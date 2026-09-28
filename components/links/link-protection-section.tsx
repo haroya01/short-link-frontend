@@ -109,7 +109,7 @@ export function LinkProtectionSection({ shortCode }: { shortCode: string }) {
         {loadFailed && (
           <p role="alert" className="mr-auto text-[12px] text-red-600 dark:text-red-400">{tSection("loadFailed")}</p>
         )}
-        <Button variant="accent" size="sm" onClick={() => void save()} disabled={busy || loading || loadFailed}>
+        <Button variant="outline" size="sm" onClick={() => void save()} disabled={busy || loading || loadFailed}>
           {t("save")}
         </Button>
       </div>

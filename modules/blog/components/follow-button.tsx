@@ -9,6 +9,7 @@ import { followUser, unfollowUser } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
 import { emitFollowChanged } from "@/modules/blog/lib/consequence-events";
+import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
 
 // useLayoutEffect on the client (seed before paint → no flash), useEffect on the server (no warning).
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -159,10 +160,6 @@ export function FollowButton({
     }
   }
 
-  const stateCls = following
-    ? "border-slate-300 text-slate-700 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
-    : "border-accent-700 text-accent-700 hover:bg-accent-50 dark:border-accent-500 dark:text-accent-400 dark:hover:bg-accent-500/10";
-  const sizeCls = compact ? "h-7 px-3 text-[12px]" : "h-9 px-4 text-[14px]";
   const gapCls = compact ? "gap-1" : "gap-1.5";
   const iconCls = compact ? "h-3.5 w-3.5" : "h-4 w-4";
   const icon = following ? <Check aria-hidden className={iconCls} /> : null;
@@ -181,7 +178,7 @@ export function FollowButton({
           // Curation framing, not broadcast: following a curator is following the path they weave, not
           // subscribing to a feed. Kept as the quiet hint so the pill itself stays a single word.
           title={following ? undefined : t("followCuratorHint")}
-          className={`touch-target inline-flex shrink-0 items-center rounded-lg border font-semibold transition-colors duration-200 focus-ring ${sizeCls} ${stateCls}`}
+          className={followToggleClass(following, compact)}
         >
           {/* Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle. */}
           <span

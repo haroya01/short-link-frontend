@@ -4,9 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MousePointerClick } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import {
   createCta,
   deleteCta,
@@ -31,9 +38,12 @@ export default function CtaLibraryPage() {
   const { ready, authenticated } = useAuth();
   const t = useTranslations("ctaLibrary");
   const tc = useTranslations("common");
+  const errorMessage = useApiErrorMessage();
+  const { toast } = useToast();
+  const [confirm, confirmDialog] = useConfirm();
   const [ctas, setCtas] = useState<CtaView[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<unknown>(null);
   const [editing, setEditing] = useState<CtaView | "new" | null>(null);
 
   const load = useCallback(async () => {
@@ -42,7 +52,7 @@ export default function CtaLibraryPage() {
     try {
       setCtas(await listMyCtas());
     } catch (e) {
-      setError(e instanceof Error ? e.message : "load failed");
+      setError(e);
     } finally {
       setLoading(false);
     }
@@ -54,42 +64,33 @@ export default function CtaLibraryPage() {
   }, [ready, authenticated, load]);
 
   async function handleDelete(cta: CtaView) {
-    if (!window.confirm(t("deleteConfirm", { label: cta.label }))) {
-      return;
-    }
+    if (!(await confirm({ title: t("deleteConfirm", { label: cta.label }), destructive: true }))) return;
     try {
       await deleteCta(cta.id);
       setCtas((prev) => prev.filter((c) => c.id !== cta.id));
     } catch (e) {
-      window.alert(e instanceof Error ? e.message : "delete failed");
+      toast(errorMessage(e, t("deleteFailed")), "error");
     }
   }
 
   if (!ready) return null;
-  if (!authenticated) {
-    return (
-      <main className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-slate-600 dark:text-slate-400">{tc("loginRequired")}</p>
-      </main>
-    );
-  }
+  if (!authenticated) return <LinksAuthGate title={tc("loginRequired")} />;
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <header className="mb-8 flex items-start justify-between gap-4">
+    <div className="container max-w-3xl space-y-6 py-10">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+            {t("title")}
+          </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("description")}</p>
         </div>
-        <Button
-          type="button"
-          variant="accent"
-          size="sm"
-          onClick={() => setEditing("new")}
-        >
-          {t("new")}
-        </Button>
-      </header>
+        {!editing && (
+          <Button type="button" variant="accent" onClick={() => setEditing("new")}>
+            {t("new")}
+          </Button>
+        )}
+      </div>
 
       {editing && (
         <CtaEditor
@@ -97,9 +98,7 @@ export default function CtaLibraryPage() {
           onSaved={(cta) => {
             setCtas((prev) => {
               const existing = prev.find((c) => c.id === cta.id);
-              return existing
-                ? prev.map((c) => (c.id === cta.id ? cta : c))
-                : [cta, ...prev];
+              return existing ? prev.map((c) => (c.id === cta.id ? cta : c)) : [cta, ...prev];
             });
             setEditing(null);
           }}
@@ -107,55 +106,39 @@ export default function CtaLibraryPage() {
         />
       )}
 
-      {loading && <p className="text-slate-500 dark:text-slate-400">{tc("loading")}</p>}
-      {error && <ErrorState message={error} onRetry={() => void load()} />}
-
-      {!loading && !error && ctas.length === 0 && (
-        <EmptyState
-          icon={MousePointerClick}
-          title={t("empty")}
-          action={
-            <Button variant="accent" onClick={() => setEditing("new")}>
-              {t("new")}
-            </Button>
-          }
-          className="mt-6"
-        />
-      )}
-
-      {!loading && ctas.length > 0 && (
-        <ul className="mt-6 divide-y divide-slate-100 dark:divide-slate-800">
+      {loading ? (
+        <ul aria-busy className="divide-y divide-slate-100 dark:divide-slate-800">
+          {[0, 1, 2].map((i) => (
+            <li key={i} className="py-4">
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="mt-2 h-3 w-1/3" />
+            </li>
+          ))}
+        </ul>
+      ) : error ? (
+        <ErrorState message={errorMessage(error, tc("errorDesc"))} onRetry={() => void load()} />
+      ) : ctas.length === 0 ? (
+        <EmptyState icon={MousePointerClick} title={t("empty")} />
+      ) : (
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {ctas.map((cta) => (
             <li key={cta.id} className="flex items-center gap-3 py-4">
-              <span
-                className={`rounded px-2 py-1 text-xs font-medium ${
-                  cta.style === "PRIMARY"
-                    ? "bg-accent-100 dark:bg-accent-500/15 text-accent-800 dark:text-accent-300"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                }`}
-              >
-                {cta.style}
-              </span>
-              <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs text-slate-600 dark:text-slate-400">
-                {t(`purpose.${cta.purpose}`)}
-              </span>
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{cta.label}</p>
-                <p className="truncate text-xs text-slate-500 dark:text-slate-400">{cta.url}</p>
+                <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">
+                  {t(`purpose.${cta.purpose}`)} · {t(`styleOption.${cta.style}`)} ·{" "}
+                  <span className="font-mono">{cta.url}</span>
+                </p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setEditing(cta)}
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(cta)}>
                 {t("edit")}
               </Button>
               <Button
                 type="button"
-                variant="destructive"
+                variant="ghost"
                 size="sm"
-                onClick={() => handleDelete(cta)}
+                className="text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                onClick={() => void handleDelete(cta)}
               >
                 {t("delete")}
               </Button>
@@ -163,7 +146,8 @@ export default function CtaLibraryPage() {
           ))}
         </ul>
       )}
-    </main>
+      {confirmDialog}
+    </div>
   );
 }
 
@@ -178,6 +162,7 @@ function CtaEditor({
 }) {
   const t = useTranslations("ctaLibrary");
   const tc = useTranslations("common");
+  const errorMessage = useApiErrorMessage();
   const [label, setLabel] = useState(initial?.label ?? "");
   const [url, setUrl] = useState(initial?.url ?? "");
   const [style, setStyle] = useState<CtaStyle>(initial?.style ?? "PRIMARY");
@@ -195,8 +180,8 @@ function CtaEditor({
         ? await updateCta(initial.id, { label, url, style, purpose })
         : await createCta({ label, url, style, purpose });
       onSaved(cta);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "save failed");
+    } catch (err) {
+      setError(errorMessage(err, t("saveFailed")));
       setSaving(false);
     }
   }
@@ -204,82 +189,71 @@ function CtaEditor({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-4 space-y-3"
+      className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:p-5"
     >
-      <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+      <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
         {initial ? t("editorTitleEdit") : t("editorTitleNew")}
       </h2>
-      <label className="block text-sm">
-        <span className="text-slate-700 dark:text-slate-300">{t("label")}</span>
-        <input
+      <label className="block space-y-1.5">
+        <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">{t("label")}</span>
+        <Input
           type="text"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           maxLength={100}
           required
           placeholder={t("labelPlaceholder")}
-          className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
         />
       </label>
-      <label className="block text-sm">
-        <span className="text-slate-700 dark:text-slate-300">URL</span>
-        <input
+      <label className="block space-y-1.5">
+        <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">URL</span>
+        <Input
           type="url"
+          inputMode="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           maxLength={2048}
           required
           pattern="https?://.*"
           placeholder="https://"
-          className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 font-mono"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
+          className="font-mono"
         />
       </label>
-      <div className="grid grid-cols-2 gap-3">
-        <label className="block text-sm">
-          <span className="text-slate-700 dark:text-slate-300">{t("style")}</span>
-          <select
-            value={style}
-            onChange={(e) => setStyle(e.target.value as CtaStyle)}
-            className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-          >
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block space-y-1.5">
+          <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">{t("style")}</span>
+          <Select value={style} onChange={(e) => setStyle(e.target.value as CtaStyle)}>
             {STYLE_OPTIONS.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {t(`styleOption.${s}`)}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
-        <label className="block text-sm">
-          <span className="text-slate-700 dark:text-slate-300">{t("intent")}</span>
-          <select
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value as CtaPurpose)}
-            className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-          >
+        <label className="block space-y-1.5">
+          <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">{t("intent")}</span>
+          <Select value={purpose} onChange={(e) => setPurpose(e.target.value as CtaPurpose)}>
             {PURPOSE_OPTIONS.map((p) => (
               <option key={p} value={p}>
-                {p}
+                {t(`purpose.${p}`)}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
       </div>
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-      <div className="flex justify-end gap-2 pt-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onCancel}
-        >
+      {error && (
+        <p role="alert" className="text-[13px] text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onCancel}>
           {tc("cancel")}
         </Button>
-        <Button
-          type="submit"
-          variant="accent"
-          size="sm"
-          disabled={saving}
-        >
+        <Button type="submit" variant="accent" disabled={saving}>
           {saving ? t("saving") : initial ? t("save") : t("create")}
         </Button>
       </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AlertTriangle, Check, Copy, Trash2, Webhook } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/lib/auth";
 import {
   ALL_BLOG_WEBHOOK_EVENTS,
@@ -110,22 +111,12 @@ function WebhookRow({ hook, onChanged }: { hook: BlogWebhookSummary; onChanged: 
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {/* enabled toggle */}
-          <button
-            type="button"
-            role="switch"
-            aria-checked={hook.enabled}
+          <Switch
+            checked={hook.enabled}
+            aria-label={hook.url}
             disabled={busy}
             onClick={() => void run(() => updateBlogWebhook(hook.id, { enabled: !hook.enabled }))}
-            className={`focus-ring relative h-6 w-10 rounded-full transition-colors ${
-              hook.enabled ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700"
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-[left] ease-[var(--ease)] ${
-                hook.enabled ? "left-[18px]" : "left-0.5"
-              }`}
-            />
-          </button>
+          />
           <button
             type="button"
             aria-label={t("delete")}
@@ -151,7 +142,7 @@ function WebhookRow({ hook, onChanged }: { hook: BlogWebhookSummary; onChanged: 
               aria-pressed={on}
               className={`focus-ring rounded-full border px-2.5 py-1 text-[12px] font-medium transition-colors ${
                 on
-                  ? "border-transparent bg-accent-700 text-white"
+                  ? "border-transparent bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
                   : "border-slate-200 text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:text-slate-400"
               }`}
             >
@@ -290,7 +281,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
                   aria-pressed={on}
                   className={`focus-ring rounded-full border px-2.5 py-1 text-[12px] font-medium transition-colors ${
                     on
-                      ? "border-transparent bg-accent-700 text-white"
+                      ? "border-transparent bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
                       : "border-slate-200 text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:text-slate-400"
                   }`}
                 >

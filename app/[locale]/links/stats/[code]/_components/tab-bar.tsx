@@ -11,11 +11,9 @@ type Props = {
 };
 
 /**
- * Segmented pill tabs that drive the stats body. Active pill rides on {@code bg-white} with a
- * soft shadow over the slate-50 trough — looks like a hardware switch landed in a slot, not just
- * an inverted color (Apple segmented-control idiom). Inner radius {@code rounded-full} matches
- * the outer container's {@code rounded-full} so the radii read as concentric. Hash-synced via
- * the parent's setter.
+ * Ink-underline tabs that drive the stats body — the house anatomy for switching between separate
+ * panels (segmented controls are only for a parameter of the same content). Hash-synced via the
+ * parent's setter.
  */
 export function TabBar({ active, onSelect, items }: Props) {
   const t = useTranslations("stats");

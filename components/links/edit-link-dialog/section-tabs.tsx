@@ -9,46 +9,46 @@ type Props = {
   t: ReturnType<typeof useTranslations<"edit">>;
 };
 
+const SECTIONS: Section[] = ["basic", "tags", "og", "protection"];
+
+/** Separate panels, so ink-underline tabs (the stats tab bar's anatomy), not a segmented control. */
 export function SectionTabs({ active, onSelect, t }: Props) {
   return (
-    <div className="mb-4 flex gap-1 rounded-md bg-slate-100 dark:bg-slate-800 p-1 text-xs">
-      <Pill active={active === "basic"} onClick={() => onSelect("basic")}>
-        {t("tabs.basic")}
-      </Pill>
-      <Pill active={active === "tags"} onClick={() => onSelect("tags")}>
-        {t("tabs.tags")}
-      </Pill>
-      <Pill active={active === "og"} onClick={() => onSelect("og")}>
-        {t("tabs.og")}
-      </Pill>
-      <Pill active={active === "protection"} onClick={() => onSelect("protection")}>
-        {t("tabs.protection")}
-      </Pill>
+    <div role="tablist" className="mb-4 flex gap-1 overflow-x-auto border-b border-slate-200 dark:border-slate-800">
+      {SECTIONS.map((section, index) => {
+        const selected = active === section;
+        return (
+          <button
+            key={section}
+            type="button"
+            role="tab"
+            id={`edit-tab-${section}`}
+            aria-selected={selected}
+            tabIndex={selected ? 0 : -1}
+            onClick={() => onSelect(section)}
+            onKeyDown={(event) => {
+              const next =
+                event.key === "ArrowRight"
+                  ? (index + 1) % SECTIONS.length
+                  : event.key === "ArrowLeft"
+                    ? (index + SECTIONS.length - 1) % SECTIONS.length
+                    : -1;
+              if (next < 0) return;
+              event.preventDefault();
+              onSelect(SECTIONS[next]);
+              document.getElementById(`edit-tab-${SECTIONS[next]}`)?.focus();
+            }}
+            className={
+              "relative -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 " +
+              (selected
+                ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100")
+            }
+          >
+            {t(`tabs.${section}`)}
+          </button>
+        );
+      })}
     </div>
-  );
-}
-
-function Pill({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={
-        "focus-ring flex-1 rounded px-2 py-1.5 text-center transition " +
-        (active
-          ? "bg-white dark:bg-slate-900 font-medium text-accent-700 dark:text-accent-400 shadow-sm"
-          : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100")
-      }
-    >
-      {children}
-    </button>
   );
 }

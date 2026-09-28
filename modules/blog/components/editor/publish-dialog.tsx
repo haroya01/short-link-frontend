@@ -484,7 +484,7 @@ export function PublishDialog({
                     <div
                       role="radiogroup"
                       aria-label={t("publishTiming")}
-                      className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-700"
+                      className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
                     >
                       <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
                         {t("publishNow")}
@@ -648,12 +648,12 @@ export function PublishDialog({
   );
 }
 
-/** Segmented-control button — the active segment gets the accent fill, the rest stay quiet. */
+/** Segmented-control button — the house segment: white on the gray track, ink text. */
 function segBtn(active: boolean) {
-  return `focus-ring rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+  return `focus-ring min-h-9 rounded-md px-3 text-[13px] font-medium transition-colors ${
     active
-      ? "bg-accent-700 text-white"
-      : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
   }`;
 }
 
@@ -726,7 +726,7 @@ function PrimaryAction({
   onCancelSchedule: () => void;
 }) {
   const solid =
-    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
+    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50";
   if (status === "DRAFT") {
     // The tag requirement is a teachable click (onPublish nudges the tag field) rather than a
     // disabled button, so Publish/Schedule stay enabled. Schedule still gates on a picked time —

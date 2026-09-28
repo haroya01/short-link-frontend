@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -288,23 +289,7 @@ function QrModal({
 
           <label className="mt-3 flex w-full items-center justify-between gap-2 text-xs text-slate-700 dark:text-slate-300">
             <span>{t("logoLabel")}</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={withLogo}
-              onClick={() => setWithLogo((v) => !v)}
-              className={
-                "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition " +
-                (withLogo ? "bg-slate-900" : "bg-slate-200 dark:bg-slate-800")
-              }
-            >
-              <span
-                className={
-                  "inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-900 shadow transition " +
-                  (withLogo ? "translate-x-4" : "translate-x-0.5")
-                }
-              />
-            </button>
+            <Switch checked={withLogo} onCheckedChange={setWithLogo} />
           </label>
 
           {showSrcInput && (

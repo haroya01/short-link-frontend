@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   disableWebPush,
@@ -71,27 +72,12 @@ export function WebPushToggle() {
           )}
         </span>
       </span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={on}
+      <Switch
+        checked={on}
         aria-label={t("webPushLabel")}
         disabled={busy || denied}
         onClick={toggle}
-        className={cn(
-          "focus-ring relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50",
-          on ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-700",
-        )}
-      >
-        <span
-          className={cn(
-            // left-0 anchors the knob: without it the absolutely-positioned span falls back
-            // to its static position, which the button's UA text-align:center puts mid-pill.
-            "absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
-            on ? "translate-x-[1.375rem]" : "translate-x-0.5",
-          )}
-        />
-      </button>
+      />
         </div>
       </div>
     </section>
