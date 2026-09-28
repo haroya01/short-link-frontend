@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowDown, Check, Plus, QrCode } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { CAMPAIGN_END, CAMPAIGN_START, EASE, summarize, type MockData } from "../_lib/mock-data";
+import { formatNumber } from "@/lib/utils";
 
 function useNumberFormats() {
   const locale = useLocale();
@@ -155,7 +156,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
           <span className="truncate text-slate-600 dark:text-slate-300">{row.area}</span>
           <span className="truncate text-slate-600 dark:text-slate-300">{row.dist}</span>
           <span className="text-right tabular-nums text-slate-700 dark:text-slate-300">
-            {row.qty.toLocaleString()}
+            {formatNumber(row.qty)}
             {t("batchUnit")}
           </span>
           <span className="flex items-center justify-end gap-1 text-[11px] text-accent-700 dark:text-accent-400">

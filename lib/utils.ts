@@ -18,6 +18,13 @@ export function formatDate(iso: string) {
   return `${yyyy}.${mm}.${dd}`;
 }
 
+/** formatDate plus the local 24h time, for logs and "last seen" stamps. */
+export function formatDateTime(iso: string) {
+  const d = new Date(iso);
+  const time = [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, "0")).join(":");
+  return `${formatDate(iso)} ${time}`;
+}
+
 export function formatNumber(n: number) {
   return new Intl.NumberFormat("ko-KR").format(n);
 }

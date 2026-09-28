@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/link-events";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { formatDateTime } from "@/lib/utils";
 
 /**
  * Raw-data surface for a link the owner holds: CSV exports (click events + a daily-stats
@@ -110,7 +111,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
                   {events.map((e, i) => (
                     <tr key={i} className="border-b border-slate-100 dark:border-slate-800 align-top dark:border-slate-800">
                       <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">
-                        {new Date(e.clickedAt).toLocaleString()}
+                        {formatDateTime(e.clickedAt)}
                       </td>
                       <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">
                         {[e.city, e.country].filter(Boolean).join(", ") || "—"}
