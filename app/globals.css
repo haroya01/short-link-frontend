@@ -81,6 +81,10 @@ body[data-bottom-nav] {
   body[data-bottom-nav] {
     --fab-bottom: calc(var(--bottom-nav-h) + 1rem);
   }
+  body[data-bottom-nav][data-composer] {
+    --toast-bottom: calc(var(--bottom-nav-h) + 4.5rem);
+    --cookie-bottom: calc(var(--bottom-nav-h) + 3.75rem);
+  }
 }
 
 @media (max-width: 639px) {

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, Link2, Loader2, Lock, LockOpen } from "lucide-react";
+import { ArrowRight, ChevronDown, ClipboardPaste, Link2, Loader2, Lock, LockOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
+import { extractUrl } from "@/lib/extract-url";
 import { prewarmPowToken } from "@/lib/pow";
 import { track } from "@/components/common/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
@@ -29,9 +30,18 @@ type Props = {
   hero?: boolean;
   /** 답 줄 상태에서 "다른 주소도 줄이기"로 돌아온 빈 줄은 바로 받아쓸 수 있게 포커스. */
   heroAutoFocus?: boolean;
+  /** 다른 앱에서 공유해 들어온 주소 — 준비되면 한 번 바로 줄인다. */
+  initialUrl?: string;
 };
 
-export function ShortenForm({ authenticated, ready, onShortened, hero = false, heroAutoFocus = false }: Props) {
+export function ShortenForm({
+  authenticated,
+  ready,
+  onShortened,
+  hero = false,
+  heroAutoFocus = false,
+  initialUrl,
+}: Props) {
   const t = useTranslations("shortenForm");
   const [url, setUrl] = useState("");
   const [customCode, setCustomCode] = useState("");
@@ -45,6 +55,20 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
   const heroInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const [canPaste, setCanPaste] = useState(false);
+  const sharedHandled = useRef(false);
+
+  useEffect(() => {
+    setCanPaste(typeof navigator.clipboard?.readText === "function");
+  }, []);
+
+  useEffect(() => {
+    if (!hero || !initialUrl || !ready || sharedHandled.current) return;
+    sharedHandled.current = true;
+    setUrl(initialUrl);
+    void shorten(initialUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hero, initialUrl, ready]);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
   // mining cost. Authenticated users skip PoW server-side, so don't bother computing. Wait for
@@ -80,6 +104,21 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
     e.preventDefault();
     setUrl(pasted);
     void shorten(pasted);
+  }
+
+  async function pasteFromClipboard() {
+    try {
+      const found = extractUrl(await navigator.clipboard.readText());
+      if (!found) {
+        setError(t("errors.invalid"));
+        heroInputRef.current?.focus();
+        return;
+      }
+      setUrl(found);
+      void shorten(found);
+    } catch {
+      heroInputRef.current?.focus();
+    }
   }
 
   async function shorten(trimmed: string) {
@@ -171,6 +210,16 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
                truncate: 좁은 폭에선 placeholder 가 원형 버튼에 닿기 전에 …로 접힌다. */
             className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-500 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-400 sm:text-[17px]"
           />
+          {canPaste && !url && !busy && (
+            <button
+              type="button"
+              onClick={() => void pasteFromClipboard()}
+              className="focus-ring hidden h-11 shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-2.5 text-[14px] font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 [@media(pointer:coarse)]:inline-flex"
+            >
+              <ClipboardPaste aria-hidden className="h-4 w-4" />
+              {t("paste")}
+            </button>
+          )}
           <button
             type="submit"
             disabled={busy}

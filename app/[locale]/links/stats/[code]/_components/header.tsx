@@ -1,6 +1,9 @@
-import { Download, Settings2 } from "lucide-react";
+import { useState } from "react";
+import { Download, MoreHorizontal, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
+import { ShareButton } from "@/components/common/share-button";
 import { DestinationHealthBanner } from "@/components/links/stats/destination-health-banner";
 import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
 import { QrButton } from "@/components/links/qr/button";
@@ -37,6 +40,7 @@ type Props = {
  */
 export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, onSettings, settingsActive }: Props) {
   const t = useTranslations("stats");
+  const [moreOpen, setMoreOpen] = useState(false);
   const display = shortUrl || `/${data.shortCode}`;
   const { data: detail } = useLinkDetail(demo ? undefined : data.shortCode);
   let destinationHost = "";
@@ -78,7 +82,53 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
             )}
           </p>}
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 sm:hidden">
+          <div className="[&>button]:w-full">
+            <CopyButton variant={demo ? "outline" : "accent"} size="lg" value={display} onCopied={onCopy} />
+          </div>
+          <div className="[&>button]:w-full">
+            <ShareButton url={display} title={title || display} variant="outline" size="lg" />
+          </div>
+          <Button
+            variant="outline"
+            size="lg"
+            className="px-3"
+            onClick={() => setMoreOpen(true)}
+            aria-label={t("moreActions")}
+            aria-haspopup="dialog"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+        <BottomSheet open={moreOpen} onClose={() => setMoreOpen(false)} label={t("moreActions")}>
+          <div className="space-y-2 pb-1">
+            <QrButton value={display} filename={`${data.shortCode}.png`} size="lg" />
+            {onSettings && (
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full"
+                onClick={() => {
+                  setMoreOpen(false);
+                  onSettings();
+                }}
+              >
+                <Settings2 className="h-4 w-4" />
+                {t("linkSettings")}
+              </Button>
+            )}
+            {!demo && (
+              <div className="flex justify-center rounded-lg border border-slate-300 dark:border-slate-700">
+                <PublicStatsToggle shortCode={data.shortCode} />
+              </div>
+            )}
+            <Button variant="outline" size="lg" className="w-full" onClick={exportCsv}>
+              <Download className="h-4 w-4" />
+              {t("exportCsv")}
+            </Button>
+          </div>
+        </BottomSheet>
+        <div className="hidden flex-wrap items-center gap-1.5 sm:flex">
           <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} onCopied={onCopy} />
           <QrButton value={display} filename={`${data.shortCode}.png`} />
           {onSettings && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,8 @@ type Props = {
   iconOnly?: boolean;
   /** 속삭임 행(단축 답 줄 아래)용 텍스트 트리거 — 버튼 상자 없이 밑줄 글자만. */
   textTrigger?: boolean;
+  /** "lg" = a full-size labelled button (bottom-sheet action rows). */
+  size?: "sm" | "lg";
 };
 
 type Palette = { id: string; dark: string; light: string };
@@ -80,6 +83,7 @@ export function QrButton({
   defaultSrcHint = "",
   iconOnly = false,
   textTrigger = false,
+  size = "sm",
 }: Props) {
   const t = useTranslations("qr");
   const baseUrl = url ?? value ?? "";
@@ -109,10 +113,10 @@ export function QrButton({
           <QrCode className="h-3.5 w-3.5" />
         </button>
       ) : (
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}
-          aria-label={t("triggerAria")} title={t("triggerAria")}>
+        <Button variant="outline" size={size} onClick={() => setOpen(true)} disabled={!baseUrl}
+          aria-label={t("triggerAria")} title={t("triggerAria")} className={size === "lg" ? "w-full" : undefined}>
           <QrCode className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">QR</span>
+          <span className={size === "lg" ? undefined : "hidden sm:inline"}>QR</span>
         </Button>
       )}
       {open && (
@@ -226,7 +230,7 @@ function QrModal({
     }
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center p-4">
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
       <div
@@ -345,7 +349,8 @@ function QrModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
@@ -15,6 +15,7 @@ import { HomeRecent } from "@/components/links/home-recent";
 import { useInvalidateLinks } from "@/lib/api/links.queries";
 import { useAuth } from "@/lib/auth";
 import { recordRecent, useRecentLinks } from "@/lib/recent-links";
+import { extractUrl } from "@/lib/extract-url";
 import { Link } from "@/i18n/navigation";
 import type { CreateLinkResponse } from "@/types";
 
@@ -56,6 +57,17 @@ export default function HomePage() {
   const tResult = useTranslations("result");
   const recent = useRecentLinks();
   const invalidateLinks = useInvalidateLinks();
+  // 다른 앱의 공유 시트 → kurl(설치형 PWA share_target) 로 들어온 주소. 한 번 줄이고 주소창에서 지운다.
+  const [sharedUrl, setSharedUrl] = useState<string | null>(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const found = extractUrl(params.get("shared_url") || params.get("shared_text") || "");
+    if (!found) return;
+    setSharedUrl(found);
+    for (const key of ["shared_url", "shared_text", "shared_title"]) params.delete(key);
+    const qs = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+  }, []);
   const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
 
@@ -95,6 +107,7 @@ export default function HomePage() {
               {(!results || results.length === 0 || composing) && (
                 <ShortenForm
                   hero
+                  initialUrl={sharedUrl ?? undefined}
                   heroAutoFocus={Boolean(results && results.length > 0)}
                   authenticated={authenticated}
                   ready={ready}

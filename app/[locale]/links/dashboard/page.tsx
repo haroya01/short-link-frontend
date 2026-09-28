@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable, type LiveBump } from "@/components/links/table";
+import { MobileComposer } from "@/components/links/mobile-composer";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
@@ -182,7 +183,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-4 py-6">
+    <div className="container max-w-5xl space-y-4 py-6 max-sm:pb-24">
       <div className="flex items-end justify-between gap-3">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
@@ -199,7 +200,7 @@ export default function DashboardPage() {
           <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
             <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
           </Button>
-          <Link href="/">
+          <Link href="/" className="hidden sm:inline-flex">
             <Button variant="accent">
               <Plus className="h-4 w-4" /> {t("newLink")}
             </Button>
@@ -212,6 +213,7 @@ export default function DashboardPage() {
         onClose={() => setBulkOpen(false)}
         onImported={() => void invalidateLinks()}
       />
+      <MobileComposer onCreated={() => void invalidateLinks()} />
 
       {firstRun ? (
         // No links yet, no filter → a single clear next step. The stats, campaign card, weekly
