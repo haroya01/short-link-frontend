@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Phone composer for signed-in users: a single field pinned above the tab bar, where the thumb
- * already is. Pasting a link into the empty field (the OS paste — no in-app paste button) shortens
- * it right away; the result opens as the link sheet (copy · share · QR). Rides the tab bar's
- * hide-on-scroll.
+ * already is. The OS paste only fills the field (a shared sentence is trimmed to its URL); shortening
+ * waits for the button, and the result opens as the link sheet (copy · share · QR). Rides the tab
+ * bar's hide-on-scroll.
  */
 export function MobileComposer({ onCreated }: { onCreated: () => void }) {
   const t = useTranslations("composer");
@@ -91,12 +91,12 @@ export function MobileComposer({ onCreated }: { onCreated: () => void }) {
               if (error) setError(null);
             }}
             onPaste={(e) => {
-              if (!empty || busy) return;
+              if (!empty) return;
               const pasted = e.clipboardData.getData("text");
-              if (!extractUrl(pasted)) return;
+              const found = extractUrl(pasted);
+              if (!found || found === pasted.trim()) return;
               e.preventDefault();
-              setValue(pasted.trim());
-              void shorten(pasted);
+              setValue(found);
             }}
             placeholder={t("placeholder")}
             aria-label={t("placeholder")}

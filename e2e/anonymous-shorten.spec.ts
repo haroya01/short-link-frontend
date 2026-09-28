@@ -32,6 +32,33 @@ test.describe("anonymous shorten flow", () => {
     expect(href).toMatch(/\/[0-9A-Za-z]{7}$/);
   });
 
+  test("pasting only fills the field — shortening waits for the button", async ({ page }) => {
+    let created = 0;
+    page.on("request", (request) => {
+      if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/links") created += 1;
+    });
+    await page.goto("/ko");
+    const input = page.getByPlaceholder(/긴 주소를 여기에/);
+    await input.focus();
+    await page.evaluate(() => {
+      const data = new DataTransfer();
+      data.setData("text/plain", "이거 봐 https://example.com/pasted 좋더라");
+      document.activeElement?.dispatchEvent(
+        new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }),
+      );
+    });
+
+    // 공유 문구째 붙어도 칸엔 주소만, 그리고 아직 아무것도 만들지 않는다(옵션을 고를 틈).
+    await expect(input).toHaveValue("https://example.com/pasted");
+    await page.waitForTimeout(600);
+    expect(created).toBe(0);
+    await expect(page.getByTestId("result-line")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "단축하기" }).click();
+    await expect(page.getByTestId("result-line").first()).toBeVisible({ timeout: 10000 });
+    expect(created).toBe(1);
+  });
+
   test("rejects empty URL with inline error", async ({ page }) => {
     await page.goto("/ko");
     await page.getByRole("button", { name: "단축하기" }).click();

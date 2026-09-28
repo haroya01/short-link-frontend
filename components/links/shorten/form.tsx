@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
+import { extractUrl } from "@/lib/extract-url";
 import { prewarmPowToken } from "@/lib/pow";
 import { inert } from "@/lib/utils";
 import { track } from "@/components/common/posthog-provider";
@@ -61,8 +62,6 @@ export function ShortenForm({
     if (!hero || !initialUrl || !ready || sharedHandled.current) return;
     sharedHandled.current = true;
     setUrl(initialUrl);
-    void shorten(initialUrl);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hero, initialUrl, ready]);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
@@ -86,19 +85,15 @@ export function ShortenForm({
     await shorten(url.trim());
   }
 
-  /**
-   * 히어로의 "붙여넣으면 바로 짧아진다" — 빈 한 줄에 유효한 URL 이 붙으면 제출까지 한 호흡.
-   * 고급 옵션(코드·만료)을 만지는 중이거나 이미 타이핑한 내용이 있으면 끼어들지 않는다 —
-   * 자동 제출은 의도가 명백한 경우(빈 필드 + 완결된 URL 붙여넣기)에만.
-   */
-  function handleHeroPaste(e: React.ClipboardEvent<HTMLInputElement>) {
-    if (!hero || busy) return;
-    if (url.trim() || showAdvanced || lockOn || customCode.trim() || expiresAt) return;
-    const pasted = e.clipboardData.getData("text").trim();
-    if (!isValidUrl(pasted)) return;
+  /** 붙여넣기는 칸을 채우기만 한다 — 코드·만료·비밀번호를 고를 틈을 두려고 단축은 버튼(Enter)으로만.
+   *  공유 문구째 붙으면 그 안의 주소만 남겨, 무엇이 줄어들지 칸에 보이게 한다. */
+  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    if (url.trim()) return;
+    const pasted = e.clipboardData.getData("text");
+    const found = extractUrl(pasted);
+    if (!found || found === pasted.trim()) return;
     e.preventDefault();
-    setUrl(pasted);
-    void shorten(pasted);
+    setUrl(found);
   }
 
   async function shorten(trimmed: string) {
@@ -182,7 +177,7 @@ export function ShortenForm({
               setUrl(e.target.value);
               if (error) setError(null);
             }}
-            onPaste={handleHeroPaste}
+            onPaste={handlePaste}
             placeholder={t("placeholder")}
             aria-label={t("placeholder")}
             disabled={busy}

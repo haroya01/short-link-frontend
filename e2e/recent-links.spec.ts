@@ -31,9 +31,8 @@ test.describe("recent links (localStorage)", () => {
       if (i > 0) await page.getByRole("button", { name: "다른 주소도 줄이기" }).click();
       await page.getByPlaceholder(/긴 주소를 여기에/).fill(url);
       await page.getByRole("button", { name: "단축하기" }).click();
-      await expect(
-        page.getByTestId("result-line").first().locator("a", { hasText: /\/e2eAb\d{2}/ }).first(),
-      ).toBeVisible();
+      // 앞선 답 줄이 이미 떠 있으니, 이번 주소의 답 줄이 생길 때까지 기다린다(그 전에 새로고침하면 요청이 끊긴다).
+      await expect(page.getByTestId("result-line").filter({ hasText: url })).toBeVisible();
     }
     await page.reload();
     await expect(page.getByRole("heading", { name: "최근 만든 링크" })).toBeVisible();
