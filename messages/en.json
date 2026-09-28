@@ -1023,7 +1023,8 @@
       "reservedCode": "That code is reserved. Try another one.",
       "quota": "You've reached your link limit — clean up old links to make room.",
       "validation": "Invalid input."
-    }
+    },
+    "paste": "Paste"
   },
   "result": {
     "completed": "Your short link is ready",
@@ -1285,7 +1286,8 @@
     "toolCampaigns": "QR campaigns",
     "toolEvents": "Sign-ups",
     "selectMode": "Select",
-    "selectDone": "Done"
+    "selectDone": "Done",
+    "todayDelta": "{count, number} today"
   },
   "edit": {
     "title": "Edit link",
@@ -1785,7 +1787,8 @@
       "daily": "Human clicks in the last {days} days · {tz}"
     },
     "trendTitle": "Click trends",
-    "rangeDays": "{days} days"
+    "rangeDays": "{days} days",
+    "moreActions": "More actions"
   },
   "admin": {
     "label": "admin",
@@ -4106,5 +4109,26 @@
     "humanClicks": "human clicks",
     "createFirst": "Create your first link",
     "viewFewestClicks": "Fewest clicks first"
+  },
+  "composer": {
+    "placeholder": "Paste a long link",
+    "paste": "Paste",
+    "submit": "Shorten",
+    "noUrl": "No link found. Use an address that starts with http.",
+    "pasteBlocked": "Couldn't read the clipboard. Long-press the field to paste.",
+    "failed": "Couldn't shorten it. Try again."
+  },
+  "linkSheet": {
+    "created": "Created",
+    "today": "Today",
+    "week": "7 days",
+    "total": "Total",
+    "copy": "Copy",
+    "openStats": "Open full stats",
+    "openOriginal": "Open destination",
+    "edit": "Edit",
+    "delete": "Delete",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites"
   }
 }

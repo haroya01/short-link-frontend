@@ -1023,7 +1023,8 @@
       "reservedCode": "そのコードは予約済みです。別のコードをお試しください。",
       "quota": "リンクの上限に達しました。古いリンクを整理すると作成できます。",
       "validation": "入力値が正しくありません。"
-    }
+    },
+    "paste": "貼り付け"
   },
   "result": {
     "completed": "短縮完了",
@@ -1285,7 +1286,8 @@
     "toolCampaigns": "QRキャンペーン",
     "toolEvents": "募集",
     "selectMode": "選択",
-    "selectDone": "完了"
+    "selectDone": "完了",
+    "todayDelta": "今日 {count, number}"
   },
   "edit": {
     "title": "リンク編集",
@@ -1785,7 +1787,8 @@
       "daily": "直近{days}日の人によるクリック · {tz}"
     },
     "trendTitle": "クリック推移",
-    "rangeDays": "{days}日"
+    "rangeDays": "{days}日",
+    "moreActions": "その他の操作"
   },
   "admin": {
     "label": "admin",
@@ -4106,5 +4109,26 @@
     "humanClicks": "人のクリック",
     "createFirst": "最初のリンクを作る",
     "viewFewestClicks": "クリックの少ない順に見る"
+  },
+  "composer": {
+    "placeholder": "長いURLを貼り付け",
+    "paste": "貼り付け",
+    "submit": "短縮",
+    "noUrl": "URLが見つかりません。httpで始まるアドレスを入れてください。",
+    "pasteBlocked": "クリップボードを読めませんでした。欄を長押しして貼り付けてください。",
+    "failed": "短縮できませんでした。もう一度お試しください。"
+  },
+  "linkSheet": {
+    "created": "作成しました",
+    "today": "今日",
+    "week": "7日間",
+    "total": "合計",
+    "copy": "コピー",
+    "openStats": "統計をすべて見る",
+    "openOriginal": "リンク先を開く",
+    "edit": "編集",
+    "delete": "削除",
+    "favorite": "お気に入りに追加",
+    "unfavorite": "お気に入りを解除"
   }
 }

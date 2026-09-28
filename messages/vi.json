@@ -1023,7 +1023,8 @@
       "reservedCode": "Mã này đã được dành riêng. Hãy thử mã khác.",
       "quota": "Bạn đã đạt giới hạn liên kết — dọn bớt liên kết cũ để tạo mới.",
       "validation": "Dữ liệu nhập không hợp lệ."
-    }
+    },
+    "paste": "Dán"
   },
   "result": {
     "completed": "Liên kết ngắn của bạn đã sẵn sàng",
@@ -1285,7 +1286,8 @@
     "toolCampaigns": "Chiến dịch QR",
     "toolEvents": "Đăng ký",
     "selectMode": "Chọn",
-    "selectDone": "Xong"
+    "selectDone": "Xong",
+    "todayDelta": "Hôm nay {count, number}"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",
@@ -1785,7 +1787,8 @@
       "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
     },
     "trendTitle": "Xu hướng nhấp",
-    "rangeDays": "{days} ngày"
+    "rangeDays": "{days} ngày",
+    "moreActions": "Thao tác khác"
   },
   "admin": {
     "label": "quản trị",
@@ -4106,5 +4109,26 @@
     "humanClicks": "lượt nhấp thật",
     "createFirst": "Tạo liên kết đầu tiên",
     "viewFewestClicks": "Xem theo ít lượt nhấp nhất"
+  },
+  "composer": {
+    "placeholder": "Dán liên kết dài",
+    "paste": "Dán",
+    "submit": "Rút gọn",
+    "noUrl": "Không tìm thấy liên kết. Hãy dùng địa chỉ bắt đầu bằng http.",
+    "pasteBlocked": "Không đọc được bộ nhớ tạm. Nhấn giữ ô nhập để dán.",
+    "failed": "Không rút gọn được. Hãy thử lại."
+  },
+  "linkSheet": {
+    "created": "Đã tạo",
+    "today": "Hôm nay",
+    "week": "7 ngày",
+    "total": "Tổng",
+    "copy": "Sao chép",
+    "openStats": "Xem toàn bộ thống kê",
+    "openOriginal": "Mở điểm đến",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "favorite": "Thêm vào mục yêu thích",
+    "unfavorite": "Bỏ khỏi mục yêu thích"
   }
 }

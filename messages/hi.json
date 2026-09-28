@@ -1023,7 +1023,8 @@
       "reservedCode": "यह कोड आरक्षित है। कोई और कोड आज़माएँ।",
       "quota": "आप लिंक सीमा तक पहुँच गए हैं — नए के लिए पुराने लिंक हटाएँ।",
       "validation": "अमान्य इनपुट।"
-    }
+    },
+    "paste": "चिपकाएँ"
   },
   "result": {
     "completed": "आपका छोटा लिंक तैयार है",
@@ -1285,7 +1286,8 @@
     "toolCampaigns": "QR अभियान",
     "toolEvents": "पंजीकरण",
     "selectMode": "चुनें",
-    "selectDone": "हो गया"
+    "selectDone": "हो गया",
+    "todayDelta": "आज {count, number}"
   },
   "edit": {
     "title": "लिंक संपादित करें",
@@ -1785,7 +1787,8 @@
       "daily": "पिछले {days} दिन के मानवीय क्लिक · {tz}"
     },
     "trendTitle": "क्लिक रुझान",
-    "rangeDays": "{days} दिन"
+    "rangeDays": "{days} दिन",
+    "moreActions": "और विकल्प"
   },
   "admin": {
     "label": "admin",
@@ -4106,5 +4109,26 @@
     "humanClicks": "मानव क्लिक",
     "createFirst": "पहला लिंक बनाएँ",
     "viewFewestClicks": "सबसे कम क्लिक के क्रम में देखें"
+  },
+  "composer": {
+    "placeholder": "लंबा लिंक चिपकाएँ",
+    "paste": "चिपकाएँ",
+    "submit": "छोटा करें",
+    "noUrl": "लिंक नहीं मिला। http से शुरू होने वाला पता डालें।",
+    "pasteBlocked": "क्लिपबोर्ड पढ़ा नहीं जा सका। फ़ील्ड को दबाकर रखें और चिपकाएँ।",
+    "failed": "छोटा नहीं हो सका। फिर से कोशिश करें।"
+  },
+  "linkSheet": {
+    "created": "बन गया",
+    "today": "आज",
+    "week": "7 दिन",
+    "total": "कुल",
+    "copy": "कॉपी",
+    "openStats": "पूरे आँकड़े देखें",
+    "openOriginal": "गंतव्य खोलें",
+    "edit": "संपादित करें",
+    "delete": "हटाएँ",
+    "favorite": "पसंदीदा में जोड़ें",
+    "unfavorite": "पसंदीदा से हटाएँ"
   }
 }

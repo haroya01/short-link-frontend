@@ -43,6 +43,8 @@ const LINKS_ONLY = [
   "authGate",
   "campaignStatus",
   "publicStats",
+  "composer",
+  "linkSheet",
 ];
 
 /** 관리자 세그먼트(blog/admin·links/admin) 전용. */
