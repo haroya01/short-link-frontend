@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listCampaigns } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { CampaignOnboarding } from "@/components/links/campaigns/onboarding";
@@ -70,10 +70,8 @@ export default function CampaignsPage() {
           )}
         </div>
         {items && (
-          <Link href="/campaigns/new">
-            <Button variant="accent">
-              <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}
-            </Button>
+          <Link href="/campaigns/new" className={buttonVariants({ variant: "accent" })}>
+            <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}
           </Link>
         )}
       </div>

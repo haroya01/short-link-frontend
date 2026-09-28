@@ -150,8 +150,8 @@ export function ProfileFeedEditor({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
-          <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
+          <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{t("featuredTitle")}</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("featuredHint")}</p>
         </div>
         <AddMenu
           onAddText={onAddText}
@@ -206,10 +206,10 @@ export function ProfileFeedEditor({
             // Default-expand for first-timers (no featured items yet) — they often miss the
             // collapsed disclosure and don't realize how to add their existing links to the feed.
             <details className="group" open={items.length === 0}>
-              <summary className="cursor-pointer text-[11px] text-slate-500 hover:text-slate-900">
+              <summary className="cursor-pointer text-[11px] text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200">
                 {t("addMore")} ({otherLinks.length})
               </summary>
-              <ul className="mt-2 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
+              <ul className="mt-2 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 dark:divide-slate-800">
                 {otherLinks.map((link) => (
                   <li
                     key={link.shortCode}
@@ -230,7 +230,7 @@ export function ProfileFeedEditor({
                       type="button"
                       onClick={() => onToggle(link.shortCode, true)}
                       disabled={pendingShortCode === link.shortCode}
-                      className="text-[11px] text-accent-700 hover:text-accent-800"
+                      className="text-[11px] text-accent-700 hover:text-accent-800 dark:text-accent-400"
                     >
                       {t("add")}
                     </button>
@@ -308,7 +308,7 @@ function AddMenu({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-800 dark:text-slate-300 dark:hover:border-slate-700"
       >
         <Plus className="h-3.5 w-3.5" />
         {t("addBlockMenu")}
@@ -320,7 +320,7 @@ function AddMenu({
         // demoted.
         <div
           role="menu"
-          className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg"
+          className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg dark:bg-slate-900 dark:border-slate-800"
         >
           <MenuItem onClick={() => fire(onAddText)} icon={<Type className="h-3.5 w-3.5" />}>
             {t("addHeader")}
@@ -331,7 +331,7 @@ function AddMenu({
           <MenuItem onClick={() => fire(onAddEmbed)} icon={<Play className="h-3.5 w-3.5" />}>
             {t("addEmbed")}
           </MenuItem>
-          <div className="border-t border-slate-100 px-3 py-1 text-[10px] font-medium text-slate-400">
+          <div className="border-t border-slate-100 px-3 py-1 text-[10px] font-medium text-slate-400 dark:border-slate-800">
             {t("addMoreBlocks")}
           </div>
           <MenuItem onClick={() => fire(onAddDivider)} icon={<Minus className="h-3.5 w-3.5" />}>
@@ -399,7 +399,7 @@ function MenuItem({
       type="button"
       role="menuitem"
       onClick={onClick}
-      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50"
+      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-300"
     >
       {icon}
       {children}
@@ -422,10 +422,10 @@ function FeedEmptyState({
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center">
+    <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center dark:border-slate-700 dark:bg-slate-800/40">
       <ArrowUp className="mx-auto h-4 w-4 text-slate-400" />
-      <p className="mt-2 text-sm font-medium text-slate-700">{t("featuredEmptyTitle")}</p>
-      <p className="mt-1 text-[11px] text-slate-500">
+      <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-300">{t("featuredEmptyTitle")}</p>
+      <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
         {hasOtherLinks
           ? t("featuredEmptyHasOthers", { count: otherCount })
           : t("featuredEmpty")}
@@ -483,7 +483,7 @@ function FeedItemList({
   const sectionByIdx = useMemo(() => computeSectionMeta(items), [items]);
 
   return (
-    <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
+    <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 dark:divide-slate-800">
       {items.map((item, idx) => {
         const meta = sectionByIdx[idx];
         const isHeader = item.kind === "BLOCK" && item.type === "TEXT";
@@ -639,7 +639,7 @@ function FeedItemRow({
     return (
       <li {...dndProps} className={slimRow}>
         {dragHandle}
-        <hr className="flex-1 border-t border-slate-300" aria-label={t("dividerLabel")} />
+        <hr className="flex-1 border-t border-slate-300 dark:border-slate-700" aria-label={t("dividerLabel")} />
         <button
           type="button"
           onClick={() => onDeleteBlock(item.id)}
@@ -666,7 +666,7 @@ function FeedItemRow({
           ) : (
             <ImageIcon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           )}
-          <span className="truncate text-[11px] text-slate-500">
+          <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
             {item.content || t("addImagePlaceholder")}
           </span>
         </div>
@@ -718,7 +718,7 @@ function FeedItemRow({
               onClick={sectionInfo.onToggle}
               aria-expanded={!collapsed}
               aria-label={collapsed ? t("sectionExpand") : t("sectionCollapse")}
-              className="grid h-5 w-5 shrink-0 place-items-center rounded text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
+              className="grid h-5 w-5 shrink-0 place-items-center rounded text-slate-500 transition hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
             >
               {collapsed ? (
                 <ChevronRight className="h-3.5 w-3.5" />
@@ -729,11 +729,11 @@ function FeedItemRow({
           ) : (
             <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           )}
-          <span className="truncate text-sm font-semibold text-slate-900">
+          <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
             {summarizeTextBody(item.content) || t("addTextPlaceholder")}
           </span>
           {sectionInfo && sectionInfo.count > 0 && (
-            <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
+            <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
               {t("sectionItemCount", { count: sectionInfo.count })}
             </span>
           )}
@@ -782,7 +782,7 @@ function FeedItemRow({
           type="button"
           onClick={() => onToggle(link.shortCode, false)}
           disabled={pendingShortCode === link.shortCode}
-          className="text-[11px] text-slate-500 hover:text-red-600"
+          className="text-[11px] text-slate-500 hover:text-red-600 dark:text-slate-400"
         >
           {t("remove")}
         </button>
@@ -835,7 +835,7 @@ function LinkLabelField({
         }}
         maxLength={120}
         placeholder={t("labelPlaceholder")}
-        className="block w-full truncate border-b border-accent-300 bg-transparent text-sm font-medium text-slate-900 outline-none"
+        className="block w-full truncate border-b border-accent-300 bg-transparent text-sm font-medium text-slate-900 outline-none dark:text-slate-100"
       />
     );
   }
@@ -876,7 +876,7 @@ function DragHandle({
     <div className="flex min-w-0 items-center gap-2">
       <span
         aria-label="drag handle"
-        className="cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing"
+        className="cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing dark:hover:text-slate-200"
       >
         <GripVertical className="h-4 w-4" />
       </span>
@@ -887,7 +887,7 @@ function DragHandle({
           aria-label="up"
           disabled={idx === 0}
           onClick={() => onMove(idx, -1)}
-          className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+          className="text-slate-400 hover:text-slate-900 disabled:opacity-30 dark:hover:text-slate-200"
         >
           <ChevronUp className="h-3.5 w-3.5" />
         </button>
@@ -896,7 +896,7 @@ function DragHandle({
           aria-label="down"
           disabled={idx === totalCount - 1}
           onClick={() => onMove(idx, 1)}
-          className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+          className="text-slate-400 hover:text-slate-900 disabled:opacity-30 dark:hover:text-slate-200"
         >
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
@@ -919,7 +919,7 @@ function BlockActions({
       <button
         type="button"
         onClick={onEdit}
-        className="text-slate-400 hover:text-slate-900"
+        className="text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
         aria-label={t("editTextAction")}
       >
         <Pencil className="h-3.5 w-3.5" />

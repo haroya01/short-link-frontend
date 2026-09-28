@@ -148,7 +148,7 @@ export function ProfileMetaForm({
         </div>
       </div>
       <label className="block space-y-1">
-        <span className="text-xs font-medium text-slate-500">{t("usernameLabel")}</span>
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("usernameLabel")}</span>
         <Input
           value={username}
           onChange={(e) => onUsernameChange(e.target.value)}
@@ -162,14 +162,14 @@ export function ProfileMetaForm({
       </label>
 
       <label className="block space-y-1">
-        <span className="text-xs font-medium text-slate-500">{t("bioLabel")}</span>
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("bioLabel")}</span>
         <textarea
           value={bio}
           onChange={(e) => onBioChange(e.target.value)}
           maxLength={280}
           rows={3}
           placeholder={t("bioPlaceholder")}
-          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600"
+          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 dark:bg-slate-900 dark:border-slate-800"
         />
         <p className="text-[11px] text-slate-500 dark:text-slate-400">{bio.length}/280</p>
       </label>
@@ -179,12 +179,12 @@ export function ProfileMetaForm({
           type="button"
           onClick={() => setThemeOpen((v) => !v)}
           aria-expanded={themeOpen}
-          className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left transition hover:bg-slate-50"
+          className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left transition hover:bg-slate-50 dark:hover:bg-slate-800"
         >
-          <span className="text-xs font-medium text-slate-500">
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
             {t("themeLabel")}
             {theme && (
-              <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-700">
+              <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 {THEMES.find((tm) => tm.id === theme)?.label ?? theme}
               </span>
             )}
@@ -243,8 +243,8 @@ export function ProfileMetaForm({
           // Sticky on mobile so the button is reachable even when the user has scrolled the
           // username field out of view. Desktop keeps the inline button — sidebar layout means
           // the button is rarely far from the field.
-          <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-end gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm sm:relative sm:inset-auto sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
-            <span className="text-[11px] text-slate-500 sm:hidden">
+          <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-end gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm sm:relative sm:inset-auto sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none dark:border-slate-800">
+            <span className="text-[11px] text-slate-500 sm:hidden dark:text-slate-400">
               {t("usernameUnsaved")}
             </span>
             <Button onClick={onSave} disabled={savingProfile} size="sm">
@@ -273,7 +273,7 @@ function AutoSaveIndicator({
 }) {
   if (status === "saving") {
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500">
+      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
         <Loader2 className="h-3 w-3 animate-spin" />
         {t("autosaving")}
       </span>
@@ -326,17 +326,17 @@ function SocialsPicker({
   const remaining = MAX_SOCIALS - socials.length;
 
   return (
-    <div className="space-y-1.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/30 p-3">
+    <div className="space-y-1.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/30 p-3 dark:border-slate-800 dark:bg-slate-800/40">
       <div className="flex items-baseline justify-between">
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700">
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
           <Eye className="h-3 w-3 text-slate-400" />
           {t("socialsLabel")}
         </span>
-        <span className="text-[10px] text-slate-500">
+        <span className="text-[10px] text-slate-500 dark:text-slate-400">
           {t("socialsCount", { count: socials.length, max: MAX_SOCIALS })}
         </span>
       </div>
-      <p className="text-[11px] text-slate-500">{t("socialsHint")}</p>
+      <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("socialsHint")}</p>
       <div className="flex flex-wrap gap-1.5">
         {SHARE_CHANNELS.map((ch) => {
           const active = socials.some((s) => s.channel === ch);
@@ -366,10 +366,10 @@ function SocialsPicker({
         })}
       </div>
       {socials.length > 0 && (
-        <div className="mt-2 space-y-1.5 rounded-md border border-slate-100 bg-slate-50/60 p-2">
+        <div className="mt-2 space-y-1.5 rounded-md border border-slate-100 bg-slate-50/60 p-2 dark:border-slate-800 dark:bg-slate-800/40">
           {socials.map((s) => (
             <label key={s.channel} className="flex items-center gap-2">
-              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200">
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-300">
                 <ChannelIcon channel={s.channel} className="h-3 w-3" />
               </span>
               <Input

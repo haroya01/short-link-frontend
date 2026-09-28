@@ -205,9 +205,10 @@ export function NotificationItem({
           className={cn(
             "block leading-snug",
             roomy ? "text-[14px]" : "text-[13px]",
-            item.read ? "text-slate-500 dark:text-slate-400" : "text-slate-700 dark:text-slate-200",
+            item.read ? "text-slate-500 dark:text-slate-400" : "font-medium text-slate-800 dark:text-slate-100",
           )}
         >
+          {!item.read && <span className="sr-only">{t("unreadLabel")}: </span>}
           {message}
         </span>
         {subtitle && (
