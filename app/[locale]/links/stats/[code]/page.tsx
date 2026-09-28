@@ -13,7 +13,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { useToast } from "@/components/ui/toast";
-import { HeaderSkeleton } from "./_components/header";
+import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
 
 // The live click feed fires one SSE tick per click (no backend batching). Refetching the heavy
@@ -109,7 +109,7 @@ export default function StatsPage() {
       </button>
 
       {loading ? (
-        <HeaderSkeleton shortCode={code} />
+        <StatsSkeleton shortCode={code} />
       ) : realError ? (
         <ErrorState message={realError} onRetry={() => refetch()} />
       ) : notFound || !data ? (
