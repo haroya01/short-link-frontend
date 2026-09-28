@@ -48,10 +48,14 @@ function authenticatedEntries(t: (k: string) => string): NavEntry[] {
     },
     { href: "/analytics", label: t("analytics"), active: (p) => p.startsWith("/analytics") },
     {
-      href: "/settings",
-      label: t("account"),
+      href: "/more",
+      label: t("more"),
       active: (p) =>
-        p.startsWith("/settings") || p.startsWith("/campaigns") || p.startsWith("/events") || p.startsWith("/ctas"),
+        p.startsWith("/more") ||
+        p.startsWith("/settings") ||
+        p.startsWith("/campaigns") ||
+        p.startsWith("/events") ||
+        p.startsWith("/ctas"),
     },
   ];
 }
@@ -120,7 +124,7 @@ export function Nav() {
         </div>
 
         {/* Mobile-only top cluster — the blog↔kurl switch, plus theme + login for visitors. Signed in,
-            the bottom nav's 계정 tab is the account surface (settings, theme, language, logout). */}
+            the bottom nav's 더보기 tab holds the tools, settings and logout. */}
         <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
           <AppsGrid current="links" />
           {(!ready || !authenticated) && (

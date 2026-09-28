@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { deleteMyAccount, downloadMyData, updateMyTimezone } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -17,7 +16,6 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/settings/api-keys-section";
 import { ThemeToggle } from "@/components/common/theme-toggle";
-import { LogoutButton } from "@/components/common/logout-button";
 import { TwoFactorSection } from "@/components/settings/two-factor-section";
 import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
 import { Section as SharedSection } from "@/components/common/section";
@@ -181,30 +179,6 @@ export default function SettingsPage() {
                   </div>
                 </Section>
 
-                <Section title={t("toolsTitle")}>
-                  <div className="-mx-2 divide-y divide-slate-100 dark:divide-slate-800">
-                    {([
-                      ["/settings/profile", "profile"],
-                      ["/campaigns", "campaigns"],
-                      ["/events", "events"],
-                      ["/ctas", "ctas"],
-                    ] as const).map(([href, key]) => (
-                      <Link
-                        key={key}
-                        href={href}
-                        className="focus-ring flex min-h-14 items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                      >
-                        <span className="min-w-0">
-                          <span className="block text-sm font-medium text-slate-900 dark:text-slate-100">{t(`tools.${key}`)}</span>
-                          <span className="block text-xs text-slate-500 dark:text-slate-400">{t(`tools.${key}Desc`)}</span>
-                        </span>
-                        <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
-                      </Link>
-                    ))}
-                  </div>
-                </Section>
-
-                <LogoutButton />
               </div>
             )}
 

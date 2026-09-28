@@ -841,6 +841,7 @@
     "login": "로그인",
     "logout": "로그아웃",
     "account": "계정",
+    "more": "더보기",
     "home": "홈",
     "search": "검색",
     "explore": "탐색",
@@ -2554,8 +2555,24 @@
       }
     ]
   },
+  "more": {
+    "title": "더보기",
+    "toolsTitle": "도구",
+    "tools": {
+      "profile": "공개 프로필",
+      "profileDesc": "링크를 한 페이지에 모아 보여줘요",
+      "campaigns": "QR 캠페인",
+      "campaignsDesc": "포스터·전단 QR을 배포처별로 비교해요",
+      "events": "모집",
+      "eventsDesc": "모임 신청을 링크로 받아요",
+      "ctas": "CTA 라이브러리",
+      "ctasDesc": "링크에 붙일 안내 배너를 관리해요"
+    },
+    "accountTitle": "계정",
+    "settings": "설정"
+  },
   "settings": {
-    "title": "계정",
+    "title": "설정",
     "tabs": {
       "aria": "설정 섹션",
       "account": "계정",
@@ -3068,17 +3085,6 @@
       "usagePublish": "마크다운 파일로 글 발행 (kurl-publish CLI)",
       "usageExport": "내 글 전체 백업 (zip)",
       "usageCliHint": "kurl-publish.py 스크립트 받기 (GitHub)"
-    },
-    "toolsTitle": "도구",
-    "tools": {
-      "profile": "공개 프로필",
-      "profileDesc": "링크를 한 페이지에 모아 보여줘요",
-      "campaigns": "QR 캠페인",
-      "campaignsDesc": "포스터·전단 QR을 배포처별로 비교해요",
-      "events": "모집",
-      "eventsDesc": "모임 신청을 링크로 받아요",
-      "ctas": "CTA 라이브러리",
-      "ctasDesc": "링크에 붙일 안내 배너를 관리해요"
     }
   },
   "homeStats": {
