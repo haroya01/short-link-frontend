@@ -3118,9 +3118,8 @@
     "shareButton": "공개 링크 복사",
     "shareCopied": "복사됨",
     "shareCopyFailed": "복사에 실패했어요",
-    "togglePublic": "통계 공개로 전환",
-    "togglePrivate": "통계 비공개로 전환",
-    "toggleFailed": "공개 설정에 실패했어요."
+    "toggleFailed": "공개 설정에 실패했어요.",
+    "switchLabel": "통계 공개"
   },
   "campaignApp": {
     "entry": {

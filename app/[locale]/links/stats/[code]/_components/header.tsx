@@ -113,9 +113,10 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
               </Button>
             )}
             {!demo && (
-              <div className="flex justify-center rounded-lg border border-slate-300 dark:border-slate-700">
-                <PublicStatsToggle shortCode={data.shortCode} />
-              </div>
+              <PublicStatsToggle
+                shortCode={data.shortCode}
+                className="min-h-11 flex-wrap justify-between rounded-lg border border-slate-300 px-4 dark:border-slate-700"
+              />
             )}
             <Button variant="outline" size="lg" className="w-full" onClick={exportCsv}>
               <Download className="h-4 w-4" />
@@ -132,7 +133,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
               {t("linkSettings")}
             </Button>
           )}
-          {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
+          {!demo && <PublicStatsToggle shortCode={data.shortCode} className="px-2" />}
           <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
             <Download className="h-4 w-4" />
             <span className="hidden sm:inline">CSV</span>

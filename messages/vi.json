@@ -3118,9 +3118,8 @@
     "shareButton": "Sao chép liên kết công khai",
     "shareCopied": "Đã sao chép",
     "shareCopyFailed": "Sao chép thất bại.",
-    "togglePublic": "Đặt thống kê thành công khai",
-    "togglePrivate": "Đặt thống kê thành riêng tư",
-    "toggleFailed": "Cập nhật hiển thị thất bại."
+    "toggleFailed": "Cập nhật hiển thị thất bại.",
+    "switchLabel": "Công khai thống kê"
   },
   "campaignApp": {
     "entry": {

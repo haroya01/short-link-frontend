@@ -3118,9 +3118,8 @@
     "shareButton": "公開 URL をコピー",
     "shareCopied": "コピーしました",
     "shareCopyFailed": "コピーに失敗しました",
-    "togglePublic": "統計を公開する",
-    "togglePrivate": "統計を非公開にする",
-    "toggleFailed": "公開設定の更新に失敗しました。"
+    "toggleFailed": "公開設定の更新に失敗しました。",
+    "switchLabel": "統計を公開"
   },
   "campaignApp": {
     "entry": {

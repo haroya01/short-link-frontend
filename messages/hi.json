@@ -3118,9 +3118,8 @@
     "shareButton": "सार्वजनिक लिंक कॉपी करें",
     "shareCopied": "कॉपी किया गया",
     "shareCopyFailed": "कॉपी विफल।",
-    "togglePublic": "आँकड़े सार्वजनिक करें",
-    "togglePrivate": "आँकड़े निजी करें",
-    "toggleFailed": "दृश्यता अपडेट करने में विफल।"
+    "toggleFailed": "दृश्यता अपडेट करने में विफल।",
+    "switchLabel": "सार्वजनिक आँकड़े"
   },
   "campaignApp": {
     "entry": {

@@ -3118,9 +3118,8 @@
     "shareButton": "Copy public link",
     "shareCopied": "Copied",
     "shareCopyFailed": "Copy failed.",
-    "togglePublic": "Make stats public",
-    "togglePrivate": "Make stats private",
-    "toggleFailed": "Failed to update visibility."
+    "toggleFailed": "Failed to update visibility.",
+    "switchLabel": "Public stats"
   },
   "campaignApp": {
     "entry": {

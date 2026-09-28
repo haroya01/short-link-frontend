@@ -36,8 +36,10 @@ test.describe("stats page", () => {
       },
     });
     await page.goto(`/ko/stats/${CODE}`);
-    await page.getByRole("button", { name: /통계 공개로 전환/ }).click();
-    await expect(page.getByRole("button", { name: /통계 비공개로 전환/ })).toBeVisible();
+    const publicSwitch = page.getByRole("switch", { name: "통계 공개" });
+    await expect(publicSwitch).toHaveAttribute("aria-checked", "false");
+    await publicSwitch.click();
+    await expect(publicSwitch).toHaveAttribute("aria-checked", "true");
     expect(statsPublic).toBe(true);
 
     const visitor = await browser.newPage();
