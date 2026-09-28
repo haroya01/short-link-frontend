@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core";
-import { Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey, TextSelection, type Transaction } from "@tiptap/pm/state";
 import { findWrapping } from "@tiptap/pm/transform";
 import type { MarkType } from "@tiptap/pm/model";
 
@@ -67,6 +67,26 @@ export const MarkdownShortcuts = Extension.create({
           const schema = newState.schema;
           const blockStart = $from.start();
           const before = parent.textBetween(0, $from.parentOffset, "\n", "\n");
+
+          // "- [ ] " typed GitHub-style: the "- " already made a one-item bullet list, so "[ ] " lands
+          // inside it and no rule matches there. Swap that fresh list for a task list.
+          const taskMarker = /^\[( |x)?\] $/i.exec(before);
+          const { taskList, taskItem, paragraph } = schema.nodes;
+          if (taskMarker && taskList && taskItem && $from.depth >= 3 && parent.type.name === "paragraph") {
+            const item = $from.node(-1);
+            const list = $from.node(-2);
+            if (item.type.name === "listItem" && item.childCount === 1 && list.type.name === "bulletList" && list.childCount === 1) {
+              const rest = parent.content.cut(taskMarker[0].length);
+              const listPos = $from.before(-2);
+              const task = taskList.create(
+                null,
+                taskItem.create({ checked: /x/i.test(taskMarker[1] ?? "") }, paragraph.create(null, rest)),
+              );
+              const tr = newState.tr.replaceWith(listPos, listPos + list.nodeSize, task);
+              tr.setSelection(TextSelection.create(tr.doc, listPos + 3 + rest.size));
+              return tr.setMeta(KEY, true);
+            }
+          }
 
           // --- Block: only a plain top-level paragraph promotes (lists/quotes/headings keep their own). ---
           // A single Enter is a soft break (EnterSoftBreak), so a marker typed at the start of the next

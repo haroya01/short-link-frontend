@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 
 /**
@@ -206,6 +207,39 @@ describe("MarkdownShortcuts after a soft line break (single Enter in the editor)
     type("a - b");
     expect(blocks()).toHaveLength(1);
     expect(blocks()[0].type).toBe("paragraph");
+  });
+});
+
+describe("MarkdownShortcuts GitHub-style task items", () => {
+  function makeTaskEditor() {
+    editor = new Editor({
+      element: document.createElement("div"),
+      extensions: [StarterKit, TaskList, TaskItem.configure({ nested: true }), MarkdownShortcuts],
+      content: "<p></p>",
+    });
+  }
+
+  it("turns '- [ ] ' into an unchecked task and keeps typing inside it", () => {
+    makeTaskEditor();
+    type("- [ ] buy milk");
+    const top = (editor.getJSON() as any).content?.[0];
+    expect(top?.type).toBe("taskList");
+    expect(top?.content?.[0]?.attrs?.checked).toBe(false);
+    expect(top?.content?.[0]?.content?.[0]?.content?.[0]?.text).toBe("buy milk");
+  });
+
+  it("turns '- [x] ' into a checked task", () => {
+    makeTaskEditor();
+    type("- [x] done");
+    expect((editor.getJSON() as any).content?.[0]?.content?.[0]?.attrs?.checked).toBe(true);
+  });
+
+  it("leaves '[ ] ' inside an existing multi-item bullet list alone", () => {
+    makeTaskEditor();
+    editor.commands.setContent("<ul><li><p>one</p></li><li><p></p></li></ul>");
+    editor.commands.setTextSelection(editor.state.doc.content.size - 3);
+    type("[ ] ");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("bulletList");
   });
 });
 
