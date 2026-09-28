@@ -284,8 +284,8 @@ export function ShortenForm({
           <div
             id="shorten-password-row"
             {...inert(!lockOn)}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
-              lockOn ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+            className={`grid motion-reduce:transition-none ${
+              lockOn ? "visible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s] mt-2 grid-rows-[1fr] opacity-100" : "invisible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s_linear_280ms] mt-0 grid-rows-[0fr] opacity-0"
             }`}
           >
             <div className="overflow-hidden">
@@ -343,10 +343,10 @@ export function ShortenForm({
           <div
             id="shorten-advanced-section"
             {...inert(!showAdvanced)}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
+            className={`grid motion-reduce:transition-none ${
               showAdvanced
-                ? "mt-2 grid-rows-[1fr] opacity-100"
-                : "mt-0 grid-rows-[0fr] opacity-0"
+                ? "visible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s] mt-2 grid-rows-[1fr] opacity-100"
+                : "invisible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s_linear_280ms] mt-0 grid-rows-[0fr] opacity-0"
             }`}
           >
             <div className="overflow-hidden">
