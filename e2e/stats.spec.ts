@@ -14,7 +14,7 @@ test.describe("stats page", () => {
     });
     await page.goto(`/ko/stats/${CODE}`);
     await expect(page.getByText("아직 클릭이 없어요", { exact: true })).toBeVisible();
-    await expect(page.getByText("단축 링크 복사")).toBeVisible();
+    await expect(page.getByRole("button", { name: "복사", exact: true })).toHaveCount(1);
   });
 
   test("shows totals when clicks exist", async ({ page }) => {

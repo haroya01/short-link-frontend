@@ -230,7 +230,7 @@
       "likes": "좋아요순",
       "recent": "최신순"
     },
-    "analyticsFollows": "늘어난 팔로우",
+    "analyticsFollows": "총 팔로우",
     "analyticsFollowsGained": "이 글로 늘어난 팔로우",
     "analyticsWindowFollows": "최근 {days}일 +{count}",
     "linksByPost": "글별 클릭",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "팔로워 수 숨기기",
     "settingsHideFollowerCountHint": "켜면 팔로워·팔로잉 숫자가 아무에게도 보이지 않아요. 팔로우는 그대로 됩니다.",
     "rowDelete": "삭제",
-    "rowDeleteConfirm": "“{title}” 글을 삭제할까요? 되돌릴 수 없어요.",
-    "rowDeleteFailed": "삭제에 실패했어요.",
     "curationLiked": "좋아요한 글",
     "curationLikedHint": "내가 좋아요한 글 모음.",
     "curationHighlights": "하이라이트·메모",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "팔로우한 주제 — 최근 글이 없는 태그까지 모두. 이 주제의 글은 피드 상단 띠에 모여요.",
     "settingsFollowedTagsEmpty": "아직 팔로우한 주제가 없어요.",
     "settingsUnfollowTag": "{tag} 팔로우 해제",
-    "analyticsPeakDay": "최고 하루 {date} · {count}회"
+    "analyticsPeakDay": "최고 하루 {date} · {count}회",
+    "analyticsLifetimeCaption": "전체 기간"
   },
   "postEditor": {
     "backToList": "글 목록",
@@ -704,7 +703,8 @@
       "caution": "경고"
     },
     "activityPosts": "글 {count}편",
-    "activitySince": "{date}부터"
+    "activitySince": "{date}부터",
+    "reportFailed": "신고를 보내지 못했어요. 다시 시도해 주세요."
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -819,7 +819,8 @@
     "groupToday": "오늘",
     "groupYesterday": "어제",
     "groupWeek": "이번 주",
-    "groupEarlier": "이전 알림"
+    "groupEarlier": "이전 알림",
+    "unreadLabel": "읽지 않음"
   },
   "nav": {
     "events": "모집",
@@ -1023,8 +1024,7 @@
       "reservedCode": "예약된 코드예요. 다른 코드를 골라 주세요.",
       "quota": "링크 한도에 도달했어요. 오래된 링크를 정리하면 새로 만들 수 있어요.",
       "validation": "입력값이 올바르지 않아요."
-    },
-    "paste": "붙여넣기"
+    }
   },
   "result": {
     "completed": "단축 완료",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "비밀번호가 걸리지 않았어요. 링크 관리에서 다시 걸어 주세요.",
     "copy": "복사",
     "copied": "복사됨",
-    "open": "열기",
     "viewStats": "통계 보기",
     "stats": "통계",
     "moreShorten": "다른 주소도 줄이기",
@@ -1124,7 +1123,6 @@
     "loadMore": "더 보기",
     "loadingMore": "불러오는 중...",
     "searchPlaceholder": "이름, 목적지 또는 코드 검색",
-    "clearSearch": "검색 지우기",
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "내 링크와 클릭 통계는 로그인 후에 볼 수 있어요.",
     "goToLogin": "로그인하러 가기",
@@ -1281,7 +1279,6 @@
     "accountScope": "계정 전체 · {tz} · 자동 접속 포함 누적 {total}회 · 목록 필터와 별도로 집계",
     "libraryViews": "링크 목록 선택",
     "allLinks": "전체 링크",
-    "copied": "링크를 복사했어요",
     "subtitleCount": "링크 {count}개",
     "toolCampaigns": "QR 캠페인",
     "toolEvents": "모집",
@@ -1341,7 +1338,6 @@
       "unknown": "알 수 없음",
       "direct": "직접 유입"
     },
-    "back": "뒤로",
     "shortCode": "단축 링크",
     "detailsTitle": "상세",
     "tabs": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "클릭 {count}회",
-      "detailShare": "전체의 {share}%",
+      "detailShare": "전체의 {share}",
       "detailClose": "닫기"
     },
     "rawData": {
@@ -2336,9 +2332,7 @@
   },
   "statsEmpty": {
     "title": "아직 클릭이 없어요",
-    "description": "이 링크를 카톡·슬랙·SNS 등에 공유하면, 클릭이 들어오는 순간부터 분석이 시작돼요.",
-    "shareCta": "단축 링크 복사",
-    "shareCopied": "복사됨"
+    "description": "이 링크를 카톡·슬랙·SNS 등에 공유하면, 클릭이 들어오는 순간부터 분석이 시작돼요."
   },
   "utm": {
     "toggle": "UTM 파라미터 추가",
@@ -3656,7 +3650,13 @@
       "CONTACT": "문의",
       "DOWNLOAD": "자료 다운로드",
       "CUSTOM": "기타"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "강조",
+      "SECONDARY": "보조"
+    },
+    "deleteFailed": "CTA를 삭제하지 못했어요. 다시 시도해 주세요.",
+    "saveFailed": "저장하지 못했어요. 다시 시도해 주세요."
   },
   "abuseReports": {
     "title": "신고 관리",
@@ -3954,7 +3954,6 @@
     "list": {
       "title": "모집",
       "new": "새 모집",
-      "loading": "불러오는 중…",
       "loadFailed": "목록을 불러오지 못했어요.",
       "emptyTitle": "첫 모집 페이지를 만들어 보세요",
       "emptyBody": "소개 페이지와 신청 폼을 만들면, 마감과 신청자 유입까지 여기서 관리할 수 있어요.",
@@ -4112,10 +4111,8 @@
   },
   "composer": {
     "placeholder": "긴 주소 붙여넣기",
-    "paste": "붙여넣기",
     "submit": "단축",
     "noUrl": "주소를 찾지 못했어요. http로 시작하는 주소를 넣어 주세요.",
-    "pasteBlocked": "붙여넣기 권한이 없어요. 칸을 길게 눌러 붙여 넣어 주세요.",
     "failed": "줄이지 못했어요. 다시 시도해 주세요."
   },
   "linkSheet": {

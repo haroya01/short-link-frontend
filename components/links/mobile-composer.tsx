@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ClipboardPaste, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
 import { track } from "@/components/common/posthog-provider";
@@ -15,8 +15,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Phone composer for signed-in users: a single field pinned above the tab bar, where the thumb
- * already is. Empty field → "붙여넣기" reads the clipboard and shortens in the same tap; the
- * result opens as the link sheet (copy · share · QR). Rides the tab bar's hide-on-scroll.
+ * already is. Pasting a link into the empty field (the OS paste — no in-app paste button) shortens
+ * it right away; the result opens as the link sheet (copy · share · QR). Rides the tab bar's
+ * hide-on-scroll.
  */
 export function MobileComposer({ onCreated }: { onCreated: () => void }) {
   const t = useTranslations("composer");
@@ -25,12 +26,10 @@ export function MobileComposer({ onCreated }: { onCreated: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<SheetLink | null>(null);
-  const [canPaste, setCanPaste] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navHidden = useHideOnScroll();
 
   useEffect(() => {
-    setCanPaste(typeof navigator.clipboard?.readText === "function");
     document.body.dataset.composer = "1";
     return () => {
       delete document.body.dataset.composer;
@@ -59,21 +58,6 @@ export function MobileComposer({ onCreated }: { onCreated: () => void }) {
       setError(errorMessage(err, t("failed")));
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function paste() {
-    try {
-      const text = await navigator.clipboard.readText();
-      if (!text.trim()) {
-        inputRef.current?.focus();
-        return;
-      }
-      setValue(text.trim());
-      await shorten(text);
-    } catch {
-      setError(t("pasteBlocked"));
-      inputRef.current?.focus();
     }
   }
 
@@ -118,26 +102,14 @@ export function MobileComposer({ onCreated }: { onCreated: () => void }) {
             aria-label={t("placeholder")}
             className="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-[15px] text-slate-900 placeholder:text-slate-500 focus:border-accent-600 focus:outline-none focus:ring-4 focus:ring-accent-600/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
           />
-          {empty && canPaste ? (
-            <button
-              type="button"
-              onClick={() => void paste()}
-              disabled={busy}
-              className={buttonVariants({ variant: "accent", size: "lg" })}
-            >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardPaste className="h-4 w-4" />}
-              {t("paste")}
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={busy || empty}
-              className={buttonVariants({ variant: "accent", size: "lg" })}
-            >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-              {t("submit")}
-            </button>
-          )}
+          <button
+            type="submit"
+            disabled={busy || empty}
+            className={buttonVariants({ variant: "accent", size: "lg" })}
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+            {t("submit")}
+          </button>
         </div>
       </form>
       <LinkSheet link={created} created onClose={() => setCreated(null)} />

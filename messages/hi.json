@@ -230,7 +230,7 @@
       "likes": "पसंद के अनुसार",
       "recent": "सबसे नया"
     },
-    "analyticsFollows": "मिले फ़ॉलो",
+    "analyticsFollows": "कुल फ़ॉलो",
     "analyticsFollowsGained": "इस पोस्ट से मिले फ़ॉलो",
     "analyticsWindowFollows": "{days}दिन में +{count}",
     "linksByPost": "पोस्ट के अनुसार क्लिक",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "फ़ॉलोअर संख्या छिपाएँ",
     "settingsHideFollowerCountHint": "चालू करने पर आपके फ़ॉलोअर और फ़ॉलोइंग की संख्या किसी को नहीं दिखती। फ़ॉलो करना फिर भी चलता है।",
     "rowDelete": "हटाएँ",
-    "rowDeleteConfirm": "“{title}” हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
-    "rowDeleteFailed": "हटाया नहीं जा सका।",
     "curationLiked": "पसंद की गई पोस्ट",
     "curationLikedHint": "आपने जिन पोस्ट को पसंद किया।",
     "curationHighlights": "हाइलाइट और नोट्स",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "आपके फ़ॉलो किए विषय — वे भी जिनमें हाल की कोई पोस्ट नहीं है। इनकी पोस्ट आपकी फ़ीड की पट्टी में दिखती हैं।",
     "settingsFollowedTagsEmpty": "आपने अभी तक किसी विषय को फ़ॉलो नहीं किया है।",
     "settingsUnfollowTag": "{tag} को अनफ़ॉलो करें",
-    "analyticsPeakDay": "सबसे व्यस्त दिन {date} · {count} व्यू"
+    "analyticsPeakDay": "सबसे व्यस्त दिन {date} · {count} व्यू",
+    "analyticsLifetimeCaption": "अब तक"
   },
   "postEditor": {
     "backToList": "पोस्ट",
@@ -704,7 +703,8 @@
       "caution": "सावधानी"
     },
     "activityPosts": "{count} पोस्ट",
-    "activitySince": "{date} से"
+    "activitySince": "{date} से",
+    "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -819,7 +819,8 @@
     "groupToday": "आज",
     "groupYesterday": "कल",
     "groupWeek": "इस सप्ताह",
-    "groupEarlier": "पहले"
+    "groupEarlier": "पहले",
+    "unreadLabel": "अपठित"
   },
   "nav": {
     "events": "इवेंट",
@@ -1023,8 +1024,7 @@
       "reservedCode": "यह कोड आरक्षित है। कोई और कोड आज़माएँ।",
       "quota": "आप लिंक सीमा तक पहुँच गए हैं — नए के लिए पुराने लिंक हटाएँ।",
       "validation": "अमान्य इनपुट।"
-    },
-    "paste": "चिपकाएँ"
+    }
   },
   "result": {
     "completed": "आपका छोटा लिंक तैयार है",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "पासवर्ड नहीं लगा। लिंक सेटिंग्स में फिर से लगाएँ।",
     "copy": "कॉपी करें",
     "copied": "कॉपी किया गया",
-    "open": "खोलें",
     "viewStats": "आँकड़े देखें",
     "stats": "आंकड़े",
     "moreShorten": "एक और छोटा करें",
@@ -1124,7 +1123,6 @@
     "loadMore": "और देखें",
     "loadingMore": "लोड हो रहा है...",
     "searchPlaceholder": "नाम, गंतव्य या कोड खोजें",
-    "clearSearch": "खोज साफ़ करें",
     "loginRequired": "साइन इन ज़रूरी है",
     "loginRequiredDesc": "मेरे लिंक और क्लिक आँकड़े केवल साइन इन के बाद दिखते हैं।",
     "goToLogin": "साइन इन पर जाएँ",
@@ -1281,7 +1279,6 @@
     "accountScope": "पूरा खाता · {tz} · स्वचालित सहित अब तक {total} क्लिक · सूची फ़िल्टर से अलग",
     "libraryViews": "लिंक सूची चुनें",
     "allLinks": "सभी लिंक",
-    "copied": "लिंक कॉपी हो गया",
     "subtitleCount": "{count} लिंक",
     "toolCampaigns": "QR अभियान",
     "toolEvents": "पंजीकरण",
@@ -1341,7 +1338,6 @@
       "unknown": "अज्ञात",
       "direct": "प्रत्यक्ष"
     },
-    "back": "वापस",
     "shortCode": "छोटा लिंक",
     "detailsTitle": "विवरण",
     "tabs": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} क्लिक",
-      "detailShare": "कुल का {share}%",
+      "detailShare": "कुल का {share}",
       "detailClose": "बंद करें"
     },
     "rawData": {
@@ -2336,9 +2332,7 @@
   },
   "statsEmpty": {
     "title": "अभी तक कोई क्लिक नहीं",
-    "description": "इस छोटे लिंक को KakaoTalk, Slack, या सोशल पर साझा करें — किसी के क्लिक करते ही आँकड़े आना शुरू हो जाते हैं।",
-    "shareCta": "छोटा लिंक कॉपी करें",
-    "shareCopied": "कॉपी किया गया"
+    "description": "इस छोटे लिंक को KakaoTalk, Slack, या सोशल पर साझा करें — किसी के क्लिक करते ही आँकड़े आना शुरू हो जाते हैं।"
   },
   "utm": {
     "toggle": "UTM पैरामीटर जोड़ें",
@@ -3656,7 +3650,13 @@
       "CONTACT": "संपर्क",
       "DOWNLOAD": "डाउनलोड",
       "CUSTOM": "अन्य"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "प्रमुख",
+      "SECONDARY": "सहायक"
+    },
+    "deleteFailed": "CTA हटाया नहीं जा सका। कृपया फिर से कोशिश करें।",
+    "saveFailed": "सहेजा नहीं जा सका। कृपया फिर से कोशिश करें।"
   },
   "abuseReports": {
     "title": "दुरुपयोग रिपोर्ट",
@@ -3954,7 +3954,6 @@
     "list": {
       "title": "इवेंट",
       "new": "नया इवेंट",
-      "loading": "लोड हो रहा है…",
       "loadFailed": "सूची लोड नहीं हो सकी।",
       "emptyTitle": "अपना पहला इवेंट पेज बनाएं",
       "emptyBody": "परिचय पेज और पंजीकरण फ़ॉर्म बनाएँ, फिर यहीं सीटें संभालें और देखें पंजीकरण कहाँ से आए।",
@@ -4112,10 +4111,8 @@
   },
   "composer": {
     "placeholder": "लंबा लिंक चिपकाएँ",
-    "paste": "चिपकाएँ",
     "submit": "छोटा करें",
     "noUrl": "लिंक नहीं मिला। http से शुरू होने वाला पता डालें।",
-    "pasteBlocked": "क्लिपबोर्ड पढ़ा नहीं जा सका। फ़ील्ड को दबाकर रखें और चिपकाएँ।",
     "failed": "छोटा नहीं हो सका। फिर से कोशिश करें।"
   },
   "linkSheet": {

@@ -152,6 +152,16 @@ html.dark {
   color-scheme: dark;
 }
 
+/* Native checkboxes and radios take the selection ink instead of the browser's own blue. */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: theme("colors.slate.900");
+}
+html.dark input[type="checkbox"],
+html.dark input[type="radio"] {
+  accent-color: theme("colors.slate.100");
+}
+
 /* Avoid orphans (single-character last lines). Modern browsers (Chrome 117+, Safari 17.4+, FF 121+). */
 h1, h2, h3, p {
   text-wrap: pretty;
@@ -1263,6 +1273,11 @@ html[data-cc-accepted] [data-cc-banner] {
 }
 html:not([data-auth-hint]) [data-auth-slot="authed"],
 html[data-auth-hint] [data-auth-slot="anon"] {
+  display: none;
+}
+
+/* Share controls open the OS share sheet only; html[data-share] (pre-paint) says one exists. */
+html:not([data-share]) [data-share-only] {
   display: none;
 }
 

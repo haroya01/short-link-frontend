@@ -1,18 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
-import { useToast } from "@/components/ui/toast";
 import { HeaderSkeleton } from "./_components/header";
 import { StatsBody } from "./_components/stats-body";
 
@@ -23,12 +22,9 @@ const STATS_REFETCH_THROTTLE_MS = 5000;
 
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
-  const router = useRouter();
-  const locale = useLocale();
   const t = useTranslations("stats");
-  const tResult = useTranslations("result");
+  const tNav = useTranslations("nav");
   const { authenticated, ready } = useAuth();
-  const { toast } = useToast();
   const code = params.code;
 
   const [shortUrl, setShortUrl] = useState<string>("");
@@ -92,21 +88,13 @@ export default function StatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <button
-        onClick={() => {
-          // Direct entry (no in-app history) leaves router.back() a no-op — fall back to the link
-          // dashboard so the button always goes somewhere.
-          if (typeof window !== "undefined" && window.history.length > 1) {
-            router.back();
-          } else {
-            router.push(`/${locale}/dashboard`);
-          }
-        }}
-        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2"
+      <Link
+        href="/dashboard"
+        className="touch-target focus-ring inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        {t("back")}
-      </button>
+        <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
+        {tNav("myLinks")}
+      </Link>
 
       {loading ? (
         <HeaderSkeleton shortCode={code} />
@@ -117,8 +105,8 @@ export default function StatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/dashboard">
-              <Button variant="outline">{t("backToDashboard")}</Button>
+            <Link href="/dashboard" className={buttonVariants({ variant: "outline" })}>
+              {t("backToDashboard")}
             </Link>
           }
         />
@@ -126,7 +114,6 @@ export default function StatsPage() {
         <StatsBody
           data={data}
           shortUrl={shortUrl}
-          onCopy={() => toast(tResult("copied"), "success")}
           onTick={handleTick}
           shortCodeLabel={t("shortCode")}
         />

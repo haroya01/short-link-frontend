@@ -230,7 +230,7 @@
       "likes": "いいね順",
       "recent": "新着順"
     },
-    "analyticsFollows": "増えたフォロー",
+    "analyticsFollows": "累計フォロー",
     "analyticsFollowsGained": "この記事で増えたフォロー",
     "analyticsWindowFollows": "直近{days}日 +{count}",
     "linksByPost": "記事別クリック",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "フォロワー数を隠す",
     "settingsHideFollowerCountHint": "オンにすると、フォロワー・フォロー中の数が誰にも表示されません。フォローはそのまま使えます。",
     "rowDelete": "削除",
-    "rowDeleteConfirm": "「{title}」を削除しますか？元に戻せません。",
-    "rowDeleteFailed": "削除に失敗しました。",
     "curationLiked": "いいねした記事",
     "curationLikedHint": "あなたがいいねした記事。",
     "curationHighlights": "ハイライト・メモ",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "フォロー中のトピック — 最近の投稿がないものも含めて。これらの投稿はフィード上部の帯に表示されます。",
     "settingsFollowedTagsEmpty": "まだフォロー中のトピックはありません。",
     "settingsUnfollowTag": "{tag} のフォローを解除",
-    "analyticsPeakDay": "最多日 {date} · {count}回"
+    "analyticsPeakDay": "最多日 {date} · {count}回",
+    "analyticsLifetimeCaption": "全期間"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -704,7 +703,8 @@
       "caution": "警告"
     },
     "activityPosts": "記事 {count}本",
-    "activitySince": "{date}から"
+    "activitySince": "{date}から",
+    "reportFailed": "通報を送信できませんでした。もう一度お試しください。"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -819,7 +819,8 @@
     "groupToday": "今日",
     "groupYesterday": "昨日",
     "groupWeek": "今週",
-    "groupEarlier": "それ以前"
+    "groupEarlier": "それ以前",
+    "unreadLabel": "未読"
   },
   "nav": {
     "events": "イベント",
@@ -1023,8 +1024,7 @@
       "reservedCode": "そのコードは予約済みです。別のコードをお試しください。",
       "quota": "リンクの上限に達しました。古いリンクを整理すると作成できます。",
       "validation": "入力値が正しくありません。"
-    },
-    "paste": "貼り付け"
+    }
   },
   "result": {
     "completed": "短縮完了",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "パスワードがかかっていません。リンク管理でもう一度設定してください。",
     "copy": "コピー",
     "copied": "コピー済み",
-    "open": "開く",
     "viewStats": "統計を見る",
     "stats": "統計",
     "moreShorten": "別のURLも短縮",
@@ -1124,7 +1123,6 @@
     "loadMore": "もっと見る",
     "loadingMore": "読み込み中...",
     "searchPlaceholder": "名前、リンク先、コードで検索",
-    "clearSearch": "検索をクリア",
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
     "goToLogin": "ログインへ",
@@ -1281,7 +1279,6 @@
     "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
     "libraryViews": "リンク一覧の選択",
     "allLinks": "全リンク",
-    "copied": "リンクをコピーしました",
     "subtitleCount": "リンク {count}件",
     "toolCampaigns": "QRキャンペーン",
     "toolEvents": "募集",
@@ -1341,7 +1338,6 @@
       "unknown": "不明",
       "direct": "直接"
     },
-    "back": "戻る",
     "shortCode": "短縮リンク",
     "detailsTitle": "詳細",
     "tabs": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} 回",
-      "detailShare": "全体の {share}%",
+      "detailShare": "全体の {share}",
       "detailClose": "閉じる"
     },
     "rawData": {
@@ -2336,9 +2332,7 @@
   },
   "statsEmpty": {
     "title": "まだクリックがありません",
-    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。",
-    "shareCta": "短縮リンクをコピー",
-    "shareCopied": "コピー済み"
+    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。"
   },
   "utm": {
     "toggle": "UTMパラメータを追加",
@@ -3656,7 +3650,13 @@
       "CONTACT": "問い合わせ",
       "DOWNLOAD": "資料ダウンロード",
       "CUSTOM": "その他"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "強調",
+      "SECONDARY": "補助"
+    },
+    "deleteFailed": "CTAを削除できませんでした。もう一度お試しください。",
+    "saveFailed": "保存できませんでした。もう一度お試しください。"
   },
   "abuseReports": {
     "title": "通報管理",
@@ -3954,7 +3954,6 @@
     "list": {
       "title": "イベント",
       "new": "新規作成",
-      "loading": "読み込み中…",
       "loadFailed": "読み込みに失敗しました。",
       "emptyTitle": "最初の募集ページを作りましょう",
       "emptyBody": "紹介ページと申込フォームを作れば、締切や流入の確認までここで管理できます。",
@@ -4112,10 +4111,8 @@
   },
   "composer": {
     "placeholder": "長いURLを貼り付け",
-    "paste": "貼り付け",
     "submit": "短縮",
     "noUrl": "URLが見つかりません。httpで始まるアドレスを入れてください。",
-    "pasteBlocked": "クリップボードを読めませんでした。欄を長押しして貼り付けてください。",
     "failed": "短縮できませんでした。もう一度お試しください。"
   },
   "linkSheet": {

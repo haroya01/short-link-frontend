@@ -3,7 +3,7 @@
 import { memo, Fragment, useState } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
+import { cn, formatShare } from "@/lib/utils";
 import type { HeatmapCell } from "@/types";
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
@@ -286,8 +286,7 @@ function ActiveCellLabel({
           from: active.hour,
           to: active.hour + active.span - 1,
         });
-  const share = total > 0 ? (active.count / total) * 100 : 0;
-  const shareLabel = share >= 10 ? share.toFixed(0) : share.toFixed(1);
+  const shareLabel = formatShare(total > 0 ? active.count / total : 0);
 
   return (
     <div

@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
-import { AccountSheet } from "@/components/common/account-sheet";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
@@ -61,8 +59,7 @@ function authenticatedEntries(t: (k: string) => string): NavEntry[] {
 export function Nav() {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const { authenticated, ready, me } = useAuth();
-  const [sheet, setSheet] = useState(false);
+  const { authenticated, ready } = useAuth();
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -122,41 +119,20 @@ export function Nav() {
           )}
         </div>
 
-        {/* Mobile-only top cluster — the blog↔kurl switch + the account avatar (opens the slim links
-            AccountSheet). AppsGrid plays the same warp transition as desktop on the cross-product hop;
-            the bottom nav carries the feature tabs. */}
+        {/* Mobile-only top cluster — the blog↔kurl switch, plus theme + login for visitors. Signed in,
+            the bottom nav's 계정 tab is the account surface (settings, theme, language, logout). */}
         <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
           <AppsGrid current="links" />
-          {!ready ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
-          ) : authenticated ? (
-            <button
-              type="button"
-              onClick={() => setSheet(true)}
-              aria-haspopup="dialog"
-              aria-label={t("account")}
-              className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
-            >
-              {me?.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={me.avatarUrl} alt="" className="h-full w-full object-cover" />
-              ) : (
-                (me?.username || me?.email || "?").charAt(0).toUpperCase()
-              )}
-            </button>
-          ) : (
-            <>
-              {/* 비로그인 모바일은 계정 시트가 없어 테마를 바꿀 곳이 여기뿐 — 데스크톱 바와 같은 이유. */}
+          {(!ready || !authenticated) && (
+            <div data-auth-slot={ready ? undefined : "anon"} className="contents">
               <ThemeToggle
                 iconOnly
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
-              <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="outline">
-                  {t("login")}
-                </Button>
+              <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
+                {t("login")}
               </Link>
-            </>
+            </div>
           )}
         </div>
 
@@ -182,10 +158,8 @@ export function Nav() {
                 iconOnly
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
-              <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="outline">
-                  {t("login")}
-                </Button>
+              <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
+                {t("login")}
               </Link>
             </>
           )}
@@ -193,7 +167,6 @@ export function Nav() {
       </div>
       </div>
     </header>
-    <AccountSheet open={sheet} onClose={() => setSheet(false)} product="links" />
     </>
   );
 }

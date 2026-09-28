@@ -34,7 +34,6 @@ test.describe("settings", () => {
     await page.goto("/ko/settings");
     const select = page.locator("select").first();
     await select.selectOption("Asia/Tokyo");
-    await page.getByRole("button", { name: "저장" }).first().click();
     await expect(page.getByText("저장됨")).toBeVisible({ timeout: 5000 });
     expect(saved).toEqual(["Asia/Tokyo"]);
 

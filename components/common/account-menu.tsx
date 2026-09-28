@@ -10,7 +10,6 @@ import {
   Layers,
   LogOut,
   Newspaper,
-  Settings,
   User,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -32,11 +31,11 @@ import { cn } from "@/lib/utils";
  * out" off the bar and consolidates the surface-level controls, Google/Naver style; the cross-product
  * app switcher (AppsGrid) stays a separate control. Closes on outside-click or Escape.
  *
- * `product` slims the personal rows per surface, mirroring the mobile AccountSheet:
+ * `product` slims the personal rows per surface:
  *  - "blog" (default): the viewer's two public surfaces (블로그 / 프로필 — separate products, shared
  *    identity) plus analytics + library.
- *  - "links": kurl is its own app, so just 설정 — its profile + blog↔kurl switch live in the top Nav
- *    (AppsGrid) instead, not duplicated here. Same account vocabulary (avatar → menu) as blog.
+ *  - "links": no personal rows — 계정 is a top-nav entry and the blog↔kurl switch is the AppsGrid
+ *    pill, so the menu keeps only theme, language and sign out.
  */
 export function AccountMenu({ product = "blog" }: { product?: Product }) {
   const isLinks = product === "links";
@@ -116,18 +115,6 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
               )}
               {me?.email && <p className="truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</p>}
             </div>
-          )}
-
-          {/* kurl: just 설정 here — profile is a top-nav entry, the blog switch is the AppsGrid pill.
-              Mirrors the mobile AccountSheet product="links" slim menu. */}
-          {isLinks && (
-            <>
-              <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-              <a href={linksHref(`/${locale}/settings`)} role="menuitem" className={itemClass}>
-                <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                {t("settings")}
-              </a>
-            </>
           )}
 
           {!isLinks && username && (

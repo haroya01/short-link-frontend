@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JetBrains_Mono } from "next/font/google";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
+import { ThemeColorSync } from "@/components/common/theme-color-sync";
 import "../globals.css";
 
 /*
@@ -51,10 +52,7 @@ export function generateStaticParams() {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#040906" },
-  ],
+  themeColor: "#ffffff",
 };
 
 export async function generateMetadata({
@@ -212,6 +210,7 @@ export default async function RootLayout({
     // 창을 밀어 둔다(주 1회만 와도 선택이 유지). 서버 Set-Cookie 경유가 정석이지만 /api/* 는
     // 프록시 계층에서 백엔드로 넘어갈 수 있어 여기서 처리한다.
     "if(m){document.cookie=n+'='+m[1]+'; path=/; max-age=31536000; samesite=lax'+(onP?'; domain=.'+P:'');}" +
+    "if(navigator.share){document.documentElement.dataset.share='1';}" +
     authHintScript +
     "}catch(e){}})()";
 
@@ -287,6 +286,7 @@ export default async function RootLayout({
         {/* Privacy-friendly analytics — no cookies, no PII collection. Matches the cookie banner
             promise of "no analytics cookies." */}
         <Analytics />
+        <ThemeColorSync />
         <SpeedInsights />
       </body>
     </html>

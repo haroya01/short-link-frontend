@@ -24,7 +24,9 @@ test.describe("anonymous shorten flow", () => {
     const resultLink = line.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
     await expect(resultLink).toBeVisible();
     await expect(page.getByRole("button", { name: "복사" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "열기" }).first()).toBeVisible();
+    // 짧은 주소 자체가 새 탭으로 여는 링크라 별도 '열기'는 없다.
+    await expect(resultLink).toHaveAttribute("target", "_blank");
+    await expect(page.getByRole("link", { name: "열기" })).toHaveCount(0);
 
     const href = await resultLink.getAttribute("href");
     expect(href).toMatch(/\/[0-9A-Za-z]{7}$/);

@@ -230,7 +230,7 @@
       "likes": "Theo lượt thích",
       "recent": "Mới nhất"
     },
-    "analyticsFollows": "Lượt theo dõi mới",
+    "analyticsFollows": "Tổng lượt theo dõi",
     "analyticsFollowsGained": "Lượt theo dõi từ bài này",
     "analyticsWindowFollows": "+{count} trong {days} ngày",
     "linksByPost": "Lượt nhấp theo bài",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
     "rowDelete": "Xóa",
-    "rowDeleteConfirm": "Xóa “{title}”? Thao tác này không thể hoàn tác.",
-    "rowDeleteFailed": "Không xóa được.",
     "curationLiked": "Bài đã thích",
     "curationLikedHint": "Những bài bạn đã thích.",
     "curationHighlights": "Đánh dấu & ghi chú",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "Các chủ đề bạn theo dõi — kể cả những chủ đề chưa có bài gần đây. Bài của chúng hiện ở dải trên bảng tin của bạn.",
     "settingsFollowedTagsEmpty": "Bạn chưa theo dõi chủ đề nào.",
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
-    "analyticsPeakDay": "Ngày cao nhất {date} · {count} lượt xem"
+    "analyticsPeakDay": "Ngày cao nhất {date} · {count} lượt xem",
+    "analyticsLifetimeCaption": "Toàn thời gian"
   },
   "postEditor": {
     "backToList": "Bài viết",
@@ -718,7 +717,8 @@
       "caution": "Cảnh báo"
     },
     "activityPosts": "{count} bài viết",
-    "activitySince": "từ {date}"
+    "activitySince": "từ {date}",
+    "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại."
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -819,7 +819,8 @@
     "groupToday": "Hôm nay",
     "groupYesterday": "Hôm qua",
     "groupWeek": "Tuần này",
-    "groupEarlier": "Trước đó"
+    "groupEarlier": "Trước đó",
+    "unreadLabel": "Chưa đọc"
   },
   "nav": {
     "events": "Sự kiện",
@@ -1023,8 +1024,7 @@
       "reservedCode": "Mã này đã được dành riêng. Hãy thử mã khác.",
       "quota": "Bạn đã đạt giới hạn liên kết — dọn bớt liên kết cũ để tạo mới.",
       "validation": "Dữ liệu nhập không hợp lệ."
-    },
-    "paste": "Dán"
+    }
   },
   "result": {
     "completed": "Liên kết ngắn của bạn đã sẵn sàng",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "Chưa đặt được mật khẩu. Hãy đặt lại trong phần quản lý liên kết.",
     "copy": "Sao chép",
     "copied": "Đã sao chép",
-    "open": "Mở",
     "viewStats": "Xem thống kê",
     "stats": "Thống kê",
     "moreShorten": "Rút gọn URL khác",
@@ -1124,7 +1123,6 @@
     "loadMore": "Xem thêm",
     "loadingMore": "Đang tải...",
     "searchPlaceholder": "Tìm tên, điểm đến hoặc mã",
-    "clearSearch": "Xóa tìm kiếm",
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Liên kết và thống kê lượt nhấp của tôi chỉ hiển thị sau khi đăng nhập.",
     "goToLogin": "Đi đến đăng nhập",
@@ -1281,7 +1279,6 @@
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
     "libraryViews": "Chọn danh sách liên kết",
     "allLinks": "Tất cả liên kết",
-    "copied": "Đã sao chép liên kết",
     "subtitleCount": "{count} liên kết",
     "toolCampaigns": "Chiến dịch QR",
     "toolEvents": "Đăng ký",
@@ -1341,7 +1338,6 @@
       "unknown": "Không rõ",
       "direct": "Trực tiếp"
     },
-    "back": "Quay lại",
     "shortCode": "liên kết ngắn",
     "detailsTitle": "Chi tiết",
     "tabs": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} lượt nhấp",
-      "detailShare": "{share}% tổng số",
+      "detailShare": "{share} tổng số",
       "detailClose": "Đóng"
     },
     "rawData": {
@@ -2336,9 +2332,7 @@
   },
   "statsEmpty": {
     "title": "Chưa có lượt nhấp",
-    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp.",
-    "shareCta": "Sao chép liên kết ngắn",
-    "shareCopied": "Đã sao chép"
+    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp."
   },
   "utm": {
     "toggle": "Thêm tham số UTM",
@@ -3656,7 +3650,13 @@
       "CONTACT": "Liên hệ",
       "DOWNLOAD": "Tải về",
       "CUSTOM": "Khác"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "Nổi bật",
+      "SECONDARY": "Phụ"
+    },
+    "deleteFailed": "Không xóa được CTA. Vui lòng thử lại.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại."
   },
   "abuseReports": {
     "title": "Báo cáo lạm dụng",
@@ -3954,7 +3954,6 @@
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loading": "Đang tải…",
       "loadFailed": "Không tải được danh sách.",
       "emptyTitle": "Tạo trang sự kiện đầu tiên",
       "emptyBody": "Tạo trang giới thiệu và mẫu đăng ký, rồi quản lý sĩ số và xem nguồn đăng ký ngay tại đây.",
@@ -4112,10 +4111,8 @@
   },
   "composer": {
     "placeholder": "Dán liên kết dài",
-    "paste": "Dán",
     "submit": "Rút gọn",
     "noUrl": "Không tìm thấy liên kết. Hãy dùng địa chỉ bắt đầu bằng http.",
-    "pasteBlocked": "Không đọc được bộ nhớ tạm. Nhấn giữ ô nhập để dán.",
     "failed": "Không rút gọn được. Hãy thử lại."
   },
   "linkSheet": {

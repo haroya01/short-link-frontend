@@ -230,7 +230,7 @@
       "likes": "By likes",
       "recent": "Most recent"
     },
-    "analyticsFollows": "Follows gained",
+    "analyticsFollows": "Total follows",
     "analyticsFollowsGained": "Follows from this post",
     "analyticsWindowFollows": "+{count} in {days}d",
     "linksByPost": "Clicks by post",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "Hide follower count",
     "settingsHideFollowerCountHint": "When on, no one sees your follower or following numbers. Following still works.",
     "rowDelete": "Delete",
-    "rowDeleteConfirm": "Delete “{title}”? This can't be undone.",
-    "rowDeleteFailed": "Couldn't delete.",
     "curationLiked": "Liked posts",
     "curationLikedHint": "Posts you've liked.",
     "curationHighlights": "Highlights & notes",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "Topics you follow — including ones with no recent posts. Their posts surface in your feed strip.",
     "settingsFollowedTagsEmpty": "You're not following any topics yet.",
     "settingsUnfollowTag": "Unfollow {tag}",
-    "analyticsPeakDay": "Peak day {date} · {count} views"
+    "analyticsPeakDay": "Peak day {date} · {count} views",
+    "analyticsLifetimeCaption": "All time"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -704,7 +703,8 @@
       "caution": "Caution"
     },
     "activityPosts": "{count, plural, one {# post} other {# posts}}",
-    "activitySince": "since {date}"
+    "activitySince": "since {date}",
+    "reportFailed": "Couldn't send your report. Please try again."
   },
   "imageCropper": {
     "title": "Crop image",
@@ -819,7 +819,8 @@
     "groupToday": "Today",
     "groupYesterday": "Yesterday",
     "groupWeek": "This week",
-    "groupEarlier": "Earlier"
+    "groupEarlier": "Earlier",
+    "unreadLabel": "Unread"
   },
   "nav": {
     "events": "Events",
@@ -1023,8 +1024,7 @@
       "reservedCode": "That code is reserved. Try another one.",
       "quota": "You've reached your link limit — clean up old links to make room.",
       "validation": "Invalid input."
-    },
-    "paste": "Paste"
+    }
   },
   "result": {
     "completed": "Your short link is ready",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "The password wasn't applied. Add it again in the link settings.",
     "copy": "Copy",
     "copied": "Copied",
-    "open": "Open",
     "viewStats": "View stats",
     "stats": "Stats",
     "moreShorten": "Shorten another",
@@ -1124,7 +1123,6 @@
     "loadMore": "Load more",
     "loadingMore": "Loading...",
     "searchPlaceholder": "Search name, URL or code",
-    "clearSearch": "Clear search",
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
     "goToLogin": "Go to sign in",
@@ -1281,7 +1279,6 @@
     "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
     "libraryViews": "Link collection",
     "allLinks": "All links",
-    "copied": "Link copied",
     "subtitleCount": "{count, plural, one {# link} other {# links}}",
     "toolCampaigns": "QR campaigns",
     "toolEvents": "Sign-ups",
@@ -1341,7 +1338,6 @@
       "unknown": "Unknown",
       "direct": "Direct"
     },
-    "back": "Back",
     "shortCode": "short link",
     "detailsTitle": "Details",
     "tabs": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count, plural, one {# click} other {# clicks}}",
-      "detailShare": "{share}% of total",
+      "detailShare": "{share} of total",
       "detailClose": "Close"
     },
     "rawData": {
@@ -2336,9 +2332,7 @@
   },
   "statsEmpty": {
     "title": "No clicks yet",
-    "description": "Share this short link on KakaoTalk, Slack, or social — stats start rolling in as soon as someone clicks.",
-    "shareCta": "Copy short link",
-    "shareCopied": "Copied"
+    "description": "Share this short link on KakaoTalk, Slack, or social — stats start rolling in as soon as someone clicks."
   },
   "utm": {
     "toggle": "Add UTM parameters",
@@ -3656,7 +3650,13 @@
       "CONTACT": "Contact",
       "DOWNLOAD": "Download",
       "CUSTOM": "Other"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "Primary",
+      "SECONDARY": "Secondary"
+    },
+    "deleteFailed": "Couldn't delete the CTA. Please try again.",
+    "saveFailed": "Couldn't save. Please try again."
   },
   "abuseReports": {
     "title": "Abuse Reports",
@@ -3954,7 +3954,6 @@
     "list": {
       "title": "Events",
       "new": "New event",
-      "loading": "Loading…",
       "loadFailed": "Could not load events.",
       "emptyTitle": "Create your first event page",
       "emptyBody": "Make an intro page and a sign-up form, then manage capacity and see where sign-ups came from here.",
@@ -4112,10 +4111,8 @@
   },
   "composer": {
     "placeholder": "Paste a long link",
-    "paste": "Paste",
     "submit": "Shorten",
     "noUrl": "No link found. Use an address that starts with http.",
-    "pasteBlocked": "Couldn't read the clipboard. Long-press the field to paste.",
     "failed": "Couldn't shorten it. Try again."
   },
   "linkSheet": {
