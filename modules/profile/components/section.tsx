@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import {
@@ -70,6 +71,7 @@ type ProfileSectionProps = {
  */
 export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const t = useTranslations("settings.profile");
+  const [confirm, confirmDialog] = useConfirm();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [profile, setProfile] = useState<MyProfile | null>(null);
@@ -264,8 +266,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     // Username changes give up the previous handle into a 30d grace window — make the user
     // ack that explicitly so they don't accidentally lose the link they put in their bio.
     if (prev && next && prev !== next) {
-      const ok = window.confirm(t("usernameChangeConfirm", { prev, next }));
-      if (!ok) return;
+      if (!(await confirm({ title: t("usernameChangeConfirm", { prev, next }) }))) return;
     }
     setSavingProfile(true);
     try {
@@ -518,7 +519,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         />
       );
     }
-    return <p className="px-1 text-xs text-slate-500">{t("loading")}</p>;
+    return <p className="px-1 text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>;
   }
 
   // No username yet → just show the claim flow. intro 는 페이지 헤더가 이미 말한다(중복 금지).
@@ -529,7 +530,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   return (
     <div className="space-y-6">
       <SectionLabel label={t("sectionProfile")}>
-        <div className="rounded-lg border border-slate-200 bg-white p-4">{metaForm}</div>
+        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:bg-slate-900 dark:border-slate-800">{metaForm}</div>
       </SectionLabel>
 
       <SectionLabel label={t("sectionAddLink")}>
@@ -578,6 +579,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         persistTextBlock={persistTextBlock}
         t={t}
       />
+      {confirmDialog}
     </div>
   );
 }

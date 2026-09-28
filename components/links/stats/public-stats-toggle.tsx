@@ -1,20 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Globe, Lock } from "lucide-react";
+import { useEffect, useId, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
 import { getLinkDetail, setLinkVisibility } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
-export function PublicStatsToggle({ shortCode }: { shortCode: string }) {
+export function PublicStatsToggle({ shortCode, className }: { shortCode: string; className?: string }) {
   const t = useTranslations("publicStats");
   const locale = useLocale();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [busy, setBusy] = useState(false);
   const [isPublic, setIsPublic] = useState<boolean | null>(null);
+  const labelId = useId();
 
   useEffect(() => {
     let active = true;
@@ -55,18 +57,18 @@ export function PublicStatsToggle({ shortCode }: { shortCode: string }) {
   }
 
   return (
-    <div className="flex items-center gap-1">
-      <Button variant="ghost" size="sm" onClick={toggle} disabled={busy || isPublic === null}>
-        {isPublic === true ? (
-          <>
-            <Lock className="h-3.5 w-3.5" /> {t("togglePrivate")}
-          </>
-        ) : (
-          <>
-            <Globe className="h-3.5 w-3.5" /> {t("togglePublic")}
-          </>
-        )}
-      </Button>
+    <div className={cn("flex items-center gap-2", className)}>
+      <span className="flex items-center gap-2">
+        <span id={labelId} className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          {t("switchLabel")}
+        </span>
+        <Switch
+          checked={isPublic === true}
+          aria-labelledby={labelId}
+          disabled={busy || isPublic === null}
+          onClick={() => void toggle()}
+        />
+      </span>
       {isPublic === true && (
         <Button variant="ghost" size="sm" onClick={copyPublicUrl}>
           {t("shareButton")}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -33,6 +34,7 @@ export function LinkDestinationsSection({
   onChanged: () => void;
 }) {
   const t = useTranslations("stats.destinations");
+  const [confirm, confirmDialog] = useConfirm();
   const errorMessage = useApiErrorMessage();
   const { toast } = useToast();
   const [items, setItems] = useState<DestinationSummary[] | null>(null);
@@ -105,7 +107,7 @@ export function LinkDestinationsSection({
   }
 
   async function handleDelete(id: number) {
-    if (!confirm(t("deleteConfirm"))) return;
+    if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     try {
       await deleteDestination(shortCode, id);
       await refresh();
@@ -164,7 +166,7 @@ export function LinkDestinationsSection({
           <Button
             type="submit"
             size="sm"
-            variant="accent"
+            variant="outline"
             disabled={busy || !url.trim()}
             className="ml-auto"
           >
@@ -212,6 +214,7 @@ export function LinkDestinationsSection({
           ))
         )}
       </div>
+      {confirmDialog}
     </section>
   );
 }

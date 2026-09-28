@@ -172,7 +172,7 @@ export default async function PublicProfileHomepage({
         )}
 
         <footer className="mt-16 flex items-center justify-end border-t border-slate-100 pt-8 dark:border-slate-800">
-          <ReportButton subjectType="USER" subjectId={author.id} />
+          <ReportButton subjectType="USER" subjectId={author.id} ownerUsername={author.username} />
         </footer>
         </AuthorContentTransition>
       </ReadingShell>

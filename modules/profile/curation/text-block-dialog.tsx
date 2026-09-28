@@ -123,7 +123,7 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
             maxLength={MAX_CHARS + 100}
           />
           <div className="flex items-center justify-between text-[11px]">
-            <span className="flex items-center gap-1 text-slate-500">
+            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
               {t("textMarkdownHint")}
             </span>
             <span className={overLimit ? "text-red-600" : "text-slate-500"}>
@@ -194,7 +194,7 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
         )}
 
         <div>
-          <p className="mb-1 text-[11px] font-medium text-slate-500">
+          <p className="mb-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
             {t("textPreviewLabel")}
           </p>
           <PreviewPane
@@ -230,7 +230,7 @@ function PreviewPane({
 }) {
   if (body.length === 0) {
     return (
-      <div className="profile-card-static rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3">
+      <div className="profile-card-static rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3 dark:border-slate-800 dark:bg-slate-800/40">
         <p className="text-[11px] italic text-slate-500 dark:text-slate-400">{t("textPreviewEmpty")}</p>
       </div>
     );
@@ -261,7 +261,7 @@ function PreviewPane({
             {icon}
           </span>
         )}
-        <div className="prose-text-block text-slate-800">
+        <div className="prose-text-block text-slate-800 dark:text-slate-200">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
         </div>
       </div>
@@ -277,14 +277,14 @@ function PreviewPane({
     }[a];
     return (
       <div className={`border-l-4 pl-4 py-1 ${rail}`}>
-        <div className="prose-text-block text-slate-900">
+        <div className="prose-text-block text-slate-900 dark:text-slate-100">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
         </div>
       </div>
     );
   }
   return (
-    <div className="profile-card-static rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3">
+    <div className="profile-card-static rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3 dark:border-slate-800 dark:bg-slate-800/40">
       <div className="prose-text-block">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
       </div>

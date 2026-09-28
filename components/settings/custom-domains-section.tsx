@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -17,6 +18,7 @@ import type { CustomDomain } from "@/types";
 
 export function CustomDomainsSection() {
   const t = useTranslations("settings.customDomains");
+  const [confirm, confirmDialog] = useConfirm();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [items, setItems] = useState<CustomDomain[] | null>(null);
@@ -85,7 +87,7 @@ export function CustomDomainsSection() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm(t("deleteConfirm"))) return;
+    if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     try {
       await deleteCustomDomain(id);
       await refresh();
@@ -108,7 +110,7 @@ export function CustomDomainsSection() {
           disabled={busy}
           required
         />
-        <Button type="submit" size="sm" variant="accent" disabled={busy || !domain.trim()}>
+        <Button type="submit" size="lg" variant="outline" disabled={busy || !domain.trim()}>
           {busy ? t("registering") : t("register")}
         </Button>
       </form>
@@ -124,6 +126,7 @@ export function CustomDomainsSection() {
           ))}
         </ul>
       )}
+      {confirmDialog}
     </div>
   );
 }

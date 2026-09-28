@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
+import { cn, inert } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useSidebarState } from "@/components/common/sidebar-state";
 
@@ -63,8 +63,9 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
       <div
         ref={panelRef}
         role="dialog"
-        aria-modal="true"
+        aria-modal={open || undefined}
         aria-label={t("menu")}
+        {...inert(!open)}
         className={cn(
           "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[var(--ease)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
           open ? "translate-x-0" : "-translate-x-full",

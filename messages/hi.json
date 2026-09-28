@@ -164,7 +164,7 @@
     "postsEmpty": "अभी तक कोई प्रकाशित पोस्ट नहीं।",
     "draftsTitle": "ड्राफ़्ट",
     "draftsEmpty": "कोई ड्राफ़्ट नहीं।",
-    "views": "{count} व्यू",
+    "views": "{count, number} व्यू",
     "loginRequired": "कृपया साइन इन करें।",
     "loading": "लोड हो रहा है…",
     "seriesTitle": "सीरीज़",
@@ -203,11 +203,11 @@
     "analyticsLifetimeViews": "कुल व्यू",
     "analyticsLifetimeLikes": "कुल पसंद",
     "analyticsPublished": "प्रकाशित",
-    "analyticsViews": "{count} व्यू",
+    "analyticsViews": "{count, number} व्यू",
     "analyticsDays": "{days}दिन",
     "analyticsAll": "सभी",
     "analyticsAllViews": "सर्वकालिक व्यू",
-    "analyticsAllClicks": "सर्वकालिक {count} क्लिक",
+    "analyticsAllClicks": "सर्वकालिक {count, number} क्लिक",
     "analyticsSeries": "सीरीज़",
     "analyticsSubscribers": "सब्सक्राइबर",
     "analyticsPosts": "पोस्ट",
@@ -220,7 +220,7 @@
     "analyticsLinkClicks": "इस सामग्री से क्लिक",
     "analyticsLinkClicksAll": "आपकी पोस्ट के लिंक से क्लिक",
     "analyticsLinkBreakdown": "लिंक के अनुसार क्लिक",
-    "analyticsWindowClicks": "{days}दिन में {count} क्लिक",
+    "analyticsWindowClicks": "{days}दिन में {count, number} क्लिक",
     "analyticsPerPost": "प्रति-पोस्ट",
     "analyticsViewAll": "सभी देखें",
     "analyticsCollapse": "समेटें",
@@ -230,7 +230,7 @@
       "likes": "पसंद के अनुसार",
       "recent": "सबसे नया"
     },
-    "analyticsFollows": "मिले फ़ॉलो",
+    "analyticsFollows": "कुल फ़ॉलो",
     "analyticsFollowsGained": "इस पोस्ट से मिले फ़ॉलो",
     "analyticsWindowFollows": "{days}दिन में +{count}",
     "linksByPost": "पोस्ट के अनुसार क्लिक",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "फ़ॉलोअर संख्या छिपाएँ",
     "settingsHideFollowerCountHint": "चालू करने पर आपके फ़ॉलोअर और फ़ॉलोइंग की संख्या किसी को नहीं दिखती। फ़ॉलो करना फिर भी चलता है।",
     "rowDelete": "हटाएँ",
-    "rowDeleteConfirm": "“{title}” हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
-    "rowDeleteFailed": "हटाया नहीं जा सका।",
     "curationLiked": "पसंद की गई पोस्ट",
     "curationLikedHint": "आपने जिन पोस्ट को पसंद किया।",
     "curationHighlights": "हाइलाइट और नोट्स",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "आपके फ़ॉलो किए विषय — वे भी जिनमें हाल की कोई पोस्ट नहीं है। इनकी पोस्ट आपकी फ़ीड की पट्टी में दिखती हैं।",
     "settingsFollowedTagsEmpty": "आपने अभी तक किसी विषय को फ़ॉलो नहीं किया है।",
     "settingsUnfollowTag": "{tag} को अनफ़ॉलो करें",
-    "analyticsPeakDay": "सबसे व्यस्त दिन {date} · {count} व्यू"
+    "analyticsPeakDay": "सबसे व्यस्त दिन {date} · {count, number} व्यू",
+    "analyticsLifetimeCaption": "अब तक"
   },
   "postEditor": {
     "backToList": "पोस्ट",
@@ -394,8 +393,8 @@
     "featuredMoveDown": "नीचे ले जाएँ",
     "viewAll": "सूची",
     "viewBySeries": "सीरीज़ के अनुसार",
-    "viewCount": "{count} व्यू",
-    "likeCount": "{count} पसंद",
+    "viewCount": "{count, number} व्यू",
+    "likeCount": "{count, number} पसंद",
     "noPosts": "अभी तक कोई पोस्ट नहीं।",
     "listLoading": "लोड हो रहा है…",
     "slugHint": "प्रकाशन तक संपादन योग्य · छोटे अक्षर, अंक, हाइफ़न",
@@ -596,7 +595,7 @@
     "highlightSaved": "हाइलाइट किया गया",
     "highlightNoteSaved": "नोट जोड़ा गया",
     "highlightSaveError": "सहेजा नहीं जा सका. कृपया फिर से प्रयास करें.",
-    "highlightsShownCount": "{count} हाइलाइट",
+    "highlightsShownCount": "{count, number} हाइलाइट",
     "highlightsHidden": "हाइलाइट छिपे",
     "highlightsHide": "छिपाएँ",
     "highlightsShow": "दिखाएँ",
@@ -656,8 +655,8 @@
     "follow": "फ़ॉलो करें",
     "followCuratorHint": "इस क्यूरेटर के जोड़े पथ पर पढ़ते चलें",
     "following": "फ़ॉलोइंग",
-    "followers": "{count} फ़ॉलोअर",
-    "followingCount": "{count} फ़ॉलोइंग",
+    "followers": "{count, number} फ़ॉलोअर",
+    "followingCount": "{count, number} फ़ॉलोइंग",
     "followersTab": "फ़ॉलोअर",
     "followingTab": "फ़ॉलोइंग",
     "followersEmpty": "अभी तक कोई फ़ॉलोअर नहीं।",
@@ -704,7 +703,8 @@
       "caution": "सावधानी"
     },
     "activityPosts": "{count} पोस्ट",
-    "activitySince": "{date} से"
+    "activitySince": "{date} से",
+    "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -819,7 +819,8 @@
     "groupToday": "आज",
     "groupYesterday": "कल",
     "groupWeek": "इस सप्ताह",
-    "groupEarlier": "पहले"
+    "groupEarlier": "पहले",
+    "unreadLabel": "अपठित"
   },
   "nav": {
     "events": "इवेंट",
@@ -1023,8 +1024,7 @@
       "reservedCode": "यह कोड आरक्षित है। कोई और कोड आज़माएँ।",
       "quota": "आप लिंक सीमा तक पहुँच गए हैं — नए के लिए पुराने लिंक हटाएँ।",
       "validation": "अमान्य इनपुट।"
-    },
-    "paste": "चिपकाएँ"
+    }
   },
   "result": {
     "completed": "आपका छोटा लिंक तैयार है",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "पासवर्ड नहीं लगा। लिंक सेटिंग्स में फिर से लगाएँ।",
     "copy": "कॉपी करें",
     "copied": "कॉपी किया गया",
-    "open": "खोलें",
     "viewStats": "आँकड़े देखें",
     "stats": "आंकड़े",
     "moreShorten": "एक और छोटा करें",
@@ -1124,7 +1123,6 @@
     "loadMore": "और देखें",
     "loadingMore": "लोड हो रहा है...",
     "searchPlaceholder": "नाम, गंतव्य या कोड खोजें",
-    "clearSearch": "खोज साफ़ करें",
     "loginRequired": "साइन इन ज़रूरी है",
     "loginRequiredDesc": "मेरे लिंक और क्लिक आँकड़े केवल साइन इन के बाद दिखते हैं।",
     "goToLogin": "साइन इन पर जाएँ",
@@ -1281,7 +1279,6 @@
     "accountScope": "पूरा खाता · {tz} · स्वचालित सहित अब तक {total} क्लिक · सूची फ़िल्टर से अलग",
     "libraryViews": "लिंक सूची चुनें",
     "allLinks": "सभी लिंक",
-    "copied": "लिंक कॉपी हो गया",
     "subtitleCount": "{count} लिंक",
     "toolCampaigns": "QR अभियान",
     "toolEvents": "पंजीकरण",
@@ -1341,7 +1338,6 @@
       "unknown": "अज्ञात",
       "direct": "प्रत्यक्ष"
     },
-    "back": "वापस",
     "shortCode": "छोटा लिंक",
     "detailsTitle": "विवरण",
     "tabs": {
@@ -1474,7 +1470,7 @@
       "weight": "भार",
       "labelPlaceholder": "लेबल (वैकल्पिक, जैसे variant-A)",
       "controlLabel": "डिफ़ॉल्ट गंतव्य",
-      "controlBadge": "कंट्रोल",
+      "controlBadge": "आधार",
       "add": "जोड़ें",
       "adding": "जोड़ा जा रहा है...",
       "addFailed": "गंतव्य जोड़ने में विफल।",
@@ -1604,7 +1600,7 @@
       },
       "country": {
         "title": "देश",
-        "desc": "GeoLite2-City IP लुकअप"
+        "desc": "विज़िटर के IP से अनुमानित देश"
       },
       "region": {
         "title": "क्षेत्र",
@@ -1621,7 +1617,7 @@
       "asn": {
         "title": "नेटवर्क / ASN",
         "desc": "स्वायत्त सिस्टम (ISP / क्लाउड प्रदाता) वितरण। {dc} डेटासेंटर क्लिक स्वतः बॉट के रूप में चिह्नित किए गए।",
-        "empty": "कोई ASN डेटा नहीं (GeoLite2-ASN बंडल नहीं)"
+        "empty": "अभी नेटवर्क (ASN) डेटा नहीं है"
       }
     },
     "clientApp": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} क्लिक",
-      "detailShare": "कुल का {share}%",
+      "detailShare": "कुल का {share}",
       "detailClose": "बंद करें"
     },
     "rawData": {
@@ -2211,7 +2207,6 @@
   "publicProfile": {
     "empty": "इस उपयोगकर्ता ने अभी तक कोई लिंक नहीं जोड़ा।",
     "viewBlog": "{count} पोस्ट देखें",
-    "madeWith": "kurl.me से बनाया गया",
     "editFab": "संपादित करें",
     "share": {
       "x": "X पर साझा करें",
@@ -2336,9 +2331,7 @@
   },
   "statsEmpty": {
     "title": "अभी तक कोई क्लिक नहीं",
-    "description": "इस छोटे लिंक को KakaoTalk, Slack, या सोशल पर साझा करें — किसी के क्लिक करते ही आँकड़े आना शुरू हो जाते हैं।",
-    "shareCta": "छोटा लिंक कॉपी करें",
-    "shareCopied": "कॉपी किया गया"
+    "description": "इस छोटे लिंक को KakaoTalk, Slack, या सोशल पर साझा करें — किसी के क्लिक करते ही आँकड़े आना शुरू हो जाते हैं।"
   },
   "utm": {
     "toggle": "UTM पैरामीटर जोड़ें",
@@ -2786,7 +2779,6 @@
       "emailFormHowItWorks": "आगंतुकों द्वारा छोड़े गए ईमेल आपके निजी 'लीड' डैशबोर्ड में आते हैं। CSV में निर्यात करें और Mailchimp / अपने ईमेल टूल में आयात करें।",
       "emailFormViewLeadsCta": "एकत्र किए गए ईमेल देखें",
       "leadsLink": "एकत्र किए गए ईमेल",
-      "leadsDisabledTitle": "यहाँ लीड एकत्र करने के लिए एक ईमेल फ़ॉर्म जोड़ें",
       "stats": {
         "title": "मेरी प्रोफ़ाइल विज़िट आँकड़े",
         "intro": "आपकी सार्वजनिक प्रोफ़ाइल किसने और कहाँ से देखी, छोटे लिंक के आँकड़ों जैसे ही विभाजनों के साथ।",
@@ -3006,7 +2998,7 @@
     "deleteConfirmTitle": "सच में हटाएँ?",
     "deleteConfirmDesc": "पुनर्स्थापित करने के लिए 30 दिनों में वापस साइन इन करें। उसके बाद यह स्थायी है। पुष्टि के लिए \"DELETE\" टाइप करें।",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "हमेशा के लिए हटाएँ",
+    "deleteOk": "खाता हटाएँ",
     "cancel": "रद्द करें",
     "deleting": "हटाया जा रहा है...",
     "twofa": {
@@ -3124,9 +3116,8 @@
     "shareButton": "सार्वजनिक लिंक कॉपी करें",
     "shareCopied": "कॉपी किया गया",
     "shareCopyFailed": "कॉपी विफल।",
-    "togglePublic": "आँकड़े सार्वजनिक करें",
-    "togglePrivate": "आँकड़े निजी करें",
-    "toggleFailed": "दृश्यता अपडेट करने में विफल।"
+    "toggleFailed": "दृश्यता अपडेट करने में विफल।",
+    "switchLabel": "सार्वजनिक आँकड़े"
   },
   "campaignApp": {
     "entry": {
@@ -3176,7 +3167,6 @@
       "startNow": "अभी शुरू करें",
       "startSchedule": "शुरुआत शेड्यूल करें",
       "endLabel": "समाप्त",
-      "endHint": "कैंपेन समाप्त होने के बाद प्रिंट किए QR कोड इस पॉलिसी का पालन करते हैं।",
       "defaultUrlLabel": "डिफ़ॉल्ट गंतव्य URL",
       "defaultUrlHint": "यदि हर बैच को अपना URL इस्तेमाल करना हो तो खाली छोड़ें।",
       "postEndLabel": "कैंपेन समाप्त होने के बाद",
@@ -3200,12 +3190,14 @@
       "loadFailed": "लोड विफल",
       "loginRequired": "साइन इन ज़रूरी है",
       "backToList": "QR कैंपेन",
-      "confirmEnd": "इस QR कैंपेन को अभी समाप्त करें?\nएंड पॉलिसी प्रिंट किए QR पर तुरंत लागू होती है।",
+      "confirmEnd": "इस QR कैंपेन को अभी समाप्त करें?",
+      "confirmEndDesc": "एंड पॉलिसी प्रिंट किए QR पर तुरंत लागू होती है।",
       "ended": "QR कैंपेन समाप्त हुआ",
       "endFailed": "समाप्त करने में विफल",
       "reapplied": "एंड पॉलिसी फिर से लागू की गई",
       "reapplyFailed": "फिर से लागू करने में विफल",
-      "confirmArchive": "इस QR कैंपेन को संग्रहित करें?\nयह सूची से छिप जाएगा, पर डेटा बरकरार रहता है।",
+      "confirmArchive": "इस QR कैंपेन को संग्रहित करें?",
+      "confirmArchiveDesc": "यह सूची से छिप जाएगा, पर डेटा बरकरार रहता है।",
       "archived": "QR कैंपेन संग्रहित हुआ",
       "archiveFailed": "संग्रहित करने में विफल",
       "cancel": "रद्द करें",
@@ -3656,7 +3648,13 @@
       "CONTACT": "संपर्क",
       "DOWNLOAD": "डाउनलोड",
       "CUSTOM": "अन्य"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "प्रमुख",
+      "SECONDARY": "सहायक"
+    },
+    "deleteFailed": "CTA हटाया नहीं जा सका। कृपया फिर से कोशिश करें।",
+    "saveFailed": "सहेजा नहीं जा सका। कृपया फिर से कोशिश करें।"
   },
   "abuseReports": {
     "title": "दुरुपयोग रिपोर्ट",
@@ -3954,7 +3952,6 @@
     "list": {
       "title": "इवेंट",
       "new": "नया इवेंट",
-      "loading": "लोड हो रहा है…",
       "loadFailed": "सूची लोड नहीं हो सकी।",
       "emptyTitle": "अपना पहला इवेंट पेज बनाएं",
       "emptyBody": "परिचय पेज और पंजीकरण फ़ॉर्म बनाएँ, फिर यहीं सीटें संभालें और देखें पंजीकरण कहाँ से आए।",
@@ -4112,10 +4109,8 @@
   },
   "composer": {
     "placeholder": "लंबा लिंक चिपकाएँ",
-    "paste": "चिपकाएँ",
     "submit": "छोटा करें",
     "noUrl": "लिंक नहीं मिला। http से शुरू होने वाला पता डालें।",
-    "pasteBlocked": "क्लिपबोर्ड पढ़ा नहीं जा सका। फ़ील्ड को दबाकर रखें और चिपकाएँ।",
     "failed": "छोटा नहीं हो सका। फिर से कोशिश करें।"
   },
   "linkSheet": {

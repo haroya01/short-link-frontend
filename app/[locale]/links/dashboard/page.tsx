@@ -9,7 +9,6 @@ import {
   QrCode,
   Search,
   Star,
-  X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -29,7 +28,7 @@ import {
 } from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable, type LiveBump } from "@/components/links/table";
@@ -200,10 +199,8 @@ export default function DashboardPage() {
           <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
             <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
           </Button>
-          <Link href="/" className="hidden sm:inline-flex">
-            <Button variant="accent">
-              <Plus className="h-4 w-4" /> {t("newLink")}
-            </Button>
+          <Link href="/" className={buttonVariants({ variant: "accent", className: "hidden sm:inline-flex" })}>
+            <Plus className="h-4 w-4" /> {t("newLink")}
           </Link>
         </div>
       </div>
@@ -231,22 +228,14 @@ export default function DashboardPage() {
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
                 <Input
+                  type="search"
+                  enterKeyHint="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("searchPlaceholder")}
                   aria-label={t("searchPlaceholder")}
-                  className="pl-9 pr-9"
+                  className="pl-9"
                 />
-                {query && (
-                  <button
-                    type="button"
-                    onClick={() => setQuery("")}
-                    aria-label={t("clearSearch")}
-                    className="focus-ring absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800" role="group" aria-label={t("libraryViews")}>

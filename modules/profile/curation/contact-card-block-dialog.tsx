@@ -116,13 +116,13 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
             cropAspect={1}
           />
         </div>
-        <div className="text-[11px] text-slate-500">
-          <p className="font-medium text-slate-700">{t("contactFieldLogo")}</p>
-          <p className="mt-0.5 text-slate-500">{t("contactFieldLogoHint")}</p>
+        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="font-medium text-slate-700 dark:text-slate-300">{t("contactFieldLogo")}</p>
+          <p className="mt-0.5 text-slate-500 dark:text-slate-400">{t("contactFieldLogoHint")}</p>
         </div>
       </div>
       <div className="mb-4">
-        <p className="mb-1.5 text-xs font-medium text-slate-700">
+        <p className="mb-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
           {t("contactFieldPalette")}
         </p>
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">

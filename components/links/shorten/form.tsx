@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, ClipboardPaste, Link2, Loader2, Lock, LockOpen } from "lucide-react";
+import { ArrowRight, ChevronDown, Link2, Loader2, Lock, LockOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
 import { extractUrl } from "@/lib/extract-url";
 import { prewarmPowToken } from "@/lib/pow";
+import { inert } from "@/lib/utils";
 import { track } from "@/components/common/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
 import { shortenPayload } from "./payload";
@@ -55,19 +56,12 @@ export function ShortenForm({
   /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
   const heroInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
-  const [canPaste, setCanPaste] = useState(false);
   const sharedHandled = useRef(false);
-
-  useEffect(() => {
-    setCanPaste(typeof navigator.clipboard?.readText === "function");
-  }, []);
 
   useEffect(() => {
     if (!hero || !initialUrl || !ready || sharedHandled.current) return;
     sharedHandled.current = true;
     setUrl(initialUrl);
-    void shorten(initialUrl);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hero, initialUrl, ready]);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
@@ -91,34 +85,15 @@ export function ShortenForm({
     await shorten(url.trim());
   }
 
-  /**
-   * 히어로의 "붙여넣으면 바로 짧아진다" — 빈 한 줄에 유효한 URL 이 붙으면 제출까지 한 호흡.
-   * 고급 옵션(코드·만료)을 만지는 중이거나 이미 타이핑한 내용이 있으면 끼어들지 않는다 —
-   * 자동 제출은 의도가 명백한 경우(빈 필드 + 완결된 URL 붙여넣기)에만.
-   */
-  function handleHeroPaste(e: React.ClipboardEvent<HTMLInputElement>) {
-    if (!hero || busy) return;
-    if (url.trim() || showAdvanced || lockOn || customCode.trim() || expiresAt) return;
-    const pasted = e.clipboardData.getData("text").trim();
-    if (!isValidUrl(pasted)) return;
+  /** 붙여넣기는 칸을 채우기만 한다 — 코드·만료·비밀번호를 고를 틈을 두려고 단축은 버튼(Enter)으로만.
+   *  공유 문구째 붙으면 그 안의 주소만 남겨, 무엇이 줄어들지 칸에 보이게 한다. */
+  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    if (url.trim()) return;
+    const pasted = e.clipboardData.getData("text");
+    const found = extractUrl(pasted);
+    if (!found || found === pasted.trim()) return;
     e.preventDefault();
-    setUrl(pasted);
-    void shorten(pasted);
-  }
-
-  async function pasteFromClipboard() {
-    try {
-      const found = extractUrl(await navigator.clipboard.readText());
-      if (!found) {
-        setError(t("errors.invalid"));
-        heroInputRef.current?.focus();
-        return;
-      }
-      setUrl(found);
-      void shorten(found);
-    } catch {
-      heroInputRef.current?.focus();
-    }
+    setUrl(found);
   }
 
   async function shorten(trimmed: string) {
@@ -202,24 +177,15 @@ export function ShortenForm({
               setUrl(e.target.value);
               if (error) setError(null);
             }}
-            onPaste={handleHeroPaste}
+            onPaste={handlePaste}
             placeholder={t("placeholder")}
+            aria-label={t("placeholder")}
             disabled={busy}
             aria-invalid={!!error}
             /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정.
                truncate: 좁은 폭에선 placeholder 가 원형 버튼에 닿기 전에 …로 접힌다. */
             className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-500 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-400 sm:text-[17px]"
           />
-          {canPaste && !url && !busy && (
-            <button
-              type="button"
-              onClick={() => void pasteFromClipboard()}
-              className="focus-ring hidden h-11 shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-2.5 text-[14px] font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 [@media(pointer:coarse)]:inline-flex"
-            >
-              <ClipboardPaste aria-hidden className="h-4 w-4" />
-              {t("paste")}
-            </button>
-          )}
           <button
             type="submit"
             disabled={busy}
@@ -285,7 +251,7 @@ export function ShortenForm({
               onClick={() => setShowAdvanced((v) => !v)}
               aria-expanded={showAdvanced}
               aria-controls="shorten-advanced-section"
-              className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+              className="touch-target focus-ring inline-flex items-center gap-1 rounded-sm text-xs text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
             >
               <ChevronDown
                 className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
@@ -300,7 +266,7 @@ export function ShortenForm({
               }}
               aria-pressed={lockOn}
               aria-controls="shorten-password-row"
-              className={`inline-flex items-center gap-1 text-xs transition-colors ${
+              className={`touch-target focus-ring inline-flex items-center gap-1 rounded-sm text-xs transition-colors ${
                 lockOn
                   ? "font-medium text-accent-700 dark:text-accent-400"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
@@ -312,9 +278,9 @@ export function ShortenForm({
           </div>
           <div
             id="shorten-password-row"
-            aria-hidden={!lockOn}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
-              lockOn ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+            {...inert(!lockOn)}
+            className={`grid motion-reduce:transition-none ${
+              lockOn ? "visible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s] mt-2 grid-rows-[1fr] opacity-100" : "invisible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s_linear_280ms] mt-0 grid-rows-[0fr] opacity-0"
             }`}
           >
             <div className="overflow-hidden">
@@ -371,11 +337,11 @@ export function ShortenForm({
            */}
           <div
             id="shorten-advanced-section"
-            aria-hidden={!showAdvanced}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
+            {...inert(!showAdvanced)}
+            className={`grid motion-reduce:transition-none ${
               showAdvanced
-                ? "mt-2 grid-rows-[1fr] opacity-100"
-                : "mt-0 grid-rows-[0fr] opacity-0"
+                ? "visible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s] mt-2 grid-rows-[1fr] opacity-100"
+                : "invisible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s_linear_280ms] mt-0 grid-rows-[0fr] opacity-0"
             }`}
           >
             <div className="overflow-hidden">
@@ -391,6 +357,9 @@ export function ShortenForm({
                       onChange={(e) => setCustomCode(e.target.value)}
                       pattern="^[0-9A-Za-z]{3,16}$"
                       placeholder={t("customCodePlaceholder")}
+                      autoCapitalize="off"
+                      autoCorrect="off"
+                      spellCheck={false}
                       className="h-9 font-mono text-sm"
                       disabled={busy}
                     />

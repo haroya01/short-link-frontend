@@ -427,8 +427,7 @@ export default async function PublicPostPage({
             <BookmarkButton postId={post.id} />
             <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
-            <ReportButton subjectType="POST" subjectId={post.id} />
+            <ReportButton subjectType="POST" subjectId={post.id} ownerUsername={author.username} leadingRule />
           </div>
         </div>
       </footer>

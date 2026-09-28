@@ -159,7 +159,8 @@ export default function BlogAnalyticsPage() {
 
           {/* 누적 보조 지표 — lifetime 숫자들은 히어로(기간)와 결이 달라 한 단 아래 행으로.
               링크 클릭은 kurl 연동 차별점이라 숫자만 brand-green 으로 조용히 구분. */}
-          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-slate-100 py-5 sm:grid-cols-3 lg:grid-cols-5 dark:border-slate-800">
+          <p className="mt-8 text-[12px] font-medium text-slate-500 dark:text-slate-400">{t("analyticsLifetimeCaption")}</p>
+          <div className="mt-2 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-slate-100 py-5 sm:grid-cols-3 lg:grid-cols-5 dark:border-slate-800">
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
             <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollows")} value={data.lifetimeFollows} />

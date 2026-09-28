@@ -381,7 +381,7 @@ function CommentRow({
             <button
               type="button"
               onClick={onDelete}
-              className="touch-target rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
+              className="touch-target rounded text-slate-500 transition-colors hover:text-red-600 focus-ring dark:text-slate-400 dark:hover:text-red-400"
               aria-label={deleteLabel}
             >
               <Trash2 className="h-3.5 w-3.5" />

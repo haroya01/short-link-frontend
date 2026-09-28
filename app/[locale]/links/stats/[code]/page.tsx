@@ -7,12 +7,11 @@ import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
-import { useToast } from "@/components/ui/toast";
-import { StatsBackButton } from "./_components/back-button";
+import { StatsBackLink } from "./_components/back-button";
 import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
 
@@ -24,9 +23,7 @@ const STATS_REFETCH_THROTTLE_MS = 5000;
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
   const t = useTranslations("stats");
-  const tResult = useTranslations("result");
   const { authenticated, ready } = useAuth();
-  const { toast } = useToast();
   const code = params.code;
 
   const [shortUrl, setShortUrl] = useState<string>("");
@@ -90,7 +87,7 @@ export default function StatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <StatsBackButton label={t("back")} />
+      <StatsBackLink />
 
       {loading ? (
         <StatsSkeleton shortCode={code} />
@@ -101,8 +98,8 @@ export default function StatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/dashboard">
-              <Button variant="outline">{t("backToDashboard")}</Button>
+            <Link href="/dashboard" className={buttonVariants({ variant: "outline" })}>
+              {t("backToDashboard")}
             </Link>
           }
         />
@@ -110,7 +107,6 @@ export default function StatsPage() {
         <StatsBody
           data={data}
           shortUrl={shortUrl}
-          onCopy={() => toast(tResult("copied"), "success")}
           onTick={handleTick}
           shortCodeLabel={t("shortCode")}
         />

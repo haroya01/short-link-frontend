@@ -17,7 +17,7 @@ const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 탐색 · 알림 · 계정. 탐색/계정 open
+ * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 검색 · 알림 · 계정. 검색/계정 open
  * full-width sheets; 홈/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
  * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
@@ -71,7 +71,7 @@ export function BlogBottomNav() {
           className={cn(TAB, sheet === "search" ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Search className="h-5 w-5" />
-          {t("explore")}
+          {t("search")}
         </button>
 
         <BlogChromeLink

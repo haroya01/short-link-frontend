@@ -35,16 +35,16 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
   ];
 
   return (
-    <div className="rounded-card-lg border border-slate-200 bg-white p-5 shadow-card-flat">
-      <div className="flex items-center gap-2 text-xs font-medium text-slate-700">
+    <div className="rounded-card-lg border border-slate-200 bg-white p-5 shadow-card-flat dark:bg-slate-900 dark:border-slate-800">
+      <div className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
         <BarChart3 className="h-3.5 w-3.5" />
         {t("summary.title")}
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {buckets.map((b) => (
-          <div key={b.label} className="rounded-md border border-slate-100 bg-slate-50/50 p-3">
-            <dt className="text-[10px] text-slate-500">{b.label}</dt>
-            <dd className="mt-1 text-lg font-semibold tabular-nums text-slate-900">
+          <div key={b.label} className="rounded-md border border-slate-100 bg-slate-50/50 p-3 dark:border-slate-800 dark:bg-slate-800/40">
+            <dt className="text-[10px] text-slate-500 dark:text-slate-400">{b.label}</dt>
+            <dd className="mt-1 text-lg font-semibold tabular-nums text-slate-900 dark:text-slate-100">
               {formatNumber(b.value)}
             </dd>
           </div>

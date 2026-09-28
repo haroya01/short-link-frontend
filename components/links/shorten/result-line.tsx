@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
 import { QrButton } from "@/components/links/qr/button";
-import { useToast } from "@/components/ui/toast";
 import { Link } from "@/i18n/navigation";
 import { truncateMiddle } from "@/lib/utils";
 import type { CreateLinkResponse } from "@/types";
@@ -36,7 +35,6 @@ export function ResultLine({
   enterIndex = 0,
 }: Props) {
   const t = useTranslations("result");
-  const { toast } = useToast();
   const display = result.shortUrl.replace(/^https?:\/\//, "");
 
   return (
@@ -59,13 +57,7 @@ export function ResultLine({
             {display}
           </span>
         </a>
-        <CopyButton
-          size="sm"
-          variant="accent"
-          label={t("copy")}
-          value={result.shortUrl}
-          onCopied={() => toast(t("copied"), "success")}
-        />
+        <CopyButton size="sm" variant="accent" label={t("copy")} value={result.shortUrl} />
         {/* 답의 밑줄 — 입력 줄과 같은 자리 문법인데, 이번엔 초록이 그어진 채로 남는다. */}
         <span
           aria-hidden
@@ -99,9 +91,6 @@ export function ResultLine({
         )}
         <QrButton url={result.shortUrl} textTrigger />
         <ShareButton url={result.shortUrl} title={result.shortUrl} textTrigger />
-        <a href={result.shortUrl} target="_blank" rel="noreferrer" className={WHISPER_LINK}>
-          {t("open")}
-        </a>
         {!authenticated && (
           <span className="inline-flex flex-wrap items-center gap-x-1.5">
             {t("anonymousExpiryInline")}

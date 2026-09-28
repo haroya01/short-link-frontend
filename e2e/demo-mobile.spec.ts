@@ -74,9 +74,9 @@ test.describe("demo page artifacts", () => {
     const cells = page.locator("button[aria-label]").filter({ hasNot: page.locator('[role="tab"]') });
     // The dashboard chrome has a Copy + QR button on the Header — they also match
     // button[aria-label], so the 168-cell expectation is "≥ 168", not exactly 168. Heatmap
-    // tooltip aria-label format is `{day} {hour}시 — {count}회` (ko) / `{day} {hour}h — {count} clicks` (en),
-    // so the "시 —" infix is the locale-safe needle that hits every cell on /ko/demo.
-    const heatmapCells = page.locator('button[aria-label*="시 —"]');
+    // tooltip aria-label format is `{day} {hour}시, {count}회` (ko), so the "시," infix is the needle
+    // that hits every cell on /ko/demo.
+    const heatmapCells = page.locator('button[aria-label*="시,"]');
     const total = await heatmapCells.count();
     expect(total).toBeGreaterThanOrEqual(168);
     const accentSelectors = [
@@ -97,11 +97,10 @@ test.describe("demo page artifacts", () => {
     expect(cells.count()).resolves.toBeGreaterThan(0);
   });
 
-  test("country tile arrow opens the where chapter with the full geo mirror", async ({ page }) => {
+  test("the where tab opens the full geo mirror", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    // 개요 상세 그리드의 국가 타일 화살표(aria-label = 타일 라벨)가 어디서 챕터로 내려간다.
-    await page.getByRole("button", { name: "국가", exact: true }).click();
+    await page.getByRole("tab", { name: "유입 경로" }).click();
     // {@code stats.section.country.title} = "국가"; the where chapter renders the CountryTable
     // inside a Section keyed on this exact title.
     const countrySection = page.locator('section:has-text("국가")').first();
@@ -131,13 +130,10 @@ test.describe("demo page artifacts", () => {
     }
   });
 
-  test("device tile arrow opens the who chapter with audience mirrors (100% mirror)", async ({
-    page,
-  }) => {
+  test("the who tab opens the audience mirrors (100% mirror)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    // 개요 상세 그리드의 디바이스 타일 화살표가 누가 챕터로 내려간다.
-    await page.getByRole("button", { name: "디바이스", exact: true }).click();
+    await page.getByRole("tab", { name: "방문 환경" }).click();
     // Section titles in ko — pulled from messages/ko.json stats.section.*
     for (const title of ["언어", "봇 종류", "네트워크 / ASN"]) {
       const section = page.locator(`section:has-text("${title}")`).first();

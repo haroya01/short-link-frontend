@@ -243,7 +243,7 @@ export function LinksTable({
                         )}
                       </span>
                       <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
-                        /{item.shortCode} · {hostOf(item.originalUrl)}
+                        <span className="font-mono">/{item.shortCode}</span> · {hostOf(item.originalUrl)}
                       </span>
                     </span>
                     <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-accent-600 dark:text-accent-400" />
@@ -263,7 +263,7 @@ export function LinksTable({
                       </span>
                     </span>
                   </button>
-                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} onCopied={() => toast(t("copied"), "success")} />
+                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} />
                 </div>
                 <div className="hidden items-center gap-3 px-3 py-2.5 sm:flex sm:px-4">
                 <label className={cn("h-11 w-5 cursor-pointer place-items-center sm:grid", selectMode ? "grid" : "hidden")}>
@@ -295,7 +295,7 @@ export function LinksTable({
                     )}
                   </span>
                   <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
-                    <span data-vt-link-code className="shrink-0">/{item.shortCode}</span>
+                    <span data-vt-link-code className="shrink-0 font-mono">/{item.shortCode}</span>
                     {item.tags && item.tags.length > 0 && (
                       <span className="shrink-0 lg:hidden">#{item.tags[0]}{item.tags.length > 1 ? ` +${item.tags.length - 1}` : ""}</span>
                     )}
@@ -314,20 +314,38 @@ export function LinksTable({
                     ))}
                   </div>
                 )}
+                <Sparkline
+                  values={item.clicksLast7d}
+                  width={56}
+                  height={20}
+                  className="hidden shrink-0 text-accent-600 dark:text-accent-400 md:block"
+                />
                 <div className="flex shrink-0 items-center gap-1.5 text-right">
                   {bump && <LiveDot />}
-                  <span className="min-w-[3ch] text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                    {bump ? (
-                      <span key={bump.seq} className="count-bump">
-                        {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
-                      </span>
-                    ) : (
-                      formatNumber(item.humanClickCount ?? item.clickCount)
-                    )}
+                  <span className="min-w-[4.5rem]">
+                    <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                      {bump ? (
+                        <span key={bump.seq} className="count-bump">
+                          {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
+                        </span>
+                      ) : (
+                        formatNumber(item.humanClickCount ?? item.clickCount)
+                      )}
+                    </span>
+                    <span
+                      className={cn(
+                        "block text-[12px] tabular-nums",
+                        (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
+                          ? "text-accent-700 dark:text-accent-400"
+                          : "text-slate-500 dark:text-slate-400",
+                      )}
+                    >
+                      {t("todayDelta", { count: (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) })}
+                    </span>
                   </span>
                 </div>
                 <div className="flex shrink-0 items-center">
-                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} onCopied={() => toast(t("copied"), "success")} />
+                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} />
                   <RowMenu
                     label={t("actions.more")}
                     items={[

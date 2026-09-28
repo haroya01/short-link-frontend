@@ -33,7 +33,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {mock.campaignName}
           </p>
-          <span className="flex-shrink-0 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+          <span className="flex-shrink-0 text-[10px] font-medium text-slate-600 dark:text-slate-400">
             {t("kpiStatus")}
           </span>
         </div>
@@ -63,7 +63,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-800 dark:bg-accent-500/15 dark:text-accent-400">
           {t("kpiAfterKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -98,7 +98,7 @@ function KpiCellMini({
 }) {
   return (
     <div className="min-w-0 px-2 py-1 first:pl-0 last:pr-0">
-      <p className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
+      <p className="truncate text-[10px] font-medium text-slate-600 dark:text-slate-400">
         {label}
       </p>
       <p
@@ -134,7 +134,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
           {t("batchAdd")}
         </span>
       </div>
-      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium text-slate-600 dark:text-slate-400">
         <span>{t("batchColName")}</span>
         <span>{t("batchColArea")}</span>
         <span>{t("batchColDist")}</span>

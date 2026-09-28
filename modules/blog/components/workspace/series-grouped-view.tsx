@@ -229,7 +229,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
             <button
               type="submit"
               disabled={busy || !nTitle.trim() || !nSlug.trim()}
-              className="focus-ring shrink-0 rounded-lg bg-accent-700 px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+              className="focus-ring shrink-0 rounded-lg bg-accent-700 px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50"
             >
               {t("seriesCreate")}
             </button>
@@ -273,7 +273,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                   type="button"
                   onClick={() => handleRename(s.id)}
                   disabled={busy || !rTitle.trim() || !rSlug.trim()}
-                  className="focus-ring shrink-0 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+                  className="focus-ring shrink-0 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50"
                 >
                   {t("seriesRenameSave")}
                 </button>
@@ -439,7 +439,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                                 aria-hidden
                                 className={`grid h-5 w-5 shrink-0 place-items-center rounded border transition-colors ${
                                   checked
-                                    ? "border-accent-600 bg-accent-700 text-white"
+                                    ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
                                     : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
                                 }`}
                               >
@@ -461,7 +461,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                         type="button"
                         onClick={() => addSelected(s.id)}
                         disabled={busy}
-                        className="focus-ring flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+                        className="focus-ring flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50"
                       >
                         <Plus className="h-4 w-4" />
                         {t("seriesAddSelected", { count: pickSelected.size })}

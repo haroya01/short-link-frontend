@@ -45,7 +45,9 @@ export function BasicSection({
           onChange={(e) => onOriginalUrlChange(e.target.value)}
           placeholder="https://..."
           disabled={busy}
-          autoFocus
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
         />
       </label>
       <label className="block space-y-1">

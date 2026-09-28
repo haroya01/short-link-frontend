@@ -82,7 +82,7 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={() => markAll.mutate()}
-            className="focus-ring rounded-md px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            className="touch-target focus-ring rounded-md px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
             {t("markAllRead")}
           </button>

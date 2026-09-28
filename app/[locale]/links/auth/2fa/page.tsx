@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { setToken, verifyTwoFactor } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function TwoFactorChallengePage() {
@@ -55,8 +55,8 @@ export default function TwoFactorChallengePage() {
       <div className="container max-w-md py-20 text-center">
         <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
         <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
-        <Link href="/login" className="mt-6 inline-block">
-          <Button variant="outline">{tAuth("backToLogin")}</Button>
+        <Link href="/login" className={buttonVariants({ variant: "outline", className: "mt-6" })}>
+          {tAuth("backToLogin")}
         </Link>
       </div>
     );

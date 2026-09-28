@@ -84,14 +84,18 @@ export function LinkSheet({
             </div>
           )}
 
-          <div className="grid grid-cols-3 gap-2">
-            <div className="[&>button]:w-full">
-              <CopyButton size="lg" variant="accent" label={t("copy")} value={shown.shortUrl} />
+          <div className="flex gap-2">
+            <CopyButton size="lg" variant="accent" label={t("copy")} value={shown.shortUrl} className="flex-1" />
+            <ShareButton
+              url={shown.shortUrl}
+              title={shown.name ?? shown.shortUrl}
+              variant="outline"
+              size="lg"
+              className="flex-1"
+            />
+            <div className="flex-1">
+              <QrButton url={shown.shortUrl} size="lg" />
             </div>
-            <div className="[&>button]:w-full">
-              <ShareButton url={shown.shortUrl} title={shown.name ?? shown.shortUrl} variant="outline" size="lg" />
-            </div>
-            <QrButton url={shown.shortUrl} size="lg" />
           </div>
 
           <Link

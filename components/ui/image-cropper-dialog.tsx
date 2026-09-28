@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Cropper, { type Area } from "react-easy-crop";
 import { useTranslations } from "next-intl";
 import { ZoomIn, ZoomOut } from "lucide-react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 type CropShape = "rect" | "round";
 type OutputType = "image/jpeg" | "image/webp" | "image/png";
@@ -27,8 +29,8 @@ type Props = {
 /**
  * Image cropper dialog used by every upload entry point (avatar / banner / contact logo / gallery
  * / product card / place cover / image block). Builds on {@code react-easy-crop} for the core
- * pinch+wheel+drag interaction; the surrounding shell is custom so the visual matches our card
- * design language (dark canvas / amber primary / rounded-2xl).
+ * pinch+wheel+drag interaction; the surrounding shell is custom: a dark canvas so the photo carries
+ * the screen, with the house primary button and the slate ramp.
  *
  * <p>UX spec source: PR-cropper-research (2026-05-12). Mobile = full-screen sheet; desktop = 520x620
  * centered dialog with a dark blurred backdrop. Grid lines (rule-of-thirds) only show during
@@ -106,32 +108,25 @@ export function ImageCropperDialog({
     }
   }
 
-  // Esc to cancel. Doesn't conflict with focus inside the slider since range inputs don't capture
-  // Escape.
-  useEffect(() => {
-    if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onCancel();
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onCancel]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, { active: open && !!src, onEscape: onCancel });
 
   if (!open || !src) return null;
 
-  return (
+  return createPortal(
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={t("title")}
       className="fixed inset-0 z-50 flex items-stretch justify-stretch bg-black/60 backdrop-blur-sm sm:items-center sm:justify-center"
     >
-      <div className="flex h-full w-full flex-col bg-zinc-950 text-white shadow-2xl sm:h-[620px] sm:max-h-[90vh] sm:w-[520px] sm:rounded-2xl">
+      <div className="flex h-full w-full flex-col bg-slate-950 text-white shadow-2xl sm:h-[620px] sm:max-h-[90vh] sm:w-[520px] sm:rounded-2xl">
         <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
           <button
             type="button"
             onClick={onCancel}
-            className="focus-ring rounded-md px-1 text-sm text-zinc-400 transition hover:text-white"
+            className="focus-ring rounded-md px-1 text-sm text-slate-400 transition hover:text-white"
           >
             {t("cancel")}
           </button>
@@ -140,13 +135,13 @@ export function ImageCropperDialog({
             type="button"
             onClick={handleConfirm}
             disabled={busy || !areaPixels}
-            className="focus-ring rounded-full bg-amber-400 px-4 py-1 text-sm font-semibold text-zinc-900 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="focus-ring rounded-lg bg-accent-500 px-4 py-1.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? t("applying") : t("apply")}
           </button>
         </header>
 
-        <div className="relative flex-1 bg-zinc-950">
+        <div className="relative flex-1 bg-slate-950">
           <Cropper
             image={src}
             crop={crop}
@@ -168,7 +163,7 @@ export function ImageCropperDialog({
             }}
             onCropComplete={onCropComplete}
             style={{
-              containerStyle: { background: "#0a0a0a" },
+              containerStyle: { background: "#040906" },
               cropAreaStyle: {
                 border: "1px solid rgba(255,255,255,0.4)",
                 color: "rgba(0,0,0,0.62)",
@@ -192,13 +187,14 @@ export function ImageCropperDialog({
                 ping();
               }}
               aria-label={t("zoom")}
-              className="focus-ring flex-1 accent-amber-400"
+              className="focus-ring flex-1 accent-slate-100"
             />
             <ZoomIn className="h-4 w-4 text-white/70" aria-hidden />
           </div>
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

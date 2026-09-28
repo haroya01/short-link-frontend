@@ -94,7 +94,7 @@ export default function ProfileLeadsCampaignPage() {
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("back")}
         </Link>
-        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px] dark:text-slate-100">
+        <h1 className="mt-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>

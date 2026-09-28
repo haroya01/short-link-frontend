@@ -15,7 +15,7 @@ import {
   setEmailLeadOptedOut,
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { EmailLead } from "@/types";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -153,11 +153,9 @@ export default function ProfileLeadsPage() {
             </Button>
           )}
           {hasLeads ? (
-            <Link href={blogPath("/leads/campaign")}>
-              <Button variant="accent">
-                <Mail className="mr-1 h-4 w-4" />
-                {t("buildCampaign")}
-              </Button>
+            <Link href={blogPath("/leads/campaign")} className={buttonVariants({ variant: "accent" })}>
+              <Mail className="mr-1 h-4 w-4" />
+              {t("buildCampaign")}
             </Link>
           ) : (
             <Button variant="accent" disabled title={t("emptyTitle")}>

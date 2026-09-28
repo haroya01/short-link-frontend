@@ -15,9 +15,8 @@ import type { AbstractIntlMessages } from "next-intl";
 export const CLIENT_MESSAGE_SCOPES = {
   root: ["common"],
   links: [
-    "collections", "cookieConsent", "footer", "home", "homeFaq", "homeStats", "languageSwitcher",
-    "nav", "notifications", "qr", "recent", "result", "share", "shortenForm", "sidebar.blog",
-    "stats.live", "whyKurl",
+    "cookieConsent", "footer", "home", "homeFaq", "homeStats", "languageSwitcher", "nav", "qr",
+    "recent", "result", "share", "shortenForm", "stats.live", "whyKurl",
   ],
   "links/admin": ["abuseReports", "admin", "stats"],
   "links/analytics": ["authGate", "linkAnalytics", "weeklyInsights"],
@@ -26,9 +25,9 @@ export const CLIENT_MESSAGE_SCOPES = {
     "authGate", "campaignApp.batchCard", "campaignApp.batchDialogs", "campaignApp.batchesNew",
     "campaignApp.campaignStats", "campaignApp.detail", "campaignApp.new",
     "campaignApp.posterBuilder", "campaignApp.printSheet", "campaignStatus", "campaignsApp",
-    "dashboard.onboarding.scene", "qrDownload", "stats",
+    "dashboard.onboarding.scene", "errors", "qrDownload", "stats",
   ],
-  "links/ctas": ["ctaLibrary"],
+  "links/ctas": ["authGate", "ctaLibrary", "errors"],
   "links/dashboard": [
     "auth", "authGate", "campaignsApp.onboarding.scene", "composer", "dashboard", "edit", "errors",
     "expiringBanner", "linkSheet", "tags",
