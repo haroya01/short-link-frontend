@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
   backToDraftPost,
+  createPost,
   deletePost,
   getBlocks,
   getPost,
@@ -31,14 +32,21 @@ import { useConfirm } from "@/components/ui/use-confirm";
 
 export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft";
 
+function randomSlug(): string {
+  return "draft-" + Math.random().toString(36).slice(2, 9);
+}
+
 /**
  * The post editor's controller: owns loading, the editable fields, dirty tracking, and the
  * save / status / delete actions. The page is left as pure presentation. Field setters mark the
  * draft dirty (clear "saved") so the view never has to manage that. Adding an action or field
  * touches only this hook, not the view.
+ *
+ * `postId` null is a new post that exists only in the browser until there is something to keep:
+ * the first save (or image upload) creates the draft, so opening 글쓰기 and leaving leaves nothing.
  */
 export function usePostEditor(
-  postId: number,
+  postId: number | null,
   {
     ready,
     authenticated,
@@ -62,7 +70,7 @@ export function usePostEditor(
   // snapshot includes edits made while the preceding request was pending (including metadata).
   const currentDraft = useRef({ post, title, slug, markdown, tags, seriesId, coverUrl, excerpt });
   currentDraft.current = { post, title, slug, markdown, tags, seriesId, coverUrl, excerpt };
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(postId != null);
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,6 +102,7 @@ export function usePostEditor(
   // 결정적(4xx) 실패는 즉시 정지해 ~2초 무한 재전송을 막고, 다음 편집(touchDirty)에서 해제한다.
   const failStreak = useRef(0);
   const autoRetryBlocked = useRef(false);
+  const creating = useRef<Promise<PostView> | null>(null);
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -146,7 +155,7 @@ export function usePostEditor(
   };
 
   const load = useCallback(async () => {
-    if (!Number.isFinite(postId)) return;
+    if (postId == null || !Number.isFinite(postId)) return;
     setLoading(true);
     setError(null);
     try {
@@ -178,7 +187,8 @@ export function usePostEditor(
   // saves only on an explicit action, so the live post never changes out from under readers mid-edit.
   // Each edit re-arms the debounce; `dirty` clears on save → effect no-ops until the next edit.
   useEffect(() => {
-    if (!post || post.status !== "DRAFT" || !dirty || saving || busy) return;
+    const draft = post ? post.status === "DRAFT" : postId == null;
+    if (!draft || !dirty || saving || busy) return;
     // 결정적(4xx)·과다 실패로 정지된 상태면 재무장하지 않는다 — 다음 편집(touchDirty)이 해제한다.
     if (autoRetryBlocked.current) return;
     // 연속 실패 시 지수 백오프 — 실패하는 페이로드를 ~2초마다 무한 재전송하지 않도록 간격을 늘린다.
@@ -189,11 +199,43 @@ export function usePostEditor(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, post, saving, busy]);
 
+  // Single flight: an autosave and an image upload arriving together still create one draft.
+  function ensurePost(): Promise<PostView> {
+    const existing = currentDraft.current.post;
+    if (existing) return Promise.resolve(existing);
+    creating.current ??= (async () => {
+      const chosen = slugForSave(currentDraft.current.slug);
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const created = await createPost({ slug: chosen || randomSlug(), title: currentDraft.current.title.trim() });
+          currentDraft.current.post = created;
+          setPost(created);
+          if (!currentDraft.current.slug) {
+            currentDraft.current.slug = created.slug;
+            setSlugRaw(created.slug);
+          }
+          window.history.replaceState(
+            window.history.state,
+            "",
+            window.location.pathname.replace(/\/new\/?$/, `/${created.id}`) + window.location.search,
+          );
+          return created;
+        } catch (e) {
+          const generatedSlugCollided = !chosen && attempt === 0 && e instanceof ApiError && e.status === 409;
+          if (!generatedSlugCollided) throw e;
+        }
+      }
+    })().finally(() => {
+      creating.current = null;
+    });
+    return creating.current;
+  }
+
   // Returns true when the content is persisted (a successful save, or already-saved identical content),
   // false when the save failed — so a lifecycle action (Publish/Schedule) or leave() can hold instead
   // of proceeding on a stale snapshot or dropping edits.
   async function save(): Promise<boolean> {
-    if (currentDraft.current.post == null) return false;
+    if (currentDraft.current.post == null && postId != null) return false;
     // One flight includes any catch-up snapshots. Leave/publish/restore all await the whole flight,
     // so none can navigate or replace server content while a newer save is still outstanding.
     const pending = inFlightSave.current;
@@ -204,10 +246,21 @@ export function usePostEditor(
       setError(null);
       try {
         for (;;) {
-          const { post, title, slug, markdown, tags, seriesId, coverUrl, excerpt } = currentDraft.current;
-          if (post == null) return false;
+          const { title, markdown, tags, seriesId, coverUrl, excerpt } = currentDraft.current;
           const md = liveMarkdown.current?.() ?? markdown;
           const seqAtSnapshot = editSeq.current;
+          if (currentDraft.current.post == null) {
+            const nothingToKeep =
+              !title.trim() && !md.trim() && tags.length === 0 && !coverUrl && !excerpt.trim() && seriesId == null;
+            if (nothingToKeep) {
+              setDirty(false);
+              return true;
+            }
+            await ensurePost();
+          }
+          const post = currentDraft.current.post;
+          if (post == null) return false;
+          const { slug } = currentDraft.current;
           const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
           const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", seriesId, md]);
           if (sig === lastSaved.current) {
@@ -293,7 +346,7 @@ export function usePostEditor(
   // Published posts persist only via explicit actions, so a dirty one asks before discarding instead
   // of navigating the edits away without a word.
   async function leave() {
-    if (dirty && post?.status === "DRAFT") {
+    if (dirty && (post ? post.status === "DRAFT" : postId == null)) {
       // 저장 실패 시 확인 없이 떠나면 편집이 사라진다 — 에디터에 머물러 에러(error)를 보여준다.
       if (!(await save())) return;
     } else if (dirty && post != null) {
@@ -315,6 +368,7 @@ export function usePostEditor(
    * tracking miss never blocks publishing. Returns the rewritten markdown (or null if nothing changed).
    */
   async function applyLinkShortening(urls: string[]): Promise<string | null> {
+    const post = currentDraft.current.post;
     if (post == null || urls.length === 0) return null;
     const md = liveMarkdown.current?.() ?? markdown;
     const map: Record<string, string> = {};
@@ -336,6 +390,7 @@ export function usePostEditor(
     action: StatusAction,
     opts?: { shortenLinks?: string[] },
   ): Promise<boolean> {
+    const post = currentDraft.current.post;
     if (post == null || busy) return false;
     const goingPublic = action === "publish" || action === "republish";
     // Publishing from a draft needs a title (backend enforces it too; this gives an immediate localized
@@ -384,7 +439,7 @@ export function usePostEditor(
 
   /** Returns true once the post is parked for a future publish — the caller can then confirm the time. */
   async function schedule(scheduledAt: string, opts?: { shortenLinks?: string[] }): Promise<boolean> {
-    if (post == null || busy) return false;
+    if (busy) return false;
     if (!title.trim()) {
       setError(t("titleRequired"));
       return false;
@@ -409,6 +464,8 @@ export function usePostEditor(
     try {
       // Persist edits first so the scheduled snapshot matches what's on screen, then park it.
       if (!(await save())) return false;
+      const post = currentDraft.current.post;
+      if (post == null) return false;
       // Shorten in-post links into the scheduled snapshot; reseed the editor so the author (who stays
       // here after scheduling) sees the rewritten links rather than stale originals.
       if (opts?.shortenLinks?.length) {
@@ -449,11 +506,14 @@ export function usePostEditor(
   }
 
   async function remove() {
-    if (post == null) return;
+    if (post == null && postId != null) return;
     if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     setBusy(true);
     try {
-      await deletePost(post.id);
+      await inFlightSave.current;
+      await creating.current?.catch(() => null);
+      const current = currentDraft.current.post;
+      if (current != null) await deletePost(current.id);
       router.push(writeBase);
     } catch (e) {
       setError(e instanceof Error ? e.message : "delete failed");
@@ -495,6 +555,7 @@ export function usePostEditor(
     lastSavedAt,
     writeBase,
     save,
+    ensurePost,
     changeStatus,
     schedule,
     restoreRevision,

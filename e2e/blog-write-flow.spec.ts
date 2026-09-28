@@ -1209,32 +1209,46 @@ test("assigning a freshly created series persists membership (PUT /series/:id/po
   expect(seriesPostIds, "the post is appended to the new series").toContain(POST_ID);
 });
 
-test("the new-post bootstrap creates a draft and lands in its editor", async ({ page }) => {
+test("a new post is created by its first save, not by opening the editor", async ({ page }) => {
   const NEW_ID = 777;
-  const draft = { ...POST, id: NEW_ID, slug: "draft-x" };
+  const draft = { ...POST, id: NEW_ID, slug: "draft-x", title: "" };
+  let created = 0;
+  const patches: { title?: string; slug?: string }[] = [];
   await page.route("**/api/v1/**", (route) =>
     route.fulfill({ status: 200, contentType: "application/json", body: "[]" }),
   );
   await page.route("**/api/v1/users/me", (route) => route.fulfill({ json: ME }));
-  let created = false;
   await page.route("**/api/v1/posts", (route) => {
     if (route.request().method() === "POST") {
-      created = true;
+      created += 1;
       return route.fulfill({ json: draft });
     }
     return route.fulfill({ json: [] });
   });
-  await page.route(`**/api/v1/posts/${NEW_ID}`, (route) => route.fulfill({ json: draft }));
+  await page.route(`**/api/v1/posts/${NEW_ID}`, (route) => {
+    if (route.request().method() === "PATCH") {
+      const body = route.request().postDataJSON();
+      patches.push(body);
+      return route.fulfill({ json: { ...draft, ...body } });
+    }
+    return route.fulfill({ json: draft });
+  });
   await page.route(`**/api/v1/posts/${NEW_ID}/blocks`, (route) => route.fulfill({ json: [] }));
   await page.context().addInitScript((t) => {
     window.localStorage.setItem("short-link:access-token", t as string);
     window.localStorage.setItem("kurl:cookie-consent:v1", "accepted");
   }, TOKEN);
   await page.goto("/en/blog/write/new");
-  // The bootstrap POSTs a blank draft then swaps /new → /{id} and drops into the editor.
-  await expect(page).toHaveURL(new RegExp(`/blog/write/${NEW_ID}$`), { timeout: 30_000 });
   await expect(page.locator(".tiptap")).toBeVisible({ timeout: 30_000 });
-  expect(created, "a draft was created via POST /posts").toBe(true);
+  await page.waitForTimeout(2_500);
+  expect(created, "opening the editor alone creates no draft").toBe(0);
+  await expect(page).toHaveURL(/\/blog\/write\/new$/);
+
+  await titleInput(page).fill("First words");
+  await expect(page).toHaveURL(new RegExp(`/blog/write/${NEW_ID}$`), { timeout: 15_000 });
+  await expect.poll(() => patches.at(-1)?.title, { timeout: 15_000 }).toBe("First words");
+  expect(created, "the first save created exactly one draft").toBe(1);
+  expect(patches.at(-1)?.slug).toBe("draft-x");
 });
 
 test("code block language + body round-trip into the CODE block", async ({ page }) => {
