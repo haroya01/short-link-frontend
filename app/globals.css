@@ -168,20 +168,28 @@ h1, h2, h3, p {
 }
 
 /* CJK typesetting:
- *  1. `word-break: keep-all` keeps phrases (eojeol / bunsetsu) intact instead of breaking on every
- *     character — fixes "이." / "で。" style orphan tails.
+ *  1. Korean breaks at spaces, so `word-break: keep-all` keeps each eojeol whole — fixes "이." style
+ *     orphan tails. Japanese and Chinese have no spaces: keep-all turned a whole unpunctuated
+ *     sentence into one unbreakable word that ran off the screen. They keep normal CJK breaking;
+ *     Japanese asks for `auto-phrase` (bunsetsu-aware, Chromium); Safari drops that value, so
+ *     `normal` is declared first — it also has to beat the `break-keep` utility on shared headings.
  *  2. `overflow-wrap: break-word` (not `anywhere`) is the softer fallback for the few cases that
  *     still don't fit — `anywhere` was so aggressive it overrode (1) and broke mid-phrase.
  *  3. `line-break: strict` is the actual fix for the lone `。` / `、` / closing-paren on the next
  *     line: it applies the Japanese Layout Requirements line-start prohibition (kinsoku shori).
- *     Modern browsers all support it; older fallbacks just see normal CJK break behaviour.
  * Applies broadly because the bug surfaces on any text node a CJK string ends up in (span / div /
  * a / button labels, etc) — explicit element lists kept missing one.
  */
 :lang(ko), :lang(ja), :lang(zh) {
-  word-break: keep-all;
   overflow-wrap: break-word;
   line-break: strict;
+}
+:lang(ko) {
+  word-break: keep-all;
+}
+:lang(ja) {
+  word-break: normal;
+  word-break: auto-phrase;
 }
 
 * {
