@@ -112,7 +112,7 @@ function AccountRecent({ exclude }: { exclude: string[] }) {
             {link.originalUrl}
           </span>
           <span className="shrink-0 text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
-            {t("recentClicks", { count: link.clickCount })}
+            {t("recentClicks", { count: link.humanClickCount ?? link.clickCount })}
           </span>
           <CopyButton size="sm" variant="ghost" label="" value={link.shortUrl} />
         </li>
