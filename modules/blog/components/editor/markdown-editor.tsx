@@ -64,6 +64,7 @@ import {
   type ImageWidth,
 } from "@/modules/blog/lib/image-width";
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
+import { DropCursorLine } from "@/modules/blog/components/editor/drop-cursor";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 
@@ -111,6 +112,18 @@ function scheduleKeepCaret(
   rafRef.current = window.requestAnimationFrame(() => {
     rafRef.current = undefined;
     keepCaretInView(editor, scrollerRef.current);
+  });
+}
+
+/** Resolve once the browser has the image (or gave up), so swapping it in never blanks the preview. */
+function preloadImage(url: string): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const done = () => resolve();
+    img.onload = done;
+    img.onerror = done;
+    window.setTimeout(done, 8000);
+    img.src = url;
   });
 }
 
@@ -221,28 +234,52 @@ export function MarkdownEditor({
     }
   }
 
-  async function uploadAndInsert(ed: Editor, file: File, width?: ImageWidth) {
+  // Swap the placeholder image whose src is `from` for its uploaded attrs (or drop it when the upload
+  // failed). Kept out of the undo history: undoing the insert should remove the image, not bring back
+  // the local preview URL.
+  function settleImage(ed: Editor, from: string, attrs: { src: string; alt: string } | null) {
+    if (ed.isDestroyed) return;
+    const tr = ed.state.tr;
+    ed.state.doc.descendants((node, pos) => {
+      if (node.type.name !== "image" || node.attrs.src !== from) return;
+      const at = tr.mapping.map(pos);
+      if (attrs) tr.setNodeMarkup(at, undefined, { ...node.attrs, ...attrs });
+      else tr.delete(at, at + node.nodeSize);
+    });
+    if (tr.docChanged) ed.view.dispatch(tr.setMeta("addToHistory", false));
+  }
+
+  async function upload(ed: Editor, file: File, local: string, width?: ImageWidth) {
     try {
-      // Decode the intrinsic size before/while uploading so the reader can reserve the exact
-      // aspect-ratio box (no layout shift as the image streams in). null on decode failure → omit.
+      // Decode the intrinsic size while uploading so the reader can reserve the exact aspect-ratio box
+      // (no layout shift as the image streams in). null on decode failure → omit.
       const [url, dims] = await Promise.all([onUploadImage(file), imageNaturalSize(file)]);
+      await preloadImage(url);
       // Width + dims ride on the alt marker so they survive markdown↔block round-trip (image-width.ts).
-      ed.chain().focus().setImage({ src: url, alt: altWithWidth(file.name, width, dims ?? undefined) }).run();
+      settleImage(ed, local, { src: url, alt: altWithWidth(file.name, width, dims ?? undefined) });
     } catch (e) {
+      settleImage(ed, local, null);
       // Typed image errors carry a code (+ sizes); resolve to localized copy here, not in the data layer.
       const { key, values } = postImageErrorMessageKey(e);
       onUploadError?.(t(key, values));
+    } finally {
+      URL.revokeObjectURL(local);
     }
   }
 
-  // Insert several images in order. setImage leaves each inserted image SELECTED (a NodeSelection), so
+  // Every picked image shows at once from a local object URL (dimmed while it uploads) and is swapped
+  // for the hosted URL when its upload finishes; the markdown serializer skips blob: images, so a save
+  // mid-upload never persists one. setImage leaves each inserted image SELECTED (a NodeSelection), so
   // collapse the caret to just after it before the next insert — otherwise the second setImage replaces
   // the first and only one survives (drop / paste / multi-pick all hit this).
   async function uploadAndInsertMany(ed: Editor, files: File[], width?: ImageWidth) {
-    for (const f of files) {
-      await uploadAndInsert(ed, f, width);
+    const placed = files.map((file) => {
+      const local = URL.createObjectURL(file);
+      ed.chain().focus().setImage({ src: local, alt: altWithWidth(file.name, width) }).run();
       ed.commands.setTextSelection(ed.state.selection.to);
-    }
+      return { file, local };
+    });
+    for (const { file, local } of placed) await upload(ed, file, local, width);
   }
 
   // Re-host one external URL; null = failed (caller decides the fallback).
@@ -319,6 +356,7 @@ export function MarkdownEditor({
       // codeBlock off → our CodeMirror block; link openOnClick off so clicking a link in the editor
       // places the cursor instead of opening a tab.
       StarterKit.configure({
+        dropcursor: false,
         codeBlock: false,
         heading: false,
         blockquote: false,
@@ -329,6 +367,7 @@ export function MarkdownEditor({
         strike: false,
         link: { openOnClick: false, enableClickSelection: true },
       }),
+      DropCursorLine,
       MarkdownText,
       MarkdownHardBreak,
       MarkdownHeading,
@@ -474,6 +513,22 @@ export function MarkdownEditor({
       if (liveMarkdownRef) liveMarkdownRef.current = null;
     };
   }, [editor, liveMarkdownRef]);
+
+  // The drop line clears itself only when dragend/drop reach the editor DOM. A block dragged by the
+  // gutter grip (which lives outside the editor) and released outside the body never tells it, so the
+  // line lingered for seconds. Forward every drag end to the editor.
+  useEffect(() => {
+    if (!editor) return;
+    const settle = () => {
+      if (!editor.isDestroyed) editor.view.dom.dispatchEvent(new Event("dragend"));
+    };
+    document.addEventListener("dragend", settle);
+    document.addEventListener("drop", settle);
+    return () => {
+      document.removeEventListener("dragend", settle);
+      document.removeEventListener("drop", settle);
+    };
+  }, [editor]);
 
   useEffect(() => {
     if (!focusEditorRef) return;

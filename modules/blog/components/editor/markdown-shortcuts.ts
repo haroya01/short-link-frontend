@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core";
-import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
 import { findWrapping } from "@tiptap/pm/transform";
 import type { MarkType } from "@tiptap/pm/model";
 
@@ -15,8 +15,9 @@ import type { MarkType } from "@tiptap/pm/model";
  * are gone and nothing matches) — the two coexist without double-converting.
  */
 
-// Block shortcuts — the marker sits at the very start of a paragraph and the caret is right after the
-// space that completes it. Capture group drives the level / list kind.
+// Block shortcuts — the marker sits at the very start of a line (a paragraph, or the line after a soft
+// break) and the caret is right after the space that completes it. Capture group drives the level / list
+// kind.
 const BLOCK: { re: RegExp; kind: "heading" | "bullet" | "ordered" | "quote" | "task" }[] = [
   { re: /^(#{1,3}) $/, kind: "heading" },
   { re: /^(?:[-*] )?\[( |x)?\] $/i, kind: "task" },
@@ -68,21 +69,40 @@ export const MarkdownShortcuts = Extension.create({
           const before = parent.textBetween(0, $from.parentOffset, "\n", "\n");
 
           // --- Block: only a plain top-level paragraph promotes (lists/quotes/headings keep their own). ---
-          if (parent.type.name === "paragraph") {
-            // Divider — the whole paragraph is just `---`/`***`/`___`. Replace the paragraph with a
-            // horizontalRule so it round-trips as a DIVIDER block (the reader draws the section rule).
+          // A single Enter is a soft break (EnterSoftBreak), so a marker typed at the start of the next
+          // visual line sits mid-paragraph. Match the current line and, when it follows a soft break,
+          // split the paragraph there first so the shortcut applies to that line alone.
+          const lineStart = before.lastIndexOf("\n") + 1;
+          const line = before.slice(lineStart);
+          const afterBreak = lineStart > 0;
+          const lineIsBlockStart =
+            !afterBreak || newState.doc.resolve(blockStart + lineStart).nodeBefore?.type.name === "hardBreak";
+          if (parent.type.name === "paragraph" && lineIsBlockStart) {
+            const splitAtBreak = (tr: Transaction) => {
+              const breakPos = blockStart + lineStart - 1;
+              tr.delete(breakPos, breakPos + 1);
+              tr.split(breakPos);
+              return breakPos + 2;
+            };
+
+            // Divider — the line is just `---`/`***`/`___` with nothing after the caret. Replace that
+            // paragraph with a horizontalRule so it round-trips as a DIVIDER block (the reader draws
+            // the section rule).
             const horizontalRule = schema.nodes.horizontalRule;
-            if (horizontalRule && DIVIDER_RE.test(before) && before === parent.textContent) {
+            if (horizontalRule && DIVIDER_RE.test(line) && $from.parentOffset === parent.content.size) {
               // Swap the whole marker paragraph (its outer boundaries) for an HR, so the `---` text is
               // gone rather than left sitting above the rule.
-              const tr = newState.tr.replaceRangeWith($from.before(), $from.after(), horizontalRule.create());
+              const tr = newState.tr;
+              const lineFrom = afterBreak ? splitAtBreak(tr) : blockStart;
+              const $line = tr.doc.resolve(lineFrom);
+              tr.replaceRangeWith($line.before(), $line.after(), horizontalRule.create());
               return tr.setMeta(KEY, true);
             }
             for (const { re, kind } of BLOCK) {
-              const m = before.match(re);
+              const m = line.match(re);
               if (!m) continue;
               const tr = newState.tr;
-              const from = blockStart;
+              const from = afterBreak ? splitAtBreak(tr) : blockStart;
               tr.delete(from, from + m[0].length);
 
               if (kind === "heading") {
