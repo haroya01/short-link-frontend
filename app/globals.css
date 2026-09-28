@@ -42,11 +42,10 @@
      `<style jsx global>` 안에 있었는데, styled-jsx hydration race 때문에 hero 텍스트가
      opacity-0 에서 안 풀리는 경우 발생. 정식 stylesheet 로 끌어내려 초기 CSS 와 같이 로드. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  /* 모바일 하단 탭바(Blog/LinksBottomNav)가 점유하는 높이 — 플로팅 독이라 바 높이 + bottom
-     오프셋(max(0.75rem, home-indicator)). 쿠키 배너를 탭바 위로 띄우는 데 씀. 없으면 배너가
-     탭바를 덮어 탭(계정 → 로그아웃/제품 전환) 클릭을 가로챈다. 오프셋 식은 두 BottomNav 의
-     bottom-[max(...)] 와 짝. */
-  --bottom-nav-h: calc(3.5rem + max(0.75rem, env(safe-area-inset-bottom)));
+  /* 모바일 하단 탭바(Blog/LinksBottomNav)가 점유하는 높이 — 바닥에 붙은 바라 탭 높이(h-14) +
+     home-indicator 패딩. 쿠키 배너·토스트를 탭바 위로 띄우는 데 쓴다. 두 BottomNav 의
+     pb-[env(safe-area-inset-bottom)] 과 짝. */
+  --bottom-nav-h: calc(3.5rem + env(safe-area-inset-bottom));
   /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
      표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
   --cookie-bottom: env(safe-area-inset-bottom);
@@ -59,17 +58,17 @@
   --toast-bottom: 1.5rem;
   /* recharts(daily-chart) 색은 inline SVG/style 이라 Tailwind dark: 가 안 닿는다. CSS 변수로
      테마를 끌어 .dark 에서 한 번에 덮는다 — 작가 방문통계가 다크 표면에서 라이트 격자/툴팁로 깨지던 문제. */
-  --chart-grid: #e2e8f0;
+  --chart-grid: #e5e8e6;
   --chart-tooltip-bg: #ffffff;
-  --chart-tooltip-border: #e2e8f0;
-  --chart-tooltip-text: #0f172a;
+  --chart-tooltip-border: #e5e8e6;
+  --chart-tooltip-text: #131a16;
 }
 
 .dark {
-  --chart-grid: #334155;
-  --chart-tooltip-bg: #0f172a;
-  --chart-tooltip-border: #334155;
-  --chart-tooltip-text: #e2e8f0;
+  --chart-grid: #3b423e;
+  --chart-tooltip-bg: #131a16;
+  --chart-tooltip-border: #3b423e;
+  --chart-tooltip-text: #e5e8e6;
 }
 
 /* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.
@@ -248,13 +247,6 @@ mark.kurl-highlight--thread {
 }
 
 @layer utilities {
-  .grid-bg {
-    background-image:
-      linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
   /*
    * Section divider — replaces the recurring `border-t border-slate-100`. A hairline rule that fades
    * in from both ends so the section break reads softer than a hard full-width border. Light mode uses
@@ -266,8 +258,8 @@ mark.kurl-highlight--thread {
     background: linear-gradient(
       to right,
       transparent 0%,
-      rgba(15, 23, 42, 0.08) 18%,
-      rgba(15, 23, 42, 0.08) 82%,
+      rgba(19, 26, 22, 0.08) 18%,
+      rgba(19, 26, 22, 0.08) 82%,
       transparent 100%
     );
   }
@@ -304,6 +296,38 @@ mark.kurl-highlight--thread {
     }
   }
 
+  .brand-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .brand-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.02em;
+    height: 0.085em;
+    background: #059669;
+    transform-origin: left center;
+    animation: brand-underline-draw 640ms var(--ease) 700ms both;
+  }
+  .dark .brand-underline::after {
+    background: #10b981;
+  }
+  @keyframes brand-underline-draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .brand-underline::after {
+      animation: none;
+    }
+  }
+
   /* 글 내용 등장 — 스켈레톤이 실제 글로 바뀔 때(또는 직접 진입 시) 본문이 살짝 떠오르며 페이드인.
      View Transitions 는 "피드→스켈레톤"까지만 덮으므로, 정작 "스켈레톤→내용"이 툭 바뀌던 부분을 이게
      채운다 = 사용자가 원한 "내용이 뜨는" 애니메이션. 마운트마다 1회 재생(브라우저 무관). */
@@ -324,10 +348,10 @@ mark.kurl-highlight--thread {
    * layer that pairs with the card's own border for separation.
    */
   .card-highlight {
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 3px rgba(19, 26, 22, 0.04);
   }
   .card-highlight:hover {
-    box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 12px -4px rgba(19, 26, 22, 0.08);
   }
 
   /*
@@ -339,9 +363,6 @@ mark.kurl-highlight--thread {
    */
   .tracking-headline {
     letter-spacing: -0.025em;
-  }
-  .tracking-tagline {
-    letter-spacing: 0.22em;
   }
 
   /*
@@ -375,7 +396,7 @@ mark.kurl-highlight--thread {
   .profile-card,
   .profile-card-static {
     @apply rounded-2xl border;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 2px rgba(19, 26, 22, 0.04);
     transition:
       transform 200ms ease-out,
       box-shadow 200ms ease-out,
@@ -383,7 +404,7 @@ mark.kurl-highlight--thread {
   }
   .profile-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 16px rgba(19, 26, 22, 0.08);
   }
   /* Keyboard focus — every interactive card gets the same accent ring so visitors tabbing through
    * the feed always see where focus landed. Scoped to :focus-visible (not :focus) so mouse clicks
@@ -435,7 +456,7 @@ mark.kurl-highlight--thread {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
      * lift mid-press, so the cursor and the card track each other instead of fighting. */
     transform: scale(0.98) translateY(0);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 2px rgba(19, 26, 22, 0.04);
   }
   @media (prefers-reduced-motion: reduce) {
     .profile-card:hover,
@@ -717,11 +738,11 @@ mark.kurl-highlight--thread {
    */
   .prose-post pre code.hljs {
     @apply bg-transparent p-0;
-    color: #e2e8f0;
+    color: #e5e8e6;
   }
   .prose-post .hljs-comment,
   .prose-post .hljs-quote {
-    color: #94a3b8;
+    color: #9ca49f;
     font-style: italic;
   }
   .prose-post .hljs-keyword,
@@ -1152,22 +1173,22 @@ canvas.qr-canvas-fit {
  * text variants (text-slate-300/200, text-white) to readable dark variants, and the
  * border-white/10 borders to black variants matching the mono aesthetic.
  */
-.mono-card .text-white { color: rgb(15 23 42); /* slate-900 */ }
-.mono-card .text-slate-100 { color: rgb(30 41 59); /* slate-800 */ }
+.mono-card .text-white { color: rgb(19 26 22); /* slate-900 */ }
+.mono-card .text-slate-100 { color: rgb(36 43 39); /* slate-800 */ }
 .mono-card .text-slate-300 { color: rgb(71 85 105); /* slate-600 */ }
 .mono-card .text-slate-200 { color: rgb(51 65 85); /* slate-700 */ }
 .mono-card .text-slate-400 { color: rgb(100 116 139); /* slate-500 */ }
 /* Contact anchors carry an always-on underline (decoration-white/40) for touch affordance —
  * on the white mono card that decoration must flip dark like the text it underlines. */
-.mono-card .decoration-white\/40 { text-decoration-color: rgb(15 23 42 / 0.4); }
-.mono-card a:hover { text-decoration-color: rgb(15 23 42); }
+.mono-card .decoration-white\/40 { text-decoration-color: rgb(19 26 22 / 0.4); }
+.mono-card a:hover { text-decoration-color: rgb(19 26 22); }
 /* Tailwind's opacity-modifier variants (e.g. {@code text-slate-200/90}) compile to a separate
  * class name with an escaped slash — the rules above don't catch them. ContactCardEntry uses
  * {@code text-slate-200/90} for the email / phone / website rows, and on the mono variant they
  * were rendering as 90 %-opacity light grey on a white card → effectively invisible. */
 .mono-card .text-slate-200\/90 { color: rgb(51 65 85); }
-.mono-card .text-white\/80 { color: rgb(15 23 42); }
-.mono-card .text-white\/90 { color: rgb(15 23 42); }
+.mono-card .text-white\/80 { color: rgb(19 26 22); }
+.mono-card .text-white\/90 { color: rgb(19 26 22); }
 .mono-card .border-white\/10 { border-color: rgb(0 0 0 / 0.12); }
 .mono-card .border-white\/20 { border-color: rgb(0 0 0 / 0.18); }
 .mono-card .bg-white\/5,
@@ -1652,7 +1673,7 @@ body[data-cookie-consent="visible"] {
 }
 @keyframes chrome-float {
   to {
-    box-shadow: 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+    box-shadow: 0 8px 24px -16px rgba(19, 26, 22, 0.18);
   }
 }
 
@@ -1707,14 +1728,14 @@ body[data-cookie-consent="visible"] {
 .tiptap {
   font-size: 1.125rem;
   line-height: 1.55;
-  color: #334155;
+  color: #3b423e;
   outline: none;
   /* Scroll-past-end gutter: lets the LAST line be scrolled up to the typewriter position (≈2/3
    * height) instead of being pinned to the bottom edge. keepCaretInView relies on this room. */
   padding-bottom: 40vh;
 }
 .dark .tiptap {
-  color: #cbd5e1;
+  color: #d0d5d2;
 }
 /* Block rhythm mirrors the published .prose-post (18px font, tightened block gap so lines don't float). */
 .tiptap > * + * {
@@ -1727,13 +1748,13 @@ body[data-cookie-consent="visible"] {
   margin-top: 1.3rem;
 }
 .tiptap :is(h1, h2, h3) {
-  color: #0f172a;
+  color: #131a16;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.3;
 }
 .dark .tiptap :is(h1, h2, h3) {
-  color: #f1f5f9;
+  color: #f3f5f4;
 }
 /* Heading top margins match .prose-post so heading rhythm ships unchanged. */
 /* 발행면(.prose-post h2/h3/h4)과 같은 크기·무게 — 에디터의 H1/H2/H3 은 발행 시 페이지 <h1>(제목)
@@ -1748,13 +1769,13 @@ body[data-cookie-consent="visible"] {
 .tiptap blockquote {
   border-left: 3px solid #34d399;
   padding: 0.1rem 0 0.1rem 1.1rem;
-  color: #475569;
+  color: #4f5652;
 }
 .tiptap blockquote[data-alert] {
   border-left-width: 4px;
   border-radius: 0.5rem;
   padding: 0.9rem 1.25rem;
-  color: #334155;
+  color: #3b423e;
 }
 .tiptap blockquote[data-alert]::before {
   content: attr(data-label);
@@ -1773,7 +1794,7 @@ body[data-cookie-consent="visible"] {
 .tiptap blockquote[data-alert="warning"]::before { color: #b45309; }
 .tiptap blockquote[data-alert="caution"] { border-color: #fda4af; background: rgba(255, 241, 242, 0.7); }
 .tiptap blockquote[data-alert="caution"]::before { color: #be123c; }
-.dark .tiptap blockquote[data-alert] { color: #cbd5e1; }
+.dark .tiptap blockquote[data-alert] { color: #d0d5d2; }
 .dark .tiptap blockquote[data-alert="note"] { border-color: rgba(14, 165, 233, 0.5); background: rgba(14, 165, 233, 0.1); }
 .dark .tiptap blockquote[data-alert="note"]::before { color: #7dd3fc; }
 .dark .tiptap blockquote[data-alert="tip"] { border-color: rgba(6, 182, 212, 0.5); background: rgba(6, 182, 212, 0.1); }
@@ -1812,8 +1833,8 @@ body[data-cookie-consent="visible"] {
   background: linear-gradient(
     to right,
     transparent 0%,
-    rgba(15, 23, 42, 0.08) 18%,
-    rgba(15, 23, 42, 0.08) 82%,
+    rgba(19, 26, 22, 0.08) 18%,
+    rgba(19, 26, 22, 0.08) 82%,
     transparent 100%
   );
 }
@@ -1839,7 +1860,7 @@ body[data-cookie-consent="visible"] {
   text-decoration: line-through;
 }
 .tiptap :not(pre) > code {
-  background: rgba(15, 23, 42, 0.06);
+  background: rgba(19, 26, 22, 0.06);
   border-radius: 0.3rem;
   padding: 0.1em 0.35em;
   font-size: 0.9em;
@@ -1866,23 +1887,23 @@ body[data-cookie-consent="visible"] {
   text-align: center;
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: #64748b;
+  color: #6d7570;
   outline: none;
 }
 .tiptap-figcaption:empty::before {
   content: attr(data-placeholder);
-  color: #cbd5e1;
+  color: #d0d5d2;
   pointer-events: none;
 }
 .dark .tiptap-figcaption {
-  color: #94a3b8;
+  color: #9ca49f;
 }
 .dark .tiptap-figcaption:empty::before {
-  color: #475569;
+  color: #4f5652;
 }
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  color: #cbd5e1;
+  color: #d0d5d2;
   float: left;
   height: 0;
   pointer-events: none;
@@ -1898,7 +1919,7 @@ body[data-cookie-consent="visible"] {
 }
 .tiptap th,
 .tiptap td {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e8e6;
   padding: 0.4rem 0.6rem;
   text-align: left;
   vertical-align: top;
@@ -1906,14 +1927,14 @@ body[data-cookie-consent="visible"] {
 }
 .dark .tiptap th,
 .dark .tiptap td {
-  border-color: #334155;
+  border-color: #3b423e;
 }
 .tiptap th {
-  background: #f8fafc;
+  background: #f9faf9;
   font-weight: 600;
 }
 .dark .tiptap th {
-  background: #1e293b;
+  background: #242b27;
 }
 .tiptap .selectedCell {
   background: rgba(52, 211, 153, 0.12);
@@ -2099,46 +2120,6 @@ html[data-theme-vt] .vt-post-cover {
   }
 }
 
-/* 유성(meteor) — Magic UI Meteors(MIT) 포팅의 스트릭 본체(components/landing/meteors.tsx).
-   머리(점) + 오른쪽으로 잦아드는 1px 꼬리, 215° 사선 낙하. 색은 currentColor — 호출부가
-   text-* 로 정한다. 기본 opacity 0 이라 reduced-motion(애니 정지)이면 아무것도 안 보인다. */
-.meteor {
-  background: currentColor;
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
-  opacity: 0;
-}
-.meteor::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 1px;
-  width: 64px;
-  height: 1px;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, currentColor, transparent);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .meteor {
-    animation: meteor linear infinite;
-  }
-}
-@keyframes meteor {
-  0% {
-    transform: rotate(215deg) translateX(0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 0.9;
-  }
-  55% {
-    opacity: 0.9;
-  }
-  72%,
-  100% {
-    transform: rotate(215deg) translateX(-520px);
-    opacity: 0;
-  }
-}
 /* 실은 자기 가시성(view())에 물려 자라고, 알약·맥박은 실이 자란 뒤 범위에서 물질화. */
 @supports (animation-timeline: view()) {
   .stage-thread {
@@ -2256,12 +2237,12 @@ html[data-theme-vt] .vt-post-cover {
  * 불투명 폴백.
  */
 .glass-chrome {
-  background: rgba(255, 255, 255, 0.68);
-  -webkit-backdrop-filter: blur(14px) saturate(1.7);
-  backdrop-filter: blur(14px) saturate(1.7);
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 .dark .glass-chrome {
-  background: rgba(2, 6, 23, 0.62);
+  background: rgba(4, 9, 6, 0.88);
 }
 .glass-capsule {
   background: rgba(255, 255, 255, 0.55);
@@ -2269,20 +2250,20 @@ html[data-theme-vt] .vt-post-cover {
   backdrop-filter: blur(10px) saturate(1.6);
 }
 .dark .glass-capsule {
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(19, 26, 22, 0.55);
 }
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .glass-chrome {
     background: rgba(255, 255, 255, 0.97);
   }
   .dark .glass-chrome {
-    background: rgba(2, 6, 23, 0.95);
+    background: rgba(4, 9, 6, 0.95);
   }
   .glass-capsule {
     background: rgba(255, 255, 255, 0.92);
   }
   .dark .glass-capsule {
-    background: rgba(15, 23, 42, 0.92);
+    background: rgba(19, 26, 22, 0.92);
   }
 }
 @media (prefers-reduced-transparency: reduce) {
@@ -2295,13 +2276,13 @@ html[data-theme-vt] .vt-post-cover {
     background: rgb(255 255 255);
   }
   .dark .glass-chrome {
-    background: rgb(2 6 23);
+    background: rgb(4 9 6);
   }
   .glass-capsule {
     background: rgb(255 255 255);
   }
   .dark .glass-capsule {
-    background: rgb(15 23 42);
+    background: rgb(19 26 22);
   }
 }
 
@@ -2411,19 +2392,6 @@ html[data-theme-vt] .vt-post-cover {
 }
 html[data-theme-vt] .vt-link-code {
   view-transition-name: none;
-}
-
-/* 무대 장면 2 — 결과 카드에서 라이브 피드로 날아가는 링크 칩(데스크탑 전용 장식).
-   "공유하면 클릭이 돌아온다"의 왕복을 실제 궤적으로 보여준다. 9s 주기, evi-* 계열. */
-@keyframes s2-fly {
-  0%, 8% { opacity: 0; transform: translate(0, 0) scale(0.8); }
-  14% { opacity: 1; transform: translate(0, 0) scale(1); }
-  38% { opacity: 1; transform: translate(26vw, -90px) scale(0.95); }
-  44%, 100% { opacity: 0; transform: translate(27vw, -96px) scale(0.7); }
-}
-.s2-fly { animation: s2-fly 9s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .s2-fly { animation: none; opacity: 0; }
 }
 
 /* 장부에 클릭이 도착하는 순간(대시보드 라이브 모먼트). 행 전체가 브랜드 그린으로 옅게 물들었다

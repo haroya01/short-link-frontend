@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Mail, Sparkles } from "lucide-react";
+import { Check, Mail } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { SwitchLink } from "@/components/common/switch-link";
 import { useLocale, useTranslations } from "next-intl";
@@ -59,7 +59,6 @@ export default function ProfileEditPage() {
       {isOnboarding && (
         <div className="rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
-            <Sparkles className="h-3.5 w-3.5" />
             {t("onboardingEyebrow")}
           </div>
           <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">

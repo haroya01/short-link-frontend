@@ -115,7 +115,7 @@ export function AdminOverviewView() {
   return (
     <div className="container max-w-6xl space-y-5 py-10">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500 dark:text-slate-400">
+        <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
           {t("label")}
         </p>
         <h2 className="mt-1 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h2>

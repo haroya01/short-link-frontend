@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
-import { Check, Copy, ExternalLink, PartyPopper, Pencil, Users } from "lucide-react";
+import { Check, CheckCircle2, Copy, ExternalLink, Pencil, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { ConfirmDialog } from "@/components/ui/dialog";
@@ -97,7 +97,7 @@ export default function EventDetailPage() {
         {justCreated && event.links[0]?.shortCode ? (
           <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50 py-2.5 pl-3.5 pr-2 dark:border-accent-900 dark:bg-accent-950/40">
             <p className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-accent-900 dark:text-accent-200">
-              <PartyPopper className="h-4 w-4 shrink-0" />
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span className="truncate">
                 {t("createdBanner")}{" "}
                 <span className="font-mono font-semibold">
@@ -112,7 +112,7 @@ export default function EventDetailPage() {
                 setHeroCopied(true);
                 setTimeout(() => setHeroCopied(false), 2000);
               }}
-              className="flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-accent-600 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-500"
+              className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent-700 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
             >
               {heroCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {heroCopied ? t("heroCopied") : t("heroCopy")}
@@ -164,7 +164,7 @@ export default function EventDetailPage() {
       {analytics ? <AnalyticsPanel analytics={analytics} /> : null}
 
       <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+        <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
           {t("manageTitle")}
         </h2>
         <div className="mt-3 flex flex-wrap gap-2">

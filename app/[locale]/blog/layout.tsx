@@ -85,6 +85,14 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
     );
   }
 
+  if (internalPath === "/login") {
+    return (
+      <AppProviders>
+        <main className="flex-1 dark:bg-slate-950">{children}</main>
+      </AppProviders>
+    );
+  }
+
   // Public surface (feed home + any other public blog page) — header, no workspace sidebar.
   return (
     <AppProviders>

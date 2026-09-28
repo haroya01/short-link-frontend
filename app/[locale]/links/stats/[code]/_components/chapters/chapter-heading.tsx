@@ -5,7 +5,7 @@
 export function ChapterHeading({ index, title }: { index: number; title: string }) {
   return (
     <div className="flex items-baseline gap-2.5 border-b border-slate-100 pb-2.5 dark:border-slate-800">
-      <span className="font-mono text-[11px] font-semibold uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+      <span className="font-mono text-[12px] font-semibold tabular-nums text-accent-700 dark:text-accent-400">
         {String(index).padStart(2, "0")}
       </span>
       <h2 className="text-[17px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">

@@ -91,7 +91,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           <MetaRow label={t("metaDate")}>{dateLine}</MetaRow>
           <MetaRow label={t("metaTime")}>
             {timeLine}{" "}
-            <span className="text-slate-400 dark:text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
               ({timezoneLabel(event.timezone, locale)})
             </span>
           </MetaRow>
@@ -136,7 +136,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           <button
             type="button"
             onClick={scrollToForm}
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-full bg-accent-600 text-base font-semibold text-white transition-colors hover:bg-accent-700"
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-accent-700 text-base font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
           >
             {t("cta")}
           </button>
@@ -209,7 +209,7 @@ function attendanceLine(
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-baseline gap-4 border-b border-slate-100 py-3 dark:border-slate-800/60">
-      <dt className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+      <dt className="w-14 shrink-0 text-[13px] font-semibold text-accent-700 dark:text-accent-400">
         {label}
       </dt>
       <dd className="min-w-0 text-[15px] leading-relaxed text-slate-800 dark:text-slate-200">

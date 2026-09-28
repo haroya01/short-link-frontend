@@ -4,12 +4,9 @@ import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { blogHref } from "@/lib/host";
+import { blogHref, linksHref } from "@/lib/host";
 import { writeLoginNextCookie } from "@/lib/login-next-cookie";
-import { Button } from "@/components/ui/button";
-import { Mark } from "@/components/common/logo";
-import { GoogleIcon } from "@/components/common/google-icon";
-import { AppleSignInButton } from "@/components/auth/apple-sign-in-button";
+import { LoginPanel } from "@/components/auth/login-panel";
 
 // ?next= 는 같은 오리진 내부 경로만 허용 — callback 의 동일 가드와 맞춰 open-redirect 차단.
 function sanitizeNext(raw: string | null): string | null {
@@ -52,76 +49,37 @@ function BlogLoginShell({ next }: { next: string | null }) {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center overflow-hidden bg-white px-4 py-16 dark:bg-slate-950">
-      <div className="w-full max-w-sm">
-        {/* Same entrance as the kurl.me login: a hero-stagger cascade (kicker → mark draws on →
-            wordmark → subtitle), then the action block fades up. The 3-bar brand mark sweeps on
-            left-to-right (mark-draw-in) as its own reveal, and the kurl log wordmark lands under it —
-            branded and quiet, no peppy onboarding chrome. */}
-        <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
-          <p
-            className="flex items-center justify-center gap-3"
-            style={{ ["--hi" as string]: 0 } as React.CSSProperties}
-          >
-            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 dark:bg-accent-500/40 sm:block" />
-            <span className="font-mono text-[11px] font-medium text-accent-700 dark:text-accent-400">
-              {t("eyebrow")}
-            </span>
-            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 dark:bg-accent-500/40 sm:block" />
-          </p>
-
-          {/* The mark IS the reveal — it draws on (mark-draw-in) rather than fading up with the rest. */}
-          <div
-            className="relative mark-draw-in text-accent-600 dark:text-accent-500"
-            style={{ ["--hi" as string]: 1 } as React.CSSProperties}
-          >
-            <div
-              aria-hidden
-              className="absolute -inset-8 -z-10 rounded-full bg-accent-200/55 blur-3xl dark:bg-accent-500/20"
-            />
-            <Mark animated className="h-12 w-auto sm:h-14" />
-          </div>
-
-          <span
-            className="text-[32px] font-bold leading-none tracking-headline"
-            style={{ ["--hi" as string]: 2, letterSpacing: "-0.04em" } as React.CSSProperties}
-          >
-            <span className="text-slate-400 dark:text-slate-500">blog.</span>
-            <span className="text-slate-900 dark:text-slate-100">kurl</span>
-          </span>
-
-          <p
-            className="mx-auto max-w-xs text-[14px] leading-relaxed text-slate-500 dark:text-slate-400"
-            style={{ ["--hi" as string]: 3 } as React.CSSProperties}
-          >
-            {t("subtitle")}
-          </p>
-        </div>
-
-        <div className="profile-fade mt-10 space-y-3" style={{ ["--idx" as string]: 4 } as React.CSSProperties}>
-          <Button
-            variant="outline"
-            className="h-11 w-full justify-center rounded-lg"
-            onClick={onSignIn}
-          >
-            <GoogleIcon className="h-4 w-4" />
-            {t("google")}
-          </Button>
-          <AppleSignInButton successHref={blogHref(next ?? "/")} />
-        </div>
-
-        <div
-          className="profile-fade mt-8 text-center"
-          style={{ ["--idx" as string]: 5 } as React.CSSProperties}
-        >
-          <a
-            href={blogHref("/")}
-            className="text-[13px] text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
-          >
-            {t("browse")}
+    <LoginPanel
+      renderHome={(mark) => (
+        <a href={blogHref("/")} aria-label="kurl log" className="focus-ring block rounded-md">
+          {mark}
+        </a>
+      )}
+      title={t("heading")}
+      subtitle={t("subtitle")}
+      googleLabel={t("google")}
+      onGoogle={onSignIn}
+      appleSuccessHref={blogHref(next ?? "/")}
+      consent={t.rich("consent", {
+        terms: (c) => (
+          <a href={linksHref("/terms")} className="underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-300">
+            {c}
           </a>
-        </div>
-      </div>
-    </div>
+        ),
+        privacy: (c) => (
+          <a href={linksHref("/privacy")} className="underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-300">
+            {c}
+          </a>
+        ),
+      })}
+      footer={
+        <a
+          href={blogHref("/")}
+          className="text-[13px] text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
+        >
+          {t("browse")}
+        </a>
+      }
+    />
   );
 }

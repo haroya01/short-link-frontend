@@ -69,14 +69,14 @@ export default function RootNotFound() {
           const t = COPY[locale];
           return (
             <div key={locale} data-nf={locale} data-testid="not-found" className="container max-w-md py-24 text-center">
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500 dark:text-slate-400">404</p>
+              <p className="font-mono text-[12px] font-medium text-slate-500 dark:text-slate-400">404</p>
               <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">
                 {t.title}
               </h1>
               <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t.description}</p>
               <a
                 href={`/${locale}`}
-                className="mt-8 inline-flex items-center justify-center rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+                className="mt-8 focus-ring inline-flex h-10 items-center justify-center rounded-lg bg-accent-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
               >
                 {t.cta}
               </a>

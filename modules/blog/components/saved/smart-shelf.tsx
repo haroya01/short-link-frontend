@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
+import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/lib/auth";
@@ -275,7 +275,7 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
             ))}
           {/* Auto-grouped leftovers */}
           {autoSections.map(([tag, items]) => (
-            <Section key={tag} icon={<Sparkles className="h-3.5 w-3.5" />} title={tag} hint={t("autoGrouped")}>
+            <Section key={tag} icon={<Tag className="h-3.5 w-3.5" />} title={tag} hint={t("autoGrouped")}>
               {items.map((it) => <SavedCard key={it.id} item={it} selected={picked.has(it.id)} {...cardProps} />)}
             </Section>
           ))}

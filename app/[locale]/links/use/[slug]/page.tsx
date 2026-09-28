@@ -78,7 +78,7 @@ export default async function SeoLandingPage({
         <p className="mt-5 text-[17px] leading-relaxed text-slate-600 dark:text-slate-300">{c.intro}</p>
         <a
           href={ctaHref}
-          className="focus-ring mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white shadow-cta transition-colors hover:bg-accent-800"
+          className="focus-ring mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {c.cta}
           <ArrowRight className="h-4 w-4" />
@@ -88,7 +88,7 @@ export default async function SeoLandingPage({
       <ul className="mt-16 grid gap-x-8 gap-y-6 sm:grid-cols-2">
         {c.features.map((f) => (
           <li key={f.title} className="flex gap-3">
-            <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400">
+            <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400">
               <Check className="h-3.5 w-3.5" />
             </span>
             <span>
@@ -114,7 +114,7 @@ export default async function SeoLandingPage({
       <div className="mt-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 py-10 text-center ring-1 ring-slate-200/70 dark:ring-slate-700/70">
         <a
           href={ctaHref}
-          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white shadow-cta transition-colors hover:bg-accent-800"
+          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {c.cta}
           <ArrowRight className="h-4 w-4" />

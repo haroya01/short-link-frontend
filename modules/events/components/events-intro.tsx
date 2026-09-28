@@ -71,7 +71,7 @@ export function EventsIntro({ mode }: { mode: "anonymous" | "empty" }) {
             {t("ctaCreate")}
           </Link>
         )}
-        <p className="mt-3 text-[13px] text-slate-400 dark:text-slate-500">{t("ctaHint")}</p>
+        <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{t("ctaHint")}</p>
       </div>
     </div>
   );
@@ -126,7 +126,7 @@ function Demo() {
       </div>
 
       {/* 4) 결과 배지 */}
-      <div className="evi-badge absolute bottom-4 left-4 flex items-center gap-1.5 rounded-full bg-accent-600 px-3 py-1.5 text-[12px] font-semibold text-white shadow-md">
+      <div className="evi-badge absolute bottom-4 left-4 flex items-center gap-1.5 rounded-full bg-accent-700 px-3 py-1.5 text-[12px] font-semibold text-white shadow-md">
         <Users className="h-3.5 w-3.5" /> {t("badge")}
       </div>
     </div>

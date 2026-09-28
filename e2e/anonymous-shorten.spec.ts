@@ -51,7 +51,7 @@ test.describe("anonymous shorten flow", () => {
     await page.getByRole("button", { name: "단축하기" }).click();
     // 속삭임 행 — 24h 만료 안내와 보관 유도가 답 줄 아래 한 줄로.
     await expect(page.getByText(/24시간 후 만료/)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole("link", { name: /가입하고 통계 보관하기/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /로그인하고 통계 보관하기/ })).toBeVisible();
   });
 
   test("advanced section is hidden for anonymous (auth-only customCode / expiry)", async ({

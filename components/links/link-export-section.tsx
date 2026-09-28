@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, FileText } from "lucide-react";
+import { Bot, Download, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   downloadLinkEventsCsv,
@@ -116,9 +116,14 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
                         {[e.city, e.country].filter(Boolean).join(", ") || "—"}
                       </td>
                       <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">
-                        {e.bot
-                          ? `🤖 ${e.botName ?? t("bot")}`
-                          : [e.device, e.os, e.browser].filter(Boolean).join(" · ") || "—"}
+                        {e.bot ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Bot aria-hidden className="h-3.5 w-3.5 text-slate-400" />
+                            {e.botName ?? t("bot")}
+                          </span>
+                        ) : (
+                          [e.device, e.os, e.browser].filter(Boolean).join(" · ") || "—"
+                        )}
                       </td>
                       <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">
                         {e.referrerHost || e.channel || "—"}

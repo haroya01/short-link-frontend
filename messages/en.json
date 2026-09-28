@@ -34,7 +34,7 @@
     "allLanguages": "All",
     "seriesTab": "Series",
     "seriesTabEmptyTitle": "No subscribed series yet",
-    "seriesTabEmpty": "Subscribe to a series and its new posts gather here.",
+    "seriesTabEmpty": "Subscribe to a series and its new posts show up here.",
     "seriesTabSignedOut": "See the latest from series you subscribe to.",
     "seriesTabSignIn": "Sign in",
     "seriesTabFreshBadge": "Just updated",
@@ -47,19 +47,19 @@
     "retry": "Retry",
     "loadMoreError": "Couldn't load more.",
     "feed": "Following",
-    "followingSignedOut": "New posts from the authors you follow gather here.",
+    "followingSignedOut": "New posts from authors you follow show up here.",
     "forYou": "For You",
-    "forYouSignedOutTitle": "Picked for you",
+    "forYouSignedOutTitle": "Picks based on what you read",
     "forYouSignedOut": "Sign in and we'll recommend posts based on what you read and the topics you care about.",
     "forYouEmptyTitle": "Nothing to recommend yet",
     "forYouEmpty": "Follow a few topics or read some posts and your feed will fill with picks for you.",
     "followingSignedOutTitle": "Posts from authors you follow",
     "followingBrowseLatest": "Latest",
-    "followingEmpty": "Follow an author and their new posts gather here.",
+    "followingEmpty": "Follow an author and their new posts show up here.",
     "signIn": "Sign in",
     "topics": "Topics",
-    "mastheadTagline": "Read. Write. Connect.",
-    "mastheadSub": "Posts from the people of kurl.",
+    "mastheadTagline": "Writing from people on kurl",
+    "mastheadSub": "Newest first.",
     "tagFeedSubtitle": "Posts published under this topic.",
     "tagFollow": "Follow",
     "tagFollowing": "Following",
@@ -69,7 +69,7 @@
     "tagAllHiddenTitle": "All hidden by your muted topics",
     "tagAllHiddenBody": "All {count, plural, one {# post} other {# posts}} from people you follow are hidden by your muted topics. Unmute a topic in your topic settings to see them again.",
     "myTags": "My tags",
-    "metaDescription": "Read. Write. Connect. The public blog by kurl.",
+    "metaDescription": "A blog by people on kurl, where underlined passages can be linked into collections.",
     "emptyTitle": "No posts published yet",
     "emptyBody": "Be the first to publish.",
     "emptyFollowingTitle": "No posts from authors you follow",
@@ -296,7 +296,7 @@
   "postEditor": {
     "backToList": "Posts",
     "titlePlaceholder": "Title",
-    "bodyPlaceholder": "Type '/' for blocks — or just start writing",
+    "bodyPlaceholder": "Type '/' to add a block, or just start writing",
     "blockMenu": {
       "add": "Add block below",
       "embedMedia": "Embedded media",
@@ -522,7 +522,7 @@
       "warning": "Warning",
       "caution": "Caution"
     },
-    "bodyPlaceholderTouch": "Just start writing — formatting is in the toolbar above"
+    "bodyPlaceholderTouch": "Just start writing. Formatting is in the toolbar above"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -541,13 +541,13 @@
     "newFolderTo": "To new folder",
     "untagged": "Untagged",
     "emptyBookmarks": "Your reading list is empty",
-    "emptyBookmarksBody": "Bookmark posts you want to revisit and they’ll gather here.",
+    "emptyBookmarksBody": "Bookmark posts you want to revisit and they’ll show up here.",
     "emptyLiked": "No liked posts yet",
-    "emptyLikedBody": "Posts you like will gather here.",
+    "emptyLikedBody": "Posts you like will show up here.",
     "emptyHighlights": "No highlights yet",
     "emptyHighlightsBody": "Highlight a passage as you read and it collects here.",
     "emptyComments": "No comments yet",
-    "emptyCommentsBody": "Comments you write will gather here.",
+    "emptyCommentsBody": "Comments you write will show up here.",
     "browseFeed": "Browse the feed",
     "emptyHistory": "No reading history yet.",
     "emptyHistoryBody": "Posts you read will show up here.",
@@ -760,13 +760,13 @@
     "learnMore": "Privacy policy",
     "prefsTitle": "Usage analytics",
     "prefsDesc": "Turn product analytics on or off. Turning it off also deletes the analytics identifier already stored on this device. Cookies needed to keep you signed in are unaffected.",
-    "stateOn": "Current setting — analytics is on.",
-    "stateOff": "Current setting — analytics is off.",
-    "stateUnset": "Current setting — not chosen yet. Analytics is off."
+    "stateOn": "Analytics is on.",
+    "stateOff": "Analytics is off.",
+    "stateUnset": "Not chosen yet. Analytics is off."
   },
   "meta": {
     "title": "kurl · URL shortener with click analytics",
-    "description": "Shorten long URLs and see who clicks — by device, channel, and country.",
+    "description": "Shorten a long URL and see which device, channel, and country each click came from, with bots left out.",
     "ogHeadlineTop": "Short URLs +",
     "ogHeadlineBottom": "Click analytics",
     "ogSubline": "Device · channel · country · time — see where every click comes from, at a glance"
@@ -888,13 +888,12 @@
   },
   "home": {
     "tagline": "kurl v1",
-    "headline1": "Shorten in one line",
+    "headline1": "Shorten in <line>one line</line>",
     "headline2": "See when and where",
-    "subhead": "Live click feed, auto-insights, bot filtering — the analytics other shorteners lock behind paid plans, free here.",
-    "mobileSubhead": "Live clicks, insights, and bot filtering for free",
-    "anonymousHint": "No sign-in required. Sign in for stats and password-protected links.",
-    "demoLink": "Preview the analytics dashboard",
-    "scrollHint": "Scroll for more",
+    "subhead": "Paste a long link and get a short one right away. See who clicked, when, and from where, with bot clicks kept apart.",
+    "mobileSubhead": "See who clicked, when, and where. Bots kept apart.",
+    "anonymousHint": "Free, no sign-in needed. Sign in to see stats and add a password.",
+    "demoLink": "Preview the stats page",
     "previews": {
       "eyebrow": "What you get in under a minute",
       "see": "See",
@@ -961,31 +960,32 @@
     "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default.",
     "stage": {
       "scene2Eyebrow": "Share",
-      "scene2Title": "Share anywhere. See every click.",
-      "scene2Desc": "Instagram bio, X, YouTube, email — see where every click came from, live.",
+      "scene2Title": "Paste it anywhere. The clicks come back.",
+      "scene2Desc": "Put it in an Instagram bio or an email and see where each click came from as it happens.",
       "scene3Eyebrow": "Analytics",
-      "scene3Title": "Every click becomes a picture",
-      "scene3Desc": "Who, when, where — humans split from bots, down to your 30-day rhythm. The depth other shorteners paywall, free.",
-      "scene3CtaDemo": "Preview the demo",
-      "scene3CtaStart": "Start free"
+      "scene3Title": "Clicks add up to a line",
+      "scene3Desc": "Break clicks down by country, device, and source, with bot clicks kept out of the count. All of it is free.",
+      "scene3CtaDemo": "See the demo stats",
+      "scene3CtaStart": "Sign in to start",
+      "scene3Caption": "Last 30 days · {human}% human"
     }
   },
   "showcase": {
-    "eyebrow": "Public profiles · real examples",
-    "title": "Make it yours",
-    "subhead": "A profile that fits what you do — whether you run a café, ship code, teach a class, or just share links.",
+    "eyebrow": "Public profiles · examples",
+    "title": "Profiles shaped around the work",
+    "subhead": "Pick the blocks that fit what you do, like a café menu, a class schedule or a portfolio.",
     "demoCta": "Browse all examples",
-    "ctaTitle": "Your profile, live in 5 minutes",
-    "ctaSubhead": "Sign in and pick a name — then drop in your photos, links, address, and contact info, just like the examples below.",
+    "ctaTitle": "Make a profile like these",
+    "ctaSubhead": "Sign in and choose a username to get started. Add photos, links, an address and contact details, and it fills in like the examples below.",
     "cta": "Make your profile",
     "metaSuffix": "sample",
     "metaFallbackTitle": "{handle} · kurl sample",
     "sampleBanner": "Sample page · this could be your profile too",
     "sampleCta": "Make my profile",
-    "scrollCue": "See real examples",
+    "scrollCue": "See examples",
     "meta": {
-      "title": "Profile page examples · Link in bio gallery - kurl",
-      "description": "How creators, sellers, and small businesses run their bio page on kurl. Link in bio + QR business card + click analytics — one page, all the surfaces."
+      "title": "Link-in-bio profile examples · kurl",
+      "description": "Example profiles for a café, an instructor, a photographer and more. Links, a contact card, a map and product cards fit on one page."
     }
   },
   "shortenForm": {
@@ -1039,7 +1039,7 @@
   },
   "login": {
     "title": "Sign in",
-    "subtitle": "Sign in to manage your links and view analytics.",
+    "subtitle": "Sign in to keep your links in one list and see who clicked.",
     "google": "Continue with Google",
     "anonymousButton": "Shorten without signing in",
     "rotation": {
@@ -1156,16 +1156,16 @@
     "emptyCta": "Shorten now",
     "onboarding": {
       "eyebrow": "Welcome",
-      "title": "Three steps, you're set",
-      "subtitle": "Shorten → share → see stats. First click within 60 seconds is normal.",
-      "step1Title": "Shorten in a minute",
-      "step1Desc": "Paste a URL on the home page and hit Shorten. Get a short link instantly.",
+      "title": "Three steps",
+      "subtitle": "Shorten a link and post it where people will see it. Clicks collect here.",
+      "step1Title": "Shorten a link",
+      "step1Desc": "Paste a long URL on the home page and press Shorten.",
       "step2Title": "Share it",
-      "step2Desc": "Instagram bio, KakaoTalk, business card — anywhere. QR code in one click.",
+      "step2Desc": "Post it in an Instagram bio, KakaoTalk or on a business card. You can download a QR code too.",
       "step3Title": "See the stats",
-      "step3Desc": "Clicks come in → channel / country / device / time-of-day automatic.",
+      "step3Desc": "Clicks are broken down by channel, country, device and time of day.",
       "primaryCta": "Make your first link",
-      "secondaryCta": "Or preview the analytics screen →",
+      "secondaryCta": "Or preview the analytics screen",
       "scene": {
         "weekClicks": "Clicks this week"
       }
@@ -2181,17 +2181,17 @@
   },
   "demo": {
     "metaTitle": "kurl demo — see exactly what you get when you shorten a link",
-    "metaDescription": "Live preview of the analytics dashboard, no sign-up required.",
-    "sampleBanner": "Sample data — your own links will fill in this same layout.",
+    "metaDescription": "A preview of the analytics dashboard, no sign-in needed.",
+    "sampleBanner": "Sample data. Once you sign in, your own links fill in this same layout.",
     "sampleCta": "Make my link",
     "settingsNotice": {
-      "title": "Settings unlock after sign-up",
-      "desc": "A/B destinations and webhooks are managed per-link. After signing up, this exact tab opens on your own link's stats page.",
+      "title": "Settings are available after you sign in",
+      "desc": "A/B destinations and webhooks are managed per link. After you sign in, this same tab opens on your own link's stats page.",
       "cta": "Make my link"
     },
     "settingsDemo": {
       "badge": "Demo",
-      "lockedToast": "This is a demo preview. After signing up you can register and edit these on your own link.",
+      "lockedToast": "This is a demo. After you sign in, you can add and edit these on your own link.",
       "payloadPreview": "Preview the payload that gets sent"
     },
     "createCta": "Create my link"
@@ -2236,8 +2236,8 @@
       "sendAgain": "Send again",
       "error": "Couldn't sign up. Please try again.",
       "defaultPlaceholder": "you@example.com",
-      "defaultSuccess": "You're in. Thanks!",
-      "trustHint": "Goes only to the owner of this page. No spam."
+      "defaultSuccess": "You're in. Thanks.",
+      "trustHint": "Goes only to the owner of this page."
     },
     "booking": {
       "defaultTitle": "Book a time",
@@ -2322,7 +2322,7 @@
     "title": "Recently shortened",
     "empty": "Nothing yet — shorten one above.",
     "viewStats": "View stats",
-    "claimCta": "Sign up to save these links to your account permanently.",
+    "claimCta": "Sign in to keep these links in your account.",
     "anonymousNote": "Anonymous links auto-expire in 24h. Sign in and they're saved to your account — no expiration.",
     "claimedToast": "{count, plural, one {Saved # link} other {Saved # links}} to your account"
   },
@@ -2403,48 +2403,48 @@
     "github": "GitHub"
   },
   "about": {
-    "title": "kurl — URL shortener with click analytics",
+    "title": "kurl · URL shortener with click analytics",
     "lead": "Shorten long URLs and see where your clicks come from. Free to use, and currently ad-free.",
     "section1Title": "Why",
-    "section1Body": "Most shorteners hide analytics behind a paywall. kurl gives you device, OS, browser, channel, country, and hour-of-day breakdowns for free.",
+    "section1Body": "Built so click analytics wouldn't be a paid extra. Device, OS, browser, channel, country and hour-of-day stats are all free.",
     "section2Title": "How it works",
-    "section2Body": "Each visit is checked for bots and malicious URLs, then redirected. Click data is stored in a wide, query-friendly schema so charts load fast even at scale.",
+    "section2Body": "Each visit is checked for bots and malicious URLs, then sent on to the original URL. Clicks are stored with part of the IP masked.",
     "section3Title": "Stack",
-    "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. Source on GitHub.",
-    "ctaShorten": "Shorten a URL now"
+    "section3Body": "Spring Boot · MySQL · Redis · Next.js · AWS EC2 · Vercel. Source on GitHub.",
+    "ctaShorten": "Shorten a URL"
   },
   "learn": {
     "metaTitle": "Short links · URL shortener · Link in bio guide · kurl",
-    "metaDescription": "What URL shortening is, how short links differ from link-in-bio pages, and how kurl combines both — answered in one place.",
+    "metaDescription": "What URL shortening is, how short links differ from link-in-bio pages, and how kurl does both.",
     "eyebrow": "Guide · FAQ",
     "title": "Short links and link-in-bio, explained for beginners",
-    "lead": "What URL shortening is, what kurl does, how a profile page differs from a single short link — the questions people search for, in one page.",
+    "lead": "Common questions about URL shortening, what kurl does, and how a profile page differs from a single short link.",
     "q1": {
       "q": "What is URL shortening?",
-      "a": "URL shortening replaces a long address (e.g. https://example.com/very/long/path?utm_source=...) with a short one (e.g. kurl.me/abc1234). Short link and shortened URL mean the same thing.\n\nIt's useful where character limits matter (social posts), where people type the URL by hand (business cards, posters), and as an attribution layer — most shortener services track clicks so you can see which channels actually drive traffic."
+      "a": "URL shortening replaces a long address (e.g. https://example.com/very/long/path?utm_source=...) with a short one (e.g. kurl.me/abc1234). Short link and shortened URL mean the same thing.\n\nIt's useful where character limits matter (social posts) and where people type the URL by hand (business cards, posters). Shorteners also count clicks, so you can see which channels bring people in."
     },
     "q2": {
       "q": "How is a short link different from a link-in-bio page?",
-      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination — Twitter post, Instagram comment, business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use kurl.me/yourname as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both — shorten individual URLs, and build a profile page that bundles them."
+      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination, like a Twitter post, an Instagram comment or a business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use yourname.kurl.me as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both: it shortens individual URLs and builds a profile page that bundles them."
     },
     "q3": {
       "q": "What is kurl?",
-      "a": "kurl is a free URL shortener + link-in-bio service. No ads, no required signup to shorten, and free analytics: device, country, channel, time-of-day.\n\nSign in with Google in one click and your shortened links persist, plus you can build a profile page at kurl.me/yourname in five minutes."
+      "a": "kurl is a free URL shortener and link-in-bio service. There are no ads, and you can shorten links without signing in.\n\nSign in to see stats by device, country and channel. Your links stay until you delete them, and you can build a profile page at an address like yourname.kurl.me."
     },
     "q4": {
       "q": "What can a profile page contain?",
-      "a": "Eight block types: photo + bio + contacts (phone/email/address) + socials + events + galleries + product cards + calendar embeds. Mix and match per persona.\n\nA cafe owner might show: map + hours + Instagram/reservation links + menu gallery. An instructor: workshop events + 1:1 booking link + portfolio. A DJ: upcoming gigs + Spotify Artist link + photos. All on one page."
+      "a": "Mix blocks such as a photo, bio, contacts (phone/email/address), socials, events, galleries, product cards and booking links.\n\nA cafe owner might show a map, opening hours, Instagram and reservation links, and a menu gallery. An instructor: workshop events, a 1:1 booking link and a portfolio. A DJ: upcoming gigs, a Spotify Artist link and photos. All on one page."
     },
     "q5": {
       "q": "How deep do the analytics go?",
-      "a": "Per short link: total / human vs bot / unique visitors / daily + hourly charts / day-of-week × hour heatmap / country + city / device / browser / OS / referrer hosts / UTM campaigns. Same depth as Bitly Pro, but free.\n\nProfile pages get a parallel /profile/stats dashboard for visit counts and the same demographic breakdowns."
+      "a": "For each short link: total clicks, human vs bot, unique visitors, daily and hourly charts, a day-of-week × hour heatmap, country and city, device, browser, OS, referrer hosts and UTM campaigns. All of it is free.\n\nProfile pages have their own visit stats with the same breakdowns."
     },
     "q6": {
       "q": "Is it paid?",
-      "a": "Every feature is free — shortening, analytics, profile pages, all eight block types, and custom domains.\n\nThere's no paid plan, and no ads."
+      "a": "Every feature is free: shortening, analytics, profile pages, every block type and custom domains.\n\nThere's no paid plan, and no ads."
     },
-    "ctaTitle": "Shorten one now",
-    "ctaSubtitle": "No signup needed — sign in to keep your stats forever",
+    "ctaTitle": "Shorten a URL",
+    "ctaSubtitle": "No sign-in needed. Sign in to keep your stats.",
     "ctaButton": "Start shortening"
   },
   "terms": {
@@ -2588,10 +2588,10 @@
     },
     "profile": {
       "title": "Public profile",
-      "intro": "Bundle your short links into one shareable page — perfect for your social media bio.",
-      "onboardingEyebrow": "Welcome",
-      "onboardingTitle": "Start building right away!",
-      "onboardingSubhead": "Pick the username you want and you're in. Add photos, links, your store address, and contact info — it builds into a polished card as you go.",
+      "intro": "Collect your links on one page. Your social profile then needs just this page's address.",
+      "onboardingEyebrow": "Getting started",
+      "onboardingTitle": "Start with the name for your address",
+      "onboardingSubhead": "Your username goes into your page address. Photos, links, your store address and contact details can come later, one at a time.",
       "onboardingStep1": "Claim a username",
       "onboardingStep2": "Add a bio or an avatar",
       "onboardingStep3": "Drop your first block (link, image, anything)",
@@ -3100,7 +3100,7 @@
       "campaigns": "QR campaigns",
       "campaignsDesc": "Compare printed QR codes by location",
       "events": "Sign-ups",
-      "eventsDesc": "Collect event sign-ups with one link",
+      "eventsDesc": "Collect event sign-ups with a link",
       "ctas": "CTA library",
       "ctasDesc": "Manage banners shown on your links"
     }
@@ -3275,9 +3275,9 @@
       "errors": {
         "nameRequired": "Batch name is required",
         "quantityRequired": "Quantity is required",
-        "quantityPositive": "Positive integer",
-        "destinationRequired": "No campaign default URL — required",
-        "destinationUrl": "http:// or https:// URL"
+        "quantityPositive": "Enter 1 or more",
+        "destinationRequired": "Enter a URL. This campaign has no default URL.",
+        "destinationUrl": "Must start with http:// or https://"
       },
       "removeRow": "Delete row {index}",
       "pasteTitle": "Paste spreadsheet rows",
@@ -3303,7 +3303,7 @@
       "backToCampaign": "Back to QR campaign",
       "title": "Add QR to poster",
       "introCampaign": "<name></name> · Duplicate the PDF once per batch ({count} total), each with its own QR, then download one merged PDF.",
-      "toolHint": "Finish the design in Canva, InDesign, PowerPoint, or another tool, export a PDF, then place only the QR here. This is a coordinate compositor, not a design tool.",
+      "toolHint": "Finish the design in Canva, InDesign or PowerPoint and export a PDF. Here you only place the QR.",
       "targetLabel": "Composition target",
       "targetSummary": "<strong>{count}</strong> batches · output is a <strong>{pages}-page</strong> PDF",
       "noBatchesHint": "Add distribution batches first. (QR campaign detail → Add batch)",
@@ -3605,11 +3605,12 @@
     "signIn": "Sign in"
   },
   "blogLogin": {
-    "eyebrow": "Sign in",
     "title": "Sign in to write",
-    "subtitle": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
+    "subtitle": "Sign in to pick up your posts, drafts, and series where you left off.",
     "google": "Continue with Google",
-    "browse": "Browse without signing in"
+    "browse": "Browse without signing in",
+    "heading": "Sign in to kurl log",
+    "consent": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
   "postAnalytics": {
     "title": "Analytics",
@@ -3625,12 +3626,12 @@
   },
   "ctaLibrary": {
     "title": "CTA library",
-    "description": "Manage the CTA buttons you embed in posts in one place. Reuse the same CTA across multiple posts.",
+    "description": "Manage the CTA buttons you add to posts. The same CTA can be used in many posts.",
     "new": "New CTA",
     "empty": "No CTAs yet.",
     "edit": "Edit",
     "delete": "Delete",
-    "deleteConfirm": "Delete the “{label}” CTA? (soft-delete; analytics data is preserved)",
+    "deleteConfirm": "Delete the “{label}” CTA? Its click history stays.",
     "editorTitleEdit": "Edit CTA",
     "editorTitleNew": "New CTA",
     "label": "Label",
@@ -3772,14 +3773,14 @@
     "discoverTabHighlights": "Highlights",
     "highlightReplyCount": "{count, plural, one {# reply} other {# replies}}",
     "highlightsSignedOutTitle": "Passages to read along",
-    "highlightsSignedOut": "Sign in and the passages curators you follow underline will gather here.",
+    "highlightsSignedOut": "Sign in and the passages curators you follow underline will show up here.",
     "highlightsSignIn": "Sign in",
     "highlightsRetry": "Try again",
     "highlightsLoadMore": "Load more",
     "highlightsLoadingMore": "Loading more…",
     "highlightsLoadMoreError": "Couldn't load more.",
     "highlightsEmptyTitle": "No highlights yet",
-    "highlightsEmptyBody": "Passages the curators you follow underline in a post will gather here.",
+    "highlightsEmptyBody": "Passages the curators you follow underline in a post will show up here.",
     "highlightsEmptyCta": "Find writers to read",
     "discoverEntrancesTitle": "Paths open now",
     "discoverEntrancePieces": "{count} pieces",
@@ -3853,11 +3854,11 @@
   "events": {
     "intro": {
       "eyebrow": "Event pages",
-      "title": "Collect signups for your gathering with one link",
-      "subtitle": "Study groups, meetups, clubs — the page, the form, the capacity cap, and where registrants came from. One link.",
+      "title": "Take event sign-ups with a link",
+      "subtitle": "Make an intro page and a sign-up form for a study group, meetup or club. Sign-ups close when it's full, and you can see where each one came from.",
       "step1": {
         "title": "Make a page",
-        "body": "Title and date — done in about 3 minutes."
+        "body": "Add a title and a date, and the page is ready."
       },
       "step2": {
         "title": "Paste the link in your chat",
@@ -3867,7 +3868,7 @@
         "title": "Watch signups arrive",
         "body": "The list keeps itself, capacity closes itself, and you see which channel people came from."
       },
-      "ctaLogin": "Start for free",
+      "ctaLogin": "Sign in to start",
       "ctaCreate": "Create your first event",
       "ctaHint": "Attendees register without an account.",
       "demo": {
@@ -3902,13 +3903,13 @@
       "consent": "I agree that my name, contact and answers are collected and shared with the organizer to run this event, and deleted 30 days after it ends.",
       "submit": "Register",
       "submitting": "Registering…",
-      "successTitle": "You're in!",
+      "successTitle": "You're registered",
       "successBodyEmail": "We sent a confirmation email. Use the link inside to cancel if plans change.",
       "successBody": "Keep the cancellation link below in case plans change.",
       "copyCancelLink": "Copy cancellation link",
       "cancelLinkCopied": "Copied",
-      "viralHook": "This page took 3 minutes to make.",
-      "viralCta": "Create your own event page →",
+      "viralHook": "Made with kurl.",
+      "viralCta": "Make an event page",
       "canceledNotice": "This event has been canceled.",
       "fullNotice": "This event is full. Spots reopen when someone cancels — check back later.",
       "closedNotice": "Registration is closed.",
@@ -3948,7 +3949,7 @@
       "loading": "Loading…",
       "loadFailed": "Could not load events.",
       "emptyTitle": "Create your first event page",
-      "emptyBody": "Study groups, meetups, workshops — one link handles the page, registration, capacity and channel analytics.",
+      "emptyBody": "Make an intro page and a sign-up form, then manage capacity and see where sign-ups came from here.",
       "authTitle": "Event pages",
       "authDesc": "Sign in to create registration pages and see attendees and traffic sources."
     },
@@ -3956,7 +3957,7 @@
       "authTitle": "Event pages",
       "authDesc": "Sign in to create registration pages.",
       "newTitle": "New event",
-      "newSubtitle": "Takes about 3 minutes. Publishing gives you a short link and QR instantly.",
+      "newSubtitle": "Publish it to get a short link and a QR code.",
       "editTitle": "Edit event",
       "title": "Title",
       "titlePlaceholder": "Tokyo Dev Study Group #3",
@@ -4026,7 +4027,7 @@
       "authDesc": "Sign in to see attendees and traffic sources.",
       "loading": "Loading…",
       "loadFailed": "Could not load.",
-      "createdBanner": "Your event page is live! Paste this link into your group chats and socials.",
+      "createdBanner": "Your event page is live. Paste this link into your group chats and socials.",
       "edit": "Edit",
       "viewPublicPage": "View public page",
       "manageTitle": "Manage",
@@ -4040,7 +4041,7 @@
       "cancelDialogBody": "The public page shows it as canceled and registration stops. This cannot be undone. To only stop new registrations, use 'Close registration'.",
       "cancelDialogConfirm": "Cancel event",
       "heroCopy": "Copy link",
-      "heroCopied": "Copied!"
+      "heroCopied": "Copied"
     },
     "share": {
       "copied": "Copied",
@@ -4070,7 +4071,7 @@
     "attendees": {
       "title": "{count} attendees",
       "exportCsv": "Export CSV",
-      "empty": "No registrations yet. Share your link in a group chat!",
+      "empty": "No registrations yet. Share your link in a group chat.",
       "name": "Name",
       "contact": "Contact",
       "channel": "Channel",

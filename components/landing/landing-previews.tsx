@@ -68,7 +68,7 @@ export function LandingPreviews() {
       <div className="container max-w-5xl py-16 sm:py-20">
         <div className="mb-10 flex items-center gap-3">
           <span aria-hidden className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+          <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
             {t("previews.eyebrow")}
           </p>
           <span aria-hidden className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />

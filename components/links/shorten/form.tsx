@@ -137,20 +137,20 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {hero ? (
-        /* 에러 중엔 빨강이 포커스(초록 링)보다 세다 — 제출 직후 포커스가 버튼(캡슐 안)에 남아
+        /* 에러 중엔 빨강이 포커스(초록 링)보다 세다 — 제출 직후 포커스가 버튼(칸 안)에 남아
            focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
-           onChange 가 에러를 걷어 초록 포커스로 자연 복귀. 캡슐을 key 로 리마운트하면
+           onChange 가 에러를 걷어 초록 포커스로 자연 복귀. 칸을 key 로 리마운트하면
            타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
         <div
           className={
-            "relative flex items-center gap-2 overflow-hidden rounded-full border bg-white py-1.5 pl-4 pr-1.5 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
+            "relative flex items-center gap-2 overflow-hidden rounded-2xl border bg-white py-1.5 pl-4 pr-1.5 transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
             (error
               ? "border-red-400 dark:border-red-500/70"
-              : "border-slate-200 focus-within:border-accent-500 focus-within:shadow-lift focus-within:ring-4 focus-within:ring-accent-500/10 dark:border-slate-800 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
+              : "border-slate-300 hover:border-slate-400 focus-within:border-accent-600 focus-within:ring-4 focus-within:ring-accent-600/10 dark:border-slate-700 dark:hover:border-slate-600 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
           {/* 스크롤 연동 형광 스윕 — stage-sweep-host 조상(무대 on)일 때만 애니메이션.
-              캡슐 안에 두는 이유: 밖에 두면 알약 곡률과 어긋난 사각 밴드가 노출된다. */}
+              칸 안에 두는 이유: 밖에 두면 모서리 곡률과 어긋난 사각 밴드가 노출된다. */}
           <span aria-hidden className="capsule-sweep" />
           <Link2
             aria-hidden
@@ -178,7 +178,7 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent-700 px-4 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:h-10 sm:px-5"
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-4 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:h-10 sm:px-5"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -43,11 +43,20 @@ import type {
 
 /** Anchor date — every relative window (last 30 days, etc.) builds backwards from here. */
 const TODAY_UTC = new Date(Date.UTC(2026, 4, 10));
+const DEMO_BOT_CLICKS = 184;
+
+/** The landing's analytics scene shows the same demo01 numbers the /demo page renders. */
+export function buildDemoHeadline(): { total: number; humanRatio: number; series: number[] } {
+  const daily = buildDaily(30);
+  const human = daily.reduce((s, d) => s + d.count, 0);
+  const total = human + DEMO_BOT_CLICKS;
+  return { total, humanRatio: human / total, series: daily.map((d) => d.count) };
+}
 
 export function buildDemoLinkStats(): LinkStats {
   const daily = buildDaily(30);
   const human = daily.reduce((s, d) => s + d.count, 0);
-  const bot = 184;
+  const bot = DEMO_BOT_CLICKS;
   const total = human + bot;
   const unique = Math.round(human * 0.62);
   const hourly = buildHourly(daily);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, Sparkles } from "lucide-react";
+import { Info, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   LinkBlockedCountriesSection,
@@ -163,7 +163,7 @@ function DemoSettingsBanner() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-3 text-[12px]">
       <div className="flex items-center gap-2.5 text-accent-800 dark:text-accent-300">
-        <Sparkles className="h-3.5 w-3.5 shrink-0" />
+        <Info className="h-3.5 w-3.5 shrink-0" />
         <div>
           <p className="font-medium">{t("title")}</p>
           <p className="mt-0.5 text-accent-700/90">{t("desc")}</p>

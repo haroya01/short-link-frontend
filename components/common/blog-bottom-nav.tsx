@@ -13,7 +13,7 @@ import { AccountSheet } from "@/components/common/account-sheet";
 import { BlogSearchSheet } from "@/components/common/blog-search-sheet";
 
 const TAB =
-  "focus-ring flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors";
+  "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
  * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 탐색 · 알림 · 계정. 탐색/계정 open
@@ -63,10 +63,8 @@ export function BlogBottomNav() {
     <>
       <nav
         className={cn(
-          /* 상단 AppHeader 와 같은 플로팅 글래스 캡슐 — LinksBottomNav 와 미러(토큰 동일 유지).
-             safe-area 는 bottom 오프셋이 흡수, 숨김은 오프셋+섀도우까지 걷어내는 200%. */
-          "vt-bottom-nav glass-chrome fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex overflow-visible rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
-          hidden && "translate-y-[200%]",
+          "vt-bottom-nav glass-chrome fixed inset-x-0 bottom-0 z-40 flex overflow-visible border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
+          hidden && "translate-y-full",
         )}
       >
         <BlogChromeLink

@@ -606,7 +606,7 @@ function FeedItemRow({
   // no longer clears overIndex, (2) keep the indicator out of the layout flow so siblings don't
   // shift even when isOver flips quickly.
   const dropIndicator = isOver
-    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-accent-600 before:shadow-[0_0_10px_rgba(99,102,241,0.6)] "
+    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-accent-600 "
     : "";
   // Lifted/transparent state while being dragged so the user perceives the dragged row as "in
   // their hand" rather than just half-faded in place.

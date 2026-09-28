@@ -10,7 +10,7 @@ export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
 
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+      <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
         {t("title")}
       </h2>
 
