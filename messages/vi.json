@@ -3857,18 +3857,20 @@
         "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
       },
       "ctaLogin": "Đăng nhập để bắt đầu",
-      "ctaCreate": "Tạo sự kiện đầu tiên",
       "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
       "demo": {
         "eventTitle": "CLB đọc sách khu phố",
-        "eventDate": "T4, 5/8 · 19:00",
-        "eventPlace": "Quán cà phê tầng 2, Shibuya",
+        "eventDate": "Thứ Tư · 19:00",
+        "eventPlace": "Quán cà phê tầng 2",
         "registerButton": "Đăng ký",
-        "chatShare": "Mở đăng ký buổi tuần này!",
-        "reply1": "Mình! Đăng ký rồi 🙌",
-        "reply2": "Vừa xong luôn!",
-        "reply3": "Mình cũng đi~",
-        "badge": "7 người · còn 13 chỗ"
+        "example": "Ví dụ",
+        "byChannel": "Đăng ký theo kênh",
+        "registered": "{count}/{capacity} người đăng ký",
+        "channels": {
+          "groupChat": "Nhóm chat",
+          "instagram": "Instagram",
+          "qrPoster": "Poster QR"
+        }
       }
     },
     "public": {

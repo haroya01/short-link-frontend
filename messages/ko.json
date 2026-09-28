@@ -3857,18 +3857,20 @@
         "body": "명단 정리도, 마감도 자동. 어느 방에서 왔는지도 보여요."
       },
       "ctaLogin": "로그인하고 시작하기",
-      "ctaCreate": "첫 모집 만들기",
       "ctaHint": "참가자는 로그인 없이 신청할 수 있어요.",
       "demo": {
         "eventTitle": "우리 동네 독서 모임",
-        "eventDate": "8월 5일 (수) 저녁 7시",
-        "eventPlace": "시부야 카페 2층",
+        "eventDate": "수요일 저녁 7시",
+        "eventPlace": "동네 카페 2층",
         "registerButton": "신청하기",
-        "chatShare": "이번 주 모임 신청 받아요!",
-        "reply1": "저요! 신청했어요 🙌",
-        "reply2": "방금 신청 완료!",
-        "reply3": "저도 갈게요~",
-        "badge": "참여 7명 · 남은 자리 13"
+        "example": "예시",
+        "byChannel": "채널별 신청",
+        "registered": "{count}/{capacity}명 신청",
+        "channels": {
+          "groupChat": "단톡방",
+          "instagram": "인스타그램",
+          "qrPoster": "QR 포스터"
+        }
       }
     },
     "public": {
