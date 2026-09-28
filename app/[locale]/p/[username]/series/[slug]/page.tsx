@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowRight, Layers } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";

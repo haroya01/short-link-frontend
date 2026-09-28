@@ -26,7 +26,7 @@ import { PostEdges } from "@/modules/blog/components/post-edges";
 import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { PublishCelebration } from "@/modules/blog/components/publish-celebration";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";

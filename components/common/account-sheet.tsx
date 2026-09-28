@@ -29,7 +29,7 @@ import { blogHref, linksHref, type Product } from "@/lib/host";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";

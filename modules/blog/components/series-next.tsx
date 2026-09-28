@@ -1,6 +1,6 @@
 import { ArrowRight, Layers } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";

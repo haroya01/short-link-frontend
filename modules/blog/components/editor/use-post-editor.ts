@@ -20,7 +20,7 @@ import {
 import { assignPostToSeries } from "@/modules/blog/api/series";
 import { shortenUrl } from "@/lib/api/links";
 import { ApiError } from "@/lib/api/client";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { upgradeLegacyCallouts } from "@/modules/blog/lib/callout";

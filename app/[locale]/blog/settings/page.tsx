@@ -7,7 +7,7 @@ import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
 import { FollowedTagsSetting } from "@/modules/blog/components/followed-tags-setting";
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";

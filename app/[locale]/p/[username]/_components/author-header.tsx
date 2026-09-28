@@ -3,7 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
 import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { BlogLink } from "@/modules/blog/components/blog-link";

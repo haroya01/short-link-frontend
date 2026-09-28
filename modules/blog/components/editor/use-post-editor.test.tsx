@@ -17,7 +17,7 @@ vi.mock("next-intl", () => ({ useLocale: () => "en", useTranslations: () => tran
 vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [async () => true, null] }));
 vi.mock("@/modules/blog/api/series", () => ({ assignPostToSeries: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("@/lib/api/links", () => ({ shortenUrl: vi.fn() }));
-vi.mock("@/modules/blog/components/feed-card", () => ({ postHref: () => "/post" }));
+vi.mock("@/modules/blog/lib/author-href", () => ({ postHref: () => "/post" }));
 
 const POST: PostView = {
   id: 16, title: "Original title", slug: "draft", status: "DRAFT", languageTag: "en",

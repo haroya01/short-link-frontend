@@ -1,7 +1,7 @@
 import { DATE_LOCALE } from "@/lib/date";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 
 function seoulParts(iso: string): { year: string; month: string; day: string } {
   const parts = new Intl.DateTimeFormat("en-CA", {

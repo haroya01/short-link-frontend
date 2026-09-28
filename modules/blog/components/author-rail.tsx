@@ -1,7 +1,7 @@
 import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
