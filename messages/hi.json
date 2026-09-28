@@ -1185,7 +1185,7 @@
       "expiresAt": "समाप्ति",
       "clicks": "मानवीय क्लिक",
       "actions": "क्रियाएँ",
-      "sortAllClicks": "सभी क्लिक के क्रम में",
+      "sortClicks": "मानवीय क्लिक के क्रम में",
       "sortNewest": "नवीनतम",
       "sortAsc": "आरोही",
       "sortDesc": "अवरोही"

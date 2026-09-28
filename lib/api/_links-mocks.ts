@@ -52,7 +52,7 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       humanClicks: page.items.reduce((sum, item) => sum + (item.humanClickCount ?? 0), 0),
       totalLinks: page.items.length, totalClicks: page.items.reduce((sum, item) => sum + item.clickCount, 0),
       clicks7d: page.items.reduce((sum, item) => sum + item.clicksLast7d.reduce((a, b) => a + b, 0), 0),
-      clicksToday: 0, zeroClickLinks: page.items.filter((item) => !item.clickCount).length,
+      clicksToday: 0, zeroClickLinks: page.items.filter((item) => !(item.humanClickCount ?? item.clickCount)).length,
       expiringLinks: 0, timezone: "Asia/Seoul", updatedAt: new Date().toISOString(), dailyClicks: [],
       topLinks: [...page.items].sort((a, b) => (b.humanClickCount ?? 0) - (a.humanClickCount ?? 0)).slice(0, 5),
     };
@@ -81,7 +81,7 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       const qs = new URLSearchParams(path.split("?")[1]);
       const term = qs.get("q")?.toLowerCase();
       let rows = mockLibraryRows().filter((item) => !term || `${item.note} ${item.shortCode} ${item.originalUrl}`.toLowerCase().includes(term));
-      if (qs.get("sort") === "clickCount") rows.sort((a, b) => (a.clickCount - b.clickCount) * (qs.get("dir") === "asc" ? 1 : -1));
+      if (qs.get("sort") === "humanClickCount") rows.sort((a, b) => ((a.humanClickCount ?? a.clickCount) - (b.humanClickCount ?? b.clickCount)) * (qs.get("dir") === "asc" ? 1 : -1));
       const start = Number(qs.get("after") ?? 0);
       const size = Number(qs.get("size") ?? 50);
       return { items: rows.slice(start, start + size), hasMore: start + size < rows.length, nextCursor: start + size < rows.length ? String(start + size) : null };

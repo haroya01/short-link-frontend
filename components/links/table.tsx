@@ -19,7 +19,7 @@ import { cn, formatNumber } from "@/lib/utils";
 import { linkDisplayName } from "@/lib/link-library-view";
 import type { MyLink } from "@/types";
 
-type SortKey = "createdAt" | "clickCount";
+type SortKey = "createdAt" | "humanClickCount";
 type SortDir = "asc" | "desc";
 
 /**
@@ -180,13 +180,13 @@ export function LinksTable({
           </div>
           <SortHeader
             disabled={sortingDisabled}
-            active={sortKey === "clickCount"}
+            active={sortKey === "humanClickCount"}
             dir={sortDir}
             dirLabel={sortDir === "asc" ? t("table.sortAsc") : t("table.sortDesc")}
-            onClick={() => toggleSort("clickCount")}
+            onClick={() => toggleSort("humanClickCount")}
             align="right"
           >
-            {t("table.sortAllClicks")}
+            {t("table.sortClicks")}
           </SortHeader>
           <button
             type="button"

@@ -79,7 +79,7 @@ export default function LinkAnalyticsPage() {
                   <li>
                     {t("zeroClick", { count: data.zeroClickLinks })}
                     <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">·</span>
-                    <Link href="/dashboard?sort=clickCount&dir=asc" className="focus-ring rounded underline decoration-slate-300 underline-offset-4 hover:decoration-current dark:decoration-slate-600">
+                    <Link href="/dashboard?sort=humanClickCount&dir=asc" className="focus-ring rounded underline decoration-slate-300 underline-offset-4 hover:decoration-current dark:decoration-slate-600">
                       {t("viewFewestClicks")}
                     </Link>
                   </li>
