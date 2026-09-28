@@ -441,7 +441,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={selected.size === 0}
                 onClick={() => setStep(2)}
-                className="focus-ring w-full rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+                className="focus-ring w-full rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-40"
               >
                 {selected.size === 0 ? t("pickToContinue") : t("next")}
               </button>
@@ -497,7 +497,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={saving}
                 onClick={() => void connectAll()}
-                className="focus-ring flex flex-1 items-center justify-center rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+                className="focus-ring flex flex-1 items-center justify-center rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : failed ? tCommon("retry") : t("add")}
               </button>
@@ -634,7 +634,7 @@ function NewCollectionForm({
             type="button"
             disabled={!canCreate}
             onClick={onSubmit}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-40"
           >
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {t("create")}

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CornerDownRight, Layers } from "lucide-react";
+import { CornerDownRight, Library } from "lucide-react";
 import { blogHref, blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import { estimateMinutesForCount } from "@/lib/path-progress";
@@ -181,7 +181,7 @@ function EntrancesView({
 function EntranceRow({ entrance }: { entrance: Entrance }) {
   const t = useTranslations("collections");
   const isPath = entrance.kind === "PATH";
-  const Glyph = isPath ? CornerDownRight : Layers;
+  const Glyph = isPath ? CornerDownRight : Library;
   return (
     <BlogLink
       href={blogPath(`/collections/${entrance.id}`)}
@@ -272,14 +272,14 @@ function TabButton({
       onClick={onClick}
       className={`focus-ring px-2.5 py-1.5 text-[15px] font-bold transition-colors ${
         active
-          ? "text-accent-700 dark:text-accent-400"
+          ? "text-slate-900 dark:text-slate-100"
           : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
       }`}
     >
       <span className="relative inline-block pb-2">
         {children}
         {active && (
-          <span className="absolute inset-x-0 -bottom-[9px] h-0.5 rounded-full bg-accent-600 dark:bg-accent-400" />
+          <span className="absolute inset-x-0 -bottom-[9px] h-0.5 rounded-full bg-slate-900 dark:bg-slate-100" />
         )}
       </span>
     </button>

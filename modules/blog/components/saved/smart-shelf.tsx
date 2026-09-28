@@ -369,7 +369,7 @@ function BulkBar({
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="focus-ring inline-flex items-center gap-1 rounded-full bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
+          className="focus-ring inline-flex items-center gap-1 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
         >
           <FolderPlus className="h-3.5 w-3.5" />
           {t("newFolderTo")}

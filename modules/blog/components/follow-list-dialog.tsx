@@ -270,7 +270,7 @@ function RowFollowButton({
         "touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors focus-ring",
         following
           ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
-          : "border-transparent bg-accent-700 text-white hover:bg-accent-800",
+          : "border-transparent bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 hover:bg-accent-800",
       )}
     >
       {following ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
