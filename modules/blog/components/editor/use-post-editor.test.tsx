@@ -7,7 +7,7 @@ import { usePostEditor } from "./use-post-editor";
 const api = vi.hoisted(() => ({
   getPost: vi.fn(), getBlocks: vi.fn(), updatePostMetadata: vi.fn(), replaceBlocks: vi.fn(),
   publishPost: vi.fn(), unpublishPost: vi.fn(), republishPost: vi.fn(), backToDraftPost: vi.fn(),
-  schedulePost: vi.fn(), restoreRevision: vi.fn(), deletePost: vi.fn(),
+  schedulePost: vi.fn(), restoreRevision: vi.fn(), deletePost: vi.fn(), createPost: vi.fn(),
 }));
 const router = vi.hoisted(() => ({ push: vi.fn() }));
 const translate = vi.hoisted(() => (key: string) => key);
@@ -36,9 +36,9 @@ let root: Root;
 let host: HTMLDivElement;
 let editor: ReturnType<typeof usePostEditor>;
 
-async function mount() {
+async function mount(postId: number | null = POST.id) {
   function Harness() {
-    editor = usePostEditor(POST.id, { ready: true, authenticated: true });
+    editor = usePostEditor(postId, { ready: true, authenticated: true });
     return null;
   }
   host = document.createElement("div");
@@ -53,10 +53,12 @@ beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   api.getPost.mockResolvedValue(POST);
   api.getBlocks.mockResolvedValue([]);
-  api.updatePostMetadata.mockImplementation(async (_id, payload) => ({ ...POST, ...payload }));
+  api.updatePostMetadata.mockImplementation(async (id, payload) => ({ ...POST, id, ...payload }));
   api.replaceBlocks.mockResolvedValue([]);
   api.schedulePost.mockResolvedValue({ ...POST, status: "SCHEDULED" });
   api.restoreRevision.mockResolvedValue(POST);
+  api.createPost.mockResolvedValue({ ...POST, id: 77, title: "", slug: "draft-new" });
+  window.history.replaceState(null, "", "/en/blog/write/new");
 });
 
 afterEach(async () => {
@@ -158,5 +160,80 @@ describe("editor persistence boundaries", () => {
     expect(api.replaceBlocks.mock.invocationCallOrder[0]).toBeLessThan(
       api.restoreRevision.mock.invocationCallOrder[0],
     );
+  });
+});
+
+describe("a new post exists only once there is something to keep", () => {
+  it("creates nothing when opened and left blank, even after typing and clearing", async () => {
+    await mount(null);
+    expect(editor.loading).toBe(false);
+    await act(async () => { editor.setTitle("a"); });
+    await act(async () => { editor.setTitle(""); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+    await act(async () => { await editor.leave(); });
+    expect(api.createPost).not.toHaveBeenCalled();
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+    expect(router.push).toHaveBeenCalledOnce();
+  });
+
+  it("creates the draft on the first autosave, saves into it and moves the address to its id", async () => {
+    await mount(null);
+    await act(async () => { editor.setTitle("A first line"); });
+    expect(api.createPost).not.toHaveBeenCalled();
+    await act(async () => { await vi.advanceTimersByTimeAsync(2000); });
+    expect(api.createPost).toHaveBeenCalledOnce();
+    expect(api.createPost).toHaveBeenCalledWith(expect.objectContaining({
+      title: "A first line", slug: expect.stringMatching(/^draft-/),
+    }));
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(77, expect.objectContaining({
+      title: "A first line", slug: "draft-new",
+    }));
+    expect(window.location.pathname).toBe("/en/blog/write/77");
+  });
+
+  it("creates one draft when an image upload and the autosave arrive together", async () => {
+    await mount(null);
+    const created = deferred<PostView>();
+    api.createPost.mockReturnValueOnce(created.promise);
+    await act(async () => { editor.setMarkdown("Body with a photo"); });
+    let upload!: Promise<PostView>;
+    let saving!: Promise<boolean>;
+    await act(async () => { upload = editor.ensurePost(); saving = editor.save(); });
+    await act(async () => {
+      created.resolve({ ...POST, id: 77, title: "", slug: "draft-new" });
+      await upload;
+      await saving;
+    });
+    expect(api.createPost).toHaveBeenCalledOnce();
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(77, [
+      { type: "PARAGRAPH", content: "Body with a photo" },
+    ]);
+  });
+
+  it("discards a never-saved post without deleting anything", async () => {
+    await mount(null);
+    await act(async () => { editor.setTitle("Second thoughts"); });
+    await act(async () => { await editor.remove(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+    expect(api.createPost).not.toHaveBeenCalled();
+    expect(api.deletePost).not.toHaveBeenCalled();
+    expect(router.push).toHaveBeenCalledOnce();
+  });
+
+  it("publishes the draft the save just created", async () => {
+    await mount(null);
+    api.publishPost.mockResolvedValue({ ...POST, id: 77, status: "PUBLISHED", slug: "draft-new" });
+    await act(async () => {
+      editor.setTitle("Ready to go");
+      editor.setTags(["writing"]);
+    });
+    let published: boolean | undefined;
+    await act(async () => {
+      await editor.save();
+      published = await editor.changeStatus("publish");
+    });
+    expect(published).toBe(true);
+    expect(api.createPost).toHaveBeenCalledOnce();
+    expect(api.publishPost).toHaveBeenCalledWith(77);
   });
 });

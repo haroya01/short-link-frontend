@@ -133,7 +133,7 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
   const isAdminPath = matchesAny(stripLocale(pathname), ["/admin"]);
 
   // Once auth resolves to signed-out, route to /login. This is also the safety net for the
-  // expired-session case: an authed page (e.g. /write/new auto-creating a draft) hits a 401, the
+  // expired-session case: an authed page (e.g. the editor saving a draft) hits a 401, the
   // interceptor clears the token, `authenticated` flips false, and we land here instead of flashing
   // a confusing "you're logged out" state in place. Admin paths opt out — they 404 instead.
   useEffect(() => {

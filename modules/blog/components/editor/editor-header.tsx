@@ -27,7 +27,8 @@ export function EditorHeader({
   onDelete,
 }: {
   backHref: string;
-  postId: number;
+  /** null until a new post's first save creates it — there are no revisions yet. */
+  postId: number | null;
   status: PostStatus;
   saving: boolean;
   saved: boolean;
@@ -120,7 +121,7 @@ export function EditorHeader({
               reads as 글 설정, not 발행 설정 (which only fits a draft about to go live). */}
           {isDraft ? t("publish") : t("postSettings")}
         </button>
-        <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />
+        {postId != null && <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />}
         <button
           type="button"
           onClick={onExport}
