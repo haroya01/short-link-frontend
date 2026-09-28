@@ -390,7 +390,7 @@ export function MarkdownEditor({
       MarkdownShortcuts,
       CodeMirrorBlock.configure({ languageLabel: t("codeLanguage") }),
       LinkCardNode,
-      ImageWithCaption.configure({ inline: false }),
+      ImageWithCaption.configure({ inline: false, captionPlaceholder: t("imageCaptionPlaceholder") }),
       AlignableTable.configure({ resizable: false }),
       TableRow,
       AlignableTableHeader,

@@ -295,6 +295,7 @@
   "postEditor": {
     "backToList": "글 목록",
     "titlePlaceholder": "제목",
+    "imageCaptionPlaceholder": "캡션 추가 (선택)",
     "bodyPlaceholder": "'/'를 입력하면 블록을 넣을 수 있어요. 그냥 써도 돼요",
     "blockMenu": {
       "add": "아래에 블록 추가",

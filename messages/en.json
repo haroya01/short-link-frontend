@@ -295,6 +295,7 @@
   "postEditor": {
     "backToList": "Posts",
     "titlePlaceholder": "Title",
+    "imageCaptionPlaceholder": "Add a caption (optional)",
     "bodyPlaceholder": "Type '/' to add a block, or just start writing",
     "blockMenu": {
       "add": "Add block below",

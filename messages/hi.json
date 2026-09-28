@@ -295,6 +295,7 @@
   "postEditor": {
     "backToList": "पोस्ट",
     "titlePlaceholder": "शीर्षक",
+    "imageCaptionPlaceholder": "कैप्शन जोड़ें (वैकल्पिक)",
     "bodyPlaceholder": "ब्लॉक जोड़ने के लिए '/' टाइप करें, या बस लिखना शुरू करें",
     "blockMenu": {
       "add": "नीचे ब्लॉक जोड़ें",

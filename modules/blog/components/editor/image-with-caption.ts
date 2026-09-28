@@ -1,4 +1,4 @@
-import Image from "@tiptap/extension-image";
+import Image, { type ImageOptions } from "@tiptap/extension-image";
 
 // tiptap-markdown 직렬화 state(최소 표면만 사용) — AlignableTable 과 같은 이유의 로컬 타입.
 type MdState = {
@@ -11,7 +11,11 @@ type MdState = {
  * tiptap-markdown 이 표준 image title `![alt](url "캡션")` 로 직렬화한다 → markdownToBlocks 가 캡션으로
  * 싣고 리더가 figcaption 으로 렌더(round-trip). 폭(«wide»/«half» 등)은 기존처럼 alt 마커 + CSS 로 유지.
  */
-export const ImageWithCaption = Image.extend({
+export const ImageWithCaption = Image.extend<ImageOptions & { captionPlaceholder: string }>({
+  addOptions() {
+    return { ...this.parent!(), captionPlaceholder: "" };
+  },
+
   addStorage() {
     return {
       ...this.parent?.(),
@@ -38,6 +42,7 @@ export const ImageWithCaption = Image.extend({
   },
 
   addNodeView() {
+    const captionPlaceholder = this.options.captionPlaceholder;
     return ({ node, editor, getPos }) => {
       let current = node;
 
@@ -59,7 +64,7 @@ export const ImageWithCaption = Image.extend({
       const cap = document.createElement("figcaption");
       cap.className = "tiptap-figcaption";
       cap.setAttribute("contenteditable", "true");
-      cap.setAttribute("data-placeholder", "캡션 추가 (선택)");
+      cap.setAttribute("data-placeholder", captionPlaceholder);
       cap.textContent = current.attrs.title ?? "";
       figure.appendChild(cap);
 
