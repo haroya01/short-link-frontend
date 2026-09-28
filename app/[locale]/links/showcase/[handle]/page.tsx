@@ -7,6 +7,7 @@ import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
 import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-header";
 import { ShareRow } from "@/app/[locale]/u/[username]/_components/share-row";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
+import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { Link } from "@/i18n/navigation";
 
 const SITE_URL =
@@ -136,7 +137,9 @@ export default async function ShowcaseHandlePage({
             copied: tPub("share.copied"),
           }}
         />
-        <p className={`mt-6 text-center text-[11px] ${colors.muted}`}>{tPub("madeWith")}</p>
+        <div className="mt-6 flex justify-center">
+          <MadeWithKurl tone={{ text: colors.muted, strong: colors.primary, border: colors.cardBorder }} />
+        </div>
       </div>
     </div>
   );

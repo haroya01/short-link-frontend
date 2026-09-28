@@ -2207,7 +2207,6 @@
   "publicProfile": {
     "empty": "This user hasn't added any links yet.",
     "viewBlog": "View {count, plural, one {# post} other {# posts}}",
-    "madeWith": "Made with kurl.me",
     "editFab": "Edit",
     "share": {
       "x": "Share on X",
@@ -2780,7 +2779,6 @@
       "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
       "emailFormViewLeadsCta": "View collected emails",
       "leadsLink": "Collected emails",
-      "leadsDisabledTitle": "Add an email form to collect leads here",
       "stats": {
         "title": "My profile visit stats",
         "intro": "Who viewed your public profile and from where, with the same breakdowns as your short-link stats.",

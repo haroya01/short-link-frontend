@@ -2207,7 +2207,6 @@
   "publicProfile": {
     "empty": "Người dùng này chưa thêm liên kết nào.",
     "viewBlog": "Xem {count} bài viết",
-    "madeWith": "Tạo bằng kurl.me",
     "editFab": "Chỉnh sửa",
     "share": {
       "x": "Chia sẻ trên X",
@@ -2780,7 +2779,6 @@
       "emailFormHowItWorks": "Email khách để lại sẽ vào bảng 'khách tiềm năng' riêng tư của bạn. Xuất ra CSV và nhập vào Mailchimp / công cụ email của bạn.",
       "emailFormViewLeadsCta": "Xem email đã thu thập",
       "leadsLink": "Email đã thu thập",
-      "leadsDisabledTitle": "Thêm một biểu mẫu email để thu thập khách tiềm năng ở đây",
       "stats": {
         "title": "Thống kê lượt truy cập hồ sơ của tôi",
         "intro": "Ai đã xem hồ sơ công khai của bạn và từ đâu, với cùng các mục như thống kê liên kết ngắn.",

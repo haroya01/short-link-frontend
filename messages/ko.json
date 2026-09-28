@@ -2207,7 +2207,6 @@
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
     "viewBlog": "글 {count}편 보기",
-    "madeWith": "kurl.me로 만든 페이지",
     "editFab": "편집",
     "share": {
       "x": "X에 공유",
@@ -2780,7 +2779,6 @@
       "emailFormHowItWorks": "방문자가 이메일을 남기면 나만 볼 수 있는 리드 페이지에 모여요. CSV로 받아 Mailchimp · 스티비 · 채널톡 등으로 가져가세요.",
       "emailFormViewLeadsCta": "수집된 이메일 보기",
       "leadsLink": "수집된 이메일",
-      "leadsDisabledTitle": "이메일 폼을 추가하면 리드가 여기 모여요",
       "stats": {
         "title": "내 프로필 방문 통계",
         "intro": "내 공개 프로필을 누가 어디서 봤는지 단축 링크 통계와 같은 항목으로 보여 드려요.",

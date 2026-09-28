@@ -2207,7 +2207,6 @@
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
     "viewBlog": "記事{count}件を見る",
-    "madeWith": "kurl.meで作成",
     "editFab": "編集",
     "share": {
       "x": "X で共有",
@@ -2780,7 +2779,6 @@
       "emailFormHowItWorks": "訪問者が残したメールはオーナーだけが見られる 'leads' ダッシュボードに集約されます。CSV エクスポートで Mailchimp などに取り込めます。",
       "emailFormViewLeadsCta": "収集したメールを見る",
       "leadsLink": "収集したメール",
-      "leadsDisabledTitle": "メールフォームを追加すると、ここでリードを確認できます",
       "stats": {
         "title": "プロフィール訪問統計",
         "intro": "公開プロフィールを誰がどこから見たかを、短縮リンクの統計と同じ項目で確認できます。",

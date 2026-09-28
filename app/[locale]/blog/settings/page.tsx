@@ -116,10 +116,10 @@ export default function BlogSettingsPage() {
               type="button"
               onClick={() => switchLocale(l)}
               aria-pressed={l === locale}
-              className={cn(rowClass, "w-full", l === locale && "text-accent-700 dark:text-accent-300")}
+              className={cn(rowClass, "w-full", l === locale && "font-semibold text-slate-900 dark:text-slate-100")}
             >
               {tLang(l)}
-              {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+              {l === locale && <Check className="h-4 w-4 text-slate-900 dark:text-slate-100" />}
             </button>
           ))}
         </div>

@@ -83,10 +83,10 @@ export function FeedDefaultTabSetting({ rowClass }: { rowClass: string }) {
             onClick={() => choose(opt)}
             aria-pressed={tab === opt}
             disabled={tab === null || saving}
-            className={cn(rowClass, "w-full", tab === opt && "text-accent-700 dark:text-accent-300")}
+            className={cn(rowClass, "w-full", tab === opt && "font-semibold text-slate-900 dark:text-slate-100")}
           >
             {tFeed(TAB_LABEL_KEY[opt])}
-            {tab === opt && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+            {tab === opt && <Check className="h-4 w-4 text-slate-900 dark:text-slate-100" />}
           </button>
         ))}
         {failed && (

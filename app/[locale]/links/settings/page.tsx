@@ -11,6 +11,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
@@ -106,7 +107,13 @@ export default function SettingsPage() {
   }
 
   if (!me) {
-    return <div className="container max-w-2xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
+    return (
+      <div aria-busy className="container max-w-2xl space-y-6 py-12">
+        <Skeleton className="h-9 w-32" />
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+      </div>
+    );
   }
 
   return (
