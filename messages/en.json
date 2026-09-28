@@ -1185,7 +1185,7 @@
       "expiresAt": "Expires",
       "clicks": "Human clicks",
       "actions": "Actions",
-      "sortAllClicks": "Total clicks",
+      "sortClicks": "Human clicks",
       "sortNewest": "Newest",
       "sortAsc": "ascending",
       "sortDesc": "descending"

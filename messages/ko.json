@@ -1185,7 +1185,7 @@
       "expiresAt": "만료",
       "clicks": "사람 클릭",
       "actions": "액션",
-      "sortAllClicks": "전체 클릭순",
+      "sortClicks": "사람 클릭순",
       "sortNewest": "만든 순",
       "sortAsc": "오름차순",
       "sortDesc": "내림차순"

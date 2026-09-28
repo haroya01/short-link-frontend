@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { mockLinksResponse } from "../lib/api/_links-mocks";
 
 test.describe("dashboard is the signed-in home", () => {
   test("opening the home while signed in lands on the dashboard with the shortener on top", async ({ page }) => {
@@ -26,6 +27,25 @@ test.describe("dashboard is the signed-in home", () => {
     await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toHaveValue("https://example.com/shared");
     await page.waitForTimeout(500);
     expect(created).toBe(0);
+  });
+
+  test("the click sort asks for human clicks, and an old total-click address lands there too", async ({ page }) => {
+    const asked: string[] = [];
+    await signIn(page);
+    await mockBackend(page, {
+      "GET /api/v1/links/me": (route) => {
+        const url = new URL(route.request().url());
+        asked.push(`${url.searchParams.get("sort")} ${url.searchParams.get("dir")}`);
+        return route.fulfill({ json: mockLinksResponse(url.pathname + url.search, "GET") });
+      },
+    });
+    await page.goto("/ko/dashboard");
+    await page.getByRole("button", { name: /사람 클릭순/ }).click();
+    await expect.poll(() => asked.at(-1)).toBe("humanClickCount desc");
+
+    await page.goto("/ko/dashboard?sort=clickCount&dir=asc");
+    await expect.poll(() => asked.at(-1)).toBe("humanClickCount asc");
+    await expect(page).toHaveURL(/\/ko\/dashboard$/);
   });
 
   test("the phone composer sets code and password before shortening", async ({ page }) => {

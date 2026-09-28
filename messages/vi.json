@@ -1185,7 +1185,7 @@
       "expiresAt": "Hết hạn",
       "clicks": "Lượt nhấp của người",
       "actions": "Hành động",
-      "sortAllClicks": "Xếp theo mọi lượt nhấp",
+      "sortClicks": "Xếp theo lượt nhấp của người",
       "sortNewest": "Mới nhất",
       "sortAsc": "tăng dần",
       "sortDesc": "giảm dần"

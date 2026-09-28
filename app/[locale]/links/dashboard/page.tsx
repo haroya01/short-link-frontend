@@ -60,7 +60,8 @@ export default function DashboardPage() {
     const expiry = params.get("expiry");
     const sort = params.get("sort");
     if (expiry === "EXPIRING_SOON") setFilters((f) => ({ ...f, expiry, after: undefined }));
-    if (sort === "clickCount") setFilters((f) => ({ ...f, sort, dir: params.get("dir") === "asc" ? "asc" : "desc", after: undefined }));
+    if (sort === "humanClickCount" || sort === "clickCount")
+      setFilters((f) => ({ ...f, sort: "humanClickCount", dir: params.get("dir") === "asc" ? "asc" : "desc", after: undefined }));
     if (expiry || sort) history.replaceState(history.state, "", window.location.pathname + window.location.hash);
     setUrlFiltersRead(true);
   }, []);

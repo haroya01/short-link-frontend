@@ -1185,7 +1185,7 @@
       "expiresAt": "有効期限",
       "clicks": "人によるクリック",
       "actions": "操作",
-      "sortAllClicks": "総クリック順",
+      "sortClicks": "人によるクリック順",
       "sortNewest": "作成順",
       "sortAsc": "昇順",
       "sortDesc": "降順"
