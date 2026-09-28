@@ -1,7 +1,9 @@
 import { request } from "./client";
-import { MOCK_REPORTS } from "./abuse-reports-mock-data";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+// 목 신고 목록은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
+const reportMocks: typeof import("./abuse-reports-mock-data") | null =
+  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./abuse-reports-mock-data") : null;
 
 export type AbuseSubjectType = "POST" | "USER" | "COMMENT";
 
@@ -81,9 +83,9 @@ export async function submitAbuseReport(payload: {
 
 /** Admin only. */
 export async function listAbuseReports(status?: AbuseReportStatus): Promise<AbuseReportView[]> {
-  if (USE_MOCKS) {
+  if (reportMocks) {
     return Promise.resolve(
-      status ? MOCK_REPORTS.filter((r) => r.status === status) : MOCK_REPORTS,
+      status ? reportMocks.MOCK_REPORTS.filter((r) => r.status === status) : reportMocks.MOCK_REPORTS,
     );
   }
   const qs = status ? `?status=${status}` : "";
@@ -105,8 +107,8 @@ export async function resolveAbuseReport(
     adminNote?: string;
   },
 ): Promise<AbuseReportView> {
-  if (USE_MOCKS) {
-    const base = MOCK_REPORTS.find((r) => r.id === id);
+  if (reportMocks) {
+    const base = reportMocks.MOCK_REPORTS.find((r) => r.id === id);
     const now = new Date().toISOString();
     // Mirror the backend: an UNPUBLISH_POST / DELETE_COMMENT action removes the subject.
     const removes = payload.action === "UNPUBLISH_POST" || payload.action === "DELETE_COMMENT";

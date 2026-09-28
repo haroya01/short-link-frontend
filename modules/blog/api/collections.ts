@@ -8,22 +8,9 @@
  * "이 문장이 속한 길" (which paths a sentence belongs to).
  */
 import { request } from "@/lib/api/client";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
-import {
-  mockCollectionDetail,
-  mockCollectionsContainingHighlight,
-  mockConnect,
-  mockCreateCollection,
-  mockDeleteCollection,
-  mockDisconnect,
-  mockDiscoverConnections,
-  mockMineCollections,
-  mockPostCollections,
-  mockPostCollectionsBatch,
-  mockPublicConnectionFeed,
-  mockReorderConnections,
-  mockUpdateCollection,
-} from "@/modules/blog/api/_mocks-collections";
+import { collectionMocks } from "@/modules/blog/api/_mock-gates";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -176,7 +163,7 @@ export function listMyCollections(block?: {
   blockType: ConnectionBlockType;
   refId: number;
 }): Promise<CollectionSummary[]> {
-  if (USE_MOCKS) return Promise.resolve(mockMineCollections(block));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockMineCollections(block));
   const query = block
     ? `?blockType=${encodeURIComponent(block.blockType)}&refId=${block.refId}`
     : "";
@@ -188,8 +175,9 @@ export function listMyCollections(block?: {
 export async function listPublicCollectionsByUsername(
   username: string,
 ): Promise<CollectionSummary[]> {
-  if (USE_MOCKS) {
-    return Promise.resolve(mockMineCollections().filter((c) => c.visibility === "PUBLIC"));
+  if (collectionMocks) {
+    const mine = collectionMocks.mockMineCollections();
+    return Promise.resolve(mine.filter((c) => c.visibility === "PUBLIC"));
   }
   const res = await fetch(
     `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/collections`,
@@ -203,7 +191,7 @@ export async function listPublicCollectionsByUsername(
  *  private ones need ownership (the backend enforces it). 인증을 실어야 소유자가 자기 비공개
  *  컬렉션을 볼 수 있다 — 이전의 헤더 없는 raw fetch 는 로그인 상태에서도 401 → "찾을 수 없어요". */
 export async function getCollection(id: number): Promise<CollectionDetail | null> {
-  if (USE_MOCKS) return Promise.resolve(mockCollectionDetail(id));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockCollectionDetail(id));
   try {
     return await request<CollectionDetail>(`/api/v1/collections/${id}`, { method: "GET" });
   } catch {
@@ -213,7 +201,7 @@ export async function getCollection(id: number): Promise<CollectionDetail | null
 
 /** Discover — connection flow of curators the viewer follows (newest first). Empty when following 0. */
 export function listDiscoverConnections(): Promise<DiscoverFeed> {
-  if (USE_MOCKS) return Promise.resolve(mockDiscoverConnections());
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockDiscoverConnections());
   return request<DiscoverFeed>("/api/v1/feed/connections", { method: "GET" });
 }
 
@@ -226,7 +214,7 @@ export function listDiscoverConnections(): Promise<DiscoverFeed> {
  * `/blog` static — matching the sibling public-post feed reads, not per-request `no-store`.
  */
 export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
-  if (USE_MOCKS) return Promise.resolve(mockPublicConnectionFeed(page, size));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockPublicConnectionFeed(page, size));
   try {
     const res = await fetch(
       `${API_BASE}/api/v1/public/feed/connections?page=${page}&size=${size}`,
@@ -242,7 +230,7 @@ export async function listPublicConnectionFeed(page = 0, size = 12): Promise<Dis
 /** Public — which PUBLIC collections/paths a post is connected into (most recently touched first).
  *  Backs the feed card's "속함" line. Readable signed-out; a missing post just yields []. */
 export async function listPublicPostCollections(postId: number): Promise<CollectionSummary[]> {
-  if (USE_MOCKS) return Promise.resolve(mockPostCollections(postId));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockPostCollections(postId));
   try {
     const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/collections`, {
       cache: "no-store",
@@ -276,7 +264,7 @@ export async function listPublicPostCollectionsBatch(
 ): Promise<PostCollectionsView[]> {
   const unique = Array.from(new Set(ids.filter((id) => Number.isFinite(id))));
   if (unique.length === 0) return [];
-  if (USE_MOCKS) return Promise.resolve(mockPostCollectionsBatch(unique));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockPostCollectionsBatch(unique));
 
   const chunks: number[][] = [];
   for (let i = 0; i < unique.length; i += POST_COLLECTIONS_BATCH_CAP) {
@@ -304,7 +292,8 @@ export async function listPublicPostCollectionsBatch(
 export async function listCollectionsContainingHighlight(
   highlightId: number,
 ): Promise<CollectionSummary[]> {
-  if (USE_MOCKS) return Promise.resolve(mockCollectionsContainingHighlight(highlightId));
+  if (collectionMocks)
+    return Promise.resolve(collectionMocks.mockCollectionsContainingHighlight(highlightId));
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/collections`, {
     cache: "no-store",
   });
@@ -343,7 +332,7 @@ export async function listKindredCurators(username: string): Promise<KindredCura
 
 /** Authenticated — create a collection / path. Returns the new summary (count 0). */
 export function createCollection(payload: NewCollection): Promise<CollectionSummary> {
-  if (USE_MOCKS) return Promise.resolve(mockCreateCollection(payload));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockCreateCollection(payload));
   return request<CollectionSummary>("/api/v1/collections", { method: "POST", body: payload });
 }
 
@@ -359,15 +348,15 @@ export interface CollectionEdit {
 /** Authenticated — edit a collection's name / blurb / visibility (owner only, enforced by the backend).
  *  `PUT /collections/{id}`. Returns the updated summary. Mirrors the kurl-ios `CollectionsAPI.edit`. */
 export function updateCollection(id: number, payload: CollectionEdit): Promise<CollectionSummary> {
-  if (USE_MOCKS) return Promise.resolve(mockUpdateCollection(id, payload));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockUpdateCollection(id, payload));
   return request<CollectionSummary>(`/api/v1/collections/${id}`, { method: "PUT", body: payload });
 }
 
 /** Authenticated — delete a collection (its connections go with it; owner only, backend-enforced). 204.
  *  `DELETE /collections/{id}`. Mirrors the kurl-ios `CollectionsAPI.delete`. */
 export function deleteCollection(id: number): Promise<void> {
-  if (USE_MOCKS) {
-    mockDeleteCollection(id);
+  if (collectionMocks) {
+    collectionMocks.mockDeleteCollection(id);
     return Promise.resolve();
   }
   return request(`/api/v1/collections/${id}`, { method: "DELETE" });
@@ -378,8 +367,8 @@ export function connectBlock(
   collectionId: number,
   payload: { blockType: ConnectionBlockType; refId: number; why?: string | null },
 ): Promise<void> {
-  if (USE_MOCKS) {
-    mockConnect(collectionId, payload);
+  if (collectionMocks) {
+    collectionMocks.mockConnect(collectionId, payload);
     return Promise.resolve();
   }
   return request(`/api/v1/collections/${collectionId}/connections`, {
@@ -390,8 +379,8 @@ export function connectBlock(
 
 /** Authenticated — reorder a PATH's connections (the full ordered id list). 204. */
 export function reorderConnections(collectionId: number, connectionIds: number[]): Promise<void> {
-  if (USE_MOCKS) {
-    mockReorderConnections(collectionId, connectionIds);
+  if (collectionMocks) {
+    collectionMocks.mockReorderConnections(collectionId, connectionIds);
     return Promise.resolve();
   }
   return request(`/api/v1/collections/${collectionId}/connections/order`, {
@@ -403,8 +392,8 @@ export function reorderConnections(collectionId: number, connectionIds: number[]
 /** Authenticated — remove a connection from a collection (owner only, backend-enforced). 204.
  *  `DELETE /collections/{id}/connections/{connectionId}`. Mirrors the kurl-ios `CollectionsAPI.disconnect`. */
 export function disconnect(collectionId: number, connectionId: number): Promise<void> {
-  if (USE_MOCKS) {
-    mockDisconnect(collectionId, connectionId);
+  if (collectionMocks) {
+    collectionMocks.mockDisconnect(collectionId, connectionId);
     return Promise.resolve();
   }
   return request(`/api/v1/collections/${collectionId}/connections/${connectionId}`, {

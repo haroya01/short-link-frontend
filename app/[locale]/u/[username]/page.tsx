@@ -12,7 +12,7 @@ import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
 import { ShareRow } from "./_components/share-row";
 import { THEME_TABLE } from "./_lib/theme";
 import { fetchProfile } from "./_lib/fetch-profile";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { ArrowRight, BookOpen } from "lucide-react";
 
 const SITE_URL =

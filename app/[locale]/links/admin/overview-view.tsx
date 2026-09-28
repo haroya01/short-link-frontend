@@ -1,34 +1,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { Activity, Link2, MousePointerClick, ShieldBan, Users } from "lucide-react";
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
 import { AdminAccessToken } from "@/components/admin/access-token";
 import { ActivityFeed } from "@/components/admin/activity-feed";
-import { AdminDeepStats } from "@/components/admin/deep-stats";
 import { AdminLinkMetrics } from "@/components/admin/link-metrics";
 import { AdminRequestMetrics } from "@/components/admin/request-metrics";
 import { AdminRouteMetrics } from "@/components/admin/route-metrics";
 import { AdminTopLinksTable, AdminTopUsersTable } from "@/components/admin/top-tables";
+import type { AdminTrendRow } from "@/components/admin/trend-chart";
 import { Section } from "@/components/common/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { Link } from "@/i18n/navigation";
 import { formatNumber } from "@/lib/utils";
 import type { AdminHealthMetrics, AdminOverview } from "@/types";
+
+// recharts 는 차트가 실제로 그려질 때만 받는다. 추이 칸은 h-72 고정이라 자리표시자가 같은 칸을 채우고,
+// 심층 통계는 첫 화면 아래라 비워 둔다.
+const AdminTrendChart = dynamic(
+  () => import("@/components/admin/trend-chart").then((m) => m.AdminTrendChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40" />
+    ),
+  },
+);
+const AdminDeepStats = dynamic(
+  () => import("@/components/admin/deep-stats").then((m) => m.AdminDeepStats),
+  { ssr: false },
+);
 
 export function AdminOverviewView() {
   const t = useTranslations("admin");
@@ -190,53 +197,14 @@ export function AdminOverviewView() {
 
       <Section title={t("section.trend.title")} description={t("section.trend.desc")}>
         <div className="h-72 w-full">
-          <ResponsiveContainer className="text-slate-500 dark:text-slate-400" width="100%" height="100%">
-            <LineChart data={trendData} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 11, fill: "currentColor" }}
-                tickFormatter={(v: string) => v.slice(5)}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: "currentColor" }}
-                tickLine={false}
-                axisLine={false}
-                allowDecimals={false}
-              />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-              {/* Three series share one accent — clicks (the lead metric) carries brand-600,
-                  links + signups lean on slate so the chart reads as brand-anchored rather than
-                  rainbow-coded. Distinguishable by hue weight, not unrelated palettes. */}
-              <Line
-                type="monotone"
-                dataKey="signups"
-                stroke="#94a3b8"
-                strokeWidth={1.5}
-                dot={false}
-                name={t("trend.signups")}
-              />
-              <Line
-                type="monotone"
-                dataKey="links"
-                stroke="#334155"
-                strokeWidth={1.5}
-                dot={false}
-                name={t("trend.links")}
-              />
-              <Line
-                type="monotone"
-                dataKey="clicks"
-                stroke="#059669"
-                strokeWidth={1.5}
-                dot={false}
-                name={t("trend.clicks")}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <AdminTrendChart
+            data={trendData}
+            labels={{
+              signups: t("trend.signups"),
+              links: t("trend.links"),
+              clicks: t("trend.clicks"),
+            }}
+          />
         </div>
       </Section>
 
@@ -374,15 +342,13 @@ function Kpi({
   );
 }
 
-type TrendRow = { date: string; signups: number; links: number; clicks: number };
-
-function mergeTrends(d: AdminOverview): TrendRow[] {
+function mergeTrends(d: AdminOverview): AdminTrendRow[] {
   // BE returns the daily* arrays as null when a fresh DB has no events yet — iterating
   // {@code for (const p of null)} throws TypeError "undefined is not iterable" and tanks
   // the whole admin page through global-error.tsx (the recent /ko/admin "Application
   // error" reports). Null-coalesce to [] so empty state renders an empty chart rather than
   // crashing the route.
-  const map = new Map<string, TrendRow>();
+  const map = new Map<string, AdminTrendRow>();
   for (const p of d.dailySignups ?? []) {
     map.set(p.date, { date: p.date, signups: p.count, links: 0, clicks: 0 });
   }

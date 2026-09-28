@@ -37,7 +37,7 @@ import {
   type Connection,
 } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock, quoteHref } from "@/modules/blog/components/connection-block";
 import { PathReorder } from "@/modules/blog/components/path-reorder";

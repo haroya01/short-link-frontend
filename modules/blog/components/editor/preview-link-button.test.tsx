@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock("next-intl", () => ({ useLocale: () => "en", useTranslations: () => (key: string) => key }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/modules/blog/api/posts", () => ({ getPost: mocks.getPost, issuePreviewToken: mocks.issuePreviewToken }));
-vi.mock("@/modules/blog/components/feed-card", () => ({ postHref: mocks.postHref }));
+vi.mock("@/modules/blog/lib/author-href", () => ({ postHref: mocks.postHref }));
 
 let root: Root;
 let host: HTMLDivElement;

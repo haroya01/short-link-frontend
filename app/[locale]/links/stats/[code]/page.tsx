@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
@@ -12,7 +11,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
-import { HeaderSkeleton } from "./_components/header";
+import { StatsBackLink } from "./_components/back-button";
+import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
 
 // The live click feed fires one SSE tick per click (no backend batching). Refetching the heavy
@@ -23,7 +23,6 @@ const STATS_REFETCH_THROTTLE_MS = 5000;
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
   const t = useTranslations("stats");
-  const tNav = useTranslations("nav");
   const { authenticated, ready } = useAuth();
   const code = params.code;
 
@@ -88,16 +87,10 @@ export default function StatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <Link
-        href="/dashboard"
-        className="touch-target focus-ring inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-      >
-        <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
-        {tNav("myLinks")}
-      </Link>
+      <StatsBackLink />
 
       {loading ? (
-        <HeaderSkeleton shortCode={code} />
+        <StatsSkeleton shortCode={code} />
       ) : realError ? (
         <ErrorState message={realError} onRetry={() => refetch()} />
       ) : notFound || !data ? (

@@ -19,7 +19,15 @@ const LIMIT = 5;
  */
 export function HomeRecent({ exclude = [] }: { exclude?: string[] }) {
   const { ready, authenticated } = useAuth();
-  if (!ready) return null;
+  if (!ready) {
+    // /me 가 오기 전 — pre-paint 인증 힌트가 로그인 사용자라고 하면 계정 목록 자리를 먼저 잡아,
+    // 목록이 도착할 때 아래 내용이 밀리지 않게 한다(로그아웃 방문자에겐 CSS 로 숨음).
+    return (
+      <div data-auth-slot="authed">
+        <AccountRecentPending />
+      </div>
+    );
+  }
   return authenticated ? <AccountRecent exclude={exclude} /> : <BrowserRecent exclude={exclude} />;
 }
 
@@ -75,17 +83,7 @@ function AccountRecent({ exclude }: { exclude: string[] }) {
     .filter((link) => !exclude.includes(link.shortCode))
     .slice(0, LIMIT);
 
-  if (query.isPending) {
-    return (
-      <RecentList title={t("recentTitle")} busy>
-        {[0, 1, 2].map((i) => (
-          <li key={i} className="py-2.5">
-            <div className="h-5 w-2/3 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
-          </li>
-        ))}
-      </RecentList>
-    );
-  }
+  if (query.isPending) return <AccountRecentPending />;
   if (items.length === 0) return null;
 
   return (
@@ -115,6 +113,19 @@ function AccountRecent({ exclude }: { exclude: string[] }) {
             {t("recentClicks", { count: link.humanClickCount ?? link.clickCount })}
           </span>
           <CopyButton size="sm" variant="ghost" label="" value={link.shortUrl} />
+        </li>
+      ))}
+    </RecentList>
+  );
+}
+
+function AccountRecentPending() {
+  const t = useTranslations("home");
+  return (
+    <RecentList title={t("recentTitle")} busy>
+      {[0, 1, 2].map((i) => (
+        <li key={i} className="py-2.5">
+          <div className="h-5 w-2/3 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
         </li>
       ))}
     </RecentList>

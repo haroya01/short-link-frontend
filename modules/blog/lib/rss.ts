@@ -1,5 +1,5 @@
 import type { PublicFeedItem, PublicPostListItem, PublicAuthor } from "@/modules/blog/api/public-posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 
 /** Minimal RSS 2.0 builder for the blog + per-author feeds. Path is `/feed` (not `.xml`) because the
  *  middleware skips dotted paths, which would break the subdomain/blog-host rewrites. Feed readers

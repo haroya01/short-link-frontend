@@ -8,7 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { StatsCards } from "@/components/links/stats/cards";
 import { Section } from "@/components/common/section";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
-import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { LazyDailyChart } from "@/components/links/stats/charts/lazy-charts";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { CountryTable } from "@/components/links/stats/country-table";
@@ -102,7 +102,7 @@ export default function PublicStatsPage() {
           description={t("section.daily.desc", { tz: data.timezone })}
           className="lg:col-span-2"
         >
-          <DailyChart data={data.dailyClicks} />
+          <LazyDailyChart data={data.dailyClicks} />
         </Section>
         <Section
           id="section-device"

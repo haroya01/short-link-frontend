@@ -1,14 +1,6 @@
 import { request } from "@/lib/api/client";
 import type { PostView } from "./posts";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
-import {
-  mockCreateSeries,
-  mockDeleteSeries,
-  mockGetSeries,
-  mockListSeries,
-  mockSetSeriesPosts,
-  mockUpdateSeries,
-} from "@/modules/blog/api/_mocks-authoring";
+import { authoringMocks } from "@/modules/blog/api/_mock-gates";
 
 export interface SeriesView {
   id: number;
@@ -25,17 +17,17 @@ export interface SeriesDetailView {
 }
 
 export function listSeries(): Promise<SeriesView[]> {
-  if (USE_MOCKS) return Promise.resolve(mockListSeries());
+  if (authoringMocks) return Promise.resolve(authoringMocks.mockListSeries());
   return request<SeriesView[]>("/api/v1/series", { method: "GET" });
 }
 
 export function getSeries(id: number): Promise<SeriesDetailView> {
-  if (USE_MOCKS) return Promise.resolve(mockGetSeries(id));
+  if (authoringMocks) return Promise.resolve(authoringMocks.mockGetSeries(id));
   return request<SeriesDetailView>(`/api/v1/series/${id}`, { method: "GET" });
 }
 
 export function createSeries(payload: { slug: string; title: string }): Promise<SeriesDetailView> {
-  if (USE_MOCKS) return Promise.resolve(mockCreateSeries(payload));
+  if (authoringMocks) return Promise.resolve(authoringMocks.mockCreateSeries(payload));
   return request<SeriesDetailView>("/api/v1/series", { method: "POST", body: payload });
 }
 
@@ -44,12 +36,12 @@ export function updateSeries(
   id: number,
   payload: { title: string; slug: string },
 ): Promise<SeriesDetailView> {
-  if (USE_MOCKS) return Promise.resolve(mockUpdateSeries(id, payload));
+  if (authoringMocks) return Promise.resolve(authoringMocks.mockUpdateSeries(id, payload));
   return request<SeriesDetailView>(`/api/v1/series/${id}`, { method: "PUT", body: payload });
 }
 
 export function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDetailView> {
-  if (USE_MOCKS) return Promise.resolve(mockSetSeriesPosts(id, postIds));
+  if (authoringMocks) return Promise.resolve(authoringMocks.mockSetSeriesPosts(id, postIds));
   return request<SeriesDetailView>(`/api/v1/series/${id}/posts`, {
     method: "PUT",
     body: { postIds },
@@ -57,8 +49,8 @@ export function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDet
 }
 
 export function deleteSeries(id: number): Promise<void> {
-  if (USE_MOCKS) {
-    mockDeleteSeries(id);
+  if (authoringMocks) {
+    authoringMocks.mockDeleteSeries(id);
     return Promise.resolve();
   }
   return request(`/api/v1/series/${id}`, { method: "DELETE" });

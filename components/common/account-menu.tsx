@@ -21,7 +21,7 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
 import { blogHref, linksHref, type Product } from "@/lib/host";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 

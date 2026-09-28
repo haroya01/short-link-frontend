@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { blogHref } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { ErrorState } from "@/components/common/error-state";

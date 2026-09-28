@@ -1,9 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "@/lib/auth";
 import { getLinkOverview } from "@/lib/api/link-library";
 import { formatNumber } from "@/lib/utils";
@@ -13,6 +13,15 @@ import { ErrorState } from "@/components/common/error-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { LinkListRow } from "@/components/links/link-list-row";
 import { WeeklyInsightsCard } from "@/components/links/stats/weekly-insights-card";
+
+// 하단 탭 '분석'은 어느 화면에서나 프리페치된다 — recharts 는 막대를 그릴 때만 받는다. 막대 칸은
+// h-44 고정이라 자리표시자가 같은 칸을 채운다.
+const WeekBars = dynamic(() => import("./_components/week-bars").then((m) => m.WeekBars), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40" />
+  ),
+});
 
 export default function LinkAnalyticsPage() {
   const reducedMotion = useReducedMotion();
@@ -56,29 +65,7 @@ export default function LinkAnalyticsPage() {
             </p>
             {daily.length > 0 && (
               <div className="mt-6 h-44 text-slate-500 dark:text-slate-400" role="img" aria-label={daily.map((d) => `${d.label} ${d.count}`).join(", ")}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={daily} margin={{ top: 4, right: 0, bottom: 0, left: -24 }}>
-                    <CartesianGrid vertical={false} stroke="currentColor" className="text-slate-100 dark:text-slate-800" />
-                    <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "currentColor" }} />
-                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "currentColor" }} />
-                    <Tooltip
-                      cursor={{ fill: "rgba(148,163,184,0.12)" }}
-                      contentStyle={{
-                        borderRadius: 12,
-                        border: "1px solid var(--chart-tooltip-border)",
-                        backgroundColor: "var(--chart-tooltip-bg)",
-                        color: "var(--chart-tooltip-text)",
-                        fontSize: 12,
-                        padding: "8px 12px",
-                      }}
-                      itemStyle={{ color: "var(--chart-tooltip-text)" }}
-                      labelStyle={{ color: "var(--chart-tooltip-text)" }}
-                      formatter={(value: number) => [formatNumber(value), t("humanClicks")]}
-                      labelFormatter={(label: string) => label}
-                    />
-                    <Bar isAnimationActive={!reducedMotion} dataKey="count" fill="#059669" radius={[3, 3, 0, 0]} maxBarSize={36} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <WeekBars data={daily} seriesLabel={t("humanClicks")} animate={!reducedMotion} />
               </div>
             )}
             <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">{t("scopeNote", { tz: data.timezone })}</p>

@@ -39,6 +39,9 @@ const nextConfig = {
   output: "standalone",
   env: {
     NEXT_PUBLIC_BUILD_DATE: new Date().toISOString().slice(0, 10),
+    // 목(mock) 모드는 빌드 시점 상수로 — 값이 빌드에 박혀야 목 분기가 정적으로 죽어 프로덕션
+    // 번들에서 픽스처가 빠진다(미정의면 런타임 비교로 남아 모든 라우트에 목 데이터가 실렸다).
+    NEXT_PUBLIC_USE_MOCKS: process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? "1" : "0",
   },
   // 목록 썸네일 최적화(next/image) 허용 호스트 — 커버가 실제로 사는 곳만 연다('**' 금지:
   // 임의 호스트 프록시는 최적화 비용 악용 표면). 목록 밖 호스트는 CoverThumb 가 원본
@@ -109,4 +112,10 @@ module.exports = withSentryConfig(withNextIntl(nextConfig), {
   silent: !process.env.CI,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
+  // 리플레이 압축 워커(excludeReplayWorker)는 빼지 않는다 — 직접 호스팅하는 workerUrl 이 없다.
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+    excludeReplayIframe: true,
+    excludeReplayShadowDom: true,
+  },
 });

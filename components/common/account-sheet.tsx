@@ -27,7 +27,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, linksHref } from "@/lib/host";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";

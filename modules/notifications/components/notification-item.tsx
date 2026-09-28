@@ -16,7 +16,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";

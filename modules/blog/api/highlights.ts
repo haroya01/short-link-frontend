@@ -1,8 +1,9 @@
 import { request } from "@/lib/api/client";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
-import { mockHighlightFeed, mockMyHighlights } from "@/modules/blog/api/_mocks-collections";
 import type { FeedSource } from "./collections";
 import type { PublicAuthor } from "./public-posts";
+import { collectionMocks } from "@/modules/blog/api/_mock-gates";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -115,7 +116,7 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
 /** Authenticated — every highlight the viewer has drawn, newest first, each with its source post
  *  (their private "내 서재"). */
 export async function listMyHighlights(): Promise<MyHighlightItem[]> {
-  if (USE_MOCKS) return mockMyHighlights();
+  if (collectionMocks) return collectionMocks.mockMyHighlights();
   return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
 }
 
@@ -130,7 +131,7 @@ export function getHighlightFeed(
   size = 20,
   scope?: FeedSource,
 ): Promise<HighlightFeedPage> {
-  if (USE_MOCKS) return Promise.resolve(mockHighlightFeed(page, size, scope));
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockHighlightFeed(page, size, scope));
   const scopeParam = scope === "global" ? "&scope=global" : "";
   return request<HighlightFeedPage>(
     `/api/v1/highlights/feed?page=${page}&size=${size}${scopeParam}`,

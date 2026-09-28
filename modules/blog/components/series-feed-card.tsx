@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Layers } from "lucide-react";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";

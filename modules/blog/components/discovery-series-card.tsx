@@ -6,7 +6,7 @@ import { ChevronRight, Layers } from "lucide-react";
 import { DATE_LOCALE } from "@/lib/date";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";

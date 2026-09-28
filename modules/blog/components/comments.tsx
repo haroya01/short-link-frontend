@@ -16,7 +16,7 @@ import {
   type CommentView,
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";

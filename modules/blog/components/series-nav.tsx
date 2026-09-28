@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { SeriesSwitchButtons } from "@/modules/blog/components/series-swipe";

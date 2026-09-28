@@ -8,7 +8,7 @@ import { dateLocale } from "@/lib/date";
 import type { FeedSource } from "@/modules/blog/api/collections";
 import { getHighlightFeed, type HighlightFeedItem } from "@/modules/blog/api/highlights";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { quoteHref } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";

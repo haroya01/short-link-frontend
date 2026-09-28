@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesPostRef } from "@/modules/blog/api/public-posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 

@@ -2,7 +2,7 @@
 
 import type { Connection, ConnectionEvent } from "@/modules/blog/api/collections";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 
 /** The flat block fields shared by a {@link Connection} and a {@link ConnectionEvent}. */
 type BlockFields = Pick<
