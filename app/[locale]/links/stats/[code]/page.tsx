@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
@@ -13,6 +12,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { useToast } from "@/components/ui/toast";
+import { StatsBackButton } from "./_components/back-button";
 import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
 
@@ -23,8 +23,6 @@ const STATS_REFETCH_THROTTLE_MS = 5000;
 
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
-  const router = useRouter();
-  const locale = useLocale();
   const t = useTranslations("stats");
   const tResult = useTranslations("result");
   const { authenticated, ready } = useAuth();
@@ -92,21 +90,7 @@ export default function StatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <button
-        onClick={() => {
-          // Direct entry (no in-app history) leaves router.back() a no-op — fall back to the link
-          // dashboard so the button always goes somewhere.
-          if (typeof window !== "undefined" && window.history.length > 1) {
-            router.back();
-          } else {
-            router.push(`/${locale}/dashboard`);
-          }
-        }}
-        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        {t("back")}
-      </button>
+      <StatsBackButton label={t("back")} />
 
       {loading ? (
         <StatsSkeleton shortCode={code} />
