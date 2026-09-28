@@ -166,7 +166,7 @@ export default function WriteIndexPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
-          <h1 className="whitespace-nowrap text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
+          <h1 className="whitespace-nowrap text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("myPosts")}</h1>
           {/* Cumulative reach — the one summary the filter chips don't already carry. Counts per
               status live on the chips below; this line answers "내 글이 얼마나 읽혔나" at a glance. */}
           {totalViews > 0 && (

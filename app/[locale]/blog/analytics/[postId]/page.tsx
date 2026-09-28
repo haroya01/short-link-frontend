@@ -114,7 +114,7 @@ export default function PostAnalyticsPage() {
       ) : (
         <>
           <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
-            <h1 className="max-w-xl text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="max-w-xl text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {data.title || data.slug}
             </h1>
             <WindowTabs days={days} onChange={setDays} />

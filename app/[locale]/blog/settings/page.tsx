@@ -52,7 +52,7 @@ export default function BlogSettingsPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("settingsTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("settingsTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("settingsSubtitle")}</p>
 
       {/* 계정 */}

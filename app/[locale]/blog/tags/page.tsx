@@ -84,7 +84,7 @@ export default async function TagsIndexPage({
       </header>
 
       <div className="mx-auto mt-6 max-w-2xl">
-        <h1 className="text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("topics")}
         </h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">

@@ -37,7 +37,7 @@ function Library() {
   return (
     // max-w-3xl: 글·분석·리드와 같은 워크스페이스 공통 폭.
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("savedTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("savedTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("savedSubtitle")}</p>
 
       <nav aria-label={t("savedTitle")} className="mt-7 grid grid-cols-3 border-b border-slate-100 dark:border-slate-800">

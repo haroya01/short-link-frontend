@@ -75,7 +75,7 @@ export default function NotificationsPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         {unread > 0 && (

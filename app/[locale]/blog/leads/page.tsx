@@ -122,7 +122,7 @@ export default function ProfileLeadsPage() {
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">

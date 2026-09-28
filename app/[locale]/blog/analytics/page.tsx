@@ -114,7 +114,7 @@ export default function BlogAnalyticsPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       {/* 분석은 계정 메뉴의 전용 진입점에서 들어오는 독립 화면 — '내 글로 돌아가기' 백링크는 두지 않는다. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("analyticsTitle")}</h1>
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("analyticsTitle")}</h1>
         <WindowTabs days={days} onChange={setDays} />
       </div>
 

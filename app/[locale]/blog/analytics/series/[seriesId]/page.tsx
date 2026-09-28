@@ -59,7 +59,7 @@ export default function SeriesAnalyticsPage() {
         {t("seriesTitle")}
       </BlogLink>
 
-      <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      <h1 className="mt-3 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
         {title ? t("seriesAnalyticsTitle", { title }) : t("analyticsTitle")}
       </h1>
 

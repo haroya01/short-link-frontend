@@ -130,7 +130,7 @@ export default function EventDetailPage() {
                 {event.capacity != null ? `/${event.capacity}` : ""}
               </span>
             </div>
-            <h1 className="mt-1.5 text-xl font-bold leading-tight text-slate-900 dark:text-slate-50">
+            <h1 className="mt-1.5 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {event.title}
             </h1>
             <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400">
