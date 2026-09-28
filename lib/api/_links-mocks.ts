@@ -52,9 +52,11 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       humanClicks: page.items.reduce((sum, item) => sum + (item.humanClickCount ?? 0), 0),
       totalLinks: page.items.length, totalClicks: page.items.reduce((sum, item) => sum + item.clickCount, 0),
       clicks7d: page.items.reduce((sum, item) => sum + item.clicksLast7d.reduce((a, b) => a + b, 0), 0),
+      previousClicks7d: 1020, peak: { dayOfWeek: 4, hour: 21, clicks: 96 },
       clicksToday: 0, zeroClickLinks: page.items.filter((item) => !(item.humanClickCount ?? item.clickCount)).length,
       expiringLinks: 0, timezone: "Asia/Seoul", updatedAt: new Date().toISOString(), dailyClicks: [],
       topLinks: [...page.items].sort((a, b) => (b.humanClickCount ?? 0) - (a.humanClickCount ?? 0)).slice(0, 5),
+      weekTopLinks: [...page.items].map((item) => ({ item, week: item.clicksLast7d.reduce((a, b) => a + b, 0) })).filter((row) => row.week > 0).sort((a, b) => b.week - a.week).slice(0, 5).map((row) => row.item),
     };
     const codes = p.endsWith("/by-codes") ? new URLSearchParams(path.split("?")[1]).get("codes")?.split(",") ?? [] : mockFavoriteCodes;
     return { items: codes.flatMap((code) => page.items.filter((item) => item.shortCode === code)), hasMore: false, nextCursor: null };
@@ -100,12 +102,6 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       return [];
     case "/api/v1/ctas":
       return [];
-    // Weekly insights (dashboard/stats summary) — a well-formed WeeklyInsights so the card renders its
-    // populated state. The prior shape ({ clicks, links, topLinks, byDay }) predated the type and left
-    // totalClicks/humanClicks/deltaPercent undefined, so the card's `totalClicks === 0` empty-state
-    // guard fell through (undefined !== 0) and every fmt.number(undefined) printed "NaN".
-    case "/api/v1/users/me/insights/week":
-      return mockWeeklyInsights();
     // Owner profile visit stats (방문자/readers + /u/<user>/stats) — a populated ProfileStats so the
     // dashboard renders its full chart breakdown (the page errored without this, blocking dark-mode QA).
     case "/api/v1/users/me/profile/stats":
@@ -216,32 +212,6 @@ function mockProfileStats(): unknown {
   };
 }
 
-// A populated WeeklyInsights (matches types/stats.ts). Every derived field — deltaPercent, humanRatio
-// — is a finite number here, never NaN, so the dashboard card shows real values in mock mode. from/to
-// span the trailing 7 days so the eyebrow ("지난 7일 인사이트") reads truthfully.
-function mockWeeklyInsights(): unknown {
-  const now = new Date();
-  const to = now.toISOString();
-  const from = new Date(now.getTime() - 7 * 86_400_000).toISOString();
-  const humanClicks = 1180;
-  const previousHumanClicks = 1020;
-  return {
-    from,
-    to,
-    totalClicks: 1340,
-    humanClicks,
-    previousHumanClicks,
-    deltaPercent: (humanClicks - previousHumanClicks) / previousHumanClicks,
-    humanRatio: humanClicks / 1340,
-    topLink: {
-      shortCode: "launch",
-      originalUrl: "https://example.com/launch",
-      clicks: 512,
-      topUtmSource: "twitter",
-    },
-    peak: { dayOfWeek: 4, hour: 21, clicks: 96 },
-  };
-}
 function mockLibraryRows(): MyLink[] {
   const base = [
           {

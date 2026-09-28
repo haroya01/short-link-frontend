@@ -19,7 +19,7 @@ export const CLIENT_MESSAGE_SCOPES = {
     "recent", "result", "share", "shortenForm", "stats.live", "whyKurl",
   ],
   "links/admin": ["abuseReports", "admin", "stats"],
-  "links/analytics": ["authGate", "linkAnalytics", "weeklyInsights"],
+  "links/analytics": ["authGate", "linkAnalytics"],
   "links/auth": ["auth", "errors"],
   "links/campaigns": [
     "authGate", "campaignApp.batchCard", "campaignApp.batchDialogs", "campaignApp.batchesNew",
