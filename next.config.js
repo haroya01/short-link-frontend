@@ -112,4 +112,10 @@ module.exports = withSentryConfig(withNextIntl(nextConfig), {
   silent: !process.env.CI,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
+  // 리플레이 압축 워커(excludeReplayWorker)는 빼지 않는다 — 직접 호스팅하는 workerUrl 이 없다.
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+    excludeReplayIframe: true,
+    excludeReplayShadowDom: true,
+  },
 });
