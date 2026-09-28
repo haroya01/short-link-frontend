@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -208,23 +209,19 @@ function StatusPill({
 }) {
   if (verified) {
     return (
-      <span className="rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200">
-        {t("statusVerified")}
-      </span>
+      <StatusBadge tone="live">{t("statusVerified")}</StatusBadge>
     );
   }
   if (inAutoWindow) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-700 dark:text-sky-400 ring-1 ring-inset ring-sky-200 dark:ring-sky-500/30">
+      <StatusBadge tone="neutral">
         <Loader2 className="h-2.5 w-2.5 animate-spin" />
         {t("statusAutoChecking", { time: formatRemaining(remainingMs) })}
-      </span>
+      </StatusBadge>
     );
   }
   return (
-    <span className="rounded-full bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400 ring-1 ring-inset ring-amber-200">
-      {t("statusPending")}
-    </span>
+    <StatusBadge tone="caution">{t("statusPending")}</StatusBadge>
   );
 }
 

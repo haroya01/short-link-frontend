@@ -10,6 +10,7 @@ import { LinksAuthGate } from "@/components/links/auth-gate";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import type { Attendee, EventAnalytics, MyEvent } from "@/modules/events/api/events";
+import { EventStatusBadge } from "@/modules/events/components/event-status-badge";
 import {
   changeEventStatus,
   getAttendees,
@@ -123,7 +124,7 @@ export default function EventDetailPage() {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <StatusBadge status={event.status} />
+              <EventStatusBadge status={event.status} />
               <span className="flex items-center gap-1 text-[13px] font-medium tabular-nums text-slate-500 dark:text-slate-400">
                 <Users className="h-3.5 w-3.5" />
                 {event.registrationCount}
@@ -198,24 +199,6 @@ export default function EventDetailPage() {
         }}
       />
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: MyEvent["status"] }) {
-  const t = useTranslations("events.status");
-  const cls =
-    status === "OPEN"
-      ? "bg-accent-100 text-accent-700 dark:bg-accent-900/60 dark:text-accent-300"
-      : status === "CLOSED"
-        ? "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-        : "bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-300";
-  const label = status === "OPEN" ? t("open") : status === "CLOSED" ? t("closed") : t("canceled");
-  return (
-    <span
-      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
-    >
-      {label}
-    </span>
   );
 }
 
