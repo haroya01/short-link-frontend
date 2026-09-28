@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { ApiKeySummary, IssuedApiKey } from "@/types";
+import { formatDate } from "@/lib/utils";
 
 export function ApiKeysSection() {
   const t = useTranslations("settings.apiKeys");
@@ -167,8 +168,8 @@ export function ApiKeysSection() {
                     )}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                    {t("createdAt")}: {key.createdAt.slice(0, 10)} ·{" "}
-                    {t("lastUsedAt")}: {key.lastUsedAt ? key.lastUsedAt.slice(0, 10) : t("never")}
+                    {t("createdAt")}: {formatDate(key.createdAt)} ·{" "}
+                    {t("lastUsedAt")}: {key.lastUsedAt ? formatDate(key.lastUsedAt) : t("never")}
                   </div>
                 </div>
                 {isActive && (

@@ -20,6 +20,7 @@ import { TwoFactorSection } from "@/components/settings/two-factor-section";
 import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
 import { Section as SharedSection } from "@/components/common/section";
 import type { Me } from "@/types";
+import { formatDate } from "@/lib/utils";
 
 function localeName(l: string): string {
   try {
@@ -128,7 +129,7 @@ export default function SettingsPage() {
                 <Section title={t("profileTitle")}>
                   <Row label={t("email")}>{me.email}</Row>
                   {me.role === "ADMIN" && <Row label={t("role")}>{me.role}</Row>}
-                  <Row label={t("joinedAt")}>{me.createdAt?.slice(0, 10) ?? "—"}</Row>
+                  <Row label={t("joinedAt")}>{me.createdAt ? formatDate(me.createdAt) : "—"}</Row>
                 </Section>
 
                 <Section title={t("preferencesTitle")}>

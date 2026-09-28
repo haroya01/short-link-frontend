@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignDetail } from "@/types";
+import { formatNumber } from "@/lib/utils";
 
 type RowDraft = {
   id: string;
@@ -531,7 +532,7 @@ function SubmitBar({
           <>
             {t.rich("summary", {
               rowCount,
-              totalQuantity: totalQuantity.toLocaleString(),
+              totalQuantity: formatNumber(totalQuantity),
               strong: (chunks: ReactNode) => (
                 <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>
               ),

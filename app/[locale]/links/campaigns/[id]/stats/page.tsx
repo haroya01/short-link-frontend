@@ -30,6 +30,7 @@ import type {
   CampaignStatsCompareResponse,
   CampaignSummary,
 } from "@/types";
+import { formatNumber, formatDateTime } from "@/lib/utils";
 
 export default function CampaignStatsPage() {
   const { id } = useParams<{ id: string }>();
@@ -239,7 +240,7 @@ function CompareSection({
                   {isCurrent ? t("compare.current") : t("compare.comparison")}
                 </p>
                 <dl className="mt-2.5 grid grid-cols-3 gap-2">
-                  <CompareCell label={t("kpi.totalClicks")} value={c.stats.totalClicks.toLocaleString()} />
+                  <CompareCell label={t("kpi.totalClicks")} value={formatNumber(c.stats.totalClicks)} />
                   <CompareCell label={t("kpi.perHundred")} value={ratePerHundred.toFixed(1)} />
                   <CompareCell label={t("kpi.topArea")} value={topArea} />
                 </dl>
@@ -271,7 +272,7 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
     <Section
       title={t("recommendation.title")}
       description={t("recommendation.description", {
-        total: data.totalQuantity.toLocaleString(),
+        total: formatNumber(data.totalQuantity),
         average: data.avgRatePerHundred.toFixed(1),
       })}
       footnote={t("recommendation.footnote")}
@@ -308,8 +309,8 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
         <p className="truncate text-[13px] font-medium text-slate-900 dark:text-slate-100">{rec.batchName}</p>
         <p className="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400">
           {t("recommendation.rowMeta", {
-            current: rec.currentQuantity.toLocaleString(),
-            recommended: rec.recommendedQuantity.toLocaleString(),
+            current: formatNumber(rec.currentQuantity),
+            recommended: formatNumber(rec.recommendedQuantity),
             rate: rec.currentRatePerHundred.toFixed(1),
           })}
         </p>
@@ -324,7 +325,7 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
       </span>
       <span className={"tabular-nums text-[14px] font-semibold " + deltaColor}>
         {deltaSign}
-        {rec.delta.toLocaleString()}
+        {formatNumber(rec.delta)}
       </span>
     </li>
   );
@@ -404,11 +405,11 @@ function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount: numbe
   const ratePerHundred = totalQuantity > 0 ? (stats.totalClicks * 100) / totalQuantity : 0;
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <Kpi label={t("kpi.totalClicks")} value={stats.totalClicks.toLocaleString()} />
+      <Kpi label={t("kpi.totalClicks")} value={formatNumber(stats.totalClicks)} />
       <Kpi label={t("kpi.batches")} value={t("units.count", { count: batchCount })} />
       <Kpi
         label={t("kpi.totalDistributed")}
-        value={t("units.sheets", { count: totalQuantity.toLocaleString() })}
+        value={t("units.sheets", { count: formatNumber(totalQuantity) })}
       />
       <Kpi
         label={t("kpi.perHundred")}
@@ -465,13 +466,13 @@ function TestScansCard({ count, lastAt }: { count: number; lastAt: string | null
           </p>
           <p className="mt-1.5 text-sm text-slate-700 dark:text-slate-300">
             {t.rich("testScans.description", {
-              count: count.toLocaleString(),
+              count: formatNumber(count),
               strong: (chunks) => <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>,
             })}
           </p>
           {lastAt && (
             <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
-              {t("testScans.last", { date: new Date(lastAt).toLocaleString(locale) })}
+              {t("testScans.last", { date: formatDateTime(lastAt) })}
             </p>
           )}
         </div>
@@ -515,11 +516,11 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
                 </div>
                 <div className="flex flex-shrink-0 items-baseline gap-3 text-right">
                   <span className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                    {b.clicks.toLocaleString()}
+                    {formatNumber(b.clicks)}
                   </span>
                   <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                     {t("byBatch.meta", {
-                      quantity: b.quantity.toLocaleString(),
+                      quantity: formatNumber(b.quantity),
                       rate: ratePerHundred.toFixed(1),
                     })}
                   </span>
@@ -585,8 +586,8 @@ function GroupChart({
                   </span>
                   <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                     {t("groups.meta", {
-                      clicks: g.clicks.toLocaleString(),
-                      quantity: g.totalQuantity.toLocaleString(),
+                      clicks: formatNumber(g.clicks),
+                      quantity: formatNumber(g.totalQuantity),
                     })}
                   </span>
                 </div>
