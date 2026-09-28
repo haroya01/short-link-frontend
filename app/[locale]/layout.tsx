@@ -32,6 +32,9 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "600"],
   variable: "--font-mono",
   display: "swap",
+  // 보조 글꼴(URL·숫자·코드) — 모든 화면 머리의 preload 로 본문 글꼴·스크립트와 대역을 다투지 않게,
+  // 쓰이는 순간 받는다. 교체 이동은 next/font 의 메트릭 맞춤 폴백이 막는다.
+  preload: false,
 });
 import { routing } from "@/i18n/routing";
 
@@ -240,11 +243,6 @@ export default async function RootLayout({
             loaded — upgrading to Pretendard without ever blocking first paint. */}
         {/* Pretendard 는 /pretendard/* 자사 프록시(next.config rewrites)로 — jsdelivr
             preconnect 불필요, 폰트 요청이 본문과 같은 커넥션을 탄다. */}
-        {/* PostHog warms up off the critical path, but its first config/flags fetches still paid
-            full DNS+TLS on mobile (~660ms est. in Lighthouse). us-assets serves plain <script>
-            loads (no-cors), us.i is fetch/XHR (cors) — hence the crossOrigin split. */}
-        <link rel="preconnect" href="https://us-assets.i.posthog.com" />
-        <link rel="preconnect" href="https://us.i.posthog.com" crossOrigin="anonymous" />
         <link
           rel="preload"
           as="style"
