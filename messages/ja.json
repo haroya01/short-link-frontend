@@ -841,6 +841,7 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "account": "アカウント",
+    "more": "その他",
     "home": "ホーム",
     "search": "検索",
     "explore": "探す",
@@ -2554,8 +2555,24 @@
       }
     ]
   },
+  "more": {
+    "title": "その他",
+    "toolsTitle": "ツール",
+    "tools": {
+      "profile": "公開プロフィール",
+      "profileDesc": "リンクを1ページにまとめて表示",
+      "campaigns": "QRキャンペーン",
+      "campaignsDesc": "ポスター・チラシのQRを配布先ごとに比較",
+      "events": "募集",
+      "eventsDesc": "イベントの申し込みをリンクで受付",
+      "ctas": "CTAライブラリ",
+      "ctasDesc": "リンクに表示する案内バナーを管理"
+    },
+    "accountTitle": "アカウント",
+    "settings": "設定"
+  },
   "settings": {
-    "title": "アカウント",
+    "title": "設定",
     "tabs": {
       "aria": "設定セクション",
       "account": "アカウント",
@@ -3068,17 +3085,6 @@
       "deleteFailed": "削除に失敗しました。",
       "dnsTxtHint": "ドメイン所有確認用 — DNS に TXT レコードを追加",
       "dnsCnameHint": "トラフィック転送用 — 同じ DNS に CNAME も追加"
-    },
-    "toolsTitle": "ツール",
-    "tools": {
-      "profile": "公開プロフィール",
-      "profileDesc": "リンクを1ページにまとめて表示",
-      "campaigns": "QRキャンペーン",
-      "campaignsDesc": "ポスター・チラシのQRを配布先ごとに比較",
-      "events": "募集",
-      "eventsDesc": "イベントの申し込みをリンクで受付",
-      "ctas": "CTAライブラリ",
-      "ctasDesc": "リンクに表示する案内バナーを管理"
     }
   },
   "homeStats": {

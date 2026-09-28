@@ -841,6 +841,7 @@
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
     "account": "Tài khoản",
+    "more": "Xem thêm",
     "home": "Trang chủ",
     "search": "Tìm kiếm",
     "explore": "Khám phá",
@@ -2554,8 +2555,24 @@
       }
     ]
   },
+  "more": {
+    "title": "Xem thêm",
+    "toolsTitle": "Công cụ",
+    "tools": {
+      "profile": "Hồ sơ công khai",
+      "profileDesc": "Gom liên kết vào một trang",
+      "campaigns": "Chiến dịch QR",
+      "campaignsDesc": "So sánh mã QR in theo vị trí",
+      "events": "Đăng ký",
+      "eventsDesc": "Nhận đăng ký sự kiện qua liên kết",
+      "ctas": "Thư viện CTA",
+      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
+    },
+    "accountTitle": "Tài khoản",
+    "settings": "Cài đặt"
+  },
   "settings": {
-    "title": "Tài khoản",
+    "title": "Cài đặt",
     "tabs": {
       "aria": "Các mục cài đặt",
       "account": "Tài khoản",
@@ -3068,17 +3085,6 @@
       "deleteFailed": "Xóa thất bại.",
       "dnsTxtHint": "Kiểm tra quyền sở hữu — thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
       "dnsCnameHint": "Định tuyến lưu lượng — thêm bản ghi CNAME này tại cùng nhà cung cấp"
-    },
-    "toolsTitle": "Công cụ",
-    "tools": {
-      "profile": "Hồ sơ công khai",
-      "profileDesc": "Gom liên kết vào một trang",
-      "campaigns": "Chiến dịch QR",
-      "campaignsDesc": "So sánh mã QR in theo vị trí",
-      "events": "Đăng ký",
-      "eventsDesc": "Nhận đăng ký sự kiện qua liên kết",
-      "ctas": "Thư viện CTA",
-      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     }
   },
   "homeStats": {

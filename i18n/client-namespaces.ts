@@ -38,6 +38,7 @@ export const CLIENT_MESSAGE_SCOPES = {
     "events.intro", "events.list", "events.share", "events.status",
   ],
   "links/login": ["auth", "login"],
+  "links/more": ["more"],
   "links/profile": ["auth"],
   "links/qr-campaigns": ["qrCampaigns"],
   "links/settings": ["avatar", "banner", "errors", "imageCropper", "publicProfile", "settings"],

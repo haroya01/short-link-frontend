@@ -841,6 +841,7 @@
     "login": "Sign in",
     "logout": "Sign out",
     "account": "Account",
+    "more": "More",
     "home": "Home",
     "search": "Search",
     "explore": "Explore",
@@ -2554,8 +2555,24 @@
       }
     ]
   },
+  "more": {
+    "title": "More",
+    "toolsTitle": "Tools",
+    "tools": {
+      "profile": "Public profile",
+      "profileDesc": "All your links on one page",
+      "campaigns": "QR campaigns",
+      "campaignsDesc": "Compare printed QR codes by location",
+      "events": "Sign-ups",
+      "eventsDesc": "Collect event sign-ups with a link",
+      "ctas": "CTA library",
+      "ctasDesc": "Manage banners shown on your links"
+    },
+    "accountTitle": "Account",
+    "settings": "Settings"
+  },
   "settings": {
-    "title": "Account",
+    "title": "Settings",
     "tabs": {
       "aria": "Settings sections",
       "account": "Account",
@@ -3068,17 +3085,6 @@
       "deleteFailed": "Failed to delete.",
       "dnsTxtHint": "Ownership check — add this TXT record at your DNS provider",
       "dnsCnameHint": "Traffic routing — add this CNAME record at the same provider"
-    },
-    "toolsTitle": "Tools",
-    "tools": {
-      "profile": "Public profile",
-      "profileDesc": "All your links on one page",
-      "campaigns": "QR campaigns",
-      "campaignsDesc": "Compare printed QR codes by location",
-      "events": "Sign-ups",
-      "eventsDesc": "Collect event sign-ups with a link",
-      "ctas": "CTA library",
-      "ctasDesc": "Manage banners shown on your links"
     }
   },
   "homeStats": {

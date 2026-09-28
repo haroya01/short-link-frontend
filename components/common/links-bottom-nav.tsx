@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { BarChart3, CalendarDays, CircleUserRound, Contact, Link2, Megaphone } from "lucide-react";
+import { BarChart3, CalendarDays, Contact, Ellipsis, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -12,10 +12,9 @@ const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar for the kurl (links) product. The tabs map to kurl's own features —
- * 단축(shortener) · 캠페인(QR) · 모집(events) · 통계(short-link dashboard) · 프로필(online business card) — so it reads
- * as a distinct app from the blog (only the session, via the `.kurl.me` refresh cookie, is shared).
- * Account + the blog↔kurl switch live in the top Nav on mobile, not here. All tabs are locale-aware
+ * Mobile-only bottom tab bar for the kurl (links) product, a distinct app from the blog (only the
+ * session, via the `.kurl.me` refresh cookie, is shared). Signed in: 링크 · 분석 · 더보기 (tools,
+ * settings, logout). Visitors: 단축 · QR 캠페인 · 모집 · 프로필. All tabs are locale-aware
  * same-origin Links (NOT linksHref): an absolute apex URL without the locale, e.g.
  * https://kurl.me/campaigns, is resolved as a short code on the backend apex → 404 LINK_NOT_FOUND.
  * Hidden on `sm`+ where the top Nav carries everything. Auto-hides on scroll-down.
@@ -35,9 +34,6 @@ export function LinksBottomNav() {
     };
   }, []);
 
-  // 단축: the shortener home. 캠페인: the app (authed) or its landing (anon). 통계: the short-link
-  // dashboard (내 링크 + 클릭수 + 주간 인사이트) — kurl's stats hub, NOT the blog post analytics.
-  // 프로필: view the public online business card (or showcase onboarding when there's no card yet).
   const username = me?.username;
   const profileHref = authenticated && username ? `/u/${username}` : "/showcase";
   const tabs = authenticated
@@ -50,10 +46,11 @@ export function LinksBottomNav() {
         },
         { href: "/analytics", label: t("analytics"), Icon: BarChart3, active: pathname.startsWith("/analytics") },
         {
-          href: "/settings",
-          label: t("account"),
-          Icon: CircleUserRound,
+          href: "/more",
+          label: t("more"),
+          Icon: Ellipsis,
           active:
+            pathname.startsWith("/more") ||
             pathname.startsWith("/settings") ||
             pathname.startsWith("/campaigns") ||
             pathname.startsWith("/events") ||
