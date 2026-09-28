@@ -7,7 +7,7 @@ import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
 import { QrButton } from "@/components/links/qr/button";
-import { Sparkline } from "@/components/links/sparkline";
+import { Sparkline } from "@/components/links/stats/sparkline";
 import { Link } from "@/i18n/navigation";
 import { cn, formatNumber } from "@/lib/utils";
 
@@ -80,7 +80,7 @@ export function LinkSheet({
                 <Figure label={t("week")} value={week} />
                 {shown.total !== undefined && <Figure label={t("total")} value={shown.total} />}
               </dl>
-              <Sparkline values={series} className="h-8 w-20 shrink-0" />
+              <Sparkline values={series} width={80} height={32} className="shrink-0 text-accent-600 dark:text-accent-400" />
             </div>
           )}
 

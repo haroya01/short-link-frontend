@@ -11,7 +11,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
 import { LiveDot } from "@/components/common/live-dot";
 import { LinkSheet } from "@/components/links/link-sheet";
-import { Sparkline } from "@/components/links/sparkline";
+import { Sparkline } from "@/components/links/stats/sparkline";
 import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -246,7 +246,7 @@ export function LinksTable({
                         /{item.shortCode} · {hostOf(item.originalUrl)}
                       </span>
                     </span>
-                    <Sparkline values={item.clicksLast7d} className="h-5 w-12 shrink-0" />
+                    <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-accent-600 dark:text-accent-400" />
                     <span className="w-[4.5rem] shrink-0 text-right">
                       <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                         {formatNumber((item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0))}
