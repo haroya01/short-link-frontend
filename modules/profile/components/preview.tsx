@@ -7,6 +7,7 @@ import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-h
 import { ShareRow } from "@/app/[locale]/u/[username]/_components/share-row";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { cn } from "@/lib/utils";
+import "./device-frame.css";
 
 type Props = {
   username: string;

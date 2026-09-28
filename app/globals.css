@@ -22,20 +22,6 @@
   }
 }
 
-/* devices.css — open-source CSS-only phone/laptop frames used by the landing-page profile
-   showcase. Only the iPhone variants render; the rest is dead CSS but the whole file is ~5KB
-   minified so we don't bother tree-shaking. */
-@import "devices.css/dist/devices.min.css";
-
-/*
- * devices.css ships {@code .device .device-screen { background: #000 }} — a descendant selector
- * with specificity (0,2,0), higher than Tailwind utilities (0,1,0). Previous attempts here
- * (`.device-screen { transparent }` and `:where(.device-screen) { transparent }`) both lost the
- * cascade. The real fix lives in {@code ShowcaseCard} / {@code ProfilePreview}: inline
- * {@code style.backgroundColor} (specificity 1,0,0,0) beats the descendant selector and the
- * theme's {@code pageBgHex} actually paints. No CSS rule is needed here anymore.
- */
-
 :root {
   color-scheme: light;
   /* qr-campaigns 히어로 + 일반 entrance easing token. 이전엔 GlobalStyles 의
