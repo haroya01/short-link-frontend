@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ContactCardEntry } from "@/app/[locale]/u/[username]/_components/contact-card-entry";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { Markdown } from "@/modules/blog/components/markdown";
 import { PublicEventPage } from "@/modules/events/components/public-event-page";
 import type { PublicEvent } from "@/modules/events/api/events";
 import type { ContactCardConfig } from "@/types";
@@ -50,7 +51,10 @@ const FIXTURES: Record<string, () => React.ReactNode> = {
   // useSearchParams(취소 토큰) 때문에 force-static 빌드에서 Suspense 경계가 필수.
   "public-event": () => (
     <Suspense>
-      <PublicEventPage initialEvent={SAMPLE_EVENT} />
+      <PublicEventPage
+        initialEvent={SAMPLE_EVENT}
+        description={<Markdown>{SAMPLE_EVENT.descriptionMd ?? ""}</Markdown>}
+      />
     </Suspense>
   ),
 };
