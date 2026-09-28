@@ -31,8 +31,11 @@ test.describe("password while shortening", () => {
     await page.goto("/ko?stage=off");
 
     const password = page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호");
+    const lockToggle = page.getByRole("button", { name: "비밀번호 걸기" });
+    // 접힌 줄이 렌더된 뒤에 숨김을 본다 — 렌더 전의 '아직 없음'을 숨김으로 통과시키지 않도록.
+    await expect(lockToggle).toBeVisible();
     await expect(password).toBeHidden();
-    await page.getByRole("button", { name: "비밀번호 걸기" }).click();
+    await lockToggle.click();
     await expect(password).toBeVisible();
     await expect(password).toBeFocused();
     await password.pressSequentially("open-sesame");

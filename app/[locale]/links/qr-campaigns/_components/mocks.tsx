@@ -19,7 +19,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
   const sum = summarize(mock);
   return (
     <div
-      className="space-y-2 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="space-y-2 transition-[opacity,transform] motion-reduce:transition-none duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -33,7 +33,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {mock.campaignName}
           </p>
-          <span className="flex-shrink-0 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+          <span className="flex-shrink-0 text-[10px] font-medium text-slate-600 dark:text-slate-400">
             {t("kpiStatus")}
           </span>
         </div>
@@ -56,14 +56,14 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
       </div>
 
       <div
-        className="rounded-2xl border border-accent-200 bg-accent-50/30 p-4 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)] dark:border-accent-500/30 dark:bg-accent-500/10"
+        className="rounded-2xl border border-accent-200 bg-accent-50/30 p-4 transition-[opacity,transform] motion-reduce:transition-none duration-[480ms] ease-[var(--ease)] dark:border-accent-500/30 dark:bg-accent-500/10"
         style={{
           transitionDelay: active ? "800ms" : "0ms",
           opacity: active ? 1 : 0,
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-800 dark:bg-accent-500/15 dark:text-accent-400">
           {t("kpiAfterKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -98,7 +98,7 @@ function KpiCellMini({
 }) {
   return (
     <div className="min-w-0 px-2 py-1 first:pl-0 last:pr-0">
-      <p className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
+      <p className="truncate text-[10px] font-medium text-slate-600 dark:text-slate-400">
         {label}
       </p>
       <p
@@ -121,7 +121,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
   const t = useTranslations("qrCampaigns.mock");
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] motion-reduce:transition-none duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -134,7 +134,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
           {t("batchAdd")}
         </span>
       </div>
-      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium text-slate-600 dark:text-slate-400">
         <span>{t("batchColName")}</span>
         <span>{t("batchColArea")}</span>
         <span>{t("batchColDist")}</span>
@@ -144,7 +144,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
       {mock.rows.map((row, i) => (
         <div
           key={row.name}
-          className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-5 py-3 text-[12px] transition-[opacity,transform] duration-[480ms] ease-[var(--ease)] last:border-b-0"
+          className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-5 py-3 text-[12px] transition-[opacity,transform] motion-reduce:transition-none duration-[480ms] ease-[var(--ease)] last:border-b-0"
           style={{
             transitionDelay: active ? `${200 + i * 110}ms` : "0ms",
             opacity: active ? 1 : 0,
@@ -195,7 +195,7 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
     // 모바일에서 다른 mock 보다 세로가 크다는 사용자 피드백 → MockPoster 만 max-width 좁게 cap.
     // 다른 mock 은 부모의 max-w-sm 그대로.
     <div
-      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] duration-700 ease-[var(--ease)] sm:max-w-[300px] lg:max-w-none"
+      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] motion-reduce:transition-none duration-700 ease-[var(--ease)] sm:max-w-[300px] lg:max-w-none"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -257,7 +257,7 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
       <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 px-5 py-3">
         <p className="text-[12px] font-semibold text-slate-900 dark:text-slate-100">{t("posterTitle")}</p>
         <span
-          className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-[11px] font-medium text-accent-700 dark:text-accent-400 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
+          className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-[11px] font-medium text-accent-700 dark:text-accent-400 transition-[opacity,transform] motion-reduce:transition-none duration-[480ms] ease-[var(--ease)]"
           style={{
             transitionDelay: active ? "2400ms" : "0ms",
             opacity: active ? 1 : 0,
@@ -279,7 +279,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
   const max = Math.max(...sum.areas.map((a) => a.clicks));
   return (
     <div
-      className="space-y-3 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="space-y-3 transition-[opacity,transform] motion-reduce:transition-none duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -353,7 +353,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
         </div>
       </div>
       <div
-        className="rounded-2xl border border-accent-200 bg-accent-50/50 px-4 py-3.5 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)] dark:border-accent-500/30 dark:bg-accent-500/10"
+        className="rounded-2xl border border-accent-200 bg-accent-50/50 px-4 py-3.5 transition-[opacity,transform] motion-reduce:transition-none duration-[480ms] ease-[var(--ease)] dark:border-accent-500/30 dark:bg-accent-500/10"
         style={{
           transitionDelay: active ? "1100ms" : "0ms",
           opacity: active ? 1 : 0,
@@ -380,7 +380,7 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
   const max = Math.max(...mock.cases.map((c) => c.after));
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] motion-reduce:transition-none duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -396,7 +396,7 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
         return (
           <div
             key={c.biz}
-            className="border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)] last:border-b-0"
+            className="border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 transition-[opacity,transform] motion-reduce:transition-none duration-[480ms] ease-[var(--ease)] last:border-b-0"
             style={{
               transitionDelay: active ? `${rowDelay}ms` : "0ms",
               opacity: active ? 1 : 0,
@@ -493,7 +493,7 @@ export function MockTimeline({ active }: { mock: MockData; active: boolean }) {
   const day = new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", timeZone: "UTC" });
   return (
     <div
-      className="space-y-3 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="space-y-3 transition-[opacity,transform] motion-reduce:transition-none duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
