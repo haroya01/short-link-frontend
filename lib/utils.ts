@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** React 18 drops a boolean `inert`; the attribute only reaches the DOM as an empty string. */
+export function inert(on: boolean): { inert?: boolean } {
+  return on ? ({ inert: "" } as unknown as { inert: boolean }) : {};
+}
+
 export function formatDate(iso: string) {
   const d = new Date(iso);
   const yyyy = d.getFullYear();
@@ -15,6 +20,14 @@ export function formatDate(iso: string) {
 
 export function formatNumber(n: number) {
   return new Intl.NumberFormat("ko-KR").format(n);
+}
+
+/** A part of a whole (0–1) as a percent: whole numbers from 10%, one decimal below it so small
+ *  slices stay distinguishable. */
+export function formatShare(ratio: number) {
+  const pct = ratio * 100;
+  if (pct === 0) return "0%";
+  return `${pct >= 10 ? pct.toFixed(0) : pct.toFixed(1)}%`;
 }
 
 export function formatPercent(ratio: number, fractionDigits = 1) {

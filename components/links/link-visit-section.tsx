@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Switch as SwitchControl } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
@@ -303,7 +304,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
 
         <div className="mt-3 flex items-center justify-end gap-3">
           {dirty && <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("unsaved")}</span>}
-          <Button variant="accent" size="sm" onClick={() => void saveChanges()} disabled={!dirty || saving || loading}>
+          <Button variant="outline" size="sm" onClick={() => void saveChanges()} disabled={!dirty || saving || loading}>
             {t("save")}
           </Button>
         </div>
@@ -330,24 +331,12 @@ function Switch({
   onToggle: () => void;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
+    <SwitchControl
+      checked={checked}
       aria-labelledby={labelledBy}
       disabled={disabled}
       onClick={onToggle}
-      className={
-        "focus-ring relative mt-0.5 inline-flex h-6 w-11 shrink-0 items-center rounded-full transition disabled:opacity-50 " +
-        (checked ? "bg-slate-900 dark:bg-slate-100" : "bg-slate-200 dark:bg-slate-700")
-      }
-    >
-      <span
-        className={
-          "inline-block h-5 w-5 transform rounded-full bg-white dark:bg-slate-900 shadow transition " +
-          (checked ? "translate-x-5" : "translate-x-0.5")
-        }
-      />
-    </button>
+      className="mt-0.5"
+    />
   );
 }

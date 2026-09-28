@@ -106,12 +106,13 @@ export function AppHeader({
           signed-out visitors who have no account menu. */}
       {!authed && <LanguageSwitcher />}
       <span aria-hidden className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
-      {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
-          a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
+      {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row.
+          Chrome, not content: quiet like the other bar controls, so each page's own primary stays
+          the one green action on screen. Mobile uses the bottom tab bar. */}
       {authed && !inWriting && (
         <ChromeNavLink
           href={blogHref("/write/new")}
-          className="focus-ring hidden h-8 items-center gap-1.5 rounded-lg bg-accent-700 px-3 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:inline-flex"
+          className="focus-ring hidden h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex"
         >
           <PenSquare className="h-3.5 w-3.5" />
           {t("write")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
@@ -11,10 +11,13 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/settings/api-keys-section";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { LogoutButton } from "@/components/common/logout-button";
 import { TwoFactorSection } from "@/components/settings/two-factor-section";
 import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
 import { Section as SharedSection } from "@/components/common/section";
@@ -39,6 +42,16 @@ const COMMON_TIMEZONES = [
   "Australia/Sydney",
 ];
 
+function timezoneOptions(current: string): string[] {
+  let all: string[] = COMMON_TIMEZONES;
+  try {
+    all = Intl.supportedValuesOf("timeZone");
+  } catch {
+    // Older engines: the short list still covers the common cases.
+  }
+  return Array.from(new Set(["UTC", current, ...all]));
+}
+
 export default function SettingsPage() {
   const t = useTranslations("settings");
   const locale = useLocale();
@@ -51,7 +64,7 @@ export default function SettingsPage() {
   // 쳐서 /users/me 가 중복으로 호출됐음. timezone 업데이트 후 로컬 me 유지를 위해 setMe 는 남김.
   const [me, setMe] = useState<Me | null>(ctxMe);
   const [tz, setTz] = useState(ctxMe?.timezone ?? "UTC");
-  const [saving, setSaving] = useState(false);
+  const zones = useMemo(() => timezoneOptions(tz), [tz]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -68,16 +81,16 @@ export default function SettingsPage() {
     }
   }, [authenticated, ready, locale, router, ctxMe]);
 
-  async function handleSaveTimezone() {
-    setSaving(true);
+  async function changeTimezone(next: string) {
+    const previous = tz;
+    setTz(next);
     try {
-      const updated = await updateMyTimezone(tz);
+      const updated = await updateMyTimezone(next);
       setMe(updated);
       toast(t("saved"), "success");
     } catch (err) {
+      setTz(previous);
       toast(errorMessage(err, t("saveFailed")), "error");
-    } finally {
-      setSaving(false);
     }
   }
 
@@ -94,7 +107,13 @@ export default function SettingsPage() {
   }
 
   if (!me) {
-    return <div className="container max-w-2xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
+    return (
+      <div aria-busy className="container max-w-2xl space-y-6 py-12">
+        <Skeleton className="h-9 w-32" />
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+      </div>
+    );
   }
 
   return (
@@ -120,22 +139,15 @@ export default function SettingsPage() {
                       <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                         {t("timezoneLabel")}
                       </span>
-                      <select
-                        value={tz}
-                        onChange={(e) => setTz(e.target.value)}
-                        className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600"
-                      >
-                        {COMMON_TIMEZONES.map((z) => (
+                      <Select value={tz} onChange={(e) => void changeTimezone(e.target.value)}>
+                        {zones.map((z) => (
                           <option key={z} value={z}>
                             {z}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                       <p className="text-xs text-slate-500 dark:text-slate-400">{t("timezoneHint")}</p>
                     </label>
-                    <Button variant="accent" onClick={handleSaveTimezone} disabled={saving} size="sm">
-                      {t("save")}
-                    </Button>
                   </div>
 
                   <div className="mt-6 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
@@ -191,6 +203,8 @@ export default function SettingsPage() {
                     ))}
                   </div>
                 </Section>
+
+                <LogoutButton />
               </div>
             )}
 

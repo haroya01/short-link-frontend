@@ -5,7 +5,7 @@
     "defaultDesc": "ログインすると、リンクとキャンペーンの続きを管理できます。"
   },
   "comments": {
-    "count": "コメント{count}件",
+    "count": "コメント{count, number}件",
     "placeholder": "コメントを入力",
     "submit": "コメント",
     "submitting": "投稿中…",
@@ -164,7 +164,7 @@
     "postsEmpty": "まだ公開した記事がありません。",
     "draftsTitle": "下書き",
     "draftsEmpty": "下書きがありません。",
-    "views": "閲覧 {count}",
+    "views": "閲覧 {count, number}",
     "loginRequired": "ログインが必要です。",
     "loading": "読み込み中…",
     "seriesTitle": "シリーズ",
@@ -203,11 +203,11 @@
     "analyticsLifetimeViews": "累計閲覧",
     "analyticsLifetimeLikes": "累計いいね",
     "analyticsPublished": "公開記事",
-    "analyticsViews": "閲覧 {count}",
+    "analyticsViews": "閲覧 {count, number}",
     "analyticsDays": "{days}日",
     "analyticsAll": "全期間",
     "analyticsAllViews": "全期間のビュー",
-    "analyticsAllClicks": "全期間で{count}クリック",
+    "analyticsAllClicks": "全期間で{count, number}クリック",
     "analyticsSeries": "シリーズ",
     "analyticsSubscribers": "購読者",
     "analyticsPosts": "記事",
@@ -220,7 +220,7 @@
     "analyticsLinkClicks": "この記事が生んだクリック",
     "analyticsLinkClicksAll": "記事内リンクが生んだクリック",
     "analyticsLinkBreakdown": "リンク別クリック",
-    "analyticsWindowClicks": "直近{days}日で{count}クリック",
+    "analyticsWindowClicks": "直近{days}日で{count, number}クリック",
     "analyticsPerPost": "記事別の成果",
     "analyticsViewAll": "すべて表示",
     "analyticsCollapse": "閉じる",
@@ -230,7 +230,7 @@
       "likes": "いいね順",
       "recent": "新着順"
     },
-    "analyticsFollows": "増えたフォロー",
+    "analyticsFollows": "累計フォロー",
     "analyticsFollowsGained": "この記事で増えたフォロー",
     "analyticsWindowFollows": "直近{days}日 +{count}",
     "linksByPost": "記事別クリック",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "フォロワー数を隠す",
     "settingsHideFollowerCountHint": "オンにすると、フォロワー・フォロー中の数が誰にも表示されません。フォローはそのまま使えます。",
     "rowDelete": "削除",
-    "rowDeleteConfirm": "「{title}」を削除しますか？元に戻せません。",
-    "rowDeleteFailed": "削除に失敗しました。",
     "curationLiked": "いいねした記事",
     "curationLikedHint": "あなたがいいねした記事。",
     "curationHighlights": "ハイライト・メモ",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "フォロー中のトピック — 最近の投稿がないものも含めて。これらの投稿はフィード上部の帯に表示されます。",
     "settingsFollowedTagsEmpty": "まだフォロー中のトピックはありません。",
     "settingsUnfollowTag": "{tag} のフォローを解除",
-    "analyticsPeakDay": "最多日 {date} · {count}回"
+    "analyticsPeakDay": "最多日 {date} · {count, number}回",
+    "analyticsLifetimeCaption": "全期間"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -394,8 +393,8 @@
     "featuredMoveDown": "下へ",
     "viewAll": "一覧",
     "viewBySeries": "シリーズ別",
-    "viewCount": "{count} 回閲覧",
-    "likeCount": "{count} 件のいいね",
+    "viewCount": "{count, number} 回閲覧",
+    "likeCount": "{count, number} 件のいいね",
     "noPosts": "まだ投稿がありません。",
     "listLoading": "読み込み中…",
     "slugHint": "公開前は変更可能 · 英小文字・数字・ハイフン",
@@ -596,7 +595,7 @@
     "highlightSaved": "ハイライトしました",
     "highlightNoteSaved": "メモを追加しました",
     "highlightSaveError": "保存できませんでした。もう一度お試しください。",
-    "highlightsShownCount": "ハイライト {count}",
+    "highlightsShownCount": "ハイライト {count, number}",
     "highlightsHidden": "ハイライト非表示",
     "highlightsHide": "非表示",
     "highlightsShow": "表示",
@@ -656,8 +655,8 @@
     "follow": "フォロー",
     "followCuratorHint": "このキュレーターがつなぐ道をたどって読む",
     "following": "フォロー中",
-    "followers": "フォロワー {count}",
-    "followingCount": "フォロー中 {count}",
+    "followers": "フォロワー {count, number}",
+    "followingCount": "フォロー中 {count, number}",
     "followersTab": "フォロワー",
     "followingTab": "フォロー中",
     "followersEmpty": "まだフォロワーがいません。",
@@ -704,7 +703,8 @@
       "caution": "警告"
     },
     "activityPosts": "記事 {count}本",
-    "activitySince": "{date}から"
+    "activitySince": "{date}から",
+    "reportFailed": "通報を送信できませんでした。もう一度お試しください。"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -819,7 +819,8 @@
     "groupToday": "今日",
     "groupYesterday": "昨日",
     "groupWeek": "今週",
-    "groupEarlier": "それ以前"
+    "groupEarlier": "それ以前",
+    "unreadLabel": "未読"
   },
   "nav": {
     "events": "イベント",
@@ -1023,8 +1024,7 @@
       "reservedCode": "そのコードは予約済みです。別のコードをお試しください。",
       "quota": "リンクの上限に達しました。古いリンクを整理すると作成できます。",
       "validation": "入力値が正しくありません。"
-    },
-    "paste": "貼り付け"
+    }
   },
   "result": {
     "completed": "短縮完了",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "パスワードがかかっていません。リンク管理でもう一度設定してください。",
     "copy": "コピー",
     "copied": "コピー済み",
-    "open": "開く",
     "viewStats": "統計を見る",
     "stats": "統計",
     "moreShorten": "別のURLも短縮",
@@ -1124,7 +1123,6 @@
     "loadMore": "もっと見る",
     "loadingMore": "読み込み中...",
     "searchPlaceholder": "名前、リンク先、コードで検索",
-    "clearSearch": "検索をクリア",
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
     "goToLogin": "ログインへ",
@@ -1281,7 +1279,6 @@
     "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
     "libraryViews": "リンク一覧の選択",
     "allLinks": "全リンク",
-    "copied": "リンクをコピーしました",
     "subtitleCount": "リンク {count}件",
     "toolCampaigns": "QRキャンペーン",
     "toolEvents": "募集",
@@ -1341,7 +1338,6 @@
       "unknown": "不明",
       "direct": "直接"
     },
-    "back": "戻る",
     "shortCode": "短縮リンク",
     "detailsTitle": "詳細",
     "tabs": {
@@ -1409,7 +1405,7 @@
       "issuedFormatSlack": "Slack URL を検出しました — クリックは Slack メッセージとして送られます (署名検証は不要)。",
       "formatBadgeDiscord": "Discord",
       "formatBadgeSlack": "Slack",
-      "formatBadgeGeneric": "Generic",
+      "formatBadgeGeneric": "汎用",
       "reveal": "表示",
       "hide": "隠す",
       "copy": "コピー",
@@ -1474,7 +1470,7 @@
       "weight": "重み",
       "labelPlaceholder": "ラベル (任意、例: variant-A)",
       "controlLabel": "デフォルトのリンク先",
-      "controlBadge": "control",
+      "controlBadge": "基準",
       "add": "追加",
       "adding": "追加中...",
       "addFailed": "リンク先の追加に失敗しました。",
@@ -1604,15 +1600,15 @@
       },
       "country": {
         "title": "国",
-        "desc": "GeoLite2-City IPルックアップ"
+        "desc": "アクセス元IPから推定した国"
       },
       "region": {
         "title": "地域",
-        "desc": "state / province 単位"
+        "desc": "州・県単位"
       },
       "city": {
         "title": "都市",
-        "desc": "city 単位"
+        "desc": "都市単位"
       },
       "language": {
         "title": "言語",
@@ -1621,7 +1617,7 @@
       "asn": {
         "title": "ネットワーク / ASN",
         "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボットとして分類されます。",
-        "empty": "ASN データなし (GeoLite2-ASN 未導入)"
+        "empty": "ネットワーク(ASN)情報はまだありません"
       }
     },
     "clientApp": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} 回",
-      "detailShare": "全体の {share}%",
+      "detailShare": "全体の {share}",
       "detailClose": "閉じる"
     },
     "rawData": {
@@ -2211,7 +2207,6 @@
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
     "viewBlog": "記事{count}件を見る",
-    "madeWith": "kurl.meで作成",
     "editFab": "編集",
     "share": {
       "x": "X で共有",
@@ -2336,9 +2331,7 @@
   },
   "statsEmpty": {
     "title": "まだクリックがありません",
-    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。",
-    "shareCta": "短縮リンクをコピー",
-    "shareCopied": "コピー済み"
+    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。"
   },
   "utm": {
     "toggle": "UTMパラメータを追加",
@@ -2786,7 +2779,6 @@
       "emailFormHowItWorks": "訪問者が残したメールはオーナーだけが見られる 'leads' ダッシュボードに集約されます。CSV エクスポートで Mailchimp などに取り込めます。",
       "emailFormViewLeadsCta": "収集したメールを見る",
       "leadsLink": "収集したメール",
-      "leadsDisabledTitle": "メールフォームを追加すると、ここでリードを確認できます",
       "stats": {
         "title": "プロフィール訪問統計",
         "intro": "公開プロフィールを誰がどこから見たかを、短縮リンクの統計と同じ項目で確認できます。",
@@ -3002,11 +2994,11 @@
     "exportHint": "ユーザー情報 + すべてのリンク + クリックイベント (IPはマスク済み)。",
     "dangerTitle": "危険な操作",
     "deleteHint": "削除申請後30日間の猶予期間があります。その間に再ログインすれば自動で復元され、30日経過後にアカウントとすべてのリンク・統計が完全削除されます。匿名リンクには影響しません。",
-    "deleteButton": "アカウントを完全削除",
+    "deleteButton": "アカウントを削除",
     "deleteConfirmTitle": "本当に削除しますか？",
     "deleteConfirmDesc": "30日以内に再ログインすれば復元できます。それ以降は永久削除されます。\"DELETE\" と入力して確認してください。",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "完全に削除する",
+    "deleteOk": "アカウントを削除",
     "cancel": "キャンセル",
     "deleting": "削除中...",
     "twofa": {
@@ -3124,9 +3116,8 @@
     "shareButton": "公開 URL をコピー",
     "shareCopied": "コピーしました",
     "shareCopyFailed": "コピーに失敗しました",
-    "togglePublic": "統計を公開する",
-    "togglePrivate": "統計を非公開にする",
-    "toggleFailed": "公開設定の更新に失敗しました。"
+    "toggleFailed": "公開設定の更新に失敗しました。",
+    "switchLabel": "統計を公開"
   },
   "campaignApp": {
     "entry": {
@@ -3176,7 +3167,6 @@
       "startNow": "今すぐ開始",
       "startSchedule": "開始時刻を予約",
       "endLabel": "終了時点",
-      "endHint": "終了後、印刷済み QR は下のポリシーに従います。",
       "defaultUrlLabel": "デフォルトのリンク先URL",
       "defaultUrlHint": "空にすると、各バッチごとに URL を指定する必要があります。",
       "postEndLabel": "終了後の動作",
@@ -3200,12 +3190,14 @@
       "loadFailed": "読み込みに失敗しました",
       "loginRequired": "ログインが必要です",
       "backToList": "QR キャンペーン一覧",
-      "confirmEnd": "この QR キャンペーンを今すぐ終了しますか？\n終了ポリシーが印刷済み QR に即時適用されます。",
+      "confirmEnd": "この QR キャンペーンを今すぐ終了しますか？",
+      "confirmEndDesc": "終了ポリシーが印刷済み QR に即時適用されます。",
       "ended": "QR キャンペーンを終了しました",
       "endFailed": "終了に失敗しました",
       "reapplied": "終了ポリシーを再適用しました",
       "reapplyFailed": "再適用に失敗しました",
-      "confirmArchive": "この QR キャンペーンをアーカイブしますか？\n一覧から非表示になりますが、データは保持されます。",
+      "confirmArchive": "この QR キャンペーンをアーカイブしますか？",
+      "confirmArchiveDesc": "一覧から非表示になりますが、データは保持されます。",
       "archived": "QR キャンペーンをアーカイブしました",
       "archiveFailed": "アーカイブに失敗しました",
       "cancel": "キャンセル",
@@ -3656,7 +3648,13 @@
       "CONTACT": "問い合わせ",
       "DOWNLOAD": "資料ダウンロード",
       "CUSTOM": "その他"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "強調",
+      "SECONDARY": "補助"
+    },
+    "deleteFailed": "CTAを削除できませんでした。もう一度お試しください。",
+    "saveFailed": "保存できませんでした。もう一度お試しください。"
   },
   "abuseReports": {
     "title": "通報管理",
@@ -3954,7 +3952,6 @@
     "list": {
       "title": "イベント",
       "new": "新規作成",
-      "loading": "読み込み中…",
       "loadFailed": "読み込みに失敗しました。",
       "emptyTitle": "最初の募集ページを作りましょう",
       "emptyBody": "紹介ページと申込フォームを作れば、締切や流入の確認までここで管理できます。",
@@ -4112,10 +4109,8 @@
   },
   "composer": {
     "placeholder": "長いURLを貼り付け",
-    "paste": "貼り付け",
     "submit": "短縮",
     "noUrl": "URLが見つかりません。httpで始まるアドレスを入れてください。",
-    "pasteBlocked": "クリップボードを読めませんでした。欄を長押しして貼り付けてください。",
     "failed": "短縮できませんでした。もう一度お試しください。"
   },
   "linkSheet": {

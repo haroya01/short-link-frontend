@@ -350,19 +350,19 @@ function PlaceAutocompleteInput({
       {open && suggestions.length > 0 && (
         <ul
           role="listbox"
-          className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg"
+          className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg dark:bg-slate-900 dark:border-slate-800"
         >
           {suggestions.map((s) => (
             <li key={s.placeId}>
               <button
                 type="button"
                 onClick={() => handleSelect(s)}
-                className="block w-full px-3 py-2 text-left transition hover:bg-slate-50"
+                className="block w-full px-3 py-2 text-left transition hover:bg-slate-50 dark:hover:bg-slate-800"
               >
-                <span className="block truncate text-sm font-medium text-slate-900">
+                <span className="block truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                   {s.primary}
                 </span>
-                <span className="block truncate text-[11px] text-slate-500">{s.secondary}</span>
+                <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">{s.secondary}</span>
               </button>
             </li>
           ))}

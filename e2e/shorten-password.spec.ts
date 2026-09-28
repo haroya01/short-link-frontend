@@ -65,7 +65,7 @@ test.describe("password while shortening", () => {
     await page.getByRole("button", { name: "더보기" }).first().click();
     await page.getByRole("menuitem", { name: "편집" }).click();
     const dialog = page.getByRole("dialog");
-    await dialog.getByRole("button", { name: "보호", exact: true }).click();
+    await dialog.getByRole("tab", { name: "보호", exact: true }).click();
     const field = dialog.locator('input[autocomplete="new-password"]');
     await field.fill("s3cret");
     await expect(field).toHaveAttribute("type", "password");
@@ -86,6 +86,8 @@ test.describe("password while shortening", () => {
     await page.goto("/ko?stage=off");
 
     await page.getByRole("button", { name: "비밀번호 걸기" }).click();
+    // 펼치면 다음 프레임에 비밀번호 칸으로 포커스가 온다 — 그걸 본 뒤에 주소를 넣어야 입력이 엇갈리지 않는다.
+    await expect(page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호")).toBeFocused();
     await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/private-deck");
     await page.getByRole("button", { name: "단축하기" }).click();
 

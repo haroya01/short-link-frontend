@@ -26,13 +26,13 @@ const buttonVariants = cva(
         link: "text-slate-900 hover:underline underline-offset-4 dark:text-slate-100",
       },
       size: {
-        sm: "h-8 px-3",
+        sm: "touch-target h-8 px-3",
         md: "h-10 px-4",
         lg: "h-11 px-5",
         // Marketing hero / final CTA — qr-campaigns landing 의 hero CTA 매칭.
         // 반경은 베이스의 lg 그대로(컨트롤 티어 단일) — 크기만 키운다.
         xl: "h-12 px-7 text-[14px]",
-        icon: "h-9 w-9",
+        icon: "touch-target h-9 w-9",
       },
     },
     defaultVariants: {

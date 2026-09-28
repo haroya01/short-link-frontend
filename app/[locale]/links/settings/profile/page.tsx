@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Mail } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { blogHref } from "@/lib/host";
 import { SwitchLink } from "@/components/common/switch-link";
 import { useLocale, useTranslations } from "next-intl";
@@ -49,7 +50,12 @@ export default function ProfileEditPage() {
   const handleDraft = useCallback((next: ProfileDraft) => setDraft(next), []);
 
   if (!ready || !authenticated) {
-    return <div className="container max-w-2xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
+    return (
+      <div aria-busy className="container max-w-5xl space-y-6 py-12">
+        <Skeleton className="h-9 w-40" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+      </div>
+    );
   }
 
   const hasEmailForm = draft.entries.some((e) => e.kind === "EMAIL_FORM");
@@ -61,12 +67,16 @@ export default function ProfileEditPage() {
           <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
             {t("onboardingEyebrow")}
           </div>
-          <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">
-            {t("onboardingTitle")}
-          </h2>
-          <p className="mt-1 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
-            {t("onboardingSubhead")}
-          </p>
+          {!steps.username && (
+            <>
+              <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">
+                {t("onboardingTitle")}
+              </h2>
+              <p className="mt-1 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+                {t("onboardingSubhead")}
+              </p>
+            </>
+          )}
           {/* Three-step progress — each step's bullet is filled (●) once detected. The bar
               keeps showing until all three are done so the user has a clear sense of "what's
               next" while editing. Hidden once everything's set so the editor doesn't carry
@@ -109,22 +119,11 @@ export default function ProfileEditPage() {
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
         </div>
-        {/* Leads 페이지 link 를 *항상* 노출 — 이전엔 EMAIL_FORM block 있을 때만 표시했는데, 폼을
-            나중에 추가하는 사용자는 "leads dashboard 자체" 가 어디 있는지 발견 못함 (orphan).
-            폼 있으면 공통 전환 캡슐(SwitchLink)로 다른 크로스-표면 링크와 한 관용구; 폼 없을 땐
-            disabled 톤 점선으로 *비활성* 시각 표시(살아 있는 hop 이 아니라 "아직 미설정" 표시). */}
-        {hasEmailForm ? (
+        {/* 리드 페이지는 이메일 폼이 생긴 뒤에만 — 폼 추가 대화상자가 모인 주소가 어디로 가는지 말해 준다. */}
+        {hasEmailForm && (
           <SwitchLink href={blogHref("/leads")} icon={Mail} className="shrink-0">
             {t("leadsLink")}
           </SwitchLink>
-        ) : (
-          <span
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-400 dark:border-slate-800 dark:text-slate-400"
-            title={t("leadsDisabledTitle")}
-          >
-            <Mail className="h-3.5 w-3.5" aria-hidden />
-            {t("leadsLink")}
-          </span>
         )}
       </div>
 

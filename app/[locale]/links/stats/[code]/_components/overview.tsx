@@ -1,14 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { StatsJournal } from "@/components/links/stats/journal";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, countryFlag, countryName, formatNumber, formatShare } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 import type { RangeDays } from "./chapters/when-chapter";
 
@@ -42,9 +41,9 @@ export function StatsOverview({
   demo?: boolean;
 }) {
   const t = useTranslations("stats");
+  const locale = useLocale();
   const total = data.totalClicks ?? 0;
-  const botRatio = total > 0 ? ((data.botClicks ?? 0) / total) * 100 : 0;
-  const velocity = data.velocity?.ratio ?? 0;
+  const botRatio = total > 0 ? (data.botClicks ?? 0) / total : 0;
 
   return (
     <div>
@@ -65,12 +64,7 @@ export function StatsOverview({
               label={t("kpi.unique")}
               value={formatNumber(data.uniqueClicks ?? 0)}
             />
-            <Metric label={t("kpi.bot")} value={`${botRatio.toFixed(1)}%`} muted />
-            {/* 저표본 게이트 — lib/stats-journal MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
-                총 2클릭에 "24.0x"는 마스트헤드 전체를 과장으로 읽히게 한다. */}
-            {velocity >= 1.5 && (data.humanClicks ?? 0) >= 30 && (
-              <Metric label={t("kpi.velocityHot")} value={`${velocity.toFixed(1)}x`} className="hidden sm:flex" />
-            )}
+            <Metric label={t("kpi.bot")} value={formatShare(botRatio)} muted />
           </dl>
         </div>
       </section>
@@ -83,8 +77,6 @@ export function StatsOverview({
         <div className="grid grid-cols-1 gap-3 sm:mt-4 sm:gap-4 lg:grid-cols-12">
           <Tile
             label={t("section.daily.title")}
-            section="section-daily"
-            onNavigate={onNavigate}
             className="lg:col-span-7"
             actions={
               <div className="inline-flex gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
@@ -117,8 +109,6 @@ export function StatsOverview({
           <div className="lg:col-span-12"><StatsJournal data={data} onNavigate={onNavigate} initialVisible={2} /></div>
           <Tile
             label={t("section.referrerHost.title")}
-            section="section-sources"
-            onNavigate={onNavigate}
             className="cv-auto lg:col-span-4"
           >
             <BreakdownList
@@ -129,8 +119,6 @@ export function StatsOverview({
 
           <Tile
             label={t("section.device.title")}
-            section="section-device"
-            onNavigate={onNavigate}
             className="cv-auto lg:col-span-4"
           >
             <DeviceChart data={data.deviceClicks} />
@@ -138,12 +126,10 @@ export function StatsOverview({
 
           <Tile
             label={t("section.country.title")}
-            section="chapter-where"
-            onNavigate={onNavigate}
             className="cv-auto lg:col-span-4"
           >
             <BreakdownList
-              items={data.countryClicks.map((c) => ({ label: c.country, count: c.count }))}
+              items={data.countryClicks.map((c) => ({ label: countryLabel(c.country, locale, t("countryTable.unknown")), count: c.count }))}
               maxItems={5}
             />
           </Tile>
@@ -183,15 +169,11 @@ function Metric({
 
 function Tile({
   label,
-  section,
-  onNavigate,
   actions,
   children,
   className,
 }: {
   label?: string;
-  section?: string;
-  onNavigate?: (section: string) => void;
   actions?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
@@ -206,22 +188,16 @@ function Tile({
       {(label || actions) && (
         <div className="mb-3 flex items-center justify-between gap-2">
           <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{label}</h3>
-          <span className="flex items-center gap-1.5">
-            {actions}
-            {section && onNavigate && (
-              <button
-                type="button"
-                onClick={() => onNavigate(section)}
-                aria-label={label}
-                className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-slate-400 transition-[color,transform] duration-150 ease-[var(--ease)] hover:text-accent-700 active:scale-90 dark:text-slate-400 dark:hover:text-accent-400"
-              >
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </span>
+          {actions}
         </div>
       )}
       {children}
     </section>
   );
+}
+
+function countryLabel(code: string, locale: string, unknown: string) {
+  const upper = code?.toUpperCase() ?? "";
+  if (upper.length !== 2 || upper === "UN") return `🌐 ${unknown}`;
+  return `${countryFlag(upper)} ${countryName(upper, locale)}`;
 }

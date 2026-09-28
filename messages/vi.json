@@ -164,7 +164,7 @@
     "postsEmpty": "Chưa có bài viết đã xuất bản.",
     "draftsTitle": "Bản nháp",
     "draftsEmpty": "Không có bản nháp.",
-    "views": "{count} lượt xem",
+    "views": "{count, number} lượt xem",
     "loginRequired": "Vui lòng đăng nhập.",
     "loading": "Đang tải…",
     "seriesTitle": "Loạt bài",
@@ -203,11 +203,11 @@
     "analyticsLifetimeViews": "Tổng lượt xem",
     "analyticsLifetimeLikes": "Tổng lượt thích",
     "analyticsPublished": "Đã xuất bản",
-    "analyticsViews": "{count} lượt xem",
+    "analyticsViews": "{count, number} lượt xem",
     "analyticsDays": "{days} ngày",
     "analyticsAll": "Tất cả",
     "analyticsAllViews": "Lượt xem toàn thời gian",
-    "analyticsAllClicks": "{count} lượt nhấp toàn thời gian",
+    "analyticsAllClicks": "{count, number} lượt nhấp toàn thời gian",
     "analyticsSeries": "Series",
     "analyticsSubscribers": "Người đăng ký",
     "analyticsPosts": "Bài viết",
@@ -220,7 +220,7 @@
     "analyticsLinkClicks": "Lượt nhấp từ nội dung này",
     "analyticsLinkClicksAll": "Lượt nhấp từ liên kết trong bài",
     "analyticsLinkBreakdown": "Lượt nhấp theo liên kết",
-    "analyticsWindowClicks": "{count} lượt nhấp trong {days} ngày",
+    "analyticsWindowClicks": "{count, number} lượt nhấp trong {days} ngày",
     "analyticsPerPost": "Theo từng bài",
     "analyticsViewAll": "Xem tất cả",
     "analyticsCollapse": "Thu gọn",
@@ -230,7 +230,7 @@
       "likes": "Theo lượt thích",
       "recent": "Mới nhất"
     },
-    "analyticsFollows": "Lượt theo dõi mới",
+    "analyticsFollows": "Tổng lượt theo dõi",
     "analyticsFollowsGained": "Lượt theo dõi từ bài này",
     "analyticsWindowFollows": "+{count} trong {days} ngày",
     "linksByPost": "Lượt nhấp theo bài",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
     "rowDelete": "Xóa",
-    "rowDeleteConfirm": "Xóa “{title}”? Thao tác này không thể hoàn tác.",
-    "rowDeleteFailed": "Không xóa được.",
     "curationLiked": "Bài đã thích",
     "curationLikedHint": "Những bài bạn đã thích.",
     "curationHighlights": "Đánh dấu & ghi chú",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "Các chủ đề bạn theo dõi — kể cả những chủ đề chưa có bài gần đây. Bài của chúng hiện ở dải trên bảng tin của bạn.",
     "settingsFollowedTagsEmpty": "Bạn chưa theo dõi chủ đề nào.",
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
-    "analyticsPeakDay": "Ngày cao nhất {date} · {count} lượt xem"
+    "analyticsPeakDay": "Ngày cao nhất {date} · {count, number} lượt xem",
+    "analyticsLifetimeCaption": "Toàn thời gian"
   },
   "postEditor": {
     "backToList": "Bài viết",
@@ -394,8 +393,8 @@
     "featuredMoveDown": "Xuống dưới",
     "viewAll": "Danh sách",
     "viewBySeries": "Theo series",
-    "viewCount": "{count} lượt xem",
-    "likeCount": "{count} lượt thích",
+    "viewCount": "{count, number} lượt xem",
+    "likeCount": "{count, number} lượt thích",
     "noPosts": "Chưa có bài viết.",
     "listLoading": "Đang tải…",
     "slugHint": "Chỉnh được đến khi xuất bản · chữ thường, chữ số, dấu gạch ngang",
@@ -610,7 +609,7 @@
     "highlightSaved": "Đã đánh dấu",
     "highlightNoteSaved": "Đã thêm ghi chú",
     "highlightSaveError": "Không thể lưu. Vui lòng thử lại.",
-    "highlightsShownCount": "{count} đánh dấu",
+    "highlightsShownCount": "{count, number} đánh dấu",
     "highlightsHidden": "Đã ẩn đánh dấu",
     "highlightsHide": "Ẩn",
     "highlightsShow": "Hiện",
@@ -670,8 +669,8 @@
     "follow": "Theo dõi",
     "followCuratorHint": "Đọc theo lối đi mà người tuyển chọn này kết nối",
     "following": "Đang theo dõi",
-    "followers": "{count} người theo dõi",
-    "followingCount": "Đang theo dõi {count}",
+    "followers": "{count, number} người theo dõi",
+    "followingCount": "Đang theo dõi {count, number}",
     "followersTab": "Người theo dõi",
     "followingTab": "Đang theo dõi",
     "followersEmpty": "Chưa có người theo dõi.",
@@ -718,7 +717,8 @@
       "caution": "Cảnh báo"
     },
     "activityPosts": "{count} bài viết",
-    "activitySince": "từ {date}"
+    "activitySince": "từ {date}",
+    "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại."
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -819,7 +819,8 @@
     "groupToday": "Hôm nay",
     "groupYesterday": "Hôm qua",
     "groupWeek": "Tuần này",
-    "groupEarlier": "Trước đó"
+    "groupEarlier": "Trước đó",
+    "unreadLabel": "Chưa đọc"
   },
   "nav": {
     "events": "Sự kiện",
@@ -1023,8 +1024,7 @@
       "reservedCode": "Mã này đã được dành riêng. Hãy thử mã khác.",
       "quota": "Bạn đã đạt giới hạn liên kết — dọn bớt liên kết cũ để tạo mới.",
       "validation": "Dữ liệu nhập không hợp lệ."
-    },
-    "paste": "Dán"
+    }
   },
   "result": {
     "completed": "Liên kết ngắn của bạn đã sẵn sàng",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "Chưa đặt được mật khẩu. Hãy đặt lại trong phần quản lý liên kết.",
     "copy": "Sao chép",
     "copied": "Đã sao chép",
-    "open": "Mở",
     "viewStats": "Xem thống kê",
     "stats": "Thống kê",
     "moreShorten": "Rút gọn URL khác",
@@ -1124,7 +1123,6 @@
     "loadMore": "Xem thêm",
     "loadingMore": "Đang tải...",
     "searchPlaceholder": "Tìm tên, điểm đến hoặc mã",
-    "clearSearch": "Xóa tìm kiếm",
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Liên kết và thống kê lượt nhấp của tôi chỉ hiển thị sau khi đăng nhập.",
     "goToLogin": "Đi đến đăng nhập",
@@ -1281,7 +1279,6 @@
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
     "libraryViews": "Chọn danh sách liên kết",
     "allLinks": "Tất cả liên kết",
-    "copied": "Đã sao chép liên kết",
     "subtitleCount": "{count} liên kết",
     "toolCampaigns": "Chiến dịch QR",
     "toolEvents": "Đăng ký",
@@ -1341,7 +1338,6 @@
       "unknown": "Không rõ",
       "direct": "Trực tiếp"
     },
-    "back": "Quay lại",
     "shortCode": "liên kết ngắn",
     "detailsTitle": "Chi tiết",
     "tabs": {
@@ -1474,7 +1470,7 @@
       "weight": "Trọng số",
       "labelPlaceholder": "Nhãn (tùy chọn, ví dụ: variant-A)",
       "controlLabel": "Điểm đến mặc định",
-      "controlBadge": "kiểm soát",
+      "controlBadge": "Đối chứng",
       "add": "Thêm",
       "adding": "Đang thêm...",
       "addFailed": "Thêm điểm đến thất bại.",
@@ -1604,7 +1600,7 @@
       },
       "country": {
         "title": "Quốc gia",
-        "desc": "Tra cứu IP GeoLite2-City"
+        "desc": "Ước tính từ IP người truy cập"
       },
       "region": {
         "title": "Khu vực",
@@ -1621,7 +1617,7 @@
       "asn": {
         "title": "Mạng / ASN",
         "desc": "Phân bố hệ thống tự trị (ISP / nhà cung cấp đám mây). {dc} lượt nhấp từ trung tâm dữ liệu đã được tự động gắn cờ là bot.",
-        "empty": "Không có dữ liệu ASN (GeoLite2-ASN không được đóng gói kèm)"
+        "empty": "Chưa có dữ liệu mạng (ASN)"
       }
     },
     "clientApp": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} lượt nhấp",
-      "detailShare": "{share}% tổng số",
+      "detailShare": "{share} tổng số",
       "detailClose": "Đóng"
     },
     "rawData": {
@@ -2211,7 +2207,6 @@
   "publicProfile": {
     "empty": "Người dùng này chưa thêm liên kết nào.",
     "viewBlog": "Xem {count} bài viết",
-    "madeWith": "Tạo bằng kurl.me",
     "editFab": "Chỉnh sửa",
     "share": {
       "x": "Chia sẻ trên X",
@@ -2336,9 +2331,7 @@
   },
   "statsEmpty": {
     "title": "Chưa có lượt nhấp",
-    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp.",
-    "shareCta": "Sao chép liên kết ngắn",
-    "shareCopied": "Đã sao chép"
+    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp."
   },
   "utm": {
     "toggle": "Thêm tham số UTM",
@@ -2786,7 +2779,6 @@
       "emailFormHowItWorks": "Email khách để lại sẽ vào bảng 'khách tiềm năng' riêng tư của bạn. Xuất ra CSV và nhập vào Mailchimp / công cụ email của bạn.",
       "emailFormViewLeadsCta": "Xem email đã thu thập",
       "leadsLink": "Email đã thu thập",
-      "leadsDisabledTitle": "Thêm một biểu mẫu email để thu thập khách tiềm năng ở đây",
       "stats": {
         "title": "Thống kê lượt truy cập hồ sơ của tôi",
         "intro": "Ai đã xem hồ sơ công khai của bạn và từ đâu, với cùng các mục như thống kê liên kết ngắn.",
@@ -3006,7 +2998,7 @@
     "deleteConfirmTitle": "Thật sự xóa?",
     "deleteConfirmDesc": "Đăng nhập lại trong 30 ngày để khôi phục. Sau đó việc này là vĩnh viễn. Gõ \"DELETE\" để xác nhận.",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "Xóa vĩnh viễn",
+    "deleteOk": "Xóa tài khoản",
     "cancel": "Hủy",
     "deleting": "Đang xóa...",
     "twofa": {
@@ -3124,9 +3116,8 @@
     "shareButton": "Sao chép liên kết công khai",
     "shareCopied": "Đã sao chép",
     "shareCopyFailed": "Sao chép thất bại.",
-    "togglePublic": "Đặt thống kê thành công khai",
-    "togglePrivate": "Đặt thống kê thành riêng tư",
-    "toggleFailed": "Cập nhật hiển thị thất bại."
+    "toggleFailed": "Cập nhật hiển thị thất bại.",
+    "switchLabel": "Công khai thống kê"
   },
   "campaignApp": {
     "entry": {
@@ -3176,7 +3167,6 @@
       "startNow": "Bắt đầu ngay",
       "startSchedule": "Lên lịch bắt đầu",
       "endLabel": "Kết thúc",
-      "endHint": "Mã QR đã in tuân theo chính sách này sau khi chiến dịch kết thúc.",
       "defaultUrlLabel": "URL đích mặc định",
       "defaultUrlHint": "Để trống nếu mỗi đợt nên dùng URL riêng.",
       "postEndLabel": "Sau khi chiến dịch kết thúc",
@@ -3200,12 +3190,14 @@
       "loadFailed": "Tải thất bại",
       "loginRequired": "Cần đăng nhập",
       "backToList": "Chiến dịch QR",
-      "confirmEnd": "Kết thúc chiến dịch QR này ngay?\nChính sách kết thúc áp dụng ngay cho QR đã in.",
+      "confirmEnd": "Kết thúc chiến dịch QR này ngay?",
+      "confirmEndDesc": "Chính sách kết thúc áp dụng ngay cho QR đã in.",
       "ended": "Đã kết thúc chiến dịch QR",
       "endFailed": "Kết thúc thất bại",
       "reapplied": "Đã áp dụng lại chính sách kết thúc",
       "reapplyFailed": "Áp dụng lại thất bại",
-      "confirmArchive": "Lưu trữ chiến dịch QR này?\nNó sẽ bị ẩn khỏi danh sách, nhưng dữ liệu vẫn còn nguyên.",
+      "confirmArchive": "Lưu trữ chiến dịch QR này?",
+      "confirmArchiveDesc": "Nó sẽ bị ẩn khỏi danh sách, nhưng dữ liệu vẫn còn nguyên.",
       "archived": "Đã lưu trữ chiến dịch QR",
       "archiveFailed": "Lưu trữ thất bại",
       "cancel": "Hủy",
@@ -3656,7 +3648,13 @@
       "CONTACT": "Liên hệ",
       "DOWNLOAD": "Tải về",
       "CUSTOM": "Khác"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "Nổi bật",
+      "SECONDARY": "Phụ"
+    },
+    "deleteFailed": "Không xóa được CTA. Vui lòng thử lại.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại."
   },
   "abuseReports": {
     "title": "Báo cáo lạm dụng",
@@ -3954,7 +3952,6 @@
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loading": "Đang tải…",
       "loadFailed": "Không tải được danh sách.",
       "emptyTitle": "Tạo trang sự kiện đầu tiên",
       "emptyBody": "Tạo trang giới thiệu và mẫu đăng ký, rồi quản lý sĩ số và xem nguồn đăng ký ngay tại đây.",
@@ -4112,10 +4109,8 @@
   },
   "composer": {
     "placeholder": "Dán liên kết dài",
-    "paste": "Dán",
     "submit": "Rút gọn",
     "noUrl": "Không tìm thấy liên kết. Hãy dùng địa chỉ bắt đầu bằng http.",
-    "pasteBlocked": "Không đọc được bộ nhớ tạm. Nhấn giữ ô nhập để dán.",
     "failed": "Không rút gọn được. Hãy thử lại."
   },
   "linkSheet": {

@@ -4,7 +4,7 @@ import type { ComponentType, CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Mark } from "@/components/common/logo";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export type AuthGateBenefit = {
   icon: ComponentType<{ className?: string }>;
@@ -71,10 +71,8 @@ export function LinksAuthGate({
         )}
 
         <div className="flex w-full flex-col items-center gap-3 pt-1" style={hi(3)}>
-          <Link href={loginHref} className="w-full sm:w-auto">
-            <Button variant="accent" size="lg" className="w-full sm:w-auto sm:min-w-[13rem]">
-              {t("login")}
-            </Button>
+          <Link href={loginHref} className={buttonVariants({ variant: "accent", size: "lg", className: "w-full sm:w-auto w-full sm:w-auto sm:min-w-[13rem]" })}>
+            {t("login")}
           </Link>
           <Link
             href="/"

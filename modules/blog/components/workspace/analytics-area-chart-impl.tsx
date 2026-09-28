@@ -66,7 +66,7 @@ export function AnalyticsAreaChartImpl({ data }: { data: DailyPoint[] }) {
             }}
             itemStyle={{ color: "var(--chart-tooltip-text)" }}
             labelStyle={{ color: "var(--chart-tooltip-text)" }}
-            formatter={(value) => [t("analyticsViews", { count: String(value) }), ""]}
+            formatter={(value) => [t("analyticsViews", { count: Number(value) }), ""]}
             labelFormatter={(label: string) => label}
           />
           <Area

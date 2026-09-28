@@ -203,7 +203,7 @@
     "analyticsLifetimeViews": "Total views",
     "analyticsLifetimeLikes": "Total likes",
     "analyticsPublished": "Published",
-    "analyticsViews": "{count} views",
+    "analyticsViews": "{count, number} views",
     "analyticsDays": "{days}d",
     "analyticsAll": "All",
     "analyticsAllViews": "All-time views",
@@ -220,7 +220,7 @@
     "analyticsLinkClicks": "Clicks from this content",
     "analyticsLinkClicksAll": "Clicks from your post links",
     "analyticsLinkBreakdown": "Clicks by link",
-    "analyticsWindowClicks": "{count} clicks in {days}d",
+    "analyticsWindowClicks": "{count, number} clicks in {days}d",
     "analyticsPerPost": "Per-post",
     "analyticsViewAll": "View all",
     "analyticsCollapse": "Collapse",
@@ -230,7 +230,7 @@
       "likes": "By likes",
       "recent": "Most recent"
     },
-    "analyticsFollows": "Follows gained",
+    "analyticsFollows": "Total follows",
     "analyticsFollowsGained": "Follows from this post",
     "analyticsWindowFollows": "+{count} in {days}d",
     "linksByPost": "Clicks by post",
@@ -266,8 +266,6 @@
     "settingsHideFollowerCount": "Hide follower count",
     "settingsHideFollowerCountHint": "When on, no one sees your follower or following numbers. Following still works.",
     "rowDelete": "Delete",
-    "rowDeleteConfirm": "Delete “{title}”? This can't be undone.",
-    "rowDeleteFailed": "Couldn't delete.",
     "curationLiked": "Liked posts",
     "curationLikedHint": "Posts you've liked.",
     "curationHighlights": "Highlights & notes",
@@ -291,7 +289,8 @@
     "settingsFollowedTagsHint": "Topics you follow — including ones with no recent posts. Their posts surface in your feed strip.",
     "settingsFollowedTagsEmpty": "You're not following any topics yet.",
     "settingsUnfollowTag": "Unfollow {tag}",
-    "analyticsPeakDay": "Peak day {date} · {count} views"
+    "analyticsPeakDay": "Peak day {date} · {count, number} views",
+    "analyticsLifetimeCaption": "All time"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -596,7 +595,7 @@
     "highlightSaved": "Highlighted",
     "highlightNoteSaved": "Note added",
     "highlightSaveError": "Couldn't save. Please try again.",
-    "highlightsShownCount": "{count} highlighted",
+    "highlightsShownCount": "{count, number} highlighted",
     "highlightsHidden": "Highlights hidden",
     "highlightsHide": "Hide",
     "highlightsShow": "Show",
@@ -657,7 +656,7 @@
     "followCuratorHint": "Follow the paths this curator connects",
     "following": "Following",
     "followers": "{count, plural, one {# follower} other {# followers}}",
-    "followingCount": "{count} following",
+    "followingCount": "{count, number} following",
     "followersTab": "Followers",
     "followingTab": "Following",
     "followersEmpty": "No followers yet.",
@@ -704,7 +703,8 @@
       "caution": "Caution"
     },
     "activityPosts": "{count, plural, one {# post} other {# posts}}",
-    "activitySince": "since {date}"
+    "activitySince": "since {date}",
+    "reportFailed": "Couldn't send your report. Please try again."
   },
   "imageCropper": {
     "title": "Crop image",
@@ -819,7 +819,8 @@
     "groupToday": "Today",
     "groupYesterday": "Yesterday",
     "groupWeek": "This week",
-    "groupEarlier": "Earlier"
+    "groupEarlier": "Earlier",
+    "unreadLabel": "Unread"
   },
   "nav": {
     "events": "Events",
@@ -1023,8 +1024,7 @@
       "reservedCode": "That code is reserved. Try another one.",
       "quota": "You've reached your link limit — clean up old links to make room.",
       "validation": "Invalid input."
-    },
-    "paste": "Paste"
+    }
   },
   "result": {
     "completed": "Your short link is ready",
@@ -1034,7 +1034,6 @@
     "passwordNotApplied": "The password wasn't applied. Add it again in the link settings.",
     "copy": "Copy",
     "copied": "Copied",
-    "open": "Open",
     "viewStats": "View stats",
     "stats": "Stats",
     "moreShorten": "Shorten another",
@@ -1124,7 +1123,6 @@
     "loadMore": "Load more",
     "loadingMore": "Loading...",
     "searchPlaceholder": "Search name, URL or code",
-    "clearSearch": "Clear search",
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
     "goToLogin": "Go to sign in",
@@ -1281,7 +1279,6 @@
     "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
     "libraryViews": "Link collection",
     "allLinks": "All links",
-    "copied": "Link copied",
     "subtitleCount": "{count, plural, one {# link} other {# links}}",
     "toolCampaigns": "QR campaigns",
     "toolEvents": "Sign-ups",
@@ -1341,7 +1338,6 @@
       "unknown": "Unknown",
       "direct": "Direct"
     },
-    "back": "Back",
     "shortCode": "short link",
     "detailsTitle": "Details",
     "tabs": {
@@ -1474,7 +1470,7 @@
       "weight": "Weight",
       "labelPlaceholder": "Label (optional, e.g. variant-A)",
       "controlLabel": "Default destination",
-      "controlBadge": "control",
+      "controlBadge": "Control",
       "add": "Add",
       "adding": "Adding...",
       "addFailed": "Failed to add destination.",
@@ -1604,7 +1600,7 @@
       },
       "country": {
         "title": "Country",
-        "desc": "GeoLite2-City IP lookup"
+        "desc": "Estimated from the visitor's IP"
       },
       "region": {
         "title": "Region",
@@ -1621,7 +1617,7 @@
       "asn": {
         "title": "Network / ASN",
         "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
-        "empty": "No ASN data (GeoLite2-ASN not bundled)"
+        "empty": "No network (ASN) data yet"
       }
     },
     "clientApp": {
@@ -1688,7 +1684,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count, plural, one {# click} other {# clicks}}",
-      "detailShare": "{share}% of total",
+      "detailShare": "{share} of total",
       "detailClose": "Close"
     },
     "rawData": {
@@ -2211,7 +2207,6 @@
   "publicProfile": {
     "empty": "This user hasn't added any links yet.",
     "viewBlog": "View {count, plural, one {# post} other {# posts}}",
-    "madeWith": "Made with kurl.me",
     "editFab": "Edit",
     "share": {
       "x": "Share on X",
@@ -2336,9 +2331,7 @@
   },
   "statsEmpty": {
     "title": "No clicks yet",
-    "description": "Share this short link on KakaoTalk, Slack, or social — stats start rolling in as soon as someone clicks.",
-    "shareCta": "Copy short link",
-    "shareCopied": "Copied"
+    "description": "Share this short link on KakaoTalk, Slack, or social — stats start rolling in as soon as someone clicks."
   },
   "utm": {
     "toggle": "Add UTM parameters",
@@ -2786,7 +2779,6 @@
       "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
       "emailFormViewLeadsCta": "View collected emails",
       "leadsLink": "Collected emails",
-      "leadsDisabledTitle": "Add an email form to collect leads here",
       "stats": {
         "title": "My profile visit stats",
         "intro": "Who viewed your public profile and from where, with the same breakdowns as your short-link stats.",
@@ -3006,7 +2998,7 @@
     "deleteConfirmTitle": "Really delete?",
     "deleteConfirmDesc": "Sign back in within 30 days to restore. After that this is permanent. Type \"DELETE\" to confirm.",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "Delete forever",
+    "deleteOk": "Delete account",
     "cancel": "Cancel",
     "deleting": "Deleting...",
     "twofa": {
@@ -3124,9 +3116,8 @@
     "shareButton": "Copy public link",
     "shareCopied": "Copied",
     "shareCopyFailed": "Copy failed.",
-    "togglePublic": "Make stats public",
-    "togglePrivate": "Make stats private",
-    "toggleFailed": "Failed to update visibility."
+    "toggleFailed": "Failed to update visibility.",
+    "switchLabel": "Public stats"
   },
   "campaignApp": {
     "entry": {
@@ -3176,7 +3167,6 @@
       "startNow": "Start now",
       "startSchedule": "Schedule start",
       "endLabel": "End",
-      "endHint": "Printed QR codes follow this policy after the campaign ends.",
       "defaultUrlLabel": "Default destination URL",
       "defaultUrlHint": "Leave blank if each batch should use its own URL.",
       "postEndLabel": "After campaign ends",
@@ -3200,12 +3190,14 @@
       "loadFailed": "Load failed",
       "loginRequired": "Sign in required",
       "backToList": "QR campaigns",
-      "confirmEnd": "End this QR campaign now?\nThe end policy applies immediately to printed QRs.",
+      "confirmEnd": "End this QR campaign now?",
+      "confirmEndDesc": "The end policy applies immediately to printed QRs.",
       "ended": "QR campaign ended",
       "endFailed": "Failed to end",
       "reapplied": "End policy reapplied",
       "reapplyFailed": "Failed to reapply",
-      "confirmArchive": "Archive this QR campaign?\nIt will be hidden from the list, but data stays intact.",
+      "confirmArchive": "Archive this QR campaign?",
+      "confirmArchiveDesc": "It will be hidden from the list, but data stays intact.",
       "archived": "QR campaign archived",
       "archiveFailed": "Failed to archive",
       "cancel": "Cancel",
@@ -3656,7 +3648,13 @@
       "CONTACT": "Contact",
       "DOWNLOAD": "Download",
       "CUSTOM": "Other"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "Primary",
+      "SECONDARY": "Secondary"
+    },
+    "deleteFailed": "Couldn't delete the CTA. Please try again.",
+    "saveFailed": "Couldn't save. Please try again."
   },
   "abuseReports": {
     "title": "Abuse Reports",
@@ -3954,7 +3952,6 @@
     "list": {
       "title": "Events",
       "new": "New event",
-      "loading": "Loading…",
       "loadFailed": "Could not load events.",
       "emptyTitle": "Create your first event page",
       "emptyBody": "Make an intro page and a sign-up form, then manage capacity and see where sign-ups came from here.",
@@ -4112,10 +4109,8 @@
   },
   "composer": {
     "placeholder": "Paste a long link",
-    "paste": "Paste",
     "submit": "Shorten",
     "noUrl": "No link found. Use an address that starts with http.",
-    "pasteBlocked": "Couldn't read the clipboard. Long-press the field to paste.",
     "failed": "Couldn't shorten it. Try again."
   },
   "linkSheet": {

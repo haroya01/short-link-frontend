@@ -382,7 +382,7 @@ export function ConnectSheet({
                               aria-hidden
                               className={`grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
                                 selected.has(c.id)
-                                  ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500"
+                                  ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
                                   : "border-slate-300 dark:border-slate-600"
                               }`}
                             >

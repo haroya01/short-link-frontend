@@ -24,10 +24,39 @@ test.describe("anonymous shorten flow", () => {
     const resultLink = line.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
     await expect(resultLink).toBeVisible();
     await expect(page.getByRole("button", { name: "복사" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "열기" }).first()).toBeVisible();
+    // 짧은 주소 자체가 새 탭으로 여는 링크라 별도 '열기'는 없다.
+    await expect(resultLink).toHaveAttribute("target", "_blank");
+    await expect(page.getByRole("link", { name: "열기" })).toHaveCount(0);
 
     const href = await resultLink.getAttribute("href");
     expect(href).toMatch(/\/[0-9A-Za-z]{7}$/);
+  });
+
+  test("pasting only fills the field — shortening waits for the button", async ({ page }) => {
+    let created = 0;
+    page.on("request", (request) => {
+      if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/links") created += 1;
+    });
+    await page.goto("/ko");
+    const input = page.getByPlaceholder(/긴 주소를 여기에/);
+    await input.focus();
+    await page.evaluate(() => {
+      const data = new DataTransfer();
+      data.setData("text/plain", "이거 봐 https://example.com/pasted 좋더라");
+      document.activeElement?.dispatchEvent(
+        new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }),
+      );
+    });
+
+    // 공유 문구째 붙어도 칸엔 주소만, 그리고 아직 아무것도 만들지 않는다(옵션을 고를 틈).
+    await expect(input).toHaveValue("https://example.com/pasted");
+    await page.waitForTimeout(600);
+    expect(created).toBe(0);
+    await expect(page.getByTestId("result-line")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "단축하기" }).click();
+    await expect(page.getByTestId("result-line").first()).toBeVisible({ timeout: 10000 });
+    expect(created).toBe(1);
   });
 
   test("rejects empty URL with inline error", async ({ page }) => {

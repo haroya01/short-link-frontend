@@ -121,7 +121,7 @@ export function SavedCard({
           aria-hidden
           className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-md border transition-colors ${
             selected
-              ? "border-accent-600 bg-accent-700 text-white"
+              ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
               : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
           }`}
         >

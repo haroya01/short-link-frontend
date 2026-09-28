@@ -245,8 +245,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
           aria-pressed={selectMode}
           className={`focus-ring ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
             selectMode
-              ? "bg-accent-700 text-white"
-              : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+              ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+              : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
           }`}
         >
           <ListChecks className="h-3.5 w-3.5" />
@@ -402,13 +402,13 @@ function FolderPill({
       aria-pressed={active}
       className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
         active
-          ? "bg-accent-700 text-white"
-          : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+          ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+          : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
       }`}
     >
       {icon && <Folder className="h-3.5 w-3.5" />}
       {label}
-      <span className={active ? "text-white/70" : "text-slate-500 dark:text-slate-400"}>{count}</span>
+      <span className={active ? "text-white/70 dark:text-slate-900/60" : "text-slate-500 dark:text-slate-400"}>{count}</span>
     </button>
   );
 }
