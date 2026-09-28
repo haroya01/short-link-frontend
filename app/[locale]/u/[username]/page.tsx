@@ -5,42 +5,21 @@ import { getTranslations } from "next-intl/server";
 import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
 import { ProfileShareFab } from "@/modules/profile/components/share-fab";
 import type { PublicProfile } from "@/types";
-import { mockPublicProfile } from "@/modules/profile/mock-profile";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { EntryList } from "./_components/entry-list";
 import { ProfileHeader } from "./_components/profile-header";
 import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
 import { ShareRow } from "./_components/share-row";
 import { THEME_TABLE } from "./_lib/theme";
+import { fetchProfile } from "./_lib/fetch-profile";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { ArrowRight, BookOpen } from "lucide-react";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
-const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   "https://kurl.me";
 
-async function fetchProfile(username: string): Promise<PublicProfile | null> {
-  // Demo/mock mode: render a stand-in link-in-bio so the surface (and the blog→프로필 cross-link)
-  // works without a backend.
-  if (USE_MOCKS) return mockPublicProfile(username);
-  // Short revalidate so owner edits show up within ~30s without smashing the backend per visit.
-  // The backend layers a 5min Redis cache that auto-evicts on profile/toggle/reorder writes.
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}`, {
-      next: { revalidate: 30 },
-    });
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error("profile fetch failed");
-    return (await res.json()) as PublicProfile;
-  } catch {
-    // No backend / unparseable base URL → a clean 404 instead of an unhandled server crash.
-    return null;
-  }
-}
 
 export async function generateMetadata({
   params,
@@ -51,15 +30,9 @@ export async function generateMetadata({
   const profile = await fetchProfile(username).catch(() => null);
   if (!profile) return { title: `@${username}` };
   const entries = profile.entries ?? [];
-  // OG image: banner (3:1 / 4:1 — already a hero shape) > avatar (square fallback) > nothing.
-  // KakaoTalk / Discord / Slack crawlers all read og:image; without it the preview shows just the
-  // title text with no thumbnail (which is why pasting kurl.me/u/<handle> into KakaoTalk showed
-  // no image before this).
-  //
-  // <p>Crawler caching note: once a URL has been scraped without an image, KakaoTalk pins that
-  // result for ~24h. Telling the owner to retest after deploy + use Kakao's 공유 디버거
-  // (https://developers.kakao.com/tool/debugger/sharing) to force-refresh.
-  const ogImage = profile.bannerUrl ?? profile.avatarUrl ?? null;
+  // og:image comes from ./opengraph-image.tsx (paper card: avatar + handle + bio, banner beside it).
+  // Crawler caching note: KakaoTalk pins a scraped preview for ~24h — owners retest with Kakao's
+  // 공유 디버거 (https://developers.kakao.com/tool/debugger/sharing) to force-refresh.
   const profileUrl = `${SITE_URL}/${locale}/u/${profile.username}`;
   return {
     title: `@${profile.username} · kurl`,
@@ -69,17 +42,13 @@ export async function generateMetadata({
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
       url: profileUrl,
-      images: ogImage
-        ? [{ url: ogImage, width: 1200, height: 630, alt: `@${profile.username}` }]
-        : undefined,
       type: "profile",
       siteName: "kurl",
     },
     twitter: {
-      card: ogImage ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
-      images: ogImage ? [ogImage] : undefined,
     },
   };
 }

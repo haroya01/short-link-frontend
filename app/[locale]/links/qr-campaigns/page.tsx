@@ -456,8 +456,7 @@ function FinalCta({
   return (
     <section id="qr-final-cta" className="bg-accent-900 text-white">
       <div className="container max-w-5xl py-20 sm:py-24">
-        <p className="text-[13px] font-semibold text-accent-200">{t("eyebrow")}</p>
-        <h2 className="mt-3 max-w-2xl text-balance text-headline-md font-bold tracking-headline sm:text-headline-lg">
+        <h2 className="max-w-2xl text-balance text-headline-md font-bold tracking-headline sm:text-headline-lg">
           {t("title")}
         </h2>
         <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">

@@ -392,7 +392,7 @@
     "featuredPinnedLabel": "Nổi bật",
     "featuredMoveUp": "Lên trên",
     "featuredMoveDown": "Xuống dưới",
-    "viewAll": "Tất cả",
+    "viewAll": "Danh sách",
     "viewBySeries": "Theo series",
     "viewCount": "{count} lượt xem",
     "likeCount": "{count} lượt thích",
@@ -3556,7 +3556,6 @@
       "line2": "chỉ đổi đích đến."
     },
     "cta": {
-      "eyebrow": "Chiến dịch QR",
       "title": "Chọn nơi phát tiếp theo bằng lượt nhấp",
       "primary": "Tạo QR",
       "secondary": "Đăng nhập",

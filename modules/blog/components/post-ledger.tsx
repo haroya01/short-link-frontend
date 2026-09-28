@@ -47,7 +47,7 @@ export function PostLedger({
         <section key={year} aria-labelledby={`ledger-${year}`}>
           <h2
             id={`ledger-${year}`}
-            className="border-b border-slate-200 pb-2 font-mono text-[13px] font-semibold tabular-nums text-slate-500 dark:border-slate-800 dark:text-slate-400"
+            className="border-b border-slate-200 pb-2 text-[13px] font-semibold tabular-nums text-slate-500 dark:border-slate-800 dark:text-slate-400"
           >
             {year}
           </h2>
@@ -63,7 +63,7 @@ export function PostLedger({
                     <time
                       dateTime={post.publishedAt}
                       title={fullDate.format(new Date(post.publishedAt))}
-                      className="w-11 shrink-0 font-mono text-[13px] tabular-nums text-slate-500 dark:text-slate-400"
+                      className="w-11 shrink-0 text-[13px] tabular-nums text-slate-500 dark:text-slate-400"
                     >
                       {month}.{day}
                     </time>

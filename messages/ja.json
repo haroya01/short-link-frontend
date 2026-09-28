@@ -392,7 +392,7 @@
     "featuredPinnedLabel": "代表記事",
     "featuredMoveUp": "上へ",
     "featuredMoveDown": "下へ",
-    "viewAll": "すべて",
+    "viewAll": "一覧",
     "viewBySeries": "シリーズ別",
     "viewCount": "{count} 回閲覧",
     "likeCount": "{count} 件のいいね",
@@ -3556,7 +3556,6 @@
       "line2": "行き先だけ変えます。"
     },
     "cta": {
-      "eyebrow": "QRキャンペーン",
       "title": "次の配布先をクリック数で決める",
       "primary": "QRを作成",
       "secondary": "ログイン",

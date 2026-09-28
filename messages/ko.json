@@ -392,7 +392,7 @@
     "featuredPinnedLabel": "대표글",
     "featuredMoveUp": "위로",
     "featuredMoveDown": "아래로",
-    "viewAll": "전체",
+    "viewAll": "목록",
     "viewBySeries": "시리즈별",
     "viewCount": "조회 {count}",
     "likeCount": "좋아요 {count}",
@@ -3556,7 +3556,6 @@
       "line2": "목적지만 바꿔요."
     },
     "cta": {
-      "eyebrow": "QR 캠페인",
       "title": "다음 배포 위치를 클릭 수로 정해요",
       "primary": "QR 만들기",
       "secondary": "로그인",

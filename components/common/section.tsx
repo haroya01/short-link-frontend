@@ -15,8 +15,8 @@ type Props = {
 /**
  * Stat / dashboard section surface. Refined Apple-style 16 px corner ({@code rounded-2xl}) sits
  * above inner controls / nested boxes ({@code rounded-lg} 8 px) so radii read as concentric.
- * Header has a three-level hierarchy: optional eyebrow (uppercase tracking, accent — used as a
- * tiny brand mark on sections that need contextual labeling), title (semibold, tracking-tight,
+ * Header has a three-level hierarchy: optional eyebrow (small accent label — for sections that need
+ * contextual labeling), title (semibold, tracking-tight,
  * 15 px), description (slate-500, leading-relaxed). The optional footnote slot lets sections
  * add caveats / data-source links without spilling outside the wrapper.
  */
