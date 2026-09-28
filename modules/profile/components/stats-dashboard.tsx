@@ -3,8 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { ProfileStats } from "@/types";
 import { StatsCards } from "@/components/links/stats/cards";
-import { DailyChart } from "@/components/links/stats/charts/daily-chart";
-import { HourChart } from "@/components/links/stats/charts/hour-chart";
+import { LazyDailyChart, LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { CountryTable } from "@/components/links/stats/country-table";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
@@ -33,10 +32,10 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section id="section-daily" title={t("daily.title")} description={t("daily.desc")} className="lg:col-span-2">
-          <DailyChart data={data.dailyVisits} />
+          <LazyDailyChart data={data.dailyVisits} />
         </Section>
         <Section id="section-hourly" title={t("hourly.title")} description={t("hourly.desc")}>
-          <HourChart data={data.hourVisits} />
+          <LazyHourChart data={data.hourVisits} />
         </Section>
       </div>
 

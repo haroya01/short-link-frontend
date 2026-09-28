@@ -18,8 +18,10 @@ import { ErrorState } from "@/components/common/error-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { Section } from "@/components/common/section";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
-import { DailyChart as DailyTrendChart } from "@/components/links/stats/charts/daily-chart";
-import { HourChart as HourRhythmChart } from "@/components/links/stats/charts/hour-chart";
+import {
+  LazyDailyChart as DailyTrendChart,
+  LazyHourChart as HourRhythmChart,
+} from "@/components/links/stats/charts/lazy-charts";
 import type { HeatmapCell } from "@/types";
 import type {
   CampaignDetail,
