@@ -7,8 +7,8 @@ import { DashboardOnboardingScene } from "@/components/common/onboarding-scenes"
 import { OnboardingSteps } from "@/components/common/onboarding-steps";
 
 /**
- * First-link onboarding panel shown on the dashboard when the user has no links yet. The page
- * header's "새 링크" stays the one primary action; the panel only explains the three steps.
+ * First-link onboarding panel shown on the dashboard when the user has no links yet. The shortener
+ * above it stays the one primary action; the panel only explains the three steps.
  */
 export function DashboardOnboarding() {
   const t = useTranslations("dashboard.onboarding");

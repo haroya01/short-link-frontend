@@ -28,7 +28,7 @@ test.describe("password while shortening", () => {
         });
       },
     });
-    await page.goto("/ko?stage=off");
+    await page.goto("/ko/dashboard");
 
     const password = page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호");
     const lockToggle = page.getByRole("button", { name: "비밀번호 걸기" });
@@ -83,7 +83,7 @@ test.describe("password while shortening", () => {
         return route.fulfill({ status: 500, json: {} });
       },
     });
-    await page.goto("/ko?stage=off");
+    await page.goto("/ko/dashboard");
 
     await page.getByRole("button", { name: "비밀번호 걸기" }).click();
     // 펼치면 다음 프레임에 비밀번호 칸으로 포커스가 온다 — 그걸 본 뒤에 주소를 넣어야 입력이 엇갈리지 않는다.

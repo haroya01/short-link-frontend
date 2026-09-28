@@ -973,9 +973,7 @@
     },
     "recentKept": "Lưu trên trình duyệt này trong 24 giờ",
     "recentClaim": "Đăng nhập để chuyển các liên kết này vào tài khoản, không bị hết hạn.",
-    "recentLogin": "Đăng nhập",
-    "recentAll": "Xem tất cả",
-    "recentClicks": "{count, number} lượt nhấp"
+    "recentLogin": "Đăng nhập"
   },
   "showcase": {
     "eyebrow": "Hồ sơ công khai · ví dụ",
@@ -1166,12 +1164,11 @@
       "title": "Ba bước",
       "subtitle": "Rút gọn một liên kết rồi đăng ở nơi mọi người sẽ thấy. Lượt nhấp sẽ được ghi lại ở đây.",
       "step1Title": "Rút gọn liên kết",
-      "step1Desc": "Dán một URL dài ở trang chủ rồi nhấn Rút gọn.",
+      "step1Desc": "Dán URL dài vào ô rút gọn, đặt mã, hạn dùng hoặc mật khẩu nếu cần, rồi nhấn Rút gọn.",
       "step2Title": "Chia sẻ nó",
       "step2Desc": "Đăng ở bio Instagram, KakaoTalk hay danh thiếp. Bạn cũng có thể tải mã QR.",
       "step3Title": "Xem thống kê",
       "step3Desc": "Lượt nhấp được chia theo kênh, quốc gia, thiết bị và khung giờ.",
-      "primaryCta": "Tạo liên kết đầu tiên",
       "secondaryCta": "Hoặc xem trước màn hình phân tích",
       "scene": {
         "weekClicks": "Lượt nhấp tuần này",
@@ -4111,7 +4108,12 @@
     "placeholder": "Dán liên kết dài",
     "submit": "Rút gọn",
     "noUrl": "Không tìm thấy liên kết. Hãy dùng địa chỉ bắt đầu bằng http.",
-    "failed": "Không rút gọn được. Hãy thử lại."
+    "failed": "Không rút gọn được. Hãy thử lại.",
+    "options": "Tùy chọn",
+    "optionsTitle": "Tùy chọn rút gọn",
+    "optionsSet": "Đã đặt {count}",
+    "done": "Xong",
+    "codeInvalid": "Mã dùng 3–16 chữ cái hoặc số."
   },
   "linkSheet": {
     "created": "Đã tạo",

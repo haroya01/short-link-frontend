@@ -1,23 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { ShortenForm } from "@/components/links/shorten/form";
-import { ResultLine } from "@/components/links/shorten/result-line";
+import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { HomeStatsExample } from "@/components/landing/home-stats-example";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
 import { HomeRecent } from "@/components/links/home-recent";
-import { useInvalidateLinks } from "@/lib/api/links.queries";
 import { useAuth } from "@/lib/auth";
-import { recordRecent, useRecentLinks } from "@/lib/recent-links";
-import { extractUrl } from "@/lib/extract-url";
-import { Link } from "@/i18n/navigation";
-import type { CreateLinkResponse } from "@/types";
+import { useRecentLinks } from "@/lib/recent-links";
+import { useSharedUrl } from "@/lib/use-shared-url";
+import { Link, useRouter } from "@/i18n/navigation";
 
 // Below-fold sections split into their own chunks (SSR HTML unchanged) so the above-fold form +
 // header hydrate without parsing the preview/FAQ code first — on a throttled phone that's the
@@ -49,27 +46,22 @@ export default function HomePage() {
         : locale === "vi"
           ? "text-[30px] leading-[1.14] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.1]"
           : "text-[38px] leading-[1.14] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.1]";
-  const [results, setResults] = useState<
-    { res: CreateLinkResponse; original: string; passwordRequested?: boolean }[] | null
-  >(null);
-  /** 답 줄이 자리를 차지한 뒤 "다른 주소도 줄이기"로 빈 줄을 다시 불러온 상태. */
-  const [composing, setComposing] = useState(false);
-  const tResult = useTranslations("result");
+  const [results, setResults] = useState<ShortenedEntry[] | null>(null);
   const recent = useRecentLinks();
-  const invalidateLinks = useInvalidateLinks();
-  // 다른 앱의 공유 시트 → kurl(설치형 PWA share_target) 로 들어온 주소. 한 번 줄이고 주소창에서 지운다.
-  const [sharedUrl, setSharedUrl] = useState<string | null>(null);
+  // 공유로 들어온 쿼리는 useSharedUrl 이 곧 지우므로, 대시보드로 넘길 원본을 첫 렌더에 잡아 둔다.
+  const arrivedWith = useRef(typeof window === "undefined" ? "" : window.location.search);
+  const sharedUrl = useSharedUrl();
+  const router = useRouter();
+  // 로그인한 사람의 홈은 대시보드다. 첫 로드는 pre-paint 스크립트가 이미 넘겼고, 여긴 앱 안에서 "/" 로
+  // 온 경우.
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const found = extractUrl(params.get("shared_url") || params.get("shared_text") || "");
-    if (!found) return;
-    setSharedUrl(found);
-    for (const key of ["shared_url", "shared_text", "shared_title"]) params.delete(key);
-    const qs = params.toString();
-    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
-  }, []);
+    if (!ready || !authenticated) return;
+    router.replace(`/dashboard${arrivedWith.current}`);
+  }, [ready, authenticated, router]);
   const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
+
+  if (ready && authenticated) return <div className="min-h-screen" />;
 
   return (
     <div>
@@ -103,69 +95,13 @@ export default function HomePage() {
             {/* 단축이 끝나면 입력 칸이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
                 "다른 주소도 줄이기"를 누르면 빈 칸이 맨 위로 돌아오고 답들은
                 영수증처럼 아래로 밀린다. */}
-            <div className="max-w-2xl">
-              {(!results || results.length === 0 || composing) && (
-                <ShortenForm
-                  hero
-                  initialUrl={sharedUrl ?? undefined}
-                  heroAutoFocus={Boolean(results && results.length > 0)}
-                  authenticated={authenticated}
-                  ready={ready}
-                  onShortened={(items) => {
-                    setComposing(false);
-                    // 새 답이 맨 위로 — 이번 세션의 영수증 스택(최대 5줄, 전체는 최근 단축이 보관).
-                    setResults((prev) => {
-                      const next = items.map((it) => ({
-                        res: it.res,
-                        original: it.originalUrl,
-                        passwordRequested: it.passwordRequested,
-                      }));
-                      const seen = new Set(next.map((n) => n.res.shortCode));
-                      const kept = (prev ?? []).filter((p) => !seen.has(p.res.shortCode));
-                      return [...next, ...kept].slice(0, 5);
-                    });
-                    for (const it of items) {
-                      recordRecent({
-                        shortCode: it.res.shortCode,
-                        shortUrl: it.res.shortUrl,
-                        originalUrl: it.originalUrl,
-                        createdAt: Date.now(),
-                        claimToken: it.res.claimToken,
-                      });
-                    }
-                    if (authenticated) void invalidateLinks();
-                  }}
-                />
-              )}
-
-              {results && results.length > 0 && (
-                <div className={composing ? "mt-9 space-y-8" : "space-y-8"}>
-                  {results.map((r, i) => (
-                    <ResultLine
-                      key={r.res.shortCode}
-                      result={r.res}
-                      originalUrl={r.original}
-                      authenticated={authenticated}
-                      passwordRequested={r.passwordRequested}
-                      enterIndex={i}
-                    />
-                  ))}
-                  {!composing && (
-                    <button
-                      type="button"
-                      onClick={() => setComposing(true)}
-                      className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
-                      style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
-                    >
-                      {tResult("moreShorten")}
-                      <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
-                        ↵
-                      </span>
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+            <ShortenPanel
+              authenticated={authenticated}
+              ready={ready}
+              results={results}
+              onResultsChange={setResults}
+              initialUrl={sharedUrl ?? undefined}
+            />
           </div>
 
           <div className="mt-5 min-h-[44px] max-w-2xl">

@@ -5,7 +5,6 @@ import {
   BarChart3,
   FileUp,
   Link2,
-  Plus,
   QrCode,
   Search,
   Star,
@@ -28,11 +27,13 @@ import {
 } from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable, type LiveBump } from "@/components/links/table";
 import { MobileComposer } from "@/components/links/mobile-composer";
+import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
+import { useSharedUrl } from "@/lib/use-shared-url";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
@@ -64,6 +65,8 @@ export default function DashboardPage() {
     setUrlFiltersRead(true);
   }, []);
   const [bulkOpen, setBulkOpen] = useState(false);
+  const [made, setMade] = useState<ShortenedEntry[] | null>(null);
+  const sharedUrl = useSharedUrl();
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [ordering, setOrdering] = useState(false);
   const favorites = useLinkFavorites();
@@ -195,14 +198,21 @@ export default function DashboardPage() {
             <button type="button" onClick={() => setBulkOpen(true)} className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100 sm:hidden">{t("bulkImport.button")}</button>
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
-            <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
-          </Button>
-          <Link href="/" className={buttonVariants({ variant: "accent", className: "hidden sm:inline-flex" })}>
-            <Plus className="h-4 w-4" /> {t("newLink")}
-          </Link>
-        </div>
+        <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
+          <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
+        </Button>
+      </div>
+
+      {/* 로그인한 사람의 홈 — 단축 칸이 맨 위(폰은 엄지 자리의 하단 입력 바가 같은 일을 한다). */}
+      <div className="hidden pb-2 pt-1 sm:block">
+        <ShortenPanel
+          authenticated={authenticated}
+          ready={ready}
+          results={made}
+          onResultsChange={setMade}
+          initialUrl={sharedUrl ?? undefined}
+          onCreated={() => void invalidateLinks()}
+        />
       </div>
 
       <BulkImportDialog
@@ -210,7 +220,7 @@ export default function DashboardPage() {
         onClose={() => setBulkOpen(false)}
         onImported={() => void invalidateLinks()}
       />
-      <MobileComposer onCreated={() => void invalidateLinks()} />
+      <MobileComposer initialUrl={sharedUrl ?? undefined} onCreated={() => void invalidateLinks()} />
 
       {firstRun ? (
         // No links yet, no filter → a single clear next step. The stats, campaign card, weekly

@@ -973,9 +973,7 @@
     },
     "recentKept": "Kept in this browser for 24 hours",
     "recentClaim": "Sign in and these links move to your account, with no expiry.",
-    "recentLogin": "Sign in",
-    "recentAll": "View all",
-    "recentClicks": "{count, plural, one {# click} other {# clicks}}"
+    "recentLogin": "Sign in"
   },
   "showcase": {
     "eyebrow": "Public profiles · examples",
@@ -1166,12 +1164,11 @@
       "title": "Three steps",
       "subtitle": "Shorten a link and post it where people will see it. Clicks collect here.",
       "step1Title": "Shorten a link",
-      "step1Desc": "Paste a long URL on the home page and press Shorten.",
+      "step1Desc": "Paste a long URL into the shortener, set a code, expiry or password if you like, then press Shorten.",
       "step2Title": "Share it",
       "step2Desc": "Post it in an Instagram bio, KakaoTalk or on a business card. You can download a QR code too.",
       "step3Title": "See the stats",
       "step3Desc": "Clicks are broken down by channel, country, device and time of day.",
-      "primaryCta": "Make your first link",
       "secondaryCta": "Or preview the analytics screen",
       "scene": {
         "weekClicks": "Clicks this week",
@@ -4111,7 +4108,12 @@
     "placeholder": "Paste a long link",
     "submit": "Shorten",
     "noUrl": "No link found. Use an address that starts with http.",
-    "failed": "Couldn't shorten it. Try again."
+    "failed": "Couldn't shorten it. Try again.",
+    "options": "Options",
+    "optionsTitle": "Shortening options",
+    "optionsSet": "{count} set",
+    "done": "Done",
+    "codeInvalid": "Use 3–16 letters or numbers for the code."
   },
   "linkSheet": {
     "created": "Created",
