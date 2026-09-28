@@ -1286,14 +1286,12 @@
   "edit": {
     "title": "लिंक संपादित करें",
     "originalUrl": "गंतव्य URL",
-    "expiresAt": "समाप्ति समय (कोई समाप्ति न हो तो खाली छोड़ें)",
     "noteLabel": "लिंक का नाम / नोट (वैकल्पिक)",
     "notePlaceholder": "जैसे स्प्रिंग प्रोमो / Instagram स्टोरी में इस्तेमाल",
     "noteHint": "आपकी सूची और पसंदीदा में दिखता है। आगंतुकों को नहीं दिखता।",
     "expiredMessageLabel": "समाप्ति-पेज संदेश (वैकल्पिक)",
     "expiredMessagePlaceholder": "जैसे प्रोमो समाप्त — अगली पेशकश example.com पर देखें",
     "expiredMessageHint": "लिंक समाप्त होने या व्यू सीमा पर पहुँचने पर डिफ़ॉल्ट समाप्ति पेज के बजाय दिखाया जाता है।",
-    "clear": "साफ़ करें",
     "cancel": "रद्द करें",
     "save": "सहेजें",
     "saving": "सहेजा जा रहा है...",
@@ -1304,8 +1302,7 @@
     "tabs": {
       "basic": "बुनियादी",
       "tags": "टैग",
-      "og": "शेयर कार्ड",
-      "protection": "सुरक्षा"
+      "og": "शेयर कार्ड"
     },
     "tags": {
       "description": "इस लिंक के लिए टैग टाइप करें। नए नाम स्वतः बन जाते हैं।"
@@ -1328,7 +1325,8 @@
       "maxViewsPlaceholder": "जैसे 100",
       "maxViewsInvalid": "अधिकतम व्यू एक धनात्मक पूर्णांक होना चाहिए।",
       "viewCountHint": "वर्तमान में {current}/{max} व्यू"
-    }
+    },
+    "behaviorHint": "पासवर्ड, समाप्ति और तय समय पर खुलना <settings>लिंक सेटिंग्स</settings> में बदलें।"
   },
   "stats": {
     "breakdown": {
@@ -1781,7 +1779,14 @@
     },
     "trendTitle": "क्लिक रुझान",
     "rangeDays": "{days} दिन",
-    "moreActions": "और विकल्प"
+    "moreActions": "और विकल्प",
+    "period": {
+      "title": "सक्रिय अवधि",
+      "expiry": "समाप्ति",
+      "expiryDesc": "इस समय के बाद लिंक बंद हो जाएगा।",
+      "expiryAt": "बंद होने का समय",
+      "expiryBeforeOpen": "समाप्ति खुलने के समय के बाद होनी चाहिए।"
+    }
   },
   "admin": {
     "label": "admin",

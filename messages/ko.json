@@ -1286,14 +1286,12 @@
   "edit": {
     "title": "링크 편집",
     "originalUrl": "목적지 URL",
-    "expiresAt": "만료 일시 (비워두면 만료 없음)",
     "noteLabel": "링크 이름 / 메모 (선택)",
     "notePlaceholder": "예: 봄 이벤트용 / 인스타그램 스토리에서 사용",
     "noteHint": "목록과 즐겨찾기에 표시해요. 방문자에게는 보이지 않아요.",
     "expiredMessageLabel": "만료 시 안내 메시지 (선택)",
     "expiredMessagePlaceholder": "예: 이벤트가 종료됐어요. 다음 캠페인은 example.com에서!",
     "expiredMessageHint": "만료/뷰 한도 초과 시 기본 안내 대신 이 문장이 노출돼요.",
-    "clear": "지우기",
     "cancel": "취소",
     "save": "저장",
     "saving": "저장 중…",
@@ -1304,8 +1302,7 @@
     "tabs": {
       "basic": "기본",
       "tags": "태그",
-      "og": "공유 카드",
-      "protection": "보호"
+      "og": "공유 카드"
     },
     "tags": {
       "description": "이 링크에 붙일 태그를 입력하세요. 없는 이름이면 새로 만들어져요."
@@ -1328,7 +1325,8 @@
       "maxViewsPlaceholder": "예: 100",
       "maxViewsInvalid": "최대 조회수는 1 이상의 정수여야 해요.",
       "viewCountHint": "현재 {current}/{max} 회 조회됨"
-    }
+    },
+    "behaviorHint": "비밀번호·만료·공개 예약은 <settings>링크 설정</settings>에서 바꿔요."
   },
   "stats": {
     "breakdown": {
@@ -1781,7 +1779,14 @@
     },
     "trendTitle": "클릭 흐름",
     "rangeDays": "{days}일",
-    "moreActions": "작업 더 보기"
+    "moreActions": "작업 더 보기",
+    "period": {
+      "title": "공개 기간",
+      "expiry": "만료",
+      "expiryDesc": "정한 시각이 지나면 링크가 닫혀요.",
+      "expiryAt": "닫는 시각",
+      "expiryBeforeOpen": "만료는 공개 시각보다 뒤여야 해요."
+    }
   },
   "admin": {
     "label": "admin",

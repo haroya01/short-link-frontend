@@ -1286,14 +1286,12 @@
   "edit": {
     "title": "リンク編集",
     "originalUrl": "リンク先URL",
-    "expiresAt": "有効期限 (空欄なら無期限)",
     "noteLabel": "リンク名 / メモ（任意）",
     "notePlaceholder": "例: 春キャンペーン用 / Instagram ストーリーで使用",
     "noteHint": "一覧とお気に入りに表示されます。訪問者には表示されません。",
     "expiredMessageLabel": "期限切れ時の案内 (任意)",
     "expiredMessagePlaceholder": "例: イベント終了。次のキャンペーンは example.com にて。",
     "expiredMessageHint": "期限切れ/閲覧上限到達時に既定の案内の代わりにこの文章を表示。",
-    "clear": "クリア",
     "cancel": "キャンセル",
     "save": "保存",
     "saving": "保存中...",
@@ -1304,8 +1302,7 @@
     "tabs": {
       "basic": "基本",
       "tags": "タグ",
-      "og": "共有カード",
-      "protection": "保護"
+      "og": "共有カード"
     },
     "tags": {
       "description": "このリンクに付けるタグを入力してください。新しい名前は自動で作成されます。"
@@ -1328,7 +1325,8 @@
       "maxViewsPlaceholder": "例: 100",
       "maxViewsInvalid": "最大閲覧数は1以上の整数である必要があります。",
       "viewCountHint": "現在 {current}/{max} 回閲覧"
-    }
+    },
+    "behaviorHint": "パスワード・期限・公開予約は<settings>リンク設定</settings>で変更します。"
   },
   "stats": {
     "breakdown": {
@@ -1781,7 +1779,14 @@
     },
     "trendTitle": "クリック推移",
     "rangeDays": "{days}日",
-    "moreActions": "その他の操作"
+    "moreActions": "その他の操作",
+    "period": {
+      "title": "公開期間",
+      "expiry": "期限",
+      "expiryDesc": "指定した時刻を過ぎるとリンクが閉じます。",
+      "expiryAt": "閉じる時刻",
+      "expiryBeforeOpen": "期限は公開時刻より後にしてください。"
+    }
   },
   "admin": {
     "label": "admin",

@@ -60,16 +60,13 @@ test.describe("password while shortening", () => {
   test("the password field in link settings can be revealed too", async ({ page }) => {
     await signIn(page);
     await mockBackend(page);
-    await page.goto("/ko/dashboard");
+    await page.goto("/ko/stats/e2ePw#settings");
 
-    await page.getByRole("button", { name: "더보기" }).first().click();
-    await page.getByRole("menuitem", { name: "편집" }).click();
-    const dialog = page.getByRole("dialog");
-    await dialog.getByRole("tab", { name: "보호", exact: true }).click();
-    const field = dialog.locator('input[autocomplete="new-password"]');
+    const section = page.locator("section", { has: page.getByRole("heading", { name: "보호", exact: true }) });
+    const field = section.locator('input[autocomplete="new-password"]');
     await field.fill("s3cret");
     await expect(field).toHaveAttribute("type", "password");
-    await dialog.getByRole("button", { name: "비밀번호 보기" }).click();
+    await section.getByRole("button", { name: "비밀번호 보기" }).click();
     await expect(field).toHaveAttribute("type", "text");
     await expect(field).toHaveValue("s3cret");
   });

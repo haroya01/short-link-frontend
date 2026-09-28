@@ -1286,14 +1286,12 @@
   "edit": {
     "title": "Chỉnh sửa liên kết",
     "originalUrl": "URL đích",
-    "expiresAt": "Hết hạn lúc (để trống nếu không hết hạn)",
     "noteLabel": "Tên liên kết / ghi chú (tùy chọn)",
     "notePlaceholder": "ví dụ: Khuyến mãi xuân / dùng trong story Instagram",
     "noteHint": "Hiện trong danh sách và mục yêu thích, không hiện với khách.",
     "expiredMessageLabel": "Thông báo trang hết hạn (tùy chọn)",
     "expiredMessagePlaceholder": "ví dụ: Khuyến mãi đã kết thúc — xem đợt tiếp theo tại example.com",
     "expiredMessageHint": "Hiển thị thay cho trang hết hạn mặc định khi liên kết hết hạn hoặc đạt giới hạn lượt xem.",
-    "clear": "Xóa",
     "cancel": "Hủy",
     "save": "Lưu",
     "saving": "Đang lưu...",
@@ -1304,8 +1302,7 @@
     "tabs": {
       "basic": "Cơ bản",
       "tags": "Thẻ",
-      "og": "Thẻ chia sẻ",
-      "protection": "Bảo vệ"
+      "og": "Thẻ chia sẻ"
     },
     "tags": {
       "description": "Gõ thẻ cho liên kết này. Tên mới sẽ được tạo tự động."
@@ -1328,7 +1325,8 @@
       "maxViewsPlaceholder": "ví dụ: 100",
       "maxViewsInvalid": "Lượt xem tối đa phải là số nguyên dương.",
       "viewCountHint": "Hiện tại {current}/{max} lượt xem"
-    }
+    },
+    "behaviorHint": "Mật khẩu, hết hạn và hẹn giờ mở nằm trong <settings>cài đặt liên kết</settings>."
   },
   "stats": {
     "breakdown": {
@@ -1781,7 +1779,14 @@
     },
     "trendTitle": "Xu hướng nhấp",
     "rangeDays": "{days} ngày",
-    "moreActions": "Thao tác khác"
+    "moreActions": "Thao tác khác",
+    "period": {
+      "title": "Thời gian hoạt động",
+      "expiry": "Hết hạn",
+      "expiryDesc": "Liên kết sẽ đóng sau thời điểm này.",
+      "expiryAt": "Đóng lúc",
+      "expiryBeforeOpen": "Thời điểm hết hạn phải sau thời điểm mở."
+    }
   },
   "admin": {
     "label": "quản trị",
