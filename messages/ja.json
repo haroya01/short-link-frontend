@@ -295,6 +295,7 @@
   "postEditor": {
     "backToList": "記事一覧",
     "titlePlaceholder": "タイトル",
+    "imageCaptionPlaceholder": "キャプションを追加（任意）",
     "bodyPlaceholder": "'/' でブロックを追加できます。そのまま書いても大丈夫です",
     "blockMenu": {
       "add": "下にブロックを追加",

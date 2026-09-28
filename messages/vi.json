@@ -295,6 +295,7 @@
   "postEditor": {
     "backToList": "Bài viết",
     "titlePlaceholder": "Tiêu đề",
+    "imageCaptionPlaceholder": "Thêm chú thích (không bắt buộc)",
     "bodyPlaceholder": "Gõ '/' để chèn khối, hoặc cứ bắt đầu viết",
     "blockMenu": {
       "add": "Thêm khối bên dưới",
