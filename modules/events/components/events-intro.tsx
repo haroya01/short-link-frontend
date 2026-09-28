@@ -96,7 +96,7 @@ function Demo() {
         <p className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
           <MapPin className="h-3 w-3" /> {t("eventPlace")}
         </p>
-        <div className="mt-2.5 rounded-lg bg-accent-600 py-1.5 text-center text-[11px] font-semibold text-white">
+        <div className="mt-2.5 rounded-lg bg-accent-700 py-1.5 text-center text-[11px] font-semibold text-white">
           {t("registerButton")}
         </div>
       </div>

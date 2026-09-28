@@ -169,7 +169,7 @@ function DomainRow({
             size="icon"
             variant="ghost"
             aria-label={t("delete")}
-            className="text-slate-400 dark:text-slate-500 hover:text-red-600"
+            className="text-slate-400 dark:text-slate-400 hover:text-red-600"
             onClick={() => onDelete(d.id)}
           >
             <Trash2 className="h-3.5 w-3.5" />

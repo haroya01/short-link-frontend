@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Layers } from "lucide-react";
 import { DATE_LOCALE } from "@/lib/date";
-import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -158,20 +157,20 @@ export function DiscoverySeriesCard({
                 )}
 
                 {/* 회차 번호 = 표지의 공통 주인공(사진/종이 통일): 같은 위치·크기, 필드에 따라 색만 —
-                    종이는 그린 잉크, 사진은 흰 번호(스크림 위, drop-shadow 가독). 빈 가운데를 채운다. */}
+                    종이는 잉크, 사진은 흰 번호(스크림 위, drop-shadow 가독). 빈 가운데를 채운다. */}
                 {front && (
-                  <div aria-hidden className="pointer-events-none absolute left-4 top-[15%] z-10 select-none font-mono font-bold leading-[0.8] tracking-tighter tabular-nums">
+                  <div aria-hidden className="pointer-events-none absolute left-4 top-[15%] z-10 select-none font-bold leading-[0.8] tracking-tighter tabular-nums">
                     <span
                       className={
                         p.ogImageUrl
                           ? "text-[112px] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
-                          : "text-[112px] text-accent-700 dark:text-accent-400"
+                          : "text-[112px] text-slate-900 dark:text-slate-100"
                       }
                     >
-                      {String(i + 1).padStart(2, "0")}
+                      {i + 1}
                     </span>
-                    <span className={`ml-1.5 align-top text-[22px] font-bold ${p.ogImageUrl ? "text-white/75" : "text-accent-500/45 dark:text-accent-400/45"}`}>
-                      /{String(series.postCount).padStart(2, "0")}
+                    <span className={`ml-1.5 align-top text-[22px] font-bold ${p.ogImageUrl ? "text-white/75" : "text-slate-500 dark:text-slate-400"}`}>
+                      /{series.postCount}
                     </span>
                   </div>
                 )}
@@ -203,7 +202,7 @@ export function DiscoverySeriesCard({
                       // -m/p pair: ≥24px tap box without visual change (target-size on touch).
                       className="pointer-events-auto -mx-1 -my-1.5 flex min-w-0 items-center gap-1.5 rounded px-1 py-1.5"
                     >
-                      <Mark className={`h-2.5 w-auto shrink-0 ${p.ogImageUrl ? "" : "text-accent-600 dark:text-accent-400"}`} animated />
+                      <Layers aria-hidden className="h-3 w-3 shrink-0" />
                       <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
                     </Nav>
                   </div>
@@ -251,7 +250,7 @@ export function DiscoverySeriesCard({
                     className={`absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center transition-colors duration-300 ${
                       p.ogImageUrl
                         ? "text-white/85 hover:text-white"
-                        : "text-slate-400 hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
+                        : "text-slate-400 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
                     }`}
                   >
                     <span

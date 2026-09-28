@@ -464,7 +464,7 @@ function BatchSection({
 
       {batches.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center">
-          <PackageOpen className="mx-auto h-6 w-6 text-slate-400 dark:text-slate-500" aria-hidden />
+          <PackageOpen className="mx-auto h-6 w-6 text-slate-400 dark:text-slate-400" aria-hidden />
           <p className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">
             {t("batches.emptyTitle")}
           </p>

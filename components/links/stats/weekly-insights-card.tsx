@@ -92,7 +92,7 @@ export function WeeklyInsightsCard() {
           <ChevronDown
             aria-hidden
             className={cn(
-              "h-4 w-4 text-slate-400 dark:text-slate-500 transition-transform",
+              "h-4 w-4 text-slate-400 dark:text-slate-400 transition-transform",
               expanded && "rotate-180",
             )}
           />
@@ -222,7 +222,7 @@ function Stat({
       >
         {content}
         {/* 이동 어포던스는 호버에서만 — 정지 상태의 외톨이 화살표는 잘린 요소처럼 읽힌다. */}
-        <ArrowRight className="mt-1 h-3 w-3 text-slate-400 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100 dark:text-slate-500" />
+        <ArrowRight className="mt-1 h-3 w-3 text-slate-400 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100 dark:text-slate-400" />
       </Link>
     );
   }

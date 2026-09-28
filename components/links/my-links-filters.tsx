@@ -164,7 +164,7 @@ export function MyLinksFiltersBar({ className, filters, onChange, tagOptions }: 
                   patch({ createdAfter: toIsoStart(e.target.value) })
                 }
               />
-              <span className="text-slate-400 dark:text-slate-500">–</span>
+              <span className="text-slate-400 dark:text-slate-400">–</span>
               <Input
                 type="date"
                 value={dateOnly(filters.createdBefore)}
@@ -187,7 +187,7 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
       <button
         type="button"
         onClick={onRemove}
-        className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+        className="text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
         aria-label="remove filter"
       >
         <X className="h-3 w-3" />

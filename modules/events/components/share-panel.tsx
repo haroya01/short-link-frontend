@@ -70,7 +70,7 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
             className="flex items-center gap-2 py-2.5"
           >
             <span className="min-w-0 flex-1">
-              <span className="block text-[11px] font-medium uppercase tracking-wide text-slate-400">
+              <span className="block text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 {link.label}
               </span>
               <span className="block truncate font-mono text-[13px] text-slate-800 dark:text-slate-200">

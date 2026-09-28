@@ -194,7 +194,7 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
         )}
 
         <div>
-          <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+          <p className="mb-1 text-[11px] font-medium text-slate-500">
             {t("textPreviewLabel")}
           </p>
           <PreviewPane

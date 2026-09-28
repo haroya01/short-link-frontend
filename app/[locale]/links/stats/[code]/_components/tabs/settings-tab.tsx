@@ -138,7 +138,7 @@ function DemoLinkExportPreview() {
       </div>
       <table className="mt-4 w-full border-collapse text-[12px]">
         <thead>
-          <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] uppercase text-slate-500 dark:text-slate-400">
+          <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] text-slate-500 dark:text-slate-400">
             <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
             <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
             <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>
@@ -147,7 +147,7 @@ function DemoLinkExportPreview() {
         </thead>
         <tbody>
           <tr className="border-b border-slate-100 dark:border-slate-800">
-            <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">2026-05-10 20:14</td>
+            <td className="py-1.5 pr-3 tabular-nums text-slate-600 dark:text-slate-300">2026-05-10 20:14</td>
             <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">Seoul, KR</td>
             <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">mobile · iOS · Safari</td>
             <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">instagram.com</td>
@@ -343,7 +343,7 @@ function DemoDestinationRow({
           <span className="text-slate-300 dark:text-slate-600">·</span>
           {share ? (
             <>
-              <span className="text-slate-400 dark:text-slate-500">
+              <span className="text-slate-500 dark:text-slate-400">
                 {t("configuredShare", { pct: share.configured.toFixed(0) })}
               </span>
               <span className="text-slate-300 dark:text-slate-600">·</span>

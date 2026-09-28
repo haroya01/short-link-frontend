@@ -309,7 +309,7 @@ function SettingsTabs({
         <div
           role="tablist"
           aria-label={t("tabs.aria")}
-          className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
+          className="flex max-w-full gap-1 overflow-x-auto border-b border-slate-200 [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
         >
           {tabs.map((it) => {
             const active = tab === it.key;
@@ -336,10 +336,10 @@ function SettingsTabs({
                   document.getElementById(`settings-tab-${next.key}`)?.focus();
                 }}
                 className={
-                  "focus-ring min-h-10 shrink-0 rounded-md px-3.5 text-sm font-medium transition-colors " +
+                  "focus-ring -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3.5 text-sm font-medium transition-colors " +
                   (active
-                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100")
+                    ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                    : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100")
                 }
               >
                 {it.label}

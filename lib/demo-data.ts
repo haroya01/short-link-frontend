@@ -41,8 +41,23 @@ import type {
  * refresh).
  */
 
-/** Anchor date — every relative window (last 30 days, etc.) builds backwards from here. */
-const TODAY_UTC = new Date(Date.UTC(2026, 4, 10));
+const WEEK_MS = 7 * 86_400_000;
+// The seeded series was tuned ending on this Sunday; its weekday rhythm (weekends dip) is baked in.
+const TUNED_ANCHOR = Date.UTC(2026, 4, 10);
+
+/**
+ * Anchor date — every relative window (last 30 days, etc.) builds backwards from here. Rolled
+ * forward in whole weeks to the latest same-weekday date at or before the build date, so the demo
+ * shows recent dates while every number stays identical. A build-time constant (not "now") keeps the
+ * server-rendered HTML and the hydrating client on the same anchor.
+ */
+function demoAnchor(): Date {
+  const built = Date.parse(`${process.env.NEXT_PUBLIC_BUILD_DATE ?? ""}T00:00:00Z`);
+  if (Number.isNaN(built) || built < TUNED_ANCHOR) return new Date(TUNED_ANCHOR);
+  return new Date(TUNED_ANCHOR + Math.floor((built - TUNED_ANCHOR) / WEEK_MS) * WEEK_MS);
+}
+
+const TODAY_UTC = demoAnchor();
 const DEMO_BOT_CLICKS = 184;
 
 /** The landing's analytics scene shows the same demo01 numbers the /demo page renders. */

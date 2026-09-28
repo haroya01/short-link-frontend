@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { linksHref } from "@/lib/host";
 import { routing } from "@/i18n/routing";
-import { SEO_PAGES, getSeoContent, getSeoPage } from "@/modules/marketing/seo-landing";
+import { SEO_FAQ_TITLE, SEO_PAGES, getSeoContent, getSeoPage, seoContentLocale } from "@/modules/marketing/seo-landing";
 
 export const revalidate = 3600;
 
@@ -51,6 +51,7 @@ export default async function SeoLandingPage({
   const page = getSeoPage(slug);
   if (!page) notFound();
   const c = getSeoContent(page, locale);
+  const seoLocale = seoContentLocale(page, locale);
   const ctaHref = linksHref(`/?ref=seo-${slug}`);
 
   // FAQPage structured data → eligible for FAQ rich results in Google.
@@ -85,39 +86,36 @@ export default async function SeoLandingPage({
         </a>
       </header>
 
-      <ul className="mt-16 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+      <dl className="mt-16 divide-y divide-slate-200 border-y border-slate-200 dark:divide-slate-800 dark:border-slate-800">
         {c.features.map((f) => (
-          <li key={f.title} className="flex gap-3">
-            <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400">
-              <Check className="h-3.5 w-3.5" />
-            </span>
-            <span>
-              <span className="block text-[15px] font-semibold text-slate-900 dark:text-slate-100">{f.title}</span>
-              <span className="mt-1 block text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{f.body}</span>
-            </span>
-          </li>
+          <div key={f.title} className="grid gap-x-8 gap-y-1 py-5 sm:grid-cols-[13rem_1fr]">
+            <dt className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{f.title}</dt>
+            <dd className="text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{f.body}</dd>
+          </div>
         ))}
-      </ul>
+      </dl>
 
-      <section className="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10">
-        <h2 className="text-headline-xs font-bold tracking-headline text-slate-900 dark:text-slate-100">FAQ</h2>
+      <section className="mt-16">
+        <h2 className="text-headline-xs font-bold tracking-headline text-slate-900 dark:text-slate-100">
+          {SEO_FAQ_TITLE[seoLocale]}
+        </h2>
         <dl className="mt-6 space-y-6">
           {c.faq.map((f) => (
             <div key={f.q}>
               <dt className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{f.q}</dt>
-              <dd className="mt-1.5 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{f.a}</dd>
+              <dd className="mt-1.5 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{f.a}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <div className="mt-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 py-10 text-center ring-1 ring-slate-200/70 dark:ring-slate-700/70">
+      <div className="mt-16 border-t border-slate-200 pt-10 dark:border-slate-800">
         <a
           href={ctaHref}
           className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {c.cta}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight aria-hidden className="h-4 w-4" />
         </a>
       </div>
     </main>

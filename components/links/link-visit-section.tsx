@@ -192,7 +192,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
                 <span role={messageError ? "alert" : undefined} className="text-red-600 dark:text-red-400">
                   {messageError ? t("splashMessageRequired") : ""}
                 </span>
-                <span className="tabular-nums text-slate-400 dark:text-slate-500">
+                <span className="tabular-nums text-slate-500 dark:text-slate-400">
                   {(draft.message ?? "").length}/{MESSAGE_MAX}
                 </span>
               </span>

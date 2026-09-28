@@ -441,7 +441,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={selected.size === 0}
                 onClick={() => setStep(2)}
-                className="focus-ring w-full rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+                className="focus-ring w-full rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-40"
               >
                 {selected.size === 0 ? t("pickToContinue") : t("next")}
               </button>
@@ -473,7 +473,7 @@ export function ConnectSheet({
               />
               {/* Quiet remaining-length counter, right-aligned under the field (maxLength already caps it;
                   this just makes the limit legible as you approach it). Digits only — no i18n needed. */}
-              <p className="mt-1 text-right text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
+              <p className="mt-1 text-right text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
                 {why.length}/280
               </p>
               <p className="mt-2 text-[12px] text-slate-500 dark:text-slate-400">
@@ -497,7 +497,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={saving}
                 onClick={() => void connectAll()}
-                className="focus-ring flex flex-1 items-center justify-center rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+                className="focus-ring flex flex-1 items-center justify-center rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : failed ? tCommon("retry") : t("add")}
               </button>
@@ -634,7 +634,7 @@ function NewCollectionForm({
             type="button"
             disabled={!canCreate}
             onClick={onSubmit}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-40"
           >
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {t("create")}
@@ -684,7 +684,7 @@ function NewVisibilityToggle({
             className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
               active
                 ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
-                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Icon className="h-3 w-3" />

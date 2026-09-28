@@ -76,7 +76,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
             type="button"
             onClick={close}
             disabled={busy}
-            className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            className="text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
             aria-label={t("close")}
           >
             <X className="h-4 w-4" />

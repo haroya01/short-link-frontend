@@ -37,6 +37,9 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  env: {
+    NEXT_PUBLIC_BUILD_DATE: new Date().toISOString().slice(0, 10),
+  },
   // 목록 썸네일 최적화(next/image) 허용 호스트 — 커버가 실제로 사는 곳만 연다('**' 금지:
   // 임의 호스트 프록시는 최적화 비용 악용 표면). 목록 밖 호스트는 CoverThumb 가 원본
   // <img> 로 폴백한다. ※ modules/blog/lib/optimized-image.ts 의 허용목록과 같이 바꿀 것.

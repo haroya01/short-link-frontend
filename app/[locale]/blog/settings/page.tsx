@@ -52,7 +52,7 @@ export default function BlogSettingsPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("settingsTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("settingsTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("settingsSubtitle")}</p>
 
       {/* 계정 */}
@@ -82,14 +82,14 @@ export default function BlogSettingsPage() {
                 <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsEditProfile")}
               </span>
-              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
             <a href={linksHref(`/${locale}/settings`)} className={rowClass}>
               <span className="inline-flex items-center gap-2.5">
                 <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsAccountSettings")}
               </span>
-              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
             {username && (
               <a href={authorHref(username, locale)} className={rowClass}>
@@ -97,7 +97,7 @@ export default function BlogSettingsPage() {
                   <Newspaper className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   {t("settingsViewBlog")}
                 </span>
-                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
               </a>
             )}
           </div>

@@ -58,7 +58,7 @@ export function TagInput({ value, onChange, disabled, suggestions, maxTags = 20 
               type="button"
               onClick={() => removeTag(tag)}
               disabled={disabled}
-              className="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
+              className="text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
               aria-label={t("removeTag", { name: tag })}
             >
               <X className="h-3 w-3" />

@@ -195,7 +195,7 @@ export function NotificationItem({
             className={cn(
               "h-2.5 w-2.5",
               item.type === "LIKE" && "fill-current",
-              item.read ? "text-slate-400 dark:text-slate-500" : "text-accent-600 dark:text-accent-400",
+              item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
             )}
           />
         </span>
@@ -221,7 +221,7 @@ export function NotificationItem({
             {subtitle}
           </span>
         )}
-        <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-500">
+        <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">
           {relative(item.createdAt)}
         </span>
       </span>

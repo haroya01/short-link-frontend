@@ -75,7 +75,7 @@ export default function NotificationsPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         {unread > 0 && (
@@ -114,7 +114,7 @@ export default function NotificationsPage() {
         ) : (
           GROUP_ORDER.filter((key) => groups.has(key)).map((key) => (
             <section key={key} className="mt-5 first:mt-1" aria-label={t(key)}>
-              <h2 className="px-2 text-[12px] font-semibold tracking-wide text-slate-400 dark:text-slate-500">
+              <h2 className="px-2 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
                 {t(key)}
               </h2>
               <ul className="mt-1.5">

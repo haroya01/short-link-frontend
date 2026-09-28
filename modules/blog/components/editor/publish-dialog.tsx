@@ -299,7 +299,7 @@ export function PublishDialog({
                   )}
                   <p
                     className={`mt-1 line-clamp-2 text-card-title-sm font-bold leading-[1.3] tracking-tight ${
-                      title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"
+                      title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400"
                     }`}
                   >
                     {title.trim() || t("untitled")}
@@ -345,7 +345,7 @@ export function PublishDialog({
               ) : cover ? (
                 <>
                   {autoCover && (
-                    <span className="text-[11px] text-slate-400 dark:text-slate-500">{t("coverAuto")}</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">{t("coverAuto")}</span>
                   )}
                   <button
                     type="button"
@@ -427,7 +427,7 @@ export function PublishDialog({
                   className={`h-4 w-4 text-slate-400 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
                 />
               </span>
-              <span className="min-w-0 truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+              <span className="min-w-0 truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
                 {addressPrefix}
                 {slug}
               </span>
@@ -537,7 +537,7 @@ export function PublishDialog({
                               <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                               <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
                                 {host}
-                                <span className="text-slate-500 dark:text-slate-500">
+                                <span className="text-slate-500 dark:text-slate-400">
                                   {url.slice(url.indexOf(host) + host.length)}
                                 </span>
                               </span>
@@ -664,7 +664,7 @@ function CharCount({ value, max }: { value: string; max: number }) {
   return (
     <p
       className={`mt-1 text-right text-[11px] tabular-nums ${
-        near ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-500"
+        near ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400"
       }`}
     >
       {n}/{max}

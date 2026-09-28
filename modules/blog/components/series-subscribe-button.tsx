@@ -28,10 +28,10 @@ export function SeriesSubscribeButton({ seriesId }: { seriesId: number }) {
       // Fixed height + a border in *both* states (transparent when filled) so toggling never changes
       // the box height — only the width flexes with the label. `transition-colors` crossfades the
       // fill/outline swap so 구독 ↔ 구독중 eases rather than snapping.
-      className={`touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors duration-200 focus-ring ${
+      className={`touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-lg border px-3 text-[12px] font-semibold transition-colors duration-200 focus-ring ${
         on
           ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
-          : "border-transparent bg-accent-700 text-white hover:bg-accent-800"
+          : "border-transparent bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 hover:bg-accent-800"
       }`}
     >
       {/* Keyed by state so it remounts + replays the pop on each 구독 ↔ 구독중 toggle. */}

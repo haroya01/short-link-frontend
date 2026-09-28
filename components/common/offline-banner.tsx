@@ -37,7 +37,7 @@ export function OfflineBanner() {
             closing ? "animate-fade-out" : "animate-fade-in"
           }`}
         >
-          <WifiOff className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+          <WifiOff className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400" />
           <span>{t("offline")}</span>
         </div>
       )}

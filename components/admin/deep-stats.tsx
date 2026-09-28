@@ -68,7 +68,7 @@ function ActiveUsersSection({ t }: { t: T }) {
             onClick={() => setPeriod(p)}
             className={cn(
               "rounded px-3 py-1 text-xs font-mono transition",
-              period === p ? "bg-accent-700 text-white" : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
+              period === p ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900" : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
             )}
           >
             {p}
@@ -369,7 +369,7 @@ function RecentErrorsSection({ t }: { t: T }) {
                       {e.logger}
                     </p>
                   </div>
-                  <span className="mt-0.5 shrink-0 font-mono text-[10px] text-slate-400 dark:text-slate-500">
+                  <span className="mt-0.5 shrink-0 font-mono text-[10px] text-slate-400 dark:text-slate-400">
                     {isOpen ? "−" : "+"}
                   </span>
                 </button>
@@ -442,7 +442,7 @@ function DetailGrid({ e, t }: { e: AdminRecentError; t: T }) {
     <dl className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-0.5 font-mono">
       {present.map((r) => (
         <div key={r.label} className="contents">
-          <dt className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">{r.label}</dt>
+          <dt className="text-[10px] text-slate-500 dark:text-slate-400">{r.label}</dt>
           <dd className="break-all text-[11px] text-slate-800 dark:text-slate-200">{r.value}</dd>
         </div>
       ))}

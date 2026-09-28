@@ -410,7 +410,7 @@ function CollectionEditor({
               >
                 <Icon
                   className={`mt-0.5 h-4 w-4 shrink-0 ${
-                    active ? "text-accent-700 dark:text-accent-400" : "text-slate-400 dark:text-slate-500"
+                    active ? "text-accent-700 dark:text-accent-400" : "text-slate-400 dark:text-slate-400"
                   }`}
                 />
                 <span className="min-w-0 flex-1">
@@ -450,7 +450,7 @@ function CollectionEditor({
           onClick={() =>
             onSave({ title: trimmedTitle, description: description.trim() || null, visibility })
           }
-          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-40"
         >
           {t("save")}
         </button>
@@ -466,7 +466,7 @@ function CollectionEditor({
       {/* Danger zone — a separated, red-framed section at the bottom so an irreversible delete can't be
           fired by muscle memory next to Save. The confirm dialog still gates the actual delete. */}
       <div className="mt-8 rounded-2xl border border-red-200 p-4 dark:border-red-500/30">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-red-600/80 dark:text-red-400/80">
+        <p className="text-[11px] font-bold text-red-600/80 dark:text-red-400/80">
           {t("dangerZone")}
         </p>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
@@ -492,7 +492,7 @@ function CollectionEditor({
 function EditorSection({ label, children }: { label: string; children: ReactNode }) {
   return (
     <section className="mt-6 first:mt-0">
-      <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+      <p className="mb-2 text-[12px] font-bold text-slate-500 dark:text-slate-400">
         {label}
       </p>
       {children}
@@ -654,7 +654,7 @@ function PathWalk({
                     ? "bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950"
                     : isReached
                       ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400"
-                      : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
+                      : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-400"
                 }`}
               >
                 {i + 1}
@@ -831,7 +831,7 @@ function RemoveConnectionButton({
       type="button"
       onClick={onRemove}
       disabled={disabled}
-      className="focus-ring mt-0.5 shrink-0 rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+      className="focus-ring mt-0.5 shrink-0 rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
     >
       {t("unlink")}
     </button>

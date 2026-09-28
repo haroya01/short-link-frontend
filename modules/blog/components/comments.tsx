@@ -226,7 +226,7 @@ export function PostComments({
             type="button"
             data-testid="comment-composer-placeholder"
             onClick={() => setComposerActive(true)}
-            className="flex w-full items-center rounded-lg border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-500"
+            className="flex w-full items-center rounded-lg border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {t("placeholder")}
           </button>
@@ -273,7 +273,7 @@ export function PostComments({
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
-                  className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring"
+                  className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}

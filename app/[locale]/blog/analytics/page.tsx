@@ -2,13 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, ExternalLink, Eye, FileText, Heart, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
+import { ChevronDown, ExternalLink, Eye, FileText, Heart, Layers, Link2, MousePointerClick, TrendingUp, UserPlus, Users } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
 import { blogPath, linksHref } from "@/lib/host";
-import { Mark } from "@/components/common/logo";
 import { ErrorState } from "@/components/common/error-state";
 import {
   getAuthorAnalyticsOverview,
@@ -28,8 +27,7 @@ import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skele
 type AnalyticsTab = "referrers" | "series" | "links" | "posts";
 
 /** 분석 화면의 섹션 탭 — 히어로 아래에서 유입 경로/시리즈/링크/글 패널을 전환한다(라우팅 없이
- *  인페이지). WindowTabs·내 글의 보기 전환과 같은 pill 세그먼트 — 워크스페이스 전환 컨트롤을
- *  한 가지 모양으로(밑줄 탭은 여기서만 쓰이는 두 번째 문법이었다). role=tab 으로 접근성 유지. */
+ *  인페이지). 패널을 바꾸는 탭은 두 제품 모두 잉크 밑줄, 세그먼트는 기간·정렬 같은 조건 전환에만. */
 function SectionTabs({
   active,
   onChange,
@@ -42,7 +40,7 @@ function SectionTabs({
   return (
     <div
       role="tablist"
-      className="inline-flex max-w-full overflow-x-auto rounded-full border border-slate-200 p-0.5 dark:border-slate-800 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="flex max-w-full gap-1 overflow-x-auto border-b border-slate-200 [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
     >
       {tabs.map((tabItem) => {
         const isActive = tabItem.key === active;
@@ -53,10 +51,10 @@ function SectionTabs({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(tabItem.key)}
-            className={`focus-ring whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+            className={`focus-ring -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3.5 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-accent-700 text-white"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
             }`}
           >
             {tabItem.label}
@@ -115,7 +113,7 @@ export default function BlogAnalyticsPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       {/* 분석은 계정 메뉴의 전용 진입점에서 들어오는 독립 화면 — '내 글로 돌아가기' 백링크는 두지 않는다. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("analyticsTitle")}</h1>
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("analyticsTitle")}</h1>
         <WindowTabs days={days} onChange={setDays} />
       </div>
 
@@ -138,7 +136,7 @@ export default function BlogAnalyticsPage() {
           <section className="mt-7">
             <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
               <div>
-                <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-[12px] font-medium">
                     {days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })}
@@ -191,12 +189,12 @@ export default function BlogAnalyticsPage() {
                   const pct = Math.max(4, Math.round((r.views / max) * 100));
                   return (
                     <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2">
-                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-500">
+                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-400">
                         {i + 1}
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="flex items-baseline justify-between gap-3">
-                          <span className="truncate font-mono text-[13px] text-slate-700 dark:text-slate-200">
+                          <span className="truncate text-[13px] text-slate-700 dark:text-slate-200">
                             {r.host}
                           </span>
                           <span className="shrink-0 text-[13px] font-semibold tabular-nums text-slate-700 dark:text-slate-200">
@@ -354,18 +352,17 @@ function PostPerformanceList() {
     <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
-        {/* WindowTabs(7일/30일/전체)와 같은 pill 세그먼트 — 워크스페이스의 전환 컨트롤 한 가지 모양. */}
-        <div className="inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
+        <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
           {SORTS.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => setSort(s)}
               aria-pressed={sort === s}
-              className={`focus-ring rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
+              className={`focus-ring min-h-8 whitespace-nowrap rounded-md px-2.5 text-[12px] font-medium transition-colors ${
                 sort === s
-                  ? "bg-accent-700 text-white"
-                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
               {t(`analyticsSort.${s}`)}
@@ -458,7 +455,7 @@ function SeriesAnalyticsSection() {
   return (
     <section className="mt-8">
       <h2 className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-        <Mark className="h-3 w-auto text-slate-400 dark:text-slate-500" />
+        <Layers aria-hidden className="h-3.5 w-3.5 text-slate-400 dark:text-slate-400" />
         {t("analyticsSeries")}
       </h2>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -545,7 +542,7 @@ function LinksBreakdownSection() {
     <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-          <Link2 className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+          <Link2 className="h-4 w-4 text-slate-400 dark:text-slate-400" />
           {t("linksByPost")}
         </h2>
         <a
@@ -565,7 +562,7 @@ function LinksBreakdownSection() {
               href={blogPath(`/analytics/${r.postId}`)}
               className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
-              <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
+              <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-400">
                 {i + 1}
               </span>
               <span className="min-w-0 flex-1">

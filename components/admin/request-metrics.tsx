@@ -193,7 +193,7 @@ function RouteAggregateCard({
               className="inline-flex items-center gap-1 rounded-full bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300"
             >
               <span className="font-medium">{outcome}</span>
-              <span className="tabular-nums text-slate-500 dark:text-slate-500">{formatNumber(count)}</span>
+              <span className="tabular-nums text-slate-500 dark:text-slate-400">{formatNumber(count)}</span>
             </span>
           ))}
         </div>
@@ -250,7 +250,7 @@ function OutcomeLookup({
         className="flex gap-2"
       >
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-400" />
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -402,7 +402,7 @@ function RawRow({
         {row.latencyMs}ms
       </span>
       <span
-        className="shrink-0 font-mono text-[10px] tabular-nums text-slate-400 dark:text-slate-500"
+        className="shrink-0 font-mono text-[10px] tabular-nums text-slate-400 dark:text-slate-400"
         title={row.occurredAt}
       >
         {fmt.relativeTime(new Date(row.occurredAt), { now: new Date() })}
@@ -439,7 +439,7 @@ function MetricStat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] text-slate-500 dark:text-slate-500">{label}</p>
+      <p className="truncate text-[10px] text-slate-500 dark:text-slate-400">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",

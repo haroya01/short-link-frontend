@@ -61,11 +61,11 @@ export function WebPushToggle() {
       <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
         <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm">
           <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
-        <Bell className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+        <Bell className="h-4 w-4 text-slate-400 dark:text-slate-400" />
         <span className="flex flex-col">
           {t("webPushLabel")}
           {denied && (
-            <span className="text-[12px] text-slate-500 dark:text-slate-500">
+            <span className="text-[12px] text-slate-500 dark:text-slate-400">
               {t("webPushDenied")}
             </span>
           )}

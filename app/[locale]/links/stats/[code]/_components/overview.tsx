@@ -98,7 +98,7 @@ export function StatsOverview({
                       "min-h-9 whitespace-nowrap rounded-md px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
                       range === d
                         ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                        : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+                        : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
                     )}
                   >
                     {t("rangeDays", { days: d })}
@@ -119,7 +119,7 @@ export function StatsOverview({
             label={t("section.referrerHost.title")}
             section="section-sources"
             onNavigate={onNavigate}
-            className="cv-auto lg:col-span-5"
+            className="cv-auto lg:col-span-4"
           >
             <BreakdownList
               items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
@@ -131,7 +131,7 @@ export function StatsOverview({
             label={t("section.device.title")}
             section="section-device"
             onNavigate={onNavigate}
-            className="cv-auto lg:col-span-6"
+            className="cv-auto lg:col-span-4"
           >
             <DeviceChart data={data.deviceClicks} />
           </Tile>
@@ -140,7 +140,7 @@ export function StatsOverview({
             label={t("section.country.title")}
             section="chapter-where"
             onNavigate={onNavigate}
-            className="cv-auto lg:col-span-6"
+            className="cv-auto lg:col-span-4"
           >
             <BreakdownList
               items={data.countryClicks.map((c) => ({ label: c.country, count: c.count }))}
@@ -213,7 +213,7 @@ function Tile({
                 type="button"
                 onClick={() => onNavigate(section)}
                 aria-label={label}
-                className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-slate-400 transition-[color,transform] duration-150 ease-[var(--ease)] hover:text-accent-700 active:scale-90 dark:text-slate-500 dark:hover:text-accent-400"
+                className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-slate-400 transition-[color,transform] duration-150 ease-[var(--ease)] hover:text-accent-700 active:scale-90 dark:text-slate-400 dark:hover:text-accent-400"
               >
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </button>

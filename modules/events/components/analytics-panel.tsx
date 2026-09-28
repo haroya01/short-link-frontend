@@ -56,7 +56,7 @@ export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
 function Stat({ label, value, first = false }: { label: string; value: string; first?: boolean }) {
   return (
     <div className={first ? "flex-1 pr-4" : "flex-1 px-4"}>
-      <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500">{label}</div>
+      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{label}</div>
       <div className="mt-0.5 text-xl font-bold tabular-nums tracking-tight text-slate-900 dark:text-slate-50">
         {value}
       </div>

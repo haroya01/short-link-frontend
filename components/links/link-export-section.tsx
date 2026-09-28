@@ -99,7 +99,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-[12px]">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] uppercase text-slate-500 dark:border-slate-700">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] text-slate-500 dark:border-slate-700">
                     <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
                     <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
                     <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>

@@ -142,7 +142,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                   {item.badge && (
                     <span
                       className={
-                        "pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-sm " +
+                        "pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold shadow-sm " +
                         BADGE_COLOR[item.badge]
                       }
                     >
@@ -422,7 +422,7 @@ function CardImages({
           {badge && (
             <span
               className={
-                "pointer-events-none absolute left-2 top-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-sm " +
+                "pointer-events-none absolute left-2 top-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm " +
                 BADGE_COLOR[badge]
               }
             >

@@ -149,12 +149,9 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
               : "border-slate-300 hover:border-slate-400 focus-within:border-accent-600 focus-within:ring-4 focus-within:ring-accent-600/10 dark:border-slate-700 dark:hover:border-slate-600 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
-          {/* 스크롤 연동 형광 스윕 — stage-sweep-host 조상(무대 on)일 때만 애니메이션.
-              칸 안에 두는 이유: 밖에 두면 모서리 곡률과 어긋난 사각 밴드가 노출된다. */}
-          <span aria-hidden className="capsule-sweep" />
           <Link2
             aria-hidden
-            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
+            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-400"
           />
           <Input
             ref={heroInputRef}
@@ -267,8 +264,8 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
           <div
             id="shorten-password-row"
             aria-hidden={!lockOn}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
-              lockOn ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+            className={`grid motion-reduce:transition-none ${
+              lockOn ? "visible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s] mt-2 grid-rows-[1fr] opacity-100" : "invisible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s_linear_280ms] mt-0 grid-rows-[0fr] opacity-0"
             }`}
           >
             <div className="overflow-hidden">
@@ -326,10 +323,10 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
           <div
             id="shorten-advanced-section"
             aria-hidden={!showAdvanced}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
+            className={`grid motion-reduce:transition-none ${
               showAdvanced
-                ? "mt-2 grid-rows-[1fr] opacity-100"
-                : "mt-0 grid-rows-[0fr] opacity-0"
+                ? "visible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s] mt-2 grid-rows-[1fr] opacity-100"
+                : "invisible [transition:grid-template-rows_280ms_var(--ease),opacity_280ms_var(--ease),visibility_0s_linear_280ms] mt-0 grid-rows-[0fr] opacity-0"
             }`}
           >
             <div className="overflow-hidden">

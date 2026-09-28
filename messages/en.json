@@ -240,7 +240,7 @@
     "savedSubtitle": "Return to saved posts and passages you want to remember.",
     "curationMockNote": "Preview — saved to this browser only for now.",
     "curationPinned": "Pinned posts",
-    "curationPinnedHint": "Shown in this order at the top of your public profile.",
+    "curationPinnedHint": "Shown in this order at the top of your author page.",
     "curationPinnedEmpty": "Nothing pinned yet. Add one below.",
     "curationAdd": "Add",
     "curationAddLabel": "Add a pinned post",
@@ -654,7 +654,7 @@
     "seriesEmpty": "No series yet.",
     "seriesTagFilterEmpty": "No series tagged #{tag}.",
     "follow": "Follow",
-    "followCuratorHint": "Follow the path this curator weaves",
+    "followCuratorHint": "Follow the paths this curator connects",
     "following": "Following",
     "followers": "{count, plural, one {# follower} other {# followers}}",
     "followingCount": "{count} following",
@@ -702,7 +702,9 @@
       "important": "Important",
       "warning": "Warning",
       "caution": "Caution"
-    }
+    },
+    "activityPosts": "{count, plural, one {# post} other {# posts}}",
+    "activitySince": "since {date}"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -724,10 +726,10 @@
     "LINK_VIEW_LIMIT_EXCEEDED": "This link has reached its view limit.",
     "LINK_NOT_OWNED": "You don't have permission to manage this link.",
     "LINK_QUOTA_EXCEEDED": "You've reached the link quota ({limit}).",
-    "DUPLICATE_SHORT_CODE": "That short code is already in use.",
-    "RESERVED_SHORT_CODE": "That short code is reserved.",
+    "DUPLICATE_SHORT_CODE": "That code is already in use.",
+    "RESERVED_SHORT_CODE": "That code is reserved.",
     "MALICIOUS_URL": "This URL was flagged as malicious or a phishing site.",
-    "SHORT_CODE_EXHAUSTED": "Couldn't generate a short code. Please try again.",
+    "SHORT_CODE_EXHAUSTED": "Couldn't generate a code. Please try again.",
     "BULK_IMPORT_TOO_LARGE": "Up to {limit} rows per upload — got {rows}.",
     "OPTIMISTIC_LOCK": "Someone updated this in another tab. Reload and try again.",
     "INVALID_REFRESH_TOKEN": "Your session expired. Please sign in again.",
@@ -790,8 +792,8 @@
     "reply": "<b>{actor}</b> replied to your comment",
     "new_post": "<b>{actor}</b> published a new post",
     "mention": "<b>{actor}</b> mentioned you in a comment",
-    "connected": "<b>{actor}</b> added your post to <c>{collection}</c>",
-    "path_grew": "A new post joined <c>{collection}</c>, where your post lives",
+    "connected": "<b>{actor}</b> connected your post to <c>{collection}</c>",
+    "path_grew": "A new post was connected to <c>{collection}</c>, which has your post",
     "aCollection": "a collection",
     "blogPrefsTitle": "Notification types",
     "blogPrefsSubtitle": "Keep only the notifications you want. The same choices apply on the web and in the app.",
@@ -810,10 +812,10 @@
     "prefSeriesSubscribeHint": "When someone subscribes to your series",
     "prefNewPost": "Posts from writers you follow",
     "prefNewPostHint": "When a writer you follow publishes a new post",
-    "prefConnected": "When your post is linked",
-    "prefConnectedHint": "When someone adds your post to a collection",
+    "prefConnected": "When your post is connected",
+    "prefConnectedHint": "When someone connects your post to a collection",
     "prefPathGrew": "New posts in a collection with your post",
-    "prefPathGrewHint": "When a new post joins a collection your post lives in",
+    "prefPathGrewHint": "When a new post is connected to a collection that has your post",
     "groupToday": "Today",
     "groupYesterday": "Yesterday",
     "groupWeek": "This week",
@@ -832,7 +834,7 @@
     "liked": "Liked posts",
     "library": "Library",
     "myCollections": "My collections",
-    "showcase": "Profiles",
+    "showcase": "Examples",
     "campaigns": "QR Campaigns",
     "settings": "Settings",
     "login": "Sign in",
@@ -946,9 +948,7 @@
         }
       }
     },
-    "recentEyebrow": "recent",
-    "recentTitle": "Just shortened",
-    "recentSubhead": "Saved in this browser for 24 hours. Sign in to keep them permanently.",
+    "recentTitle": "Recent links",
     "statsEyebrow": "live",
     "statsTitle": "Service-wide so far",
     "statsSubhead": "Total links shortened and clicks tracked so far.",
@@ -959,16 +959,22 @@
     "whyTitle": "Why doesn't every shortener include this?",
     "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default.",
     "stage": {
-      "scene2Eyebrow": "Share",
-      "scene2Title": "Paste it anywhere. The clicks come back.",
-      "scene2Desc": "Put it in an Instagram bio or an email and see where each click came from as it happens.",
-      "scene3Eyebrow": "Analytics",
-      "scene3Title": "Clicks add up to a line",
-      "scene3Desc": "Break clicks down by country, device, and source, with bot clicks kept out of the count. All of it is free.",
-      "scene3CtaDemo": "See the demo stats",
-      "scene3CtaStart": "Sign in to start",
-      "scene3Caption": "Last 30 days · {human}% human"
-    }
+      "title": "Sign in and every link gets stats like these",
+      "desc": "Every click is recorded. Stats are free, and the screens below use example data.",
+      "feedTitle": "Where each click came from",
+      "feedDesc": "Country, device, and channel, one line per click. Keep the stats page open and they arrive live.",
+      "trendTitle": "30-day trend and human share",
+      "trendDesc": "Bot clicks are filtered out, and you see how many came from people.",
+      "trendLabel": "Clicks",
+      "trendCaption": "Last 30 days · {human}% human",
+      "ctaStart": "Sign in to start",
+      "ctaDemo": "See the demo stats"
+    },
+    "recentKept": "Kept in this browser for 24 hours",
+    "recentClaim": "Sign in and these links move to your account, with no expiry.",
+    "recentLogin": "Sign in",
+    "recentAll": "View all",
+    "recentClicks": "{count, plural, one {# click} other {# clicks}}"
   },
   "showcase": {
     "eyebrow": "Public profiles · examples",
@@ -986,7 +992,9 @@
     "meta": {
       "title": "Link-in-bio profile examples · kurl",
       "description": "Example profiles for a café, an instructor, a photographer and more. Links, a contact card, a map and product cards fit on one page."
-    }
+    },
+    "prev": "Previous example",
+    "next": "Next example"
   },
   "shortenForm": {
     "placeholder": "Paste your long URL here",
@@ -1011,8 +1019,8 @@
       "urlBlank": "Please enter a URL.",
       "urlGeneric": "Invalid URL.",
       "generic": "Failed to shorten.",
-      "selfReferencing": "kurl.me links can't be shortened again — they're already short.",
-      "reservedCode": "That code is reserved — try another one.",
+      "selfReferencing": "kurl.me links are already short links, so they can't be shortened again.",
+      "reservedCode": "That code is reserved. Try another one.",
       "quota": "You've reached your link limit — clean up old links to make room.",
       "validation": "Invalid input."
     }
@@ -1167,7 +1175,8 @@
       "primaryCta": "Make your first link",
       "secondaryCta": "Or preview the analytics screen",
       "scene": {
-        "weekClicks": "Clicks this week"
+        "weekClicks": "Clicks this week",
+        "example": "Example"
       }
     },
     "noResultTitle": "No matches",
@@ -1175,7 +1184,7 @@
     "noResultDescFiltered": "No links match the current filters. Try adjusting them.",
     "table": {
       "shortUrl": "Link name",
-      "originalUrl": "Original URL",
+      "originalUrl": "Destination",
       "createdAt": "Created",
       "expiresAt": "Expires",
       "clicks": "Human clicks",
@@ -1280,7 +1289,7 @@
   },
   "edit": {
     "title": "Edit link",
-    "originalUrl": "Original URL",
+    "originalUrl": "Destination URL",
     "expiresAt": "Expires at (leave blank for no expiry)",
     "noteLabel": "Link name / note (optional)",
     "notePlaceholder": "e.g. Spring promo / used in Instagram story",
@@ -1306,7 +1315,7 @@
       "description": "Type tags for this link. New names are created automatically."
     },
     "og": {
-      "description": "Override the preview shown when this link is pasted on KakaoTalk, Slack, Twitter, etc. Leave fields blank to use the auto-scraped values from the destination page.",
+      "description": "Override the preview shown when this link is pasted on KakaoTalk, Slack, X, etc. Leave fields blank to use the auto-scraped values from the destination page.",
       "titleLabel": "Title override",
       "titlePlaceholder": "e.g., Our service",
       "descriptionLabel": "Description override",
@@ -1331,7 +1340,7 @@
       "direct": "Direct"
     },
     "back": "Back",
-    "shortCode": "short code",
+    "shortCode": "short link",
     "detailsTitle": "Details",
     "tabs": {
       "aria": "Stats sections",
@@ -1438,7 +1447,7 @@
     },
     "destinations": {
       "title": "A/B split / geo-targeting",
-      "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the original URL. Up to 4 per link.",
+      "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the default destination. Up to 4 per link.",
       "countryLabel": "Target country",
       "countryAny": "🌐 Any country",
       "countryPlaceholder": "Select country",
@@ -1462,7 +1471,7 @@
       },
       "weight": "Weight",
       "labelPlaceholder": "Label (optional, e.g. variant-A)",
-      "controlLabel": "Default (original URL)",
+      "controlLabel": "Default destination",
       "controlBadge": "control",
       "add": "Add",
       "adding": "Adding...",
@@ -1568,7 +1577,7 @@
       },
       "srcChannel": {
         "title": "Share channel (?src)",
-        "desc": "Tracked via the ?src= hint on the short URL itself — covers QR scans, KakaoTalk, offline channels where the referrer header is missing.",
+        "desc": "Tracked via the ?src= hint on the short link itself. Covers QR scans, KakaoTalk and offline channels where the referrer header is missing.",
         "empty": "No clicks carried a ?src parameter."
       },
       "clientApp": {
@@ -2290,7 +2299,8 @@
       "goTo": "Go to card {idx}",
       "openImage": "Open image",
       "imageN": "Image {idx}"
-    }
+    },
+    "featured": "Featured"
   },
   "weeklyInsights": {
     "eyebrow": "Last 7 days",
@@ -2319,11 +2329,6 @@
     "retry": "Try again"
   },
   "recent": {
-    "title": "Recently shortened",
-    "empty": "Nothing yet — shorten one above.",
-    "viewStats": "View stats",
-    "claimCta": "Sign in to keep these links in your account.",
-    "anonymousNote": "Anonymous links auto-expire in 24h. Sign in and they're saved to your account — no expiration.",
     "claimedToast": "{count, plural, one {Saved # link} other {Saved # links}} to your account"
   },
   "statsEmpty": {
@@ -2408,7 +2413,7 @@
     "section1Title": "Why",
     "section1Body": "Built so click analytics wouldn't be a paid extra. Device, OS, browser, channel, country and hour-of-day stats are all free.",
     "section2Title": "How it works",
-    "section2Body": "Each visit is checked for bots and malicious URLs, then sent on to the original URL. Clicks are stored with part of the IP masked.",
+    "section2Body": "Each visit is checked for bots and malicious URLs, then sent on to the destination. Clicks are stored with part of the IP masked.",
     "section3Title": "Stack",
     "section3Body": "Spring Boot · MySQL · Redis · Next.js · AWS EC2 · Vercel. Source on GitHub.",
     "ctaShorten": "Shorten a URL"
@@ -2649,7 +2654,7 @@
       "copyPublicUrl": "Copy public URL",
       "openProfile": "Open my live profile",
       "openShort": "Open",
-      "yourPage": "Your page",
+      "yourPage": "Public profile",
       "featuredTitle": "Profile feed",
       "featuredHint": "Drag to reorder (mobile uses ↑↓), ★ to highlight one as a hero card, 'Remove' to drop. Add a header to group items into a section — collapsible and movable as one.",
       "sectionExpand": "Expand section",
@@ -2691,7 +2696,7 @@
       "productCardFieldImages": "Images (up to {max})",
       "productCardImagesEmpty": "Add an image",
       "productCardImageAdd": "Add image",
-      "productCardImageFocalHint": "Drag the dot on the thumbnail to center the important part. That spot stays in view when the image is cropped on your public page.",
+      "productCardImageFocalHint": "Drag the dot on the thumbnail to center the important part. That spot stays in view when the image is cropped on your public profile.",
       "productCardImageSizeHint": "Recommended: 4:3 ratio (e.g. 800×600), under 5MB each. JPG / PNG / WebP supported.",
       "productCardImageMoveLeft": "Move left",
       "productCardImageMoveRight": "Move right",
@@ -2781,7 +2786,7 @@
       "leadsDisabledTitle": "Add an email form to collect leads here",
       "stats": {
         "title": "My profile visit stats",
-        "intro": "Who's reading your /u/username page, and from where. Same depth as your short-link stats.",
+        "intro": "Who viewed your public profile and from where, with the same breakdowns as your short-link stats.",
         "backToEditor": "Back to editor",
         "loadFailed": "Couldn't load stats.",
         "summary": {
@@ -2897,7 +2902,7 @@
       },
       "addContactCardTitle": "Add contact card",
       "editContactCardTitle": "Edit contact card",
-      "addContactCardDescription": "Fields shown on your public page. Visitors can download a .vcf to save your contact directly.",
+      "addContactCardDescription": "Fields shown on your public profile. Visitors can download a .vcf to save your contact directly.",
       "addContactCardPlaceholder": "(no contact card)",
       "contactFieldName": "Name",
       "contactFieldNamePlaceholder": "Jane Doe",
@@ -2966,7 +2971,7 @@
       "addEmbedPlaceholder": "(no embed URL)",
       "addEmbedTitle": "Add embed",
       "editEmbedTitle": "Edit embed",
-      "addEmbedDescription": "Paste a YouTube, Vimeo, Spotify, or SoundCloud URL. It'll render as a player on your public page.",
+      "addEmbedDescription": "Paste a YouTube, Vimeo, Spotify, or SoundCloud URL. It'll render as a player on your public profile.",
       "embedFieldUrl": "URL",
       "embedUnsupportedProvider": "Unsupported domain.",
       "embedSupportedProviders": "Supported services",
@@ -3088,7 +3093,7 @@
       "verifyFailed": "TXT record not found. DNS may take 1–5 min to propagate.",
       "delete": "Delete",
       "deleted": "Deleted",
-      "deleteConfirm": "Remove this domain? Short URLs on this domain will stop working immediately.",
+      "deleteConfirm": "Remove this domain? Short links on this domain will stop working immediately.",
       "deleteFailed": "Failed to delete.",
       "dnsTxtHint": "Ownership check — add this TXT record at your DNS provider",
       "dnsCnameHint": "Traffic routing — add this CNAME record at the same provider"
@@ -3136,7 +3141,7 @@
     },
     "batchDialogs": {
       "editTitle": "Edit distribution batch",
-      "editDescription": "You can edit only the name, distributor, area, quantity, and memo. The short URL printed in the QR stays unchanged.",
+      "editDescription": "You can edit only the name, distributor, area, quantity, and memo. The short link printed in the QR stays unchanged.",
       "save": "Save",
       "updated": "Batch updated",
       "updateFailed": "Failed to update",
@@ -3149,7 +3154,7 @@
       "delete": "Delete",
       "deleted": "Batch deleted",
       "deleteFailed": "Failed to delete",
-      "deleteWarningTitle": "The short URL will be deleted too.",
+      "deleteWarningTitle": "The short link will be deleted too.",
       "deleteWarningBody": "People scanning already-printed QR codes will see a link-not-found page. This is safe before ordering print, but after distribution you should usually keep it alive with an end policy.",
       "quantityUnit": "{count} sheets"
     },
@@ -3174,7 +3179,7 @@
       "postEndLabel": "After campaign ends",
       "policy": {
         "keepTitle": "Keep as is",
-        "keepBody": "Printed QR codes keep sending visitors to the original URLs after the campaign ends.",
+        "keepBody": "Printed QR codes keep sending visitors to the same destinations after the campaign ends.",
         "expireTitle": "Show expired page",
         "expireBody": "Scans show a campaign-ended message.",
         "redirectTitle": "Redirect elsewhere",
@@ -3428,7 +3433,7 @@
     "q2": "Can I use it without signing in?",
     "a2": "Yes — shortening works without an account. Stats and permanent storage need Google sign-in.",
     "q3": "Where do I see stats?",
-    "a3": "On the My Links page click any short code to open the 8-dimension stats page.",
+    "a3": "On the My Links page click any code to open the 8-dimension stats page.",
     "q4": "Will previews show in KakaoTalk / Slack?",
     "a4": "Yes — preview cards work on KakaoTalk, Slack, and Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image instead of redirecting right away.",
     "q5": "How are malicious URLs blocked?",
@@ -3454,29 +3459,27 @@
     "batchCount": "{count} batches",
     "details": "Details",
     "onboarding": {
-      "eyebrow": "Offline campaigns",
-      "title": "Improve offline promotion like online ads",
-      "body": "Split posters, flyers, and QR codes by distributor, area, and batch. Measure which batch performed best, then tune the next distribution with data.",
+      "title": "Give each flyer batch its own QR and compare",
+      "body": "Make a separate QR for each area, distributor, and batch, then see which batch got the clicks. Use those numbers to decide where the next batch goes.",
       "steps": [
         {
-          "title": "Distribute",
-          "desc": "Split posters, flyers, and QR codes by distributor, area, and batch."
+          "title": "Split",
+          "desc": "Put a different QR on each area, distributor, and batch."
         },
         {
-          "title": "Measure batches",
-          "desc": "Area A: 500 → 80, Area B: 500 → 5. See which batch won."
+          "title": "Compare batches",
+          "desc": "Clicks per 100 flyers show which batch did better."
         },
         {
-          "title": "Tune & route",
-          "desc": "Scale up what worked; route expired QR codes to the next page."
+          "title": "Plan the next run",
+          "desc": "Hand out more where the clicks came from, and send an ended campaign's QR to the next page."
         }
       ],
-      "createCta": "Create first QR campaign",
-      "createHint": "For the first campaign, you only need a name and an end time.",
       "scene": {
-        "scans": "Scans",
+        "scans": "Clicks",
         "place1": "Downtown",
-        "place2": "Riverside"
+        "place2": "Riverside",
+        "example": "Example"
       }
     }
   },
@@ -3508,60 +3511,59 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "QR Campaigns | Flyer & Poster QR Performance — kurl",
-      "description": "Track flyer, poster, coupon QRs split by area, vendor, or batch. Use clicks-per-100 to choose your next drop zone."
+      "title": "QR campaigns · Flyer QR click tracking · kurl",
+      "description": "Split flyer, poster, and coupon QRs by area, distributor, or batch and compare their clicks. Clicks per 100 flyers tell you where to hand out next."
     },
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "Different QR per flyer —",
-      "title2": "instantly see which ones got scanned.",
-      "sub": "Auto-generate a different QR per area, exit, or distributor. Use clicks per 100 flyers to pick your next drop zone.",
-      "chip1": "5 minutes to first campaign",
+      "title2": "see where the response comes from.",
+      "sub": "Make a separate QR for each area, exit, or distributor, and use clicks per 100 flyers to choose where to hand out next.",
+      "chip1": "A QR for every batch",
       "chip2": "Canva / InDesign PDF supported",
-      "chip3": "Change destination anytime",
-      "chip1Short": "5-min start",
+      "chip3": "Change the destination anytime",
+      "chip1Short": "QR per batch",
       "chip2Short": "PDF ready",
-      "chip3Short": "Editable link",
+      "chip3Short": "Editable destination",
       "cta": "Create QRs"
     },
     "s1": {
-      "line1": "Flyers are out.",
-      "line2": "But where did they actually work?"
+      "line1": "Once the flyers are out,",
+      "line2": "it's hard to tell where they worked."
     },
     "s2": {
-      "line1": "By area, exit, vendor —",
+      "line1": "By area, exit, or distributor,",
       "line2": "split the QR.",
-      "aux": "Batch = a group of flyers sharing the same QR."
+      "aux": "A batch is a stack of flyers that share one QR."
     },
     "s3": {
-      "line1": "Same design,",
-      "line2": "auto-insert different QRs.",
-      "aux": "Bring a Canva / InDesign PDF. Mark where the QR goes."
+      "line1": "Keep the design,",
+      "line2": "and the QRs go in automatically.",
+      "aux": "Bring a Canva or InDesign PDF and mark where the QR goes."
     },
     "s4": {
       "line1": "Shibuya 142 clicks, Shinjuku 38.",
-      "line2": "Double down on Shibuya next round.",
-      "aux": "Where to drop next — the clicks tell you."
+      "line2": "Hand out more in Shibuya next time.",
+      "aux": "The clicks show where to hand out next."
     },
     "s5": {
       "line1": "Flyers, coupons, posters.",
-      "line2": "Same play across every industry.",
-      "aux": "Use cases — compare with the same method."
+      "line2": "It works the same in any industry.",
+      "aux": "Example: round 1 and round 2 compared the same way."
     },
     "s6": {
-      "line1": "Printed QR stays,",
-      "line2": "the linked page changes."
+      "line1": "The printed QR stays,",
+      "line2": "only the destination changes."
     },
     "cta": {
-      "eyebrow": "Start right now",
-      "title": "Where to drop next — the clicks tell you.",
+      "title": "Choose your next drop by clicks",
       "primary": "Create QR",
       "secondary": "Log in",
-      "note": "Your short links and stats share the same account."
+      "note": "Your short links and stats live in the same account."
     },
     "mock": {
-      "kpiBeforeKurl": "Before kurl",
-      "kpiAfterKurl": "After kurl",
+      "kpiBeforeKurl": "Before tracking",
+      "kpiAfterKurl": "After tracking",
       "kpiStatus": "Distributed but untracked",
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",
@@ -3582,19 +3584,22 @@
       "posterStep3": "Download merged PDF — one page per batch",
       "posterBoxLabel": "QR",
       "posterPerBatch": "Different QR per batch",
-      "barsTitle": "Clicks per 100",
+      "barsTitle": "Clicks by area",
       "barsSort": "By efficiency",
       "barsTop": "Top",
       "barsRecoTitle": "Recommended next",
-      "barsRecoEstimate": "Est. +160 clicks",
+      "barsRecoEstimate": "Est. +{count} clicks",
       "casesTitle": "Use cases",
       "casesBefore": "Before",
       "casesAfter": "After",
-      "casesFooter": "Example — auto-comparing two campaigns",
+      "casesFooter": "Example · two campaigns compared",
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",
-      "timelineFoot": "Same QR, the linked page switches."
+      "timelineFoot": "Same QR, the linked page switches.",
+      "kpiStatusAfter": "Tracked by batch",
+      "barsMeta": "{qty} flyers · {per100} per 100",
+      "barsReco": "{qty} flyers: {from} → {to}"
     },
     "backLink": "Back to URL shortener",
     "statsLink": "QR campaign analytics"
@@ -3740,7 +3745,7 @@
     "pathComplete": "You've read this whole path",
     "footerPathEnd": "That's the end of this path.",
     "footerCollectionEnd": "That's the end of this collection.",
-    "footerGuestPrompt": "To weave your own collections and keep reading,",
+    "footerGuestPrompt": "To connect posts into your own collections and keep reading,",
     "footerGuestSignIn": "sign in.",
     "footerCuratorMore": "See more from @{curator}",
     "visibilityPrivate": "Private",
@@ -3789,8 +3794,8 @@
     "belongsToRest": "In “{title}” and {count} more collections",
     "connectedTo": "connected",
     "connectionMeta": "<curator>{curatorName}</curator> connected into <collection>{collectionName}</collection>",
-    "connectionMetaPath": "<curator>{curatorName}</curator> wove into <collection>{collectionName}</collection>",
-    "connectedToPath": "woven into a path",
+    "connectionMetaPath": "<curator>{curatorName}</curator> connected into <collection>{collectionName}</collection>",
+    "connectedToPath": "connected to a path",
     "connectThisSentence": "Connect to a collection or path",
     "inPathTitle": "Paths this sentence belongs to",
     "relatedBlocksTitle": "Connected to this",
@@ -3798,7 +3803,7 @@
     "sharedItems": "{count} in common",
     "postEdgesPathsTitle": "Paths this post is on",
     "postEdgesRelatedTitle": "Connected reads",
-    "postEdgesCuratorsTitle": "Curators who wove this post",
+    "postEdgesCuratorsTitle": "Curators who connected this post",
     "postEdgesPathPosition": "{position} of {total}",
     "connectStep1Title": "Where should this go?",
     "connectStep2Title": "Why did you connect it?",
@@ -3814,7 +3819,7 @@
     "add": "Add",
     "whyLabel": "Why did you connect it?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "Added to {count} collection(s).",
+    "addToCount": "Connects to {count} collection(s).",
     "connectError": "Couldn't save. Please try again.",
     "createError": "Couldn't create it. Please try again.",
     "edit": "Edit",
@@ -3837,12 +3842,12 @@
     "editSavedToast": "Collection saved",
     "editError": "Couldn't save. Please try again.",
     "deleteError": "Couldn't delete. Please try again.",
-    "connectedToast": "{count, plural, one {Added to # collection} other {Added to # collections}}",
-    "connectedPartialToast": "Only some were added. Please try again.",
+    "connectedToast": "{count, plural, one {Connected to # collection} other {Connected to # collections}}",
+    "connectedPartialToast": "Only some were connected. Please try again.",
     "newCollectionNamePlaceholder": "Collection name",
     "newCollectionNameLabel": "Name",
     "create": "Create",
-    "connectLabel": "Collection",
+    "connectLabel": "Connect",
     "myCollectionsMetaTitle": "My collections",
     "myCollectionsTitle": "My collections",
     "myCollectionsSubtitle": "The collections and paths you've made — private ones live here too.",

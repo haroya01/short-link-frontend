@@ -71,7 +71,7 @@ export default function EventDetailPage() {
   }
 
   if (failed) {
-    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-red-600">{t("loadFailed")}</p>;
+    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-red-600 dark:text-red-400">{t("loadFailed")}</p>;
   }
   if (!event) {
     return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-slate-400">{t("loading")}</p>;
@@ -130,7 +130,7 @@ export default function EventDetailPage() {
                 {event.capacity != null ? `/${event.capacity}` : ""}
               </span>
             </div>
-            <h1 className="mt-1.5 text-xl font-bold leading-tight text-slate-900 dark:text-slate-50">
+            <h1 className="mt-1.5 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {event.title}
             </h1>
             <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400">
@@ -212,7 +212,7 @@ function StatusBadge({ status }: { status: MyEvent["status"] }) {
   const label = status === "OPEN" ? t("open") : status === "CLOSED" ? t("closed") : t("canceled");
   return (
     <span
-      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}
+      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
     >
       {label}
     </span>

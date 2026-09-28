@@ -84,14 +84,13 @@ async function AuthorHeaderSlot({
 function AuthorHeaderSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="flex items-center gap-4">
-        <div className="h-16 w-16 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
-        <div className="space-y-2">
-          <div className="h-5 w-40 rounded bg-slate-200/80 dark:bg-slate-700/80" />
-          <div className="h-3.5 w-56 rounded bg-slate-100 dark:bg-slate-800" />
-        </div>
+      <div className="flex items-center gap-3.5">
+        <div className="h-11 w-11 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+        <div className="h-7 w-44 rounded bg-slate-200/80 dark:bg-slate-700/80" />
       </div>
-      <div className="mt-6 flex gap-5 border-b border-slate-100 pb-3 dark:border-slate-800">
+      <div className="mt-4 h-3.5 w-64 rounded bg-slate-100 dark:bg-slate-800" />
+      <div className="mt-3 h-3 w-48 rounded bg-slate-100 dark:bg-slate-800" />
+      <div className="mt-7 flex gap-5 border-b border-slate-200 pb-3 dark:border-slate-800">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="h-4 w-12 rounded bg-slate-100 dark:bg-slate-800" />
         ))}

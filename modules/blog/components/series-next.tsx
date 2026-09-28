@@ -1,6 +1,5 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Layers } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
@@ -32,8 +31,7 @@ export async function SeriesNext({
           data-bhv-id={`${username}/${series.next.slug}`}
         >
           <span className="flex items-center gap-1.5 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
-            {/* Hovering the next-up card replays the mark's draw — same cue as the feed series card. */}
-            <Mark animated className="h-2.5 w-auto" />
+            <Layers aria-hidden className="h-3 w-3" />
             {t("seriesNextUp")}
           </span>
           <span className="mt-2 flex items-center justify-between gap-3">

@@ -81,7 +81,7 @@ export function Nav() {
       <div className="relative">
         <div
           aria-hidden
-          className="glass-chrome absolute inset-0 border-b border-slate-200/80 dark:border-slate-800/80"
+          className="absolute inset-0 border-b border-slate-200/80 bg-white dark:border-slate-800/80 dark:bg-slate-950"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">

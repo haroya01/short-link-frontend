@@ -373,7 +373,7 @@ function BadgeSelector({
             onClick={() => onChange(active ? "" : badge)}
             aria-pressed={active}
             className={
-              "rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition " +
+              "rounded-full border px-3 py-1 text-[11px] font-semibold transition " +
               (active
                 ? "border-transparent " + colorByBadge[badge]
                 : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
@@ -409,7 +409,7 @@ function PreviewPane({
 
   return (
     <div className="rounded-md border border-slate-200 bg-white p-3">
-      <p className="mb-2 flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+      <p className="mb-2 flex items-center gap-1 text-[11px] font-medium text-slate-500">
         {t("productCardPreviewLabel")}
       </p>
       {title.trim().length > 0 && (

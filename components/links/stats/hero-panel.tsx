@@ -12,18 +12,17 @@ type Props = {
   series?: number[] | null;
   /**
    * 스파크라인 드로잉 모드:
-   *  mount  = 실제 통계 화면 — 마운트 시 1회 자가-드로잉(모션=정보, §10 합격)
-   *  scroll = 무대(랜딩) — view() 타임라인에 물림(§11)
-   *  static = 항상 완성 상태 (프리렌더/RM 폴백은 CSS 가 소유)
+   *  mount  = 실제 통계 화면 — 마운트 시 1회 자가-드로잉(모션=정보)
+   *  static = 항상 완성 상태 (홈의 예시·프리렌더/RM 폴백)
    */
-  draw?: "mount" | "scroll" | "static";
+  draw?: "mount" | "static";
   /** 라벨 옆 표시 — 랜딩처럼 데모 수치를 보여 줄 때 "예시" */
   badge?: string;
   className?: string;
 };
 
 /**
- * 딥그린 통계 히어로 패널 — 실제 통계 화면(StatsCards 히어로 카드)과 랜딩 무대 장면 3이
+ * 딥그린 통계 히어로 패널 — 실제 통계 화면(StatsCards 히어로 카드)과 홈의 통계 예시 섹션이
  * **같은 컴포넌트**를 렌더한다. 랜딩이 보여주는 카드 = 제품에 실존하는 카드라는 계약
  * (과장광고 방지)이므로, 이 파일을 고치면 두 표면이 함께 변한다는 걸 전제로 고칠 것.
  */
@@ -60,7 +59,6 @@ function StatsHeroCoreImpl({ label, caption, total, series, draw = "static", bad
             className={cn(
               "stroke-accent-300",
               draw === "mount" && "hero-draw-once",
-              draw === "scroll" && "stage-draw",
             )}
             strokeWidth="2.5"
             strokeLinecap="round"

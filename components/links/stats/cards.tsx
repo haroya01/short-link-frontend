@@ -226,7 +226,7 @@ function Stat({
         className={cn(
           "truncate text-[10px] font-semibold transition-colors",
           muted
-            ? "text-slate-400 dark:text-slate-500"
+            ? "text-slate-400 dark:text-slate-400"
             : "text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200",
         )}
       >

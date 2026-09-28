@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { BarChart3, CalendarDays, CircleUserRound, Contact, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 
 const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
@@ -23,8 +24,7 @@ export function LinksBottomNav() {
   const t = useTranslations("nav");
   const pathname = usePathname(); // locale-stripped (e.g. "/", "/dashboard", "/campaigns", "/u/..")
   const { authenticated, me } = useAuth();
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
+  const hidden = useHideOnScroll();
 
   // Tell the cookie banner a bottom tab bar is present so it lifts above it (else it overlays the
   // tabs and swallows their taps). See globals.css.
@@ -33,18 +33,6 @@ export function LinksBottomNav() {
     return () => {
       delete document.body.dataset.bottomNav;
     };
-  }, []);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > lastY.current + 8 && y > 80) setHidden(true);
-      else if (y < lastY.current - 8) setHidden(false);
-      lastY.current = y;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // 단축: the shortener home. 캠페인: the app (authed) or its landing (anon). 통계: the short-link
@@ -82,7 +70,7 @@ export function LinksBottomNav() {
   return (
     <nav
       className={cn(
-        "vt-bottom-nav glass-chrome fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
+        "vt-bottom-nav fixed inset-x-0 bottom-0 z-40 flex bg-white dark:bg-slate-950 border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
         hidden && "translate-y-full",
       )}
     >
@@ -91,7 +79,7 @@ export function LinksBottomNav() {
           key={label}
           href={href}
           aria-current={active ? "page" : undefined}
-          className={cn(TAB, active ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, active ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Icon className="h-5 w-5" />
           {label}

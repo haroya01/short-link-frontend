@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { ReportButton } from "@/modules/blog/components/report-button";
-import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
@@ -429,13 +428,6 @@ export default async function PublicPostPage({
 
       <PostComments postId={post.id} authorUsername={author.username} />
 
-      {/* Quiet viral-loop badge — every shared post carries a followable link back to kurl. Drafts
-          (preview) skip it. Centered + muted so it reads as a colophon, not an ad (§10). */}
-      {!isPreview && (
-        <div className="mt-16 flex justify-center">
-          <MadeWithKurl />
-        </div>
-      )}
       </article>
       </SeriesSwipe>
 

@@ -174,7 +174,7 @@ export function SeriesReadingShell({
                 type="button"
                 onClick={() => setTagsOpen((o) => !o)}
                 aria-expanded={tagsOpen}
-                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
               >
                 {tagsOpen ? tf("seriesTagsLess") : tf("seriesTagsMore", { count: tags.length - TAG_CAP })}
               </button>

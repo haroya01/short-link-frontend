@@ -7,19 +7,21 @@ test.describe("recent links (localStorage)", () => {
   });
 
   test("persists shortenings across reload", async ({ page }) => {
-    await page.goto("/ko?stage=off");
+    await page.goto("/ko");
     await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/recent-1");
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(page.getByTestId("result-line").first().locator("a", { hasText: /\/e2eAb\d{2}/ }).first()).toBeVisible();
+    // 방금 만든 링크는 답 줄에 이미 있으니 최근 목록에 겹쳐 나오지 않는다.
+    await expect(page.getByRole("heading", { name: "최근 만든 링크" })).toHaveCount(0);
 
     await page.reload();
-    await expect(page.getByRole("heading", { name: "방금 만든 링크" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "최근 만든 링크" })).toBeVisible();
     const recentItems = page.locator("ul li").filter({ hasText: "https://example.com/recent-1" });
     await expect(recentItems).toBeVisible();
   });
 
   test("multiple shortenings appear in recent list", async ({ page }) => {
-    await page.goto("/ko?stage=off");
+    await page.goto("/ko");
     for (const [i, url] of [
       "https://example.com/recent-a",
       "https://example.com/recent-b",
@@ -34,7 +36,7 @@ test.describe("recent links (localStorage)", () => {
       ).toBeVisible();
     }
     await page.reload();
-    await expect(page.getByRole("heading", { name: "방금 만든 링크" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "최근 만든 링크" })).toBeVisible();
     await expect(page.getByText("https://example.com/recent-a")).toBeVisible();
     await expect(page.getByText("https://example.com/recent-b")).toBeVisible();
     await expect(page.getByText("https://example.com/recent-c")).toBeVisible();

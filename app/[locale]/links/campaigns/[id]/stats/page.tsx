@@ -314,7 +314,7 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
       </div>
       <span
         className={
-          "flex-shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider " +
+          "flex-shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold " +
           verdictStyle[rec.verdict]
         }
       >
@@ -436,7 +436,7 @@ function Kpi({
         (accent ? "border-accent-200 bg-accent-50/40 dark:bg-accent-600/10" : "border-slate-200 dark:border-slate-800")
       }
     >
-      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{label}</p>
       <p
         className={
           "mt-2 text-[24px] font-semibold leading-tight tracking-headline " +
