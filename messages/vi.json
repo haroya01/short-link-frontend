@@ -841,7 +841,7 @@
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
     "account": "Tài khoản",
-    "more": "Thêm",
+    "more": "Xem thêm",
     "home": "Trang chủ",
     "search": "Tìm kiếm",
     "explore": "Khám phá",
@@ -2556,7 +2556,7 @@
     ]
   },
   "more": {
-    "title": "Thêm",
+    "title": "Xem thêm",
     "toolsTitle": "Công cụ",
     "tools": {
       "profile": "Hồ sơ công khai",
