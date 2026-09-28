@@ -46,17 +46,17 @@ const WINDOWS = [7, 30, 0] as const;
 export function WindowTabs({ days, onChange }: { days: number; onChange: (d: number) => void }) {
   const t = useTranslations("blogWorkspace");
   return (
-    <div className="inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
+    <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
       {WINDOWS.map((d) => (
         <button
           key={d}
           type="button"
           onClick={() => onChange(d)}
           aria-pressed={days === d}
-          className={`focus-ring rounded-full px-3 py-1 text-[13px] font-medium transition-colors ${
+          className={`focus-ring min-h-9 whitespace-nowrap rounded-md px-3 text-[13px] font-medium transition-colors ${
             days === d
-              ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+              ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+              : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
           }`}
         >
           {d === 0 ? t("analyticsAll") : t("analyticsDays", { days: d })}

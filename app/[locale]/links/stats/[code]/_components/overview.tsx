@@ -119,7 +119,7 @@ export function StatsOverview({
             label={t("section.referrerHost.title")}
             section="section-sources"
             onNavigate={onNavigate}
-            className="cv-auto lg:col-span-5"
+            className="cv-auto lg:col-span-4"
           >
             <BreakdownList
               items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
@@ -131,7 +131,7 @@ export function StatsOverview({
             label={t("section.device.title")}
             section="section-device"
             onNavigate={onNavigate}
-            className="cv-auto lg:col-span-6"
+            className="cv-auto lg:col-span-4"
           >
             <DeviceChart data={data.deviceClicks} />
           </Tile>
@@ -140,7 +140,7 @@ export function StatsOverview({
             label={t("section.country.title")}
             section="chapter-where"
             onNavigate={onNavigate}
-            className="cv-auto lg:col-span-6"
+            className="cv-auto lg:col-span-4"
           >
             <BreakdownList
               items={data.countryClicks.map((c) => ({ label: c.country, count: c.count }))}

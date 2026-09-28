@@ -25,7 +25,7 @@ export default async function ConnectionsPage({
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
       <header className="mb-8">
-        <h1 className="text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("discoverTitle")}
         </h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">

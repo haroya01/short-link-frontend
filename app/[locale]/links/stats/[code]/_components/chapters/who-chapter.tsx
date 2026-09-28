@@ -7,7 +7,6 @@ import { ClickQualitySummary } from "@/components/links/stats/click-quality-summ
 import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
-import { ChapterHeading } from "./chapter-heading";
 
 /** 1장 누가 — 사람/봇 품질, 기기·OS·브라우저·언어, 인앱 브라우저, 봇 정체, ASN. */
 export function WhoChapter({ data }: { data: LinkStats }) {
@@ -16,7 +15,6 @@ export function WhoChapter({ data }: { data: LinkStats }) {
   const clientApps = data.clientAppClicks ?? [];
   return (
     <div id="chapter-who" className="scroll-mt-28 space-y-4">
-      <ChapterHeading index={1} title={t("analysisTabs.who")} />
       <ClickQualitySummary data={data} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section

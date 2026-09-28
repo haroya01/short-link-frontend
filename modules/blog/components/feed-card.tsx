@@ -1,7 +1,7 @@
 import { DATE_LOCALE } from "@/lib/date";
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Library } from "lucide-react";
+import { Layers } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
@@ -125,7 +125,7 @@ function SeriesLine({
       data-testid="feed-card-series"
       className="focus-ring -mx-1 mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded px-1 py-1 text-[12px] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
     >
-      <Library aria-hidden className="h-3.5 w-3.5 shrink-0" />
+      <Layers aria-hidden className="h-3.5 w-3.5 shrink-0" />
       <span className="truncate">
         {t("seriesEyebrow")} · {series.title}
       </span>

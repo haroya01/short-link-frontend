@@ -35,7 +35,7 @@ export function HomeStatsExample() {
             <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("feedTitle")}</h3>
             <p className="mt-1 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("feedDesc")}</p>
             <div aria-hidden className="mt-5 select-none">
-              <LiveClickFeedDemo still />
+              <LiveClickFeedDemo />
             </div>
           </div>
           <div className="min-w-0">

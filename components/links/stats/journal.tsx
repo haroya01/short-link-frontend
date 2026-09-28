@@ -3,7 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
@@ -100,14 +100,21 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
 }
 
 /**
- * 룰이 넘긴 파라미터 중 값 자체가 메시지 키인 것(예: 인앱 앱 이름)을 카탈로그로 한 번 옮긴다.
- * 룰 엔진은 i18n 을 모르는 순수 함수로 두고, 번역은 렌더 직전 이 한 줄에서만 일어난다.
+ * 룰이 넘긴 파라미터 중 값 자체가 메시지 키인 것(예: 인앱 앱 이름)을 카탈로그로 한 번 옮기고,
+ * "MM-DD" 날짜는 로케일 날짜("9월 24일")로 바꾼다. 룰 엔진은 i18n 을 모르는 순수 함수로 두고,
+ * 번역은 렌더 직전 여기서만 일어난다.
  */
-function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTranslations>) {
-  if (!entry.translatedParams?.length) return entry.params;
+function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTranslations>, locale: string) {
   const resolved = { ...entry.params };
-  for (const name of entry.translatedParams) {
+  for (const name of entry.translatedParams ?? []) {
     resolved[name] = tStats(String(entry.params[name]));
+  }
+  const date = resolved.date;
+  if (typeof date === "string" && /^\d{2}-\d{2}$/.test(date)) {
+    const [month, day] = date.split("-").map(Number);
+    resolved.date = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", timeZone: "UTC" }).format(
+      Date.UTC(2000, month - 1, day),
+    );
   }
   return resolved;
 }
@@ -129,6 +136,7 @@ export function StatsJournal({
 }) {
   const t = useTranslations("stats.journal");
   const tStats = useTranslations("stats");
+  const locale = useLocale();
   const entries = buildJournal(data);
   const [showAll, setShowAll] = useState(false);
   const [openKeys, setOpenKeys] = useState<ReadonlySet<string>>(new Set());
@@ -171,7 +179,7 @@ export function StatsJournal({
                     className="mt-[9px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600 dark:bg-accent-400"
                   />
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
-                    {t(entry.key, resolveParams(entry, tStats))}
+                    {t(entry.key, resolveParams(entry, tStats, locale))}
                   </span>
                   <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
                     {t("evidence")}

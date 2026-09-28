@@ -27,8 +27,7 @@ import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skele
 type AnalyticsTab = "referrers" | "series" | "links" | "posts";
 
 /** 분석 화면의 섹션 탭 — 히어로 아래에서 유입 경로/시리즈/링크/글 패널을 전환한다(라우팅 없이
- *  인페이지). WindowTabs·내 글의 보기 전환과 같은 pill 세그먼트 — 워크스페이스 전환 컨트롤을
- *  한 가지 모양으로(밑줄 탭은 여기서만 쓰이는 두 번째 문법이었다). role=tab 으로 접근성 유지. */
+ *  인페이지). 패널을 바꾸는 탭은 두 제품 모두 잉크 밑줄, 세그먼트는 기간·정렬 같은 조건 전환에만. */
 function SectionTabs({
   active,
   onChange,
@@ -41,7 +40,7 @@ function SectionTabs({
   return (
     <div
       role="tablist"
-      className="inline-flex max-w-full overflow-x-auto rounded-full border border-slate-200 p-0.5 dark:border-slate-800 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="flex max-w-full gap-1 overflow-x-auto border-b border-slate-200 [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
     >
       {tabs.map((tabItem) => {
         const isActive = tabItem.key === active;
@@ -52,10 +51,10 @@ function SectionTabs({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(tabItem.key)}
-            className={`focus-ring whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+            className={`focus-ring -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3.5 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
             }`}
           >
             {tabItem.label}
@@ -195,7 +194,7 @@ export default function BlogAnalyticsPage() {
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="flex items-baseline justify-between gap-3">
-                          <span className="truncate font-mono text-[13px] text-slate-700 dark:text-slate-200">
+                          <span className="truncate text-[13px] text-slate-700 dark:text-slate-200">
                             {r.host}
                           </span>
                           <span className="shrink-0 text-[13px] font-semibold tabular-nums text-slate-700 dark:text-slate-200">
@@ -353,18 +352,17 @@ function PostPerformanceList() {
     <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
-        {/* WindowTabs(7일/30일/전체)와 같은 pill 세그먼트 — 워크스페이스의 전환 컨트롤 한 가지 모양. */}
-        <div className="inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
+        <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
           {SORTS.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => setSort(s)}
               aria-pressed={sort === s}
-              className={`focus-ring rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
+              className={`focus-ring min-h-8 whitespace-nowrap rounded-md px-2.5 text-[12px] font-medium transition-colors ${
                 sort === s
-                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
               {t(`analyticsSort.${s}`)}
