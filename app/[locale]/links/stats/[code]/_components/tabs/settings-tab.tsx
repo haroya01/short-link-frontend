@@ -7,6 +7,7 @@ import {
   LinkDestinationsSection,
 } from "@/components/links/destinations-section";
 import { LinkExportSection } from "@/components/links/link-export-section";
+import { LinkPeriodSection } from "@/components/links/link-period-section";
 import { LinkProtectionSection } from "@/components/links/link-protection-section";
 import { LinkVisitSection } from "@/components/links/link-visit-section";
 import { LinkWebhooksSection } from "@/components/links/webhooks-section";
@@ -38,9 +39,10 @@ export function SettingsTab({
   }
   return (
     <div className="space-y-5">
-      {/* 보호가 편집 다이얼로그에만 있으면 "설정에서 사라졌다"고 읽힌다 — 설정 탭이
-          이 링크의 모든 설정을 모으는 자리라는 기대에 맞춰 맨 앞에 앉힌다. */}
+      {/* 링크 설정 = 링크가 '어떻게' 동작하는지(보호·공개 기간·방문·분배·웹훅). '무엇'인지(이름·목적지·
+          태그·공유 카드)는 편집 대화상자가 맡는다. */}
       <LinkProtectionSection shortCode={data.shortCode} />
+      <LinkPeriodSection shortCode={data.shortCode} />
       <LinkVisitSection shortCode={data.shortCode} />
       <LinkDestinationsSection
         shortCode={data.shortCode}

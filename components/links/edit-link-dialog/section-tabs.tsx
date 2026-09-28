@@ -9,7 +9,7 @@ type Props = {
   t: ReturnType<typeof useTranslations<"edit">>;
 };
 
-const SECTIONS: Section[] = ["basic", "tags", "og", "protection"];
+const SECTIONS: Section[] = ["basic", "tags", "og"];
 
 /** Separate panels, so ink-underline tabs (the stats tab bar's anatomy), not a segmented control. */
 export function SectionTabs({ active, onSelect, t }: Props) {

@@ -1286,14 +1286,12 @@
   "edit": {
     "title": "Edit link",
     "originalUrl": "Destination URL",
-    "expiresAt": "Expires at (leave blank for no expiry)",
     "noteLabel": "Link name / note (optional)",
     "notePlaceholder": "e.g. Spring promo / used in Instagram story",
     "noteHint": "Shown in your library and favorites. Never shown to visitors.",
     "expiredMessageLabel": "Expired-page message (optional)",
     "expiredMessagePlaceholder": "e.g. Promo ended — see the next drop at example.com",
     "expiredMessageHint": "Shown instead of the default expiry page when the link expires or hits its view limit.",
-    "clear": "Clear",
     "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
@@ -1304,8 +1302,7 @@
     "tabs": {
       "basic": "Basic",
       "tags": "Tags",
-      "og": "Share card",
-      "protection": "Protection"
+      "og": "Share card"
     },
     "tags": {
       "description": "Type tags for this link. New names are created automatically."
@@ -1328,7 +1325,8 @@
       "maxViewsPlaceholder": "e.g., 100",
       "maxViewsInvalid": "Max views must be a positive integer.",
       "viewCountHint": "Currently {current}/{max} views"
-    }
+    },
+    "behaviorHint": "Password, expiry and scheduled opening live in <settings>link settings</settings>."
   },
   "stats": {
     "breakdown": {
@@ -1781,7 +1779,14 @@
     },
     "trendTitle": "Click trends",
     "rangeDays": "{days} days",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "period": {
+      "title": "Active period",
+      "expiry": "Expiry",
+      "expiryDesc": "The link closes after this time.",
+      "expiryAt": "Closes at",
+      "expiryBeforeOpen": "Expiry has to come after the opening time."
+    }
   },
   "admin": {
     "label": "admin",
