@@ -104,7 +104,7 @@ export default function CampaignDetailPage() {
             campaign={campaign}
             pending={pending}
             onEndNow={async () => {
-              if (!(await confirm({ title: t("confirmEnd"), destructive: true }))) return;
+              if (!(await confirm({ title: t("confirmEnd"), description: t("confirmEndDesc"), destructive: true }))) return;
               setPending(true);
               try {
                 await endCampaignNow(campaign.id);
@@ -129,7 +129,7 @@ export default function CampaignDetailPage() {
               }
             }}
             onArchive={async () => {
-              if (!(await confirm({ title: t("confirmArchive") }))) return;
+              if (!(await confirm({ title: t("confirmArchive"), description: t("confirmArchiveDesc") }))) return;
               setPending(true);
               try {
                 await archiveCampaign(campaign.id);

@@ -171,9 +171,6 @@ export default function NewCampaignPage() {
             onChange={(e) => setEndsAtLocal(e.target.value)}
             required
           />
-          <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-            {t("endHint")}
-          </p>
         </Field>
 
         <Field

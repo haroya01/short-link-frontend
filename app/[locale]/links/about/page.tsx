@@ -33,7 +33,7 @@ export default async function AboutPage({
   return (
     <article className="container max-w-3xl space-y-8 py-16">
       <header className="space-y-3">
-        <h1 className="text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">{t("lead")}</p>
       </header>
 

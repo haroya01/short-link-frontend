@@ -46,8 +46,8 @@ test.describe("settings", () => {
     await mockBackend(page);
     await page.goto("/ko/settings");
     await page.getByRole("tab", { name: "데이터" }).click();
-    await page.getByRole("button", { name: /계정 영구 삭제/ }).click();
-    const confirm = page.getByRole("button", { name: /^영구 삭제/ });
+    await page.getByRole("button", { name: "계정 삭제", exact: true }).click();
+    const confirm = page.getByRole("dialog").getByRole("button", { name: "삭제", exact: true });
     await expect(confirm).toBeDisabled();
     await page.getByPlaceholder("DELETE").fill("DELETE");
     await expect(confirm).toBeEnabled();

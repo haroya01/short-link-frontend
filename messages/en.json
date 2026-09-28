@@ -203,7 +203,7 @@
     "analyticsLifetimeViews": "Total views",
     "analyticsLifetimeLikes": "Total likes",
     "analyticsPublished": "Published",
-    "analyticsViews": "{count} views",
+    "analyticsViews": "{count, number} views",
     "analyticsDays": "{days}d",
     "analyticsAll": "All",
     "analyticsAllViews": "All-time views",
@@ -220,7 +220,7 @@
     "analyticsLinkClicks": "Clicks from this content",
     "analyticsLinkClicksAll": "Clicks from your post links",
     "analyticsLinkBreakdown": "Clicks by link",
-    "analyticsWindowClicks": "{count} clicks in {days}d",
+    "analyticsWindowClicks": "{count, number} clicks in {days}d",
     "analyticsPerPost": "Per-post",
     "analyticsViewAll": "View all",
     "analyticsCollapse": "Collapse",
@@ -289,7 +289,7 @@
     "settingsFollowedTagsHint": "Topics you follow — including ones with no recent posts. Their posts surface in your feed strip.",
     "settingsFollowedTagsEmpty": "You're not following any topics yet.",
     "settingsUnfollowTag": "Unfollow {tag}",
-    "analyticsPeakDay": "Peak day {date} · {count} views",
+    "analyticsPeakDay": "Peak day {date} · {count, number} views",
     "analyticsLifetimeCaption": "All time"
   },
   "postEditor": {
@@ -595,7 +595,7 @@
     "highlightSaved": "Highlighted",
     "highlightNoteSaved": "Note added",
     "highlightSaveError": "Couldn't save. Please try again.",
-    "highlightsShownCount": "{count} highlighted",
+    "highlightsShownCount": "{count, number} highlighted",
     "highlightsHidden": "Highlights hidden",
     "highlightsHide": "Hide",
     "highlightsShow": "Show",
@@ -656,7 +656,7 @@
     "followCuratorHint": "Follow the paths this curator connects",
     "following": "Following",
     "followers": "{count, plural, one {# follower} other {# followers}}",
-    "followingCount": "{count} following",
+    "followingCount": "{count, number} following",
     "followersTab": "Followers",
     "followingTab": "Following",
     "followersEmpty": "No followers yet.",
@@ -1470,7 +1470,7 @@
       "weight": "Weight",
       "labelPlaceholder": "Label (optional, e.g. variant-A)",
       "controlLabel": "Default destination",
-      "controlBadge": "control",
+      "controlBadge": "Control",
       "add": "Add",
       "adding": "Adding...",
       "addFailed": "Failed to add destination.",
@@ -1600,7 +1600,7 @@
       },
       "country": {
         "title": "Country",
-        "desc": "GeoLite2-City IP lookup"
+        "desc": "Estimated from the visitor's IP"
       },
       "region": {
         "title": "Region",
@@ -1617,7 +1617,7 @@
       "asn": {
         "title": "Network / ASN",
         "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
-        "empty": "No ASN data (GeoLite2-ASN not bundled)"
+        "empty": "No network (ASN) data yet"
       }
     },
     "clientApp": {
@@ -3000,7 +3000,7 @@
     "deleteConfirmTitle": "Really delete?",
     "deleteConfirmDesc": "Sign back in within 30 days to restore. After that this is permanent. Type \"DELETE\" to confirm.",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "Delete forever",
+    "deleteOk": "Delete account",
     "cancel": "Cancel",
     "deleting": "Deleting...",
     "twofa": {
@@ -3170,7 +3170,6 @@
       "startNow": "Start now",
       "startSchedule": "Schedule start",
       "endLabel": "End",
-      "endHint": "Printed QR codes follow this policy after the campaign ends.",
       "defaultUrlLabel": "Default destination URL",
       "defaultUrlHint": "Leave blank if each batch should use its own URL.",
       "postEndLabel": "After campaign ends",
@@ -3194,12 +3193,14 @@
       "loadFailed": "Load failed",
       "loginRequired": "Sign in required",
       "backToList": "QR campaigns",
-      "confirmEnd": "End this QR campaign now?\nThe end policy applies immediately to printed QRs.",
+      "confirmEnd": "End this QR campaign now?",
+      "confirmEndDesc": "The end policy applies immediately to printed QRs.",
       "ended": "QR campaign ended",
       "endFailed": "Failed to end",
       "reapplied": "End policy reapplied",
       "reapplyFailed": "Failed to reapply",
-      "confirmArchive": "Archive this QR campaign?\nIt will be hidden from the list, but data stays intact.",
+      "confirmArchive": "Archive this QR campaign?",
+      "confirmArchiveDesc": "It will be hidden from the list, but data stays intact.",
       "archived": "QR campaign archived",
       "archiveFailed": "Failed to archive",
       "cancel": "Cancel",
