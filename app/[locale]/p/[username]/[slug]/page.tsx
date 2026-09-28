@@ -1,6 +1,7 @@
 import { DATE_LOCALE } from "@/lib/date";
 import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
@@ -31,6 +32,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
+import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -352,16 +354,29 @@ export default async function PublicPostPage({
           {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
               모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
               이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
-              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. */}
-          <img
-            src={post.ogImageUrl}
-            alt=""
-            fetchPriority="high"
-            decoding="async"
-            className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
-          />
+              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. 허용 호스트는 읽기
+              컬럼 폭에 맞춘 변형(next/image, preload 포함), 그 밖의 호스트는 원본 <img>. */}
+          {canOptimizeCover(post.ogImageUrl) ? (
+            <Image
+              src={post.ogImageUrl}
+              alt=""
+              width={1344}
+              height={672}
+              sizes="(min-width: 672px) 672px, 100vw"
+              priority
+              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={post.ogImageUrl}
+              alt=""
+              fetchPriority="high"
+              decoding="async"
+              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+            />
+          )}
         </div>
       )}
 
