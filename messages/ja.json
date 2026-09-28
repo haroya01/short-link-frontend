@@ -988,7 +988,9 @@
     "meta": {
       "title": "リンクインバイオのプロフィール作例 · kurl",
       "description": "カフェ、講師、写真家など、仕事に合わせて作ったプロフィールの作例です。リンク、名刺、地図、商品カードを1ページにまとめられます。"
-    }
+    },
+    "prev": "前の例",
+    "next": "次の例"
   },
   "shortenForm": {
     "placeholder": "長いURLをここに貼り付け",
@@ -1169,7 +1171,8 @@
       "primaryCta": "最初のリンクを作る",
       "secondaryCta": "分析画面をデモで見る",
       "scene": {
-        "weekClicks": "今週のクリック"
+        "weekClicks": "今週のクリック",
+        "example": "例"
       }
     },
     "noResultTitle": "該当する結果がありません",
@@ -3457,29 +3460,27 @@
     "batchCount": "{count}件の束",
     "details": "詳細",
     "onboarding": {
-      "eyebrow": "オフラインキャンペーン",
-      "title": "オフライン施策をオンライン広告のように改善",
-      "body": "ポスター・チラシ・QRを配布者、地域、束ごとに分け、どの束が成果を出したかを測定します。次の配布はそのデータで調整できます。",
+      "title": "チラシの束ごとに別の QR で反応を比べる",
+      "body": "地域・配布者・束ごとに QR を分けて配り、どの束でクリックが多かったかを見ます。次の配布場所はその数字で決められます。",
       "steps": [
         {
-          "title": "配布",
-          "desc": "ポスター・チラシ・QRを配布者・地域・束ごとに分けて配ります。"
+          "title": "分けて配る",
+          "desc": "地域・配布者・束ごとに別の QR を付けます。"
         },
         {
-          "title": "束ごとに測定",
-          "desc": "A地域 500枚 → 80人、B 500枚 → 5人。どの束が勝ったかを見ます。"
+          "title": "束ごとに見る",
+          "desc": "100枚あたりのクリック数で、どの束が良かったかを比べます。"
         },
         {
-          "title": "調整・転送",
-          "desc": "成果の出た束を増やし、終了したQRは次のページへ自動転送。"
+          "title": "次の配布を決める",
+          "desc": "クリックの多い場所に多めに配り、終わったキャンペーンの QR は次のページへつなぎます。"
         }
       ],
-      "createCta": "最初のQRキャンペーンを作成",
-      "createHint": "最初はキャンペーン名と終了時刻を決めるだけで始められます。",
       "scene": {
-        "scans": "スキャン",
+        "scans": "クリック",
         "place1": "渋谷",
-        "place2": "新宿"
+        "place2": "新宿",
+        "example": "例"
       }
     }
   },
@@ -3569,7 +3570,7 @@
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
       "kpiPer100": "100枚あたり",
-      "kpiTopArea": "Top エリア",
+      "kpiTopArea": "1位エリア",
       "batchTitle": "配布バッチ",
       "batchAdd": "バッチ追加",
       "batchColName": "バッチ名",
@@ -3585,11 +3586,11 @@
       "posterStep3": "バッチごとの結合 PDF をダウンロード",
       "posterBoxLabel": "QR",
       "posterPerBatch": "バッチごとに別の QR",
-      "barsTitle": "100 枚あたりのクリック",
+      "barsTitle": "エリア別クリック",
       "barsSort": "効率順",
-      "barsTop": "Top",
+      "barsTop": "1位",
       "barsRecoTitle": "次回のおすすめ",
-      "barsRecoEstimate": "予想 +160 クリック",
+      "barsRecoEstimate": "予想 +{count} クリック",
       "casesTitle": "活用例",
       "casesBefore": "1回目",
       "casesAfter": "2回目",
@@ -3597,7 +3598,10 @@
       "timelineExpired": "期限切れ時点",
       "timelineNext": "次のページ",
       "timelineChip": "予約 / メニュー",
-      "timelineFoot": "印刷したQRはそのまま、行き先だけ自動切替"
+      "timelineFoot": "印刷したQRはそのまま、行き先だけ自動切替",
+      "kpiStatusAfter": "束ごとの QR で配布",
+      "barsMeta": "{qty} 枚 · 100枚あたり {per100}",
+      "barsReco": "{from} {qty} 枚 → {to}"
     },
     "backLink": "短縮URLツールに戻る",
     "statsLink": "QRキャンペーン分析"

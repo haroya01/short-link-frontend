@@ -32,6 +32,17 @@ import type {
 // need responsive variants for an above-the-fold marquee.
 const local = (id: string) => `/showcase/${id}.jpg`;
 
+const DAY_MS = 86_400_000;
+const BUILD_DAY = (() => {
+  const built = Date.parse(`${process.env.NEXT_PUBLIC_BUILD_DATE ?? ""}T00:00:00Z`);
+  return Number.isNaN(built) ? Date.UTC(2026, 8, 28) : built;
+})();
+const EVENT_SATURDAY = BUILD_DAY + (((6 - new Date(BUILD_DAY).getUTCDay() + 7) % 7) + 21) * DAY_MS;
+
+function kst(dayOffset: number, time: string): string {
+  return `${new Date(EVENT_SATURDAY + dayOffset * DAY_MS).toISOString().slice(0, 10)}T${time}+09:00`;
+}
+
 type EntryInput = {
   kind: PublicProfileEntry["kind"];
   id?: number;
@@ -183,8 +194,8 @@ const SPECS: ProfileSpec[] = [
         kind: "EVENT",
         content: {
           title: "주말 빈야사 워크샵",
-          startsAt: "2026-05-18T10:00:00+09:00",
-          endsAt: "2026-05-18T12:00:00+09:00",
+          startsAt: kst(0, "10:00:00"),
+          endsAt: kst(0, "12:00:00"),
           location: "을지로 5층 스튜디오",
           description: "전 레벨 환영 · 매트는 준비돼 있어요.",
           url: null,
@@ -395,8 +406,8 @@ const SPECS: ProfileSpec[] = [
         kind: "EVENT",
         content: {
           title: "Vent Tokyo",
-          startsAt: "2026-05-24T23:00:00+09:00",
-          endsAt: "2026-05-25T05:00:00+09:00",
+          startsAt: kst(0, "23:00:00"),
+          endsAt: kst(1, "05:00:00"),
           location: "Aoyama · Vent",
           description: null,
           url: null,

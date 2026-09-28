@@ -92,7 +92,7 @@ export default function HomePage() {
            * `profile-fade` keyframe gives it the same fade-in feel without the cascading delay.
            */}
           <div
-            className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
+            className="profile-fade"
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
             {/* 단축이 끝나면 입력 칸이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.

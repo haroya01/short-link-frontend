@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
@@ -43,18 +42,16 @@ export function SeriesNav({
           data-bhv="series"
           data-bhv-id={series.slug}
         >
-          {/* The kurl mark draws itself in (사사삭) when the banner appears — the series surface's
-              signature entrance, shared with the series detail header + feed card. */}
-          <Mark animated className="mark-draw-in h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
+          <Layers aria-hidden className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
           <span className="truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
             {series.title}
           </span>
         </BlogLink>
         <div className="flex shrink-0 items-center gap-2">
-          <span className="font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
+          <span className="text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
             {t("seriesPosition", {
-              position: String(series.position).padStart(2, "0"),
-              total: String(series.total).padStart(2, "0"),
+              position: series.position,
+              total: series.total,
             })}
           </span>
           {/* 이전/다음 회차 — 데스크톱(hover 입력)에서만. 모바일은 좌우 스와이프가 담당하므로 숨긴다

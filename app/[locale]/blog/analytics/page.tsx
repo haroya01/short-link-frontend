@@ -2,13 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, ExternalLink, Eye, FileText, Heart, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
+import { ChevronDown, ExternalLink, Eye, FileText, Heart, Layers, Link2, MousePointerClick, TrendingUp, UserPlus, Users } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
 import { blogPath, linksHref } from "@/lib/host";
-import { Mark } from "@/components/common/logo";
 import { ErrorState } from "@/components/common/error-state";
 import {
   getAuthorAnalyticsOverview,
@@ -458,7 +457,7 @@ function SeriesAnalyticsSection() {
   return (
     <section className="mt-8">
       <h2 className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-        <Mark className="h-3 w-auto text-slate-400 dark:text-slate-500" />
+        <Layers aria-hidden className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
         {t("analyticsSeries")}
       </h2>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">

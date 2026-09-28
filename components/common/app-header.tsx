@@ -19,6 +19,8 @@ import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { cn } from "@/lib/utils";
 
+const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
+
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
  * navigation while the post editor has unsaved edits. A soft navigation never triggers the editor's
@@ -81,6 +83,7 @@ export function AppHeader({
   );
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
+  const inWriting = WRITE_PATH.test(pathname);
 
   const mobileWriteCircle = (authed: boolean) => (
     <ChromeNavLink
@@ -105,7 +108,7 @@ export function AppHeader({
       <span aria-hidden className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
       {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
           a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
-      {authed && (
+      {authed && !inWriting && (
         <ChromeNavLink
           href={blogHref("/write/new")}
           className="focus-ring hidden h-8 items-center gap-1.5 rounded-lg bg-accent-700 px-3 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:inline-flex"
@@ -144,7 +147,7 @@ export function AppHeader({
       <div className="relative">
         <div
           aria-hidden
-          className="glass-chrome absolute inset-0 border-b border-slate-200/80 dark:border-slate-800/80"
+          className="absolute inset-0 border-b border-slate-200/80 bg-white dark:border-slate-800/80 dark:bg-slate-950"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">

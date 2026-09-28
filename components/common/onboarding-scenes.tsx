@@ -2,10 +2,17 @@ import { QrCode } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 /**
- * 온보딩 패널의 미니어처 장면 — 글 대신 제품이 움직이는 걸 보여준다(이벤트 소개의
- * 루프 데모와 같은 계열). 엔트런스는 한 번, 핑·펄스만 은은히 계속. 키프레임은
- * globals.css 의 obs-* 블록(reduced-motion 은 완성 정지 화면).
+ * 온보딩 패널의 미니어처 장면 — 글 대신 제품이 움직이는 걸 보여준다. 엔트런스는 한 번뿐이고
+ * 끝나면 정지 화면. 키프레임은 globals.css 의 obs-* 블록(reduced-motion 은 완성 정지 화면).
  */
+
+function SceneExample({ label }: { label: string }) {
+  return (
+    <span className="absolute right-3 top-3 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+      {label}
+    </span>
+  );
+}
 
 /** 대시보드 온보딩 — 긴 URL 이 kurl 필로 줄고, 미니 통계 카드에 클릭이 흘러든다. */
 export function DashboardOnboardingScene() {
@@ -15,8 +22,9 @@ export function DashboardOnboardingScene() {
       aria-hidden
       className="relative h-[190px] overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 dark:border-slate-700/70 dark:bg-slate-900/50"
     >
+      <SceneExample label={t("example")} />
       <div
-        className="obs-rise absolute left-4 top-4 max-w-[75%] truncate rounded-lg bg-slate-100 px-2.5 py-1.5 font-mono text-[10px] text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+        className="obs-rise absolute left-4 top-4 max-w-[70%] truncate rounded-lg bg-slate-100 px-2.5 py-1.5 font-mono text-[10px] text-slate-500 dark:bg-slate-800 dark:text-slate-400"
         style={{ animationDelay: "0.1s" }}
       >
         https://shop.example.com/summer-sale?utm_source=instagram
@@ -29,13 +37,13 @@ export function DashboardOnboardingScene() {
         <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
           ↳
         </span>
-        <span className="inline-flex items-center rounded-full border border-accent-300/60 bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-accent-700 shadow-sm dark:border-accent-700/60 dark:bg-slate-950 dark:text-accent-400">
+        <span className="inline-flex items-center rounded-md border border-accent-300/60 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-accent-700 dark:border-accent-700/60 dark:bg-slate-950 dark:text-accent-400">
           kurl.me/sp2ng
         </span>
       </div>
 
       <div
-        className="obs-pop absolute inset-x-4 bottom-4 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+        className="obs-pop absolute inset-x-4 bottom-4 rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900"
         style={{ animationDelay: "1.05s" }}
       >
         <div className="flex items-end justify-between gap-3">
@@ -43,7 +51,7 @@ export function DashboardOnboardingScene() {
             <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
               {t("weekClicks")}
             </p>
-            <p className="mt-0.5 font-mono text-xl font-semibold tabular-nums leading-none text-slate-900 dark:text-slate-100">
+            <p className="mt-0.5 text-xl font-semibold tabular-nums leading-none text-slate-900 dark:text-slate-100">
               1,540
             </p>
           </div>
@@ -61,21 +69,12 @@ export function DashboardOnboardingScene() {
             />
           </svg>
         </div>
-        {/* 클릭 핑 — 카드 밖에서 숫자 쪽으로 흘러들어와 흡수 */}
-        <span
-          className="obs-ping absolute right-6 top-0 h-1.5 w-1.5 rounded-full bg-accent-500"
-          style={{ "--tx": "-120px", "--ty": "26px", animationDelay: "1.8s" } as React.CSSProperties}
-        />
-        <span
-          className="obs-ping absolute right-16 -top-2 h-1.5 w-1.5 rounded-full bg-accent-500"
-          style={{ "--tx": "-70px", "--ty": "30px", animationDelay: "2.9s" } as React.CSSProperties}
-        />
       </div>
     </div>
   );
 }
 
-/** QR 캠페인 온보딩 — 포스터의 QR 이 스캔 펄스를 내고, 곳별 카운트가 자란다. */
+/** QR 캠페인 온보딩 — 포스터의 QR 과 곳별 스캔 수. */
 export function CampaignOnboardingScene() {
   const t = useTranslations("campaignsApp.onboarding.scene");
   return (
@@ -83,23 +82,19 @@ export function CampaignOnboardingScene() {
       aria-hidden
       className="relative h-[190px] overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 dark:border-slate-700/70 dark:bg-slate-900/50"
     >
+      <SceneExample label={t("example")} />
       {/* 포지셔닝(-translate-y-1/2)과 obs-rise 를 분리 — 키프레임의 transform:none 이
           유틸리티 translate 를 밟아 포스터가 스테이지 아래로 넘쳐 잘려 보였다. */}
       <div className="absolute left-5 top-1/2 w-[88px] -translate-y-1/2">
         <div
-          className="obs-rise rounded-lg border border-slate-200 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+          className="obs-rise rounded-lg border border-slate-200 bg-white p-2.5 dark:border-slate-700 dark:bg-slate-900"
           style={{ animationDelay: "0.1s" }}
         >
           <div className="mx-auto h-1.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
           <div className="mx-auto mt-1 h-1.5 w-8 rounded bg-slate-100 dark:bg-slate-800" />
           <div className="mt-2 h-9 rounded-md bg-accent-50 dark:bg-accent-500/10" />
-          <div className="relative mt-2 flex justify-center">
-            <span className="obs-pulse absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-500/60" />
-            <span
-              className="obs-pulse absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-500/60"
-              style={{ animationDelay: "0.9s" }}
-            />
-            <QrCode className="relative h-7 w-7 text-slate-900 dark:text-slate-100" />
+          <div className="mt-2 flex justify-center">
+            <QrCode className="h-7 w-7 text-slate-900 dark:text-slate-100" />
           </div>
         </div>
       </div>
@@ -109,7 +104,7 @@ export function CampaignOnboardingScene() {
           {t("scans")}
         </p>
         <p
-          className="obs-pop mt-0.5 font-mono text-2xl font-semibold tabular-nums leading-none text-slate-900 dark:text-slate-100"
+          className="obs-pop mt-0.5 text-2xl font-semibold tabular-nums leading-none text-slate-900 dark:text-slate-100"
           style={{ animationDelay: "0.7s" }}
         >
           21
@@ -140,7 +135,7 @@ function SceneBar({
         <span className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
           {label}
         </span>
-        <span className="font-mono text-[10px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+        <span className="text-[10px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
           {count}
         </span>
       </div>

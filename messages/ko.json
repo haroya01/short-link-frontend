@@ -988,7 +988,9 @@
     "meta": {
       "title": "링크 인 바이오 프로필 예시 · kurl",
       "description": "카페, 강사, 사진작가처럼 하는 일에 맞춰 꾸민 공개 프로필 예시예요. 링크, 명함 카드, 지도, 상품 카드를 한 페이지에 담을 수 있어요."
-    }
+    },
+    "prev": "이전 예시",
+    "next": "다음 예시"
   },
   "shortenForm": {
     "placeholder": "긴 주소를 여기에 붙여넣으세요",
@@ -1169,7 +1171,8 @@
       "primaryCta": "첫 링크 만들러 가기",
       "secondaryCta": "통계 화면이 어떤지 데모로 보기",
       "scene": {
-        "weekClicks": "이번 주 클릭"
+        "weekClicks": "이번 주 클릭",
+        "example": "예시"
       }
     },
     "noResultTitle": "검색 결과가 없어요",
@@ -3457,29 +3460,27 @@
     "batchCount": "{count}개 묶음",
     "details": "자세히",
     "onboarding": {
-      "eyebrow": "오프라인 캠페인",
-      "title": "오프라인 홍보를 온라인 광고처럼 개선하는 도구",
-      "body": "포스터·전단지·QR 을 여러 사람·지역·묶음으로 나눠 뿌리고, 어느 묶음이 성과가 좋았는지 측정합니다. 다음 배포는 그 데이터로 조정.",
+      "title": "전단지마다 다른 QR로 반응을 비교해요",
+      "body": "지역·배포자·묶음마다 QR을 따로 만들어 뿌리고, 어느 묶음에서 클릭이 많았는지 봐요. 다음 배포 위치는 그 숫자로 정하면 돼요.",
       "steps": [
         {
-          "title": "배포",
-          "desc": "포스터·전단지·QR 을 사람·지역·묶음으로 나눠 뿌립니다."
+          "title": "나눠 뿌리기",
+          "desc": "지역·배포자·묶음마다 다른 QR을 붙여요."
         },
         {
-          "title": "묶음별 측정",
-          "desc": "A 지역 500장 → 80명, B 500장 → 5명. 어느 묶음이 이겼는지 봅니다."
+          "title": "묶음별로 보기",
+          "desc": "100장당 클릭 수로 어느 묶음이 나았는지 비교해요."
         },
         {
-          "title": "조정·전환",
-          "desc": "성과 난 쪽을 늘리고, 종료된 QR 은 다음 페이지로 자동 전환."
+          "title": "다음 배포 정하기",
+          "desc": "클릭이 많은 곳에 더 뿌리고, 끝난 캠페인의 QR은 다음 페이지로 넘겨요."
         }
       ],
-      "createCta": "첫 QR 캠페인 만들기",
-      "createHint": "처음 만들 때는 QR 캠페인 이름과 종료 시점만 정하면 됩니다.",
       "scene": {
-        "scans": "스캔",
+        "scans": "클릭",
         "place1": "홍대입구",
-        "place2": "강남역"
+        "place2": "강남역",
+        "example": "예시"
       }
     }
   },
@@ -3569,7 +3570,7 @@
       "kpiDistributed": "배포",
       "kpiClicks": "클릭",
       "kpiPer100": "100장당",
-      "kpiTopArea": "Top 지역",
+      "kpiTopArea": "1위 지역",
       "batchTitle": "배포 묶음",
       "batchAdd": "묶음 추가",
       "batchColName": "묶음명",
@@ -3585,11 +3586,11 @@
       "posterStep3": "묶음별 합본 PDF 다운로드",
       "posterBoxLabel": "QR",
       "posterPerBatch": "묶음마다 다른 QR",
-      "barsTitle": "100장당 클릭",
+      "barsTitle": "지역별 클릭",
       "barsSort": "효율순",
-      "barsTop": "Top",
+      "barsTop": "1위",
       "barsRecoTitle": "다음 회 추천",
-      "barsRecoEstimate": "예상 +160 클릭",
+      "barsRecoEstimate": "예상 +{count} 클릭",
       "casesTitle": "사용 예시",
       "casesBefore": "1차",
       "casesAfter": "2차",
@@ -3597,7 +3598,10 @@
       "timelineExpired": "만료 시점",
       "timelineNext": "다음 페이지",
       "timelineChip": "예약 / 메뉴",
-      "timelineFoot": "인쇄된 QR 은 그대로, 연결 페이지만 자동 전환"
+      "timelineFoot": "인쇄된 QR 은 그대로, 연결 페이지만 자동 전환",
+      "kpiStatusAfter": "묶음별 QR로 배포",
+      "barsMeta": "{qty}장 · 100장당 {per100}",
+      "barsReco": "{from} {qty}장 → {to}"
     },
     "backLink": "단축 URL 도구로 돌아가기",
     "statsLink": "QR 캠페인 분석"

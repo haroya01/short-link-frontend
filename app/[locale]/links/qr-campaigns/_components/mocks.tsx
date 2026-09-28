@@ -2,46 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { ArrowDown, Check, Plus, QrCode } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { EASE, type MockData } from "../_lib/mock-data";
+import { useLocale, useTranslations } from "next-intl";
+import { CAMPAIGN_END, CAMPAIGN_START, EASE, summarize, type MockData } from "../_lib/mock-data";
 
-export function CountUp({
-  to,
-  active,
-  durationMs = 1400,
-}: {
-  to: number;
-  active: boolean;
-  durationMs?: number;
-}) {
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    if (!active) {
-      setN(0);
-      return;
-    }
-    // prefers-reduced-motion 이면 숫자 롤링 없이 최종값 즉시 표시 — 스스로 시작하는 모션은
-    // 사용자의 모션 설정을 따른다 (hooks/use-auto-slide 와 같은 계약).
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      setN(to);
-      return;
-    }
-    const start = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / durationMs, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setN(Math.round(to * eased));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [active, to, durationMs]);
-  return <>{n.toLocaleString()}</>;
+function useNumberFormats() {
+  const locale = useLocale();
+  return {
+    int: new Intl.NumberFormat(locale),
+    dec: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+  };
 }
 
 export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
   const t = useTranslations("qrCampaigns.mock");
+  const { int, dec } = useNumberFormats();
+  const sum = summarize(mock);
   return (
     <div
       className="space-y-2 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
@@ -50,28 +25,26 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      {/* Before kurl — 4 cells 중 3개가 "?" */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold text-rose-700">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
           {t("kpiBeforeKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {mock.campaignName}
           </p>
-          <span className="flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+          <span className="flex-shrink-0 text-[10px] font-medium text-slate-500 dark:text-slate-400">
             {t("kpiStatus")}
           </span>
         </div>
         <div className="mt-3 grid grid-cols-4 divide-x divide-slate-100 dark:divide-slate-800">
-          <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
+          <KpiCellMini label={t("kpiDistributed")} value={int.format(sum.distributed)} />
           <KpiCellMini label={t("kpiClicks")} value="?" muted />
           <KpiCellMini label={t("kpiPer100")} value="?" muted />
           <KpiCellMini label={t("kpiTopArea")} value="?" muted />
         </div>
       </div>
 
-      {/* Arrow between cards — active 진입 후 살짝 늦게 등장 */}
       <div
         className="flex justify-center transition-opacity duration-[480ms]"
         style={{
@@ -79,44 +52,33 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           opacity: active ? 1 : 0,
         }}
       >
-        <ArrowDown className="h-4 w-4 text-accent-500" aria-hidden />
+        <ArrowDown className="h-4 w-4 text-slate-400 dark:text-slate-500" aria-hidden />
       </div>
 
-      {/* After kurl — 같은 캠페인의 *kurl 도입 후* KPI. accent 톤. */}
       <div
-        className="rounded-2xl border border-accent-200 bg-accent-50/30 dark:bg-accent-500/10 p-4 shadow-[0_4px_24px_rgba(5,150,105,0.08)] transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
+        className="rounded-2xl border border-accent-200 bg-accent-50/30 p-4 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)] dark:border-accent-500/30 dark:bg-accent-500/10"
         style={{
           transitionDelay: active ? "800ms" : "0ms",
           opacity: active ? 1 : 0,
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-700 dark:text-accent-400">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
           {t("kpiAfterKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {mock.campaignName}
           </p>
-          <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-[10px] font-medium text-accent-700 dark:text-accent-400 shadow-sm">
-            <span
-              className={
-                "h-1.5 w-1.5 rounded-full bg-accent-600 " +
-                (active ? "animate-pulse" : "")
-              }
-            />
-            Live
+          <span className="flex-shrink-0 text-[10px] font-medium text-accent-700 dark:text-accent-400">
+            {t("kpiStatusAfter")}
           </span>
         </div>
-        <div className="mt-3 grid grid-cols-4 divide-x divide-slate-100 dark:divide-slate-800">
-          <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
-          <KpiCellMini
-            label={t("kpiClicks")}
-            value={active ? <CountUp to={mock.afterClicks} active={active} /> : 0}
-            accent
-          />
-          <KpiCellMini label={t("kpiPer100")} value={mock.afterPer100} accent />
-          <KpiCellMini label={t("kpiTopArea")} value={mock.afterTopArea} accent />
+        <div className="mt-3 grid grid-cols-4 divide-x divide-accent-100 dark:divide-slate-800">
+          <KpiCellMini label={t("kpiDistributed")} value={int.format(sum.distributed)} />
+          <KpiCellMini label={t("kpiClicks")} value={int.format(sum.clicks)} accent />
+          <KpiCellMini label={t("kpiPer100")} value={dec.format(sum.per100)} accent />
+          <KpiCellMini label={t("kpiTopArea")} value={sum.best.label} accent />
         </div>
       </div>
     </div>
@@ -134,7 +96,6 @@ function KpiCellMini({
   muted?: boolean;
   accent?: boolean;
 }) {
-  /* 셀마다 상자를 두르던 타일 그리드는 "AI 상자" 문법 — 헤어라인 분할의 플랫 스탯 행으로. */
   return (
     <div className="min-w-0 px-2 py-1 first:pl-0 last:pr-0">
       <p className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
@@ -144,7 +105,7 @@ function KpiCellMini({
         className={
           "mt-0.5 text-[14px] font-semibold tabular-nums leading-tight tracking-headline " +
           (muted
-            ? "animate-pulse text-slate-300"
+            ? "text-slate-400 dark:text-slate-500"
             : accent
               ? "text-accent-700 dark:text-accent-400"
               : "text-slate-900 dark:text-slate-100")
@@ -160,7 +121,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
   const t = useTranslations("qrCampaigns.mock");
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -234,14 +195,14 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
     // 모바일에서 다른 mock 보다 세로가 크다는 사용자 피드백 → MockPoster 만 max-width 좁게 cap.
     // 다른 mock 은 부모의 max-w-sm 그대로.
     <div
-      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-[opacity,transform] duration-700 ease-[var(--ease)] sm:max-w-[300px] lg:max-w-none"
+      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] duration-700 ease-[var(--ease)] sm:max-w-[300px] lg:max-w-none"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
       {/* PDF 페이지 시뮬레이션 + 박스 이동 + QR 등장 시퀀스. 모바일은 4/5, lg+ 만 A4 비율. */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 lg:aspect-[1/1.414]">
+      <div className="relative aspect-[4/5] overflow-hidden bg-slate-50 dark:bg-slate-800/40 lg:aspect-[1/1.414]">
         {/* 회색 placeholder content — 디자이너가 만든 포스터 디자인의 윤곽 흉내 */}
         <div className="absolute inset-0 flex flex-col gap-2.5 p-6">
           <div className="h-3 w-3/5 rounded-sm bg-slate-200 dark:bg-slate-800" />
@@ -265,7 +226,6 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
             height: active ? "30%" : "48%",
             transitionDelay: active ? "700ms" : "0ms",
             opacity: active ? 1 : 0,
-            boxShadow: "0 4px 16px rgba(5,150,105,0.18)",
           }}
         >
           {qrUrl ? (
@@ -314,7 +274,9 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
 
 export function MockBars({ mock, active }: { mock: MockData; active: boolean }) {
   const t = useTranslations("qrCampaigns.mock");
-  const max = Math.max(...mock.bars.map((b) => b.value));
+  const { int, dec } = useNumberFormats();
+  const sum = summarize(mock);
+  const max = Math.max(...sum.areas.map((a) => a.clicks));
   return (
     <div
       className="space-y-3 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
@@ -323,7 +285,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
         <div className="mb-4 flex items-center justify-between">
           <p className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("barsTitle")}</p>
           <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -332,13 +294,13 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
           </span>
         </div>
         <div className="space-y-3">
-          {mock.bars.map((b, i) => {
-            const pct = (b.value / max) * 100;
+          {sum.areas.map((area, i) => {
+            const pct = (area.clicks / max) * 100;
             const isTop = i === 0;
             const delay = 200 + i * 180;
             return (
               <div
-                key={b.label}
+                key={area.label}
                 className="transition-opacity duration-[480ms]"
                 style={{
                   transitionDelay: active ? `${delay}ms` : "0ms",
@@ -351,7 +313,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                       isTop ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"
                     }
                   >
-                    {b.label}
+                    {area.label}
                   </span>
                   <div className="flex items-center gap-2">
                     <span
@@ -360,22 +322,18 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                         (isTop ? "font-semibold text-accent-700 dark:text-accent-400" : "text-slate-600 dark:text-slate-300")
                       }
                     >
-                      {active ? <CountUp to={b.value} active={active} /> : 0}
+                      {int.format(area.clicks)}
                     </span>
                     {isTop && (
-                      <span
-                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[10px] font-semibold text-accent-700 dark:text-accent-400 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
-                        style={{
-                          transitionDelay: active ? `${delay + 900}ms` : "0ms",
-                          opacity: active ? 1 : 0,
-                          transform: active ? "scale(1)" : "scale(0.6)",
-                        }}
-                      >
+                      <span className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[10px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
                         {t("barsTop")}
                       </span>
                     )}
                   </div>
                 </div>
+                <p className="mt-0.5 text-[10px] tabular-nums text-slate-500 dark:text-slate-400">
+                  {t("barsMeta", { qty: int.format(area.qty), per100: dec.format(area.per100) })}
+                </p>
                 <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                   <div
                     className={
@@ -395,9 +353,9 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
         </div>
       </div>
       <div
-        className="rounded-2xl border border-accent-200 bg-accent-50/50 dark:bg-accent-500/10 px-4 py-3.5 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
+        className="rounded-2xl border border-accent-200 bg-accent-50/50 px-4 py-3.5 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)] dark:border-accent-500/30 dark:bg-accent-500/10"
         style={{
-          transitionDelay: active ? "1500ms" : "0ms",
+          transitionDelay: active ? "1100ms" : "0ms",
           opacity: active ? 1 : 0,
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
@@ -405,8 +363,12 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
         <p className="text-[10px] font-medium text-accent-700 dark:text-accent-400">
           {t("barsRecoTitle")}
         </p>
-        <p className="mt-1 text-[14px] font-medium text-slate-900 dark:text-slate-100">{mock.reco}</p>
-        <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-300">{t("barsRecoEstimate")}</p>
+        <p className="mt-1 text-[14px] font-medium text-slate-900 dark:text-slate-100">
+          {t("barsReco", { from: sum.worst.label, to: sum.best.label, qty: int.format(mock.recoQty) })}
+        </p>
+        <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-300">
+          {t("barsRecoEstimate", { count: int.format(sum.recoGain) })}
+        </p>
       </div>
     </div>
   );
@@ -418,7 +380,7 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
   const max = Math.max(...mock.cases.map((c) => c.after));
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-[opacity,transform] duration-700 ease-[var(--ease)]"
+      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
       style={{
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
@@ -525,8 +487,10 @@ function CaseBar({
   );
 }
 
-export function MockTimeline({ mock, active }: { mock: MockData; active: boolean }) {
+export function MockTimeline({ active }: { mock: MockData; active: boolean }) {
   const t = useTranslations("qrCampaigns.mock");
+  const locale = useLocale();
+  const day = new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", timeZone: "UTC" });
   return (
     <div
       className="space-y-3 transition-[opacity,transform] duration-700 ease-[var(--ease)]"
@@ -535,10 +499,9 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
-        {/* timeline mini header */}
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 px-5 py-3 text-[11px]">
-          <span className="tabular-nums text-slate-500 dark:text-slate-400">{mock.startDate}</span>
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-3 text-[11px] dark:border-slate-800">
+          <span className="tabular-nums text-slate-500 dark:text-slate-400">{day.format(CAMPAIGN_START)}</span>
           <div className="relative h-px flex-1 bg-slate-200 dark:bg-slate-800">
             <div
               className="absolute left-0 top-0 h-full bg-accent-600 transition-[width] duration-700"
@@ -548,84 +511,48 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
                 width: active ? "100%" : "0%",
               }}
             />
-            <div
-              className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent-600 transition-transform duration-300"
-              style={{
-                transitionDelay: active ? "1400ms" : "0ms",
-                transform: active ? "translateY(-50%) scale(1.4)" : "translateY(-50%) scale(1)",
-              }}
-            />
+            <div className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent-600" />
           </div>
           <span
-            className="font-medium text-accent-700 dark:text-accent-400 transition-opacity duration-[480ms]"
+            className="font-medium text-accent-700 transition-opacity duration-[480ms] dark:text-accent-400"
             style={{
-              transitionDelay: active ? "1500ms" : "0ms",
+              transitionDelay: active ? "1000ms" : "0ms",
               opacity: active ? 1 : 0.4,
             }}
           >
-            {t("timelineExpired")}
+            {t("timelineExpired")} · <span className="tabular-nums">{day.format(CAMPAIGN_END)}</span>
           </span>
         </div>
 
-        {/* iPhone mockup — 캠페인 진행 중 화면 → 만료 후 화면 자동 슬라이드 */}
-        <div className="relative grid place-items-center bg-gradient-to-b from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 px-6 py-8">
-          {/* date pill 표시 (옆) */}
-          <div
-            className="absolute left-5 top-5 rounded-md bg-white/80 dark:bg-slate-900/80 px-2 py-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 shadow-sm transition-opacity duration-[480ms]"
-            style={{ transitionDelay: active ? "400ms" : "0ms", opacity: active ? 1 : 0 }}
-          >
-            {mock.endDate}
-          </div>
-          <div
-            className="absolute right-5 top-5 rounded-md bg-accent-50 dark:bg-accent-500/10 px-2 py-1 text-[10px] font-medium text-accent-700 dark:text-accent-400 shadow-sm transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
-            style={{
-              transitionDelay: active ? "1700ms" : "0ms",
-              opacity: active ? 1 : 0,
-              transform: active ? "translateY(0)" : "translateY(-6px)",
-            }}
-          >
-            {t("timelineExpired")} →
-          </div>
-
-          {/* phone frame */}
-          <div className="relative h-[280px] w-[150px] overflow-hidden rounded-3xl border-[5px] border-slate-900 bg-white dark:bg-slate-900 shadow-[0_14px_32px_rgba(15,23,42,0.22)]">
-            {/* notch */}
-            <div className="absolute left-1/2 top-1.5 z-20 h-2 w-10 -translate-x-1/2 rounded-full bg-slate-900" />
-
-            {/* screen A — 캠페인 진행 중 (rose) */}
+        <div className="grid place-items-center bg-slate-50 px-6 py-8 dark:bg-slate-800/40">
+          <div className="relative h-[280px] w-[150px] overflow-hidden rounded-lg border border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900">
             <div
               className="absolute inset-0 transition-transform duration-700"
               style={{
                 transitionTimingFunction: EASE,
-                transitionDelay: active ? "1700ms" : "0ms",
+                transitionDelay: active ? "1300ms" : "0ms",
                 transform: active ? "translateX(-100%)" : "translateX(0%)",
               }}
             >
-              <PhoneScreen kind="before" />
+              <PageScreen kind="before" />
             </div>
-
-            {/* screen B — 만료 후 (accent) */}
             <div
               className="absolute inset-0 transition-transform duration-700"
               style={{
                 transitionTimingFunction: EASE,
-                transitionDelay: active ? "1700ms" : "0ms",
+                transitionDelay: active ? "1300ms" : "0ms",
                 transform: active ? "translateX(0%)" : "translateX(100%)",
               }}
             >
-              <PhoneScreen
-                kind="after"
-                nextLabel={t("timelineNext")}
-                chipLabel={t("timelineChip")}
-              />
+              <PageScreen kind="after" nextLabel={t("timelineNext")} chipLabel={t("timelineChip")} />
             </div>
           </div>
         </div>
       </div>
       <p
-        className="px-1 text-[11px] text-slate-500 dark:text-slate-400 transition-opacity duration-[480ms]"
+        className="px-1 text-[11px] text-slate-500 transition-opacity duration-[480ms] dark:text-slate-400"
         style={{
-          transitionDelay: active ? "2600ms" : "0ms",
+          transitionDelay: active ? "2000ms" : "0ms",
           opacity: active ? 1 : 0,
         }}
       >
@@ -635,7 +562,7 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
   );
 }
 
-function PhoneScreen({
+function PageScreen({
   kind,
   nextLabel,
   chipLabel,
@@ -648,18 +575,18 @@ function PhoneScreen({
   return (
     <div
       className={
-        "flex h-full flex-col gap-1.5 px-2.5 pb-3 pt-9 " +
-        (isAfter ? "bg-accent-50 dark:bg-accent-500/10" : "bg-rose-50")
+        "flex h-full flex-col gap-1.5 px-2.5 pb-3 pt-3 " +
+        (isAfter ? "bg-accent-50 dark:bg-accent-500/10" : "bg-white dark:bg-slate-900")
       }
     >
       <div
         className={
-          "h-12 w-full rounded-md " + (isAfter ? "bg-accent-200" : "bg-rose-200")
+          "h-12 w-full rounded-md " + (isAfter ? "bg-accent-200 dark:bg-accent-500/25" : "bg-slate-200 dark:bg-slate-700")
         }
       />
       <div
         className={
-          "h-1.5 w-3/5 rounded-full " + (isAfter ? "bg-accent-600" : "bg-rose-500")
+          "h-1.5 w-3/5 rounded-full " + (isAfter ? "bg-accent-600" : "bg-slate-500 dark:bg-slate-400")
         }
       />
       <div className="space-y-1">
@@ -677,7 +604,7 @@ function PhoneScreen({
           </span>
         </div>
       ) : (
-        <div className="mt-auto h-5 w-full rounded-md bg-rose-600" />
+        <div className="mt-auto h-5 w-full rounded-md bg-slate-800 dark:bg-slate-300" />
       )}
     </div>
   );

@@ -209,7 +209,7 @@ export default async function PublicProfilePage({
           }}
         />
         <div className="mt-6 flex justify-center">
-          <MadeWithKurl />
+          <MadeWithKurl tone={{ text: colors.muted, strong: colors.primary, border: colors.cardBorder }} />
         </div>
       </div>
       <ProfileShareFab

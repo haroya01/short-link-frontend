@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, Home, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -9,6 +9,7 @@ import { blogHref } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { cn } from "@/lib/utils";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { AccountSheet } from "@/components/common/account-sheet";
 import { BlogSearchSheet } from "@/components/common/blog-search-sheet";
 
@@ -27,8 +28,7 @@ export function BlogBottomNav() {
   const { authenticated } = useAuth();
   const unread = useUnreadCount();
   const [sheet, setSheet] = useState<null | "search" | "account">(null);
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
+  const hidden = useHideOnScroll();
 
   // Tell the cookie banner a bottom tab bar is present so it lifts above it (else it overlays the
   // tabs and swallows their taps). See globals.css.
@@ -37,18 +37,6 @@ export function BlogBottomNav() {
     return () => {
       delete document.body.dataset.bottomNav;
     };
-  }, []);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > lastY.current + 8 && y > 80) setHidden(true);
-      else if (y < lastY.current - 8) setHidden(false);
-      lastY.current = y;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Locale-anchored so 홈 highlights on both topologies: production subdomain (pathname = `/ko`) and
@@ -63,14 +51,14 @@ export function BlogBottomNav() {
     <>
       <nav
         className={cn(
-          "vt-bottom-nav glass-chrome fixed inset-x-0 bottom-0 z-40 flex overflow-visible border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
+          "vt-bottom-nav fixed inset-x-0 bottom-0 z-40 flex bg-white dark:bg-slate-950 overflow-visible border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
           hidden && "translate-y-full",
         )}
       >
         <BlogChromeLink
           href={blogHref("/")}
           aria-current={isHome ? "page" : undefined}
-          className={cn(TAB, isHome ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, isHome ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Home className="h-5 w-5" />
           {t("home")}
@@ -80,7 +68,7 @@ export function BlogBottomNav() {
           onClick={() => setSheet("search")}
           aria-expanded={sheet === "search"}
           aria-haspopup="dialog"
-          className={cn(TAB, sheet === "search" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, sheet === "search" ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Search className="h-5 w-5" />
           {t("explore")}
@@ -92,7 +80,7 @@ export function BlogBottomNav() {
           // Fold the unread count into the tab's name so a screen reader announces it — the numeric badge
           // is otherwise decorative (aria-hidden) and silent.
           aria-label={authenticated && unread > 0 ? `${tNotif("title")}, ${tNotif("unreadCount", { count: unread })}` : undefined}
-          className={cn(TAB, isNotif ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, isNotif ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <span className="relative">
             <Bell className="h-5 w-5" />
@@ -112,7 +100,7 @@ export function BlogBottomNav() {
           onClick={() => setSheet("account")}
           aria-expanded={sheet === "account"}
           aria-haspopup="dialog"
-          className={cn(TAB, sheet === "account" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, sheet === "account" ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <User className="h-5 w-5" />
           {authenticated ? t("account") : t("login")}

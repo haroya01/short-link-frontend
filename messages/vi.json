@@ -988,7 +988,9 @@
     "meta": {
       "title": "Ví dụ hồ sơ link-in-bio · kurl",
       "description": "Ví dụ hồ sơ cho quán cà phê, giảng viên, nhiếp ảnh gia và nhiều nghề khác. Liên kết, danh thiếp, bản đồ và thẻ sản phẩm nằm gọn trên một trang."
-    }
+    },
+    "prev": "Ví dụ trước",
+    "next": "Ví dụ tiếp theo"
   },
   "shortenForm": {
     "placeholder": "Dán URL dài của bạn vào đây",
@@ -1169,7 +1171,8 @@
       "primaryCta": "Tạo liên kết đầu tiên",
       "secondaryCta": "Hoặc xem trước màn hình phân tích",
       "scene": {
-        "weekClicks": "Lượt nhấp tuần này"
+        "weekClicks": "Lượt nhấp tuần này",
+        "example": "Ví dụ"
       }
     },
     "noResultTitle": "Không có kết quả",
@@ -3457,29 +3460,27 @@
     "batchCount": "{count} đợt",
     "details": "Chi tiết",
     "onboarding": {
-      "eyebrow": "Chiến dịch ngoại tuyến",
-      "title": "Cải thiện quảng bá ngoại tuyến như quảng cáo trực tuyến",
-      "body": "Chia áp phích, tờ rơi, và mã QR theo người phát, khu vực, và đợt. Đo đợt nào hiệu quả nhất, rồi tinh chỉnh lần phát sau bằng dữ liệu.",
+      "title": "Mỗi lô tờ rơi một mã QR riêng để so sánh",
+      "body": "Tạo mã QR riêng cho từng khu vực, người phát và lô, rồi xem lô nào có nhiều lượt nhấp. Dùng các con số đó để chọn nơi phát lần sau.",
       "steps": [
         {
-          "title": "Phát",
-          "desc": "Chia áp phích, tờ rơi và mã QR theo người phát, khu vực và đợt."
+          "title": "Chia lô",
+          "desc": "Gắn mã QR khác nhau cho từng khu vực, người phát và lô."
         },
         {
-          "title": "Đo các đợt",
-          "desc": "Khu A: 500 → 80, khu B: 500 → 5. Xem đợt nào thắng."
+          "title": "So sánh các lô",
+          "desc": "Lượt nhấp trên 100 tờ cho biết lô nào tốt hơn."
         },
         {
-          "title": "Tinh chỉnh & định tuyến",
-          "desc": "Nhân rộng cái hiệu quả; định tuyến QR hết hạn tới trang tiếp theo."
+          "title": "Lên kế hoạch lần sau",
+          "desc": "Phát nhiều hơn ở nơi có nhiều lượt nhấp, và chuyển QR của chiến dịch đã kết thúc sang trang tiếp theo."
         }
       ],
-      "createCta": "Tạo chiến dịch QR đầu tiên",
-      "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc.",
       "scene": {
-        "scans": "Lượt quét",
+        "scans": "Lượt nhấp",
         "place1": "Quận 1",
-        "place2": "Quận 3"
+        "place2": "Quận 3",
+        "example": "Ví dụ"
       }
     }
   },
@@ -3585,11 +3586,11 @@
       "posterStep3": "Tải PDF gộp — một trang mỗi đợt",
       "posterBoxLabel": "QR",
       "posterPerBatch": "QR khác nhau mỗi đợt",
-      "barsTitle": "Lượt nhấp trên 100",
+      "barsTitle": "Lượt nhấp theo khu vực",
       "barsSort": "Theo hiệu suất",
       "barsTop": "Hàng đầu",
       "barsRecoTitle": "Gợi ý tiếp theo",
-      "barsRecoEstimate": "Ước tính +160 lượt nhấp",
+      "barsRecoEstimate": "Ước tính +{count} lượt nhấp",
       "casesTitle": "Trường hợp dùng",
       "casesBefore": "Trước",
       "casesAfter": "Sau",
@@ -3597,7 +3598,10 @@
       "timelineExpired": "Hết hạn",
       "timelineNext": "Trang tiếp theo",
       "timelineChip": "Đặt chỗ / Thực đơn",
-      "timelineFoot": "Cùng một QR, trang liên kết đổi."
+      "timelineFoot": "Cùng một QR, trang liên kết đổi.",
+      "kpiStatusAfter": "Đo theo từng lô",
+      "barsMeta": "{qty} tờ · {per100} / 100 tờ",
+      "barsReco": "{qty} tờ: {from} → {to}"
     },
     "backLink": "Quay lại trình rút gọn URL",
     "statsLink": "Phân tích chiến dịch QR"

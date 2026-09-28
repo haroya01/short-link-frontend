@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BarChart3, Check, ChevronDown, ChevronUp, FileText, Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { BarChart3, Check, ChevronDown, ChevronUp, FileText, Layers, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import {
   createSeries,
   deleteSeries,
@@ -12,7 +12,6 @@ import {
   type SeriesView,
 } from "@/modules/blog/api/series";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
-import { Mark } from "@/components/common/logo";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -198,7 +197,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
           className={`focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
             creating
               ? "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-              : "bg-accent-700 text-white hover:bg-accent-800"
+              : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           }`}
         >
           {creating ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
@@ -250,10 +249,10 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       {groups.map(({ series: s, members }) => (
         <section
           key={s.id}
-          className="mark-hoverable overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800"
+          className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800"
         >
           <header className="flex items-center gap-3 px-4 py-3.5">
-            <Mark animated className="mark-draw-in h-3.5 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
+            <Layers aria-hidden className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
             {renaming === s.id ? (
               <span className="flex flex-1 items-center gap-2">
                 <input
@@ -339,8 +338,8 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     key={p.id}
                     className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   >
-                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 font-mono text-[12px] font-semibold tabular-nums text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
-                      {String(i + 1).padStart(2, "0")}
+                    <span className="w-6 shrink-0 text-right text-[13px] tabular-nums text-slate-400 dark:text-slate-500">
+                      {i + 1}
                     </span>
                     <BlogLink
                       href={`${writeBase}/${p.id}`}

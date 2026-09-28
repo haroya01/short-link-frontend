@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import AutoplayPlugin from "embla-carousel-autoplay";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PublicProfile } from "@/types";
 import { Link } from "@/i18n/navigation";
@@ -18,8 +18,8 @@ import { cn } from "@/lib/utils";
  * {@code /u/[username]/page.tsx} layout — same banner aspect ratio, same mask-image fade, same
  * {@code -mt-12} container overlap — so the showcase shows the page itself.
  *
- * Carousel is Embla — touch-swipe on mobile, drag on desktop, autoplay that pauses on hover so
- * users can read a card without it sliding past.
+ * Carousel is Embla — touch-swipe on mobile, drag or the prev/next buttons elsewhere. Nothing
+ * moves on its own.
  */
 const DEVICE_MAX_SCALE = 0.8;
 const DEVICE_NATIVE_W = 428;
@@ -46,19 +46,12 @@ function useDeviceScale() {
 export function ProfileShowcase() {
   const t = useTranslations("showcase");
   const scale = useDeviceScale();
-  const autoplayRef = useRef(
-    AutoplayPlugin({
-      delay: 3500,
-      stopOnInteraction: false,
-      stopOnMouseEnter: true,
-      playOnInit:
-        typeof window === "undefined" || !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    }),
-  );
-  const [emblaRef] = useEmblaCarousel(
-    { loop: true, dragFree: false, align: "center", containScroll: false },
-    [autoplayRef.current],
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    dragFree: false,
+    align: "center",
+    containScroll: false,
+  });
 
   return (
     <div className="relative">
@@ -91,6 +84,24 @@ export function ProfileShowcase() {
           ))}
         </div>
       </div>
+      <div className="container mt-6 flex max-w-5xl justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => emblaApi?.scrollPrev()}
+          aria-label={t("prev")}
+          className="focus-ring grid h-10 w-10 place-items-center rounded-lg border border-slate-300 text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
+        >
+          <ChevronLeft aria-hidden className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => emblaApi?.scrollNext()}
+          aria-label={t("next")}
+          className="focus-ring grid h-10 w-10 place-items-center rounded-lg border border-slate-300 text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
+        >
+          <ChevronRight aria-hidden className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -107,7 +118,7 @@ function ShowcaseCard({
   const colors = THEME_TABLE[profile.theme ?? "default"];
   return (
     <div
-      className="group relative mr-10 block shrink-0 cursor-pointer transition-transform hover:-translate-y-1 sm:mr-14"
+      className="group relative mr-10 block shrink-0 cursor-pointer sm:mr-14"
       // Promote each slide to its own compositor layer + clip paint to the slide's box.
       // Without this, embla's translateX on the parent flex track forces every slide's
       // ContactCardEntry `filter:` and per-card `backdrop-blur` to repaint as the track
@@ -140,6 +151,8 @@ function ShowcaseCard({
             height: DEVICE_NATIVE_H,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
+            WebkitMaskImage: "linear-gradient(to bottom, black 86%, transparent)",
+            maskImage: "linear-gradient(to bottom, black 86%, transparent)",
             ...(colors.pageBgHex ? { backgroundColor: colors.pageBgHex } : {}),
           }}
         >

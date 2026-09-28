@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
+import { useAuth } from "@/lib/auth";
 import { buildDemoHeadline } from "@/lib/demo-data";
 
 /**
@@ -25,6 +26,7 @@ const DEMO = buildDemoHeadline();
 export function StageScenes() {
   const t = useTranslations("home.stage");
   const tLive = useTranslations("stats.live");
+  const { ready, authenticated } = useAuth();
 
   return (
     <>
@@ -79,12 +81,14 @@ export function StageScenes() {
                 >
                   {t("scene3CtaDemo")} <ArrowRight aria-hidden className="h-4 w-4" />
                 </Link>
-                <Link
-                  href="/login"
-                  className="focus-ring rounded-sm text-[15px] font-medium text-accent-100 underline decoration-accent-300/50 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
-                >
-                  {t("scene3CtaStart")}
-                </Link>
+                {!(ready && authenticated) && (
+                  <Link
+                    href="/login"
+                    className="focus-ring rounded-sm text-[15px] font-medium text-accent-100 underline decoration-accent-300/50 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+                  >
+                    {t("scene3CtaStart")}
+                  </Link>
+                )}
               </div>
             </div>
 

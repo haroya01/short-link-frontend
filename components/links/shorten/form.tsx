@@ -149,9 +149,6 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
               : "border-slate-300 hover:border-slate-400 focus-within:border-accent-600 focus-within:ring-4 focus-within:ring-accent-600/10 dark:border-slate-700 dark:hover:border-slate-600 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
-          {/* 스크롤 연동 형광 스윕 — stage-sweep-host 조상(무대 on)일 때만 애니메이션.
-              칸 안에 두는 이유: 밖에 두면 모서리 곡률과 어긋난 사각 밴드가 노출된다. */}
-          <span aria-hidden className="capsule-sweep" />
           <Link2
             aria-hidden
             className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"

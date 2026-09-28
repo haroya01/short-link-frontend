@@ -988,7 +988,9 @@
     "meta": {
       "title": "Link-in-bio profile examples · kurl",
       "description": "Example profiles for a café, an instructor, a photographer and more. Links, a contact card, a map and product cards fit on one page."
-    }
+    },
+    "prev": "Previous example",
+    "next": "Next example"
   },
   "shortenForm": {
     "placeholder": "Paste your long URL here",
@@ -1169,7 +1171,8 @@
       "primaryCta": "Make your first link",
       "secondaryCta": "Or preview the analytics screen",
       "scene": {
-        "weekClicks": "Clicks this week"
+        "weekClicks": "Clicks this week",
+        "example": "Example"
       }
     },
     "noResultTitle": "No matches",
@@ -3457,29 +3460,27 @@
     "batchCount": "{count} batches",
     "details": "Details",
     "onboarding": {
-      "eyebrow": "Offline campaigns",
-      "title": "Improve offline promotion like online ads",
-      "body": "Split posters, flyers, and QR codes by distributor, area, and batch. Measure which batch performed best, then tune the next distribution with data.",
+      "title": "Give each flyer batch its own QR and compare",
+      "body": "Make a separate QR for each area, distributor, and batch, then see which batch got the clicks. Use those numbers to decide where the next batch goes.",
       "steps": [
         {
-          "title": "Distribute",
-          "desc": "Split posters, flyers, and QR codes by distributor, area, and batch."
+          "title": "Split",
+          "desc": "Put a different QR on each area, distributor, and batch."
         },
         {
-          "title": "Measure batches",
-          "desc": "Area A: 500 → 80, Area B: 500 → 5. See which batch won."
+          "title": "Compare batches",
+          "desc": "Clicks per 100 flyers show which batch did better."
         },
         {
-          "title": "Tune & route",
-          "desc": "Scale up what worked; route expired QR codes to the next page."
+          "title": "Plan the next run",
+          "desc": "Hand out more where the clicks came from, and send an ended campaign's QR to the next page."
         }
       ],
-      "createCta": "Create first QR campaign",
-      "createHint": "For the first campaign, you only need a name and an end time.",
       "scene": {
-        "scans": "Scans",
+        "scans": "Clicks",
         "place1": "Downtown",
-        "place2": "Riverside"
+        "place2": "Riverside",
+        "example": "Example"
       }
     }
   },
@@ -3585,11 +3586,11 @@
       "posterStep3": "Download merged PDF — one page per batch",
       "posterBoxLabel": "QR",
       "posterPerBatch": "Different QR per batch",
-      "barsTitle": "Clicks per 100",
+      "barsTitle": "Clicks by area",
       "barsSort": "By efficiency",
       "barsTop": "Top",
       "barsRecoTitle": "Recommended next",
-      "barsRecoEstimate": "Est. +160 clicks",
+      "barsRecoEstimate": "Est. +{count} clicks",
       "casesTitle": "Use cases",
       "casesBefore": "Before",
       "casesAfter": "After",
@@ -3597,7 +3598,10 @@
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",
-      "timelineFoot": "Same QR, the linked page switches."
+      "timelineFoot": "Same QR, the linked page switches.",
+      "kpiStatusAfter": "Tracked by batch",
+      "barsMeta": "{qty} flyers · {per100} per 100",
+      "barsReco": "{qty} flyers: {from} → {to}"
     },
     "backLink": "Back to URL shortener",
     "statsLink": "QR campaign analytics"

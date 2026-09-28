@@ -190,14 +190,14 @@ export default function WriteIndexPage() {
       </header>
 
       {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 컨트롤보다 먼저 답한다.
-          가장 최근 임시저장 1건만, 조용한 그린 틴트 카드로 헤더 바로 아래 고정(보기와 무관).
-          임시저장이 없으면 섹션 자체가 없다. */}
+          가장 최근 임시저장 1건만, 헤더 바로 아래 고정(보기와 무관). 초록은 머리의 '새 글
+          쓰기' 하나라 이 카드는 종이 카드. 임시저장이 없으면 섹션 자체가 없다. */}
       {!loading && latestDraft && (
         <BlogLink
           href={`${writeBase}/${latestDraft.id}`}
-          className="focus-ring group mb-5 flex items-center gap-3 rounded-2xl border border-accent-200/70 bg-accent-50/50 px-4 py-3 transition-colors hover:border-accent-300 hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/15"
+          className="focus-ring group mb-5 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800/60"
         >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-transform duration-200 ease-[var(--ease)] group-hover:scale-105 motion-reduce:transform-none">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-300">
             <PenSquare className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
