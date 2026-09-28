@@ -37,7 +37,6 @@ const LINKS_ONLY = [
   "demo",
   "result",
   "login",
-  "qr",
   "statsEmpty",
   "expiringBanner",
   "authGate",
