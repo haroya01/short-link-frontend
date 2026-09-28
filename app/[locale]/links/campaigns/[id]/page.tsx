@@ -41,6 +41,7 @@ import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
 import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
 import { BatchCard } from "./_components/batch-card";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
+import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
 
 export default function CampaignDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -184,7 +185,7 @@ function Header({
   return (
     <header className="space-y-3">
       <div className="flex items-center gap-2">
-        <StatusBadge status={campaign.status} />
+        <CampaignStatusBadge status={campaign.status} />
         <span className="text-[12px] text-slate-500 dark:text-slate-400">
           {formatPeriod(campaign.startsAt, campaign.endsAt, locale)}
         </span>
@@ -513,24 +514,6 @@ function BatchSection({
         }}
       />
     </section>
-  );
-}
-
-function StatusBadge({ status }: { status: CampaignStatus }) {
-  const t = useTranslations("campaignStatus");
-  const palette: Record<CampaignStatus, { bg: string; text: string }> = {
-    DRAFT: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300" },
-    ACTIVE: { bg: "bg-accent-50 dark:bg-accent-500/10", text: "text-accent-700 dark:text-accent-400" },
-    ENDED: { bg: "bg-amber-50 dark:bg-amber-500/10", text: "text-amber-700 dark:text-amber-400" },
-    ARCHIVED: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-500 dark:text-slate-400" },
-  };
-  const { bg, text } = palette[status];
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${bg} ${text}`}
-    >
-      {t(status)}
-    </span>
   );
 }
 

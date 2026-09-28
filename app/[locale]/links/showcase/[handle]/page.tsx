@@ -62,21 +62,17 @@ export default async function ShowcaseHandlePage({
 
   return (
     <div className={`min-h-screen ${colors.page}`}>
-      {/* Sample banner — keep it small and dismissible-looking so it doesn't bury the demo, but
-          explicit enough that visitors don't think this is a real user's page. */}
-      <div className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10">
-        <div className="container flex max-w-md items-center justify-between gap-3 py-2 text-[11px]">
-          {/* min-w-0 + truncate keeps the banner to one line on narrow viewports —
-              previously the long copy wrapped to two rows on phone. */}
-          <span className="inline-flex min-w-0 items-center gap-1.5 font-medium text-amber-900 dark:text-amber-300">
-            <span className="truncate">{t("sampleBanner")}</span>
-          </span>
+      {/* Sample banner — small enough not to bury the demo, explicit enough that visitors don't
+          take this for a real user's page. */}
+      <div className="sticky top-0 z-30 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+        <div className="container flex max-w-md items-center justify-between gap-3 py-2 text-[12px]">
+          <span className="min-w-0 truncate font-medium text-slate-700 dark:text-slate-300">{t("sampleBanner")}</span>
           <Link
             href="/login?next=/profile/auto"
-            className="inline-flex shrink-0 items-center gap-1 rounded-md bg-slate-900 dark:bg-white px-2.5 py-1 text-[11px] font-medium text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
+            className="focus-ring inline-flex min-h-8 shrink-0 items-center gap-1 rounded font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
           >
             {t("sampleCta")}
-            <ArrowRight className="h-3 w-3" />
+            <ArrowRight className="h-3 w-3" aria-hidden />
           </Link>
         </div>
       </div>

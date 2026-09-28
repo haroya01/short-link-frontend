@@ -9,6 +9,7 @@ import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
 import { EventsIntro } from "@/modules/events/components/events-intro";
+import { EventStatusBadge } from "@/modules/events/components/event-status-badge";
 import { ErrorState } from "@/components/common/error-state";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -72,7 +73,7 @@ export default function EventsListPage() {
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <StatusBadge status={event.status} />
+                    <EventStatusBadge status={event.status} />
                     <span className="truncate text-[15px] font-semibold text-slate-900 underline-offset-[3px] group-hover:underline group-hover:decoration-slate-300 dark:text-slate-100">
                       {event.title}
                     </span>
@@ -93,28 +94,5 @@ export default function EventsListPage() {
         </ul>
       )}
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: MyEvent["status"] }) {
-  const t = useTranslations("events.status");
-  if (status === "OPEN") {
-    return (
-      <span className="shrink-0 rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-semibold text-accent-700 dark:bg-accent-900/60 dark:text-accent-300">
-        {t("open")}
-      </span>
-    );
-  }
-  if (status === "CLOSED") {
-    return (
-      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-        {t("closed")}
-      </span>
-    );
-  }
-  return (
-    <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-600 dark:bg-red-900/50 dark:text-red-300">
-      {t("canceled")}
-    </span>
   );
 }
