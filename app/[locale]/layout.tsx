@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JetBrains_Mono } from "next/font/google";
+import { FirstLoadMark } from "@/components/common/first-load-mark";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
 import "../globals.css";
@@ -202,6 +203,8 @@ export default async function RootLayout({
   const platformHost = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
   const themeInitScript =
     "(function(){try{" +
+    // 첫 하드 로드 표식 — 서버 HTML 로 연 화면은 진입 모션 없이 그린다(첫 내비게이션에 FirstLoadMark 가 뗌).
+    "document.documentElement.setAttribute('data-first-load','');" +
     "var h=location.hostname,P=" + JSON.stringify(platformHost) + ",onP=(h===P||h.endsWith('.'+P));" +
     "var seg=location.pathname.split('/')[2];" +
     "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
@@ -282,6 +285,7 @@ export default async function RootLayout({
         </NextIntlClientProvider>
         {/* Load-fade marker for lazy content images (img.img-fade) — see the component doc. */}
         <ImageFade />
+        <FirstLoadMark />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
