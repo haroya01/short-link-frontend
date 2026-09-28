@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
 import { BlogBottomNav } from "@/components/common/blog-bottom-nav";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
+import { MessagesScope } from "@/i18n/messages-scope";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { AuthorHeader } from "./_components/author-header";
 import { ProfileChrome } from "./_components/profile-chrome";
@@ -36,32 +37,34 @@ export default async function AuthorChromeLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <AppProviders>
-      <SidebarStateProvider>
-        {/* Header inside the dark wrapper so its translucent bg blends with the dark page (not the
-            white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}
-        <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
-          {/* Author/post pages are the blog product → tell the switcher so it offers "kurl" (links),
-              not "kurl log" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
-          <AppHeader showMenu={false} slimMobile product="blog" />
-          <div className="flex-1 pb-16 sm:pb-0">
-            {/* ProfileChrome renders the header slot ONLY on the tab routes (글·시리즈·소개·…); on a
-                post / series-detail route it drops the header and renders children alone. So the
-                streamed author fetch below only materially matters where the header is shown. */}
-            <ProfileChrome
-              header={
-                <Suspense fallback={<AuthorHeaderSkeleton />}>
-                  <AuthorHeaderSlot params={params} />
-                </Suspense>
-              }
-            >
-              {children}
-            </ProfileChrome>
+    <MessagesScope locale={locale} scope="p/[username]">
+      <AppProviders>
+        <SidebarStateProvider>
+          {/* Header inside the dark wrapper so its translucent bg blends with the dark page (not the
+              white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}
+          <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
+            {/* Author/post pages are the blog product → tell the switcher so it offers "kurl" (links),
+                not "kurl log" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
+            <AppHeader showMenu={false} slimMobile product="blog" />
+            <div className="flex-1 pb-16 sm:pb-0">
+              {/* ProfileChrome renders the header slot ONLY on the tab routes (글·시리즈·소개·…); on a
+                  post / series-detail route it drops the header and renders children alone. So the
+                  streamed author fetch below only materially matters where the header is shown. */}
+              <ProfileChrome
+                header={
+                  <Suspense fallback={<AuthorHeaderSkeleton />}>
+                    <AuthorHeaderSlot params={params} />
+                  </Suspense>
+                }
+              >
+                {children}
+              </ProfileChrome>
+            </div>
           </div>
-        </div>
-        <BlogBottomNav />
-      </SidebarStateProvider>
-    </AppProviders>
+          <BlogBottomNav />
+        </SidebarStateProvider>
+      </AppProviders>
+    </MessagesScope>
   );
 }
 

@@ -1,13 +1,11 @@
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
-import { linksClientMessages } from "@/i18n/client-namespaces";
+import { setRequestLocale } from "next-intl/server";
+import { MessagesScope } from "@/i18n/messages-scope";
 import { LinksChrome } from "./links-chrome";
 
 /**
- * links 세그먼트의 서버 레이아웃 — 루트 프로바이더가 뺀 links 전용 네임스페이스(캠페인·QR·
- * 단축폼 등)를 여기서 공급한다(중첩 프로바이더는 messages 대체라 공용분 포함 세트로).
- * 클라이언트 크롬(경로별 셸 분기)은 links-chrome.tsx 로 분리 — 클라이언트 레이아웃에선
- * getMessages 를 못 부른다.
+ * links 세그먼트의 서버 레이아웃 — 크롬과 홈이 쓰는 메시지 스코프를 싣는다(하위 화면 문구는 각
+ * 화면 레이아웃의 스코프가 얹는다, i18n/client-namespaces.ts). 클라이언트 크롬(경로별 셸 분기)은
+ * links-chrome.tsx 로 분리 — 클라이언트 레이아웃에선 메시지를 못 싣는다.
  */
 export default async function LinksLayout({
   children,
@@ -22,8 +20,8 @@ export default async function LinksLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <NextIntlClientProvider messages={linksClientMessages(await getMessages())}>
+    <MessagesScope locale={locale} scope="links">
       <LinksChrome>{children}</LinksChrome>
-    </NextIntlClientProvider>
+    </MessagesScope>
   );
 }
