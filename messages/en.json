@@ -948,9 +948,7 @@
         }
       }
     },
-    "recentEyebrow": "recent",
-    "recentTitle": "Just shortened",
-    "recentSubhead": "Saved in this browser for 24 hours. Sign in to keep them permanently.",
+    "recentTitle": "Recent links",
     "statsEyebrow": "live",
     "statsTitle": "Service-wide so far",
     "statsSubhead": "Total links shortened and clicks tracked so far.",
@@ -961,16 +959,22 @@
     "whyTitle": "Why doesn't every shortener include this?",
     "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default.",
     "stage": {
-      "scene2Eyebrow": "Share",
-      "scene2Title": "Paste it anywhere. The clicks come back.",
-      "scene2Desc": "Put it in an Instagram bio or an email and see where each click came from as it happens.",
-      "scene3Eyebrow": "Analytics",
-      "scene3Title": "Clicks add up to a line",
-      "scene3Desc": "Break clicks down by country, device, and source, with bot clicks kept out of the count. All of it is free.",
-      "scene3CtaDemo": "See the demo stats",
-      "scene3CtaStart": "Sign in to start",
-      "scene3Caption": "Last 30 days · {human}% human"
-    }
+      "title": "Sign in and every link gets stats like these",
+      "desc": "Every click is recorded. Stats are free, and the screens below use example data.",
+      "feedTitle": "Where each click came from",
+      "feedDesc": "Country, device, and channel, one line per click. Keep the stats page open and they arrive live.",
+      "trendTitle": "30-day trend and human share",
+      "trendDesc": "Bot clicks are filtered out, and you see how many came from people.",
+      "trendLabel": "Clicks",
+      "trendCaption": "Last 30 days · {human}% human",
+      "ctaStart": "Sign in to start",
+      "ctaDemo": "See the demo stats"
+    },
+    "recentKept": "Kept in this browser for 24 hours",
+    "recentClaim": "Sign in and these links move to your account, with no expiry.",
+    "recentLogin": "Sign in",
+    "recentAll": "View all",
+    "recentClicks": "{count, plural, one {# click} other {# clicks}}"
   },
   "showcase": {
     "eyebrow": "Public profiles · examples",
@@ -2325,11 +2329,6 @@
     "retry": "Try again"
   },
   "recent": {
-    "title": "Recently shortened",
-    "empty": "Nothing yet — shorten one above.",
-    "viewStats": "View stats",
-    "claimCta": "Sign in to keep these links in your account.",
-    "anonymousNote": "Anonymous links auto-expire in 24h. Sign in and they're saved to your account — no expiration.",
     "claimedToast": "{count, plural, one {Saved # link} other {Saved # links}} to your account"
   },
   "statsEmpty": {

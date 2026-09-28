@@ -308,24 +308,9 @@ mark.kurl-highlight--thread {
     bottom: 0.02em;
     height: 0.085em;
     background: #059669;
-    transform-origin: left center;
-    animation: brand-underline-draw 640ms var(--ease) 700ms both;
   }
   .dark .brand-underline::after {
     background: #10b981;
-  }
-  @keyframes brand-underline-draw {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .brand-underline::after {
-      animation: none;
-    }
   }
 
   /* 글 내용 등장 — 스켈레톤이 실제 글로 바뀔 때(또는 직접 진입 시) 본문이 살짝 떠오르며 페이드인.
@@ -2014,92 +1999,6 @@ html:not([data-theme-vt])::view-transition-new(root) {
 }
 html[data-theme-vt] .vt-post-cover {
   view-transition-name: none;
-}
-
-/*
- * ===== 무대(Stage) 모션 어휘 =====
- * 랜딩 여정 장면(stage-scenes.tsx) 전용 연출. 전부 aria-hidden 장식이라 꺼져도 정보 손실이 없다.
- * 스크롤 연동은 CSS scroll-driven animations 만 사용(의존성 0). 미지원 브라우저는 @supports
- * 밖의 기본 상태 = 완성 상태를 보므로 깨지지 않고, reduced-motion 은 전부 정적 완성 상태.
- */
-/* 무대 어휘 확장 — 여정 장면(stage-scenes.tsx)용. 규칙은 위 stage-* 블록과 동일:
-   view() 연동은 @supports 게이트, 기본 상태 = 완성 상태, reduced-motion = 정적. */
-@keyframes stage-thread-draw-x {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-.stage-thread-x {
-  transform-origin: left;
-}
-.stage-thread-x.stage-from-right {
-  transform-origin: right;
-}
-@keyframes stage-rise {
-  from {
-    transform: translateY(36px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-@keyframes stage-draw-line {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.stage-draw {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0; /* 기본 = 완성 상태 (미지원/RM 폴백) */
-}
-@keyframes stage-bar-rise {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-.stage-bar {
-  transform-origin: bottom;
-}
-@supports (animation-timeline: view()) {
-  .stage-thread-x {
-    animation: stage-thread-draw-x linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 45%;
-  }
-  .stage-rise {
-    animation: stage-rise linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 90%;
-  }
-  .stage-draw {
-    animation: stage-draw-line linear both;
-    animation-timeline: view();
-    animation-range: entry 20% cover 65%;
-  }
-  .stage-bar {
-    animation: stage-bar-rise linear both;
-    animation-timeline: view();
-    animation-range: entry 15% cover 55%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .stage-thread-x,
-  .stage-rise,
-  .stage-draw,
-  .stage-bar {
-    animation: none !important;
-  }
 }
 
 /*

@@ -8,10 +8,11 @@ import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
-import { StageScenes } from "@/components/landing/stage-scenes";
+import { HomeStatsExample } from "@/components/landing/home-stats-example";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
-import { RecentLinks } from "@/components/links/recent-links";
+import { HomeRecent } from "@/components/links/home-recent";
+import { useInvalidateLinks } from "@/lib/api/links.queries";
 import { useAuth } from "@/lib/auth";
 import { recordRecent, useRecentLinks } from "@/lib/recent-links";
 import { Link } from "@/i18n/navigation";
@@ -54,6 +55,7 @@ export default function HomePage() {
   const [composing, setComposing] = useState(false);
   const tResult = useTranslations("result");
   const recent = useRecentLinks();
+  const invalidateLinks = useInvalidateLinks();
   const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
 
@@ -61,11 +63,10 @@ export default function HomePage() {
     <div>
       <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
         <div className="container relative z-10 max-w-5xl pb-12 pt-14 sm:pb-16 sm:pt-24">
-          <div className="hero-stagger mb-9 max-w-3xl space-y-5 sm:mb-11 sm:space-y-6">
+          <div className="mb-9 max-w-3xl space-y-5 sm:mb-11 sm:space-y-6">
             <h1
               data-testid="home-hero-heading"
               className={`text-balance font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
-              style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               <span>
                 {t.rich("headline1", {
@@ -78,23 +79,15 @@ export default function HomePage() {
             <p
               data-testid="home-hero-subhead"
               className="max-w-xl text-pretty text-[15px] leading-[1.65] text-slate-600 dark:text-slate-300 sm:text-[17px]"
-              style={{ ["--hi" as string]: 2 } as React.CSSProperties}
             >
               <span className="sm:hidden">{t("mobileSubhead")}</span>
               <span className="hidden sm:inline">{t("subhead")}</span>
             </p>
           </div>
 
-          {/*
-           * Form sits outside the hero-stagger wrapper because the staggered cascade in the
-           * headline already lasts ~360ms; making the form wait another 90ms past the subhead
-           * forces visitors past the "I can already see where to paste my URL" moment. The
-           * `profile-fade` keyframe gives it the same fade-in feel without the cascading delay.
-           */}
-          <div
-            className="profile-fade"
-            style={{ ["--idx" as string]: 4 } as React.CSSProperties}
-          >
+          {/* 제목·입력칸은 등장 모션 없이 첫 페인트에 그대로 — 여러 번 오는 화면이라 매번 다시
+              떠오르는 연출은 붙여 넣기까지의 지연일 뿐이다. */}
+          <div>
             {/* 단축이 끝나면 입력 칸이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
                 "다른 주소도 줄이기"를 누르면 빈 칸이 맨 위로 돌아오고 답들은
                 영수증처럼 아래로 밀린다. */}
@@ -127,6 +120,7 @@ export default function HomePage() {
                         claimToken: it.res.claimToken,
                       });
                     }
+                    if (authenticated) void invalidateLinks();
                   }}
                 />
               )}
@@ -162,7 +156,7 @@ export default function HomePage() {
           </div>
 
           <div className="mt-5 min-h-[44px] max-w-2xl">
-            {(!results || results.length === 0) && !authenticated ? (
+            {(!results || results.length === 0) && !authenticated && recent.length === 0 ? (
               <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
                 {t("anonymousHint")}{" "}
                 <Link
@@ -174,32 +168,38 @@ export default function HomePage() {
               </p>
             ) : null}
           </div>
+
+          <div className="max-w-2xl">
+            <HomeRecent exclude={results?.map((r) => r.res.shortCode) ?? []} />
+          </div>
         </div>
       </section>
 
-      {/* 글리프 워밍업 — 무대 씬 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
-          늦게 오는 font-face 이벤트가 뷰포트 안 씬 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
+      {/* 글리프 워밍업 — 예시 섹션 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
+          늦게 오는 font-face 이벤트가 뷰포트 안 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
           모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
       {stage === "on" && (
         <div aria-hidden className="invisible absolute h-0 overflow-hidden">
-          <span className="text-headline-sm font-semibold">{t("stage.scene2Title")}</span>
-          <span className="text-headline-sm font-semibold">{t("stage.scene3Title")}</span>
-          <span>{t("stage.scene2Desc")}</span>
-          <span>{t("stage.scene3Desc")}</span>
+          <span className="text-headline-sm font-bold">{t("stage.title")}</span>
+          <span>{t("stage.desc")}</span>
+          <span className="font-semibold">{t("stage.feedTitle")}</span>
+          <span className="font-semibold">{t("stage.trendTitle")}</span>
         </div>
       )}
 
-      {/* 무대 on = "잉크 스파인 + 딥그린 클라이맥스" 여정이 프리뷰 카드·카운터·기능 캐러셀을
-          대체한다(vault kurl-web-stage-design). off = 기존 구성 그대로(롤백 계약). */}
-      {stage === "on" ? <StageScenes /> : <LandingPreviews />}
-
-      {/* `ready` 게이트: /me 해석 전엔 렌더하지 않는다 — 로그인 사용자의 첫 렌더(authenticated=false)에
-          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다.
-          stage on 은 여정으로 끝나는 한 편의 페이지 — 최근 링크·비교표·FAQ 꼬리를 달지 않는다. */}
-      {stage !== "on" && ready && !authenticated && recent.length > 0 && (
-        <Section eyebrow={t("recentEyebrow")} title={t("recentTitle")} subhead={t("recentSubhead")}>
-          <RecentLinks />
-        </Section>
+      {/* 기본 = 도구 먼저: 폼·최근 링크가 주인공이고, 설명은 로그아웃 방문자에게만 한 섹션.
+          ready 전에는 pre-paint 인증 힌트(data-auth-slot)로 로그인 사용자에게 숨겨 둔다.
+          ?stage=off = 레거시 구성(롤백 확인용). */}
+      {stage === "on" ? (
+        !ready ? (
+          <div data-auth-slot="anon">
+            <HomeStatsExample />
+          </div>
+        ) : !authenticated ? (
+          <HomeStatsExample />
+        ) : null
+      ) : (
+        <LandingPreviews />
       )}
 
       {/*

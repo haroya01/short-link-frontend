@@ -948,9 +948,7 @@
         }
       }
     },
-    "recentEyebrow": "gần đây",
-    "recentTitle": "Vừa rút gọn",
-    "recentSubhead": "Lưu trên trình duyệt này trong 24 giờ. Đăng nhập để giữ vĩnh viễn.",
+    "recentTitle": "Liên kết gần đây",
     "statsEyebrow": "trực tiếp",
     "statsTitle": "Toàn dịch vụ đến nay",
     "statsSubhead": "Tổng số liên kết đã rút gọn và lượt nhấp đã theo dõi đến nay.",
@@ -961,16 +959,22 @@
     "whyTitle": "Sao không phải dịch vụ rút gọn nào cũng có điều này?",
     "whySubhead": "Những tính năng thường bị khóa sau các gói doanh nghiệp — ở đây miễn phí, bật sẵn theo mặc định.",
     "stage": {
-      "scene2Eyebrow": "Chia sẻ",
-      "scene2Title": "Dán ở đâu, click quay về từ đó",
-      "scene2Desc": "Đặt trong bio Instagram hay trong email, bạn đều thấy ngay lượt nhấp đến từ đâu.",
-      "scene3Eyebrow": "Phân tích",
-      "scene3Title": "Lượt nhấp gộp lại thành một đường",
-      "scene3Desc": "Xem theo quốc gia, thiết bị và nguồn truy cập, lượt nhấp của bot được tách riêng. Tất cả đều miễn phí.",
-      "scene3CtaDemo": "Xem thống kê demo",
-      "scene3CtaStart": "Đăng nhập để bắt đầu",
-      "scene3Caption": "30 ngày qua · {human}% người thật"
-    }
+      "title": "Đăng nhập để mỗi liên kết có thống kê như thế này",
+      "desc": "Mỗi lượt nhấp đều được ghi lại. Thống kê hoàn toàn miễn phí, màn hình bên dưới dùng dữ liệu ví dụ.",
+      "feedTitle": "Mỗi lượt nhấp đến từ đâu",
+      "feedDesc": "Quốc gia, thiết bị và kênh, mỗi lượt một dòng. Mở trang thống kê là thấy lượt nhấp theo thời gian thực.",
+      "trendTitle": "Xu hướng 30 ngày và tỷ lệ người thật",
+      "trendDesc": "Lượt nhấp của bot được lọc riêng, và bạn thấy bao nhiêu phần là do người thật.",
+      "trendLabel": "Lượt nhấp",
+      "trendCaption": "30 ngày qua · {human}% người thật",
+      "ctaStart": "Đăng nhập để bắt đầu",
+      "ctaDemo": "Xem thống kê mẫu"
+    },
+    "recentKept": "Lưu trên trình duyệt này trong 24 giờ",
+    "recentClaim": "Đăng nhập để chuyển các liên kết này vào tài khoản, không bị hết hạn.",
+    "recentLogin": "Đăng nhập",
+    "recentAll": "Xem tất cả",
+    "recentClicks": "{count, number} lượt nhấp"
   },
   "showcase": {
     "eyebrow": "Hồ sơ công khai · ví dụ",
@@ -2325,11 +2329,6 @@
     "retry": "Thử lại"
   },
   "recent": {
-    "title": "Vừa rút gọn",
-    "empty": "Chưa có gì — rút gọn một liên kết ở trên.",
-    "viewStats": "Xem thống kê",
-    "claimCta": "Đăng nhập để giữ các liên kết này trong tài khoản của bạn.",
-    "anonymousNote": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Đăng nhập và chúng được lưu vào tài khoản của bạn — không hết hạn.",
     "claimedToast": "Đã lưu {count} liên kết vào tài khoản của bạn"
   },
   "statsEmpty": {

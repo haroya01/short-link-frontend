@@ -948,9 +948,7 @@
         }
       }
     },
-    "recentEyebrow": "最近",
-    "recentTitle": "直近で作ったリンク",
-    "recentSubhead": "このブラウザに 24 時間保存されます。ログインするとアカウントにずっと残せます。",
+    "recentTitle": "最近作ったリンク",
     "statsEyebrow": "live",
     "statsTitle": "kurl 全体で",
     "statsSubhead": "これまでに短縮されたリンクと分析されたクリック数。",
@@ -961,16 +959,22 @@
     "whyTitle": "なぜ他では出てこないのか",
     "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。",
     "stage": {
-      "scene2Eyebrow": "共有",
-      "scene2Title": "貼った場所から、クリックが返ってくる",
-      "scene2Desc": "Instagramのプロフィールでもメールでも、どこから来たクリックかがすぐわかります。",
-      "scene3Eyebrow": "分析",
-      "scene3Title": "クリックが集まって線になる",
-      "scene3Desc": "国・端末・流入元ごとに分けて見られて、ボットのクリックは別に数えます。すべて無料です。",
-      "scene3CtaDemo": "デモの統計を見る",
-      "scene3CtaStart": "ログインしてはじめる",
-      "scene3Caption": "直近30日 · 人間 {human}%"
-    }
+      "title": "ログインすると、リンクごとにこの統計が付きます",
+      "desc": "クリックのたびに記録されます。統計はすべて無料で、下の画面は例のデータです。",
+      "feedTitle": "クリックごとの流入元",
+      "feedDesc": "国・デバイス・チャネルが1行ずつ残ります。統計画面を開いておけばリアルタイムで届きます。",
+      "trendTitle": "30日の推移と人の割合",
+      "trendDesc": "ボットのクリックは分けて数え、人が押した割合も一緒に表示します。",
+      "trendLabel": "クリック",
+      "trendCaption": "直近30日 · 人 {human}%",
+      "ctaStart": "ログインして始める",
+      "ctaDemo": "デモ統計を見る"
+    },
+    "recentKept": "このブラウザに24時間保存されます",
+    "recentClaim": "ログインするとこれらのリンクがアカウントに移り、期限なく残ります。",
+    "recentLogin": "ログイン",
+    "recentAll": "すべて見る",
+    "recentClicks": "クリック {count, number}"
   },
   "showcase": {
     "eyebrow": "公開プロフィール · 作例",
@@ -2325,11 +2329,6 @@
     "retry": "再試行"
   },
   "recent": {
-    "title": "最近の短縮",
-    "empty": "まだありません。上のフォームから短縮してみてください。",
-    "viewStats": "統計を見る",
-    "claimCta": "ログインすると、これらのリンクをアカウントに保存できます。",
-    "anonymousNote": "匿名リンクは 24 時間後に自動で失効します。ログインすればアカウントに自動で引き継がれ、有効期限なしでずっと保存されます。",
     "claimedToast": "{count}件のリンクをアカウントに保存しました"
   },
   "statsEmpty": {
