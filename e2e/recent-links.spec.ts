@@ -31,8 +31,11 @@ test.describe("recent links (localStorage)", () => {
       if (i > 0) await page.getByRole("button", { name: "다른 주소도 줄이기" }).click();
       await page.getByPlaceholder(/긴 주소를 여기에/).fill(url);
       await page.getByRole("button", { name: "단축하기" }).click();
+      // 방금 만든 코드를 기다린다 — 앞선 답 줄도 같은 모양이라, 아무 코드나 보면 새 단축이 끝나기
+      // 전에 다음 단계(마지막엔 새로고침)로 넘어가 마지막 링크가 기록되지 않는다.
+      const code = `e2eAb${String(i + 1).padStart(2, "0")}`;
       await expect(
-        page.getByTestId("result-line").first().locator("a", { hasText: /\/e2eAb\d{2}/ }).first(),
+        page.getByTestId("result-line").first().locator("a", { hasText: `/${code}` }).first(),
       ).toBeVisible();
     }
     await page.reload();
