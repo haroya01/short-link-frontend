@@ -6,13 +6,16 @@ export type LinkOverview = {
   totalClicks: number;
   humanClicks: number;
   clicks7d: number;
+  previousClicks7d?: number;
   clicksToday: number;
   zeroClickLinks: number;
   expiringLinks: number;
   timezone: string;
   updatedAt: string;
   dailyClicks: { date: string; count: number }[];
+  peak?: { dayOfWeek: number; hour: number; clicks: number } | null;
   topLinks: MyLink[];
+  weekTopLinks?: MyLink[];
 };
 
 export function getLinkOverview(signal?: AbortSignal) {

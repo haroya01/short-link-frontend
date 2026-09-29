@@ -5,7 +5,7 @@
 export function SectionLabel({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <p className="px-1 text-[10px] font-semibold text-slate-500">
+      <p className="px-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
         {label}
       </p>
       {children}

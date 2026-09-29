@@ -197,3 +197,27 @@ describe("checklists in the editor", () => {
   });
 });
 
+
+describe("images still uploading", () => {
+  it("leaves a local blob: preview out of the markdown and keeps the hosted one", async () => {
+    const { ImageWithCaption } = await import("./image-with-caption");
+    const editor = new Editor({
+      extensions: [StarterKit, ImageWithCaption.configure({ inline: false }), Markdown.configure({ html: false, breaks: true })],
+      content: {
+        type: "doc",
+        content: [
+          { type: "paragraph", content: [{ type: "text", text: "before" }] },
+          { type: "image", attrs: { src: "blob:http://localhost/123", alt: "photo.png" } },
+          { type: "image", attrs: { src: "https://cdn.kurl.me/a.png", alt: "done.png" } },
+          { type: "paragraph", content: [{ type: "text", text: "after" }] },
+        ],
+      },
+    });
+    const md = (editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown();
+    editor.destroy();
+    expect(md).not.toContain("blob:");
+    expect(md).toContain("![done.png](https://cdn.kurl.me/a.png)");
+    expect(md).toContain("before");
+    expect(md).toContain("after");
+  });
+});

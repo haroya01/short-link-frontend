@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
-import { AccountSheet } from "@/components/common/account-sheet";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
@@ -48,12 +46,17 @@ function authenticatedEntries(t: (k: string) => string): NavEntry[] {
       label: t("links"),
       active: (p) => p === "/" || p.startsWith("/dashboard") || p.startsWith("/stats/"),
     },
+    {
+      href: "/campaigns",
+      label: t("campaigns"),
+      active: (p) => p.startsWith("/campaigns") || p.startsWith("/qr-campaigns"),
+    },
+    { href: "/events", label: t("events"), active: (p) => p.startsWith("/events") },
     { href: "/analytics", label: t("analytics"), active: (p) => p.startsWith("/analytics") },
     {
-      href: "/settings",
-      label: t("account"),
-      active: (p) =>
-        p.startsWith("/settings") || p.startsWith("/campaigns") || p.startsWith("/events") || p.startsWith("/ctas"),
+      href: "/more",
+      label: t("more"),
+      active: (p) => p.startsWith("/more") || p.startsWith("/settings") || p.startsWith("/ctas"),
     },
   ];
 }
@@ -61,8 +64,7 @@ function authenticatedEntries(t: (k: string) => string): NavEntry[] {
 export function Nav() {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const { authenticated, ready, me } = useAuth();
-  const [sheet, setSheet] = useState(false);
+  const { authenticated, ready } = useAuth();
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -77,13 +79,11 @@ export function Nav() {
 
   return (
     <>
-    {/* 상시 유리 캡슐(§12) — 스크롤 상태 무관, 첫 화면부터 떠 있는 투명 카드로 보인다.
-        (스크롤 시에만 캡슐화되던 2장 크로스페이드를 단일 상태로 단순화) */}
     <header className="vt-app-header sticky top-0 z-30">
       <div className="relative">
         <div
           aria-hidden
-          className="glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] dark:border-slate-800/60"
+          className="absolute inset-0 border-b border-slate-200/80 bg-white dark:border-slate-800/80 dark:bg-slate-950"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
@@ -91,7 +91,7 @@ export function Nav() {
           {/* 360px 미만에선 마크만. 풀 워드마크를 두면 우측 "blog.kurl" 필과 겹쳐 워드마크의 l 이
               가려졌다(320 에서 4px). 여백을 넓히면 그 겹침이 더 커지므로 같이 처리한다. 블로그
               헤더가 이미 같은 방식(<sm 마크만)이라 문법도 어긋나지 않는다. */}
-          <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
+          <Link href={authenticated ? "/dashboard" : "/"} aria-label="kurl" className="mark-hoverable shrink-0">
             <Logo animated showText={false} className="min-[360px]:hidden" />
             <Logo animated className="hidden min-[360px]:inline-flex" />
           </Link>
@@ -100,7 +100,7 @@ export function Nav() {
               {entries.map((entry) => {
                 const active = entry.active(pathname);
                 const className = cn(
-                  "rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
+                  "whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
                   active
                     ? "text-slate-900 dark:text-slate-100"
                     : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
@@ -124,41 +124,20 @@ export function Nav() {
           )}
         </div>
 
-        {/* Mobile-only top cluster — the blog↔kurl switch + the account avatar (opens the slim links
-            AccountSheet). AppsGrid plays the same warp transition as desktop on the cross-product hop;
-            the bottom nav carries the feature tabs. */}
+        {/* Mobile-only top cluster — the blog↔kurl switch, plus theme + login for visitors. Signed in,
+            the bottom nav's 더보기 tab holds the tools, settings and logout. */}
         <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
           <AppsGrid current="links" />
-          {!ready ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
-          ) : authenticated ? (
-            <button
-              type="button"
-              onClick={() => setSheet(true)}
-              aria-haspopup="dialog"
-              aria-label={t("account")}
-              className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
-            >
-              {me?.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={me.avatarUrl} alt="" className="h-full w-full object-cover" />
-              ) : (
-                (me?.username || me?.email || "?").charAt(0).toUpperCase()
-              )}
-            </button>
-          ) : (
-            <>
-              {/* 비로그인 모바일은 계정 시트가 없어 테마를 바꿀 곳이 여기뿐 — 데스크톱 바와 같은 이유. */}
+          {(!ready || !authenticated) && (
+            <div data-auth-slot={ready ? undefined : "anon"} className="contents">
               <ThemeToggle
                 iconOnly
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
-              <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="default" className="rounded-full">
-                  {t("login")}
-                </Button>
+              <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
+                {t("login")}
               </Link>
-            </>
+            </div>
           )}
         </div>
 
@@ -169,7 +148,7 @@ export function Nav() {
             kurl's own entries (profile + blog switch stay in the top Nav / AppsGrid, not duplicated).
             Signed out: language + theme stay visible on the bar since there's no account menu yet. */}
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
-          <AppsGrid />
+          <AppsGrid current="links" />
           {!ready ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
           ) : authenticated ? (
@@ -184,10 +163,8 @@ export function Nav() {
                 iconOnly
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
-              <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="default" className="rounded-full">
-                  {t("login")}
-                </Button>
+              <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
+                {t("login")}
               </Link>
             </>
           )}
@@ -195,7 +172,6 @@ export function Nav() {
       </div>
       </div>
     </header>
-    <AccountSheet open={sheet} onClose={() => setSheet(false)} product="links" />
     </>
   );
 }

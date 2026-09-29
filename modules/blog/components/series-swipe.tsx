@@ -12,7 +12,7 @@ import { useTransitionRouter } from "next-view-transitions";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { trackBehavior } from "@/lib/analytics/behavior";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 

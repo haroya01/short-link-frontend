@@ -38,7 +38,7 @@ export function CanvasTags({
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="focus-ring mt-1 rounded px-1 text-[12px] text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+          className="focus-ring mt-1 rounded px-1 text-[12px] text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
         >
           {t("tagsDone")}
         </button>
@@ -63,7 +63,7 @@ export function CanvasTags({
       type="button"
       onClick={() => setEditing(true)}
       aria-label={t("tagsEdit")}
-      className="focus-ring mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 self-start rounded px-1 text-left text-[13px] text-slate-500 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+      className="focus-ring mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 self-start rounded px-1 text-left text-[13px] text-slate-500 transition-colors hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
     >
       {tags.map((tag) => (
         <span key={tag}>#{tag}</span>

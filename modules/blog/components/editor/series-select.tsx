@@ -94,7 +94,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
             type="button"
             onClick={create}
             disabled={busy || !newTitle.trim()}
-            className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+            className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50"
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
             {t("seriesNew")}

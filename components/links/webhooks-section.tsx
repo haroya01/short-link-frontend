@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -22,6 +23,7 @@ import type { IssuedWebhook, WebhookConfigPatch, WebhookFormat, WebhookSummary }
  */
 export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
   const t = useTranslations("stats.webhooks");
+  const [confirm, confirmDialog] = useConfirm();
   const errorMessage = useApiErrorMessage();
   const { toast } = useToast();
   const [items, setItems] = useState<WebhookSummary[] | null>(null);
@@ -82,7 +84,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm(t("deleteConfirm"))) return;
+    if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     try {
       await deleteWebhook(shortCode, id);
       await refresh();
@@ -145,7 +147,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
           maxLength={100}
           disabled={busy}
         />
-        <Button type="submit" size="sm" variant="accent" disabled={busy || !url.trim()}>
+        <Button type="submit" size="lg" variant="outline" disabled={busy || !url.trim()}>
           {busy ? t("registering") : t("register")}
         </Button>
       </form>
@@ -299,6 +301,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
           ))
         )}
       </div>
+      {confirmDialog}
     </section>
   );
 }
@@ -400,7 +403,7 @@ function ConfigForm({
         </div>
       </div>
       <div className="flex justify-end">
-        <Button type="submit" size="sm" variant="accent">
+        <Button type="submit" size="sm" variant="outline">
           {t("save")}
         </Button>
       </div>

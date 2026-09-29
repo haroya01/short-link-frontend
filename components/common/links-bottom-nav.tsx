@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { BarChart3, CalendarDays, CircleUserRound, Contact, Link2, Megaphone } from "lucide-react";
+import { useEffect } from "react";
+import { BarChart3, CalendarDays, Contact, Ellipsis, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 
 const TAB =
-  "focus-ring flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors";
+  "focus-ring flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar for the kurl (links) product. The tabs map to kurl's own features —
- * 단축(shortener) · 캠페인(QR) · 모집(events) · 통계(short-link dashboard) · 프로필(online business card) — so it reads
- * as a distinct app from the blog (only the session, via the `.kurl.me` refresh cookie, is shared).
- * Account + the blog↔kurl switch live in the top Nav on mobile, not here. All tabs are locale-aware
+ * Mobile-only bottom tab bar for the kurl (links) product, a distinct app from the blog (only the
+ * session, via the `.kurl.me` refresh cookie, is shared). Signed in: 링크 · 분석 · 더보기 (tools,
+ * settings, logout). Visitors: 단축 · QR 캠페인 · 모집 · 프로필. All tabs are locale-aware
  * same-origin Links (NOT linksHref): an absolute apex URL without the locale, e.g.
  * https://kurl.me/campaigns, is resolved as a short code on the backend apex → 404 LINK_NOT_FOUND.
  * Hidden on `sm`+ where the top Nav carries everything. Auto-hides on scroll-down.
@@ -23,8 +23,7 @@ export function LinksBottomNav() {
   const t = useTranslations("nav");
   const pathname = usePathname(); // locale-stripped (e.g. "/", "/dashboard", "/campaigns", "/u/..")
   const { authenticated, me } = useAuth();
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
+  const hidden = useHideOnScroll();
 
   // Tell the cookie banner a bottom tab bar is present so it lifts above it (else it overlays the
   // tabs and swallows their taps). See globals.css.
@@ -35,21 +34,6 @@ export function LinksBottomNav() {
     };
   }, []);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > lastY.current + 8 && y > 80) setHidden(true);
-      else if (y < lastY.current - 8) setHidden(false);
-      lastY.current = y;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // 단축: the shortener home. 캠페인: the app (authed) or its landing (anon). 통계: the short-link
-  // dashboard (내 링크 + 클릭수 + 주간 인사이트) — kurl's stats hub, NOT the blog post analytics.
-  // 프로필: view the public online business card (or showcase onboarding when there's no card yet).
   const username = me?.username;
   const profileHref = authenticated && username ? `/u/${username}` : "/showcase";
   const tabs = authenticated
@@ -60,16 +44,19 @@ export function LinksBottomNav() {
           Icon: Link2,
           active: pathname === "/" || pathname.startsWith("/dashboard") || pathname.startsWith("/stats/"),
         },
+        {
+          href: "/campaigns",
+          label: t("campaignsTab"),
+          Icon: Megaphone,
+          active: pathname.startsWith("/campaigns") || pathname.startsWith("/qr-campaigns"),
+        },
+        { href: "/events", label: t("events"), Icon: CalendarDays, active: pathname.startsWith("/events") },
         { href: "/analytics", label: t("analytics"), Icon: BarChart3, active: pathname.startsWith("/analytics") },
         {
-          href: "/settings",
-          label: t("account"),
-          Icon: CircleUserRound,
-          active:
-            pathname.startsWith("/settings") ||
-            pathname.startsWith("/campaigns") ||
-            pathname.startsWith("/events") ||
-            pathname.startsWith("/ctas"),
+          href: "/more",
+          label: t("more"),
+          Icon: Ellipsis,
+          active: pathname.startsWith("/more") || pathname.startsWith("/settings") || pathname.startsWith("/ctas"),
         },
       ]
     : [
@@ -82,11 +69,8 @@ export function LinksBottomNav() {
   return (
     <nav
       className={cn(
-        /* 상단 Nav 와 같은 플로팅 글래스 캡슐(inset-x-3·rounded-2xl·보더·섀도우 동일 토큰).
-           safe-area 는 내부 패딩이 아니라 bottom 오프셋이 흡수 — 높이 계산은 globals.css
-           --bottom-nav-h 와 짝. 숨김은 100% 로는 오프셋+섀도우가 남아 200% 로 내린다. */
-        "vt-bottom-nav glass-chrome fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
-        hidden && "translate-y-[200%]",
+        "vt-bottom-nav fixed inset-x-0 bottom-0 z-40 flex bg-white dark:bg-slate-950 border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
+        hidden && "translate-y-full",
       )}
     >
       {tabs.map(({ href, label, Icon, active }) => (
@@ -94,10 +78,10 @@ export function LinksBottomNav() {
           key={label}
           href={href}
           aria-current={active ? "page" : undefined}
-          className={cn(TAB, active ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, active ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Icon className="h-5 w-5" />
-          {label}
+          <span className="max-w-full truncate px-1">{label}</span>
         </Link>
       ))}
     </nav>

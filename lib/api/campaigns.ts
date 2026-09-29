@@ -75,6 +75,7 @@ export async function createCampaignBatchesBulk(
   return request<CampaignBatch[]>(`/api/v1/campaigns/${campaignId}/batches/bulk`, {
     method: "POST",
     body: payload,
+    timeoutMs: 0,
   });
 }
 

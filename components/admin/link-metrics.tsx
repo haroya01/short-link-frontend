@@ -326,7 +326,7 @@ export function AdminLinkMetrics() {
                               ? t("section.linkMetrics.collapseOutcomes")
                               : t("section.linkMetrics.expandOutcomes")
                           }
-                          className="rounded p-0.5 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
+                          className="rounded p-0.5 text-slate-400 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                           data-testid="link-metric-toggle"
                         >
                           {isExpanded ? (
@@ -350,7 +350,7 @@ export function AdminLinkMetrics() {
                       title={r.originalUrl ?? undefined}
                     >
                       {r.originalUrl ?? (
-                        <span className="text-slate-400 dark:text-slate-500">
+                        <span className="text-slate-400 dark:text-slate-400">
                           {t("section.linkMetrics.noOriginal")}
                         </span>
                       )}
@@ -433,7 +433,7 @@ function LinkStat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] text-slate-500 dark:text-slate-500">{label}</p>
+      <p className="truncate text-[10px] text-slate-500 dark:text-slate-400">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",

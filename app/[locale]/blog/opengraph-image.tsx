@@ -22,10 +22,9 @@ export default async function BlogOgImage() {
           justifyContent: "center",
           gap: 80,
           backgroundColor: OG.bg,
-          backgroundImage: `${OG.glow}, ${OG.bgGradient}`,
         }}
       >
-        <OgMark width={280} id="blog-mark" />
+        <OgMark width={280} />
         <div
           style={{
             display: "flex",
@@ -37,7 +36,7 @@ export default async function BlogOgImage() {
             color: OG.ink,
           }}
         >
-          kurl<span style={{ color: OG.faint }}> log</span>
+          kurl<span style={{ color: OG.faint, marginLeft: 56 }}>log</span>
         </div>
       </div>
     ),

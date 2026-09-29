@@ -29,7 +29,7 @@ type DialogProps = {
    * multi-column form.
    */
   maxWidthClass?: string;
-  /** Size to content instead of pinning a min height — for lightweight confirms (no form body). */
+  /** Size to content instead of pinning a min height. Defaults to true when there is no form body. */
   compact?: boolean;
 };
 
@@ -46,8 +46,9 @@ export function ConfirmDialog({
   onConfirm,
   children,
   maxWidthClass = "max-w-md",
-  compact = false,
+  compact,
 }: DialogProps) {
+  const fitContent = compact ?? !children;
   const t = useTranslations("common");
   const [busy, setBusy] = React.useState(false);
   const busyRef = React.useRef(false);
@@ -104,7 +105,7 @@ export function ConfirmDialog({
     >
       <div
         className={cn(
-          "fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70",
+          "fixed inset-0 scrim",
           // The backdrop fades with the panel — it used to snap in/out around the panel's fade.
           closing ? "animate-fade-out" : "animate-fade-in",
         )}
@@ -130,7 +131,7 @@ export function ConfirmDialog({
           // forcing a scroll to reach it. dvh tracks the actual viewport.
           "relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900",
           // Compact confirms size to content; form dialogs pin a min height so Save doesn't jump.
-          !compact && "min-h-[min(540px,calc(100dvh-4rem))]",
+          !fitContent && "min-h-[min(540px,calc(100dvh-4rem))]",
           maxWidthClass,
           closing ? "animate-fade-out" : "animate-fade-in",
         )}

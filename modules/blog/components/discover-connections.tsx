@@ -2,20 +2,22 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CornerDownRight, Layers } from "lucide-react";
+import { CornerDownRight, Library } from "lucide-react";
 import { blogHref, blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import { estimateMinutesForCount } from "@/lib/path-progress";
 import {
   listDiscoverConnections,
+  listPublicConnectionFeed,
   listPublicCollectionsByUsername,
   type CollectionSummary,
   type ConnectionEvent,
+  type DiscoverFeed,
   type FeedSource,
   type KindredCurator,
 } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { quoteHref } from "@/modules/blog/components/connection-block";
 import { HighlightsFeed } from "@/modules/blog/components/highlights-feed";
@@ -50,18 +52,26 @@ export function DiscoverConnections({ locale }: { locale: string }) {
 
   useEffect(() => {
     let alive = true;
+    const apply = async (feed: DiscoverFeed) => {
+      if (!alive) return;
+      setEvents(feed.items);
+      setSource(feed.source);
+      setState("ready");
+      // Resolve the open paths behind the feed: each distinct curator's public collections, matched
+      // to the collections they connected into here. Best-effort — a failed lookup just drops that
+      // curator's entrances, never the whole view.
+      const resolved = await resolveEntrances(feed.items);
+      if (alive) setEntrances(resolved);
+    };
     listDiscoverConnections()
-      .then(async (feed) => {
-        if (!alive) return;
-        setEvents(feed.items);
-        setSource(feed.source);
-        setState("ready");
-        // Resolve the open paths behind the feed: each distinct curator's public collections, matched
-        // to the collections they connected into here. Best-effort — a failed lookup just drops that
-        // curator's entrances, never the whole view.
-        const resolved = await resolveEntrances(feed.items);
-        if (alive) setEntrances(resolved);
-      })
+      .then(apply)
+      // 개인화 피드는 인증 클라이언트라 비로그인은 무조건 실패했고, 제품 테제의 관문이 게스트에게
+      // "불러오지 못했어요" 죽은 표면이었다(적대 검증 r5 — Are.na 는 로그아웃 Explore 가 실물을
+      // 보여준다). 공개 전역 스트림으로 폴백 — listPublicConnectionFeed 는 throw 하지 않고 빈
+      // 피드로 강등되므로, 여기서부터는 실패해도 빈 상태(콜드스타트 안내)지 에러 벽이 아니다.
+      .catch(() =>
+        listPublicConnectionFeed().then((feed: DiscoverFeed) => apply({ ...feed, source: "global" })),
+      )
       .catch(() => alive && setState("failed"));
     return () => {
       alive = false;
@@ -181,7 +191,7 @@ function EntrancesView({
 function EntranceRow({ entrance }: { entrance: Entrance }) {
   const t = useTranslations("collections");
   const isPath = entrance.kind === "PATH";
-  const Glyph = isPath ? CornerDownRight : Layers;
+  const Glyph = isPath ? CornerDownRight : Library;
   return (
     <BlogLink
       href={blogPath(`/collections/${entrance.id}`)}
@@ -272,14 +282,14 @@ function TabButton({
       onClick={onClick}
       className={`focus-ring px-2.5 py-1.5 text-[15px] font-bold transition-colors ${
         active
-          ? "text-accent-700 dark:text-accent-400"
+          ? "text-slate-900 dark:text-slate-100"
           : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
       }`}
     >
       <span className="relative inline-block pb-2">
         {children}
         {active && (
-          <span className="absolute inset-x-0 -bottom-[9px] h-0.5 rounded-full bg-accent-600 dark:bg-accent-400" />
+          <span className="absolute inset-x-0 -bottom-[9px] h-0.5 rounded-full bg-slate-900 dark:bg-slate-100" />
         )}
       </span>
     </button>

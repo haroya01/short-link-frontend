@@ -8,14 +8,14 @@ import { Link } from "@/i18n/navigation";
 import { StatsCards } from "@/components/links/stats/cards";
 import { Section } from "@/components/common/section";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
-import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { LazyDailyChart } from "@/components/links/stats/charts/lazy-charts";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { CountryTable } from "@/components/links/stats/country-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function PublicStatsPage() {
   const params = useParams<{ code: string }>();
@@ -52,8 +52,8 @@ export default function PublicStatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/">
-              <Button variant="outline">{t("backToDashboard")}</Button>
+            <Link href="/" className={buttonVariants({ variant: "outline" })}>
+              {t("backToDashboard")}
             </Link>
           }
         />
@@ -65,7 +65,7 @@ export default function PublicStatsPage() {
     <div className="container max-w-6xl space-y-5 py-10">
       <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <div>
-          <p className="tabular-nums text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+          <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
             {tPublic("title")}
           </p>
           <h1 className="mt-1.5 tabular-nums text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
@@ -102,7 +102,7 @@ export default function PublicStatsPage() {
           description={t("section.daily.desc", { tz: data.timezone })}
           className="lg:col-span-2"
         >
-          <DailyChart data={data.dailyClicks} />
+          <LazyDailyChart data={data.dailyClicks} />
         </Section>
         <Section
           id="section-device"

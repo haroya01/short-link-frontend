@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, Copy, Loader2, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, Copy, Loader2, Mail, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -94,7 +94,7 @@ export default function ProfileLeadsCampaignPage() {
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("back")}
         </Link>
-        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px] dark:text-slate-100">
+        <h1 className="mt-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
@@ -148,7 +148,7 @@ export default function ProfileLeadsCampaignPage() {
             </>
           ) : (
             <>
-              <Sparkles className="mr-1.5 h-4 w-4" />
+              <Mail className="mr-1.5 h-4 w-4" />
               {t("buildCta")}
             </>
           )}
@@ -156,7 +156,7 @@ export default function ProfileLeadsCampaignPage() {
       </div>
 
       {output && (
-        <div className="space-y-4 rounded-2xl border border-accent-200 bg-accent-50/40 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+        <div className="space-y-4 rounded-2xl border border-accent-200 bg-accent-50/40 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-accent-500/30 dark:bg-accent-500/10 dark:shadow-none">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("outputTitle")}</h2>
@@ -183,7 +183,7 @@ export default function ProfileLeadsCampaignPage() {
               <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {output.rows.map((row) => (
                   <li key={row.original} className="px-3 py-2 text-[11px]">
-                    <div className="truncate text-slate-400 dark:text-slate-500">{row.original}</div>
+                    <div className="truncate text-slate-500 dark:text-slate-400">{row.original}</div>
                     <div className="truncate font-medium text-slate-700 dark:text-slate-200">{row.shortUrl}</div>
                   </li>
                 ))}

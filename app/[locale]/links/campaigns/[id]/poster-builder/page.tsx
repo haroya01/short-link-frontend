@@ -329,7 +329,7 @@ function DropZone({ onPick }: { onPick: (file: File) => void }) {
         }}
         className="sr-only"
       />
-      <FileUp className="h-8 w-8 text-slate-400 dark:text-slate-500" aria-hidden />
+      <FileUp className="h-8 w-8 text-slate-400 dark:text-slate-400" aria-hidden />
       <p className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">{t("dropTitle")}</p>
       <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">{t("dropSubtitle")}</p>
     </label>

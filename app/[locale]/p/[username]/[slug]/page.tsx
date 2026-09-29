@@ -1,12 +1,13 @@
 import { DATE_LOCALE } from "@/lib/date";
+import { linksHref } from "@/lib/host";
 import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { ReportButton } from "@/modules/blog/components/report-button";
-import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
@@ -27,11 +28,12 @@ import { PostEdges } from "@/modules/blog/components/post-edges";
 import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { PublishCelebration } from "@/modules/blog/components/publish-celebration";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
+import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -126,6 +128,7 @@ export default async function PublicPostPage({
   const isPreview = Boolean(preview);
   const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
   const t = await getTranslations({ locale, namespace: "publicPost" });
+  const tFooter = await getTranslations({ locale, namespace: "footer" });
 
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404. A bad preview token is a plain 404.
@@ -354,16 +357,29 @@ export default async function PublicPostPage({
           {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
               모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
               이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
-              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. */}
-          <img
-            src={post.ogImageUrl}
-            alt=""
-            fetchPriority="high"
-            decoding="async"
-            className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
-          />
+              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. 허용 호스트는 읽기
+              컬럼 폭에 맞춘 변형(next/image, preload 포함), 그 밖의 호스트는 원본 <img>. */}
+          {canOptimizeCover(post.ogImageUrl) ? (
+            <Image
+              src={post.ogImageUrl}
+              alt=""
+              width={1344}
+              height={672}
+              sizes="(min-width: 672px) 672px, 100vw"
+              priority
+              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={post.ogImageUrl}
+              alt=""
+              fetchPriority="high"
+              decoding="async"
+              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+            />
+          )}
         </div>
       )}
 
@@ -420,13 +436,18 @@ export default async function PublicPostPage({
             <BookmarkButton postId={post.id} />
             <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
-            <ReportButton subjectType="POST" subjectId={post.id} />
+            <ReportButton subjectType="POST" subjectId={post.id} ownerUsername={author.username} leadingRule />
           </div>
         </div>
       </footer>
 
-      <RelatedPosts locale={locale} author={author} currentSlug={post.slug} tags={post.tags} />
+      <RelatedPosts
+        locale={locale}
+        author={author}
+        currentSlug={post.slug}
+        currentTitle={post.title}
+        tags={post.tags}
+      />
 
       {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
       {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
@@ -436,23 +457,30 @@ export default async function PublicPostPage({
 
       <PostComments postId={post.id} authorUsername={author.username} />
 
-      {/* Quiet viral-loop badge — every shared post carries a followable link back to kurl. Drafts
-          (preview) skip it. Centered + muted so it reads as a colophon, not an ad (§10). */}
+      {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
       {!isPreview && (
-        <div className="mt-16 flex justify-center">
-          <MadeWithKurl />
-        </div>
+        <p className="mt-16 flex items-center justify-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+          <span>{tFooter("copyright", { year: new Date().getFullYear() })}</span>
+          <span aria-hidden>·</span>
+          <a href={linksHref(`/${locale}/terms`)} className="focus-ring rounded underline-offset-2 hover:underline">
+            {tFooter("terms")}
+          </a>
+          <span aria-hidden>·</span>
+          <a href={linksHref(`/${locale}/privacy`)} className="focus-ring rounded underline-offset-2 hover:underline">
+            {tFooter("privacy")}
+          </a>
+        </p>
       )}
       </article>
       </SeriesSwipe>
 
-      {/* velog-style TOC pinned just right of the centered column. Fixed (not a grid gutter) so it
-          shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
-          breaking its centering. Below that, the floating button → bottom sheet takes over.
-          반투명 블러 배경(헤더와 같은 언어): full-bleed 이미지가 TOC 뒤를 지나갈 때 텍스트가
-          이미지와 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이 겹침 자체를 제거. */}
+      {/* TOC pinned just right of the centered column. Fixed (not a grid gutter) so it shows from
+          landscape-tablet width up (~1100px) without shrinking the 42rem reading column or breaking its
+          centering. Below that, the floating button → bottom sheet takes over. 불투명 종이 배경:
+          full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
+          겹침 자체를 제거. */}
       {tocHeadings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white/85 p-3 backdrop-blur-sm min-[1100px]:block xl:w-52 dark:bg-slate-950/85">
+        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
           <PostToc headings={tocHeadings} />
         </aside>
       )}

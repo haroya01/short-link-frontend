@@ -52,7 +52,7 @@ export function FollowedTagsShelf() {
       </ul>
       <BlogLink
         href={blogPath("/settings")}
-        className="focus-ring mt-3 inline-flex items-center gap-1 rounded text-[12px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+        className="focus-ring mt-3 inline-flex items-center gap-1 rounded text-[12px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
       >
         {t("curationTagsManage")}
         <ArrowRight className="h-3 w-3" />

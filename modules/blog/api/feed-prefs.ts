@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** A user's feed preferences — currently just the blog-home tab that opens by default. */
 export interface FeedPrefs {

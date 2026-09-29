@@ -33,7 +33,7 @@ import {
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
@@ -455,7 +455,7 @@ function HighlightVisibilityToggle({
   showLabel: string;
 }) {
   return (
-    <div className="mt-8 flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-500">
+    <div className="mt-8 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
       <Highlighter className="h-3.5 w-3.5 text-accent-600/70 dark:text-accent-500/70" aria-hidden />
       <span>{show ? shownLabel : hiddenLabel}</span>
       <span aria-hidden>·</span>
@@ -483,7 +483,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
   const tc = useTranslations("collections");
   useFocusTrap(contentRef, { active: true, onEscape: onClose });
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4" onMouseDown={onClose}>
       <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl" onMouseDown={(event) => event.stopPropagation()}>
         <h3 id="highlight-choices-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
         <ul className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
@@ -648,7 +648,7 @@ function HighlightThread({
   return (
     <>
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4"
       style={{ paddingBottom: inset }}
       onMouseDown={onClose}
     >
@@ -735,7 +735,7 @@ function HighlightThread({
             // 답글이 아직 없음 — 하이라이트는 이미 위(따옴표+작성자)에 있으므로, 이 자리는 "답글이 없다"만
             // 조용히 말한다. 예전 "첫 답글을 남겨보세요"는 큰 중앙 블록이라 "여기 비어 있다/하이라이트 없다"
             // 로 오독됐다(사장님 신고) — 왼쪽 정렬 muted 한 줄로 낮춰 답글에 한정된 상태임을 분명히 한다.
-            <p className="text-[13px] text-slate-400 dark:text-slate-500">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">
               {t("highlightThreadNoReplies")}
             </p>
           ) : (
@@ -792,7 +792,7 @@ function HighlightThread({
           {/* 이 문장이 속한 길 — from one sentence to the paths/collections it's woven into. */}
           {inCollections.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
-              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-500">
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                 {tc("inPathTitle")}
               </p>
               <ul className="mt-2 space-y-1">
@@ -810,7 +810,7 @@ function HighlightThread({
                       <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-200">
                         {c.title}
                       </span>
-                      <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-500">
+                      <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
                         {c.count}
                       </span>
                     </BlogLink>
@@ -823,7 +823,7 @@ function HighlightThread({
           {/* 이것과 이어진 것 — other blocks curators wove alongside this sentence (co-occurrence hop). */}
           {related.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
-              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-500">
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                 {tc("relatedBlocksTitle")}
               </p>
               <ul className="mt-3 space-y-3">
@@ -878,7 +878,7 @@ function HighlightThread({
 
 /** A small glyph for a containing collection's visibility (paths use the path arrow instead). */
 function ContainingGlyph({ visibility }: { visibility: CollectionSummary["visibility"] }) {
-  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500";
+  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400";
   if (visibility === "PUBLIC") return <Globe className={cls} />;
   if (visibility === "UNLISTED") return <LinkIcon className={cls} />;
   return <Lock className={cls} />;

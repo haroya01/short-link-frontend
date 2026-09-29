@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Mark } from "@/components/common/logo";
 import { NotFoundThemeSync } from "@/components/common/not-found-theme-sync";
 
 export default async function NotFound() {
@@ -9,14 +10,16 @@ export default async function NotFound() {
       {/* 동적 페이지의 notFound() 는 클라이언트 렌더라 레이아웃의 no-FOUC 테마 스크립트가
           실행되지 않는다 — hydration 후 쿠키 판정을 한 번 더 적용. */}
       <NotFoundThemeSync />
-      <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500 dark:text-slate-400">404</p>
+      {/* 주 방문자는 만료된 단축 링크로 온 첫 방문자 — 발신자 서명으로 마크 하나만. */}
+      <Mark className="mx-auto h-5 w-auto text-accent-600 dark:text-accent-400" />
+      <p className="mt-6 font-mono text-[12px] font-medium text-slate-500 dark:text-slate-400">404</p>
       <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">
         {t("title")}
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
       <Link
         href="/"
-        className="mt-8 inline-flex items-center justify-center rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+        className="mt-8 focus-ring inline-flex h-10 items-center justify-center rounded-lg bg-accent-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
       >
         {t("cta")}
       </Link>

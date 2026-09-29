@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { readStorageJson, removeStorageItem, writeStorageJson } from "@/lib/storage-json";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { useAuth } from "@/lib/auth";
+import { inert } from "@/lib/utils";
 import { FollowListDialog, type FollowTab } from "./follow-list-dialog";
 
 type Counts = { followers: number; following: number };
@@ -72,8 +73,7 @@ export function FollowCounts({ username }: { username: string }) {
       <div
         // Until the counts land the row is invisible; also make it inert (no clicks, out of the a11y
         // tree) so an invisible button can't open the list with a placeholder "0".
-        aria-hidden={!counts}
-        inert={!counts}
+        {...inert(!counts)}
         className={`flex items-center gap-2.5 text-[13px] text-slate-500 transition-opacity duration-300 dark:text-slate-400 ${
           counts ? "opacity-100" : "pointer-events-none opacity-0"
         }`}

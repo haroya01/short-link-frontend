@@ -6,12 +6,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listCampaigns } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { CampaignOnboarding } from "@/components/links/campaigns/onboarding";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignSummary } from "@/types";
+import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
 
 export default function CampaignsPage() {
   const t = useTranslations("campaignsApp");
@@ -70,10 +71,8 @@ export default function CampaignsPage() {
           )}
         </div>
         {items && (
-          <Link href="/campaigns/new">
-            <Button variant="accent">
-              <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}
-            </Button>
+          <Link href="/campaigns/new" className={buttonVariants({ variant: "accent" })}>
+            <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}
           </Link>
         )}
       </div>
@@ -103,7 +102,7 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
             className="profile-card group block rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 text-left"
           >
             <div className="flex items-center justify-between gap-2">
-              <StatusBadge status={c.status} />
+              <CampaignStatusBadge status={c.status} />
               <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                 {t("batchCount", { count: c.batchCount })}
               </span>
@@ -121,24 +120,6 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-function StatusBadge({ status }: { status: CampaignSummary["status"] }) {
-  const t = useTranslations("campaignStatus");
-  const palette: Record<CampaignSummary["status"], { bg: string; text: string }> = {
-    DRAFT: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300" },
-    ACTIVE: { bg: "bg-accent-50 dark:bg-accent-500/10", text: "text-accent-700 dark:text-accent-400" },
-    ENDED: { bg: "bg-amber-50 dark:bg-amber-500/10", text: "text-amber-700 dark:text-amber-400" },
-    ARCHIVED: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-500 dark:text-slate-400" },
-  };
-  const { bg, text } = palette[status];
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${bg} ${text}`}
-    >
-      {t(status)}
-    </span>
   );
 }
 

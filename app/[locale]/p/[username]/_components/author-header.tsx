@@ -1,20 +1,21 @@
-import { Link2 } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
-import { SwitchLink } from "@/components/common/switch-link";
 import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
-import { TagChip } from "@/modules/blog/components/tag-chip";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
+import { DATE_LOCALE } from "@/lib/date";
 import { AuthorTabs } from "./author-tabs";
 import { HeaderBio } from "./header-bio";
 
 type Tab = "posts" | "series" | "collections" | "about";
 
 const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
+const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
 
 // 대표 주제로 노출할 태그 수. 정체성 한 눈에 잡히는 정도만 — 나머지 전량은 데스크톱 레일 태그 섹션이 담당.
 const MAX_TOPIC_TAGS = 4;
@@ -30,6 +31,16 @@ const MAX_TOPIC_TAGS = 4;
 function authorTabHref(username: string, locale: string, sub = ""): string {
   const base = BLOG_HOST ? `/@${username}` : `/${locale}/p/${username}`;
   return sub ? `${base}/${sub}` : base;
+}
+
+/** The month of the author's first published post — "2026년 5월" / "May 2026". */
+function earliestMonth(posts: PublicPostListItem[], locale: string): string {
+  const first = posts.reduce((min, p) => (p.publishedAt < min ? p.publishedAt : min), posts[0].publishedAt);
+  return new Date(first).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+    year: "numeric",
+    month: "long",
+    timeZone: "Asia/Seoul",
+  });
 }
 
 /**
@@ -51,10 +62,9 @@ function topTopicTags(posts: PublicPostListItem[]): string[] {
 }
 
 /**
- * Shared header for the author's blog pages (velog @user style): avatar + handle + bio + 대표 주제, then
- * a tab bar — 글 / 시리즈 / 컬렉션 / 소개. The identity block carries who this person is (name · bio · the
- * topics they write under · follow) on EVERY breakpoint — the right rail only exists on desktop, so the
- * topics have to ride the header to reach mobile. Hrefs are relative to the author subdomain root.
+ * Shared header for the author's blog pages: handle as the headline, bio, one line of what they've
+ * written (count · since when · followers · their kurl card address), their main topics, then the
+ * 글 / 시리즈 / 컬렉션 / 소개 bar. Topics ride the header below xl because the rail only exists there.
  */
 export async function AuthorHeader({
   author,
@@ -86,55 +96,65 @@ export async function AuthorHeader({
     { key: "about", href: authorTabHref(author.username, locale, "about"), label: t("tabAbout") },
   ];
 
+  const since = posts.length > 0 ? earliestMonth(posts, locale) : null;
+  const cardHost = `${author.username}.${KURL_HOST}`;
+
   return (
     <header>
-      {/* Identity block. Rides the calm root crossfade on a tab switch (NOT its own view-transition
-          group) — under that crossfade the OLD page is held at full opacity, so the identical avatar /
-          handle / bio stay visually static instead of dipping. (A named group did the opposite: it
-          crossfaded old-out/new-in, and the new snapshot is pre-hydration, so the whole block blinked.) */}
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-1 sm:items-start sm:gap-y-0 sm:gap-x-5">
-        <span className="sm:hidden">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3.5">
           <Avatar src={author.avatarUrl} name={author.username} size="lg" eager />
-        </span>
-        <span className="hidden sm:row-span-2 sm:block">
-          <Avatar src={author.avatarUrl} name={author.username} size="xl" eager />
-        </span>
-        {/* 이름이 먼저 눈에 든다 — 크기가 아니라 무게로. semibold → bold 로 존재감만 키우고 크기 스텝은
-            그대로(headline-sm → md). */}
-        <h1 className="min-w-0 truncate text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:pt-1 sm:text-headline-md">
-          @{author.username}
-        </h1>
-        <div className="col-span-2 min-w-0 sm:col-span-1 sm:col-start-2">
-          {author.bio && (
-            <HeaderBio bio={author.bio} />
-          )}
-          {/* 대표 주제 — 이 사람이 주로 무엇을 쓰는지 한 줄. 레일 없는 모바일/태블릿에서도 정체성이
-              "글 목록"이 아니라 "이 사람"으로 읽히게 하는 핵심. 라벨 없이 태그 자체가 말하게(§10 절제).
-              xl+ 에선 우측 레일의 태그 섹션(카운트+전량 브라우즈)이 이 역할을 더 충실히 담당하므로 헤더
-              칩은 숨겨 중복을 피한다. */}
-          {topics.length > 0 && (
-            <ul className="mt-3 flex flex-wrap gap-2 xl:hidden">
-              {topics.map((tag) => (
-                <li key={tag}>
-                  <TagChip href={topicHref(tag)} label={tag} />
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
-            {/* Tappable follower / following counts — each opens the list at the matching tab. */}
-            <FollowCounts username={author.username} />
-            {/* Cross-surface link to the same person's link-in-bio (separate product, shared
-                identity). Shown only when they actually have one. */}
-            {author.hasLinkInBio && (
-              <SwitchLink href={cardHref(author.username, locale)} icon={Link2}>
-                {tNav("profile")}
-              </SwitchLink>
-            )}
-          </div>
+          <h1 className="min-w-0 truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
+            @{author.username}
+          </h1>
+        </div>
+        <div className="shrink-0 pt-1">
+          <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
         </div>
       </div>
+
+      {author.bio && <HeaderBio bio={author.bio} />}
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] text-slate-500 dark:text-slate-400">
+        {posts.length > 0 && (
+          <span className="tabular-nums">
+            {t("activityPosts", { count: posts.length })}
+            {since && (
+              <>
+                <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
+                  ·
+                </span>
+                {t("activitySince", { date: since })}
+              </>
+            )}
+          </span>
+        )}
+        <FollowCounts username={author.username} />
+        {author.hasLinkInBio && (
+          <a
+            href={cardHref(author.username, locale)}
+            title={tNav("profile")}
+            className="focus-ring inline-flex items-center gap-1 rounded-sm font-mono text-[13px] text-slate-600 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-300 dark:hover:text-accent-400"
+          >
+            {cardHost}
+            <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
+          </a>
+        )}
+      </div>
+
+      {topics.length > 0 && (
+        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[13px] xl:hidden">
+          {topics.map((tag) => (
+            <BlogLink
+              key={tag}
+              href={topicHref(tag)}
+              className="focus-ring rounded-sm text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+            >
+              #{tag}
+            </BlogLink>
+          ))}
+        </p>
+      )}
 
       <AuthorTabs tabs={tabs} username={author.username} />
     </header>

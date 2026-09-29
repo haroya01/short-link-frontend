@@ -6,18 +6,10 @@
  */
 
 import { cache } from "react";
-import {
-  USE_MOCKS,
-  mockFeedView,
-  mockPostDetail,
-  mockPostList,
-  mockDiscoverSeries,
-  mockSeriesDetail,
-  mockSeriesList,
-  mockTrendingByTag,
-  MOCK_POPULAR_TAGS,
-  MOCK_SUGGESTED_AUTHORS,
-} from "@/modules/blog/api/_mocks";
+import { blogMocks } from "@/modules/blog/api/_mock-gates";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -198,7 +190,7 @@ async function fetchPublic<T>(
   // prerenders at build) must degrade to the page's empty state — not 500 the render or fail the
   // build. ISR refills within REVALIDATE_SECONDS once the API answers again.
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       url,
       opts?.noStore ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } },
     );
@@ -220,7 +212,7 @@ export function listPublicFeed(
   size = 20,
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ sort }) });
+  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort }) });
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
   );
@@ -237,7 +229,7 @@ export function listFeedByTag(
   page = 0,
   size = 24,
 ): Promise<FetchResult<PublicFeedView>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ tag, sort }) });
+  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ tag, sort }) });
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&sort=${sort}&page=${page}&size=${size}`,
   );
@@ -251,7 +243,8 @@ export function searchPublicFeed(
   size = 24,
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ sort, q: query }) });
+  if (blogMocks)
+    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query }) });
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
   );
@@ -261,7 +254,7 @@ export function searchPublicFeed(
 // reads it for the header, the page for its posts).
 export const listPublicPosts = cache(
   (username: string): Promise<FetchResult<PublicPostList>> => {
-    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostList(username) });
+    if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockPostList(username) });
     return fetchPublic<PublicPostList>(
       `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
     );
@@ -273,7 +266,8 @@ export const listPublicPosts = cache(
 // twice per view; cache() dedupes within the render pass regardless of the fetch cache policy.
 export const findPublicPost = cache(
   (username: string, slug: string): Promise<FetchResult<PublicPostDetail>> => {
-    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail(username, slug) });
+    if (blogMocks)
+      return Promise.resolve({ ok: true, data: blogMocks.mockPostDetail(username, slug) });
     return fetchPublic<PublicPostDetail>(
       `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
       { noStore: true },
@@ -287,7 +281,8 @@ export const findPublicPost = cache(
  */
 export const findPreviewPost = cache(
   (token: string): Promise<FetchResult<PublicPostDetail>> => {
-    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail("me", "preview") });
+    if (blogMocks)
+      return Promise.resolve({ ok: true, data: blogMocks.mockPostDetail("me", "preview") });
     return fetchPublic<PublicPostDetail>(`/api/v1/public/preview/${encodeURIComponent(token)}`, {
       noStore: true,
     });
@@ -301,7 +296,8 @@ export interface TagCount {
 
 /** Most-used tags across published posts, most popular first — the 주제 index. */
 export function listPopularTags(limit = 50): Promise<FetchResult<TagCount[]>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: MOCK_POPULAR_TAGS.slice(0, limit) });
+  if (blogMocks)
+    return Promise.resolve({ ok: true, data: blogMocks.MOCK_POPULAR_TAGS.slice(0, limit) });
   return fetchPublic<TagCount[]>(`/api/v1/public/tags?limit=${limit}`);
 }
 
@@ -312,8 +308,8 @@ export interface SuggestedAuthor {
 
 /** Authors ranked by published-post count — the discovery rail's 추천 작가 list. */
 export function listSuggestedAuthors(limit = 5): Promise<FetchResult<SuggestedAuthor[]>> {
-  if (USE_MOCKS)
-    return Promise.resolve({ ok: true, data: MOCK_SUGGESTED_AUTHORS.slice(0, limit) });
+  if (blogMocks)
+    return Promise.resolve({ ok: true, data: blogMocks.MOCK_SUGGESTED_AUTHORS.slice(0, limit) });
   return fetchPublic<SuggestedAuthor[]>(`/api/v1/public/authors?limit=${limit}`);
 }
 
@@ -331,8 +327,8 @@ export function listTrendingByTag(
   tagLimit = 6,
   perTag = 8,
 ): Promise<FetchResult<TrendingTagSection[]>> {
-  if (USE_MOCKS)
-    return Promise.resolve({ ok: true, data: mockTrendingByTag(tagLimit, perTag) });
+  if (blogMocks)
+    return Promise.resolve({ ok: true, data: blogMocks.mockTrendingByTag(tagLimit, perTag) });
   return fetchPublic<TrendingTagSection[]>(
     `/api/v1/public/feed/trending-by-tag?tagLimit=${tagLimit}&perTag=${perTag}`,
   );
@@ -340,12 +336,12 @@ export function listTrendingByTag(
 
 /** Cross-author active series for the feed's series cards — most recently active first. */
 export function listDiscoverSeries(limit = 6): Promise<FetchResult<PublicSeriesCard[]>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockDiscoverSeries(limit) });
+  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockDiscoverSeries(limit) });
   return fetchPublic<PublicSeriesCard[]>(`/api/v1/public/series?limit=${limit}`);
 }
 
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockSeriesList(username) });
+  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockSeriesList(username) });
   return fetchPublic<PublicSeriesList>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/series`,
   );
@@ -353,7 +349,8 @@ export function listPublicSeries(username: string): Promise<FetchResult<PublicSe
 
 export const findPublicSeries = cache(
   (username: string, slug: string): Promise<FetchResult<PublicSeriesDetail>> => {
-    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockSeriesDetail(username, slug) });
+    if (blogMocks)
+      return Promise.resolve({ ok: true, data: blogMocks.mockSeriesDetail(username, slug) });
     return fetchPublic<PublicSeriesDetail>(
       `/api/v1/public/profiles/${encodeURIComponent(username)}/series/${encodeURIComponent(slug)}`,
       { noStore: true },

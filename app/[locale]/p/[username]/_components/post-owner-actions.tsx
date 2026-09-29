@@ -6,7 +6,7 @@ import { Loader2, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { blogHref } from "@/lib/host";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { deletePost } from "@/modules/blog/api/posts";
 
 /**

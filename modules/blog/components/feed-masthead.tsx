@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
  * surfaces (a tag's feed, the topics index) reuse the SAME band with an overridden title/sub so they
  * read as the same product rather than separate pages. Optional `eyebrow` adds a small contextual
  * label (e.g. "주제") above the title. No eyebrow on the home feed: the sticky header already carries
- * the "blog.kurl" wordmark. Server component: no auth, no client state, no layout shift.
+ * the "kurl log" wordmark. Server component: no auth, no client state, no layout shift.
  */
 export async function FeedMasthead({
   locale,
@@ -24,20 +24,19 @@ export async function FeedMasthead({
   const heading = title ?? t("mastheadTagline");
   const subText = sub === null ? null : (sub ?? t("mastheadSub"));
   return (
-    <section className="border-b border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-14">
-        <div className="hero-stagger max-w-2xl">
+    <section className="bg-white dark:bg-slate-950">
+      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-14">
+        <div className="hero-stagger mx-auto max-w-2xl">
           {eyebrow && (
             <p className="mb-2 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
               {eyebrow}
             </p>
           )}
-          <h1 className="text-balance text-headline-sm font-semibold leading-[1.15] tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg sm:leading-[1.1]">
+          <h1 className="text-balance text-[26px] font-bold leading-[1.2] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[34px]">
             {heading}
           </h1>
-          {/* Sub-line is brand flourish — hide on mobile to get the first post above the fold sooner. */}
           {subText && (
-            <p className="mt-2 hidden text-[15px] leading-relaxed text-slate-500 dark:text-slate-400 sm:mt-3 sm:block">
+            <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
               {subText}
             </p>
           )}

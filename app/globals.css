@@ -22,31 +22,16 @@
   }
 }
 
-/* devices.css — open-source CSS-only phone/laptop frames used by the landing-page profile
-   showcase. Only the iPhone variants render; the rest is dead CSS but the whole file is ~5KB
-   minified so we don't bother tree-shaking. */
-@import "devices.css/dist/devices.min.css";
-
-/*
- * devices.css ships {@code .device .device-screen { background: #000 }} — a descendant selector
- * with specificity (0,2,0), higher than Tailwind utilities (0,1,0). Previous attempts here
- * (`.device-screen { transparent }` and `:where(.device-screen) { transparent }`) both lost the
- * cascade. The real fix lives in {@code ShowcaseCard} / {@code ProfilePreview}: inline
- * {@code style.backgroundColor} (specificity 1,0,0,0) beats the descendant selector and the
- * theme's {@code pageBgHex} actually paints. No CSS rule is needed here anymore.
- */
-
 :root {
   color-scheme: light;
   /* qr-campaigns 히어로 + 일반 entrance easing token. 이전엔 GlobalStyles 의
      `<style jsx global>` 안에 있었는데, styled-jsx hydration race 때문에 hero 텍스트가
      opacity-0 에서 안 풀리는 경우 발생. 정식 stylesheet 로 끌어내려 초기 CSS 와 같이 로드. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  /* 모바일 하단 탭바(Blog/LinksBottomNav)가 점유하는 높이 — 플로팅 독이라 바 높이 + bottom
-     오프셋(max(0.75rem, home-indicator)). 쿠키 배너를 탭바 위로 띄우는 데 씀. 없으면 배너가
-     탭바를 덮어 탭(계정 → 로그아웃/제품 전환) 클릭을 가로챈다. 오프셋 식은 두 BottomNav 의
-     bottom-[max(...)] 와 짝. */
-  --bottom-nav-h: calc(3.5rem + max(0.75rem, env(safe-area-inset-bottom)));
+  /* 모바일 하단 탭바(Blog/LinksBottomNav)가 점유하는 높이 — 바닥에 붙은 바라 탭 높이(h-14) +
+     home-indicator 패딩. 쿠키 배너·토스트를 탭바 위로 띄우는 데 쓴다. 두 BottomNav 의
+     pb-[env(safe-area-inset-bottom)] 과 짝. */
+  --bottom-nav-h: calc(3.5rem + env(safe-area-inset-bottom));
   /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
      표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
   --cookie-bottom: env(safe-area-inset-bottom);
@@ -59,17 +44,17 @@
   --toast-bottom: 1.5rem;
   /* recharts(daily-chart) 색은 inline SVG/style 이라 Tailwind dark: 가 안 닿는다. CSS 변수로
      테마를 끌어 .dark 에서 한 번에 덮는다 — 작가 방문통계가 다크 표면에서 라이트 격자/툴팁로 깨지던 문제. */
-  --chart-grid: #e2e8f0;
+  --chart-grid: #e5e8e6;
   --chart-tooltip-bg: #ffffff;
-  --chart-tooltip-border: #e2e8f0;
-  --chart-tooltip-text: #0f172a;
+  --chart-tooltip-border: #e5e8e6;
+  --chart-tooltip-text: #131a16;
 }
 
 .dark {
-  --chart-grid: #334155;
-  --chart-tooltip-bg: #0f172a;
-  --chart-tooltip-border: #334155;
-  --chart-tooltip-text: #e2e8f0;
+  --chart-grid: #3b423e;
+  --chart-tooltip-bg: #131a16;
+  --chart-tooltip-border: #3b423e;
+  --chart-tooltip-text: #e5e8e6;
 }
 
 /* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.
@@ -77,6 +62,15 @@
 body[data-bottom-nav] {
   --cookie-bottom: var(--bottom-nav-h);
   --toast-bottom: calc(var(--bottom-nav-h) + 0.75rem);
+}
+@media (max-width: 639px) {
+  body[data-bottom-nav] {
+    --fab-bottom: calc(var(--bottom-nav-h) + 1rem);
+  }
+  body[data-bottom-nav][data-composer] {
+    --toast-bottom: calc(var(--bottom-nav-h) + 4.5rem);
+    --cookie-bottom: calc(var(--bottom-nav-h) + 3.75rem);
+  }
 }
 
 @media (max-width: 639px) {
@@ -95,11 +89,6 @@ body[data-bottom-nav] {
   0% { opacity: 0; transform: translateY(16px); }
   100% { opacity: 1; transform: translateY(0); }
 }
-@keyframes dot-progress {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
 /* Blog search open animation — the mobile 탐색 sheet unfolds down from the top (transform-origin set
    via origin-top on the element). The header field unfolds by width (transition, not a keyframe). */
 @keyframes search-sheet-in {
@@ -149,26 +138,51 @@ html.dark {
   color-scheme: dark;
 }
 
+/* Native checkboxes and radios take the selection ink instead of the browser's own blue. */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: theme("colors.slate.900");
+}
+html.dark input[type="checkbox"],
+html.dark input[type="radio"] {
+  accent-color: theme("colors.slate.100");
+}
+
 /* Avoid orphans (single-character last lines). Modern browsers (Chrome 117+, Safari 17.4+, FF 121+). */
 h1, h2, h3, p {
   text-wrap: pretty;
 }
 
 /* CJK typesetting:
- *  1. `word-break: keep-all` keeps phrases (eojeol / bunsetsu) intact instead of breaking on every
- *     character — fixes "이." / "で。" style orphan tails.
+ *  1. Korean breaks at spaces, so `word-break: keep-all` keeps each eojeol whole — fixes "이." style
+ *     orphan tails. Japanese and Chinese have no spaces: keep-all turned a whole unpunctuated
+ *     sentence into one unbreakable word that ran off the screen. They keep normal CJK breaking;
+ *     Japanese asks for `auto-phrase` (bunsetsu-aware, Chromium); Safari drops that value, so
+ *     `normal` is declared first — it also has to beat the `break-keep` utility on shared headings.
  *  2. `overflow-wrap: break-word` (not `anywhere`) is the softer fallback for the few cases that
  *     still don't fit — `anywhere` was so aggressive it overrode (1) and broke mid-phrase.
  *  3. `line-break: strict` is the actual fix for the lone `。` / `、` / closing-paren on the next
  *     line: it applies the Japanese Layout Requirements line-start prohibition (kinsoku shori).
- *     Modern browsers all support it; older fallbacks just see normal CJK break behaviour.
  * Applies broadly because the bug surfaces on any text node a CJK string ends up in (span / div /
  * a / button labels, etc) — explicit element lists kept missing one.
  */
 :lang(ko), :lang(ja), :lang(zh) {
-  word-break: keep-all;
   overflow-wrap: break-word;
   line-break: strict;
+}
+:lang(ko) {
+  word-break: keep-all;
+}
+
+/* ja 활자 = Pretendard JP 우선(레이아웃이 ja 로케일에서만 스타일시트를 싣는다). KR판 단독으로는
+ * 일본 신자체 한자가 글자 단위로 시스템 폴백에 떨어져 자형이 섞였다. JP판은 동일 파운드리·동일
+ * 메트릭이라 자형만 일본화한다. 폴백 체인도 일본어 시스템 고딕을 앞세운다. */
+:lang(ja) {
+  word-break: normal;
+  word-break: auto-phrase;
+  font-family: "Pretendard JP Variable", "Pretendard Variable", Pretendard, ui-sans-serif,
+    system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
+    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 }
 
 * {
@@ -248,13 +262,6 @@ mark.kurl-highlight--thread {
 }
 
 @layer utilities {
-  .grid-bg {
-    background-image:
-      linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
   /*
    * Section divider — replaces the recurring `border-t border-slate-100`. A hairline rule that fades
    * in from both ends so the section break reads softer than a hard full-width border. Light mode uses
@@ -266,8 +273,8 @@ mark.kurl-highlight--thread {
     background: linear-gradient(
       to right,
       transparent 0%,
-      rgba(15, 23, 42, 0.08) 18%,
-      rgba(15, 23, 42, 0.08) 82%,
+      rgba(19, 26, 22, 0.08) 18%,
+      rgba(19, 26, 22, 0.08) 82%,
       transparent 100%
     );
   }
@@ -304,6 +311,23 @@ mark.kurl-highlight--thread {
     }
   }
 
+  .brand-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .brand-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.02em;
+    height: 0.085em;
+    background: #059669;
+  }
+  .dark .brand-underline::after {
+    background: #10b981;
+  }
+
   /* 글 내용 등장 — 스켈레톤이 실제 글로 바뀔 때(또는 직접 진입 시) 본문이 살짝 떠오르며 페이드인.
      View Transitions 는 "피드→스켈레톤"까지만 덮으므로, 정작 "스켈레톤→내용"이 툭 바뀌던 부분을 이게
      채운다 = 사용자가 원한 "내용이 뜨는" 애니메이션. 마운트마다 1회 재생(브라우저 무관). */
@@ -324,10 +348,10 @@ mark.kurl-highlight--thread {
    * layer that pairs with the card's own border for separation.
    */
   .card-highlight {
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 3px rgba(19, 26, 22, 0.04);
   }
   .card-highlight:hover {
-    box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 12px -4px rgba(19, 26, 22, 0.08);
   }
 
   /*
@@ -339,9 +363,6 @@ mark.kurl-highlight--thread {
    */
   .tracking-headline {
     letter-spacing: -0.025em;
-  }
-  .tracking-tagline {
-    letter-spacing: 0.22em;
   }
 
   /*
@@ -375,7 +396,7 @@ mark.kurl-highlight--thread {
   .profile-card,
   .profile-card-static {
     @apply rounded-2xl border;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 2px rgba(19, 26, 22, 0.04);
     transition:
       transform 200ms ease-out,
       box-shadow 200ms ease-out,
@@ -383,7 +404,7 @@ mark.kurl-highlight--thread {
   }
   .profile-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 16px rgba(19, 26, 22, 0.08);
   }
   /* Keyboard focus — every interactive card gets the same accent ring so visitors tabbing through
    * the feed always see where focus landed. Scoped to :focus-visible (not :focus) so mouse clicks
@@ -415,6 +436,13 @@ mark.kurl-highlight--thread {
   .dark .focus-ring {
     @apply focus-visible:ring-offset-slate-950;
   }
+  /* 전면 오버레이 뒤 막은 이것 하나 — 대화상자·시트·서랍이 같은 농도, 흐림 없음. */
+  .scrim {
+    @apply bg-slate-900/40;
+  }
+  .dark .scrim {
+    @apply bg-slate-950/70;
+  }
   /* Expands the TOUCH target of a compact control (like/share/follow pills sit ~32px tall) to the
      44px WCAG 2.5.5 minimum WITHOUT growing its visual size — a transparent overlay centered on the
      control captures the taps. Keeps the minimal pill look while staying thumb-friendly on mobile. */
@@ -435,7 +463,7 @@ mark.kurl-highlight--thread {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
      * lift mid-press, so the cursor and the card track each other instead of fighting. */
     transform: scale(0.98) translateY(0);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 2px rgba(19, 26, 22, 0.04);
   }
   @media (prefers-reduced-motion: reduce) {
     .profile-card:hover,
@@ -491,6 +519,17 @@ mark.kurl-highlight--thread {
       opacity: 1;
     }
   }
+}
+
+/* 첫 하드 로드엔 진입 모션을 걸지 않는다 — 내용이 opacity 0 에서 출발해 LCP 가 모션 길이만큼 늦어졌다.
+   html[data-first-load] 는 루트 레이아웃의 pre-paint 스크립트가 달고, 첫 클라이언트 내비게이션이
+   커밋될 때 FirstLoadMark 가 뗀다 — 그다음 화면부터 진입이 돈다. 레이아웃에 남는 요소에 이 클래스를
+   달면 떼는 순간 진입이 다시 재생되니 화면(page) 쪽 요소에만 쓴다. */
+html[data-first-load] .route-enter,
+html[data-first-load] .post-enter,
+html[data-first-load] .profile-fade {
+  animation: none;
+  opacity: 1;
 }
 
   /*
@@ -638,6 +677,9 @@ mark.kurl-highlight--thread {
   .prose-post pre code {
     @apply bg-transparent p-0 text-slate-100;
   }
+  .prose-post .post-code pre {
+    @apply m-0 rounded-none pt-2;
+  }
   /* 인용구에 italic 금지(재발 방지) — Pretendard 에 이탤릭 자형이 없어 한글/일본어가 합성 기울임
      (가짜 oblique)으로 찌그러진다. 구분은 왼쪽 그린 바 + 색이 담당하고, em(인라인 강조)만 이탤릭을
      유지한다. .prose-text-block blockquote 도 같은 이유로 non-italic. */
@@ -738,12 +780,11 @@ mark.kurl-highlight--thread {
    */
   .prose-post pre code.hljs {
     @apply bg-transparent p-0;
-    color: #e2e8f0;
+    color: #e5e8e6;
   }
   .prose-post .hljs-comment,
   .prose-post .hljs-quote {
-    color: #94a3b8;
-    font-style: italic;
+    color: #9ca49f;
   }
   .prose-post .hljs-keyword,
   .prose-post .hljs-selector-tag,
@@ -839,6 +880,12 @@ mark.kurl-highlight--thread {
 }
 @media (prefers-reduced-motion: reduce) {
   .comment-in {
+    animation: none;
+  }
+  /* animate-pulse 글로벌 가드(§10.7) — 스켈레톤·라이브 점 36곳이 개별 motion-reduce 없이 쓰여
+     reduce 에서도 맥박이 돌았다(적대 검증 r7 실측: 랜딩 라이브 점). 유틸리티를 한 곳에서 정지 —
+     스켈레톤은 정적 블록으로, 라이브 점은 색+라벨이 상태를 이미 전달한다. */
+  .animate-pulse {
     animation: none;
   }
 }
@@ -1173,22 +1220,22 @@ canvas.qr-canvas-fit {
  * text variants (text-slate-300/200, text-white) to readable dark variants, and the
  * border-white/10 borders to black variants matching the mono aesthetic.
  */
-.mono-card .text-white { color: rgb(15 23 42); /* slate-900 */ }
-.mono-card .text-slate-100 { color: rgb(30 41 59); /* slate-800 */ }
+.mono-card .text-white { color: rgb(19 26 22); /* slate-900 */ }
+.mono-card .text-slate-100 { color: rgb(36 43 39); /* slate-800 */ }
 .mono-card .text-slate-300 { color: rgb(71 85 105); /* slate-600 */ }
 .mono-card .text-slate-200 { color: rgb(51 65 85); /* slate-700 */ }
 .mono-card .text-slate-400 { color: rgb(100 116 139); /* slate-500 */ }
 /* Contact anchors carry an always-on underline (decoration-white/40) for touch affordance —
  * on the white mono card that decoration must flip dark like the text it underlines. */
-.mono-card .decoration-white\/40 { text-decoration-color: rgb(15 23 42 / 0.4); }
-.mono-card a:hover { text-decoration-color: rgb(15 23 42); }
+.mono-card .decoration-white\/40 { text-decoration-color: rgb(19 26 22 / 0.4); }
+.mono-card a:hover { text-decoration-color: rgb(19 26 22); }
 /* Tailwind's opacity-modifier variants (e.g. {@code text-slate-200/90}) compile to a separate
  * class name with an escaped slash — the rules above don't catch them. ContactCardEntry uses
  * {@code text-slate-200/90} for the email / phone / website rows, and on the mono variant they
  * were rendering as 90 %-opacity light grey on a white card → effectively invisible. */
 .mono-card .text-slate-200\/90 { color: rgb(51 65 85); }
-.mono-card .text-white\/80 { color: rgb(15 23 42); }
-.mono-card .text-white\/90 { color: rgb(15 23 42); }
+.mono-card .text-white\/80 { color: rgb(19 26 22); }
+.mono-card .text-white\/90 { color: rgb(19 26 22); }
 .mono-card .border-white\/10 { border-color: rgb(0 0 0 / 0.12); }
 .mono-card .border-white\/20 { border-color: rgb(0 0 0 / 0.18); }
 .mono-card .bg-white\/5,
@@ -1272,6 +1319,11 @@ html[data-cc-accepted] [data-cc-banner] {
 }
 html:not([data-auth-hint]) [data-auth-slot="authed"],
 html[data-auth-hint] [data-auth-slot="anon"] {
+  display: none;
+}
+
+/* Share controls open the OS share sheet only; html[data-share] (pre-paint) says one exists. */
+html:not([data-share]) [data-share-only] {
   display: none;
 }
 
@@ -1659,24 +1711,6 @@ body[data-cookie-consent="visible"] {
   }
 }
 
-/* ── scroll-driven 헤더 깊이 (progressive enhancement) ───────────────────────
-   스크롤 진행(0→120px)에 비례해 헤더 아래 그림자가 떠오른다 — JS 스크롤 리스너 없이 CSS
-   scroll() 타임라인만으로. 미지원 브라우저는 기존 모습(보더+블러) 그대로. */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .vt-app-header {
-      animation: chrome-float linear both;
-      animation-timeline: scroll();
-      animation-range: 0 120px;
-    }
-  }
-}
-@keyframes chrome-float {
-  to {
-    box-shadow: 0 8px 24px -16px rgba(15, 23, 42, 0.18);
-  }
-}
-
 /* The Tailwind animation utilities (dialogs, sheets, dropdowns, toasts) have no reduced-motion
    guard of their own — collapse them for users who ask for less motion. The exit classes are here
    too: their overlays unmount instantly under reduced motion (use-presence), so they must never
@@ -1728,14 +1762,14 @@ body[data-cookie-consent="visible"] {
 .tiptap {
   font-size: 1.125rem;
   line-height: 1.55;
-  color: #334155;
+  color: #3b423e;
   outline: none;
   /* Scroll-past-end gutter: lets the LAST line be scrolled up to the typewriter position (≈2/3
    * height) instead of being pinned to the bottom edge. keepCaretInView relies on this room. */
   padding-bottom: 40vh;
 }
 .dark .tiptap {
-  color: #cbd5e1;
+  color: #d0d5d2;
 }
 /* Block rhythm mirrors the published .prose-post (18px font, tightened block gap so lines don't float). */
 .tiptap > * + * {
@@ -1748,13 +1782,13 @@ body[data-cookie-consent="visible"] {
   margin-top: 1.3rem;
 }
 .tiptap :is(h1, h2, h3) {
-  color: #0f172a;
+  color: #131a16;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.3;
 }
 .dark .tiptap :is(h1, h2, h3) {
-  color: #f1f5f9;
+  color: #f3f5f4;
 }
 /* Heading top margins match .prose-post so heading rhythm ships unchanged. */
 /* 발행면(.prose-post h2/h3/h4)과 같은 크기·무게 — 에디터의 H1/H2/H3 은 발행 시 페이지 <h1>(제목)
@@ -1769,13 +1803,13 @@ body[data-cookie-consent="visible"] {
 .tiptap blockquote {
   border-left: 3px solid #34d399;
   padding: 0.1rem 0 0.1rem 1.1rem;
-  color: #475569;
+  color: #4f5652;
 }
 .tiptap blockquote[data-alert] {
   border-left-width: 4px;
   border-radius: 0.5rem;
   padding: 0.9rem 1.25rem;
-  color: #334155;
+  color: #3b423e;
 }
 .tiptap blockquote[data-alert]::before {
   content: attr(data-label);
@@ -1794,7 +1828,7 @@ body[data-cookie-consent="visible"] {
 .tiptap blockquote[data-alert="warning"]::before { color: #b45309; }
 .tiptap blockquote[data-alert="caution"] { border-color: #fda4af; background: rgba(255, 241, 242, 0.7); }
 .tiptap blockquote[data-alert="caution"]::before { color: #be123c; }
-.dark .tiptap blockquote[data-alert] { color: #cbd5e1; }
+.dark .tiptap blockquote[data-alert] { color: #d0d5d2; }
 .dark .tiptap blockquote[data-alert="note"] { border-color: rgba(14, 165, 233, 0.5); background: rgba(14, 165, 233, 0.1); }
 .dark .tiptap blockquote[data-alert="note"]::before { color: #7dd3fc; }
 .dark .tiptap blockquote[data-alert="tip"] { border-color: rgba(6, 182, 212, 0.5); background: rgba(6, 182, 212, 0.1); }
@@ -1833,8 +1867,8 @@ body[data-cookie-consent="visible"] {
   background: linear-gradient(
     to right,
     transparent 0%,
-    rgba(15, 23, 42, 0.08) 18%,
-    rgba(15, 23, 42, 0.08) 82%,
+    rgba(19, 26, 22, 0.08) 18%,
+    rgba(19, 26, 22, 0.08) 82%,
     transparent 100%
   );
 }
@@ -1860,7 +1894,7 @@ body[data-cookie-consent="visible"] {
   text-decoration: line-through;
 }
 .tiptap :not(pre) > code {
-  background: rgba(15, 23, 42, 0.06);
+  background: rgba(19, 26, 22, 0.06);
   border-radius: 0.3rem;
   padding: 0.1em 0.35em;
   font-size: 0.9em;
@@ -1882,28 +1916,33 @@ body[data-cookie-consent="visible"] {
 .tiptap-figure {
   margin: 1.5rem 0;
 }
+/* 올린 사진은 바로 보이고, 업로드가 끝날 때까지만 옅게. */
+.tiptap-figure.is-uploading img {
+  opacity: 0.55;
+  cursor: progress;
+}
 .tiptap-figcaption {
   margin-top: 0.5rem;
   text-align: center;
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: #64748b;
+  color: #6d7570;
   outline: none;
 }
 .tiptap-figcaption:empty::before {
   content: attr(data-placeholder);
-  color: #cbd5e1;
+  color: #d0d5d2;
   pointer-events: none;
 }
 .dark .tiptap-figcaption {
-  color: #94a3b8;
+  color: #9ca49f;
 }
 .dark .tiptap-figcaption:empty::before {
-  color: #475569;
+  color: #4f5652;
 }
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  color: #cbd5e1;
+  color: #d0d5d2;
   float: left;
   height: 0;
   pointer-events: none;
@@ -1919,7 +1958,7 @@ body[data-cookie-consent="visible"] {
 }
 .tiptap th,
 .tiptap td {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e8e6;
   padding: 0.4rem 0.6rem;
   text-align: left;
   vertical-align: top;
@@ -1927,14 +1966,14 @@ body[data-cookie-consent="visible"] {
 }
 .dark .tiptap th,
 .dark .tiptap td {
-  border-color: #334155;
+  border-color: #3b423e;
 }
 .tiptap th {
-  background: #f8fafc;
+  background: #f9faf9;
   font-weight: 600;
 }
 .dark .tiptap th {
-  background: #1e293b;
+  background: #242b27;
 }
 .tiptap .selectedCell {
   background: rgba(52, 211, 153, 0.12);
@@ -2035,294 +2074,35 @@ html[data-theme-vt] .vt-post-cover {
 }
 
 /*
- * ===== 무대(Stage) 모션 어휘 — DESIGN.md §11 =====
- * "한 번 보는 화면" 전용 연출 레이어. kurl_stage 플래그(lib/stage-flag.ts) 뒤에서만 마운트되고,
- * 전부 aria-hidden 장식이라 꺼져도(기본값) 정보 손실이 없다.
- *
- * 어휘 4종 (iOS 웰컴 종이 문법의 웹 쌍둥이 — celebrate-* 가 배아):
- *   실-그리기 stage-thread   — 그린 실이 여정을 따라 그려짐 (스크롤 연동)
- *   클릭-맥박 stage-pulse    — 점 도착 + 파동 = 클릭 유입
- *   형광-스윕 stage-sweep    — 강조 면 위로 형광펜 밴드가 지나감 (스크롤 연동)
- *   알약    stage-pill-in   — 단축 결과물(알약)의 물질화
- *
- * 스크롤 연동은 CSS scroll-driven animations 만 사용(의존성 0). 미지원 브라우저는 @supports
- * 밖의 기본 상태 = 완성 상태를 보므로 깨지지 않고, reduced-motion 은 전부 정적 완성 상태.
- */
-@keyframes stage-thread-draw {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-.stage-thread {
-  transform-origin: top;
-}
-@keyframes stage-pill-in {
-  from {
-    transform: translateY(12px) scale(0.94);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-@keyframes stage-pulse-ring {
-  from {
-    transform: scale(0.6);
-    opacity: 0.55;
-  }
-  to {
-    transform: scale(2.2);
-    opacity: 0;
-  }
-}
-.stage-pulse-ring {
-  animation: stage-pulse-ring 2400ms var(--ease) infinite;
-}
-/* 폼 캡슐 안 형광 스윕 — 밴드를 캡슐 내부 오버레이(.capsule-sweep)로 옮겨 알약 모양에
-   클리핑된다. 호스트 ::after 사각 밴드는 캡슐 위아래로 직선 잘림이 그대로 노출됐다.
-   루트 스크롤 0→320px 에 1:1(시간이 아니라 손이 재생점). 미지원 브라우저는 opacity:0
-   그대로라 아무것도 안 보인다(순수 장식). */
-.capsule-sweep {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 18%,
-    rgba(5, 150, 105, 0.09) 44%,
-    rgba(52, 211, 153, 0.15) 54%,
-    transparent 84%
-  );
-}
-@supports (animation-timeline: scroll()) {
-  .stage-sweep-host .capsule-sweep {
-    animation: capsule-sweep-band linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0px 320px;
-  }
-}
-@keyframes capsule-sweep-band {
-  0% {
-    transform: translateX(-55%);
-    opacity: 0;
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(55%);
-    opacity: 0;
-  }
-}
-
-/* 유성(meteor) — Magic UI Meteors(MIT) 포팅의 스트릭 본체(components/landing/meteors.tsx).
-   머리(점) + 오른쪽으로 잦아드는 1px 꼬리, 215° 사선 낙하. 색은 currentColor — 호출부가
-   text-* 로 정한다. 기본 opacity 0 이라 reduced-motion(애니 정지)이면 아무것도 안 보인다. */
-.meteor {
-  background: currentColor;
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
-  opacity: 0;
-}
-.meteor::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 1px;
-  width: 64px;
-  height: 1px;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, currentColor, transparent);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .meteor {
-    animation: meteor linear infinite;
-  }
-}
-@keyframes meteor {
-  0% {
-    transform: rotate(215deg) translateX(0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 0.9;
-  }
-  55% {
-    opacity: 0.9;
-  }
-  72%,
-  100% {
-    transform: rotate(215deg) translateX(-520px);
-    opacity: 0;
-  }
-}
-/* 실은 자기 가시성(view())에 물려 자라고, 알약·맥박은 실이 자란 뒤 범위에서 물질화. */
-@supports (animation-timeline: view()) {
-  .stage-thread {
-    animation: stage-thread-draw linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 45%;
-  }
-  .stage-pill {
-    animation: stage-pill-in linear both;
-    animation-timeline: view();
-    animation-range: entry 30% cover 60%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .stage-thread,
-  .stage-pill,
-  .stage-pulse-ring,
-  .capsule-sweep {
-    animation: none !important;
-  }
-  /* 정적 완성 상태 유지 — 스윕 밴드만은 과정 그 자체라 아예 숨긴다. */
-  .capsule-sweep {
-    opacity: 0;
-  }
-}
-
-/* 무대 어휘 확장 — 여정 장면(stage-scenes.tsx)용. 규칙은 위 stage-* 블록과 동일:
-   view() 연동은 @supports 게이트, 기본 상태 = 완성 상태, reduced-motion = 정적. */
-@keyframes stage-thread-draw-x {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-.stage-thread-x {
-  transform-origin: left;
-}
-.stage-thread-x.stage-from-right {
-  transform-origin: right;
-}
-@keyframes stage-rise {
-  from {
-    transform: translateY(36px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-@keyframes stage-draw-line {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.stage-draw {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0; /* 기본 = 완성 상태 (미지원/RM 폴백) */
-}
-@keyframes stage-bar-rise {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-.stage-bar {
-  transform-origin: bottom;
-}
-@supports (animation-timeline: view()) {
-  .stage-thread-x {
-    animation: stage-thread-draw-x linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 45%;
-  }
-  .stage-rise {
-    animation: stage-rise linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 90%;
-  }
-  .stage-draw {
-    animation: stage-draw-line linear both;
-    animation-timeline: view();
-    animation-range: entry 20% cover 65%;
-  }
-  .stage-bar {
-    animation: stage-bar-rise linear both;
-    animation-timeline: view();
-    animation-range: entry 15% cover 55%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .stage-thread-x,
-  .stage-rise,
-  .stage-draw,
-  .stage-bar {
-    animation: none !important;
-  }
-}
-
-/*
- * ===== 유리(Glass) 크롬 재질 — DESIGN.md §12 =====
- * iOS 확정 문법 "종이 본문, 액체 크롬"의 웹 쌍둥이. 유리는 크롬(항해·플로팅 바·배너·오버레이
- * 캡슐)에만 — 콘텐츠 카드에 바르면 §10 flat 철학 위반이자 가독성 사고(NN/g 경고).
- * 종전에 bg-white/85 + backdrop-blur 로 7곳에 흩어져 있던 유사-유리를 이 두 클래스가 소유한다.
- *
- * 가드레일(리서치 수렴값): blur 10–14px 고정 · backdrop-filter 애니메이션 금지 · 큰 콘텐츠
- * 면적 금지 · 텍스트 대비 4.5:1 유지(배경 불투명도 0.62 미만 금지) · 미지원/저투명 선호는
- * 불투명 폴백.
+ * ===== 유리(Glass) 재질 =====
+ * 본문 위에 잠깐 떠 있는 오버레이(쿠키 배너·오프라인 배너)에만. 항해 크롬(헤더·하단 탭바)은
+ * 불투명한 종이 바다 — 헤더는 view-transition-name 때문에 backdrop root 가 되어 블러가 먹지 않고
+ * 글자가 비쳤다. 텍스트 대비 4.5:1 유지, 미지원/저투명 선호는 불투명 폴백.
  */
 .glass-chrome {
-  background: rgba(255, 255, 255, 0.68);
-  -webkit-backdrop-filter: blur(14px) saturate(1.7);
-  backdrop-filter: blur(14px) saturate(1.7);
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 .dark .glass-chrome {
-  background: rgba(2, 6, 23, 0.62);
-}
-.glass-capsule {
-  background: rgba(255, 255, 255, 0.55);
-  -webkit-backdrop-filter: blur(10px) saturate(1.6);
-  backdrop-filter: blur(10px) saturate(1.6);
-}
-.dark .glass-capsule {
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(4, 9, 6, 0.88);
 }
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .glass-chrome {
     background: rgba(255, 255, 255, 0.97);
   }
   .dark .glass-chrome {
-    background: rgba(2, 6, 23, 0.95);
-  }
-  .glass-capsule {
-    background: rgba(255, 255, 255, 0.92);
-  }
-  .dark .glass-capsule {
-    background: rgba(15, 23, 42, 0.92);
+    background: rgba(4, 9, 6, 0.95);
   }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .glass-chrome,
-  .glass-capsule {
+  .glass-chrome {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-  }
-  .glass-chrome {
     background: rgb(255 255 255);
   }
   .dark .glass-chrome {
-    background: rgb(2 6 23);
-  }
-  .glass-capsule {
-    background: rgb(255 255 255);
-  }
-  .dark .glass-capsule {
-    background: rgb(15 23 42);
+    background: rgb(4 9 6);
   }
 }
 
@@ -2371,57 +2151,19 @@ html[data-theme-vt] .vt-post-cover {
   contain-intrinsic-size: auto 320px;
 }
 
-/* ── 모집(events) 인트로 데모 — 9s 루프: 페이지 생성 → 단톡에 링크 → 신청이 쌓임.
-   처음 보는 사람이 텍스트 없이도 "아, 신청 페이지 만들어서 뿌리는 거구나"를 3초 안에 잡게 하는 장치.
-   reduced-motion 이면 애니메이션 없이 완성 상태를 정지화면으로 보여준다. */
-@keyframes evi-card {
-  0%, 2% { opacity: 0; transform: translateY(18px) scale(0.97); }
-  10%, 93% { opacity: 1; transform: translateY(0) scale(1); }
-  98%, 100% { opacity: 0; transform: translateY(0) scale(1); }
-}
-@keyframes evi-fly {
-  0%, 20% { opacity: 0; transform: translate(-46px, -128px) scale(0.6); }
-  24% { opacity: 1; transform: translate(-46px, -128px) scale(1.05); }
-  27% { transform: translate(-46px, -128px) scale(1); }
-  36% { opacity: 1; transform: translate(0, 0) scale(1); }
-  38%, 100% { opacity: 0; transform: translate(0, 0) scale(1); }
-}
-@keyframes evi-bubble { 0%, 36% { opacity: 0; transform: translateY(8px) scale(0.85); } 40% { opacity: 1; transform: translateY(0) scale(1.04); } 42%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-@keyframes evi-r1 { 0%, 48% { opacity: 0; transform: translateY(8px) scale(0.85); } 52% { opacity: 1; transform: translateY(0) scale(1.04); } 54%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-@keyframes evi-r2 { 0%, 58% { opacity: 0; transform: translateY(8px) scale(0.85); } 62% { opacity: 1; transform: translateY(0) scale(1.04); } 64%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-@keyframes evi-r3 { 0%, 68% { opacity: 0; transform: translateY(8px) scale(0.85); } 72% { opacity: 1; transform: translateY(0) scale(1.04); } 74%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-@keyframes evi-badge { 0%, 80% { opacity: 0; transform: translateY(6px) scale(0.9); } 84% { opacity: 1; transform: translateY(0) scale(1.06); } 86%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-.evi-card { animation: evi-card 9s ease-out infinite; }
-.evi-fly { animation: evi-fly 9s ease-in-out infinite; }
-.evi-bubble { animation: evi-bubble 9s ease-out infinite; }
-.evi-r1 { animation: evi-r1 9s ease-out infinite; }
-.evi-r2 { animation: evi-r2 9s ease-out infinite; }
-.evi-r3 { animation: evi-r3 9s ease-out infinite; }
-.evi-badge { animation: evi-badge 9s ease-out infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .evi-card, .evi-bubble, .evi-r1, .evi-r2, .evi-r3, .evi-badge { animation: none; opacity: 1; transform: none; }
-  .evi-fly { animation: none; opacity: 0; }
-}
-
-/* 온보딩 장면(obs-*) — 대시보드·QR 캠페인 온보딩 패널의 미니어처 데모.
-   한 번 떠오르는 엔트런스(rise/pop/draw/bar) + 은은히 계속 도는 생명(핑·펄스).
-   이벤트 소개의 evi-* 와 같은 계열, 리듬만 원샷+지속으로 다르다. */
+/* 온보딩 장면(obs-*) — 대시보드·QR 캠페인 온보딩 패널의 미니어처 데모. 한 번 떠오르는
+   엔트런스(rise/pop/draw/bar)만 — 끝나면 멈춘 그림으로 남는다. */
 @keyframes obs-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes obs-pop { 0% { opacity: 0; transform: scale(0.7); } 60% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes obs-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 @keyframes obs-bar { from { transform: scaleX(0.06); opacity: 0.4; } to { transform: scaleX(1); opacity: 1; } }
-@keyframes obs-ping { 0% { opacity: 0; transform: translate(0, 0) scale(0.8); } 15% { opacity: 0.9; } 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); } }
-@keyframes obs-pulse { 0% { opacity: 0.7; transform: scale(0.55); } 100% { opacity: 0; transform: scale(2.2); } }
 .obs-rise { animation: obs-rise 0.6s var(--ease) both; }
 .obs-pop { animation: obs-pop 0.5s var(--ease) both; }
 .obs-draw { stroke-dasharray: 100; animation: obs-draw 1.4s ease-out both; }
 .obs-bar { transform-origin: left center; animation: obs-bar 0.8s var(--ease) both; }
-.obs-ping { animation: obs-ping 2.2s ease-in infinite; }
-.obs-pulse { animation: obs-pulse 1.8s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .obs-rise, .obs-pop, .obs-bar { animation: none; opacity: 1; transform: none; }
   .obs-draw { animation: none; stroke-dashoffset: 0; }
-  .obs-ping, .obs-pulse { animation: none; opacity: 0; }
 }
 
 /* 대시보드 /코드 → 통계 헤더 /코드 모프(StatsMorphLink 페어). 통계 쪽은 정적 명명,
@@ -2432,19 +2174,6 @@ html[data-theme-vt] .vt-post-cover {
 }
 html[data-theme-vt] .vt-link-code {
   view-transition-name: none;
-}
-
-/* 무대 장면 2 — 결과 카드에서 라이브 피드로 날아가는 링크 칩(데스크탑 전용 장식).
-   "공유하면 클릭이 돌아온다"의 왕복을 실제 궤적으로 보여준다. 9s 주기, evi-* 계열. */
-@keyframes s2-fly {
-  0%, 8% { opacity: 0; transform: translate(0, 0) scale(0.8); }
-  14% { opacity: 1; transform: translate(0, 0) scale(1); }
-  38% { opacity: 1; transform: translate(26vw, -90px) scale(0.95); }
-  44%, 100% { opacity: 0; transform: translate(27vw, -96px) scale(0.7); }
-}
-.s2-fly { animation: s2-fly 9s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .s2-fly { animation: none; opacity: 0; }
 }
 
 /* 장부에 클릭이 도착하는 순간(대시보드 라이브 모먼트). 행 전체가 브랜드 그린으로 옅게 물들었다

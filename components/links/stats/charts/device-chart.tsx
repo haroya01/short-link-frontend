@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { useTranslations } from "next-intl";
 import type { DeviceClick } from "@/types";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, formatShare } from "@/lib/utils";
 
 type Props = { data: DeviceClick[] };
 
@@ -29,7 +29,7 @@ function DeviceChartImpl({ data }: Props) {
         className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
         role="img"
         aria-label={sorted
-          .map((d) => `${labelFor(d.device)} ${((d.count / total) * 100).toFixed(0)}%`)
+          .map((d) => `${labelFor(d.device)} ${formatShare(d.count / total)}`)
           .join(", ")}
       >
         {sorted.map((d, i) => {
@@ -39,7 +39,7 @@ function DeviceChartImpl({ data }: Props) {
               key={d.device}
               className="h-full first:rounded-l-full last:rounded-r-full"
               style={{ width: `${pct}%`, background: COLORS[i % COLORS.length] }}
-              title={`${labelFor(d.device)} · ${formatNumber(d.count)} (${pct.toFixed(1)}%)`}
+              title={`${labelFor(d.device)} · ${formatNumber(d.count)} (${formatShare(d.count / total)})`}
             />
           );
         })}
@@ -57,7 +57,7 @@ function DeviceChartImpl({ data }: Props) {
             <span className="tabular-nums text-slate-600 dark:text-slate-300">
               {formatNumber(d.count)}
               <span className="ml-1.5 text-[10px] text-slate-500 dark:text-slate-400">
-                {((d.count / total) * 100).toFixed(0)}%
+                {formatShare(d.count / total)}
               </span>
             </span>
           </li>

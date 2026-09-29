@@ -37,7 +37,7 @@ export function ProtectionSection({
     <div className="space-y-3">
       <p className="text-xs text-slate-500 dark:text-slate-400">{t("protection.description")}</p>
       <div className="space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("protection.passwordLabel")}
         </span>
         <PasswordInput
@@ -69,7 +69,7 @@ export function ProtectionSection({
         )}
       </div>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("protection.maxViewsLabel")}
         </span>
         <Input

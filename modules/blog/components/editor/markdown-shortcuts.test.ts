@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 
 /**
@@ -148,3 +149,97 @@ describe("MarkdownShortcuts (mobile input path)", () => {
     expect(tail?.marks ?? []).toHaveLength(0);
   });
 });
+
+describe("MarkdownShortcuts after a soft line break (single Enter in the editor)", () => {
+  function softBreak() {
+    editor.commands.setHardBreak();
+  }
+  function blocks() {
+    return ((editor.getJSON() as any).content ?? []) as any[];
+  }
+
+  it("splits a '- ' line off into a bullet list", () => {
+    makeEditor();
+    type("First paragraph");
+    softBreak();
+    type("- one");
+    const [first, second] = blocks();
+    expect(first.type).toBe("paragraph");
+    expect(first.content).toEqual([{ type: "text", text: "First paragraph" }]);
+    expect(second.type).toBe("bulletList");
+    expect(second.content?.[0]?.content?.[0]?.content?.[0]?.text).toBe("one");
+  });
+
+  it("turns a '## ' line into a heading of its own", () => {
+    makeEditor();
+    type("Intro");
+    softBreak();
+    type("## Title");
+    const [first, second] = blocks();
+    expect(first.content?.[0]?.text).toBe("Intro");
+    expect(second.type).toBe("heading");
+    expect(second.attrs?.level).toBe(2);
+    expect(second.content?.[0]?.text).toBe("Title");
+  });
+
+  it("turns a '1. ' line into an ordered list", () => {
+    makeEditor();
+    type("Steps");
+    softBreak();
+    type("1. first");
+    expect(blocks()[1]?.type).toBe("orderedList");
+  });
+
+  it("turns a '---' line into a divider below the text", () => {
+    makeEditor();
+    type("Intro");
+    softBreak();
+    type("---");
+    const [first, second] = blocks();
+    expect(first.content?.[0]?.text).toBe("Intro");
+    expect(second.type).toBe("horizontalRule");
+  });
+
+  it("leaves a dash in the middle of a line as text", () => {
+    makeEditor();
+    type("First");
+    softBreak();
+    type("a - b");
+    expect(blocks()).toHaveLength(1);
+    expect(blocks()[0].type).toBe("paragraph");
+  });
+});
+
+describe("MarkdownShortcuts GitHub-style task items", () => {
+  function makeTaskEditor() {
+    editor = new Editor({
+      element: document.createElement("div"),
+      extensions: [StarterKit, TaskList, TaskItem.configure({ nested: true }), MarkdownShortcuts],
+      content: "<p></p>",
+    });
+  }
+
+  it("turns '- [ ] ' into an unchecked task and keeps typing inside it", () => {
+    makeTaskEditor();
+    type("- [ ] buy milk");
+    const top = (editor.getJSON() as any).content?.[0];
+    expect(top?.type).toBe("taskList");
+    expect(top?.content?.[0]?.attrs?.checked).toBe(false);
+    expect(top?.content?.[0]?.content?.[0]?.content?.[0]?.text).toBe("buy milk");
+  });
+
+  it("turns '- [x] ' into a checked task", () => {
+    makeTaskEditor();
+    type("- [x] done");
+    expect((editor.getJSON() as any).content?.[0]?.content?.[0]?.attrs?.checked).toBe(true);
+  });
+
+  it("leaves '[ ] ' inside an existing multi-item bullet list alone", () => {
+    makeTaskEditor();
+    editor.commands.setContent("<ul><li><p>one</p></li><li><p></p></li></ul>");
+    editor.commands.setTextSelection(editor.state.doc.content.size - 3);
+    type("[ ] ");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("bulletList");
+  });
+});
+

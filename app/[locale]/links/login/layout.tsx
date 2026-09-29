@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { messagesScopeLayout } from "@/i18n/messages-scope";
 
 export async function generateMetadata({
   params,
@@ -15,6 +16,4 @@ export async function generateMetadata({
   };
 }
 
-export default function LoginLayout({ children }: { children: React.ReactNode }) {
-  return children;
-}
+export default messagesScopeLayout("links/login");

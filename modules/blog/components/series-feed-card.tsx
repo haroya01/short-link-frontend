@@ -1,9 +1,9 @@
 import { DATE_LOCALE } from "@/lib/date";
 import { getTranslations } from "next-intl/server";
-import { Mark } from "@/components/common/logo";
+import { Layers } from "lucide-react";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
@@ -48,7 +48,7 @@ export async function SeriesFeedCard({
           href={seriesUrl}
           className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
         >
-          <Mark className="h-2.5 w-auto shrink-0" animated />
+          <Layers aria-hidden className="h-3 w-3 shrink-0" />
           {t("seriesEyebrow")}
         </BlogLink>
         <SeriesSubscribeButton seriesId={series.id} />

@@ -1,6 +1,6 @@
-// Shared building blocks for the four OG share cards (root, blog feed, author home, post). One dark,
-// mark-forward visual system + the brand font so every unfurl reads premium and consistent — not a
-// generic template per surface. Imported only by `opengraph-image.tsx` routes (nodejs runtime).
+// Shared building blocks for the four OG share cards (root, blog feed, author home, post): one paper
+// visual system + the brand font so every unfurl matches the site it links to. Imported only by
+// `opengraph-image.tsx` routes (nodejs runtime).
 
 const PRETENDARD_BASE = "https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/public/static";
 
@@ -35,31 +35,25 @@ export async function ogFonts(text: string): Promise<OgFont[]> {
   return loadPretendard();
 }
 
-// Dark, mark-forward palette shared by every card.
+// Paper palette shared by every card — the site's own surface, ink and single green.
 export const OG = {
   size: { width: 2400, height: 1260 },
-  bg: "#0B1120",
-  bgGradient: "linear-gradient(150deg, #131C31 0%, #0B1120 55%, #080D18 100%)",
-  glow: "radial-gradient(900px circle at 12% 0%, rgba(16,185,129,0.16) 0%, rgba(11,17,32,0) 55%)",
-  ink: "#F8FAFC",
-  mute: "#94A3B8",
-  faint: "#64748B",
-  emerald: "#34D399",
+  bg: "#F9FAF9",
+  ink: "#131A16",
+  mute: "#4F5652",
+  faint: "#6D7570",
+  rule: "#E5E8E6",
+  green: "#059669",
+  greenSoft: "#ECFDF5",
+  greenInk: "#047857",
 } as const;
 
-/** The kurl mark (three bars) in the emerald brand gradient. `id` must be unique per card — Satori
- *  resolves SVG gradient ids globally, so two marks sharing an id would collide. */
-export function OgMark({ width = 132, id }: { width?: number; id: string }) {
+/** The kurl mark (three bars), solid brand green. */
+export function OgMark({ width = 132 }: { width?: number }) {
   const height = (width * 18) / 28;
   return (
     <svg width={width} height={height} viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#34D399" />
-          <stop offset="100%" stopColor="#059669" />
-        </linearGradient>
-      </defs>
-      <g fill={`url(#${id})`}>
+      <g fill={OG.green}>
         <rect x="6" y="1" width="20" height="3.4" rx="1" />
         <rect x="0" y="7.3" width="28" height="3.4" rx="1" />
         <rect x="9" y="13.6" width="17" height="3.4" rx="1" />

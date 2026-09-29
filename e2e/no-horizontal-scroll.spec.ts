@@ -8,10 +8,10 @@ import { expect, test } from "@playwright/test";
  *
  * 세로 스크롤바가 없는 환경 기준이라 1px 여유도 두지 않는다 — 0 이 아니면 무언가 삐져나온 것이다.
  */
-const PATHS = ["/ko", "/ko/qr-campaigns", "/ko/demo"];
+const PATHS = ["/ko", "/ko/qr-campaigns", "/ko/demo", "/ja", "/ja/qr-campaigns"];
 
 for (const path of PATHS) {
-  for (const width of [320, 390]) {
+  for (const width of [320, 390, 1280]) {
     test(`${path} 은 ${width}px 에서 가로로 밀리지 않는다`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto(path);

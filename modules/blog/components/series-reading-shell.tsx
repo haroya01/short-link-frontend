@@ -5,7 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
@@ -119,8 +119,8 @@ export function SeriesReadingShell({
     cn(
       "focus-ring inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors",
       active
-        ? "bg-accent-700 text-white"
-        : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
+        ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+        : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100",
     );
   const renderTagChip = ([tag, count]: readonly [string, number]) => {
     const active = isActive({ kind: "tag", value: tag });
@@ -174,7 +174,7 @@ export function SeriesReadingShell({
                 type="button"
                 onClick={() => setTagsOpen((o) => !o)}
                 aria-expanded={tagsOpen}
-                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
               >
                 {tagsOpen ? tf("seriesTagsLess") : tf("seriesTagsMore", { count: tags.length - TAG_CAP })}
               </button>
@@ -205,7 +205,7 @@ export function SeriesReadingShell({
                           className={cn(
                             "focus-ring flex w-full items-baseline justify-between gap-3 rounded-lg px-2 py-1.5 transition-colors",
                             active
-                              ? "bg-accent-50 font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
+                              ? "bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-100"
                               : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50",
                           )}
                         >

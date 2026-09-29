@@ -5,11 +5,9 @@ import {
   BarChart3,
   FileUp,
   Link2,
-  Plus,
   QrCode,
   Search,
   Star,
-  X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -33,6 +31,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable, type LiveBump } from "@/components/links/table";
+import { MobileComposer } from "@/components/links/mobile-composer";
+import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
+import { useSharedUrl } from "@/lib/use-shared-url";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
@@ -59,11 +60,14 @@ export default function DashboardPage() {
     const expiry = params.get("expiry");
     const sort = params.get("sort");
     if (expiry === "EXPIRING_SOON") setFilters((f) => ({ ...f, expiry, after: undefined }));
-    if (sort === "clickCount") setFilters((f) => ({ ...f, sort, dir: params.get("dir") === "asc" ? "asc" : "desc", after: undefined }));
+    if (sort === "humanClickCount" || sort === "clickCount")
+      setFilters((f) => ({ ...f, sort: "humanClickCount", dir: params.get("dir") === "asc" ? "asc" : "desc", after: undefined }));
     if (expiry || sort) history.replaceState(history.state, "", window.location.pathname + window.location.hash);
     setUrlFiltersRead(true);
   }, []);
   const [bulkOpen, setBulkOpen] = useState(false);
+  const [made, setMade] = useState<ShortenedEntry[] | null>(null);
+  const sharedUrl = useSharedUrl();
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [ordering, setOrdering] = useState(false);
   const favorites = useLinkFavorites();
@@ -182,7 +186,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-4 py-6">
+    <div className="container max-w-5xl space-y-4 py-6 max-sm:pb-24">
       <div className="flex items-end justify-between gap-3">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
@@ -195,16 +199,21 @@ export default function DashboardPage() {
             <button type="button" onClick={() => setBulkOpen(true)} className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100 sm:hidden">{t("bulkImport.button")}</button>
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
-            <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
-          </Button>
-          <Link href="/">
-            <Button variant="accent">
-              <Plus className="h-4 w-4" /> {t("newLink")}
-            </Button>
-          </Link>
-        </div>
+        <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
+          <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
+        </Button>
+      </div>
+
+      {/* 로그인한 사람의 홈 — 단축 칸이 맨 위(폰은 엄지 자리의 하단 입력 바가 같은 일을 한다). */}
+      <div className="hidden pb-2 pt-1 sm:block">
+        <ShortenPanel
+          authenticated={authenticated}
+          ready={ready}
+          results={made}
+          onResultsChange={setMade}
+          initialUrl={sharedUrl ?? undefined}
+          onCreated={() => void invalidateLinks()}
+        />
       </div>
 
       <BulkImportDialog
@@ -212,6 +221,7 @@ export default function DashboardPage() {
         onClose={() => setBulkOpen(false)}
         onImported={() => void invalidateLinks()}
       />
+      <MobileComposer initialUrl={sharedUrl ?? undefined} onCreated={() => void invalidateLinks()} />
 
       {firstRun ? (
         // No links yet, no filter → a single clear next step. The stats, campaign card, weekly
@@ -229,22 +239,14 @@ export default function DashboardPage() {
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
                 <Input
+                  type="search"
+                  enterKeyHint="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("searchPlaceholder")}
                   aria-label={t("searchPlaceholder")}
-                  className="pl-9 pr-9"
+                  className="pl-9"
                 />
-                {query && (
-                  <button
-                    type="button"
-                    onClick={() => setQuery("")}
-                    aria-label={t("clearSearch")}
-                    className="focus-ring absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800" role="group" aria-label={t("libraryViews")}>
@@ -258,7 +260,7 @@ export default function DashboardPage() {
                         "focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors",
                         favoritesOnly === fav
                           ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                          : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+                          : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
                       )}
                     >
                       {fav && <Star className="h-3.5 w-3.5" />}

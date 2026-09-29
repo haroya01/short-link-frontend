@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** One entry in the reading list — mirrors the backend BookmarkView. */
 export interface BookmarkItem {

@@ -9,7 +9,7 @@ export const size = OG.size;
 export const contentType = "image/png";
 
 /**
- * Per-post share card — dark, title-first. The post title is the hero (the one piece of text that
+ * Per-post share card — paper, title-first. The post title is the hero (the one piece of text that
  * earns the click); byline = avatar + @handle. Everything else (excerpt, date, reading time) is
  * dropped on purpose — a clean, mark-forward card reads premium, not like a stuffed template. Also the
  * share-parity fallback for image-less posts (DESIGN.md §10.4): no cover → still a branded title card.
@@ -51,10 +51,8 @@ export default async function PostOgImage({
           paddingLeft: 168,
           paddingRight: 168,
           backgroundColor: OG.bg,
-          backgroundImage: `${OG.glow}, ${OG.bgGradient}`,
         }}
       >
-        {/* Signature emerald stripe down the left edge */}
         <div
           style={{
             position: "absolute",
@@ -62,15 +60,15 @@ export default async function PostOgImage({
             bottom: 0,
             left: 0,
             width: 28,
-            backgroundImage: "linear-gradient(180deg, #34D399 0%, #059669 100%)",
+            backgroundColor: OG.green,
           }}
         />
 
         {/* Eyebrow — mark + product wordmark */}
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <OgMark width={96} id="post-mark" />
+          <OgMark width={96} />
           <div style={{ display: "flex", fontFamily: "Pretendard", fontSize: 50, fontWeight: 700, letterSpacing: -1.5, color: OG.ink }}>
-            kurl<span style={{ color: OG.faint }}> log</span>
+            kurl<span style={{ color: OG.faint, marginLeft: 13 }}>log</span>
           </div>
         </div>
 
@@ -95,7 +93,7 @@ export default async function PostOgImage({
         <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
           {avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img alt="" src={avatar} width={84} height={84} style={{ width: 84, height: 84, borderRadius: 42, objectFit: "cover", border: "4px solid rgba(255,255,255,0.10)" }} />
+            <img alt="" src={avatar} width={84} height={84} style={{ width: 84, height: 84, borderRadius: 42, objectFit: "cover", border: `3px solid ${OG.rule}` }} />
           ) : (
             <div
               style={{
@@ -103,10 +101,10 @@ export default async function PostOgImage({
                 width: 84,
                 height: 84,
                 borderRadius: 42,
-                backgroundImage: "linear-gradient(135deg, #34D399 0%, #059669 100%)",
+                backgroundColor: OG.greenSoft,
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#06281d",
+                color: OG.greenInk,
                 fontFamily: "Pretendard",
                 fontSize: 42,
                 fontWeight: 700,

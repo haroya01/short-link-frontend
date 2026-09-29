@@ -3,13 +3,15 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { ViewTransitions } from "next-view-transitions";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { rootClientMessages } from "@/i18n/client-namespaces";
+import { CLIENT_MESSAGE_SCOPES, pickMessages } from "@/i18n/client-namespaces";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JetBrains_Mono } from "next/font/google";
+import { FirstLoadMark } from "@/components/common/first-load-mark";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
+import { ThemeColorSync } from "@/components/common/theme-color-sync";
 import "../globals.css";
 
 /*
@@ -31,6 +33,9 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "600"],
   variable: "--font-mono",
   display: "swap",
+  // 보조 글꼴(URL·숫자·코드) — 모든 화면 머리의 preload 로 본문 글꼴·스크립트와 대역을 다투지 않게,
+  // 쓰이는 순간 받는다. 교체 이동은 next/font 의 메트릭 맞춤 폴백이 막는다.
+  preload: false,
 });
 import { routing } from "@/i18n/routing";
 
@@ -51,7 +56,7 @@ export function generateStaticParams() {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#059669",
+  themeColor: "#ffffff",
 };
 
 export async function generateMetadata({
@@ -199,6 +204,8 @@ export default async function RootLayout({
   const platformHost = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
   const themeInitScript =
     "(function(){try{" +
+    // 첫 하드 로드 표식 — 서버 HTML 로 연 화면은 진입 모션 없이 그린다(첫 내비게이션에 FirstLoadMark 가 뗌).
+    "document.documentElement.setAttribute('data-first-load','');" +
     "var h=location.hostname,P=" + JSON.stringify(platformHost) + ",onP=(h===P||h.endsWith('.'+P));" +
     "var seg=location.pathname.split('/')[2];" +
     "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
@@ -209,7 +216,10 @@ export default async function RootLayout({
     // 창을 밀어 둔다(주 1회만 와도 선택이 유지). 서버 Set-Cookie 경유가 정석이지만 /api/* 는
     // 프록시 계층에서 백엔드로 넘어갈 수 있어 여기서 처리한다.
     "if(m){document.cookie=n+'='+m[1]+'; path=/; max-age=31536000; samesite=lax'+(onP?'; domain=.'+P:'');}" +
+    "if(navigator.share){document.documentElement.dataset.share='1';}" +
     authHintScript +
+    // 로그인한 사람의 링크 제품 홈은 대시보드 — 슬로건 화면을 그리기 전에 넘긴다(공유로 들어온 쿼리째).
+    "if(document.documentElement.dataset.authHint&&n==='kurl_theme'&&/^\\/[a-z]{2}\\/?$/.test(location.pathname)){location.replace(location.pathname.replace(/\\/?$/,'/dashboard')+location.search+location.hash);}" +
     "}catch(e){}})()";
 
   return (
@@ -234,11 +244,6 @@ export default async function RootLayout({
             loaded — upgrading to Pretendard without ever blocking first paint. */}
         {/* Pretendard 는 /pretendard/* 자사 프록시(next.config rewrites)로 — jsdelivr
             preconnect 불필요, 폰트 요청이 본문과 같은 커넥션을 탄다. */}
-        {/* PostHog warms up off the critical path, but its first config/flags fetches still paid
-            full DNS+TLS on mobile (~660ms est. in Lighthouse). us-assets serves plain <script>
-            loads (no-cors), us.i is fetch/XHR (cors) — hence the crossOrigin split. */}
-        <link rel="preconnect" href="https://us-assets.i.posthog.com" />
-        <link rel="preconnect" href="https://us.i.posthog.com" crossOrigin="anonymous" />
         <link
           rel="preload"
           as="style"
@@ -250,11 +255,30 @@ export default async function RootLayout({
           data-pretendard=""
           href="/pretendard/pretendardvariable-dynamic-subset.min.css"
         />
+        {/* ja 로케일만: Pretendard JP(동일 파운드리·메트릭 호환)를 겹쳐 일본 신자체 자형을
+            네이티브로. KR판 단독으로는 신자체 한자(読·気 등) 상당수가 글자 단위 시스템 폴백으로
+            떨어져 자형 혼합("중화폰트" 질감)이 났다 — 일본 독자 즉시 이탈 신호. 로딩 패턴은 위
+            KR판과 동일한 비차단 3종 세트, globals.css 의 :lang(ja) font-family 가 소비한다. */}
+        {locale === "ja" && (
+          <>
+            <link
+              rel="preload"
+              as="style"
+              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+            />
+            <link
+              rel="stylesheet"
+              media="print"
+              data-pretendard=""
+              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+            />
+          </>
+        )}
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var l=document.querySelector('link[data-pretendard]');if(!l)return;var a=function(){l.media='all'};if(l.sheet)a();else l.addEventListener('load',a,{once:true});})();",
+              "(function(){var ls=document.querySelectorAll('link[data-pretendard]');for(var i=0;i<ls.length;i++){(function(l){var a=function(){l.media='all'};if(l.sheet)a();else l.addEventListener('load',a,{once:true});})(ls[i]);}})();",
           }}
         />
         <noscript>
@@ -264,18 +288,29 @@ export default async function RootLayout({
             rel="stylesheet"
             href="/pretendard/pretendardvariable-dynamic-subset.min.css"
           />
+          {locale === "ja" && (
+            // eslint-disable-next-line @next/next/no-css-tags
+            <link
+              rel="stylesheet"
+              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+            />
+          )}
         </noscript>
       </head>
       <body className="min-h-screen flex flex-col">
         {/* messages 미지정 시 next-intl 이 카탈로그 전체를 자동 임베드(45–56KB gz/페이지) —
-            공용 클라이언트 네임스페이스만 싣고, links·admin 전용분은 각 세그먼트 레이아웃의
-            중첩 프로바이더가 공급한다(i18n/client-namespaces.ts). */}
-        <NextIntlClientProvider locale={locale} messages={rootClientMessages(await getMessages())}>
+            루트는 제품 레이아웃 밖 클라이언트(오프라인 띠·에러 경계)가 쓰는 것만 싣고, 제품·화면별
+            문구는 각 레이아웃의 메시지 스코프가 얹는다(i18n/client-namespaces.ts). */}
+        <NextIntlClientProvider
+          locale={locale}
+          messages={pickMessages(await getMessages({ locale }), CLIENT_MESSAGE_SCOPES.root)}
+        >
           <OfflineBanner />
           {children}
         </NextIntlClientProvider>
         {/* Load-fade marker for lazy content images (img.img-fade) — see the component doc. */}
         <ImageFade />
+        <FirstLoadMark />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
@@ -284,6 +319,7 @@ export default async function RootLayout({
         {/* Privacy-friendly analytics — no cookies, no PII collection. Matches the cookie banner
             promise of "no analytics cookies." */}
         <Analytics />
+        <ThemeColorSync />
         <SpeedInsights />
       </body>
     </html>

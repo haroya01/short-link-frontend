@@ -8,7 +8,6 @@ import type { PostStatus } from "@/modules/blog/api/posts";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
@@ -238,7 +237,7 @@ export function PublishDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center scrim p-0 sm:items-center sm:p-4"
       // Push the whole sheet up above the on-screen keyboard on mobile (0 on desktop).
       style={{ paddingBottom: keyboardInset || undefined }}
     >
@@ -299,7 +298,7 @@ export function PublishDialog({
                   )}
                   <p
                     className={`mt-1 line-clamp-2 text-card-title-sm font-bold leading-[1.3] tracking-tight ${
-                      title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"
+                      title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400"
                     }`}
                   >
                     {title.trim() || t("untitled")}
@@ -345,7 +344,7 @@ export function PublishDialog({
               ) : cover ? (
                 <>
                   {autoCover && (
-                    <span className="text-[11px] text-slate-400 dark:text-slate-500">{t("coverAuto")}</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">{t("coverAuto")}</span>
                   )}
                   <button
                     type="button"
@@ -427,7 +426,7 @@ export function PublishDialog({
                   className={`h-4 w-4 text-slate-400 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
                 />
               </span>
-              <span className="min-w-0 truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+              <span className="min-w-0 truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
                 {addressPrefix}
                 {slug}
               </span>
@@ -484,7 +483,7 @@ export function PublishDialog({
                     <div
                       role="radiogroup"
                       aria-label={t("publishTiming")}
-                      className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-700"
+                      className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
                     >
                       <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
                         {t("publishNow")}
@@ -537,7 +536,7 @@ export function PublishDialog({
                               <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                               <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
                                 {host}
-                                <span className="text-slate-500 dark:text-slate-500">
+                                <span className="text-slate-500 dark:text-slate-400">
                                   {url.slice(url.indexOf(host) + host.length)}
                                 </span>
                               </span>
@@ -648,12 +647,12 @@ export function PublishDialog({
   );
 }
 
-/** Segmented-control button — the active segment gets the accent fill, the rest stay quiet. */
+/** Segmented-control button — the house segment: white on the gray track, ink text. */
 function segBtn(active: boolean) {
-  return `focus-ring rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+  return `focus-ring min-h-9 rounded-md px-3 text-[13px] font-medium transition-colors ${
     active
-      ? "bg-accent-700 text-white"
-      : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
   }`;
 }
 
@@ -664,7 +663,7 @@ function CharCount({ value, max }: { value: string; max: number }) {
   return (
     <p
       className={`mt-1 text-right text-[11px] tabular-nums ${
-        near ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-500"
+        near ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400"
       }`}
     >
       {n}/{max}
@@ -686,7 +685,6 @@ function Field({
   return (
     <div>
       <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
-        <BrandTick />
         {label}
         {required && (
           <span className="text-accent-600 dark:text-accent-400" aria-hidden>
@@ -726,7 +724,7 @@ function PrimaryAction({
   onCancelSchedule: () => void;
 }) {
   const solid =
-    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
+    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50";
   if (status === "DRAFT") {
     // The tag requirement is a teachable click (onPublish nudges the tag field) rather than a
     // disabled button, so Publish/Schedule stay enabled. Schedule still gates on a picked time —

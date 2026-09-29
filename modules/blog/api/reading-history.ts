@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** One entry in the reader's history — the post + its author + when it was last read. */
 export interface ReadingHistoryEntry {

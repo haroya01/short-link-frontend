@@ -1,10 +1,12 @@
 import { request } from "@/lib/api/client";
-import { USE_MOCKS, mockFollowingView } from "@/modules/blog/api/_mocks";
 import type { PublicFeedView } from "@/modules/blog/api/public-posts";
+import { blogMocks } from "@/modules/blog/api/_mock-gates";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** Authenticated — posts from authors the current user follows (the "피드" tab). */
 export function listFollowingFeed(page = 0, size = 24): Promise<PublicFeedView> {
-  if (USE_MOCKS) return Promise.resolve(mockFollowingView());
+  if (blogMocks) return Promise.resolve(blogMocks.mockFollowingView());
   return request<PublicFeedView>(`/api/v1/feed/following?page=${page}&size=${size}`, {
     method: "GET",
   });
@@ -16,7 +18,7 @@ export function listFollowingFeed(page = 0, size = 24): Promise<PublicFeedView> 
  * trending server-side, so a signed-in reader always gets something.
  */
 export function listForYouFeed(page = 0, size = 24): Promise<PublicFeedView> {
-  if (USE_MOCKS) return Promise.resolve(mockFollowingView());
+  if (blogMocks) return Promise.resolve(blogMocks.mockFollowingView());
   return request<PublicFeedView>(`/api/v1/feed/for-you?page=${page}&size=${size}`, {
     method: "GET",
   });

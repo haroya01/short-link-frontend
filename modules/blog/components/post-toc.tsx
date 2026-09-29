@@ -6,6 +6,7 @@ import { List, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { usePresence } from "@/hooks/use-presence";
 
 export type TocHeading = { id: string; legacyId?: string; text: string; level: number };
@@ -59,7 +60,20 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
       const el = document.getElementById(h.id);
       if (el) observer.observe(el);
     }
-    return () => observer.disconnect();
+    // 바닥 클램프 — 상단 25% 밴드 스파이는 문서 끝에서 마지막 헤딩이 밴드에 못 들어와 활성이
+    // 본문 중간 항목에 고착됐다(적대 검증 r4: 추천·댓글 영역인데 TOC 는 중간을 가리킴). 끝에
+    // 도달하면 마지막 항목으로 스냅.
+    const last = headings[headings.length - 1];
+    const clampToEnd = () => {
+      if (!last) return;
+      const doc = document.documentElement;
+      if (window.scrollY + window.innerHeight >= doc.scrollHeight - 160) setActive(last.id);
+    };
+    window.addEventListener("scroll", clampToEnd, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", clampToEnd);
+    };
   }, [headings]);
 
   function jumpTo(e: React.MouseEvent, id: string) {
@@ -80,7 +94,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
               aria-current={active === h.id ? "location" : undefined}
               className={`block truncate rounded transition-colors focus-ring ${
                 active === h.id
-                  ? "font-medium text-accent-700 dark:text-accent-400"
+                  ? "font-semibold text-slate-900 dark:text-slate-100"
                   : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
             >
@@ -100,6 +114,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
 export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
+  const hidden = useHideOnScroll();
   const dialogRef = useRef<HTMLDivElement>(null);
   // Hold the sheet mounted through its exit (sheet-down / scrim fade) instead of popping on close.
   const { mounted, closing } = usePresence(open, 240);
@@ -119,9 +134,12 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
         onClick={() => setOpen(true)}
         aria-label={t("toc")}
         aria-haspopup="dialog"
-        className="focus-ring fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-[13px] font-medium text-slate-700 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-200 sm:bottom-5"
+        tabIndex={hidden ? -1 : undefined}
+        className={`focus-ring fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-[opacity,transform,border-color] duration-200 hover:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 sm:bottom-5 ${
+          hidden ? "pointer-events-none translate-y-3 opacity-0" : ""
+        }`}
       >
-        <List className="h-4 w-4 text-accent-600" />
+        <List aria-hidden className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         {t("toc")}
       </button>
       {mounted && portalReady && createPortal(
@@ -140,7 +158,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
             aria-hidden
             tabIndex={-1}
             onClick={() => setOpen(false)}
-            className={`absolute inset-0 bg-slate-900/30 motion-reduce:animate-none ${
+            className={`absolute inset-0 scrim motion-reduce:animate-none ${
               closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
             }`}
           />
