@@ -77,7 +77,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
           <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
             <AppHeader product="blog" />
             <WorkspaceBody>{children}</WorkspaceBody>
-            {!isEditorCanvas && <Footer />}
+            {!isEditorCanvas && <Footer app="blog" />}
           </div>
         </SidebarStateProvider>
         <CookieConsent darkAware />
@@ -103,7 +103,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
               (post, tags, author) keep the compact 🔍. */}
           <AppHeader showMenu={false} searchOpen={internalPath === "/"} slimMobile product="blog" />
           <main className="flex-1 pb-20 sm:pb-0">{children}</main>
-          <Footer />
+          <Footer app="blog" />
         </div>
         {/* Mobile-only bottom tab bar (thumb-reachable nav); desktop uses the header. */}
         <BlogBottomNav />

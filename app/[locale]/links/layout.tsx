@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { MessagesScope } from "@/i18n/messages-scope";
+import { IOS_APP_ID } from "@/lib/app-store";
 import { LinksChrome } from "./links-chrome";
+
+// iPhone Safari 스마트 앱 배너. 공개 프로필(/u)·모집(/e)은 이 세그먼트 밖이라 배너가 붙지 않는다.
+export const metadata: Metadata = { itunes: { appId: IOS_APP_ID.links } };
 
 /**
  * links 세그먼트의 서버 레이아웃 — 크롬과 홈이 쓰는 메시지 스코프를 싣는다(하위 화면 문구는 각

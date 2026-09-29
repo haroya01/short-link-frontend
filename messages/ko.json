@@ -2379,6 +2379,7 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "서비스 소개",
+    "iosApp": "iPhone 앱",
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
     "github": "GitHub"
@@ -2567,6 +2568,14 @@
       "ctas": "CTA 라이브러리",
       "ctasDesc": "링크에 붙일 안내 배너를 관리해요"
     },
+    "appsTitle": "앱",
+    "apps": {
+      "links": "kurl.me 앱",
+      "linksDesc": "iPhone에서 링크를 줄이고 클릭을 봐요",
+      "blog": "컬로그 앱",
+      "blogDesc": "iPhone에서 글을 읽고 써요"
+    },
+    "appsScanHint": "폰 카메라로 QR을 찍으면 App Store가 열려요",
     "accountTitle": "계정",
     "settings": "설정"
   },
