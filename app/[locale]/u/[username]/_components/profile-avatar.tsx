@@ -25,6 +25,7 @@ export function ProfileAvatar({ avatarUrl, username, hasBanner, colors }: Props)
   if (!avatarUrl || failed) {
     return (
       <div
+        data-profile-avatar
         className={`grid h-24 w-24 place-items-center rounded-full text-[28px] font-semibold shadow-sm ring-4 ${ring} ${colors.avatar} ${colors.avatarText}`}
       >
         {initial}
@@ -33,7 +34,7 @@ export function ProfileAvatar({ avatarUrl, username, hasBanner, colors }: Props)
   }
 
   return (
-    <div className={`h-24 w-24 overflow-hidden rounded-full shadow-sm ring-4 ${ring}`}>
+    <div data-profile-avatar className={`h-24 w-24 overflow-hidden rounded-full shadow-sm ring-4 ${ring}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={avatarUrl}

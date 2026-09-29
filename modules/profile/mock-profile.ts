@@ -27,13 +27,20 @@ function link(
   };
 }
 
+// 표지가 있는 프로필을 백엔드 없이 그리기 위한 단색 표지(외부 이미지 없이 CI 에서도 뜬다).
+const MOCK_BANNER =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='1500' height='500'><rect width='1500' height='500' fill='#1f3a2e'/></svg>",
+  );
+
 export function mockPublicProfile(username: string): PublicProfile {
   return {
     username,
     bio: "프로덕트 만들고 글 씁니다. 모든 링크는 여기에.",
     theme: null,
     avatarUrl: null,
-    bannerUrl: null,
+    bannerUrl: MOCK_BANNER,
     socials: [],
     publishedPostCount: 12,
     hideFollowerCount: false,
