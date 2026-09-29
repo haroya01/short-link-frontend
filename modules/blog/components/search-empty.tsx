@@ -37,21 +37,16 @@ export async function SearchEmpty({
         {t("searchEmptyBody")}
       </p>
 
-      <form action="" method="get" className="mt-6 flex w-full max-w-sm items-center gap-2">
+      <form action="" method="get" className="mt-6 w-full max-w-sm">
         <input
           type="search"
           name="q"
           defaultValue={query}
+          enterKeyHint="search"
           aria-label={t("searchPlaceholder")}
           placeholder={t("searchPlaceholder")}
-          className="focus-ring h-10 min-w-0 flex-1 rounded-full border border-slate-200 bg-white px-4 text-[14px] text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          className="focus-ring h-10 w-full rounded-full border border-slate-200 bg-white px-4 text-[14px] text-slate-900 placeholder:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
         />
-        <button
-          type="submit"
-          className="focus-ring h-10 shrink-0 rounded-full bg-accent-700 px-4 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800"
-        >
-          {t("searchSubmit")}
-        </button>
       </form>
 
       {topics.length > 0 && (
