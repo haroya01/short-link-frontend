@@ -185,6 +185,7 @@ export async function bulkImportLinks(file: File): Promise<BulkImportSummary> {
   const { text, headers } = await requestText("/api/v1/links/bulk", {
     method: "POST",
     body: form,
+    timeoutMs: 0,
   });
   return {
     ok: Number(headers.get("X-Bulk-Ok") ?? 0),

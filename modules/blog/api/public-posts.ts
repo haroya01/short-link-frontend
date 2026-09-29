@@ -9,6 +9,7 @@ import { cache } from "react";
 import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -189,7 +190,7 @@ async function fetchPublic<T>(
   // prerenders at build) must degrade to the page's empty state — not 500 the render or fail the
   // build. ISR refills within REVALIDATE_SECONDS once the API answers again.
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       url,
       opts?.noStore ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } },
     );
