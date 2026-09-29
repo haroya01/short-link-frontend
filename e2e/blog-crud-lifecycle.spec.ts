@@ -168,7 +168,7 @@ async function openEditor(page: Page) {
 }
 
 function titleInput(page: Page) {
-  return page.locator('input[type="text"][autocomplete="off"]').first();
+  return page.locator('textarea[autocomplete="off"]').first();
 }
 
 async function openPublishDialog(page: Page) {
