@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { messagesScopeLayout } from "@/i18n/messages-scope";
 
 export async function generateMetadata({
   params,
@@ -12,6 +13,4 @@ export async function generateMetadata({
   };
 }
 
-export default function StatsLayout({ children }: { children: React.ReactNode }) {
-  return children;
-}
+export default messagesScopeLayout("links/stats/[code]");

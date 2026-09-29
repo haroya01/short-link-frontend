@@ -44,7 +44,7 @@ export function SwitchLink({
       <span>{children}</span>
       <ArrowUpRight
         className={cn(
-          "text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 dark:text-slate-500",
+          "text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 dark:text-slate-400",
           size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4",
         )}
         aria-hidden

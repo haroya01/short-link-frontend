@@ -46,14 +46,12 @@ export function StatsBody({
   data: sourceData,
   shortUrl,
   shortCodeLabel,
-  onCopy,
   onTick,
   demo = false,
 }: {
   data: LinkStats;
   shortUrl: string;
   shortCodeLabel: string;
-  onCopy: () => void;
   onTick: () => void;
   demo?: boolean;
 }) {
@@ -103,13 +101,12 @@ export function StatsBody({
         data={data}
         shortUrl={shortUrl}
         shortCodeLabel={shortCodeLabel}
-        onCopy={onCopy}
         demo={demo}
         onSettings={() => setView("settings")}
         settingsActive={view === "settings"}
       />
       {data.totalClicks === 0 && view !== "settings" && (
-        <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />
+        <StatsEmptyState />
       )}
       <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who"]} />
       {view !== "settings" && (

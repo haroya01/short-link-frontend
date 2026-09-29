@@ -85,7 +85,7 @@ export function PublishCelebration({ slug }: { slug: string }) {
           헤더(h-14) 바로 아래 띠에 떠서 제목을 가리지 않는다. */}
       <div className="absolute left-1/2 top-[4.5rem] -translate-x-1/2">
         <div className={phase === "in" ? "celebrate-pill-in" : "animate-fade-out"}>
-          <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white/95 py-2.5 pl-3 pr-5 shadow-card-hover backdrop-blur dark:border-slate-700 dark:bg-slate-900/95">
+          <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-2.5 pl-3 pr-5 shadow-card-hover dark:border-slate-700 dark:bg-slate-900">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-700 text-white">
               <Check className="h-3.5 w-3.5" />
             </span>

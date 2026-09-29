@@ -4,21 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
-import {
-  isValidUrl,
-  setLinkOgOverride,
-  setLinkProtection,
-  setLinkTags,
-  updateLink,
-} from "@/lib/api";
+import { isValidUrl, setLinkOgOverride, setLinkTags, updateLink } from "@/lib/api";
 import { useLinkDetail, useTags } from "@/lib/api/links.queries";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { SectionTabs } from "@/components/links/edit-link-dialog/section-tabs";
 import { BasicSection } from "@/components/links/edit-link-dialog/sections/basic-section";
 import { OgOverrideSection } from "@/components/links/edit-link-dialog/sections/og-override-section";
-import { ProtectionSection } from "@/components/links/edit-link-dialog/sections/protection-section";
 import { TagsSection } from "@/components/links/edit-link-dialog/sections/tags-section";
-import { blankToNull, buildExpiryPatch, toLocalInput, type Section } from "@/components/links/edit-link-dialog/utils";
+import { blankToNull, type Section } from "@/components/links/edit-link-dialog/utils";
+import { Link } from "@/i18n/navigation";
 import type { MyLink } from "@/types";
 
 type Props = {
@@ -28,25 +22,19 @@ type Props = {
 };
 
 /**
- * Modal dialog for editing a link's metadata. Drives four sub-sections (basic / tags / OG override
- * / protection) and saves them in a single submit, calling each backend endpoint only when its
- * slice actually changed. Each sub-section is a pure presentational component — all state +
- * change-detection is owned here.
+ * Modal dialog for what a link IS — name, destination, tags, share card — saved in one submit,
+ * calling each endpoint only when its slice changed. How it BEHAVES (password, expiry, scheduled
+ * opening, visit options) lives in the stats page's link settings; the dialog links there.
  */
 export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const t = useTranslations("edit");
   const errorMessage = useApiErrorMessage();
   const [section, setSection] = useState<Section>("basic");
   const [originalUrl, setOriginalUrl] = useState("");
-  const [expiresAt, setExpiresAt] = useState("");
   const [note, setNote] = useState("");
-  const [expiredMessage, setExpiredMessage] = useState("");
   const [ogTitle, setOgTitle] = useState("");
   const [ogDescription, setOgDescription] = useState("");
   const [ogImage, setOgImage] = useState("");
-  const [password, setPassword] = useState("");
-  const [removePassword, setRemovePassword] = useState(false);
-  const [maxViewsInput, setMaxViewsInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,16 +55,11 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     if (!link) return;
     setSection("basic");
     setOriginalUrl(link.originalUrl);
-    setExpiresAt(link.expiresAt ? toLocalInput(link.expiresAt) : "");
     setOgTitle("");
     setOgDescription("");
     setOgImage("");
-    setPassword("");
-    setRemovePassword(false);
-    setMaxViewsInput("");
     setTags(link.tags ?? []);
     setNote("");
-    setExpiredMessage("");
     setError(null);
   }, [link]);
 
@@ -86,10 +69,8 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     setOgTitle(detail.ogTitleOverride ?? "");
     setOgDescription(detail.ogDescriptionOverride ?? "");
     setOgImage(detail.ogImageOverride ?? "");
-    setMaxViewsInput(detail.maxViews != null ? String(detail.maxViews) : "");
     setTags(detail.tags ?? []);
     setNote(detail.note ?? "");
-    setExpiredMessage(detail.expiredMessage ?? "");
   }, [detail]);
 
   // Escape / backdrop / focus-trap / scroll-lock / portal are all handled by ConfirmDialog now.
@@ -120,7 +101,6 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
       await applyBasic();
       await applyTags();
       await applyOgOverride();
-      await applyProtection();
       toast(t("saved"), "success");
       onSaved();
     } catch (err) {
@@ -135,16 +115,11 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     if (!link) return;
     const trimmed = originalUrl.trim();
     const urlChanged = trimmed.length > 0 && trimmed !== link.originalUrl;
-    const expiry = buildExpiryPatch(link.expiresAt ?? null, expiresAt);
-    const expiresChanged = Object.keys(expiry).length > 0;
     const noteChanged = (detail?.note ?? "") !== note;
-    const expiredChanged = (detail?.expiredMessage ?? "") !== expiredMessage;
-    if (!urlChanged && !expiresChanged && !noteChanged && !expiredChanged) return;
+    if (!urlChanged && !noteChanged) return;
     await updateLink(link.shortCode, {
       originalUrl: urlChanged ? trimmed : undefined,
-      ...expiry,
       note: noteChanged ? note : undefined,
-      expiredMessage: expiredChanged ? expiredMessage : undefined,
     });
   }
 
@@ -178,29 +153,6 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     await setLinkOgOverride(link.shortCode, next);
   }
 
-  async function applyProtection() {
-    if (!link || !detail) return;
-    const trimmedMax = maxViewsInput.trim();
-    let nextMaxViews: number | null;
-    if (!trimmedMax) {
-      nextMaxViews = null;
-    } else {
-      const parsed = Number(trimmedMax);
-      if (!Number.isFinite(parsed) || parsed < 1 || !Number.isInteger(parsed)) {
-        throw new Error(t("protection.maxViewsInvalid"));
-      }
-      nextMaxViews = parsed;
-    }
-    const passwordChanged = password.length > 0 || removePassword;
-    const maxViewsChanged = nextMaxViews !== detail.maxViews;
-    if (!passwordChanged && !maxViewsChanged) return;
-    const passwordPayload = removePassword ? "" : password.length > 0 ? password : null;
-    await setLinkProtection(link.shortCode, {
-      password: passwordPayload,
-      maxViews: nextMaxViews,
-    });
-  }
-
   return (
     <ConfirmDialog
       open
@@ -222,15 +174,11 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
         {section === "basic" && (
           <BasicSection
             originalUrl={originalUrl}
-            expiresAt={expiresAt}
             note={note}
-            expiredMessage={expiredMessage}
             busy={busy}
             loadingDetail={loadingDetail}
             onOriginalUrlChange={setOriginalUrl}
-            onExpiresAtChange={setExpiresAt}
             onNoteChange={setNote}
-            onExpiredMessageChange={setExpiredMessage}
             t={t}
           />
         )}
@@ -258,28 +206,25 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
             t={t}
           />
         )}
-        {section === "protection" && (
-          <ProtectionSection
-            password={password}
-            removePassword={removePassword}
-            passwordProtected={Boolean(detail?.passwordProtected)}
-            maxViewsInput={maxViewsInput}
-            viewCount={detail?.viewCount ?? 0}
-            maxViews={detail?.maxViews ?? null}
-            busy={busy}
-            loadingDetail={loadingDetail}
-            onPasswordChange={setPassword}
-            onRemovePasswordChange={setRemovePassword}
-            onMaxViewsChange={setMaxViewsInput}
-            t={t}
-          />
-        )}
-
         {error && (
           <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
             {error}
           </p>
         )}
+
+        <p className="mt-4 border-t border-slate-100 pt-3 text-[12px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          {t.rich("behaviorHint", {
+            settings: (chunks) => (
+              <Link
+                href={`/stats/${link.shortCode}#settings`}
+                onClick={onClose}
+                className="focus-ring rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
     </ConfirmDialog>
   );
 }

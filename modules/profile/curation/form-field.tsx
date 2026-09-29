@@ -20,7 +20,7 @@ export function FormField({
 }) {
   return (
     <label className={`block space-y-1 ${className ?? ""}`}>
-      <span className="text-xs font-medium text-slate-700">
+      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
         {label}
         {required && <span className="ml-1 text-red-500">*</span>}
       </span>

@@ -16,7 +16,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
@@ -195,7 +195,7 @@ export function NotificationItem({
             className={cn(
               "h-2.5 w-2.5",
               item.type === "LIKE" && "fill-current",
-              item.read ? "text-slate-400 dark:text-slate-500" : "text-accent-600 dark:text-accent-400",
+              item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
             )}
           />
         </span>
@@ -205,9 +205,10 @@ export function NotificationItem({
           className={cn(
             "block leading-snug",
             roomy ? "text-[14px]" : "text-[13px]",
-            item.read ? "text-slate-500 dark:text-slate-400" : "text-slate-700 dark:text-slate-200",
+            item.read ? "text-slate-500 dark:text-slate-400" : "font-medium text-slate-800 dark:text-slate-100",
           )}
         >
+          {!item.read && <span className="sr-only">{t("unreadLabel")}: </span>}
           {message}
         </span>
         {subtitle && (
@@ -221,7 +222,7 @@ export function NotificationItem({
             {subtitle}
           </span>
         )}
-        <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-500">
+        <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">
           {relative(item.createdAt)}
         </span>
       </span>

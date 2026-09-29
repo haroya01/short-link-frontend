@@ -109,7 +109,7 @@ export function AuthorTabs({
   return (
     <nav
       ref={navRef}
-      className="relative mt-6 flex gap-1 overflow-x-auto border-b sm:mt-8 border-slate-100 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
+      className="relative mt-6 flex gap-1 overflow-x-auto border-b sm:mt-7 border-slate-200 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
     >
       {visible.map((tab, i) => (
         <BlogLink
@@ -130,7 +130,7 @@ export function AuthorTabs({
       {bar && (
         <span
           aria-hidden
-          className="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none"
+          className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"
           style={{
             transform: `translateX(${bar.left}px)`,
             width: `${bar.width}px`,

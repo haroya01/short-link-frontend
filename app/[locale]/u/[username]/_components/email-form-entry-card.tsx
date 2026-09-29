@@ -81,6 +81,8 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
             <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2 sm:flex-row">
               <input
                 type="email"
+                autoComplete="email"
+                aria-label={config.placeholder ?? t("defaultPlaceholder")}
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

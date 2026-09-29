@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePresence } from "@/hooks/use-presence";
@@ -66,6 +67,7 @@ function ToastItem({
   onDismiss: () => void;
   onGone: (id: number) => void;
 }) {
+  const t = useTranslations("common");
   const { mounted, closing } = usePresence(!toast.closing, EXIT_MS);
 
   React.useEffect(() => {
@@ -90,7 +92,7 @@ function ToastItem({
       <button
         type="button"
         onClick={onDismiss}
-        aria-label="dismiss"
+        aria-label={t("close")}
         className="grid h-5 w-5 place-items-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"
       >
         <X className="h-3 w-3" />

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   BarChart3,
-  Bell,
   Bookmark,
   Check,
   ChevronDown,
@@ -25,11 +24,10 @@ import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
-import { blogHref, linksHref, type Product } from "@/lib/host";
-import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
+import { blogHref, linksHref } from "@/lib/host";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -39,27 +37,13 @@ const ITEM =
   "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
- * Mobile account bottom sheet. `product` slims it per surface:
- *  - "blog" (default): the full personal menu — the viewer's two surfaces (블로그/프로필), workspace
- *    entries (내 글/리드/…), the cross-product switch, language, sign out.
- *  - "links": kurl is its own app, so only 설정·테마·언어·로그아웃 here — its profile + blog↔kurl
- *    switch live in the bottom nav / top Nav instead, not duplicated in the sheet.
+ * The blog's mobile account sheet: the viewer's two surfaces (블로그/프로필), workspace entries
+ * (내 글/리드/…), the cross-product switch, theme, language, sign out. 알림 is its own bottom tab.
  */
-export function AccountSheet({
-  open,
-  onClose,
-  product = "blog",
-}: {
-  open: boolean;
-  onClose: () => void;
-  product?: Product;
-}) {
-  const isLinks = product === "links";
+export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
-  const tNotif = useTranslations("notifications");
   const tBlog = useTranslations("sidebar.blog");
   const tColl = useTranslations("collections");
-  const unread = useUnreadCount();
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
   const router = useRouter();
@@ -122,7 +106,7 @@ export function AccountSheet({
         aria-hidden
         tabIndex={-1}
         onClick={onClose}
-        className={`absolute inset-0 bg-slate-900/30 motion-reduce:animate-none ${
+        className={`absolute inset-0 scrim motion-reduce:animate-none ${
           closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
         }`}
       />
@@ -142,16 +126,11 @@ export function AccountSheet({
             home indicator. */}
         <div className="overflow-y-auto pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         {/* The blog brand lives here on mobile (it's dropped from the slim top bar so the screen leads
-            with the author/post). This anchors the sheet as "where kurl log + the product switch are."
-            On kurl the switch is in the top Nav, so the sheet leads straight with the account. */}
-        {!isLinks && (
-          <>
-            <a href={blogHref("/")} aria-label="kurl log" className="mark-hoverable flex items-center px-3 py-2">
-              <Logo variant="blog" />
-            </a>
-            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-          </>
-        )}
+            with the author/post). This anchors the sheet as "where kurl log + the product switch are." */}
+        <a href={blogHref("/")} aria-label="kurl log" className="mark-hoverable flex items-center px-3 py-2">
+          <Logo variant="blog" />
+        </a>
+        <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
 
         {authenticated && (
           <>
@@ -170,15 +149,6 @@ export function AccountSheet({
               </span>
             </div>
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-            {/* kurl: just settings here — profile is a bottom-nav tab, the blog switch is in the top Nav. */}
-            {isLinks && (
-              <a href={linksHref(`/${locale}/settings`)} className={ITEM}>
-                <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-                {t("settings")}
-              </a>
-            )}
-            {!isLinks && (
-            <>
             {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
             <a href={blogHref("/analytics")} className={ITEM}>
               <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
@@ -207,20 +177,6 @@ export function AccountSheet({
               <Layers className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("myCollections")}
             </a>
-            {/* Notifications — mobile reaches the full page here (the desktop header bell has a
-                dropdown). Unread badge mirrors the desktop bell. */}
-            <a href={blogHref("/notifications")} className={cn(ITEM, "justify-between")}>
-              <span className="inline-flex items-center gap-3">
-                <Bell className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-                {tNotif("title")}
-              </span>
-              {unread > 0 && (
-                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-700 px-1 text-[11px] font-bold text-white">
-                  {unread > 99 ? "99+" : unread}
-                </span>
-              )}
-            </a>
-
             {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach
                 (the bottom nav only has 홈/검색/글쓰기/계정). 분석은 별도 항목이 아니라 글의 facet 이라
                 여기서도 빼고, 내 글(/write) 상단 요약 strip·글별 성과로 들어간다(#602). */}
@@ -241,18 +197,14 @@ export function AccountSheet({
               <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("settings")}
             </a>
-            </>
-            )}
           </>
         )}
 
         {/* Cross-product switch (blog → kurl) — AppsGrid plays the same warp transition as desktop on
-            the cross-product hop. On kurl the switch lives in the top Nav instead, so it's dropped here. */}
-        {!isLinks && (
-          <div className="px-2 py-1.5">
-            <AppsGrid current="blog" />
-          </div>
-        )}
+            the cross-product hop. */}
+        <div className="px-2 py-1.5">
+          <AppsGrid current="blog" />
+        </div>
 
         <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
         <ThemeToggle className={cn(ITEM, "justify-between")} />

@@ -180,7 +180,7 @@ export function TableHandles({ editor }: { editor: Editor }) {
   if (!geom) return null;
 
   const HANDLE =
-    "pointer-events-auto absolute grid place-items-center rounded-md border border-slate-200 bg-white text-slate-400 shadow-sm transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500 dark:hover:border-accent-700 dark:hover:bg-accent-500/10 dark:hover:text-accent-400";
+    "pointer-events-auto absolute grid place-items-center rounded-md border border-slate-200 bg-white text-slate-400 shadow-sm transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-accent-700 dark:hover:bg-accent-500/10 dark:hover:text-accent-400";
 
   const colItems: { icon: LucideIcon; label: string; run: () => boolean; danger?: boolean }[] = [
     { icon: ArrowLeftToLine, label: t("insertColumnLeft"), run: () => editor.commands.addColumnBefore() },
@@ -269,7 +269,7 @@ export function TableHandles({ editor }: { editor: Editor }) {
                     : "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
                 }`}
               >
-                <it.icon className={`h-4 w-4 shrink-0 ${it.danger ? "" : "text-slate-400 dark:text-slate-500"}`} />
+                <it.icon className={`h-4 w-4 shrink-0 ${it.danger ? "" : "text-slate-400 dark:text-slate-400"}`} />
                 {it.label}
               </button>
             ))}

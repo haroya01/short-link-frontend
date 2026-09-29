@@ -7,7 +7,6 @@ import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
-import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 // Static + ISR: nothing here is per-visitor, and the public fetches degrade to an empty state if
@@ -77,14 +76,10 @@ export default async function TagsIndexPage({
 
   return (
     // Same shell as a single topic's page (/tags/[tag]) so selecting a topic is a seamless soft-nav:
-    // identical max-w-7xl main → centered max-w-2xl tabs header → heading → chips → content.
+    // identical max-w-7xl main → centered max-w-2xl heading → chips → content.
     <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-      <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3 dark:border-slate-800">
-        <FeedTabs locale={locale} />
-      </header>
-
-      <div className="mx-auto mt-6 max-w-2xl">
-        <h1 className="text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      <div className="mx-auto max-w-2xl">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("topics")}
         </h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">

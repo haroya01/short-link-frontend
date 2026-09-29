@@ -42,9 +42,9 @@ export function ProfilePublicUrlBanner({
   const display = url.replace(/^https?:\/\//, "");
 
   return (
-    <div className="group flex items-stretch overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-md">
+    <div className="group flex items-stretch overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-md dark:bg-slate-900 dark:border-slate-800 dark:hover:border-slate-700">
       {/* Site chip — matches the kurl wordmark + favicon, gives the row a recognizable left edge */}
-      <div className="flex items-center gap-2 border-r border-slate-200 bg-slate-50/60 px-3 py-3">
+      <div className="flex items-center gap-2 border-r border-slate-200 bg-slate-50/60 px-3 py-3 dark:border-slate-800 dark:bg-slate-800/40">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icon.svg" alt="" className="h-4 w-4 shrink-0" />
       </div>
@@ -57,10 +57,10 @@ export function ProfilePublicUrlBanner({
         rel="noreferrer"
         className="flex min-w-0 flex-1 flex-col justify-center px-3 py-2"
       >
-        <span className="text-[10px] font-medium text-slate-500">
+        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
           {t("yourPage")}
         </span>
-        <span className="truncate font-mono text-[13px] font-medium text-slate-900 group-hover:text-emerald-700">
+        <span className="truncate font-mono text-[13px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
           {display}
         </span>
       </a>
@@ -75,10 +75,10 @@ export function ProfilePublicUrlBanner({
           onClick={copy}
           aria-label={t("copyPublicUrl")}
           title={t("copyPublicUrl")}
-          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
         >
           {copied ? (
-            <Check className="h-3.5 w-3.5 text-emerald-600" />
+            <Check className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
           ) : (
             <Copy className="h-3.5 w-3.5" />
           )}
@@ -97,7 +97,7 @@ export function ProfilePublicUrlBanner({
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-700"
+          className="inline-flex items-center gap-1 rounded-md bg-accent-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {t("openShort")}
           <ExternalLink className="h-3 w-3" />

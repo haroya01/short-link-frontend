@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { deleteCampaignBatch } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import type { CampaignBatch } from "@/types";
+import { formatNumber } from "@/lib/utils";
 
 export function BatchDeleteDialog({
   open,
@@ -53,7 +54,7 @@ export function BatchDeleteDialog({
         <div className="mt-3 space-y-1 rounded-lg bg-slate-50 dark:bg-slate-800/50 px-3 py-2.5 text-[12px] text-slate-600 dark:text-slate-300">
           <p>
             <span className="font-medium text-slate-900 dark:text-slate-100">{batch.name}</span> ·{" "}
-            {t("quantityUnit", { count: batch.quantity.toLocaleString() })}
+            {t("quantityUnit", { count: formatNumber(batch.quantity) })}
           </p>
           <p className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{batch.shortUrl}</p>
         </div>

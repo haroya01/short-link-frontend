@@ -249,7 +249,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
           <span className="text-[12px] font-medium">
             {remaining <= 0 ? t("galleryFull") : t("galleryDropzone")}
           </span>
-          <span className="text-[10px] text-slate-500">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400">
             {t("galleryCounter", { count: slots.length, max: MAX_IMAGES })}
           </span>
           <input
@@ -317,7 +317,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
                 );
               })}
             </div>
-            <p className="text-[10px] text-slate-500">{t("galleryReorderHint")}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">{t("galleryReorderHint")}</p>
           </div>
         )}
       </div>

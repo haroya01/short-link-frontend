@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
+import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/lib/auth";
@@ -245,8 +245,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
           aria-pressed={selectMode}
           className={`focus-ring ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
             selectMode
-              ? "bg-accent-700 text-white"
-              : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+              ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+              : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
           }`}
         >
           <ListChecks className="h-3.5 w-3.5" />
@@ -275,7 +275,7 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
             ))}
           {/* Auto-grouped leftovers */}
           {autoSections.map(([tag, items]) => (
-            <Section key={tag} icon={<Sparkles className="h-3.5 w-3.5" />} title={tag} hint={t("autoGrouped")}>
+            <Section key={tag} icon={<Tag className="h-3.5 w-3.5" />} title={tag} hint={t("autoGrouped")}>
               {items.map((it) => <SavedCard key={it.id} item={it} selected={picked.has(it.id)} {...cardProps} />)}
             </Section>
           ))}
@@ -332,7 +332,7 @@ function BulkBar({
             </button>
             {folders.map((f) => (
               <button key={f.id} type="button" onClick={() => onMove(f.id)} className={bulkMenuItem}>
-                <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+                <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400" />
                 <span className="flex-1 truncate text-left">{f.name}</span>
               </button>
             ))}
@@ -369,7 +369,7 @@ function BulkBar({
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="focus-ring inline-flex items-center gap-1 rounded-full bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
+          className="focus-ring inline-flex items-center gap-1 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
         >
           <FolderPlus className="h-3.5 w-3.5" />
           {t("newFolderTo")}
@@ -402,13 +402,13 @@ function FolderPill({
       aria-pressed={active}
       className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
         active
-          ? "bg-accent-700 text-white"
-          : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+          ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+          : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
       }`}
     >
       {icon && <Folder className="h-3.5 w-3.5" />}
       {label}
-      <span className={active ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count}</span>
+      <span className={active ? "text-white/70 dark:text-slate-900/60" : "text-slate-500 dark:text-slate-400"}>{count}</span>
     </button>
   );
 }
@@ -429,7 +429,7 @@ function Section({
       <h2 className="mb-4 flex items-center gap-1.5 text-[13px] font-bold text-slate-800 dark:text-slate-200">
         <span className="text-accent-600 dark:text-accent-400">{icon}</span>
         {title}
-        {hint && <span className="font-medium text-slate-500 dark:text-slate-500">· {hint}</span>}
+        {hint && <span className="font-medium text-slate-500 dark:text-slate-400">· {hint}</span>}
       </h2>
       <div className="flex flex-col gap-6">{children}</div>
     </section>

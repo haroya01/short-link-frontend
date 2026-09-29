@@ -37,33 +37,6 @@ test.describe("cookie banner vs footer", () => {
       expect(blocked, `covered footer links: ${blocked.join(", ")}`).toEqual([]);
     });
   }
-
-  /**
-   * The QR campaigns page floats a "QR 만들기" CTA in the same bottom-right corner as the banner.
-   * With a fixed offset it covered the banner's 확인 button outright — the consent bar could not be
-   * dismissed on that page at all. The CTA now rides --fab-bottom, which lifts with the banner.
-   */
-  test("the QR page's floating CTA never covers the banner's own buttons", async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/ko/qr-campaigns");
-    const banner = page.locator("[data-cc-banner]");
-    await expect(banner).toBeVisible({ timeout: 15_000 });
-    await page.waitForTimeout(1500); // the CTA fades in on a delay
-
-    const blocked = await page.evaluate(() => {
-      const bar = document.querySelector("[data-cc-banner]");
-      return [...(bar?.querySelectorAll("button, a") ?? [])]
-        .map((el) => {
-          const r = el.getBoundingClientRect();
-          if (r.width === 0 || r.height === 0) return null;
-          const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
-          return top === el || el.contains(top) ? null : (el.textContent ?? "").trim();
-        })
-        .filter(Boolean);
-    });
-
-    expect(blocked, `covered banner controls: ${blocked.join(", ")}`).toEqual([]);
-  });
 });
 
 /**

@@ -33,8 +33,7 @@ function SparklineImpl({ values, width = 64, height = 18, className }: Props) {
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      role="img"
-      aria-label="7-day click trend"
+      aria-hidden
       className={className}
     >
       <polyline

@@ -24,7 +24,7 @@ export default function NewEventPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8">
-      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50">{t("newTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("newTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("newSubtitle")}</p>
       <div className="mt-6">
         <EventForm

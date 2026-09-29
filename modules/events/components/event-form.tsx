@@ -274,7 +274,7 @@ export function EventForm({
       <button
         type="submit"
         disabled={busy || !form.title.trim()}
-        className="flex h-11 items-center justify-center gap-2 rounded-full bg-accent-600 text-[14px] font-semibold text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-accent-700 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {event ? t("save") : t("publish")}
@@ -310,7 +310,7 @@ function DescriptionField({
       />
       {value.trim() ? (
         <div className="rounded-lg border border-slate-200 px-3.5 py-3 dark:border-slate-700">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+          <p className="mb-2 text-[13px] font-semibold text-accent-700 dark:text-accent-400">
             {t("descPreview")}
           </p>
           <div className="prose-text-block text-slate-800 dark:text-slate-200">
@@ -318,7 +318,7 @@ function DescriptionField({
           </div>
         </div>
       ) : null}
-      <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("descriptionHint")}</p>
+      <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("descriptionHint")}</p>
     </div>
   );
 }
@@ -327,7 +327,7 @@ function Section({ title, children }: { title?: string; children: React.ReactNod
   return (
     <section className="flex flex-col gap-4 border-t border-slate-200 pt-6 first:border-t-0 first:pt-0 dark:border-slate-800">
       {title ? (
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+        <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
           {title}
         </h2>
       ) : null}
@@ -352,9 +352,9 @@ function CollapsibleSection({
       open={defaultOpen}
       className="group border-t border-slate-200 pt-1 dark:border-slate-800"
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[13px] font-semibold text-accent-700 dark:text-accent-400 [&::-webkit-details-marker]:hidden">
         {title}
-        <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-400 dark:text-slate-500">
+        <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-500 dark:text-slate-400">
           {t("optional")}
           <span className="text-slate-300 transition-transform group-open:rotate-180 dark:text-slate-600">
             ▾
@@ -418,7 +418,7 @@ function CoverField({ eventId, initialUrl }: { eventId: number; initialUrl: stri
       {error ? (
         <p className="text-[11px] text-red-500">{t("coverFailed")}</p>
       ) : (
-        <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("coverHint")}</p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("coverHint")}</p>
       )}
     </div>
   );
@@ -444,7 +444,7 @@ function Field({
         {required ? <span className="ml-0.5 text-red-500">*</span> : null}
       </label>
       {children}
-      {hint ? <p className="text-[11px] text-slate-400 dark:text-slate-500">{hint}</p> : null}
+      {hint ? <p className="text-[11px] text-slate-500 dark:text-slate-400">{hint}</p> : null}
     </div>
   );
 }

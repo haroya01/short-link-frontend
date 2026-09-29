@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
-import { Mark } from "@/components/common/logo";
 
 /**
  * Cross-product switcher. The header pill shows the *destination* brand (the mark + its wordmark),
@@ -14,9 +13,9 @@ import { Mark } from "@/components/common/logo";
  * the (cross-origin) navigation.
  * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
  */
-const PRODUCTS: { key: Product; href: () => string; labelKey: string; hintKey: string }[] = [
-  { key: "links", href: () => linksHref("/"), labelKey: "linksLabel", hintKey: "linksHint" },
-  { key: "blog", href: () => blogHref("/"), labelKey: "blogLabel", hintKey: "blogHint" },
+const PRODUCTS: { key: Product; href: () => string; hintKey: string }[] = [
+  { key: "links", href: () => linksHref("/"), hintKey: "linksHint" },
+  { key: "blog", href: () => blogHref("/"), hintKey: "blogHint" },
 ];
 
 /** Destination wordmark — blog gets the "blog." prefix in a muted tone over the given base color. */
@@ -73,17 +72,16 @@ export function AppsGrid({ current }: { current?: Product }) {
       <a
         href={dest?.href() ?? "#"}
         onClick={switchTo}
-        className="group mark-hoverable inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white pl-2.5 pr-2 text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800"
-        aria-label={dest ? t(dest.labelKey) : t("trigger")}
+        className="focus-ring group inline-flex h-8 items-center gap-1 rounded-lg px-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        aria-label={dest ? undefined : t("trigger")}
         title={dest ? t(dest.hintKey) : undefined}
       >
-        <Mark className="h-3 text-accent-600" animated />
         <span
           data-wordmark
-          className="min-w-[2.5rem] text-[13px] font-bold leading-none tracking-[-0.04em]"
+          className="min-w-[1.75rem] text-[13px] font-semibold leading-none tracking-[-0.02em]"
           aria-hidden={!dest}
         >
-          {dest ? <Wordmark product={dest.key} muted="text-slate-400" /> : null}
+          {dest ? (dest.key === "blog" ? "kurl log" : "kurl") : null}
         </span>
         <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </a>

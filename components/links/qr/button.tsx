@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -30,6 +32,8 @@ type Props = {
   iconOnly?: boolean;
   /** 속삭임 행(단축 답 줄 아래)용 텍스트 트리거 — 버튼 상자 없이 밑줄 글자만. */
   textTrigger?: boolean;
+  /** "lg" = a full-size labelled button (bottom-sheet action rows). */
+  size?: "sm" | "lg";
 };
 
 type Palette = { id: string; dark: string; light: string };
@@ -80,6 +84,7 @@ export function QrButton({
   defaultSrcHint = "",
   iconOnly = false,
   textTrigger = false,
+  size = "sm",
 }: Props) {
   const t = useTranslations("qr");
   const baseUrl = url ?? value ?? "";
@@ -104,15 +109,15 @@ export function QrButton({
           disabled={!baseUrl}
           aria-label={t("triggerAria")}
           title={t("triggerAria")}
-          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50"
+          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50"
         >
           <QrCode className="h-3.5 w-3.5" />
         </button>
       ) : (
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}
-          aria-label={t("triggerAria")} title={t("triggerAria")}>
+        <Button variant="outline" size={size} onClick={() => setOpen(true)} disabled={!baseUrl}
+          aria-label={t("triggerAria")} title={t("triggerAria")} className={size === "lg" ? "w-full" : undefined}>
           <QrCode className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">QR</span>
+          <span className={size === "lg" ? undefined : "hidden sm:inline"}>QR</span>
         </Button>
       )}
       {open && (
@@ -226,9 +231,9 @@ function QrModal({
     }
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 scrim" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
@@ -284,23 +289,7 @@ function QrModal({
 
           <label className="mt-3 flex w-full items-center justify-between gap-2 text-xs text-slate-700 dark:text-slate-300">
             <span>{t("logoLabel")}</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={withLogo}
-              onClick={() => setWithLogo((v) => !v)}
-              className={
-                "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition " +
-                (withLogo ? "bg-slate-900" : "bg-slate-200 dark:bg-slate-800")
-              }
-            >
-              <span
-                className={
-                  "inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-900 shadow transition " +
-                  (withLogo ? "translate-x-4" : "translate-x-0.5")
-                }
-              />
-            </button>
+            <Switch checked={withLogo} onCheckedChange={setWithLogo} />
           </label>
 
           {showSrcInput && (
@@ -345,7 +334,8 @@ function QrModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

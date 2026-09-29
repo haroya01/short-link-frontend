@@ -166,7 +166,7 @@ export default function WriteIndexPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
-          <h1 className="whitespace-nowrap text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
+          <h1 className="whitespace-nowrap text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("myPosts")}</h1>
           {/* Cumulative reach — the one summary the filter chips don't already carry. Counts per
               status live on the chips below; this line answers "내 글이 얼마나 읽혔나" at a glance. */}
           {totalViews > 0 && (
@@ -181,7 +181,7 @@ export default function WriteIndexPage() {
           <ImportMdButton onDone={load} />
           <BlogLink
             href={`${writeBase}/new`}
-            className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 sm:px-4"
+            className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 sm:px-4"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
@@ -190,14 +190,14 @@ export default function WriteIndexPage() {
       </header>
 
       {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 컨트롤보다 먼저 답한다.
-          가장 최근 임시저장 1건만, 조용한 그린 틴트 카드로 헤더 바로 아래 고정(보기와 무관).
-          임시저장이 없으면 섹션 자체가 없다. */}
+          가장 최근 임시저장 1건만, 헤더 바로 아래 고정(보기와 무관). 초록은 머리의 '새 글
+          쓰기' 하나라 이 카드는 종이 카드. 임시저장이 없으면 섹션 자체가 없다. */}
       {!loading && latestDraft && (
         <BlogLink
           href={`${writeBase}/${latestDraft.id}`}
-          className="focus-ring group mb-5 flex items-center gap-3 rounded-2xl border border-accent-200/70 bg-accent-50/50 px-4 py-3 transition-colors hover:border-accent-300 hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/15"
+          className="focus-ring group mb-5 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800/60"
         >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-transform duration-200 ease-[var(--ease)] group-hover:scale-105 motion-reduce:transform-none">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-300">
             <PenSquare className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
@@ -230,7 +230,7 @@ export default function WriteIndexPage() {
               className={`focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors ${
                 view === v
                   ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -248,12 +248,12 @@ export default function WriteIndexPage() {
                 aria-pressed={filter === s}
                 className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
                   filter === s
-                    ? "bg-accent-700 text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                 }`}
               >
                 {s === "all" ? t("filterAll") : t(`status${s}`)}
-                <span className={filter === s ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count(s)}</span>
+                <span className={filter === s ? "text-white/70 dark:text-slate-900/60" : "text-slate-500 dark:text-slate-400"}>{count(s)}</span>
               </button>
             ))}
           </div>
@@ -285,7 +285,7 @@ export default function WriteIndexPage() {
                   onClick={() => movePin(p.id, -1)}
                   disabled={i === 0}
                   aria-label={t("featuredMoveUp")}
-                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 >
                   <ArrowUp className="h-4 w-4" />
                 </button>
@@ -294,7 +294,7 @@ export default function WriteIndexPage() {
                   onClick={() => movePin(p.id, 1)}
                   disabled={i === pinned.length - 1}
                   aria-label={t("featuredMoveDown")}
-                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 >
                   <ArrowDown className="h-4 w-4" />
                 </button>
@@ -302,7 +302,7 @@ export default function WriteIndexPage() {
                   type="button"
                   onClick={() => togglePin(p)}
                   aria-label={t("featuredUnpin")}
-                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -325,7 +325,7 @@ export default function WriteIndexPage() {
           </div>
           <BlogLink
             href={`${writeBase}/new`}
-            className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
+            className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
@@ -358,12 +358,12 @@ export default function WriteIndexPage() {
                       <div className="flex items-center gap-2 text-[12px]">
                         <PostStatusBadge status={p.status} />
                         {p.tags[0] && (
-                          <span className="truncate text-slate-500 dark:text-slate-500">{p.tags[0]}</span>
+                          <span className="truncate text-slate-500 dark:text-slate-400">{p.tags[0]}</span>
                         )}
                       </div>
                       <h3
                         className={`mt-1.5 line-clamp-2 text-[17px] font-semibold leading-snug transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
-                          titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"
+                          titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-500 dark:text-slate-400"
                         }`}
                       >
                         {titled || t("untitled")}
@@ -414,7 +414,7 @@ export default function WriteIndexPage() {
                         className={`focus-ring touch-target grid h-8 w-8 place-items-center rounded-lg border backdrop-blur transition-colors ${
                           p.pinOrder != null
                             ? "border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 dark:border-accent-500/40 dark:bg-accent-500/15 dark:text-accent-300"
-                            : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-500 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                            : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
                         }`}
                       >
                         <Pin className={`h-4 w-4 ${p.pinOrder != null ? "fill-current" : ""}`} />

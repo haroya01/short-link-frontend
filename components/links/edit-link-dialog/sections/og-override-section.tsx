@@ -34,7 +34,7 @@ export function OgOverrideSection({
     <div className="space-y-3">
       <p className="text-xs text-slate-500 dark:text-slate-400">{t("og.description")}</p>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("og.titleLabel")}
         </span>
         <Input
@@ -47,7 +47,7 @@ export function OgOverrideSection({
         />
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("og.descriptionLabel")}
         </span>
         <Textarea
@@ -60,7 +60,7 @@ export function OgOverrideSection({
         />
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("og.imageLabel")}
         </span>
         <Input

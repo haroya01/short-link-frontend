@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import {
   followUser,
@@ -99,7 +99,7 @@ export function FollowListDialog({
   return createPortal(
     <div className="fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16">
       <div
-        className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70"
+        className="fixed inset-0 scrim"
         onClick={() => onOpenChange(false)}
         aria-hidden
       />
@@ -270,7 +270,7 @@ function RowFollowButton({
         "touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors focus-ring",
         following
           ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
-          : "border-transparent bg-accent-700 text-white hover:bg-accent-800",
+          : "border-transparent bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 hover:bg-accent-800",
       )}
     >
       {following ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}

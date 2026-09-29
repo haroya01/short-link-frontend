@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, formatShare } from "@/lib/utils";
 import type { ChannelDepth } from "@/types";
 
 /**
@@ -54,7 +54,6 @@ export function ChannelDepthTable({
       <TBody>
         {data.map((c, i) => {
           const ratio = Math.max(0, Math.min(1, c.returnRatio));
-          const pct = (ratio * 100).toFixed(0);
           const isLeader = c.returnRatio === topRatio && topRatio > 0;
           return (
             <TR key={c.host}>
@@ -84,7 +83,7 @@ export function ChannelDepthTable({
                         isLeader ? "bg-accent-700" : "bg-accent-600",
                       )}
                       style={{
-                        width: `${pct}%`,
+                        width: `${ratio * 100}%`,
                         animation: `cdGrow 600ms ${i * 50}ms ease-out backwards`,
                       }}
                     />
@@ -97,7 +96,7 @@ export function ChannelDepthTable({
                         : "text-slate-500 dark:text-slate-400",
                     )}
                   >
-                    {pct}%
+                    {formatShare(ratio)}
                   </span>
                 </span>
               </TD>

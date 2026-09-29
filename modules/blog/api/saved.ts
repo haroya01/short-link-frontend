@@ -6,18 +6,8 @@
  * /api/v1/me/{liked,saved} + /api/v1/bookmarks/folders (backend work — owner's domain).
  */
 import { request } from "@/lib/api/client";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
-import {
-  mockCreateFolder,
-  mockDeleteFolder,
-  mockListFolders,
-  mockListLikedFeed,
-  mockListSavedFeed,
-  mockMoveToFolder,
-  mockRemoveSaved,
-  mockRenameFolder,
-} from "@/modules/blog/api/_mocks-saved";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
+import { savedMocks } from "@/modules/blog/api/_mock-gates";
 
 export interface BookmarkFolder {
   id: number;
@@ -29,49 +19,49 @@ export interface BookmarkFolder {
 export type SavedPost = PublicFeedItem & { folderId: number | null };
 
 export function listLikedFeed(): Promise<PublicFeedItem[]> {
-  if (USE_MOCKS) return Promise.resolve(mockListLikedFeed());
+  if (savedMocks) return Promise.resolve(savedMocks.mockListLikedFeed());
   return request<PublicFeedItem[]>("/api/v1/users/me/likes", { method: "GET" });
 }
 
 export function listSavedFeed(): Promise<SavedPost[]> {
-  if (USE_MOCKS) return Promise.resolve(mockListSavedFeed());
+  if (savedMocks) return Promise.resolve(savedMocks.mockListSavedFeed());
   return request<SavedPost[]>("/api/v1/me/saved", { method: "GET" });
 }
 
 export function listFolders(): Promise<BookmarkFolder[]> {
-  if (USE_MOCKS) return Promise.resolve(mockListFolders());
+  if (savedMocks) return Promise.resolve(savedMocks.mockListFolders());
   return request<BookmarkFolder[]>("/api/v1/bookmarks/folders", { method: "GET" });
 }
 
 export function createFolder(name: string): Promise<BookmarkFolder> {
-  if (USE_MOCKS) return Promise.resolve(mockCreateFolder(name));
+  if (savedMocks) return Promise.resolve(savedMocks.mockCreateFolder(name));
   return request<BookmarkFolder>("/api/v1/bookmarks/folders", { method: "POST", body: { name } });
 }
 
 export function renameFolder(id: number, name: string): Promise<BookmarkFolder> {
-  if (USE_MOCKS) return Promise.resolve(mockRenameFolder(id, name));
+  if (savedMocks) return Promise.resolve(savedMocks.mockRenameFolder(id, name));
   return request<BookmarkFolder>(`/api/v1/bookmarks/folders/${id}`, { method: "PATCH", body: { name } });
 }
 
 export function deleteFolder(id: number): Promise<void> {
-  if (USE_MOCKS) {
-    mockDeleteFolder(id);
+  if (savedMocks) {
+    savedMocks.mockDeleteFolder(id);
     return Promise.resolve();
   }
   return request(`/api/v1/bookmarks/folders/${id}`, { method: "DELETE" });
 }
 
 export function moveSavedToFolder(postId: number, folderId: number | null): Promise<void> {
-  if (USE_MOCKS) {
-    mockMoveToFolder(postId, folderId);
+  if (savedMocks) {
+    savedMocks.mockMoveToFolder(postId, folderId);
     return Promise.resolve();
   }
   return request(`/api/v1/me/saved/${postId}/folder`, { method: "PUT", body: { folderId } });
 }
 
 export function removeSaved(postId: number): Promise<void> {
-  if (USE_MOCKS) {
-    mockRemoveSaved(postId);
+  if (savedMocks) {
+    savedMocks.mockRemoveSaved(postId);
     return Promise.resolve();
   }
   return request(`/api/v1/posts/${postId}/bookmark`, { method: "DELETE" });

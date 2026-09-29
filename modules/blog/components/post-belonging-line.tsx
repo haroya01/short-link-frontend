@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CornerDownRight, Layers } from "lucide-react";
+import { CornerDownRight, Library } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { useInView } from "@/lib/animations";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -62,7 +62,7 @@ export function PostBelongingLine({
         {isPath ? (
           <CornerDownRight className={`h-3 w-3 shrink-0 ${over ? "" : "text-accent-600"}`} />
         ) : (
-          <Layers className={`h-3 w-3 shrink-0 ${over ? "" : "text-accent-600"}`} />
+          <Library className={`h-3 w-3 shrink-0 ${over ? "" : "text-accent-600"}`} />
         )}
         <span className="truncate">{label}</span>
       </BlogLink>

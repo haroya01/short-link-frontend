@@ -27,7 +27,8 @@ export function EditorHeader({
   onDelete,
 }: {
   backHref: string;
-  postId: number;
+  /** null until a new post's first save creates it — there are no revisions yet. */
+  postId: number | null;
   status: PostStatus;
   saving: boolean;
   saved: boolean;
@@ -82,7 +83,7 @@ export function EditorHeader({
               </>
             ) : savedTime ? (
               // 체크 2초가 지나간 쉼 상태 — "마지막 저장이 언제였나"를 시각으로.
-              <span className="text-slate-500 dark:text-slate-500">{t("savedAt", { time: savedTime })}</span>
+              <span className="text-slate-500 dark:text-slate-400">{t("savedAt", { time: savedTime })}</span>
             ) : (
               t("autoSave")
             )}
@@ -94,7 +95,7 @@ export function EditorHeader({
             <PostStatusBadge status={status} />
             {/* 공개 글은 명시 저장 — 버튼 옆 시각이 "마지막으로 반영된 때"를 말해 준다. */}
             {!saving && !saved && savedTime && (
-              <span className="hidden text-[12px] text-slate-500 dark:text-slate-500 sm:inline">
+              <span className="hidden text-[12px] text-slate-500 dark:text-slate-400 sm:inline">
                 {t("savedAt", { time: savedTime })}
               </span>
             )}
@@ -113,18 +114,18 @@ export function EditorHeader({
           type="button"
           onClick={onOpenPublish}
           disabled={busy}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-1.5 text-sm font-semibold text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-800 disabled:opacity-50"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-1.5 text-sm font-semibold text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50"
         >
           {isDraft ? <Send className="h-4 w-4" /> : <Settings2 className="h-4 w-4" />}
           {/* Already-public posts aren't being "published" — this opens metadata + 내리기/예약, so it
               reads as 글 설정, not 발행 설정 (which only fits a draft about to go live). */}
           {isDraft ? t("publish") : t("postSettings")}
         </button>
-        <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />
+        {postId != null && <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />}
         <button
           type="button"
           onClick={onExport}
-          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300"
           title={t("exportMd")}
           aria-label={t("exportMd")}
         >
@@ -134,7 +135,7 @@ export function EditorHeader({
           type="button"
           onClick={onDelete}
           disabled={busy}
-          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-slate-500 dark:hover:bg-red-500/15 dark:hover:text-red-400"
+          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-red-500/15 dark:hover:text-red-400"
           title={t("delete")}
         >
           <Trash2 className="h-4 w-4" />
