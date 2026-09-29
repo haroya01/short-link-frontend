@@ -95,3 +95,16 @@ for (const s of SCREENS) {
     await rendersCleanly(page, s.name, response?.status() ?? null);
   });
 }
+
+test("link-in-bio: 표지가 있어도 아바타가 표지 위에 보인다", async ({ page }) => {
+  await page.goto("/ko/u/dohyun");
+  const avatar = page.locator("[data-profile-avatar]");
+  await expect(avatar).toBeVisible();
+  // 표지는 mask-image 로 따로 쌓이는 층이다. 머리가 그 아래에 깔리면 아바타 자리에서 표지가 잡힌다.
+  const onTop = await avatar.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return !!hit && (hit === el || el.contains(hit));
+  });
+  expect(onTop, "아바타 가운데를 누르면 아바타가 잡혀야 한다").toBe(true);
+});

@@ -128,7 +128,9 @@ export default async function PublicProfilePage({
           />
         </div>
       )}
-      <div className={`container max-w-md ${profile.bannerUrl ? "-mt-12 pb-12" : "py-12"}`}>
+      {/* relative: 표지는 mask-image 때문에 따로 쌓이는 층이라, 위치 없는 머리는 그 아래에 깔린다 —
+          진입 애니메이션이 꺼지는 첫 로드·동작 줄이기에서 아바타가 표지에 가려졌다. */}
+      <div className={`relative container max-w-md ${profile.bannerUrl ? "-mt-12 pb-12" : "py-12"}`}>
         <ProfileHeader
           username={profile.username}
           bio={profile.bio}
