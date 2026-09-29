@@ -12,8 +12,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const TOOLS = [
   ["/settings/profile", "profile"],
-  ["/campaigns", "campaigns"],
-  ["/events", "events"],
   ["/ctas", "ctas"],
 ] as const;
 

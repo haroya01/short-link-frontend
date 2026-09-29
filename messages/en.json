@@ -837,6 +837,7 @@
     "myCollections": "My collections",
     "showcase": "Examples",
     "campaigns": "QR Campaigns",
+    "campaignsTab": "Campaigns",
     "settings": "Settings",
     "login": "Sign in",
     "logout": "Sign out",
@@ -2559,10 +2560,6 @@
     "tools": {
       "profile": "Public profile",
       "profileDesc": "All your links on one page",
-      "campaigns": "QR campaigns",
-      "campaignsDesc": "Compare printed QR codes by location",
-      "events": "Sign-ups",
-      "eventsDesc": "Collect event sign-ups with a link",
       "ctas": "CTA library",
       "ctasDesc": "Manage banners shown on your links"
     },

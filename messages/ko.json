@@ -837,6 +837,7 @@
     "myCollections": "내 컬렉션",
     "showcase": "프로필 예시",
     "campaigns": "QR 캠페인",
+    "campaignsTab": "QR 캠페인",
     "settings": "설정",
     "login": "로그인",
     "logout": "로그아웃",
@@ -2559,10 +2560,6 @@
     "tools": {
       "profile": "공개 프로필",
       "profileDesc": "링크를 한 페이지에 모아 보여줘요",
-      "campaigns": "QR 캠페인",
-      "campaignsDesc": "포스터·전단 QR을 배포처별로 비교해요",
-      "events": "모집",
-      "eventsDesc": "모임 신청을 링크로 받아요",
       "ctas": "CTA 라이브러리",
       "ctasDesc": "링크에 붙일 안내 배너를 관리해요"
     },

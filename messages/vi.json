@@ -837,6 +837,7 @@
     "myCollections": "Bộ sưu tập của tôi",
     "showcase": "Ví dụ",
     "campaigns": "Chiến dịch QR",
+    "campaignsTab": "Chiến dịch",
     "settings": "Cài đặt",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
@@ -2559,10 +2560,6 @@
     "tools": {
       "profile": "Hồ sơ công khai",
       "profileDesc": "Gom liên kết vào một trang",
-      "campaigns": "Chiến dịch QR",
-      "campaignsDesc": "So sánh mã QR in theo vị trí",
-      "events": "Đăng ký",
-      "eventsDesc": "Nhận đăng ký sự kiện qua liên kết",
       "ctas": "Thư viện CTA",
       "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     },

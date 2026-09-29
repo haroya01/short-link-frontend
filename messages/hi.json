@@ -837,6 +837,7 @@
     "myCollections": "मेरे कलेक्शन",
     "showcase": "उदाहरण",
     "campaigns": "QR कैंपेन",
+    "campaignsTab": "QR कैंपेन",
     "settings": "सेटिंग्स",
     "login": "साइन इन करें",
     "logout": "साइन आउट करें",
@@ -2559,10 +2560,6 @@
     "tools": {
       "profile": "सार्वजनिक प्रोफ़ाइल",
       "profileDesc": "सभी लिंक एक पेज पर",
-      "campaigns": "QR अभियान",
-      "campaignsDesc": "मुद्रित QR को स्थान अनुसार तुलना करें",
-      "events": "पंजीकरण",
-      "eventsDesc": "लिंक से इवेंट पंजीकरण लें",
       "ctas": "CTA लाइब्रेरी",
       "ctasDesc": "लिंक पर दिखने वाले बैनर प्रबंधित करें"
     },

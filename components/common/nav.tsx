@@ -46,16 +46,17 @@ function authenticatedEntries(t: (k: string) => string): NavEntry[] {
       label: t("links"),
       active: (p) => p === "/" || p.startsWith("/dashboard") || p.startsWith("/stats/"),
     },
+    {
+      href: "/campaigns",
+      label: t("campaigns"),
+      active: (p) => p.startsWith("/campaigns") || p.startsWith("/qr-campaigns"),
+    },
+    { href: "/events", label: t("events"), active: (p) => p.startsWith("/events") },
     { href: "/analytics", label: t("analytics"), active: (p) => p.startsWith("/analytics") },
     {
       href: "/more",
       label: t("more"),
-      active: (p) =>
-        p.startsWith("/more") ||
-        p.startsWith("/settings") ||
-        p.startsWith("/campaigns") ||
-        p.startsWith("/events") ||
-        p.startsWith("/ctas"),
+      active: (p) => p.startsWith("/more") || p.startsWith("/settings") || p.startsWith("/ctas"),
     },
   ];
 }
@@ -99,7 +100,7 @@ export function Nav() {
               {entries.map((entry) => {
                 const active = entry.active(pathname);
                 const className = cn(
-                  "rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
+                  "whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
                   active
                     ? "text-slate-900 dark:text-slate-100"
                     : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
