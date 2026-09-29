@@ -82,14 +82,8 @@ export function LinkPeriodSection({ shortCode }: { shortCode: string }) {
     setError(null);
     setSaving(true);
     try {
-      let nextOpensAt = loaded.opensAt;
-      if (scheduleDirty) {
-        const saved = await setLinkVisitOptions(
-          shortCode,
-          schedule.on && opensAt ? { opensAt: opensAt.toISOString() } : { clearOpensAt: true },
-        );
-        nextOpensAt = saved.opensAt ?? null;
-      }
+      // 만료부터 저장한다 — 서버는 공개 시각을 저장할 때 '저장돼 있는' 만료와 비교하므로, 공개를
+      // 옛 만료 뒤로 옮기면서 만료도 늘리는 저장이 공개부터 가면 옛 만료에 걸려 거절된다.
       let nextExpiresAt = loaded.expiresAt;
       if (expiryDirty || messageDirty) {
         const saved = await updateLink(shortCode, {
@@ -97,6 +91,14 @@ export function LinkPeriodSection({ shortCode }: { shortCode: string }) {
           expiredMessage: messageDirty ? message : undefined,
         });
         nextExpiresAt = saved.expiresAt ?? null;
+      }
+      let nextOpensAt = loaded.opensAt;
+      if (scheduleDirty) {
+        const saved = await setLinkVisitOptions(
+          shortCode,
+          schedule.on && opensAt ? { opensAt: opensAt.toISOString() } : { clearOpensAt: true },
+        );
+        nextOpensAt = saved.opensAt ?? null;
       }
       setLoaded({ opensAt: nextOpensAt, expiresAt: nextExpiresAt, message });
       setSchedule({ on: Boolean(nextOpensAt), local: nextOpensAt ? toLocalInput(nextOpensAt) : "" });

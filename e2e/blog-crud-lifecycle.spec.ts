@@ -73,6 +73,7 @@ function makeBackend() {
   const state = { post: freshPost() };
   const hits: Hit[] = [];
   const fail: Record<string, number> = {}; // suffix -> http status to return once
+  const failCode: Record<string, string> = {}; // suffix -> ProblemDetail code for that failure
   const delayMs: Record<string, number> = {}; // suffix -> ms to stall
 
   async function install(page: Page) {
@@ -117,12 +118,14 @@ function makeBackend() {
         const body = route.request().postDataJSON() ?? null;
         if (fail[suffix]) {
           const s = fail[suffix];
+          const code = failCode[suffix] ?? "ERROR";
           delete fail[suffix];
+          delete failCode[suffix];
           hits.push({ method: "POST", suffix: `${suffix}-fail`, body: s });
           return route.fulfill({
             status: s,
             contentType: "application/json",
-            body: JSON.stringify({ code: s === 409 ? "SLUG_TAKEN" : "ERROR", message: "nope" }),
+            body: JSON.stringify({ status: s, detail: "nope", code }),
           });
         }
         hits.push({ method: "POST", suffix, body });
@@ -151,7 +154,10 @@ function makeBackend() {
     install,
     hits,
     state,
-    setFail: (suffix: string, status: number) => (fail[suffix] = status),
+    setFail: (suffix: string, status: number, code?: string) => {
+      fail[suffix] = status;
+      if (code) failCode[suffix] = code;
+    },
     setDelay: (suffix: string, ms: number) => (delayMs[suffix] = ms),
     countOf: (suffix: string) => hits.filter((h) => h.suffix === suffix).length,
     last: (suffix: string) => [...hits].reverse().find((h) => h.suffix === suffix),
@@ -275,7 +281,7 @@ test("slug is editable while DRAFT and locked once PUBLISHED", async ({ page }) 
 
 test("publish that 409s (slug taken) surfaces an error and does NOT flip the UI to published", async ({ page }) => {
   const be = makeBackend();
-  be.setFail("publish", 409);
+  be.setFail("publish", 409, "SLUG_CONFLICT");
   await be.install(page);
   await openEditor(page);
   await titleInput(page).fill("Clash");
@@ -294,6 +300,22 @@ test("publish that 409s (slug taken) surfaces an error and does NOT flip the UI 
     (await page.getByRole("dialog").getByRole("button", { name: "Publish" }).count()) > 0 ||
     (await page.getByRole("button", { name: "Publish" }).count()) > 0;
   expect(stillDraft).toBe(true);
+  await expect(page.getByText("This address is already taken — try a different one.")).toBeVisible();
+});
+
+test("a 409 that is not a slug clash (someone else saved first) does not blame the address", async ({ page }) => {
+  const be = makeBackend();
+  be.setFail("publish", 409, "OPTIMISTIC_LOCK");
+  await be.install(page);
+  await openEditor(page);
+  await titleInput(page).fill("Two tabs");
+
+  await openPublishDialog(page);
+  await page.getByRole("dialog").getByRole("button", { name: "Publish" }).click();
+
+  await expect.poll(() => be.hits.some((h) => h.suffix === "publish-fail")).toBe(true);
+  await expect(page.getByText("Someone updated this in another tab. Reload and try again.")).toBeVisible();
+  await expect(page.getByText("This address is already taken — try a different one.")).toHaveCount(0);
 });
 
 // Delete lives only on the PUBLIC post page (PostOwnerActions), which is a server component that

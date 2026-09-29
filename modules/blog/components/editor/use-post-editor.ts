@@ -31,6 +31,11 @@ import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 import { setEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useConfirm } from "@/components/ui/use-confirm";
 
+// 글 오류는 대부분 409 다(주소 충돌·주소 고정·상태 불일치·동시 수정). '주소 사용 중'은 코드로만 가른다.
+function isSlugConflict(e: unknown): boolean {
+  return e instanceof ApiError && e.detail.code === "SLUG_CONFLICT";
+}
+
 export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft";
 
 function randomSlug(): string {
@@ -225,7 +230,7 @@ export function usePostEditor(
           );
           return created;
         } catch (e) {
-          const generatedSlugCollided = !chosen && attempt === 0 && e instanceof ApiError && e.status === 409;
+          const generatedSlugCollided = !chosen && attempt === 0 && isSlugConflict(e);
           if (!generatedSlugCollided) throw e;
         }
       }
@@ -306,8 +311,7 @@ export function usePostEditor(
           return true;
         }
       } catch (e) {
-        // A duplicate slug (same author) returns 409 — show a fixable hint, not a raw "HTTP 409".
-        if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
+        if (isSlugConflict(e)) setError(t("slugTaken"));
         else setError(errorMessage(e, t("saveFailed")));
         // 자동저장 무한 재시도 차단: 4xx(사용자 개입이 필요한 결정적 실패)는 즉시 정지하고, 그 밖의
         // 실패(네트워크·5xx)는 백오프로 몇 번만 재시도 후 정지. 정지는 다음 편집에서 풀린다.
@@ -433,7 +437,7 @@ export function usePostEditor(
       }
       return true;
     } catch (e) {
-      if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
+      if (isSlugConflict(e)) setError(t("slugTaken"));
       else setError(errorMessage(e, t("statusChangeFailed")));
       return false;
     } finally {
@@ -482,7 +486,7 @@ export function usePostEditor(
       setPost(await schedulePost(post.id, scheduledAtIso));
       return true;
     } catch (e) {
-      if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
+      if (isSlugConflict(e)) setError(t("slugTaken"));
       else setError(errorMessage(e, t("scheduleFailed")));
       return false;
     } finally {
