@@ -146,12 +146,15 @@ export default async function PublicPostPage({
   const minutes = readingMinutes(blocks);
   // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
   // (incl. the save-at-publish stamp) read as part of publishing and stay quiet (조용한 웹로그).
+  // 렌더는 글 끝(푸터 직전)에서만 — 첫 화면 메타는 날짜·읽기시간 두 개로 절제(적대 검증 r1,
+  // 수정일은 도착 시점 정보가 아니라 다 읽은 독자를 위한 기록이다).
   const editedLabel =
     post.lastEditedAt &&
     formatDate(post.lastEditedAt, locale) !== formatDate(post.publishedAt, locale)
       ? formatDate(post.lastEditedAt, locale)
       : null;
   const headings = extractHeadings(blocks);
+  const tocHeadings = headings.filter((h) => h.level <= 2);
   // 제목 위 조용한 eyebrow — 시리즈에 속하면 시리즈명, 아니면 대표 태그(tags[0]), 둘 다 없으면 없음.
   // 컬러 배지 없이 회색 muted 한 줄(피드 카드 TagEyebrow 와 같은 어휘) — 제목 앞에 맥락 한 겹만.
   const eyebrow = result.data.series ? result.data.series.title : (post.tags[0] ?? null);
@@ -317,7 +320,6 @@ export default async function PublicPostPage({
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
                 {t("readingTime", { minutes })}
-                {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
               </span>
             </span>
           </a>
@@ -325,7 +327,6 @@ export default async function PublicPostPage({
             <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
             {" · "}
             {t("readingTime", { minutes })}
-            {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
           </p>
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <span className="xl:hidden">
@@ -410,6 +411,12 @@ export default async function PublicPostPage({
         </div>
       )}
 
+      {editedLabel && (
+        <p className="mt-10 text-[12px] text-slate-500 dark:text-slate-400">
+          {t("editedOn", { date: editedLabel })}
+        </p>
+      )}
+
       <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
           <a
@@ -467,19 +474,19 @@ export default async function PublicPostPage({
       </article>
       </SeriesSwipe>
 
-      {/* velog-style TOC pinned just right of the centered column. Fixed (not a grid gutter) so it
-          shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
-          breaking its centering. Below that, the floating button → bottom sheet takes over.
-          반투명 블러 배경(헤더와 같은 언어): full-bleed 이미지가 TOC 뒤를 지나갈 때 텍스트가
-          이미지와 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이 겹침 자체를 제거. */}
-      {headings.length >= 1 && (
+      {/* TOC pinned just right of the centered column. Fixed (not a grid gutter) so it shows from
+          landscape-tablet width up (~1100px) without shrinking the 42rem reading column or breaking its
+          centering. Below that, the floating button → bottom sheet takes over. 불투명 종이 배경:
+          full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
+          겹침 자체를 제거. */}
+      {tocHeadings.length >= 1 && (
         <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
-          <PostToc headings={headings} />
+          <PostToc headings={tocHeadings} />
         </aside>
       )}
 
       {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
-      <PostTocMobile headings={headings} />
+      <PostTocMobile headings={tocHeadings} />
       <LegacyHeadingHash headings={headings} />
     </div>
   );
