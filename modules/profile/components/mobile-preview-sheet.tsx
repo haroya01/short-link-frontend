@@ -48,7 +48,7 @@ export function MobilePreviewSheet({ children }: Props) {
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <div
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            className="absolute inset-0 scrim"
             onClick={() => setOpen(false)}
           />
           <div className="absolute inset-x-0 bottom-0 max-h-[92vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white shadow-2xl dark:bg-slate-900">

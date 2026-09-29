@@ -233,7 +233,7 @@ function QrModal({
 
   return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 scrim" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"

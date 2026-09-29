@@ -56,7 +56,7 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
         aria-hidden
         onClick={close}
         className={cn(
-          "fixed inset-0 top-14 z-20 bg-slate-900/20 backdrop-blur-[2px] transition-opacity duration-200 sm:hidden",
+          "fixed inset-0 top-14 z-20 scrim transition-opacity duration-200 sm:hidden",
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
         )}
       />

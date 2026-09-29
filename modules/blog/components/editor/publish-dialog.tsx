@@ -8,7 +8,6 @@ import type { PostStatus } from "@/modules/blog/api/posts";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
@@ -238,7 +237,7 @@ export function PublishDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center scrim p-0 sm:items-center sm:p-4"
       // Push the whole sheet up above the on-screen keyboard on mobile (0 on desktop).
       style={{ paddingBottom: keyboardInset || undefined }}
     >
@@ -686,7 +685,6 @@ function Field({
   return (
     <div>
       <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
-        <BrandTick />
         {label}
         {required && (
           <span className="text-accent-600 dark:text-accent-400" aria-hidden>

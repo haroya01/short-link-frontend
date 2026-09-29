@@ -2,7 +2,6 @@
 
 import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
-import { BrandTick } from "@/modules/blog/components/rail-heading";
 
 /**
  * A collapsible row for the reader's 저장한 글 보관함 인덱스 — the label (brand-green tick + title) and
@@ -32,10 +31,7 @@ export function CollapsibleSection({
           className="focus-ring flex w-full items-center gap-3 px-1 py-3.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
         >
           <span className="flex min-w-0 flex-1 flex-col gap-1">
-            <span className="flex items-center gap-2 text-[13px] font-bold text-slate-800 dark:text-slate-200">
-              <BrandTick />
-              {title}
-            </span>
+            <span className="text-[13px] font-bold text-slate-800 dark:text-slate-200">{title}</span>
             {hint && (
               <span className="text-[12px] font-normal text-slate-500 dark:text-slate-400">{hint}</span>
             )}
