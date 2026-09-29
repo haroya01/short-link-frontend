@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { OnboardingSteps } from "@/components/common/onboarding-steps";
 
 const CHANNELS = [
   ["groupChat", 4],
@@ -10,58 +11,38 @@ const CHANNELS = [
   ["qrPoster", 1],
 ] as const;
 
-export function EventsIntro({ mode }: { mode: "anonymous" | "empty" }) {
+export function EventsIntro() {
   const t = useTranslations("events.intro");
+  const steps = (["step1", "step2", "step3"] as const).map((step) => ({
+    title: t(`${step}.title`),
+    desc: t(`${step}.body`),
+  }));
 
   return (
-    <div className={mode === "empty" ? "w-full pt-6" : "mx-auto w-full max-w-5xl px-4 py-14 sm:py-20"}>
-      {mode === "anonymous" ? (
-        <div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div>
-            <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">{t("eyebrow")}</p>
-            <h1 className="mt-2 break-keep text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-headline-md lg:text-headline-lg">
-              {t("title")}
-            </h1>
-            <p className="mt-3 max-w-md break-keep text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 sm:mt-5 sm:text-[15px]">
-              {t("subtitle")}
-            </p>
-            <div className="mt-6 lg:mt-8">
-              <a href="/login?next=/events" className={buttonVariants({ variant: "accent", size: "xl" })}>
-                {t("ctaLogin")}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </a>
-              <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{t("ctaHint")}</p>
-            </div>
+    <div className="mx-auto w-full max-w-5xl px-4 py-14 sm:py-20">
+      <div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div>
+          <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">{t("eyebrow")}</p>
+          <h1 className="mt-2 break-keep text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-headline-md lg:text-headline-lg">
+            {t("title")}
+          </h1>
+          <p className="mt-3 max-w-md break-keep text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 sm:mt-5 sm:text-[15px]">
+            {t("subtitle")}
+          </p>
+          <div className="mt-6 lg:mt-8">
+            <a href="/login?next=/events" className={buttonVariants({ variant: "accent", size: "xl" })}>
+              {t("ctaLogin")}
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </a>
+            <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{t("ctaHint")}</p>
           </div>
-          <Still />
         </div>
-      ) : (
-        <p className="text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{t("subtitle")}</p>
-      )}
+        <Still />
+      </div>
 
-      <ol className="mt-10 border-y border-slate-100 dark:border-slate-800 sm:flex">
-        {(["step1", "step2", "step3"] as const).map((step, index) => (
-          <li
-            key={step}
-            className={
-              "flex-1 py-5 sm:px-5 " +
-              (index > 0
-                ? "border-t border-slate-100 dark:border-slate-800 sm:border-l sm:border-t-0"
-                : "sm:pl-0")
-            }
-          >
-            <p className="text-[11px] font-medium tabular-nums text-slate-500 dark:text-slate-400">
-              {String(index + 1).padStart(2, "0")}
-            </p>
-            <p className="mt-1.5 text-[14px] font-semibold text-slate-800 dark:text-slate-200">
-              {t(`${step}.title`)}
-            </p>
-            <p className="mt-1 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-              {t(`${step}.body`)}
-            </p>
-          </li>
-        ))}
-      </ol>
+      <div className="mt-5">
+        <OnboardingSteps steps={steps} />
+      </div>
     </div>
   );
 }
