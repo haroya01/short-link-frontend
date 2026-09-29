@@ -1,12 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Globe } from "lucide-react";
+import { Check, Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useDismiss } from "@/hooks/use-dismiss";
-import { cn } from "@/lib/utils";
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -44,21 +43,19 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-1 w-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-900"
+          className="absolute right-0 top-full z-40 mt-1 w-40 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900"
         >
           {routing.locales.map((l) => (
             <button
               key={l}
               type="button"
               role="menuitem"
+              aria-current={l === locale ? "true" : undefined}
               onClick={() => switchTo(l)}
-              className={cn(
-                "flex w-full items-center justify-between px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800",
-                l === locale && "bg-accent-50 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400",
-              )}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               {t(l)}
-              <span className="font-mono text-[10px] uppercase text-slate-500 dark:text-slate-400">{l}</span>
+              {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" aria-hidden />}
             </button>
           ))}
         </div>
