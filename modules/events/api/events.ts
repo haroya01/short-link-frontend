@@ -110,7 +110,8 @@ export type EventDraft = {
   capacity: number | null;
   closeAt: string | null;
   contactField?: ContactField;
-  questions: QuestionSpec[];
+  // 빼면 서버가 기존 질문을 그대로 둔다. 확정 신청이 생긴 모집은 질문을 보내는 것 자체가 거절된다.
+  questions?: QuestionSpec[];
 };
 
 export function listMyEvents(): Promise<MyEvent[]> {

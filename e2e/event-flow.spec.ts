@@ -69,4 +69,33 @@ test.describe("event organizer flow", () => {
     await expect(page.getByText("변경했어요")).toBeVisible();
     expect(events[0].status).toBe("CLOSED");
   });
+
+  test("신청이 들어온 모집도 고칠 수 있다 — 잠긴 질문은 보내지 않는다", async ({ page }) => {
+    const events = await organizerBackend(page);
+    await page.goto("/ko/events/new");
+    await page.getByLabel("제목", { exact: false }).fill("신청 받은 모집");
+    await page.locator("#ef-starts").fill("2030-03-01T10:00");
+    await page.getByRole("button", { name: "발행하기" }).click();
+    await expect(page.getByRole("heading", { name: "신청 받은 모집" })).toBeVisible();
+    events[0].registrationCount = 1;
+
+    // 서버 규칙 그대로: 확정 신청이 있는데 questions 를 보내면(빈 배열이어도) 거절한다.
+    let patchBody: Record<string, unknown> | null = null;
+    await page.route(/\/api\/v1\/events\/1$/, (route) => {
+      if (route.request().method() !== "PATCH") return route.fallback();
+      patchBody = JSON.parse(route.request().postData() ?? "{}");
+      if (patchBody && "questions" in patchBody) {
+        return route.fulfill({ status: 400, json: { status: 400, detail: "registrations exist", code: "INVALID_QUESTIONS" } });
+      }
+      Object.assign(events[0], patchBody);
+      return route.fulfill({ json: events[0] });
+    });
+
+    await page.goto("/ko/events/1/edit");
+    await page.getByLabel("제목", { exact: false }).fill("제목만 고친 모집");
+    await page.getByRole("button", { name: "저장", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "제목만 고친 모집" })).toBeVisible();
+    expect(patchBody).not.toBeNull();
+    expect(patchBody).not.toHaveProperty("questions");
+  });
 });

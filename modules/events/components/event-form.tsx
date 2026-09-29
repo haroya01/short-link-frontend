@@ -112,7 +112,7 @@ export function EventForm({
         capacity: form.capacity ? Number(form.capacity) : null,
         closeAt: form.closeAtLocal ? wallTimeToIso(form.closeAtLocal, form.timezone) : null,
         contactField: form.contactField,
-        questions: form.questions,
+        ...(questionsLocked ? {} : { questions: form.questions }),
       });
     } catch (err) {
       setBusy(false);
