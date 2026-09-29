@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";

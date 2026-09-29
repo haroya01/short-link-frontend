@@ -15,8 +15,8 @@ type Props = {
 /**
  * Stat / dashboard section surface. Refined Apple-style 16 px corner ({@code rounded-2xl}) sits
  * above inner controls / nested boxes ({@code rounded-lg} 8 px) so radii read as concentric.
- * Header has a three-level hierarchy: optional eyebrow (uppercase tracking, accent — used as a
- * tiny brand mark on sections that need contextual labeling), title (semibold, tracking-tight,
+ * Header has a three-level hierarchy: optional eyebrow (small accent label — for sections that need
+ * contextual labeling), title (semibold, tracking-tight,
  * 15 px), description (slate-500, leading-relaxed). The optional footnote slot lets sections
  * add caveats / data-source links without spilling outside the wrapper.
  */
@@ -47,7 +47,7 @@ export function Section({
       <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-slate-800">
         <div className="min-w-0 flex-1">
           {eyebrow && (
-            <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+            <p className="mb-1 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
               {eyebrow}
             </p>
           )}

@@ -5,6 +5,7 @@ import { ExternalLink, Pencil, QrCode, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
 import type { CampaignBatch } from "@/types";
+import { formatNumber } from "@/lib/utils";
 
 type Props = {
   batch: CampaignBatch;
@@ -22,7 +23,7 @@ export function BatchCard({ batch, campaignId, canModify, onEdit, onDelete }: Pr
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">{batch.name}</h3>
         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-          {t("quantityUnit", { count: batch.quantity.toLocaleString() })}
+          {t("quantityUnit", { count: formatNumber(batch.quantity) })}
         </span>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-slate-500 dark:text-slate-400">

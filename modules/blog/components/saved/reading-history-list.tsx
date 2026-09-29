@@ -5,7 +5,7 @@ import { Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";

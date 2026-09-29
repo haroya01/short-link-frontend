@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { adminClientMessages } from "@/i18n/client-namespaces";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { MessagesScope } from "@/i18n/messages-scope";
 
 export async function generateMetadata({
   params,
@@ -27,10 +26,9 @@ export default async function BlogAdminLayout({
   // getMessages() 가 defaultLocale 로 떨어지지 않는다.
   const { locale } = await params;
   setRequestLocale(locale);
-  // 루트 프로바이더가 뺀 admin 전용 네임스페이스를 관리자 세그먼트에서 공급.
   return (
-    <NextIntlClientProvider messages={adminClientMessages(await getMessages())}>
+    <MessagesScope locale={locale} scope="blog/admin">
       {children}
-    </NextIntlClientProvider>
+    </MessagesScope>
   );
 }

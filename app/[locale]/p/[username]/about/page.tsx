@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { linksHref } from "@/lib/host";
 import { SwitchLink } from "@/components/common/switch-link";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { RailHeading } from "@/modules/blog/components/rail-heading";

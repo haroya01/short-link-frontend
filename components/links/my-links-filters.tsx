@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { MyLinksFilters } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 type Props = {
   className?: string;
@@ -74,13 +74,13 @@ export function MyLinksFiltersBar({ className, filters, onChange, tagOptions }: 
         )}
         {filters.createdAfter && (
           <Chip
-            label={`${t("after")}: ${filters.createdAfter.slice(0, 10)}`}
+            label={`${t("after")}: ${formatDate(filters.createdAfter)}`}
             onRemove={() => patch({ createdAfter: undefined })}
           />
         )}
         {filters.createdBefore && (
           <Chip
-            label={`${t("before")}: ${filters.createdBefore.slice(0, 10)}`}
+            label={`${t("before")}: ${formatDate(filters.createdBefore)}`}
             onRemove={() => patch({ createdBefore: undefined })}
           />
         )}
@@ -164,7 +164,7 @@ export function MyLinksFiltersBar({ className, filters, onChange, tagOptions }: 
                   patch({ createdAfter: toIsoStart(e.target.value) })
                 }
               />
-              <span className="text-slate-400 dark:text-slate-500">–</span>
+              <span className="text-slate-400 dark:text-slate-400">–</span>
               <Input
                 type="date"
                 value={dateOnly(filters.createdBefore)}
@@ -187,7 +187,7 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
       <button
         type="button"
         onClick={onRemove}
-        className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+        className="text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
         aria-label="remove filter"
       >
         <X className="h-3 w-3" />
@@ -218,8 +218,12 @@ function countActive(f: MyLinksFilters): number {
   return n;
 }
 
+// The inverse of toIsoStart/toIsoEnd: the LOCAL calendar date of the stored instant (slicing the UTC
+// ISO string shifted every pick back a day east of UTC).
 function dateOnly(iso?: string): string {
-  return iso ? iso.slice(0, 10) : "";
+  if (!iso) return "";
+  const d = new Date(iso);
+  return [d.getFullYear(), d.getMonth() + 1, d.getDate()].map((n, i) => String(n).padStart(i ? 2 : 4, "0")).join("-");
 }
 
 function toIsoStart(date: string): string | undefined {

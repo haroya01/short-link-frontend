@@ -107,7 +107,7 @@ export function PostImage({
             aria-hidden={closing || undefined}
             className={`post-lightbox${
               closing ? " post-lightbox-closing pointer-events-none" : ""
-            } fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm`}
+            } fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

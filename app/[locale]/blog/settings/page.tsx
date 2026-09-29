@@ -1,19 +1,19 @@
 "use client";
 
-import { Check, ExternalLink, Globe, LogOut, Newspaper, User } from "lucide-react";
+import { Check, ExternalLink, Globe, Newspaper, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
 import { FollowedTagsSetting } from "@/modules/blog/components/followed-tags-setting";
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { LogoutButton } from "@/components/common/logout-button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -24,13 +24,11 @@ import { cn } from "@/lib/utils";
  */
 export default function BlogSettingsPage() {
   const t = useTranslations("blogWorkspace");
-  const tNav = useTranslations("nav");
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
-  const router = useRouter();
   const intlRouter = useIntlRouter();
   const pathname = usePathname();
-  const { ready, authenticated, me, signOut } = useAuth();
+  const { ready, authenticated, me } = useAuth();
 
   if (!ready) return null;
   if (!authenticated) {
@@ -52,7 +50,7 @@ export default function BlogSettingsPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("settingsTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("settingsTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("settingsSubtitle")}</p>
 
       {/* 계정 */}
@@ -82,14 +80,14 @@ export default function BlogSettingsPage() {
                 <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsEditProfile")}
               </span>
-              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
             <a href={linksHref(`/${locale}/settings`)} className={rowClass}>
               <span className="inline-flex items-center gap-2.5">
                 <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsAccountSettings")}
               </span>
-              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
             {username && (
               <a href={authorHref(username, locale)} className={rowClass}>
@@ -97,7 +95,7 @@ export default function BlogSettingsPage() {
                   <Newspaper className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   {t("settingsViewBlog")}
                 </span>
-                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
               </a>
             )}
           </div>
@@ -118,10 +116,10 @@ export default function BlogSettingsPage() {
               type="button"
               onClick={() => switchLocale(l)}
               aria-pressed={l === locale}
-              className={cn(rowClass, "w-full", l === locale && "text-accent-700 dark:text-accent-300")}
+              className={cn(rowClass, "w-full", l === locale && "font-semibold text-slate-900 dark:text-slate-100")}
             >
               {tLang(l)}
-              {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+              {l === locale && <Check className="h-4 w-4 text-slate-900 dark:text-slate-100" />}
             </button>
           ))}
         </div>
@@ -144,17 +142,7 @@ export default function BlogSettingsPage() {
 
       {/* 로그아웃 */}
       <section className="mt-8">
-        <button
-          type="button"
-          onClick={async () => {
-            await signOut();
-            router.push(`/${locale}`);
-          }}
-          className="focus-ring inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-slate-800 dark:text-slate-200 dark:hover:border-red-900/50 dark:hover:bg-red-950/40"
-        >
-          <LogOut className="h-4 w-4" />
-          {tNav("logout")}
-        </button>
+        <LogoutButton />
       </section>
     </main>
   );

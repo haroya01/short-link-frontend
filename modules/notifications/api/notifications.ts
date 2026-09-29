@@ -1,10 +1,9 @@
 import { request } from "@/lib/api/client";
-import {
-  USE_MOCKS,
-  mockBlogNotificationPreferences,
-  mockNotificationsPage,
-  mockUnreadCount,
-} from "./_mocks";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+// 목 알림은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
+const notificationMocks: typeof import("./_mocks") | null =
+  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
 
 export type NotificationType =
   | "LIKE"
@@ -60,7 +59,7 @@ export interface NotificationsPage {
 }
 
 export function getNotifications(before?: number, limit = 20): Promise<NotificationsPage> {
-  if (USE_MOCKS) return Promise.resolve(mockNotificationsPage());
+  if (notificationMocks) return Promise.resolve(notificationMocks.mockNotificationsPage());
   const q = new URLSearchParams();
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));
@@ -72,7 +71,7 @@ export function getNotifications(before?: number, limit = 20): Promise<Notificat
  * never toggled defaults to enabled). Separate endpoint from the link-product preferences.
  */
 export function getBlogNotificationPreferences(): Promise<BlogNotificationPreferences> {
-  if (USE_MOCKS) return Promise.resolve(mockBlogNotificationPreferences());
+  if (notificationMocks) return Promise.resolve(notificationMocks.mockBlogNotificationPreferences());
   return request<BlogNotificationPreferences>("/api/v1/notifications/blog-preferences", {
     method: "GET",
   });
@@ -91,7 +90,7 @@ export function updateBlogNotificationPreference(
 }
 
 export function getUnreadCount(): Promise<{ count: number }> {
-  if (USE_MOCKS) return Promise.resolve(mockUnreadCount());
+  if (notificationMocks) return Promise.resolve(notificationMocks.mockUnreadCount());
   return request<{ count: number }>(`/api/v1/notifications/unread-count`, { method: "GET" });
 }
 

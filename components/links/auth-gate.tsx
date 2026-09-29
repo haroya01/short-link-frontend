@@ -4,7 +4,7 @@ import type { ComponentType, CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Mark } from "@/components/common/logo";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export type AuthGateBenefit = {
   icon: ComponentType<{ className?: string }>;
@@ -40,10 +40,6 @@ export function LinksAuthGate({
     <div className="container flex min-h-[calc(100dvh-3.5rem)] max-w-md flex-col items-center justify-center gap-7 py-14 text-center">
       <div className="hero-stagger flex w-full flex-col items-center gap-6">
         <div className="relative" style={hi(0)}>
-          <div
-            aria-hidden
-            className="absolute -inset-6 -z-10 rounded-full bg-accent-200/45 blur-2xl dark:bg-accent-500/10"
-          />
           <Mark className="h-9 w-auto text-accent-600 dark:text-accent-500" />
         </div>
 
@@ -75,10 +71,8 @@ export function LinksAuthGate({
         )}
 
         <div className="flex w-full flex-col items-center gap-3 pt-1" style={hi(3)}>
-          <Link href={loginHref} className="w-full sm:w-auto">
-            <Button variant="accent" size="lg" className="w-full sm:w-auto sm:min-w-[13rem]">
-              {t("login")}
-            </Button>
+          <Link href={loginHref} className={buttonVariants({ variant: "accent", size: "lg", className: "w-full sm:w-auto w-full sm:w-auto sm:min-w-[13rem]" })}>
+            {t("login")}
           </Link>
           <Link
             href="/"

@@ -1,21 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { ShortenForm } from "@/components/links/shorten/form";
-import { ResultLine } from "@/components/links/shorten/result-line";
+import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
-import { StageScenes } from "@/components/landing/stage-scenes";
+import { HomeStatsExample } from "@/components/landing/home-stats-example";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
-import { RecentLinks } from "@/components/links/recent-links";
+import { HomeRecent } from "@/components/links/home-recent";
 import { useAuth } from "@/lib/auth";
-import { recordRecent, useRecentLinks } from "@/lib/recent-links";
-import { Link } from "@/i18n/navigation";
-import type { CreateLinkResponse } from "@/types";
+import { useRecentLinks } from "@/lib/recent-links";
+import { useSharedUrl } from "@/lib/use-shared-url";
+import { Link, useRouter } from "@/i18n/navigation";
 
 // Below-fold sections split into their own chunks (SSR HTML unchanged) so the above-fold form +
 // header hydrate without parsing the preview/FAQ code first — on a throttled phone that's the
@@ -43,183 +42,113 @@ export default function HomePage() {
     locale === "ja"
       ? "text-[28px] leading-[1.12] min-[390px]:text-[29px] sm:text-[46px]"
       : locale === "en"
-        ? "text-[34px] leading-[1.08] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.02]"
+        ? "text-[34px] leading-[1.14] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.1]"
         : locale === "vi"
-          ? "text-[30px] leading-[1.08] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.02]"
-          : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
-  const [results, setResults] = useState<
-    { res: CreateLinkResponse; original: string; passwordRequested?: boolean }[] | null
-  >(null);
-  /** 답 줄이 자리를 차지한 뒤 "다른 주소도 줄이기"로 빈 줄을 다시 불러온 상태. */
-  const [composing, setComposing] = useState(false);
-  const tResult = useTranslations("result");
+          ? "text-[30px] leading-[1.14] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.1]"
+          : "text-[38px] leading-[1.14] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.1]";
+  const [results, setResults] = useState<ShortenedEntry[] | null>(null);
   const recent = useRecentLinks();
+  // 공유로 들어온 쿼리는 useSharedUrl 이 곧 지우므로, 대시보드로 넘길 원본을 첫 렌더에 잡아 둔다.
+  const arrivedWith = useRef(typeof window === "undefined" ? "" : window.location.search);
+  const sharedUrl = useSharedUrl();
+  const router = useRouter();
+  // 로그인한 사람의 홈은 대시보드다. 첫 로드는 pre-paint 스크립트가 이미 넘겼고, 여긴 앱 안에서 "/" 로
+  // 온 경우.
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    router.replace(`/dashboard${arrivedWith.current}`);
+  }, [ready, authenticated, router]);
   const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
 
+  if (ready && authenticated) return <div className="min-h-screen" />;
+
   return (
     <div>
-      {/*
-       * Hero — flat white surface (no mesh, no noise) so the typography carries the page on its
-       * own. The earlier version layered `hero-mesh + hero-noise + grid-bg` over a centered
-       * eyebrow / h1 / subhead, and the cumulative ornament read as busy rather than refined.
-       * Luxury / refined surfaces work through restraint — type hierarchy + spacing carry the
-       * page. Headline is Pretendard semibold across both lines (single family, no display
-       * swap) — the contrast between solid slate-900 line one and slate-500 line two is the
-       * editorial moment. The hairline eyebrow on either side of the tagline stays as a subtle
-       * grid-break, and the cascade-in still fires through `.hero-stagger`, opacity-only.
-       */}
       <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
-        <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
-          {/* "kurl v1" 아이브로+헤어라인은 철거 — 버전 배지는 방문자에게 무의미한 크롬이었고,
-              폴드는 헤드라인·폼 카드 둘만 남길수록 강해진다. */}
-          <div className="hero-stagger mb-10 space-y-5 sm:mb-12">
+        <div className="container relative z-10 max-w-5xl pb-12 pt-14 sm:pb-16 sm:pt-24">
+          <div className="mb-9 max-w-3xl space-y-5 sm:mb-11 sm:space-y-6">
             <h1
               data-testid="home-hero-heading"
-              className={`text-balance text-center font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
-              style={{ ["--hi" as string]: 1 } as React.CSSProperties}
+              className={`text-balance font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
             >
-              <span>{t("headline1")}</span>
+              <span>
+                {t.rich("headline1", {
+                  line: (chunks) => <span className="brand-underline">{chunks}</span>,
+                })}
+              </span>
               <br />
-              <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
+              <span className="font-medium">{t("headline2")}</span>
             </h1>
             <p
               data-testid="home-hero-subhead"
-              className="mx-auto max-w-[320px] text-balance text-center text-[14px] leading-[1.7] text-slate-500 dark:text-slate-400 sm:max-w-md sm:text-[15px] sm:leading-relaxed"
-              style={{ ["--hi" as string]: 2 } as React.CSSProperties}
+              className="max-w-xl text-pretty text-[15px] leading-[1.65] text-slate-600 dark:text-slate-300 sm:text-[17px]"
             >
               <span className="sm:hidden">{t("mobileSubhead")}</span>
               <span className="hidden sm:inline">{t("subhead")}</span>
             </p>
           </div>
 
-          {/*
-           * Form sits outside the hero-stagger wrapper because the staggered cascade in the
-           * headline already lasts ~360ms; making the form wait another 90ms past the subhead
-           * forces visitors past the "I can already see where to paste my URL" moment. The
-           * `profile-fade` keyframe gives it the same fade-in feel without the cascading delay.
-           */}
-          <div
-            className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
-            style={{ ["--idx" as string]: 4 } as React.CSSProperties}
-          >
-            {/* 단축이 끝나면 입력 캡슐이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
-                "다른 주소도 줄이기"를 누르면 빈 캡슐이 맨 위로 돌아오고 답들은
+          {/* 제목·입력칸은 등장 모션 없이 첫 페인트에 그대로 — 여러 번 오는 화면이라 매번 다시
+              떠오르는 연출은 붙여 넣기까지의 지연일 뿐이다. */}
+          <div>
+            {/* 단축이 끝나면 입력 칸이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
+                "다른 주소도 줄이기"를 누르면 빈 칸이 맨 위로 돌아오고 답들은
                 영수증처럼 아래로 밀린다. */}
-            <div className="mx-auto max-w-2xl">
-              {(!results || results.length === 0 || composing) && (
-                <ShortenForm
-                  hero
-                  heroAutoFocus={Boolean(results && results.length > 0)}
-                  authenticated={authenticated}
-                  ready={ready}
-                  onShortened={(items) => {
-                    setComposing(false);
-                    // 새 답이 맨 위로 — 이번 세션의 영수증 스택(최대 5줄, 전체는 최근 단축이 보관).
-                    setResults((prev) => {
-                      const next = items.map((it) => ({
-                        res: it.res,
-                        original: it.originalUrl,
-                        passwordRequested: it.passwordRequested,
-                      }));
-                      const seen = new Set(next.map((n) => n.res.shortCode));
-                      const kept = (prev ?? []).filter((p) => !seen.has(p.res.shortCode));
-                      return [...next, ...kept].slice(0, 5);
-                    });
-                    for (const it of items) {
-                      recordRecent({
-                        shortCode: it.res.shortCode,
-                        shortUrl: it.res.shortUrl,
-                        originalUrl: it.originalUrl,
-                        createdAt: Date.now(),
-                        claimToken: it.res.claimToken,
-                      });
-                    }
-                  }}
-                />
-              )}
-
-              {results && results.length > 0 && (
-                <div className={composing ? "mt-9 space-y-8" : "space-y-8"}>
-                  {results.map((r, i) => (
-                    <ResultLine
-                      key={r.res.shortCode}
-                      result={r.res}
-                      originalUrl={r.original}
-                      authenticated={authenticated}
-                      passwordRequested={r.passwordRequested}
-                      enterIndex={i}
-                    />
-                  ))}
-                  {!composing && (
-                    <button
-                      type="button"
-                      onClick={() => setComposing(true)}
-                      className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
-                      style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
-                    >
-                      {tResult("moreShorten")}
-                      <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
-                        ↵
-                      </span>
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+            <ShortenPanel
+              authenticated={authenticated}
+              ready={ready}
+              results={results}
+              onResultsChange={setResults}
+              initialUrl={sharedUrl ?? undefined}
+            />
           </div>
 
-          <div className="mt-6 min-h-[64px] space-y-3">
-            {(!results || results.length === 0) && !authenticated ? (
-              <div className="space-y-2 text-center">
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
+          <div className="mt-5 min-h-[44px] max-w-2xl">
+            {(!results || results.length === 0) && !authenticated && recent.length === 0 ? (
+              <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+                {t("anonymousHint")}{" "}
                 <Link
                   href="/demo"
-                  className="inline-flex items-center gap-1 text-xs text-accent-700 dark:text-accent-400 hover:text-accent-800"
+                  className="focus-ring inline-flex items-center gap-1 whitespace-nowrap rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
                 >
-                  {t("demoLink")} <ArrowRight className="h-3 w-3" />
+                  {t("demoLink")} <ArrowRight aria-hidden className="h-3 w-3" />
                 </Link>
-              </div>
+              </p>
             ) : null}
           </div>
-        </div>
 
-        {/* Scroll cue — animated chevron + label below the fold-anchored hero so first-time
-            visitors see that the page continues past the input. The element is `absolute` inside
-            the hero, so it scrolls off with the hero itself once the user starts moving — no
-            JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 sm:flex"
-        >
-          <span>{t("scrollHint")}</span>
-          <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
+          <div className="max-w-2xl">
+            <HomeRecent exclude={results?.map((r) => r.res.shortCode) ?? []} />
+          </div>
         </div>
       </section>
 
-      {/* 글리프 워밍업 — 무대 씬 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
-          늦게 오는 font-face 이벤트가 뷰포트 안 씬 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
+      {/* 글리프 워밍업 — 예시 섹션 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
+          늦게 오는 font-face 이벤트가 뷰포트 안 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
           모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
       {stage === "on" && (
         <div aria-hidden className="invisible absolute h-0 overflow-hidden">
-          <span className="text-headline-sm font-semibold">{t("stage.scene2Title")}</span>
-          <span className="text-headline-sm font-semibold">{t("stage.scene3Title")}</span>
-          <span>{t("stage.scene2Desc")}</span>
-          <span>{t("stage.scene3Desc")}</span>
+          <span className="text-headline-sm font-bold">{t("stage.title")}</span>
+          <span>{t("stage.desc")}</span>
+          <span className="font-semibold">{t("stage.feedTitle")}</span>
+          <span className="font-semibold">{t("stage.trendTitle")}</span>
         </div>
       )}
 
-      {/* 무대 on = "잉크 스파인 + 딥그린 클라이맥스" 여정이 프리뷰 카드·카운터·기능 캐러셀을
-          대체한다(vault kurl-web-stage-design). off = 기존 구성 그대로(롤백 계약). */}
-      {stage === "on" ? <StageScenes /> : <LandingPreviews />}
-
-      {/* `ready` 게이트: /me 해석 전엔 렌더하지 않는다 — 로그인 사용자의 첫 렌더(authenticated=false)에
-          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다.
-          stage on 은 여정으로 끝나는 한 편의 페이지 — 최근 링크·비교표·FAQ 꼬리를 달지 않는다. */}
-      {stage !== "on" && ready && !authenticated && recent.length > 0 && (
-        <Section eyebrow={t("recentEyebrow")} title={t("recentTitle")} subhead={t("recentSubhead")}>
-          <RecentLinks />
-        </Section>
+      {/* 기본 = 도구 먼저: 폼·최근 링크가 주인공이고, 설명은 로그아웃 방문자에게만 한 섹션.
+          ready 전에는 pre-paint 인증 힌트(data-auth-slot)로 로그인 사용자에게 숨겨 둔다.
+          ?stage=off = 레거시 구성(롤백 확인용). */}
+      {stage === "on" ? (
+        !ready ? (
+          <div data-auth-slot="anon">
+            <HomeStatsExample />
+          </div>
+        ) : !authenticated ? (
+          <HomeStatsExample />
+        ) : null
+      ) : (
+        <LandingPreviews />
       )}
 
       {/*
@@ -306,7 +235,7 @@ function Section({
         {hasHeader && (
           <div className="mb-10 space-y-3 text-center sm:mb-14">
             {eyebrow && (
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+              <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
                 {eyebrow}
               </p>
             )}

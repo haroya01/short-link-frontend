@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
+import { cn, inert } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useSidebarState } from "@/components/common/sidebar-state";
 
@@ -56,15 +56,16 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
         aria-hidden
         onClick={close}
         className={cn(
-          "fixed inset-0 top-14 z-20 bg-slate-900/20 backdrop-blur-[2px] transition-opacity duration-200 sm:hidden",
+          "fixed inset-0 top-14 z-20 scrim transition-opacity duration-200 sm:hidden",
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
         )}
       />
       <div
         ref={panelRef}
         role="dialog"
-        aria-modal="true"
+        aria-modal={open || undefined}
         aria-label={t("menu")}
+        {...inert(!open)}
         className={cn(
           "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[var(--ease)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
           open ? "translate-x-0" : "-translate-x-full",
@@ -144,14 +145,14 @@ function SidebarItem({
         className={cn(
           "relative flex items-center rounded-lg px-3 py-2 text-sm transition-colors duration-200 ease-out",
           isActive
-            ? "bg-accent-50 font-medium text-slate-900 dark:bg-accent-500/15 dark:text-slate-100"
+            ? "bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-100"
             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100",
         )}
       >
         {isActive && (
           <span
             aria-hidden
-            className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-accent-600"
+            className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 bg-slate-900 dark:bg-slate-100"
           />
         )}
         {entry.label}

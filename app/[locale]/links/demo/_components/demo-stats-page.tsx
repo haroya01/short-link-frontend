@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useToast } from "@/components/ui/toast";
 import { buildDemoLinkStats } from "@/lib/demo-data";
 import { StatsBody } from "@/app/[locale]/links/stats/[code]/_components/stats-body";
 
@@ -30,8 +29,6 @@ const SITE_URL =
 export function DemoStatsPage() {
   const t = useTranslations("demo");
   const tStats = useTranslations("stats");
-  const tResult = useTranslations("result");
-  const { toast } = useToast();
   // useMemo so React doesn't rebuild the (seeded but heavy) LinkStats payload on every tab
   // switch — buildDemoLinkStats does a 30-day daily walk + a 168-cell heatmap synthesis.
   const data = useMemo(() => buildDemoLinkStats(), []);
@@ -44,7 +41,6 @@ export function DemoStatsPage() {
           is intentionally low-weight so the eye lands on the charts. */}
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:border-accent-500/20 dark:bg-accent-500/10 px-4 py-2.5 text-[12px]">
         <span className="inline-flex min-w-0 items-center gap-2 font-medium text-accent-800 dark:text-accent-300">
-          <Sparkles className="h-3.5 w-3.5 shrink-0" />
           {t("sampleBanner")}
         </span>
         <Link
@@ -60,7 +56,6 @@ export function DemoStatsPage() {
         data={data}
         shortUrl={shortUrl}
         shortCodeLabel={tStats("shortCode")}
-        onCopy={() => toast(tResult("copied"), "success")}
         onTick={() => {
           // No-op on /demo — there's no backend to refetch from, and the seeded data is stable
           // across renders by design. The dashboard's stats page bumps a tick counter here on

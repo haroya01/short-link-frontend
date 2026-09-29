@@ -33,7 +33,7 @@ export default async function AboutPage({
   return (
     <article className="container max-w-3xl space-y-8 py-16">
       <header className="space-y-3">
-        <h1 className="text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">{t("lead")}</p>
       </header>
 
@@ -52,7 +52,7 @@ export default async function AboutPage({
 
       <Link
         href="/"
-        className="inline-flex items-center justify-center rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+        className="focus-ring inline-flex h-10 items-center justify-center rounded-lg bg-accent-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
       >
         {t("ctaShorten")}
       </Link>

@@ -1,12 +1,13 @@
 "use client";
 
-import { Lock, Sparkles } from "lucide-react";
+import { Info, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   LinkBlockedCountriesSection,
   LinkDestinationsSection,
 } from "@/components/links/destinations-section";
 import { LinkExportSection } from "@/components/links/link-export-section";
+import { LinkPeriodSection } from "@/components/links/link-period-section";
 import { LinkProtectionSection } from "@/components/links/link-protection-section";
 import { LinkVisitSection } from "@/components/links/link-visit-section";
 import { LinkWebhooksSection } from "@/components/links/webhooks-section";
@@ -38,9 +39,10 @@ export function SettingsTab({
   }
   return (
     <div className="space-y-5">
-      {/* 보호가 편집 다이얼로그에만 있으면 "설정에서 사라졌다"고 읽힌다 — 설정 탭이
-          이 링크의 모든 설정을 모으는 자리라는 기대에 맞춰 맨 앞에 앉힌다. */}
+      {/* 링크 설정 = 링크가 '어떻게' 동작하는지(보호·공개 기간·방문·분배·웹훅). '무엇'인지(이름·목적지·
+          태그·공유 카드)는 편집 대화상자가 맡는다. */}
       <LinkProtectionSection shortCode={data.shortCode} />
+      <LinkPeriodSection shortCode={data.shortCode} />
       <LinkVisitSection shortCode={data.shortCode} />
       <LinkDestinationsSection
         shortCode={data.shortCode}
@@ -138,7 +140,7 @@ function DemoLinkExportPreview() {
       </div>
       <table className="mt-4 w-full border-collapse text-[12px]">
         <thead>
-          <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] uppercase text-slate-500 dark:text-slate-400">
+          <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] text-slate-500 dark:text-slate-400">
             <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
             <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
             <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>
@@ -147,7 +149,7 @@ function DemoLinkExportPreview() {
         </thead>
         <tbody>
           <tr className="border-b border-slate-100 dark:border-slate-800">
-            <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">2026-05-10 20:14</td>
+            <td className="py-1.5 pr-3 tabular-nums text-slate-600 dark:text-slate-300">2026-05-10 20:14</td>
             <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">Seoul, KR</td>
             <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">mobile · iOS · Safari</td>
             <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">instagram.com</td>
@@ -163,7 +165,7 @@ function DemoSettingsBanner() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-3 text-[12px]">
       <div className="flex items-center gap-2.5 text-accent-800 dark:text-accent-300">
-        <Sparkles className="h-3.5 w-3.5 shrink-0" />
+        <Info className="h-3.5 w-3.5 shrink-0" />
         <div>
           <p className="font-medium">{t("title")}</p>
           <p className="mt-0.5 text-accent-700/90">{t("desc")}</p>
@@ -343,7 +345,7 @@ function DemoDestinationRow({
           <span className="text-slate-300 dark:text-slate-600">·</span>
           {share ? (
             <>
-              <span className="text-slate-400 dark:text-slate-500">
+              <span className="text-slate-500 dark:text-slate-400">
                 {t("configuredShare", { pct: share.configured.toFixed(0) })}
               </span>
               <span className="text-slate-300 dark:text-slate-600">·</span>

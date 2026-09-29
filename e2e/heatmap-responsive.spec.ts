@@ -109,7 +109,7 @@ test.describe("heatmap desktop full grid (24h × 7day)", () => {
 /**
  * Aggregate correctness: each mobile cell's aria-label count must equal the sum of the four
  * hourly cells it covers on the desktop grid. We compare counts by parsing the localized
- * aria-label "{day} {h}시 — {count}회" → count = parseInt last number.
+ * aria-label "{day} {h}시, {count}회" → count = parseInt last number.
  *
  * 두 grid 가 같은 데이터(`data.heatmap`)로 렌더되므로, viewport 만 바꿔도 비교 가능. 첫 round 는
  * 데스크탑 viewport 로 hourly 합을 수집, 두 번째 round 는 모바일 viewport 로 4h aggregate 값을 읽고
@@ -119,8 +119,8 @@ test.describe("heatmap aggregate correctness — mobile bucket = desktop 4h sum"
   test("mobile 4h bucket count equals desktop hourly sum per (day, bucket)", async ({ page }) => {
     function parseCount(label: string | null): number {
       if (!label) return -1;
-      // ko: "{day} {hour}시 — {count}회"  or "{day} {from}–{to}시 — {count}회"
-      const m = label.match(/—\s*(\d+)\s*회/);
+      // ko: "{day} {hour}시, {count}회"  or "{day} {from}–{to}시, {count}회"
+      const m = label.match(/,\s*(\d+)\s*회/);
       return m ? Number(m[1]) : -1;
     }
 

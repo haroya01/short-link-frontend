@@ -11,16 +11,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // kurl is opting into dark mode — mirror the blog palette (slate-950 page, slate-900 surfaces,
-        // white primary CTA) so the two products read as one in dark.
-        default:
-          "bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200",
         // Dark flips to a light green fill with dark text — white labels on accent-400/500 sit
         // around 2.5:1 and fail WCAG AA; slate-950 on the same fills clears 7:1.
+        default:
+          "bg-accent-700 text-white hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400",
         accent:
           "bg-accent-700 text-white hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400",
         outline:
-          "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800",
+          "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800",
         ghost: "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",
         subtle:
           "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
@@ -28,13 +26,13 @@ const buttonVariants = cva(
         link: "text-slate-900 hover:underline underline-offset-4 dark:text-slate-100",
       },
       size: {
-        sm: "h-8 px-3",
+        sm: "touch-target h-8 px-3",
         md: "h-10 px-4",
         lg: "h-11 px-5",
         // Marketing hero / final CTA — qr-campaigns landing 의 hero CTA 매칭.
         // 반경은 베이스의 lg 그대로(컨트롤 티어 단일) — 크기만 키운다.
         xl: "h-12 px-7 text-[14px]",
-        icon: "h-9 w-9",
+        icon: "touch-target h-9 w-9",
       },
     },
     defaultVariants: {

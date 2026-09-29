@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, Home, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -9,14 +9,15 @@ import { blogHref } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { cn } from "@/lib/utils";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { AccountSheet } from "@/components/common/account-sheet";
 import { BlogSearchSheet } from "@/components/common/blog-search-sheet";
 
 const TAB =
-  "focus-ring flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors";
+  "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 탐색 · 알림 · 계정. 탐색/계정 open
+ * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 검색 · 알림 · 계정. 검색/계정 open
  * full-width sheets; 홈/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
  * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
@@ -27,8 +28,7 @@ export function BlogBottomNav() {
   const { authenticated } = useAuth();
   const unread = useUnreadCount();
   const [sheet, setSheet] = useState<null | "search" | "account">(null);
-  const [hidden, setHidden] = useState(false);
-  const lastY = useRef(0);
+  const hidden = useHideOnScroll();
 
   // Tell the cookie banner a bottom tab bar is present so it lifts above it (else it overlays the
   // tabs and swallows their taps). See globals.css.
@@ -37,18 +37,6 @@ export function BlogBottomNav() {
     return () => {
       delete document.body.dataset.bottomNav;
     };
-  }, []);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > lastY.current + 8 && y > 80) setHidden(true);
-      else if (y < lastY.current - 8) setHidden(false);
-      lastY.current = y;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Locale-anchored so 홈 highlights on both topologies: production subdomain (pathname = `/ko`) and
@@ -63,16 +51,14 @@ export function BlogBottomNav() {
     <>
       <nav
         className={cn(
-          /* 상단 AppHeader 와 같은 플로팅 글래스 캡슐 — LinksBottomNav 와 미러(토큰 동일 유지).
-             safe-area 는 bottom 오프셋이 흡수, 숨김은 오프셋+섀도우까지 걷어내는 200%. */
-          "vt-bottom-nav glass-chrome fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex overflow-visible rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
-          hidden && "translate-y-[200%]",
+          "vt-bottom-nav fixed inset-x-0 bottom-0 z-40 flex bg-white dark:bg-slate-950 overflow-visible border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 sm:hidden",
+          hidden && "translate-y-full",
         )}
       >
         <BlogChromeLink
           href={blogHref("/")}
           aria-current={isHome ? "page" : undefined}
-          className={cn(TAB, isHome ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, isHome ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Home className="h-5 w-5" />
           {t("home")}
@@ -82,10 +68,10 @@ export function BlogBottomNav() {
           onClick={() => setSheet("search")}
           aria-expanded={sheet === "search"}
           aria-haspopup="dialog"
-          className={cn(TAB, sheet === "search" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, sheet === "search" ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Search className="h-5 w-5" />
-          {t("explore")}
+          {t("search")}
         </button>
 
         <BlogChromeLink
@@ -94,7 +80,7 @@ export function BlogBottomNav() {
           // Fold the unread count into the tab's name so a screen reader announces it — the numeric badge
           // is otherwise decorative (aria-hidden) and silent.
           aria-label={authenticated && unread > 0 ? `${tNotif("title")}, ${tNotif("unreadCount", { count: unread })}` : undefined}
-          className={cn(TAB, isNotif ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, isNotif ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <span className="relative">
             <Bell className="h-5 w-5" />
@@ -114,7 +100,7 @@ export function BlogBottomNav() {
           onClick={() => setSheet("account")}
           aria-expanded={sheet === "account"}
           aria-haspopup="dialog"
-          className={cn(TAB, sheet === "account" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn(TAB, sheet === "account" ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <User className="h-5 w-5" />
           {authenticated ? t("account") : t("login")}

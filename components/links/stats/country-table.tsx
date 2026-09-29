@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import type { CountryClick } from "@/types";
-import { cn, countryFlag, countryName, formatNumber } from "@/lib/utils";
+import { cn, countryFlag, countryName, formatNumber, formatShare } from "@/lib/utils";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 
 type Props = { data: CountryClick[] };
@@ -31,11 +31,6 @@ export function CountryTable({ data }: Props) {
       <TBody>
         {data.map((c, i) => {
           const ratio = c.count / total;
-          // < 10% gets a single decimal so a 2% / 3% split stays distinguishable; >= 10%
-          // rounds to whole numbers so the table reads as a clean breakdown without false
-          // precision (a 61.3% leader doesn't carry useful info past the integer).
-          const pct =
-            ratio >= 0.1 ? (ratio * 100).toFixed(0) : (ratio * 100).toFixed(1);
           const code = c.country?.toUpperCase() ?? "??";
           const known = code.length === 2 && code !== "UN" && code !== "??";
           const isLeader = c.count === topCount && topCount > 0;
@@ -72,13 +67,13 @@ export function CountryTable({ data }: Props) {
                         isLeader ? "bg-accent-700" : "bg-accent-600",
                       )}
                       style={{
-                        width: `${pct}%`,
+                        width: `${ratio * 100}%`,
                         animation: `ctGrow 600ms ${i * 50}ms ease-out backwards`,
                       }}
                     />
                   </div>
                   <span className="w-9 text-right text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:w-10">
-                    {pct}%
+                    {formatShare(ratio)}
                   </span>
                 </div>
               </TD>

@@ -1,6 +1,7 @@
 import { request } from "@/lib/api/client";
 import { stripImageMetadata } from "@/lib/image-resize";
-import { USE_MOCKS } from "@/modules/blog/api/_mocks";
+
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** Why an image upload was rejected, as a code the caller localizes (keeps display copy out of this
  *  data module). `too-large` carries the sizes so the message can name the actual limit. */

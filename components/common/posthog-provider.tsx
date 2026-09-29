@@ -33,6 +33,25 @@ import {
 const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
 
+// PostHog's first config/flags fetches paid full DNS+TLS on mobile (~660ms est. in Lighthouse), so the
+// connections are warmed — but only once consent lets the SDK load, never from the document head for
+// every visitor. The assets host serves plain <script> loads (no-cors), the api host fetch/XHR (cors).
+function preconnectPostHog() {
+  const hosts: [string, boolean][] = [[POSTHOG_HOST, true]];
+  const assets = POSTHOG_HOST.replace(
+    /^https:\/\/(\w+)\.i\.posthog\.com\/?$/,
+    "https://$1-assets.i.posthog.com",
+  );
+  if (assets !== POSTHOG_HOST) hosts.push([assets, false]);
+  for (const [href, cors] of hosts) {
+    const link = document.createElement("link");
+    link.rel = "preconnect";
+    link.href = href;
+    if (cors) link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+  }
+}
+
 // Memoized loader — the posthog-js chunk is fetched at most once, on the first capture after
 // hydration, then reused. Returns null (SSR or no key) so callers can `?.` without guarding.
 let clientPromise: Promise<PostHog | null> | null = null;
@@ -43,6 +62,7 @@ function loadPostHog(): Promise<PostHog | null> {
   // 청크 자체를 안 받는 게 중요하다: import 만 해도 init 이 돌아 저장소를 건드린다.
   if (!hasAcceptedConsent()) return Promise.resolve(null);
   if (!clientPromise) {
+    preconnectPostHog();
     clientPromise = import("posthog-js").then(({ default: posthog }) => {
       if (!(posthog as unknown as { __loaded?: boolean }).__loaded) {
         posthog.init(POSTHOG_KEY!, {

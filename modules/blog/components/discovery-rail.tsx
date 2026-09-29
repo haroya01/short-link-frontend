@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { blogPath } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";

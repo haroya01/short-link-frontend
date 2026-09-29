@@ -8,7 +8,7 @@ import { dateLocale } from "@/lib/date";
 import type { FeedSource } from "@/modules/blog/api/collections";
 import { getHighlightFeed, type HighlightFeedItem } from "@/modules/blog/api/highlights";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { quoteHref } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -248,12 +248,12 @@ function HighlightFeedRow({ item, locale }: { item: HighlightFeedItem; locale: s
             // post author is unknown (no destination to open the thread on).
             <BlogLink
               href={`${quoteHref(item.postAuthorUsername, item.postSlug, item.quote, locale, item.id)}&thread=1`}
-              className="focus-ring ml-auto rounded tabular-nums text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+              className="focus-ring ml-auto rounded tabular-nums text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
             >
               {t("highlightReplyCount", { count: item.replyCount })}
             </BlogLink>
           ) : (
-            <span className="ml-auto tabular-nums text-slate-400 dark:text-slate-500">
+            <span className="ml-auto tabular-nums text-slate-500 dark:text-slate-400">
               {t("highlightReplyCount", { count: item.replyCount })}
             </span>
           ))}
@@ -278,7 +278,7 @@ function HighlightFeedRow({ item, locale }: { item: HighlightFeedItem; locale: s
       {item.postAuthorUsername && (
         <BlogLink
           href={postHref(item.postAuthorUsername, item.postSlug, locale)}
-          className="focus-ring group mt-2 inline-flex max-w-full items-center gap-1.5 rounded text-[12px] text-slate-400 dark:text-slate-500"
+          className="focus-ring group mt-2 inline-flex max-w-full items-center gap-1.5 rounded text-[12px] text-slate-500 dark:text-slate-400"
         >
           <span className="truncate font-medium text-slate-500 transition-colors group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
             {item.postTitle}

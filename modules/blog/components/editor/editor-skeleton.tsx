@@ -1,10 +1,8 @@
 import { Skeleton } from "@/modules/blog/components/skeleton";
 
 /**
- * The editor's loading shape (top bar → title → meta strip → body), shared by the new-post bootstrap
- * (/write/new, while the draft is being created) and the editor itself (/write/[id], while it loads).
- * Using one skeleton for both means 글쓰기 → new draft → editor swaps in continuously with no jump
- * from a spinner to a skeleton to the real surface.
+ * The editor's loading shape (top bar → title → meta strip → body), shown while /write/[id] loads a
+ * post so the real surface swaps in without a jump from a spinner.
  */
 export function EditorSkeleton() {
   return (

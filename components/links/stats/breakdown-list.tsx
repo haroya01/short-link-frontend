@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { useTranslations } from "next-intl";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, formatShare } from "@/lib/utils";
 
 type Props = {
   // `title` overrides the hover tooltip when the visible `label` is a truncated stand-in for a
@@ -28,7 +28,6 @@ function BreakdownListImpl({ items, maxItems = 10 }: Props) {
     <ul className="space-y-2.5">
       {top.map((item, i) => {
         const ratio = item.count / total;
-        const pct = ratio >= 0.1 ? (ratio * 100).toFixed(0) : (ratio * 100).toFixed(1);
         const isLeader = item.count === topCount && topCount > 0;
         return (
           <li key={item.label} className="flex items-center gap-2 text-sm sm:gap-3">
@@ -49,7 +48,7 @@ function BreakdownListImpl({ items, maxItems = 10 }: Props) {
                     isLeader ? "bg-accent-700" : "bg-accent-600",
                   )}
                   style={{
-                    width: `${pct}%`,
+                    width: `${ratio * 100}%`,
                     animation: `bdGrow 600ms ${i * 50}ms ease-out backwards`,
                   }}
                 />
@@ -59,7 +58,7 @@ function BreakdownListImpl({ items, maxItems = 10 }: Props) {
               {formatNumber(item.count)}
             </span>
             <span className="hidden w-12 text-right text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:inline">
-              {pct}%
+              {formatShare(ratio)}
             </span>
           </li>
         );

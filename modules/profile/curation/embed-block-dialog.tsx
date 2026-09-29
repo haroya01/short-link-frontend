@@ -78,12 +78,12 @@ export function EmbedBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }
           )}
         </FormField>
 
-        <div className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2">
-          <p className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">
+        <div className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2 dark:border-slate-800 dark:bg-slate-800/40">
+          <p className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600 dark:text-slate-300">
             <Play className="h-3 w-3" />
             {t("embedSupportedProviders")}
           </p>
-          <p className="mt-1 text-[10px] leading-relaxed text-slate-500">
+          <p className="mt-1 text-[10px] leading-relaxed text-slate-500 dark:text-slate-400">
             {EMBED_PROVIDERS.map((p) => p.name).join(" · ")}
           </p>
         </div>

@@ -34,7 +34,6 @@ test.describe("settings", () => {
     await page.goto("/ko/settings");
     const select = page.locator("select").first();
     await select.selectOption("Asia/Tokyo");
-    await page.getByRole("button", { name: "저장" }).first().click();
     await expect(page.getByText("저장됨")).toBeVisible({ timeout: 5000 });
     expect(saved).toEqual(["Asia/Tokyo"]);
 
@@ -47,8 +46,8 @@ test.describe("settings", () => {
     await mockBackend(page);
     await page.goto("/ko/settings");
     await page.getByRole("tab", { name: "데이터" }).click();
-    await page.getByRole("button", { name: /계정 영구 삭제/ }).click();
-    const confirm = page.getByRole("button", { name: /^영구 삭제/ });
+    await page.getByRole("button", { name: "계정 삭제", exact: true }).click();
+    const confirm = page.getByRole("dialog").getByRole("button", { name: "삭제", exact: true });
     await expect(confirm).toBeDisabled();
     await page.getByPlaceholder("DELETE").fill("DELETE");
     await expect(confirm).toBeEnabled();

@@ -34,7 +34,7 @@
     "allLanguages": "Tất cả",
     "seriesTab": "Series",
     "seriesTabEmptyTitle": "Chưa đăng ký series nào",
-    "seriesTabEmpty": "Đăng ký một series và những bài viết mới sẽ tụ về đây.",
+    "seriesTabEmpty": "Đăng ký một series và các bài viết mới sẽ hiện ở đây.",
     "seriesTabSignedOut": "Xem bài mới nhất từ các series bạn đăng ký.",
     "seriesTabSignIn": "Đăng nhập",
     "seriesTabFreshBadge": "Vừa cập nhật",
@@ -47,19 +47,19 @@
     "retry": "Thử lại",
     "loadMoreError": "Không tải thêm được.",
     "feed": "Đang theo dõi",
-    "followingSignedOut": "Bài viết mới từ các tác giả bạn theo dõi sẽ tụ về đây.",
+    "followingSignedOut": "Bài viết mới từ các tác giả bạn theo dõi sẽ hiện ở đây.",
     "forYou": "Dành cho bạn",
-    "forYouSignedOutTitle": "Chọn riêng cho bạn",
+    "forYouSignedOutTitle": "Gợi ý dựa trên những gì bạn đọc",
     "forYouSignedOut": "Đăng nhập và chúng tôi sẽ gợi ý bài viết dựa trên những gì bạn đọc và chủ đề bạn quan tâm.",
     "forYouEmptyTitle": "Chưa có gì để gợi ý",
     "forYouEmpty": "Theo dõi vài chủ đề hoặc đọc vài bài, dòng tin của bạn sẽ đầy ắp những lựa chọn dành riêng cho bạn.",
     "followingSignedOutTitle": "Bài viết từ các tác giả bạn theo dõi",
     "followingBrowseLatest": "Mới nhất",
-    "followingEmpty": "Theo dõi một tác giả và bài viết mới của họ sẽ tụ về đây.",
+    "followingEmpty": "Theo dõi một tác giả và bài viết mới của họ sẽ hiện ở đây.",
     "signIn": "Đăng nhập",
     "topics": "Chủ đề",
-    "mastheadTagline": "Đọc. Viết. Kết nối.",
-    "mastheadSub": "Bài viết từ những người dùng kurl.",
+    "mastheadTagline": "Bài viết của những người trên kurl",
+    "mastheadSub": "Bài mới nhất ở trên cùng.",
     "tagFeedSubtitle": "Bài viết được xuất bản trong chủ đề này.",
     "tagFollow": "Theo dõi",
     "tagFollowing": "Đang theo dõi",
@@ -69,7 +69,7 @@
     "tagAllHiddenTitle": "Đều bị ẩn bởi các chủ đề đã tắt tiếng",
     "tagAllHiddenBody": "Cả {count} bài từ những người bạn theo dõi đều bị ẩn bởi các chủ đề bạn đã tắt tiếng. Bỏ ẩn một chủ đề trong cài đặt chủ đề để xem lại.",
     "myTags": "Thẻ của tôi",
-    "metaDescription": "Đọc. Viết. Kết nối. Blog công khai của kurl.",
+    "metaDescription": "Blog của những người trên kurl, nơi bạn có thể gom các đoạn đã gạch chân vào bộ sưu tập.",
     "emptyTitle": "Chưa có bài viết nào được xuất bản",
     "emptyBody": "Hãy là người xuất bản đầu tiên.",
     "emptyFollowingTitle": "Chưa có bài từ các tác giả bạn theo dõi",
@@ -165,7 +165,7 @@
     "postsEmpty": "Chưa có bài viết đã xuất bản.",
     "draftsTitle": "Bản nháp",
     "draftsEmpty": "Không có bản nháp.",
-    "views": "{count} lượt xem",
+    "views": "{count, number} lượt xem",
     "loginRequired": "Vui lòng đăng nhập.",
     "loading": "Đang tải…",
     "seriesTitle": "Loạt bài",
@@ -204,11 +204,10 @@
     "analyticsLifetimeViews": "Tổng lượt xem",
     "analyticsLifetimeLikes": "Tổng lượt thích",
     "analyticsPublished": "Đã xuất bản",
-    "analyticsViews": "{count} lượt xem",
+    "analyticsViews": "{count, number} lượt xem",
     "analyticsDays": "{days} ngày",
     "analyticsAll": "Tất cả",
     "analyticsAllViews": "Lượt xem toàn thời gian",
-    "analyticsAllClicks": "{count} lượt nhấp toàn thời gian",
     "analyticsSeries": "Series",
     "analyticsSubscribers": "Người đăng ký",
     "analyticsPosts": "Bài viết",
@@ -221,7 +220,7 @@
     "analyticsLinkClicks": "Lượt nhấp từ nội dung này",
     "analyticsLinkClicksAll": "Lượt nhấp từ liên kết trong bài",
     "analyticsLinkBreakdown": "Lượt nhấp theo liên kết",
-    "analyticsWindowClicks": "{count} lượt nhấp trong {days} ngày",
+    "analyticsWindowClicks": "{count, number} lượt nhấp trong {days} ngày",
     "analyticsPerPost": "Theo từng bài",
     "analyticsViewAll": "Xem tất cả",
     "analyticsCollapse": "Thu gọn",
@@ -231,7 +230,7 @@
       "likes": "Theo lượt thích",
       "recent": "Mới nhất"
     },
-    "analyticsFollows": "Lượt theo dõi mới",
+    "analyticsFollows": "Tổng lượt theo dõi",
     "analyticsFollowsGained": "Lượt theo dõi từ bài này",
     "analyticsWindowFollows": "+{count} trong {days} ngày",
     "linksByPost": "Lượt nhấp theo bài",
@@ -241,7 +240,7 @@
     "savedSubtitle": "Đọc lại bài viết đã lưu và những đoạn muốn ghi nhớ.",
     "curationMockNote": "Xem trước — hiện chỉ lưu trên trình duyệt này.",
     "curationPinned": "Bài ghim",
-    "curationPinnedHint": "Hiển thị theo thứ tự này ở đầu trang công khai của bạn.",
+    "curationPinnedHint": "Hiển thị theo thứ tự này ở đầu trang tác giả của bạn.",
     "curationPinnedEmpty": "Chưa ghim gì. Thêm một bài bên dưới.",
     "curationAdd": "Thêm",
     "curationAddLabel": "Thêm một bài để ghim",
@@ -267,8 +266,6 @@
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
     "rowDelete": "Xóa",
-    "rowDeleteConfirm": "Xóa “{title}”? Thao tác này không thể hoàn tác.",
-    "rowDeleteFailed": "Không xóa được.",
     "curationLiked": "Bài đã thích",
     "curationLikedHint": "Những bài bạn đã thích.",
     "curationHighlights": "Đánh dấu & ghi chú",
@@ -292,12 +289,14 @@
     "settingsFollowedTagsHint": "Các chủ đề bạn theo dõi — kể cả những chủ đề chưa có bài gần đây. Bài của chúng hiện ở dải trên bảng tin của bạn.",
     "settingsFollowedTagsEmpty": "Bạn chưa theo dõi chủ đề nào.",
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
-    "analyticsPeakDay": "Ngày cao nhất {date} · {count} lượt xem"
+    "analyticsPeakDay": "Ngày cao nhất {date} · {count, number} lượt xem",
+    "analyticsLifetimeCaption": "Toàn thời gian"
   },
   "postEditor": {
     "backToList": "Bài viết",
     "titlePlaceholder": "Tiêu đề",
-    "bodyPlaceholder": "Gõ '/' để chèn khối — hoặc cứ bắt đầu viết",
+    "imageCaptionPlaceholder": "Thêm chú thích (không bắt buộc)",
+    "bodyPlaceholder": "Gõ '/' để chèn khối, hoặc cứ bắt đầu viết",
     "blockMenu": {
       "add": "Thêm khối bên dưới",
       "embedMedia": "Nội dung nhúng",
@@ -393,10 +392,10 @@
     "featuredPinnedLabel": "Nổi bật",
     "featuredMoveUp": "Lên trên",
     "featuredMoveDown": "Xuống dưới",
-    "viewAll": "Tất cả",
+    "viewAll": "Danh sách",
     "viewBySeries": "Theo series",
-    "viewCount": "{count} lượt xem",
-    "likeCount": "{count} lượt thích",
+    "viewCount": "{count, number} lượt xem",
+    "likeCount": "{count, number} lượt thích",
     "noPosts": "Chưa có bài viết.",
     "listLoading": "Đang tải…",
     "slugHint": "Chỉnh được đến khi xuất bản · chữ thường, chữ số, dấu gạch ngang",
@@ -523,7 +522,7 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "bodyPlaceholderTouch": "Cứ bắt đầu viết — định dạng ở thanh công cụ phía trên"
+    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -542,13 +541,13 @@
     "newFolderTo": "Vào thư mục mới",
     "untagged": "Chưa gắn thẻ",
     "emptyBookmarks": "Danh sách đọc của bạn trống",
-    "emptyBookmarksBody": "Đánh dấu những bài bạn muốn đọc lại và chúng sẽ tụ về đây.",
+    "emptyBookmarksBody": "Đánh dấu những bài bạn muốn đọc lại và chúng sẽ hiện ở đây.",
     "emptyLiked": "Chưa có bài nào được thích",
-    "emptyLikedBody": "Những bài bạn thích sẽ tụ về đây.",
+    "emptyLikedBody": "Những bài bạn thích sẽ hiện ở đây.",
     "emptyHighlights": "Chưa có đoạn nào được tô",
     "emptyHighlightsBody": "Tô một đoạn khi đọc và nó sẽ tụ lại ở đây.",
     "emptyComments": "Chưa có bình luận nào",
-    "emptyCommentsBody": "Bình luận bạn viết sẽ tụ về đây.",
+    "emptyCommentsBody": "Bình luận bạn viết sẽ hiện ở đây.",
     "browseFeed": "Duyệt dòng tin",
     "emptyHistory": "Chưa có lịch sử đọc.",
     "emptyHistoryBody": "Những bài bạn đọc sẽ hiện ở đây.",
@@ -611,7 +610,7 @@
     "highlightSaved": "Đã đánh dấu",
     "highlightNoteSaved": "Đã thêm ghi chú",
     "highlightSaveError": "Không thể lưu. Vui lòng thử lại.",
-    "highlightsShownCount": "{count} đánh dấu",
+    "highlightsShownCount": "{count, number} đánh dấu",
     "highlightsHidden": "Đã ẩn đánh dấu",
     "highlightsHide": "Ẩn",
     "highlightsShow": "Hiện",
@@ -669,10 +668,10 @@
     "seriesEmpty": "Chưa có series nào.",
     "seriesTagFilterEmpty": "Không có series nào gắn thẻ #{tag}.",
     "follow": "Theo dõi",
-    "followCuratorHint": "Theo con đường mà người tuyển chọn này dệt nên",
+    "followCuratorHint": "Đọc theo lối đi mà người tuyển chọn này kết nối",
     "following": "Đang theo dõi",
-    "followers": "{count} người theo dõi",
-    "followingCount": "Đang theo dõi {count}",
+    "followers": "{count, number} người theo dõi",
+    "followingCount": "Đang theo dõi {count, number}",
     "followersTab": "Người theo dõi",
     "followingTab": "Đang theo dõi",
     "followersEmpty": "Chưa có người theo dõi.",
@@ -717,7 +716,10 @@
       "important": "Quan trọng",
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
-    }
+    },
+    "activityPosts": "{count} bài viết",
+    "activitySince": "từ {date}",
+    "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại."
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -725,10 +727,10 @@
     "LINK_VIEW_LIMIT_EXCEEDED": "Liên kết này đã đạt giới hạn lượt xem.",
     "LINK_NOT_OWNED": "Bạn không có quyền quản lý liên kết này.",
     "LINK_QUOTA_EXCEEDED": "Bạn đã đạt hạn mức liên kết ({limit}).",
-    "DUPLICATE_SHORT_CODE": "Mã rút gọn đó đang được dùng.",
-    "RESERVED_SHORT_CODE": "Mã rút gọn đó đã được giữ chỗ.",
+    "DUPLICATE_SHORT_CODE": "Mã đó đang được dùng.",
+    "RESERVED_SHORT_CODE": "Mã đó đã được giữ chỗ.",
     "MALICIOUS_URL": "URL này bị gắn cờ là độc hại hoặc trang lừa đảo.",
-    "SHORT_CODE_EXHAUSTED": "Không tạo được mã rút gọn. Vui lòng thử lại.",
+    "SHORT_CODE_EXHAUSTED": "Không tạo được mã. Vui lòng thử lại.",
     "BULK_IMPORT_TOO_LARGE": "Tối đa {limit} dòng mỗi lần tải lên — đã nhận {rows}.",
     "OPTIMISTIC_LOCK": "Có người vừa cập nhật mục này ở tab khác. Tải lại và thử lại.",
     "INVALID_REFRESH_TOKEN": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.",
@@ -761,13 +763,13 @@
     "learnMore": "Chính sách quyền riêng tư",
     "prefsTitle": "Phân tích sử dụng",
     "prefsDesc": "Bật hoặc tắt phân tích sản phẩm. Khi tắt, mã định danh phân tích đã lưu trên thiết bị này cũng bị xoá. Cookie cần thiết để giữ bạn đăng nhập không bị ảnh hưởng.",
-    "stateOn": "Thiết lập hiện tại — phân tích đang bật.",
-    "stateOff": "Thiết lập hiện tại — phân tích đang tắt.",
-    "stateUnset": "Thiết lập hiện tại — bạn chưa chọn. Phân tích đang tắt."
+    "stateOn": "Phân tích đang bật.",
+    "stateOff": "Phân tích đang tắt.",
+    "stateUnset": "Bạn chưa chọn. Phân tích đang tắt."
   },
   "meta": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
-    "description": "Rút gọn URL dài và xem ai nhấp — theo thiết bị, kênh và quốc gia.",
+    "description": "Rút gọn một URL dài và xem mỗi lượt nhấp đến từ thiết bị, kênh và quốc gia nào, không tính bot.",
     "ogHeadlineTop": "URL ngắn +",
     "ogHeadlineBottom": "Phân tích lượt nhấp",
     "ogSubline": "Thiết bị · kênh · quốc gia · thời gian — xem mỗi lượt nhấp đến từ đâu, trong nháy mắt"
@@ -791,8 +793,8 @@
     "reply": "<b>{actor}</b> đã trả lời bình luận của bạn",
     "new_post": "<b>{actor}</b> đã xuất bản bài mới",
     "mention": "<b>{actor}</b> đã nhắc đến bạn trong một bình luận",
-    "connected": "<b>{actor}</b> đã thêm bài của bạn vào <c>{collection}</c>",
-    "path_grew": "Một bài mới vừa nối vào <c>{collection}</c>, nơi có bài của bạn",
+    "connected": "<b>{actor}</b> đã kết nối bài của bạn vào <c>{collection}</c>",
+    "path_grew": "Một bài mới vừa được kết nối vào <c>{collection}</c>, nơi có bài của bạn",
     "aCollection": "một bộ sưu tập",
     "blogPrefsTitle": "Loại thông báo",
     "blogPrefsSubtitle": "Chỉ giữ lại những thông báo bạn muốn. Cùng một lựa chọn được áp dụng trên web và trong ứng dụng.",
@@ -811,14 +813,15 @@
     "prefSeriesSubscribeHint": "Khi ai đó đăng ký series của bạn",
     "prefNewPost": "Bài viết từ người bạn theo dõi",
     "prefNewPostHint": "Khi một người bạn theo dõi đăng bài mới",
-    "prefConnected": "Khi bài của bạn được nối",
-    "prefConnectedHint": "Khi ai đó thêm bài của bạn vào một bộ sưu tập",
+    "prefConnected": "Khi bài của bạn được kết nối",
+    "prefConnectedHint": "Khi ai đó kết nối bài của bạn vào một bộ sưu tập",
     "prefPathGrew": "Bài mới trong bộ sưu tập có bài của bạn",
-    "prefPathGrewHint": "Khi một bài mới nối vào bộ sưu tập có bài của bạn",
+    "prefPathGrewHint": "Khi một bài mới được kết nối vào bộ sưu tập có bài của bạn",
     "groupToday": "Hôm nay",
     "groupYesterday": "Hôm qua",
     "groupWeek": "Tuần này",
-    "groupEarlier": "Trước đó"
+    "groupEarlier": "Trước đó",
+    "unreadLabel": "Chưa đọc"
   },
   "nav": {
     "events": "Sự kiện",
@@ -833,12 +836,13 @@
     "liked": "Bài đã thích",
     "library": "Thư viện",
     "myCollections": "Bộ sưu tập của tôi",
-    "showcase": "Hồ sơ",
+    "showcase": "Ví dụ",
     "campaigns": "Chiến dịch QR",
     "settings": "Cài đặt",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
     "account": "Tài khoản",
+    "more": "Xem thêm",
     "home": "Trang chủ",
     "search": "Tìm kiếm",
     "explore": "Khám phá",
@@ -889,13 +893,12 @@
   },
   "home": {
     "tagline": "kurl v1",
-    "headline1": "Rút gọn trong một dòng",
+    "headline1": "Rút gọn trong <line>một dòng</line>",
     "headline2": "Khi nào, ở đâu",
-    "subhead": "Dòng nhấp trực tiếp, thông tin tự động, lọc bot — phân tích mà các dịch vụ rút gọn khác khóa sau gói trả phí, ở đây miễn phí.",
-    "mobileSubhead": "Lượt nhấp trực tiếp, thông tin và lọc bot miễn phí",
-    "anonymousHint": "Không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu cho liên kết.",
-    "demoLink": "Xem trước bảng phân tích",
-    "scrollHint": "Cuộn để xem thêm",
+    "subhead": "Dán một liên kết dài là có ngay liên kết ngắn. Xem ai đã nhấp, khi nào và từ đâu, lượt nhấp của bot được tách riêng.",
+    "mobileSubhead": "Ai nhấp, khi nào, từ đâu. Bot được tách riêng.",
+    "anonymousHint": "Miễn phí, không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu.",
+    "demoLink": "Xem trước trang thống kê",
     "previews": {
       "eyebrow": "Những gì bạn nhận được trong chưa đầy một phút",
       "see": "Xem",
@@ -948,9 +951,7 @@
         }
       }
     },
-    "recentEyebrow": "gần đây",
-    "recentTitle": "Vừa rút gọn",
-    "recentSubhead": "Lưu trên trình duyệt này trong 24 giờ. Đăng nhập để giữ vĩnh viễn.",
+    "recentTitle": "Liên kết gần đây",
     "statsEyebrow": "trực tiếp",
     "statsTitle": "Toàn dịch vụ đến nay",
     "statsSubhead": "Tổng số liên kết đã rút gọn và lượt nhấp đã theo dõi đến nay.",
@@ -961,33 +962,38 @@
     "whyTitle": "Sao không phải dịch vụ rút gọn nào cũng có điều này?",
     "whySubhead": "Những tính năng thường bị khóa sau các gói doanh nghiệp — ở đây miễn phí, bật sẵn theo mặc định.",
     "stage": {
-      "scene2Eyebrow": "Chia sẻ",
-      "scene2Title": "Dán ở đâu, click quay về từ đó",
-      "scene2Desc": "Bio Instagram, X, YouTube, email — biết mỗi click đến từ đâu, theo thời gian thực.",
-      "scene3Eyebrow": "Phân tích",
-      "scene3Title": "Từng click trở thành một bức tranh",
-      "scene3Desc": "Ai, khi nào, từ đâu — tách người và bot, đến cả nhịp 30 ngày. Độ sâu nơi khác thu phí, ở đây miễn phí.",
-      "scene3CtaDemo": "Xem trước bản demo",
-      "scene3CtaStart": "Bắt đầu miễn phí"
-    }
+      "title": "Đăng nhập để mỗi liên kết có thống kê như thế này",
+      "desc": "Mỗi lượt nhấp đều được ghi lại. Thống kê hoàn toàn miễn phí, màn hình bên dưới dùng dữ liệu ví dụ.",
+      "feedTitle": "Mỗi lượt nhấp đến từ đâu",
+      "feedDesc": "Quốc gia, thiết bị và kênh, mỗi lượt một dòng. Mở trang thống kê là thấy lượt nhấp theo thời gian thực.",
+      "trendTitle": "Xu hướng 30 ngày theo lượt nhấp thật",
+      "trendDesc": "Lượt nhấp của bot được lọc riêng, nên con số đầu tiên bạn thấy là lượt nhấp thật.",
+      "ctaStart": "Đăng nhập để bắt đầu",
+      "ctaDemo": "Xem thống kê mẫu"
+    },
+    "recentKept": "Lưu trên trình duyệt này trong 24 giờ",
+    "recentClaim": "Đăng nhập để chuyển các liên kết này vào tài khoản, không bị hết hạn.",
+    "recentLogin": "Đăng nhập"
   },
   "showcase": {
-    "eyebrow": "Hồ sơ công khai · ví dụ thật",
-    "title": "Biến nó thành của bạn",
-    "subhead": "Một hồ sơ hợp với việc bạn làm — dù bạn điều hành quán cà phê, viết code, dạy học, hay chỉ chia sẻ liên kết.",
+    "eyebrow": "Hồ sơ công khai · ví dụ",
+    "title": "Hồ sơ hợp với công việc của bạn",
+    "subhead": "Chọn các khối hợp với việc bạn làm, như thực đơn quán cà phê, lịch lớp học hay portfolio.",
     "demoCta": "Xem tất cả ví dụ",
-    "ctaTitle": "Hồ sơ của bạn, lên sóng trong 5 phút",
-    "ctaSubhead": "Đăng nhập và chọn một cái tên — rồi thả vào ảnh, liên kết, địa chỉ và thông tin liên hệ, đúng như các ví dụ bên dưới.",
+    "ctaTitle": "Bạn cũng có thể tạo hồ sơ như thế này",
+    "ctaSubhead": "Đăng nhập và chọn tên người dùng là có thể bắt đầu. Thêm ảnh, liên kết, địa chỉ và thông tin liên hệ, trang sẽ trông giống các ví dụ bên dưới.",
     "cta": "Tạo hồ sơ của bạn",
     "metaSuffix": "mẫu",
     "metaFallbackTitle": "{handle} · mẫu kurl",
     "sampleBanner": "Trang mẫu · đây cũng có thể là hồ sơ của bạn",
     "sampleCta": "Tạo hồ sơ của tôi",
-    "scrollCue": "Xem ví dụ thật",
+    "scrollCue": "Xem ví dụ",
     "meta": {
-      "title": "Ví dụ trang hồ sơ · Bộ sưu tập link in bio - kurl",
-      "description": "Cách những người sáng tạo, người bán, và doanh nghiệp nhỏ vận hành trang bio trên kurl. Link in bio + danh thiếp QR + phân tích lượt nhấp — một trang, mọi bề mặt."
-    }
+      "title": "Ví dụ hồ sơ link-in-bio · kurl",
+      "description": "Ví dụ hồ sơ cho quán cà phê, giảng viên, nhiếp ảnh gia và nhiều nghề khác. Liên kết, danh thiếp, bản đồ và thẻ sản phẩm nằm gọn trên một trang."
+    },
+    "prev": "Ví dụ trước",
+    "next": "Ví dụ tiếp theo"
   },
   "shortenForm": {
     "placeholder": "Dán URL dài của bạn vào đây",
@@ -1012,8 +1018,8 @@
       "urlBlank": "Vui lòng nhập URL.",
       "urlGeneric": "URL không hợp lệ.",
       "generic": "Rút gọn thất bại.",
-      "selfReferencing": "Liên kết kurl.me không thể rút gọn thêm — nó đã ngắn rồi.",
-      "reservedCode": "Mã này đã được dành riêng — hãy thử mã khác.",
+      "selfReferencing": "Liên kết kurl.me đã là liên kết ngắn nên không thể rút gọn thêm.",
+      "reservedCode": "Mã này đã được dành riêng. Hãy thử mã khác.",
       "quota": "Bạn đã đạt giới hạn liên kết — dọn bớt liên kết cũ để tạo mới.",
       "validation": "Dữ liệu nhập không hợp lệ."
     }
@@ -1026,7 +1032,6 @@
     "passwordNotApplied": "Chưa đặt được mật khẩu. Hãy đặt lại trong phần quản lý liên kết.",
     "copy": "Sao chép",
     "copied": "Đã sao chép",
-    "open": "Mở",
     "viewStats": "Xem thống kê",
     "stats": "Thống kê",
     "moreShorten": "Rút gọn URL khác",
@@ -1040,7 +1045,7 @@
   },
   "login": {
     "title": "Đăng nhập",
-    "subtitle": "Đăng nhập để quản lý liên kết và xem phân tích.",
+    "subtitle": "Đăng nhập để quản lý các liên kết trong một danh sách và xem ai đã nhấp.",
     "google": "Tiếp tục với Google",
     "anonymousButton": "Rút gọn mà không cần đăng nhập",
     "rotation": {
@@ -1115,8 +1120,7 @@
     "newLink": "Liên kết mới",
     "loadMore": "Xem thêm",
     "loadingMore": "Đang tải...",
-    "searchPlaceholder": "Tìm tên, URL gốc hoặc mã rút gọn",
-    "clearSearch": "Xóa tìm kiếm",
+    "searchPlaceholder": "Tìm tên, điểm đến hoặc mã",
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Liên kết và thống kê lượt nhấp của tôi chỉ hiển thị sau khi đăng nhập.",
     "goToLogin": "Đi đến đăng nhập",
@@ -1157,18 +1161,18 @@
     "emptyCta": "Rút gọn ngay",
     "onboarding": {
       "eyebrow": "Chào mừng",
-      "title": "Ba bước là xong",
-      "subtitle": "Rút gọn → chia sẻ → xem thống kê. Lượt nhấp đầu tiên trong vòng 60 giây là bình thường.",
-      "step1Title": "Rút gọn trong một phút",
-      "step1Desc": "Dán một URL ở trang chủ và nhấn Rút gọn. Nhận liên kết ngắn ngay.",
+      "title": "Ba bước",
+      "subtitle": "Rút gọn một liên kết rồi đăng ở nơi mọi người sẽ thấy. Lượt nhấp sẽ được ghi lại ở đây.",
+      "step1Title": "Rút gọn liên kết",
+      "step1Desc": "Dán URL dài vào ô rút gọn, đặt mã, hạn dùng hoặc mật khẩu nếu cần, rồi nhấn Rút gọn.",
       "step2Title": "Chia sẻ nó",
-      "step2Desc": "Bio Instagram, KakaoTalk, danh thiếp — bất cứ đâu. Mã QR chỉ với một cú nhấp.",
+      "step2Desc": "Đăng ở bio Instagram, KakaoTalk hay danh thiếp. Bạn cũng có thể tải mã QR.",
       "step3Title": "Xem thống kê",
-      "step3Desc": "Lượt nhấp đến → kênh / quốc gia / thiết bị / thời điểm trong ngày tự động.",
-      "primaryCta": "Tạo liên kết đầu tiên",
-      "secondaryCta": "Hoặc xem trước màn hình phân tích →",
+      "step3Desc": "Lượt nhấp được chia theo kênh, quốc gia, thiết bị và khung giờ.",
+      "secondaryCta": "Hoặc xem trước màn hình phân tích",
       "scene": {
-        "weekClicks": "Lượt nhấp tuần này"
+        "weekClicks": "Lượt nhấp tuần này",
+        "example": "Ví dụ"
       }
     },
     "noResultTitle": "Không có kết quả",
@@ -1176,12 +1180,12 @@
     "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại. Hãy thử điều chỉnh.",
     "table": {
       "shortUrl": "Tên liên kết",
-      "originalUrl": "URL gốc",
+      "originalUrl": "Điểm đến",
       "createdAt": "Tạo lúc",
       "expiresAt": "Hết hạn",
       "clicks": "Lượt nhấp của người",
       "actions": "Hành động",
-      "sortAllClicks": "Xếp theo mọi lượt nhấp",
+      "sortClicks": "Xếp theo lượt nhấp của người",
       "sortNewest": "Mới nhất",
       "sortAsc": "tăng dần",
       "sortDesc": "giảm dần"
@@ -1197,7 +1201,7 @@
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
       "more": "Thêm",
-      "openOriginal": "Mở liên kết gốc"
+      "openOriginal": "Mở điểm đến"
     },
     "favorite": {
       "add": "Thêm vào mục yêu thích",
@@ -1272,24 +1276,22 @@
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
     "libraryViews": "Chọn danh sách liên kết",
     "allLinks": "Tất cả liên kết",
-    "copied": "Đã sao chép liên kết",
     "subtitleCount": "{count} liên kết",
     "toolCampaigns": "Chiến dịch QR",
     "toolEvents": "Đăng ký",
     "selectMode": "Chọn",
-    "selectDone": "Xong"
+    "selectDone": "Xong",
+    "todayDelta": "Hôm nay {count, number}"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",
-    "originalUrl": "URL gốc",
-    "expiresAt": "Hết hạn lúc (để trống nếu không hết hạn)",
+    "originalUrl": "URL đích",
     "noteLabel": "Tên liên kết / ghi chú (tùy chọn)",
     "notePlaceholder": "ví dụ: Khuyến mãi xuân / dùng trong story Instagram",
     "noteHint": "Hiện trong danh sách và mục yêu thích, không hiện với khách.",
     "expiredMessageLabel": "Thông báo trang hết hạn (tùy chọn)",
     "expiredMessagePlaceholder": "ví dụ: Khuyến mãi đã kết thúc — xem đợt tiếp theo tại example.com",
     "expiredMessageHint": "Hiển thị thay cho trang hết hạn mặc định khi liên kết hết hạn hoặc đạt giới hạn lượt xem.",
-    "clear": "Xóa",
     "cancel": "Hủy",
     "save": "Lưu",
     "saving": "Đang lưu...",
@@ -1300,14 +1302,13 @@
     "tabs": {
       "basic": "Cơ bản",
       "tags": "Thẻ",
-      "og": "Thẻ chia sẻ",
-      "protection": "Bảo vệ"
+      "og": "Thẻ chia sẻ"
     },
     "tags": {
       "description": "Gõ thẻ cho liên kết này. Tên mới sẽ được tạo tự động."
     },
     "og": {
-      "description": "Ghi đè bản xem trước khi liên kết này được dán lên KakaoTalk, Slack, Twitter, v.v. Để trống các trường để dùng giá trị tự động lấy từ trang đích.",
+      "description": "Ghi đè bản xem trước khi liên kết này được dán lên KakaoTalk, Slack, X, v.v. Để trống các trường để dùng giá trị tự động lấy từ trang đích.",
       "titleLabel": "Ghi đè tiêu đề",
       "titlePlaceholder": "ví dụ: Dịch vụ của chúng tôi",
       "descriptionLabel": "Ghi đè mô tả",
@@ -1324,15 +1325,15 @@
       "maxViewsPlaceholder": "ví dụ: 100",
       "maxViewsInvalid": "Lượt xem tối đa phải là số nguyên dương.",
       "viewCountHint": "Hiện tại {current}/{max} lượt xem"
-    }
+    },
+    "behaviorHint": "Mật khẩu, hết hạn và hẹn giờ mở nằm trong <settings>cài đặt liên kết</settings>."
   },
   "stats": {
     "breakdown": {
       "unknown": "Không rõ",
       "direct": "Trực tiếp"
     },
-    "back": "Quay lại",
-    "shortCode": "mã rút gọn",
+    "shortCode": "liên kết ngắn",
     "detailsTitle": "Chi tiết",
     "tabs": {
       "aria": "Các mục thống kê",
@@ -1439,7 +1440,7 @@
     },
     "destinations": {
       "title": "Chia tách A/B / nhắm theo vị trí",
-      "description": "Phân phối lượt nhấp tới các điểm đến theo trọng số, hoặc gửi khách từ một số quốc gia tới trang phù hợp. Biến thể gắn quốc gia chỉ kích hoạt với khách khớp; nếu không, lưu lượng quay về các biến thể không gắn quốc gia, rồi đến URL gốc. Tối đa 4 mỗi liên kết.",
+      "description": "Phân phối lượt nhấp tới các điểm đến theo trọng số, hoặc gửi khách từ một số quốc gia tới trang phù hợp. Biến thể gắn quốc gia chỉ kích hoạt với khách khớp; nếu không, lưu lượng quay về các biến thể không gắn quốc gia, rồi đến điểm đến mặc định. Tối đa 4 mỗi liên kết.",
       "countryLabel": "Quốc gia mục tiêu",
       "countryAny": "🌐 Mọi quốc gia",
       "countryPlaceholder": "Chọn quốc gia",
@@ -1463,8 +1464,8 @@
       },
       "weight": "Trọng số",
       "labelPlaceholder": "Nhãn (tùy chọn, ví dụ: variant-A)",
-      "controlLabel": "Mặc định (URL gốc)",
-      "controlBadge": "kiểm soát",
+      "controlLabel": "Điểm đến mặc định",
+      "controlBadge": "Đối chứng",
       "add": "Thêm",
       "adding": "Đang thêm...",
       "addFailed": "Thêm điểm đến thất bại.",
@@ -1496,15 +1497,15 @@
     "backToDashboard": "Quay lại liên kết của tôi",
     "kpi": {
       "totalClicks": "Tổng lượt nhấp",
+      "totalVisits": "Tổng lượt truy cập",
       "unique": "Khách ước tính",
       "human": "Lượt nhấp của người",
+      "humanVisits": "Lượt truy cập của người",
       "bot": "Truy cập tự động",
       "velocityHot": "Lượt nhấp tăng vọt",
-      "velocityHour": "Giờ qua",
       "ttfc": "Lượt nhấp đầu sau",
-      "noActivity": "Hoạt động",
-      "noData": "Dữ liệu chưa đủ",
       "uniqueOfHuman": "{ratio}% của người",
+      "uniqueOfHumanVisits": "{ratio}% của người",
       "vsBaseline": "so với trung bình 24 giờ",
       "afterCreation": "sau khi tạo",
       "profile": "Từ hồ sơ",
@@ -1569,7 +1570,7 @@
       },
       "srcChannel": {
         "title": "Kênh chia sẻ (?src)",
-        "desc": "Được theo dõi qua gợi ý ?src= trên chính URL ngắn — bao quát quét QR, KakaoTalk, các kênh ngoại tuyến nơi thiếu header giới thiệu.",
+        "desc": "Được theo dõi qua gợi ý ?src= trên chính liên kết ngắn. Bao quát quét QR, KakaoTalk, các kênh ngoại tuyến nơi thiếu header giới thiệu.",
         "empty": "Không có lượt nhấp nào kèm tham số ?src."
       },
       "clientApp": {
@@ -1594,7 +1595,7 @@
       },
       "country": {
         "title": "Quốc gia",
-        "desc": "Tra cứu IP GeoLite2-City"
+        "desc": "Ước tính từ IP người truy cập"
       },
       "region": {
         "title": "Khu vực",
@@ -1611,7 +1612,7 @@
       "asn": {
         "title": "Mạng / ASN",
         "desc": "Phân bố hệ thống tự trị (ISP / nhà cung cấp đám mây). {dc} lượt nhấp từ trung tâm dữ liệu đã được tự động gắn cờ là bot.",
-        "empty": "Không có dữ liệu ASN (GeoLite2-ASN không được đóng gói kèm)"
+        "empty": "Chưa có dữ liệu mạng (ASN)"
       }
     },
     "clientApp": {
@@ -1678,7 +1679,7 @@
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} lượt nhấp",
-      "detailShare": "{share}% tổng số",
+      "detailShare": "{share} tổng số",
       "detailClose": "Đóng"
     },
     "rawData": {
@@ -1777,7 +1778,15 @@
       "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
     },
     "trendTitle": "Xu hướng nhấp",
-    "rangeDays": "{days} ngày"
+    "rangeDays": "{days} ngày",
+    "moreActions": "Thao tác khác",
+    "period": {
+      "title": "Thời gian hoạt động",
+      "expiry": "Hết hạn",
+      "expiryDesc": "Liên kết sẽ đóng sau thời điểm này.",
+      "expiryAt": "Đóng lúc",
+      "expiryBeforeOpen": "Thời điểm hết hạn phải sau thời điểm mở."
+    }
   },
   "admin": {
     "label": "quản trị",
@@ -2182,17 +2191,17 @@
   },
   "demo": {
     "metaTitle": "kurl demo — xem chính xác bạn nhận được gì khi rút gọn một liên kết",
-    "metaDescription": "Xem trước trực tiếp bảng phân tích, không cần đăng ký.",
-    "sampleBanner": "Dữ liệu mẫu — các liên kết của riêng bạn sẽ được lấp vào cùng bố cục này.",
+    "metaDescription": "Xem trước bảng phân tích, không cần đăng nhập.",
+    "sampleBanner": "Dữ liệu mẫu. Sau khi đăng nhập, các liên kết của bạn sẽ hiện theo đúng bố cục này.",
     "sampleCta": "Tạo liên kết của tôi",
     "settingsNotice": {
-      "title": "Cài đặt mở khóa sau khi đăng ký",
-      "desc": "Điểm đến A/B và webhook được quản lý theo từng liên kết. Sau khi đăng ký, đúng tab này sẽ mở trên trang thống kê của liên kết của bạn.",
+      "title": "Bạn có thể đổi cài đặt sau khi đăng nhập",
+      "desc": "Điểm đến A/B và webhook được quản lý theo từng liên kết. Sau khi đăng nhập, tab này sẽ mở trên trang thống kê của liên kết của bạn.",
       "cta": "Tạo liên kết của tôi"
     },
     "settingsDemo": {
       "badge": "Demo",
-      "lockedToast": "Đây là bản xem trước demo. Sau khi đăng ký bạn có thể đăng ký và chỉnh sửa những thứ này trên liên kết của riêng mình.",
+      "lockedToast": "Đây là bản demo. Sau khi đăng nhập, bạn có thể thêm và chỉnh sửa những mục này trên liên kết của mình.",
       "payloadPreview": "Xem trước payload được gửi đi"
     },
     "createCta": "Tạo liên kết của tôi"
@@ -2200,7 +2209,6 @@
   "publicProfile": {
     "empty": "Người dùng này chưa thêm liên kết nào.",
     "viewBlog": "Xem {count} bài viết",
-    "madeWith": "Tạo bằng kurl.me",
     "editFab": "Chỉnh sửa",
     "share": {
       "x": "Chia sẻ trên X",
@@ -2237,8 +2245,8 @@
       "sendAgain": "Gửi lại",
       "error": "Không đăng ký được. Vui lòng thử lại.",
       "defaultPlaceholder": "ban@example.com",
-      "defaultSuccess": "Bạn đã đăng ký. Cảm ơn!",
-      "trustHint": "Chỉ gửi đến chủ trang này. Không spam."
+      "defaultSuccess": "Bạn đã đăng ký. Cảm ơn.",
+      "trustHint": "Chỉ gửi đến chủ trang này."
     },
     "booking": {
       "defaultTitle": "Đặt lịch",
@@ -2291,47 +2299,15 @@
       "goTo": "Đến thẻ {idx}",
       "openImage": "Mở ảnh",
       "imageN": "Ảnh {idx}"
-    }
-  },
-  "weeklyInsights": {
-    "eyebrow": "7 ngày qua",
-    "emptyDesc": "Tuần này chưa có lượt nhấp. Gắn UTM cho các kênh của bạn và dữ liệu sẽ bắt đầu đổ về.",
-    "humanClicks": "Lượt nhấp của người",
-    "humanRatio": "{percent}% tổng số",
-    "topLink": "Liên kết hàng đầu",
-    "topLinkSub": "{count} lượt nhấp · {source}",
-    "noUtm": "trực tiếp",
-    "peak": "Giờ cao điểm",
-    "peakValue": "{day} {hour}:00",
-    "peakSub": "{count} lượt nhấp lúc cao điểm",
-    "compareLabel": "7 ngày trước",
-    "compareSub": "Mốc so sánh",
-    "noBaseline": "Chưa có mốc so sánh",
-    "days": {
-      "sun": "CN",
-      "mon": "T2",
-      "tue": "T3",
-      "wed": "T4",
-      "thu": "T5",
-      "fri": "T6",
-      "sat": "T7"
     },
-    "loadFailed": "Không tải được phân tích tuần này.",
-    "retry": "Thử lại"
+    "featured": "Nổi bật"
   },
   "recent": {
-    "title": "Vừa rút gọn",
-    "empty": "Chưa có gì — rút gọn một liên kết ở trên.",
-    "viewStats": "Xem thống kê",
-    "claimCta": "Đăng ký để lưu vĩnh viễn các liên kết này vào tài khoản của bạn.",
-    "anonymousNote": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Đăng nhập và chúng được lưu vào tài khoản của bạn — không hết hạn.",
     "claimedToast": "Đã lưu {count} liên kết vào tài khoản của bạn"
   },
   "statsEmpty": {
     "title": "Chưa có lượt nhấp",
-    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp.",
-    "shareCta": "Sao chép liên kết ngắn",
-    "shareCopied": "Đã sao chép"
+    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp."
   },
   "utm": {
     "toggle": "Thêm tham số UTM",
@@ -2404,48 +2380,48 @@
     "github": "GitHub"
   },
   "about": {
-    "title": "kurl — Rút gọn URL kèm phân tích lượt nhấp",
+    "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
     "lead": "Rút gọn URL dài và xem lượt nhấp của bạn đến từ đâu. Miễn phí, hiện chưa có quảng cáo.",
     "section1Title": "Vì sao",
-    "section1Body": "Hầu hết dịch vụ rút gọn giấu phân tích sau bức tường trả phí. kurl cho bạn phân tách theo thiết bị, hệ điều hành, trình duyệt, kênh, quốc gia và thời điểm trong ngày, miễn phí.",
+    "section1Body": "kurl được làm ra để thống kê lượt nhấp không phải là tính năng trả phí. Thống kê theo thiết bị, hệ điều hành, trình duyệt, kênh, quốc gia và giờ trong ngày đều miễn phí.",
     "section2Title": "Cách hoạt động",
-    "section2Body": "Mỗi lượt truy cập được kiểm tra bot và URL độc hại, rồi chuyển hướng. Dữ liệu lượt nhấp được lưu trong một lược đồ rộng, thân thiện với truy vấn nên biểu đồ tải nhanh ngay cả ở quy mô lớn.",
+    "section2Body": "Mỗi lượt truy cập được kiểm tra bot và URL độc hại trước, rồi chuyển đến điểm đến. Lượt nhấp được lưu với một phần IP đã được che.",
     "section3Title": "Công nghệ",
-    "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. Mã nguồn trên GitHub.",
-    "ctaShorten": "Rút gọn một URL ngay"
+    "section3Body": "Spring Boot · MySQL · Redis · Next.js · AWS EC2 · Vercel. Mã nguồn trên GitHub.",
+    "ctaShorten": "Rút gọn một URL"
   },
   "learn": {
     "metaTitle": "Liên kết ngắn · Rút gọn URL · Hướng dẫn link in bio · kurl",
-    "metaDescription": "Rút gọn URL là gì, liên kết ngắn khác trang link-in-bio thế nào, và kurl kết hợp cả hai ra sao — giải đáp trong một nơi.",
+    "metaDescription": "Rút gọn URL là gì, liên kết ngắn khác trang link-in-bio thế nào, và kurl làm cả hai ra sao.",
     "eyebrow": "Hướng dẫn · FAQ",
     "title": "Liên kết ngắn và link-in-bio, giải thích cho người mới",
-    "lead": "Rút gọn URL là gì, kurl làm gì, trang hồ sơ khác một liên kết ngắn đơn lẻ thế nào — những câu hỏi người ta tìm kiếm, gói trong một trang.",
+    "lead": "Những câu hỏi thường gặp về rút gọn URL, về kurl, và về sự khác nhau giữa trang hồ sơ với một liên kết ngắn.",
     "q1": {
       "q": "Rút gọn URL là gì?",
-      "a": "Rút gọn URL thay một địa chỉ dài (ví dụ https://example.com/very/long/path?utm_source=...) bằng một địa chỉ ngắn (ví dụ kurl.me/abc1234). Liên kết ngắn và URL rút gọn cùng nghĩa.\n\nNó hữu ích ở những nơi giới hạn ký tự (bài đăng mạng xã hội), nơi người ta gõ URL bằng tay (danh thiếp, áp phích), và như một lớp phân bổ — hầu hết dịch vụ rút gọn theo dõi lượt nhấp để bạn thấy kênh nào thực sự mang lại lưu lượng."
+      "a": "Rút gọn URL thay một địa chỉ dài (ví dụ https://example.com/very/long/path?utm_source=...) bằng một địa chỉ ngắn (ví dụ kurl.me/abc1234). Liên kết ngắn và URL rút gọn cùng nghĩa.\n\nNó hữu ích ở những nơi giới hạn ký tự (bài đăng mạng xã hội) và nơi người ta gõ URL bằng tay (danh thiếp, áp phích). Dịch vụ rút gọn cũng đếm lượt nhấp, nên bạn thấy được kênh nào mang người đến."
     },
     "q2": {
       "q": "Liên kết ngắn khác trang link-in-bio thế nào?",
-      "a": "Liên kết ngắn là ánh xạ 1:1: một URL dài → một URL ngắn. Tốt nhất cho một điểm đến duy nhất — bài đăng Twitter, bình luận Instagram, danh thiếp.\n\nTrang link-in-bio gom nhiều liên kết sau một URL. Vì Instagram chỉ cho đặt một liên kết trong hồ sơ, người sáng tạo dùng kurl.me/tencuaban làm liên kết đó, dẫn khách tới một trang nhỏ gồm email, đặt lịch, cửa hàng, blog và mạng xã hội của họ.\n\nkurl làm cả hai — rút gọn từng URL, và dựng một trang hồ sơ gói chúng lại."
+      "a": "Liên kết ngắn là ánh xạ 1:1: một URL dài → một URL ngắn. Phù hợp nhất cho một điểm đến duy nhất, như bài đăng Twitter, bình luận Instagram hay danh thiếp.\n\nTrang link-in-bio gom nhiều liên kết sau một URL. Vì Instagram chỉ cho đặt một liên kết trong hồ sơ, người sáng tạo dùng tencuaban.kurl.me làm liên kết đó, dẫn khách tới một trang nhỏ gồm email, đặt lịch, cửa hàng, blog và mạng xã hội của họ.\n\nkurl làm được cả hai: rút gọn từng URL và dựng một trang hồ sơ gom chúng lại."
     },
     "q3": {
       "q": "kurl là gì?",
-      "a": "kurl là dịch vụ rút gọn URL + link-in-bio miễn phí. Không quảng cáo, không bắt buộc đăng ký để rút gọn, và phân tích miễn phí: thiết bị, quốc gia, kênh, thời điểm trong ngày.\n\nĐăng nhập bằng Google chỉ với một cú nhấp và các liên kết rút gọn của bạn được giữ lại, đồng thời bạn có thể dựng một trang hồ sơ tại kurl.me/tencuaban trong năm phút."
+      "a": "kurl là dịch vụ rút gọn URL và link-in-bio miễn phí. Không có quảng cáo, và bạn có thể rút gọn liên kết mà không cần đăng nhập.\n\nĐăng nhập để xem thống kê theo thiết bị, quốc gia và kênh. Liên kết được giữ cho đến khi bạn xoá, và bạn có thể tạo trang hồ sơ tại một địa chỉ như tencuaban.kurl.me."
     },
     "q4": {
       "q": "Một trang hồ sơ có thể chứa gì?",
-      "a": "Tám loại khối: ảnh + tiểu sử + liên hệ (điện thoại/email/địa chỉ) + mạng xã hội + sự kiện + thư viện ảnh + thẻ sản phẩm + nhúng lịch. Phối hợp tùy theo từng phong cách.\n\nChủ quán cà phê có thể hiện: bản đồ + giờ mở cửa + liên kết Instagram/đặt chỗ + thư viện ảnh thực đơn. Một giảng viên: sự kiện workshop + liên kết đặt lịch 1:1 + portfolio. Một DJ: các buổi diễn sắp tới + liên kết Spotify Artist + ảnh. Tất cả trên một trang."
+      "a": "Kết hợp các khối như ảnh, tiểu sử, liên hệ (điện thoại/email/địa chỉ), mạng xã hội, sự kiện, thư viện ảnh, thẻ sản phẩm và liên kết đặt lịch.\n\nChủ quán cà phê có thể đặt bản đồ, giờ mở cửa, liên kết Instagram và đặt chỗ, cùng thư viện ảnh thực đơn. Giảng viên: sự kiện workshop, liên kết đặt lịch 1:1 và portfolio. DJ: lịch diễn sắp tới, liên kết Spotify Artist và ảnh. Tất cả trên một trang."
     },
     "q5": {
       "q": "Phân tích sâu đến đâu?",
-      "a": "Theo từng liên kết ngắn: tổng số / người vs bot / khách riêng biệt / biểu đồ ngày + giờ / bản đồ nhiệt thứ × giờ / quốc gia + thành phố / thiết bị / trình duyệt / hệ điều hành / host giới thiệu / chiến dịch UTM. Sâu như Bitly Pro, nhưng miễn phí.\n\nTrang hồ sơ có một bảng /profile/stats song song cho số lượt truy cập và cùng các phân tách nhân khẩu học."
+      "a": "Với mỗi liên kết ngắn: tổng lượt nhấp, người và bot, khách riêng biệt, biểu đồ theo ngày và giờ, bản đồ nhiệt thứ × giờ, quốc gia và thành phố, thiết bị, trình duyệt, hệ điều hành, host giới thiệu và chiến dịch UTM. Tất cả đều miễn phí.\n\nTrang hồ sơ cũng có thống kê lượt truy cập riêng với cùng các mục phân tách."
     },
     "q6": {
       "q": "Có tính phí không?",
-      "a": "Mọi tính năng đều miễn phí — rút gọn, phân tích, trang hồ sơ, cả tám loại khối, và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
+      "a": "Mọi tính năng đều miễn phí: rút gọn, phân tích, trang hồ sơ, mọi loại khối và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
     },
-    "ctaTitle": "Rút gọn một liên kết ngay",
-    "ctaSubtitle": "Không cần đăng ký — đăng nhập để giữ thống kê mãi mãi",
+    "ctaTitle": "Rút gọn một URL",
+    "ctaSubtitle": "Không cần đăng nhập. Đăng nhập để giữ thống kê của bạn.",
     "ctaButton": "Bắt đầu rút gọn"
   },
   "terms": {
@@ -2578,8 +2554,24 @@
       }
     ]
   },
+  "more": {
+    "title": "Xem thêm",
+    "toolsTitle": "Công cụ",
+    "tools": {
+      "profile": "Hồ sơ công khai",
+      "profileDesc": "Gom liên kết vào một trang",
+      "campaigns": "Chiến dịch QR",
+      "campaignsDesc": "So sánh mã QR in theo vị trí",
+      "events": "Đăng ký",
+      "eventsDesc": "Nhận đăng ký sự kiện qua liên kết",
+      "ctas": "Thư viện CTA",
+      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
+    },
+    "accountTitle": "Tài khoản",
+    "settings": "Cài đặt"
+  },
   "settings": {
-    "title": "Tài khoản",
+    "title": "Cài đặt",
     "tabs": {
       "aria": "Các mục cài đặt",
       "account": "Tài khoản",
@@ -2589,10 +2581,10 @@
     },
     "profile": {
       "title": "Hồ sơ công khai",
-      "intro": "Gom các liên kết ngắn của bạn vào một trang chia sẻ được — hoàn hảo cho bio mạng xã hội.",
-      "onboardingEyebrow": "Chào mừng",
-      "onboardingTitle": "Bắt đầu dựng ngay!",
-      "onboardingSubhead": "Chọn tên người dùng bạn muốn là xong. Thêm ảnh, liên kết, địa chỉ cửa hàng, và thông tin liên hệ — nó tự dựng thành một thẻ chỉn chu khi bạn làm.",
+      "intro": "Gom các liên kết của bạn vào một trang. Hồ sơ mạng xã hội chỉ cần địa chỉ của trang này.",
+      "onboardingEyebrow": "Bắt đầu",
+      "onboardingTitle": "Trước tiên, chọn tên sẽ nằm trong địa chỉ của bạn",
+      "onboardingSubhead": "Tên người dùng sẽ nằm trong địa chỉ trang của bạn. Ảnh, liên kết, địa chỉ cửa hàng và thông tin liên hệ có thể thêm dần sau.",
       "onboardingStep1": "Nhận một tên người dùng",
       "onboardingStep2": "Thêm tiểu sử hoặc ảnh đại diện",
       "onboardingStep3": "Thả khối đầu tiên (liên kết, ảnh, bất cứ gì)",
@@ -2650,7 +2642,7 @@
       "copyPublicUrl": "Sao chép URL công khai",
       "openProfile": "Mở hồ sơ trực tiếp của tôi",
       "openShort": "Mở",
-      "yourPage": "Trang của bạn",
+      "yourPage": "Hồ sơ công khai",
       "featuredTitle": "Dòng tin hồ sơ",
       "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓), ★ để làm nổi bật một mục thành thẻ chính, 'Xóa' để gỡ. Thêm tiêu đề để gom các mục thành một phần — có thể thu gọn và di chuyển như một khối.",
       "sectionExpand": "Mở rộng phần",
@@ -2692,7 +2684,7 @@
       "productCardFieldImages": "Ảnh (tối đa {max})",
       "productCardImagesEmpty": "Thêm ảnh",
       "productCardImageAdd": "Thêm ảnh",
-      "productCardImageFocalHint": "Kéo chấm trên ảnh thu nhỏ để căn giữa phần quan trọng. Điểm đó luôn nằm trong khung khi ảnh bị cắt trên trang công khai.",
+      "productCardImageFocalHint": "Kéo chấm trên ảnh thu nhỏ để căn giữa phần quan trọng. Điểm đó luôn nằm trong khung khi ảnh bị cắt trên hồ sơ công khai.",
       "productCardImageSizeHint": "Khuyến nghị: tỷ lệ 4:3 (ví dụ 800×600), mỗi ảnh dưới 5MB. Hỗ trợ JPG / PNG / WebP.",
       "productCardImageMoveLeft": "Sang trái",
       "productCardImageMoveRight": "Sang phải",
@@ -2779,10 +2771,9 @@
       "emailFormHowItWorks": "Email khách để lại sẽ vào bảng 'khách tiềm năng' riêng tư của bạn. Xuất ra CSV và nhập vào Mailchimp / công cụ email của bạn.",
       "emailFormViewLeadsCta": "Xem email đã thu thập",
       "leadsLink": "Email đã thu thập",
-      "leadsDisabledTitle": "Thêm một biểu mẫu email để thu thập khách tiềm năng ở đây",
       "stats": {
         "title": "Thống kê lượt truy cập hồ sơ của tôi",
-        "intro": "Ai đang đọc trang /u/tên-người-dùng của bạn, và từ đâu. Sâu như thống kê liên kết ngắn của bạn.",
+        "intro": "Ai đã xem hồ sơ công khai của bạn và từ đâu, với cùng các mục như thống kê liên kết ngắn.",
         "backToEditor": "Quay lại trình chỉnh sửa",
         "loadFailed": "Không tải được thống kê.",
         "summary": {
@@ -2898,7 +2889,7 @@
       },
       "addContactCardTitle": "Thêm thẻ liên hệ",
       "editContactCardTitle": "Sửa thẻ liên hệ",
-      "addContactCardDescription": "Các trường hiện trên trang công khai của bạn. Khách có thể tải .vcf để lưu liên hệ của bạn trực tiếp.",
+      "addContactCardDescription": "Các trường hiện trên hồ sơ công khai của bạn. Khách có thể tải .vcf để lưu liên hệ của bạn trực tiếp.",
       "addContactCardPlaceholder": "(chưa có thẻ liên hệ)",
       "contactFieldName": "Tên",
       "contactFieldNamePlaceholder": "Nguyễn Văn A",
@@ -2967,7 +2958,7 @@
       "addEmbedPlaceholder": "(chưa có URL nhúng)",
       "addEmbedTitle": "Thêm nhúng",
       "editEmbedTitle": "Sửa nhúng",
-      "addEmbedDescription": "Dán URL YouTube, Vimeo, Spotify, hay SoundCloud. Nó sẽ hiển thị dưới dạng trình phát trên trang công khai của bạn.",
+      "addEmbedDescription": "Dán URL YouTube, Vimeo, Spotify, hay SoundCloud. Nó sẽ hiển thị dưới dạng trình phát trên hồ sơ công khai của bạn.",
       "embedFieldUrl": "URL",
       "embedUnsupportedProvider": "Tên miền không được hỗ trợ.",
       "embedSupportedProviders": "Dịch vụ được hỗ trợ",
@@ -2999,7 +2990,7 @@
     "deleteConfirmTitle": "Thật sự xóa?",
     "deleteConfirmDesc": "Đăng nhập lại trong 30 ngày để khôi phục. Sau đó việc này là vĩnh viễn. Gõ \"DELETE\" để xác nhận.",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "Xóa vĩnh viễn",
+    "deleteOk": "Xóa tài khoản",
     "cancel": "Hủy",
     "deleting": "Đang xóa...",
     "twofa": {
@@ -3089,21 +3080,10 @@
       "verifyFailed": "Không tìm thấy bản ghi TXT. DNS có thể mất 1–5 phút để lan truyền.",
       "delete": "Xóa",
       "deleted": "Đã xóa",
-      "deleteConfirm": "Gỡ tên miền này? Các URL ngắn trên tên miền này sẽ ngừng hoạt động ngay lập tức.",
+      "deleteConfirm": "Gỡ tên miền này? Các liên kết ngắn trên tên miền này sẽ ngừng hoạt động ngay lập tức.",
       "deleteFailed": "Xóa thất bại.",
       "dnsTxtHint": "Kiểm tra quyền sở hữu — thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
       "dnsCnameHint": "Định tuyến lưu lượng — thêm bản ghi CNAME này tại cùng nhà cung cấp"
-    },
-    "toolsTitle": "Công cụ",
-    "tools": {
-      "profile": "Hồ sơ công khai",
-      "profileDesc": "Gom liên kết vào một trang",
-      "campaigns": "Chiến dịch QR",
-      "campaignsDesc": "So sánh mã QR in theo vị trí",
-      "events": "Đăng ký",
-      "eventsDesc": "Nhận đăng ký sự kiện bằng một liên kết",
-      "ctas": "Thư viện CTA",
-      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     }
   },
   "homeStats": {
@@ -3117,9 +3097,8 @@
     "shareButton": "Sao chép liên kết công khai",
     "shareCopied": "Đã sao chép",
     "shareCopyFailed": "Sao chép thất bại.",
-    "togglePublic": "Đặt thống kê thành công khai",
-    "togglePrivate": "Đặt thống kê thành riêng tư",
-    "toggleFailed": "Cập nhật hiển thị thất bại."
+    "toggleFailed": "Cập nhật hiển thị thất bại.",
+    "switchLabel": "Công khai thống kê"
   },
   "campaignApp": {
     "entry": {
@@ -3137,7 +3116,7 @@
     },
     "batchDialogs": {
       "editTitle": "Sửa đợt phát",
-      "editDescription": "Bạn chỉ chỉnh được tên, người phát, khu vực, số lượng, và ghi chú. URL ngắn in trong QR giữ nguyên.",
+      "editDescription": "Bạn chỉ chỉnh được tên, người phát, khu vực, số lượng, và ghi chú. Liên kết ngắn in trong QR giữ nguyên.",
       "save": "Lưu",
       "updated": "Đã cập nhật đợt",
       "updateFailed": "Cập nhật thất bại",
@@ -3150,7 +3129,7 @@
       "delete": "Xóa",
       "deleted": "Đã xóa đợt",
       "deleteFailed": "Xóa thất bại",
-      "deleteWarningTitle": "URL ngắn cũng sẽ bị xóa.",
+      "deleteWarningTitle": "Liên kết ngắn cũng sẽ bị xóa.",
       "deleteWarningBody": "Người quét mã QR đã in sẽ thấy trang không tìm thấy liên kết. Việc này an toàn trước khi đặt in, nhưng sau khi phát thì thường nên giữ nó hoạt động với một chính sách kết thúc.",
       "quantityUnit": "{count} tờ"
     },
@@ -3169,13 +3148,12 @@
       "startNow": "Bắt đầu ngay",
       "startSchedule": "Lên lịch bắt đầu",
       "endLabel": "Kết thúc",
-      "endHint": "Mã QR đã in tuân theo chính sách này sau khi chiến dịch kết thúc.",
       "defaultUrlLabel": "URL đích mặc định",
       "defaultUrlHint": "Để trống nếu mỗi đợt nên dùng URL riêng.",
       "postEndLabel": "Sau khi chiến dịch kết thúc",
       "policy": {
         "keepTitle": "Giữ nguyên",
-        "keepBody": "Mã QR đã in vẫn dẫn khách tới URL gốc sau khi chiến dịch kết thúc.",
+        "keepBody": "Mã QR đã in vẫn dẫn khách tới cùng điểm đến sau khi chiến dịch kết thúc.",
         "expireTitle": "Hiện trang hết hạn",
         "expireBody": "Lượt quét hiện thông báo chiến dịch đã kết thúc.",
         "redirectTitle": "Chuyển hướng nơi khác",
@@ -3193,12 +3171,14 @@
       "loadFailed": "Tải thất bại",
       "loginRequired": "Cần đăng nhập",
       "backToList": "Chiến dịch QR",
-      "confirmEnd": "Kết thúc chiến dịch QR này ngay?\nChính sách kết thúc áp dụng ngay cho QR đã in.",
+      "confirmEnd": "Kết thúc chiến dịch QR này ngay?",
+      "confirmEndDesc": "Chính sách kết thúc áp dụng ngay cho QR đã in.",
       "ended": "Đã kết thúc chiến dịch QR",
       "endFailed": "Kết thúc thất bại",
       "reapplied": "Đã áp dụng lại chính sách kết thúc",
       "reapplyFailed": "Áp dụng lại thất bại",
-      "confirmArchive": "Lưu trữ chiến dịch QR này?\nNó sẽ bị ẩn khỏi danh sách, nhưng dữ liệu vẫn còn nguyên.",
+      "confirmArchive": "Lưu trữ chiến dịch QR này?",
+      "confirmArchiveDesc": "Nó sẽ bị ẩn khỏi danh sách, nhưng dữ liệu vẫn còn nguyên.",
       "archived": "Đã lưu trữ chiến dịch QR",
       "archiveFailed": "Lưu trữ thất bại",
       "cancel": "Hủy",
@@ -3276,9 +3256,9 @@
       "errors": {
         "nameRequired": "Tên đợt là bắt buộc",
         "quantityRequired": "Số lượng là bắt buộc",
-        "quantityPositive": "Số nguyên dương",
-        "destinationRequired": "Không có URL mặc định của chiến dịch — bắt buộc",
-        "destinationUrl": "URL http:// hoặc https://"
+        "quantityPositive": "Nhập số từ 1 trở lên",
+        "destinationRequired": "Nhập URL. Chiến dịch này chưa có URL mặc định.",
+        "destinationUrl": "Phải bắt đầu bằng http:// hoặc https://"
       },
       "removeRow": "Xóa dòng {index}",
       "pasteTitle": "Dán các dòng bảng tính",
@@ -3304,7 +3284,7 @@
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thêm QR vào áp phích",
       "introCampaign": "<name></name> · Nhân bản PDF một lần cho mỗi đợt (tổng {count}), mỗi cái có QR riêng, rồi tải về một PDF gộp.",
-      "toolHint": "Hoàn thiện thiết kế trong Canva, InDesign, PowerPoint, hay công cụ khác, xuất một PDF, rồi chỉ đặt QR ở đây. Đây là công cụ ghép theo tọa độ, không phải công cụ thiết kế.",
+      "toolHint": "Hoàn thiện thiết kế trong Canva, InDesign hay PowerPoint rồi xuất PDF. Ở đây bạn chỉ đặt vị trí QR.",
       "targetLabel": "Mục tiêu ghép",
       "targetSummary": "<strong>{count}</strong> đợt · đầu ra là PDF <strong>{pages} trang</strong>",
       "noBatchesHint": "Thêm các đợt phát trước. (Chi tiết chiến dịch QR → Thêm đợt)",
@@ -3429,7 +3409,7 @@
     "q2": "Tôi dùng được mà không đăng nhập không?",
     "a2": "Được — rút gọn hoạt động mà không cần tài khoản. Thống kê và lưu trữ vĩnh viễn cần đăng nhập Google.",
     "q3": "Tôi xem thống kê ở đâu?",
-    "a3": "Trên trang Liên kết của tôi, nhấp vào mã rút gọn bất kỳ để mở trang thống kê 8 chiều.",
+    "a3": "Trên trang Liên kết của tôi, nhấp vào mã bất kỳ để mở trang thống kê 8 chiều.",
     "q4": "Bản xem trước có hiện trên KakaoTalk / Slack không?",
     "a4": "Có — thẻ xem trước hoạt động trên KakaoTalk, Slack, và Discord. Khi các ứng dụng đó lấy liên kết để dựng thẻ, kurl trả về một trang xem trước có tiêu đề, mô tả và ảnh thay vì chuyển hướng ngay.",
     "q5": "URL độc hại bị chặn thế nào?",
@@ -3455,29 +3435,27 @@
     "batchCount": "{count} đợt",
     "details": "Chi tiết",
     "onboarding": {
-      "eyebrow": "Chiến dịch ngoại tuyến",
-      "title": "Cải thiện quảng bá ngoại tuyến như quảng cáo trực tuyến",
-      "body": "Chia áp phích, tờ rơi, và mã QR theo người phát, khu vực, và đợt. Đo đợt nào hiệu quả nhất, rồi tinh chỉnh lần phát sau bằng dữ liệu.",
+      "title": "Mỗi lô tờ rơi một mã QR riêng để so sánh",
+      "body": "Tạo mã QR riêng cho từng khu vực, người phát và lô, rồi xem lô nào có nhiều lượt nhấp. Dùng các con số đó để chọn nơi phát lần sau.",
       "steps": [
         {
-          "title": "Phát",
-          "desc": "Chia áp phích, tờ rơi và mã QR theo người phát, khu vực và đợt."
+          "title": "Chia lô",
+          "desc": "Gắn mã QR khác nhau cho từng khu vực, người phát và lô."
         },
         {
-          "title": "Đo các đợt",
-          "desc": "Khu A: 500 → 80, khu B: 500 → 5. Xem đợt nào thắng."
+          "title": "So sánh các lô",
+          "desc": "Lượt nhấp trên 100 tờ cho biết lô nào tốt hơn."
         },
         {
-          "title": "Tinh chỉnh & định tuyến",
-          "desc": "Nhân rộng cái hiệu quả; định tuyến QR hết hạn tới trang tiếp theo."
+          "title": "Lên kế hoạch lần sau",
+          "desc": "Phát nhiều hơn ở nơi có nhiều lượt nhấp, và chuyển QR của chiến dịch đã kết thúc sang trang tiếp theo."
         }
       ],
-      "createCta": "Tạo chiến dịch QR đầu tiên",
-      "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc.",
       "scene": {
-        "scans": "Lượt quét",
+        "scans": "Lượt nhấp",
         "place1": "Quận 1",
-        "place2": "Quận 3"
+        "place2": "Quận 3",
+        "example": "Ví dụ"
       }
     }
   },
@@ -3509,60 +3487,49 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "Chiến dịch QR | Hiệu quả QR tờ rơi & áp phích — kurl",
-      "description": "Theo dõi QR tờ rơi, áp phích, coupon chia theo khu vực, nhà cung cấp, hay đợt. Dùng lượt nhấp trên 100 để chọn khu phát tiếp theo."
+      "title": "Chiến dịch QR · Đo lượt nhấp QR trên tờ rơi · kurl",
+      "description": "Chia QR trên tờ rơi, áp phích, phiếu giảm giá theo khu vực, người phát hoặc lô và so sánh lượt nhấp. Lượt nhấp trên 100 tờ cho biết nên phát ở đâu tiếp theo."
     },
     "hero": {
-      "eyebrow": "Offline QR campaigns",
+      "eyebrow": "Chiến dịch QR ngoại tuyến",
       "title1": "QR khác nhau trên mỗi tờ rơi —",
-      "title2": "thấy ngay cái nào được quét.",
-      "sub": "Tự tạo QR khác nhau theo khu vực, cửa ra, hay người phát. Dùng lượt nhấp trên 100 tờ rơi để chọn khu phát tiếp theo.",
-      "chip1": "5 phút cho chiến dịch đầu tiên",
-      "chip2": "Hỗ trợ PDF Canva / InDesign",
-      "chip3": "Đổi đích bất cứ lúc nào",
-      "chip1Short": "Khởi động 5 phút",
-      "chip2Short": "PDF sẵn sàng",
-      "chip3Short": "Liên kết chỉnh được",
+      "title2": "xem phản hồi đến từ đâu.",
+      "sub": "Tạo QR riêng cho từng khu vực, lối ra hoặc người phát, rồi dùng lượt nhấp trên 100 tờ để chọn nơi phát tiếp theo.",
       "cta": "Tạo QR"
     },
-    "s1": {
-      "line1": "Tờ rơi đã phát.",
-      "line2": "Nhưng chúng thật sự hiệu quả ở đâu?"
-    },
     "s2": {
-      "line1": "Theo khu vực, cửa ra, nhà cung cấp —",
-      "line2": "chia QR.",
-      "aux": "Đợt = một nhóm tờ rơi dùng chung một QR."
+      "line1": "Theo khu vực, lối ra, người phát,",
+      "line2": "tách QR ra.",
+      "aux": "Một lô là nhóm tờ rơi dùng chung một QR."
     },
     "s3": {
-      "line1": "Cùng một thiết kế,",
-      "line2": "tự chèn QR khác nhau.",
-      "aux": "Mang một PDF Canva / InDesign. Đánh dấu nơi đặt QR."
+      "line1": "Giữ nguyên thiết kế,",
+      "line2": "QR được chèn tự động.",
+      "aux": "Chỉ cần đánh dấu vị trí QR trên PDF từ Canva hoặc InDesign."
     },
     "s4": {
       "line1": "Shibuya 142 lượt nhấp, Shinjuku 38.",
-      "line2": "Đợt sau dồn vào Shibuya.",
-      "aux": "Phát tiếp ở đâu — lượt nhấp sẽ mách bạn."
+      "line2": "Lần sau phát nhiều hơn ở Shibuya.",
+      "aux": "Lượt nhấp cho biết nên phát ở đâu tiếp theo."
     },
     "s5": {
       "line1": "Tờ rơi, coupon, áp phích.",
-      "line2": "Cùng một cách làm cho mọi ngành.",
-      "aux": "Trường hợp dùng — so sánh bằng cùng phương pháp."
+      "line2": "Ngành nào cũng dùng được như nhau.",
+      "aux": "Ví dụ: so sánh lần 1 và lần 2 theo cùng một cách."
     },
     "s6": {
-      "line1": "QR đã in giữ nguyên,",
-      "line2": "trang liên kết thay đổi."
+      "line1": "QR đã in vẫn giữ nguyên,",
+      "line2": "chỉ đổi đích đến."
     },
     "cta": {
-      "eyebrow": "Bắt đầu ngay bây giờ",
-      "title": "Phát tiếp ở đâu — lượt nhấp sẽ mách bạn.",
+      "title": "Chọn nơi phát tiếp theo bằng lượt nhấp",
       "primary": "Tạo QR",
       "secondary": "Đăng nhập",
-      "note": "Liên kết ngắn và thống kê của bạn dùng chung tài khoản."
+      "note": "Liên kết rút gọn và thống kê dùng chung một tài khoản."
     },
     "mock": {
-      "kpiBeforeKurl": "Trước kurl",
-      "kpiAfterKurl": "Sau kurl",
+      "kpiBeforeKurl": "Trước khi đo",
+      "kpiAfterKurl": "Sau khi đo",
       "kpiStatus": "Đã phát nhưng không theo dõi",
       "kpiDistributed": "Đã phát",
       "kpiClicks": "Lượt nhấp",
@@ -3578,24 +3545,24 @@
       "batchDone": "Đã in",
       "batchUnit": "",
       "posterTitle": "Trình ghép áp phích",
-      "posterStep1": "Tải PDF của bạn lên",
-      "posterStep2": "Đặt khung QR",
-      "posterStep3": "Tải PDF gộp — một trang mỗi đợt",
       "posterBoxLabel": "QR",
       "posterPerBatch": "QR khác nhau mỗi đợt",
-      "barsTitle": "Lượt nhấp trên 100",
+      "barsTitle": "Lượt nhấp theo khu vực",
       "barsSort": "Theo hiệu suất",
       "barsTop": "Hàng đầu",
       "barsRecoTitle": "Gợi ý tiếp theo",
-      "barsRecoEstimate": "Ước tính +160 lượt nhấp",
+      "barsRecoEstimate": "Ước tính +{count} lượt nhấp",
       "casesTitle": "Trường hợp dùng",
       "casesBefore": "Trước",
       "casesAfter": "Sau",
-      "casesFooter": "Ví dụ — tự so sánh hai chiến dịch",
+      "casesFooter": "Ví dụ · so sánh hai chiến dịch",
       "timelineExpired": "Hết hạn",
       "timelineNext": "Trang tiếp theo",
       "timelineChip": "Đặt chỗ / Thực đơn",
-      "timelineFoot": "Cùng một QR, trang liên kết đổi."
+      "timelineFoot": "Cùng một QR, trang liên kết đổi.",
+      "kpiStatusAfter": "Đo theo từng lô",
+      "barsMeta": "{qty} tờ · {per100} / 100 tờ",
+      "barsReco": "{qty} tờ: {from} → {to}"
     },
     "backLink": "Quay lại trình rút gọn URL",
     "statsLink": "Phân tích chiến dịch QR"
@@ -3606,11 +3573,12 @@
     "signIn": "Đăng nhập"
   },
   "blogLogin": {
-    "eyebrow": "Đăng nhập",
     "title": "Đăng nhập để viết",
-    "subtitle": "Bài viết, bản nháp, và series của bạn nằm ở đây. Đăng nhập để tiếp tục từ chỗ bạn dừng lại.",
+    "subtitle": "Đăng nhập để viết tiếp bài viết, bản nháp và series của bạn.",
     "google": "Tiếp tục với Google",
-    "browse": "Duyệt mà không đăng nhập"
+    "browse": "Duyệt mà không đăng nhập",
+    "heading": "Đăng nhập kurl log",
+    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
   },
   "postAnalytics": {
     "title": "Phân tích",
@@ -3626,12 +3594,12 @@
   },
   "ctaLibrary": {
     "title": "Thư viện CTA",
-    "description": "Quản lý các nút CTA bạn nhúng vào bài viết ở một chỗ. Tái sử dụng cùng một CTA trên nhiều bài.",
+    "description": "Quản lý các nút CTA bạn thêm vào bài viết. Một CTA có thể dùng cho nhiều bài.",
     "new": "CTA mới",
     "empty": "Chưa có CTA nào.",
     "edit": "Sửa",
     "delete": "Xóa",
-    "deleteConfirm": "Xóa CTA “{label}”? (xóa mềm; dữ liệu phân tích được giữ lại)",
+    "deleteConfirm": "Xóa CTA “{label}”? Lịch sử lượt nhấp vẫn được giữ.",
     "editorTitleEdit": "Sửa CTA",
     "editorTitleNew": "CTA mới",
     "label": "Nhãn",
@@ -3648,7 +3616,13 @@
       "CONTACT": "Liên hệ",
       "DOWNLOAD": "Tải về",
       "CUSTOM": "Khác"
-    }
+    },
+    "styleOption": {
+      "PRIMARY": "Nổi bật",
+      "SECONDARY": "Phụ"
+    },
+    "deleteFailed": "Không xóa được CTA. Vui lòng thử lại.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại."
   },
   "abuseReports": {
     "title": "Báo cáo lạm dụng",
@@ -3728,7 +3702,7 @@
   },
   "collections": {
     "metaTitle": "Bộ sưu tập",
-    "discoverMetaTitle": "Discover connections",
+    "discoverMetaTitle": "Khám phá kết nối",
     "notFound": "Không tìm thấy bộ sưu tập này.",
     "empty": "Chưa có kết nối nào.",
     "pathEyebrow": "Lối đi",
@@ -3740,7 +3714,7 @@
     "pathComplete": "Bạn đã đọc hết lối đi này",
     "footerPathEnd": "Lối đi kết thúc ở đây.",
     "footerCollectionEnd": "Bộ sưu tập kết thúc ở đây.",
-    "footerGuestPrompt": "Để tự tạo bộ sưu tập và đọc tiếp,",
+    "footerGuestPrompt": "Để tự kết nối bài vào bộ sưu tập và đọc tiếp,",
     "footerGuestSignIn": "hãy đăng nhập.",
     "footerCuratorMore": "Xem thêm từ @{curator}",
     "visibilityPrivate": "Riêng tư",
@@ -3773,14 +3747,14 @@
     "discoverTabHighlights": "Đánh dấu",
     "highlightReplyCount": "{count} phản hồi",
     "highlightsSignedOutTitle": "Những đoạn để đọc cùng",
-    "highlightsSignedOut": "Đăng nhập để những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân sẽ tụ về đây.",
+    "highlightsSignedOut": "Đăng nhập để những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân hiện ở đây.",
     "highlightsSignIn": "Đăng nhập",
     "highlightsRetry": "Thử lại",
     "highlightsLoadMore": "Xem thêm",
     "highlightsLoadingMore": "Đang tải thêm…",
     "highlightsLoadMoreError": "Không tải thêm được.",
     "highlightsEmptyTitle": "Chưa có đoạn nào được đánh dấu",
-    "highlightsEmptyBody": "Những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân trong bài viết sẽ tụ về đây.",
+    "highlightsEmptyBody": "Những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân trong bài viết sẽ hiện ở đây.",
     "highlightsEmptyCta": "Tìm tác giả để đọc",
     "discoverEntrancesTitle": "Lối đi đang mở",
     "discoverEntrancePieces": "{count} bài",
@@ -3789,9 +3763,9 @@
     "belongsToRest": "Trong “{title}” và {count} bộ sưu tập khác",
     "connectedTo": "đã kết nối",
     "connectionMeta": "<curator>{curatorName}</curator> đã kết nối vào <collection>{collectionName}</collection>",
-    "connectionMetaPath": "<curator>{curatorName}</curator> đã đan vào <collection>{collectionName}</collection>",
-    "connectedToPath": "woven into a path",
-    "connectThisSentence": "Kết nối vào bộ sưu tập hoặc đường",
+    "connectionMetaPath": "<curator>{curatorName}</curator> đã kết nối vào lối đi <collection>{collectionName}</collection>",
+    "connectedToPath": "đã kết nối vào lối đi",
+    "connectThisSentence": "Kết nối vào bộ sưu tập hoặc lối đi",
     "inPathTitle": "Những đường mà câu này thuộc về",
     "relatedBlocksTitle": "Liên kết với điều này",
     "kindredCuratorsTitle": "Người tuyển chọn cùng gu",
@@ -3814,7 +3788,7 @@
     "add": "Thêm",
     "whyLabel": "Vì sao bạn kết nối nó?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "Đã thêm vào {count} bộ sưu tập.",
+    "addToCount": "Sẽ kết nối vào {count} bộ sưu tập.",
     "connectError": "Không thể lưu. Vui lòng thử lại.",
     "createError": "Không thể tạo. Vui lòng thử lại.",
     "edit": "Chỉnh sửa",
@@ -3837,12 +3811,12 @@
     "editSavedToast": "Đã lưu bộ sưu tập",
     "editError": "Không lưu được. Vui lòng thử lại.",
     "deleteError": "Không xóa được. Vui lòng thử lại.",
-    "connectedToast": "{count, plural, other {Đã thêm vào # bộ sưu tập}}",
-    "connectedPartialToast": "Chỉ thêm được một phần. Vui lòng thử lại.",
+    "connectedToast": "{count, plural, other {Đã kết nối vào # bộ sưu tập}}",
+    "connectedPartialToast": "Chỉ kết nối được một phần. Vui lòng thử lại.",
     "newCollectionNamePlaceholder": "Tên bộ sưu tập",
     "newCollectionNameLabel": "Tên",
     "create": "Tạo",
-    "connectLabel": "Bộ sưu tập",
+    "connectLabel": "Kết nối",
     "myCollectionsMetaTitle": "Bộ sưu tập của tôi",
     "myCollectionsTitle": "Bộ sưu tập của tôi",
     "myCollectionsSubtitle": "Những bộ sưu tập và lối đọc bạn đã tạo — cả những cái riêng tư cũng ở đây.",
@@ -3854,11 +3828,11 @@
   "events": {
     "intro": {
       "eyebrow": "Trang sự kiện",
-      "title": "Nhận đăng ký cho buổi gặp chỉ với một liên kết",
-      "subtitle": "Nhóm học, meetup, câu lạc bộ — trang giới thiệu, mẫu đăng ký, giới hạn chỗ và nguồn người đăng ký. Một liên kết là đủ.",
+      "title": "Nhận đăng ký sự kiện qua một liên kết",
+      "subtitle": "Tạo trang giới thiệu và mẫu đăng ký cho nhóm học, meetup hay câu lạc bộ. Khi đủ chỗ, đăng ký tự đóng, và bạn xem được mỗi lượt đăng ký đến từ đâu.",
       "step1": {
         "title": "Tạo trang",
-        "body": "Chỉ cần tiêu đề và ngày giờ — xong trong 3 phút."
+        "body": "Chỉ cần tiêu đề và ngày giờ là có trang."
       },
       "step2": {
         "title": "Dán liên kết vào nhóm chat",
@@ -3868,19 +3842,21 @@
         "title": "Đăng ký tự đến",
         "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
       },
-      "ctaLogin": "Bắt đầu miễn phí",
-      "ctaCreate": "Tạo sự kiện đầu tiên",
+      "ctaLogin": "Đăng nhập để bắt đầu",
       "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
       "demo": {
         "eventTitle": "CLB đọc sách khu phố",
-        "eventDate": "T4, 5/8 · 19:00",
-        "eventPlace": "Quán cà phê tầng 2, Shibuya",
+        "eventDate": "Thứ Tư · 19:00",
+        "eventPlace": "Quán cà phê tầng 2",
         "registerButton": "Đăng ký",
-        "chatShare": "Mở đăng ký buổi tuần này!",
-        "reply1": "Mình! Đăng ký rồi 🙌",
-        "reply2": "Vừa xong luôn!",
-        "reply3": "Mình cũng đi~",
-        "badge": "7 người · còn 13 chỗ"
+        "example": "Ví dụ",
+        "byChannel": "Đăng ký theo kênh",
+        "registered": "{count}/{capacity} người đăng ký",
+        "channels": {
+          "groupChat": "Nhóm chat",
+          "instagram": "Instagram",
+          "qrPoster": "Poster QR"
+        }
       }
     },
     "public": {
@@ -3903,13 +3879,13 @@
       "consent": "Tôi đồng ý cho thu thập tên, liên hệ (gồm câu trả lời) và chia sẻ với người tổ chức để vận hành sự kiện; dữ liệu bị xóa 30 ngày sau khi kết thúc.",
       "submit": "Đăng ký",
       "submitting": "Đang gửi…",
-      "successTitle": "Đăng ký thành công!",
+      "successTitle": "Bạn đã đăng ký",
       "successBodyEmail": "Chúng tôi đã gửi email xác nhận. Dùng liên kết trong email để hủy nếu bận.",
       "successBody": "Hãy lưu liên kết hủy bên dưới phòng khi bạn bận.",
       "copyCancelLink": "Sao chép liên kết hủy",
       "cancelLinkCopied": "Đã sao chép",
-      "viralHook": "Trang này được tạo trong 3 phút.",
-      "viralCta": "Tạo trang sự kiện của bạn →",
+      "viralHook": "Trang này được tạo bằng kurl.",
+      "viralCta": "Tạo trang sự kiện",
       "canceledNotice": "Sự kiện đã bị hủy.",
       "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy — hãy quay lại sau.",
       "closedNotice": "Đã đóng đăng ký.",
@@ -3946,10 +3922,9 @@
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loading": "Đang tải…",
       "loadFailed": "Không tải được danh sách.",
       "emptyTitle": "Tạo trang sự kiện đầu tiên",
-      "emptyBody": "Nhóm học, meetup, workshop — một liên kết lo cả trang, đăng ký, sĩ số và phân tích nguồn truy cập.",
+      "emptyBody": "Tạo trang giới thiệu và mẫu đăng ký, rồi quản lý sĩ số và xem nguồn đăng ký ngay tại đây.",
       "authTitle": "Trang sự kiện",
       "authDesc": "Đăng nhập để tạo trang đăng ký và xem người tham gia, nguồn truy cập."
     },
@@ -3957,7 +3932,7 @@
       "authTitle": "Trang sự kiện",
       "authDesc": "Đăng nhập để tạo trang đăng ký.",
       "newTitle": "Sự kiện mới",
-      "newSubtitle": "Chỉ mất 3 phút. Xuất bản xong có ngay liên kết ngắn và QR.",
+      "newSubtitle": "Xuất bản xong là có liên kết ngắn và mã QR.",
       "editTitle": "Sửa sự kiện",
       "title": "Tiêu đề",
       "titlePlaceholder": "Nhóm học lập trình Tokyo #3",
@@ -4027,7 +4002,7 @@
       "authDesc": "Đăng nhập để xem người tham gia và nguồn truy cập.",
       "loading": "Đang tải…",
       "loadFailed": "Không tải được.",
-      "createdBanner": "Trang sự kiện đã xuất bản! Dán liên kết này vào nhóm chat và mạng xã hội.",
+      "createdBanner": "Trang sự kiện đã được xuất bản. Dán liên kết này vào nhóm chat và mạng xã hội.",
       "edit": "Sửa",
       "viewPublicPage": "Xem trang công khai",
       "manageTitle": "Quản lý",
@@ -4041,7 +4016,7 @@
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
       "cancelDialogConfirm": "Hủy sự kiện",
       "heroCopy": "Sao chép liên kết",
-      "heroCopied": "Đã sao chép!"
+      "heroCopied": "Đã sao chép"
     },
     "share": {
       "copied": "Đã sao chép",
@@ -4071,7 +4046,7 @@
     "attendees": {
       "title": "{count} người đăng ký",
       "exportCsv": "Xuất CSV",
-      "empty": "Chưa có ai đăng ký. Chia sẻ liên kết vào nhóm chat nhé!",
+      "empty": "Chưa có ai đăng ký. Hãy chia sẻ liên kết vào nhóm chat.",
       "name": "Họ tên",
       "contact": "Liên hệ",
       "channel": "Kênh",
@@ -4091,15 +4066,45 @@
     "loginDesc": "Xu hướng lượt nhấp thật và liên kết nổi bật ở một nơi.",
     "loadFailed": "Không tải được số liệu. Vui lòng thử lại.",
     "weekHumanClicks": "Lượt nhấp thật · 7 ngày qua",
-    "todayAndLinks": "Hôm nay {today} · {links} liên kết",
+    "today": "Hôm nay {count}",
+    "peak": "Đông nhất: {when}",
+    "vsPrevUp": "Tăng {percent}% so với 7 ngày trước đó ({count})",
+    "vsPrevDown": "Giảm {percent}% so với 7 ngày trước đó ({count})",
+    "vsPrevSimilar": "Gần bằng 7 ngày trước đó ({count})",
+    "vsPrevNone": "7 ngày trước đó chưa có lượt nhấp",
     "scopeNote": "Đã loại trừ lượt nhấp của bot. Giờ theo {tz}.",
     "attention": "Cần xem",
     "zeroClick": "{count} liên kết chưa có lượt nhấp",
     "expiring": "{count} liên kết hết hạn trong 3 ngày",
-    "topLinks": "Liên kết hàng đầu",
-    "topLinksNote": "Theo tổng lượt nhấp thật",
+    "weekTopLinks": "Được nhấp nhiều nhất trong 7 ngày qua",
+    "weekTopLinksNote": "Theo lượt nhấp thật",
+    "weekTopLinksEmpty": "7 ngày qua chưa có lượt nhấp nào.",
     "humanClicks": "lượt nhấp thật",
     "createFirst": "Tạo liên kết đầu tiên",
     "viewFewestClicks": "Xem theo ít lượt nhấp nhất"
+  },
+  "composer": {
+    "placeholder": "Dán liên kết dài",
+    "submit": "Rút gọn",
+    "noUrl": "Không tìm thấy liên kết. Hãy dùng địa chỉ bắt đầu bằng http.",
+    "failed": "Không rút gọn được. Hãy thử lại.",
+    "options": "Tùy chọn",
+    "optionsTitle": "Tùy chọn rút gọn",
+    "optionsSet": "Đã đặt {count}",
+    "done": "Xong",
+    "codeInvalid": "Mã dùng 3–16 chữ cái hoặc số."
+  },
+  "linkSheet": {
+    "created": "Đã tạo",
+    "today": "Hôm nay",
+    "week": "7 ngày",
+    "total": "Tổng",
+    "copy": "Sao chép",
+    "openStats": "Xem toàn bộ thống kê",
+    "openOriginal": "Mở điểm đến",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "favorite": "Thêm vào mục yêu thích",
+    "unfavorite": "Bỏ khỏi mục yêu thích"
   }
 }
