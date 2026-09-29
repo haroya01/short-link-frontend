@@ -5,6 +5,10 @@ export type ThemeColors = {
   card: string;
   cardBorder: string;
   cardHover: string;
+  /** 한 목록 안 줄 사이의 1px 선(cardBorder 는 테마에 따라 두께까지 들어 있어 따로 둔다). */
+  divider: string;
+  /** 목록 줄의 호버 바탕 — 카드처럼 떠오르지 않고 바탕만 바뀐다. */
+  rowHover: string;
   primary: string;
   muted: string;
   avatar: string;
@@ -39,6 +43,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white",
     cardBorder: "border-slate-200",
     cardHover: "hover:border-slate-300 hover:bg-slate-50",
+    divider: "border-slate-200",
+    rowHover: "hover:bg-slate-50",
     primary: "text-slate-900",
     muted: "text-slate-500",
     avatar: "bg-slate-900",
@@ -51,6 +57,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white",
     cardBorder: "border-slate-200",
     cardHover: "hover:border-slate-300 hover:bg-slate-50",
+    divider: "border-slate-200",
+    rowHover: "hover:bg-slate-50",
     primary: "text-slate-900",
     muted: "text-slate-500",
     avatar: "bg-slate-900",
@@ -63,6 +71,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-slate-900",
     cardBorder: "border-slate-800",
     cardHover: "hover:border-slate-700 hover:bg-slate-800",
+    divider: "border-slate-800",
+    rowHover: "hover:bg-slate-800",
     primary: "text-slate-100",
     muted: "text-slate-400",
     avatar: "bg-slate-100",
@@ -74,6 +84,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white",
     cardBorder: "border-accent-200",
     cardHover: "hover:border-accent-300 hover:bg-accent-50/50",
+    divider: "border-accent-200",
+    rowHover: "hover:bg-accent-50/50",
     primary: "text-slate-900",
     muted: "text-slate-600",
     avatar: "bg-accent-600",
@@ -85,6 +97,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white/90 backdrop-blur-sm",
     cardBorder: "border-rose-200",
     cardHover: "hover:border-rose-300 hover:bg-white",
+    divider: "border-rose-200",
+    rowHover: "hover:bg-white",
     primary: "text-slate-900",
     muted: "text-rose-900/70",
     avatar: "bg-gradient-to-br from-orange-400 to-rose-500",
@@ -96,6 +110,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white/90 backdrop-blur-sm",
     cardBorder: "border-sky-200",
     cardHover: "hover:border-sky-300 hover:bg-white",
+    divider: "border-sky-200",
+    rowHover: "hover:bg-white",
     primary: "text-slate-900",
     muted: "text-sky-900/70",
     avatar: "bg-gradient-to-br from-cyan-500 to-sky-600",
@@ -107,6 +123,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white/90 backdrop-blur-sm",
     cardBorder: "border-emerald-200",
     cardHover: "hover:border-emerald-300 hover:bg-white",
+    divider: "border-emerald-200",
+    rowHover: "hover:bg-white",
     primary: "text-slate-900",
     muted: "text-emerald-900/70",
     avatar: "bg-gradient-to-br from-emerald-500 to-teal-600",
@@ -123,6 +141,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     // to a paper-style offset shadow keeps the mono aesthetic (strong black border, no color
     // hue) while leaving text readable.
     cardHover: "hover:bg-slate-50 hover:shadow-[3px_3px_0_0_#000]",
+    divider: "border-black",
+    rowHover: "hover:bg-slate-50",
     primary: "text-black",
     muted: "text-slate-700",
     avatar: "bg-black",
@@ -135,6 +155,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-slate-900/80 backdrop-blur-sm",
     cardBorder: "border border-fuchsia-500/40",
     cardHover: "hover:border-fuchsia-400 hover:shadow-[0_0_30px_rgba(232,121,249,0.25)]",
+    divider: "border-fuchsia-500/30",
+    rowHover: "hover:bg-fuchsia-500/10",
     primary: "text-fuchsia-100",
     muted: "text-fuchsia-300/70",
     avatar: "bg-gradient-to-br from-fuchsia-500 to-cyan-400",
@@ -147,6 +169,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white/85 backdrop-blur-sm",
     cardBorder: "border border-violet-200",
     cardHover: "hover:bg-white hover:border-violet-300",
+    divider: "border-violet-200",
+    rowHover: "hover:bg-white",
     primary: "text-slate-900",
     muted: "text-slate-600",
     avatar: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
@@ -159,6 +183,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white/85 backdrop-blur-sm",
     cardBorder: "border border-sky-200",
     cardHover: "hover:bg-white hover:border-sky-300",
+    divider: "border-sky-200",
+    rowHover: "hover:bg-white",
     primary: "text-slate-900",
     muted: "text-sky-900/70",
     avatar: "bg-gradient-to-br from-sky-500 to-cyan-500",
@@ -171,6 +197,8 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     card: "bg-white/85 backdrop-blur-sm",
     cardBorder: "border border-orange-200",
     cardHover: "hover:bg-white hover:border-orange-300",
+    divider: "border-orange-200",
+    rowHover: "hover:bg-white",
     primary: "text-slate-900",
     muted: "text-orange-900/70",
     avatar: "bg-gradient-to-br from-amber-500 to-rose-600",

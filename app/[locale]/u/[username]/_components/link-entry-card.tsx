@@ -1,11 +1,9 @@
 import type { CSSProperties } from "react";
-import { ExternalLink, Star } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { ExternalLink } from "lucide-react";
 import { Favicon } from "@/components/common/favicon";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 import { hostOf, isImageUrl, isSpotifyUrl, youtubeId } from "../_lib/url-helpers";
-import { CardFloatingChip } from "./card-floating-chip";
 
 type Props = {
   entry: PublicProfileEntry;
@@ -15,22 +13,17 @@ type Props = {
 };
 
 /**
- * Renders one of four LINK card variants based on the destination URL:
+ * Renders one of three LINK card variants based on the destination URL (the owner's featured link
+ * is drawn by FeaturedLink, and plain links that sit together by LinkRows):
  *
  * <ul>
  *   <li><b>Image</b> — the destination IS the image (URL ends in .jpg/.png/etc). Renders the
  *       image inline as the card body.</li>
- *   <li><b>Highlighted</b> — owner has starred this link AND it has an OG image. Renders a hero
- *       card with the OG image as the top banner + ★ Featured badge.</li>
  *   <li><b>YouTube</b> — destination is a YouTube URL. Renders the thumbnail + play overlay.</li>
  *   <li><b>Generic</b> — fallback. Favicon + title + host. Spotify gets a small green pill.</li>
  * </ul>
- *
- * The fallthrough order matters — image and highlighted both pre-empt YouTube because a hero
- * banner is more visually weighty than a thumbnail.
  */
 export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
-  const t = useTranslations("publicProfile");
   const originalUrl = entry.originalUrl ?? "";
   // src=profile-{username} so analytics can split profile-driven clicks from direct kurl.me hits.
   const href = `${entry.shortUrl}?src=profile-${username}`;
@@ -58,44 +51,6 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
               </span>
             </div>
           )}
-        </a>
-      </li>
-    );
-  }
-
-  if (entry.highlighted && entry.ogImage) {
-    return (
-      <li className="profile-fade" style={fadeStyle}>
-        <a
-          href={href}
-          target="_blank"
-          rel="noreferrer"
-          className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
-        >
-          <div className="relative aspect-[1.91/1] w-full bg-slate-100">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={entry.ogImage}
-              alt={entry.ogTitle ?? ""}
-              loading="lazy"
-              className="h-full w-full object-cover"
-            />
-            <CardFloatingChip position="top-left" icon={<Star aria-hidden className="h-3 w-3 fill-current" />}>
-              {t("featured")}
-            </CardFloatingChip>
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3">
-            <Favicon url={originalUrl} size={20} className="shrink-0" />
-            <span className="min-w-0 flex-1">
-              <span className={`block truncate text-base font-semibold ${colors.primary}`}>
-                {entry.ogTitle ?? hostOf(originalUrl)}
-              </span>
-              <span className={`block truncate text-[11px] ${colors.muted}`}>
-                {hostOf(originalUrl)}
-              </span>
-            </span>
-            <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
-          </div>
         </a>
       </li>
     );
