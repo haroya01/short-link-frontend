@@ -7,6 +7,7 @@ import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
 import { buildDemoHeadline } from "@/lib/demo-data";
+import { formatNumber } from "@/lib/utils";
 
 const DEMO = buildDemoHeadline();
 
@@ -19,6 +20,7 @@ const DEMO = buildDemoHeadline();
 export function HomeStatsExample() {
   const t = useTranslations("home.stage");
   const tLive = useTranslations("stats.live");
+  const tKpi = useTranslations("stats.kpi");
 
   return (
     <section className="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
@@ -43,9 +45,9 @@ export function HomeStatsExample() {
             <p className="mt-1 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("trendDesc")}</p>
             <div aria-hidden className="mt-5 select-none">
               <StatsHeroCore
-                label={t("trendLabel")}
-                caption={t("trendCaption", { human: Math.round(DEMO.humanRatio * 100) })}
-                total={DEMO.total}
+                label={tKpi("human")}
+                caption={`${tKpi("totalClicks")} ${formatNumber(DEMO.total)}`}
+                value={DEMO.human}
                 series={DEMO.series}
                 badge={tLive("example")}
               />
