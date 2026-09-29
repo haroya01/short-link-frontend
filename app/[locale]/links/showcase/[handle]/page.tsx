@@ -77,35 +77,13 @@ export default async function ShowcaseHandlePage({
         </div>
       </div>
 
-      {profile.bannerUrl && (
-        <div
-          className="aspect-[3/1] w-full overflow-hidden sm:aspect-[4/1] md:aspect-[5/1]"
-          style={{
-            WebkitMaskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
-            maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={profile.bannerUrl}
-            alt=""
-            width={1200}
-            height={400}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
-      <div className={`container max-w-md ${profile.bannerUrl ? "-mt-12 pb-12" : "py-12"}`}>
+      <div className="container max-w-md py-10">
         <ProfileHeader
           username={profile.username}
           bio={profile.bio}
           avatarUrl={profile.avatarUrl}
           bannerUrl={profile.bannerUrl}
           colors={colors}
-          bannerInline={false}
         />
         <EntryList
           entries={profile.entries ?? []}

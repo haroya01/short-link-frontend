@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
 /**
  * Landing-page profile showcase. Renders the real {@link ProfileHeader} + {@link EntryList} on a
  * phone-sized page (no device chrome). The inner content tree mirrors the public
- * {@code /u/[username]/page.tsx} layout — same banner aspect ratio, same mask-image fade, same
- * {@code -mt-12} container overlap — so the showcase shows the page itself.
+ * {@code /u/[username]/page.tsx} layout — same header, same list — so the showcase shows the
+ * page itself.
  *
  * Carousel is Embla — touch-swipe on mobile, drag or the prev/next buttons elsewhere. Nothing
  * moves on its own.
@@ -172,35 +172,14 @@ function ProfilePreviewBody({
 }) {
   return (
     <div className="min-h-full">
-      {profile.bannerUrl && (
-        <div
-          className="aspect-[3/1] w-full overflow-hidden"
-          style={{
-            WebkitMaskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
-            maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={profile.bannerUrl}
-            alt=""
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
-      <div
-        className={cn(
-          "mx-auto w-full max-w-md px-4",
-          profile.bannerUrl ? "-mt-12 pb-12" : "py-12",
-        )}
-      >
+      <div className="mx-auto w-full max-w-md px-4 py-10">
         <ProfileHeader
+          headingLevel="h2"
           username={profile.username}
           bio={profile.bio}
           avatarUrl={profile.avatarUrl}
           bannerUrl={profile.bannerUrl}
           colors={colors}
-          bannerInline={false}
         />
         <EntryList
           entries={profile.entries ?? []}

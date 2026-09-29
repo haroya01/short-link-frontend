@@ -12,6 +12,9 @@ import { GalleryEntryCard } from "./gallery-entry-card";
 import { ProductCardEntry } from "./product-card-entry";
 import { ImageEntryCard } from "./image-entry-card";
 import { LinkEntryCard } from "./link-entry-card";
+import { FeaturedLink } from "./featured-link";
+import { LinkRows } from "./link-rows";
+import { isImageUrl, youtubeId } from "../_lib/url-helpers";
 import { TextEntry } from "./text-entry";
 
 type Props = {
@@ -24,6 +27,24 @@ type Props = {
 /** Header is at index 0 (handled outside this component), so feed items start at idx + 1. */
 function fadeStyle(idx: number): CSSProperties {
   return { "--idx": idx + 1 } as CSSProperties;
+}
+
+type Item = { rows: PublicProfileEntry[] } | { entry: PublicProfileEntry };
+
+function isPlainLink(entry: PublicProfileEntry): boolean {
+  const url = entry.originalUrl ?? "";
+  return entry.kind === "LINK" && !isImageUrl(url) && !youtubeId(url);
+}
+
+// 주인이 정한 순서는 그대로 두고, 연달아 놓인 보통 링크만 한 목록으로 묶는다.
+function groupEntries(entries: PublicProfileEntry[]): Item[] {
+  const items: Item[] = [];
+  for (const entry of entries) {
+    const last = items[items.length - 1];
+    if (isPlainLink(entry) && last && "rows" in last) last.rows.push(entry);
+    else items.push(isPlainLink(entry) ? { rows: [entry] } : { entry });
+  }
+  return items;
 }
 
 /**
@@ -43,9 +64,27 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
     );
   }
 
+  const featured = entries.find((e) => e.kind === "LINK" && e.highlighted) ?? null;
+  const items = groupEntries(featured ? entries.filter((e) => e !== featured) : entries);
+  const offset = featured ? 1 : 0;
+
   return (
     <ul className="mt-8 space-y-2.5">
-      {entries.map((entry, idx) => {
+      {featured && <FeaturedLink entry={featured} username={username} colors={colors} fadeStyle={fadeStyle(0)} />}
+      {items.map((item, i) => {
+        const idx = i + offset;
+        if ("rows" in item) {
+          return (
+            <LinkRows
+              key={`rows-${item.rows[0].shortCode ?? idx}`}
+              entries={item.rows}
+              username={username}
+              colors={colors}
+              fadeStyle={fadeStyle(idx)}
+            />
+          );
+        }
+        const entry = item.entry;
         const key = entry.id != null ? `${entry.kind}-${entry.id}` : `${entry.kind}-${idx}`;
         const style = fadeStyle(idx);
         if (entry.kind === "DIVIDER")

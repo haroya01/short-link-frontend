@@ -7,39 +7,17 @@ type Props = {
   avatarUrl: string | null;
   bannerUrl: string | null;
   colors: ThemeColors;
-  /**
-   * Render the banner inside this header. The public page sets this to {@code false} and renders
-   * a separate full-bleed banner before the container so it can reach the screen edges + fade
-   * into the page background. The phone-preview keeps {@code true} so the banner stays inside
-   * the framed preview.
-   */
-  bannerInline?: boolean;
+  /** 한 페이지에 프로필이 여러 장 놓이는 곳(쇼케이스 카드·편집기 미리보기)은 h2. */
+  headingLevel?: "h1" | "h2";
 };
 
-/**
- * Banner (3:1) → avatar (overlapping the banner's bottom edge when present, otherwise standalone)
- * → handle → bio. The avatar gets a small ring on the banner side so it pops regardless of the
- * banner's color. When {@code bannerInline} is false the banner is suppressed here — the avatar
- * still pulls up to overlap an external banner via {@code -mt-12}, controlled by {@code bannerUrl}
- * being truthy.
- */
-export function ProfileHeader({
-  username,
-  bio,
-  avatarUrl,
-  bannerUrl,
-  colors,
-  bannerInline = true,
-}: Props) {
+/** 문서의 머리처럼 — 표지(있으면) 한 장, 그 아래 아바타 · @이름 · 한 줄 소개를 한 줄에. */
+export function ProfileHeader({ username, bio, avatarUrl, bannerUrl, colors, headingLevel = "h1" }: Props) {
+  const Heading = headingLevel;
   return (
-    // relative: 표지는 mask-image 때문에 따로 쌓이는 층이라, 위치 없는 머리는 그 아래에 깔린다 —
-    // 진입 애니메이션이 꺼지는 첫 로드·동작 줄이기에서 아바타가 표지에 가려졌다.
-    <div
-      className="profile-fade relative flex flex-col items-center gap-3 text-center"
-      style={{ "--idx": 0 } as React.CSSProperties}
-    >
-      {bannerUrl && bannerInline && (
-        <div className="-mx-4 mb-2 aspect-[3/1] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:w-full sm:rounded-2xl">
+    <div className="profile-fade" style={{ "--idx": 0 } as React.CSSProperties}>
+      {bannerUrl && (
+        <div className="mb-6 aspect-[3/1] w-full overflow-hidden rounded-2xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={bannerUrl}
@@ -53,27 +31,15 @@ export function ProfileHeader({
           />
         </div>
       )}
-      <ProfileAvatar
-        avatarUrl={avatarUrl}
-        username={username}
-        hasBanner={Boolean(bannerUrl)}
-        colors={colors}
-      />
-      {/* Handle scale unified with dashboard / stats pages — 18 px semibold with tracking-headline
-          is the brand voice for the page's primary identifier. Previously 14 px regular which
-          read as caption-weight on a Linktree-equivalent landing page. */}
-      <p
-        className={`text-[18px] font-semibold leading-tight tracking-headline ${colors.primary}`}
-      >
-        @{username}
-      </p>
-      {bio && (
-        <p
-          className={`max-w-[28ch] text-[15px] leading-relaxed ${colors.muted}`}
-        >
-          {bio}
-        </p>
-      )}
+      <div className="flex items-center gap-4">
+        <ProfileAvatar avatarUrl={avatarUrl} username={username} colors={colors} />
+        <div className="min-w-0">
+          <Heading className={`truncate text-[20px] font-semibold leading-tight tracking-headline ${colors.primary}`}>
+            @{username}
+          </Heading>
+          {bio && <p className={`mt-1 text-[14px] leading-relaxed ${colors.muted}`}>{bio}</p>}
+        </div>
+      </div>
     </div>
   );
 }

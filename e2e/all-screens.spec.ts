@@ -108,3 +108,21 @@ test("link-in-bio: 표지가 있어도 아바타가 표지 위에 보인다", as
   });
   expect(onTop, "아바타 가운데를 누르면 아바타가 잡혀야 한다").toBe(true);
 });
+
+test("link-in-bio: 대표 링크가 맨 위, 이어진 보통 링크는 한 장의 목록", async ({ page }) => {
+  await page.goto("/ko/u/dohyun");
+  await expect(page.getByText("대표 링크")).toBeVisible();
+  const layout = await page.evaluate(() => {
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('a[href*="src=profile-dohyun"]')];
+    const byTitle = (t: string) => links.find((a) => a.textContent?.includes(t));
+    const featured = byTitle("GitHub");
+    const rows = ["X (Twitter)", "YouTube 채널", "이메일"].map(byTitle);
+    const lists = new Set(rows.map((a) => a?.closest("ul")));
+    return {
+      featuredFirst: !!featured && links.indexOf(featured) === 0,
+      oneList: rows.every(Boolean) && lists.size === 1,
+    };
+  });
+  expect(layout.featuredFirst, "대표 링크가 첫 링크여야 한다").toBe(true);
+  expect(layout.oneList, "이어진 보통 링크는 한 목록에 있어야 한다").toBe(true);
+});

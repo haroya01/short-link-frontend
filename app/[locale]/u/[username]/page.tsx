@@ -106,36 +106,13 @@ export default async function PublicProfilePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
-      {profile.bannerUrl && (
-        // Full-bleed banner above the container so it reaches the top + side edges of the viewport.
-        // `mask-image` softly fades the bottom 25% into transparent → the page bg shows through
-        // regardless of theme color, no extra overlay needed. Same effect on mobile and desktop.
-        <div
-          className="aspect-[3/1] w-full overflow-hidden sm:aspect-[4/1] md:aspect-[5/1]"
-          style={{
-            WebkitMaskImage:
-              "linear-gradient(to bottom, black 75%, transparent 100%)",
-            maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={profile.bannerUrl}
-            alt=""
-            width={1500}
-            height={500}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
-      <div className={`container max-w-md ${profile.bannerUrl ? "-mt-12 pb-12" : "py-12"}`}>
+      <div className="container max-w-md py-10">
         <ProfileHeader
           username={profile.username}
           bio={profile.bio}
           avatarUrl={profile.avatarUrl}
           bannerUrl={profile.bannerUrl}
           colors={colors}
-          bannerInline={false}
         />
         <EntryList
           entries={profile.entries ?? []}
@@ -146,16 +123,16 @@ export default async function PublicProfilePage({
         {/* Bridge into the weblog: shown only when this author has published posts, so the
             link-in-bio surface can reach /p/<user> (the profile→blog direction, mirroring blog→profile). */}
         {profile.publishedPostCount > 0 && (
-          <div className="mt-5 flex justify-center">
-            <a
-              href={authorHref(profile.username, locale)}
-              className={`focus-ring inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[13px] font-medium transition-opacity hover:opacity-80 ${colors.cardBorder} ${colors.card} ${colors.primary}`}
-            >
-              <BookOpen className="h-4 w-4" aria-hidden />
+          <a
+            href={authorHref(profile.username, locale)}
+            className={`profile-card mt-2.5 flex items-center gap-3 px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+          >
+            <BookOpen className={`h-5 w-5 shrink-0 ${colors.muted}`} aria-hidden />
+            <span className={`min-w-0 flex-1 truncate text-sm font-medium ${colors.primary}`}>
               {t("viewBlog", { count: profile.publishedPostCount })}
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-            </a>
-          </div>
+            </span>
+            <ArrowRight className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} aria-hidden />
+          </a>
         )}
         <ShareRow
           url={`${SITE_URL}/u/${profile.username}`}

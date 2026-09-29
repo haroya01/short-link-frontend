@@ -6,8 +6,6 @@ import type { ThemeColors } from "../_lib/theme";
 type Props = {
   avatarUrl: string | null;
   username: string;
-  /** Truthy when a banner sits behind the avatar — pulls it up to overlap + adds the light ring. */
-  hasBanner: boolean;
   colors: ThemeColors;
 };
 
@@ -17,16 +15,15 @@ type Props = {
  * on {@code onError} we fall back to the same accent disc + initial the header already renders when
  * there's no avatar at all, so the failure looks like a deliberate empty state rather than a bug.
  */
-export function ProfileAvatar({ avatarUrl, username, hasBanner, colors }: Props) {
+export function ProfileAvatar({ avatarUrl, username, colors }: Props) {
   const [failed, setFailed] = useState(false);
   const initial = (username[0] ?? "·").toUpperCase();
-  const ring = hasBanner ? "-mt-14 ring-white/95" : "ring-transparent";
 
   if (!avatarUrl || failed) {
     return (
       <div
         data-profile-avatar
-        className={`grid h-24 w-24 place-items-center rounded-full text-[28px] font-semibold shadow-sm ring-4 ${ring} ${colors.avatar} ${colors.avatarText}`}
+        className={`grid h-16 w-16 shrink-0 place-items-center rounded-full text-[22px] font-semibold ${colors.avatar} ${colors.avatarText}`}
       >
         {initial}
       </div>
@@ -34,13 +31,13 @@ export function ProfileAvatar({ avatarUrl, username, hasBanner, colors }: Props)
   }
 
   return (
-    <div data-profile-avatar className={`h-24 w-24 overflow-hidden rounded-full shadow-sm ring-4 ${ring}`}>
+    <div data-profile-avatar className="h-16 w-16 shrink-0 overflow-hidden rounded-full">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={avatarUrl}
         alt={username}
-        width={96}
-        height={96}
+        width={64}
+        height={64}
         loading="eager"
         fetchPriority="high"
         decoding="async"

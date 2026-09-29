@@ -104,38 +104,15 @@ export function ProfilePreview({
                   same way the real iOS device does. */}
               <div aria-hidden className="h-10 w-full" />
 
-              {/* Body: identical to /u/[username]/page.tsx — full-bleed banner with mask fade,
-                  container with -mt-12 overlap, ProfileHeader + EntryList + ShareRow. */}
-              {bannerUrl && (
-                <div
-                  className="aspect-[3/1] w-full overflow-hidden"
-                  style={{
-                    WebkitMaskImage:
-                      "linear-gradient(to bottom, black 75%, transparent 100%)",
-                    maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
-                  }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={bannerUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              )}
-              <div
-                className={cn(
-                  "mx-auto w-full max-w-md px-4",
-                  bannerUrl ? "-mt-12 pb-6" : "py-6",
-                )}
-              >
+              {/* Body: identical to /u/[username]/page.tsx — ProfileHeader + EntryList + ShareRow. */}
+              <div className="mx-auto w-full max-w-md px-4 py-6">
                 <ProfileHeader
+                  headingLevel="h2"
                   username={displayUsername}
                   bio={bio || null}
                   avatarUrl={avatarUrl}
                   bannerUrl={bannerUrl}
                   colors={colors}
-                  bannerInline={false}
                 />
                 <EntryList
                   entries={entries}
