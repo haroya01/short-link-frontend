@@ -1278,8 +1278,6 @@
     "libraryViews": "Link collection",
     "allLinks": "All links",
     "subtitleCount": "{count, plural, one {# link} other {# links}}",
-    "toolCampaigns": "QR campaigns",
-    "toolEvents": "Sign-ups",
     "selectMode": "Select",
     "selectDone": "Done",
     "todayDelta": "{count, number} today"

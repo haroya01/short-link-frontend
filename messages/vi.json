@@ -1278,8 +1278,6 @@
     "libraryViews": "Chọn danh sách liên kết",
     "allLinks": "Tất cả liên kết",
     "subtitleCount": "{count} liên kết",
-    "toolCampaigns": "Chiến dịch QR",
-    "toolEvents": "Đăng ký",
     "selectMode": "Chọn",
     "selectDone": "Xong",
     "todayDelta": "Hôm nay {count, number}"

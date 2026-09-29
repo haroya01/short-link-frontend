@@ -1278,8 +1278,6 @@
     "libraryViews": "링크 목록 선택",
     "allLinks": "전체 링크",
     "subtitleCount": "링크 {count}개",
-    "toolCampaigns": "QR 캠페인",
-    "toolEvents": "모집",
     "selectMode": "선택",
     "selectDone": "완료",
     "todayDelta": "오늘 {count, number}"

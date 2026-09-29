@@ -1278,8 +1278,6 @@
     "libraryViews": "リンク一覧の選択",
     "allLinks": "全リンク",
     "subtitleCount": "リンク {count}件",
-    "toolCampaigns": "QRキャンペーン",
-    "toolEvents": "募集",
     "selectMode": "選択",
     "selectDone": "完了",
     "todayDelta": "今日 {count, number}"
