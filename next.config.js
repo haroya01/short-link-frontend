@@ -93,6 +93,11 @@ const nextConfig = {
         destination:
           "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/:path*",
       },
+      {
+        source: "/packages/pretendard-jp/:path*",
+        destination:
+          "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard-jp/:path*",
+      },
     ];
     if (!PROXY_BACKEND) return fontProxy;
     return [
