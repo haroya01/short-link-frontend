@@ -9,6 +9,7 @@ import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
 import { EventsIntro } from "@/modules/events/components/events-intro";
+import { EventsOnboarding } from "@/modules/events/components/events-onboarding";
 import { EventStatusBadge } from "@/modules/events/components/event-status-badge";
 import { ErrorState } from "@/components/common/error-state";
 import { buttonVariants } from "@/components/ui/button";
@@ -35,7 +36,7 @@ export default function EventsListPage() {
   }, [ready, authenticated, load]);
 
   if (ready && !authenticated) {
-    return <EventsIntro mode="anonymous" />;
+    return <EventsIntro />;
   }
 
   return (
@@ -62,7 +63,7 @@ export default function EventsListPage() {
           ))}
         </ul>
       ) : events.length === 0 ? (
-        <EventsIntro mode="empty" />
+        <EventsOnboarding />
       ) : (
         <ul className="mt-4 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
           {events.map((event) => (

@@ -59,7 +59,7 @@ export default function CampaignsPage() {
 
   return (
     <div className="container max-w-5xl space-y-6 py-10">
-      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
+      <div className="flex items-start justify-between gap-3 sm:items-end">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}

@@ -1,18 +1,12 @@
 import { QrCode } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SceneBar, SceneExample } from "@/components/common/onboarding-scene-parts";
 
 /**
  * 온보딩 패널의 미니어처 장면 — 글 대신 제품이 움직이는 걸 보여준다. 엔트런스는 한 번뿐이고
  * 끝나면 정지 화면. 키프레임은 globals.css 의 obs-* 블록(reduced-motion 은 완성 정지 화면).
  */
 
-function SceneExample({ label }: { label: string }) {
-  return (
-    <span className="absolute right-3 top-3 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-      {label}
-    </span>
-  );
-}
 
 /** 대시보드 온보딩 — 긴 URL 이 kurl 필로 줄고, 미니 통계 카드에 클릭이 흘러든다. */
 export function DashboardOnboardingScene() {
@@ -114,35 +108,6 @@ export function CampaignOnboardingScene() {
           <SceneBar label={t("place2")} count={9} width="56%" delay="1.4s" />
         </div>
       </div>
-    </div>
-  );
-}
-
-function SceneBar({
-  label,
-  count,
-  width,
-  delay,
-}: {
-  label: string;
-  count: number;
-  width: string;
-  delay: string;
-}) {
-  return (
-    <div>
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
-          {label}
-        </span>
-        <span className="text-[10px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-          {count}
-        </span>
-      </div>
-      <div
-        className="obs-bar mt-1 h-1 rounded-full bg-accent-600 dark:bg-accent-500"
-        style={{ width, animationDelay: delay }}
-      />
     </div>
   );
 }
