@@ -18,6 +18,11 @@ const REQUIRED_FIELDS: readonly (keyof ThemeColors)[] = [
   "avatar",
   "avatarText",
   "ctaPrimary",
+  "divider",
+  "rowHover",
+  "accentText",
+  "accentBorder",
+  "pageBgHex",
 ];
 
 describe("THEME_TABLE", () => {
@@ -52,18 +57,23 @@ describe("THEME_TABLE", () => {
     },
   );
 
-  it("dark theme uses inverted CTA (white on dark) — readability on dark card", () => {
-    expect(THEME_TABLE.dark.ctaPrimary).toContain("bg-white");
-    expect(THEME_TABLE.dark.ctaPrimary).toContain("text-slate-900");
+  // 테마 = 색 종이 한 장 + 강조색 하나. 주 버튼과 이니셜 원은 같은 강조색 계열이어야 한다.
+  it.each(Object.keys(THEME_TABLE))("%s uses one accent for the button and the avatar", (themeName) => {
+    const theme = THEME_TABLE[themeName as keyof typeof THEME_TABLE];
+    const hue = (cls: string) => /(?:^|\s)bg-([a-z]+)(?:-\d+)?(?:\/\d+)?(?=\s|$)/.exec(cls)?.[1];
+    expect(hue(theme.ctaPrimary), `${themeName}.ctaPrimary`).toBeTruthy();
+    expect(hue(theme.ctaPrimary)).toBe(hue(theme.avatar));
   });
 
-  it("light themes use dark CTA (near-black) — readability on light card", () => {
-    expect(THEME_TABLE.light.ctaPrimary).toContain("bg-slate-900");
-    expect(THEME_TABLE.default.ctaPrimary).toContain("bg-slate-900");
+  // 페이지와 카드는 평평한 종이 — 그라디언트·움직이는 배경·흐림·글로우를 다시 들이지 않는다.
+  it.each(Object.keys(THEME_TABLE))("%s page and cards stay flat paper", (themeName) => {
+    const theme = THEME_TABLE[themeName as keyof typeof THEME_TABLE];
+    const surface = [theme.page, theme.card, theme.cardBorder, theme.cardHover, theme.avatar].join(" ");
+    expect(surface).not.toMatch(/gradient|-anim|backdrop-blur|shadow-\[/);
   });
 
-  it("brand themes use their accent color (accent / neon)", () => {
-    expect(THEME_TABLE.accent.ctaPrimary).toContain("bg-accent-600");
-    expect(THEME_TABLE.neon.ctaPrimary).toContain("bg-fuchsia-500");
+  it("keeps the default theme's text ink (the contact card reads mono from text-black)", () => {
+    expect(THEME_TABLE.default.primary).not.toBe("text-black");
+    expect(THEME_TABLE.mono.primary).toBe("text-black");
   });
 });

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/share-row";
 import { socialUrlPrefix } from "@/modules/profile/curation/socials-templates";
+import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 
 const SHARE_CHANNELS: ShareChannel[] = [
   "instagram",
@@ -23,65 +24,8 @@ const SHARE_CHANNELS: ShareChannel[] = [
 ];
 const MAX_SOCIALS = 2;
 
-/**
- * Picker preview classes — each theme renders as a mini-card showing the actual page bg + a
- * sample link card inside. Kept self-contained (not imported from THEME_TABLE) so the picker
- * is visually accurate without dragging in /u page's full color tokens; the small duplication
- * is the price of decoupling.
- */
-const THEMES: { id: ProfileTheme; label: string; page: string; card: string }[] = [
-  { id: "light", label: "Light", page: "bg-slate-50", card: "bg-white border border-slate-200" },
-  { id: "dark", label: "Dark", page: "bg-slate-950", card: "bg-slate-900 border border-slate-800" },
-  {
-    id: "accent",
-    label: "Accent",
-    page: "bg-gradient-to-b from-accent-50 to-white",
-    card: "bg-white border border-accent-200",
-  },
-  {
-    id: "sunset",
-    label: "Sunset",
-    page: "bg-gradient-to-b from-orange-100 via-rose-50 to-amber-50",
-    card: "bg-white/90 border border-rose-200",
-  },
-  {
-    id: "ocean",
-    label: "Ocean",
-    page: "bg-gradient-to-b from-sky-100 via-cyan-50 to-blue-50",
-    card: "bg-white/90 border border-sky-200",
-  },
-  {
-    id: "forest",
-    label: "Forest",
-    page: "bg-gradient-to-b from-emerald-100 via-green-50 to-teal-50",
-    card: "bg-white/90 border border-emerald-200",
-  },
-  { id: "mono", label: "Mono", page: "bg-white", card: "bg-white border-2 border-black" },
-  {
-    id: "neon",
-    label: "Neon",
-    page: "bg-slate-950",
-    card: "bg-slate-900/80 border border-fuchsia-500/40",
-  },
-  {
-    id: "aurora",
-    label: "Aurora",
-    page: "theme-aurora-anim",
-    card: "bg-white/85 backdrop-blur-sm border border-violet-200",
-  },
-  {
-    id: "wave",
-    label: "Wave",
-    page: "theme-wave-anim",
-    card: "bg-white/85 backdrop-blur-sm border border-sky-200",
-  },
-  {
-    id: "ember",
-    label: "Ember",
-    page: "theme-ember-anim",
-    card: "bg-white/85 backdrop-blur-sm border border-orange-200",
-  },
-];
+// 고르기 견본은 /u 의 테마 표에서 그대로 그린다 — 따로 적어 두면 테마가 바뀔 때 견본만 옛 모습으로 남는다.
+const THEME_IDS: ProfileTheme[] = ["light", "dark", "accent", "sunset", "ocean", "forest", "mono", "neon", "aurora", "wave", "ember"];
 
 type Props = {
   profile: MyProfile | null;
@@ -185,7 +129,7 @@ export function ProfileMetaForm({
             {t("themeLabel")}
             {theme && (
               <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                {THEMES.find((tm) => tm.id === theme)?.label ?? theme}
+                {t(`themes.${theme}`)}
               </span>
             )}
           </span>
@@ -201,13 +145,14 @@ export function ProfileMetaForm({
           // (lg+ : ~640px). Capped width also makes the picker read as "swatches" rather than a
           // full-width hero strip.
           <div className="grid max-w-md grid-cols-3 gap-2 sm:grid-cols-4">
-            {THEMES.map((tm) => {
-              const active = theme === tm.id;
+            {THEME_IDS.map((id) => {
+              const active = theme === id;
+              const tm = THEME_TABLE[id];
               return (
                 <button
-                  key={tm.id}
+                  key={id}
                   type="button"
-                  onClick={() => onThemeChange(tm.id)}
+                  onClick={() => onThemeChange(id)}
                   aria-pressed={active}
                   className={
                     "group relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-offset-1 transition " +
@@ -215,14 +160,14 @@ export function ProfileMetaForm({
                   }
                 >
                   <div className={`absolute inset-0 ${tm.page}`}>
-                    {/* Mini sample cards — visualise what an actual link card looks like in this theme. */}
+                    <span aria-hidden className={`absolute right-2 top-2 h-3 w-3 rounded-full ${tm.avatar}`} />
                     <div className="absolute inset-x-2 bottom-2 space-y-1">
-                      <div className={`h-2 rounded-sm ${tm.card}`} />
-                      <div className={`h-2 rounded-sm ${tm.card}`} />
+                      <div className={`h-2 rounded-sm ${tm.card} ${tm.accentBorder}`} />
+                      <div className={`h-2 rounded-sm ${tm.card} ${tm.cardBorder}`} />
                     </div>
                   </div>
-                  <div className="relative px-1 py-1 text-[10px] font-medium leading-none text-white mix-blend-difference">
-                    {tm.label}
+                  <div className={`relative px-1.5 py-1.5 text-left text-[10px] font-medium leading-none ${tm.primary}`}>
+                    {t(`themes.${id}`)}
                   </div>
                 </button>
               );
