@@ -276,11 +276,11 @@ export default function DashboardPage() {
 
           </div>
 
-          {!favoritesOnly && favorites.error && <ErrorState message={t("favorite.loadFailed")} onRetry={() => void favorites.refetch()} />}
+          {!favoritesOnly && favorites.error && !loading && !error && <ErrorState message={t("favorite.loadFailed")} onRetry={() => void favorites.refetch()} />}
           {loading ? (
             <LoadingTable t={t} />
           ) : error ? (
-            <ErrorState message={error} onRetry={() => { if (favoritesOnly) void favorites.refetch(); else void linksQuery.refetch(); }} />
+            <ErrorState message={error} onRetry={() => { void favorites.refetch(); if (!favoritesOnly) void linksQuery.refetch(); }} />
           ) : displayItems.length === 0 && (!favoritesOnly || hasActiveFilter) ? (
             <EmptyState
               title={t("noResultTitle")}

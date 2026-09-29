@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/link-events";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { formatDateTime } from "@/lib/utils";
 
 /**
@@ -22,6 +23,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
   const t = useTranslations("stats.rawData");
   const tc = useTranslations("common");
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
 
   const [busy, setBusy] = useState<null | "events" | "stats">(null);
   const [open, setOpen] = useState(false);
@@ -38,7 +40,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
         ? downloadLinkEventsCsv(shortCode)
         : downloadLinkStatsCsv(shortCode, "daily"));
     } catch (e) {
-      toast(e instanceof Error ? e.message : tc("errorTitle"), "default");
+      toast(errorMessage(e, t("exportFailed")), "error");
     } finally {
       setBusy(null);
     }
@@ -53,7 +55,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
       setCursor(page.nextCursor);
       setLoadedOnce(true);
     } catch (e) {
-      toast(e instanceof Error ? e.message : tc("errorTitle"), "default");
+      toast(errorMessage(e, t("logLoadFailed")), "error");
     } finally {
       setLoading(false);
     }

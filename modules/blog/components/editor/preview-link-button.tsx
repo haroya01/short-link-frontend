@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { getPost, issuePreviewToken } from "@/modules/blog/api/posts";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 /**
  * "미리보기 링크 복사" — issues the post's share token and copies a {slug}?preview={token} link to the
@@ -24,6 +25,7 @@ export function PreviewLinkButton({
   const t = useTranslations("postEditor");
   const locale = useLocale();
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -43,7 +45,7 @@ export function PreviewLinkButton({
       toast(t("previewCopied"), "success");
       setTimeout(() => setCopied(false), 2000);
     } catch (e) {
-      toast(e instanceof Error ? e.message : t("previewCopyError"), "error");
+      toast(errorMessage(e, t("previewCopyError")), "error");
     } finally {
       setBusy(false);
     }

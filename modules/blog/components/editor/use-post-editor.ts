@@ -21,6 +21,7 @@ import {
 import { assignPostToSeries } from "@/modules/blog/api/series";
 import { shortenUrl } from "@/lib/api/links";
 import { ApiError } from "@/lib/api/client";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
@@ -54,6 +55,7 @@ export function usePostEditor(
   }: { ready: boolean; authenticated: boolean; username?: string | null },
 ) {
   const t = useTranslations("postEditor");
+  const errorMessage = useApiErrorMessage();
   const router = useRouter();
   const locale = useLocale();
   const [confirm, confirmDialog] = useConfirm();
@@ -71,6 +73,7 @@ export function usePostEditor(
   const currentDraft = useRef({ post, title, slug, markdown, tags, seriesId, coverUrl, excerpt });
   currentDraft.current = { post, title, slug, markdown, tags, seriesId, coverUrl, excerpt };
   const [loading, setLoading] = useState(postId != null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -158,6 +161,7 @@ export function usePostEditor(
     if (postId == null || !Number.isFinite(postId)) return;
     setLoading(true);
     setError(null);
+    setLoadFailed(false);
     try {
       const [p, blocks] = await Promise.all([getPost(postId), getBlocks(postId)]);
       setPost(p);
@@ -172,7 +176,7 @@ export function usePostEditor(
       lastSaved.current = ""; // new content baseline — let the first real edit save
       setReloadKey((k) => k + 1); // remount the editor so it seeds from the (re)loaded content
     } catch (e) {
-      setError(e instanceof Error ? e.message : "load failed");
+      if (!(e instanceof ApiError && e.status === 404)) setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -304,7 +308,7 @@ export function usePostEditor(
       } catch (e) {
         // A duplicate slug (same author) returns 409 — show a fixable hint, not a raw "HTTP 409".
         if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
-        else setError(e instanceof Error ? e.message : "save failed");
+        else setError(errorMessage(e, t("saveFailed")));
         // 자동저장 무한 재시도 차단: 4xx(사용자 개입이 필요한 결정적 실패)는 즉시 정지하고, 그 밖의
         // 실패(네트워크·5xx)는 백오프로 몇 번만 재시도 후 정지. 정지는 다음 편집에서 풀린다.
         failStreak.current += 1;
@@ -430,7 +434,7 @@ export function usePostEditor(
       return true;
     } catch (e) {
       if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
-      else setError(e instanceof Error ? e.message : `${action} failed`);
+      else setError(errorMessage(e, t("statusChangeFailed")));
       return false;
     } finally {
       setBusy(false);
@@ -479,7 +483,7 @@ export function usePostEditor(
       return true;
     } catch (e) {
       if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
-      else setError(e instanceof Error ? e.message : "schedule failed");
+      else setError(errorMessage(e, t("scheduleFailed")));
       return false;
     } finally {
       setBusy(false);
@@ -499,7 +503,7 @@ export function usePostEditor(
       // Restore replaces server content with the revision's snapshot — reload so the editor reflects it.
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "restore failed");
+      setError(errorMessage(e, t("restoreFailed")));
     } finally {
       setBusy(false);
     }
@@ -516,7 +520,7 @@ export function usePostEditor(
       if (current != null) await deletePost(current.id);
       router.push(writeBase);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "delete failed");
+      setError(errorMessage(e, t("deleteFailed")));
       setBusy(false);
     }
   }
@@ -548,6 +552,8 @@ export function usePostEditor(
     // the post dirty. Used for onExcerptPrefill.
     setExcerptRaw,
     loading,
+    loadFailed,
+    reload: load,
     saving,
     busy,
     error,

@@ -407,7 +407,6 @@ function messageOf(err: unknown, t: (key: string) => string): string {
     // detail 은 서버의 영문 로그 원문 — 사용자 화면엔 매핑된 카피만 내보낸다.
     return t("errors.generic");
   }
-  if (err instanceof Error) return err.message;
   return t("errors.generic");
 }
 
@@ -418,5 +417,5 @@ function translateValidation(field: string, message: string, t: (key: string) =>
     if (message.toLowerCase().includes("blank")) return t("errors.urlBlank");
     return t("errors.urlGeneric");
   }
-  return message;
+  return t("errors.validation");
 }

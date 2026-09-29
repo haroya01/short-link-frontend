@@ -5,13 +5,13 @@ import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ApiError } from "@/lib/api/client";
 import { Markdown } from "@/modules/blog/components/markdown";
 import type { ContactField, EventDraft, MyEvent, QuestionSpec } from "@/modules/events/api/events";
 import { commitCover, presignCover } from "@/modules/events/api/events";
 import { isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
 import { LocationField } from "./location-field";
 import { QuestionBuilder } from "./question-builder";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 const TIMEZONES = ["Asia/Tokyo", "Asia/Seoul", "UTC", "America/Los_Angeles", "Europe/London"];
 const CONTACT_FIELDS: ContactField[] = ["EMAIL", "PHONE", "KAKAO", "LINE", "INSTAGRAM"];
@@ -67,6 +67,7 @@ export function EventForm({
   onSubmit: (draft: EventDraft) => Promise<void>;
 }) {
   const t = useTranslations("events.form");
+  const errorMessage = useApiErrorMessage();
   const [form, setForm] = useState<FormState>(() => initialState(event));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,7 +117,7 @@ export function EventForm({
       });
     } catch (err) {
       setBusy(false);
-      setError(err instanceof ApiError ? err.message : t("errors.generic"));
+      setError(errorMessage(err, t("errors.generic")));
     }
   };
 

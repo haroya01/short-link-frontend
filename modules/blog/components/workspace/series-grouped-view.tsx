@@ -16,6 +16,8 @@ import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { ErrorState } from "@/components/common/error-state";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 /**
  * 내 글의 "시리즈별 보기" — the post list grouped by series (the unified workspace; series is a lens on
@@ -32,6 +34,8 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const errorMessage = useApiErrorMessage();
   const [confirm, confirmDialog] = useConfirm();
 
   const [creating, setCreating] = useState(false);
@@ -53,8 +57,9 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       const [s, p] = await Promise.all([listSeries(), listMyPosts()]);
       setSeries(s);
       setPosts(p);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "load failed");
+      setLoadFailed(false);
+    } catch {
+      setLoadFailed(true);
     } finally {
       setLoaded(true);
     }
@@ -94,7 +99,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
     );
     setError(null);
     void setSeriesPosts(seriesId, ids).catch((e) => {
-      setError(e instanceof Error ? e.message : "update failed");
+      setError(errorMessage(e, t("seriesActionFailed")));
       void load();
     });
   }
@@ -139,7 +144,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       setCreating(false);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "create failed");
+      setError(errorMessage(e, t("seriesActionFailed")));
     } finally {
       setBusy(false);
     }
@@ -160,7 +165,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       setRenaming(null);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "rename failed");
+      setError(errorMessage(e, t("seriesActionFailed")));
     } finally {
       setBusy(false);
     }
@@ -173,7 +178,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       await deleteSeries(id);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "delete failed");
+      setError(errorMessage(e, t("seriesActionFailed")));
     } finally {
       setBusy(false);
     }
@@ -186,6 +191,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   }, [ungrouped, pickQuery]);
 
   if (!loaded) return <SkeletonRows count={5} />;
+  if (loadFailed) return <ErrorState onRetry={() => void load()} />;
 
   return (
     <div className="space-y-3">

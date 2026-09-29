@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updateCampaignBatch } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import type { CampaignBatch } from "@/types";
 
 export function BatchEditDialog({
@@ -24,6 +25,7 @@ export function BatchEditDialog({
 }) {
   const t = useTranslations("campaignApp.batchDialogs");
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const [name, setName] = useState("");
   const [distributor, setDistributor] = useState("");
   const [area, setArea] = useState("");
@@ -64,7 +66,7 @@ export function BatchEditDialog({
           toast(t("updated"), "success");
           onUpdated();
         } catch (err) {
-          toast(err instanceof Error ? err.message : t("updateFailed"), "error");
+          toast(errorMessage(err, t("updateFailed")), "error");
         }
       }}
     >

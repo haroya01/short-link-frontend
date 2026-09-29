@@ -141,7 +141,8 @@ describe("editor persistence boundaries", () => {
     await act(async () => { result = await editor.schedule("2099-01-01T12:00"); });
     expect(result).toBe(false);
     expect(api.schedulePost).not.toHaveBeenCalled();
-    expect(editor.error).toBe("Save unavailable");
+    // 원문("Save unavailable")이 아니라 번역된 대체 문구가 뜬다.
+    expect(editor.error).toBe("saveFailed");
   });
 
   it("finishes an in-flight save before restoring a revision", async () => {

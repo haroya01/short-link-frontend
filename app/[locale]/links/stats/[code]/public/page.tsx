@@ -25,8 +25,7 @@ export default function PublicStatsPage() {
 
   const { data, error, isLoading } = usePublicLinkStats(code);
   const notFound = error instanceof ApiError && error.status === 404;
-  const realError =
-    error && !notFound ? (error instanceof Error ? error.message : "load failed") : null;
+  const realError = Boolean(error) && !notFound;
 
   if (isLoading) {
     return (
@@ -40,7 +39,7 @@ export default function PublicStatsPage() {
   if (realError) {
     return (
       <div className="container max-w-2xl py-10">
-        <ErrorState message={realError} onRetry={() => window.location.reload()} />
+        <ErrorState onRetry={() => window.location.reload()} />
       </div>
     );
   }

@@ -31,3 +31,26 @@ describe("webhook error code i18n", () => {
     });
   }
 });
+
+describe("resolveErrorMessage", async () => {
+  const { resolveErrorMessage } = await import("./error-messages");
+  const { ApiError } = await import("./api");
+  const catalog = {
+    has: (code: string) => code in ko.errors,
+    translate: (code: string) => (ko.errors as Record<string, string>)[code],
+  };
+
+  it("번역해 둔 코드는 그 문구", () => {
+    const err = new ApiError(500, { title: "Internal Server Error", status: 500, detail: "internal server error", code: "INTERNAL_ERROR" });
+    expect(resolveErrorMessage(err, "불러오지 못했어요", catalog)).toBe(ko.errors.INTERNAL_ERROR);
+  });
+
+  it("번역 없는 코드는 서버 영어 detail 대신 대체 문구", () => {
+    const err = new ApiError(404, { title: "Not Found", status: 404, detail: "campaign not found", code: "CAMPAIGN_NOT_FOUND" });
+    expect(resolveErrorMessage(err, "불러오지 못했어요", catalog)).toBe("불러오지 못했어요");
+  });
+
+  it("JS 오류 메시지(Failed to fetch 등)도 대체 문구", () => {
+    expect(resolveErrorMessage(new TypeError("Failed to fetch"), "불러오지 못했어요", catalog)).toBe("불러오지 못했어요");
+  });
+});
