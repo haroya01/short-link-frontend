@@ -3494,17 +3494,7 @@
       "title1": "チラシごとに、違う QR。",
       "title2": "どこで反応があったかが見えます。",
       "sub": "エリア・出口・配布者ごとに別のQRを作り、100枚あたりのクリック数で次の配布先を決めます。",
-      "chip1": "ロットごとにQRを自動作成",
-      "chip2": "Canva・InDesign PDF 対応",
-      "chip3": "QRの行き先はいつでも変更",
-      "chip1Short": "ロット別QR",
-      "chip2Short": "PDF対応",
-      "chip3Short": "行き先変更",
       "cta": "QR作成"
-    },
-    "s1": {
-      "line1": "チラシを配ったあと、",
-      "line2": "どこで効いたかは分かりにくいものです。"
     },
     "s2": {
       "line1": "エリア・出口・配布者ごとに",
@@ -3554,9 +3544,6 @@
       "batchDone": "印刷済",
       "batchUnit": "枚",
       "posterTitle": "ポスター合成",
-      "posterStep1": "PDFをアップロード",
-      "posterStep2": "QRボックスを配置",
-      "posterStep3": "バッチごとの結合 PDF をダウンロード",
       "posterBoxLabel": "QR",
       "posterPerBatch": "バッチごとに別の QR",
       "barsTitle": "エリア別クリック",

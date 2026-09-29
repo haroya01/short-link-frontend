@@ -3494,17 +3494,7 @@
       "title1": "QR khác nhau trên mỗi tờ rơi —",
       "title2": "xem phản hồi đến từ đâu.",
       "sub": "Tạo QR riêng cho từng khu vực, lối ra hoặc người phát, rồi dùng lượt nhấp trên 100 tờ để chọn nơi phát tiếp theo.",
-      "chip1": "QR riêng cho từng lô",
-      "chip2": "Hỗ trợ PDF Canva / InDesign",
-      "chip3": "Đổi đích đến bất cứ lúc nào",
-      "chip1Short": "QR theo lô",
-      "chip2Short": "PDF sẵn sàng",
-      "chip3Short": "Đổi đích đến",
       "cta": "Tạo QR"
-    },
-    "s1": {
-      "line1": "Phát tờ rơi xong,",
-      "line2": "khó biết nơi nào hiệu quả."
     },
     "s2": {
       "line1": "Theo khu vực, lối ra, người phát,",
@@ -3554,9 +3544,6 @@
       "batchDone": "Đã in",
       "batchUnit": "",
       "posterTitle": "Trình ghép áp phích",
-      "posterStep1": "Tải PDF của bạn lên",
-      "posterStep2": "Đặt khung QR",
-      "posterStep3": "Tải PDF gộp — một trang mỗi đợt",
       "posterBoxLabel": "QR",
       "posterPerBatch": "QR khác nhau mỗi đợt",
       "barsTitle": "Lượt nhấp theo khu vực",

@@ -3494,17 +3494,7 @@
       "title1": "Different QR per flyer —",
       "title2": "see where the response comes from.",
       "sub": "Make a separate QR for each area, exit, or distributor, and use clicks per 100 flyers to choose where to hand out next.",
-      "chip1": "A QR for every batch",
-      "chip2": "Canva / InDesign PDF supported",
-      "chip3": "Change the destination anytime",
-      "chip1Short": "QR per batch",
-      "chip2Short": "PDF ready",
-      "chip3Short": "Editable destination",
       "cta": "Create QRs"
-    },
-    "s1": {
-      "line1": "Once the flyers are out,",
-      "line2": "it's hard to tell where they worked."
     },
     "s2": {
       "line1": "By area, exit, or distributor,",
@@ -3554,9 +3544,6 @@
       "batchDone": "Printed",
       "batchUnit": "",
       "posterTitle": "Poster composer",
-      "posterStep1": "Upload your PDF",
-      "posterStep2": "Place the QR box",
-      "posterStep3": "Download merged PDF — one page per batch",
       "posterBoxLabel": "QR",
       "posterPerBatch": "Different QR per batch",
       "barsTitle": "Clicks by area",

@@ -3494,17 +3494,7 @@
       "title1": "전단지마다 다른 QR을 넣고,",
       "title2": "어디서 반응이 오는지 봐요.",
       "sub": "지역·출구·배포자마다 QR을 따로 만들고, 100장당 클릭 수로 다음 배포 위치를 정해요.",
-      "chip1": "묶음마다 QR 자동 생성",
-      "chip2": "Canva·인디자인 PDF 지원",
-      "chip3": "QR 목적지 언제든 변경",
-      "chip1Short": "묶음별 QR",
-      "chip2Short": "PDF 지원",
-      "chip3Short": "목적지 변경",
       "cta": "QR 만들기"
-    },
-    "s1": {
-      "line1": "전단지를 뿌리고 나면",
-      "line2": "어디서 반응이 왔는지 알기 어려워요."
     },
     "s2": {
       "line1": "지역·출구·배포자별로",
@@ -3554,9 +3544,6 @@
       "batchDone": "인쇄 완료",
       "batchUnit": "장",
       "posterTitle": "포스터 합성",
-      "posterStep1": "PDF 업로드",
-      "posterStep2": "QR 박스 배치",
-      "posterStep3": "묶음별 합본 PDF 다운로드",
       "posterBoxLabel": "QR",
       "posterPerBatch": "묶음마다 다른 QR",
       "barsTitle": "지역별 클릭",

@@ -124,6 +124,3 @@ export const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
   },
 };
-
-export const SECTION_COUNT = 6;
-export const EASE = "cubic-bezier(0.16,1,0.3,1)";
