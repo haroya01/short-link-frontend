@@ -28,12 +28,20 @@ type Props = {
   onNavigate?: (section: string) => void;
   /** Hosts with fewer breakdowns omit navigation affordances for unavailable sections. */
   navigationTargets?: readonly string[];
+  /** 수치를 세는 단위 — 블로그 글·시리즈 분석은 방문으로 센다. */
+  unit?: "click" | "visit";
+};
+
+// 위성 카드 수별 트랙. 히어로는 lg 에서 1.5배, 그보다 좁으면 한 줄을 다 쓴다.
+const GRID_TRACKS: Record<number, string> = {
+  2: "sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]",
+  3: "sm:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr]",
+  4: "sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
 };
 
 /**
- * Six-up KPI grid that anchors the stats page. Hero (total clicks) is a {@code rounded-2xl}
- * flat card sized 1.5× the others so the eye lands there first; satellite cards are also
- * {@code rounded-2xl} per DESIGN.md §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
+ * KPI grid that anchors the stats page. Hero (human clicks) is sized 1.5× the others so the eye
+ * lands there first; a satellite card renders only when it has data. Each card is clickable — jump-scrolls
  * to the matching detail section, turning the KPI grid into a navigation control rather than
  * dead chrome. Hover state lifts each card {@code -translate-y-0.5} + soft shadow; active state
  * snaps it back with a {@code scale(0.99)} press tactile.
@@ -50,6 +58,7 @@ export function StatsCards({
   animate = false,
   onNavigate,
   navigationTargets,
+  unit = "click",
 }: Props) {
   const t = useTranslations("stats.kpi");
   const hasUnique = typeof unique === "number" && Number.isFinite(unique);
@@ -74,7 +83,6 @@ export function StatsCards({
     document.getElementById(section)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
-  const humanRatio = total > 0 ? (human / total) * 100 : 0;
   const botRatio = total > 0 ? (bot / total) * 100 : 0;
   const uniqueRatio = hasUnique && human > 0 ? ((unique as number) / human) * 100 : 0;
   const profileRatio = showProfile && human > 0 ? ((profileClicks as number) / human) * 100 : 0;
@@ -83,67 +91,48 @@ export function StatsCards({
   // 총 2클릭에 "클릭 가속 24.0x"가 뜨면 KPI 헤더가 과장으로 읽힌다.
   const showVelocity = hasVelocity && (velocityRatio as number) >= 1.5 && human >= 30;
   const showLatency = !showVelocity && hasLatency;
+  const showActivity = showVelocity || showLatency;
+  const satellites = 2 + (showProfile ? 1 : 0) + (showActivity ? 1 : 0);
+  const visit = unit === "visit";
 
-  const animatedTotal = useCountUp(total, 900, animate);
+  const animatedHuman = useCountUp(human, 900, animate);
 
   return (
     <div
       className={cn(
-        // Mobile: 2-col so KPI cards stack densely on iPhone; the hero "total" card spans both
-        // columns (col-span-2 below). Tablet: 3-col, hero spans 3. Desktop keeps the bespoke
-        // explicit track widths so the hero is 1.5x the others (Apple nested-radius math).
         // 모바일 2열에서 마지막 카드가 홀수로 남으면 고아 — 풀폭으로 펴서 구멍을 없앤다.
-        "grid grid-cols-2 gap-3 max-sm:[&>*:nth-child(even):last-child]:col-span-2 sm:grid-cols-3 sm:gap-4",
-        showProfile
-          ? "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]"
-          : "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
+        "grid grid-cols-2 gap-3 max-sm:[&>*:nth-child(even):last-child]:col-span-2 sm:gap-4",
+        GRID_TRACKS[satellites],
       )}
     >
-      {/* 히어로 = 딥그린 시그니처 패널(StatsHeroCore) — 랜딩 무대 장면 3과 같은 컴포넌트.
-          랜딩이 약속하는 카드가 실제 화면의 이 카드다(과장광고 방지 계약). */}
+      {/* 히어로(StatsHeroCore) — 홈의 통계 예시와 같은 컴포넌트. 랜딩이 약속하는 카드가 실제
+          화면의 이 카드다(과장광고 방지 계약). */}
       <button
         type="button"
         onClick={() => jump("section-daily")}
         disabled={!canNavigate("section-daily")}
         aria-disabled={!canNavigate("section-daily")}
         className={cn(
-          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-800 p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow] duration-200 ease-[var(--ease)] sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:shadow-none",
+          "relative col-span-full overflow-hidden rounded-2xl p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow] duration-200 ease-[var(--ease)] lg:col-span-1 dark:shadow-none",
           canNavigate("section-daily")
             ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
         )}
       >
         <StatsHeroCore
-          label={t("totalClicks")}
-          caption={`${t("human")} ${humanRatio.toFixed(0)}%`}
-          total={animatedTotal}
+          label={visit ? t("humanVisits") : t("human")}
+          caption={`${visit ? t("totalVisits") : t("totalClicks")} ${formatNumber(total)}`}
+          value={animatedHuman}
           series={dailySeries}
           draw={animate ? "mount" : "static"}
-          className="rounded-none"
+          className="h-full transition-colors group-hover:border-slate-300 dark:group-hover:border-slate-700"
         />
-        {hasUnique && (
-          <p className="bg-accent-900 px-5 pb-4 text-[11px] text-accent-100/70">
-            <span className="font-medium tabular-nums text-white">
-              {formatNumber(unique as number)}
-            </span>{" "}
-            {t("unique").toLowerCase()}{" "}
-            <span className="text-accent-300/70">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
-          </p>
-        )}
       </button>
 
       <CountStat
-        label={t("human")}
-        target={human}
-        sub={`${humanRatio.toFixed(1)}%`}
-        ratio={humanRatio / 100}
-        animate={animate}
-        onJump={canNavigate("section-device") ? () => jump("section-device") : undefined}
-      />
-      <CountStat
         label={t("unique")}
         target={hasUnique ? (unique as number) : null}
-        sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
+        sub={hasUnique ? t(visit ? "uniqueOfHumanVisits" : "uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
         ratio={hasUnique ? uniqueRatio / 100 : undefined}
         animate={animate}
         onJump={canNavigate("section-daily") ? () => jump("section-daily") : undefined}
@@ -167,26 +156,18 @@ export function StatsCards({
           onJump={canNavigate("section-sources") ? () => jump("section-sources") : undefined}
         />
       )}
-      <Stat
-        label={
-          showVelocity && (velocityRatio as number) >= 1.5
-            ? t("velocityHot")
-            : showVelocity
-              ? t("velocityHour")
-              : showLatency
-                ? t("ttfc")
-                : t("noActivity")
-        }
-        value={
-          showVelocity
-            ? `${(velocityRatio as number).toFixed(1)}x`
-            : showLatency
-              ? formatLatency(timeToFirstClickMinutes as number)
-              : "—"
-        }
-        sub={showVelocity ? t("vsBaseline") : showLatency ? t("afterCreation") : t("noData")}
-        onJump={(showVelocity || showLatency) && canNavigate("section-hourly") ? () => jump("section-hourly") : undefined}
-      />
+      {showActivity && (
+        <Stat
+          label={showVelocity ? t("velocityHot") : t("ttfc")}
+          value={
+            showVelocity
+              ? `${(velocityRatio as number).toFixed(1)}x`
+              : formatLatency(timeToFirstClickMinutes as number)
+          }
+          sub={showVelocity ? t("vsBaseline") : t("afterCreation")}
+          onJump={canNavigate("section-hourly") ? () => jump("section-hourly") : undefined}
+        />
+      )}
     </div>
   );
 }
@@ -221,10 +202,10 @@ function Stat({
           : "cursor-default",
       )}
     >
-      {/* 아이콘 배지 제거(아이덴티티 v2 절제 패스) — 라벨은 mono 소문자 톤, muted 는 라벨 색으로 표현. */}
+      {/* 라벨·보조 글씨 크기는 히어로 카드(StatsHeroCore)와 같다. muted 는 라벨 색으로 표현. */}
       <span
         className={cn(
-          "truncate text-[10px] font-semibold transition-colors",
+          "truncate text-[13px] font-semibold transition-colors",
           muted
             ? "text-slate-400 dark:text-slate-400"
             : "text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200",
@@ -235,7 +216,7 @@ function Stat({
       <p className="mt-2 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </p>
-      {sub && <p className="mt-2 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}
+      {sub && <p className="mt-2 truncate text-[12px] text-slate-500 dark:text-slate-400">{sub}</p>}
       {typeof ratio === "number" && Number.isFinite(ratio) && (
         <span
           aria-hidden

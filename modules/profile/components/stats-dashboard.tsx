@@ -28,6 +28,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         bot={data.botVisits}
         unique={data.uniqueVisits}
         navigationTargets={["section-daily", "section-device", "section-hourly"]}
+        unit="visit"
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
