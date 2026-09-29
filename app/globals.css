@@ -429,6 +429,13 @@ mark.kurl-highlight--thread {
   .dark .focus-ring {
     @apply focus-visible:ring-offset-slate-950;
   }
+  /* 전면 오버레이 뒤 막은 이것 하나 — 대화상자·시트·서랍이 같은 농도, 흐림 없음. */
+  .scrim {
+    @apply bg-slate-900/40;
+  }
+  .dark .scrim {
+    @apply bg-slate-950/70;
+  }
   /* Expands the TOUCH target of a compact control (like/share/follow pills sit ~32px tall) to the
      44px WCAG 2.5.5 minimum WITHOUT growing its visual size — a transparent overlay centered on the
      control captures the taps. Keeps the minimal pill look while staying thumb-friendly on mobile. */

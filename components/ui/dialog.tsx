@@ -105,7 +105,7 @@ export function ConfirmDialog({
     >
       <div
         className={cn(
-          "fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70",
+          "fixed inset-0 scrim",
           // The backdrop fades with the panel — it used to snap in/out around the panel's fade.
           closing ? "animate-fade-out" : "animate-fade-in",
         )}

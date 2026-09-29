@@ -119,7 +119,7 @@ export function ImageCropperDialog({
       role="dialog"
       aria-modal="true"
       aria-label={t("title")}
-      className="fixed inset-0 z-50 flex items-stretch justify-stretch bg-black/60 backdrop-blur-sm sm:items-center sm:justify-center"
+      className="fixed inset-0 z-50 flex items-stretch justify-stretch bg-black/60 sm:items-center sm:justify-center"
     >
       <div className="flex h-full w-full flex-col bg-slate-950 text-white shadow-2xl sm:h-[620px] sm:max-h-[90vh] sm:w-[520px] sm:rounded-2xl">
         <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">

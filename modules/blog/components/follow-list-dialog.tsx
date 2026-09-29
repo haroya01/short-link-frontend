@@ -99,7 +99,7 @@ export function FollowListDialog({
   return createPortal(
     <div className="fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16">
       <div
-        className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70"
+        className="fixed inset-0 scrim"
         onClick={() => onOpenChange(false)}
         aria-hidden
       />

@@ -483,7 +483,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
   const tc = useTranslations("collections");
   useFocusTrap(contentRef, { active: true, onEscape: onClose });
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4" onMouseDown={onClose}>
       <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl" onMouseDown={(event) => event.stopPropagation()}>
         <h3 id="highlight-choices-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
         <ul className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
@@ -648,7 +648,7 @@ function HighlightThread({
   return (
     <>
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4"
       style={{ paddingBottom: inset }}
       onMouseDown={onClose}
     >

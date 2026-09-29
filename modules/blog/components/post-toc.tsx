@@ -145,7 +145,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
             aria-hidden
             tabIndex={-1}
             onClick={() => setOpen(false)}
-            className={`absolute inset-0 bg-slate-900/30 motion-reduce:animate-none ${
+            className={`absolute inset-0 scrim motion-reduce:animate-none ${
               closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
             }`}
           />

@@ -52,7 +52,7 @@ export function HighlightNoteSheet({ quote, onCancel, onSave }: {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4"
       style={{ paddingBottom: inset }}
       onMouseDown={requestCancel}
     >
