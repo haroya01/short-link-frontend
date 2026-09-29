@@ -23,6 +23,7 @@ export default function NewCampaignPage() {
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const t = useTranslations("campaignApp.new");
+  const tErr = useTranslations("errors");
   const [confirm, confirmDialog] = useConfirm();
 
   const [name, setName] = useState("");
@@ -66,9 +67,12 @@ export default function NewCampaignPage() {
   }
 
   const redirectRequired = postEndAction === "REDIRECT";
+  const periodStart = startMode === "schedule" ? new Date(startsAtLocal) : new Date();
+  const periodInvalid = !endsAtLocal || new Date(endsAtLocal).getTime() <= periodStart.getTime();
   const canSubmit =
     name.trim().length > 0 &&
     (!redirectRequired || postEndDestinationUrl.trim().length > 0) &&
+    !periodInvalid &&
     !submitting;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -168,9 +172,17 @@ export default function NewCampaignPage() {
             id="campaign-end"
             type="datetime-local"
             value={endsAtLocal}
+            min={startMode === "schedule" ? startsAtLocal : toLocalInput(new Date())}
             onChange={(e) => setEndsAtLocal(e.target.value)}
+            aria-invalid={periodInvalid || undefined}
+            aria-describedby={periodInvalid ? "campaign-end-error" : undefined}
             required
           />
+          {periodInvalid && (
+            <p id="campaign-end-error" className="text-[12px] text-red-600 dark:text-red-400">
+              {tErr("INVALID_CAMPAIGN_PERIOD")}
+            </p>
+          )}
         </Field>
 
         <Field

@@ -4,6 +4,8 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { ApiError } from "@/lib/api/client";
+import { useToast } from "@/components/ui/toast";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import { followUser, unfollowUser } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
@@ -68,6 +70,7 @@ export function FollowButton({
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
   // following / count / countHidden live in a process-wide store keyed by username, so two buttons for
   // the same author (rail + header on a post) move in lockstep this session. Seeded from the initial
   // follower count; the cache seed + status load below write through it, so all instances share one truth.
@@ -153,8 +156,9 @@ export function FollowButton({
       });
       // The following feed's contents changed — mark it stale so it re-fetches on the next visit.
       emitFollowChanged();
-    } catch {
+    } catch (e) {
       setShared({ following: !next, count, countHidden });
+      toast(t(e instanceof ApiError && e.detail.code === "BLOCKED_TARGET" ? "followBlocked" : "followError"), "error");
     } finally {
       setBusy(false);
     }

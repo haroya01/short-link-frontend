@@ -3,7 +3,7 @@
 import { useState, type CSSProperties, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Lock } from "lucide-react";
-import { submitEmailLead } from "@/lib/api";
+import { ApiError, submitEmailLead } from "@/lib/api";
 import { parseEmailFormConfig } from "@/modules/profile/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
@@ -30,6 +30,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.emailForm");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
+  const [errorKey, setErrorKey] = useState<"error" | "invalidEmail">("error");
 
   const config = parseEmailFormConfig(content);
 
@@ -40,7 +41,8 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
     try {
       await submitEmailLead(id, email.trim());
       setStatus("done");
-    } catch {
+    } catch (err) {
+      setErrorKey(err instanceof ApiError && err.detail.code === "INVALID_EMAIL" ? "invalidEmail" : "error");
       setStatus("error");
     }
   }
@@ -106,7 +108,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
           </>
         )}
         {status === "error" && (
-          <p className="mt-2 text-[11px] text-red-600 dark:text-red-400">{t("error")}</p>
+          <p className="mt-2 text-[11px] text-red-600 dark:text-red-400">{t(errorKey)}</p>
         )}
       </div>
     </li>
