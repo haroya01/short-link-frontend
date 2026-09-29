@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { mockLinksResponse } from "../lib/api/_links-mocks";
 
 const CODE = "e2eVisit";
 
@@ -100,6 +101,43 @@ test.describe("visit options", () => {
     await expect(page.getByText("저장했어요.")).toBeVisible();
     expect(sent?.expiresAt).toBe(await page.evaluate(() => new Date("2099-06-01T18:00").toISOString()));
     expect(sent?.expiredMessage).toBe("행사가 끝났어요");
+  });
+
+  test("opening after the old expiry while extending the expiry saves in one go", async ({ page }) => {
+    let storedExpiresAt: string | null = "2099-06-01T09:00:00.000Z";
+    const order: string[] = [];
+    await signIn(page);
+    await mockBackend(page, {
+      [`GET /api/v1/links/${CODE}/detail`]: (route) => {
+        const base = mockLinksResponse(`/api/v1/links/${CODE}/detail`, "GET", undefined) as Record<string, unknown>;
+        return route.fulfill({ json: { ...base, shortCode: CODE, opensAt: null, expiresAt: storedExpiresAt, expiredMessage: null } });
+      },
+      [`PATCH /api/v1/links/${CODE}`]: (route) => {
+        order.push("expiry");
+        const body = JSON.parse(route.request().postData() ?? "{}");
+        if ("expiresAt" in body) storedExpiresAt = body.expiresAt;
+        return route.fulfill({ json: { shortCode: CODE, expiresAt: storedExpiresAt } });
+      },
+      [`PATCH /api/v1/links/${CODE}/visit-options`]: (route) => {
+        order.push("opens");
+        const body = JSON.parse(route.request().postData() ?? "{}");
+        // 서버 규칙 그대로: 공개 시각은 '저장돼 있는' 만료보다 앞이어야 한다.
+        if (body.opensAt && storedExpiresAt && new Date(body.opensAt) >= new Date(storedExpiresAt)) {
+          return route.fulfill({ status: 400, json: { status: 400, detail: "link would open after it expires", code: "OPENS_AFTER_EXPIRY" } });
+        }
+        return route.fulfill({ json: { shortCode: CODE, openInBrowser: false, opensAt: body.opensAt ?? null } });
+      },
+    });
+    await page.goto(`/ko/stats/${CODE}#settings`);
+
+    const section = page.locator("section", { hasText: "공개 기간" });
+    await section.getByRole("switch", { name: "공개 예약" }).click();
+    await section.getByLabel("여는 시각").fill("2099-07-01T10:00");
+    await section.getByLabel("닫는 시각").fill("2099-08-01T18:00");
+    await section.getByRole("button", { name: "저장" }).click();
+
+    await expect(page.getByText("저장했어요.")).toBeVisible();
+    expect(order).toEqual(["expiry", "opens"]);
   });
 
   test("the edit dialog keeps to what the link is and points to link settings for the rest", async ({ page }) => {
