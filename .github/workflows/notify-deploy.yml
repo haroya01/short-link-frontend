@@ -79,7 +79,8 @@ jobs:
             --arg sha "${GITHUB_SHA:0:7}" \
             --arg msg "$COMMIT_MSG" \
             --arg run "$RUN_URL" \
-            '{ content: "✅ **FE deploy success** · \($sha) — \($msg)\n<\($run)>" }')
+            '($msg | split("\n")[0] // "" | .[0:300]) as $subject
+             | { content: "✅ **FE deploy success** · \($sha) — \($subject)\n<\($run)>" }')
           curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK"
 
       - name: Notify Discord — FE deploy failure
@@ -93,5 +94,6 @@ jobs:
             --arg sha "${GITHUB_SHA:0:7}" \
             --arg msg "$COMMIT_MSG" \
             --arg run "$RUN_URL" \
-            '{ content: "🚨 **FE deploy FAILED or timed out** · \($sha) — \($msg)\n<\($run)>" }')
+            '($msg | split("\n")[0] // "" | .[0:300]) as $subject
+             | { content: "🚨 **FE deploy FAILED or timed out** · \($sha) — \($subject)\n<\($run)>" }')
           curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK" || true
