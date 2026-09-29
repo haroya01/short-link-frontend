@@ -37,7 +37,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
           {reconnecting ? t("disconnectedHint") : t("waiting")}
         </p>
       ) : (
-        <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-card-flat">
           {items.map((item) => (
             <li key={item.id} className="flex items-center gap-3 px-4 py-2.5 text-[12px]">
               <span className="tabular-nums text-slate-500 dark:text-slate-400" suppressHydrationWarning>

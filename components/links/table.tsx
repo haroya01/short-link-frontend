@@ -508,7 +508,7 @@ function RowMenu({ label, items }: { label: string; items: RowMenuItem[] }) {
 
   const itemClass = (destructive?: boolean) =>
     cn(
-      "flex min-h-11 w-full items-center gap-2.5 rounded-md px-3 text-left text-sm transition-colors disabled:opacity-50",
+      "flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-left text-sm transition-colors disabled:opacity-50",
       destructive
         ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
         : "text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800",
@@ -532,7 +532,7 @@ function RowMenu({ label, items }: { label: string; items: RowMenuItem[] }) {
         <div
           role="menu"
           aria-label={label}
-          className="absolute right-0 top-full z-20 mt-1 w-52 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+          className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900"
         >
           {items.map(({ label: itemLabel, icon: Icon, onSelect, href, destructive, disabled }) =>
             href ? (

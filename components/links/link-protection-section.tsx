@@ -85,7 +85,7 @@ export function LinkProtectionSection({ shortCode }: { shortCode: string }) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-card-flat">
       <div className="mb-3">
         <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
           {tSection("title")}

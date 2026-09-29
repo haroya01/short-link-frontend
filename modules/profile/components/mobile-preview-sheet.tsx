@@ -51,7 +51,7 @@ export function MobilePreviewSheet({ children }: Props) {
             className="absolute inset-0 scrim"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[92vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white shadow-2xl dark:bg-slate-900">
+          <div className="absolute inset-x-0 bottom-0 max-h-[92vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white shadow-modal dark:bg-slate-900">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-3 dark:bg-slate-900 dark:border-slate-800">
               <span className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("previewTitle")}</span>
               <button

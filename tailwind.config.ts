@@ -162,6 +162,10 @@ const config: Config = {
         // 대시보드(통계 등) 카드의 hover 리프트 — browse 타일(card-hover)보다 한참 얕다.
         // 작업 화면의 카드는 떠오르는 연출이 아니라 "눌러진다"는 힌트만 필요해서 별도 농도.
         lift: "0 4px 16px rgba(19,26,22,0.12)",
+        // 떠 있는 층은 두 단 — float(막 없이 뜬 메뉴·팝오버·목록·토스트·떠 있는 막대),
+        // modal(막 위의 대화상자·시트·서랍). 값은 globals.css 변수라 다크에서 검정 그림자로 바뀐다.
+        float: "var(--shadow-float)",
+        modal: "var(--shadow-modal)",
       },
       // Enter/exit pairs. Exits mirror their entrance, ride the same --ease curve, run slightly
       // quicker, and hold their end state (`both`) so the overlay never flashes back to full

@@ -95,7 +95,7 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="absolute bottom-full right-0 z-30 mb-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+            className="absolute bottom-full right-0 z-30 mb-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-900"
           >
             <h2 id={titleId} className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
               {t("reportTitle")}

@@ -63,7 +63,7 @@ export function HighlightNoteSheet({ quote, onCancel, onSave }: {
         aria-labelledby="note-sheet-title"
         aria-describedby="note-sheet-scope"
         aria-busy={pending}
-        className="max-h-[85dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
+        className="max-h-[85dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-modal dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <h3 id="note-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("highlightNoteTitle")}</h3>

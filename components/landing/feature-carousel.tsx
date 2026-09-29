@@ -240,13 +240,13 @@ function RealtimePreview() {
         </h3>
         <div className="flex items-center gap-1.5 text-[11px]">
           <span
-            className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent-600 shadow-[0_0_8px_rgba(5,150,105,0.5)]"
+            className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent-600"
             aria-hidden
           />
           <span className="font-medium text-emerald-700 dark:text-emerald-400">{t("live")}</span>
         </div>
       </div>
-      <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-card-flat">
         {events.map((e, i) => (
           <li
             key={e.ts}

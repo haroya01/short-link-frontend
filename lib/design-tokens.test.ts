@@ -11,6 +11,8 @@ import { describe, expect, it } from "vitest";
  *    결정부터(개별 화면에서 임의 발명 금지).
  *  - transition-all 금지 — 변하는 속성만 명시(폭 변화까지 미끄러져 레이아웃이 출렁인다).
  *  - hover 임의 그림자 금지 — browse 타일 hover 농도는 shadow-card-hover 토큰이 소유.
+ *  - 그림자는 토큰만 — 페이지 위 카드(card·card-flat·card-hover·lift), 떠 있는 층(float·modal).
+ *    Tailwind 기본 md/lg/xl/2xl 과 임의 shadow-[…] 금지(drop-shadow 는 사진 위 글자용이라 밖).
  *  - 컴포넌트 소스의 cubic-bezier( 하드코딩 금지 — 하우스 곡선(0.16,1,0.3,1) 미러만 허용
  *    (var() 를 못 받는 자리용, globals.css 의 잠긴 키프레임은 이 가드 밖).
  */
@@ -19,11 +21,18 @@ const ROOTS = ["app", "components", "modules", "hooks"];
 // 곧 정체성) — tailwind.config 와 같은 "정의하는 쪽"이라 가드 대상이 아니다.
 const EXCLUDED = /(\.test\.|fixtures|mock-data|demo-data|\.design-sync[\\/]|_lib[\\/]theme\.ts)/;
 
-const BANNED: { name: string; pattern: RegExp; allow?: RegExp }[] = [
+const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegExp }[] = [
   { name: "transition-all", pattern: /transition-all/ },
   { name: "rounded-xl (템플릿 밖 티어)", pattern: /(?<![\w-])rounded-xl(?![\w-])/ },
   { name: "임의 반경 rounded-[…]", pattern: /rounded-\[/ },
   { name: "hover 임의 그림자", pattern: /hover:shadow-\[/ },
+  { name: "임의 그림자 shadow-[…]", pattern: /(?<![\w-])shadow-\[/ },
+  {
+    name: "기본 그림자 shadow-md/lg/xl/2xl",
+    pattern: /(?<![\w-])shadow-(?:md|lg|xl|2xl)(?![\w-])/,
+    // 명함 카드는 시각 스냅샷(visual.spec)이 잠근 물체 — 바꾸려면 베이스라인 재생성이 같이 가야 한다.
+    allowFile: /contact-card-entry\.tsx$/,
+  },
   {
     name: "cubic-bezier 하드코딩",
     pattern: /cubic-bezier\(/,
@@ -48,6 +57,7 @@ describe("design token guard", () => {
     it(`소스에 ${rule.name} 이(가) 없어야 한다`, () => {
       const hits: string[] = [];
       for (const file of files) {
+        if (rule.allowFile?.test(file)) continue;
         const lines = fs.readFileSync(file, "utf8").split("\n");
         lines.forEach((line, i) => {
           if (!rule.pattern.test(line)) return;

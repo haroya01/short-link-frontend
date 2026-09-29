@@ -187,7 +187,7 @@ export default function ProfileLeadsPage() {
         /* Surface card uses rounded-2xl + flat shadow to read as a sibling of Section / stats
            cards (PR #245 unified surface). The table interior keeps its tight rounded-md tone
            by virtue of being inside the rounded-2xl clip. */
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card-flat dark:border-slate-800 dark:bg-slate-900">
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-[11px] text-slate-500 dark:bg-slate-800/40 dark:text-slate-400">

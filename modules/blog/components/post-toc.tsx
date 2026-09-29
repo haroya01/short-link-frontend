@@ -163,7 +163,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
             }`}
           />
           <div
-            className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900 ${
+            className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-slate-200 bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
               closing ? "animate-[sheet-down_240ms_var(--ease)_both]" : "animate-[sheet-up_280ms_var(--ease)_both]"
             }`}
           >
