@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 
 const TAB =
-  "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
+  "focus-ring flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
  * Mobile-only bottom tab bar for the kurl (links) product, a distinct app from the blog (only the
@@ -44,17 +44,19 @@ export function LinksBottomNav() {
           Icon: Link2,
           active: pathname === "/" || pathname.startsWith("/dashboard") || pathname.startsWith("/stats/"),
         },
+        {
+          href: "/campaigns",
+          label: t("campaignsTab"),
+          Icon: Megaphone,
+          active: pathname.startsWith("/campaigns") || pathname.startsWith("/qr-campaigns"),
+        },
+        { href: "/events", label: t("events"), Icon: CalendarDays, active: pathname.startsWith("/events") },
         { href: "/analytics", label: t("analytics"), Icon: BarChart3, active: pathname.startsWith("/analytics") },
         {
           href: "/more",
           label: t("more"),
           Icon: Ellipsis,
-          active:
-            pathname.startsWith("/more") ||
-            pathname.startsWith("/settings") ||
-            pathname.startsWith("/campaigns") ||
-            pathname.startsWith("/events") ||
-            pathname.startsWith("/ctas"),
+          active: pathname.startsWith("/more") || pathname.startsWith("/settings") || pathname.startsWith("/ctas"),
         },
       ]
     : [
@@ -79,7 +81,7 @@ export function LinksBottomNav() {
           className={cn(TAB, active ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Icon className="h-5 w-5" />
-          {label}
+          <span className="max-w-full truncate px-1">{label}</span>
         </Link>
       ))}
     </nav>

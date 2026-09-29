@@ -838,6 +838,7 @@
     "myCollections": "マイコレクション",
     "showcase": "作例",
     "campaigns": "QRキャンペーン",
+    "campaignsTab": "キャンペーン",
     "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト",
@@ -2563,10 +2564,6 @@
     "tools": {
       "profile": "公開プロフィール",
       "profileDesc": "リンクを1ページにまとめて表示",
-      "campaigns": "QRキャンペーン",
-      "campaignsDesc": "ポスター・チラシのQRを配布先ごとに比較",
-      "events": "募集",
-      "eventsDesc": "イベントの申し込みをリンクで受付",
       "ctas": "CTAライブラリ",
       "ctasDesc": "リンクに表示する案内バナーを管理"
     },
