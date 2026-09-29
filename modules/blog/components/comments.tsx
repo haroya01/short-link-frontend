@@ -21,6 +21,7 @@ import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 // The composer pulls in the Tiptap/ProseMirror editor (rich-comment-input) — a heavy graph that most
 // readers never touch. Splitting it into its own chunk keeps the editor out of the post page's initial
@@ -51,6 +52,7 @@ export function PostComments({
 }) {
   const t = useTranslations("comments");
   const tCommon = useTranslations("common");
+  const errorMessage = useApiErrorMessage();
   const locale = useLocale();
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
 
@@ -143,8 +145,8 @@ export function PostComments({
       // 서버가 돌려준 완성 댓글을 낙관 추가 — 전체 재조회(load)는 실패 시 목록을 [] 로 덮으므로 피한다.
       setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id); // animate the new comment in once it renders
-    } catch {
-      setError(t("submitError"));
+    } catch (e) {
+      setError(errorMessage(e, t("submitError")));
     } finally {
       setBusy(false);
     }

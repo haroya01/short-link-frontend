@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { useDismiss } from "@/hooks/use-dismiss";
@@ -29,6 +30,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
 export function SmartShelf({ username, locale }: { username: string; locale: string }) {
   const t = useTranslations("savedLibrary");
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const { ready, me } = useAuth();
   const isOwner = ready && me?.username === username;
 
@@ -94,8 +96,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
       const f = await apiCreateFolder(name);
       setFolders((prev) => [...prev, { ...f, count: 0 }]);
       if (thenMovePostId != null) move(thenMovePostId, f.id);
-    } catch {
-      toast(t("saveFailed"), "error");
+    } catch (e) {
+      toast(errorMessage(e, t("saveFailed")), "error");
     }
   }
 
@@ -141,8 +143,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
       const f = await apiCreateFolder(trimmed);
       applyBulkMove([...picked], f.id, { ...f, count: 0 });
       exitSelect();
-    } catch {
-      toast(t("saveFailed"), "error");
+    } catch (e) {
+      toast(errorMessage(e, t("saveFailed")), "error");
     }
   }
 

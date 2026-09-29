@@ -39,6 +39,7 @@ import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clusteri
 import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
 import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelection, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 // The reply composer (HighlightThread) and note editor (NoteSheet) both pull in the Tiptap/ProseMirror
 // editor — a heavy graph no reader touches until they open a thread or write a memo. Both only render
@@ -77,6 +78,7 @@ export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
   const { authenticated, me, signInWithGoogle } = useAuth();
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const [confirm, confirmDialog] = useConfirm();
   // Reader-level "paint highlights or read clean" toggle (device-local, default ON). Hiding stops the
   // painting but never the ability to create a highlight from a selection.
@@ -282,8 +284,8 @@ export function PostHighlights({ postId }: { postId: number }) {
     async (payload: NewHighlight, okMessage: string) => {
       try {
         await createHighlight(postId, payload);
-      } catch {
-        toast(t("highlightSaveError"), "error");
+      } catch (e) {
+        toast(errorMessage(e, t("highlightSaveError")), "error");
         return false;
       }
       // A failed refresh must not turn a confirmed write into a retry/duplicate creation.
@@ -291,7 +293,7 @@ export function PostHighlights({ postId }: { postId: number }) {
       toast(okMessage, "success");
       return true;
     },
-    [postId, t, toast],
+    [postId, t, toast, errorMessage],
   );
 
   // After a reply is added/removed, re-pull so the painted marks reflect the new replyCount.
@@ -527,6 +529,7 @@ function HighlightThread({
   onDelete: () => void;
 }) {
   const t = useTranslations("publicPost");
+  const errorMessage = useApiErrorMessage();
   const tc = useTranslations("collections");
   const locale = useLocale();
   const [replies, setReplies] = useState<HighlightReplyView[]>([]);
@@ -614,8 +617,8 @@ function HighlightThread({
       // this ref after the list re-renders. The composer keeps focus so a follow-up reply flows.
       justPostedIdRef.current = created.id;
       onChanged(); // refresh the marks' replyCount
-    } catch {
-      setError(t("replyError"));
+    } catch (e) {
+      setError(errorMessage(e, t("replyError")));
     } finally {
       setBusy(false);
     }
@@ -628,8 +631,8 @@ function HighlightThread({
       await deleteHighlightReply(id);
       setReplies((prev) => prev.filter((r) => r.id !== id));
       onChanged();
-    } catch {
-      setError(t("replyError"));
+    } catch (e) {
+      setError(errorMessage(e, t("replyError")));
     } finally {
       setBusy(false);
     }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { ApiError } from "./api";
 
@@ -29,9 +30,12 @@ export function resolveErrorMessage(err: unknown, fallback: string, catalog: Err
 
 export function useApiErrorMessage() {
   const tErr = useTranslations("errors");
-  const catalog: ErrorCatalog = {
-    has: (code) => tErr.has(code),
-    translate: (code, values) => tErr(code, values),
-  };
-  return (err: unknown, fallback: string): string => resolveErrorMessage(err, fallback, catalog);
+  return useCallback(
+    (err: unknown, fallback: string): string =>
+      resolveErrorMessage(err, fallback, {
+        has: (code) => tErr.has(code),
+        translate: (code, values) => tErr(code, values),
+      }),
+    [tErr],
+  );
 }
