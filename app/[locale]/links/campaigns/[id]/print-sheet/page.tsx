@@ -60,8 +60,8 @@ export default function PrintSheetPage() {
         setCampaign(c);
         setBatches(bs);
       })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : t("loadFailed"));
+      .catch(() => {
+        if (!cancelled) setError(t("loadFailed"));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

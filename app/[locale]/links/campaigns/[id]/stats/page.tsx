@@ -69,8 +69,8 @@ export default function CampaignStatsPage() {
         setOtherCampaigns(all.filter((it) => it.id !== campaignId));
         setRecData(rec);
       })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : t("loadFailed"));
+      .catch(() => {
+        if (!cancelled) setError(t("loadFailed"));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

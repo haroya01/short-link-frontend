@@ -96,8 +96,8 @@ export default function PosterBuilderPage() {
         setCampaign(c);
         setBatches(bs);
       })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : t("loadFailed"));
+      .catch(() => {
+        if (!cancelled) setError(t("loadFailed"));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -184,8 +184,8 @@ export default function PosterBuilderPage() {
       triggerDownload(url, filename);
       setTimeout(() => URL.revokeObjectURL(url), 5000);
       toast(t("composed", { count: batches.length }), "success");
-    } catch (e) {
-      toast(e instanceof Error ? e.message : t("composeFailed"), "error");
+    } catch {
+      toast(t("composeFailed"), "error");
     } finally {
       setComposing(false);
     }

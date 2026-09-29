@@ -178,6 +178,7 @@
     "seriesDelete": "削除",
     "postCount": "{count}本",
     "seriesEmpty": "まだシリーズがありません。",
+    "seriesActionFailed": "シリーズを変更できませんでした。もう一度お試しください。",
     "seriesDeleteConfirm": "このシリーズを削除しますか？記事は削除されず、シリーズから外れるだけです。",
     "seriesMembers": "シリーズ内の記事",
     "seriesNoMembers": "このシリーズにはまだ記事がありません。下から追加してください。",
@@ -515,6 +516,11 @@
     "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。",
     "seriesLoadFailed": "シリーズ一覧を読み込めませんでした。",
     "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。",
+    "saveFailed": "保存できませんでした。しばらくしてからもう一度お試しください。",
+    "statusChangeFailed": "反映できませんでした。もう一度お試しください。",
+    "scheduleFailed": "予約できませんでした。もう一度お試しください。",
+    "restoreFailed": "このバージョンに戻せませんでした。もう一度お試しください。",
+    "deleteFailed": "削除できませんでした。もう一度お試しください。",
     "callout": {
       "note": "ノート",
       "tip": "ヒント",
@@ -1697,7 +1703,9 @@
       "colTime": "時刻",
       "colLocation": "地域",
       "colDevice": "デバイス",
-      "colReferrer": "参照元"
+      "colReferrer": "参照元",
+      "exportFailed": "書き出せませんでした。もう一度お試しください。",
+      "logLoadFailed": "クリックログを読み込めませんでした。もう一度お試しください。"
     },
     "chart": {
       "peak": "ピーク"

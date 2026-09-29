@@ -15,6 +15,7 @@ import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { ErrorState } from "@/components/common/error-state";
 
 const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ["year", 31_536_000_000],
@@ -73,7 +74,7 @@ export default function WriteIndexPage() {
   const [posts, setPosts] = useState<PostView[]>([]);
   const [filter, setFilter] = useState<"all" | PostStatus>("all");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   // Preserve the current path prefix (locale + /blog-preview on the apex) for intra-blog links —
   // a root-relative "/write/..." would drop the prefix and 404.
   const [writeBase, setWriteBase] = useState("/write");
@@ -90,11 +91,11 @@ export default function WriteIndexPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setLoadFailed(false);
     try {
       setPosts(await listMyPosts());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "load failed");
+    } catch {
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -312,9 +313,9 @@ export default function WriteIndexPage() {
         </section>
       )}
 
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
       {loading && <SkeletonRows count={6} thumb />}
-      {!loading && posts.length === 0 && (
+      {!loading && loadFailed && <ErrorState onRetry={() => void load()} />}
+      {!loading && !loadFailed && posts.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <span className="grid h-12 w-12 place-items-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
             <PenSquare className="h-5 w-5" />

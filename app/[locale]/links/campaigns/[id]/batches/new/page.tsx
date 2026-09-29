@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignDetail } from "@/types";
 import { formatNumber } from "@/lib/utils";
@@ -60,6 +61,7 @@ export default function NewBatchPage() {
   const router = useRouter();
   const { authenticated, ready } = useAuth();
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const t = useTranslations("campaignApp.batchesNew");
 
   const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
@@ -79,8 +81,8 @@ export default function NewBatchPage() {
       .then((c) => {
         if (!cancelled) setCampaign(c);
       })
-      .catch((err) => {
-        if (!cancelled) toast(err instanceof Error ? err.message : t("loadFailed"), "error");
+      .catch(() => {
+        if (!cancelled) toast(t("loadFailed"), "error");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -155,7 +157,7 @@ export default function NewBatchPage() {
       toast(t("created", { count: rows.length }), "success");
       router.push(`/campaigns/${campaignId}`);
     } catch (err) {
-      toast(err instanceof Error ? err.message : t("createFailed"), "error");
+      toast(errorMessage(err, t("createFailed")), "error");
     } finally {
       setSubmitting(false);
     }

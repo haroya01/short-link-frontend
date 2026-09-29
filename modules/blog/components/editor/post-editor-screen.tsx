@@ -17,6 +17,7 @@ import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { extractExternalLinks } from "@/modules/blog/lib/post-links";
+import { ErrorState } from "@/components/common/error-state";
 
 /** The writing surface for an existing post (`postId`) or a new one that is created on its first save (`null`). */
 export function PostEditorScreen({ postId }: { postId: number | null }) {
@@ -43,8 +44,11 @@ export function PostEditorScreen({ postId }: { postId: number | null }) {
   if (!ed.post && postId != null) {
     return (
       <main className="mx-auto max-w-[44rem] px-5 py-12">
-        <p className="text-red-600 dark:text-red-400">{t("notFound")}</p>
-        {ed.error && <p className="mt-2 text-sm text-slate-500">{ed.error}</p>}
+        {ed.loadFailed ? (
+          <ErrorState onRetry={() => void ed.reload()} />
+        ) : (
+          <p className="text-red-600 dark:text-red-400">{t("notFound")}</p>
+        )}
       </main>
     );
   }

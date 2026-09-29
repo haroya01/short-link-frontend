@@ -178,6 +178,7 @@
     "seriesDelete": "삭제",
     "postCount": "{count}편",
     "seriesEmpty": "아직 시리즈가 없어요.",
+    "seriesActionFailed": "시리즈를 바꾸지 못했어요. 다시 시도해 주세요.",
     "seriesDeleteConfirm": "이 시리즈를 삭제할까요? 글은 지워지지 않고 시리즈에서만 빠져요.",
     "seriesMembers": "시리즈 글",
     "seriesNoMembers": "이 시리즈에 글이 없어요. 아래에서 글을 추가하세요.",
@@ -515,6 +516,11 @@
     "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요.",
     "seriesLoadFailed": "시리즈 목록을 불러오지 못했어요.",
     "revisionsLoadFailed": "저장된 버전을 불러오지 못했어요.",
+    "saveFailed": "저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    "statusChangeFailed": "반영하지 못했어요. 다시 시도해 주세요.",
+    "scheduleFailed": "예약하지 못했어요. 다시 시도해 주세요.",
+    "restoreFailed": "이 버전으로 되돌리지 못했어요. 다시 시도해 주세요.",
+    "deleteFailed": "삭제하지 못했어요. 다시 시도해 주세요.",
     "callout": {
       "note": "참고",
       "tip": "팁",
@@ -1697,7 +1703,9 @@
       "colTime": "시각",
       "colLocation": "위치",
       "colDevice": "기기",
-      "colReferrer": "유입"
+      "colReferrer": "유입",
+      "exportFailed": "내보내지 못했어요. 다시 시도해 주세요.",
+      "logLoadFailed": "클릭 로그를 불러오지 못했어요. 다시 시도해 주세요."
     },
     "chart": {
       "peak": "피크"

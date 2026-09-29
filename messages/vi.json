@@ -178,6 +178,7 @@
     "seriesDelete": "Xóa",
     "postCount": "{count} bài",
     "seriesEmpty": "Chưa có series nào.",
+    "seriesActionFailed": "Không cập nhật được series. Vui lòng thử lại.",
     "seriesDeleteConfirm": "Xóa series này? Các bài viết vẫn còn — chỉ bị gỡ khỏi series.",
     "seriesMembers": "Bài viết trong series",
     "seriesNoMembers": "Chưa có bài viết nào trong series này. Thêm một bài bên dưới.",
@@ -515,6 +516,11 @@
     "seriesCreateError": "Không thể tạo series. Vui lòng thử lại.",
     "seriesLoadFailed": "Không tải được danh sách series.",
     "revisionsLoadFailed": "Không tải được các phiên bản đã lưu.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại sau.",
+    "statusChangeFailed": "Không áp dụng được thay đổi. Vui lòng thử lại.",
+    "scheduleFailed": "Không hẹn giờ được. Vui lòng thử lại.",
+    "restoreFailed": "Không khôi phục được phiên bản này. Vui lòng thử lại.",
+    "deleteFailed": "Không xóa được. Vui lòng thử lại.",
     "callout": {
       "note": "Ghi chú",
       "tip": "Mẹo",
@@ -1697,7 +1703,9 @@
       "colTime": "Thời gian",
       "colLocation": "Vị trí",
       "colDevice": "Thiết bị",
-      "colReferrer": "Nguồn giới thiệu"
+      "colReferrer": "Nguồn giới thiệu",
+      "exportFailed": "Không xuất được. Vui lòng thử lại.",
+      "logLoadFailed": "Không tải được nhật ký lượt nhấp. Vui lòng thử lại."
     },
     "chart": {
       "peak": "Đỉnh"

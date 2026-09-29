@@ -36,8 +36,8 @@ export default function CampaignsPage() {
         if (cancelled) return;
         setItems(data);
       })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : t("loadFailed"));
+      .catch(() => {
+        if (!cancelled) setError(t("loadFailed"));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

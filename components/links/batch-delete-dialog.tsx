@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { deleteCampaignBatch } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import type { CampaignBatch } from "@/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ export function BatchDeleteDialog({
 }) {
   const t = useTranslations("campaignApp.batchDialogs");
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   return (
     <ConfirmDialog
       open={open}
@@ -37,7 +39,7 @@ export function BatchDeleteDialog({
           toast(t("deleted"), "success");
           onDeleted();
         } catch (err) {
-          toast(err instanceof Error ? err.message : t("deleteFailed"), "error");
+          toast(errorMessage(err, t("deleteFailed")), "error");
         }
       }}
     >

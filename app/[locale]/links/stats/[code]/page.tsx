@@ -73,8 +73,7 @@ export default function StatsPage() {
 
   // 404 = link doesn't exist (or not owned). Map to the empty state, not an error toast.
   const notFound = error instanceof ApiError && error.status === 404;
-  const realError =
-    error && !notFound ? (error instanceof Error ? error.message : "load failed") : null;
+  const realError = Boolean(error) && !notFound;
 
   if (ready && !authenticated) {
     return (
@@ -92,7 +91,7 @@ export default function StatsPage() {
       {loading ? (
         <StatsSkeleton shortCode={code} />
       ) : realError ? (
-        <ErrorState message={realError} onRetry={() => refetch()} />
+        <ErrorState onRetry={() => refetch()} />
       ) : notFound || !data ? (
         <EmptyState
           title={t("notFound")}

@@ -34,7 +34,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   ],
   "links/demo": ["demo", "edit", "errors", "publicStats", "stats", "statsEmpty", "tags"],
   "links/events": [
-    "authGate", "events.analytics", "events.attendees", "events.detail", "events.form",
+    "authGate", "errors", "events.analytics", "events.attendees", "events.detail", "events.form",
     "events.intro", "events.list", "events.share", "events.status",
   ],
   "links/login": ["auth", "login"],
@@ -59,7 +59,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/login": ["auth", "blogLogin"],
   "blog/settings": ["blogWorkspace"],
   "blog/webhooks": ["blogWebhooks"],
-  "blog/write": ["blogWorkspace", "postEditor", "tags"],
+  "blog/write": ["blogWorkspace", "errors", "postEditor", "tags"],
   "p/[username]": [
     "collections", "comments", "errors", "languageSwitcher", "nav", "notifications",
     "postEditor.urlDialog", "publicFeed", "publicPost", "share", "sidebar.blog",
