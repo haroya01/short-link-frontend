@@ -53,7 +53,7 @@ test.describe("dashboard (auth)", () => {
   test("search filters by original URL", async ({ page }) => {
     await withLinks(page, [link("findA", "https://findme.example.com/A"), link("othrB", "https://other.example.com/B")]);
     await page.goto("/ko/dashboard");
-    await page.getByPlaceholder(/원본 URL 또는 짧은 코드/).fill("findme");
+    await page.getByPlaceholder(/목적지 또는 코드/).fill("findme");
     await expect(row(page, "findA")).toBeVisible();
     await expect(row(page, "othrB")).toHaveCount(0);
   });

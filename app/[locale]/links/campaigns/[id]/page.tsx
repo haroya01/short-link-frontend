@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import {
   archiveCampaign,
   campaignBatchesCsvUrl,
@@ -29,16 +30,18 @@ import {
   updateCampaign,
 } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
 import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
 import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
 import { BatchCard } from "./_components/batch-card";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
+import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
 
 export default function CampaignDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -46,6 +49,8 @@ export default function CampaignDetailPage() {
   const { authenticated, ready } = useAuth();
   const { toast } = useToast();
   const t = useTranslations("campaignApp.detail");
+  const errorMessage = useApiErrorMessage();
+  const [confirm, confirmDialog] = useConfirm();
   const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
   const [batches, setBatches] = useState<CampaignBatch[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -87,7 +92,7 @@ export default function CampaignDetailPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <Link
         href="/campaigns"
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+        className="touch-target focus-ring inline-flex items-center gap-1.5 rounded-sm text-[12px] font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
       </Link>
@@ -100,15 +105,14 @@ export default function CampaignDetailPage() {
             campaign={campaign}
             pending={pending}
             onEndNow={async () => {
-              if (!confirm(t("confirmEnd")))
-                return;
+              if (!(await confirm({ title: t("confirmEnd"), description: t("confirmEndDesc"), destructive: true }))) return;
               setPending(true);
               try {
                 await endCampaignNow(campaign.id);
                 toast(t("ended"), "success");
                 setReload((n) => n + 1);
               } catch (e) {
-                toast(e instanceof Error ? e.message : t("endFailed"), "error");
+                toast(errorMessage(e, t("endFailed")), "error");
               } finally {
                 setPending(false);
               }
@@ -120,21 +124,20 @@ export default function CampaignDetailPage() {
                 toast(t("reapplied"), "success");
                 setReload((n) => n + 1);
               } catch (e) {
-                toast(e instanceof Error ? e.message : t("reapplyFailed"), "error");
+                toast(errorMessage(e, t("reapplyFailed")), "error");
               } finally {
                 setPending(false);
               }
             }}
             onArchive={async () => {
-              if (!confirm(t("confirmArchive")))
-                return;
+              if (!(await confirm({ title: t("confirmArchive"), description: t("confirmArchiveDesc") }))) return;
               setPending(true);
               try {
                 await archiveCampaign(campaign.id);
                 toast(t("archived"), "success");
                 setReload((n) => n + 1);
               } catch (e) {
-                toast(e instanceof Error ? e.message : t("archiveFailed"), "error");
+                toast(errorMessage(e, t("archiveFailed")), "error");
               } finally {
                 setPending(false);
               }
@@ -159,6 +162,7 @@ export default function CampaignDetailPage() {
       ) : error ? (
         <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : null}
+      {confirmDialog}
     </div>
   );
 }
@@ -181,7 +185,7 @@ function Header({
   return (
     <header className="space-y-3">
       <div className="flex items-center gap-2">
-        <StatusBadge status={campaign.status} />
+        <CampaignStatusBadge status={campaign.status} />
         <span className="text-[12px] text-slate-500 dark:text-slate-400">
           {formatPeriod(campaign.startsAt, campaign.endsAt, locale)}
         </span>
@@ -191,10 +195,8 @@ function Header({
           {campaign.name}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={`/campaigns/${campaign.id}/stats`}>
-            <Button variant="outline">
-              <BarChart3 className="h-4 w-4" aria-hidden /> {t("actions.stats")}
-            </Button>
+          <Link href={`/campaigns/${campaign.id}/stats`} className={buttonVariants({ variant: "outline" })}>
+            <BarChart3 className="h-4 w-4" aria-hidden /> {t("actions.stats")}
           </Link>
           {campaign.status === "ACTIVE" && (
             <Button variant="outline" onClick={onEndNow} disabled={pending}>
@@ -227,6 +229,7 @@ function PrepareSection({
   const [zipDialogOpen, setZipDialogOpen] = useState(false);
   const [csvPending, setCsvPending] = useState(false);
   const t = useTranslations("campaignApp.detail");
+  const errorMessage = useApiErrorMessage();
   const { toast } = useToast();
 
   // CSV 는 인증(Bearer)이 필요한 엔드포인트라 raw 앵커 내비게이션(헤더 없음)은 401. QR ZIP 과 같은
@@ -246,7 +249,7 @@ function PrepareSection({
       a.click();
       setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     } catch (e) {
-      toast(e instanceof Error ? e.message : t("csvFailed"), "error");
+      toast(errorMessage(e, t("csvFailed")), "error");
     } finally {
       setCsvPending(false);
     }
@@ -273,15 +276,11 @@ function PrepareSection({
           <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
             <FileText className="h-4 w-4" aria-hidden /> Batch CSV
           </Button>
-          <Link href={`/campaigns/${campaignId}/print-sheet`}>
-            <Button variant="outline">
-              <Printer className="h-4 w-4" aria-hidden /> {t("prepare.printSheet")}
-            </Button>
+          <Link href={`/campaigns/${campaignId}/print-sheet`} className={buttonVariants({ variant: "outline" })}>
+            <Printer className="h-4 w-4" aria-hidden /> {t("prepare.printSheet")}
           </Link>
-          <Link href={`/campaigns/${campaignId}/poster-builder`}>
-            <Button variant="outline">
-              <Layers className="h-4 w-4" aria-hidden /> {t("prepare.posterBuilder")}
-            </Button>
+          <Link href={`/campaigns/${campaignId}/poster-builder`} className={buttonVariants({ variant: "outline" })}>
+            <Layers className="h-4 w-4" aria-hidden /> {t("prepare.posterBuilder")}
           </Link>
         </div>
       </div>
@@ -303,6 +302,7 @@ function PolicySummary({
 }) {
   const { toast } = useToast();
   const t = useTranslations("campaignApp.detail");
+  const errorMessage = useApiErrorMessage();
   const action = campaign.postEndAction;
   const label =
     action === "KEEP"
@@ -336,7 +336,7 @@ function PolicySummary({
       setEditing(false);
       onChanged();
     } catch (e) {
-      toast(e instanceof Error ? e.message : t("policy.saveFailed"), "error");
+      toast(errorMessage(e, t("policy.saveFailed")), "error");
     } finally {
       setSaving(false);
     }
@@ -453,10 +453,8 @@ function BatchSection({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {!terminal && (
-            <Link href={`/campaigns/${campaignId}/batches/new`}>
-              <Button variant="accent">
-                <PlayCircle className="h-4 w-4" aria-hidden /> {t("batches.add")}
-              </Button>
+            <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ variant: "accent" })}>
+              <PlayCircle className="h-4 w-4" aria-hidden /> {t("batches.add")}
             </Link>
           )}
         </div>
@@ -464,7 +462,7 @@ function BatchSection({
 
       {batches.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center">
-          <PackageOpen className="mx-auto h-6 w-6 text-slate-400 dark:text-slate-500" aria-hidden />
+          <PackageOpen className="mx-auto h-6 w-6 text-slate-400 dark:text-slate-400" aria-hidden />
           <p className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">
             {t("batches.emptyTitle")}
           </p>
@@ -472,8 +470,11 @@ function BatchSection({
             {t("batches.emptyDescription")}
           </p>
           {!terminal && (
-            <Link href={`/campaigns/${campaignId}/batches/new`} className="mt-4 inline-block">
-              <Button variant="accent">{t("batches.addFirst")}</Button>
+            <Link
+              href={`/campaigns/${campaignId}/batches/new`}
+              className={buttonVariants({ variant: "accent", className: "mt-4" })}
+            >
+              {t("batches.addFirst")}
             </Link>
           )}
         </div>
@@ -513,24 +514,6 @@ function BatchSection({
         }}
       />
     </section>
-  );
-}
-
-function StatusBadge({ status }: { status: CampaignStatus }) {
-  const t = useTranslations("campaignStatus");
-  const palette: Record<CampaignStatus, { bg: string; text: string }> = {
-    DRAFT: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300" },
-    ACTIVE: { bg: "bg-accent-50 dark:bg-accent-500/10", text: "text-accent-700 dark:text-accent-400" },
-    ENDED: { bg: "bg-amber-50 dark:bg-amber-500/10", text: "text-amber-700 dark:text-amber-400" },
-    ARCHIVED: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-500 dark:text-slate-400" },
-  };
-  const { bg, text } = palette[status];
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${bg} ${text}`}
-    >
-      {t(status)}
-    </span>
   );
 }
 

@@ -9,7 +9,6 @@ import { FetchSiteBreakdown } from "@/components/links/stats/labeled-breakdowns"
 import { Section } from "@/components/common/section";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
-import { ChapterHeading } from "./chapter-heading";
 
 /** 3장 어디서 — 유입(호스트/URL/채널 깊이/UTM/채널/글), 지리(국가/지역/도시). */
 export function WhereChapter({ data }: { data: LinkStats }) {
@@ -59,7 +58,6 @@ export function WhereChapter({ data }: { data: LinkStats }) {
 
   return (
     <div id="chapter-where" className="scroll-mt-28 space-y-4">
-      <ChapterHeading index={3} title={t("analysisTabs.where")} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section
           id="section-sources"

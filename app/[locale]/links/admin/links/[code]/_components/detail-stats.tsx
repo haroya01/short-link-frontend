@@ -2,9 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
-import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
-import { HourChart } from "@/components/links/stats/charts/hour-chart";
+import { LazyDailyChart, LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
@@ -26,13 +25,13 @@ export function DetailStats({ stats }: { stats: LinkStats }) {
           description={t("detail.section.daily.desc", { tz: stats.timezone })}
           className="lg:col-span-2"
         >
-          <DailyChart data={stats.dailyClicks} />
+          <LazyDailyChart data={stats.dailyClicks} />
         </Section>
         <Section
           title={t("detail.section.hourly.title")}
           description={t("detail.section.hourly.desc")}
         >
-          <HourChart data={stats.hourClicks} />
+          <LazyHourChart data={stats.hourClicks} />
         </Section>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { Ban, Download, SlidersHorizontal, Sparkles, Trash2, Undo2 } from "lucide-react";
+import { Ban, Download, Mail, SlidersHorizontal, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -15,7 +15,7 @@ import {
   setEmailLeadOptedOut,
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { EmailLead } from "@/types";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -122,7 +122,7 @@ export default function ProfileLeadsPage() {
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
@@ -153,15 +153,13 @@ export default function ProfileLeadsPage() {
             </Button>
           )}
           {hasLeads ? (
-            <Link href={blogPath("/leads/campaign")}>
-              <Button variant="accent">
-                <Sparkles className="mr-1 h-4 w-4" />
-                {t("buildCampaign")}
-              </Button>
+            <Link href={blogPath("/leads/campaign")} className={buttonVariants({ variant: "accent" })}>
+              <Mail className="mr-1 h-4 w-4" />
+              {t("buildCampaign")}
             </Link>
           ) : (
             <Button variant="accent" disabled title={t("emptyTitle")}>
-              <Sparkles className="mr-1 h-4 w-4" />
+              <Mail className="mr-1 h-4 w-4" />
               {t("buildCampaign")}
             </Button>
           )}
@@ -207,7 +205,7 @@ export default function ProfileLeadsPage() {
                   <td
                     className={
                       lead.optedOut
-                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through dark:text-slate-500"
+                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through dark:text-slate-400"
                         : "truncate px-4 py-2 font-medium text-slate-900 dark:text-slate-100"
                     }
                   >
@@ -245,7 +243,7 @@ export default function ProfileLeadsPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(lead.id)}
-                      className="text-slate-400 hover:text-red-600 dark:text-slate-500"
+                      className="text-slate-400 hover:text-red-600 dark:text-slate-400"
                       aria-label={t("delete")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />

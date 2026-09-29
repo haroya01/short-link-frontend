@@ -58,7 +58,7 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
 
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">{t("title")}</h2>
+      <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">{t("title")}</h2>
       <p className="mt-1 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
         {t("subtitle")}
       </p>
@@ -70,7 +70,7 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
             className="flex items-center gap-2 py-2.5"
           >
             <span className="min-w-0 flex-1">
-              <span className="block text-[11px] font-medium uppercase tracking-wide text-slate-400">
+              <span className="block text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 {link.label}
               </span>
               <span className="block truncate font-mono text-[13px] text-slate-800 dark:text-slate-200">

@@ -11,6 +11,9 @@ import type { ReactNode } from "react";
  * 진입은 끝 상태에 transform 을 남기지 않는(fill:none) opacity 페이드로 통일한다. 페이지 래퍼에 정적 transform
  * 이 남으면 position:fixed 자손의 containing block 이 되어 모달·시트·FAB 가 뷰포트가 아니라 래퍼에 갇힌다.
  * 그래서 rise/scale(translateY 유지) 진입은 쓰지 않는다. `mode` 는 호출부(template.tsx) 계약을 위해 남긴다.
+ *
+ * 첫 하드 로드에선 돌지 않는다(`route-enter` — globals.css 의 html[data-first-load] 규칙) — 클라이언트
+ * 내비게이션에서만 진입이 재생된다.
  */
 export function PageTransition({
   children,
@@ -18,5 +21,5 @@ export function PageTransition({
   children: ReactNode;
   mode?: "settle" | "fade";
 }) {
-  return <div className="animate-fade-in">{children}</div>;
+  return <div className="route-enter animate-fade-in">{children}</div>;
 }

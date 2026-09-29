@@ -1,4 +1,4 @@
-import Image from "@tiptap/extension-image";
+import Image, { type ImageOptions } from "@tiptap/extension-image";
 
 // tiptap-markdown 직렬화 state(최소 표면만 사용) — AlignableTable 과 같은 이유의 로컬 타입.
 type MdState = {
@@ -11,7 +11,11 @@ type MdState = {
  * tiptap-markdown 이 표준 image title `![alt](url "캡션")` 로 직렬화한다 → markdownToBlocks 가 캡션으로
  * 싣고 리더가 figcaption 으로 렌더(round-trip). 폭(«wide»/«half» 등)은 기존처럼 alt 마커 + CSS 로 유지.
  */
-export const ImageWithCaption = Image.extend({
+export const ImageWithCaption = Image.extend<ImageOptions & { captionPlaceholder: string }>({
+  addOptions() {
+    return { ...this.parent!(), captionPlaceholder: "" };
+  },
+
   addStorage() {
     return {
       ...this.parent?.(),
@@ -23,6 +27,8 @@ export const ImageWithCaption = Image.extend({
         serialize(state: MdState, node: { attrs: Record<string, unknown> }) {
           const alt = typeof node.attrs.alt === "string" ? node.attrs.alt : "";
           const src = typeof node.attrs.src === "string" ? node.attrs.src : "";
+          // A local preview still uploading — its blob: URL means nothing outside this tab.
+          if (src.startsWith("blob:")) return;
           const title =
             typeof node.attrs.title === "string" && node.attrs.title.trim()
               ? ` "${node.attrs.title.trim().replace(/[\\"]/g, "\\$&")}"`
@@ -36,6 +42,7 @@ export const ImageWithCaption = Image.extend({
   },
 
   addNodeView() {
+    const captionPlaceholder = this.options.captionPlaceholder;
     return ({ node, editor, getPos }) => {
       let current = node;
 
@@ -46,11 +53,18 @@ export const ImageWithCaption = Image.extend({
       img.src = current.attrs.src;
       img.alt = current.attrs.alt ?? "";
       figure.appendChild(img);
+      const markUploading = (src: string) => {
+        const uploading = src.startsWith("blob:");
+        figure.classList.toggle("is-uploading", uploading);
+        if (uploading) figure.setAttribute("aria-busy", "true");
+        else figure.removeAttribute("aria-busy");
+      };
+      markUploading(current.attrs.src ?? "");
 
       const cap = document.createElement("figcaption");
       cap.className = "tiptap-figcaption";
       cap.setAttribute("contenteditable", "true");
-      cap.setAttribute("data-placeholder", "캡션 추가 (선택)");
+      cap.setAttribute("data-placeholder", captionPlaceholder);
       cap.textContent = current.attrs.title ?? "";
       figure.appendChild(cap);
 
@@ -90,12 +104,16 @@ export const ImageWithCaption = Image.extend({
       return {
         dom: figure,
         // The figcaption is NOT ProseMirror content (it's a node attr), so keep PM out of its events/mutations.
-        ignoreMutation: (m) => m.target === cap || cap.contains(m.target as Node),
+        ignoreMutation: (m) =>
+          m.target === cap ||
+          cap.contains(m.target as Node) ||
+          (m.type === "attributes" && m.target === figure && (m.attributeName === "class" || m.attributeName === "aria-busy")),
         stopEvent: (e) => e.target === cap || cap.contains(e.target as Node),
         update: (updated) => {
           if (updated.type.name !== current.type.name) return false;
           current = updated;
           if (img.getAttribute("src") !== updated.attrs.src) img.src = updated.attrs.src;
+          markUploading(updated.attrs.src ?? "");
           img.alt = updated.attrs.alt ?? "";
           // Don't clobber the caret while the user is typing in the caption.
           if (document.activeElement !== cap) {

@@ -9,7 +9,7 @@ import type { PostStatus } from "@/modules/blog/api/posts";
 const TONE: Record<PostStatus, string> = {
   DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
   PUBLISHED: "text-slate-500 dark:text-slate-400",
-  SCHEDULED: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  SCHEDULED: "bg-accent-50 text-accent-800 dark:bg-accent-500/15 dark:text-accent-300",
   UNPUBLISHED: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
 };
 

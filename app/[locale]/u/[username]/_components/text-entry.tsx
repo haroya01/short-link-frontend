@@ -1,6 +1,4 @@
-"use client";
-
-import { useMemo, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { TextAccent, TextLayout } from "@/types";
@@ -73,7 +71,7 @@ const QUOTE_RAIL_CLASS: Record<TextAccent, string> = {
  * rather than a tint over the standard card background.
  */
 export function TextEntry({ content, colors, fadeStyle }: Props) {
-  const config = useMemo(() => parseTextBlockConfig(content), [content]);
+  const config = parseTextBlockConfig(content);
   if (!config.body.trim()) return null;
   const accent = config.accent ?? "blue";
 

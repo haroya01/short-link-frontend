@@ -113,8 +113,8 @@ export default function GlobalError({
           fontFamily: "system-ui, sans-serif",
           padding: "48px 24px",
           textAlign: "center",
-          color: "#0f172a",
-          background: "#f8fafc",
+          color: "#131a16",
+          background: "#f9faf9",
           minHeight: "100vh",
         }}
       >
@@ -122,7 +122,7 @@ export default function GlobalError({
           <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>
             {text.title}
           </h1>
-          <p style={{ fontSize: 14, color: "#64748b", marginBottom: 24 }}>
+          <p style={{ fontSize: 14, color: "#6d7570", marginBottom: 24 }}>
             {text.description}
           </p>
           <button
@@ -133,7 +133,7 @@ export default function GlobalError({
               fontSize: 14,
               fontWeight: 500,
               color: "#fff",
-              background: "#0f172a",
+              background: "#131a16",
               border: 0,
               borderRadius: 6,
               cursor: "pointer",

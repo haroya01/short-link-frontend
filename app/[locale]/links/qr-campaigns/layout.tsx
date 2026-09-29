@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { serializeJsonLd } from "@/lib/json-ld";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { MessagesScope } from "@/i18n/messages-scope";
 import { marketingOg } from "@/lib/marketing-og";
 
 const SITE_URL =
@@ -38,6 +39,7 @@ export default async function QrCampaignsLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "qrCampaigns.meta" });
   // Service JSON-LD — gives Google a structured signal that this page is the marketing surface
   // for a specific offering (QR campaign tracking), distinct from the generic url-shortener
@@ -54,13 +56,13 @@ export default async function QrCampaignsLayout({
     inLanguage: locale,
   };
   return (
-    <>
+    <MessagesScope locale={locale} scope="links/qr-campaigns">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       {children}
-    </>
+    </MessagesScope>
   );
 }

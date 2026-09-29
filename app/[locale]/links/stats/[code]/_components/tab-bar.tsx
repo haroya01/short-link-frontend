@@ -11,11 +11,9 @@ type Props = {
 };
 
 /**
- * Segmented pill tabs that drive the stats body. Active pill rides on {@code bg-white} with a
- * soft shadow over the slate-50 trough — looks like a hardware switch landed in a slot, not just
- * an inverted color (Apple segmented-control idiom). Inner radius {@code rounded-full} matches
- * the outer container's {@code rounded-full} so the radii read as concentric. Hash-synced via
- * the parent's setter.
+ * Ink-underline tabs that drive the stats body — the house anatomy for switching between separate
+ * panels (segmented controls are only for a parameter of the same content). Hash-synced via the
+ * parent's setter.
  */
 export function TabBar({ active, onSelect, items }: Props) {
   const t = useTranslations("stats");
@@ -34,7 +32,7 @@ export function TabBar({ active, onSelect, items }: Props) {
       aria-label={t("tabs.aria")}
       className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
     >
-      <div className="inline-flex gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+      <div className="flex gap-1 border-b border-slate-200 dark:border-slate-800">
         {tabs.map((it) => {
           const selected = active === it.key;
           return (
@@ -56,10 +54,10 @@ export function TabBar({ active, onSelect, items }: Props) {
               aria-selected={selected}
               onClick={() => onSelect(it.key)}
               className={
-                "relative min-h-10 shrink-0 rounded-md px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 " +
+                "relative -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 " +
                 (selected
-                  ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
-                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100")
+                  ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                  : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100")
               }
             >
               {it.label}

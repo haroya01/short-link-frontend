@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { createCampaign } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignPostEndAction } from "@/types";
 
@@ -19,7 +21,9 @@ export default function NewCampaignPage() {
   const { authenticated, ready } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const t = useTranslations("campaignApp.new");
+  const [confirm, confirmDialog] = useConfirm();
 
   const [name, setName] = useState("");
   const [startMode, setStartMode] = useState<StartMode>("now");
@@ -87,17 +91,17 @@ export default function NewCampaignPage() {
       toast(t("created"), "success");
       router.push(`/campaigns/${created.id}`);
     } catch (err) {
-      toast(err instanceof Error ? err.message : t("createFailed"), "error");
+      toast(errorMessage(err, t("createFailed")), "error");
     } finally {
       setSubmitting(false);
     }
   }
 
   // 목록으로 나가는 소프트 내비는 beforeunload 가 안 걸리므로 dirty 면 여기서 한 번 확인한다.
-  function confirmLeave(e: React.MouseEvent) {
-    if (dirty && !submitting && !window.confirm(t("leaveConfirm"))) {
-      e.preventDefault();
-    }
+  async function confirmLeave(e: React.MouseEvent) {
+    if (!dirty || submitting) return;
+    e.preventDefault();
+    if (await confirm({ title: t("leaveConfirm") })) router.push("/campaigns");
   }
 
   return (
@@ -106,7 +110,7 @@ export default function NewCampaignPage() {
         <Link
           href="/campaigns"
           onClick={confirmLeave}
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+          className="touch-target focus-ring inline-flex items-center gap-1.5 rounded-sm text-[12px] font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
         </Link>
@@ -122,8 +126,9 @@ export default function NewCampaignPage() {
         onSubmit={handleSubmit}
         className="space-y-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
       >
-        <Field label={t("nameLabel")} required>
+        <Field label={t("nameLabel")} required htmlFor="campaign-name">
           <Input
+            id="campaign-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t("namePlaceholder")}
@@ -158,23 +163,23 @@ export default function NewCampaignPage() {
           )}
         </Field>
 
-        <Field label={t("endLabel")} required>
+        <Field label={t("endLabel")} required htmlFor="campaign-end">
           <Input
+            id="campaign-end"
             type="datetime-local"
             value={endsAtLocal}
             onChange={(e) => setEndsAtLocal(e.target.value)}
             required
           />
-          <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-            {t("endHint")}
-          </p>
         </Field>
 
         <Field
           label={t("defaultUrlLabel")}
           hint={t("defaultUrlHint")}
+          htmlFor="campaign-default-url"
         >
           <Input
+            id="campaign-default-url"
             type="url"
             value={defaultDestinationUrl}
             onChange={(e) => setDefaultDestinationUrl(e.target.value)}
@@ -235,16 +240,15 @@ export default function NewCampaignPage() {
         </Field>
 
         <div className="flex items-center justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-4">
-          <Link href="/campaigns" onClick={confirmLeave}>
-            <Button type="button" variant="outline">
-              {t("cancel")}
-            </Button>
+          <Link href="/campaigns" onClick={confirmLeave} className={buttonVariants({ variant: "outline" })}>
+            {t("cancel")}
           </Link>
           <Button type="submit" variant="accent" disabled={!canSubmit}>
             {submitting ? t("creating") : t("submit")}
           </Button>
         </div>
       </form>
+      {confirmDialog}
     </div>
   );
 }
@@ -253,19 +257,39 @@ function Field({
   label,
   required,
   hint,
+  htmlFor,
   children,
 }: {
   label: string;
   required?: boolean;
   hint?: string;
+  /** The single control this labels; without it the field is a labelled group of controls. */
+  htmlFor?: string;
   children: React.ReactNode;
 }) {
+  const groupLabelId = useId();
+  const text = (
+    <>
+      {label}
+      {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
+    </>
+  );
+  const labelClass = "block text-[13px] font-medium text-slate-900 dark:text-slate-100";
   return (
-    <div className="space-y-2">
-      <label className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">
-        {label}
-        {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
-      </label>
+    <div
+      className="space-y-2"
+      role={htmlFor ? undefined : "group"}
+      aria-labelledby={htmlFor ? undefined : groupLabelId}
+    >
+      {htmlFor ? (
+        <label htmlFor={htmlFor} className={labelClass}>
+          {text}
+        </label>
+      ) : (
+        <p id={groupLabelId} className={labelClass}>
+          {text}
+        </p>
+      )}
       {children}
       {hint && <p className="text-[12px] text-slate-500 dark:text-slate-400">{hint}</p>}
     </div>

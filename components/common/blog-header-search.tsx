@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
 

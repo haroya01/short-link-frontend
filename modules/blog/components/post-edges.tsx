@@ -169,7 +169,7 @@ function ContainingGlyph({
   if (kind === "PATH") {
     return <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-500" />;
   }
-  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500";
+  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400";
   if (visibility === "PUBLIC") return <Globe className={cls} />;
   if (visibility === "UNLISTED") return <LinkIcon className={cls} />;
   return <Lock className={cls} />;

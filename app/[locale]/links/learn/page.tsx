@@ -64,7 +64,7 @@ export default async function LearnPage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd) }}
       />
       <header className="space-y-3">
-        <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+        <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </p>
         <h1 className="text-balance text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-4xl">
@@ -89,7 +89,7 @@ export default async function LearnPage({
         </div>
         <Link
           href="/"
-          className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent-700 px-5 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+          className="focus-ring inline-flex shrink-0 h-10 items-center justify-center rounded-lg bg-accent-700 px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {t("ctaButton")}
         </Link>

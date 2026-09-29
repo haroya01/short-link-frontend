@@ -114,7 +114,7 @@ export default function PostAnalyticsPage() {
       ) : (
         <>
           <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
-            <h1 className="max-w-xl text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="max-w-xl text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {data.title || data.slug}
             </h1>
             <WindowTabs days={days} onChange={setDays} />
@@ -127,21 +127,14 @@ export default function PostAnalyticsPage() {
             <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollowsGained")} value={data.lifetimeFollows} />
           </div>
 
-          <div className="mt-3 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50/50 p-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-accent-700 dark:text-accent-300">
-                <MousePointerClick className="h-4 w-4" />
-                <span className="text-[13px] font-semibold">{t("analyticsLinkClicks")}</span>
-              </div>
-              <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
-                {days === 0
-                  ? t("analyticsAllClicks", { count: data.windowLinkClicks })
-                  : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
-              </p>
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-accent-700 dark:text-accent-300">
-              {data.lifetimeLinkClicks.toLocaleString()}
-            </span>
+          <div className="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800">
+            <StatCard
+              icon={<MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+              label={t("analyticsLinkClicks")}
+              value={data.lifetimeLinkClicks}
+              tone="accent"
+              sub={days === 0 ? undefined : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
+            />
           </div>
 
           {/* 글 안 링크별 분해 — 합계가 어느 링크에서 나왔는지. 링크가 있을 때만 노출. */}
@@ -151,7 +144,7 @@ export default function PostAnalyticsPage() {
               <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
                 {data.linkBreakdown.map((lc) => (
                   <li key={lc.shortCode} className="flex items-center gap-3 px-4 py-2.5">
-                    <Link2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                    <Link2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[14px] text-slate-700 dark:text-slate-200">
                         {lc.destinationUrl}

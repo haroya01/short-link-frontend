@@ -1,10 +1,4 @@
-import type { WeeklyInsights } from "@/types";
-
 import { request, requestBlob } from "./client";
-
-export async function getWeeklyInsights(): Promise<WeeklyInsights> {
-  return request<WeeklyInsights>("/api/v1/users/me/insights/week", { method: "GET" });
-}
 
 export async function deleteMyAccount(): Promise<void> {
   await request("/api/v1/users/me", { method: "DELETE" });

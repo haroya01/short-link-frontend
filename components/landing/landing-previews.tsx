@@ -68,7 +68,7 @@ export function LandingPreviews() {
       <div className="container max-w-5xl py-16 sm:py-20">
         <div className="mb-10 flex items-center gap-3">
           <span aria-hidden className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+          <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
             {t("previews.eyebrow")}
           </p>
           <span aria-hidden className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
@@ -161,7 +161,7 @@ function StatsVisual() {
   return (
     <div className="absolute inset-0 flex items-end gap-3 px-4 pb-3 pt-3">
       <div className="flex flex-col gap-0.5">
-        <span className="font-mono text-[10px] uppercase tracking-wider text-accent-700 dark:text-accent-400">
+        <span className="font-mono text-[10px] text-accent-700 dark:text-accent-400">
           30d
         </span>
         <span className="font-mono text-base font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
@@ -228,14 +228,14 @@ function DomainVisual() {
   return (
     <div className="absolute inset-0 flex flex-col justify-center gap-2 px-4">
       <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5">
-        <LinkIcon className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-500" />
+        <LinkIcon className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-400" />
         <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900 dark:text-slate-100">
           go.brand.com/spring
         </span>
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600" aria-hidden />
       </div>
       <div className="flex min-w-0 items-center gap-1.5 px-1 font-mono text-[10px] text-slate-500 dark:text-slate-400">
-        <span className="shrink-0 whitespace-nowrap uppercase tracking-wider text-accent-700 dark:text-accent-400">
+        <span className="shrink-0 whitespace-nowrap text-accent-700 dark:text-accent-400">
           DNS
         </span>
         <span className="shrink-0 text-slate-300">·</span>

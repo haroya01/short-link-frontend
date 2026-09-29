@@ -26,9 +26,9 @@ export function ProfileOwnerFab({ username }: { username: string }) {
     // in prod, same-origin path in dev/preview) and use a plain <a> full load, like blog/settings.
     <a
       href={linksHref(`/${locale}/settings/profile`)}
-      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[60] inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:shadow-2xl active:scale-95"
+      className="focus-ring fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[60] inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-50"
     >
-      <Pencil className="h-4 w-4" />
+      <Pencil aria-hidden className="h-4 w-4 text-slate-500" />
       {t("editFab")}
     </a>
   );

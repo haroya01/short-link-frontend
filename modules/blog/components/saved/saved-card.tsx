@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { Check, FolderPlus, MoreHorizontal, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
@@ -121,7 +121,7 @@ export function SavedCard({
           aria-hidden
           className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-md border transition-colors ${
             selected
-              ? "border-accent-600 bg-accent-700 text-white"
+              ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
               : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
           }`}
         >
@@ -138,7 +138,7 @@ export function SavedCard({
           aria-haspopup="menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="focus-ring grid h-7 w-7 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          className="focus-ring grid h-7 w-7 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300"
         >
           <MoreHorizontal className="h-4 w-4" />
         </button>

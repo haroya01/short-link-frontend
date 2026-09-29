@@ -336,7 +336,7 @@ function PrintStyles() {
       }
 
       .print-area {
-        background: #f1f5f9;
+        background: #f3f5f4;
         padding: 24px;
         display: flex;
         flex-direction: column;
@@ -348,7 +348,7 @@ function PrintStyles() {
         width: 190mm;
         height: 277mm;
         background: white;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 4px 16px rgba(19, 26, 22, 0.08);
         page-break-after: always;
         break-after: page;
         padding: 0;
@@ -380,7 +380,7 @@ function PrintStyles() {
       }
 
       .print-cell.with-cut-marks {
-        border: 1px dashed #cbd5e1;
+        border: 1px dashed #d0d5d2;
       }
 
       .cell-qr {
@@ -396,7 +396,7 @@ function PrintStyles() {
       .cell-qr-placeholder {
         flex: 1 1 auto;
         width: 100%;
-        background: #f1f5f9;
+        background: #f3f5f4;
         border-radius: 4px;
         min-height: 0;
       }
@@ -404,7 +404,7 @@ function PrintStyles() {
       .cell-label {
         font-size: 9pt;
         line-height: 1.2;
-        color: #0f172a;
+        color: #131a16;
         text-align: center;
         max-width: 100%;
         overflow: hidden;
@@ -431,7 +431,7 @@ function PrintStyles() {
           box-shadow: none;
         }
         .print-cell.with-cut-marks {
-          border-color: #94a3b8;
+          border-color: #9ca49f;
         }
       }
     `}</style>

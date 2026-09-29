@@ -1,7 +1,7 @@
 import type { KindredCurator } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**

@@ -216,7 +216,7 @@ function RichEditable({
   return (
     <div className="relative">
       {isEmpty && (
-        <span className="pointer-events-none absolute left-4 top-3 text-[15px] text-slate-400 dark:text-slate-500">
+        <span className="pointer-events-none absolute left-4 top-3 text-[15px] text-slate-500 dark:text-slate-400">
           {placeholder}
         </span>
       )}

@@ -1,22 +1,37 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "@/lib/auth";
-import { getLinkOverview } from "@/lib/api/link-library";
+import { getLinkOverview, type LinkOverview } from "@/lib/api/link-library";
 import { formatNumber } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { LinksAuthGate } from "@/components/links/auth-gate";
-import { LinkListRow } from "@/components/links/link-list-row";
-import { WeeklyInsightsCard } from "@/components/links/stats/weekly-insights-card";
+import { WeekLinkRow } from "./_components/week-link-row";
+
+// 하단 탭 '분석'은 어느 화면에서나 프리페치된다 — recharts 는 막대를 그릴 때만 받는다. 막대 칸은
+// h-44 고정이라 자리표시자가 같은 칸을 채운다.
+const WeekBars = dynamic(() => import("./_components/week-bars").then((m) => m.WeekBars), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40" />
+  ),
+});
+
+// MySQL DAYOFWEEK(1=일요일)를 달력의 한 일요일(2026-09-06)에 얹어 요일·시각을 로케일대로 쓴다.
+function peakMoment(peak: NonNullable<LinkOverview["peak"]>): Date {
+  return new Date(Date.UTC(2026, 8, 5 + peak.dayOfWeek, peak.hour));
+}
 
 export default function LinkAnalyticsPage() {
   const reducedMotion = useReducedMotion();
   const t = useTranslations("linkAnalytics");
+  const format = useFormatter();
   const { authenticated, ready, me } = useAuth();
   const enabled = ready && authenticated;
   const overview = useQuery({
@@ -51,34 +66,21 @@ export default function LinkAnalyticsPage() {
             <p className="mt-1 text-[40px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
               {formatNumber(data.clicks7d)}
             </p>
-            <p className="mt-2 text-sm tabular-nums text-slate-500 dark:text-slate-400">
-              {t("todayAndLinks", { today: formatNumber(data.clicksToday), links: data.totalLinks })}
+            <WeekComparison current={data.clicks7d} previous={data.previousClicks7d} />
+            <p className="mt-1 text-sm tabular-nums text-slate-500 dark:text-slate-400">
+              {t("today", { count: formatNumber(data.clicksToday) })}
+              {data.peak && data.peak.clicks > 1 && (
+                <>
+                  <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">·</span>
+                  {t("peak", {
+                    when: format.dateTime(peakMoment(data.peak), { weekday: "long", hour: "numeric", timeZone: "UTC" }),
+                  })}
+                </>
+              )}
             </p>
             {daily.length > 0 && (
               <div className="mt-6 h-44 text-slate-500 dark:text-slate-400" role="img" aria-label={daily.map((d) => `${d.label} ${d.count}`).join(", ")}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={daily} margin={{ top: 4, right: 0, bottom: 0, left: -24 }}>
-                    <CartesianGrid vertical={false} stroke="currentColor" className="text-slate-100 dark:text-slate-800" />
-                    <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "currentColor" }} />
-                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "currentColor" }} />
-                    <Tooltip
-                      cursor={{ fill: "rgba(148,163,184,0.12)" }}
-                      contentStyle={{
-                        borderRadius: 12,
-                        border: "1px solid var(--chart-tooltip-border)",
-                        backgroundColor: "var(--chart-tooltip-bg)",
-                        color: "var(--chart-tooltip-text)",
-                        fontSize: 12,
-                        padding: "8px 12px",
-                      }}
-                      itemStyle={{ color: "var(--chart-tooltip-text)" }}
-                      labelStyle={{ color: "var(--chart-tooltip-text)" }}
-                      formatter={(value: number) => [formatNumber(value), t("humanClicks")]}
-                      labelFormatter={(label: string) => label}
-                    />
-                    <Bar isAnimationActive={!reducedMotion} dataKey="count" fill="#059669" radius={[3, 3, 0, 0]} maxBarSize={36} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <WeekBars data={daily} seriesLabel={t("humanClicks")} animate={!reducedMotion} />
               </div>
             )}
             <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">{t("scopeNote", { tz: data.timezone })}</p>
@@ -92,7 +94,7 @@ export default function LinkAnalyticsPage() {
                   <li>
                     {t("zeroClick", { count: data.zeroClickLinks })}
                     <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">·</span>
-                    <Link href="/dashboard?sort=clickCount&dir=asc" className="focus-ring rounded underline decoration-slate-300 underline-offset-4 hover:decoration-current dark:decoration-slate-600">
+                    <Link href="/dashboard?sort=humanClickCount&dir=asc" className="focus-ring rounded underline decoration-slate-300 underline-offset-4 hover:decoration-current dark:decoration-slate-600">
                       {t("viewFewestClicks")}
                     </Link>
                   </li>
@@ -108,26 +110,38 @@ export default function LinkAnalyticsPage() {
             </section>
           )}
 
-          <WeeklyInsightsCard />
-
-          <section>
-            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("topLinks")}</h2>
-            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{t("topLinksNote")}</p>
-            {data.topLinks.length > 0 ? (
-              <div className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
-                {data.topLinks.map((link) => <LinkListRow key={link.shortCode} link={link} />)}
-              </div>
-            ) : (
-              <Link
-                href="/"
-                className="focus-ring mt-4 inline-flex h-10 items-center rounded-lg bg-accent-700 px-4 text-sm font-medium text-white hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
-              >
-                {t("createFirst")}
-              </Link>
-            )}
-          </section>
+          {data.weekTopLinks && (
+            <section>
+              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("weekTopLinks")}</h2>
+              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{t("weekTopLinksNote")}</p>
+              {data.weekTopLinks.length > 0 ? (
+                <div className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
+                  {data.weekTopLinks.map((link) => <WeekLinkRow key={link.shortCode} link={link} />)}
+                </div>
+              ) : data.totalLinks === 0 ? (
+                <Link href="/dashboard" className={buttonVariants({ className: "mt-4" })}>
+                  {t("createFirst")}
+                </Link>
+              ) : (
+                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{t("weekTopLinksEmpty")}</p>
+              )}
+            </section>
+          )}
         </>
       )}
     </div>
   );
+}
+
+function WeekComparison({ current, previous }: { current: number; previous?: number }) {
+  const t = useTranslations("linkAnalytics");
+  if (previous == null || (previous === 0 && current === 0)) return null;
+  const percent = previous === 0 ? 0 : Math.round((Math.abs(current - previous) / previous) * 100);
+  const text =
+    previous === 0
+      ? t("vsPrevNone")
+      : percent === 0
+        ? t("vsPrevSimilar", { count: formatNumber(previous) })
+        : t(current > previous ? "vsPrevUp" : "vsPrevDown", { percent, count: formatNumber(previous) });
+  return <p className="mt-2 text-sm text-slate-700 dark:text-slate-300">{text}</p>;
 }

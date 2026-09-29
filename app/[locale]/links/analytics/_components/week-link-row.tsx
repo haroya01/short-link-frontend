@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { formatNumber } from "@/lib/utils";
 import type { MyLink } from "@/types";
 
-export function destinationHost(url: string): string {
+function destinationHost(url: string): string {
   try {
     return new URL(url).host.replace(/^www\./, "");
   } catch {
@@ -11,9 +11,9 @@ export function destinationHost(url: string): string {
   }
 }
 
-export function LinkListRow({ link }: { link: MyLink }) {
+export function WeekLinkRow({ link }: { link: MyLink }) {
   const t = useTranslations("linkAnalytics");
-  const clicks = link.humanClickCount ?? link.clickCount;
+  const week = link.clicksLast7d.reduce((sum, count) => sum + count, 0);
   return (
     <Link
       href={`/stats/${link.shortCode}`}
@@ -24,13 +24,14 @@ export function LinkListRow({ link }: { link: MyLink }) {
           {link.note?.trim() || destinationHost(link.originalUrl)}
         </p>
         <p className="truncate text-sm text-slate-500 dark:text-slate-400">
-          {link.note?.trim() ? `/${link.shortCode} · ${destinationHost(link.originalUrl)}` : `/${link.shortCode}`}
+          <span className="font-mono">/{link.shortCode}</span>
+          {link.note?.trim() && ` · ${destinationHost(link.originalUrl)}`}
         </p>
       </div>
-      <div className="shrink-0 text-right">
-        <p className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">{formatNumber(clicks)}</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400">{t("humanClicks")}</p>
-      </div>
+      <p className="shrink-0 text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+        {formatNumber(week)}
+        <span className="sr-only"> {t("humanClicks")}</span>
+      </p>
     </Link>
   );
 }

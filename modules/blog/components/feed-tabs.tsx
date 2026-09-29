@@ -34,11 +34,8 @@ export async function FeedTabs({
           aria-current={active === tab.key ? "page" : undefined}
           className={`touch-target relative rounded px-2.5 py-1.5 transition-colors focus-ring ${
             active === tab.key
-              ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-accent-600"
-              : // slate-500: slate-400 on white was 2.6:1 — under the 4.5:1 AA bar at this 15px
-                // size. One shade down passes (4.8:1) and the active accent + underline still
-                // dominates the hierarchy. Dark mirror bumped 500→400 for the same reason.
-                "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+              ? "text-slate-900 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:bg-slate-900 dark:text-slate-100 dark:after:bg-slate-100"
+              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >
           {tab.label}

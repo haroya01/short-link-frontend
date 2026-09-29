@@ -3,7 +3,6 @@ import * as Sentry from "@sentry/nextjs";
 import type { ProblemDetail } from "@/types";
 import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
 import { clearSessionHint, hasSessionHint, writeSessionHint } from "@/lib/session-hint";
-import { mockLinksResponse } from "@/lib/api/_links-mocks";
 import { fetchWithTimeout, isTimeoutError } from "@/lib/api/fetch-timeout";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
@@ -17,6 +16,10 @@ export const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 /** Demo/mock mode (NEXT_PUBLIC_USE_MOCKS=1) — lets the app render + interact without a backend. */
 const MOCKS_ON = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+// 링크 목 응답(데모 통계 포함)은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 와 픽스처가
+// 번들에서 빠진다. 정적 import 로 되돌리면 모든 라우트에 목 데이터가 다시 실린다.
+const linksMocks: typeof import("@/lib/api/_links-mocks") | null =
+  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("@/lib/api/_links-mocks") : null;
 
 export function withBase(path: string): string {
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
@@ -168,8 +171,8 @@ export async function request<T>(
   retried = false,
 ): Promise<T> {
   // Mock mode: answer known links-product read endpoints locally so the app renders without a backend.
-  if (MOCKS_ON) {
-    const mocked = mockLinksResponse(path, init.method ?? "GET", init.body);
+  if (linksMocks) {
+    const mocked = linksMocks.mockLinksResponse(path, init.method ?? "GET", init.body);
     if (mocked !== undefined) return mocked as T;
   }
   const res = await fetchWithAuth(path, init, retried);

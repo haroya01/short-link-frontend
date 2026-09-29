@@ -9,6 +9,10 @@ import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
 import { EventsIntro } from "@/modules/events/components/events-intro";
+import { EventStatusBadge } from "@/modules/events/components/event-status-badge";
+import { ErrorState } from "@/components/common/error-state";
+import { buttonVariants } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EventsListPage() {
   const t = useTranslations("events.list");
@@ -18,6 +22,7 @@ export default function EventsListPage() {
   const [error, setError] = useState(false);
 
   const load = useCallback(async () => {
+    setError(false);
     try {
       setEvents(await listMyEvents());
     } catch {
@@ -37,19 +42,25 @@ export default function EventsListPage() {
     <div className="container max-w-3xl py-10">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
-        <Link
-          href="/events/new"
-          className="focus-ring inline-flex h-10 items-center gap-1.5 rounded-lg bg-accent-700 px-4 text-sm font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
-        >
+        <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
           <CalendarPlus className="h-4 w-4" />
           {t("new")}
         </Link>
       </div>
 
       {error ? (
-        <p className="mt-8 text-[13px] text-red-600">{t("loadFailed")}</p>
+        <div className="mt-8">
+          <ErrorState message={t("loadFailed")} onRetry={() => void load()} />
+        </div>
       ) : events == null ? (
-        <p className="mt-8 text-[13px] text-slate-400">{t("loading")}</p>
+        <ul aria-busy className="mt-4 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
+          {[0, 1, 2].map((i) => (
+            <li key={i} className="py-4">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="mt-2 h-3 w-1/3" />
+            </li>
+          ))}
+        </ul>
       ) : events.length === 0 ? (
         <EventsIntro mode="empty" />
       ) : (
@@ -62,7 +73,7 @@ export default function EventsListPage() {
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <StatusBadge status={event.status} />
+                    <EventStatusBadge status={event.status} />
                     <span className="truncate text-[15px] font-semibold text-slate-900 underline-offset-[3px] group-hover:underline group-hover:decoration-slate-300 dark:text-slate-100">
                       {event.title}
                     </span>
@@ -83,28 +94,5 @@ export default function EventsListPage() {
         </ul>
       )}
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: MyEvent["status"] }) {
-  const t = useTranslations("events.status");
-  if (status === "OPEN") {
-    return (
-      <span className="shrink-0 rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-700 dark:bg-accent-900/60 dark:text-accent-300">
-        {t("open")}
-      </span>
-    );
-  }
-  if (status === "CLOSED") {
-    return (
-      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-        {t("closed")}
-      </span>
-    );
-  }
-  return (
-    <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600 dark:bg-red-900/50 dark:text-red-300">
-      {t("canceled")}
-    </span>
   );
 }

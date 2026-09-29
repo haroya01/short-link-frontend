@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Markdown } from "@/modules/blog/components/markdown";
 import type { PublicEvent } from "@/modules/events/api/events";
 import { PublicEventPage } from "@/modules/events/components/public-event-page";
 
@@ -77,5 +78,10 @@ export default async function EventPage({
   const { slug } = await params;
   const event = await fetchEvent(slug);
   if (!event) notFound();
-  return <PublicEventPage initialEvent={event} />;
+  return (
+    <PublicEventPage
+      initialEvent={event}
+      description={event.descriptionMd ? <Markdown>{event.descriptionMd}</Markdown> : null}
+    />
+  );
 }

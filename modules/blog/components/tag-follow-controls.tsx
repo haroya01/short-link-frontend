@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, EyeOff, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
+import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
 
 /**
  * Follow / hide controls for a topic, shown on the tag feed page. Per-device (localStorage) — lets a
@@ -31,11 +32,7 @@ export function TagFollowControls({ tag }: { tag: string }) {
         aria-pressed={followed}
         // Fixed height + a border in both states (transparent when filled) so toggling never shifts
         // the row — the posts below used to jump when the followed fill added/removed its border.
-        className={`focus-ring inline-flex h-8 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-medium transition-colors ${
-          followed
-            ? "border-transparent bg-accent-700 text-white hover:bg-accent-800"
-            : "border-slate-200 text-slate-600 hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
-        }`}
+        className={followToggleClass(followed)}
       >
         <span key={followed ? "on" : "off"} className={`${pop} inline-flex items-center gap-1.5`}>
           {followed ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
@@ -50,7 +47,7 @@ export function TagFollowControls({ tag }: { tag: string }) {
         }}
         aria-pressed={hidden}
         title={hidden ? t("tagUnhide") : t("tagHide")}
-        className={`focus-ring inline-flex h-8 items-center gap-1.5 rounded-full border border-transparent px-3 text-[13px] font-medium transition-colors ${
+        className={`touch-target focus-ring inline-flex h-9 items-center gap-1.5 rounded-lg border border-transparent px-3 text-[13px] font-medium transition-colors ${
           hidden
             ? "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
             : "text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300"
