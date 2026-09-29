@@ -35,7 +35,7 @@ export function ConsentPreferences() {
   const status = !ready ? "" : value === "accepted" ? t("stateOn") : value === "rejected" ? t("stateOff") : t("stateUnset");
 
   return (
-    <section className="space-y-3 rounded-lg border border-slate-200 p-4 dark:border-slate-800">
+    <section className="space-y-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
       <h2 className="text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">
         {t("prefsTitle")}
       </h2>
@@ -46,22 +46,17 @@ export function ConsentPreferences() {
         {status}
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => set("rejected")}
-          disabled={!ready || value === "rejected"}
-          className="focus-ring rounded-md border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-default disabled:opacity-40 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
-        >
-          {t("reject")}
-        </button>
-        <button
-          type="button"
-          onClick={() => set("accepted")}
-          disabled={!ready || value === "accepted"}
-          className="focus-ring rounded-md border border-transparent bg-slate-900 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-slate-800 disabled:cursor-default disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
-        >
-          {t("accept")}
-        </button>
+        {(["rejected", "accepted"] as const).map((choice) => (
+          <button
+            key={choice}
+            type="button"
+            onClick={() => set(choice)}
+            disabled={!ready || value === choice}
+            className="focus-ring rounded-lg border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-default disabled:opacity-40 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            {t(choice === "rejected" ? "reject" : "accept")}
+          </button>
+        ))}
       </div>
     </section>
   );

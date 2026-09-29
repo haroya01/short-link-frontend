@@ -24,7 +24,7 @@ test.describe("쿠키 동의", () => {
     expect(analyticsHits, "동의 전에 분석 SDK 를 받아왔다").toEqual([]);
   });
 
-  test("거부와 동의는 같은 크기다 — 거부가 동의만큼 쉬워야 유효한 동의다", async ({ page }) => {
+  test("거부와 동의는 크기도 모양도 같다 — 거부가 동의만큼 쉬워야 유효한 동의다", async ({ page }) => {
     await page.goto("/ko");
     const banner = page.locator("[data-cc-banner]");
     await expect(banner).toBeVisible({ timeout: 15_000 });
@@ -40,6 +40,13 @@ test.describe("쿠키 동의", () => {
     // 폰트/문구 길이 차이만큼의 가로 편차는 허용하고, 눌리는 면적의 급이 같은지를 본다.
     expect(Math.abs(reject!.height - accept!.height)).toBeLessThanOrEqual(1);
     expect(reject!.width).toBeGreaterThan(accept!.width * 0.6);
+    // 크기만 같고 한쪽만 채워 두면 눈이 그쪽으로 간다 — 바탕·테두리·글자까지 같아야 같은 급이다.
+    const look = (i: number) =>
+      buttons.nth(i).evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return [cs.backgroundColor, cs.borderTopColor, cs.color, cs.fontWeight].join(" | ");
+      });
+    expect(await look(0)).toBe(await look(1));
   });
 
   test("거부를 고르면 거부로 기억하고 배너가 사라진다", async ({ page, context }) => {
