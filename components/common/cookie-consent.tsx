@@ -124,8 +124,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
            이 0.5rem 은 globals.css 의 body[data-cookie-consent] 하단 예약과 짝. */
         className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--cookie-bottom)+0.5rem)] z-40 sm:bottom-4 sm:px-4"
       >
-      {/* Phones: 하단 탭바 독과 같은 플로팅 글래스 캡슐(inset 12px·rounded-2xl·동일 섀도우) —
-          엣지-투-엣지 슬랩은 상하단 캡슐 크롬 사이에서 혼자 문법을 깼다. sm+: 우측 정렬 카드. */}
+      {/* 폰: 좌우 12px 띄운 떠 있는 카드(탭바 위). sm+: 오른쪽 정렬 카드. */}
       <div
         ref={cardRef}
         className={cn(
@@ -155,32 +154,21 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           >
             {t("learnMore")}
           </a>
-          {/* 거부와 동의는 같은 크기·같은 모양이다. 동의는 "자유롭게 주어진" 것이어야 해서 거부가
-              동의만큼 쉬워야 하고, 한쪽만 눈에 띄게 만들면 그 조건이 깨진다. 채움/테두리 차이는
-              어느 쪽이 기본값인지가 아니라 두 버튼을 구분하기 위한 것이다. */}
-          <button
-            type="button"
-            onClick={() => choose("rejected")}
-            className={cn(
-              "focus-ring rounded-full border border-slate-300 px-3 py-1.5 text-[11px] font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:px-4 sm:py-2 sm:text-xs",
-              darkAware &&
-                "dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800",
-            )}
-          >
-            {t("reject")}
-          </button>
-          <button
-            type="button"
-            onClick={() => choose("accepted")}
-            className={cn(
-              // border-transparent: 거부 버튼에만 테두리가 있으면 같은 padding 이라도 2px 더 높다.
-              // 두 선택지의 높이가 어긋나면 "같은 급" 이라는 인상이 깨진다.
-              "focus-ring rounded-full border border-transparent bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-slate-800 sm:px-4 sm:py-2 sm:text-xs",
-              darkAware && "dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white",
-            )}
-          >
-            {t("accept")}
-          </button>
+          {/* 거부와 동의는 크기·모양·무게까지 같다. 동의는 자유롭게 주어져야 해서, 한쪽만 채워
+              눈에 띄게 하면 그쪽으로 기운다. */}
+          {(["rejected", "accepted"] as const).map((choice) => (
+            <button
+              key={choice}
+              type="button"
+              onClick={() => choose(choice)}
+              className={cn(
+                "focus-ring rounded-lg border border-slate-300 px-3 py-1.5 text-[11px] font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:px-4 sm:py-2 sm:text-xs",
+                darkAware && "dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800",
+              )}
+            >
+              {t(choice === "rejected" ? "reject" : "accept")}
+            </button>
+          ))}
         </div>
       </div>
       </div>
