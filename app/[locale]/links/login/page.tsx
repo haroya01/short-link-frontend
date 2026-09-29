@@ -78,7 +78,7 @@ function LoginShell({ next = null }: { next?: string | null }) {
       footer={
         <Link
           href="/"
-          className="text-[13px] text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
+          className="text-[13px] text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100"
         >
           {t("anonymousButton")}
         </Link>

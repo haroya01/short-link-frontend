@@ -5,6 +5,7 @@
     "defaultDesc": "ログインすると、リンクとキャンペーンの続きを管理できます。"
   },
   "comments": {
+    "heading": "コメント",
     "count": "コメント{count, number}件",
     "placeholder": "コメントを入力",
     "submit": "コメント",
@@ -2166,6 +2167,9 @@
     "hidePassword": "パスワードを隠す"
   },
   "notFound": {
+    "postTitle": "この記事は見つかりません",
+    "postDescription": "削除されたか、アドレスが変わった可能性があります。",
+    "postTrending": "代わりに読める記事",
     "title": "ページが見つかりません",
     "description": "URLが間違っているか、短縮リンクが期限切れか、存在しないページの可能性があります。",
     "cta": "ホームへ戻る",

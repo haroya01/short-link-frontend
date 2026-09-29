@@ -1,4 +1,5 @@
 import { DATE_LOCALE } from "@/lib/date";
+import { linksHref } from "@/lib/host";
 import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -127,6 +128,7 @@ export default async function PublicPostPage({
   const isPreview = Boolean(preview);
   const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
   const t = await getTranslations({ locale, namespace: "publicPost" });
+  const tFooter = await getTranslations({ locale, namespace: "footer" });
 
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404. A bad preview token is a plain 404.
@@ -432,7 +434,13 @@ export default async function PublicPostPage({
         </div>
       </footer>
 
-      <RelatedPosts locale={locale} author={author} currentSlug={post.slug} tags={post.tags} />
+      <RelatedPosts
+        locale={locale}
+        author={author}
+        currentSlug={post.slug}
+        currentTitle={post.title}
+        tags={post.tags}
+      />
 
       {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
       {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
@@ -442,6 +450,20 @@ export default async function PublicPostPage({
 
       <PostComments postId={post.id} authorUsername={author.username} />
 
+      {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
+      {!isPreview && (
+        <p className="mt-16 flex items-center justify-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+          <span>{tFooter("copyright", { year: new Date().getFullYear() })}</span>
+          <span aria-hidden>·</span>
+          <a href={linksHref(`/${locale}/terms`)} className="focus-ring rounded underline-offset-2 hover:underline">
+            {tFooter("terms")}
+          </a>
+          <span aria-hidden>·</span>
+          <a href={linksHref(`/${locale}/privacy`)} className="focus-ring rounded underline-offset-2 hover:underline">
+            {tFooter("privacy")}
+          </a>
+        </p>
+      )}
       </article>
       </SeriesSwipe>
 
