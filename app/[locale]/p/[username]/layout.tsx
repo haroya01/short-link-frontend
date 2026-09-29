@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
 import { AppHeader } from "@/components/common/app-header";
@@ -5,9 +6,12 @@ import { AppProviders } from "@/components/common/app-providers";
 import { BlogBottomNav } from "@/components/common/blog-bottom-nav";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { MessagesScope } from "@/i18n/messages-scope";
+import { IOS_APP_ID } from "@/lib/app-store";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { AuthorHeader } from "./_components/author-header";
 import { ProfileChrome } from "./_components/profile-chrome";
+
+export const metadata: Metadata = { itunes: { appId: IOS_APP_ID.blog } };
 
 /**
  * Chrome for the public author/post surface (post / author home / series / about). Uses the SAME

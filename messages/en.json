@@ -2379,6 +2379,7 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "About",
+    "iosApp": "iPhone app",
     "terms": "Terms",
     "privacy": "Privacy",
     "github": "GitHub"
@@ -2567,6 +2568,14 @@
       "ctas": "CTA library",
       "ctasDesc": "Manage banners shown on your links"
     },
+    "appsTitle": "Apps",
+    "apps": {
+      "links": "kurl.me app",
+      "linksDesc": "Shorten links and see clicks on iPhone",
+      "blog": "kurl log app",
+      "blogDesc": "Read and write on iPhone"
+    },
+    "appsScanHint": "Scan the QR with your phone camera to open the App Store",
     "accountTitle": "Account",
     "settings": "Settings"
   },

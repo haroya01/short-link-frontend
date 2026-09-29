@@ -2379,6 +2379,7 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "Giới thiệu",
+    "iosApp": "Ứng dụng iPhone",
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
     "github": "GitHub"
@@ -2567,6 +2568,14 @@
       "ctas": "Thư viện CTA",
       "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     },
+    "appsTitle": "Ứng dụng",
+    "apps": {
+      "links": "Ứng dụng kurl.me",
+      "linksDesc": "Rút gọn liên kết và xem lượt nhấp trên iPhone",
+      "blog": "Ứng dụng kurl log",
+      "blogDesc": "Đọc và viết trên iPhone"
+    },
+    "appsScanHint": "Quét mã QR bằng camera điện thoại để mở App Store",
     "accountTitle": "Tài khoản",
     "settings": "Cài đặt"
   },
