@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 
 // Matches @username (the backend's handle grammar); the lookbehind keeps it out of emails (foo@bar).
 const MENTION_RE = /(?<![A-Za-z0-9_])@([a-z0-9][a-z0-9_]{2,15})/g;

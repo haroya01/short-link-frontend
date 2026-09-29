@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesPostRef } from "@/modules/blog/api/public-posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 
@@ -78,7 +78,7 @@ export function SeriesEpisodeList({
         >
           <BlogLink
             href={seriesUrl}
-            className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
+            className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
           >
             <span aria-hidden className="w-[2ch] shrink-0" />
             <span>{t("seriesMoreCount", { count: more })}</span>

@@ -48,7 +48,7 @@ export const TH = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-10 px-4 text-left align-middle text-[11px] font-medium uppercase tracking-wider",
+      "h-10 px-4 text-left align-middle text-[11px] font-medium",
       className,
     )}
     {...props}

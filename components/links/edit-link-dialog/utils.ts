@@ -14,7 +14,7 @@ export function toLocalInput(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-export type Section = "basic" | "tags" | "og" | "protection";
+export type Section = "basic" | "tags" | "og";
 
 /** Explicit expiry clearing; unchanged minute inputs preserve the original second precision. */
 export function buildExpiryPatch(previous: string | null, input: string): { expiresAt?: string | null; clearExpiresAt?: boolean } {

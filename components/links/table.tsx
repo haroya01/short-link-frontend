@@ -10,6 +10,8 @@ import { CopyButton } from "@/components/common/copy-button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
 import { LiveDot } from "@/components/common/live-dot";
+import { LinkSheet } from "@/components/links/link-sheet";
+import { Sparkline } from "@/components/links/stats/sparkline";
 import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -17,7 +19,7 @@ import { cn, formatNumber } from "@/lib/utils";
 import { linkDisplayName } from "@/lib/link-library-view";
 import type { MyLink } from "@/types";
 
-type SortKey = "createdAt" | "clickCount";
+type SortKey = "createdAt" | "humanClickCount";
 type SortDir = "asc" | "desc";
 
 /**
@@ -57,6 +59,7 @@ export function LinksTable({
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
   const [editing, setEditing] = useState<MyLink | null>(null);
+  const [sheetItem, setSheetItem] = useState<MyLink | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
@@ -177,13 +180,13 @@ export function LinksTable({
           </div>
           <SortHeader
             disabled={sortingDisabled}
-            active={sortKey === "clickCount"}
+            active={sortKey === "humanClickCount"}
             dir={sortDir}
             dirLabel={sortDir === "asc" ? t("table.sortAsc") : t("table.sortDesc")}
-            onClick={() => toggleSort("clickCount")}
+            onClick={() => toggleSort("humanClickCount")}
             align="right"
           >
-            {t("table.sortAllClicks")}
+            {t("table.sortClicks")}
           </SortHeader>
           <button
             type="button"
@@ -206,10 +209,63 @@ export function LinksTable({
               <li
                 key={item.shortCode}
                 className={cn(
-                  "group flex items-center gap-3 px-3 py-2.5 transition-colors last:rounded-b-2xl hover:bg-slate-50/70 dark:hover:bg-slate-800/40 sm:px-4",
+                  "group transition-colors last:rounded-b-2xl hover:bg-slate-50/70 dark:hover:bg-slate-800/40",
                   bump && (bump.seq % 2 ? "click-arrive-a" : "click-arrive-b"),
                 )}
               >
+                <div className="flex items-center gap-2 py-2 pl-3 pr-1.5 sm:hidden">
+                  {selectMode && (
+                    <label className="grid h-11 w-5 shrink-0 cursor-pointer place-items-center">
+                      <input
+                        type="checkbox"
+                        aria-label={t("bulkSelectRow", { code: item.shortCode })}
+                        checked={selected.has(item.shortCode)}
+                        onChange={() => toggleOne(item.shortCode)}
+                        className="h-3.5 w-3.5 cursor-pointer"
+                      />
+                    </label>
+                  )}
+                  <button
+                    type="button"
+                    data-vt-link-scope
+                    aria-haspopup={selectMode ? undefined : "dialog"}
+                    onClick={() => (selectMode ? toggleOne(item.shortCode) : setSheetItem(item))}
+                    className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-md py-1 text-left"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+                          {linkDisplayName(item)}
+                        </span>
+                        {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-accent-600 dark:text-accent-400" />}
+                        {expiry?.kind === "expired" && (
+                          <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
+                        )}
+                      </span>
+                      <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
+                        <span className="font-mono">/{item.shortCode}</span> · {hostOf(item.originalUrl)}
+                      </span>
+                    </span>
+                    <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-accent-600 dark:text-accent-400" />
+                    <span className="w-[4.5rem] shrink-0 text-right">
+                      <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                        {formatNumber((item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0))}
+                      </span>
+                      <span
+                        className={cn(
+                          "block text-[12px] tabular-nums",
+                          (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
+                            ? "text-accent-700 dark:text-accent-400"
+                            : "text-slate-500 dark:text-slate-400",
+                        )}
+                      >
+                        {t("todayDelta", { count: (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) })}
+                      </span>
+                    </span>
+                  </button>
+                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} />
+                </div>
+                <div className="hidden items-center gap-3 px-3 py-2.5 sm:flex sm:px-4">
                 <label className={cn("h-11 w-5 cursor-pointer place-items-center sm:grid", selectMode ? "grid" : "hidden")}>
                   <input
                     type="checkbox"
@@ -239,7 +295,7 @@ export function LinksTable({
                     )}
                   </span>
                   <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
-                    <span data-vt-link-code className="shrink-0">/{item.shortCode}</span>
+                    <span data-vt-link-code className="shrink-0 font-mono">/{item.shortCode}</span>
                     {item.tags && item.tags.length > 0 && (
                       <span className="shrink-0 lg:hidden">#{item.tags[0]}{item.tags.length > 1 ? ` +${item.tags.length - 1}` : ""}</span>
                     )}
@@ -258,20 +314,38 @@ export function LinksTable({
                     ))}
                   </div>
                 )}
+                <Sparkline
+                  values={item.clicksLast7d}
+                  width={56}
+                  height={20}
+                  className="hidden shrink-0 text-accent-600 dark:text-accent-400 md:block"
+                />
                 <div className="flex shrink-0 items-center gap-1.5 text-right">
                   {bump && <LiveDot />}
-                  <span className="min-w-[3ch] text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                    {bump ? (
-                      <span key={bump.seq} className="count-bump">
-                        {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
-                      </span>
-                    ) : (
-                      formatNumber(item.humanClickCount ?? item.clickCount)
-                    )}
+                  <span className="min-w-[4.5rem]">
+                    <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                      {bump ? (
+                        <span key={bump.seq} className="count-bump">
+                          {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
+                        </span>
+                      ) : (
+                        formatNumber(item.humanClickCount ?? item.clickCount)
+                      )}
+                    </span>
+                    <span
+                      className={cn(
+                        "block text-[12px] tabular-nums",
+                        (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
+                          ? "text-accent-700 dark:text-accent-400"
+                          : "text-slate-500 dark:text-slate-400",
+                      )}
+                    >
+                      {t("todayDelta", { count: (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) })}
+                    </span>
                   </span>
                 </div>
                 <div className="flex shrink-0 items-center">
-                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} onCopied={() => toast(t("copied"), "success")} />
+                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} />
                   <RowMenu
                     label={t("actions.more")}
                     items={[
@@ -286,6 +360,7 @@ export function LinksTable({
                       { label: t("actions.delete"), icon: Trash2, destructive: true, onSelect: () => setConfirmCode(item.shortCode) },
                     ]}
                   />
+                </div>
                 </div>
               </li>
             );
@@ -314,6 +389,37 @@ export function LinksTable({
         confirmLabel={bulkDeleting ? t("bulkDeleting") : t("bulkDeleteAction")}
         confirmDisabled={bulkDeleting}
         onConfirm={handleBulkDelete}
+      />
+
+      <LinkSheet
+        link={
+          sheetItem && {
+            shortCode: sheetItem.shortCode,
+            shortUrl: sheetItem.shortUrl,
+            originalUrl: sheetItem.originalUrl,
+            name: linkDisplayName(sheetItem),
+            clicksLast7d: sheetItem.clicksLast7d,
+            total: sheetItem.humanClickCount ?? sheetItem.clickCount,
+          }
+        }
+        onClose={() => setSheetItem(null)}
+        actions={
+          sheetItem
+            ? {
+                favorite: isFavorite(sheetItem.shortCode),
+                favoriteDisabled: favoritesDisabled,
+                onToggleFavorite: () => onToggleFavorite(sheetItem.shortCode),
+                onEdit: () => {
+                  setEditing(sheetItem);
+                  setSheetItem(null);
+                },
+                onDelete: () => {
+                  setConfirmCode(sheetItem.shortCode);
+                  setSheetItem(null);
+                },
+              }
+            : undefined
+        }
       />
 
       <EditLinkDialog

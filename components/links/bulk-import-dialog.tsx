@@ -68,7 +68,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50" onClick={close} />
+      <div className="absolute inset-0 scrim" onClick={close} />
       <div className="relative w-full max-w-md animate-fade-in rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h2>
@@ -76,7 +76,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
             type="button"
             onClick={close}
             disabled={busy}
-            className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            className="text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
             aria-label={t("close")}
           >
             <X className="h-4 w-4" />

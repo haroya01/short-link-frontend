@@ -37,7 +37,7 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
           onClick={() => onDelete(post)}
           aria-label={t("rowDelete")}
           title={t("rowDelete")}
-          className="focus-ring mr-2 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 opacity-0 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 group-hover/row:opacity-100 dark:text-slate-500 dark:hover:bg-red-950/40"
+          className="focus-ring mr-2 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 opacity-0 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 group-hover/row:opacity-100 dark:text-slate-400 dark:hover:bg-red-950/40"
         >
           <Trash2 className="h-4 w-4" />
         </button>

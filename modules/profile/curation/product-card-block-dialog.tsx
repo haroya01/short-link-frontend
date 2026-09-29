@@ -179,7 +179,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         <PreviewPane title={title} items={items} t={t} />
 
         <label className="block space-y-1">
-          <span className="text-xs font-medium text-slate-700">
+          <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
             {t("productCardFieldBlockTitle")}
           </span>
           <Input
@@ -191,7 +191,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         </label>
 
         <div className="space-y-1">
-          <p className="text-xs font-medium text-slate-700">{t("productCardFieldLayout")}</p>
+          <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{t("productCardFieldLayout")}</p>
           <div className="flex flex-wrap gap-1.5">
             {LAYOUTS.map((l) => (
               <button
@@ -210,7 +210,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
               </button>
             ))}
           </div>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[10px] text-slate-500 dark:text-slate-400">
             {layout === "grid"
               ? t("productCardLayoutGridHint")
               : t("productCardLayoutCarouselHint")}
@@ -221,10 +221,10 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
           {items.map((item, idx) => (
             <div
               key={idx}
-              className="space-y-2 rounded-md border border-slate-200 bg-slate-50/50 p-3"
+              className="space-y-2 rounded-md border border-slate-200 bg-slate-50/50 p-3 dark:border-slate-800 dark:bg-slate-800/40"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-medium text-slate-500">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                   {t("productCardItemLabel", { idx: idx + 1 })}
                 </span>
                 <button
@@ -315,11 +315,11 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
           type="button"
           onClick={addItem}
           disabled={items.length >= MAX_ITEMS}
-          className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 px-2.5 py-1.5 text-xs text-slate-600 transition hover:border-slate-400 hover:text-slate-900 disabled:opacity-40"
+          className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 px-2.5 py-1.5 text-xs text-slate-600 transition hover:border-slate-400 hover:text-slate-900 disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:text-slate-200"
         >
           <Plus className="h-3.5 w-3.5" />
           {t("productCardAddItem")}
-          <span className="text-[10px] text-slate-500">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400">
             ({items.length}/{MAX_ITEMS})
           </span>
         </button>
@@ -373,7 +373,7 @@ function BadgeSelector({
             onClick={() => onChange(active ? "" : badge)}
             aria-pressed={active}
             className={
-              "rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition " +
+              "rounded-full border px-3 py-1 text-[11px] font-semibold transition " +
               (active
                 ? "border-transparent " + colorByBadge[badge]
                 : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
@@ -408,12 +408,12 @@ function PreviewPane({
   if (visibleItems.length === 0) return null;
 
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-3">
-      <p className="mb-2 flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+    <div className="rounded-md border border-slate-200 bg-white p-3 dark:bg-slate-900 dark:border-slate-800">
+      <p className="mb-2 flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
         {t("productCardPreviewLabel")}
       </p>
       {title.trim().length > 0 && (
-        <p className="mb-2 px-0.5 text-[12px] font-semibold text-slate-900">{title.trim()}</p>
+        <p className="mb-2 px-0.5 text-[12px] font-semibold text-slate-900 dark:text-slate-100">{title.trim()}</p>
       )}
       <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {visibleItems.map((item, idx) => {
@@ -421,9 +421,9 @@ function PreviewPane({
           return (
             <div
               key={idx}
-              className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+              className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:bg-slate-900 dark:border-slate-800"
             >
-              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
+              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                 {hero ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -435,9 +435,9 @@ function PreviewPane({
                 ) : null}
               </div>
               <div className="space-y-0.5 px-2 pb-2 pt-1.5">
-                <p className="truncate text-[11px] font-semibold text-slate-900">{item.name}</p>
+                <p className="truncate text-[11px] font-semibold text-slate-900 dark:text-slate-100">{item.name}</p>
                 {item.price.trim() && (
-                  <p className="truncate text-[10px] font-medium text-accent-700">
+                  <p className="truncate text-[10px] font-medium text-accent-700 dark:text-accent-400">
                     {item.price.trim()}
                   </p>
                 )}
@@ -545,7 +545,7 @@ function ImageGalleryEditor({
             type="button"
             onClick={() => fileInput.current?.click()}
             disabled={busy}
-            className="flex aspect-[4/3] w-32 shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50/50 text-slate-500 transition hover:border-slate-400 hover:text-slate-700 disabled:opacity-50"
+            className="flex aspect-[4/3] w-32 shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50/50 text-slate-500 transition hover:border-slate-400 hover:text-slate-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:bg-slate-800/40 dark:hover:text-slate-200"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -569,7 +569,7 @@ function ImageGalleryEditor({
           className="hidden"
         />
       </div>
-      <p className="text-[10px] leading-snug text-slate-500">
+      <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
         {t("productCardImageSizeHint")}
       </p>
       <ImageCropperDialog
@@ -610,7 +610,7 @@ function ImageThumbEditor({
 }) {
   return (
     <div className="w-32 shrink-0 space-y-1">
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md border border-slate-200 bg-slate-100 dark:bg-slate-800 dark:border-slate-800">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image.url}
@@ -633,11 +633,11 @@ function ImageThumbEditor({
           onClick={() => onMove(-1)}
           disabled={idx === 0}
           aria-label={t("productCardImageMoveLeft")}
-          className="grid h-5 w-5 place-items-center rounded text-slate-400 transition hover:text-slate-700 disabled:opacity-30"
+          className="grid h-5 w-5 place-items-center rounded text-slate-400 transition hover:text-slate-700 disabled:opacity-30 dark:hover:text-slate-200"
         >
           <ArrowLeft className="h-3 w-3" />
         </button>
-        <span className="text-[10px] text-slate-500">
+        <span className="text-[10px] text-slate-500 dark:text-slate-400">
           {idx + 1}/{total}
         </span>
         <button
@@ -645,7 +645,7 @@ function ImageThumbEditor({
           onClick={() => onMove(1)}
           disabled={idx === total - 1}
           aria-label={t("productCardImageMoveRight")}
-          className="grid h-5 w-5 place-items-center rounded text-slate-400 transition hover:text-slate-700 disabled:opacity-30"
+          className="grid h-5 w-5 place-items-center rounded text-slate-400 transition hover:text-slate-700 disabled:opacity-30 dark:hover:text-slate-200"
         >
           <ArrowRight className="h-3 w-3" />
         </button>

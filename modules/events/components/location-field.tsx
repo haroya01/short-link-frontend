@@ -135,7 +135,7 @@ export function LocationField({
                     {suggestion.main}
                   </span>
                   {suggestion.secondary ? (
-                    <span className="block truncate text-[11px] text-slate-400 dark:text-slate-500">
+                    <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">
                       {suggestion.secondary}
                     </span>
                   ) : null}
@@ -199,7 +199,7 @@ export function LocationField({
             {t("openMap")}
           </a>
         ) : null}
-        <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("locationUrlHint")}</p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("locationUrlHint")}</p>
       </div>
     </div>
   );

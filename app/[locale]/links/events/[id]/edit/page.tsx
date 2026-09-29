@@ -37,7 +37,7 @@ export default function EditEventPage() {
   }
 
   if (failed) {
-    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-red-600">{t("errors.generic")}</p>;
+    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-red-600 dark:text-red-400">{t("errors.generic")}</p>;
   }
   if (!event) {
     return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-slate-400">…</p>;
@@ -45,7 +45,7 @@ export default function EditEventPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8">
-      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50">{t("editTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("editTitle")}</h1>
       <div className="mt-6">
         <EventForm
           event={event}

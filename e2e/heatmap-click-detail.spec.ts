@@ -29,7 +29,7 @@ test.describe("heatmap click → inline detail (desktop)", () => {
       const buttons = Array.from(root.querySelectorAll("button")) as HTMLButtonElement[];
       return (
         buttons.find((b) => {
-          const m = (b.getAttribute("aria-label") ?? "").match(/—\s*(\d+)\s*회/);
+          const m = (b.getAttribute("aria-label") ?? "").match(/,\s*(\d+)\s*회/);
           return m && Number(m[1]) > 0;
         }) ?? null
       );
@@ -57,7 +57,7 @@ test.describe("heatmap click → inline detail (desktop)", () => {
       const buttons = Array.from(root.querySelectorAll("button")) as HTMLButtonElement[];
       return (
         buttons.find((b) => {
-          const m = (b.getAttribute("aria-label") ?? "").match(/—\s*(\d+)\s*회/);
+          const m = (b.getAttribute("aria-label") ?? "").match(/,\s*(\d+)\s*회/);
           return m && Number(m[1]) > 0;
         }) ?? null
       );
@@ -91,7 +91,7 @@ test.describe("heatmap click → inline detail (mobile)", () => {
       const buttons = Array.from(root.querySelectorAll("button")) as HTMLButtonElement[];
       return (
         buttons.find((b) => {
-          const m = (b.getAttribute("aria-label") ?? "").match(/—\s*(\d+)\s*회/);
+          const m = (b.getAttribute("aria-label") ?? "").match(/,\s*(\d+)\s*회/);
           return m && Number(m[1]) > 0;
         }) ?? null
       );

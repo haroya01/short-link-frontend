@@ -24,10 +24,9 @@ export default async function OgImage() {
           justifyContent: "center",
           gap: 84,
           backgroundColor: OG.bg,
-          backgroundImage: `${OG.glow}, ${OG.bgGradient}`,
         }}
       >
-        <OgMark width={300} id="root-mark" />
+        <OgMark width={300} />
         <div
           style={{
             display: "flex",

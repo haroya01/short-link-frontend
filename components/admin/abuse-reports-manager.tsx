@@ -243,7 +243,7 @@ export function AbuseReportsManager() {
                   )}
                 </td>
                 <td className="px-2 py-3 text-slate-600 dark:text-slate-400">
-                  {r.reporterUserId ?? <span className="text-slate-400 dark:text-slate-500">{t("anonymous")}</span>}
+                  {r.reporterUserId ?? <span className="text-slate-400 dark:text-slate-400">{t("anonymous")}</span>}
                 </td>
                 <td className="px-2 py-3 max-w-xs">
                   {r.reasonCode ? (
@@ -251,7 +251,7 @@ export function AbuseReportsManager() {
                       {t(reasonLabelKey(r.reasonCode))}
                     </span>
                   ) : (
-                    <span className="text-slate-400 dark:text-slate-500">—</span>
+                    <span className="text-slate-400 dark:text-slate-400">—</span>
                   )}
                   {r.detail && (
                     <p className="mt-1 text-slate-700 dark:text-slate-300 line-clamp-3">{r.detail}</p>

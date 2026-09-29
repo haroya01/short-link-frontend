@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { getMyProfile, updateMyProfile } from "@/modules/profile/api/profile";
 
@@ -55,35 +56,20 @@ export function FollowerCountSetting() {
       <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
         <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm">
           <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
-            <EyeOff className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+            <EyeOff className="h-4 w-4 text-slate-400 dark:text-slate-400" />
             <span className="flex flex-col">
               {t("settingsHideFollowerCount")}
-              <span className="text-[12px] text-slate-500 dark:text-slate-500">
+              <span className="text-[12px] text-slate-500 dark:text-slate-400">
                 {t("settingsHideFollowerCountHint")}
               </span>
             </span>
           </span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={hidden}
+          <Switch
+            checked={hidden}
             aria-label={t("settingsHideFollowerCount")}
             disabled={busy}
             onClick={toggle}
-            className={cn(
-              "focus-ring relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50",
-              hidden ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-700",
-            )}
-          >
-            <span
-              className={cn(
-                // left-0 anchors the knob: without it the absolutely-positioned span falls back
-                // to its static position, which the button's UA text-align:center puts mid-pill.
-                "absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
-                hidden ? "translate-x-[1.375rem]" : "translate-x-0.5",
-              )}
-            />
-          </button>
+          />
         </div>
       </div>
     </section>

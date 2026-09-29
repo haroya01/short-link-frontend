@@ -51,11 +51,13 @@ jobs:
             [ "$code" = "200" ] || fail=1
           }
           for host in https://kurl.me https://blog.kurl.me; do
-            css="$host/pretendard/pretendardvariable-dynamic-subset.min.css"
-            check "$css"
-            font=$(curl -s "$css" | grep -o 'url([^)]*\.woff2)' | head -1 | sed -E 's/url\((.*)\)/\1/; s#^(\.\./)+#/#')
-            if [ -z "$font" ]; then echo "no woff2 in $css"; fail=1; continue; fi
-            check "$host$font"
+            for sheet in pretendardvariable-dynamic-subset pretendardvariable-jp-dynamic-subset; do
+              css="$host/pretendard/$sheet.min.css"
+              check "$css"
+              font=$(curl -s "$css" | grep -o 'url([^)]*\.woff2)' | head -1 | sed -E 's/url\((.*)\)/\1/; s#^(\.\./)+#/#')
+              if [ -z "$font" ]; then echo "no woff2 in $css"; fail=1; continue; fi
+              check "$host$font"
+            done
           done
           check https://blog.kurl.me/
           exit $fail
@@ -79,7 +81,8 @@ jobs:
             --arg sha "${GITHUB_SHA:0:7}" \
             --arg msg "$COMMIT_MSG" \
             --arg run "$RUN_URL" \
-            '{ content: "✅ **FE deploy success** · \($sha) — \($msg)\n<\($run)>" }')
+            '($msg | split("\n")[0] // "" | .[0:300]) as $subject
+             | { content: "✅ **FE deploy success** · \($sha) — \($subject)\n<\($run)>" }')
           curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK"
 
       - name: Notify Discord — FE deploy failure
@@ -93,5 +96,6 @@ jobs:
             --arg sha "${GITHUB_SHA:0:7}" \
             --arg msg "$COMMIT_MSG" \
             --arg run "$RUN_URL" \
-            '{ content: "🚨 **FE deploy FAILED or timed out** · \($sha) — \($msg)\n<\($run)>" }')
+            '($msg | split("\n")[0] // "" | .[0:300]) as $subject
+             | { content: "🚨 **FE deploy FAILED or timed out** · \($sha) — \($subject)\n<\($run)>" }')
           curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK" || true

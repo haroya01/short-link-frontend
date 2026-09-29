@@ -1,11 +1,13 @@
-import { Download, Settings2 } from "lucide-react";
+import { useState } from "react";
+import { Download, MoreHorizontal, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
+import { ShareButton } from "@/components/common/share-button";
 import { DestinationHealthBanner } from "@/components/links/stats/destination-health-banner";
 import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
 import { QrButton } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { buildStatsCsv, statsCsvFilename } from "@/lib/stats-csv";
 import { useLinkDetail } from "@/lib/api/links.queries";
 import type { LinkStats } from "@/types";
@@ -14,7 +16,6 @@ type Props = {
   data: LinkStats;
   shortUrl: string;
   shortCodeLabel: string;
-  onCopy: () => void;
   /**
    * Public {@code /demo} route renders this header against synthetic data — visibility toggle
    * (which calls {@code PATCH /api/v1/links/{code}/visibility}) would 401 without a session, so
@@ -35,8 +36,9 @@ type Props = {
  * {@code PATCH /api/v1/links/{code}/visibility} which would 401 on the public {@code /demo} route.
  * Copy + QR still work because they read from the local value.
  */
-export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, onSettings, settingsActive }: Props) {
+export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSettings, settingsActive }: Props) {
   const t = useTranslations("stats");
+  const [moreOpen, setMoreOpen] = useState(false);
   const display = shortUrl || `/${data.shortCode}`;
   const { data: detail } = useLinkDetail(demo ? undefined : data.shortCode);
   let destinationHost = "";
@@ -57,7 +59,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
     <div className="space-y-3">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="line-clamp-2 text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">
+          <h1 className="line-clamp-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {title || display}
           </h1>
           {title && <p className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-sm">
@@ -66,7 +68,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
               target="_blank"
               rel="noreferrer"
               aria-label={shortCodeLabel}
-              className="vt-link-code truncate font-medium text-accent-700 hover:underline dark:text-accent-400"
+              className="vt-link-code truncate font-mono font-medium text-accent-700 hover:underline dark:text-accent-400"
             >
               {display.replace(/^https?:\/\//, "")}
             </a>
@@ -78,8 +80,51 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
             )}
           </p>}
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} onCopied={onCopy} />
+        <div className="flex gap-2 sm:hidden">
+          <CopyButton variant={demo ? "outline" : "accent"} size="lg" value={display} className="flex-1" />
+          <ShareButton url={display} title={title || display} variant="outline" size="lg" className="flex-1" />
+          <Button
+            variant="outline"
+            size="lg"
+            className="px-3"
+            onClick={() => setMoreOpen(true)}
+            aria-label={t("moreActions")}
+            aria-haspopup="dialog"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+        <BottomSheet open={moreOpen} onClose={() => setMoreOpen(false)} label={t("moreActions")}>
+          <div className="space-y-2 pb-1">
+            <QrButton value={display} filename={`${data.shortCode}.png`} size="lg" />
+            {onSettings && (
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full"
+                onClick={() => {
+                  setMoreOpen(false);
+                  onSettings();
+                }}
+              >
+                <Settings2 className="h-4 w-4" />
+                {t("linkSettings")}
+              </Button>
+            )}
+            {!demo && (
+              <PublicStatsToggle
+                shortCode={data.shortCode}
+                className="min-h-11 flex-wrap justify-between rounded-lg border border-slate-300 px-4 dark:border-slate-700"
+              />
+            )}
+            <Button variant="outline" size="lg" className="w-full" onClick={exportCsv}>
+              <Download className="h-4 w-4" />
+              {t("exportCsv")}
+            </Button>
+          </div>
+        </BottomSheet>
+        <div className="hidden flex-wrap items-center gap-1.5 sm:flex">
+          <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} />
           <QrButton value={display} filename={`${data.shortCode}.png`} />
           {onSettings && (
             <Button variant={settingsActive ? "subtle" : "ghost"} size="sm" className="min-h-9" onClick={onSettings} aria-pressed={settingsActive}>
@@ -87,7 +132,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
               {t("linkSettings")}
             </Button>
           )}
-          {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
+          {!demo && <PublicStatsToggle shortCode={data.shortCode} className="px-2" />}
           <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
             <Download className="h-4 w-4" />
             <span className="hidden sm:inline">CSV</span>
@@ -95,24 +140,6 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
         </div>
       </div>
       {!demo && detail && <DestinationHealthBanner detail={detail} shortUrl={display} />}
-    </div>
-  );
-}
-
-export function HeaderSkeleton({ shortCode }: { shortCode?: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6">
-      <Skeleton className="h-3 w-20" />
-      {/* 코드는 라우트에서 이미 안다 — 스켈레톤 단계에 실코드를 그려야 대시보드 /코드 와의
-          view-transition 페어(vt-link-code)가 로딩 중에도 성립한다(늦으면 old 만 남아 모프 무산). */}
-      {shortCode ? (
-        <p className="vt-link-code mt-3 w-fit truncate text-base font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 sm:text-2xl">
-          /{shortCode}
-        </p>
-      ) : (
-        <Skeleton className="mt-3 h-7 w-56" />
-      )}
-      <Skeleton className="mt-3 h-4 w-72" />
     </div>
   );
 }

@@ -3,15 +3,18 @@
 import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { issueApiKey, listApiKeys, revokeApiKey } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { ApiKeySummary, IssuedApiKey } from "@/types";
+import { formatDate } from "@/lib/utils";
 
 export function ApiKeysSection() {
   const t = useTranslations("settings.apiKeys");
+  const [confirm, confirmDialog] = useConfirm();
   const errorMessage = useApiErrorMessage();
   const { toast } = useToast();
   const [keys, setKeys] = useState<ApiKeySummary[] | null>(null);
@@ -63,7 +66,7 @@ export function ApiKeysSection() {
   }
 
   async function handleRevoke(id: number) {
-    if (!confirm(t("revokeConfirm"))) return;
+    if (!(await confirm({ title: t("revokeConfirm"), destructive: true }))) return;
     setRevoking(id);
     try {
       await revokeApiKey(id);
@@ -101,7 +104,7 @@ export function ApiKeysSection() {
           disabled={issuing}
           className="flex-1"
         />
-        <Button type="submit" size="sm" variant="accent" disabled={issuing}>
+        <Button type="submit" size="lg" variant="outline" disabled={issuing}>
           {issuing ? t("issuing") : t("issue")}
         </Button>
       </form>
@@ -165,8 +168,8 @@ export function ApiKeysSection() {
                     )}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                    {t("createdAt")}: {key.createdAt.slice(0, 10)} ·{" "}
-                    {t("lastUsedAt")}: {key.lastUsedAt ? key.lastUsedAt.slice(0, 10) : t("never")}
+                    {t("createdAt")}: {formatDate(key.createdAt)} ·{" "}
+                    {t("lastUsedAt")}: {key.lastUsedAt ? formatDate(key.lastUsedAt) : t("never")}
                   </div>
                 </div>
                 {isActive && (
@@ -187,6 +190,7 @@ export function ApiKeysSection() {
       )}
 
       <UsageSnippets />
+      {confirmDialog}
     </div>
   );
 }

@@ -29,7 +29,7 @@ export function AttendeeTable({
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
       <div className="flex items-center justify-between">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+        <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
           {t("title", { count: attendees.filter((a) => a.status === "CONFIRMED").length })}
         </h2>
         {attendees.length > 0 ? (
@@ -50,7 +50,7 @@ export function AttendeeTable({
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[560px] text-left text-[13px]">
             <thead>
-              <tr className="border-b border-slate-200 text-[11px] uppercase tracking-wide text-slate-400 dark:border-slate-700">
+              <tr className="border-b border-slate-200 text-[12px] font-medium text-slate-500 dark:border-slate-700 dark:text-slate-400">
                 <th className="pb-2 pr-3 font-medium">{t("name")}</th>
                 <th className="pb-2 pr-3 font-medium">{t("contact")}</th>
                 <th className="pb-2 pr-3 font-medium">{t("channel")}</th>

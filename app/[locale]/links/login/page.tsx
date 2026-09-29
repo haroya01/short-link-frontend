@@ -6,9 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { writeStorageString } from "@/lib/storage-json";
-import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "@/components/common/google-icon";
-import { AppleSignInButton } from "@/components/auth/apple-sign-in-button";
+import { LoginPanel } from "@/components/auth/login-panel";
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
 
@@ -54,100 +52,37 @@ function LoginShell({ next = null }: { next?: string | null }) {
   const t = useTranslations("login");
   const { signInWithGoogle } = useAuth();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white dark:bg-slate-900 px-4 py-12">
-      <div className="w-full max-w-sm">
-        <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
-          <div
-            className="relative mark-draw-in"
-            style={{ ["--hi" as string]: 0 } as React.CSSProperties}
-          >
-            <BrandMark className="h-10 w-auto" />
-          </div>
-
-          <h1
-            className="text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100"
-            style={{ ["--hi" as string]: 1 } as React.CSSProperties}
-          >
-            {t("heading")}
-          </h1>
-
-          <p
-            className="!mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400"
-            style={{ ["--hi" as string]: 2 } as React.CSSProperties}
-          >
-            {t("subtitle")}
-          </p>
-        </div>
-
-        <div
-          className="profile-fade mt-8 space-y-3 px-4 sm:px-0"
-          style={{ ["--idx" as string]: 4 } as React.CSSProperties}
-        >
-          <Button
-            variant="outline"
-            className="h-11 w-full justify-center rounded-lg"
-            onClick={signInWithGoogle}
-          >
-            <GoogleIcon className="h-4 w-4" />
-            {t("google")}
-          </Button>
-          <AppleSignInButton successHref={next ?? "/dashboard"} />
-          <p
-            className="px-2 pt-1 text-center text-[12px] leading-relaxed text-slate-500 dark:text-slate-400"
-          >
-            {t.rich("consent", {
-              terms: (c) => (
-                <Link
-                  href="/terms"
-                  className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300"
-                >
-                  {c}
-                </Link>
-              ),
-              privacy: (c) => (
-                <Link
-                  href="/privacy"
-                  className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300"
-                >
-                  {c}
-                </Link>
-              ),
-            })}
-          </p>
-        </div>
-
-        <div
-          className="profile-fade mt-8 text-center"
-          style={{ ["--idx" as string]: 6 } as React.CSSProperties}
-        >
-          <Link
-            href="/"
-            // 상시 밑줄 — hover 밑줄만으로는 모바일(hover 없음)에서 정적 문장으로 읽혀 게스트
-            // 귀환로가 안 보였다(적대 검증 r4). 장식색은 낮춰 조용함 유지.
-            className="text-[13px] text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100"
-          >
-            {t("anonymousButton")}
+    <LoginPanel
+      renderHome={(mark) => (
+        <Link href="/" aria-label="kurl" className="focus-ring block rounded-md">
+          {mark}
+        </Link>
+      )}
+      title={t("heading")}
+      subtitle={t("subtitle")}
+      googleLabel={t("google")}
+      onGoogle={signInWithGoogle}
+      appleSuccessHref={next ?? "/dashboard"}
+      consent={t.rich("consent", {
+        terms: (c) => (
+          <Link href="/terms" className="underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-300">
+            {c}
           </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BrandMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 28 18" aria-hidden className={className}>
-      <defs>
-        <linearGradient id="kurl-login-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#059669" />
-          <stop offset="100%" stopColor="#047857" />
-        </linearGradient>
-      </defs>
-      <g fill="url(#kurl-login-mark)">
-        <rect className="mark-line mark-line-1" x="6" y="1" width="20" height="3.4" rx="1" />
-        <rect className="mark-line mark-line-2" x="0" y="7.3" width="28" height="3.4" rx="1" />
-        <rect className="mark-line mark-line-3" x="9" y="13.6" width="17" height="3.4" rx="1" />
-      </g>
-    </svg>
+        ),
+        privacy: (c) => (
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-300">
+            {c}
+          </Link>
+        ),
+      })}
+      footer={
+        <Link
+          href="/"
+          className="text-[13px] text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100"
+        >
+          {t("anonymousButton")}
+        </Link>
+      }
+    />
   );
 }

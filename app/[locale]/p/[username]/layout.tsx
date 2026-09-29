@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
 import { BlogBottomNav } from "@/components/common/blog-bottom-nav";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
+import { MessagesScope } from "@/i18n/messages-scope";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { AuthorHeader } from "./_components/author-header";
 import { ProfileChrome } from "./_components/profile-chrome";
@@ -36,32 +37,34 @@ export default async function AuthorChromeLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <AppProviders>
-      <SidebarStateProvider>
-        {/* Header inside the dark wrapper so its translucent bg blends with the dark page (not the
-            white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}
-        <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
-          {/* Author/post pages are the blog product → tell the switcher so it offers "kurl" (links),
-              not "kurl log" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
-          <AppHeader showMenu={false} slimMobile product="blog" />
-          <div className="flex-1 pb-16 sm:pb-0">
-            {/* ProfileChrome renders the header slot ONLY on the tab routes (글·시리즈·소개·…); on a
-                post / series-detail route it drops the header and renders children alone. So the
-                streamed author fetch below only materially matters where the header is shown. */}
-            <ProfileChrome
-              header={
-                <Suspense fallback={<AuthorHeaderSkeleton />}>
-                  <AuthorHeaderSlot params={params} />
-                </Suspense>
-              }
-            >
-              {children}
-            </ProfileChrome>
+    <MessagesScope locale={locale} scope="p/[username]">
+      <AppProviders>
+        <SidebarStateProvider>
+          {/* Header inside the dark wrapper so its translucent bg blends with the dark page (not the
+              white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}
+          <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
+            {/* Author/post pages are the blog product → tell the switcher so it offers "kurl" (links),
+                not "kurl log" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
+            <AppHeader showMenu={false} slimMobile product="blog" />
+            <div className="flex-1 pb-16 sm:pb-0">
+              {/* ProfileChrome renders the header slot ONLY on the tab routes (글·시리즈·소개·…); on a
+                  post / series-detail route it drops the header and renders children alone. So the
+                  streamed author fetch below only materially matters where the header is shown. */}
+              <ProfileChrome
+                header={
+                  <Suspense fallback={<AuthorHeaderSkeleton />}>
+                    <AuthorHeaderSlot params={params} />
+                  </Suspense>
+                }
+              >
+                {children}
+              </ProfileChrome>
+            </div>
           </div>
-        </div>
-        <BlogBottomNav />
-      </SidebarStateProvider>
-    </AppProviders>
+          <BlogBottomNav />
+        </SidebarStateProvider>
+      </AppProviders>
+    </MessagesScope>
   );
 }
 
@@ -84,14 +87,13 @@ async function AuthorHeaderSlot({
 function AuthorHeaderSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="flex items-center gap-4">
-        <div className="h-16 w-16 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
-        <div className="space-y-2">
-          <div className="h-5 w-40 rounded bg-slate-200/80 dark:bg-slate-700/80" />
-          <div className="h-3.5 w-56 rounded bg-slate-100 dark:bg-slate-800" />
-        </div>
+      <div className="flex items-center gap-3.5">
+        <div className="h-11 w-11 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+        <div className="h-7 w-44 rounded bg-slate-200/80 dark:bg-slate-700/80" />
       </div>
-      <div className="mt-6 flex gap-5 border-b border-slate-100 pb-3 dark:border-slate-800">
+      <div className="mt-4 h-3.5 w-64 rounded bg-slate-100 dark:bg-slate-800" />
+      <div className="mt-3 h-3 w-48 rounded bg-slate-100 dark:bg-slate-800" />
+      <div className="mt-7 flex gap-5 border-b border-slate-200 pb-3 dark:border-slate-800">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="h-4 w-12 rounded bg-slate-100 dark:bg-slate-800" />
         ))}

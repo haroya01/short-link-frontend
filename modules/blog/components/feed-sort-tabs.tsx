@@ -131,11 +131,8 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
             }}
             className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
               t.key === activeKey
-                ? "text-accent-700 dark:text-accent-400"
-                : // slate-500: slate-400 on white was 2.6:1 — under the 4.5:1 AA bar at this
-                  // size. One shade down passes (4.8:1) and the active accent still dominates.
-                  // Dark mirror bumped 500→400 for the same reason.
-                  "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                ? "text-slate-900 dark:text-slate-100"
+                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             {t.label}
@@ -145,7 +142,7 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
       {bar && (
         <span
           aria-hidden
-          className="pointer-events-none absolute bottom-0.5 left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none"
+          className="pointer-events-none absolute bottom-0.5 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"
           style={{
             transform: `translateX(${bar.left}px)`,
             width: `${bar.width}px`,

@@ -7,7 +7,7 @@ import { setToken } from "@/lib/api";
 import { Link, useRouter } from "@/i18n/navigation";
 import { writeStorageString } from "@/lib/storage-json";
 import { readSafeLoginNext } from "@/lib/login-next-cookie";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -55,8 +55,8 @@ export default function AuthCallbackPage() {
       <div className="container max-w-md py-20 text-center">
         <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("callbackFailed")}</h1>
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{error}</p>
-        <Link href="/login" className="mt-6 inline-block">
-          <Button variant="outline">{t("backToLogin")}</Button>
+        <Link href="/login" className={buttonVariants({ variant: "outline", className: "mt-6" })}>
+          {t("backToLogin")}
         </Link>
       </div>
     );

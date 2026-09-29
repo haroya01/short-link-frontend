@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { UserRound } from "lucide-react";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
-import { Markdown } from "@/modules/blog/components/markdown";
 import type { PublicEvent } from "@/modules/events/api/events";
 import {
   formatEventDate,
@@ -24,7 +23,14 @@ import { RegistrationPanel } from "./registration-panel";
  * 헤어라인으로만 단락을 가른다. 색은 브랜드 초록 한 가닥(CTA·라벨)만: 초대장은 조용할수록
  * 이벤트가 주인공이 된다.
  */
-export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent }) {
+export function PublicEventPage({
+  initialEvent,
+  description,
+}: {
+  initialEvent: PublicEvent;
+  /** 서버에서 렌더한 설명 마크다운 — 마크다운·하이라이트 파이프라인이 클라이언트 번들에 실리지 않게. */
+  description?: ReactNode;
+}) {
   const t = useTranslations("events.public");
   const locale = useLocale();
   const searchParams = useSearchParams();
@@ -91,7 +97,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           <MetaRow label={t("metaDate")}>{dateLine}</MetaRow>
           <MetaRow label={t("metaTime")}>
             {timeLine}{" "}
-            <span className="text-slate-400 dark:text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
               ({timezoneLabel(event.timezone, locale)})
             </span>
           </MetaRow>
@@ -136,7 +142,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           <button
             type="button"
             onClick={scrollToForm}
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-full bg-accent-600 text-base font-semibold text-white transition-colors hover:bg-accent-700"
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-accent-700 text-base font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
           >
             {t("cta")}
           </button>
@@ -159,11 +165,9 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           />
         ) : null}
 
-        {event.descriptionMd ? (
+        {description ? (
           <section className="mt-9 border-t border-slate-200 pt-7 dark:border-slate-800">
-            <div className="prose-text-block text-slate-800 dark:text-slate-200">
-              <Markdown>{event.descriptionMd}</Markdown>
-            </div>
+            <div className="prose-text-block text-slate-800 dark:text-slate-200">{description}</div>
           </section>
         ) : null}
 
@@ -209,7 +213,7 @@ function attendanceLine(
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-baseline gap-4 border-b border-slate-100 py-3 dark:border-slate-800/60">
-      <dt className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
+      <dt className="w-14 shrink-0 text-[13px] font-semibold text-accent-700 dark:text-accent-400">
         {label}
       </dt>
       <dd className="min-w-0 text-[15px] leading-relaxed text-slate-800 dark:text-slate-200">

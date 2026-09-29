@@ -31,7 +31,7 @@ export function FollowedTagsSetting() {
         {t("settingsFollowedTags")}
       </h2>
       <div className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
-        <p className="text-[12px] text-slate-500 dark:text-slate-500">
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
           {t("settingsFollowedTagsHint")}
         </p>
         {followed.length === 0 ? (
@@ -54,7 +54,7 @@ export function FollowedTagsSetting() {
                     onClick={() => toggleFollow(tag)}
                     aria-label={t("settingsUnfollowTag", { tag })}
                     title={t("settingsUnfollowTag", { tag })}
-                    className="focus-ring grid h-5 w-5 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+                    className="touch-target focus-ring grid h-5 w-5 place-items-center rounded-full text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>

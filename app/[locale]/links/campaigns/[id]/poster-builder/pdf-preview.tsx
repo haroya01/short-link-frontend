@@ -182,7 +182,7 @@ function DraggableBox({
         />
       ) : (
         <div
-          className="grid h-full w-full place-items-center text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400"
+          className="grid h-full w-full place-items-center text-[11px] font-medium text-accent-700 dark:text-accent-400"
           style={{ pointerEvents: "none" }}
         >
           QR

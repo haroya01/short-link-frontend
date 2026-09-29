@@ -40,7 +40,7 @@ export async function TrendingTopics({
               aria-current={active ? "true" : undefined}
               className={`shrink-0 snap-start rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
                 active
-                  ? "bg-accent-700 text-white hover:bg-accent-800"
+                  ? "bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
               }`}
             >

@@ -4,10 +4,11 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
-import { MadeWithKurl } from "@/components/common/made-with-kurl";
-import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
+import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { PostLedger } from "@/modules/blog/components/post-ledger";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
@@ -34,9 +35,10 @@ export async function generateMetadata({
   const { author } = result.data;
   const h = await headers();
   const origin = authorBaseUrl(h, username);
-  const ogImage = author.avatarUrl
-    ? [{ url: author.avatarUrl, width: 1200, height: 630, alt: `@${author.username}` }]
-    : undefined;
+  // og:image 를 여기서 명시하지 않는다 — 명시하면 파일 컨벤션 opengraph-image.tsx(아바타 원형+
+  // @핸들+마크 합성 카드)를 완전히 덮어써, 아바타 "원본 JPEG"가 카드로 나갔다(적대 검증 r3):
+  // 1.91:1 크롭 플랫폼에선 얼굴 가로 띠만 남고, 개인 사진 원본이 스크레이퍼 캐시에 풀사이즈로
+  // 박제된다. 생성 카드가 공유 카드의 진실원이다.
   return {
     title: `@${author.username}`,
     description: author.bio ?? undefined,
@@ -49,14 +51,13 @@ export async function generateMetadata({
       description: author.bio ?? undefined,
       url: `${origin}/`,
       type: "profile",
-      images: ogImage,
     },
     // Without an explicit twitter card the author home inherits the generic site card on X/Slack.
+    // 이미지는 명시하지 않는다(위와 동일) — X 는 twitter:image 부재 시 og:image 로 폴백한다.
     twitter: {
-      card: author.avatarUrl ? "summary" : "summary",
+      card: "summary_large_image",
       title: `@${author.username}`,
       description: author.bio ?? undefined,
-      images: author.avatarUrl ? [author.avatarUrl] : undefined,
     },
   };
 }
@@ -154,50 +155,24 @@ export default async function PublicProfileHomepage({
           <p className="text-slate-500">{t("emptyPosts")}</p>
         ) : visiblePosts.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400">{t("tagFilterEmpty", { tag: activeTag ?? "" })}</p>
-        ) : pinnedPosts.length > 0 ? (
-          // 대표글 → 최근 글, each under a quiet label. The labels carry the top spacing, so no flushTop.
-          <div className="space-y-9">
-            <section>
-              <RailHeading className="mb-3">{t("featuredPosts")}</RailHeading>
-              <FeedList>
-                {pinnedPosts.map((p) => (
-                  <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
-                ))}
-              </FeedList>
-            </section>
-            {recentPosts.length > 0 && (
+        ) : (
+          <div className="space-y-10">
+            {pinnedPosts.length > 0 && (
               <section>
-                <RailHeading className="mb-3">{t("recentPosts")}</RailHeading>
+                <RailHeading className="mb-3">{t("featuredPosts")}</RailHeading>
                 <FeedList>
-                  {recentPosts.map((p) => (
+                  {pinnedPosts.map((p) => (
                     <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
                   ))}
                 </FeedList>
               </section>
             )}
+            {recentPosts.length > 0 && <PostLedger posts={recentPosts} username={author.username} locale={locale} />}
           </div>
-        ) : (
-          // No pins → the plain list. Same card + wrapper as the feed; single-author surface so the
-          // author is hidden. The first row gets flushTop so it sits tight under the tabs (with a tag
-          // filter the banner leads, so don't flush).
-          <FeedList>
-            {visiblePosts.map((p, i) => (
-              <FeedCard
-                key={p.slug}
-                hideAuthor
-                flushTop={i === 0 && !activeTag}
-                item={{ ...p, author, viewCount: 0 }}
-                locale={locale}
-              />
-            ))}
-          </FeedList>
         )}
 
-        <footer className="mt-16 flex items-center justify-between border-t border-slate-100 pt-8 dark:border-slate-800">
-          {/* Viral-loop badge — followable link back to kurl; on a custom-domain profile it's a real
-              external backlink, elsewhere quiet brand exposure. */}
-          <MadeWithKurl />
-          <ReportButton subjectType="USER" subjectId={author.id} />
+        <footer className="mt-16 flex items-center justify-end border-t border-slate-100 pt-8 dark:border-slate-800">
+          <ReportButton subjectType="USER" subjectId={author.id} ownerUsername={author.username} />
         </footer>
         </AuthorContentTransition>
       </ReadingShell>

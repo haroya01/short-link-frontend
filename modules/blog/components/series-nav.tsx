@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Mark } from "@/components/common/logo";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { SeriesSwitchButtons } from "@/modules/blog/components/series-swipe";
@@ -43,18 +42,16 @@ export function SeriesNav({
           data-bhv="series"
           data-bhv-id={series.slug}
         >
-          {/* The kurl mark draws itself in (사사삭) when the banner appears — the series surface's
-              signature entrance, shared with the series detail header + feed card. */}
-          <Mark animated className="mark-draw-in h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
+          <Layers aria-hidden className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
           <span className="truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
             {series.title}
           </span>
         </BlogLink>
         <div className="flex shrink-0 items-center gap-2">
-          <span className="font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
+          <span className="text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
             {t("seriesPosition", {
-              position: String(series.position).padStart(2, "0"),
-              total: String(series.total).padStart(2, "0"),
+              position: series.position,
+              total: series.total,
             })}
           </span>
           {/* 이전/다음 회차 — 데스크톱(hover 입력)에서만. 모바일은 좌우 스와이프가 담당하므로 숨긴다
@@ -65,13 +62,14 @@ export function SeriesNav({
         </div>
       </div>
 
-      {/* Progress stepper — filled up to and including the current part. */}
+      {/* Progress stepper — filled up to and including the current part.
+          비활성 트랙 dark=600: 700 은 잉크 배경 대비 1.95:1 로 WCAG 1.4.11(non-text 3:1) 미달. */}
       <div className="mt-2 flex items-center gap-1" aria-hidden>
         {Array.from({ length: series.total }).map((_, i) => (
           <span
             key={i}
             className={`h-1 flex-1 rounded-full ${
-              i < series.position ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-700"
+              i < series.position ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-600"
             }`}
           />
         ))}

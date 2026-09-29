@@ -202,7 +202,7 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
         <p className={highlightEmpty ? "text-base font-semibold text-slate-900" : "text-sm font-medium text-slate-900"}>
           {highlightEmpty ? t("firstTitle") : t("title")}
         </p>
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[11px] text-slate-500 dark:text-slate-400">
           {highlightEmpty ? t("firstHint") : t("hint")}
         </p>
       </div>
@@ -284,14 +284,14 @@ function TemplatesRow({
 
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px] text-slate-500">{t("templatesLabel")}</p>
+      <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("templatesLabel")}</p>
       <div className="flex flex-wrap gap-1.5">
         {visible.map((tpl) => (
           <button
             key={tpl.id}
             type="button"
             onClick={() => onPick(tpl)}
-            className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+            className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-800 dark:text-slate-300 dark:hover:border-slate-700"
           >
             {tpl.label}
           </button>
@@ -300,7 +300,7 @@ function TemplatesRow({
           <button
             type="button"
             onClick={() => setShowAll(true)}
-            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-700 transition hover:border-slate-300"
+            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-700 transition hover:border-slate-300 dark:bg-slate-800/50 dark:border-slate-800 dark:text-slate-300 dark:hover:border-slate-700"
           >
             <ChevronDown className="h-3 w-3" />
             {t("templatesMore", { count: hidden })}

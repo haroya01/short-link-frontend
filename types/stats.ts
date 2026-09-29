@@ -108,24 +108,3 @@ export type ProfileVisitSummary = {
   month: number;
   allTime: number;
 };
-
-export type WeeklyInsights = {
-  from: string;
-  to: string;
-  totalClicks: number;
-  humanClicks: number;
-  previousHumanClicks: number;
-  deltaPercent: number | null;
-  humanRatio: number | null;
-  topLink: {
-    shortCode: string;
-    originalUrl: string;
-    clicks: number;
-    topUtmSource: string | null;
-  } | null;
-  peak: {
-    dayOfWeek: number;
-    hour: number;
-    clicks: number;
-  } | null;
-};

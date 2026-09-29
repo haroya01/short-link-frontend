@@ -2,7 +2,7 @@
 
 import { type ComponentProps } from "react";
 import { usePathname } from "next/navigation";
-import { LogIn, Menu, PenSquare, X, Bell } from "lucide-react";
+import { Menu, PenSquare, X, Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
@@ -18,6 +18,8 @@ import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { cn } from "@/lib/utils";
+
+const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
 
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
@@ -68,7 +70,7 @@ export function AppHeader({
 
   const loginButton = (
     <Button
-      variant="default"
+      variant="outline"
       size="sm"
       onClick={() => {
         // Route through kurl's own branded login screen (then Google) instead of bouncing straight
@@ -76,18 +78,18 @@ export function AppHeader({
         window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
       }}
     >
-      <LogIn className="h-3.5 w-3.5" />
-      <span className="hidden sm:inline">{t("login")}</span>
+      {t("login")}
     </Button>
   );
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
+  const inWriting = WRITE_PATH.test(pathname);
 
   const mobileWriteCircle = (authed: boolean) => (
     <ChromeNavLink
       href={authed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
       aria-label={t("write")}
-      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
+      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-700 text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:hidden"
     >
       <PenSquare className="h-4 w-4" />
     </ChromeNavLink>
@@ -104,12 +106,13 @@ export function AppHeader({
           signed-out visitors who have no account menu. */}
       {!authed && <LanguageSwitcher />}
       <span aria-hidden className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
-      {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
-          a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
-      {authed && (
+      {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row.
+          Chrome, not content: quiet like the other bar controls, so each page's own primary stays
+          the one green action on screen. Mobile uses the bottom tab bar. */}
+      {authed && !inWriting && (
         <ChromeNavLink
           href={blogHref("/write/new")}
-          className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 sm:inline-flex"
+          className="focus-ring hidden h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex"
         >
           <PenSquare className="h-3.5 w-3.5" />
           {t("write")}
@@ -142,11 +145,10 @@ export function AppHeader({
 
   return (
     <header className="vt-app-header sticky top-0 z-30">
-      {/* 상시 유리 캡슐 — nav.tsx 와 같은 §12 단일 상태. */}
       <div className="relative">
         <div
           aria-hidden
-          className="glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] dark:border-slate-800/60"
+          className="absolute inset-0 border-b border-slate-200/80 bg-white dark:border-slate-800/80 dark:bg-slate-950"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
@@ -164,11 +166,11 @@ export function AppHeader({
           {/* Blog header → the logo returns to the blog home, not the links app root. blogHref keeps
               the right host (blog.kurl.me, or /blog-preview on apex); BlogChromeLink upgrades the hop
               to a client-side navigation when already on that origin, so the chrome stays mounted.
-              모바일(<sm)에선 표면을 가리지 않고 마크만 — slim 공개 표면은 물론 워크스페이스도:
-              워크스페이스는 우측 클러스터(검색·벨·전환 pill·아바타)가 모바일에서도 다 살아 있어
-              풀 워드마크까지 들어가면 390px 에서 컨트롤들이 워드마크 위로 겹쳤다. */}
+              모바일(<sm) 워크스페이스는 마크만 — 우측 클러스터(검색·벨·전환·아바타)가 모바일에서도
+              살아 있어 풀 워드마크까지 들어가면 390px 에서 컨트롤이 워드마크 위로 겹쳤다. slim 공개
+              표면은 우측이 글쓰기 버튼 하나라 워드마크까지 보인다. */}
           <ChromeNavLink href={blogHref("/")} aria-label="kurl log" className="mark-hoverable shrink-0">
-            <Logo variant="blog" animated showText={false} className="sm:hidden" />
+            <Logo variant="blog" animated showText={slimMobile} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </ChromeNavLink>
         </div>

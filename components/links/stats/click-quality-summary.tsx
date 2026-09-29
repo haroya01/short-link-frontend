@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { formatShare } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 
 /**
@@ -26,7 +27,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const cards: { label: string; value: string; hint?: string }[] = [
     {
       label: t("returning"),
-      value: formatPct(returningRatio),
+      value: formatShare(returningRatio),
       hint: t("returningHint", { count: returningCount }),
     },
     {
@@ -37,7 +38,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
     {
       label: t("realVsPreview"),
       value: `${realClicks} / ${previewClicks}`,
-      hint: t("realVsPreviewHint", { ratio: formatPct(previewRatio) }),
+      hint: t("realVsPreviewHint", { ratio: formatShare(previewRatio) }),
     },
     {
       label: t("peakHour"),
@@ -69,8 +70,4 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
       </div>
     </section>
   );
-}
-
-function formatPct(ratio: number): string {
-  return `${(ratio * 100).toFixed(1)}%`;
 }

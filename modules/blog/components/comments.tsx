@@ -16,7 +16,7 @@ import {
   type CommentView,
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -228,7 +228,7 @@ export function PostComments({
             type="button"
             data-testid="comment-composer-placeholder"
             onClick={() => setComposerActive(true)}
-            className="flex w-full items-center rounded-lg border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-500"
+            className="flex w-full items-center rounded-lg border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {/* 비로그인엔 탭의 결과(로그인 문)를 미리 말해준다 — 무예고 로그인 문은 놀람이다. */}
             {ready && !authenticated ? t("loginPrompt") : t("placeholder")}
@@ -274,7 +274,7 @@ export function PostComments({
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
-                  className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring"
+                  className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}
@@ -382,7 +382,7 @@ function CommentRow({
             <button
               type="button"
               onClick={onDelete}
-              className="touch-target rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
+              className="touch-target rounded text-slate-500 transition-colors hover:text-red-600 focus-ring dark:text-slate-400 dark:hover:text-red-400"
               aria-label={deleteLabel}
             >
               <Trash2 className="h-3.5 w-3.5" />

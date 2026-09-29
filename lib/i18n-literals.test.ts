@@ -3,10 +3,12 @@ import path from "path";
 import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
-const ROOTS = ["app", "components", "hooks", "lib"];
+const ROOTS = ["app", "components", "hooks", "lib", "modules"];
 const CJK = /[가-힣ぁ-んァ-ン一-龥]/;
+// modules/*/api clients carry their mock-mode fixtures inline, seo-landing is a per-locale content
+// table, and the slash menu's search aliases are deliberately multilingual — none of them is UI copy.
 const EXCLUDED =
-  /(\.test\.|fixtures|mock-data|demo-data|admin-request-metrics-mock|messages[\\/])/;
+  /(\.test\.|fixtures|mock-data|demo-data|admin-request-metrics-mock|_mocks?[-.]|mock-profile|modules[\\/][^\\/]+[\\/]api[\\/]|seo-landing|tiptap-slash-menu|messages[\\/])/;
 
 function filesUnder(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];

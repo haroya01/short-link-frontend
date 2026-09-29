@@ -9,8 +9,8 @@ import type { PostStatus } from "@/modules/blog/api/posts";
 const TONE: Record<PostStatus, string> = {
   DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
   PUBLISHED: "text-slate-500 dark:text-slate-400",
-  SCHEDULED: "border border-slate-300 text-slate-600 dark:border-slate-600 dark:text-slate-300",
-  UNPUBLISHED: "bg-slate-600 text-white dark:bg-slate-300 dark:text-slate-900",
+  SCHEDULED: "bg-accent-50 text-accent-800 dark:bg-accent-500/15 dark:text-accent-300",
+  UNPUBLISHED: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
 };
 
 /** The single post-status pill. Label comes from the `postEditor.status{STATUS}` messages. */

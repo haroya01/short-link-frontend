@@ -9,7 +9,6 @@ import { Reveal } from "@/components/common/reveal";
 import { Section } from "@/components/common/section";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
-import { ChapterHeading } from "./chapter-heading";
 
 export type RangeDays = 7 | 30;
 
@@ -53,7 +52,6 @@ export function WhenChapter({
   const t = useTranslations("stats");
   return (
     <div id="chapter-when" className="scroll-mt-28 space-y-4">
-      <ChapterHeading index={2} title={t("analysisTabs.when")} />
       <div id="section-live">
         {demo ? (
           <LiveClickFeedDemo />
@@ -73,7 +71,7 @@ export function WhenChapter({
       {/* 기간 프리셋 — 일별 추이(아래)와 개요의 히어로 스파크라인을 함께 절환한다.
           7D/30D 만: 90D+는 API 기간 파라미터가 생기면 백엔드 후속(비활성 버튼으로 거짓 약속 ❌). */}
       <div className="flex justify-end">
-        <div className="inline-flex gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 dark:border-slate-800 dark:bg-slate-800/50">
+        <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
           {([7, 30] as const).map((d) => (
             <button
               key={d}
@@ -81,10 +79,10 @@ export function WhenChapter({
               onClick={() => onRange(d)}
               aria-pressed={range === d}
               className={cn(
-                "min-h-11 whitespace-nowrap rounded-full px-3 text-[13px] font-medium transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+                "min-h-9 whitespace-nowrap rounded-md px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
                 range === d
-                  ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.08)] dark:bg-slate-900 dark:text-slate-100"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
               )}
             >
               {t("rangeDays", { days: d })}

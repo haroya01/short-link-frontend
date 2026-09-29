@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ProfileShowcase } from "@/modules/profile/components/showcase";
 import { Link } from "@/i18n/navigation";
 
@@ -79,74 +79,51 @@ export default async function ShowcasePage({
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
-      {/* CTA-first hero — flat white surface (no mesh / no noise) so the page reads as restrained
-          rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
-          surface direction matches the landing. Headline is Pretendard semibold with
-          `.tracking-headline` (−0.025em) — same family/treatment as the landing hero. */}
-      <section className="relative isolate flex flex-col overflow-hidden bg-white dark:bg-slate-950 sm:min-h-[520px]">
-        <div className="container relative z-10 m-auto max-w-3xl py-16 text-center sm:py-24">
-          <div className="hero-stagger space-y-4">
-            <div
-              className="flex items-center justify-center gap-3"
+      <section className="bg-white dark:bg-slate-950">
+        <div className="container max-w-5xl pb-12 pt-14 sm:pb-16 sm:pt-24">
+          <div className="hero-stagger max-w-2xl space-y-4">
+            <p
+              className="text-[13px] font-semibold text-accent-700 dark:text-accent-400"
               style={{ ["--hi" as string]: 0 } as React.CSSProperties}
             >
-              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-                {t("eyebrow")}
-              </p>
-              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-            </div>
+              {t("eyebrow")}
+            </p>
             <h1
-              className="text-balance text-headline-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-xl"
+              className="text-balance text-headline-lg font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-xl"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               {t("ctaTitle")}
             </h1>
             <p
-              className="mx-auto max-w-md text-balance text-[15px] leading-relaxed text-slate-500 dark:text-slate-400"
+              className="max-w-xl text-pretty text-[15px] leading-relaxed text-slate-600 dark:text-slate-300 sm:text-[17px]"
               style={{ ["--hi" as string]: 2 } as React.CSSProperties}
             >
               {t("ctaSubhead")}
             </p>
-            <div
-              className="flex flex-col items-center pt-2"
-              style={{ ["--hi" as string]: 3 } as React.CSSProperties}
-            >
+            <div className="pt-3" style={{ ["--hi" as string]: 3 } as React.CSSProperties}>
               <Link
                 href="/login?next=/profile/auto"
-                className="group inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-5 py-3 text-sm font-medium text-white shadow-cta transition hover:bg-accent-800"
+                className="focus-ring group inline-flex h-11 items-center gap-1.5 rounded-lg bg-accent-700 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
               >
                 {t("cta")}
-                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
           </div>
         </div>
-
-        {/* Scroll cue — landing hero 의 패턴을 그대로 따름: 섹션 절대 위치 bottom-4 + bouncing
-            chevron. showcase 만 인라인 cue 였던 게 사용자가 "위치/UI 가 틀리다" 고 지적한
-            지점. 클릭 가능하게 anchor 로 두는 것만 landing 과 차이 (landing 은 decorative). */}
-        <a
-          href="#showcase-examples"
-          aria-label={t("scrollCue")}
-          className="absolute inset-x-0 bottom-4 mx-auto hidden w-fit flex-col items-center gap-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 transition hover:text-slate-600 sm:flex"
-        >
-          <span>{t("scrollCue")}</span>
-          <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
-        </a>
       </section>
 
-      <section id="showcase-examples" className="bg-white dark:bg-slate-950 py-12 sm:py-16">
-        <div className="container max-w-3xl mb-10">
-          <div className="section-divider mx-auto mb-10 w-full max-w-xl" aria-hidden />
-          <div className="text-center">
-            <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-              {t("title")}
-            </h2>
-            <p className="mx-auto mt-3 max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
-              {t("subhead")}
-            </p>
-          </div>
+      <section
+        id="showcase-examples"
+        className="border-t border-slate-200 bg-white py-12 dark:border-slate-800 dark:bg-slate-950 sm:py-16"
+      >
+        <div className="container mb-10 max-w-5xl">
+          <h2 className="text-balance text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+            {t("title")}
+          </h2>
+          <p className="mt-3 max-w-xl text-pretty text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+            {t("subhead")}
+          </p>
         </div>
         <ProfileShowcase />
       </section>

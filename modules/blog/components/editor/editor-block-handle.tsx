@@ -90,7 +90,7 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
   ];
 
   const ghostBtn =
-    "grid h-6 w-5 place-items-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300";
+    "grid h-6 w-5 place-items-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300";
 
   return (
     <>
@@ -140,7 +140,7 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
                   onClick={() => turnInto(it.run)}
                   className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
-                  <it.icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                  <it.icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
                   {it.label}
                 </button>
               ))}
@@ -152,7 +152,7 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
                 onClick={duplicate}
                 className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
               >
-                <Copy className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                <Copy className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
                 {t("duplicate")}
               </button>
               <button

@@ -5,7 +5,7 @@ import { Check, Link2, Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { getPost, issuePreviewToken } from "@/modules/blog/api/posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { postHref } from "@/modules/blog/lib/author-href";
 
 /**
  * "미리보기 링크 복사" — issues the post's share token and copies a {slug}?preview={token} link to the
