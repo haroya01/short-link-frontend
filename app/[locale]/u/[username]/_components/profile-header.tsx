@@ -32,8 +32,10 @@ export function ProfileHeader({
   bannerInline = true,
 }: Props) {
   return (
+    // relative: 표지는 mask-image 때문에 따로 쌓이는 층이라, 위치 없는 머리는 그 아래에 깔린다 —
+    // 진입 애니메이션이 꺼지는 첫 로드·동작 줄이기에서 아바타가 표지에 가려졌다.
     <div
-      className="profile-fade flex flex-col items-center gap-3 text-center"
+      className="profile-fade relative flex flex-col items-center gap-3 text-center"
       style={{ "--idx": 0 } as React.CSSProperties}
     >
       {bannerUrl && bannerInline && (
