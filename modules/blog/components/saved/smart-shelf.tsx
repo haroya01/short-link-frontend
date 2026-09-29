@@ -326,7 +326,7 @@ function BulkBar({
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
         {menuOpen && (
-          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-2xl border border-slate-200 bg-white py-1 shadow-float dark:border-slate-700 dark:bg-slate-900">
+          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900">
             <button type="button" onClick={() => onMove(null)} className={bulkMenuItem}>
               {t("unfiled")}
             </button>
@@ -380,7 +380,7 @@ function BulkBar({
 }
 
 const bulkMenuItem =
-  "flex w-full items-center gap-2 px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60";
+  "flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";
 
 function FolderPill({
   active,

@@ -187,10 +187,11 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
                   role="menuitem"
                   tabIndex={langOpen ? undefined : -1}
                   onClick={() => switchLocale(l)}
-                  className={cn(itemClass, "justify-between pl-9", l === locale && "text-accent-700 dark:text-accent-400")}
+                  aria-current={l === locale ? "true" : undefined}
+                  className={cn(itemClass, "justify-between pl-9")}
                 >
                   {tLang(l)}
-                  {l === locale && <Check className="h-4 w-4 text-accent-600" />}
+                  {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" aria-hidden />}
                 </button>
               ))}
             </div>

@@ -143,7 +143,7 @@ export function SavedCard({
           <MoreHorizontal className="h-4 w-4" />
         </button>
         {open && (
-          <div className="absolute right-0 z-30 mt-1 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-float dark:border-slate-700 dark:bg-slate-900">
+          <div className="absolute right-0 z-30 mt-1 w-52 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900">
             <p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">{t("moveTo")}</p>
             <button type="button" onClick={() => { onMove(item.id, null); setOpen(false); }} className={menuItem}>
               <span className="flex-1 text-left">{t("unfiled")}</span>
@@ -189,4 +189,4 @@ export function SavedCard({
 }
 
 const menuItem =
-  "flex w-full items-center gap-2 px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60";
+  "flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";
