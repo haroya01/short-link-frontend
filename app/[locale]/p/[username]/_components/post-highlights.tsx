@@ -484,7 +484,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
   useFocusTrap(contentRef, { active: true, onEscape: onClose });
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4" onMouseDown={onClose}>
-      <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl" onMouseDown={(event) => event.stopPropagation()}>
+      <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-modal dark:bg-slate-900 sm:max-w-md sm:rounded-2xl" onMouseDown={(event) => event.stopPropagation()}>
         <h3 id="highlight-choices-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
         <ul className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
           {highlights.map((highlight) => (
@@ -657,7 +657,7 @@ function HighlightThread({
         role="dialog"
         aria-modal="true"
         aria-labelledby="hl-thread-quote"
-        className="flex max-h-[80vh] w-full flex-col rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
+        className="flex max-h-[80vh] w-full flex-col rounded-t-2xl bg-white shadow-modal dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 p-5 dark:border-slate-800">
@@ -920,7 +920,7 @@ function SelectionBar({
         role="toolbar"
         // Keep the text selection alive through the click so it doesn't visibly collapse mid-tap.
         onMouseDown={(e) => e.preventDefault()}
-        className="flex animate-fade-in items-center gap-0.5 rounded-full bg-slate-900 p-1 text-[13px] font-medium text-white shadow-[0_10px_34px_-12px_rgba(2,6,23,0.7)] ring-1 ring-white/10 dark:bg-white dark:text-slate-900 dark:ring-slate-900/10"
+        className="flex animate-fade-in items-center gap-0.5 rounded-full bg-slate-900 p-1 text-[13px] font-medium text-white shadow-float ring-1 ring-white/10 dark:bg-white dark:text-slate-900 dark:ring-slate-900/10"
       >
         <button
           type="button"

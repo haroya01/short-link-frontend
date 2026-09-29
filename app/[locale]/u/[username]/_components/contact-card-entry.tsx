@@ -157,7 +157,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
             toggleFlip();
           }}
           aria-pressed={flipped}
-          className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-30 focus:rounded-md focus:bg-white focus:px-2 focus:py-1 focus:text-xs focus:font-medium focus:text-slate-900 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent-400"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-30 focus:rounded-md focus:bg-white focus:px-2 focus:py-1 focus:text-xs focus:font-medium focus:text-slate-900 focus:shadow-float focus:outline-none focus:ring-2 focus:ring-accent-400"
         >
           {flipped ? t("flipToFront") : t("flipToBack")}
         </button>

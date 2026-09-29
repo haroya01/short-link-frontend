@@ -160,7 +160,7 @@ export function CountryCombobox({
             role="dialog"
             aria-label={t("countryLabel")}
             onKeyDown={onKeyDown}
-            className="fixed z-50 w-64 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
+            className="fixed z-50 w-64 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-900"
             style={{
               top: Math.min(rect.bottom + 6, window.innerHeight - 340),
               left: Math.min(rect.left, window.innerWidth - 256 - 8),

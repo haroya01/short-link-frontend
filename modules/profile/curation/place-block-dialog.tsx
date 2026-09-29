@@ -350,7 +350,7 @@ function PlaceAutocompleteInput({
       {open && suggestions.length > 0 && (
         <ul
           role="listbox"
-          className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg dark:bg-slate-900 dark:border-slate-800"
+          className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-900"
         >
           {suggestions.map((s) => (
             <li key={s.placeId}>

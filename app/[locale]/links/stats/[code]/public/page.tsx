@@ -63,7 +63,7 @@ export default function PublicStatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-card-flat">
         <div>
           <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
             {tPublic("title")}

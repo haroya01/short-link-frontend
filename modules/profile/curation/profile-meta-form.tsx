@@ -243,7 +243,7 @@ export function ProfileMetaForm({
           // Sticky on mobile so the button is reachable even when the user has scrolled the
           // username field out of view. Desktop keeps the inline button — sidebar layout means
           // the button is rarely far from the field.
-          <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-end gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm sm:relative sm:inset-auto sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none dark:border-slate-800">
+          <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-4 py-3 sm:relative sm:inset-auto sm:border-0 sm:bg-transparent sm:p-0 dark:border-slate-800 dark:bg-slate-950 sm:dark:bg-transparent">
             <span className="text-[11px] text-slate-500 sm:hidden dark:text-slate-400">
               {t("usernameUnsaved")}
             </span>

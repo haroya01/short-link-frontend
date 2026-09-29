@@ -320,7 +320,7 @@ function AddMenu({
         // demoted.
         <div
           role="menu"
-          className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg dark:bg-slate-900 dark:border-slate-800"
+          className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-900"
         >
           <MenuItem onClick={() => fire(onAddText)} icon={<Type className="h-3.5 w-3.5" />}>
             {t("addHeader")}

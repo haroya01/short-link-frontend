@@ -296,7 +296,7 @@ export function ConnectSheet({
         aria-labelledby="connect-sheet-title"
         // Bottom sheet slides up/down on mobile (same grammar as the account sheet); the sm+
         // centered card keeps the quiet fade pair instead. `relative` lifts it above the absolute scrim.
-        className={`relative flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-xl motion-reduce:animate-none dark:bg-slate-900 sm:max-w-md sm:rounded-2xl ${
+        className={`relative flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-modal motion-reduce:animate-none dark:bg-slate-900 sm:max-w-md sm:rounded-2xl ${
           closing
             ? "animate-[sheet-down_240ms_var(--ease)_both] sm:animate-fade-out"
             : "animate-[sheet-up_280ms_var(--ease)_both] sm:animate-fade-in"

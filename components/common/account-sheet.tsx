@@ -111,7 +111,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         }`}
       />
       <div
-        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900 ${
+        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl border-t border-slate-200 bg-white p-2 pb-0 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
           closing
             ? "animate-[sheet-down_240ms_var(--ease)_both]"
             : "animate-[sheet-up_280ms_var(--ease)_both]"

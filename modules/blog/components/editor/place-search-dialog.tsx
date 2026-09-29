@@ -111,7 +111,7 @@ export function PlaceSearchDialog({
         }`}
       />
       <div
-        className={`absolute left-1/2 top-24 w-[min(92vw,32rem)] -translate-x-1/2 rounded-2xl bg-white p-4 shadow-[0_12px_40px_-12px_rgba(15,23,42,0.4)] motion-reduce:animate-none dark:bg-slate-900 ${
+        className={`absolute left-1/2 top-24 w-[min(92vw,32rem)] -translate-x-1/2 rounded-2xl bg-white p-4 shadow-modal motion-reduce:animate-none dark:bg-slate-900 ${
           closing ? "animate-fade-out" : "animate-fade-in"
         }`}
       >

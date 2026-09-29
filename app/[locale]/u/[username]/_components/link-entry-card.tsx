@@ -125,7 +125,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
                 (h-14 w-14 outer circle, Play h-6 w-6) so the YouTube LINK variant reads as a
                 sibling of EmbedEntryCard rather than a smaller off-brand variant. */}
             <span className="absolute inset-0 grid place-items-center">
-              <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-sm">
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 text-white shadow-float backdrop-blur-sm">
                 <span className="text-xl leading-none translate-x-[1px]">▶</span>
               </span>
             </span>

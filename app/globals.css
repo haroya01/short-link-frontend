@@ -48,6 +48,10 @@
   --chart-tooltip-bg: #ffffff;
   --chart-tooltip-border: #e5e8e6;
   --chart-tooltip-text: #131a16;
+  /* 떠 있는 층 그림자 두 단(tailwind shadow-float·shadow-modal). 잉크색으로 물들인 그림자 —
+     기본 검정 그림자는 초록 저채도 종이 위에서 회색 얼룩으로 뜬다. */
+  --shadow-float: 0 1px 2px rgba(19, 26, 22, 0.06), 0 12px 28px -10px rgba(19, 26, 22, 0.2);
+  --shadow-modal: 0 1px 2px rgba(19, 26, 22, 0.06), 0 24px 56px -16px rgba(19, 26, 22, 0.3);
 }
 
 .dark {
@@ -55,6 +59,8 @@
   --chart-tooltip-bg: #131a16;
   --chart-tooltip-border: #3b423e;
   --chart-tooltip-text: #e5e8e6;
+  --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 28px -10px rgba(0, 0, 0, 0.7);
+  --shadow-modal: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 56px -16px rgba(0, 0, 0, 0.8);
 }
 
 /* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.

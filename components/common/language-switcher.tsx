@@ -44,7 +44,7 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-1 w-32 overflow-hidden rounded-md border border-slate-200 bg-white shadow-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+          className="absolute right-0 top-full z-40 mt-1 w-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-900"
         >
           {routing.locales.map((l) => (
             <button

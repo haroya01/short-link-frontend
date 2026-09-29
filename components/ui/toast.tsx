@@ -79,7 +79,7 @@ function ToastItem({
   return (
     <div
       className={cn(
-        "pointer-events-auto flex items-center gap-3 rounded-full pl-4 pr-2 py-2 text-sm shadow-lg",
+        "pointer-events-auto flex items-center gap-3 rounded-full pl-4 pr-2 py-2 text-sm shadow-float",
         closing ? "animate-toast-out" : "animate-toast-in",
         toast.variant === "success" && "bg-accent-700 text-white",
         toast.variant === "error" && "bg-red-600 text-white",

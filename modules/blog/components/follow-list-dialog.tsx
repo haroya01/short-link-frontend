@@ -109,7 +109,7 @@ export function FollowListDialog({
         aria-modal="true"
         aria-label={tab === "followers" ? t("followersTab") : t("followingTab")}
         tabIndex={-1}
-        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl animate-fade-in dark:border-slate-800 dark:bg-slate-900"
+        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-900"
       >
         {/* Tab header — two segments + a close affordance. */}
         <div className="flex items-center border-b border-slate-100 dark:border-slate-800">

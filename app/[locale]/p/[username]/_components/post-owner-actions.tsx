@@ -82,7 +82,7 @@ export function PostOwnerActions({
           role="dialog"
           aria-modal="true"
           aria-label={t("ownerDeleteConfirm")}
-          className="absolute right-0 top-full z-30 mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-lg dark:border-slate-700 dark:bg-slate-900"
+          className="absolute right-0 top-full z-30 mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-float dark:border-slate-700 dark:bg-slate-900"
         >
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
             {t("ownerDeleteConfirm")}

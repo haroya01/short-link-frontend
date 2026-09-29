@@ -244,8 +244,8 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                 className={
                   `overflow-hidden rounded-2xl border ${colors.card} ${colors.cardBorder} ` +
                   (isActive
-                    ? "shadow-[0_4px_16px_rgba(15,23,42,0.08)]"
-                    : "shadow-[0_1px_2px_rgba(15,23,42,0.04)]") +
+                    ? "shadow-lift"
+                    : "shadow-card-flat") +
                   " transition-shadow duration-300 " +
                   // Sold-out items dim the whole article so the visitor immediately sees "not
                   // available now" without having to read the badge. Image grayscale is applied

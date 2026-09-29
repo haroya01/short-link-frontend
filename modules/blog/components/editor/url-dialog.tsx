@@ -73,7 +73,7 @@ export function UrlDialog({
         aria-modal
         aria-label={title}
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+        className="w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-4 shadow-modal dark:border-slate-700 dark:bg-slate-900"
       >
         <div className="mb-2.5 flex items-center gap-2 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
           <Link2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />

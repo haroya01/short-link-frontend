@@ -110,7 +110,7 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
               aria-label={title}
               className="absolute inset-0 grid place-items-center bg-black/0 transition-colors hover:bg-black/10"
             >
-              <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-sm transition-transform duration-150 will-change-transform hover:scale-110">
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 text-white shadow-float backdrop-blur-sm transition-transform duration-150 will-change-transform hover:scale-110">
                 <Play className="h-6 w-6 translate-x-[1px] fill-current" />
               </span>
             </button>

@@ -113,7 +113,7 @@ export function StatsCards({
         disabled={!canNavigate("section-daily")}
         aria-disabled={!canNavigate("section-daily")}
         className={cn(
-          "relative col-span-full overflow-hidden rounded-2xl p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow] duration-200 ease-[var(--ease)] lg:col-span-1 dark:shadow-none",
+          "relative col-span-full overflow-hidden rounded-2xl p-0 text-left shadow-card-flat transition-[transform,box-shadow] duration-200 ease-[var(--ease)] lg:col-span-1 dark:shadow-none",
           canNavigate("section-daily")
             ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
@@ -196,7 +196,7 @@ function Stat({
       disabled={!interactive}
       aria-disabled={!interactive}
       className={cn(
-        "flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow,border-color] duration-200 ease-[var(--ease)] dark:shadow-none",
+        "flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-card-flat transition-[transform,box-shadow,border-color] duration-200 ease-[var(--ease)] dark:shadow-none",
         interactive
           ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",

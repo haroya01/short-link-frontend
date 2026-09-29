@@ -120,7 +120,7 @@ export function LocationField({
           autoComplete="off"
         />
         {open ? (
-          <div className="absolute top-full z-20 mt-1 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
+          <div className="absolute top-full z-20 mt-1 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-900">
             {suggestions.map((suggestion) => (
               <button
                 key={suggestion.placeId}

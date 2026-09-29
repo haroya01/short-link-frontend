@@ -225,7 +225,7 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                         left: menuPos.left,
                         width: menuPos.width,
                       }}
-                      className="z-[100] origin-top overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-xl animate-dropdown-in"
+                      className="z-[100] origin-top overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-float animate-dropdown-in"
                     >
                       {gcalHref && (
                         <a

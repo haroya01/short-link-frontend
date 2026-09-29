@@ -133,7 +133,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           // 클릭을 받으면 카드 없는 왼쪽이 투명한 차단막이 된다.
           // 폰에선 문구 아래로 버튼 줄을 내린다 — 버튼이 둘이 되면서 한 줄에 다 넣으면 문구가
           // 서너 글자 폭으로 눌린다. sm+ 는 지금처럼 한 줄.
-          "pointer-events-auto glass-chrome mx-3 flex flex-col gap-2 rounded-2xl border border-slate-200/60 px-4 py-3 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] sm:ml-auto sm:mr-0 sm:max-w-[560px] sm:flex-row sm:items-center sm:gap-3 sm:px-3.5 sm:py-3",
+          "pointer-events-auto glass-chrome mx-3 flex flex-col gap-2 rounded-2xl border border-slate-200/60 px-4 py-3 shadow-float sm:ml-auto sm:mr-0 sm:max-w-[560px] sm:flex-row sm:items-center sm:gap-3 sm:px-3.5 sm:py-3",
           darkAware && "dark:border-slate-800/60",
         )}
       >
