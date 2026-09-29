@@ -22,7 +22,6 @@ import type { PlaceCategory } from "@/types";
 import { parsePlaceConfig } from "@/modules/profile/lib/block-config-parsers";
 import { directionsUrl, staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import type { ThemeColors } from "../_lib/theme";
-import { CardFloatingChip } from "./card-floating-chip";
 
 type Props = {
   content: string;
@@ -117,11 +116,6 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
               className="h-full w-full object-cover"
             />
           ) : null}
-          {CategoryIcon && (
-            <CardFloatingChip position="top-left" icon={<CategoryIcon className="h-3 w-3" />}>
-              {t(`category_${config.category}` as const)}
-            </CardFloatingChip>
-          )}
           <button
             type="button"
             onClick={share}
@@ -133,6 +127,12 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
         </div>
 
         <div className="space-y-1.5 px-4 pt-3">
+          {CategoryIcon && (
+            <p className={`flex items-center gap-1 text-[12px] font-medium ${colors.muted}`}>
+              <CategoryIcon className="h-3 w-3" aria-hidden />
+              {t(`category_${config.category}` as const)}
+            </p>
+          )}
           <h3 className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
             {config.name}
           </h3>
