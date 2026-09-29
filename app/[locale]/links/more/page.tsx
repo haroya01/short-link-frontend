@@ -30,7 +30,7 @@ export default function MorePage() {
 
   if (!me) {
     return (
-      <div aria-busy className="container max-w-2xl space-y-6 py-12">
+      <div aria-busy className="container max-w-3xl space-y-6 py-8">
         <Skeleton className="h-9 w-32" />
         <Skeleton className="h-64 w-full rounded-2xl" />
       </div>
@@ -38,7 +38,7 @@ export default function MorePage() {
   }
 
   return (
-    <div className="container max-w-2xl space-y-6 py-12">
+    <div className="container max-w-3xl space-y-6 py-8">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
         {t("title")}
       </h1>

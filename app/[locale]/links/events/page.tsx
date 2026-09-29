@@ -40,7 +40,7 @@ export default function EventsListPage() {
   }
 
   return (
-    <div className="container max-w-3xl py-10">
+    <div className="container max-w-5xl py-8">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
