@@ -186,7 +186,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-4 py-6 max-sm:pb-24">
+    <div className="container max-w-5xl space-y-4 py-8 max-sm:pb-24">
       <div className="flex items-end justify-between gap-3">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
