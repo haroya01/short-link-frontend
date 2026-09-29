@@ -127,21 +127,14 @@ export default function PostAnalyticsPage() {
             <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollowsGained")} value={data.lifetimeFollows} />
           </div>
 
-          <div className="mt-3 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50/50 p-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-accent-700 dark:text-accent-300">
-                <MousePointerClick className="h-4 w-4" />
-                <span className="text-[13px] font-semibold">{t("analyticsLinkClicks")}</span>
-              </div>
-              <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
-                {days === 0
-                  ? t("analyticsAllClicks", { count: data.windowLinkClicks })
-                  : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
-              </p>
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-accent-700 dark:text-accent-300">
-              {data.lifetimeLinkClicks.toLocaleString()}
-            </span>
+          <div className="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800">
+            <StatCard
+              icon={<MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+              label={t("analyticsLinkClicks")}
+              value={data.lifetimeLinkClicks}
+              tone="accent"
+              sub={days === 0 ? undefined : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
+            />
           </div>
 
           {/* 글 안 링크별 분해 — 합계가 어느 링크에서 나왔는지. 링크가 있을 때만 노출. */}
