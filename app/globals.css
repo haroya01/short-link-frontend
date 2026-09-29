@@ -2161,8 +2161,16 @@ html[data-theme-vt] .vt-post-cover {
 .obs-pop { animation: obs-pop 0.5s var(--ease) both; }
 .obs-draw { stroke-dasharray: 100; animation: obs-draw 1.4s ease-out both; }
 .obs-bar { transform-origin: left center; animation: obs-bar 0.8s var(--ease) both; }
+/* 소개 그림(rv-*) — 로그아웃 소개면의 목업. 화면에 들어올 때 한 번만 결과를 그린다(틀은 늘 보임).
+   숨김은 data-js 가 있을 때만 — 스크립트가 돌지 않으면 완성 그림 그대로 남는다. */
+html[data-js] [data-reveal="off"] :is(.rv-rise, .rv-pop) { opacity: 0; }
+html[data-js] [data-reveal="off"] .rv-bar { opacity: 0.4; transform: scaleX(0.06); transform-origin: left center; }
+[data-reveal="on"] .rv-rise { animation: obs-rise 0.6s var(--ease) both; }
+[data-reveal="on"] .rv-pop { animation: obs-pop 0.5s var(--ease) both; }
+[data-reveal="on"] .rv-bar { transform-origin: left center; animation: obs-bar 0.8s var(--ease) both; }
 @media (prefers-reduced-motion: reduce) {
   .obs-rise, .obs-pop, .obs-bar { animation: none; opacity: 1; transform: none; }
+  html[data-js] [data-reveal] :is(.rv-rise, .rv-pop, .rv-bar) { animation: none; opacity: 1; transform: none; }
   .obs-draw { animation: none; stroke-dashoffset: 0; }
 }
 

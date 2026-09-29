@@ -206,6 +206,8 @@ export default async function RootLayout({
     "(function(){try{" +
     // 첫 하드 로드 표식 — 서버 HTML 로 연 화면은 진입 모션 없이 그린다(첫 내비게이션에 FirstLoadMark 가 뗌).
     "document.documentElement.setAttribute('data-first-load','');" +
+    // JS 가 도는 문서 표식 — 소개 그림은 이게 있을 때만 결과를 숨겨 두었다가 보일 때 그린다.
+    "document.documentElement.setAttribute('data-js','');" +
     "var h=location.hostname,P=" + JSON.stringify(platformHost) + ",onP=(h===P||h.endsWith('.'+P));" +
     "var seg=location.pathname.split('/')[2];" +
     "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
