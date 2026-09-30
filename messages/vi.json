@@ -2316,7 +2316,6 @@
   "learn": {
     "metaTitle": "Liên kết ngắn · Rút gọn URL · Hướng dẫn link in bio",
     "metaDescription": "Rút gọn URL là gì, liên kết ngắn khác trang link-in-bio thế nào, và kurl làm cả hai ra sao.",
-    "eyebrow": "Hướng dẫn · FAQ",
     "title": "Liên kết ngắn và link-in-bio, giải thích cho người mới",
     "lead": "Những câu hỏi thường gặp về rút gọn URL, về kurl, và về sự khác nhau giữa trang hồ sơ với một liên kết ngắn.",
     "q1": {
@@ -2343,9 +2342,7 @@
       "q": "Có tính phí không?",
       "a": "Mọi tính năng đều miễn phí: rút gọn, phân tích, trang hồ sơ, mọi loại khối và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
     },
-    "ctaTitle": "Rút gọn một URL",
-    "ctaSubtitle": "Không cần đăng nhập. Đăng nhập để giữ thống kê của bạn.",
-    "ctaButton": "Bắt đầu rút gọn"
+    "ctaButton": "Rút gọn một URL"
   },
   "terms": {
     "title": "Điều khoản dịch vụ",

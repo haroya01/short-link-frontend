@@ -2316,7 +2316,6 @@
   "learn": {
     "metaTitle": "Short links · URL shortener · Link in bio guide",
     "metaDescription": "What URL shortening is, how short links differ from link-in-bio pages, and how kurl does both.",
-    "eyebrow": "Guide · FAQ",
     "title": "Short links and link-in-bio, explained for beginners",
     "lead": "Common questions about URL shortening, what kurl does, and how a profile page differs from a single short link.",
     "q1": {
@@ -2343,9 +2342,7 @@
       "q": "Is it paid?",
       "a": "Every feature is free: shortening, analytics, profile pages, every block type and custom domains.\n\nThere's no paid plan, and no ads."
     },
-    "ctaTitle": "Shorten a URL",
-    "ctaSubtitle": "No sign-in needed. Sign in to keep your stats.",
-    "ctaButton": "Start shortening"
+    "ctaButton": "Shorten a URL"
   },
   "terms": {
     "title": "Terms of Service",
