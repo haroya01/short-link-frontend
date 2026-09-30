@@ -279,7 +279,7 @@ export function FeedCard({
             tabIndex={-1}
             data-bhv="post"
             data-bhv-id={`${item.author.username}/${item.slug}`}
-            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 ${
+            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >
@@ -299,7 +299,7 @@ export function FeedCard({
         // Pinned to the whole card's top-right so it's in the same spot on every row regardless of
         // whether the row has a thumbnail. Sibling of the post links (never nested in an <a>).
         <div className="absolute right-3 top-4 z-10">
-          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} overImage={hasImage} />
         </div>
       )}
     </li>

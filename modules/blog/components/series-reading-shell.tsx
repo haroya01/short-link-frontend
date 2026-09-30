@@ -281,7 +281,7 @@ export function SeriesReadingShell({
                     )}
                   </span>
                   {hasImage && (
-                    <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
+                    <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 sm:h-24 sm:w-32">
                       <CoverThumb
                         src={p.ogImageUrl as string}
                         sizes="(min-width: 640px) 128px, 80px"
@@ -292,7 +292,7 @@ export function SeriesReadingShell({
                 </BlogLink>
                 {/* Save toggle — sibling of the post link (never nested), pinned to the row's top-right. */}
                 <div className="absolute right-3 top-4 z-10">
-                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} />
+                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} overImage={hasImage} />
                 </div>
               </li>
             );
