@@ -90,23 +90,26 @@
 }
 
 /* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.
-   토스트도 탭바 위로 올린다 — 안 그러면 bottom-6 토스트가 탭을 덮어 클릭을 가로챈다. */
-body[data-bottom-nav] {
+   토스트도 탭바 위로 올린다 — 안 그러면 bottom-6 토스트가 탭을 덮어 클릭을 가로챈다.
+   탭바는 서버 HTML 에 이미 있으므로 :has() 로 첫 페인트부터 맞춘다. body[data-bottom-nav] 는
+   hydration 뒤에야 붙어, 그 전까지 배너가 탭바를 덮고 있다가 튀어 올랐다. :is() 의 목록은 관대하게
+   읽혀서 :has() 를 모르는 브라우저는 그 항만 버리고 속성 쪽으로 동작한다. */
+body:is([data-bottom-nav], :has(.vt-bottom-nav)) {
   --cookie-bottom: var(--bottom-nav-h);
   --toast-bottom: calc(var(--bottom-nav-h) + 0.75rem);
 }
 @media (max-width: 639px) {
-  body[data-bottom-nav] {
+  body:is([data-bottom-nav], :has(.vt-bottom-nav)) {
     --fab-bottom: calc(var(--bottom-nav-h) + 1rem);
   }
-  body[data-bottom-nav][data-composer] {
+  body:is([data-bottom-nav], :has(.vt-bottom-nav))[data-composer] {
     --toast-bottom: calc(var(--bottom-nav-h) + 4.5rem);
     --cookie-bottom: calc(var(--bottom-nav-h) + 3.75rem);
   }
 }
 
 @media (max-width: 639px) {
-  body[data-bottom-nav] .site-footer {
+  body:is([data-bottom-nav], :has(.vt-bottom-nav)) .site-footer {
     padding-bottom: calc(var(--bottom-nav-h) + 1.5rem);
   }
 }
