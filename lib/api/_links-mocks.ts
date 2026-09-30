@@ -88,9 +88,6 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       const size = Number(qs.get("size") ?? 50);
       return { items: rows.slice(start, start + size), hasMore: start + size < rows.length, nextCursor: start + size < rows.length ? String(start + size) : null };
     }
-    // 홈 히어로 라이브 티커 + 공개 카운터 — 목에서도 실값 모양으로.
-    case "/api/v1/public/stats":
-      return { links: 1128, clicks: 46214 };
     case "/api/v1/tags":
       return [
         { id: 1, name: "promo", color: null, linkCount: 2, createdAt: "2026-05-11T11:00:00Z" },

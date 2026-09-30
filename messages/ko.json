@@ -918,75 +918,13 @@
     }
   },
   "home": {
-    "tagline": "kurl v1",
     "headline1": "단축은 <line>한 줄</line>",
     "headline2": "클릭은 언제, 어디서",
     "subhead": "긴 주소를 붙여 넣으면 바로 짧아져요. 누가 언제 어디서 눌렀는지 보여 드리고, 봇 클릭은 따로 걸러요.",
     "mobileSubhead": "누가 언제 어디서 눌렀는지, 봇은 따로 걸러서 보여 드려요.",
     "anonymousHint": "로그인 없이 무료로 줄일 수 있어요. 로그인하면 통계를 보고 비밀번호도 걸 수 있어요.",
     "demoLink": "통계 화면 미리 보기",
-    "previews": {
-      "eyebrow": "단축 1분 안에 확인할 수 있는 화면들",
-      "see": "보기",
-      "stats": {
-        "title": "통계 대시보드",
-        "desc": "사람과 봇을 나누고 채널·국가·시간대까지 자동으로 봐요. 30일 추이와 히트맵도 있어요."
-      },
-      "profile": {
-        "title": "공개 프로필",
-        "desc": "링크를 모두 모은 한 페이지. Instagram bio, X(트위터) 어디든 그대로 붙여요."
-      },
-      "domain": {
-        "title": "본인 도메인",
-        "desc": "go.brand.com 같은 내 도메인으로 단축해요. TXT·CNAME 검증도 자동이에요."
-      }
-    },
-    "ctaSeeLinks": "내 링크 전체 보기",
-    "loginCta": "로그인하면 이 링크의 <clickStats>클릭 통계</clickStats>를 계속 보관하고 분석할 수 있어요.",
-    "features": {
-      "realtime": {
-        "title": "실시간 클릭 피드 (SSE)",
-        "desc": "통계 페이지에서 클릭이 들어오는 순간 시간·국가·채널·디바이스가 라이브로 흘러요",
-        "preview": {
-          "eyebrow": "실시간 클릭",
-          "live": "라이브"
-        }
-      },
-      "insights": {
-        "title": "자동 인사이트",
-        "desc": "피크 시간·재방문율·가속도까지, 별도 설정 없이 바로 확인할 수 있어요",
-        "preview": {
-          "heading": "이번 주 인사이트",
-          "humanLabel": "사람 클릭",
-          "humanSub": "전체 중 91%",
-          "topLinkLabel": "탑 링크",
-          "topLinkSub": "638 · instagram",
-          "peakLabel": "피크",
-          "peakValue": "수 21시",
-          "peakSub": "이 시간대 클릭 38%",
-          "wowLabel": "전주 대비",
-          "wowSub": "지난주 사람 클릭"
-        }
-      },
-      "abtest": {
-        "title": "A/B 분배와 국가별 라우팅",
-        "desc": "단축 URL 하나로 방문자를 가중치로 분산하고, 국가에 맞는 페이지로 자동 분기해요 (링크당 4개)",
-        "preview": {
-          "explainer": "같은 단축 URL의 클릭을 가중치와 방문자 국가에 따라 나눠 보내요. 맞는 규칙이 없으면 기본 목적지로 가요.",
-          "controlLabel": "기본 (원본 URL)"
-        }
-      }
-    },
     "recentTitle": "최근 만든 링크",
-    "statsEyebrow": "live",
-    "statsTitle": "kurl 전체에서",
-    "statsSubhead": "지금까지 만들어진 단축 링크와 분석된 클릭이에요.",
-    "featuresEyebrow": "what you get",
-    "featuresTitle": "다른 단축 서비스 무료 플랜엔 없는 3가지",
-    "featuresSubhead": "실시간 클릭 피드, 자동 인사이트, A/B·국가 분기까지. HMAC 웹훅·2FA TOTP·Google Safe Browsing은 기본으로 들어가 있어요.",
-    "whyEyebrow": "why kurl",
-    "whyTitle": "왜 다른 곳에선 이걸 안 주는 걸까요?",
-    "whySubhead": "보통 엔터프라이즈 플랜에서나 주는 기능을, 여기선 무료로 기본 제공해요.",
     "stage": {
       "title": "로그인하면 링크마다 이런 통계가 생겨요",
       "desc": "클릭이 들어올 때마다 기록돼요. 통계는 전부 무료이고, 아래 화면은 예시 데이터예요.",
@@ -2356,48 +2294,6 @@
     "vi": "Tiếng Việt",
     "hi": "हिन्दी"
   },
-  "whyKurl": {
-    "th": {
-      "feature": "기능",
-      "others": "보통의 무료 단축기"
-    },
-    "paidTier": "유료 플랜",
-    "disclaimer": "비교 대상: bit.ly·short.io·rebrandly·TinyURL의 무료 플랜 기준 (2026).",
-    "rows": {
-      "abtest": {
-        "label": "A/B 분배: 한 링크에 목적지 여러 개",
-        "note": "목적지마다 비율을 설정하면 클릭이 자동으로 분산돼요. 보통 엔터프라이즈 플랜에만 있는 기능이에요."
-      },
-      "geoRouting": {
-        "label": "국가별 목적지 분기",
-        "note": "방문자 IP 국가에 맞는 페이지로 자동 라우팅해요. 무료로 주는 곳이 거의 없어요."
-      },
-      "webhooks": {
-        "label": "클릭 자동 알림 (Slack · Discord · 자체 서버)",
-        "note": "클릭마다 Slack·Discord·내 서버로 알림을 보내요. 자체 서버 POST엔 HMAC 서명이 자동으로 붙어요."
-      },
-      "realtime": {
-        "label": "실시간 클릭 피드",
-        "note": "통계 페이지에서 클릭이 들어오는 순간 라이브로 흘러요. 다른 서비스엔 거의 없는 기능이에요."
-      },
-      "insights": {
-        "label": "자동 인사이트",
-        "note": "피크 시간 · 재방문율 · 클릭 가속도를 설정 없이 바로 보여줘요"
-      },
-      "asnTracking": {
-        "label": "데이터센터 클릭 자동 분리",
-        "note": "AWS·GCP 같은 주요 클라우드 대역(ASN)에서 온 클릭을 봇으로 분류해요. 다른 서비스에선 보기 힘들어요."
-      },
-      "botDefense": {
-        "label": "다층 봇 방어",
-        "note": "Safe Browsing, 익명 단축 챌린지, 데이터센터 자동 분리"
-      },
-      "twofa": {
-        "label": "2단계 인증과 복구 코드",
-        "note": "인증 앱과 1회용 복구 코드 10개. 다른 곳에선 보통 유료 기능이에요."
-      }
-    }
-  },
   "footer": {
     "copyright": "© {year} kurl",
     "about": "서비스 소개",
@@ -3130,10 +3026,6 @@
       "usageCliHint": "kurl-publish.py 스크립트 받기 (GitHub)"
     }
   },
-  "homeStats": {
-    "linksLabel": "단축된 링크",
-    "clicksLabel": "분석된 클릭"
-  },
   "publicStats": {
     "title": "공개 통계",
     "publicBadge": "공개",
@@ -3445,21 +3337,6 @@
         "meta": "/ {quantity}장 · {rate}%"
       }
     }
-  },
-  "homeFaq": {
-    "title": "자주 묻는 질문",
-    "q1": "단축 링크는 영구 보존되나요?",
-    "a1": "로그인 없이 만든 단축 링크는 24시간 후 자동으로 만료돼요. 로그인 후 만든 링크는 직접 삭제하기 전까지 계속 보관돼요.",
-    "q2": "비밀번호 없이 사용할 수 있나요?",
-    "a2": "네, 로그인하지 않아도 단축할 수 있어요. 통계 확인과 영구 보관은 Google 로그인이 필요해요.",
-    "q3": "통계는 어디서 보나요?",
-    "a3": "내 링크 페이지에서 코드를 누르면 디바이스/채널/국가/시간대 등 8종 분석을 볼 수 있어요.",
-    "q4": "카톡/슬랙에 붙이면 미리보기가 뜨나요?",
-    "a4": "네. 카톡·Slack·Discord 미리보기 카드가 모두 정상으로 떠요. 이 앱들이 링크 정보를 가져갈 때 kurl이 바로 넘기지 않고, 제목·설명·이미지가 담긴 미리보기 페이지를 따로 돌려주기 때문이에요.",
-    "q5": "악성 URL은 어떻게 차단되나요?",
-    "a5": "단축하는 순간 Google Safe Browsing으로 검사해요. 차단된 URL은 단축하지 않아요.",
-    "q6": "API가 있나요?",
-    "a6": "네. 개발자용 API가 있어요. 설정 > API 키에서 키를 발급받아 단축·통계 API를 호출할 수 있어요."
   },
   "campaignStatus": {
     "DRAFT": "시작 전",

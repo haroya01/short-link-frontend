@@ -5,7 +5,7 @@ import path from "node:path";
  * Mobile landing-page artifact spec.
  *
  * Boots the landing in two mobile viewports (iPhone 13 — 375x812 and iPhone 11 Pro Max — 414x896),
- * walks each major landing section (hero, previews, counters, feature carousel, why-kurl, FAQ),
+ * walks each landing section (hero, stats example),
  * takes a focused element screenshot of each, and writes the PNG to
  * `test-results/landing-mobile/<viewport>/<section>.png` so PR reviewers can inspect the mobile
  * layout without booting a phone.
@@ -20,13 +20,8 @@ import path from "node:path";
  */
 
 const SECTIONS: { id: string; selector: string }[] = [
-  { id: "hero", selector: "section.grid-bg" },
-  // Use ul.grid as the anchor — it's a stable handle for the 4 preview cards.
-  { id: "previews", selector: "section:has(> div > ul.grid)" },
-  { id: "counters", selector: "section:has(dl.grid-cols-2)" },
-  { id: "features", selector: 'section:has-text("단순 단축이 아닙니다")' },
-  { id: "why-kurl", selector: 'section:has-text("이걸 다른 데선 왜 안 줄까")' },
-  { id: "faq", selector: 'section:has-text("자주 묻는 질문")' },
+  { id: "hero", selector: 'section:has([data-testid="home-hero-heading"])' },
+  { id: "stats-example", selector: "section.border-t" },
 ];
 
 const VIEWPORTS: { name: string; width: number; height: number }[] = [

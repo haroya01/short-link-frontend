@@ -373,20 +373,6 @@ mark.kurl-highlight--thread {
   }
 
   /*
-   * Card surface — single soft 1px falloff at rest, a slightly deeper falloff on hover. The
-   * earlier version layered three shadows (inner highlight + near + far) to fake a printed-card
-   * bevel; on a luxury / refined surface that read as ornament rather than depth. We keep the
-   * class so existing call sites do not have to change, but the shadow is now a single near
-   * layer that pairs with the card's own border for separation.
-   */
-  .card-highlight {
-    box-shadow: 0 1px 3px rgba(19, 26, 22, 0.04);
-  }
-  .card-highlight:hover {
-    box-shadow: 0 4px 12px -4px rgba(19, 26, 22, 0.08);
-  }
-
-  /*
    * Tighter tracking utility for the Pretendard headline path — Pretendard's default tracking
    * is generous for body comfort, which makes large headlines feel airy. Applying -0.025em on
    * h1/h2 size only restores the editorial density without affecting body comfort. Pretendard

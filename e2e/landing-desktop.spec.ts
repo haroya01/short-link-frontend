@@ -17,12 +17,8 @@ import path from "node:path";
  */
 
 const SECTIONS: { id: string; selector: string }[] = [
-  { id: "hero", selector: "section.grid-bg" },
-  { id: "previews", selector: "section:has(> div > ul.grid)" },
-  { id: "counters", selector: "section:has(dl.grid-cols-2)" },
-  { id: "features", selector: 'section:has-text("단순 단축이 아닙니다")' },
-  { id: "why-kurl", selector: 'section:has-text("이걸 다른 데선 왜 안 줄까")' },
-  { id: "faq", selector: 'section:has-text("자주 묻는 질문")' },
+  { id: "hero", selector: 'section:has([data-testid="home-hero-heading"])' },
+  { id: "stats-example", selector: "section.border-t" },
 ];
 
 const VIEWPORTS: { name: string; width: number; height: number }[] = [

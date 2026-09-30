@@ -3,41 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import dynamic from "next/dynamic";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
-import { FeatureCarousel } from "@/components/landing/feature-carousel";
-import { HomeCounters } from "@/components/landing/home-counters";
 import { HomeStatsExample } from "@/components/landing/home-stats-example";
-import { useStageVariant } from "@/lib/stage-flag";
-import { usePublicTotals } from "@/lib/api/stats.queries";
 import { HomeRecent } from "@/components/links/home-recent";
 import { useAuth } from "@/lib/auth";
 import { useRecentLinks } from "@/lib/recent-links";
 import { useSharedUrl } from "@/lib/use-shared-url";
 import { Link, useRouter } from "@/i18n/navigation";
 
-// Below-fold sections split into their own chunks (SSR HTML unchanged) so the above-fold form +
-// header hydrate without parsing the preview/FAQ code first — on a throttled phone that's the
-// difference between the first tap landing instantly or during hydration jank. The feature
-// carousel is the one EXCEPTION and stays statically imported (see the import block above): it
-// autoplays, so its glyph-warmup layer (feature-carousel.tsx) must request every slide's font
-// subsets at first paint — as a lazy chunk those loads slid to chunk-arrival time and the late
-// font-face events re-recorded the hero h1 as the LCP mid-measurement. The other sections only
-// reveal new glyphs on scroll, and scrolling is a user input that finalizes LCP, so lazy chunks
-// are safe there.
-const LandingPreviews = dynamic(
-  () => import("@/components/landing/landing-previews").then((m) => m.LandingPreviews),
-);
-const WhyKurl = dynamic(() => import("@/components/landing/why-kurl").then((m) => m.WhyKurl));
-const HomeFaq = dynamic(() => import("@/components/landing/home-faq").then((m) => m.HomeFaq));
 
 export default function HomePage() {
   const { authenticated, ready } = useAuth();
   const t = useTranslations("home");
   const locale = useLocale();
-  // 무대(Stage)가 기본 랜딩(2026-07-23 졸업). ?stage=off(쿠키/비상 env)로만 레거시 구성이
-  // 남아 있다 — 완전 철거 전까지의 안전핀.
-  const stage = useStageVariant();
   const headlineSizeClass =
     locale === "ja"
       ? "text-[28px] leading-[1.12] min-[390px]:text-[29px] sm:text-[46px]"
@@ -58,8 +36,6 @@ export default function HomePage() {
     if (!ready || !authenticated) return;
     router.replace(`/dashboard${arrivedWith.current}`);
   }, [ready, authenticated, router]);
-  const { data: totals } = usePublicTotals();
-  const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
 
   if (ready && authenticated) return <div className="min-h-screen" />;
 
@@ -127,132 +103,22 @@ export default function HomePage() {
       {/* 글리프 워밍업 — 예시 섹션 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
           늦게 오는 font-face 이벤트가 뷰포트 안 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
           모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
-      {stage === "on" && (
-        <div aria-hidden className="invisible absolute h-0 overflow-hidden">
-          <span className="text-headline-sm font-bold">{t("stage.title")}</span>
-          <span>{t("stage.desc")}</span>
-          <span className="font-semibold">{t("stage.feedTitle")}</span>
-          <span className="font-semibold">{t("stage.trendTitle")}</span>
-        </div>
-      )}
-
-      {/* 기본 = 도구 먼저: 폼·최근 링크가 주인공이고, 설명은 로그아웃 방문자에게만 한 섹션.
-          ready 전에는 pre-paint 인증 힌트(data-auth-slot)로 로그인 사용자에게 숨겨 둔다.
-          ?stage=off = 레거시 구성(롤백 확인용). */}
-      {stage === "on" ? (
-        !ready ? (
-          <div data-auth-slot="anon">
-            <HomeStatsExample />
-          </div>
-        ) : !authenticated ? (
-          <HomeStatsExample />
-        ) : null
-      ) : (
-        <LandingPreviews />
-      )}
-
-      {/*
-       * Counters always render so the layout doesn't shift when usePublicTotals resolves —
-       * skeleton placeholders claim the same height as the final value, dropping CLS to ~0.
-       */}
-      {stage !== "on" && (
-        <>
-          <Section
-            eyebrow={t("statsEyebrow")}
-            title={t("statsTitle")}
-            subhead={t("statsSubhead")}
-          >
-            {totals != null && showStats ? (
-              <HomeCounters totals={totals} />
-            ) : (
-              <dl className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-800 text-center" aria-hidden>
-                {[0, 1].map((i) => (
-                  <div key={i} className="px-6 py-2">
-                    <div className="mx-auto h-12 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-800 sm:h-14" />
-                    <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-50 dark:bg-slate-800/50" />
-                  </div>
-                ))}
-              </dl>
-            )}
-          </Section>
-
-          <Section
-            wide
-            eyebrow={t("featuresEyebrow")}
-            title={t("featuresTitle")}
-            subhead={t("featuresSubhead")}
-          >
-            <FeatureCarousel />
-          </Section>
-        </>
-      )}
-
-      {stage !== "on" && (
-        <>
-          <Section
-            wide
-            eyebrow={t("whyEyebrow")}
-            title={t("whyTitle")}
-            subhead={t("whySubhead")}
-          >
-            <WhyKurl />
-          </Section>
-
-          <Section>
-            <HomeFaq />
-          </Section>
-        </>
-      )}
-    </div>
-  );
-}
-
-/*
- * Section primitive — earlier version stacked a centered eyebrow / h2 / subhead on every block.
- * Now each section opens with the shared `.section-divider` (hairline + accent dot) so the
- * transition between blocks reads as a deliberate page break, then the eyebrow / title use the
- * same Pretendard semibold + `.tracking-headline` (−0.025em) as the hero. Single sans family
- * across the app, no display-serif swap — weight and tracking carry the editorial moment.
- */
-function Section({
-  children,
-  eyebrow,
-  title,
-  subhead,
-  wide,
-}: {
-  children: React.ReactNode;
-  eyebrow?: string;
-  title?: string;
-  subhead?: string;
-  wide?: boolean;
-}) {
-  const hasHeader = eyebrow || title || subhead;
-  return (
-    <section className="bg-white dark:bg-slate-950">
-      <div className={"container py-16 sm:py-20 " + (wide ? "max-w-5xl" : "max-w-3xl")}>
-        <div className="section-divider mx-auto mb-12 w-full max-w-xl" aria-hidden />
-        {hasHeader && (
-          <div className="mb-10 space-y-3 text-center sm:mb-14">
-            {eyebrow && (
-              <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
-                {eyebrow}
-              </p>
-            )}
-            {title && (
-              <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
-                {title}
-              </h2>
-            )}
-            {subhead && (
-              <p className="mx-auto max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
-                {subhead}
-              </p>
-            )}
-          </div>
-        )}
-        {children}
+      <div aria-hidden className="invisible absolute h-0 overflow-hidden">
+        <span className="text-headline-sm font-bold">{t("stage.title")}</span>
+        <span>{t("stage.desc")}</span>
+        <span className="font-semibold">{t("stage.feedTitle")}</span>
+        <span className="font-semibold">{t("stage.trendTitle")}</span>
       </div>
-    </section>
+
+      {/* 도구 먼저: 폼·최근 링크가 주인공이고, 설명은 로그아웃 방문자에게만 한 섹션.
+          ready 전에는 pre-paint 인증 힌트(data-auth-slot)로 로그인 사용자에게 숨겨 둔다. */}
+      {!ready ? (
+        <div data-auth-slot="anon">
+          <HomeStatsExample />
+        </div>
+      ) : !authenticated ? (
+        <HomeStatsExample />
+      ) : null}
+    </div>
   );
 }
