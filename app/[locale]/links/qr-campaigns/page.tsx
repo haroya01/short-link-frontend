@@ -30,44 +30,55 @@ export default function QrCampaignsLandingPage() {
 
   return (
     <div className="bg-white dark:bg-slate-950">
-      <PromoHero
-        title={
-          <>
-            {t("hero.title1")}
-            <br />
-            <span className="font-medium">{t("hero.title2")}</span>
-          </>
-        }
-        lead={t("hero.sub")}
-        action={
-          <Link href={ctaHref} className={buttonVariants({ variant: "accent", size: "xl" })}>
-            {t("hero.cta")}
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
-        }
-      />
+      {/* data-section-idx = 폰에서 한 화면에 들어와야 하는 단위(사용자 요구, e2e qr-campaigns-mobile-height). */}
+      <div data-section-idx={0}>
+        <PromoHero
+          title={
+            <>
+              {t("hero.title1")}
+              <br />
+              <span className="font-medium">{t("hero.title2")}</span>
+            </>
+          }
+          lead={t("hero.sub")}
+          action={
+            <Link href={ctaHref} className={buttonVariants({ variant: "accent", size: "xl" })}>
+              {t("hero.cta")}
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          }
+        />
+      </div>
 
       <PromoSection title={t("example.title")} desc={t("example.desc")}>
         <PromoExample className="space-y-4">
-          <KpiRow stats={stats} batchCount={stats.byBatch.length} />
+          <div data-section-idx={1}>
+            <KpiRow stats={stats} batchCount={stats.byBatch.length} />
+          </div>
           <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
-            <GroupChart title={tStats("groups.areaTitle")} hint={tStats("groups.areaHint")} groups={stats.byArea} />
-            <RecommendationCard data={recommendation} />
+            <div data-section-idx={2}>
+              <GroupChart title={tStats("groups.areaTitle")} hint={tStats("groups.areaHint")} groups={stats.byArea} />
+            </div>
+            <div data-section-idx={3}>
+              <RecommendationCard data={recommendation} />
+            </div>
           </div>
         </PromoExample>
 
-        <PromoLines
-          items={LINES.map((key) => ({
-            title: `${t(`${key}.line1`)}${join}${t(`${key}.line2`)}`.replace(/[.。।]$/, ""),
-            body: t(`${key}.aux`),
-          }))}
-        />
+        <div data-section-idx={4}>
+          <PromoLines
+            items={LINES.map((key) => ({
+              title: `${t(`${key}.line1`)}${join}${t(`${key}.line2`)}`.replace(/[.。।]$/, ""),
+              body: t(`${key}.aux`),
+            }))}
+          />
 
-        <PromoActions>
-          <Link href={ctaHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
-            {t("hero.cta")}
-          </Link>
-        </PromoActions>
+          <PromoActions>
+            <Link href={ctaHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
+              {t("hero.cta")}
+            </Link>
+          </PromoActions>
+        </div>
       </PromoSection>
     </div>
   );

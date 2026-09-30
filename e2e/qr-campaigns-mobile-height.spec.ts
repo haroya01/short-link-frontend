@@ -24,18 +24,16 @@ test.describe("qr-campaigns hero visible across reloads", () => {
       const opacities = await page.evaluate(() => {
         const hero = document.querySelector('[data-section-idx="0"]');
         if (!hero) return null;
-        const eyebrow = hero.querySelector("p.text-accent-700");
-        const titleSpans = hero.querySelectorAll("h1 span");
+        const title = hero.querySelector("h1");
+        const lead = hero.querySelector("h1 + p");
         return {
-          eyebrow: eyebrow ? Number(getComputedStyle(eyebrow).opacity) : null,
-          title1: titleSpans[0] ? Number(getComputedStyle(titleSpans[0]).opacity) : null,
-          title2: titleSpans[1] ? Number(getComputedStyle(titleSpans[1]).opacity) : null,
+          title: title ? Number(getComputedStyle(title).opacity) : null,
+          lead: lead ? Number(getComputedStyle(lead).opacity) : null,
         };
       });
       expect(opacities, `reload #${i + 1}: hero DOM not found`).not.toBeNull();
-      expect(opacities!.eyebrow, `reload #${i + 1}: eyebrow stuck at opacity ${opacities!.eyebrow}`).toBeGreaterThan(0.9);
-      expect(opacities!.title1, `reload #${i + 1}: title1 stuck at opacity ${opacities!.title1}`).toBeGreaterThan(0.9);
-      expect(opacities!.title2, `reload #${i + 1}: title2 stuck at opacity ${opacities!.title2}`).toBeGreaterThan(0.9);
+      expect(opacities!.title, `reload #${i + 1}: title stuck at opacity ${opacities!.title}`).toBeGreaterThan(0.9);
+      expect(opacities!.lead, `reload #${i + 1}: lead stuck at opacity ${opacities!.lead}`).toBeGreaterThan(0.9);
     }
   });
 });
