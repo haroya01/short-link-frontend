@@ -122,9 +122,9 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
       >
         <div className="flex items-start gap-4 px-4 pt-4">
           {/* Calendar-leaf date tile. Colored band on top, big day numeral on bottom. */}
-          <div className="grid h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-accent-200/60 bg-white text-center leading-none shadow-sm">
-            <div className="grid h-6 place-items-center bg-accent-700 px-1">
-              <p className="text-[10px] font-bold text-white">
+          <div className="grid h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white text-center leading-none">
+            <div className={`grid h-6 place-items-center px-1 ${colors.avatar}`}>
+              <p className={`text-[10px] font-bold ${colors.avatarText}`}>
                 {dateBadge.month}
               </p>
             </div>
@@ -135,19 +135,11 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
 
           <div className="min-w-0 flex-1">
             {relative && (
-              <span
-                className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  isPast
-                    ? "bg-slate-100 text-slate-500"
-                    : "bg-accent-100 text-accent-800"
-                }`}
-              >
-                {relative}
-              </span>
+              <p className={`text-[12px] font-medium ${isPast ? colors.muted : colors.accentText}`}>{relative}</p>
             )}
             {/* Past events mute the title too (not just opacity-60 on the card) so the "ended"
                 state reads as a deliberate muted-text treatment rather than a disabled-looking
-                dim — matches the muted relative-time pill and the "종료" CTA badge below. */}
+                dim — matches the muted relative-time label and the "종료" CTA badge below. */}
             <p
               className={`mt-1 text-base font-semibold leading-tight ${
                 isPast ? colors.muted : colors.primary
