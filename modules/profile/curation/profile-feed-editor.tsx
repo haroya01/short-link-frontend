@@ -23,7 +23,7 @@ import {
   Type,
   X,
 } from "lucide-react";
-import type { useTranslations } from "next-intl";
+import { useLocale, type useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
 import { useCollapsedSections } from "@/hooks/use-collapsed-sections";
 import { summarizeTextBody } from "@/modules/profile/lib/feed-summarizers";
@@ -607,6 +607,7 @@ function FeedItemRow({
   onEditLabel,
   t,
 }: RowProps) {
+  const locale = useLocale();
   const dndProps = {
     draggable: true,
     onDragStart: (e: React.DragEvent) => onDragStart(idx, e),
@@ -697,7 +698,7 @@ function FeedItemRow({
   if (item.kind === "BLOCK" && isCommonBlockType(item.type)) {
     const meta = BLOCK_ROW_META[item.type];
     const Icon = meta.Icon;
-    const text = meta.render(item.content, t) || t(meta.placeholderKey);
+    const text = meta.render(item.content, t, locale) || t(meta.placeholderKey);
     const textClass =
       meta.textStyle === "primary"
         ? "truncate text-sm font-medium text-slate-900"
