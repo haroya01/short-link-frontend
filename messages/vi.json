@@ -179,7 +179,7 @@
     "postCount": "{count} bài",
     "seriesEmpty": "Chưa có series nào.",
     "seriesActionFailed": "Không cập nhật được series. Vui lòng thử lại.",
-    "seriesDeleteConfirm": "Xóa series này? Các bài viết vẫn còn — chỉ bị gỡ khỏi series.",
+    "seriesDeleteConfirm": "Xóa series này? Các bài viết không bị xóa, chỉ bị gỡ khỏi series.",
     "seriesMembers": "Bài viết trong series",
     "seriesNoMembers": "Chưa có bài viết nào trong series này. Thêm một bài bên dưới.",
     "seriesRename": "Đổi tên",
@@ -239,7 +239,7 @@
     "libraryCollections": "Bộ sưu tập",
     "savedTitle": "Thư viện",
     "savedSubtitle": "Đọc lại bài viết đã lưu và những đoạn muốn ghi nhớ.",
-    "curationMockNote": "Xem trước — hiện chỉ lưu trên trình duyệt này.",
+    "curationMockNote": "Đây là bản xem trước. Hiện chỉ được lưu trên trình duyệt này.",
     "curationPinned": "Bài ghim",
     "curationPinnedHint": "Hiển thị theo thứ tự này ở đầu trang tác giả của bạn.",
     "curationPinnedEmpty": "Chưa ghim gì. Thêm một bài bên dưới.",
@@ -261,7 +261,7 @@
     "settingsViewBlog": "Xem blog của tôi",
     "settingsDisplay": "Hiển thị",
     "settingsFeed": "Dòng tin",
-    "settingsDefaultTab": "Tab mặc định — mở đầu tiên khi bạn vào trang chủ blog",
+    "settingsDefaultTab": "Tab mặc định: mở đầu tiên khi bạn vào trang chủ blog",
     "settingsDefaultTabFailed": "Không thể lưu. Vui lòng thử lại.",
     "settingsPrivacy": "Phạm vi hiển thị",
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
@@ -287,7 +287,7 @@
     "analyticsTabLinks": "Liên kết",
     "analyticsTabPosts": "Bài viết",
     "settingsFollowedTags": "Chủ đề đang theo dõi",
-    "settingsFollowedTagsHint": "Các chủ đề bạn theo dõi — kể cả những chủ đề chưa có bài gần đây. Bài của chúng hiện ở dải trên bảng tin của bạn.",
+    "settingsFollowedTagsHint": "Tất cả chủ đề bạn theo dõi, kể cả những chủ đề chưa có bài gần đây. Bài của các chủ đề này hiện ở dải trên cùng bảng tin của bạn.",
     "settingsFollowedTagsEmpty": "Bạn chưa theo dõi chủ đề nào.",
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
     "analyticsPeakDay": "Ngày cao nhất {date} · {count, number} lượt xem",
@@ -374,7 +374,7 @@
     "uploadNotImage": "Chỉ có thể tải lên tệp ảnh.",
     "uploadTooLarge": "Tệp quá lớn ({sizeMb}MB > {maxMb}MB).",
     "codeLanguage": "Ngôn ngữ mã",
-    "pasteImportFailed": "Không thể nhập {count, plural, one {# ảnh} other {# ảnh}} — đã giữ liên kết gốc. Nếu ảnh không hiển thị, hãy xóa và tải tệp lên.",
+    "pasteImportFailed": "Không thể nhập {count, plural, one {# ảnh} other {# ảnh}} nên đã giữ liên kết gốc. Nếu ảnh không hiển thị, hãy xóa và tải tệp lên.",
     "loginRequired": "Vui lòng đăng nhập.",
     "loading": "Đang tải…",
     "notFound": "Không tìm thấy bài viết.",
@@ -414,7 +414,7 @@
     "advancedSettings": "Cài đặt nâng cao",
     "slugFreezeWarn": "Địa chỉ sẽ bị khóa sau khi đăng.",
     "scheduleInvalid": "Chọn một thời điểm trong tương lai.",
-    "slugTaken": "Địa chỉ này đã được dùng — hãy thử một địa chỉ khác.",
+    "slugTaken": "Địa chỉ này đã được dùng. Hãy thử một địa chỉ khác.",
     "scheduledToast": "Đã lên lịch xuất bản vào {when}.",
     "scheduledFor": "Xuất bản {when}",
     "cancelSchedule": "Hủy lịch",
@@ -622,7 +622,7 @@
     "highlightsShow": "Hiện",
     "readingTime": "Đọc {minutes} phút",
     "ogReadingTime": "Đọc {minutes} phút",
-    "previewBanner": "Xem trước — bài này chưa được xuất bản. Chỉ người có liên kết này mới xem được.",
+    "previewBanner": "Đây là bản xem trước. Bài này chưa được xuất bản nên chỉ người có liên kết này mới xem được.",
     "editedOn": "Cập nhật {date}",
     "morePosts": "Thêm bài từ @{username}",
     "allPosts": "Tất cả bài viết",
@@ -638,7 +638,7 @@
     "reportPlaceholder": "Thêm chi tiết cụ thể nếu có (tùy chọn)",
     "reportSubmit": "Báo cáo",
     "reportSubmitting": "Đang gửi…",
-    "reportDone": "Cảm ơn — chúng tôi đã nhận báo cáo của bạn.",
+    "reportDone": "Chúng tôi đã nhận báo cáo của bạn.",
     "ctaUnavailable": "{label} · liên kết không khả dụng",
     "ctaDeleted": "Liên kết đã xóa",
     "toc": "Mục lục",
@@ -754,7 +754,7 @@
     "RESERVED_SHORT_CODE": "Mã đó đã được giữ chỗ.",
     "MALICIOUS_URL": "URL này bị gắn cờ là độc hại hoặc trang lừa đảo.",
     "SHORT_CODE_EXHAUSTED": "Không tạo được mã. Vui lòng thử lại.",
-    "BULK_IMPORT_TOO_LARGE": "Tối đa {limit} dòng mỗi lần tải lên — đã nhận {rows}.",
+    "BULK_IMPORT_TOO_LARGE": "Tối đa {limit} dòng mỗi lần tải lên. Tệp này có {rows} dòng.",
     "OPTIMISTIC_LOCK": "Có người vừa cập nhật mục này ở tab khác. Tải lại và thử lại.",
     "INVALID_REFRESH_TOKEN": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.",
     "USER_NOT_FOUND": "Không tìm thấy tài khoản.",
@@ -766,7 +766,7 @@
     "PROFILE_NOT_FOUND": "Không tìm thấy hồ sơ.",
     "INVALID_ACTIVE_PERIOD": "Khoảng thời gian hoạt động không hợp lệ.",
     "INVALID_WEBHOOK_URL": "URL webhook phải bắt đầu bằng http(s):// và trỏ tới một máy chủ công khai.",
-    "TOO_MANY_WEBHOOKS": "Tối đa {limit} webhook mỗi liên kết — xóa bớt một cái để thêm cái mới.",
+    "TOO_MANY_WEBHOOKS": "Tối đa {limit} webhook mỗi liên kết. Hãy xóa bớt một cái để thêm cái mới.",
     "WEBHOOK_NOT_FOUND": "Không tìm thấy webhook. Có thể nó đã bị xóa ở tab khác.",
     "VALIDATION_FAILED": "Một số trường không hợp lệ.",
     "MALFORMED_REQUEST": "Yêu cầu đó có vẻ không ổn. Vui lòng thử lại.",
@@ -795,7 +795,7 @@
     "description": "Rút gọn một URL dài và xem mỗi lượt nhấp đến từ thiết bị, kênh và quốc gia nào, không tính bot.",
     "ogHeadlineTop": "URL ngắn +",
     "ogHeadlineBottom": "Phân tích lượt nhấp",
-    "ogSubline": "Thiết bị · kênh · quốc gia · thời gian — xem mỗi lượt nhấp đến từ đâu, trong nháy mắt"
+    "ogSubline": "Xem mỗi lượt nhấp đến từ đâu: thiết bị, kênh, quốc gia và thời gian"
   },
   "notifications": {
     "webPushLabel": "Thông báo trên trình duyệt",
@@ -928,11 +928,11 @@
       "see": "Xem",
       "stats": {
         "title": "Bảng phân tích",
-        "desc": "Phân tách người/bot, kênh, quốc gia, thời điểm trong ngày — tự động. Xu hướng 30 ngày + bản đồ nhiệt."
+        "desc": "Tự động tách người và bot, kèm kênh, quốc gia và thời điểm trong ngày. Xu hướng 30 ngày và bản đồ nhiệt."
       },
       "profile": {
         "title": "Hồ sơ công khai",
-        "desc": "Một trang cho mọi liên kết — hoàn hảo cho bio Instagram, Twitter, hay bất cứ nơi nào bạn chia sẻ liên kết."
+        "desc": "Một trang gom mọi liên kết của bạn. Dán vào bio Instagram, X hay bất cứ đâu."
       },
       "domain": {
         "title": "Tên miền của riêng bạn",
@@ -944,7 +944,7 @@
     "features": {
       "realtime": {
         "title": "Dòng nhấp trực tiếp (SSE)",
-        "desc": "Xem từng lượt nhấp xuất hiện trên trang thống kê theo thời gian thực — thời gian, quốc gia, kênh, thiết bị, tất cả phát trực tiếp.",
+        "desc": "Ngay khi có lượt nhấp, thời gian, quốc gia, kênh và thiết bị hiện trực tiếp trên trang thống kê.",
         "preview": {
           "eyebrow": "Lượt nhấp trực tiếp",
           "live": "trực tiếp"
@@ -952,7 +952,7 @@
       },
       "insights": {
         "title": "Thông tin tự động",
-        "desc": "Giờ cao điểm, tỷ lệ quay lại, tốc độ — hiển thị mà không cần thiết lập gì",
+        "desc": "Giờ cao điểm, tỷ lệ quay lại và tốc độ nhấp, xem ngay không cần thiết lập",
         "preview": {
           "heading": "Thông tin tuần này",
           "humanLabel": "Lượt nhấp của người",
@@ -984,7 +984,7 @@
     "featuresSubhead": "Dòng nhấp trực tiếp · thông tin tự động · định tuyến A/B + vị trí. Webhook HMAC · 2FA TOTP · Google Safe Browsing đều có sẵn.",
     "whyEyebrow": "vì sao chọn kurl",
     "whyTitle": "Sao không phải dịch vụ rút gọn nào cũng có điều này?",
-    "whySubhead": "Những tính năng thường bị khóa sau các gói doanh nghiệp — ở đây miễn phí, bật sẵn theo mặc định.",
+    "whySubhead": "Những tính năng thường chỉ có trong gói doanh nghiệp, ở đây miễn phí và bật sẵn.",
     "stage": {
       "title": "Đăng nhập để mỗi liên kết có thống kê như thế này",
       "desc": "Mỗi lượt nhấp đều được ghi lại. Thống kê hoàn toàn miễn phí, màn hình bên dưới dùng dữ liệu ví dụ.",
@@ -1044,7 +1044,7 @@
       "generic": "Rút gọn thất bại.",
       "selfReferencing": "Liên kết kurl.me đã là liên kết ngắn nên không thể rút gọn thêm.",
       "reservedCode": "Mã này đã được dành riêng. Hãy thử mã khác.",
-      "quota": "Bạn đã đạt giới hạn liên kết — dọn bớt liên kết cũ để tạo mới.",
+      "quota": "Bạn đã đạt giới hạn liên kết. Hãy xóa bớt liên kết cũ để tạo mới.",
       "validation": "Dữ liệu nhập không hợp lệ."
     }
   },
@@ -1312,7 +1312,7 @@
     "notePlaceholder": "ví dụ: Khuyến mãi xuân / dùng trong story Instagram",
     "noteHint": "Hiện trong danh sách và mục yêu thích, không hiện với khách.",
     "expiredMessageLabel": "Thông báo trang hết hạn (tùy chọn)",
-    "expiredMessagePlaceholder": "ví dụ: Khuyến mãi đã kết thúc — xem đợt tiếp theo tại example.com",
+    "expiredMessagePlaceholder": "ví dụ: Khuyến mãi đã kết thúc. Đợt tiếp theo có tại example.com!",
     "expiredMessageHint": "Hiển thị thay cho trang hết hạn mặc định khi liên kết hết hạn hoặc đạt giới hạn lượt xem.",
     "cancel": "Hủy",
     "save": "Lưu",
@@ -1418,8 +1418,8 @@
       "registerFailed": "Đăng ký webhook thất bại.",
       "issuedTitle": "Đã đăng ký webhook",
       "issuedHint": "Khóa bí mật này chỉ hiển thị một lần. Dùng nó ở bên nhận để xác minh header X-Kurl-Signature (sha256=hex).",
-      "issuedFormatDiscord": "Đã phát hiện URL Discord — lượt nhấp được gửi dưới dạng embed Discord (không cần xác minh chữ ký).",
-      "issuedFormatSlack": "Đã phát hiện URL Slack — lượt nhấp được gửi dưới dạng tin nhắn Slack (không cần xác minh chữ ký).",
+      "issuedFormatDiscord": "Đây là URL Discord nên lượt nhấp được gửi dưới dạng tin nhắn Discord (không cần xác minh chữ ký).",
+      "issuedFormatSlack": "Đây là URL Slack nên lượt nhấp được gửi dưới dạng tin nhắn Slack (không cần xác minh chữ ký).",
       "formatBadgeDiscord": "Discord",
       "formatBadgeSlack": "Slack",
       "formatBadgeGeneric": "Chung",
@@ -1597,11 +1597,11 @@
       },
       "clientApp": {
         "title": "Mở trong ứng dụng",
-        "desc": "Các lượt mở bên trong trình duyệt của ứng dụng — KakaoTalk, Instagram và tương tự. Chuyển hướng đăng nhập và tải xuống hay hỏng ở đó."
+        "desc": "Các lượt nhấp mở trong trình duyệt tích hợp của ứng dụng như KakaoTalk hay Instagram. Chuyển hướng đăng nhập và tải xuống hay bị lỗi ở đó."
       },
       "fetchSite": {
         "title": "Họ mở bằng cách nào",
-        "desc": "Tự mở địa chỉ hay bấm theo một liên kết — tách riêng những lượt nhấp không kèm referrer."
+        "desc": "Người dùng tự mở địa chỉ hay bấm theo một liên kết. Cũng tách riêng được những lượt nhấp không kèm referrer."
       },
       "postClicks": {
         "title": "Từ bài viết nào",
@@ -1696,8 +1696,8 @@
     "heatmap": {
       "less": "Ít",
       "more": "Nhiều",
-      "tooltip": "{day} {hour}h — {count} lượt nhấp",
-      "tooltipBucket": "{day} {from}–{to}h — {count} lượt nhấp",
+      "tooltip": "{day} {hour}h, {count} lượt nhấp",
+      "tooltipBucket": "{day} {from}–{to}h, {count} lượt nhấp",
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} lượt nhấp",
@@ -1738,19 +1738,19 @@
       "newVisitors": "Khách mới",
       "returningVisitors": "Khách quay lại",
       "velocity": "Đang được nhấn nhanh gấp {x} lần bình thường",
-      "trendUp": "7 ngày qua tăng {percent}% so với tuần trước — {count} lượt nhấn",
-      "trendDown": "7 ngày qua giảm {percent}% so với tuần trước — {count} lượt nhấn",
-      "peakDay": "Đạt đỉnh ngày {date} — {count} lượt trong một ngày",
+      "trendUp": "Lượt nhấp 7 ngày qua tăng {percent}% so với 7 ngày trước đó ({count} lượt nhấp)",
+      "trendDown": "Lượt nhấp 7 ngày qua giảm {percent}% so với 7 ngày trước đó ({count} lượt nhấp)",
+      "peakDay": "Ngày nhiều nhất là {date}, với {count} lượt nhấp",
       "topSource": "{host} mang về {percent}% lượt truy cập",
       "peakHour": "Nhộn nhịp nhất quanh {hour} giờ",
       "returning": "{percent}% khách đã quay lại",
       "topCountry": "{percent}% đến từ {country}",
-      "mobileHeavy": "{percent}% trên di động — liên kết được bấm trên điện thoại",
-      "desktopHeavy": "{percent}% trên máy tính — mở tại bàn làm việc",
+      "mobileHeavy": "{percent}% lượt nhấp đến từ di động",
+      "desktopHeavy": "{percent}% lượt nhấp đến từ máy tính",
       "botHigh": "Truy cập tự động chiếm {percent}% · {human} lượt nhấp của người",
       "botFiltered": "Bỏ {percent}% truy cập tự động, còn {human} lượt nhấp của người",
       "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút",
-      "inAppBrowser": "{percent}% mở trong {app} — tỷ lệ trình duyệt trong ứng dụng khá cao",
+      "inAppBrowser": "{percent}% lượt nhấp mở trong {app}",
       "channelLoyalty": "{percent}% người đến từ {host} đã quay lại",
       "showMore": "Xem thêm {count} thay đổi",
       "showLess": "Thu gọn"
@@ -1975,7 +1975,7 @@
       },
       "requestMetrics": {
         "title": "Nhật ký yêu cầu (thô)",
-        "desc": "Dựa trên bảng request_metrics mới — mọi yêu cầu HTTP hoàn tất được ghi lại bất đồng bộ, nên mục này có thể trả lời các câu hỏi về kết quả theo từng mã và đi sâu vào từng yêu cầu, điều mà các mục dựa trên timer ở trên không làm được. Dùng 'Hiện mẫu' để xem trước bố cục khi bảng trống (vừa triển khai / trước ra mắt).",
+        "desc": "Dựa trên bảng request_metrics mới. Mọi yêu cầu HTTP hoàn tất được ghi lại bất đồng bộ, nên mục này có thể trả lời các câu hỏi về kết quả theo từng mã và đi sâu vào từng yêu cầu, điều mà các mục dựa trên timer ở trên không làm được. Dùng 'Hiện mẫu' để xem trước bố cục khi bảng trống (vừa triển khai / trước ra mắt).",
         "mockOn": "Đang hiện mẫu",
         "mockOff": "Hiện mẫu",
         "window": {
@@ -2022,7 +2022,7 @@
     },
     "accessToken": {
       "title": "Token truy cập API",
-      "desc": "Một token để gọi API với danh nghĩa của bạn. Nếu bị lộ, nó trao quyền truy cập tài khoản của bạn — hãy cẩn thận.",
+      "desc": "Một token để gọi API với danh nghĩa của bạn. Nếu bị lộ, nó trao quyền truy cập tài khoản của bạn, nên hãy cẩn thận.",
       "issue": "Cấp token",
       "reissue": "Cấp lại",
       "copy": "Sao chép",
@@ -2138,7 +2138,7 @@
     },
     "blocked": {
       "title": "Tên miền bị chặn",
-      "subtitle": "Tên miền trong danh sách này bị từ chối khi rút gọn mới, và mọi liên kết hiện có — kể cả tên miền phụ — lập tức hiển thị trang chặn. Khi chặn, chủ sở hữu liên kết bị ảnh hưởng sẽ nhận cảnh cáo tự động.",
+      "subtitle": "Tên miền trong danh sách này bị từ chối khi rút gọn mới, và mọi liên kết hiện có, kể cả tên miền phụ, lập tức hiển thị trang chặn. Khi chặn, chủ sở hữu liên kết bị ảnh hưởng sẽ nhận cảnh cáo tự động.",
       "addPlaceholder": "spam.example.com",
       "reasonPlaceholder": "Lý do (tùy chọn)",
       "add": "Chặn",
@@ -2152,7 +2152,7 @@
       "unblockConfirm": "Bỏ chặn {domain}? Việc rút gọn và chuyển hướng tới tên miền này sẽ được cho phép trở lại.",
       "addFailed": "Yêu cầu thất bại",
       "warned": "Đã gửi cảnh cáo tới {count} chủ sở hữu liên kết bằng ngôn ngữ của họ.",
-      "warnedNone": "{domain} — không có liên kết thuộc tài khoản nào nên không gửi cảnh cáo."
+      "warnedNone": "{domain} không có liên kết thuộc tài khoản nào nên không gửi cảnh cáo."
     },
     "enforce": {
       "title": "Xử lý vi phạm",
@@ -2165,7 +2165,7 @@
       "warnPlaceholder": "VD: Quảng bá trang web bất hợp pháp là vi phạm điều khoản. Liên kết đã bị chặn; tái phạm sẽ khiến tài khoản bị đình chỉ.",
       "warnSend": "Gửi cảnh cáo",
       "warnSent": "Đã gửi cảnh cáo.",
-      "warnAnonymous": "Liên kết được tạo ẩn danh — không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
+      "warnAnonymous": "Liên kết được tạo ẩn danh nên không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
       "failed": "Yêu cầu thất bại",
       "blockShort": "Chặn",
       "blockedShort": "Đã chặn"
@@ -2217,7 +2217,7 @@
     "copiedFallback": "Đã sao chép URL"
   },
   "demo": {
-    "metaTitle": "kurl demo — xem chính xác bạn nhận được gì khi rút gọn một liên kết",
+    "metaTitle": "kurl demo: xem bạn nhận được gì khi rút gọn một liên kết",
     "metaDescription": "Xem trước bảng phân tích, không cần đăng nhập.",
     "sampleBanner": "Dữ liệu mẫu. Sau khi đăng nhập, các liên kết của bạn sẽ hiện theo đúng bố cục này.",
     "sampleCta": "Tạo liên kết của tôi",
@@ -2336,7 +2336,7 @@
   },
   "statsEmpty": {
     "title": "Chưa có lượt nhấp",
-    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack, hay mạng xã hội — thống kê bắt đầu đổ về ngay khi có người nhấp."
+    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack hay mạng xã hội. Thống kê bắt đầu ngay khi có người nhấp."
   },
   "utm": {
     "toggle": "Thêm tham số UTM",
@@ -2368,7 +2368,7 @@
     "disclaimer": "So sánh với các gói miễn phí của bit.ly, short.io, rebrandly, và TinyURL (2026).",
     "rows": {
       "abtest": {
-        "label": "Chia tách A/B — một liên kết, nhiều điểm đến",
+        "label": "Chia tách A/B: một liên kết, nhiều điểm đến",
         "note": "Định tuyến một tỷ lệ phần trăm lượt nhấp tới mỗi điểm đến. Thường chỉ dành cho doanh nghiệp."
       },
       "geoRouting": {
@@ -2385,11 +2385,11 @@
       },
       "insights": {
         "label": "Thông tin tự động",
-        "note": "Giờ cao điểm, tỷ lệ quay lại, tốc độ — hiển thị mà không cần thiết lập."
+        "note": "Hiện giờ cao điểm, tỷ lệ quay lại và tốc độ nhấp mà không cần thiết lập."
       },
       "asnTracking": {
         "label": "Tự tách lượt nhấp từ trung tâm dữ liệu",
-        "note": "Lượt nhấp từ các dải đám mây lớn (AWS / GCP...) được gắn cờ bot — hiếm nơi có."
+        "note": "Lượt nhấp từ các mạng đám mây lớn (ASN) như AWS, GCP được phân loại là bot. Ít dịch vụ khác làm điều này."
       },
       "botDefense": {
         "label": "Phòng vệ bot nhiều lớp",
@@ -2647,7 +2647,7 @@
       },
       "socialsLabel": "Nút mạng xã hội",
       "socialKakaoLabel": "Kênh KakaoTalk",
-      "socialsHint": "Chọn các kênh hiện ở cuối hồ sơ công khai của bạn. Với mỗi kênh, dán URL tài khoản của bạn — khách chạm nút sẽ đến đó. Tối đa 2, hiển thị theo thứ tự bạn chọn.",
+      "socialsHint": "Chọn các kênh hiện ở cuối hồ sơ công khai của bạn. Với mỗi kênh, dán URL tài khoản của bạn để khách chạm nút sẽ đến đó. Tối đa 2, hiển thị theo thứ tự bạn chọn.",
       "socialsCount": "{count}/{max} đã chọn",
       "socialUrlPlaceholderX": "https://x.com/tencuaban",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~lineid",
@@ -2668,7 +2668,7 @@
       "quickAdd": {
         "title": "Thêm liên kết",
         "firstTitle": "Thêm liên kết đầu tiên ↓",
-        "firstHint": "Bất kỳ URL nào — Instagram, blog, YouTube, v.v. Thêm kèm nhãn và nó hiện trên liên kết bio của bạn.",
+        "firstHint": "Thêm bất kỳ URL nào như Instagram, blog, YouTube kèm nhãn, và nó sẽ hiện trên liên kết bio của bạn.",
         "hint": "Dán bất kỳ URL nào + một nhãn. Chúng tôi rút gọn và đưa nó nổi bật. Thêm bao nhiêu tùy thích.",
         "urlPlaceholder": "https://... hoặc mailto:...",
         "labelPlaceholder": "Nhãn (ví dụ: 📝 Blog)",
@@ -2758,7 +2758,7 @@
       "addPlace": "+ Địa điểm",
       "addPlaceTitle": "Thêm địa điểm",
       "editPlaceTitle": "Sửa địa điểm",
-      "addPlaceDescription": "Hiện một thẻ doanh nghiệp / địa điểm — quán cà phê, cửa hàng, studio, popup, v.v. Google Places tự gợi ý điền địa chỉ và tọa độ.",
+      "addPlaceDescription": "Hiện một địa điểm dưới dạng thẻ, như quán cà phê, cửa hàng, studio hay cửa hàng pop-up. Tìm trên Google Places là địa chỉ và tọa độ tự điền.",
       "addPlacePlaceholder": "(chưa đặt địa điểm)",
       "placeFieldSearch": "Tìm địa điểm",
       "placeFieldSearchPlaceholder": "ví dụ: NUDAKE Dosan",
@@ -2810,7 +2810,7 @@
       "emailFormFieldTitle": "Tiêu đề biểu mẫu",
       "emailFormFieldTitlePlaceholder": "ví dụ: Nhận bản tin của tôi",
       "emailFormFieldSubtitle": "Phụ đề (tùy chọn)",
-      "emailFormFieldSubtitlePlaceholder": "ví dụ: Ra mắt sản phẩm mới, lớp học mở, thực đơn giới hạn — bạn sẽ là người biết đầu tiên.",
+      "emailFormFieldSubtitlePlaceholder": "ví dụ: Biết đầu tiên về sản phẩm mới, lớp học mở và thực đơn giới hạn.",
       "emailFormFieldSubtitleHint": "Một hoặc hai câu nói cho khách biết vì sao họ nên để lại email.",
       "emailFormFieldPlaceholder": "Văn bản gợi ý trong ô nhập",
       "emailFormFieldSuccess": "Thông báo thành công",
@@ -2870,7 +2870,7 @@
           "title": "Nguồn UTM",
           "desc": "Email / mạng xã hội / v.v."
         },
-        "publicTitle": "@{username} — thống kê lượt truy cập công khai",
+        "publicTitle": "Thống kê lượt truy cập hồ sơ của @{username}",
         "publicIntro": "Thống kê tổng hợp mà chủ hồ sơ chọn chia sẻ công khai.",
         "publicNotAvailable": {
           "title": "Thống kê không công khai",
@@ -2950,13 +2950,13 @@
       "contactFieldAddress": "Địa chỉ",
       "contactFieldAddressPlaceholder": "Thành phố, Quốc gia",
       "contactFieldLogo": "Logo (tùy chọn)",
-      "contactFieldLogoHint": "Logo công ty / cá nhân — hiển thị dạng hình vuông trên thẻ.",
+      "contactFieldLogoHint": "Logo công ty hoặc cá nhân, hiển thị dạng hình vuông trên thẻ.",
       "contactFieldLogoFocalHint": "Kéo ảnh để chọn phần nào lấp đầy hình vuông.",
       "contactFieldPalette": "Bảng màu ánh kim",
       "addGalleryTitle": "Thêm thư viện ảnh",
       "editGalleryTitle": "Sửa thư viện ảnh",
       "addGalleryDescription": "URL ảnh để hiển thị dưới dạng băng chuyền vuốt được. Tối đa {max} ảnh.",
-      "addGalleryDescriptionUpload": "Tối đa {max} — khách vuốt để xem. Ảnh đầu tiên là ảnh bìa.",
+      "addGalleryDescriptionUpload": "Tối đa {max} ảnh. Khách vuốt để xem, ảnh đầu tiên là ảnh bìa.",
       "addGalleryPlaceholder": "(chưa có thư viện ảnh)",
       "galleryDropzone": "Thêm ảnh (chọn nhiều cùng lúc)",
       "galleryFull": "Đã đạt tối đa",
@@ -2982,7 +2982,7 @@
       "addTextDescription": "Lời giới thiệu mục, thông báo, hay đoạn ngắn. Hỗ trợ markdown (tiêu đề, đậm, danh sách, liên kết).",
       "textFieldContent": "Nội dung",
       "textFieldPlaceholder": "ví dụ: ## Cập nhật\nCó món mới! [Đọc thêm](https://...)",
-      "textMarkdownHint": "Markdown — # tiêu đề, **đậm**, *nghiêng*, - danh sách",
+      "textMarkdownHint": "Hỗ trợ Markdown: # tiêu đề, **đậm**, *nghiêng*, - danh sách",
       "textPreviewLabel": "Xem trước",
       "textPreviewEmpty": "Bản xem trước markdown sẽ hiện ở đây",
       "textFieldLayout": "Kiểu",
@@ -2996,7 +2996,7 @@
       "textAccent_red": "Đỏ",
       "textAccent_violet": "Tím",
       "textFieldIcon": "Biểu tượng (một emoji)",
-      "textFieldIconHint": "Hiện ở góc trên trái hộp nổi bật — ví dụ 💡 / 📢 / ⚠️ / 🎉",
+      "textFieldIconHint": "Hiện ở góc trên bên trái hộp nổi bật, ví dụ 💡 📢 ⚠️ 🎉",
       "addImagePrompt": "URL ảnh (https://...)",
       "addImagePlaceholder": "(chưa có ảnh)",
       "addImageTitle": "Thêm ảnh",
@@ -3042,7 +3042,7 @@
     "deleting": "Đang xóa...",
     "twofa": {
       "title": "Xác thực hai yếu tố (2FA)",
-      "description": "Thêm một ứng dụng xác thực TOTP (Google Authenticator, Authy, 1Password, v.v.) cho thêm một bước khi đăng nhập. Lưu 10 mã khôi phục hiện ngay sau khi bật — chúng là phương án dự phòng nếu bạn mất quyền truy cập ứng dụng.",
+      "description": "Thêm một ứng dụng xác thực TOTP (Google Authenticator, Authy, 1Password, v.v.) để có thêm một bước khi đăng nhập. Ngay sau khi bật, hãy lưu 10 mã khôi phục ở nơi an toàn để vẫn đăng nhập được nếu mất ứng dụng.",
       "loading": "Đang tải...",
       "statusOn": "Đã bật",
       "statusOff": "Đã tắt",
@@ -3070,7 +3070,7 @@
       "regenerated": "Đã cấp mã khôi phục mới.",
       "disabled": "Đã tắt 2FA.",
       "recoveryTitle": "Lưu mã khôi phục của bạn ở nơi an toàn",
-      "recoveryHint": "Mỗi mã chỉ dùng được một lần. Dùng chúng nếu bạn mất quyền truy cập ứng dụng xác thực — in ra hoặc lưu trong trình quản lý mật khẩu.",
+      "recoveryHint": "Mỗi mã chỉ dùng được một lần. Dùng chúng nếu bạn mất quyền truy cập ứng dụng xác thực, và hãy in ra hoặc lưu trong trình quản lý mật khẩu.",
       "recoveryCopyAll": "Sao chép tất cả",
       "recoveryCopied": "Đã sao chép mã khôi phục.",
       "recoveryCopyFailed": "Sao chép thất bại.",
@@ -3080,7 +3080,7 @@
     },
     "apiKeys": {
       "title": "Khóa API",
-      "description": "Dùng chúng từ script hoặc tự động hóa gọi API của kurl. Khóa đầy đủ chỉ hiển thị một lần — hãy sao chép ngay vào nơi an toàn.",
+      "description": "Dùng chúng từ script hoặc tự động hóa gọi API của kurl. Khóa đầy đủ chỉ hiển thị một lần, nên hãy sao chép ngay vào nơi an toàn.",
       "namePlaceholder": "Tên (ví dụ: 'Bot báo cáo nội bộ')",
       "issue": "Cấp",
       "issuing": "Đang cấp...",
@@ -3112,7 +3112,7 @@
     },
     "customDomains": {
       "title": "Tên miền tùy chỉnh",
-      "description": "Phục vụ liên kết ngắn từ tên miền của riêng bạn (ví dụ go.brand.com). Thêm bản ghi TXT + CNAME — chúng tôi tự xác minh ở chế độ nền (truy vấn DNS đến 10 phút). Cách dễ nhất cho TLS: đặt tên miền sau Cloudflare gói miễn phí.",
+      "description": "Phục vụ liên kết ngắn từ tên miền của riêng bạn (ví dụ go.brand.com). Thêm bản ghi TXT và CNAME, chúng tôi sẽ tự xác minh ở chế độ nền, kiểm tra DNS trong tối đa 10 phút. Cách dễ nhất để có TLS là đặt tên miền sau gói miễn phí của Cloudflare.",
       "register": "Đăng ký",
       "registering": "Đang đăng ký...",
       "registerFailed": "Đăng ký tên miền thất bại.",
@@ -3129,8 +3129,8 @@
       "deleted": "Đã xóa",
       "deleteConfirm": "Gỡ tên miền này? Các liên kết ngắn trên tên miền này sẽ ngừng hoạt động ngay lập tức.",
       "deleteFailed": "Xóa thất bại.",
-      "dnsTxtHint": "Kiểm tra quyền sở hữu — thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
-      "dnsCnameHint": "Định tuyến lưu lượng — thêm bản ghi CNAME này tại cùng nhà cung cấp"
+      "dnsTxtHint": "Kiểm tra quyền sở hữu: thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
+      "dnsCnameHint": "Định tuyến lưu lượng: thêm bản ghi CNAME này tại cùng nhà cung cấp"
     }
   },
   "homeStats": {
@@ -3206,7 +3206,7 @@
         "redirectTitle": "Chuyển hướng nơi khác",
         "redirectBody": "Gửi QR đã in tới trang đánh giá, chiến dịch tiếp theo, danh sách chờ, hay bất kỳ URL theo sau nào."
       },
-      "messagePlaceholder": "ví dụ: Chiến dịch này đã kết thúc. Hẹn gặp ở sự kiện tiếp theo vào tháng Mười Hai.\nLiên hệ — @kurl_official",
+      "messagePlaceholder": "ví dụ: Chiến dịch này đã kết thúc. Hẹn gặp ở sự kiện tiếp theo vào tháng Mười Hai.\nLiên hệ: @kurl_official",
       "messageHint": "Để trống sẽ dùng thông báo mặc định. Ngắt dòng được giữ nguyên ·",
       "redirectHint": "URL chuyển hướng được áp dụng cho mã QR đã in khi chiến dịch kết thúc.",
       "cancel": "Hủy",
@@ -3384,7 +3384,7 @@
       "loading": "Đang tải...",
       "groups": {
         "distributorTitle": "Hiệu quả theo người phát",
-        "distributorHint": "Lượt nhấp trên 100 tờ — so sánh được ngay cả khi các người phát xử lý số lượng khác nhau.",
+        "distributorHint": "Lượt nhấp trên 100 tờ, nên có thể so sánh các người phát ngay cả khi số lượng khác nhau.",
         "areaTitle": "Hiệu quả theo khu vực",
         "areaHint": "Dùng cái này để quyết định nơi phát tiếp theo.",
         "tooltip": "{rate} / 100 tờ · lượt nhấp {clicks} / đã phát {quantity}",
@@ -3394,7 +3394,7 @@
       "compare": {
         "title": "So sánh với chiến dịch khác",
         "description": "So sánh đợt một với đợt hai, hoặc các chiến dịch theo mùa khác nhau.",
-        "none": "— Không so sánh —",
+        "none": "Không so sánh",
         "current": "Hiện tại",
         "comparison": "So sánh",
         "selectHint": "Chọn một chiến dịch từ menu thả xuống ở trên."
@@ -3454,15 +3454,15 @@
     "q1": "Liên kết rút gọn có vĩnh viễn không?",
     "a1": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết bạn tạo khi đã đăng nhập tồn tại đến khi bạn xóa.",
     "q2": "Tôi dùng được mà không đăng nhập không?",
-    "a2": "Được — rút gọn hoạt động mà không cần tài khoản. Thống kê và lưu trữ vĩnh viễn cần đăng nhập Google.",
+    "a2": "Được. Rút gọn hoạt động mà không cần tài khoản. Thống kê và lưu trữ vĩnh viễn cần đăng nhập Google.",
     "q3": "Tôi xem thống kê ở đâu?",
     "a3": "Trên trang Liên kết của tôi, nhấp vào mã bất kỳ để mở trang thống kê 8 chiều.",
     "q4": "Bản xem trước có hiện trên KakaoTalk / Slack không?",
-    "a4": "Có — thẻ xem trước hoạt động trên KakaoTalk, Slack, và Discord. Khi các ứng dụng đó lấy liên kết để dựng thẻ, kurl trả về một trang xem trước có tiêu đề, mô tả và ảnh thay vì chuyển hướng ngay.",
+    "a4": "Có. Thẻ xem trước hoạt động trên KakaoTalk, Slack và Discord. Khi các ứng dụng đó lấy liên kết để dựng thẻ, kurl trả về một trang xem trước có tiêu đề, mô tả và ảnh thay vì chuyển hướng ngay.",
     "q5": "URL độc hại bị chặn thế nào?",
     "a5": "Chúng tôi sàng lọc bằng Google Safe Browsing lúc rút gọn. URL bị gắn cờ sẽ bị từ chối.",
     "q6": "Có API không?",
-    "a6": "Có — kurl cung cấp API cho nhà phát triển. Lấy khóa trong Cài đặt > Khóa API và gọi các endpoint rút gọn / thống kê từ mã của bạn."
+    "a6": "Có. kurl có API cho nhà phát triển. Lấy khóa trong Cài đặt > Khóa API và gọi các endpoint rút gọn và thống kê từ mã của bạn."
   },
   "campaignStatus": {
     "DRAFT": "Bản nháp",
@@ -3539,8 +3539,8 @@
     },
     "hero": {
       "eyebrow": "Chiến dịch QR ngoại tuyến",
-      "title1": "QR khác nhau trên mỗi tờ rơi —",
-      "title2": "xem phản hồi đến từ đâu.",
+      "title1": "Mỗi tờ rơi một mã QR riêng,",
+      "title2": "rồi xem phản hồi đến từ đâu.",
       "sub": "Tạo QR riêng cho từng khu vực, lối ra hoặc người phát, rồi dùng lượt nhấp trên 100 tờ để chọn nơi phát tiếp theo.",
       "cta": "Tạo QR"
     },
@@ -3768,7 +3768,7 @@
     "visibilityUnlisted": "Chỉ qua liên kết",
     "visibilityPublic": "Công khai",
     "visibilityPrivateDesc": "Chỉ bạn xem được.",
-    "visibilityUnlistedDesc": "Chỉ người có liên kết mới xem được — không liệt kê hay xuất hiện khi khám phá.",
+    "visibilityUnlistedDesc": "Chỉ người có liên kết mới xem được. Không xuất hiện trong danh sách hay khám phá.",
     "visibilityPublicDesc": "Ai cũng xem được, và xuất hiện ở hồ sơ của bạn và mục Khám phá.",
     "dangerZone": "Vùng nguy hiểm",
     "deleteCollectionDesc": "Xóa bộ sưu tập này. Các mục bên trong không bị xóa. Không thể hoàn tác.",
@@ -3866,7 +3866,7 @@
     "connectLabel": "Kết nối",
     "myCollectionsMetaTitle": "Bộ sưu tập của tôi",
     "myCollectionsTitle": "Bộ sưu tập của tôi",
-    "myCollectionsSubtitle": "Những bộ sưu tập và lối đọc bạn đã tạo — cả những cái riêng tư cũng ở đây.",
+    "myCollectionsSubtitle": "Những bộ sưu tập và lối đọc bạn đã tạo, kể cả những cái riêng tư.",
     "myCollectionsLoadError": "Không tải được.",
     "myCollectionsEmptyTitle": "Chưa có bộ sưu tập nào",
     "myCollectionsEmptyBody": "Khi đang đọc một bài hay một câu, hãy dùng “Kết nối” để bắt đầu bộ sưu tập đầu tiên.",
@@ -3934,7 +3934,7 @@
       "viralHook": "Trang này được tạo bằng kurl.",
       "viralCta": "Tạo trang sự kiện",
       "canceledNotice": "Sự kiện đã bị hủy.",
-      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy — hãy quay lại sau.",
+      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy, hãy quay lại sau.",
       "closedNotice": "Đã đóng đăng ký.",
       "cancelTitle": "Hủy đăng ký",
       "cancelBody": "Hủy đăng ký \"{title}\"? Chỗ của bạn sẽ dành cho người khác.",
@@ -4040,7 +4040,7 @@
       "coverUploading": "Đang tải lên…",
       "descWrite": "Viết",
       "descPreview": "Xem trước",
-      "descPreviewEmpty": "Chưa có nội dung — viết markdown ở tab Viết để xem trước tại đây.",
+      "descPreviewEmpty": "Chưa có nội dung. Viết markdown ở tab Viết để xem trước tại đây.",
       "useGoogleMaps": "Tạo liên kết Google Maps cho “{place}”",
       "openMap": "Mở bản đồ ↗"
     },

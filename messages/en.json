@@ -179,7 +179,7 @@
     "postCount": "{count, plural, one {# post} other {# posts}}",
     "seriesEmpty": "No series yet.",
     "seriesActionFailed": "Could not update the series. Please try again.",
-    "seriesDeleteConfirm": "Delete this series? Posts stay — they're just removed from the series.",
+    "seriesDeleteConfirm": "Delete this series? Its posts aren't deleted, only removed from the series.",
     "seriesMembers": "Posts in series",
     "seriesNoMembers": "No posts in this series yet. Add one below.",
     "seriesRename": "Rename",
@@ -239,7 +239,7 @@
     "libraryCollections": "Collections",
     "savedTitle": "Library",
     "savedSubtitle": "Return to saved posts and passages you want to remember.",
-    "curationMockNote": "Preview — saved to this browser only for now.",
+    "curationMockNote": "This is a preview. For now, it's saved only in this browser.",
     "curationPinned": "Pinned posts",
     "curationPinnedHint": "Shown in this order at the top of your author page.",
     "curationPinnedEmpty": "Nothing pinned yet. Add one below.",
@@ -261,7 +261,7 @@
     "settingsViewBlog": "View my blog",
     "settingsDisplay": "Display",
     "settingsFeed": "Feed",
-    "settingsDefaultTab": "Default tab — opens first when you land on the blog home",
+    "settingsDefaultTab": "Default tab: opens first when you land on the blog home",
     "settingsDefaultTabFailed": "Couldn't save. Please try again.",
     "settingsPrivacy": "Visibility",
     "settingsHideFollowerCount": "Hide follower count",
@@ -287,7 +287,7 @@
     "analyticsTabLinks": "Links",
     "analyticsTabPosts": "Posts",
     "settingsFollowedTags": "Followed tags",
-    "settingsFollowedTagsHint": "Topics you follow — including ones with no recent posts. Their posts surface in your feed strip.",
+    "settingsFollowedTagsHint": "Every topic you follow, including ones with no recent posts. Their posts gather in the strip at the top of your feed.",
     "settingsFollowedTagsEmpty": "You're not following any topics yet.",
     "settingsUnfollowTag": "Unfollow {tag}",
     "analyticsPeakDay": "Peak day {date} · {count, number} views",
@@ -374,7 +374,7 @@
     "uploadNotImage": "Only image files can be uploaded.",
     "uploadTooLarge": "File is too large ({sizeMb}MB > {maxMb}MB).",
     "codeLanguage": "Code language",
-    "pasteImportFailed": "Couldn't import {count, plural, one {# image} other {# images}} — kept the original link. If it doesn't show, delete it and upload the file.",
+    "pasteImportFailed": "Couldn't import {count, plural, one {# image} other {# images}}, so the original link was kept. If it doesn't show, delete it and upload the file.",
     "loginRequired": "Please sign in.",
     "loading": "Loading…",
     "notFound": "Post not found.",
@@ -414,7 +414,7 @@
     "advancedSettings": "Advanced settings",
     "slugFreezeWarn": "The address locks once published.",
     "scheduleInvalid": "Pick a future time.",
-    "slugTaken": "This address is already taken — try a different one.",
+    "slugTaken": "This address is already taken. Try a different one.",
     "scheduledToast": "Scheduled to publish on {when}.",
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
@@ -608,7 +608,7 @@
     "highlightsShow": "Show",
     "readingTime": "{minutes} min read",
     "ogReadingTime": "{minutes} min read",
-    "previewBanner": "Preview — this post isn't published yet. Only people with this link can see it.",
+    "previewBanner": "This is a preview. The post isn't published yet, so only people with this link can see it.",
     "editedOn": "Updated {date}",
     "morePosts": "More from @{username}",
     "allPosts": "All posts",
@@ -624,7 +624,7 @@
     "reportPlaceholder": "Add any specific details (optional)",
     "reportSubmit": "Report",
     "reportSubmitting": "Sending…",
-    "reportDone": "Thanks — your report was received.",
+    "reportDone": "Your report was received.",
     "ctaUnavailable": "{label} · link unavailable",
     "ctaDeleted": "Removed link",
     "toc": "Contents",
@@ -754,7 +754,7 @@
     "RESERVED_SHORT_CODE": "That code is reserved.",
     "MALICIOUS_URL": "This URL was flagged as malicious or a phishing site.",
     "SHORT_CODE_EXHAUSTED": "Couldn't generate a code. Please try again.",
-    "BULK_IMPORT_TOO_LARGE": "Up to {limit} rows per upload — got {rows}.",
+    "BULK_IMPORT_TOO_LARGE": "Up to {limit} rows per upload. This one had {rows}.",
     "OPTIMISTIC_LOCK": "Someone updated this in another tab. Reload and try again.",
     "INVALID_REFRESH_TOKEN": "Your session expired. Please sign in again.",
     "USER_NOT_FOUND": "Account not found.",
@@ -766,7 +766,7 @@
     "PROFILE_NOT_FOUND": "Profile not found.",
     "INVALID_ACTIVE_PERIOD": "Invalid active period.",
     "INVALID_WEBHOOK_URL": "Webhook URL must start with http(s):// and resolve to a public host.",
-    "TOO_MANY_WEBHOOKS": "Up to {limit} webhooks per link — delete one to add another.",
+    "TOO_MANY_WEBHOOKS": "Up to {limit} webhooks per link. Delete one to add another.",
     "WEBHOOK_NOT_FOUND": "Webhook not found. It may have been deleted in another tab.",
     "VALIDATION_FAILED": "Some fields are invalid.",
     "MALFORMED_REQUEST": "Something looks wrong with that request. Please try again.",
@@ -795,7 +795,7 @@
     "description": "Shorten a long URL and see which device, channel, and country each click came from, with bots left out.",
     "ogHeadlineTop": "Short URLs +",
     "ogHeadlineBottom": "Click analytics",
-    "ogSubline": "Device · channel · country · time — see where every click comes from, at a glance"
+    "ogSubline": "See where every click comes from: device, channel, country, and time of day"
   },
   "notifications": {
     "webPushLabel": "Browser notifications",
@@ -928,11 +928,11 @@
       "see": "See",
       "stats": {
         "title": "Analytics dashboard",
-        "desc": "Human/bot split, channel, country, time-of-day — automatic. 30-day trend + heatmap."
+        "desc": "Humans and bots split automatically, plus channel, country, and time of day. 30-day trend and heatmap."
       },
       "profile": {
         "title": "Public profile",
-        "desc": "One page for every link — perfect for your Instagram bio, Twitter, or anywhere you share links."
+        "desc": "One page with all your links. Paste it into your Instagram bio, X, or anywhere else."
       },
       "domain": {
         "title": "Your own domain",
@@ -944,7 +944,7 @@
     "features": {
       "realtime": {
         "title": "Live click feed (SSE)",
-        "desc": "Watch clicks land on the stats page in real time — time, country, channel, device, all streaming live.",
+        "desc": "The moment a click comes in, its time, country, channel, and device show up live on the stats page.",
         "preview": {
           "eyebrow": "Live clicks",
           "live": "live"
@@ -952,7 +952,7 @@
       },
       "insights": {
         "title": "Automatic insights",
-        "desc": "Peak hour, return rate, velocity — surfaced without any setup",
+        "desc": "Peak hour, return rate, and click velocity, ready with no setup",
         "preview": {
           "heading": "This week's insights",
           "humanLabel": "Human clicks",
@@ -984,7 +984,7 @@
     "featuresSubhead": "Live click feed · auto-insights · A/B + geo routing. HMAC webhooks · 2FA TOTP · Google Safe Browsing are built in.",
     "whyEyebrow": "why kurl",
     "whyTitle": "Why doesn't every shortener include this?",
-    "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default.",
+    "whySubhead": "Features that usually come with enterprise plans are free here and on by default.",
     "stage": {
       "title": "Sign in and every link gets stats like these",
       "desc": "Every click is recorded. Stats are free, and the screens below use example data.",
@@ -1044,7 +1044,7 @@
       "generic": "Failed to shorten.",
       "selfReferencing": "kurl.me links are already short links, so they can't be shortened again.",
       "reservedCode": "That code is reserved. Try another one.",
-      "quota": "You've reached your link limit — clean up old links to make room.",
+      "quota": "You've reached your link limit. Delete old links to make room for new ones.",
       "validation": "Invalid input."
     }
   },
@@ -1312,7 +1312,7 @@
     "notePlaceholder": "e.g. Spring promo / used in Instagram story",
     "noteHint": "Shown in your library and favorites. Never shown to visitors.",
     "expiredMessageLabel": "Expired-page message (optional)",
-    "expiredMessagePlaceholder": "e.g. Promo ended — see the next drop at example.com",
+    "expiredMessagePlaceholder": "e.g. This promo has ended. Catch the next one at example.com!",
     "expiredMessageHint": "Shown instead of the default expiry page when the link expires or hits its view limit.",
     "cancel": "Cancel",
     "save": "Save",
@@ -1418,8 +1418,8 @@
       "registerFailed": "Failed to register webhook.",
       "issuedTitle": "Webhook registered",
       "issuedHint": "This secret is shown only once. Use it on the receiver to verify the X-Kurl-Signature (sha256=hex) header.",
-      "issuedFormatDiscord": "Discord URL detected — clicks are sent as Discord embeds (no signature verification needed).",
-      "issuedFormatSlack": "Slack URL detected — clicks are sent as Slack messages (no signature verification needed).",
+      "issuedFormatDiscord": "This is a Discord URL, so clicks are sent as Discord messages (no signature verification needed).",
+      "issuedFormatSlack": "This is a Slack URL, so clicks are sent as Slack messages (no signature verification needed).",
       "formatBadgeDiscord": "Discord",
       "formatBadgeSlack": "Slack",
       "formatBadgeGeneric": "Generic",
@@ -1597,11 +1597,11 @@
       },
       "clientApp": {
         "title": "Opened in an app",
-        "desc": "Clicks that opened inside an in-app browser — KakaoTalk, Instagram and friends. Sign-in redirects and downloads often break in there."
+        "desc": "Clicks opened in an app's built-in browser, like KakaoTalk or Instagram. Sign-in redirects and downloads often break there."
       },
       "fetchSite": {
         "title": "How they opened it",
-        "desc": "Whether they opened the address themselves or followed a link — this splits apart clicks that carry no referrer."
+        "desc": "Whether people typed the address themselves or followed a link. This also sorts out clicks with no referrer."
       },
       "postClicks": {
         "title": "Which post",
@@ -1696,8 +1696,8 @@
     "heatmap": {
       "less": "Less",
       "more": "More",
-      "tooltip": "{day} {hour}h — {count} clicks",
-      "tooltipBucket": "{day} {from}–{to}h — {count} clicks",
+      "tooltip": "{day} {hour}h, {count} clicks",
+      "tooltipBucket": "{day} {from}–{to}h, {count} clicks",
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count, plural, one {# click} other {# clicks}}",
@@ -1738,19 +1738,19 @@
       "newVisitors": "New visitors",
       "returningVisitors": "Returning visitors",
       "velocity": "Being clicked at {x}× the usual pace right now",
-      "trendUp": "Last 7 days up {percent}% on the week before — {count} clicks",
-      "trendDown": "Last 7 days down {percent}% on the week before — {count} clicks",
-      "peakDay": "Peaked on {date} — {count} clicks in a day",
+      "trendUp": "Clicks in the last 7 days rose {percent}% from the 7 days before ({count} clicks)",
+      "trendDown": "Clicks in the last 7 days fell {percent}% from the 7 days before ({count} clicks)",
+      "peakDay": "The busiest day was {date}, with {count} clicks",
       "topSource": "{host} brought {percent}% of your traffic",
       "peakHour": "Busiest around {hour}:00",
       "returning": "{percent}% of visitors came back",
       "topCountry": "{percent}% arrived from {country}",
-      "mobileHeavy": "{percent}% on mobile — this link gets tapped on phones",
-      "desktopHeavy": "{percent}% on desktop — opened at a desk",
+      "mobileHeavy": "{percent}% of clicks came from mobile",
+      "desktopHeavy": "{percent}% of clicks came from desktop",
       "botHigh": "Automated traffic is {percent}% · {human} human clicks",
       "botFiltered": "Excluding {percent}% automated traffic leaves {human} human clicks",
       "fastFirstClick": "First click landed {minutes} min after creation",
-      "inAppBrowser": "{percent}% opened inside {app} — that is a lot of in-app browser traffic",
+      "inAppBrowser": "{percent}% of clicks opened inside {app}",
       "channelLoyalty": "{percent}% of the people from {host} came back",
       "showMore": "Show {count} more changes",
       "showLess": "Show less"
@@ -1975,7 +1975,7 @@
       },
       "requestMetrics": {
         "title": "Request log (raw)",
-        "desc": "Backed by the new request_metrics table — every finished HTTP request is captured asynchronously, so this section can answer per-code outcome questions and drill into individual requests, things the timer-backed sections above cannot. Use 'Show sample' to preview the layout when the table is empty (fresh deploy / pre-launch).",
+        "desc": "Backed by the new request_metrics table. Every finished HTTP request is captured asynchronously, so this section can answer per-code outcome questions and drill into individual requests, which the timer-backed sections above cannot. Use 'Show sample' to preview the layout when the table is empty (fresh deploy / pre-launch).",
         "mockOn": "Showing sample",
         "mockOff": "Show sample",
         "window": {
@@ -2022,7 +2022,7 @@
     },
     "accessToken": {
       "title": "API access token",
-      "desc": "A token to call the API as yourself. If leaked it hands over your account access — handle with care.",
+      "desc": "A token to call the API as yourself. If it leaks, it hands over your account access, so handle it with care.",
       "issue": "Issue token",
       "reissue": "Reissue",
       "copy": "Copy",
@@ -2138,7 +2138,7 @@
     },
     "blocked": {
       "title": "Blocked domains",
-      "subtitle": "Domains listed here are rejected at shorten time, and every existing link to them — subdomains included — immediately serves the blocked page. Blocking automatically warns the owners of affected links.",
+      "subtitle": "Domains listed here are rejected at shorten time, and every existing link to them, subdomains included, immediately serves the blocked page. Blocking automatically warns the owners of affected links.",
       "addPlaceholder": "spam.example.com",
       "reasonPlaceholder": "Reason (optional)",
       "add": "Block",
@@ -2152,7 +2152,7 @@
       "unblockConfirm": "Unblock {domain}? Shortening and redirects to this domain will be allowed again.",
       "addFailed": "Request failed",
       "warned": "Warned {count} link owner(s) in their own language.",
-      "warnedNone": "{domain} — no account-owned links, so no warnings were sent."
+      "warnedNone": "No account-owned links point to {domain}, so no warnings were sent."
     },
     "enforce": {
       "title": "Enforcement",
@@ -2165,7 +2165,7 @@
       "warnPlaceholder": "e.g. Promoting illegal sites violates our terms. The link has been blocked; repeated violations will suspend your account.",
       "warnSend": "Send warning",
       "warnSent": "Warning sent.",
-      "warnAnonymous": "This link was created anonymously — there is no account to warn. Use the domain block instead.",
+      "warnAnonymous": "This link was created anonymously, so there's no account to warn. Use the domain block instead.",
       "failed": "Request failed",
       "blockShort": "Block",
       "blockedShort": "Blocked"
@@ -2217,7 +2217,7 @@
     "copiedFallback": "URL copied"
   },
   "demo": {
-    "metaTitle": "kurl demo — see exactly what you get when you shorten a link",
+    "metaTitle": "kurl demo: see what you get when you shorten a link",
     "metaDescription": "A preview of the analytics dashboard, no sign-in needed.",
     "sampleBanner": "Sample data. Once you sign in, your own links fill in this same layout.",
     "sampleCta": "Make my link",
@@ -2336,7 +2336,7 @@
   },
   "statsEmpty": {
     "title": "No clicks yet",
-    "description": "Share this short link on KakaoTalk, Slack, or social — stats start rolling in as soon as someone clicks."
+    "description": "Share this short link on KakaoTalk, Slack, or social media. Stats start the moment someone clicks."
   },
   "utm": {
     "toggle": "Add UTM parameters",
@@ -2368,7 +2368,7 @@
     "disclaimer": "Compared against bit.ly, short.io, rebrandly, and TinyURL free plans (2026).",
     "rows": {
       "abtest": {
-        "label": "A/B split — one link, several destinations",
+        "label": "A/B split: one link, several destinations",
         "note": "Route a percentage of clicks to each destination. Usually enterprise-only."
       },
       "geoRouting": {
@@ -2385,11 +2385,11 @@
       },
       "insights": {
         "label": "Automatic insights",
-        "note": "Peak hour, return rate, velocity — surfaced without setup."
+        "note": "Shows peak hour, return rate, and click velocity with no setup."
       },
       "asnTracking": {
         "label": "Auto-separate datacenter clicks",
-        "note": "Clicks from major cloud ranges (AWS / GCP and more) are flagged as bots — rare elsewhere."
+        "note": "Clicks from major cloud networks (ASNs) like AWS and GCP are classified as bots. Few other services do this."
       },
       "botDefense": {
         "label": "Layered bot defence",
@@ -2647,7 +2647,7 @@
       },
       "socialsLabel": "Social buttons",
       "socialKakaoLabel": "KakaoTalk Channel",
-      "socialsHint": "Pick which channels appear at the bottom of your public profile. For each, paste the URL of your own account — visitors who tap the button land there. Up to 2, shown in the order you pick.",
+      "socialsHint": "Pick which channels appear at the bottom of your public profile. Paste your own account URL for each, and visitors who tap the button go there. Up to 2, shown in the order you pick.",
       "socialsCount": "{count}/{max} selected",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2668,7 +2668,7 @@
       "quickAdd": {
         "title": "Add link",
         "firstTitle": "Add your first link ↓",
-        "firstHint": "Any URL — Instagram, blog, YouTube, etc. Add it with a label and it shows up on your bio link.",
+        "firstHint": "Add any URL, like Instagram, a blog, or YouTube, with a label, and it shows up on your bio link.",
         "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
         "urlPlaceholder": "https://... or mailto:...",
         "labelPlaceholder": "Label (e.g. 📝 Blog)",
@@ -2758,7 +2758,7 @@
       "addPlace": "+ Place",
       "addPlaceTitle": "Add place",
       "editPlaceTitle": "Edit place",
-      "addPlaceDescription": "Show a single business / venue card — café, store, studio, popup, etc. Google Places autocomplete fills in the address and coords.",
+      "addPlaceDescription": "Show one place as a card, like a café, store, studio, or pop-up. Search Google Places and the address and coordinates fill in automatically.",
       "addPlacePlaceholder": "(no place set)",
       "placeFieldSearch": "Search place",
       "placeFieldSearchPlaceholder": "e.g. NUDAKE Dosan",
@@ -2810,7 +2810,7 @@
       "emailFormFieldTitle": "Form title",
       "emailFormFieldTitlePlaceholder": "e.g. Get my newsletter",
       "emailFormFieldSubtitle": "Subtitle (optional)",
-      "emailFormFieldSubtitlePlaceholder": "e.g. New product launches, class openings, limited menus — you'll hear it first.",
+      "emailFormFieldSubtitlePlaceholder": "e.g. Be the first to hear about new products, class openings, and limited menus.",
       "emailFormFieldSubtitleHint": "One or two sentences telling visitors why they should leave their email.",
       "emailFormFieldPlaceholder": "Input placeholder",
       "emailFormFieldSuccess": "Success message",
@@ -2870,7 +2870,7 @@
           "title": "UTM source",
           "desc": "Email / SNS / etc."
         },
-        "publicTitle": "@{username} — public visit stats",
+        "publicTitle": "Profile visit stats for @{username}",
         "publicIntro": "Aggregated stats the profile owner chose to share publicly.",
         "publicNotAvailable": {
           "title": "Stats aren't public",
@@ -2950,13 +2950,13 @@
       "contactFieldAddress": "Address",
       "contactFieldAddressPlaceholder": "City, Country",
       "contactFieldLogo": "Logo (optional)",
-      "contactFieldLogoHint": "Company / personal logo — displayed as a square on the card.",
+      "contactFieldLogoHint": "Company or personal logo, shown as a square on the card.",
       "contactFieldLogoFocalHint": "Drag the image to pick which part fills the square.",
       "contactFieldPalette": "Holographic palette",
       "addGalleryTitle": "Add gallery",
       "editGalleryTitle": "Edit gallery",
       "addGalleryDescription": "Image URLs to display as a swipeable carousel. Up to {max} images.",
-      "addGalleryDescriptionUpload": "Up to {max} — visitors swipe through. First image is the cover.",
+      "addGalleryDescriptionUpload": "Up to {max} images. Visitors swipe through them, and the first one is the cover.",
       "addGalleryPlaceholder": "(no gallery)",
       "galleryDropzone": "Add photos (pick several at once)",
       "galleryFull": "Maximum reached",
@@ -2982,7 +2982,7 @@
       "addTextDescription": "Section blurb, announcement, or short paragraph. Supports markdown (headings, bold, lists, links).",
       "textFieldContent": "Content",
       "textFieldPlaceholder": "e.g. ## Updates\nNew menu items! [Read more](https://...)",
-      "textMarkdownHint": "Markdown — # heading, **bold**, *italic*, - list",
+      "textMarkdownHint": "Markdown supported: # heading, **bold**, *italic*, - list",
       "textPreviewLabel": "Preview",
       "textPreviewEmpty": "Markdown preview will appear here",
       "textFieldLayout": "Style",
@@ -2996,7 +2996,7 @@
       "textAccent_red": "Red",
       "textAccent_violet": "Violet",
       "textFieldIcon": "Icon (one emoji)",
-      "textFieldIconHint": "Shown top-left of the highlight box — e.g. 💡 / 📢 / ⚠️ / 🎉",
+      "textFieldIconHint": "Shown at the top left of the highlight box, e.g. 💡 📢 ⚠️ 🎉",
       "addImagePrompt": "Image URL (https://...)",
       "addImagePlaceholder": "(no image)",
       "addImageTitle": "Add image",
@@ -3042,7 +3042,7 @@
     "deleting": "Deleting...",
     "twofa": {
       "title": "Two-factor authentication (2FA)",
-      "description": "Add a TOTP authenticator app (Google Authenticator, Authy, 1Password, etc.) for an extra step at sign-in. Save the 10 recovery codes shown right after enabling — they're your backup if you lose access to the app.",
+      "description": "Add a TOTP authenticator app (Google Authenticator, Authy, 1Password, etc.) for an extra step at sign-in. Right after you turn it on, save the 10 recovery codes somewhere safe so you can still sign in if you lose the app.",
       "loading": "Loading...",
       "statusOn": "Enabled",
       "statusOff": "Disabled",
@@ -3070,7 +3070,7 @@
       "regenerated": "New recovery codes issued.",
       "disabled": "2FA disabled.",
       "recoveryTitle": "Save your recovery codes somewhere safe",
-      "recoveryHint": "Each code works only once. Use them if you lose access to your authenticator app — print them or store in a password manager.",
+      "recoveryHint": "Each code works only once. Use them if you lose access to your authenticator app, and keep them printed or in a password manager.",
       "recoveryCopyAll": "Copy all",
       "recoveryCopied": "Recovery codes copied.",
       "recoveryCopyFailed": "Copy failed.",
@@ -3080,7 +3080,7 @@
     },
     "apiKeys": {
       "title": "API keys",
-      "description": "Use these from scripts or automations that call the kurl API. The full key is shown once — copy it somewhere safe immediately.",
+      "description": "Use these from scripts or automations that call the kurl API. The full key is shown only once, so copy it somewhere safe right away.",
       "namePlaceholder": "Name (e.g., 'Internal report bot')",
       "issue": "Issue",
       "issuing": "Issuing...",
@@ -3112,7 +3112,7 @@
     },
     "customDomains": {
       "title": "Custom domains",
-      "description": "Serve short links from your own domain (e.g. go.brand.com). Add TXT + CNAME records — we auto-verify in the background (polls DNS for up to 10 min). Easiest TLS path: front your domain with Cloudflare free plan.",
+      "description": "Serve short links from your own domain (e.g. go.brand.com). Add the TXT and CNAME records and we verify them in the background, checking DNS for up to 10 minutes. The easiest way to get TLS is to put your domain behind Cloudflare's free plan.",
       "register": "Register",
       "registering": "Registering...",
       "registerFailed": "Failed to register domain.",
@@ -3129,8 +3129,8 @@
       "deleted": "Deleted",
       "deleteConfirm": "Remove this domain? Short links on this domain will stop working immediately.",
       "deleteFailed": "Failed to delete.",
-      "dnsTxtHint": "Ownership check — add this TXT record at your DNS provider",
-      "dnsCnameHint": "Traffic routing — add this CNAME record at the same provider"
+      "dnsTxtHint": "Ownership check: add this TXT record at your DNS provider",
+      "dnsCnameHint": "Traffic routing: add this CNAME record at the same provider"
     }
   },
   "homeStats": {
@@ -3206,7 +3206,7 @@
         "redirectTitle": "Redirect elsewhere",
         "redirectBody": "Send printed QRs to a review page, next campaign, waitlist, or any follow-up URL."
       },
-      "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.\nContact — @kurl_official",
+      "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.\nContact: @kurl_official",
       "messageHint": "Blank uses the default message. Line breaks are preserved ·",
       "redirectHint": "The redirect URL is applied to printed QR codes when the campaign ends.",
       "cancel": "Cancel",
@@ -3384,7 +3384,7 @@
       "loading": "Loading...",
       "groups": {
         "distributorTitle": "Performance by distributor",
-        "distributorHint": "Clicks per 100 sheets — comparable even when distributors handled different quantities.",
+        "distributorHint": "Clicks per 100 sheets, so distributors can be compared even when they handed out different amounts.",
         "areaTitle": "Performance by area",
         "areaHint": "Use this to decide the next distribution location.",
         "tooltip": "{rate} / 100 sheets · clicks {clicks} / distributed {quantity}",
@@ -3394,7 +3394,7 @@
       "compare": {
         "title": "Compare with another campaign",
         "description": "Compare first vs second runs, or different seasonal campaigns.",
-        "none": "— No comparison —",
+        "none": "No comparison",
         "current": "Current",
         "comparison": "Compare",
         "selectHint": "Choose a campaign from the dropdown above."
@@ -3454,15 +3454,15 @@
     "q1": "Are shortened links permanent?",
     "a1": "Anonymous links auto-expire after 24h. Links you make signed in last until you delete them.",
     "q2": "Can I use it without signing in?",
-    "a2": "Yes — shortening works without an account. Stats and permanent storage need Google sign-in.",
+    "a2": "Yes. Shortening works without an account. Stats and permanent storage need Google sign-in.",
     "q3": "Where do I see stats?",
     "a3": "On the My Links page click any code to open the 8-dimension stats page.",
     "q4": "Will previews show in KakaoTalk / Slack?",
-    "a4": "Yes — preview cards work on KakaoTalk, Slack, and Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image instead of redirecting right away.",
+    "a4": "Yes. Preview cards work on KakaoTalk, Slack, and Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image instead of redirecting right away.",
     "q5": "How are malicious URLs blocked?",
     "a5": "We screen with Google Safe Browsing at shorten time. Flagged URLs are rejected.",
     "q6": "Is there an API?",
-    "a6": "Yes — kurl offers a developer API. Get a key under Settings > API keys and call the shorten / stats endpoints from your own code."
+    "a6": "Yes. kurl has a developer API. Get a key under Settings > API keys and call the shorten and stats endpoints from your own code."
   },
   "campaignStatus": {
     "DRAFT": "Draft",
@@ -3539,8 +3539,8 @@
     },
     "hero": {
       "eyebrow": "Offline QR campaigns",
-      "title1": "Different QR per flyer —",
-      "title2": "see where the response comes from.",
+      "title1": "Put a different QR on each flyer,",
+      "title2": "then see where the response comes from.",
       "sub": "Make a separate QR for each area, exit, or distributor, and use clicks per 100 flyers to choose where to hand out next.",
       "cta": "Create QRs"
     },
@@ -3768,7 +3768,7 @@
     "visibilityUnlisted": "Link only",
     "visibilityPublic": "Public",
     "visibilityPrivateDesc": "Only you can see it.",
-    "visibilityUnlistedDesc": "Only people with the link can see it — not listed or discovered.",
+    "visibilityUnlistedDesc": "Only people with the link can see it. It won't appear in lists or discovery.",
     "visibilityPublicDesc": "Anyone can see it, and it flows into your profile and Discover.",
     "dangerZone": "Danger zone",
     "deleteCollectionDesc": "Delete this collection. The items in it aren't deleted. This can't be undone.",
@@ -3866,7 +3866,7 @@
     "connectLabel": "Connect",
     "myCollectionsMetaTitle": "My collections",
     "myCollectionsTitle": "My collections",
-    "myCollectionsSubtitle": "The collections and paths you've made — private ones live here too.",
+    "myCollectionsSubtitle": "Collections and paths you've made, including private ones.",
     "myCollectionsLoadError": "Couldn't load them.",
     "myCollectionsEmptyTitle": "No collections yet",
     "myCollectionsEmptyBody": "While reading a post or a sentence, use “Connect” to start your first collection.",
@@ -3934,7 +3934,7 @@
       "viralHook": "Made with kurl.",
       "viralCta": "Make an event page",
       "canceledNotice": "This event has been canceled.",
-      "fullNotice": "This event is full. Spots reopen when someone cancels — check back later.",
+      "fullNotice": "This event is full. Spots open up again when someone cancels, so check back later.",
       "closedNotice": "Registration is closed.",
       "cancelTitle": "Cancel registration",
       "cancelBody": "Cancel your registration for \"{title}\"? Your spot goes back to others.",
@@ -4040,7 +4040,7 @@
       "coverUploading": "Uploading…",
       "descWrite": "Write",
       "descPreview": "Preview",
-      "descPreviewEmpty": "Nothing yet — write markdown in the Write tab and preview it here.",
+      "descPreviewEmpty": "Nothing here yet. Write in Markdown on the Write tab to preview it here.",
       "useGoogleMaps": "Create a Google Maps link for “{place}”",
       "openMap": "Open map ↗"
     },
