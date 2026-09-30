@@ -8,7 +8,7 @@ type Props = {
   bannerUrl: string | null;
   colors: ThemeColors;
   /** 한 페이지에 프로필이 여러 장 놓이는 곳(쇼케이스 카드·편집기 미리보기)은 h2. */
-  headingLevel?: "h1" | "h2";
+  headingLevel?: "h1" | "h2" | "h3";
 };
 
 /** 문서의 머리처럼 — 표지(있으면) 한 장, 그 아래 아바타 · @이름 · 한 줄 소개를 한 줄에. */

@@ -1002,7 +1002,6 @@
     "recentLogin": "ログイン"
   },
   "showcase": {
-    "eyebrow": "公開プロフィール · 作例",
     "title": "仕事に合わせたプロフィール",
     "subhead": "カフェのメニュー、講座の日程、作品など、仕事に合うブロックを選んで1ページにまとめます。",
     "demoCta": "作例を見る",
@@ -1013,13 +1012,10 @@
     "metaFallbackTitle": "{handle} · kurl サンプル",
     "sampleBanner": "サンプル · ログインすると自分のページを作れます",
     "sampleCta": "プロフィールを作る",
-    "scrollCue": "作例を見る",
     "meta": {
       "title": "リンクインバイオのプロフィール作例 · kurl",
       "description": "カフェ、講師、写真家など、仕事に合わせて作ったプロフィールの作例です。リンク、名刺、地図、商品カードを1ページにまとめられます。"
-    },
-    "prev": "前の例",
-    "next": "次の例"
+    }
   },
   "shortenForm": {
     "placeholder": "長いURLをここに貼り付け",
@@ -3540,11 +3536,14 @@
       "description": "チラシ・ポスター・クーポンのQRをエリア・配布者・ロットごとに分けて、クリックを比べます。100枚あたりのクリック数で次の配布先を決められます。"
     },
     "hero": {
-      "eyebrow": "オフラインQRキャンペーン",
       "title1": "チラシごとに、違う QR。",
       "title2": "どこで反応があったかが見えます。",
       "sub": "エリア・出口・配布者ごとに別のQRを作り、100枚あたりのクリック数で次の配布先を決めます。",
       "cta": "QR作成"
+    },
+    "example": {
+      "title": "キャンペーンを作ると、こんな統計が見られます",
+      "desc": "ロットごとにQRが違うので、100枚あたりのクリックでどこが良かったかすぐに比べられます。下は例のデータです。"
     },
     "s2": {
       "line1": "エリア・出口・配布者ごとに",
@@ -3556,65 +3555,11 @@
       "line2": "QRだけ自動で入ります。",
       "aux": "CanvaやInDesignのPDFに、位置を指定するだけです。"
     },
-    "s4": {
-      "line1": "渋谷 142 クリック・新宿 38。",
-      "line2": "次は渋谷で多めに配ります。",
-      "aux": "次の配布先は、クリック数で決められます。"
-    },
-    "s5": {
-      "line1": "チラシ・クーポン・ポスター。",
-      "line2": "業種が違っても同じように使えます。",
-      "aux": "例:同じ方法で1回目と2回目を比べました。"
-    },
     "s6": {
       "line1": "印刷したQRはそのままで、",
-      "line2": "行き先だけ変えます。"
-    },
-    "cta": {
-      "title": "次の配布先をクリック数で決める",
-      "primary": "QRを作成",
-      "secondary": "ログイン",
-      "note": "同じアカウントで短縮リンクと統計も使えます。"
-    },
-    "mock": {
-      "kpiBeforeKurl": "計測前",
-      "kpiAfterKurl": "計測後",
-      "kpiStatus": "効果を測らずに配布",
-      "kpiDistributed": "配布",
-      "kpiClicks": "クリック",
-      "kpiPer100": "100枚あたり",
-      "kpiTopArea": "1位エリア",
-      "batchTitle": "配布バッチ",
-      "batchAdd": "バッチ追加",
-      "batchColName": "バッチ名",
-      "batchColArea": "エリア",
-      "batchColDist": "業者",
-      "batchColQty": "枚数",
-      "batchColStatus": "状態",
-      "batchDone": "印刷済",
-      "batchUnit": "枚",
-      "posterTitle": "ポスター合成",
-      "posterBoxLabel": "QR",
-      "posterPerBatch": "バッチごとに別の QR",
-      "barsTitle": "エリア別クリック",
-      "barsSort": "効率順",
-      "barsTop": "1位",
-      "barsRecoTitle": "次回のおすすめ",
-      "barsRecoEstimate": "予想 +{count} クリック",
-      "casesTitle": "活用例",
-      "casesBefore": "1回目",
-      "casesAfter": "2回目",
-      "casesFooter": "例 · 2つのキャンペーンを比べた画面",
-      "timelineExpired": "期限切れ時点",
-      "timelineNext": "次のページ",
-      "timelineChip": "予約 / メニュー",
-      "timelineFoot": "印刷したQRはそのまま、行き先だけ自動切替",
-      "kpiStatusAfter": "束ごとの QR で配布",
-      "barsMeta": "{qty} 枚 · 100枚あたり {per100}",
-      "barsReco": "{from} {qty} 枚 → {to}"
-    },
-    "backLink": "短縮URLツールに戻る",
-    "statsLink": "QRキャンペーン分析"
+      "line2": "行き先だけ変えます。",
+      "aux": "イベントが終わっても、配ったQRは次の案内ページにつながります。"
+    }
   },
   "workspaceGate": {
     "title": "ログインして書き始める",
@@ -3864,9 +3809,14 @@
   },
   "events": {
     "intro": {
-      "eyebrow": "募集ページ",
       "title": "参加申し込みをリンクで受け付けます",
       "subtitle": "勉強会やミートアップ、サークルの紹介ページと申込フォームを作れます。定員に達すると自動で締め切られ、どこから申し込みが来たかも確認できます。",
+      "example": {
+        "title": "参加者にはこんなページが開きます",
+        "desc": "リンクを開くと日時・場所・残り枠がひと目でわかり、主催者にはどのチャットから申し込まれたかがたまります。下は例です。",
+        "guest": "参加者が見るページ",
+        "host": "主催者が見る申し込み状況"
+      },
       "step1": {
         "title": "ページを作る",
         "body": "タイトルと日時を入れればページができます。"
@@ -3888,12 +3838,12 @@
         "registerButton": "申し込む",
         "example": "例",
         "byChannel": "チャネル別の申し込み",
-        "registered": "{count}/{capacity}名が申し込み",
         "channels": {
           "groupChat": "グループチャット",
           "instagram": "Instagram",
           "qrPoster": "QRポスター"
-        }
+        },
+        "hostName": "夜の読書会"
       }
     },
     "public": {
