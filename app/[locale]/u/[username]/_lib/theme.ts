@@ -13,134 +13,142 @@ export type ThemeColors = {
   muted: string;
   avatar: string;
   avatarText: string;
-  /**
-   * Primary CTA button — combined bg + text + hover classes. Use for the main call-to-action
-   * button in a card (e.g. PlaceEntry "길찾기", EmailFormEntry submit). Light themes get a near-
-   * black button, dark themes get an inverted white button so the CTA stays the strongest
-   * visual on the card across all themes. Themes with their own accent color hue (sunset / ocean
-   * / forest / aurora / wave / ember) keep the slate primary so the CTA reads as "action button"
-   * universally rather than a color statement that competes with the page gradient.
-   */
+  /** 주 버튼 — 테마의 강조색 한 가지(길찾기·신청·캘린더 추가·이메일 등록 등). */
   ctaPrimary: string;
+  /** 대표 카드의 라벨 글자색 — 강조색. */
+  accentText: string;
+  /** 대표 카드 테두리 — 두께까지(모노는 2px). */
+  accentBorder: string;
   /**
-   * Hex / CSS-color value for the page background, applied as an inline style on the device-frame
-   * preview surfaces (ShowcaseCard / ProfilePreview). devices.css ships
-   * {@code .device .device-screen { background: #000 }} (specificity 0,2,0) which beats both
-   * Tailwind utilities (0,1,0) and any low-specificity reset; inline style (1,0,0,0) wins. Only
-   * needed for solid-colored themes — gradient themes (sunset / ocean / forest / aurora / wave
-   * / ember / neon) paint their gradient over the whole screen, so the #000 default never shows.
+   * Hex value of the page background for the phone-preview surfaces (ShowcaseCard / ProfilePreview):
+   * devices.css paints {@code .device .device-screen} black at a specificity Tailwind can't beat, so
+   * the preview sets this inline.
    */
-  pageBgHex?: string;
+  pageBgHex: string;
 };
 
 /**
- * Tailwind class lookup keyed by the user's saved theme. The default fallback (when a user hasn't
- * picked one) matches "light" so the page never renders without colors.
+ * 테마 = 색 종이 한 장 + 강조색 하나. 페이지는 평평한 옅은 색(그라디언트·움직임·흐림·글로우 없음),
+ * 카드는 흰 종이(다크·네온은 먹색), 테마의 색은 강조색(대표 카드·주 버튼·이니셜 원)으로만 드러난다.
+ * 키는 백엔드 enum 그대로 — 저장된 테마를 옮기지 않는다.
  */
+function paperTheme(o: {
+  page: string;
+  pageBgHex: string;
+  line: string;
+  cardHover: string;
+  rowHover: string;
+  accentText: string;
+  accentBorder: string;
+  cta: string;
+  avatar: string;
+}): ThemeColors {
+  return {
+    page: o.page,
+    card: "bg-white",
+    cardBorder: `border ${o.line}`,
+    cardHover: o.cardHover,
+    divider: o.line,
+    rowHover: o.rowHover,
+    primary: "text-slate-900",
+    muted: "text-slate-500",
+    avatar: o.avatar,
+    avatarText: "text-white",
+    ctaPrimary: o.cta,
+    accentText: o.accentText,
+    accentBorder: o.accentBorder,
+    pageBgHex: o.pageBgHex,
+  };
+}
+
 export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
-  default: {
+  default: paperTheme({
     page: "bg-white",
-    card: "bg-white",
-    cardBorder: "border-slate-200",
-    cardHover: "hover:border-slate-300 hover:bg-slate-50",
-    divider: "border-slate-200",
-    rowHover: "hover:bg-slate-50",
-    primary: "text-slate-900",
-    muted: "text-slate-500",
-    avatar: "bg-slate-900",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
     pageBgHex: "#ffffff",
-  },
-  light: {
-    page: "bg-slate-50",
-    card: "bg-white",
-    cardBorder: "border-slate-200",
-    cardHover: "hover:border-slate-300 hover:bg-slate-50",
-    divider: "border-slate-200",
+    line: "border-slate-200",
+    cardHover: "hover:border-slate-300",
     rowHover: "hover:bg-slate-50",
-    primary: "text-slate-900",
-    muted: "text-slate-500",
+    accentText: "text-accent-700",
+    accentBorder: "border border-accent-300",
+    cta: "bg-accent-700 text-white hover:bg-accent-800 active:bg-accent-800",
+    avatar: "bg-accent-700",
+  }),
+  light: paperTheme({
+    page: "bg-slate-50",
+    pageBgHex: "#f9faf9",
+    line: "border-slate-200",
+    cardHover: "hover:border-slate-300",
+    rowHover: "hover:bg-slate-50",
+    accentText: "text-slate-900",
+    accentBorder: "border border-slate-400",
+    cta: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
     avatar: "bg-slate-900",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
-    pageBgHex: "#f8fafc",
-  },
+  }),
   dark: {
     page: "bg-slate-950",
     card: "bg-slate-900",
-    cardBorder: "border-slate-800",
-    cardHover: "hover:border-slate-700 hover:bg-slate-800",
+    cardBorder: "border border-slate-800",
+    cardHover: "hover:border-slate-700",
     divider: "border-slate-800",
-    rowHover: "hover:bg-slate-800",
+    rowHover: "hover:bg-slate-800/60",
     primary: "text-slate-100",
     muted: "text-slate-400",
-    avatar: "bg-slate-100",
-    avatarText: "text-slate-900",
-    ctaPrimary: "bg-white text-slate-900 hover:bg-slate-100 active:bg-slate-200",
+    avatar: "bg-accent-500",
+    avatarText: "text-slate-950",
+    ctaPrimary: "bg-accent-500 text-slate-950 hover:bg-accent-400 active:bg-accent-400",
+    accentText: "text-accent-400",
+    accentBorder: "border border-accent-500/40",
+    pageBgHex: "#040906",
   },
-  accent: {
-    page: "bg-gradient-to-b from-accent-50 to-white",
-    card: "bg-white",
-    cardBorder: "border-accent-200",
-    cardHover: "hover:border-accent-300 hover:bg-accent-50/50",
-    divider: "border-accent-200",
-    rowHover: "hover:bg-accent-50/50",
-    primary: "text-slate-900",
-    muted: "text-slate-600",
-    avatar: "bg-accent-600",
-    avatarText: "text-white",
-    ctaPrimary: "bg-accent-600 text-white hover:bg-accent-700 active:bg-accent-700",
-  },
-  sunset: {
-    page: "bg-gradient-to-b from-orange-100 via-rose-50 to-amber-50",
-    card: "bg-white/90 backdrop-blur-sm",
-    cardBorder: "border-rose-200",
-    cardHover: "hover:border-rose-300 hover:bg-white",
-    divider: "border-rose-200",
-    rowHover: "hover:bg-white",
-    primary: "text-slate-900",
-    muted: "text-rose-900/70",
-    avatar: "bg-gradient-to-br from-orange-400 to-rose-500",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
-  },
-  ocean: {
-    page: "bg-gradient-to-b from-sky-100 via-cyan-50 to-blue-50",
-    card: "bg-white/90 backdrop-blur-sm",
-    cardBorder: "border-sky-200",
-    cardHover: "hover:border-sky-300 hover:bg-white",
-    divider: "border-sky-200",
-    rowHover: "hover:bg-white",
-    primary: "text-slate-900",
-    muted: "text-sky-900/70",
-    avatar: "bg-gradient-to-br from-cyan-500 to-sky-600",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
-  },
-  forest: {
-    page: "bg-gradient-to-b from-emerald-100 via-green-50 to-teal-50",
-    card: "bg-white/90 backdrop-blur-sm",
-    cardBorder: "border-emerald-200",
-    cardHover: "hover:border-emerald-300 hover:bg-white",
-    divider: "border-emerald-200",
-    rowHover: "hover:bg-white",
-    primary: "text-slate-900",
-    muted: "text-emerald-900/70",
-    avatar: "bg-gradient-to-br from-emerald-500 to-teal-600",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
-  },
+  accent: paperTheme({
+    page: "bg-accent-50",
+    pageBgHex: "#ecfdf5",
+    line: "border-accent-200",
+    cardHover: "hover:border-accent-300",
+    rowHover: "hover:bg-accent-50/60",
+    accentText: "text-accent-700",
+    accentBorder: "border border-accent-400",
+    cta: "bg-accent-700 text-white hover:bg-accent-800 active:bg-accent-800",
+    avatar: "bg-accent-700",
+  }),
+  sunset: paperTheme({
+    page: "bg-rose-50",
+    pageBgHex: "#fff1f2",
+    line: "border-rose-200",
+    cardHover: "hover:border-rose-300",
+    rowHover: "hover:bg-rose-50/60",
+    accentText: "text-rose-700",
+    accentBorder: "border border-rose-300",
+    cta: "bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-700",
+    avatar: "bg-rose-600",
+  }),
+  ocean: paperTheme({
+    page: "bg-sky-50",
+    pageBgHex: "#f0f9ff",
+    line: "border-sky-200",
+    cardHover: "hover:border-sky-300",
+    rowHover: "hover:bg-sky-50/60",
+    accentText: "text-sky-700",
+    accentBorder: "border border-sky-300",
+    cta: "bg-sky-700 text-white hover:bg-sky-800 active:bg-sky-800",
+    avatar: "bg-sky-700",
+  }),
+  forest: paperTheme({
+    page: "bg-teal-50",
+    pageBgHex: "#f0fdfa",
+    line: "border-teal-200",
+    cardHover: "hover:border-teal-300",
+    rowHover: "hover:bg-teal-50/60",
+    accentText: "text-teal-700",
+    accentBorder: "border border-teal-300",
+    cta: "bg-teal-700 text-white hover:bg-teal-800 active:bg-teal-800",
+    avatar: "bg-teal-700",
+  }),
   mono: {
     page: "bg-white",
     card: "bg-white",
     cardBorder: "border-2 border-black",
-    // Previous hover was {@code bg-black + text-white} — the bg flipped but each child's
-    // explicit {@code text-black} / {@code text-slate-900} override won the cascade, leaving
-    // black text on a black background and making the link unreadable on tap/hover. Switching
-    // to a paper-style offset shadow keeps the mono aesthetic (strong black border, no color
-    // hue) while leaving text readable.
-    cardHover: "hover:bg-slate-50 hover:shadow-[3px_3px_0_0_#000]",
+    cardHover: "hover:bg-slate-50",
     divider: "border-black",
     rowHover: "hover:bg-slate-50",
     primary: "text-black",
@@ -148,61 +156,57 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-black",
     avatarText: "text-white",
     ctaPrimary: "bg-black text-white hover:bg-slate-800 active:bg-slate-800",
+    accentText: "text-black",
+    accentBorder: "border-2 border-black",
     pageBgHex: "#ffffff",
   },
   neon: {
     page: "bg-slate-950",
-    card: "bg-slate-900/80 backdrop-blur-sm",
+    card: "bg-slate-900",
     cardBorder: "border border-fuchsia-500/40",
-    cardHover: "hover:border-fuchsia-400 hover:shadow-[0_0_30px_rgba(232,121,249,0.25)]",
-    divider: "border-fuchsia-500/30",
+    cardHover: "hover:border-fuchsia-400",
+    divider: "border-fuchsia-500/20",
     rowHover: "hover:bg-fuchsia-500/10",
-    primary: "text-fuchsia-100",
-    muted: "text-fuchsia-300/70",
-    avatar: "bg-gradient-to-br from-fuchsia-500 to-cyan-400",
-    avatarText: "text-slate-950",
-    ctaPrimary: "bg-fuchsia-500 text-white hover:bg-fuchsia-400 active:bg-fuchsia-600",
-  },
-  aurora: {
-    // Animated gradient (defined in globals.css with prefers-reduced-motion fallback).
-    page: "theme-aurora-anim",
-    card: "bg-white/85 backdrop-blur-sm",
-    cardBorder: "border border-violet-200",
-    cardHover: "hover:bg-white hover:border-violet-300",
-    divider: "border-violet-200",
-    rowHover: "hover:bg-white",
-    primary: "text-slate-900",
-    muted: "text-slate-600",
-    avatar: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
+    primary: "text-slate-100",
+    muted: "text-slate-400",
+    avatar: "bg-fuchsia-500",
     avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
+    ctaPrimary: "bg-fuchsia-500 text-white hover:bg-fuchsia-400 active:bg-fuchsia-400",
+    accentText: "text-fuchsia-300",
+    accentBorder: "border border-fuchsia-400/60",
+    pageBgHex: "#040906",
   },
-  wave: {
-    // Animated vertical wave (sky → cyan → deep ocean). See .theme-wave-anim in globals.css.
-    page: "theme-wave-anim",
-    card: "bg-white/85 backdrop-blur-sm",
-    cardBorder: "border border-sky-200",
-    cardHover: "hover:bg-white hover:border-sky-300",
-    divider: "border-sky-200",
-    rowHover: "hover:bg-white",
-    primary: "text-slate-900",
-    muted: "text-sky-900/70",
-    avatar: "bg-gradient-to-br from-sky-500 to-cyan-500",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
-  },
-  ember: {
-    // Animated warm flicker (amber → orange → crimson). See .theme-ember-anim in globals.css.
-    page: "theme-ember-anim",
-    card: "bg-white/85 backdrop-blur-sm",
-    cardBorder: "border border-orange-200",
-    cardHover: "hover:bg-white hover:border-orange-300",
-    divider: "border-orange-200",
-    rowHover: "hover:bg-white",
-    primary: "text-slate-900",
-    muted: "text-orange-900/70",
-    avatar: "bg-gradient-to-br from-amber-500 to-rose-600",
-    avatarText: "text-white",
-    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
-  },
+  aurora: paperTheme({
+    page: "bg-violet-50",
+    pageBgHex: "#f5f3ff",
+    line: "border-violet-200",
+    cardHover: "hover:border-violet-300",
+    rowHover: "hover:bg-violet-50/60",
+    accentText: "text-violet-700",
+    accentBorder: "border border-violet-300",
+    cta: "bg-violet-600 text-white hover:bg-violet-700 active:bg-violet-700",
+    avatar: "bg-violet-600",
+  }),
+  wave: paperTheme({
+    page: "bg-cyan-50",
+    pageBgHex: "#ecfeff",
+    line: "border-cyan-200",
+    cardHover: "hover:border-cyan-300",
+    rowHover: "hover:bg-cyan-50/60",
+    accentText: "text-cyan-800",
+    accentBorder: "border border-cyan-300",
+    cta: "bg-cyan-700 text-white hover:bg-cyan-800 active:bg-cyan-800",
+    avatar: "bg-cyan-700",
+  }),
+  ember: paperTheme({
+    page: "bg-orange-50",
+    pageBgHex: "#fff7ed",
+    line: "border-orange-200",
+    cardHover: "hover:border-orange-300",
+    rowHover: "hover:bg-orange-50/60",
+    accentText: "text-orange-700",
+    accentBorder: "border border-orange-300",
+    cta: "bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-700",
+    avatar: "bg-orange-600",
+  }),
 };

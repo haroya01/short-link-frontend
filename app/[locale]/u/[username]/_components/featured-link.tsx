@@ -34,7 +34,7 @@ export function FeaturedLink({ entry, username, colors, fadeStyle }: Props) {
         href={href}
         target="_blank"
         rel="noreferrer"
-        className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+        className={`profile-card group block overflow-hidden ${colors.card} ${colors.accentBorder} ${colors.cardHover}`}
       >
         {cover && (
           <div className="aspect-[1.91/1] w-full bg-slate-100">
@@ -43,7 +43,7 @@ export function FeaturedLink({ entry, username, colors, fadeStyle }: Props) {
           </div>
         )}
         <div className="px-4 py-4">
-          <p className={`text-[12px] font-medium ${colors.muted}`}>{t("featured")}</p>
+          <p className={`text-[12px] font-medium ${colors.accentText}`}>{t("featured")}</p>
           <p className={`mt-1 text-[17px] font-semibold leading-snug tracking-headline ${colors.primary}`}>
             {entry.ogTitle ?? host}
           </p>
