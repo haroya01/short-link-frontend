@@ -90,6 +90,18 @@ export async function bootstrapSession(): Promise<boolean> {
   return (await tryRefresh()) != null;
 }
 
+/**
+ * Trade the refresh cookie a sign-in just set for this origin's access token. Unlike
+ * bootstrapSession it always asks: a new sign-in replaces whatever token this origin held.
+ */
+export async function completeSignIn(): Promise<boolean> {
+  if (MOCKS_ON) {
+    setToken("mock-session-token");
+    return true;
+  }
+  return (await tryRefresh()) != null;
+}
+
 async function tryRefresh(): Promise<string | null> {
   if (refreshInFlight) return refreshInFlight;
   refreshInFlight = (async () => {

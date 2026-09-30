@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { setToken } from "@/lib/api";
+import { completeSignIn } from "@/lib/api";
 import { Link, useRouter } from "@/i18n/navigation";
 import { writeStorageString } from "@/lib/storage-json";
 import { readSafeLoginNext } from "@/lib/login-next-cookie";
@@ -20,34 +20,39 @@ export default function AuthCallbackPage() {
       setError(t("oauthFailed", { reason: queryError }));
       return;
     }
-    const hash = window.location.hash;
-    if (!hash || !hash.includes("access_token=")) {
-      setError(t("tokenMissing"));
-      return;
+    // Sign-in leaves only an HttpOnly refresh cookie. An older backend also put the access token in
+    // the fragment — clear it from the address bar and history without reading it.
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname);
     }
-    const params = new URLSearchParams(hash.replace(/^#/, ""));
-    const token = params.get("access_token");
-    if (!token) {
-      setError(t("tokenInvalid"));
-      return;
-    }
-    setToken(token);
-    // Drop a flag the dashboard reads on first render and clears, so the welcome toast appears
-    // *after* navigation completes — putting it here would flash and disappear with the redirect.
-    writeStorageString("kurl:just-signed-in", "1", { session: true });
-    window.history.replaceState(null, "", "/auth/callback");
 
-    // Return to the page login started from (blog, profile, …). signInWithGoogle stashes the FULL url
-    // in a `.kurl.me` cookie that survives the cross-host blog → apex callback hop; readSafeLoginNext
-    // validates the origin (same-origin or on-platform .kurl.me) so it can't open-redirect off-site and
-    // clears the cookie as it reads. Navigate with the browser — the destination may be a different
-    // host (blog.kurl.me / {author}.kurl.me) than this apex callback. Falls back to /dashboard.
-    const next = readSafeLoginNext();
-    if (next) {
-      window.location.replace(next);
-    } else {
-      router.replace("/dashboard");
-    }
+    let cancelled = false;
+    completeSignIn().then((signedIn) => {
+      if (cancelled) return;
+      if (!signedIn) {
+        setError(t("signInIncomplete"));
+        return;
+      }
+      // Drop a flag the dashboard reads on first render and clears, so the welcome toast appears
+      // *after* navigation completes — putting it here would flash and disappear with the redirect.
+      writeStorageString("kurl:just-signed-in", "1", { session: true });
+
+      // Return to the page login started from (blog, profile, …). signInWithGoogle stashes the FULL
+      // url in a `.kurl.me` cookie that survives the cross-host blog → apex callback hop;
+      // readSafeLoginNext validates the origin (same-origin or on-platform .kurl.me) so it can't
+      // open-redirect off-site and clears the cookie as it reads. Navigate with the browser — the
+      // destination may be a different host (blog.kurl.me / {author}.kurl.me) than this apex
+      // callback. Falls back to /dashboard.
+      const next = readSafeLoginNext();
+      if (next) {
+        window.location.replace(next);
+      } else {
+        router.replace("/dashboard");
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [router, t]);
 
   if (error) {
