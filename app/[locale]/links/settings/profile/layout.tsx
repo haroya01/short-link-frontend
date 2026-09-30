@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { messagesScopeLayout } from "@/i18n/messages-scope";
 
 export async function generateMetadata({
   params,
@@ -8,8 +7,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "events.list" });
+  const t = await getTranslations({ locale, namespace: "settings.profile" });
   return { title: t("title") };
 }
 
-export default messagesScopeLayout("links/events");
+export default function ProfileSettingsLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}

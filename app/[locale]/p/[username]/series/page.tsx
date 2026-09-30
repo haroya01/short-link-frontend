@@ -19,9 +19,9 @@ export const revalidate = 30;
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ username: string }>;
+  params: Promise<{ locale: string; username: string }>;
 }): Promise<Metadata> {
-  const { username } = await params;
+  const { locale, username } = await params;
   // 존재하지 않는 작가는 여기서 404 를 확정한다 — 페이지의 notFound() 만으로는 레이아웃 스트리밍이
   // 먼저 커밋돼 HTTP 200 으로 나가는 soft-404 가 된다(같은 이유는 [slug]/page.tsx 참조). listPublicPosts
   // 는 cache() 라 레이아웃 헤더 조회와 dedupe 된다(추가 요청 없음).
@@ -29,7 +29,8 @@ export async function generateMetadata({
   if (!exists.ok && exists.status === 404) notFound();
   const h = await headers();
   const url = `${authorBaseUrl(h, username)}/series`;
-  const title = `Series · @${username}`;
+  const t = await getTranslations({ locale, namespace: "publicPost" });
+  const title = `${t("seriesIndexTitle")} · @${username}`;
   return {
     title,
     alternates: { canonical: url },

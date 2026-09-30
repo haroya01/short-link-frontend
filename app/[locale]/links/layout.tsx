@@ -1,11 +1,23 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MessagesScope } from "@/i18n/messages-scope";
 import { IOS_APP_ID } from "@/lib/app-store";
+import { LINKS_TITLE_TEMPLATE } from "@/lib/page-title";
 import { LinksChrome } from "./links-chrome";
 
 // iPhone Safari 스마트 앱 배너. 공개 프로필(/u)·모집(/e)은 이 세그먼트 밖이라 배너가 붙지 않는다.
-export const metadata: Metadata = { itunes: { appId: IOS_APP_ID.links } };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  return {
+    itunes: { appId: IOS_APP_ID.links },
+    title: { template: LINKS_TITLE_TEMPLATE, default: t("title") },
+  };
+}
 
 /**
  * links 세그먼트의 서버 레이아웃 — 크롬과 홈이 쓰는 메시지 스코프를 싣는다(하위 화면 문구는 각

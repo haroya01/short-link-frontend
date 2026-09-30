@@ -1010,12 +1010,12 @@
     "ctaSubhead": "로그인하고 사용자 이름만 정하면 시작할 수 있어요. 사진, 링크, 가게 주소, 연락처를 넣으면 아래 예시처럼 채워져요.",
     "cta": "내 프로필 만들기",
     "metaSuffix": "예시",
-    "metaFallbackTitle": "{handle} · kurl 예시",
+    "metaFallbackTitle": "{handle} 예시",
     "sampleBanner": "예시 페이지 · 로그인하면 직접 만들 수 있어요",
     "sampleCta": "내 프로필 만들기",
     "scrollCue": "예시 보기",
     "meta": {
-      "title": "링크 인 바이오 프로필 예시 · kurl",
+      "title": "링크 인 바이오 프로필 예시",
       "description": "카페, 강사, 사진작가처럼 하는 일에 맞춰 꾸민 공개 프로필 예시예요. 링크, 명함 카드, 지도, 상품 카드를 한 페이지에 담을 수 있어요."
     },
     "prev": "이전 예시",
@@ -2219,7 +2219,7 @@
     "copiedFallback": "URL이 복사됐어요"
   },
   "demo": {
-    "metaTitle": "kurl 데모: 단축하면 무엇이 보이는지 직접 만져보기",
+    "metaTitle": "데모 · 단축하면 보이는 통계 직접 만져보기",
     "metaDescription": "로그인 없이 단축 링크 분석 화면을 그대로 보여 드려요.",
     "sampleBanner": "샘플 데이터예요. 로그인하면 내 링크에도 똑같이 채워져요.",
     "sampleCta": "내 링크 만들기",
@@ -2423,7 +2423,7 @@
     "ctaShorten": "주소 줄이기"
   },
   "learn": {
-    "metaTitle": "숏링크 · URL 단축 · 링크 인 바이오 가이드 · kurl",
+    "metaTitle": "숏링크 · URL 단축 · 링크 인 바이오 가이드",
     "metaDescription": "URL 단축이란 무엇인지, 숏링크와 링크 인 바이오의 차이, 공개 프로필 만드는 법까지. kurl 사용법과 자주 묻는 질문.",
     "eyebrow": "가이드 · FAQ",
     "title": "숏링크 · 링크 인 바이오, 처음 쓰는 사람을 위한 안내서",
@@ -3536,7 +3536,7 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "QR 캠페인 · 전단지 QR 클릭 측정 · kurl",
+      "title": "QR 캠페인 · 전단지 QR 클릭 측정",
       "description": "전단지, 포스터, 쿠폰 QR을 지역·배포자·묶음별로 나눠 클릭을 비교해요. 100장당 클릭 수로 다음 배포 위치를 정할 수 있어요."
     },
     "hero": {

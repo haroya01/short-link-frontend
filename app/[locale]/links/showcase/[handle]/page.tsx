@@ -31,7 +31,7 @@ export async function generateMetadata({
   return {
     // Marketing demo pages — clearly labeled as 예시 so they don't compete with real
     // /u/<handle> profiles for the same handle in Google.
-    title: `${profile.username} (${t("metaSuffix")}) · kurl`,
+    title: `${profile.username} (${t("metaSuffix")})`,
     description: profile.bio ?? undefined,
     robots: { index: true, follow: true },
     alternates: { canonical: `${SITE_URL}/${locale}/showcase/${profile.username}` },
