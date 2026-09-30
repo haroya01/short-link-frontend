@@ -239,7 +239,7 @@
     "libraryCollections": "コレクション",
     "savedTitle": "ライブラリ",
     "savedSubtitle": "保存した記事や、覚えておきたい一節をもう一度。",
-    "curationMockNote": "プレビュー — 保存はこのブラウザだけに残ります。",
+    "curationMockNote": "プレビューです。今のところ、保存はこのブラウザにだけ残ります。",
     "curationPinned": "代表記事",
     "curationPinnedHint": "作家ページの記事一覧の先頭にこの順で表示されます。",
     "curationPinnedEmpty": "まだ固定した記事がありません。下から追加してください。",
@@ -261,7 +261,7 @@
     "settingsViewBlog": "自分のブログを見る",
     "settingsDisplay": "表示",
     "settingsFeed": "フィード",
-    "settingsDefaultTab": "デフォルトタブ — ブログホームを開いたときに最初に表示",
+    "settingsDefaultTab": "デフォルトタブ: ブログホームを開いたときに最初に表示",
     "settingsDefaultTabFailed": "保存できませんでした。しばらくしてからもう一度お試しください。",
     "settingsPrivacy": "公開範囲",
     "settingsHideFollowerCount": "フォロワー数を隠す",
@@ -287,7 +287,7 @@
     "analyticsTabLinks": "リンク",
     "analyticsTabPosts": "記事",
     "settingsFollowedTags": "フォロー中のタグ",
-    "settingsFollowedTagsHint": "フォロー中のトピック — 最近の投稿がないものも含めて。これらの投稿はフィード上部の帯に表示されます。",
+    "settingsFollowedTagsHint": "最近の投稿がないものも含め、フォロー中のトピックをすべて表示します。これらのトピックの投稿はフィード上部の帯に集まります。",
     "settingsFollowedTagsEmpty": "まだフォロー中のトピックはありません。",
     "settingsUnfollowTag": "{tag} のフォローを解除",
     "analyticsPeakDay": "最多日 {date} · {count, number}回",
@@ -608,7 +608,7 @@
     "highlightsShow": "表示",
     "readingTime": "読了目安：約{minutes}分",
     "ogReadingTime": "{minutes}分で読めます",
-    "previewBanner": "プレビュー — まだ公開されていない記事です。このリンクを知っている人だけが閲覧できます。",
+    "previewBanner": "プレビューです。まだ公開されていない記事のため、このリンクを知っている人だけが閲覧できます。",
     "editedOn": "更新 {date}",
     "morePosts": "@{username}さんの他の記事",
     "allPosts": "すべての記事",
@@ -740,6 +740,8 @@
     "OPENS_AFTER_EXPIRY": "公開日時は期限より前にしてください。",
     "COMMENT_BLOCKED": "この記事にはコメントできません。",
     "POST_INTERACTION_BLOCKED": "この記事には反応できません。",
+    "ACCOUNT_SUSPENDED": "アカウントが一時停止中のため、投稿やリアクションはできません。",
+    "ACCOUNT_BANNED": "利用が制限されたアカウントのため、投稿やリアクションはできません。",
     "SLUG_FROZEN": "記事の状態が別の場所で変わりました。再読み込みしてもう一度お試しください。",
     "SCHEDULE_AFTER_PUBLISH": "記事の状態が別の場所で変わりました。再読み込みしてもう一度お試しください。",
     "UNPUBLISH_NOT_PUBLISHED": "記事の状態が別の場所で変わりました。再読み込みしてもう一度お試しください。",
@@ -795,7 +797,7 @@
     "description": "長いURLを短くして、どの端末・チャネル・国から押されたかを、ボットを除いて表示します。",
     "ogHeadlineTop": "URL短縮 +",
     "ogHeadlineBottom": "クリック分析",
-    "ogSubline": "デバイス・チャネル・国・時間 — どこから誰がクリックしたか、ひと目でわかる"
+    "ogSubline": "デバイス・チャネル・国・時間帯で、誰がどこからクリックしたかがひと目でわかる"
   },
   "notifications": {
     "webPushLabel": "ブラウザ通知を受け取る",
@@ -944,7 +946,7 @@
     "features": {
       "realtime": {
         "title": "ライブクリックフィード (SSE)",
-        "desc": "統計ページでクリックがリアルタイムに流れる — 時刻 / 国 / チャネル / デバイス",
+        "desc": "クリックが入った瞬間、時刻・国・チャネル・デバイスが統計ページにリアルタイムで流れます",
         "preview": {
           "eyebrow": "リアルタイムクリック",
           "live": "ライブ"
@@ -952,7 +954,7 @@
       },
       "insights": {
         "title": "自動インサイト",
-        "desc": "ピーク時間 / 再訪率 / Velocity — 設定なしで即可視化",
+        "desc": "ピーク時間・再訪率・クリックの勢いまで、設定なしですぐに確認できます",
         "preview": {
           "heading": "今週のインサイト",
           "humanLabel": "人間クリック",
@@ -1418,8 +1420,8 @@
       "registerFailed": "Webhook登録に失敗しました。",
       "issuedTitle": "Webhookを登録しました",
       "issuedHint": "このsecretは一度だけ表示されます。受信側で X-Kurl-Signature(sha256=hex) 検証に使ってください。",
-      "issuedFormatDiscord": "Discord URL を検出しました — クリックは Discord embed メッセージとして送られます (署名検証は不要)。",
-      "issuedFormatSlack": "Slack URL を検出しました — クリックは Slack メッセージとして送られます (署名検証は不要)。",
+      "issuedFormatDiscord": "Discord の URL です。クリックは Discord のメッセージとして送られます (署名検証は不要)。",
+      "issuedFormatSlack": "Slack の URL です。クリックは Slack のメッセージとして送られます (署名検証は不要)。",
       "formatBadgeDiscord": "Discord",
       "formatBadgeSlack": "Slack",
       "formatBadgeGeneric": "汎用",
@@ -1696,8 +1698,8 @@
     "heatmap": {
       "less": "少",
       "more": "多",
-      "tooltip": "{day} {hour}時 — {count}回",
-      "tooltipBucket": "{day} {from}–{to}時 — {count}回",
+      "tooltip": "{day} {hour}時、{count}回",
+      "tooltipBucket": "{day} {from}–{to}時、{count}回",
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} 回",
@@ -1738,19 +1740,19 @@
       "newVisitors": "新規訪問",
       "returningVisitors": "再訪問",
       "velocity": "いま平常の{x}倍のペースでクリックされています",
-      "trendUp": "直近7日は前週より{percent}%増 — {count}クリック",
-      "trendDown": "直近7日は前週より{percent}%減 — {count}クリック",
-      "peakDay": "{date}にピーク — 1日{count}クリック",
+      "trendUp": "直近7日のクリックはその前の7日より{percent}%増えました({count}クリック)",
+      "trendDown": "直近7日のクリックはその前の7日より{percent}%減りました({count}クリック)",
+      "peakDay": "{date}が1日{count}クリックで最多でした",
       "topSource": "{host}が流入の{percent}%を連れてきました",
       "peakHour": "1日の中では{hour}時がいちばん賑わいます",
       "returning": "訪れた人の{percent}%が戻ってきました",
       "topCountry": "{country}から{percent}%が来ています",
-      "mobileHeavy": "モバイルが{percent}% — スマホで押されるリンクです",
-      "desktopHeavy": "デスクトップが{percent}% — 机の前で開かれるリンクです",
+      "mobileHeavy": "クリックの{percent}%がモバイルからでした",
+      "desktopHeavy": "クリックの{percent}%がデスクトップからでした",
       "botHigh": "自動アクセスは{percent}% · 人によるクリックは{human}回",
       "botFiltered": "自動アクセス{percent}%を除くと、人によるクリックは{human}回",
       "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました",
-      "inAppBrowser": "{app}で開かれたのが{percent}% — アプリ内ブラウザの比率が高めです",
+      "inAppBrowser": "クリックの{percent}%が{app}アプリ内で開かれました",
       "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました",
       "showMore": "変化をあと{count}件表示",
       "showLess": "折りたたむ"
@@ -1975,7 +1977,7 @@
       },
       "requestMetrics": {
         "title": "リクエストログ (raw)",
-        "desc": "新しい request_metrics テーブル — 完了した HTTP リクエストをすべて非同期で蓄積。short_code 別の outcome 分布や個別リクエストへの drill-down など、上のタイマーベースのセクションでは答えられない問いに対応します。テーブルが空のときは「サンプル表示」でレイアウトをプレビュー。",
+        "desc": "新しい request_metrics テーブルに基づきます。完了した HTTP リクエストをすべて非同期で蓄積するため、short_code 別の outcome 分布や個別リクエストへの drill-down など、上のタイマーベースのセクションでは答えられない問いに対応します。テーブルが空のときは「サンプル表示」でレイアウトをプレビューできます。",
         "mockOn": "サンプル表示中",
         "mockOff": "サンプル表示",
         "window": {
@@ -2152,7 +2154,7 @@
       "unblockConfirm": "{domain} のブロックを解除しますか?このドメインへの短縮とリダイレクトが再び許可されます。",
       "addFailed": "リクエストに失敗しました",
       "warned": "リンク所有者 {count} 名に、それぞれの言語で警告を送りました。",
-      "warnedNone": "{domain} — アカウント所有のリンクがないため警告は送っていません。"
+      "warnedNone": "{domain} にはアカウント所有のリンクがないため、警告は送っていません。"
     },
     "enforce": {
       "title": "不正対応",
@@ -2217,7 +2219,7 @@
     "copiedFallback": "URLをコピーしました"
   },
   "demo": {
-    "metaTitle": "kurl デモ — 短縮後に何が見えるかを実際に体験",
+    "metaTitle": "kurl デモ: 短縮後に何が見えるかを実際に体験",
     "metaDescription": "ログインなしで分析画面をそのまま見られます。",
     "sampleBanner": "サンプルデータです。ログインすると、自分のリンクで同じ画面が表示されます。",
     "sampleCta": "リンクを作る",
@@ -2368,7 +2370,7 @@
     "disclaimer": "比較対象: bit.ly / short.io / rebrandly / TinyURL の無料プラン (2026 時点)。",
     "rows": {
       "abtest": {
-        "label": "A/B 振り分け — 1 リンクにリンク先を複数",
+        "label": "A/B 振り分け: 1 つのリンクに複数のリンク先",
         "note": "各リンク先に比率を設定。クリックが比率どおりに自動分散。通常は enterprise プラン専用の機能。"
       },
       "geoRouting": {
@@ -2385,7 +2387,7 @@
       },
       "insights": {
         "label": "自動インサイト",
-        "note": "ピーク時間 / 再訪率 / Velocity — 設定なしで即可視化。"
+        "note": "ピーク時間・再訪率・クリックの勢いを設定なしですぐに表示します。"
       },
       "asnTracking": {
         "label": "データセンタークリックを自動分離",
@@ -2810,7 +2812,7 @@
       "emailFormFieldTitle": "案内文",
       "emailFormFieldTitlePlaceholder": "例: ニュースレター登録",
       "emailFormFieldSubtitle": "サブテキスト (任意)",
-      "emailFormFieldSubtitlePlaceholder": "例: 新作・講座開催・限定メニュー — いち早くお届けします。",
+      "emailFormFieldSubtitlePlaceholder": "例: 新作・講座開催・限定メニューの情報をいち早くお届けします。",
       "emailFormFieldSubtitleHint": "なぜメールを残すべきか、訪問者が分かるよう一言添えてください。",
       "emailFormFieldPlaceholder": "入力欄ヒント",
       "emailFormFieldSuccess": "送信後メッセージ",
@@ -2950,12 +2952,12 @@
       "contactFieldAddress": "住所",
       "contactFieldAddressPlaceholder": "東京都 ...",
       "contactFieldLogo": "ロゴ (任意)",
-      "contactFieldLogoHint": "会社 / 個人ロゴ — 名刺に正方形で表示されます。",
+      "contactFieldLogoHint": "会社や個人のロゴ。名刺に正方形で表示されます。",
       "contactFieldLogoFocalHint": "画像をドラッグして正方形に収まる位置を決めます。",
       "contactFieldPalette": "ホログラフィック パレット",
       "addGalleryTitle": "ギャラリー追加",
       "editGalleryTitle": "ギャラリー編集",
-      "addGalleryDescription": "画像 URL を入力してください。最大 {max} 枚 — 訪問者は左右にスワイプして見られます。",
+      "addGalleryDescription": "画像 URL を入力してください。最大 {max} 枚まで、訪問者は左右にスワイプして見られます。",
       "addGalleryDescriptionUpload": "最大 {max} 枚。訪問者は左右にスワイプ。最初の画像が表紙。",
       "addGalleryPlaceholder": "(ギャラリー未設定)",
       "galleryDropzone": "画像を追加 (一度に複数選択可)",
@@ -2982,7 +2984,7 @@
       "addTextDescription": "セクション案内 / お知らせ / 短い段落。マークダウン (見出し、太字、リスト、リンクなど) に対応しています。",
       "textFieldContent": "内容",
       "textFieldPlaceholder": "例: ## 今週のお知らせ\n新メニュー登場! [詳しく](https://...)",
-      "textMarkdownHint": "マークダウン対応 — # 見出し、**太字**、*斜体*、- リスト",
+      "textMarkdownHint": "マークダウン対応: # 見出し、**太字**、*斜体*、- リスト",
       "textPreviewLabel": "プレビュー",
       "textPreviewEmpty": "ここにマークダウンの結果が表示されます",
       "textFieldLayout": "スタイル",
@@ -2996,7 +2998,7 @@
       "textAccent_red": "レッド",
       "textAccent_violet": "バイオレット",
       "textFieldIcon": "アイコン (絵文字 1 字)",
-      "textFieldIconHint": "ハイライトボックス左上に表示 — 例: 💡 / 📢 / ⚠️ / 🎉",
+      "textFieldIconHint": "ハイライトボックスの左上に表示されます。例: 💡 📢 ⚠️ 🎉",
       "addImagePrompt": "画像 URL (https://...)",
       "addImagePlaceholder": "(画像 未設定)",
       "addImageTitle": "画像追加",
@@ -3129,8 +3131,8 @@
       "deleted": "削除しました",
       "deleteConfirm": "このドメインを削除しますか？このドメインの短縮リンクはただちに動作を停止します。",
       "deleteFailed": "削除に失敗しました。",
-      "dnsTxtHint": "ドメイン所有確認用 — DNS に TXT レコードを追加",
-      "dnsCnameHint": "トラフィック転送用 — 同じ DNS に CNAME も追加"
+      "dnsTxtHint": "ドメイン所有確認用: DNS に TXT レコードを追加",
+      "dnsCnameHint": "トラフィック転送用: 同じ DNS に CNAME も追加"
     }
   },
   "homeStats": {
@@ -3206,7 +3208,7 @@
         "redirectTitle": "別ページへ自動転送",
         "redirectBody": "レビュー、次回キャンペーン、待機リストなど任意の URL に送れます。"
       },
-      "messagePlaceholder": "例: このキャンペーンは終了しました。次回イベントは12月です。\n問い合わせ — @kurl_official",
+      "messagePlaceholder": "例: このキャンペーンは終了しました。次回イベントは12月です。\n問い合わせ: @kurl_official",
       "messageHint": "空の場合は標準メッセージを表示します。改行はそのまま反映されます ·",
       "redirectHint": "キャンペーン終了時に、印刷済み QR へ一括適用される転送先 URL です。",
       "cancel": "キャンセル",
@@ -3384,7 +3386,7 @@
       "loading": "読み込み中...",
       "groups": {
         "distributorTitle": "配布担当別の成果",
-        "distributorHint": "100枚あたりクリック率 — 配布数が違っても効率を比較できます。",
+        "distributorHint": "100枚あたりのクリック率なので、配布数が違っても効率を比較できます。",
         "areaTitle": "エリア別の成果",
         "areaHint": "次の配布場所を決める基準です。",
         "tooltip": "{rate}回 / 100枚 · クリック {clicks} / 配布 {quantity}",
@@ -3394,7 +3396,7 @@
       "compare": {
         "title": "他キャンペーンと比較",
         "description": "1回目 vs 2回目、または別シーズンの効率を比較します。",
-        "none": "— 比較なし —",
+        "none": "比較なし",
         "current": "現在",
         "comparison": "比較",
         "selectHint": "上のドロップダウンから比較するキャンペーンを選択してください。"
@@ -3413,7 +3415,7 @@
       },
       "recommendation": {
         "title": "次回配布のおすすめ",
-        "description": "現在合計 {total}枚 — 同じ総量で再配分。平均 100枚あたり {average} 基準",
+        "description": "現在の合計 {total}枚を同じ総量で配り直します。平均は100枚あたり {average}。",
         "footnote": "効率比率に基づくおすすめ。平均の30%未満は削減し、残りを比率で再配分します (1バッチ最大3倍)。",
         "verdict": {
           "BOOST": "増加",
@@ -3438,7 +3440,7 @@
       },
       "testScans": {
         "title": "開始前テストスキャン",
-        "description": "<strong>{count}回</strong> — キャンペーン開始前。分析合計から除外されます。",
+        "description": "<strong>{count}回</strong>: キャンペーン開始前のスキャンのため、分析の合計から除外されます。",
         "last": "最後のテスト · {date}"
       },
       "byBatch": {
@@ -3462,7 +3464,7 @@
     "q5": "悪性URLはどう遮断されますか?",
     "a5": "Google Safe Browsing API で短縮時にチェックします。検知された URL は短縮できません。",
     "q6": "APIはありますか?",
-    "a6": "はい — 開発者向け API を提供しています。設定 > API キー でキーを発行し、ご自身のコードから短縮 / 統計エンドポイントを呼び出せます。"
+    "a6": "はい。開発者向け API を提供しています。設定 > API キー でキーを発行し、ご自身のコードから短縮・統計のエンドポイントを呼び出せます。"
   },
   "campaignStatus": {
     "DRAFT": "下書き",
@@ -3626,18 +3628,6 @@
     "browse": "ログインせずに見る",
     "heading": "kurl logにログイン",
     "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
-  },
-  "postAnalytics": {
-    "title": "分析",
-    "description": "記事ごとのビューカウンター（v0）。正確なユニークビジター／読了時間／スクロール深度は L3 トラッキング JS 導入後に対応。",
-    "totalViews": "総ビュー数",
-    "published": "公開記事",
-    "drafts": "下書き",
-    "empty": "まだ記事がありません。",
-    "colTitle": "タイトル",
-    "colStatus": "ステータス",
-    "colViews": "ビュー数",
-    "colPublished": "公開"
   },
   "ctaLibrary": {
     "title": "CTA ライブラリ",
@@ -3866,7 +3856,7 @@
     "connectLabel": "つなぐ",
     "myCollectionsMetaTitle": "マイコレクション",
     "myCollectionsTitle": "マイコレクション",
-    "myCollectionsSubtitle": "あなたが作ったコレクションとパス — 非公開のものもここに集まります。",
+    "myCollectionsSubtitle": "あなたが作ったコレクションとパスです。非公開のものもここに集まります。",
     "myCollectionsLoadError": "読み込めませんでした。",
     "myCollectionsEmptyTitle": "まだコレクションがありません",
     "myCollectionsEmptyBody": "記事や一文を読みながら「つなぐ」で最初のコレクションを始めましょう。",
@@ -4040,7 +4030,7 @@
       "coverUploading": "アップロード中…",
       "descWrite": "書く",
       "descPreview": "プレビュー",
-      "descPreviewEmpty": "まだ内容がありません — 「書く」タブでマークダウンを書くとここで確認できます。",
+      "descPreviewEmpty": "まだ内容がありません。「書く」タブでマークダウンを書くと、ここで確認できます。",
       "useGoogleMaps": "「{place}」のGoogleマップリンクを作成",
       "openMap": "地図を開く ↗"
     },

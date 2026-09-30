@@ -300,7 +300,7 @@ test("publish that 409s (slug taken) surfaces an error and does NOT flip the UI 
     (await page.getByRole("dialog").getByRole("button", { name: "Publish" }).count()) > 0 ||
     (await page.getByRole("button", { name: "Publish" }).count()) > 0;
   expect(stillDraft).toBe(true);
-  await expect(page.getByText("This address is already taken — try a different one.")).toBeVisible();
+  await expect(page.getByText("This address is already taken. Try a different one.")).toBeVisible();
 });
 
 test("a 409 that is not a slug clash (someone else saved first) does not blame the address", async ({ page }) => {
@@ -315,7 +315,7 @@ test("a 409 that is not a slug clash (someone else saved first) does not blame t
 
   await expect.poll(() => be.hits.some((h) => h.suffix === "publish-fail")).toBe(true);
   await expect(page.getByText("Someone updated this in another tab. Reload and try again.")).toBeVisible();
-  await expect(page.getByText("This address is already taken — try a different one.")).toHaveCount(0);
+  await expect(page.getByText("This address is already taken. Try a different one.")).toHaveCount(0);
 });
 
 // Delete lives only on the PUBLIC post page (PostOwnerActions), which is a server component that

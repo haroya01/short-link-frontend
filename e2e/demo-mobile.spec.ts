@@ -135,7 +135,7 @@ test.describe("demo page artifacts", () => {
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "방문 환경" }).click();
     // Section titles in ko — pulled from messages/ko.json stats.section.*
-    for (const title of ["언어", "봇 종류", "네트워크 / ASN"]) {
+    for (const title of ["언어", "봇 종류", "네트워크(ASN)"]) {
       const section = page.locator(`section:has-text("${title}")`).first();
       await expect(section).toBeVisible();
     }

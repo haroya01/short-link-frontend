@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import en from "@/messages/en.json";
+import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
+import viMessages from "@/messages/vi.json";
 
 /**
  * Backend exception handlers ship these codes in the ProblemDetail `code` field. The webhook
@@ -29,6 +31,21 @@ describe("webhook error code i18n", () => {
         });
       }
     });
+  }
+});
+
+// 글 쓰기·반응을 막는 게이트(작가 차단, 계정 정지·이용 제한)는 다시 해도 풀리지 않는다.
+// 번역이 빠지면 "잠시 후 다시 시도해 주세요"로 떨어져 거짓 안내가 된다.
+const WRITE_GATE_CODES = ["POST_INTERACTION_BLOCKED", "ACCOUNT_SUSPENDED", "ACCOUNT_BANNED"];
+
+describe("write gate error code i18n", () => {
+  for (const [name, dict] of Object.entries({ en, ko, ja, vi: viMessages, hi })) {
+    for (const code of WRITE_GATE_CODES) {
+      it(`${name} has errors.${code}`, () => {
+        const errors = (dict as { errors: Record<string, string> }).errors;
+        expect(errors[code]?.length ?? 0).toBeGreaterThan(0);
+      });
+    }
   }
 });
 

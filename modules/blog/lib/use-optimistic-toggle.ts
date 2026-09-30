@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore }
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 /** The viewer-relative state a toggle owns: whether it's on, plus an optional public counter. */
 export type ToggleState = { on: boolean; count?: number };
@@ -97,6 +98,7 @@ export function useOptimisticToggle({
   const { authenticated, ready, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const tErr = useTranslations("errors");
+  const errorMessage = useApiErrorMessage();
   const fallbackId = useId();
   const key = syncKey ?? fallbackId;
   const initRef = useRef<ToggleState>({ on: initialOn, count: initialCount });
@@ -151,11 +153,11 @@ export function useOptimisticToggle({
         on: s.on,
         count: s.count !== undefined ? s.count : entryFor(key, initRef.current).state.count,
       });
-    } catch {
+    } catch (e) {
       const c = entryFor(key, initRef.current).state;
       emit(key, { on: !next, count: tracksCount ? (c.count ?? 0) + (next ? -1 : 1) : c.count });
       // 조용한 롤백은 "눌렀는데 스스로 꺼졌다"로 읽힌다 — 실패였음을 한 줄로 알린다.
-      toast(tErr("toggleFailed"), "error");
+      toast(errorMessage(e, tErr("toggleFailed")), "error");
     } finally {
       setBusy(false);
     }
