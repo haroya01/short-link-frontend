@@ -11,6 +11,7 @@ import {
   outlookCalendarUrl,
 } from "@/modules/profile/lib/calendar-export";
 import { parseEventConfig } from "@/modules/profile/lib/block-config-parsers";
+import { offsetToIana } from "@/modules/profile/lib/event-date";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -19,6 +20,8 @@ type Props = {
   content: string;
   colors: ThemeColors;
   fadeStyle?: CSSProperties;
+  /** 주인이 대표로 올린 모집 — 목록 맨 위, 강조색 테두리와 '대표' 라벨. */
+  featured?: boolean;
 };
 
 /**
@@ -42,8 +45,9 @@ type Props = {
  * not the visitor's local time. The author meant "9 AM KST" so we show "9 AM KST" — converting
  * silently would surprise people who scheduled across timezones.
  */
-export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
+export function EventEntryCard({ id, content, colors, fadeStyle, featured = false }: Props) {
   const t = useTranslations("publicProfile.event");
+  const tProfile = useTranslations("publicProfile");
   const locale = useLocale();
   const config = useMemo(() => parseEventConfig(content), [content]);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -116,11 +120,14 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
           card itself was overflow-hidden. The date tile keeps its own overflow-hidden for
           the colored month band; the outer card doesn't need to clip anything. */}
       <div
-        className={`profile-card-static ${colors.card} ${colors.cardBorder} ${
+        className={`profile-card-static ${colors.card} ${featured ? colors.accentBorder : colors.cardBorder} ${
           isPast ? "opacity-60" : ""
         }`}
       >
-        <div className="flex items-start gap-4 px-4 pt-4">
+        {featured && (
+          <p className={`px-4 pt-3.5 text-[12px] font-medium ${colors.accentText}`}>{tProfile("featuredPick")}</p>
+        )}
+        <div className={`flex items-start gap-4 px-4 ${featured ? "pt-2.5" : "pt-4"}`}>
           {/* Calendar-leaf date tile. Colored band on top, big day numeral on bottom. */}
           <div className="grid h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white text-center leading-none">
             <div className={`grid h-6 place-items-center px-1 ${colors.avatar}`}>
@@ -341,23 +348,4 @@ function formatRelativeTime(
   const weekDiff = Math.floor(dayDiff / 7);
   if (weekDiff < 5) return t("inWeeks", { weeks: weekDiff });
   return null;
-}
-
-/**
- * Intl's {@code timeZone} option only accepts IANA names, not raw offsets like {@code +09:00}.
- * We map common offsets to "UTC" suffixed names that all browsers support. For exotic offsets
- * we fall back to Etc/GMT (sign-inverted per POSIX convention).
- */
-function offsetToIana(offset: string): string {
-  if (offset === "Z" || offset === "+00:00") return "UTC";
-  const m = offset.match(/^([+\-])(\d{2}):?(\d{2})$/);
-  if (!m) return "UTC";
-  const sign = m[1] === "+" ? "-" : "+"; // Etc/GMT is sign-inverted
-  const hours = parseInt(m[2], 10);
-  const minutes = parseInt(m[3], 10);
-  if (minutes !== 0) {
-    // Half-hour zones (e.g. India +05:30) — fall back to UTC; we can revisit if it matters.
-    return "UTC";
-  }
-  return `Etc/GMT${sign}${hours}`;
 }

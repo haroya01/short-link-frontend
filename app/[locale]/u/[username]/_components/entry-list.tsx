@@ -47,6 +47,9 @@ function groupEntries(entries: PublicProfileEntry[]): Item[] {
   return items;
 }
 
+// 대표로 올릴 수 있는 것 — 주인이 고른 링크 하나, 또는 모집·상품 블록 하나(서버가 한 명당 하나로 지킨다).
+const FEATURABLE = new Set<PublicProfileEntry["kind"]>(["LINK", "EVENT", "PRODUCT_CARD"]);
+
 /**
  * Maps each backend entry to its rendering component by {@code kind}. Anything unrecognized falls
  * through silently — defensive against the API gaining new kinds before the front catches up.
@@ -64,13 +67,18 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
     );
   }
 
-  const featured = entries.find((e) => e.kind === "LINK" && e.highlighted) ?? null;
+  const featured = entries.find((e) => e.highlighted && FEATURABLE.has(e.kind)) ?? null;
   const items = groupEntries(featured ? entries.filter((e) => e !== featured) : entries);
   const offset = featured ? 1 : 0;
 
   return (
     <ul className="mt-8 space-y-2.5">
-      {featured && <FeaturedLink entry={featured} username={username} colors={colors} fadeStyle={fadeStyle(0)} />}
+      {featured &&
+        (featured.kind === "LINK" ? (
+          <FeaturedLink entry={featured} username={username} colors={colors} fadeStyle={fadeStyle(0)} />
+        ) : (
+          <EntryItem entry={featured} idx={0} username={username} colors={colors} featured />
+        ))}
       {items.map((item, i) => {
         const idx = i + offset;
         if ("rows" in item) {
@@ -85,104 +93,48 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
           );
         }
         const entry = item.entry;
-        const key = entry.id != null ? `${entry.kind}-${entry.id}` : `${entry.kind}-${idx}`;
-        const style = fadeStyle(idx);
-        if (entry.kind === "DIVIDER")
-          return <DividerEntry key={key} colors={colors} fadeStyle={style} />;
-        if (entry.kind === "TEXT")
-          return (
-            <TextEntry
-              key={key}
-              content={entry.content ?? ""}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "IMAGE" && entry.content)
-          return (
-            <ImageEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
-          );
-        if (entry.kind === "EMBED" && entry.content)
-          return (
-            <EmbedEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
-          );
-        if (entry.kind === "EMAIL_FORM" && entry.id != null && entry.content)
-          return (
-            <EmailFormEntryCard
-              key={key}
-              id={entry.id}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "CONTACT_CARD" && entry.content)
-          return (
-            <ContactCardEntry
-              key={key}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "GALLERY" && entry.content)
-          return (
-            <GalleryEntryCard
-              key={key}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "PRODUCT_CARD" && entry.content)
-          return (
-            <ProductCardEntry
-              key={key}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "BOOKING" && entry.content)
-          return (
-            <BookingEntryCard
-              key={key}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "EVENT" && entry.id != null && entry.content)
-          return (
-            <EventEntryCard
-              key={key}
-              id={entry.id}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "PLACE" && entry.content)
-          return (
-            <PlaceEntry
-              key={key}
-              content={entry.content}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        if (entry.kind === "LINK")
-          return (
-            <LinkEntryCard
-              key={entry.shortCode ?? key}
-              entry={entry}
-              username={username}
-              colors={colors}
-              fadeStyle={style}
-            />
-          );
-        return null;
+        const key = entry.id != null ? `${entry.kind}-${entry.id}` : `${entry.shortCode ?? entry.kind}-${idx}`;
+        return <EntryItem key={key} entry={entry} idx={idx} username={username} colors={colors} />;
       })}
     </ul>
   );
+}
+
+function EntryItem({
+  entry,
+  idx,
+  username,
+  colors,
+  featured = false,
+}: {
+  entry: PublicProfileEntry;
+  idx: number;
+  username: string;
+  colors: ThemeColors;
+  featured?: boolean;
+}) {
+  const style = fadeStyle(idx);
+  if (entry.kind === "DIVIDER") return <DividerEntry colors={colors} fadeStyle={style} />;
+  if (entry.kind === "TEXT") return <TextEntry content={entry.content ?? ""} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "IMAGE" && entry.content)
+    return <ImageEntryCard url={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "EMBED" && entry.content)
+    return <EmbedEntryCard url={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "EMAIL_FORM" && entry.id != null && entry.content)
+    return <EmailFormEntryCard id={entry.id} content={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "CONTACT_CARD" && entry.content)
+    return <ContactCardEntry content={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "GALLERY" && entry.content)
+    return <GalleryEntryCard content={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "PRODUCT_CARD" && entry.content)
+    return <ProductCardEntry content={entry.content} colors={colors} fadeStyle={style} featured={featured} />;
+  if (entry.kind === "BOOKING" && entry.content)
+    return <BookingEntryCard content={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "EVENT" && entry.id != null && entry.content)
+    return <EventEntryCard id={entry.id} content={entry.content} colors={colors} fadeStyle={style} featured={featured} />;
+  if (entry.kind === "PLACE" && entry.content)
+    return <PlaceEntry content={entry.content} colors={colors} fadeStyle={style} />;
+  if (entry.kind === "LINK")
+    return <LinkEntryCard entry={entry} username={username} colors={colors} fadeStyle={style} />;
+  return null;
 }

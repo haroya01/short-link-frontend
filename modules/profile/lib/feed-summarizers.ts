@@ -10,6 +10,8 @@
  * so the row never crashes on partial / legacy data.
  */
 
+import { offsetToIana } from "./event-date";
+
 /**
  * Best-effort body extraction for TEXT rows. Accepts the JSON payload shape (PR #137) or the
  * legacy plain-markdown string — both render the same body text in the editor row.
@@ -50,14 +52,15 @@ export function productCardSummary(content: string | null): string {
       Array.isArray(parsed?.items) && typeof parsed.items[0]?.name === "string"
         ? parsed.items[0].name
         : "";
-    return first ? `${first} +${count - 1}` : "";
+    if (!first) return "";
+    return count > 1 ? `${first} +${count - 1}` : first;
   } catch {
     return "";
   }
 }
 
 /** Event title + start date for the EVENT row preview. */
-export function eventSummary(content: string | null): string {
+export function eventSummary(content: string | null, locale?: string): string {
   if (!content) return "";
   try {
     const parsed = JSON.parse(content);
@@ -67,7 +70,12 @@ export function eventSummary(content: string | null): string {
     if (!startsAt) return title;
     const d = new Date(startsAt);
     if (Number.isNaN(d.getTime())) return title;
-    const label = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    const offset = startsAt.match(/([+\-]\d{2}:?\d{2}|Z)$/)?.[1];
+    const label = new Intl.DateTimeFormat(locale, {
+      month: "short",
+      day: "numeric",
+      ...(offset ? { timeZone: offsetToIana(offset) } : {}),
+    }).format(d);
     return title ? `${title} · ${label}` : label;
   } catch {
     return "";

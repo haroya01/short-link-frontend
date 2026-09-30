@@ -71,6 +71,12 @@ describe("productCardSummary", () => {
     ).toBe("딸기 케이크 +2");
   });
 
+  it("shows just the name when there is a single item", () => {
+    expect(productCardSummary(JSON.stringify({ items: [{ name: "Linen Tote" }] }))).toBe(
+      "Linen Tote",
+    );
+  });
+
   it("returns empty when items is empty", () => {
     expect(productCardSummary(JSON.stringify({ items: [] }))).toBe("");
   });
@@ -88,6 +94,17 @@ describe("eventSummary", () => {
     );
     expect(out).toMatch(/^팝업 오픈 ·/);
     // Locale-dependent format, but the title prefix is stable.
+  });
+
+  it("formats the date in the app locale, not the browser's", () => {
+    const content = JSON.stringify({ title: "팝업 오픈", startsAt: "2026-06-15T14:00:00+09:00" });
+    expect(eventSummary(content, "ko")).toBe("팝업 오픈 · 6월 15일");
+    expect(eventSummary(content, "en")).toBe("팝업 오픈 · Jun 15");
+  });
+
+  it("keeps the day of the event's own offset", () => {
+    const content = JSON.stringify({ title: "새벽 러닝", startsAt: "2026-06-15T00:30:00+09:00" });
+    expect(eventSummary(content, "en")).toBe("새벽 러닝 · Jun 15");
   });
 
   it("returns title only when startsAt is missing", () => {

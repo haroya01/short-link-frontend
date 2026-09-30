@@ -40,7 +40,7 @@ export type CommonBlockType =
 export type BlockRowMeta = {
   Icon: LucideIcon;
   /** Build the row label from the block's content. Empty return falls back to the placeholder. */
-  render: (content: string | null, t: T) => string;
+  render: (content: string | null, t: T, locale: string) => string;
   /** i18n key for the empty-content placeholder. */
   placeholderKey: Parameters<T>[0];
   /**
@@ -86,7 +86,7 @@ export const BLOCK_ROW_META: Record<CommonBlockType, BlockRowMeta> = {
   },
   EVENT: {
     Icon: CalendarClock,
-    render: (c) => eventSummary(c),
+    render: (c, _t, locale) => eventSummary(c, locale),
     placeholderKey: "addEventPlaceholder",
     textStyle: "primary",
   },

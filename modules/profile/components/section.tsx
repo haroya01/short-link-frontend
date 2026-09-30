@@ -10,6 +10,7 @@ import {
   deleteProfileBlock,
   getMyProfile,
   listAllMyLinks,
+  setBlockHighlight,
   setLinkHighlight,
   setLinkOgOverride,
   toggleLinkOnProfile,
@@ -95,6 +96,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   // variant, which is the same behavior the live page exhibits before the OG scrape lands.
   const [ogImageByShortCode, setOgImageByShortCode] = useState<Record<string, string>>({});
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
+  // 대표는 링크·블록을 통틀어 하나(서버 규칙과 같음) — 한쪽을 세우면 다른 쪽은 비운다.
+  const [highlightedBlockId, setHighlightedBlockId] = useState<number | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
   // Ten block-editor dialogs sharing the same {open, blockId, initialPayload} shape — each block
   // type opens its own dialog component (forms are very different: 7-field contact card vs URL
@@ -165,12 +168,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         ogTitle: null,
         ogImage: null,
         clickCount: null,
-        highlighted: null,
+        highlighted: highlightedBlockId === it.id,
         content: it.content,
       };
     })
     .filter((e): e is PublicProfileEntry => e !== null),
-    [items, links, labelByShortCode, ogImageByShortCode, highlightedShortCode],
+    [items, links, labelByShortCode, ogImageByShortCode, highlightedShortCode, highlightedBlockId],
   );
 
   // Bubble local edit state up to the parent on every change so a preview pane can update live
@@ -246,6 +249,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         setLabelByShortCode(parsed.labelByShortCode);
         setOgImageByShortCode(parsed.ogImageByShortCode);
         setHighlightedShortCode(parsed.highlightedShortCode);
+        setHighlightedBlockId(parsed.highlightedBlockId);
       })
       .catch(() => {});
     return () => {
@@ -295,12 +299,28 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
   async function handleHighlight(shortCode: string) {
     const wasHighlighted = highlightedShortCode === shortCode;
-    const next = wasHighlighted ? null : shortCode;
-    setHighlightedShortCode(next);
+    const prevBlockId = highlightedBlockId;
+    setHighlightedShortCode(wasHighlighted ? null : shortCode);
+    if (!wasHighlighted) setHighlightedBlockId(null);
     try {
       await setLinkHighlight(shortCode, !wasHighlighted);
     } catch (err) {
       setHighlightedShortCode(highlightedShortCode);
+      setHighlightedBlockId(prevBlockId);
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
+  async function handleBlockHighlight(blockId: number) {
+    const wasHighlighted = highlightedBlockId === blockId;
+    const prevShortCode = highlightedShortCode;
+    setHighlightedBlockId(wasHighlighted ? null : blockId);
+    if (!wasHighlighted) setHighlightedShortCode(null);
+    try {
+      await setBlockHighlight(blockId, !wasHighlighted);
+    } catch (err) {
+      setHighlightedBlockId(highlightedBlockId);
+      setHighlightedShortCode(prevShortCode);
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
   }
@@ -542,6 +562,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           items={items}
           links={links}
           highlightedShortCode={highlightedShortCode}
+          highlightedBlockId={highlightedBlockId}
           pendingShortCode={pendingShortCode}
           dragIndex={reorder.dragIndex}
           overIndex={reorder.overIndex}
@@ -563,6 +584,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onDrop={reorder.onDrop}
           onDragEnd={reorder.onDragEnd}
           onHighlight={handleHighlight}
+          onHighlightBlock={handleBlockHighlight}
           onToggle={handleToggle}
           onEditBlock={handleEditBlock}
           onDeleteBlock={handleDeleteBlock}

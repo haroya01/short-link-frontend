@@ -2234,6 +2234,7 @@
     "createCta": "내 링크 만들기"
   },
   "publicProfile": {
+    "featuredPick": "대표",
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
     "viewBlog": "글 {count}편 보기",
     "editFab": "편집",
@@ -2690,7 +2691,7 @@
       "openShort": "열기",
       "yourPage": "공개 프로필",
       "featuredTitle": "공개 프로필에 보일 항목",
-      "featuredHint": "드래그로 순서 변경 (모바일은 ↑↓), ★ 로 1 개를 큰 카드로 강조, 빼려면 '제거'. 헤더로 섹션을 만들면 접고 펴거나 통째로 옮길 수 있어요.",
+      "featuredHint": "드래그로 순서 변경 (모바일은 ↑↓), ★로 하나를 대표로 맨 위에, 빼려면 '제거'. 헤더로 섹션을 만들면 접고 펴거나 통째로 옮길 수 있어요.",
       "sectionExpand": "섹션 펴기",
       "sectionCollapse": "섹션 접기",
       "sectionItemCount": "{count}개",
@@ -2700,7 +2701,7 @@
       "addBlockMenu": "추가",
       "addMoreBlocks": "그 외 블록",
       "remove": "제거",
-      "highlight": "큰 카드로 강조 (1 개만)",
+      "highlight": "대표로 맨 위에 (하나만)",
       "labelEdit": "라벨 수정 (방문자에게 보이는 이름)",
       "labelEmpty": "라벨 추가",
       "labelPlaceholder": "예: 📝 블로그",
