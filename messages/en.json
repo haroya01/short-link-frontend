@@ -3627,18 +3627,6 @@
     "heading": "Sign in to kurl log",
     "consent": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
-  "postAnalytics": {
-    "title": "Analytics",
-    "description": "Per-post view counter (v0). Precise unique visitors / read time / scroll depth come after L3 tracking JS.",
-    "totalViews": "Total views",
-    "published": "Published",
-    "drafts": "Drafts",
-    "empty": "You haven't written any posts yet.",
-    "colTitle": "Title",
-    "colStatus": "Status",
-    "colViews": "Views",
-    "colPublished": "Published"
-  },
   "ctaLibrary": {
     "title": "CTA library",
     "description": "Manage the CTA buttons you add to posts. The same CTA can be used in many posts.",

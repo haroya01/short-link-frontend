@@ -3627,18 +3627,6 @@
     "heading": "Đăng nhập kurl log",
     "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
   },
-  "postAnalytics": {
-    "title": "Phân tích",
-    "description": "Bộ đếm lượt xem theo từng bài (v0). Khách riêng biệt / thời gian đọc / độ sâu cuộn chính xác sẽ có sau khi tích hợp JS theo dõi L3.",
-    "totalViews": "Tổng lượt xem",
-    "published": "Đã xuất bản",
-    "drafts": "Bản nháp",
-    "empty": "Bạn chưa viết bài nào.",
-    "colTitle": "Tiêu đề",
-    "colStatus": "Trạng thái",
-    "colViews": "Lượt xem",
-    "colPublished": "Đã xuất bản"
-  },
   "ctaLibrary": {
     "title": "Thư viện CTA",
     "description": "Quản lý các nút CTA bạn thêm vào bài viết. Một CTA có thể dùng cho nhiều bài.",

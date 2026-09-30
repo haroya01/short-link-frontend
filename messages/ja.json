@@ -3627,18 +3627,6 @@
     "heading": "kurl logにログイン",
     "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
   },
-  "postAnalytics": {
-    "title": "分析",
-    "description": "記事ごとのビューカウンター（v0）。正確なユニークビジター／読了時間／スクロール深度は L3 トラッキング JS 導入後に対応。",
-    "totalViews": "総ビュー数",
-    "published": "公開記事",
-    "drafts": "下書き",
-    "empty": "まだ記事がありません。",
-    "colTitle": "タイトル",
-    "colStatus": "ステータス",
-    "colViews": "ビュー数",
-    "colPublished": "公開"
-  },
   "ctaLibrary": {
     "title": "CTA ライブラリ",
     "description": "記事に入れる CTA ボタンをここで管理します。同じ CTA を複数の記事で使えます。",
