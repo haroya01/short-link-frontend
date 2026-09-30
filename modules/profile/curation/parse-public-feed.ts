@@ -27,6 +27,7 @@ export type ParsedPublicFeed = {
   labelByShortCode: Record<string, string>;
   ogImageByShortCode: Record<string, string>;
   highlightedShortCode: string | null;
+  highlightedBlockId: number | null;
 };
 
 const BLOCK_KINDS_WITH_CONTENT = [
@@ -70,10 +71,14 @@ export function parsePublicFeed(entries: PublicFeedEntryShape[]): ParsedPublicFe
   }
 
   const highlighted = entries.find((e) => e.kind === "LINK" && e.highlighted);
+  const highlightedBlock = entries.find(
+    (e) => (e.kind === "EVENT" || e.kind === "PRODUCT_CARD") && e.highlighted,
+  );
   return {
     items,
     labelByShortCode,
     ogImageByShortCode,
     highlightedShortCode: highlighted?.shortCode ?? null,
+    highlightedBlockId: highlightedBlock?.id ?? null,
   };
 }

@@ -40,6 +40,8 @@ type Props = {
    */
   colors: ThemeColors;
   fadeStyle?: CSSProperties;
+  /** 주인이 대표로 올린 상품 묶음 — 목록 맨 위, 제목 위 '대표' 라벨. */
+  featured?: boolean;
 };
 
 /**
@@ -64,8 +66,12 @@ type Props = {
  * below the hero lets the visitor swap which one fills the hero slot — no nested swipe carousel,
  * so finger gestures on the outer carousel stay unambiguous.
  */
-export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
+export function ProductCardEntry({ content, colors, fadeStyle, featured = false }: Props) {
   const t = useTranslations("publicProfile.productCard");
+  const tProfile = useTranslations("publicProfile");
+  const featuredLabel = featured ? (
+    <p className={`mb-1 px-1 text-[12px] font-medium ${colors.accentText}`}>{tProfile("featuredPick")}</p>
+  ) : null;
   const config = useMemo(() => parseProductCardConfig(content), [content]);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const [entered, setEntered] = useState(false);
@@ -108,6 +114,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
   if (config.layout === "grid") {
     return (
       <li ref={wrapperRef} className="profile-fade" style={fadeStyle}>
+        {featuredLabel}
         {config.title && (
           <p className={`mb-2 px-1 text-[13px] font-semibold ${colors.primary}`}>
             {config.title}
@@ -207,6 +214,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
 
   return (
     <li ref={wrapperRef} className="profile-fade" style={fadeStyle}>
+        {featuredLabel}
       {config.title && (
         <p className={`mb-2 px-1 text-[13px] font-semibold ${colors.primary}`}>{config.title}</p>
       )}

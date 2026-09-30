@@ -34,7 +34,31 @@ const MOCK_BANNER =
     "<svg xmlns='http://www.w3.org/2000/svg' width='1500' height='500'><rect width='1500' height='500' fill='#1f3a2e'/></svg>",
   );
 
+// 대표로 모집을 올린 프로필 — 공개 목록이 모집 카드를 맨 위에 대표로 그리는지 확인할 때 쓴다.
+function featuredEvent(): PublicProfileEntry {
+  return {
+    kind: "EVENT",
+    id: 900,
+    shortCode: null,
+    shortUrl: null,
+    originalUrl: null,
+    ogTitle: null,
+    ogImage: null,
+    clickCount: null,
+    highlighted: true,
+    content: JSON.stringify({ title: "주말 스터디 모집", startsAt: "2099-10-12T10:00:00+09:00", location: "성수" }),
+  };
+}
+
 export function mockPublicProfile(username: string): PublicProfile {
+  if (username === "featured-event") {
+    const base = mockPublicProfile("dohyun");
+    return {
+      ...base,
+      username,
+      entries: [...base.entries.map((e) => ({ ...e, highlighted: false })), featuredEvent()],
+    };
+  }
   return {
     username,
     bio: "프로덕트 만들고 글 씁니다. 모든 링크는 여기에.",

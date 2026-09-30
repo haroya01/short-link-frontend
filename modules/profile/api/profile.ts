@@ -88,6 +88,16 @@ export async function setLinkHighlight(
   });
 }
 
+export async function setBlockHighlight(
+  blockId: number,
+  highlighted: boolean,
+): Promise<{ highlighted: boolean }> {
+  return request<{ highlighted: boolean }>(`/api/v1/users/me/profile/blocks/${blockId}/highlight`, {
+    method: "PUT",
+    body: { highlighted },
+  });
+}
+
 export async function getPublicProfile(username: string): Promise<PublicProfile> {
   return request<PublicProfile>(`/api/v1/public/profiles/${username}`, { method: "GET" });
 }

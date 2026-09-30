@@ -126,3 +126,15 @@ test("link-in-bio: 대표 링크가 맨 위, 이어진 보통 링크는 한 장�
   expect(layout.featuredFirst, "대표 링크가 첫 링크여야 한다").toBe(true);
   expect(layout.oneList, "이어진 보통 링크는 한 목록에 있어야 한다").toBe(true);
 });
+
+test("link-in-bio: 대표로 올린 모집이 맨 위에, '대표' 라벨과 함께", async ({ page }) => {
+  await page.goto("/ko/u/featured-event");
+  const featured = page.locator("li").filter({ hasText: "주말 스터디 모집" }).first();
+  await expect(featured).toBeVisible();
+  await expect(featured.getByText("대표", { exact: true })).toBeVisible();
+  const order = await page.evaluate(() => {
+    const items = [...document.querySelectorAll("main li.profile-fade")].map((li) => li.textContent ?? "");
+    return items.findIndex((t) => t.includes("주말 스터디 모집"));
+  });
+  expect(order, "대표 모집이 목록의 첫 항목이어야 한다").toBe(0);
+});

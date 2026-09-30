@@ -74,6 +74,7 @@ type Props = {
   items: FeedItem[];
   links: MyLink[] | null;
   highlightedShortCode: string | null;
+  highlightedBlockId: number | null;
   pendingShortCode: string | null;
   /** Current label (OG title override) per short code — what visitors see on the public profile. */
   labelByShortCode: Record<string, string>;
@@ -96,6 +97,7 @@ type Props = {
   onDrop: (idx: number, e: React.DragEvent) => void;
   onDragEnd: () => void;
   onHighlight: (shortCode: string) => void;
+  onHighlightBlock: (blockId: number) => void;
   onToggle: (shortCode: string, show: boolean) => void;
   onEditBlock: (blockId: number, current: string) => void;
   onDeleteBlock: (blockId: number) => void;
@@ -114,6 +116,7 @@ export function ProfileFeedEditor({
   items,
   links,
   highlightedShortCode,
+  highlightedBlockId,
   pendingShortCode,
   labelByShortCode,
   dragIndex,
@@ -135,6 +138,7 @@ export function ProfileFeedEditor({
   onDrop,
   onDragEnd,
   onHighlight,
+  onHighlightBlock,
   onToggle,
   onEditBlock,
   onDeleteBlock,
@@ -184,6 +188,7 @@ export function ProfileFeedEditor({
               items={items}
               links={links}
               highlightedShortCode={highlightedShortCode}
+              highlightedBlockId={highlightedBlockId}
               pendingShortCode={pendingShortCode}
               labelByShortCode={labelByShortCode}
               dragIndex={dragIndex}
@@ -194,6 +199,7 @@ export function ProfileFeedEditor({
               onDrop={onDrop}
               onDragEnd={onDragEnd}
               onHighlight={onHighlight}
+              onHighlightBlock={onHighlightBlock}
               onToggle={onToggle}
               onEditBlock={onEditBlock}
               onDeleteBlock={onDeleteBlock}
@@ -444,6 +450,7 @@ function FeedItemList({
   items,
   links,
   highlightedShortCode,
+  highlightedBlockId,
   pendingShortCode,
   labelByShortCode,
   dragIndex,
@@ -454,6 +461,7 @@ function FeedItemList({
   onDrop,
   onDragEnd,
   onHighlight,
+  onHighlightBlock,
   onToggle,
   onEditBlock,
   onDeleteBlock,
@@ -463,6 +471,7 @@ function FeedItemList({
   items: FeedItem[];
   links: MyLink[];
   highlightedShortCode: string | null;
+  highlightedBlockId: number | null;
   pendingShortCode: string | null;
   labelByShortCode: Record<string, string>;
   dragIndex: number | null;
@@ -473,6 +482,7 @@ function FeedItemList({
   onDrop: (idx: number, e: React.DragEvent) => void;
   onDragEnd: () => void;
   onHighlight: (shortCode: string) => void;
+  onHighlightBlock: (blockId: number) => void;
   onToggle: (shortCode: string, show: boolean) => void;
   onEditBlock: (blockId: number, current: string) => void;
   onDeleteBlock: (blockId: number) => void;
@@ -509,6 +519,7 @@ function FeedItemList({
             totalCount={items.length}
             links={links}
             highlightedShortCode={highlightedShortCode}
+            highlightedBlockId={highlightedBlockId}
             pendingShortCode={pendingShortCode}
             labelByShortCode={labelByShortCode}
             isDragging={dragIndex === idx}
@@ -521,6 +532,7 @@ function FeedItemList({
             onDrop={onDrop}
             onDragEnd={onDragEnd}
             onHighlight={onHighlight}
+            onHighlightBlock={onHighlightBlock}
             onToggle={onToggle}
             onEditBlock={onEditBlock}
             onDeleteBlock={onDeleteBlock}
@@ -545,6 +557,7 @@ type RowProps = {
   totalCount: number;
   links: MyLink[];
   highlightedShortCode: string | null;
+  highlightedBlockId: number | null;
   pendingShortCode: string | null;
   labelByShortCode: Record<string, string>;
   isDragging: boolean;
@@ -560,6 +573,7 @@ type RowProps = {
   onDrop: (idx: number, e: React.DragEvent) => void;
   onDragEnd: () => void;
   onHighlight: (shortCode: string) => void;
+  onHighlightBlock: (blockId: number) => void;
   onToggle: (shortCode: string, show: boolean) => void;
   onEditBlock: (blockId: number, current: string) => void;
   onDeleteBlock: (blockId: number) => void;
@@ -573,6 +587,7 @@ function FeedItemRow({
   totalCount,
   links,
   highlightedShortCode,
+  highlightedBlockId,
   pendingShortCode,
   labelByShortCode,
   isDragging,
@@ -585,6 +600,7 @@ function FeedItemRow({
   onDrop,
   onDragEnd,
   onHighlight,
+  onHighlightBlock,
   onToggle,
   onEditBlock,
   onDeleteBlock,
@@ -693,6 +709,13 @@ function FeedItemRow({
           <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           <span className={textClass}>{text}</span>
         </div>
+        {(item.type === "EVENT" || item.type === "PRODUCT_CARD") && (
+          <FeatureStar
+            active={highlightedBlockId === item.id}
+            onClick={() => onHighlightBlock(item.id)}
+            label={t("highlight")}
+          />
+        )}
         <BlockActions
           onEdit={() => onEditBlock(item.id, item.content ?? "")}
           onDelete={() => onDeleteBlock(item.id)}
@@ -766,18 +789,7 @@ function FeedItemRow({
         </p>
       </div>
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => onHighlight(link.shortCode)}
-          aria-pressed={highlighted}
-          title={t("highlight")}
-          className={
-            "transition " +
-            (highlighted ? "text-amber-500" : "text-slate-300 hover:text-slate-700")
-          }
-        >
-          <Star className="h-3.5 w-3.5" fill={highlighted ? "currentColor" : "none"} />
-        </button>
+        <FeatureStar active={highlighted} onClick={() => onHighlight(link.shortCode)} label={t("highlight")} />
         <button
           type="button"
           onClick={() => onToggle(link.shortCode, false)}
@@ -902,6 +914,25 @@ function DragHandle({
         </button>
       </div>
     </div>
+  );
+}
+
+// 대표 표시 — 링크·모집·상품 줄이 같은 별을 쓴다(대시보드 즐겨찾기 별과 같은 강조색).
+function FeatureStar({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      title={label}
+      aria-label={label}
+      className={
+        "transition " +
+        (active ? "text-accent-600 dark:text-accent-400" : "text-slate-300 hover:text-slate-700 dark:text-slate-600 dark:hover:text-slate-300")
+      }
+    >
+      <Star className="h-3.5 w-3.5" fill={active ? "currentColor" : "none"} />
+    </button>
   );
 }
 

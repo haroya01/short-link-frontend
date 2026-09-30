@@ -2234,6 +2234,7 @@
     "createCta": "Tạo liên kết của tôi"
   },
   "publicProfile": {
+    "featuredPick": "Nổi bật",
     "empty": "Người dùng này chưa thêm liên kết nào.",
     "viewBlog": "Xem {count} bài viết",
     "editFab": "Chỉnh sửa",

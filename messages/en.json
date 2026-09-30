@@ -2234,6 +2234,7 @@
     "createCta": "Create my link"
   },
   "publicProfile": {
+    "featuredPick": "Featured",
     "empty": "This user hasn't added any links yet.",
     "viewBlog": "View {count, plural, one {# post} other {# posts}}",
     "editFab": "Edit",

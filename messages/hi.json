@@ -2234,6 +2234,7 @@
     "createCta": "अपना लिंक बनाएँ"
   },
   "publicProfile": {
+    "featuredPick": "ख़ास",
     "empty": "इस उपयोगकर्ता ने अभी तक कोई लिंक नहीं जोड़ा।",
     "viewBlog": "{count} पोस्ट देखें",
     "editFab": "संपादित करें",

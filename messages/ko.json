@@ -2234,6 +2234,7 @@
     "createCta": "내 링크 만들기"
   },
   "publicProfile": {
+    "featuredPick": "대표",
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
     "viewBlog": "글 {count}편 보기",
     "editFab": "편집",
