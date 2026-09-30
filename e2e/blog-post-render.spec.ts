@@ -320,3 +320,39 @@ test("imported markdown renders cleanly and heading links stay short", async ({ 
   await expect(fresh.locator(`#${id}`)).toBeInViewport();
 });
 
+test("a feed title is set in its own language, not the page's", async ({ page }) => {
+  // The mock feed is Korean. On the Japanese page its titles must still break between words
+  // (keep-all) instead of inheriting the page's per-character Japanese breaking.
+  await page.goto("/ja/blog");
+  const title = page.locator("main ul > li h2").first();
+  await expect(title).toBeVisible({ timeout: 15_000 });
+  await expect(title).toHaveAttribute("lang", "ko");
+  expect(await title.evaluate((el) => getComputedStyle(el).wordBreak)).toBe("keep-all");
+});
+
+test("the Japanese locale keeps monospace for code and the font-mono utility", async ({ page }) => {
+  // The Japanese body face must reach text by inheritance only. Declared on every element, it
+  // replaced the mono face on font-mono elements and on the highlight token spans inside <code>.
+  await page.goto("/ja/blog");
+  await expect(page.locator("main ul > li h2").first()).toBeVisible({ timeout: 15_000 });
+  const fonts = await page.evaluate(() => {
+    const host = document.createElement("div");
+    host.innerHTML =
+      '<span class="font-mono">kurl.me/abc</span><pre><code>x <span class="hljs-keyword">return</span></code></pre>';
+    document.body.append(host);
+    const family = (sel: string) => getComputedStyle(host.querySelector(sel)!).fontFamily;
+    const out = {
+      body: getComputedStyle(document.body).fontFamily,
+      utility: family(".font-mono"),
+      token: family("code span"),
+    };
+    host.remove();
+    return out;
+  });
+  expect(fonts.body).toContain("Pretendard JP");
+  expect(fonts.utility).toMatch(/mono/i);
+  expect(fonts.utility).not.toContain("Pretendard");
+  expect(fonts.token).toMatch(/mono/i);
+  expect(fonts.token).not.toContain("Pretendard");
+});
+

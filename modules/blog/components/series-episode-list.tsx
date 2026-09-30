@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesPostRef } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 
@@ -59,6 +60,7 @@ export function SeriesEpisodeList({
             >
               <SeriesIndex n={i + 1} current={on} className="shrink-0 text-[13px]" />
               <span
+                lang={contentLang(post.title)}
                 className={`truncate text-[14px] transition-colors duration-200 group-hover/ep:text-accent-700 dark:group-hover/ep:text-accent-300 ${
                   on
                     ? "font-bold text-slate-900 dark:text-slate-50"

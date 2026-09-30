@@ -15,6 +15,7 @@ import {
   type TagCount,
 } from "@/modules/blog/api/public-posts";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -236,7 +237,10 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                         {item.tags[0]}
                       </span>
                     )}
-                    <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
+                    <span
+                      lang={contentLang(item.title, item.languageTag)}
+                      className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100"
+                    >
                       {item.title}
                     </span>
                     <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">

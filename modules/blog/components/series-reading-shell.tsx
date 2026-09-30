@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
@@ -261,14 +262,20 @@ export function SeriesReadingShell({
                   <SeriesIndex n={n} className="mt-1 shrink-0 text-[14px]" />
                   {/* No-image rows reserve a right gutter so the title never runs under the save toggle. */}
                   <span className={`min-w-0 flex-1 ${hasImage ? "" : "pr-9"}`}>
-                    <span className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
+                    <span
+                      lang={contentLang(p.title, p.languageTag)}
+                      className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400"
+                    >
                       {p.title}
                     </span>
                     <span className="mt-1 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                       <time dateTime={p.publishedAt}>{fmtDate(p.publishedAt)}</time>
                     </span>
                     {p.excerpt && (
-                      <span className="mt-1.5 line-clamp-2 block text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
+                      <span
+                        lang={contentLang(p.excerpt, p.languageTag)}
+                        className="mt-1.5 line-clamp-2 block text-[14px] leading-relaxed text-slate-500 dark:text-slate-400"
+                      >
                         {p.excerpt}
                       </span>
                     )}

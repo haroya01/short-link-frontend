@@ -6,6 +6,7 @@ import { Check, FolderPlus, MoreHorizontal, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
@@ -68,11 +69,11 @@ export function SavedCard({
       {item.tags[0] && (
         <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{item.tags[0]}</span>
       )}
-      <h3 className={`mt-0.5 line-clamp-2 pr-8 text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors dark:text-slate-100 ${selectMode ? "" : "group-hover/saved:text-accent-700 dark:group-hover/saved:text-accent-400"}`}>
+      <h3 lang={contentLang(item.title)} className={`mt-0.5 line-clamp-2 pr-8 text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors dark:text-slate-100 ${selectMode ? "" : "group-hover/saved:text-accent-700 dark:group-hover/saved:text-accent-400"}`}>
         {item.title}
       </h3>
       {item.excerpt && (
-        <p className="mt-1 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400">{item.excerpt}</p>
+        <p lang={contentLang(item.excerpt)} className="mt-1 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400">{item.excerpt}</p>
       )}
     </>
   );

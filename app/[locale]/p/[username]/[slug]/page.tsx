@@ -447,6 +447,7 @@ export default async function PublicPostPage({
         currentSlug={post.slug}
         currentTitle={post.title}
         tags={post.tags}
+        seriesSize={result.data.series?.total ?? 0}
       />
 
       {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}

@@ -7,6 +7,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
@@ -203,13 +204,13 @@ export function DiscoverySeriesCard({
                       className="pointer-events-auto -mx-1 -my-1.5 flex min-w-0 items-center gap-1.5 rounded px-1 py-1.5"
                     >
                       <Layers aria-hidden className="h-3 w-3 shrink-0" />
-                      <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
+                      <span lang={contentLang(series.title)} className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
                     </Nav>
                   </div>
 
                   {/* 제목 — 사진/종이 공통(큰 회차 번호가 표지 주인공, 제목은 하단에 일관 크기로). */}
                   <div>
-                    <h3 className="line-clamp-3 text-balance text-card-title-md font-bold leading-snug tracking-tight">
+                    <h3 lang={contentLang(p.title)} className="line-clamp-3 text-balance text-card-title-md font-bold leading-snug tracking-tight">
                       {p.title}
                     </h3>
                     <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>
