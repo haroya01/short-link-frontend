@@ -918,75 +918,13 @@
     }
   },
   "home": {
-    "tagline": "kurl v1",
     "headline1": "Rút gọn trong <line>một dòng</line>",
     "headline2": "Khi nào, ở đâu",
     "subhead": "Dán một liên kết dài là có ngay liên kết ngắn. Xem ai đã nhấp, khi nào và từ đâu, lượt nhấp của bot được tách riêng.",
     "mobileSubhead": "Ai nhấp, khi nào, từ đâu. Bot được tách riêng.",
     "anonymousHint": "Miễn phí, không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu.",
     "demoLink": "Xem trước trang thống kê",
-    "previews": {
-      "eyebrow": "Những gì bạn nhận được trong chưa đầy một phút",
-      "see": "Xem",
-      "stats": {
-        "title": "Bảng phân tích",
-        "desc": "Tự động tách người và bot, kèm kênh, quốc gia và thời điểm trong ngày. Xu hướng 30 ngày và bản đồ nhiệt."
-      },
-      "profile": {
-        "title": "Hồ sơ công khai",
-        "desc": "Một trang gom mọi liên kết của bạn. Dán vào bio Instagram, X hay bất cứ đâu."
-      },
-      "domain": {
-        "title": "Tên miền của riêng bạn",
-        "desc": "Định tuyến liên kết ngắn qua go.brand.com. Tự động xác minh TXT + CNAME."
-      }
-    },
-    "ctaSeeLinks": "Xem tất cả liên kết của tôi",
-    "loginCta": "Đăng nhập để giữ liên kết này và mở khóa <clickStats>thống kê lượt nhấp</clickStats> của nó.",
-    "features": {
-      "realtime": {
-        "title": "Dòng nhấp trực tiếp (SSE)",
-        "desc": "Ngay khi có lượt nhấp, thời gian, quốc gia, kênh và thiết bị hiện trực tiếp trên trang thống kê.",
-        "preview": {
-          "eyebrow": "Lượt nhấp trực tiếp",
-          "live": "trực tiếp"
-        }
-      },
-      "insights": {
-        "title": "Thông tin tự động",
-        "desc": "Giờ cao điểm, tỷ lệ quay lại và tốc độ nhấp, xem ngay không cần thiết lập",
-        "preview": {
-          "heading": "Thông tin tuần này",
-          "humanLabel": "Lượt nhấp của người",
-          "humanSub": "91% tổng số",
-          "topLinkLabel": "Liên kết hàng đầu",
-          "topLinkSub": "638 · instagram",
-          "peakLabel": "Cao điểm",
-          "peakValue": "T4 21h",
-          "peakSub": "38% lượt nhấp trong giờ này",
-          "wowLabel": "so với tuần trước",
-          "wowSub": "Lượt nhấp của người, tuần này so với tuần trước"
-        }
-      },
-      "abtest": {
-        "title": "Chia tách A/B + định tuyến theo vị trí",
-        "desc": "Một URL ngắn → các biến thể theo trọng số và điểm đến theo quốc gia (tối đa 4 mỗi liên kết)",
-        "preview": {
-          "explainer": "Chia lượt nhấp trên cùng một URL ngắn theo trọng số và quốc gia của khách. Quay về điểm đến mặc định khi không khớp gì.",
-          "controlLabel": "Mặc định (URL gốc)"
-        }
-      }
-    },
     "recentTitle": "Liên kết gần đây",
-    "statsEyebrow": "trực tiếp",
-    "statsTitle": "Toàn dịch vụ đến nay",
-    "statsSubhead": "Tổng số liên kết đã rút gọn và lượt nhấp đã theo dõi đến nay.",
-    "featuresEyebrow": "những gì bạn nhận được",
-    "featuresTitle": "Ba thứ mà các dịch vụ rút gọn miễn phí bỏ qua",
-    "featuresSubhead": "Dòng nhấp trực tiếp · thông tin tự động · định tuyến A/B + vị trí. Webhook HMAC · 2FA TOTP · Google Safe Browsing đều có sẵn.",
-    "whyEyebrow": "vì sao chọn kurl",
-    "whyTitle": "Sao không phải dịch vụ rút gọn nào cũng có điều này?",
-    "whySubhead": "Những tính năng thường chỉ có trong gói doanh nghiệp, ở đây miễn phí và bật sẵn.",
     "stage": {
       "title": "Đăng nhập để mỗi liên kết có thống kê như thế này",
       "desc": "Mỗi lượt nhấp đều được ghi lại. Thống kê hoàn toàn miễn phí, màn hình bên dưới dùng dữ liệu ví dụ.",
@@ -2356,48 +2294,6 @@
     "vi": "Tiếng Việt",
     "hi": "हिन्दी"
   },
-  "whyKurl": {
-    "th": {
-      "feature": "Tính năng",
-      "others": "Dịch vụ rút gọn miễn phí thông thường"
-    },
-    "paidTier": "Gói trả phí",
-    "disclaimer": "So sánh với các gói miễn phí của bit.ly, short.io, rebrandly, và TinyURL (2026).",
-    "rows": {
-      "abtest": {
-        "label": "Chia tách A/B: một liên kết, nhiều điểm đến",
-        "note": "Định tuyến một tỷ lệ phần trăm lượt nhấp tới mỗi điểm đến. Thường chỉ dành cho doanh nghiệp."
-      },
-      "geoRouting": {
-        "label": "Điểm đến theo từng quốc gia",
-        "note": "Tự động định tuyến khách tới trang phù hợp với quốc gia của họ. Gần như không có dịch vụ rút gọn miễn phí nào cung cấp điều này."
-      },
-      "webhooks": {
-        "label": "Thông báo lượt nhấp (Slack / Discord / máy chủ của bạn)",
-        "note": "Mỗi lượt nhấp báo về Slack, Discord hoặc endpoint của bạn. POST trực tiếp được ký HMAC tự động."
-      },
-      "realtime": {
-        "label": "Dòng nhấp trực tiếp",
-        "note": "Xem lượt nhấp đến trên trang thống kê theo thời gian thực. Hiếm có trong nhóm này."
-      },
-      "insights": {
-        "label": "Thông tin tự động",
-        "note": "Hiện giờ cao điểm, tỷ lệ quay lại và tốc độ nhấp mà không cần thiết lập."
-      },
-      "asnTracking": {
-        "label": "Tự tách lượt nhấp từ trung tâm dữ liệu",
-        "note": "Lượt nhấp từ các mạng đám mây lớn (ASN) như AWS, GCP được phân loại là bot. Ít dịch vụ khác làm điều này."
-      },
-      "botDefense": {
-        "label": "Phòng vệ bot nhiều lớp",
-        "note": "Safe Browsing + thử thách rút gọn ẩn danh + tự phân loại trung tâm dữ liệu."
-      },
-      "twofa": {
-        "label": "Xác minh hai bước + mã khôi phục",
-        "note": "Ứng dụng xác thực + 10 mã khôi phục dùng một lần. Thường là tính năng trả phí ở nơi khác."
-      }
-    }
-  },
   "footer": {
     "copyright": "© {year} kurl",
     "about": "Giới thiệu",
@@ -3130,10 +3026,6 @@
       "dnsCnameHint": "Định tuyến lưu lượng: thêm bản ghi CNAME này tại cùng nhà cung cấp"
     }
   },
-  "homeStats": {
-    "linksLabel": "liên kết đã rút gọn",
-    "clicksLabel": "lượt nhấp đã phân tích"
-  },
   "publicStats": {
     "title": "Thống kê công khai",
     "publicBadge": "công khai",
@@ -3445,21 +3337,6 @@
         "meta": "/ {quantity} tờ · {rate}%"
       }
     }
-  },
-  "homeFaq": {
-    "title": "Câu hỏi thường gặp",
-    "q1": "Liên kết rút gọn có vĩnh viễn không?",
-    "a1": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết bạn tạo khi đã đăng nhập tồn tại đến khi bạn xóa.",
-    "q2": "Tôi dùng được mà không đăng nhập không?",
-    "a2": "Được. Rút gọn hoạt động mà không cần tài khoản. Thống kê và lưu trữ vĩnh viễn cần đăng nhập Google.",
-    "q3": "Tôi xem thống kê ở đâu?",
-    "a3": "Trên trang Liên kết của tôi, nhấp vào mã bất kỳ để mở trang thống kê 8 chiều.",
-    "q4": "Bản xem trước có hiện trên KakaoTalk / Slack không?",
-    "a4": "Có. Thẻ xem trước hoạt động trên KakaoTalk, Slack và Discord. Khi các ứng dụng đó lấy liên kết để dựng thẻ, kurl trả về một trang xem trước có tiêu đề, mô tả và ảnh thay vì chuyển hướng ngay.",
-    "q5": "URL độc hại bị chặn thế nào?",
-    "a5": "Chúng tôi sàng lọc bằng Google Safe Browsing lúc rút gọn. URL bị gắn cờ sẽ bị từ chối.",
-    "q6": "Có API không?",
-    "a6": "Có. kurl có API cho nhà phát triển. Lấy khóa trong Cài đặt > Khóa API và gọi các endpoint rút gọn và thống kê từ mã của bạn."
   },
   "campaignStatus": {
     "DRAFT": "Bản nháp",

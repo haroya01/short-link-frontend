@@ -90,13 +90,4 @@ test.describe("anonymous shorten flow", () => {
     await expect(page.locator("#shorten-advanced-section")).toHaveCount(0);
     await expect(page.getByRole("button", { name: /고급 옵션|Advanced|詳細/i })).toHaveCount(0);
   });
-
-  test("FAQ accordion expands", async ({ page }) => {
-    await page.goto("/ko?stage=off");
-    const faq = page.getByRole("heading", { name: "자주 묻는 질문" });
-    await expect(faq).toBeVisible();
-    const firstQ = page.getByRole("button", { name: /단축 링크는 영구 보존되나요/ });
-    await firstQ.click();
-    await expect(page.getByText(/24시간 후 자동으로 만료/)).toBeVisible();
-  });
 });

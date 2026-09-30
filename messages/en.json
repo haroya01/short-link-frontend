@@ -918,75 +918,13 @@
     }
   },
   "home": {
-    "tagline": "kurl v1",
     "headline1": "Shorten in <line>one line</line>",
     "headline2": "See when and where",
     "subhead": "Paste a long link and get a short one right away. See who clicked, when, and from where, with bot clicks kept apart.",
     "mobileSubhead": "See who clicked, when, and where. Bots kept apart.",
     "anonymousHint": "Free, no sign-in needed. Sign in to see stats and add a password.",
     "demoLink": "Preview the stats page",
-    "previews": {
-      "eyebrow": "What you get in under a minute",
-      "see": "See",
-      "stats": {
-        "title": "Analytics dashboard",
-        "desc": "Humans and bots split automatically, plus channel, country, and time of day. 30-day trend and heatmap."
-      },
-      "profile": {
-        "title": "Public profile",
-        "desc": "One page with all your links. Paste it into your Instagram bio, X, or anywhere else."
-      },
-      "domain": {
-        "title": "Your own domain",
-        "desc": "Route your short links through go.brand.com. TXT + CNAME verified automatically."
-      }
-    },
-    "ctaSeeLinks": "See all my links",
-    "loginCta": "Sign in to keep this link and unlock its <clickStats>click stats</clickStats>.",
-    "features": {
-      "realtime": {
-        "title": "Live click feed (SSE)",
-        "desc": "The moment a click comes in, its time, country, channel, and device show up live on the stats page.",
-        "preview": {
-          "eyebrow": "Live clicks",
-          "live": "live"
-        }
-      },
-      "insights": {
-        "title": "Automatic insights",
-        "desc": "Peak hour, return rate, and click velocity, ready with no setup",
-        "preview": {
-          "heading": "This week's insights",
-          "humanLabel": "Human clicks",
-          "humanSub": "91% of total",
-          "topLinkLabel": "Top link",
-          "topLinkSub": "638 · instagram",
-          "peakLabel": "Peak",
-          "peakValue": "Wed 9pm",
-          "peakSub": "38% of clicks this hour",
-          "wowLabel": "vs last week",
-          "wowSub": "Human clicks, week over week"
-        }
-      },
-      "abtest": {
-        "title": "A/B split + geo-routing",
-        "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)",
-        "preview": {
-          "explainer": "Splits clicks on the same short URL by weight and visitor country. Falls back to the default destination when nothing matches.",
-          "controlLabel": "Default (original URL)"
-        }
-      }
-    },
     "recentTitle": "Recent links",
-    "statsEyebrow": "live",
-    "statsTitle": "Service-wide so far",
-    "statsSubhead": "Total links shortened and clicks tracked so far.",
-    "featuresEyebrow": "what you get",
-    "featuresTitle": "Three things free shorteners leave out",
-    "featuresSubhead": "Live click feed · auto-insights · A/B + geo routing. HMAC webhooks · 2FA TOTP · Google Safe Browsing are built in.",
-    "whyEyebrow": "why kurl",
-    "whyTitle": "Why doesn't every shortener include this?",
-    "whySubhead": "Features that usually come with enterprise plans are free here and on by default.",
     "stage": {
       "title": "Sign in and every link gets stats like these",
       "desc": "Every click is recorded. Stats are free, and the screens below use example data.",
@@ -2356,48 +2294,6 @@
     "vi": "Tiếng Việt",
     "hi": "हिन्दी"
   },
-  "whyKurl": {
-    "th": {
-      "feature": "Feature",
-      "others": "Typical free shortener"
-    },
-    "paidTier": "Paid plan",
-    "disclaimer": "Compared against bit.ly, short.io, rebrandly, and TinyURL free plans (2026).",
-    "rows": {
-      "abtest": {
-        "label": "A/B split: one link, several destinations",
-        "note": "Route a percentage of clicks to each destination. Usually enterprise-only."
-      },
-      "geoRouting": {
-        "label": "Per-country destinations",
-        "note": "Auto-route visitors to a page tailored to their country. Almost no free shortener offers this."
-      },
-      "webhooks": {
-        "label": "Click notifications (Slack / Discord / your server)",
-        "note": "Every click notifies Slack, Discord or your endpoint. Direct POSTs are HMAC-signed automatically."
-      },
-      "realtime": {
-        "label": "Live click feed",
-        "note": "Watch clicks arrive on the stats page in real time. Rare in this category."
-      },
-      "insights": {
-        "label": "Automatic insights",
-        "note": "Shows peak hour, return rate, and click velocity with no setup."
-      },
-      "asnTracking": {
-        "label": "Auto-separate datacenter clicks",
-        "note": "Clicks from major cloud networks (ASNs) like AWS and GCP are classified as bots. Few other services do this."
-      },
-      "botDefense": {
-        "label": "Layered bot defence",
-        "note": "Safe Browsing + anonymous-shorten challenge + datacenter auto-classification."
-      },
-      "twofa": {
-        "label": "Two-step verification + recovery codes",
-        "note": "Authenticator app + 10 single-use recovery codes. Usually a paid feature elsewhere."
-      }
-    }
-  },
   "footer": {
     "copyright": "© {year} kurl",
     "about": "About",
@@ -3130,10 +3026,6 @@
       "dnsCnameHint": "Traffic routing: add this CNAME record at the same provider"
     }
   },
-  "homeStats": {
-    "linksLabel": "links shortened",
-    "clicksLabel": "clicks analyzed"
-  },
   "publicStats": {
     "title": "Public stats",
     "publicBadge": "public",
@@ -3445,21 +3337,6 @@
         "meta": "/ {quantity} sheets · {rate}%"
       }
     }
-  },
-  "homeFaq": {
-    "title": "Frequently asked questions",
-    "q1": "Are shortened links permanent?",
-    "a1": "Anonymous links auto-expire after 24h. Links you make signed in last until you delete them.",
-    "q2": "Can I use it without signing in?",
-    "a2": "Yes. Shortening works without an account. Stats and permanent storage need Google sign-in.",
-    "q3": "Where do I see stats?",
-    "a3": "On the My Links page click any code to open the 8-dimension stats page.",
-    "q4": "Will previews show in KakaoTalk / Slack?",
-    "a4": "Yes. Preview cards work on KakaoTalk, Slack, and Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image instead of redirecting right away.",
-    "q5": "How are malicious URLs blocked?",
-    "a5": "We screen with Google Safe Browsing at shorten time. Flagged URLs are rejected.",
-    "q6": "Is there an API?",
-    "a6": "Yes. kurl has a developer API. Get a key under Settings > API keys and call the shorten and stats endpoints from your own code."
   },
   "campaignStatus": {
     "DRAFT": "Draft",

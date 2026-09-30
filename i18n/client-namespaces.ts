@@ -15,8 +15,8 @@ import type { AbstractIntlMessages } from "next-intl";
 export const CLIENT_MESSAGE_SCOPES = {
   root: ["common"],
   links: [
-    "cookieConsent", "footer", "home", "homeFaq", "homeStats", "languageSwitcher", "nav", "qr",
-    "recent", "result", "share", "shortenForm", "stats.kpi", "stats.live", "whyKurl",
+    "cookieConsent", "footer", "home", "languageSwitcher", "nav", "qr", "recent", "result", "share",
+    "shortenForm", "stats.kpi", "stats.live",
   ],
   "links/admin": ["abuseReports", "admin", "stats"],
   "links/analytics": ["authGate", "linkAnalytics"],
