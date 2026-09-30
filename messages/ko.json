@@ -1089,8 +1089,7 @@
     "signedInWith": "{email} 로 로그인되었어요",
     "callbackProcessing": "로그인 처리 중…",
     "callbackFailed": "로그인하지 못했어요",
-    "tokenMissing": "로그인 정보가 없어요. 다시 로그인해 주세요.",
-    "tokenInvalid": "로그인 정보를 읽을 수 없어요. 다시 로그인해 주세요.",
+    "signInIncomplete": "로그인을 마치지 못했어요. 다시 로그인해 주세요.",
     "oauthFailed": "Google 로그인에 실패했어요({reason}).",
     "backToLogin": "로그인 페이지로",
     "apple": "Apple로 로그인",
@@ -1106,7 +1105,7 @@
       "verifyFailed": "코드 검증에 실패했어요. 다시 시도하세요.",
       "toggleToRecovery": "인증 앱을 잃어버렸나요? 복구 코드 사용",
       "toggleToCode": "다시 인증 앱 코드 입력",
-      "missingChallenge": "인증 정보가 없어요. 다시 로그인해 주세요."
+      "expired": "인증 시간이 지났어요. 다시 로그인해 주세요."
     }
   },
   "avatar": {

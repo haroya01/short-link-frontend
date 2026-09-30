@@ -1089,8 +1089,7 @@
     "signedInWith": "{email} でログインしました",
     "callbackProcessing": "ログイン処理中...",
     "callbackFailed": "ログイン失敗",
-    "tokenMissing": "トークン情報がありません。",
-    "tokenInvalid": "トークンを読み取れません。",
+    "signInIncomplete": "ログインを完了できませんでした。もう一度ログインしてください。",
     "oauthFailed": "Googleログインに失敗しました ({reason})。",
     "backToLogin": "ログインページへ",
     "apple": "Appleでログイン",
@@ -1106,7 +1105,7 @@
       "verifyFailed": "コード検証に失敗しました。もう一度お試しください。",
       "toggleToRecovery": "認証アプリが使えないときはリカバリコードでログイン",
       "toggleToCode": "認証アプリのコードに戻る",
-      "missingChallenge": "challenge 情報がありません。再度ログインしてください。"
+      "expired": "認証の有効期限が切れました。もう一度ログインしてください。"
     }
   },
   "avatar": {

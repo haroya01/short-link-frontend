@@ -1089,8 +1089,7 @@
     "signedInWith": "Signed in as {email}",
     "callbackProcessing": "Signing you in...",
     "callbackFailed": "Sign-in failed",
-    "tokenMissing": "No token information.",
-    "tokenInvalid": "Could not read token.",
+    "signInIncomplete": "We couldn't finish signing you in. Please sign in again.",
     "oauthFailed": "Google sign-in failed ({reason}).",
     "backToLogin": "Back to sign in",
     "apple": "Sign in with Apple",
@@ -1106,7 +1105,7 @@
       "verifyFailed": "Code verification failed. Try again.",
       "toggleToRecovery": "Lost your authenticator? Use a recovery code",
       "toggleToCode": "Use authenticator code instead",
-      "missingChallenge": "Missing challenge token. Please sign in again."
+      "expired": "This sign-in timed out. Please sign in again."
     }
   },
   "avatar": {

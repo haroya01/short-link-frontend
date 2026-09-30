@@ -205,3 +205,59 @@ describe("request — token + 401 refresh flow (via fetchMe)", () => {
     );
   });
 });
+
+describe("sign-in without tokens in the URL", () => {
+  function respond(status: number, body: object) {
+    return vi.fn().mockResolvedValue({
+      ok: status >= 200 && status < 300,
+      status,
+      statusText: "",
+      text: async () => JSON.stringify(body),
+      json: async () => body,
+    });
+  }
+
+  it("completeSignIn always trades the refresh cookie, replacing a token this origin held", async () => {
+    const { setToken, readToken, completeSignIn } = await freshApi();
+    setToken("previous-account");
+    const fetchMock = respond(200, { accessToken: "new-sign-in" });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(completeSignIn()).resolves.toBe(true);
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).toContain("/api/v1/auth/refresh");
+    expect(init).toMatchObject({ method: "POST", credentials: "include" });
+    expect(readToken()).toBe("new-sign-in");
+  });
+
+  it("completeSignIn reports failure when the refresh cookie is missing or expired", async () => {
+    const { readToken, completeSignIn } = await freshApi();
+    vi.stubGlobal("fetch", respond(401, { status: 401, code: "INVALID_REFRESH_TOKEN" }));
+
+    await expect(completeSignIn()).resolves.toBe(false);
+    expect(readToken()).toBeNull();
+  });
+
+  it("verifyTwoFactor leaves the challenge out so the server reads the cookie", async () => {
+    const { verifyTwoFactor } = await freshApi();
+    const fetchMock = respond(200, { accessToken: "after-2fa" });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await verifyTwoFactor(null, "123456", false);
+
+    expect(fetchMock.mock.calls[0][1].body).toBe(JSON.stringify({ code: "123456", recovery: false }));
+  });
+
+  it("verifyTwoFactor sends a handed-over challenge in the body", async () => {
+    const { verifyTwoFactor } = await freshApi();
+    const fetchMock = respond(200, { accessToken: "after-2fa" });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await verifyTwoFactor("apple-challenge", "123456", false);
+
+    expect(fetchMock.mock.calls[0][1].body).toBe(
+      JSON.stringify({ challenge: "apple-challenge", code: "123456", recovery: false }),
+    );
+  });
+});

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { setToken } from "@/lib/api/client";
 import { appleWebLogin } from "@/lib/api/apple-login";
 import { writeStorageString } from "@/lib/storage-json";
+import { handOverTwoFactorChallenge } from "@/lib/two-factor-challenge";
 
 const APPLE_SDK_SRC =
   "https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js";
@@ -99,7 +100,8 @@ export function AppleSignInButton({ successHref }: { successHref: string }) {
       const data = await window.AppleID!.auth.signIn();
       const result = await appleWebLogin(data.authorization.id_token, rawNonce);
       if (result.challenge) {
-        window.location.assign("/auth/2fa#challenge=" + encodeURIComponent(result.challenge));
+        handOverTwoFactorChallenge(result.challenge);
+        window.location.assign("/auth/2fa");
         return;
       }
       if (result.accessToken) {

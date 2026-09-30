@@ -1089,8 +1089,7 @@
     "signedInWith": "Đã đăng nhập với {email}",
     "callbackProcessing": "Đang đăng nhập...",
     "callbackFailed": "Đăng nhập thất bại",
-    "tokenMissing": "Không có thông tin token.",
-    "tokenInvalid": "Không đọc được token.",
+    "signInIncomplete": "Không thể hoàn tất đăng nhập. Vui lòng đăng nhập lại.",
     "oauthFailed": "Đăng nhập Google thất bại ({reason}).",
     "backToLogin": "Quay lại đăng nhập",
     "apple": "Đăng nhập với Apple",
@@ -1106,7 +1105,7 @@
       "verifyFailed": "Xác minh mã thất bại. Thử lại.",
       "toggleToRecovery": "Mất ứng dụng xác thực? Dùng mã khôi phục",
       "toggleToCode": "Dùng mã từ ứng dụng xác thực",
-      "missingChallenge": "Thiếu token thử thách. Vui lòng đăng nhập lại."
+      "expired": "Phiên xác thực đã hết hạn. Vui lòng đăng nhập lại."
     }
   },
   "avatar": {

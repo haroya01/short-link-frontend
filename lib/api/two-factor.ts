@@ -28,13 +28,14 @@ export async function regenerateRecoveryCodes(code: string): Promise<TwoFactorRe
   });
 }
 
+/** Without a challenge the server uses the HttpOnly cookie a Google sign-in left. */
 export async function verifyTwoFactor(
-  challenge: string,
+  challenge: string | null,
   code: string,
   recovery: boolean,
 ): Promise<{ accessToken: string }> {
   return request<{ accessToken: string }>("/api/v1/auth/2fa/verify", {
     method: "POST",
-    body: { challenge, code, recovery },
+    body: challenge ? { challenge, code, recovery } : { code, recovery },
   });
 }
