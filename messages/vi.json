@@ -1009,11 +1009,11 @@
     "ctaSubhead": "Đăng nhập và chọn tên người dùng là có thể bắt đầu. Thêm ảnh, liên kết, địa chỉ và thông tin liên hệ, trang sẽ trông giống các ví dụ bên dưới.",
     "cta": "Tạo hồ sơ của bạn",
     "metaSuffix": "mẫu",
-    "metaFallbackTitle": "{handle} · mẫu kurl",
+    "metaFallbackTitle": "Mẫu {handle}",
     "sampleBanner": "Trang mẫu · đây cũng có thể là hồ sơ của bạn",
     "sampleCta": "Tạo hồ sơ của tôi",
     "meta": {
-      "title": "Ví dụ hồ sơ link-in-bio · kurl",
+      "title": "Ví dụ hồ sơ link-in-bio",
       "description": "Ví dụ hồ sơ cho quán cà phê, giảng viên, nhiếp ảnh gia và nhiều nghề khác. Liên kết, danh thiếp, bản đồ và thẻ sản phẩm nằm gọn trên một trang."
     }
   },
@@ -2215,7 +2215,7 @@
     "copiedFallback": "Đã sao chép URL"
   },
   "demo": {
-    "metaTitle": "kurl demo: xem bạn nhận được gì khi rút gọn một liên kết",
+    "metaTitle": "Demo · xem thống kê bạn nhận được khi rút gọn liên kết",
     "metaDescription": "Xem trước bảng phân tích, không cần đăng nhập.",
     "sampleBanner": "Dữ liệu mẫu. Sau khi đăng nhập, các liên kết của bạn sẽ hiện theo đúng bố cục này.",
     "sampleCta": "Tạo liên kết của tôi",
@@ -2419,7 +2419,7 @@
     "ctaShorten": "Rút gọn một URL"
   },
   "learn": {
-    "metaTitle": "Liên kết ngắn · Rút gọn URL · Hướng dẫn link in bio · kurl",
+    "metaTitle": "Liên kết ngắn · Rút gọn URL · Hướng dẫn link in bio",
     "metaDescription": "Rút gọn URL là gì, liên kết ngắn khác trang link-in-bio thế nào, và kurl làm cả hai ra sao.",
     "eyebrow": "Hướng dẫn · FAQ",
     "title": "Liên kết ngắn và link-in-bio, giải thích cho người mới",
@@ -3532,7 +3532,7 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "Chiến dịch QR · Đo lượt nhấp QR trên tờ rơi · kurl",
+      "title": "Chiến dịch QR · Đo lượt nhấp QR trên tờ rơi",
       "description": "Chia QR trên tờ rơi, áp phích, phiếu giảm giá theo khu vực, người phát hoặc lô và so sánh lượt nhấp. Lượt nhấp trên 100 tờ cho biết nên phát ở đâu tiếp theo."
     },
     "hero": {

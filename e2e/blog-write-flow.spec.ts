@@ -156,11 +156,20 @@ async function pressMarkShortcut(page: Page, key: string) {
  * select-then-assert is retried: the BubbleMenu can lag a frame behind the selection, so a one-shot
  * "select, then expect visible" flakes — re-selecting on each retry is the reliable shape.
  */
-async function awaitBubbleButton(page: Page, select: () => Promise<void>, buttonName: string) {
+async function awaitBubbleButton(
+  page: Page,
+  select: () => Promise<void>,
+  buttonName: string,
+  selected?: string,
+) {
   // Scope to the selection bubble — the always-on toolbar carries the same labels (Bold/Italic/…).
   const btn = page.getByTestId("bubble-bar").getByRole("button", { name: buttonName, exact: true });
   await expect(async () => {
     await select();
+    // Under a loaded run a key-by-key selection can land one character short ("ocs" for "docs").
+    if (selected !== undefined) {
+      expect(await page.evaluate(() => window.getSelection()?.toString() ?? "")).toBe(selected);
+    }
     await expect(btn).toBeVisible({ timeout: 1500 });
   }).toPass({ timeout: 15_000 });
   return btn;
@@ -668,6 +677,7 @@ test("selection Link (bubble menu + URL dialog) saves a real markdown link", asy
       for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowLeft");
     },
     "Link",
+    "docs",
   );
   await link.click();
   await page.getByPlaceholder("https://example.com").fill("https://kurl.me/help");

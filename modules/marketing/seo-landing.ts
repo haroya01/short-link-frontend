@@ -29,7 +29,7 @@ export const SEO_PAGES: SeoPage[] = [
     slug: "free-url-shortener",
     content: {
       ko: {
-        title: "무료 URL 단축과 클릭 통계 · kurl",
+        title: "무료 URL 단축과 클릭 통계",
         description:
           "긴 주소를 kurl.me 단축 링크로 무료로 줄이고 QR 코드도 받아요. 로그인하면 링크마다 누가 언제 어디서 눌렀는지 통계로 볼 수 있어요.",
         intro:
@@ -69,7 +69,7 @@ export const SEO_PAGES: SeoPage[] = [
         cta: "URL 줄이기",
       },
       en: {
-        title: "Free URL shortener with click stats · kurl",
+        title: "Free URL shortener with click stats",
         description:
           "Shorten long URLs into kurl.me short links for free and get a QR code for each. Sign in to see who clicked each link, when, and from where.",
         intro:
@@ -109,7 +109,7 @@ export const SEO_PAGES: SeoPage[] = [
         cta: "Shorten a URL",
       },
       ja: {
-        title: "無料URL短縮とクリック統計 · kurl",
+        title: "無料URL短縮とクリック統計",
         description:
           "長いURLをkurl.meの短縮リンクに無料で短くして、QRコードも受け取れます。ログインすると、リンクごとに誰がいつどこから押したかを統計で見られます。",
         intro:
@@ -154,7 +154,7 @@ export const SEO_PAGES: SeoPage[] = [
     slug: "bitly-alternative",
     content: {
       ko: {
-        title: "Bitly 대안 · 무료 단축 링크와 클릭 통계 · kurl",
+        title: "Bitly 대안 · 무료 단축 링크와 클릭 통계",
         description:
           "Bitly 대안을 찾는 분을 위해 kurl로 할 수 있는 일을 정리했어요. 단축 링크, 클릭 통계, QR 캠페인, 공개 프로필을 지금은 모두 무료로 쓸 수 있어요.",
         intro:
@@ -194,7 +194,7 @@ export const SEO_PAGES: SeoPage[] = [
         cta: "kurl 써 보기",
       },
       en: {
-        title: "Bitly alternative · free short links and click stats · kurl",
+        title: "Bitly alternative · free short links and click stats",
         description:
           "For anyone looking for a Bitly alternative, here's what kurl does. Short links, click stats, QR campaigns, and public profiles are all free for now.",
         intro:
@@ -234,7 +234,7 @@ export const SEO_PAGES: SeoPage[] = [
         cta: "Try kurl",
       },
       ja: {
-        title: "Bitlyの代替 · 無料の短縮リンクとクリック統計 · kurl",
+        title: "Bitlyの代替 · 無料の短縮リンクとクリック統計",
         description:
           "Bitlyの代わりを探している方に向けて、kurlでできることをまとめました。短縮リンク、クリック統計、QRキャンペーン、公開プロフィールを、いまはすべて無料で使えます。",
         intro:
@@ -282,7 +282,7 @@ SEO_PAGES.push(
     slug: "link-in-bio",
     content: {
       ko: {
-        title: "링크 인 바이오 만들기 · kurl",
+        title: "링크 인 바이오 만들기",
         description:
           "여러 링크를 한 페이지에 모으는 링크 인 바이오를 kurl 공개 프로필로 무료로 만들어요. 사용자이름.kurl.me 주소를 SNS 프로필에 넣고, 어떤 링크가 눌렸는지 통계로 봐요.",
         intro:
@@ -318,7 +318,7 @@ SEO_PAGES.push(
         cta: "kurl 시작하기",
       },
       en: {
-        title: "Make a link in bio page · kurl",
+        title: "Make a link in bio page",
         description:
           "Make a free link in bio page that gathers your links with a kurl public profile. Put username.kurl.me in your social bios and see which links get clicked.",
         intro:
@@ -354,7 +354,7 @@ SEO_PAGES.push(
         cta: "Get started with kurl",
       },
       ja: {
-        title: "リンクインバイオを作る · kurl",
+        title: "リンクインバイオを作る",
         description:
           "複数のリンクを1ページにまとめるリンクインバイオを、kurlの公開プロフィールで無料で作れます。ユーザー名.kurl.meのアドレスをSNSのプロフィールに載せ、どのリンクが押されたかを統計で確認できます。",
         intro:
@@ -395,7 +395,7 @@ SEO_PAGES.push(
     slug: "instagram-profile-link",
     content: {
       ko: {
-        title: "인스타그램 프로필 링크 만들기 · kurl",
+        title: "인스타그램 프로필 링크 만들기",
         description:
           "인스타그램 프로필의 링크에 kurl 공개 프로필 주소를 넣으면 유튜브, 쇼핑몰, 예약 페이지 같은 여러 링크를 한 페이지로 보여 줄 수 있어요. 링크마다 몇 번 눌렸는지도 봐요.",
         intro:
@@ -427,7 +427,7 @@ SEO_PAGES.push(
         cta: "kurl 시작하기",
       },
       en: {
-        title: "Make an Instagram profile link · kurl",
+        title: "Make an Instagram profile link",
         description:
           "Put your kurl public profile in your Instagram profile link to show YouTube, your shop, a booking page, and more on one page. See how often each link is tapped.",
         intro:
@@ -459,7 +459,7 @@ SEO_PAGES.push(
         cta: "Get started with kurl",
       },
       ja: {
-        title: "Instagramのプロフィールリンクを作る · kurl",
+        title: "Instagramのプロフィールリンクを作る",
         description:
           "Instagramのプロフィールのリンクにkurlの公開プロフィールのアドレスを入れると、YouTube、ショップ、予約ページなどのリンクを1ページで見せられます。リンクごとに何回押されたかも見られます。",
         intro:
@@ -496,7 +496,7 @@ SEO_PAGES.push(
     slug: "kakaotalk-link-preview",
     content: {
       ko: {
-        title: "카카오톡 링크 미리보기 설정 · kurl",
+        title: "카카오톡 링크 미리보기 설정",
         description:
           "kurl 단축 링크를 카카오톡에 붙이면 목적지 페이지의 제목과 이미지로 미리보기 카드가 떠요. 로그인하면 카드 문구와 이미지를 링크마다 직접 정할 수 있어요.",
         intro:
@@ -536,7 +536,7 @@ SEO_PAGES.push(
         cta: "단축 링크 만들기",
       },
       en: {
-        title: "KakaoTalk link preview settings · kurl",
+        title: "KakaoTalk link preview settings",
         description:
           "Paste a kurl short link into KakaoTalk and the preview card shows the destination page's title and image. Sign in to set the card's text and image per link.",
         intro:
@@ -576,7 +576,7 @@ SEO_PAGES.push(
         cta: "Make a short link",
       },
       ja: {
-        title: "カカオトークのリンクプレビュー設定 · kurl",
+        title: "カカオトークのリンクプレビュー設定",
         description:
           "kurlの短縮リンクをカカオトークに貼ると、遷移先ページのタイトルと画像でプレビューカードが出ます。ログインすると、カードの文言と画像をリンクごとに決められます。",
         intro:
@@ -621,7 +621,7 @@ SEO_PAGES.push(
     slug: "poster-qr-code",
     content: {
       ko: {
-        title: "포스터 QR 코드 만들기 · kurl",
+        title: "포스터 QR 코드 만들기",
         description:
           "포스터에 넣을 QR 코드를 kurl 단축 링크로 무료로 만들어요. 로그인하고 만들면 QR로 몇 번 들어왔는지 보고, 인쇄한 뒤에도 목적지를 바꿀 수 있어요.",
         intro:
@@ -657,7 +657,7 @@ SEO_PAGES.push(
         cta: "단축 링크와 QR 만들기",
       },
       en: {
-        title: "Make a poster QR code · kurl",
+        title: "Make a poster QR code",
         description:
           "Make a free poster QR code from a kurl short link. Sign in first to see how many visits came through the QR and to change the destination after printing.",
         intro:
@@ -693,7 +693,7 @@ SEO_PAGES.push(
         cta: "Make a short link and QR",
       },
       ja: {
-        title: "ポスター用QRコードを作る · kurl",
+        title: "ポスター用QRコードを作る",
         description:
           "ポスターに載せるQRコードを、kurlの短縮リンクから無料で作れます。ログインして作ると、QRから何回開かれたかを確認でき、印刷した後でも遷移先を変えられます。",
         intro:
@@ -734,7 +734,7 @@ SEO_PAGES.push(
     slug: "flyer-qr-tracking",
     content: {
       ko: {
-        title: "전단지 QR 추적 · 배포처별 클릭 비교 · kurl",
+        title: "전단지 QR 추적 · 배포처별 클릭 비교",
         description:
           "전단지를 여러 곳에 나눠 뿌릴 때 묶음마다 다른 QR을 넣고, 100장당 클릭으로 어느 곳의 반응이 좋았는지 비교해요. kurl QR 캠페인은 지금 무료예요.",
         intro:
@@ -774,7 +774,7 @@ SEO_PAGES.push(
         cta: "kurl 시작하기",
       },
       en: {
-        title: "Flyer QR tracking by distribution point · kurl",
+        title: "Flyer QR tracking by distribution point",
         description:
           "When you hand out flyers in several places, put a different QR on each batch and compare clicks per 100 flyers to see where people responded. Free for now.",
         intro:
@@ -814,7 +814,7 @@ SEO_PAGES.push(
         cta: "Get started with kurl",
       },
       ja: {
-        title: "チラシQRの効果測定 · 配布先ごとのクリック比較 · kurl",
+        title: "チラシQRの効果測定 · 配布先ごとのクリック比較",
         description:
           "チラシを何か所かに分けて配るとき、配布バッチごとに別のQRを入れ、100枚あたりのクリックでどこの反応がよかったかを比べます。kurlのQRキャンペーンはいまは無料です。",
         intro:
@@ -859,7 +859,7 @@ SEO_PAGES.push(
     slug: "qr-campaign-analytics",
     content: {
       ko: {
-        title: "QR 캠페인 분석 · kurl",
+        title: "QR 캠페인 분석",
         description:
           "QR 여러 개를 캠페인으로 묶어 배포 묶음과 지역별 클릭을 비교해요. 100장당 클릭과 시간대별 분포를 보고, 지난 캠페인과도 나란히 놓고 볼 수 있어요.",
         intro:
@@ -899,7 +899,7 @@ SEO_PAGES.push(
         cta: "kurl 시작하기",
       },
       en: {
-        title: "QR campaign analytics · kurl",
+        title: "QR campaign analytics",
         description:
           "Group QR codes into a campaign and compare clicks by batch and area. See clicks per 100 flyers and by hour, and put a past campaign side by side.",
         intro:
@@ -939,7 +939,7 @@ SEO_PAGES.push(
         cta: "Get started with kurl",
       },
       ja: {
-        title: "QRキャンペーン分析 · kurl",
+        title: "QRキャンペーン分析",
         description:
           "複数のQRをキャンペーンにまとめ、配布バッチやエリアごとのクリックを比べます。100枚あたりのクリックや時間帯ごとの分布を見て、過去のキャンペーンとも並べて比べられます。",
         intro:

@@ -15,8 +15,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "about" });
+  const tFooter = await getTranslations({ locale, namespace: "footer" });
   return {
-    title: t("title"),
+    title: tFooter("about"),
     description: t("lead"),
     alternates: { canonical: `${SITE_URL}/${locale}/about` },
     ...marketingOg({ locale, path: "/about", title: t("title"), description: t("lead") }),

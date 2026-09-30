@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { messagesScopeLayout } from "@/i18n/messages-scope";
+import { LINKS_TITLE_TEMPLATE } from "@/lib/page-title";
 
 export async function generateMetadata({
   params,
@@ -8,7 +9,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { code } = await params;
   return {
-    title: `/${code} · kurl`,
+    title: { default: `/${code}`, template: LINKS_TITLE_TEMPLATE },
     robots: { index: false, follow: false },
   };
 }

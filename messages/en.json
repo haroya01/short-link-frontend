@@ -1009,11 +1009,11 @@
     "ctaSubhead": "Sign in and choose a username to get started. Add photos, links, an address and contact details, and it fills in like the examples below.",
     "cta": "Make your profile",
     "metaSuffix": "sample",
-    "metaFallbackTitle": "{handle} · kurl sample",
+    "metaFallbackTitle": "{handle} sample",
     "sampleBanner": "Sample page · this could be your profile too",
     "sampleCta": "Make my profile",
     "meta": {
-      "title": "Link-in-bio profile examples · kurl",
+      "title": "Link-in-bio profile examples",
       "description": "Example profiles for a café, an instructor, a photographer and more. Links, a contact card, a map and product cards fit on one page."
     }
   },
@@ -2215,7 +2215,7 @@
     "copiedFallback": "URL copied"
   },
   "demo": {
-    "metaTitle": "kurl demo: see what you get when you shorten a link",
+    "metaTitle": "Demo · see the stats you get when you shorten a link",
     "metaDescription": "A preview of the analytics dashboard, no sign-in needed.",
     "sampleBanner": "Sample data. Once you sign in, your own links fill in this same layout.",
     "sampleCta": "Make my link",
@@ -2419,7 +2419,7 @@
     "ctaShorten": "Shorten a URL"
   },
   "learn": {
-    "metaTitle": "Short links · URL shortener · Link in bio guide · kurl",
+    "metaTitle": "Short links · URL shortener · Link in bio guide",
     "metaDescription": "What URL shortening is, how short links differ from link-in-bio pages, and how kurl does both.",
     "eyebrow": "Guide · FAQ",
     "title": "Short links and link-in-bio, explained for beginners",
@@ -3532,7 +3532,7 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "QR campaigns · Flyer QR click tracking · kurl",
+      "title": "QR campaigns · Flyer QR click tracking",
       "description": "Split flyer, poster, and coupon QRs by area, distributor, or batch and compare their clicks. Clicks per 100 flyers tell you where to hand out next."
     },
     "hero": {
