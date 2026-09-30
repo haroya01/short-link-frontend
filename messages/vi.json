@@ -768,7 +768,7 @@
     "PROFILE_NOT_FOUND": "Không tìm thấy hồ sơ.",
     "INVALID_ACTIVE_PERIOD": "Khoảng thời gian hoạt động không hợp lệ.",
     "INVALID_WEBHOOK_URL": "URL webhook phải bắt đầu bằng http(s):// và trỏ tới một máy chủ công khai.",
-    "TOO_MANY_WEBHOOKS": "Tối đa {limit} webhook mỗi liên kết. Hãy xóa bớt một cái để thêm cái mới.",
+    "TOO_MANY_WEBHOOKS": "Tối đa {limit} webhook. Hãy xóa bớt một cái để thêm cái mới.",
     "WEBHOOK_NOT_FOUND": "Không tìm thấy webhook. Có thể nó đã bị xóa ở tab khác.",
     "VALIDATION_FAILED": "Một số trường không hợp lệ.",
     "MALFORMED_REQUEST": "Yêu cầu đó có vẻ không ổn. Vui lòng thử lại.",

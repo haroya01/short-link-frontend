@@ -35,6 +35,10 @@ export function DailyChart({ data, compact = false }: Props) {
   // width — pulling the chart back with `left: -16` cuts off "100" / "1k" on narrow viewports.
   // Desktop keeps the original tighter offset because the wider parent absorbs the axis cleanly.
   const isMobile = useIsMobile();
+  // The peak marker lands once the line has drawn to it; a range switch redraws the line.
+  const [lineDrawn, setLineDrawn] = useState(false);
+  const series = data.map((d) => `${d.date}:${d.count}`).join(",");
+  useEffect(() => setLineDrawn(false), [series]);
   if (data.length === 0) {
     return <p className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">{t("noClicks")}</p>;
   }
@@ -109,8 +113,9 @@ export function DailyChart({ data, compact = false }: Props) {
             fill="url(#dailyFill)"
             animationDuration={900}
             animationEasing="ease-out"
+            onAnimationEnd={() => setLineDrawn(true)}
           />
-          {peak.count > 0 && (
+          {peak.count > 0 && (reducedMotion || lineDrawn) && (
             <ReferenceDot
               x={peak.date}
               y={peak.count}
