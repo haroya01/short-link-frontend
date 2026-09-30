@@ -740,6 +740,8 @@
     "OPENS_AFTER_EXPIRY": "公開日時は期限より前にしてください。",
     "COMMENT_BLOCKED": "この記事にはコメントできません。",
     "POST_INTERACTION_BLOCKED": "この記事には反応できません。",
+    "ACCOUNT_SUSPENDED": "アカウントが一時停止中のため、投稿やリアクションはできません。",
+    "ACCOUNT_BANNED": "利用が制限されたアカウントのため、投稿やリアクションはできません。",
     "SLUG_FROZEN": "記事の状態が別の場所で変わりました。再読み込みしてもう一度お試しください。",
     "SCHEDULE_AFTER_PUBLISH": "記事の状態が別の場所で変わりました。再読み込みしてもう一度お試しください。",
     "UNPUBLISH_NOT_PUBLISHED": "記事の状態が別の場所で変わりました。再読み込みしてもう一度お試しください。",

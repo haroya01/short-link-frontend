@@ -740,6 +740,8 @@
     "OPENS_AFTER_EXPIRY": "Thời điểm mở phải trước thời điểm hết hạn.",
     "COMMENT_BLOCKED": "Bạn không thể bình luận bài viết này.",
     "POST_INTERACTION_BLOCKED": "Bạn không thể tương tác với bài viết này.",
+    "ACCOUNT_SUSPENDED": "Tài khoản của bạn đang bị tạm khóa nên hiện không thể đăng bài hay tương tác.",
+    "ACCOUNT_BANNED": "Tài khoản của bạn đã bị hạn chế nên không thể đăng bài hay tương tác.",
     "SLUG_FROZEN": "Trạng thái bài viết đã thay đổi ở nơi khác. Hãy tải lại rồi thử lại.",
     "SCHEDULE_AFTER_PUBLISH": "Trạng thái bài viết đã thay đổi ở nơi khác. Hãy tải lại rồi thử lại.",
     "UNPUBLISH_NOT_PUBLISHED": "Trạng thái bài viết đã thay đổi ở nơi khác. Hãy tải lại rồi thử lại.",

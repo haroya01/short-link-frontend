@@ -740,6 +740,8 @@
     "OPENS_AFTER_EXPIRY": "The opening time must be before the expiry time.",
     "COMMENT_BLOCKED": "You can't comment on this post.",
     "POST_INTERACTION_BLOCKED": "You can't react to this post.",
+    "ACCOUNT_SUSPENDED": "Your account is suspended, so you can't post or react for now.",
+    "ACCOUNT_BANNED": "Your account is restricted, so you can't post or react.",
     "SLUG_FROZEN": "This post changed somewhere else. Reload and try again.",
     "SCHEDULE_AFTER_PUBLISH": "This post changed somewhere else. Reload and try again.",
     "UNPUBLISH_NOT_PUBLISHED": "This post changed somewhere else. Reload and try again.",
