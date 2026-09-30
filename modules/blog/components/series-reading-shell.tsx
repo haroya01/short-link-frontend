@@ -114,15 +114,8 @@ export function SeriesReadingShell({
   const toggle = (f: NonNullable<Filter>) => setFilter((cur) => (cur?.kind === f.kind && cur.value === f.value ? null : f));
   const filterKey = filter ? `${filter.kind}:${filter.value}` : "all";
 
-  // Tag chip — replicates the TagChip recipe exactly so it reads identically to the author rail, but
-  // as a button (client filter, no nav). Count hidden on the active chip, like TagChip.
-  const chipCls = (active: boolean) =>
-    cn(
-      "focus-ring inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors",
-      active
-        ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-        : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100",
-    );
+  // Tag filter — the author rail's "#tag count" text links (RailTagList), as buttons because this one
+  // filters in place instead of navigating.
   const renderTagChip = ([tag, count]: readonly [string, number]) => {
     const active = isActive({ kind: "tag", value: tag });
     return (
@@ -131,10 +124,15 @@ export function SeriesReadingShell({
           type="button"
           onClick={() => toggle({ kind: "tag", value: tag })}
           aria-pressed={active}
-          className={chipCls(active)}
+          className={cn(
+            "focus-ring rounded-sm transition-colors",
+            active
+              ? "font-semibold text-slate-900 dark:text-slate-100"
+              : "text-slate-700 hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400",
+          )}
         >
-          <span>{tag}</span>
-          {!active && <span className="text-slate-600 dark:text-slate-400">{count}</span>}
+          #{tag}
+          <span className="ml-1 tabular-nums text-slate-500 dark:text-slate-400">{count}</span>
         </button>
       </li>
     );
@@ -157,7 +155,7 @@ export function SeriesReadingShell({
       {tags.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railTags")}</RailHeading>
-          <ul className="flex flex-wrap gap-2">{tags.slice(0, TAG_CAP).map(renderTagChip)}</ul>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-2 text-[13px]">{tags.slice(0, TAG_CAP).map(renderTagChip)}</ul>
           {tags.length > TAG_CAP && (
             <>
               {/* The overflow chips animate open/closed via the grid 0fr↔1fr trick (height auto, both
@@ -168,7 +166,7 @@ export function SeriesReadingShell({
                 }`}
               >
                 <div className="overflow-hidden">
-                  <ul className="flex flex-wrap gap-2 pt-2">{tags.slice(TAG_CAP).map(renderTagChip)}</ul>
+                  <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-2 pt-1.5 text-[13px]">{tags.slice(TAG_CAP).map(renderTagChip)}</ul>
                 </div>
               </div>
               <button

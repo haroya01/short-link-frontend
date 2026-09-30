@@ -52,7 +52,7 @@ export async function SeriesFeedCard({
           <Layers aria-hidden className="h-3 w-3 shrink-0" />
           {t("seriesEyebrow")}
         </BlogLink>
-        <SeriesSubscribeButton seriesId={series.id} />
+        <SeriesSubscribeButton seriesId={series.id} quiet />
       </div>
       <BlogLink href={seriesUrl} className="focus-ring group/title mt-1 block rounded">
         <h3

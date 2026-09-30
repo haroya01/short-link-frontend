@@ -57,6 +57,7 @@ export function FollowButton({
   initialFollowerCount,
   showCount = false,
   compact = false,
+  quiet = false,
   sourcePostId,
 }: {
   username: string;
@@ -65,6 +66,8 @@ export function FollowButton({
   showCount?: boolean;
   /** Smaller pill (h-7) for tight spots like the series rail; the default (h-9) is the profile action. */
   compact?: boolean;
+  /** Green outline instead of the fill — for list rows and spots beside the page's own primary. */
+  quiet?: boolean;
   /** When followed from inside a post, attributes the follow to it ("이 글로 늘어난 팔로우" analytics). */
   sourcePostId?: number;
 }) {
@@ -182,7 +185,7 @@ export function FollowButton({
           // Curation framing, not broadcast: following a curator is following the path they weave, not
           // subscribing to a feed. Kept as the quiet hint so the pill itself stays a single word.
           title={following ? undefined : t("followCuratorHint")}
-          className={followToggleClass(following, compact)}
+          className={followToggleClass(following, compact, quiet)}
         >
           {/* Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle. */}
           <span

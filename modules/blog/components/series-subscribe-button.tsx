@@ -11,7 +11,14 @@ import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
  * episodes of subscribed series surface in the reader's following feed. Reads/writes the shared
  * {@link useSeriesSubscriptions} store (one fetch for the whole feed); anonymous click → login.
  */
-export function SeriesSubscribeButton({ seriesId }: { seriesId: number }) {
+export function SeriesSubscribeButton({
+  seriesId,
+  quiet = false,
+}: {
+  seriesId: number;
+  /** Green outline instead of the fill — for series cards repeated down a feed. */
+  quiet?: boolean;
+}) {
   const t = useTranslations("publicFeed");
   const { isSubscribed, toggle } = useSeriesSubscriptions();
   const on = isSubscribed(seriesId);
@@ -29,7 +36,7 @@ export function SeriesSubscribeButton({ seriesId }: { seriesId: number }) {
       // Fixed height + a border in *both* states (transparent when filled) so toggling never changes
       // the box height — only the width flexes with the label. `transition-colors` crossfades the
       // fill/outline swap so 구독 ↔ 구독중 eases rather than snapping.
-      className={followToggleClass(on, true)}
+      className={followToggleClass(on, true, quiet)}
     >
       {/* Keyed by state so it remounts + replays the pop on each 구독 ↔ 구독중 toggle. */}
       <span
