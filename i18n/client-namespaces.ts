@@ -35,12 +35,12 @@ export const CLIENT_MESSAGE_SCOPES = {
   "links/demo": ["demo", "edit", "errors", "publicStats", "stats", "statsEmpty", "tags"],
   "links/events": [
     "authGate", "errors", "events.analytics", "events.attendees", "events.detail", "events.form",
-    "events.intro", "events.list", "events.share", "events.status",
+    "events.intro", "events.list", "events.public", "events.share", "events.status",
   ],
   "links/login": ["auth", "login"],
   "links/more": ["more"],
   "links/profile": ["auth"],
-  "links/qr-campaigns": ["qrCampaigns"],
+  "links/qr-campaigns": ["campaignApp.campaignStats", "qrCampaigns"],
   "links/settings": ["avatar", "banner", "errors", "imageCropper", "publicProfile", "settings"],
   "links/showcase": ["publicProfile", "showcase"],
   "links/stats/[code]": [

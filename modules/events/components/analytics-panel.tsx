@@ -2,14 +2,15 @@
 
 import { useTranslations } from "next-intl";
 import type { EventAnalytics } from "@/modules/events/api/events";
+import { cn } from "@/lib/utils";
 
 /** 이 기능의 차별화 핵심 화면 — "신청자 23명: 카톡 12 · 트위터 6 · 직접 3".
  *  종이 문법: 상자 대신 헤어라인 섹션, 숫자가 텍스처를 만들고 색은 초록 한 가닥(신청 채널)만. */
-export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
+export function AnalyticsPanel({ analytics, className }: { analytics: EventAnalytics; className?: string }) {
   const t = useTranslations("events.analytics");
 
   return (
-    <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
+    <section className={cn("border-t border-slate-200 pt-6 dark:border-slate-800", className)}>
       <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
         {t("title")}
       </h2>

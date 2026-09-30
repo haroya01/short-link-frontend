@@ -15,7 +15,7 @@ test.describe("첫 화면에 엉뚱한 쪽이 번쩍이지 않는다", () => {
     await freezeBeforeHydration(page);
     await page.goto("/ko/events");
 
-    await expect(page.getByRole("link", { name: "로그인하고 시작하기" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "로그인하고 시작하기" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "새 모집" })).toBeHidden();
     const header = page.locator("header");
     await expect(header.getByRole("link", { name: "프로필 예시" })).toBeVisible();
@@ -31,7 +31,7 @@ test.describe("첫 화면에 엉뚱한 쪽이 번쩍이지 않는다", () => {
     await page.goto("/ko/events");
 
     await expect(page.getByRole("link", { name: "새 모집" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "로그인하고 시작하기" })).toBeHidden();
+    await expect(page.getByRole("link", { name: "로그인하고 시작하기" }).first()).toBeHidden();
     const header = page.locator("header");
     await expect(header.getByRole("link", { name: "분석" })).toBeVisible();
     await expect(header.getByRole("link", { name: "프로필 예시" })).toBeHidden();

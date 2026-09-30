@@ -51,7 +51,7 @@ test.describe("design polish guards", () => {
     await page.goto("/ko/showcase");
 
     await expect(page.getByRole("heading", { name: /내 프로필도 이렇게 만들 수 있어요/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /내 프로필 만들기/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /내 프로필 만들기/ }).first()).toBeVisible();
 
     const examplesTop = await page
       .getByRole("heading", { name: "하는 일에 맞춰 꾸민 프로필" })

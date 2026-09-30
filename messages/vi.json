@@ -1002,7 +1002,6 @@
     "recentLogin": "Đăng nhập"
   },
   "showcase": {
-    "eyebrow": "Hồ sơ công khai · ví dụ",
     "title": "Hồ sơ hợp với công việc của bạn",
     "subhead": "Chọn các khối hợp với việc bạn làm, như thực đơn quán cà phê, lịch lớp học hay portfolio.",
     "demoCta": "Xem tất cả ví dụ",
@@ -1013,13 +1012,10 @@
     "metaFallbackTitle": "{handle} · mẫu kurl",
     "sampleBanner": "Trang mẫu · đây cũng có thể là hồ sơ của bạn",
     "sampleCta": "Tạo hồ sơ của tôi",
-    "scrollCue": "Xem ví dụ",
     "meta": {
       "title": "Ví dụ hồ sơ link-in-bio · kurl",
       "description": "Ví dụ hồ sơ cho quán cà phê, giảng viên, nhiếp ảnh gia và nhiều nghề khác. Liên kết, danh thiếp, bản đồ và thẻ sản phẩm nằm gọn trên một trang."
-    },
-    "prev": "Ví dụ trước",
-    "next": "Ví dụ tiếp theo"
+    }
   },
   "shortenForm": {
     "placeholder": "Dán URL dài của bạn vào đây",
@@ -3540,11 +3536,14 @@
       "description": "Chia QR trên tờ rơi, áp phích, phiếu giảm giá theo khu vực, người phát hoặc lô và so sánh lượt nhấp. Lượt nhấp trên 100 tờ cho biết nên phát ở đâu tiếp theo."
     },
     "hero": {
-      "eyebrow": "Chiến dịch QR ngoại tuyến",
       "title1": "Mỗi tờ rơi một mã QR riêng,",
       "title2": "rồi xem phản hồi đến từ đâu.",
       "sub": "Tạo QR riêng cho từng khu vực, lối ra hoặc người phát, rồi dùng lượt nhấp trên 100 tờ để chọn nơi phát tiếp theo.",
       "cta": "Tạo QR"
+    },
+    "example": {
+      "title": "Mỗi chiến dịch có thống kê như thế này",
+      "desc": "Mỗi lô có QR riêng nên lượt nhấp trên 100 tờ cho thấy ngay nơi nào hiệu quả. Số liệu bên dưới là dữ liệu ví dụ."
     },
     "s2": {
       "line1": "Theo khu vực, lối ra, người phát,",
@@ -3556,65 +3555,11 @@
       "line2": "QR được chèn tự động.",
       "aux": "Chỉ cần đánh dấu vị trí QR trên PDF từ Canva hoặc InDesign."
     },
-    "s4": {
-      "line1": "Shibuya 142 lượt nhấp, Shinjuku 38.",
-      "line2": "Lần sau phát nhiều hơn ở Shibuya.",
-      "aux": "Lượt nhấp cho biết nên phát ở đâu tiếp theo."
-    },
-    "s5": {
-      "line1": "Tờ rơi, coupon, áp phích.",
-      "line2": "Ngành nào cũng dùng được như nhau.",
-      "aux": "Ví dụ: so sánh lần 1 và lần 2 theo cùng một cách."
-    },
     "s6": {
       "line1": "QR đã in vẫn giữ nguyên,",
-      "line2": "chỉ đổi đích đến."
-    },
-    "cta": {
-      "title": "Chọn nơi phát tiếp theo bằng lượt nhấp",
-      "primary": "Tạo QR",
-      "secondary": "Đăng nhập",
-      "note": "Liên kết rút gọn và thống kê dùng chung một tài khoản."
-    },
-    "mock": {
-      "kpiBeforeKurl": "Trước khi đo",
-      "kpiAfterKurl": "Sau khi đo",
-      "kpiStatus": "Đã phát nhưng không theo dõi",
-      "kpiDistributed": "Đã phát",
-      "kpiClicks": "Lượt nhấp",
-      "kpiPer100": "Trên 100",
-      "kpiTopArea": "Khu vực hàng đầu",
-      "batchTitle": "Các đợt phát",
-      "batchAdd": "Thêm đợt",
-      "batchColName": "Đợt",
-      "batchColArea": "Khu vực",
-      "batchColDist": "Nhà cung cấp",
-      "batchColQty": "SL",
-      "batchColStatus": "Trạng thái",
-      "batchDone": "Đã in",
-      "batchUnit": "",
-      "posterTitle": "Trình ghép áp phích",
-      "posterBoxLabel": "QR",
-      "posterPerBatch": "QR khác nhau mỗi đợt",
-      "barsTitle": "Lượt nhấp theo khu vực",
-      "barsSort": "Theo hiệu suất",
-      "barsTop": "Hàng đầu",
-      "barsRecoTitle": "Gợi ý tiếp theo",
-      "barsRecoEstimate": "Ước tính +{count} lượt nhấp",
-      "casesTitle": "Trường hợp dùng",
-      "casesBefore": "Trước",
-      "casesAfter": "Sau",
-      "casesFooter": "Ví dụ · so sánh hai chiến dịch",
-      "timelineExpired": "Hết hạn",
-      "timelineNext": "Trang tiếp theo",
-      "timelineChip": "Đặt chỗ / Thực đơn",
-      "timelineFoot": "Cùng một QR, trang liên kết đổi.",
-      "kpiStatusAfter": "Đo theo từng lô",
-      "barsMeta": "{qty} tờ · {per100} / 100 tờ",
-      "barsReco": "{qty} tờ: {from} → {to}"
-    },
-    "backLink": "Quay lại trình rút gọn URL",
-    "statsLink": "Phân tích chiến dịch QR"
+      "line2": "chỉ đổi đích đến.",
+      "aux": "Khi đợt khuyến mãi kết thúc, những QR đã phát vẫn dẫn tới trang tiếp theo."
+    }
   },
   "workspaceGate": {
     "title": "Đăng nhập để bắt đầu viết",
@@ -3864,9 +3809,14 @@
   },
   "events": {
     "intro": {
-      "eyebrow": "Trang sự kiện",
       "title": "Nhận đăng ký sự kiện qua một liên kết",
       "subtitle": "Tạo trang giới thiệu và mẫu đăng ký cho nhóm học, meetup hay câu lạc bộ. Khi đủ chỗ, đăng ký tự đóng, và bạn xem được mỗi lượt đăng ký đến từ đâu.",
+      "example": {
+        "title": "Người tham gia sẽ mở trang như thế này",
+        "desc": "Mở liên kết là thấy ngay thời gian, địa điểm và số chỗ còn lại, còn bạn biết mỗi lượt đăng ký đến từ nhóm chat nào. Dưới đây là ví dụ.",
+        "guest": "Trang người tham gia thấy",
+        "host": "Tình hình đăng ký bạn thấy"
+      },
       "step1": {
         "title": "Tạo trang",
         "body": "Chỉ cần tiêu đề và ngày giờ là có trang."
@@ -3888,12 +3838,12 @@
         "registerButton": "Đăng ký",
         "example": "Ví dụ",
         "byChannel": "Đăng ký theo kênh",
-        "registered": "{count}/{capacity} người đăng ký",
         "channels": {
           "groupChat": "Nhóm chat",
           "instagram": "Instagram",
           "qrPoster": "Poster QR"
-        }
+        },
+        "hostName": "Nhóm đọc sách buổi tối"
       }
     },
     "public": {

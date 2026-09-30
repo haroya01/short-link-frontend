@@ -1,193 +1,162 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { PublicProfile } from "@/types";
 import { Link } from "@/i18n/navigation";
+import { buttonVariants } from "@/components/ui/button";
+import { PromoActions, PromoHero, PromoSection } from "@/components/landing/promo";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
 import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
 import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-header";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
-import { cn } from "@/lib/utils";
+import { cn, inert } from "@/lib/utils";
 
-/**
- * Landing-page profile showcase. Renders the real {@link ProfileHeader} + {@link EntryList} on a
- * phone-sized page (no device chrome). The inner content tree mirrors the public
- * {@code /u/[username]/page.tsx} layout — same header, same list — so the showcase shows the
- * page itself.
- *
- * Carousel is Embla — touch-swipe on mobile, drag or the prev/next buttons elsewhere. Nothing
- * moves on its own.
- */
-const DEVICE_MAX_SCALE = 0.8;
-const DEVICE_NATIVE_W = 428;
-const DEVICE_NATIVE_H = 868;
+const FIRST = SHOWCASE_PROFILES.find((p) => p.username === "haruka.dev") ?? SHOWCASE_PROFILES[0];
+const START_HREF = "/login?next=/profile/auto";
 
-/**
- * Fit the (fixed-size) device into the viewport with side margin so the centered slide is never
- * clipped on small screens. SSR starts at the desktop scale and corrects on mount.
- */
-function useDeviceScale() {
-  const [scale, setScale] = useState(DEVICE_MAX_SCALE);
-  useEffect(() => {
-    const compute = () => {
-      const fit = (window.innerWidth - 40) / DEVICE_NATIVE_W;
-      setScale(Math.max(0.5, Math.min(DEVICE_MAX_SCALE, fit)));
-    };
-    compute();
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
-  }, []);
-  return scale;
+/** The signed-out profile page: the shared feature-page grammar around the examples below. */
+export function ShowcaseLanding() {
+  const t = useTranslations("showcase");
+  return (
+    <div className="bg-white dark:bg-slate-950">
+      <PromoHero
+        title={t("ctaTitle")}
+        lead={t("ctaSubhead")}
+        action={
+          <Link href={START_HREF} className={buttonVariants({ variant: "accent", size: "xl" })}>
+            {t("cta")}
+            <ArrowRight aria-hidden className="h-4 w-4" />
+          </Link>
+        }
+      />
+      <PromoSection title={t("title")} desc={t("subhead")}>
+        <ProfileShowcase />
+        <PromoActions>
+          <Link href={START_HREF} className={buttonVariants({ variant: "outline", size: "lg" })}>
+            {t("cta")}
+          </Link>
+        </PromoActions>
+      </PromoSection>
+    </div>
+  );
 }
 
+/**
+ * Profile examples: a hairline list of example pages beside the chosen one, drawn with the real
+ * {@link ProfileHeader} + {@link EntryList} at phone width. The window scrolls on its own; nothing is
+ * scaled down, faded or cut off to fit, and nothing moves by itself.
+ */
 export function ProfileShowcase() {
   const t = useTranslations("showcase");
-  const scale = useDeviceScale();
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
-    dragFree: false,
-    align: "center",
-    containScroll: false,
-  });
+  const [selected, setSelected] = useState(FIRST.username);
+  const profile = SHOWCASE_PROFILES.find((p) => p.username === selected) ?? FIRST;
+  const colors = THEME_TABLE[profile.theme ?? "default"];
 
   return (
-    <div className="relative">
-      {/* Edge fades for the peeking neighbour slides — desktop only. On mobile the centred phone
-          nearly fills the width, so a fade here would clip its right edge. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-24 bg-gradient-to-r from-white to-transparent dark:from-slate-950 sm:block"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-24 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:block"
-      />
-
-      {/* Embla's loop mode wraps slides by cloning them outside the original flex track —
-          `gap` on the parent flexbox doesn't apply to the inter-slide spacing around the loop
-          seam, so the last → first transition reads as "two slides glued together". Per-slide
-          `mr-10` (sm:mr-14) works because the margin is on the slide itself; the clone carries
-          it too, and loop wrap stays evenly spaced. The last margin is harmless visual padding
-          that embla accounts for via `containScroll: false`. */}
-      <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex py-2">
-          {SHOWCASE_PROFILES.map((profile) => (
-            <ShowcaseCard
-              key={profile.username}
-              profile={profile}
-              demoCta={t("demoCta")}
-              scale={scale}
-            />
-          ))}
+    <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,1fr)_26.75rem] lg:gap-12">
+      {/* 폰에선 창이 목록 아래로 밀려 고른 결과가 화면 밖에 뜬다 — 창 바로 위 가로 한 줄로 고른다. */}
+      <div className="-mx-4 overflow-x-auto px-4 lg:hidden">
+        <div className="flex w-max gap-5 border-b border-slate-200 dark:border-slate-800">
+          {SHOWCASE_PROFILES.map((p) => {
+            const active = p.username === selected;
+            return (
+              <button
+                key={p.username}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setSelected(p.username)}
+                className={cn(
+                  "focus-ring -mb-px whitespace-nowrap border-b-2 py-2.5 text-[14px] font-semibold transition-colors",
+                  active
+                    ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                    : "border-transparent text-slate-500 dark:text-slate-400",
+                )}
+              >
+                @{p.username}
+              </button>
+            );
+          })}
         </div>
       </div>
-      <div className="container mt-6 flex max-w-5xl justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => emblaApi?.scrollPrev()}
-          aria-label={t("prev")}
-          className="focus-ring grid h-10 w-10 place-items-center rounded-lg border border-slate-300 text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
-        >
-          <ChevronLeft aria-hidden className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => emblaApi?.scrollNext()}
-          aria-label={t("next")}
-          className="focus-ring grid h-10 w-10 place-items-center rounded-lg border border-slate-300 text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
-        >
-          <ChevronRight aria-hidden className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
 
-function ShowcaseCard({
-  profile,
-  demoCta,
-  scale,
-}: {
-  profile: PublicProfile;
-  demoCta: string;
-  scale: number;
-}) {
-  const colors = THEME_TABLE[profile.theme ?? "default"];
-  return (
-    <div
-      className="group relative mr-10 block shrink-0 cursor-pointer sm:mr-14"
-      // Promote each slide to its own compositor layer + clip paint to the slide's box.
-      // Without this, embla's translateX on the parent flex track forces every slide's
-      // ContactCardEntry `filter:` and per-card `backdrop-blur` to repaint as the track
-      // moves — with 9 slides (× embla loop clones) that compounds into the jank the user
-      // sees. `contain: layout paint` says "nothing inside this slide affects layout/paint
-      // outside it", which lets the browser keep the offscreen slides as cached layers and
-      // composite them cheaply during the swipe.
-      style={{ contain: "layout paint", transform: "translateZ(0)" }}
-    >
+      <ul className="hidden divide-y divide-slate-200 border-y border-slate-200 dark:divide-slate-800 dark:border-slate-800 lg:block lg:self-start">
+        {SHOWCASE_PROFILES.map((p) => {
+          const active = p.username === selected;
+          return (
+            <li key={p.username} className="flex items-center gap-4">
+              <button
+                type="button"
+                aria-pressed={active}
+                onClick={() => setSelected(p.username)}
+                className="focus-ring group min-w-0 flex-1 rounded-sm py-4 text-left"
+              >
+                <span
+                  className={cn(
+                    "block text-[15px] font-semibold transition-colors",
+                    active
+                      ? "text-slate-900 dark:text-slate-100"
+                      : "text-slate-500 group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100",
+                  )}
+                >
+                  @{p.username}
+                </span>
+                <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">{p.bio}</span>
+              </button>
+              <Link
+                href={`/showcase/${p.username}`}
+                aria-label={`@${p.username} ${t("demoCta")}`}
+                className={cn(
+                  "focus-ring inline-flex shrink-0 items-center gap-1 rounded-sm text-[13px] font-medium underline-offset-4 hover:underline",
+                  active ? "text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400",
+                )}
+              >
+                {t("demoCta")}
+                <ArrowRight aria-hidden className="h-3.5 w-3.5" />
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div
+        key={profile.username}
+        role="region"
+        tabIndex={0}
+        aria-label={`@${profile.username} ${t("metaSuffix")}`}
+        className={cn(
+          "focus-ring h-[36rem] overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 dark:border-slate-800 sm:h-[42rem]",
+          colors.page,
+        )}
+        style={colors.pageBgHex ? { backgroundColor: colors.pageBgHex } : undefined}
+      >
+        <div aria-hidden {...inert(true)} className="select-none">
+          <div className="mx-auto w-full max-w-md px-4 py-10">
+            <ProfileHeader
+              headingLevel="h3"
+              username={profile.username}
+              bio={profile.bio}
+              avatarUrl={profile.avatarUrl}
+              bannerUrl={profile.bannerUrl}
+              colors={colors}
+            />
+            <EntryList
+              entries={profile.entries ?? []}
+              username={profile.username}
+              colors={colors}
+              emptyLabel=""
+            />
+          </div>
+        </div>
+      </div>
+
       <Link
         href={`/showcase/${profile.username}`}
-        className="focus-ring absolute inset-0 z-10 rounded-2xl"
-        aria-label={`@${profile.username} — ${demoCta}`}
+        className="focus-ring inline-flex items-center gap-1 justify-self-start rounded-sm text-[14px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400 lg:hidden"
       >
-        <span className="sr-only">{demoCta}</span>
+        @{profile.username} {t("demoCta")}
+        <ArrowRight aria-hidden className="h-3.5 w-3.5" />
       </Link>
-      <div
-        style={{
-          width: DEVICE_NATIVE_W * scale,
-          height: DEVICE_NATIVE_H * scale,
-        }}
-      >
-        <div
-          className={cn(
-            "pointer-events-none overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800",
-            colors.page,
-          )}
-          style={{
-            width: DEVICE_NATIVE_W,
-            height: DEVICE_NATIVE_H,
-            transform: `scale(${scale})`,
-            transformOrigin: "top left",
-            WebkitMaskImage: "linear-gradient(to bottom, black 86%, transparent)",
-            maskImage: "linear-gradient(to bottom, black 86%, transparent)",
-            ...(colors.pageBgHex ? { backgroundColor: colors.pageBgHex } : {}),
-          }}
-        >
-          <ProfilePreviewBody profile={profile} colors={colors} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProfilePreviewBody({
-  profile,
-  colors,
-}: {
-  profile: PublicProfile;
-  colors: (typeof THEME_TABLE)[keyof typeof THEME_TABLE];
-}) {
-  return (
-    <div className="min-h-full">
-      <div className="mx-auto w-full max-w-md px-4 py-10">
-        <ProfileHeader
-          headingLevel="h2"
-          username={profile.username}
-          bio={profile.bio}
-          avatarUrl={profile.avatarUrl}
-          bannerUrl={profile.bannerUrl}
-          colors={colors}
-        />
-        <EntryList
-          entries={profile.entries ?? []}
-          username={profile.username}
-          colors={colors}
-          emptyLabel=""
-        />
-      </div>
     </div>
   );
 }

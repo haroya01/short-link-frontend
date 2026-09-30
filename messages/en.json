@@ -1002,7 +1002,6 @@
     "recentLogin": "Sign in"
   },
   "showcase": {
-    "eyebrow": "Public profiles · examples",
     "title": "Profiles shaped around the work",
     "subhead": "Pick the blocks that fit what you do, like a café menu, a class schedule or a portfolio.",
     "demoCta": "Browse all examples",
@@ -1013,13 +1012,10 @@
     "metaFallbackTitle": "{handle} · kurl sample",
     "sampleBanner": "Sample page · this could be your profile too",
     "sampleCta": "Make my profile",
-    "scrollCue": "See examples",
     "meta": {
       "title": "Link-in-bio profile examples · kurl",
       "description": "Example profiles for a café, an instructor, a photographer and more. Links, a contact card, a map and product cards fit on one page."
-    },
-    "prev": "Previous example",
-    "next": "Next example"
+    }
   },
   "shortenForm": {
     "placeholder": "Paste your long URL here",
@@ -3540,11 +3536,14 @@
       "description": "Split flyer, poster, and coupon QRs by area, distributor, or batch and compare their clicks. Clicks per 100 flyers tell you where to hand out next."
     },
     "hero": {
-      "eyebrow": "Offline QR campaigns",
       "title1": "Put a different QR on each flyer,",
       "title2": "then see where the response comes from.",
       "sub": "Make a separate QR for each area, exit, or distributor, and use clicks per 100 flyers to choose where to hand out next.",
       "cta": "Create QRs"
+    },
+    "example": {
+      "title": "Every campaign gets stats like these",
+      "desc": "Each batch has its own QR, so clicks per 100 flyers show right away which spot worked. The numbers below are example data."
     },
     "s2": {
       "line1": "By area, exit, or distributor,",
@@ -3556,65 +3555,11 @@
       "line2": "and the QRs go in automatically.",
       "aux": "Bring a Canva or InDesign PDF and mark where the QR goes."
     },
-    "s4": {
-      "line1": "Shibuya 142 clicks, Shinjuku 38.",
-      "line2": "Hand out more in Shibuya next time.",
-      "aux": "The clicks show where to hand out next."
-    },
-    "s5": {
-      "line1": "Flyers, coupons, posters.",
-      "line2": "It works the same in any industry.",
-      "aux": "Example: round 1 and round 2 compared the same way."
-    },
     "s6": {
       "line1": "The printed QR stays,",
-      "line2": "only the destination changes."
-    },
-    "cta": {
-      "title": "Choose your next drop by clicks",
-      "primary": "Create QR",
-      "secondary": "Log in",
-      "note": "Your short links and stats live in the same account."
-    },
-    "mock": {
-      "kpiBeforeKurl": "Before tracking",
-      "kpiAfterKurl": "After tracking",
-      "kpiStatus": "Distributed but untracked",
-      "kpiDistributed": "Distributed",
-      "kpiClicks": "Clicks",
-      "kpiPer100": "Per 100",
-      "kpiTopArea": "Top area",
-      "batchTitle": "Distribution batches",
-      "batchAdd": "Add batch",
-      "batchColName": "Batch",
-      "batchColArea": "Area",
-      "batchColDist": "Vendor",
-      "batchColQty": "Qty",
-      "batchColStatus": "Status",
-      "batchDone": "Printed",
-      "batchUnit": "",
-      "posterTitle": "Poster composer",
-      "posterBoxLabel": "QR",
-      "posterPerBatch": "Different QR per batch",
-      "barsTitle": "Clicks by area",
-      "barsSort": "By efficiency",
-      "barsTop": "Top",
-      "barsRecoTitle": "Recommended next",
-      "barsRecoEstimate": "Est. +{count} clicks",
-      "casesTitle": "Use cases",
-      "casesBefore": "Before",
-      "casesAfter": "After",
-      "casesFooter": "Example · two campaigns compared",
-      "timelineExpired": "Expiry",
-      "timelineNext": "Next page",
-      "timelineChip": "Reserve / Menu",
-      "timelineFoot": "Same QR, the linked page switches.",
-      "kpiStatusAfter": "Tracked by batch",
-      "barsMeta": "{qty} flyers · {per100} per 100",
-      "barsReco": "{qty} flyers: {from} → {to}"
-    },
-    "backLink": "Back to URL shortener",
-    "statsLink": "QR campaign analytics"
+      "line2": "only the destination changes.",
+      "aux": "When the promotion ends, flyers already handed out lead to your next page."
+    }
   },
   "workspaceGate": {
     "title": "Sign in to start writing",
@@ -3864,9 +3809,14 @@
   },
   "events": {
     "intro": {
-      "eyebrow": "Event pages",
       "title": "Take event sign-ups with a link",
       "subtitle": "Make an intro page and a sign-up form for a study group, meetup or club. Sign-ups close when it's full, and you can see where each one came from.",
+      "example": {
+        "title": "Your guests open a page like this",
+        "desc": "The link shows the date, place, and spots left at a glance, and you see which chat each sign-up came from. This is an example.",
+        "guest": "What guests see",
+        "host": "What you see as the host"
+      },
       "step1": {
         "title": "Make a page",
         "body": "Add a title and a date, and the page is ready."
@@ -3888,12 +3838,12 @@
         "registerButton": "Register",
         "example": "Example",
         "byChannel": "Sign-ups by channel",
-        "registered": "{count} of {capacity} registered",
         "channels": {
           "groupChat": "Group chat",
           "instagram": "Instagram",
           "qrPoster": "QR poster"
-        }
+        },
+        "hostName": "Night Readers"
       }
     },
     "public": {
