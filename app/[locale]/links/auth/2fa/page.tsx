@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { ApiError, setToken, verifyTwoFactor } from "@/lib/api";
 import { takeTwoFactorChallenge } from "@/lib/two-factor-challenge";
@@ -8,6 +8,7 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AuthFrame } from "@/components/auth/auth-frame";
 
 export default function TwoFactorChallengePage() {
   const router = useRouter();
@@ -52,48 +53,28 @@ export default function TwoFactorChallengePage() {
     }
   }
 
+  const home = (mark: ReactNode) => (
+    <Link href="/" aria-label="kurl" className="focus-ring block rounded-md">
+      {mark}
+    </Link>
+  );
+
   if (expired) {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
-        <p className="mt-2 text-sm text-red-600 dark:text-red-400">{t("expired")}</p>
-        <Link href="/login" className={buttonVariants({ variant: "outline", className: "mt-6" })}>
+      <AuthFrame home={home} title={t("title")} description={t("expired")}>
+        <Link href="/login" className={buttonVariants({ variant: "outline", className: "h-11 w-full" })}>
           {tAuth("backToLogin")}
         </Link>
-      </div>
+      </AuthFrame>
     );
   }
 
   return (
-    <div className="container max-w-md py-16">
-      <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
-      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-        {recovery ? t("descRecovery") : t("desc")}
-      </p>
-      <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-        <Input
-          autoFocus
-          type="text"
-          inputMode={recovery ? "text" : "numeric"}
-          pattern={recovery ? undefined : "[0-9]*"}
-          maxLength={recovery ? 16 : 6}
-          placeholder={recovery ? t("placeholderRecovery") : t("placeholderCode")}
-          value={code}
-          onChange={(e) =>
-            setCode(recovery ? e.target.value.toUpperCase() : e.target.value.replace(/\D/g, ""))
-          }
-          className="font-mono"
-          required
-        />
-        {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-        <Button
-          type="submit"
-          variant="accent"
-          className="w-full"
-          disabled={submitting || code.length === 0}
-        >
-          {submitting ? t("verifying") : t("verifyButton")}
-        </Button>
+    <AuthFrame
+      home={home}
+      title={t("title")}
+      description={recovery ? t("descRecovery") : t("desc")}
+      footer={
         <button
           type="button"
           onClick={() => {
@@ -101,11 +82,42 @@ export default function TwoFactorChallengePage() {
             setCode("");
             setError(null);
           }}
-          className="block w-full text-center text-xs text-slate-500 dark:text-slate-400 underline hover:text-slate-900 dark:hover:text-slate-100"
+          className="text-[13px] text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100"
         >
           {recovery ? t("toggleToCode") : t("toggleToRecovery")}
         </button>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Input
+          autoFocus
+          type="text"
+          inputMode={recovery ? "text" : "numeric"}
+          autoComplete="one-time-code"
+          pattern={recovery ? undefined : "[0-9]*"}
+          maxLength={recovery ? 16 : 6}
+          placeholder={recovery ? t("placeholderRecovery") : t("placeholderCode")}
+          value={code}
+          onChange={(e) =>
+            setCode(recovery ? e.target.value.toUpperCase() : e.target.value.replace(/\D/g, ""))
+          }
+          className="h-11 text-center font-mono text-[17px] tracking-[0.2em]"
+          required
+        />
+        {error && (
+          <p role="alert" className="text-center text-[13px] text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        )}
+        <Button
+          type="submit"
+          variant="accent"
+          className="h-11 w-full"
+          disabled={submitting || code.length === 0}
+        >
+          {submitting ? t("verifying") : t("verifyButton")}
+        </Button>
       </form>
-    </div>
+    </AuthFrame>
   );
 }

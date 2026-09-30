@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { completeSignIn } from "@/lib/api";
@@ -8,6 +8,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { writeStorageString } from "@/lib/storage-json";
 import { readSafeLoginNext } from "@/lib/login-next-cookie";
 import { buttonVariants } from "@/components/ui/button";
+import { AuthFrame } from "@/components/auth/auth-frame";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const queryError = new URLSearchParams(window.location.search).get("error");
     if (queryError) {
-      setError(t("oauthFailed", { reason: queryError }));
+      setError(t("oauthFailed"));
       return;
     }
     // Sign-in leaves only an HttpOnly refresh cookie. An older backend also put the access token in
@@ -55,22 +56,25 @@ export default function AuthCallbackPage() {
     };
   }, [router, t]);
 
+  const home = (mark: ReactNode) => (
+    <Link href="/" aria-label="kurl" className="focus-ring block rounded-md">
+      {mark}
+    </Link>
+  );
+
   if (error) {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("callbackFailed")}</h1>
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{error}</p>
-        <Link href="/login" className={buttonVariants({ variant: "outline", className: "mt-6" })}>
+      <AuthFrame home={home} title={t("callbackFailed")} description={error}>
+        <Link href="/login" className={buttonVariants({ variant: "outline", className: "h-11 w-full" })}>
           {t("backToLogin")}
         </Link>
-      </div>
+      </AuthFrame>
     );
   }
 
   return (
-    <div className="container max-w-md py-20 text-center">
-      <Loader2 className="mx-auto h-6 w-6 animate-spin text-slate-500 dark:text-slate-400" />
-      <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{t("callbackProcessing")}</p>
-    </div>
+    <AuthFrame home={home} title={t("callbackProcessing")}>
+      <Loader2 aria-hidden className="mx-auto h-5 w-5 animate-spin text-slate-400 dark:text-slate-500" />
+    </AuthFrame>
   );
 }

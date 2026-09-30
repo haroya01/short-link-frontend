@@ -1089,9 +1089,9 @@
     "signedInWith": "Đã đăng nhập với {email}",
     "callbackProcessing": "Đang đăng nhập...",
     "callbackFailed": "Đăng nhập thất bại",
-    "signInIncomplete": "Không thể hoàn tất đăng nhập. Vui lòng đăng nhập lại.",
-    "oauthFailed": "Đăng nhập Google thất bại ({reason}).",
-    "backToLogin": "Quay lại đăng nhập",
+    "signInIncomplete": "Có thể cookie đang bị tắt hoặc phiên đăng nhập đã hết hạn.",
+    "oauthFailed": "Đăng nhập Google đã bị hủy hoặc thất bại.",
+    "backToLogin": "Đăng nhập lại",
     "apple": "Đăng nhập với Apple",
     "appleFailed": "Đăng nhập với Apple thất bại.",
     "twofa": {
@@ -1105,7 +1105,7 @@
       "verifyFailed": "Xác minh mã thất bại. Thử lại.",
       "toggleToRecovery": "Mất ứng dụng xác thực? Dùng mã khôi phục",
       "toggleToCode": "Dùng mã từ ứng dụng xác thực",
-      "expired": "Phiên xác thực đã hết hạn. Vui lòng đăng nhập lại."
+      "expired": "Phiên xác thực đã hết hạn."
     }
   },
   "avatar": {
