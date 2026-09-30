@@ -224,7 +224,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
                   setCopied(false);
                 }
               }}
-              className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[12px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
+              className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? t("copied") : t("copy")}
@@ -298,7 +298,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
         <button
           type="submit"
           disabled={busy || disabled || !url.trim() || events.length === 0}
-          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Webhook className="h-4 w-4" />
           {t("addButton")}

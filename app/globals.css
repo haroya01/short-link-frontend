@@ -24,6 +24,19 @@
 
 :root {
   color-scheme: light;
+  /* slate 사다리(tailwind colors.slate 가 읽는다). 라이트 값 = 원래 hex 그대로. */
+  --slate-50: 249 250 249;
+  --slate-100: 243 245 244;
+  --slate-200: 229 232 230;
+  --slate-300: 208 213 210;
+  --slate-400: 156 164 159;
+  --slate-500: 109 117 112;
+  --slate-600: 79 86 82;
+  --slate-700: 59 66 62;
+  --slate-800: 36 43 39;
+  --slate-850: 28 35 31;
+  --slate-900: 19 26 22;
+  --slate-950: 4 9 6;
   /* qr-campaigns 히어로 + 일반 entrance easing token. 이전엔 GlobalStyles 의
      `<style jsx global>` 안에 있었는데, styled-jsx hydration race 때문에 hero 텍스트가
      opacity-0 에서 안 풀리는 경우 발생. 정식 stylesheet 로 끌어내려 초기 CSS 와 같이 로드. */
@@ -55,10 +68,23 @@
 }
 
 .dark {
-  --chart-grid: #3b423e;
-  --chart-tooltip-bg: #131a16;
-  --chart-tooltip-border: #3b423e;
-  --chart-tooltip-text: #e5e8e6;
+  /* 밤의 종이 — 층은 밝기로 쌓는다: 바탕 950 < 카드 900 < 떠 있는 층 850. */
+  --slate-50: 238 241 239;
+  --slate-100: 230 234 231;
+  --slate-200: 216 221 218;
+  --slate-300: 194 201 197;
+  --slate-400: 154 163 158;
+  --slate-500: 115 123 118;
+  --slate-600: 79 86 82;
+  --slate-700: 54 62 57;
+  --slate-800: 38 45 41;
+  --slate-850: 30 37 33;
+  --slate-900: 23 29 26;
+  --slate-950: 15 20 18;
+  --chart-grid: rgb(var(--slate-800));
+  --chart-tooltip-bg: rgb(var(--slate-850));
+  --chart-tooltip-border: rgb(var(--slate-700));
+  --chart-tooltip-text: rgb(var(--slate-100));
   --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 28px -10px rgba(0, 0, 0, 0.7);
   --shadow-modal: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 56px -16px rgba(0, 0, 0, 0.8);
 }
@@ -746,8 +772,8 @@ html[data-first-load] .profile-fade {
   }
   .dark .prose-post .prose-table-wrap {
     background:
-      linear-gradient(to right, #040906 30%, rgba(4, 9, 6, 0)) left / 48px 100%,
-      linear-gradient(to left, #040906 30%, rgba(4, 9, 6, 0)) right / 48px 100%,
+      linear-gradient(to right, rgb(var(--slate-950)) 30%, rgb(var(--slate-950) / 0)) left / 48px 100%,
+      linear-gradient(to left, rgb(var(--slate-950)) 30%, rgb(var(--slate-950) / 0)) right / 48px 100%,
       linear-gradient(to right, rgba(156, 164, 159, 0.14), rgba(156, 164, 159, 0)) left / 14px 100%,
       linear-gradient(to left, rgba(156, 164, 159, 0.14), rgba(156, 164, 159, 0)) right / 14px 100%;
     background-repeat: no-repeat;

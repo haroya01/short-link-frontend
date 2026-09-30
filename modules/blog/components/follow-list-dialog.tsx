@@ -109,7 +109,7 @@ export function FollowListDialog({
         aria-modal="true"
         aria-label={tab === "followers" ? t("followersTab") : t("followingTab")}
         tabIndex={-1}
-        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-900"
+        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-850"
       >
         {/* Tab header — two segments + a close affordance. */}
         <div className="flex items-center border-b border-slate-100 dark:border-slate-800">
@@ -270,7 +270,7 @@ function RowFollowButton({
         "touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors focus-ring",
         following
           ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
-          : "border-transparent bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 hover:bg-accent-800",
+          : "border-transparent bg-accent-700 text-white hover:bg-accent-800",
       )}
     >
       {following ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}

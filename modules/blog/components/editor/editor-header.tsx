@@ -114,7 +114,7 @@ export function EditorHeader({
           type="button"
           onClick={onOpenPublish}
           disabled={busy}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
         >
           {isDraft ? <Send className="h-4 w-4" /> : <Settings2 className="h-4 w-4" />}
           {/* Already-public posts aren't being "published" — this opens metadata + 내리기/예약, so it

@@ -311,7 +311,7 @@ function BulkBar({
   useDismiss(menuOpen, ref, () => setMenuOpen(false));
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-slate-200 bg-white py-1.5 pl-4 pr-1.5 shadow-float dark:border-slate-700 dark:bg-slate-900">
+    <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-slate-200 bg-white py-1.5 pl-4 pr-1.5 shadow-float dark:border-slate-700 dark:bg-slate-850">
       <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-200">
         {t("selectedCount", { count })}
       </span>
@@ -328,7 +328,7 @@ function BulkBar({
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
         {menuOpen && (
-          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900">
+          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850">
             <button type="button" onClick={() => onMove(null)} className={bulkMenuItem}>
               {t("unfiled")}
             </button>
@@ -371,7 +371,7 @@ function BulkBar({
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="focus-ring inline-flex items-center gap-1 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
+          className="focus-ring inline-flex items-center gap-1 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
         >
           <FolderPlus className="h-3.5 w-3.5" />
           {t("newFolderTo")}

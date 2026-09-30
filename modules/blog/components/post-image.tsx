@@ -87,7 +87,7 @@ export function PostImage({
           src={src}
           alt={label}
           loading="lazy"
-          className="img-fade"
+          className="img-fade dark:brightness-90"
           width={naturalWidth && naturalHeight ? naturalWidth : undefined}
           height={naturalWidth && naturalHeight ? naturalHeight : undefined}
         />

@@ -252,7 +252,7 @@ export function PublishDialog({
         // bound, grew to full content height, and pushed the sticky footer (the 발행 button) off-screen
         // (reported "특정 브라우저에서 발행 버튼 안 보임"). Declared in CSS, not two Tailwind arbitrary
         // classes, so the vh→dvh source order (and thus the cascade) is guaranteed.
-        className="dialog-max-h flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-modal dark:bg-slate-900 sm:max-w-xl sm:rounded-2xl"
+        className="dialog-max-h flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-modal dark:bg-slate-850 sm:max-w-xl sm:rounded-2xl"
         // With the keyboard up, cap the sheet to the remaining visual viewport so its scroll area shrinks
         // (rather than the footer sliding under the keyboard). `100vh - keyboardInset` already subtracts
         // the keyboard height, so it works on every engine (including no-dvh ones) without needing dvh.
@@ -724,7 +724,7 @@ function PrimaryAction({
   onCancelSchedule: () => void;
 }) {
   const solid =
-    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-50";
+    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
   if (status === "DRAFT") {
     // The tag requirement is a teachable click (onPublish nudges the tag field) rather than a
     // disabled button, so Publish/Schedule stay enabled. Schedule still gates on a picked time —

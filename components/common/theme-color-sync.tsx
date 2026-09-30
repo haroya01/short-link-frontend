@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 const LIGHT = "#ffffff";
-const DARK = "#040906";
+const DARK = "#0F1412";
 
 /** Keeps the browser's theme-color on the theme the page actually painted (the per-product cookie,
  *  not the OS setting), so a light page never sits under a dark browser bar. */

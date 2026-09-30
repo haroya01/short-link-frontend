@@ -73,7 +73,7 @@ export function UrlDialog({
         aria-modal
         aria-label={title}
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-4 shadow-modal dark:border-slate-700 dark:bg-slate-900"
+        className="w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-4 shadow-modal dark:border-slate-700 dark:bg-slate-850"
       >
         <div className="mb-2.5 flex items-center gap-2 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
           <Link2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />
@@ -129,7 +129,7 @@ export function UrlDialog({
             type="button"
             onClick={submit}
             disabled={!value.trim()}
-            className="rounded-lg bg-accent-700 px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:opacity-40"
+            className="rounded-lg bg-accent-700 px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
           >
             {t("confirm")}
           </button>

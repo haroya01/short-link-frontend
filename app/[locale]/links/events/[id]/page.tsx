@@ -113,7 +113,7 @@ export default function EventDetailPage() {
                 setHeroCopied(true);
                 setTimeout(() => setHeroCopied(false), 2000);
               }}
-              className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent-700 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+              className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent-700 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800"
             >
               {heroCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {heroCopied ? t("heroCopied") : t("heroCopy")}

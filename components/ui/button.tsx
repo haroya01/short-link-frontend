@@ -11,12 +11,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Dark flips to a light green fill with dark text — white labels on accent-400/500 sit
-        // around 2.5:1 and fail WCAG AA; slate-950 on the same fills clears 7:1.
-        default:
-          "bg-accent-700 text-white hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400",
-        accent:
-          "bg-accent-700 text-white hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400",
+        // 다크에서도 같은 깊은 초록 — 흰 글자가 accent-700 위 5.5:1 이라 뒤집을 필요가 없다.
+        // (accent-400/500 위 흰 글자는 2.5:1 로 미달이라 밝은 초록 바탕은 쓰지 않는다.)
+        default: "bg-accent-700 text-white hover:bg-accent-800",
+        accent: "bg-accent-700 text-white hover:bg-accent-800",
         outline:
           "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800",
         ghost: "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",

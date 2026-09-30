@@ -190,7 +190,7 @@ export function ShortenForm({
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-4 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:h-10 sm:px-5"
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-4 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 sm:h-10 sm:px-5"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />

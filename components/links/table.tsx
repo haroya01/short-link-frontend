@@ -532,7 +532,7 @@ function RowMenu({ label, items }: { label: string; items: RowMenuItem[] }) {
         <div
           role="menu"
           aria-label={label}
-          className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900"
+          className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
         >
           {items.map(({ label: itemLabel, icon: Icon, onSelect, href, destructive, disabled }) =>
             href ? (

@@ -182,7 +182,7 @@ export default function WriteIndexPage() {
           <ImportMdButton onDone={load} />
           <BlogLink
             href={`${writeBase}/new`}
-            className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 sm:px-4"
+            className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 sm:px-4"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
@@ -326,7 +326,7 @@ export default function WriteIndexPage() {
           </div>
           <BlogLink
             href={`${writeBase}/new`}
-            className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
+            className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
