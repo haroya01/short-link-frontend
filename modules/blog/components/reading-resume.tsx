@@ -132,7 +132,7 @@ export function ReadingResume({ postKey }: { postKey: string }) {
   return createPortal(
     <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 z-30 -translate-x-1/2 sm:bottom-6">
       <div
-        className={`flex items-center gap-1 rounded-full border border-slate-200 bg-white py-1 pl-1.5 pr-1 shadow-float motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-900 ${
+        className={`flex items-center gap-1 rounded-full border border-slate-200 bg-white py-1 pl-1.5 pr-1 shadow-float motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-850 ${
           closing ? "animate-fade-out" : "animate-fade-in"
         }`}
       >

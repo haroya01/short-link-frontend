@@ -53,7 +53,7 @@ export function PathReorder({
           <button
             type="button"
             onClick={() => onSave(items.map((c) => c.id))}
-            className="focus-ring rounded-lg bg-accent-700 px-4 py-1.5 text-[13px] font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800"
+            className="focus-ring rounded-lg bg-accent-700 px-4 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
           >
             {t("save")}
           </button>

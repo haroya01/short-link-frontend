@@ -368,7 +368,7 @@ export default async function PublicPostPage({
               height={672}
               sizes="(min-width: 672px) 672px, 100vw"
               priority
-              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
             />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
@@ -377,7 +377,7 @@ export default async function PublicPostPage({
               alt=""
               fetchPriority="high"
               decoding="async"
-              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
             />
           )}
         </div>

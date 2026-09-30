@@ -104,7 +104,7 @@ export function CommentComposer({
           type="button"
           onClick={onSubmit}
           disabled={submitting || !canSubmit}
-          className={`rounded-lg bg-accent-700 font-medium text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 focus-ring disabled:opacity-50 ${
+          className={`rounded-lg bg-accent-700 font-medium text-white transition-colors hover:bg-accent-800 focus-ring disabled:opacity-50 ${
             compact ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-sm"
           }`}
         >

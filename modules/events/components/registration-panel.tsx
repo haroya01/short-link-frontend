@@ -196,7 +196,7 @@ export function RegistrationPanel({
         <button
           type="submit"
           disabled={phase === "submitting" || !name.trim() || !contact.trim()}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent-700 text-base font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent-700 text-base font-semibold text-white transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {phase === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {phase === "submitting" ? t("submitting") : t("submit")}
@@ -240,7 +240,7 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
           href={googleCalendarUrl(event)}
           target="_blank"
           rel="noreferrer"
-          className="flex min-h-11 items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+          className="flex min-h-11 items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800"
         >
           <CalendarPlus className="h-3.5 w-3.5" />
           {t("addToCalendar")}

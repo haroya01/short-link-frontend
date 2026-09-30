@@ -238,7 +238,7 @@ function QrModal({
         role="dialog"
         aria-modal="true"
         aria-label={t("title")}
-        className="relative w-full max-w-sm animate-fade-in overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-modal"
+        className="relative w-full max-w-sm animate-fade-in overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 shadow-modal"
       >
         <button
           type="button"
@@ -312,7 +312,7 @@ function QrModal({
             type="button"
             onClick={copyUrl}
             disabled={!dataUrl}
-            className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-900 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-850 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
           >
             {copied ? (
               <>
@@ -328,7 +328,7 @@ function QrModal({
             type="button"
             onClick={download}
             disabled={!dataUrl}
-            className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-900 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-850 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
           >
             <Download className="h-4 w-4" /> {t("downloadPng")}
           </button>

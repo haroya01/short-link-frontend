@@ -17,7 +17,7 @@ export function EventOnboardingScene() {
         >
           <p className="truncate text-[11px] font-semibold text-slate-900 dark:text-slate-100">{t("eventTitle")}</p>
           <p className="mt-1 truncate text-[10px] text-slate-500 dark:text-slate-400">{t("eventDate")}</p>
-          <div className="mt-2 rounded-md bg-accent-700 py-1 text-center text-[10px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950">
+          <div className="mt-2 rounded-md bg-accent-700 py-1 text-center text-[10px] font-semibold text-white">
             {t("registerButton")}
           </div>
         </div>

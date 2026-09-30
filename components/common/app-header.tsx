@@ -89,7 +89,7 @@ export function AppHeader({
     <ChromeNavLink
       href={authed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
       aria-label={t("write")}
-      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-700 text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:hidden"
+      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
     >
       <PenSquare className="h-4 w-4" />
     </ChromeNavLink>

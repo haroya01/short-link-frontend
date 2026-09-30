@@ -97,7 +97,7 @@ export function ProfilePublicUrlBanner({
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 rounded-md bg-accent-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+          className="inline-flex items-center gap-1 rounded-md bg-accent-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-800"
         >
           {t("openShort")}
           <ExternalLink className="h-3 w-3" />

@@ -98,7 +98,7 @@ export function Markdown({ children, inline = false }: { children: string; inlin
             && parsed.dims.w > 0 && parsed.dims.h > 0 ? parsed.dims : undefined;
           return (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={src} alt={parsed.alt} title={title} loading="lazy" decoding="async"
+            <img src={src} alt={parsed.alt} title={title} loading="lazy" decoding="async" className="dark:brightness-90"
               width={dims?.w ?? width} height={dims?.h ?? height} />
           );
         },

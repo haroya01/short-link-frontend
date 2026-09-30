@@ -524,7 +524,7 @@ function SubmitBar({
   const t = useTranslations("campaignApp.batchesNew");
 
   return (
-    <div className="sticky bottom-3 z-10 mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-float sm:flex-row sm:items-center sm:justify-between">
+    <div className="sticky bottom-3 z-10 mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 px-4 py-3 shadow-float sm:flex-row sm:items-center sm:justify-between">
       <div className="text-[12px] text-slate-500 dark:text-slate-400">
         {invalidCount > 0 ? (
           <span className="text-rose-600">

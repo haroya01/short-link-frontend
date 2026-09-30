@@ -69,7 +69,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center p-4">
       <div className="absolute inset-0 scrim" onClick={close} />
-      <div className="relative w-full max-w-md animate-fade-in rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-modal">
+      <div className="relative w-full max-w-md animate-fade-in rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 p-6 shadow-modal">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h2>
           <button

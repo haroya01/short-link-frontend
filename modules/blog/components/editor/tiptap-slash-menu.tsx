@@ -188,7 +188,7 @@ export function SlashMenu({
     <div
       role="listbox"
       // Same dropdown entrance as the header menus; scale from the caret side (flip-aware origin).
-      className={`fixed z-50 max-h-80 w-72 animate-dropdown-in overflow-y-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-float dark:border-slate-700 dark:bg-slate-900 ${
+      className={`fixed z-50 max-h-80 w-72 animate-dropdown-in overflow-y-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-float dark:border-slate-700 dark:bg-slate-850 ${
         menu.bottom != null ? "origin-bottom-left" : "origin-top-left"
       }`}
       style={menu.bottom != null ? { bottom: menu.bottom, left: menu.left } : { top: menu.top, left: menu.left }}
@@ -223,7 +223,7 @@ export function SlashMenu({
                     <span
                       className={`grid h-9 w-9 shrink-0 place-items-center rounded-md border ${
                         i === active
-                          ? "border-accent-200 bg-white text-accent-700 dark:border-accent-500/30 dark:bg-slate-900 dark:text-accent-300"
+                          ? "border-accent-200 bg-white text-accent-700 dark:border-accent-500/30 dark:bg-slate-850 dark:text-accent-300"
                           : "border-slate-200 bg-white text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
                       }`}
                     >

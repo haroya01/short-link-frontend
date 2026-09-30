@@ -275,7 +275,7 @@ export function EventForm({
       <button
         type="submit"
         disabled={busy || !form.title.trim()}
-        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-accent-700 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-accent-700 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {event ? t("save") : t("publish")}

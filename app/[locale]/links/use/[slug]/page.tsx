@@ -79,7 +79,7 @@ export default async function SeoLandingPage({
         <p className="mt-5 text-[17px] leading-relaxed text-slate-600 dark:text-slate-300">{c.intro}</p>
         <a
           href={ctaHref}
-          className="focus-ring mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+          className="focus-ring mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800"
         >
           {c.cta}
           <ArrowRight className="h-4 w-4" />
@@ -112,7 +112,7 @@ export default async function SeoLandingPage({
       <div className="mt-16 border-t border-slate-200 pt-10 dark:border-slate-800">
         <a
           href={ctaHref}
-          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
+          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800"
         >
           {c.cta}
           <ArrowRight aria-hidden className="h-4 w-4" />

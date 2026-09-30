@@ -450,7 +450,7 @@ function CollectionEditor({
           onClick={() =>
             onSave({ title: trimmedTitle, description: description.trim() || null, visibility })
           }
-          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 transition-colors hover:bg-accent-800 disabled:opacity-40"
+          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
         >
           {t("save")}
         </button>
@@ -651,7 +651,7 @@ function PathWalk({
               <span
                 className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-bold ${
                   isCurrent
-                    ? "bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950"
+                    ? "bg-accent-700 text-white"
                     : isReached
                       ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400"
                       : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-400"
@@ -765,7 +765,7 @@ function ContinuityBar({
           {t("pathContinue", { step: nextStep })}
         </span>
       </span>
-      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 py-1.5 text-[12.5px] font-bold text-white dark:bg-accent-500 dark:text-slate-950">
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 py-1.5 text-[12.5px] font-bold text-white">
         {t("pathContinueCta")}
         <ArrowRight className="h-3.5 w-3.5" />
       </span>

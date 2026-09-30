@@ -28,7 +28,7 @@ export function CoverThumb({
   /** View Transition 커버 모핑 대상 표식(data-vt-cover). */
   vtCover?: boolean;
 }) {
-  const cls = eager || !className ? className : `img-fade ${className}`;
+  const cls = `${eager || !className ? (className ?? "") : `img-fade ${className}`} dark:brightness-90`.trim();
   const vtAttr = vtCover ? { "data-vt-cover": true } : {};
   if (!canOptimizeCover(src)) {
     return (

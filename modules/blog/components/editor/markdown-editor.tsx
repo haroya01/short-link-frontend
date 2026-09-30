@@ -776,7 +776,7 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
           identically-labelled always-on toolbar buttons. */}
       <div
         data-testid="bubble-bar"
-        className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900"
+        className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
       >
         {items.map((it, i) => (
           <button
@@ -876,7 +876,7 @@ function ImageBubble({ editor }: { editor: Editor }) {
     >
       <div
         data-testid="image-bubble"
-        className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-900"
+        className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
       >
         {group(widthItems)}
         {/* Align only moves a column-width or «half» image; wide/full bleed the column, so hide it. */}
