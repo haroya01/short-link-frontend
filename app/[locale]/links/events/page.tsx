@@ -16,8 +16,6 @@ import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EventsListPage() {
-  const t = useTranslations("events.list");
-  const locale = useLocale();
   const { ready, authenticated } = useAuth();
   const [events, setEvents] = useState<MyEvent[] | null>(null);
   const [error, setError] = useState(false);
@@ -35,9 +33,34 @@ export default function EventsListPage() {
     if (ready && authenticated) void load();
   }, [ready, authenticated, load]);
 
-  if (ready && !authenticated) {
-    return <EventsIntro />;
-  }
+  // /me 가 오기 전엔 소개와 목록 틀을 둘 다 그리고 pre-paint authHint 가 CSS 로 하나만 보인다.
+  return (
+    <>
+      {(!ready || !authenticated) && (
+        <div data-auth-slot={ready ? undefined : "anon"} className="contents">
+          <EventsIntro />
+        </div>
+      )}
+      {(!ready || authenticated) && (
+        <div data-auth-slot={ready ? undefined : "authed"} className="contents">
+          <EventsList events={events} error={error} onRetry={() => void load()} />
+        </div>
+      )}
+    </>
+  );
+}
+
+function EventsList({
+  events,
+  error,
+  onRetry,
+}: {
+  events: MyEvent[] | null;
+  error: boolean;
+  onRetry: () => void;
+}) {
+  const t = useTranslations("events.list");
+  const locale = useLocale();
 
   return (
     <div className="container max-w-5xl py-8">
@@ -51,7 +74,7 @@ export default function EventsListPage() {
 
       {error ? (
         <div className="mt-8">
-          <ErrorState message={t("loadFailed")} onRetry={() => void load()} />
+          <ErrorState message={t("loadFailed")} onRetry={onRetry} />
         </div>
       ) : events == null ? (
         <ul aria-busy className="mt-4 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">

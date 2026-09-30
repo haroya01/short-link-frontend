@@ -6,6 +6,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
 import { AppsGrid } from "@/components/common/apps-grid";
+import { HeaderAvatarSlot } from "@/components/common/header-avatar-slot";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -70,12 +71,34 @@ export function Nav() {
   if (pathname.startsWith("/u/")) return null;
 
   // 단일 상단 가로바 IA: 로그인 여부에 따라 entries 만 교체. (사이드바 IA 폐기 — kurl.me 는 top-nav)
-  const showEntries = ready;
-  const entries = !ready
-    ? []
-    : authenticated
-      ? authenticatedEntries(t)
-      : anonymousEntries(t);
+  // /me 가 오기 전엔 두 변형을 다 그리고 pre-paint authHint 가 CSS 로 하나만 보인다(블로그 헤더와 같은 방식).
+  const entryNav = (entries: NavEntry[]) => (
+    <nav className="hidden items-center gap-1 sm:flex">
+      {entries.map((entry) => {
+        const active = entry.active(pathname);
+        const className = cn(
+          "whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
+          active
+            ? "text-slate-900 dark:text-slate-100"
+            : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+        );
+        return entry.external ? (
+          <a key={entry.href} href={entry.href} className={className}>
+            {entry.label}
+          </a>
+        ) : (
+          <Link
+            key={entry.href}
+            href={entry.href}
+            aria-current={active ? "page" : undefined}
+            className={className}
+          >
+            {entry.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
 
   return (
     <>
@@ -95,32 +118,15 @@ export function Nav() {
             <Logo animated showText={false} className="min-[360px]:hidden" />
             <Logo animated className="hidden min-[360px]:inline-flex" />
           </Link>
-          {showEntries && (
-            <nav className="hidden items-center gap-1 sm:flex">
-              {entries.map((entry) => {
-                const active = entry.active(pathname);
-                const className = cn(
-                  "whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
-                  active
-                    ? "text-slate-900 dark:text-slate-100"
-                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
-                );
-                return entry.external ? (
-                  <a key={entry.href} href={entry.href} className={className}>
-                    {entry.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={entry.href}
-                    href={entry.href}
-                    aria-current={active ? "page" : undefined}
-                    className={className}
-                  >
-                    {entry.label}
-                  </Link>
-                );
-              })}
-            </nav>
+          {(!ready || !authenticated) && (
+            <div data-auth-slot={ready ? undefined : "anon"} className="contents">
+              {entryNav(anonymousEntries(t))}
+            </div>
+          )}
+          {(!ready || authenticated) && (
+            <div data-auth-slot={ready ? undefined : "authed"} className="contents">
+              {entryNav(authenticatedEntries(t))}
+            </div>
           )}
         </div>
 
@@ -149,12 +155,13 @@ export function Nav() {
             Signed out: language + theme stay visible on the bar since there's no account menu yet. */}
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
           <AppsGrid current="links" />
-          {!ready ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
-          ) : authenticated ? (
-            <AccountMenu product="links" />
-          ) : (
-            <>
+          {(!ready || authenticated) && (
+            <div data-auth-slot={ready ? undefined : "authed"} className="contents">
+              {ready ? <AccountMenu product="links" /> : <HeaderAvatarSlot />}
+            </div>
+          )}
+          {(!ready || !authenticated) && (
+            <div data-auth-slot={ready ? undefined : "anon"} className="contents">
               <LanguageSwitcher />
               {/* kurl desktop theme toggle — signed-out visitors have no account menu, so the toggle
                   stays on the bar; without it kurl-on-desktop could only inherit the shared cookie,
@@ -166,7 +173,7 @@ export function Nav() {
               <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
                 {t("login")}
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
