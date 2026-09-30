@@ -60,8 +60,8 @@ test.describe("로그인 주소에 토큰이 남지 않는다", () => {
     await page.goto("/ko/auth/callback");
 
     await expect(page.getByRole("heading", { name: "로그인하지 못했어요" })).toBeVisible();
-    await expect(page.getByText("로그인을 마치지 못했어요. 다시 로그인해 주세요.")).toBeVisible();
-    await expect(page.getByRole("link", { name: "로그인 페이지로" })).toBeVisible();
+    await expect(page.getByText("쿠키가 꺼져 있거나 로그인 시간이 지났을 수 있어요.")).toBeVisible();
+    await expect(page.getByRole("link", { name: "다시 로그인" })).toBeVisible();
   });
 
   test("2단계 인증: 구글 로그인은 쿠키에 맡기고 본문에 챌린지를 싣지 않는다", async ({ page }) => {
@@ -127,7 +127,38 @@ test.describe("로그인 주소에 토큰이 남지 않는다", () => {
     await page.goto("/ko/auth/2fa");
     await submitCode(page);
 
-    await expect(page.getByText("인증 시간이 지났어요. 다시 로그인해 주세요.")).toBeVisible();
-    await expect(page.getByRole("link", { name: "로그인 페이지로" })).toBeVisible();
+    await expect(page.getByText("인증 시간이 지났어요.")).toBeVisible();
+    await expect(page.getByRole("link", { name: "다시 로그인" })).toBeVisible();
+  });
+
+  test("로그인 페이지의 목적지(?next=)로 구글 로그인이 돌아간다", async ({ page, baseURL }) => {
+    await mockBackend(page, {
+      "POST /api/v1/auth/refresh": (route) => json(route, 200, { accessToken: "cookie-token" }),
+    });
+    await page.route("**/oauth2/authorization/google", (route) =>
+      route.fulfill({ status: 302, headers: { location: `${baseURL}/ko/auth/callback` } }),
+    );
+
+    await page.goto("/ko/login?next=/settings");
+    await page.getByRole("button", { name: "Google 계정으로 로그인" }).click();
+
+    await expect(page).toHaveURL(/\/ko\/settings$/);
+  });
+
+  test("목적지 없이 로그인하면 예전에 남은 목적지로 새지 않는다", async ({ page, baseURL }) => {
+    await page.context().addCookies([
+      { name: "kurl_login_next", value: encodeURIComponent("/ko/settings"), url: baseURL! },
+    ]);
+    await mockBackend(page, {
+      "POST /api/v1/auth/refresh": (route) => json(route, 200, { accessToken: "cookie-token" }),
+    });
+    await page.route("**/oauth2/authorization/google", (route) =>
+      route.fulfill({ status: 302, headers: { location: `${baseURL}/ko/auth/callback` } }),
+    );
+
+    await page.goto("/ko/login");
+    await page.getByRole("button", { name: "Google 계정으로 로그인" }).click();
+
+    await expect(page).toHaveURL(/\/ko\/dashboard$/);
   });
 });

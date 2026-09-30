@@ -1081,7 +1081,7 @@
         "통계"
       ]
     },
-    "consent": "계속하면 <terms>이용약관</terms>과 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다.",
+    "consent": "계속하면 <terms>이용약관</terms>과 <privacy>개인정보처리방침</privacy>에 동의하게 돼요.",
     "heading": "kurl에 로그인"
   },
   "auth": {
@@ -1089,9 +1089,9 @@
     "signedInWith": "{email} 로 로그인되었어요",
     "callbackProcessing": "로그인 처리 중…",
     "callbackFailed": "로그인하지 못했어요",
-    "signInIncomplete": "로그인을 마치지 못했어요. 다시 로그인해 주세요.",
-    "oauthFailed": "Google 로그인에 실패했어요({reason}).",
-    "backToLogin": "로그인 페이지로",
+    "signInIncomplete": "쿠키가 꺼져 있거나 로그인 시간이 지났을 수 있어요.",
+    "oauthFailed": "Google에서 로그인이 취소됐거나 실패했어요.",
+    "backToLogin": "다시 로그인",
     "apple": "Apple로 로그인",
     "appleFailed": "Apple 로그인에 실패했어요.",
     "twofa": {
@@ -1105,7 +1105,7 @@
       "verifyFailed": "코드 검증에 실패했어요. 다시 시도하세요.",
       "toggleToRecovery": "인증 앱을 잃어버렸나요? 복구 코드 사용",
       "toggleToCode": "다시 인증 앱 코드 입력",
-      "expired": "인증 시간이 지났어요. 다시 로그인해 주세요."
+      "expired": "인증 시간이 지났어요."
     }
   },
   "avatar": {
@@ -3571,7 +3571,7 @@
     "google": "Google 계정으로 로그인",
     "browse": "로그인 없이 둘러보기",
     "heading": "kurl log에 로그인",
-    "consent": "계속하면 <terms>이용약관</terms>과 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다."
+    "consent": "계속하면 <terms>이용약관</terms>과 <privacy>개인정보처리방침</privacy>에 동의하게 돼요."
   },
   "ctaLibrary": {
     "title": "CTA 라이브러리",

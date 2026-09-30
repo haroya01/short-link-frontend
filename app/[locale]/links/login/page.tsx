@@ -1,14 +1,13 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
-import { writeStorageString } from "@/lib/storage-json";
+import { linksHref } from "@/lib/host";
+import { clearLoginNextCookie, writeLoginNextCookie } from "@/lib/login-next-cookie";
 import { LoginPanel } from "@/components/auth/login-panel";
-
-const LOGIN_NEXT_KEY = "kurl:login-next";
 
 // Whitelist post-OAuth destinations so /login?next=evil.com cannot hijack the redirect.
 const ALLOWED_NEXT_PATHS = new Set<string>([
@@ -38,19 +37,21 @@ export default function LoginPage() {
 
 function LoginInner() {
   const searchParams = useSearchParams();
-  const next = sanitizeNext(searchParams.get("next"));
-
-  // OAuth round-trip drops the query string, so stash `next` here for the callback to read.
-  useEffect(() => {
-    if (next) writeStorageString(LOGIN_NEXT_KEY, next, { session: true });
-  }, [next]);
-
-  return <LoginShell next={next} />;
+  return <LoginShell next={sanitizeNext(searchParams.get("next"))} />;
 }
 
 function LoginShell({ next = null }: { next?: string | null }) {
   const t = useTranslations("login");
+  const locale = useLocale();
   const { signInWithGoogle } = useAuth();
+
+  // The OAuth callback reads its destination only from the `.kurl.me` cookie, and signInWithGoogle
+  // skips writing it on /login — so the page records where this sign-in should land.
+  const onGoogle = () => {
+    if (next) writeLoginNextCookie(linksHref(`/${locale}${next}`));
+    else clearLoginNextCookie();
+    signInWithGoogle();
+  };
   return (
     <LoginPanel
       renderHome={(mark) => (
@@ -61,7 +62,7 @@ function LoginShell({ next = null }: { next?: string | null }) {
       title={t("heading")}
       subtitle={t("subtitle")}
       googleLabel={t("google")}
-      onGoogle={signInWithGoogle}
+      onGoogle={onGoogle}
       appleSuccessHref={next ?? "/dashboard"}
       consent={t.rich("consent", {
         terms: (c) => (
