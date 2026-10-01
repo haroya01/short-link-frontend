@@ -12,6 +12,7 @@ import { FirstLoadMark } from "@/components/common/first-load-mark";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
 import { ThemeColorSync } from "@/components/common/theme-color-sync";
+import { themeCookieNameScript } from "@/lib/theme-cookie";
 import "../globals.css";
 
 /*
@@ -186,18 +187,16 @@ export default async function RootLayout({
 
   // No-FOUC theme. Dark mode is supported on BOTH products, but the PREFERENCE is per-product
   // (사용자 결정 2026-07-15): 블로그에서 다크를 써도 kurl(링크단축)은 기본 백을 지킨다. 블로그
-  // 표면은 기존 `theme` 쿠키(피드 blog.kurl.me ↔ 작가 {author}.kurl.me 가 같은 글 경험이라 반드시
-  // 공유), kurl 표면은 전용 `kurl_theme`. 표면 판정: 플랫폼 서브도메인이면 블로그, apex 는
-  // /{locale}/blog|p 경로만 블로그, 나머지가 kurl; 오프플랫폼(단일 오리진)은 경로만 본다.
-  // ※ lib/theme-cookie.ts 의 isBlogSurface()/themeCookieName() 이 같은 판정의 원본 — 바꾸면 같이.
+  // 표면은 `theme` 쿠키, kurl 표면(명함 {user}.kurl.me 포함)은 전용 `kurl_theme` — 어느 쪽인지는
+  // lib/theme-cookie.ts 의 themeCookieNameScript(isBlogSurface() 의 pre-paint 판본)가 고른다.
   // We deliberately do NOT auto-darken from the OS `prefers-color-scheme` — that flipped surfaces
   // inconsistently across hosts and read as "it forced dark mode on me."
   // The auth hint shares this tag: a second standalone inline <script> in <head> was dropped from
   // the streamed head on some routes (React head reconciliation), so both pre-paint flags ride the
   // one tag that's proven to survive everywhere.
   // The choice is a `.kurl.me` cookie. localStorage is per-origin, so ON the platform (any *.kurl.me)
-  // we must NOT fall back to it: a stale 'dark' left in one subdomain's localStorage would paint a post
-  // ({author}.kurl.me) dark while the shared cookie — and the feed (blog.kurl.me) — are light. So
+  // we must NOT fall back to it: a stale 'dark' left in the apex's localStorage would paint the
+  // dashboard dark while the shared cookie — and the card on {user}.kurl.me — are light. So
   // on-platform the cookie is the SOLE source of truth (light is the safe default when it's absent,
   // e.g. after iOS Safari's 7-day script-cookie cap expires); only off-platform (localhost / Vercel
   // previews, a single origin) does the localStorage fallback still apply.
@@ -209,8 +208,7 @@ export default async function RootLayout({
     // JS 가 도는 문서 표식 — 소개 그림은 이게 있을 때만 결과를 숨겨 두었다가 보일 때 그린다.
     "document.documentElement.setAttribute('data-js','');" +
     "var h=location.hostname,P=" + JSON.stringify(platformHost) + ",onP=(h===P||h.endsWith('.'+P));" +
-    "var seg=location.pathname.split('/')[2];" +
-    "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
+    themeCookieNameScript +
     "var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=(dark|light)'));" +
     "var t=m?m[1]:(onP?null:localStorage.getItem(n));" +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
@@ -232,8 +230,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* No-FOUC theme — see themeInitScript above. Sets `.dark` on <html> before paint, but ONLY on
-            blog surfaces, so the links product never inherits a dark root it has no styles for. */}
+        {/* No-FOUC theme — see themeInitScript above. Sets `.dark` on <html> before paint from the
+            surface's own cookie (blog `theme`, kurl `kurl_theme`). */}
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: themeInitScript }}

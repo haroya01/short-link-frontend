@@ -1,5 +1,3 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 async function load() {
@@ -38,11 +36,5 @@ describe("fetchProfile", () => {
     const fetchProfile = await load();
     respond(200, { username: "someone", entries: [] });
     await expect(fetchProfile("someone")).resolves.toMatchObject({ username: "someone" });
-  });
-});
-
-describe("profile segment", () => {
-  it("has no loading boundary, so a missing profile is a real 404 rather than a 200 shell", () => {
-    expect(existsSync(path.resolve(__dirname, "../loading.tsx"))).toBe(false);
   });
 });

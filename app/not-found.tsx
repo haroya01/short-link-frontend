@@ -9,6 +9,7 @@ import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import vi from "@/messages/vi.json";
 import { Mark } from "@/components/common/logo";
+import { themeCookieNameScript } from "@/lib/theme-cookie";
 import "./globals.css";
 
 /**
@@ -52,16 +53,15 @@ const localeStyle =
 
 /* No-FOUC 테마 — 이 문서는 로케일 레이아웃 밖에서 렌더돼 그쪽 테마 스크립트를 못 탄다.
    빠뜨리면 다크 사용자가 404 를 라이트로 맞는다(만료 링크·오타 URL 이 흔한 진입).
-   쿠키 판정은 [locale]/layout.tsx 의 themeInitScript 와 동일(원본=lib/theme-cookie.ts) —
-   블로그 표면=공유 `theme`, kurl 표면=`kurl_theme`. */
+   쿠키 이름은 [locale]/layout.tsx 와 같은 themeCookieNameScript(lib/theme-cookie.ts)가 고른다 —
+   블로그 표면=`theme`, kurl 표면(명함 {user}.kurl.me 포함)=`kurl_theme`. */
 const PLATFORM_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
 const themeInitScript =
   "(function(){try{" +
   "var h=location.hostname,P=" +
   JSON.stringify(PLATFORM_HOST) +
   ",onP=(h===P||h.endsWith('.'+P));" +
-  "var seg=location.pathname.split('/')[2];" +
-  "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
+  themeCookieNameScript +
   "var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=(dark|light)'));" +
   "var t=m?m[1]:(onP?null:localStorage.getItem(n));" +
   "if(t==='dark'){document.documentElement.classList.add('dark');}" +
