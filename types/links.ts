@@ -81,6 +81,15 @@ export type LinkDetail = {
   splash?: LinkSplash;
   opensAt?: string | null;
   destinationHealth?: DestinationHealth | null;
+  /** Present while an operator or the safety rescan has switched the link off; visitors get a 410 page. */
+  moderation?: LinkModeration | null;
+};
+
+export type LinkDisableReason = "ABUSE_REPORT" | "ADMIN" | "SAFE_BROWSING";
+
+export type LinkModeration = {
+  reason: LinkDisableReason;
+  disabledAt: string;
 };
 
 export type DestinationHealth = {

@@ -15,6 +15,16 @@ export const REASON_CODES: readonly AbuseReasonCode[] = [
   "OTHER",
 ] as const;
 
+/** Reasons on the public link report form. OTHER doubles as the appeal for a link switched off by mistake. */
+export const LINK_REASON_CODES: readonly AbuseReasonCode[] = [
+  "PHISHING",
+  "MALWARE",
+  "SPAM",
+  "SEXUAL",
+  "COPYRIGHT",
+  "OTHER",
+] as const;
+
 /** i18n key (under the `report.reasons` namespace) for a reason code's short label. */
 export function reasonLabelKey(code: AbuseReasonCode): string {
   return `reasons.${code}`;
@@ -23,13 +33,14 @@ export function reasonLabelKey(code: AbuseReasonCode): string {
 /**
  * The enforcement actions a moderator can attach when resolving a report, keyed by what was reported.
  * A POST report can be unpublished; a COMMENT deleted; a USER suspended (needs an expiry) or banned
- * (permanent). Resolving with no action — "reviewed, no violation" — is always allowed and handled by
+ * (permanent); a LINK switched off. Resolving with no action — "reviewed, no violation" — is always allowed and handled by
  * the plain resolve buttons, so it isn't listed here.
  */
 const ACTIONS_BY_SUBJECT: Record<AbuseSubjectType, readonly AbuseAction[]> = {
   POST: ["UNPUBLISH_POST"],
   COMMENT: ["DELETE_COMMENT"],
   USER: ["SUSPEND_USER", "BAN_USER"],
+  LINK: ["DISABLE_LINK"],
 };
 
 /** Actions offered for a subject type, minus any already applied (e.g. a post that's already removed). */
@@ -39,10 +50,12 @@ export function availableActions(
 ): readonly AbuseAction[] {
   const actions = ACTIONS_BY_SUBJECT[subjectType] ?? [];
   if (opts?.subjectRemoved) {
-    // Takedowns are idempotent from the queue's view: once the post is unpublished / comment deleted,
-    // don't re-offer the destructive button. Suspend/ban stay available (a user can be sanctioned even
+    // Takedowns are idempotent from the queue's view: once the post is unpublished / comment deleted /
+    // link switched off, don't re-offer the destructive button. Suspend/ban stay available (a user can be sanctioned even
     // after their post is gone).
-    return actions.filter((a) => a !== "UNPUBLISH_POST" && a !== "DELETE_COMMENT");
+    return actions.filter(
+      (a) => a !== "UNPUBLISH_POST" && a !== "DELETE_COMMENT" && a !== "DISABLE_LINK",
+    );
   }
   return actions;
 }

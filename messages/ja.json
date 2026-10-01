@@ -1745,6 +1745,16 @@
       "expiryDesc": "指定した時刻を過ぎるとリンクが閉じます。",
       "expiryAt": "閉じる時刻",
       "expiryBeforeOpen": "期限は公開時刻より後にしてください。"
+    },
+    "moderation": {
+      "title": "このリンクは停止中です。",
+      "reason": {
+        "ABUSE_REPORT": "報告を確認し、利用ポリシー違反として停止しました（{date}）。",
+        "ADMIN": "利用ポリシー違反のため運営者が停止しました（{date}）。",
+        "SAFE_BROWSING": "Google セーフ ブラウジングが遷移先を危険なサイトと判定したため、自動で停止しました（{date}）。"
+      },
+      "visitorEffect": "現在このリンクを開くと、遷移先の代わりに停止中の案内が表示されます。",
+      "appeal": "異議を申し立てる"
     }
   },
   "admin": {
@@ -2008,7 +2018,8 @@
         "status": {
           "active": "有効",
           "expired": "期限切れ",
-          "limitReached": "上限到達"
+          "limitReached": "上限到達",
+          "disabled": "停止中"
         },
         "ownerFilter": "所有者 #{id}",
         "clearFilter": "フィルター解除",
@@ -2103,7 +2114,18 @@
       "warnAnonymous": "匿名で作成されたリンクのため、警告を送るアカウントがありません。ドメインブロックで対応してください。",
       "failed": "リクエストに失敗しました",
       "blockShort": "ブロック",
-      "blockedShort": "ブロック済み"
+      "blockedShort": "ブロック済み",
+      "linkHint": "ドメイン全体ではなく、このリンクだけを停止します。訪問者には遷移先の代わりに停止中の案内（410）が表示されます。",
+      "linkDisable": "このリンクを停止",
+      "linkEnable": "再開する",
+      "linkDisableConfirm": "/{code} を停止しますか？訪問者には遷移先の代わりに停止中の案内が表示されます。",
+      "linkEnableConfirm": "/{code} を再開しますか？訪問者は再び遷移先へ移動します。",
+      "linkDisabled": "停止中 · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "報告対応",
+        "ADMIN": "管理者",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     }
   },
   "common": {
@@ -2300,7 +2322,8 @@
     "iosApp": "iPhoneアプリ",
     "terms": "利用規約",
     "privacy": "プライバシー",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "リンクを報告"
   },
   "about": {
     "title": "kurl · URL短縮とクリック分析",
@@ -3513,12 +3536,14 @@
       "UNPUBLISH_POST": "記事を非公開",
       "DELETE_COMMENT": "コメント削除",
       "SUSPEND_USER": "アカウント停止",
-      "BAN_USER": "永久停止"
+      "BAN_USER": "永久停止",
+      "DISABLE_LINK": "リンクを停止"
     },
     "subjectType": {
       "POST": "投稿",
       "USER": "作者",
-      "COMMENT": "コメント"
+      "COMMENT": "コメント",
+      "LINK": "短縮リンク"
     },
     "removed": "非公開",
     "reasons": {
@@ -3527,15 +3552,20 @@
       "VIOLENCE": "暴力・危険",
       "SEXUAL": "性的なコンテンツ",
       "COPYRIGHT": "著作権侵害",
-      "OTHER": "その他"
+      "OTHER": "その他",
+      "PHISHING": "フィッシング・詐欺",
+      "MALWARE": "マルウェア"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
       "DELETE_COMMENT": "このコメントを削除しますか？元に戻せません。",
-      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。"
+      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。",
+      "DISABLE_LINK": "このリンクを停止しますか？訪問者には遷移先の代わりに停止中の案内が表示されます。管理画面のリンク詳細から再開できます。"
     },
     "suspendDaysPrompt": "何日間停止しますか？（日）",
-    "suspendDaysInvalid": "1 以上の数値を入力してください。"
+    "suspendDaysInvalid": "1 以上の数値を入力してください。",
+    "removedLink": "停止中",
+    "destination": "遷移先"
   },
   "blogAdminMetrics": {
     "title": "ブログ指標",
@@ -3966,5 +3996,39 @@
     "delete": "削除",
     "favorite": "お気に入りに追加",
     "unfavorite": "お気に入りを解除"
+  },
+  "linkReport": {
+    "title": "リンクを報告",
+    "lead": "kurl の短縮リンクがフィッシングやマルウェア、スパムにつながっていたら教えてください。アカウントは不要です。",
+    "linkLabel": "報告するリンク",
+    "linkHint": "受け取ったアドレスをそのまま貼り付けてください。",
+    "linkParsed": "<mono>kurl.me/{code}</mono> を報告します",
+    "linkInvalid": "kurl の短縮リンクが見つかりません。kurl.me/ の後ろのコードまで含まれているか確認してください。",
+    "reasonLegend": "何が問題ですか？",
+    "reasons": {
+      "PHISHING": "フィッシング・詐欺",
+      "MALWARE": "マルウェア",
+      "SPAM": "スパム・宣伝",
+      "SEXUAL": "性的なコンテンツ",
+      "COPYRIGHT": "著作権侵害",
+      "OTHER": "その他"
+    },
+    "appealNote": "誤って停止されたリンクの場合は「その他」を選んで事情をお書きください。",
+    "detailLabel": "詳しい状況（任意）",
+    "detailPlaceholder": "どこで受け取ったか、開くと何を求められるかを書いていただくと判断の助けになります。",
+    "submit": "報告を送信",
+    "doneTitle": "報告を受け付けました",
+    "doneBody": "確認のうえ、ポリシーに違反するリンクであれば停止します。",
+    "another": "別のリンクを報告",
+    "errors": {
+      "notFound": "kurl に存在しないリンクです。アドレスを確認してください。",
+      "duplicate": "このリンクはすでに報告済みです。確認をお待ちください。",
+      "rateLimited": "短時間に送信が多すぎます。1 分後にもう一度お試しください。",
+      "failed": "送信できませんでした。しばらくしてからもう一度お試しください。"
+    },
+    "afterTitle": "報告のあと",
+    "afterReview": "運営者が報告を確認し、ポリシーに違反するリンクを停止します。停止したリンクを開くと、遷移先の代わりに警告が表示されます。",
+    "afterPrivacy": "誰が報告したかをリンクの所有者に伝えることはありません。",
+    "afterReply": "個別の報告への返信はできません。"
   }
 }

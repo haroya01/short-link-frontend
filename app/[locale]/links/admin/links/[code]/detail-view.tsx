@@ -81,7 +81,10 @@ export function AdminLinkDetailView() {
       ) : data ? (
         <>
           <MetaCard meta={data.meta} />
-          <EnforcementCard meta={data.meta} />
+          <EnforcementCard
+            meta={data.meta}
+            onMetaChange={(meta) => setData((d) => (d ? { ...d, meta } : d))}
+          />
           <DetailStats stats={data.stats} />
         </>
       ) : null}

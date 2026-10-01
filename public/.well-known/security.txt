@@ -1,0 +1,4 @@
+Contact: https://kurl.me/en/report
+Expires: 2027-09-30T15:00:00.000Z
+Preferred-Languages: ko, en, ja
+Canonical: https://kurl.me/.well-known/security.txt

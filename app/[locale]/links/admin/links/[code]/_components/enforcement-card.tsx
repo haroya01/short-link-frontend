@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MessageSquareWarning, ShieldBan, ShieldCheck } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { blockDomain, getBlockedDomains, warnUser } from "@/lib/api";
+import { MessageSquareWarning, Power, PowerOff, ShieldBan, ShieldCheck } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import { blockDomain, getBlockedDomains, setAdminLinkDisabled, warnUser } from "@/lib/api";
 import { hostOf, isDomainCovered } from "@/lib/blocked-domains";
 import { Section } from "@/components/common/section";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,22 @@ import { Textarea } from "@/components/ui/textarea";
 import type { AdminLinkRow } from "@/types";
 
 /**
- * Enforcement actions for one link — block its destination domain (kills every link to it,
- * new and existing) and send the owner a terms-§7 warning through the notification inbox.
+ * Enforcement actions for one link, narrowest first — switch this one link off (visitors get the
+ * switched-off page), block its destination domain (kills every link to it, new and existing), and
+ * send the owner a terms-§7 warning through the notification inbox.
  */
-export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
+export function EnforcementCard({
+  meta,
+  onMetaChange,
+}: {
+  meta: AdminLinkRow;
+  onMetaChange: (meta: AdminLinkRow) => void;
+}) {
   const t = useTranslations("admin");
+  const format = useFormatter();
   const host = useMemo(() => hostOf(meta.originalUrl), [meta.originalUrl]);
+
+  const [switching, setSwitching] = useState(false);
 
   const [blocked, setBlocked] = useState<boolean | null>(null);
   const [blocking, setBlocking] = useState(false);
@@ -57,6 +67,26 @@ export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
     }
   }
 
+  async function handleSwitch(disable: boolean) {
+    if (switching) return;
+    const confirmKey = disable ? "enforce.linkDisableConfirm" : "enforce.linkEnableConfirm";
+    if (!window.confirm(t(confirmKey, { code: meta.shortCode }))) return;
+    setSwitching(true);
+    setError(null);
+    try {
+      await setAdminLinkDisabled(meta.shortCode, disable);
+      onMetaChange({
+        ...meta,
+        disabledReason: disable ? "ADMIN" : null,
+        disabledAt: disable ? new Date().toISOString() : null,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("enforce.failed"));
+    } finally {
+      setSwitching(false);
+    }
+  }
+
   async function handleWarn() {
     const text = message.trim();
     if (!text || meta.ownerId == null || sending) return;
@@ -75,6 +105,49 @@ export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
   return (
     <Section title={t("enforce.title")} description={t("enforce.subtitle")}>
       <div className="space-y-6">
+        <div className="space-y-2">
+          <p className="text-xs text-slate-500 dark:text-slate-400">{t("enforce.linkHint")}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            {meta.disabledReason ? (
+              <>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 dark:bg-red-500/10 dark:text-red-300">
+                  <PowerOff className="h-3.5 w-3.5" />
+                  {t("enforce.linkDisabled", {
+                    reason: t(`enforce.disabledReason.${meta.disabledReason}`),
+                    date: meta.disabledAt
+                      ? format.dateTime(new Date(meta.disabledAt), {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
+                      : "—",
+                  })}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void handleSwitch(false)}
+                  disabled={switching}
+                >
+                  <Power className="h-4 w-4" />
+                  {t("enforce.linkEnable")}
+                </Button>
+              </>
+            ) : (
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => void handleSwitch(true)}
+                disabled={switching}
+              >
+                <PowerOff className="h-4 w-4" />
+                {t("enforce.linkDisable")}
+              </Button>
+            )}
+          </div>
+        </div>
+
         <div className="flex flex-wrap items-center gap-3">
           {host ? (
             blocked ? (
