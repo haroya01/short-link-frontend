@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { serializeJsonLd } from "@/lib/json-ld";
+import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
@@ -12,6 +13,7 @@ import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
 import { ShareRow } from "./_components/share-row";
 import { THEME_TABLE } from "./_lib/theme";
 import { fetchProfile } from "./_lib/fetch-profile";
+import { oldHandleRedirect, type SearchParams } from "./_lib/old-handle-redirect";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { ArrowRight, BookOpen } from "lucide-react";
 
@@ -20,15 +22,31 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   "https://kurl.me";
 
+// 이 라우트에는 loading.tsx(Suspense)를 두지 않는다. 두면 셸이 HTTP 200 으로 먼저 나가, 여기서 던진
+// notFound()·redirect() 가 200 + noindex, 200 + meta refresh 로 바뀐다. Next 14.2 는 generateMetadata
+// 의 오류도 페이지 자리에서 다시 던지므로 메타데이터로 올려도 피할 수 없다. 옛 핸들은 백엔드가 30일
+// 동안만 지금 주인으로 풀고 그 뒤엔 다른 사람이 가질 수 있어 영구(308)로 보내지 않는다.
+async function loadProfile(
+  username: string,
+  locale: string,
+  searchParams: SearchParams,
+): Promise<PublicProfile> {
+  const profile = await fetchProfile(username);
+  if (!profile) notFound();
+  const target = oldHandleRedirect(await headers(), username, profile.username, locale, searchParams);
+  if (target) redirect(target);
+  return profile;
+}
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; username: string }>;
+  searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
   const { locale, username } = await params;
-  const profile = await fetchProfile(username).catch(() => null);
-  if (!profile) return { title: `@${username}` };
+  const profile = await loadProfile(username, locale, await searchParams);
   const entries = profile.entries ?? [];
   // og:image comes from ./opengraph-image.tsx (paper card: avatar + handle + bio, banner beside it).
   // Crawler caching note: KakaoTalk pins a scraped preview for ~24h — owners retest with Kakao's
@@ -53,30 +71,16 @@ export async function generateMetadata({
   };
 }
 
-// Phase E (subdomain 실제 동작) 검증 후 NEXT_PUBLIC_AUTHOR_SUBDOMAIN_REDIRECT=true 로 enable.
-// 그 전엔 /u/{username} 그대로 유지 — 안 그러면 visitors 가 dead URL 로 redirect 됨.
-// Decision: [[decisions/2026-05-29-product-surface-c-lite]]
-const AUTHOR_SUBDOMAIN_REDIRECT_ENABLED =
-  process.env.NEXT_PUBLIC_AUTHOR_SUBDOMAIN_REDIRECT === "true";
-
 export default async function PublicProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; username: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   const { locale, username } = await params;
-  if (AUTHOR_SUBDOMAIN_REDIRECT_ENABLED) {
-    redirect(`https://${username}.kurl.me/${locale}/`);
-  }
   const t = await getTranslations({ locale, namespace: "publicProfile" });
-  const profile = await fetchProfile(username);
-  if (!profile) notFound();
-  // Old-handle redirect: backend resolves the requested handle through history within the
-  // 30d grace window, returning the current owner. Surface it as a 308 to the canonical URL
-  // so old SNS bio links keep working without leaving stale handles in browser address bars.
-  if (profile.username.toLowerCase() !== username.toLowerCase()) {
-    redirect(`/${locale}/u/${profile.username}`);
-  }
+  const profile = await loadProfile(username, locale, await searchParams);
 
   const colors = THEME_TABLE[profile.theme ?? "default"];
   const profileUrl = `${SITE_URL}/${locale}/u/${profile.username}`;

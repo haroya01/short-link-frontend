@@ -50,15 +50,27 @@ function featuredEvent(): PublicProfileEntry {
   };
 }
 
-export function mockPublicProfile(username: string): PublicProfile {
+// 명함의 HTTP 상태를 확인할 때 쓰는 핸들. 이름을 바꾼 지 30일이 안 된 옛 핸들은 백엔드가 지금 주인의
+// 명함으로 풀어 주고, 없는 핸들에는 아무것도 주지 않는다.
+const RENAMED_HANDLES = new Map([["dohyun_old", "dohyun"]]);
+const MISSING_HANDLE = "missing_card";
+
+export function mockPublicProfile(username: string): PublicProfile | null {
+  if (username === MISSING_HANDLE) return null;
+  const current = RENAMED_HANDLES.get(username);
+  if (current) return demoProfile(current);
   if (username === "featured-event") {
-    const base = mockPublicProfile("dohyun");
+    const base = demoProfile("dohyun");
     return {
       ...base,
       username,
       entries: [...base.entries.map((e) => ({ ...e, highlighted: false })), featuredEvent()],
     };
   }
+  return demoProfile(username);
+}
+
+function demoProfile(username: string): PublicProfile {
   return {
     username,
     bio: "프로덕트 만들고 글 씁니다. 모든 링크는 여기에.",
