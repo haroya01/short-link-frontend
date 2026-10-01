@@ -15,11 +15,16 @@ function field(name: string): string[] {
 
 /** RFC 9116: Contact and Expires are required, Expires appears once, contact URIs are https. */
 describe("security.txt", () => {
-  it("names at least one https contact, and the report page is a real route rather than a short code", () => {
+  it("lists the vulnerability channel first, then the link report page", () => {
     const contacts = field("Contact");
-    expect(contacts.length).toBeGreaterThan(0);
     for (const contact of contacts) expect(contact.startsWith("https://")).toBe(true);
-    expect(contacts).toContain("https://kurl.me/en/report");
+    expect(contacts).toEqual([
+      "https://github.com/haroya01/short-link/security/advisories/new",
+      "https://kurl.me/en/report",
+    ]);
+  });
+
+  it("points at the report page as a real route rather than a short code", () => {
     expect(shortCodeOf("https://kurl.me/en/report")).toBeNull();
   });
 
