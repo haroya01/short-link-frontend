@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { linksHref } from "@/lib/host";
 import { routing } from "@/i18n/routing";
 import { SEO_FAQ_TITLE, SEO_PAGES, getSeoContent, getSeoPage, seoContentLocale } from "@/modules/marketing/seo-landing";
@@ -73,16 +73,12 @@ export default async function SeoLandingPage({
       />
 
       <header className="max-w-2xl">
-        <h1 className="text-balance text-headline-md font-bold leading-[1.15] tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
+        <h1 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {c.title}
         </h1>
-        <p className="mt-5 text-[17px] leading-relaxed text-slate-600 dark:text-slate-300">{c.intro}</p>
-        <a
-          href={ctaHref}
-          className="focus-ring mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800"
-        >
+        <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{c.intro}</p>
+        <a href={ctaHref} className={buttonVariants({ variant: "accent", size: "lg", className: "mt-8" })}>
           {c.cta}
-          <ArrowRight className="h-4 w-4" />
         </a>
       </header>
 
@@ -96,7 +92,7 @@ export default async function SeoLandingPage({
       </dl>
 
       <section className="mt-16">
-        <h2 className="text-headline-xs font-bold tracking-headline text-slate-900 dark:text-slate-100">
+        <h2 className="text-headline-xs font-semibold tracking-headline text-slate-900 dark:text-slate-100">
           {SEO_FAQ_TITLE[seoLocale]}
         </h2>
         <dl className="mt-6 space-y-6">
@@ -110,12 +106,8 @@ export default async function SeoLandingPage({
       </section>
 
       <div className="mt-16 border-t border-slate-200 pt-10 dark:border-slate-800">
-        <a
-          href={ctaHref}
-          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-800"
-        >
+        <a href={ctaHref} className={buttonVariants({ variant: "accent", size: "lg" })}>
           {c.cta}
-          <ArrowRight aria-hidden className="h-4 w-4" />
         </a>
       </div>
     </main>

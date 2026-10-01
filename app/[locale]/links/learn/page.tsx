@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { getTranslations } from "next-intl/server";
 import { marketingOg } from "@/lib/marketing-og";
@@ -64,10 +65,7 @@ export default async function LearnPage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd) }}
       />
       <header className="space-y-3">
-        <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
-          {t("eyebrow")}
-        </p>
-        <h1 className="text-balance text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-4xl">
+        <h1 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">{t("lead")}</p>
@@ -75,22 +73,15 @@ export default async function LearnPage({
 
       {sections.map((id) => (
         <section key={id} className="space-y-2">
-          <h2 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t(`${id}.q`)}</h2>
-          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          <h2 className="text-headline-xs font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t(`${id}.q`)}</h2>
+          <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
             {t(`${id}.a`)}
           </p>
         </section>
       ))}
 
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("ctaTitle")}</p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("ctaSubtitle")}</p>
-        </div>
-        <Link
-          href="/"
-          className="focus-ring inline-flex shrink-0 h-10 items-center justify-center rounded-lg bg-accent-700 px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
-        >
+      <div className="border-t border-slate-200 pt-10 dark:border-slate-800">
+        <Link href="/" className={buttonVariants({ variant: "accent", size: "lg" })}>
           {t("ctaButton")}
         </Link>
       </div>
