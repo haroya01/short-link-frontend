@@ -22,6 +22,7 @@ const PUBLIC: [string, string][] = [
   ["/ko/login", "로그인 · kurl"],
   ["/ko/about", "서비스 소개 · kurl"],
   ["/ko/terms", "이용약관 · kurl"],
+  ["/ko/report", "링크 신고 · kurl"],
   ["/ko/learn", "숏링크 · URL 단축 · 링크 인 바이오 가이드 · kurl"],
   ["/ko/use/free-url-shortener", "무료 URL 단축과 클릭 통계 · kurl"],
   ["/ko/stats/e2eTitle/public", "/e2eTitle · 공개 통계 · kurl"],

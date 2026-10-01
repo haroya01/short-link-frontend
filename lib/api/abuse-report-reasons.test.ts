@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  LINK_REASON_CODES,
   REASON_CODES,
   actionRequiresExpiry,
   availableActions,
@@ -14,6 +15,17 @@ describe("abuse report reasons", () => {
       "SPAM",
       "HARASSMENT",
       "VIOLENCE",
+      "SEXUAL",
+      "COPYRIGHT",
+      "OTHER",
+    ]);
+  });
+
+  it("leads the link report with the harms of opening a link, other last", () => {
+    expect([...LINK_REASON_CODES]).toEqual([
+      "PHISHING",
+      "MALWARE",
+      "SPAM",
       "SEXUAL",
       "COPYRIGHT",
       "OTHER",
@@ -39,9 +51,14 @@ describe("availableActions", () => {
     expect(availableActions("USER")).toEqual(["SUSPEND_USER", "BAN_USER"]);
   });
 
-  it("drops the takedown once the post/comment is already removed", () => {
+  it("offers only switching off for a link", () => {
+    expect(availableActions("LINK")).toEqual(["DISABLE_LINK"]);
+  });
+
+  it("drops the takedown once the post/comment/link is already removed", () => {
     expect(availableActions("POST", { subjectRemoved: true })).toEqual([]);
     expect(availableActions("COMMENT", { subjectRemoved: true })).toEqual([]);
+    expect(availableActions("LINK", { subjectRemoved: true })).toEqual([]);
   });
 
   it("keeps suspend/ban available even after a user's content is gone", () => {
@@ -58,5 +75,6 @@ describe("actionRequiresExpiry", () => {
     expect(actionRequiresExpiry("BAN_USER")).toBe(false);
     expect(actionRequiresExpiry("UNPUBLISH_POST")).toBe(false);
     expect(actionRequiresExpiry("DELETE_COMMENT")).toBe(false);
+    expect(actionRequiresExpiry("DISABLE_LINK")).toBe(false);
   });
 });

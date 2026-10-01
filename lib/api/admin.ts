@@ -8,6 +8,7 @@ import type {
   AdminLinkMetric,
   AdminLinkMetricsSort,
   AdminLinkMetricsWindow,
+  AdminLinkModerationResult,
   AdminLinkSort,
   AdminLinksPage,
   AdminOutcomeDistribution,
@@ -133,6 +134,17 @@ export async function getAdminLinkDetail(code: string): Promise<AdminLinkDetail>
   return request<AdminLinkDetail>(`/api/v1/admin/links/${encodeURIComponent(code)}`, {
     method: "GET",
   });
+}
+
+/** Switch one link off (visitors get the switched-off page instead of the destination) or back on. */
+export async function setAdminLinkDisabled(
+  code: string,
+  disabled: boolean,
+): Promise<AdminLinkModerationResult> {
+  return request<AdminLinkModerationResult>(
+    `/api/v1/admin/links/${encodeURIComponent(code)}/${disabled ? "disable" : "enable"}`,
+    { method: "POST" },
+  );
 }
 
 export async function getBlockedDomains(): Promise<BlockedDomain[]> {

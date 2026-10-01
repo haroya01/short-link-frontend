@@ -5,7 +5,7 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 const reportMocks: typeof import("./abuse-reports-mock-data") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./abuse-reports-mock-data") : null;
 
-export type AbuseSubjectType = "POST" | "USER" | "COMMENT";
+export type AbuseSubjectType = "POST" | "USER" | "COMMENT" | "LINK";
 
 export type AbuseReportStatus = "OPEN" | "REVIEWING" | "RESOLVED" | "REJECTED";
 
@@ -22,6 +22,8 @@ export type AbuseReasonCode =
   | "VIOLENCE"
   | "SEXUAL"
   | "COPYRIGHT"
+  | "PHISHING"
+  | "MALWARE"
   | "OTHER";
 
 /**
@@ -32,7 +34,8 @@ export type AbuseAction =
   | "UNPUBLISH_POST"
   | "DELETE_COMMENT"
   | "SUSPEND_USER"
-  | "BAN_USER";
+  | "BAN_USER"
+  | "DISABLE_LINK";
 
 export interface AbuseReportView {
   id: number;
@@ -61,7 +64,11 @@ export interface AbuseReportView {
    * the queue without opening each one. Optional; absent on older payloads.
    */
   subjectExcerpt?: string | null;
-  /** True once the reported subject has been removed (post unpublished / comment deleted). */
+  /**
+   * True once the reported subject has been removed (post unpublished / comment deleted / link switched
+   * off). For a LINK the snapshot carries the short code as `subjectTitle` and the destination as
+   * `subjectExcerpt` — never as `subjectUrl`, so the queue can't send a moderator to a phishing page.
+   */
   subjectRemoved?: boolean;
 }
 
@@ -81,6 +88,16 @@ export async function submitAbuseReport(payload: {
   await request("/api/v1/public/abuse-reports", { method: "POST", body: payload });
 }
 
+/** Public, no account needed. `link` is sent as pasted; an unknown short code answers SUBJECT_NOT_FOUND. */
+export async function submitLinkAbuseReport(payload: {
+  link: string;
+  reasonCode: AbuseReasonCode;
+  detail?: string;
+}): Promise<void> {
+  if (USE_MOCKS) return Promise.resolve();
+  await request("/api/v1/public/abuse-reports/links", { method: "POST", body: payload });
+}
+
 /** Admin only. */
 export async function listAbuseReports(status?: AbuseReportStatus): Promise<AbuseReportView[]> {
   if (reportMocks) {
@@ -94,8 +111,8 @@ export async function listAbuseReports(status?: AbuseReportStatus): Promise<Abus
 
 /**
  * Admin only. Resolves a report and, optionally, applies an enforcement `action` in the same call
- * (backend #611): `UNPUBLISH_POST`, `DELETE_COMMENT`, `SUSPEND_USER` (needs `suspendUntil`) or
- * `BAN_USER`. Omitting `action` records the status change alone — "reviewed, no violation".
+ * (backend #611): `UNPUBLISH_POST`, `DELETE_COMMENT`, `SUSPEND_USER` (needs `suspendUntil`),
+ * `BAN_USER` or `DISABLE_LINK`. Omitting `action` records the status change alone — "reviewed, no violation".
  */
 export async function resolveAbuseReport(
   id: number,
@@ -110,8 +127,11 @@ export async function resolveAbuseReport(
   if (reportMocks) {
     const base = reportMocks.MOCK_REPORTS.find((r) => r.id === id);
     const now = new Date().toISOString();
-    // Mirror the backend: an UNPUBLISH_POST / DELETE_COMMENT action removes the subject.
-    const removes = payload.action === "UNPUBLISH_POST" || payload.action === "DELETE_COMMENT";
+    // Mirror the backend: an UNPUBLISH_POST / DELETE_COMMENT / DISABLE_LINK action removes the subject.
+    const removes =
+      payload.action === "UNPUBLISH_POST" ||
+      payload.action === "DELETE_COMMENT" ||
+      payload.action === "DISABLE_LINK";
     return Promise.resolve({
       id,
       reporterUserId: base?.reporterUserId ?? null,

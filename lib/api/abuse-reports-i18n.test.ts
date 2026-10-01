@@ -5,7 +5,7 @@ import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import vi from "@/messages/vi.json";
-import { REASON_CODES } from "./abuse-report-reasons";
+import { LINK_REASON_CODES, REASON_CODES } from "./abuse-report-reasons";
 import type { AbuseAction } from "./abuse-reports";
 
 /**
@@ -22,6 +22,7 @@ const ENFORCEMENT_ACTIONS: AbuseAction[] = [
   "DELETE_COMMENT",
   "SUSPEND_USER",
   "BAN_USER",
+  "DISABLE_LINK",
 ];
 
 const RESOLVE_ERROR_CODES = [
@@ -38,6 +39,7 @@ describe("abuse-report i18n coverage", () => {
   for (const [name, dict] of Object.entries(LOCALES)) {
     describe(name, () => {
       const publicPost = (dict as { publicPost: { reasons: Record<string, string> } }).publicPost;
+      const linkReport = (dict as { linkReport: { reasons: Record<string, string> } }).linkReport;
       const abuse = (dict as {
         abuseReports: {
           reasons: Record<string, string>;
@@ -45,6 +47,9 @@ describe("abuse-report i18n coverage", () => {
           actionConfirm: Record<string, string>;
           suspendDaysPrompt: string;
           suspendDaysInvalid: string;
+          subjectType: Record<string, string>;
+          removedLink: string;
+          destination: string;
         };
       }).abuseReports;
       const errors = (dict as { errors: Record<string, string> }).errors;
@@ -57,6 +62,19 @@ describe("abuse-report i18n coverage", () => {
         });
       }
 
+      for (const code of LINK_REASON_CODES) {
+        it(`labels link reason ${code} in the link report form and the queue, identically`, () => {
+          expect(nonEmptyString(linkReport.reasons[code])).toBe(true);
+          expect(linkReport.reasons[code]).toBe(abuse.reasons[code]);
+        });
+      }
+
+      it("names a LINK subject, its switched-off badge and its destination in the queue", () => {
+        expect(nonEmptyString(abuse.subjectType.LINK)).toBe(true);
+        expect(nonEmptyString(abuse.removedLink)).toBe(true);
+        expect(nonEmptyString(abuse.destination)).toBe(true);
+      });
+
       for (const action of ENFORCEMENT_ACTIONS) {
         it(`labels enforcement action ${action}`, () => {
           expect(nonEmptyString(abuse.action[action])).toBe(true);
@@ -64,7 +82,7 @@ describe("abuse-report i18n coverage", () => {
       }
 
       it("keeps a confirm prompt for every destructive action (suspend uses a day prompt)", () => {
-        for (const action of ["UNPUBLISH_POST", "DELETE_COMMENT", "BAN_USER"]) {
+        for (const action of ["UNPUBLISH_POST", "DELETE_COMMENT", "BAN_USER", "DISABLE_LINK"]) {
           expect(nonEmptyString(abuse.actionConfirm[action])).toBe(true);
         }
         expect(nonEmptyString(abuse.suspendDaysPrompt)).toBe(true);
