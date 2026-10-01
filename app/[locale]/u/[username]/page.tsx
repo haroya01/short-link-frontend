@@ -69,6 +69,8 @@ export default async function PublicProfilePage({
     redirect(`https://${username}.kurl.me/${locale}/`);
   }
   const t = await getTranslations({ locale, namespace: "publicProfile" });
+  // This segment must not have a loading.tsx: a loading boundary flushes a 200 shell before this
+  // notFound() runs, and anything.kurl.me would answer 200 instead of 404.
   const profile = await fetchProfile(username);
   if (!profile) notFound();
   // Old-handle redirect: backend resolves the requested handle through history within the
