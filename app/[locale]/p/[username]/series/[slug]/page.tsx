@@ -8,6 +8,7 @@ import { ArrowRight, Layers } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -140,7 +141,7 @@ export default async function PublicSeriesPage({
       {author.bio && (
         <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{author.bio}</p>
       )}
-      <FollowButton username={author.username} initialFollowerCount={0} compact />
+      <FollowButton username={author.username} initialFollowerCount={0} compact quiet />
       <BlogLink
         href={authorHref(author.username, locale, "series")}
         className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-500 dark:text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
@@ -160,7 +161,10 @@ export default async function PublicSeriesPage({
           {/* Title + subscribe on one row — 구독 is the series equivalent of following the author
               (author follow lives in the rail), so it sits with the series identity, not buried. */}
           <div className="mt-1.5 flex items-start justify-between gap-4">
-            <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+            <h1
+              lang={contentLang(series.title, posts[0]?.languageTag)}
+              className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md"
+            >
               {series.title}
             </h1>
             <div className="mt-1 shrink-0">
@@ -192,7 +196,7 @@ export default async function PublicSeriesPage({
               else mobile readers can 구독 the series but never follow the author or reach their other
               series. Hidden on xl where the rail carries it. */}
           <div className="mt-4 flex flex-wrap items-center gap-3 xl:hidden">
-            <FollowButton username={author.username} initialFollowerCount={0} compact />
+            <FollowButton username={author.username} initialFollowerCount={0} compact quiet />
             <BlogLink
               href={authorHref(author.username, locale, "series")}
               className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-500 dark:text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"

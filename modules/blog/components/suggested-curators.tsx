@@ -56,7 +56,7 @@ export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit
                 </span>
               </span>
             </BlogLink>
-            <FollowButton username={author.username} initialFollowerCount={0} showCount={false} compact />
+            <FollowButton username={author.username} initialFollowerCount={0} showCount={false} compact quiet />
           </li>
         ))}
       </ul>

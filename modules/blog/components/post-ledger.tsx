@@ -2,6 +2,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 function seoulParts(iso: string): { year: string; month: string; day: string } {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -67,7 +68,10 @@ export function PostLedger({
                     >
                       {month}.{day}
                     </time>
-                    <span className="min-w-0 flex-1 text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+                    <span
+                      lang={contentLang(post.title, post.languageTag)}
+                      className="min-w-0 flex-1 text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400"
+                    >
                       {post.title}
                     </span>
                   </BlogLink>

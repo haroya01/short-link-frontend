@@ -4,6 +4,7 @@ import { Layers } from "lucide-react";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
@@ -51,10 +52,13 @@ export async function SeriesFeedCard({
           <Layers aria-hidden className="h-3 w-3 shrink-0" />
           {t("seriesEyebrow")}
         </BlogLink>
-        <SeriesSubscribeButton seriesId={series.id} />
+        <SeriesSubscribeButton seriesId={series.id} quiet />
       </div>
       <BlogLink href={seriesUrl} className="focus-ring group/title mt-1 block rounded">
-        <h3 className="line-clamp-2 text-card-title-lg font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400">
+        <h3
+          lang={contentLang(series.title)}
+          className="line-clamp-2 text-card-title-lg font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400"
+        >
           {series.title}
         </h3>
       </BlogLink>

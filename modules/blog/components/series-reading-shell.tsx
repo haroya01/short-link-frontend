@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
@@ -113,15 +114,8 @@ export function SeriesReadingShell({
   const toggle = (f: NonNullable<Filter>) => setFilter((cur) => (cur?.kind === f.kind && cur.value === f.value ? null : f));
   const filterKey = filter ? `${filter.kind}:${filter.value}` : "all";
 
-  // Tag chip — replicates the TagChip recipe exactly so it reads identically to the author rail, but
-  // as a button (client filter, no nav). Count hidden on the active chip, like TagChip.
-  const chipCls = (active: boolean) =>
-    cn(
-      "focus-ring inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors",
-      active
-        ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-        : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100",
-    );
+  // Tag filter — the author rail's "#tag count" text links (RailTagList), as buttons because this one
+  // filters in place instead of navigating.
   const renderTagChip = ([tag, count]: readonly [string, number]) => {
     const active = isActive({ kind: "tag", value: tag });
     return (
@@ -130,10 +124,15 @@ export function SeriesReadingShell({
           type="button"
           onClick={() => toggle({ kind: "tag", value: tag })}
           aria-pressed={active}
-          className={chipCls(active)}
+          className={cn(
+            "focus-ring rounded-sm transition-colors",
+            active
+              ? "font-semibold text-slate-900 dark:text-slate-100"
+              : "text-slate-700 hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400",
+          )}
         >
-          <span>{tag}</span>
-          {!active && <span className="text-slate-600 dark:text-slate-400">{count}</span>}
+          #{tag}
+          <span className="ml-1 tabular-nums text-slate-500 dark:text-slate-400">{count}</span>
         </button>
       </li>
     );
@@ -156,7 +155,7 @@ export function SeriesReadingShell({
       {tags.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railTags")}</RailHeading>
-          <ul className="flex flex-wrap gap-2">{tags.slice(0, TAG_CAP).map(renderTagChip)}</ul>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-2 text-[13px]">{tags.slice(0, TAG_CAP).map(renderTagChip)}</ul>
           {tags.length > TAG_CAP && (
             <>
               {/* The overflow chips animate open/closed via the grid 0fr↔1fr trick (height auto, both
@@ -167,7 +166,7 @@ export function SeriesReadingShell({
                 }`}
               >
                 <div className="overflow-hidden">
-                  <ul className="flex flex-wrap gap-2 pt-2">{tags.slice(TAG_CAP).map(renderTagChip)}</ul>
+                  <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-2 pt-1.5 text-[13px]">{tags.slice(TAG_CAP).map(renderTagChip)}</ul>
                 </div>
               </div>
               <button
@@ -261,20 +260,26 @@ export function SeriesReadingShell({
                   <SeriesIndex n={n} className="mt-1 shrink-0 text-[14px]" />
                   {/* No-image rows reserve a right gutter so the title never runs under the save toggle. */}
                   <span className={`min-w-0 flex-1 ${hasImage ? "" : "pr-9"}`}>
-                    <span className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
+                    <span
+                      lang={contentLang(p.title, p.languageTag)}
+                      className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400"
+                    >
                       {p.title}
                     </span>
                     <span className="mt-1 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                       <time dateTime={p.publishedAt}>{fmtDate(p.publishedAt)}</time>
                     </span>
                     {p.excerpt && (
-                      <span className="mt-1.5 line-clamp-2 block text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
+                      <span
+                        lang={contentLang(p.excerpt, p.languageTag)}
+                        className="mt-1.5 line-clamp-2 block text-[14px] leading-relaxed text-slate-500 dark:text-slate-400"
+                      >
                         {p.excerpt}
                       </span>
                     )}
                   </span>
                   {hasImage && (
-                    <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
+                    <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 sm:h-24 sm:w-32">
                       <CoverThumb
                         src={p.ogImageUrl as string}
                         sizes="(min-width: 640px) 128px, 80px"
@@ -285,7 +290,7 @@ export function SeriesReadingShell({
                 </BlogLink>
                 {/* Save toggle — sibling of the post link (never nested), pinned to the row's top-right. */}
                 <div className="absolute right-3 top-4 z-10">
-                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} />
+                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} overImage={hasImage} />
                 </div>
               </li>
             );

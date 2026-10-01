@@ -7,11 +7,12 @@ import { ArrowRight } from "lucide-react";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { TagChip } from "@/modules/blog/components/tag-chip";
+import { RailTagList } from "@/modules/blog/components/rail-tag-list";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 
 export const revalidate = 30;
@@ -104,19 +105,7 @@ export default async function PublicSeriesIndexPage({
           tags.length > 0 ? (
             <section>
               <RailHeading className="mb-3">{t("railTags")}</RailHeading>
-              <ul className="flex flex-wrap gap-2">
-                {tags.map(([tag, count]) => (
-                  <li key={tag}>
-                    <TagChip
-                      href={tagHref(tag)}
-                      label={tag}
-                      count={count}
-                      active={tag === activeTag}
-                      ariaCurrent={tag === activeTag ? "true" : undefined}
-                    />
-                  </li>
-                ))}
-              </ul>
+              <RailTagList tags={tags} hrefFor={tagHref} activeTag={activeTag} />
             </section>
           ) : undefined
         }
@@ -159,7 +148,10 @@ export default async function PublicSeriesIndexPage({
                 >
                   <SeriesIndex n={i + 1} className="text-[13px]" />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[18px] font-semibold tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+                    <span
+                      lang={contentLang(s.title)}
+                      className="block truncate text-[18px] font-semibold tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400"
+                    >
                       {s.title}
                     </span>
                     <span className="mt-0.5 block text-[13px] text-slate-500 dark:text-slate-400">

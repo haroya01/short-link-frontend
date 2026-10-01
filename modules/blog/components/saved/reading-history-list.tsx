@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -154,12 +155,18 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
             >
               <Avatar src={item.avatarUrl} name={item.username} size="sm" />
               <span className="flex min-w-0 flex-col">
-                <span className="truncate text-[15px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200">
+                <span
+                  lang={contentLang(item.title)}
+                  className="truncate text-[15px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200"
+                >
                   {item.title}
                 </span>
                 <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">@{item.username}</span>
                 {item.excerpt && (
-                  <span className="mt-0.5 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400">
+                  <span
+                    lang={contentLang(item.excerpt)}
+                    className="mt-0.5 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400"
+                  >
                     {item.excerpt}
                   </span>
                 )}

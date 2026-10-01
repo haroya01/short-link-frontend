@@ -19,10 +19,13 @@ export function FeedCardBookmark({
   postId,
   username,
   slug,
+  overImage = false,
 }: {
   postId: number;
   username: string;
   slug: string;
+  /** The row has a thumbnail under the button's corner — give the icon an opaque chip to sit on. */
+  overImage?: boolean;
 }) {
   const t = useTranslations("publicFeed");
   const { isSaved, toggle } = useBookmarks();
@@ -42,11 +45,13 @@ export function FeedCardBookmark({
       aria-pressed={saved}
       aria-label={saved ? t("bookmarkOn") : t("bookmark")}
       title={saved ? t("bookmarkOn") : t("bookmark")}
-      // A faint translucent chip keeps the icon legible when the card has a thumbnail and the button
-      // sits over it; over plain text rows the chip is all but invisible on the card background.
       // Reveal 은 300ms --ease 페이드 + 0.9→1 스케일의 잔잔한 떠오름 — 전 속성 전환(all) 기본 150ms 는
       // 흰 칩이 hover 순간 탁 켜져 난폭하게 읽혔다.
-      className={`grid h-8 w-8 place-items-center rounded-lg bg-white/70 text-slate-600 shadow-sm ring-1 ring-white/50 backdrop-blur-md transition-[opacity,transform,background-color,color] duration-300 ease-[var(--ease)] hover:bg-accent-50 hover:text-accent-700 focus-ring motion-reduce:transform-none dark:bg-slate-900/55 dark:text-slate-300 dark:ring-white/10 dark:hover:bg-accent-500/15 dark:hover:text-accent-300 ${
+      className={`grid h-8 w-8 place-items-center rounded-lg text-slate-600 transition-[opacity,transform,background-color,color] duration-300 ease-[var(--ease)] hover:text-accent-700 focus-ring motion-reduce:transform-none dark:text-slate-300 dark:hover:text-accent-300 ${
+        overImage
+          ? "bg-white ring-1 ring-slate-200 hover:bg-accent-50 dark:bg-slate-900 dark:ring-slate-700 dark:hover:bg-slate-800"
+          : "hover:bg-accent-50 dark:hover:bg-accent-500/15"
+      } ${
         saved
           ? "scale-100 text-accent-600 opacity-100 dark:text-accent-400"
           : "scale-90 opacity-0 focus-visible:scale-100 focus-visible:opacity-100 group-hover:scale-100 group-hover:opacity-100 [@media(hover:none)]:scale-100 [@media(hover:none)]:opacity-100"

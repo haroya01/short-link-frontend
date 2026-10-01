@@ -7,6 +7,7 @@ import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
 
@@ -195,7 +196,10 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                         {item.tags[0]}
                       </span>
                     )}
-                    <span className="line-clamp-1 text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+                    <span
+                      lang={contentLang(item.title, item.languageTag)}
+                      className="line-clamp-1 text-[13px] font-semibold text-slate-900 dark:text-slate-100"
+                    >
                       {item.title}
                     </span>
                     <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">

@@ -2,8 +2,10 @@ import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { RailTagList } from "@/modules/blog/components/rail-tag-list";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 const MAX_TAGS = 12;
@@ -55,7 +57,10 @@ export async function AuthorRail({
                   href={authorHref(username, locale, `series/${s.slug}`)}
                   className="group flex items-baseline justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
                 >
-                  <span className="truncate text-[14px] font-medium text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
+                  <span
+                    lang={contentLang(s.title)}
+                    className="truncate text-[14px] font-medium text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100"
+                  >
                     {s.title}
                   </span>
                   <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
@@ -71,24 +76,7 @@ export async function AuthorRail({
       {tags.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railTags")}</RailHeading>
-          <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-2 text-[13px]">
-            {tags.map(([tag, count]) => (
-              <li key={tag}>
-                <BlogLink
-                  href={tagHref(tag)}
-                  aria-current={tag === activeTag ? "true" : undefined}
-                  className={`focus-ring rounded-sm transition-colors ${
-                    tag === activeTag
-                      ? "font-semibold text-slate-900 dark:text-slate-100"
-                      : "text-slate-700 hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
-                  }`}
-                >
-                  #{tag}
-                  <span className="ml-1 tabular-nums text-slate-500 dark:text-slate-400">{count}</span>
-                </BlogLink>
-              </li>
-            ))}
-          </ul>
+          <RailTagList tags={tags} hrefFor={tagHref} activeTag={activeTag} />
         </section>
       )}
 

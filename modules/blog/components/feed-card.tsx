@@ -12,6 +12,7 @@ import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 function formatDate(iso: string, locale: string): string {
   // A weblog reads by recency, so the year is usually noise — "5월 30일" / "May 30". The full date
@@ -102,7 +103,7 @@ function SeriesLine({
     >
       <Layers aria-hidden className="h-3.5 w-3.5 shrink-0" />
       <span className="truncate">
-        {t("seriesEyebrow")} · {series.title}
+        {t("seriesEyebrow")} · <span lang={contentLang(series.title, item.languageTag)}>{series.title}</span>
       </span>
       <span aria-hidden>·</span>
       <span className="shrink-0 tabular-nums">{t("seriesEpisodeCount", { count: series.postCount })}</span>
@@ -244,6 +245,7 @@ export function FeedCard({
               )
             )}
             <h2
+              lang={contentLang(item.title, item.languageTag)}
               className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
                 featured
                   ? "text-card-title-2xl tracking-headline sm:text-card-title-3xl sm:leading-[1.18]"
@@ -254,6 +256,7 @@ export function FeedCard({
             </h2>
             {item.excerpt && (
               <p
+                lang={contentLang(item.excerpt, item.languageTag)}
                 className={`mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 ${
                   featured ? "line-clamp-2 sm:line-clamp-3" : "line-clamp-2"
                 }`}
@@ -276,7 +279,7 @@ export function FeedCard({
             tabIndex={-1}
             data-bhv="post"
             data-bhv-id={`${item.author.username}/${item.slug}`}
-            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 ${
+            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >
@@ -296,7 +299,7 @@ export function FeedCard({
         // Pinned to the whole card's top-right so it's in the same spot on every row regardless of
         // whether the row has a thumbnail. Sibling of the post links (never nested in an <a>).
         <div className="absolute right-3 top-4 z-10">
-          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} overImage={hasImage} />
         </div>
       )}
     </li>

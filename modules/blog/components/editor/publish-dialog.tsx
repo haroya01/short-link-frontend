@@ -327,7 +327,7 @@ export function PublishDialog({
                   </p>
                 </div>
                 {cover && (
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 sm:h-24 sm:w-32">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={cover} alt="" className="h-full w-full object-cover" />
                   </div>

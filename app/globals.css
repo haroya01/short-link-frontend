@@ -206,12 +206,17 @@ h1, h2, h3, p {
   word-break: keep-all;
 }
 
-/* ja 활자 = Pretendard JP 우선(레이아웃이 ja 로케일에서만 스타일시트를 싣는다). KR판 단독으로는
- * 일본 신자체 한자가 글자 단위로 시스템 폴백에 떨어져 자형이 섞였다. JP판은 동일 파운드리·동일
- * 메트릭이라 자형만 일본화한다. 폴백 체인도 일본어 시스템 고딕을 앞세운다. */
 :lang(ja) {
   word-break: normal;
   word-break: auto-phrase;
+}
+
+/* ja 활자 = Pretendard JP 우선(레이아웃이 ja 로케일에서만 스타일시트를 싣는다). KR판 단독으로는
+ * 일본 신자체 한자가 글자 단위로 시스템 폴백에 떨어져 자형이 섞였다. JP판은 동일 파운드리·동일
+ * 메트릭이라 자형만 일본화한다. 폴백 체인도 일본어 시스템 고딕을 앞세운다.
+ * 셀렉터는 lang 속성을 단 요소(html·글·목록 제목)뿐이고 그 아래는 상속이다. :lang(ja) 로 요소마다
+ * 찍으면 font-mono 유틸과 코드 하이라이트 토큰을 덮어 일본어 화면에서 고정폭이 사라진다. */
+[lang|="ja"] {
   font-family: "Pretendard JP Variable", "Pretendard Variable", Pretendard, ui-sans-serif,
     system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
     "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
@@ -1259,21 +1264,6 @@ html[data-auth-hint] [data-auth-slot="anon"] {
 /* Share controls open the OS share sheet only; html[data-share] (pre-paint) says one exists. */
 html:not([data-share]) [data-share-only] {
   display: none;
-}
-
-/*
- * Root 404 locale pick (app/not-found.tsx). The page is fully static — all three locale copies are
- * in the DOM and the page's pre-paint script flags <html data-nf-locale> from the NEXT_LOCALE
- * cookie (no flag = ko). Reading the cookie server-side opted the WHOLE app out of static
- * rendering, because the root not-found boundary renders into every page tree.
- */
-[data-nf] {
-  display: none;
-}
-html:not([data-nf-locale]) [data-nf="ko"],
-html[data-nf-locale="en"] [data-nf="en"],
-html[data-nf-locale="ja"] [data-nf="ja"] {
-  display: block;
 }
 
 /*
