@@ -42,6 +42,9 @@ export interface NotificationItem {
   postSlug: string | null;
   postTitle: string | null;
   postAuthorUsername: string | null;
+  /** The spot inside the post — absent on notifications recorded before the backend carried it. */
+  commentId?: number | null;
+  highlightId?: number | null;
   seriesId: number | null;
   seriesSlug: string | null;
   seriesTitle: string | null;
