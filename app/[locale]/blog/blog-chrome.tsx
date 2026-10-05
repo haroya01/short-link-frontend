@@ -22,6 +22,7 @@ import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 // browse. stripLocale also drops the /blog (prod rewrite) or /blog-preview (dev) prefix.
 const WORKSPACE_PATHS = [
   "/write",
+  "/notes",
   "/posts",
   "/drafts",
   "/series",

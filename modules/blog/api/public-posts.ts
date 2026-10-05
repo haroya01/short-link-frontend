@@ -176,7 +176,7 @@ export type FetchResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 404 | 410 | "error" };
 
-async function fetchPublic<T>(
+export async function fetchPublic<T>(
   path: string,
   opts?: { noStore?: boolean },
 ): Promise<FetchResult<T>> {

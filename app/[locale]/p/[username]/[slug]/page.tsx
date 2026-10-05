@@ -22,6 +22,7 @@ import { ArticleBody, extractHeadings, readingMinutes } from "../_components/pos
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
+import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
 import { PostEdges } from "@/modules/blog/components/post-edges";
@@ -436,6 +437,7 @@ export default async function PublicPostPage({
             <BookmarkButton postId={post.id} />
             <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+            <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
             <ReportButton subjectType="POST" subjectId={post.id} ownerUsername={author.username} leadingRule />
           </div>
         </div>

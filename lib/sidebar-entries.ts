@@ -22,6 +22,7 @@ export function buildBlogSections(
         // 독자용 글 상세 섹션으로도 들어간다. 그 진입점들은 그대로 두고, 사이드바에도 직접 진입점을 둔다.
         // "글 안 링크"는 분석 안의 라벨된 섹션으로 흡수돼 별도 항목을 두지 않는다(중복 제거).
         { href: "/write", label: tBlog("myPosts") },
+        { href: "/notes", label: tBlog("notes") },
         { href: "/analytics", label: tBlog("analytics") },
         { href: "/leads", label: tBlog("leads") },
         { href: "/curation", label: tBlog("curation") },
