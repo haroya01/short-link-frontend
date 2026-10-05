@@ -190,6 +190,19 @@ export function findQuoteTarget(
     ?.node.parentElement ?? null;
 }
 
+/** `?highlightId=` alone (a notification) takes its quote from that highlight. Quote-only legacy links
+ *  focus a highlight only when the quote is unambiguous. */
+export function resolveDeepLink<H extends { id: number; quote: string }>(
+  params: URLSearchParams, highlights: H[],
+): { quote: string; focused: H | undefined; matches: H[] } | null {
+  const id = Number(params.get("highlightId"));
+  const exact = Number.isSafeInteger(id) && id > 0 ? highlights.find((h) => h.id === id) : undefined;
+  const quote = params.get("hl") ?? exact?.quote;
+  if (!quote) return null;
+  const matches = highlights.filter((h) => h.quote === quote);
+  return { quote, focused: exact ?? (matches.length === 1 ? matches[0] : undefined), matches };
+}
+
 /** DOM Range endpoints can be text nodes or element boundaries (keyboard/select-all). */
 export function readHighlightSelection(root: HTMLElement): HighlightSpan | null {
   const selection = root.ownerDocument.defaultView?.getSelection();
