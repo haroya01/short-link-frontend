@@ -55,3 +55,13 @@ test("a comment notification links to its comment", async ({ page }) => {
     timeout: 15_000,
   });
 });
+
+test("a comment in the library's 'my comments' links to that comment", async ({ page }) => {
+  await page.goto("/en/blog/curation");
+  const section = page.getByRole("button", { name: /My comments/ });
+  await section.click();
+
+  await expect(
+    page.locator('a[href$="/nextjs-14-app-router-blog#comment-9101"]').first(),
+  ).toBeVisible({ timeout: 15_000 });
+});
