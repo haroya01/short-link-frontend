@@ -91,21 +91,44 @@ export function PostComments({
     void load();
   }, [load]);
 
-  // Rows render after the fetch, so the browser's own `#comment-<id>` jump has nothing to land on.
+  // Rows render after the fetch, so the browser's own `#comment-<id>` jump has nothing to land on. Rails
+  // above the comments can still load after the jump and push the row out of view — re-aim twice unless
+  // the reader has started moving on their own.
   useEffect(() => {
     if (!loaded || focusedRef.current) return;
     const match = /^#comment-(\d+)$/.exec(window.location.hash);
     if (!match) return;
-    focusedRef.current = true;
     const id = Number(match[1]);
     const reduceMotion =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-    const target = document.getElementById(`comment-${id}`);
-    (target ?? document.getElementById("comments"))?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: target ? "center" : "start",
-    });
-    if (target) setFlashId(id);
+    const aim = () => {
+      const target = document.getElementById(`comment-${id}`);
+      (target ?? document.getElementById("comments"))?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: target ? "center" : "start",
+      });
+      return target != null;
+    };
+    const inputs = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+    const timers: number[] = [];
+    const release = () => {
+      focusedRef.current = true;
+      timers.forEach((t) => window.clearTimeout(t));
+      inputs.forEach((e) => window.removeEventListener(e, release));
+    };
+    inputs.forEach((e) => window.addEventListener(e, release, { passive: true }));
+    if (aim()) setFlashId(id);
+    timers.push(window.setTimeout(aim, 500));
+    timers.push(
+      window.setTimeout(() => {
+        aim();
+        release();
+      }, 1300),
+    );
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      inputs.forEach((e) => window.removeEventListener(e, release));
+    };
   }, [loaded]);
 
   useEffect(() => {
