@@ -20,7 +20,8 @@ export default async function ProfileOgImage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const profile = await fetchProfile(username).catch(() => null);
+  const result = await fetchProfile(username);
+  const profile = result.ok ? result.data : null;
   const handle = profile?.username ?? username;
   const bio = profile?.bio ? clip(profile.bio, 40) : null;
   const [avatar, banner] = await Promise.all([
@@ -89,6 +90,11 @@ export default async function ProfileOgImage({
         )}
       </div>
     ),
-    { ...size, fonts: await ogFonts(`@${handle} ${bio ?? ""}`) },
+    {
+      ...size,
+      fonts: await ogFonts(`@${handle} ${bio ?? ""}`),
+      // ImageResponse 기본값은 1년 immutable 이고 options.headers 를 소문자 키 위에 덮는다.
+      ...(profile ? {} : { headers: { "cache-control": "no-store" } }),
+    },
   );
 }

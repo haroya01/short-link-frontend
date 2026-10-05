@@ -5,14 +5,13 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
 import { ProfileShareFab } from "@/modules/profile/components/share-fab";
-import type { PublicProfile } from "@/types";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { EntryList } from "./_components/entry-list";
 import { ProfileHeader } from "./_components/profile-header";
 import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
 import { ShareRow } from "./_components/share-row";
 import { THEME_TABLE } from "./_lib/theme";
-import { fetchProfile } from "./_lib/fetch-profile";
+import { fetchProfile, type ProfileResult } from "./_lib/fetch-profile";
 import { oldHandleRedirect, type SearchParams } from "./_lib/old-handle-redirect";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { ArrowRight, BookOpen } from "lucide-react";
@@ -23,19 +22,23 @@ const SITE_URL =
   "https://kurl.me";
 
 // 이 라우트에는 loading.tsx(Suspense)를 두지 않는다. 두면 셸이 HTTP 200 으로 먼저 나가, 여기서 던진
-// notFound()·redirect() 가 200 + noindex, 200 + meta refresh 로 바뀐다. Next 14.2 는 generateMetadata
-// 의 오류도 페이지 자리에서 다시 던지므로 메타데이터로 올려도 피할 수 없다. 옛 핸들은 백엔드가 30일
-// 동안만 지금 주인으로 풀고 그 뒤엔 다른 사람이 가질 수 있어 영구(308)로 보내지 않는다.
+// notFound()·redirect() 가 200 + noindex, 200 + meta refresh 로, 페이지가 던지는 순단 오류(500)가 200 으로
+// 바뀐다. Next 14.2 는 generateMetadata 의 오류도 페이지 자리에서 다시 던지므로 메타데이터로 올려도 피할
+// 수 없다. 옛 핸들은 백엔드가 30일 동안만 지금 주인으로 풀고 그 뒤엔 다른 사람이 가질 수 있어
+// 영구(308)로 보내지 않는다.
 async function loadProfile(
   username: string,
   locale: string,
   searchParams: SearchParams,
-): Promise<PublicProfile> {
-  const profile = await fetchProfile(username);
-  if (!profile) notFound();
-  const target = oldHandleRedirect(await headers(), username, profile.username, locale, searchParams);
+): Promise<Exclude<ProfileResult, { status: 404 }>> {
+  const result = await fetchProfile(username);
+  if (!result.ok) {
+    if (result.status === 404) notFound();
+    return result;
+  }
+  const target = oldHandleRedirect(await headers(), username, result.data.username, locale, searchParams);
   if (target) redirect(target);
-  return profile;
+  return result;
 }
 
 export async function generateMetadata({
@@ -46,7 +49,9 @@ export async function generateMetadata({
   searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
   const { locale, username } = await params;
-  const profile = await loadProfile(username, locale, await searchParams);
+  const result = await loadProfile(username, locale, await searchParams);
+  if (!result.ok) return { title: `@${username} · kurl` };
+  const profile = result.data;
   const entries = profile.entries ?? [];
   // og:image comes from ./opengraph-image.tsx (paper card: avatar + handle + bio, banner beside it).
   // Crawler caching note: KakaoTalk pins a scraped preview for ~24h — owners retest with Kakao's
@@ -80,7 +85,9 @@ export default async function PublicProfilePage({
 }) {
   const { locale, username } = await params;
   const t = await getTranslations({ locale, namespace: "publicProfile" });
-  const profile = await loadProfile(username, locale, await searchParams);
+  const result = await loadProfile(username, locale, await searchParams);
+  if (!result.ok) throw new Error(`profile fetch failed: ${username}`, { cause: result.cause });
+  const profile = result.data;
 
   const colors = THEME_TABLE[profile.theme ?? "default"];
   const profileUrl = `${SITE_URL}/${locale}/u/${profile.username}`;
