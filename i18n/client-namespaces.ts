@@ -41,6 +41,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "links/more": ["more"],
   "links/profile": ["auth"],
   "links/qr-campaigns": ["campaignApp.campaignStats", "qrCampaigns"],
+  "links/report": ["linkReport"],
   "links/settings": ["avatar", "banner", "errors", "imageCropper", "publicProfile", "settings"],
   "links/showcase": ["publicProfile", "showcase"],
   "links/stats/[code]": [

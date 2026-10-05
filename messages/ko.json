@@ -1745,6 +1745,16 @@
       "expiryDesc": "정한 시각이 지나면 링크가 닫혀요.",
       "expiryAt": "닫는 시각",
       "expiryBeforeOpen": "만료는 공개 시각보다 뒤여야 해요."
+    },
+    "moderation": {
+      "title": "꺼진 링크예요.",
+      "reason": {
+        "ABUSE_REPORT": "신고를 확인한 뒤 운영 정책 위반으로 껐어요({date}).",
+        "ADMIN": "운영 정책 위반으로 운영자가 껐어요({date}).",
+        "SAFE_BROWSING": "Google Safe Browsing이 목적지를 위험한 사이트로 분류해 자동으로 꺼졌어요({date})."
+      },
+      "visitorEffect": "지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요.",
+      "appeal": "이의 제기"
     }
   },
   "admin": {
@@ -2008,7 +2018,8 @@
         "status": {
           "active": "활성",
           "expired": "만료",
-          "limitReached": "한도 도달"
+          "limitReached": "한도 도달",
+          "disabled": "꺼짐"
         },
         "ownerFilter": "소유자 #{id}",
         "clearFilter": "필터 해제",
@@ -2103,7 +2114,18 @@
       "warnAnonymous": "익명으로 만든 링크라 경고를 보낼 계정이 없어요. 도메인 차단으로 대응하세요.",
       "failed": "요청에 실패했어요",
       "blockShort": "차단",
-      "blockedShort": "차단됨"
+      "blockedShort": "차단됨",
+      "linkHint": "도메인 전체가 아니라 이 링크 하나만 꺼요. 방문자는 목적지 대신 꺼진 링크 안내(410)를 봐요.",
+      "linkDisable": "이 링크 끄기",
+      "linkEnable": "다시 켜기",
+      "linkDisableConfirm": "/{code} 링크를 끌까요? 방문자는 목적지 대신 꺼진 링크 안내를 봐요.",
+      "linkEnableConfirm": "/{code} 링크를 다시 켤까요? 방문자가 다시 목적지로 이동해요.",
+      "linkDisabled": "꺼짐 · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "신고 처리",
+        "ADMIN": "관리자",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     }
   },
   "common": {
@@ -2300,7 +2322,8 @@
     "iosApp": "iPhone 앱",
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "링크 신고"
   },
   "about": {
     "title": "kurl · 단축 링크와 클릭 분석",
@@ -3513,12 +3536,14 @@
       "UNPUBLISH_POST": "글 비공개",
       "DELETE_COMMENT": "댓글 삭제",
       "SUSPEND_USER": "계정 정지",
-      "BAN_USER": "영구 차단"
+      "BAN_USER": "영구 차단",
+      "DISABLE_LINK": "링크 끄기"
     },
     "subjectType": {
       "POST": "글",
       "USER": "작가",
-      "COMMENT": "댓글"
+      "COMMENT": "댓글",
+      "LINK": "단축 링크"
     },
     "removed": "비공개됨",
     "reasons": {
@@ -3527,15 +3552,20 @@
       "VIOLENCE": "폭력·위험",
       "SEXUAL": "성적인 콘텐츠",
       "COPYRIGHT": "저작권 침해",
-      "OTHER": "기타"
+      "OTHER": "기타",
+      "PHISHING": "피싱·사기",
+      "MALWARE": "악성 코드"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "이 글을 비공개로 돌릴까요? 공개 피드에서 내려가요(작성자 초안은 남아요).",
       "DELETE_COMMENT": "이 댓글을 삭제할까요? 되돌릴 수 없어요.",
-      "BAN_USER": "이 계정을 영구 차단할까요? 되돌리기 어려워요."
+      "BAN_USER": "이 계정을 영구 차단할까요? 되돌리기 어려워요.",
+      "DISABLE_LINK": "이 링크를 끌까요? 방문자는 목적지 대신 꺼진 링크 안내를 봐요. 관리자 링크 화면에서 다시 켤 수 있어요."
     },
     "suspendDaysPrompt": "며칠 동안 정지할까요? (일)",
-    "suspendDaysInvalid": "1 이상의 숫자를 입력하세요."
+    "suspendDaysInvalid": "1 이상의 숫자를 입력하세요.",
+    "removedLink": "꺼짐",
+    "destination": "목적지"
   },
   "blogAdminMetrics": {
     "title": "블로그 지표",
@@ -3966,5 +3996,39 @@
     "delete": "삭제",
     "favorite": "즐겨찾기에 추가",
     "unfavorite": "즐겨찾기 해제"
+  },
+  "linkReport": {
+    "title": "링크 신고",
+    "lead": "kurl 단축 링크가 피싱이나 악성 코드, 스팸으로 이어진다면 알려 주세요. 계정이 없어도 신고할 수 있어요.",
+    "linkLabel": "신고할 링크",
+    "linkHint": "받은 주소를 그대로 붙여 넣으세요.",
+    "linkParsed": "<mono>kurl.me/{code}</mono> 링크를 신고해요",
+    "linkInvalid": "kurl 단축 링크를 찾지 못했어요. kurl.me/ 뒤의 코드까지 들어 있는지 확인해 주세요.",
+    "reasonLegend": "무엇이 문제인가요?",
+    "reasons": {
+      "PHISHING": "피싱·사기",
+      "MALWARE": "악성 코드",
+      "SPAM": "스팸·광고",
+      "SEXUAL": "성적인 콘텐츠",
+      "COPYRIGHT": "저작권 침해",
+      "OTHER": "기타"
+    },
+    "appealNote": "잘못 꺼진 링크라면 '기타'를 고르고 사정을 적어 주세요.",
+    "detailLabel": "자세한 상황 (선택)",
+    "detailPlaceholder": "어디서 받았는지, 열면 무엇을 요구하는지 적어 주시면 판단에 도움이 돼요.",
+    "submit": "신고 보내기",
+    "doneTitle": "신고를 받았어요",
+    "doneBody": "확인한 뒤 운영 정책을 어긴 링크라면 꺼요.",
+    "another": "다른 링크 신고하기",
+    "errors": {
+      "notFound": "kurl에 없는 링크예요. 주소를 다시 확인해 주세요.",
+      "duplicate": "이미 신고한 링크예요. 확인을 기다리는 중이에요.",
+      "rateLimited": "짧은 시간에 너무 많이 보냈어요. 1분 뒤 다시 시도해 주세요.",
+      "failed": "보내지 못했어요. 잠시 뒤 다시 시도해 주세요."
+    },
+    "afterTitle": "신고한 뒤에는",
+    "afterReview": "운영자가 신고를 확인하고, 정책을 어긴 링크는 꺼요. 꺼진 링크를 여는 사람은 목적지 대신 경고 안내를 봐요.",
+    "afterPrivacy": "누가 신고했는지는 링크 주인에게 알리지 않아요.",
+    "afterReply": "신고마다 따로 답장을 드리지는 못해요."
   }
 }

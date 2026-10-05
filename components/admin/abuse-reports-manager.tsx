@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
+import { linksHref } from "@/lib/host";
 import {
   listAbuseReports,
   resolveAbuseReport,
@@ -38,13 +39,15 @@ const ACTION_DESTRUCTIVE: Record<AbuseAction, boolean> = {
   DELETE_COMMENT: true,
   SUSPEND_USER: false,
   BAN_USER: true,
+  DISABLE_LINK: true,
 };
 
 /**
  * Abuse-report moderation queue — list, filter by status, and resolve reports with the moderation
  * context the #611 contract now supplies: a structured `reasonCode` + reporter `detail`, and a
  * `subjectExcerpt` snapshot so COMMENT and USER reports (which have no title/URL) are judgeable in
- * the row. Each subject type offers its own enforcement actions (unpublish post / delete comment /
+ * the row. A LINK report names the short code and shows its destination as inert text: the code opens
+ * the admin link page (switch it back on there), never the reported destination itself. Each subject type offers its own enforcement actions (unpublish post / delete comment /
  * suspend or ban user); an action is folded into the resolve call, or a report is resolved with no
  * action ("reviewed, no violation").
  *
@@ -54,6 +57,7 @@ const ACTION_DESTRUCTIVE: Record<AbuseAction, boolean> = {
 export function AbuseReportsManager() {
   const t = useTranslations("abuseReports");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const [reports, setReports] = useState<AbuseReportView[]>([]);
   const [statusFilter, setStatusFilter] = useState<AbuseReportStatus | "ALL">("ALL");
   const [loading, setLoading] = useState(true);
@@ -204,7 +208,32 @@ export function AbuseReportsManager() {
                   </span>
                 </td>
                 <td className="px-2 py-3 max-w-xs">
-                  {r.subjectTitle || r.subjectAuthorHandle ? (
+                  {r.subjectType === "LINK" ? (
+                    <div className="min-w-0">
+                      {r.subjectTitle ? (
+                        <a
+                          href={linksHref(`/${locale}/admin/links/${encodeURIComponent(r.subjectTitle)}`)}
+                          className="block truncate font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
+                        >
+                          /{r.subjectTitle}
+                        </a>
+                      ) : (
+                        <code className="text-xs text-slate-700 dark:text-slate-300">
+                          {t("subjectType.LINK")} #{r.subjectId}
+                        </code>
+                      )}
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                        {t("subjectType.LINK")}
+                        {r.subjectAuthorHandle && ` · @${r.subjectAuthorHandle}`}
+                      </p>
+                      {r.subjectExcerpt && (
+                        <p className="mt-1 rounded bg-slate-50 dark:bg-slate-800/60 px-2 py-1 text-xs text-slate-600 dark:text-slate-400">
+                          <span className="mr-1 text-slate-500 dark:text-slate-400">{t("destination")}</span>
+                          <span className="break-all font-mono">{r.subjectExcerpt}</span>
+                        </p>
+                      )}
+                    </div>
+                  ) : r.subjectTitle || r.subjectAuthorHandle ? (
                     <div className="min-w-0">
                       {r.subjectUrl ? (
                         <a
@@ -231,14 +260,14 @@ export function AbuseReportsManager() {
                     </code>
                   )}
                   {/* Content snapshot — the only handle a moderator has on COMMENT / USER reports. */}
-                  {r.subjectExcerpt && (
+                  {r.subjectExcerpt && r.subjectType !== "LINK" && (
                     <p className="mt-1 line-clamp-2 rounded bg-slate-50 dark:bg-slate-800/60 px-2 py-1 text-xs italic text-slate-600 dark:text-slate-400">
                       “{r.subjectExcerpt}”
                     </p>
                   )}
                   {r.subjectRemoved && (
                     <span className="mt-1 inline-block rounded px-1.5 py-0.5 text-[11px] font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                      {t("removed")}
+                      {r.subjectType === "LINK" ? t("removedLink") : t("removed")}
                     </span>
                   )}
                 </td>

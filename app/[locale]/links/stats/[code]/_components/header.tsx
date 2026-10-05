@@ -5,6 +5,7 @@ import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
 import { DestinationHealthBanner } from "@/components/links/stats/destination-health-banner";
+import { LinkModerationBanner } from "@/components/links/stats/link-moderation-banner";
 import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
 import { QrButton } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
@@ -139,6 +140,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           </Button>
         </div>
       </div>
+      {!demo && detail && <LinkModerationBanner detail={detail} />}
       {!demo && detail && <DestinationHealthBanner detail={detail} shortUrl={display} />}
     </div>
   );

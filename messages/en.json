@@ -1745,6 +1745,16 @@
       "expiryDesc": "The link closes after this time.",
       "expiryAt": "Closes at",
       "expiryBeforeOpen": "Expiry has to come after the opening time."
+    },
+    "moderation": {
+      "title": "This link is switched off.",
+      "reason": {
+        "ABUSE_REPORT": "We switched it off after confirming a report that it breaks our usage policy ({date}).",
+        "ADMIN": "An operator switched it off for breaking our usage policy ({date}).",
+        "SAFE_BROWSING": "Google Safe Browsing flagged the destination as dangerous, so it was switched off automatically ({date})."
+      },
+      "visitorEffect": "Anyone who opens it now sees a switched-off notice instead of the destination.",
+      "appeal": "Appeal"
     }
   },
   "admin": {
@@ -2008,7 +2018,8 @@
         "status": {
           "active": "Active",
           "expired": "Expired",
-          "limitReached": "Limit reached"
+          "limitReached": "Limit reached",
+          "disabled": "Off"
         },
         "ownerFilter": "Owner #{id}",
         "clearFilter": "Clear filter",
@@ -2103,7 +2114,18 @@
       "warnAnonymous": "This link was created anonymously, so there's no account to warn. Use the domain block instead.",
       "failed": "Request failed",
       "blockShort": "Block",
-      "blockedShort": "Blocked"
+      "blockedShort": "Blocked",
+      "linkHint": "Switches off just this link, not the whole domain. Visitors see a switched-off notice (410) instead of the destination.",
+      "linkDisable": "Switch off this link",
+      "linkEnable": "Switch back on",
+      "linkDisableConfirm": "Switch off /{code}? Visitors will see a switched-off notice instead of the destination.",
+      "linkEnableConfirm": "Switch /{code} back on? Visitors will go to the destination again.",
+      "linkDisabled": "Off · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "Report",
+        "ADMIN": "Admin",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     }
   },
   "common": {
@@ -2300,7 +2322,8 @@
     "iosApp": "iPhone app",
     "terms": "Terms",
     "privacy": "Privacy",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "Report a link"
   },
   "about": {
     "title": "kurl · URL shortener with click analytics",
@@ -3513,12 +3536,14 @@
       "UNPUBLISH_POST": "Unpublish post",
       "DELETE_COMMENT": "Delete comment",
       "SUSPEND_USER": "Suspend account",
-      "BAN_USER": "Ban permanently"
+      "BAN_USER": "Ban permanently",
+      "DISABLE_LINK": "Switch off link"
     },
     "subjectType": {
       "POST": "Post",
       "USER": "Author",
-      "COMMENT": "Comment"
+      "COMMENT": "Comment",
+      "LINK": "Short link"
     },
     "removed": "Unpublished",
     "reasons": {
@@ -3527,15 +3552,20 @@
       "VIOLENCE": "Violence or danger",
       "SEXUAL": "Sexual content",
       "COPYRIGHT": "Copyright infringement",
-      "OTHER": "Other"
+      "OTHER": "Other",
+      "PHISHING": "Phishing or scam",
+      "MALWARE": "Malware"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "Unpublish this post? It leaves the public feed (the author keeps the draft).",
       "DELETE_COMMENT": "Delete this comment? This can't be undone.",
-      "BAN_USER": "Permanently ban this account? This is hard to reverse."
+      "BAN_USER": "Permanently ban this account? This is hard to reverse.",
+      "DISABLE_LINK": "Switch off this link? Visitors will see a switched-off notice instead of the destination. You can switch it back on from the admin link page."
     },
     "suspendDaysPrompt": "Suspend for how many days?",
-    "suspendDaysInvalid": "Enter a number of 1 or more."
+    "suspendDaysInvalid": "Enter a number of 1 or more.",
+    "removedLink": "Switched off",
+    "destination": "Destination"
   },
   "blogAdminMetrics": {
     "title": "Blog metrics",
@@ -3966,5 +3996,39 @@
     "delete": "Delete",
     "favorite": "Add to favorites",
     "unfavorite": "Remove from favorites"
+  },
+  "linkReport": {
+    "title": "Report a link",
+    "lead": "If a kurl short link leads to phishing, malware or spam, let us know. You don't need an account.",
+    "linkLabel": "Link to report",
+    "linkHint": "Paste it exactly as you received it.",
+    "linkParsed": "Reporting <mono>kurl.me/{code}</mono>",
+    "linkInvalid": "We couldn't find a kurl short link in that. Check that it includes the code after kurl.me/.",
+    "reasonLegend": "What's wrong with it?",
+    "reasons": {
+      "PHISHING": "Phishing or scam",
+      "MALWARE": "Malware",
+      "SPAM": "Spam or advertising",
+      "SEXUAL": "Sexual content",
+      "COPYRIGHT": "Copyright infringement",
+      "OTHER": "Other"
+    },
+    "appealNote": "If a link was switched off by mistake, choose \"Other\" and tell us why.",
+    "detailLabel": "What happened? (optional)",
+    "detailPlaceholder": "Where you got it and what it asks for once opened both help us judge it.",
+    "submit": "Send report",
+    "doneTitle": "Report received",
+    "doneBody": "We'll review it and switch the link off if it breaks our policy.",
+    "another": "Report another link",
+    "errors": {
+      "notFound": "That link isn't on kurl. Check the address and try again.",
+      "duplicate": "You've already reported this link. It's waiting for review.",
+      "rateLimited": "Too many reports in a short time. Try again in a minute.",
+      "failed": "Couldn't send the report. Try again in a moment."
+    },
+    "afterTitle": "After you report",
+    "afterReview": "An operator reviews each report and switches off links that break our policy. Anyone who opens a switched-off link sees a warning instead of the destination.",
+    "afterPrivacy": "We don't tell the link's owner who reported it.",
+    "afterReply": "We can't reply to individual reports."
   }
 }

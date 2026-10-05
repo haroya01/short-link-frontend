@@ -1745,6 +1745,16 @@
       "expiryDesc": "Liên kết sẽ đóng sau thời điểm này.",
       "expiryAt": "Đóng lúc",
       "expiryBeforeOpen": "Thời điểm hết hạn phải sau thời điểm mở."
+    },
+    "moderation": {
+      "title": "Liên kết này đã bị tắt.",
+      "reason": {
+        "ABUSE_REPORT": "Chúng tôi đã tắt liên kết sau khi xác nhận báo cáo rằng nó vi phạm chính sách sử dụng ({date}).",
+        "ADMIN": "Quản trị viên đã tắt liên kết vì vi phạm chính sách sử dụng ({date}).",
+        "SAFE_BROWSING": "Google Safe Browsing đánh dấu trang đích là nguy hiểm nên liên kết đã được tắt tự động ({date})."
+      },
+      "visitorEffect": "Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
+      "appeal": "Khiếu nại"
     }
   },
   "admin": {
@@ -2008,7 +2018,8 @@
         "status": {
           "active": "Hoạt động",
           "expired": "Hết hạn",
-          "limitReached": "Đạt giới hạn"
+          "limitReached": "Đạt giới hạn",
+          "disabled": "Đã tắt"
         },
         "ownerFilter": "Chủ sở hữu #{id}",
         "clearFilter": "Xóa bộ lọc",
@@ -2103,7 +2114,18 @@
       "warnAnonymous": "Liên kết được tạo ẩn danh nên không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
       "failed": "Yêu cầu thất bại",
       "blockShort": "Chặn",
-      "blockedShort": "Đã chặn"
+      "blockedShort": "Đã chặn",
+      "linkHint": "Chỉ tắt liên kết này, không phải cả tên miền. Khách truy cập sẽ thấy thông báo liên kết đã tắt (410) thay vì trang đích.",
+      "linkDisable": "Tắt liên kết này",
+      "linkEnable": "Bật lại",
+      "linkDisableConfirm": "Tắt /{code}? Khách truy cập sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
+      "linkEnableConfirm": "Bật lại /{code}? Khách truy cập sẽ lại được chuyển tới trang đích.",
+      "linkDisabled": "Đã tắt · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "Báo cáo",
+        "ADMIN": "Quản trị",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     }
   },
   "common": {
@@ -2300,7 +2322,8 @@
     "iosApp": "Ứng dụng iPhone",
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "Báo cáo liên kết"
   },
   "about": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
@@ -3513,12 +3536,14 @@
       "UNPUBLISH_POST": "Hủy xuất bản bài",
       "DELETE_COMMENT": "Xóa bình luận",
       "SUSPEND_USER": "Tạm ngưng tài khoản",
-      "BAN_USER": "Cấm vĩnh viễn"
+      "BAN_USER": "Cấm vĩnh viễn",
+      "DISABLE_LINK": "Tắt liên kết"
     },
     "subjectType": {
       "POST": "Bài viết",
       "USER": "Tác giả",
-      "COMMENT": "Bình luận"
+      "COMMENT": "Bình luận",
+      "LINK": "Liên kết rút gọn"
     },
     "removed": "Đã hủy xuất bản",
     "reasons": {
@@ -3527,15 +3552,20 @@
       "VIOLENCE": "Bạo lực hoặc nguy hiểm",
       "SEXUAL": "Nội dung tình dục",
       "COPYRIGHT": "Vi phạm bản quyền",
-      "OTHER": "Khác"
+      "OTHER": "Khác",
+      "PHISHING": "Lừa đảo (phishing)",
+      "MALWARE": "Phần mềm độc hại"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "Hủy xuất bản bài này? Nó rời khỏi dòng tin công khai (tác giả vẫn giữ bản nháp).",
       "DELETE_COMMENT": "Xóa bình luận này? Không thể hoàn tác.",
-      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược."
+      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược.",
+      "DISABLE_LINK": "Tắt liên kết này? Khách truy cập sẽ thấy thông báo liên kết đã tắt thay vì trang đích. Bạn có thể bật lại trong trang liên kết của quản trị."
     },
     "suspendDaysPrompt": "Tạm ngưng trong bao nhiêu ngày?",
-    "suspendDaysInvalid": "Nhập số từ 1 trở lên."
+    "suspendDaysInvalid": "Nhập số từ 1 trở lên.",
+    "removedLink": "Đã tắt",
+    "destination": "Đích đến"
   },
   "blogAdminMetrics": {
     "title": "Chỉ số blog",
@@ -3966,5 +3996,39 @@
     "delete": "Xóa",
     "favorite": "Thêm vào mục yêu thích",
     "unfavorite": "Bỏ khỏi mục yêu thích"
+  },
+  "linkReport": {
+    "title": "Báo cáo liên kết",
+    "lead": "Nếu một liên kết rút gọn kurl dẫn tới lừa đảo, phần mềm độc hại hoặc spam, hãy cho chúng tôi biết. Không cần tài khoản.",
+    "linkLabel": "Liên kết cần báo cáo",
+    "linkHint": "Dán đúng địa chỉ bạn đã nhận được.",
+    "linkParsed": "Báo cáo <mono>kurl.me/{code}</mono>",
+    "linkInvalid": "Không tìm thấy liên kết rút gọn kurl. Hãy kiểm tra xem có mã sau kurl.me/ không.",
+    "reasonLegend": "Liên kết có vấn đề gì?",
+    "reasons": {
+      "PHISHING": "Lừa đảo (phishing)",
+      "MALWARE": "Phần mềm độc hại",
+      "SPAM": "Spam hoặc quảng cáo",
+      "SEXUAL": "Nội dung tình dục",
+      "COPYRIGHT": "Vi phạm bản quyền",
+      "OTHER": "Khác"
+    },
+    "appealNote": "Nếu liên kết bị tắt nhầm, hãy chọn \"Khác\" và cho chúng tôi biết lý do.",
+    "detailLabel": "Chuyện gì đã xảy ra? (không bắt buộc)",
+    "detailPlaceholder": "Bạn nhận được liên kết ở đâu và khi mở ra nó yêu cầu gì — những điều này giúp chúng tôi đánh giá.",
+    "submit": "Gửi báo cáo",
+    "doneTitle": "Đã nhận báo cáo",
+    "doneBody": "Chúng tôi sẽ xem xét và tắt liên kết nếu nó vi phạm chính sách.",
+    "another": "Báo cáo liên kết khác",
+    "errors": {
+      "notFound": "Liên kết này không có trên kurl. Hãy kiểm tra lại địa chỉ.",
+      "duplicate": "Bạn đã báo cáo liên kết này. Báo cáo đang chờ xem xét.",
+      "rateLimited": "Bạn đã gửi quá nhiều báo cáo trong thời gian ngắn. Hãy thử lại sau một phút.",
+      "failed": "Không gửi được báo cáo. Hãy thử lại sau ít phút."
+    },
+    "afterTitle": "Sau khi bạn báo cáo",
+    "afterReview": "Quản trị viên xem xét từng báo cáo và tắt các liên kết vi phạm chính sách. Ai mở liên kết đã tắt sẽ thấy cảnh báo thay vì trang đích.",
+    "afterPrivacy": "Chúng tôi không cho chủ liên kết biết ai đã báo cáo.",
+    "afterReply": "Chúng tôi không thể trả lời từng báo cáo."
   }
 }

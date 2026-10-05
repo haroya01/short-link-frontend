@@ -2,11 +2,16 @@
 
 import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { STATUS_KEY, STATUS_STYLES } from "@/components/admin/link-browser";
+import {
+  STATUS_KEY,
+  STATUS_STYLES,
+  displayStatus,
+  type AdminLinkDisplayStatus,
+} from "@/components/admin/link-browser";
 import { Section } from "@/components/common/section";
 import { Link } from "@/i18n/navigation";
 import { cn, formatDate, formatNumber, truncateMiddle } from "@/lib/utils";
-import type { AdminLinkRow, AdminLinkStatus } from "@/types";
+import type { AdminLinkRow } from "@/types";
 
 export function MetaCard({ meta }: { meta: AdminLinkRow }) {
   const t = useTranslations("admin");
@@ -21,7 +26,7 @@ export function MetaCard({ meta }: { meta: AdminLinkRow }) {
             {meta.passwordProtected && (
               <Lock className="h-3 w-3 text-slate-400" aria-label={t("detail.meta.locked")} />
             )}
-            <StatusBadge status={meta.status} />
+            <StatusBadge status={displayStatus(meta)} />
           </span>
         </Field>
 
@@ -99,7 +104,7 @@ function Field({
   );
 }
 
-function StatusBadge({ status }: { status: AdminLinkStatus }) {
+function StatusBadge({ status }: { status: AdminLinkDisplayStatus }) {
   const t = useTranslations("admin");
   return (
     <span
