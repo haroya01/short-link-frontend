@@ -1,7 +1,7 @@
 "use client";
 
 import { DATE_LOCALE } from "@/lib/date";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2, Heart } from "lucide-react";
@@ -71,6 +71,9 @@ export function PostComments({
   const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
   // 목록 로드 실패 — "댓글 없음"으로 위장하지 않고 재시도를 내민다(빈 상태 ≠ 에러).
   const [loadFailed, setLoadFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [flashId, setFlashId] = useState<number | null>(null);
+  const focusedRef = useRef(false);
   const [confirm, confirmDialog] = useConfirm();
 
   const load = useCallback(() => {
@@ -80,12 +83,59 @@ export function PostComments({
       .catch(() => {
         setComments([]);
         setLoadFailed(true);
-      });
+      })
+      .finally(() => setLoaded(true));
   }, [postId]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Rows render after the fetch, so the browser's own `#comment-<id>` jump has nothing to land on. Rails
+  // above the comments can still load after the jump and push the row out of view — re-aim twice unless
+  // the reader has started moving on their own.
+  useEffect(() => {
+    if (!loaded || focusedRef.current) return;
+    const match = /^#comment-(\d+)$/.exec(window.location.hash);
+    if (!match) return;
+    const id = Number(match[1]);
+    const reduceMotion =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    const aim = () => {
+      const target = document.getElementById(`comment-${id}`);
+      (target ?? document.getElementById("comments"))?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: target ? "center" : "start",
+      });
+      return target != null;
+    };
+    const inputs = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+    const timers: number[] = [];
+    const release = () => {
+      focusedRef.current = true;
+      timers.forEach((t) => window.clearTimeout(t));
+      inputs.forEach((e) => window.removeEventListener(e, release));
+    };
+    inputs.forEach((e) => window.addEventListener(e, release, { passive: true }));
+    if (aim()) setFlashId(id);
+    timers.push(window.setTimeout(aim, 500));
+    timers.push(
+      window.setTimeout(() => {
+        aim();
+        release();
+      }, 1300),
+    );
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      inputs.forEach((e) => window.removeEventListener(e, release));
+    };
+  }, [loaded]);
+
+  useEffect(() => {
+    if (flashId == null) return;
+    const timer = window.setTimeout(() => setFlashId(null), 1600);
+    return () => window.clearTimeout(timer);
+  }, [flashId]);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -198,7 +248,10 @@ export function PostComments({
   }
 
   return (
-    <section className="mt-16 border-t border-slate-100 pt-10 dark:border-slate-800">
+    <section
+      id="comments"
+      className="mt-16 scroll-mt-24 border-t border-slate-100 pt-10 dark:border-slate-800"
+    >
       {/* 0일 때 카운트를 그리지 않는다 — "댓글 0개" 헤딩 + 빈 컴포저 + "첫 댓글" 문구로 공허를
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
@@ -259,6 +312,8 @@ export function PostComments({
           {tops.map((c) => (
             <li key={c.id}>
               <CommentRow
+                anchorId={`comment-${c.id}`}
+                flash={flashId === c.id}
                 comment={c}
                 fmt={fmt}
                 canDelete={canDelete(c)}
@@ -288,6 +343,8 @@ export function PostComments({
                   {repliesOf(c.id).map((r) => (
                     <li key={r.id}>
                       <CommentRow
+                        anchorId={`comment-${r.id}`}
+                        flash={flashId === r.id}
                         comment={r}
                         fmt={fmt}
                         canDelete={canDelete(r)}
@@ -333,6 +390,8 @@ export function PostComments({
 }
 
 function CommentRow({
+  anchorId,
+  flash,
   comment,
   fmt,
   canDelete,
@@ -345,6 +404,8 @@ function CommentRow({
   isNew,
   children,
 }: {
+  anchorId: string;
+  flash: boolean;
   comment: CommentView;
   fmt: (iso: string) => string;
   canDelete: boolean;
@@ -362,7 +423,12 @@ function CommentRow({
   const hasAuthor = !!comment.author?.username;
   const profileHref = hasAuthor ? authorHref(username, locale) : undefined;
   return (
-    <div className={isNew ? "comment-in" : undefined}>
+    <div
+      id={anchorId}
+      className={`-mx-3 -my-2 scroll-mt-24 rounded-lg px-3 py-2 transition-colors duration-700 motion-reduce:transition-none ${
+        flash ? "bg-accent-50 dark:bg-accent-900/30" : ""
+      } ${isNew ? "comment-in" : ""}`}
+    >
       <div className="flex items-center gap-2">
         {/* Avatar + @handle link to the commenter's profile (soft nav when same-origin, hard on the
             author subdomain). */}

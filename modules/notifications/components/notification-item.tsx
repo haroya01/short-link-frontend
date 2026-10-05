@@ -14,10 +14,10 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { blogPath } from "@/lib/host";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { notificationHref } from "@/modules/notifications/lib/notification-href";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
@@ -30,43 +30,6 @@ function flattenText(node: ReactNode): string {
   if (Array.isArray(node)) return node.map(flattenText).join("");
   if (isValidElement(node)) return flattenText((node.props as { children?: ReactNode }).children);
   return "";
-}
-
-/**
- * Where a row navigates, by type. The recipient (`myUsername`) authors LIKE/COMMENT posts and owns
- * the subscribed series; REPLY carries the post owner's handle (the post may be someone else's);
- * NEW_POST's author is the actor. The graph events (CONNECTED / PATH_GREW) land on the collection
- * that changed. Returns undefined when the needed handle/slug/id is missing.
- */
-function resolveHref(item: Item, myUsername: string | null, locale: string): string | undefined {
-  switch (item.type) {
-    case "CONNECTED":
-    case "PATH_GREW":
-      // 그래프 이벤트 — 엮인/이어진 그 컬렉션으로. 컬렉션은 블로그 같은 오리진이라 소프트 내비(blogPath).
-      return item.collectionId != null
-        ? blogPath(`/collections/${item.collectionId}`)
-        : undefined;
-    case "FOLLOW":
-      return item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
-    case "SERIES_SUBSCRIBE":
-      return item.seriesSlug && myUsername
-        ? authorHref(myUsername, locale, `series/${item.seriesSlug}`)
-        : undefined;
-    case "NEW_POST":
-      return item.postSlug && item.actorUsername
-        ? postHref(item.actorUsername, item.postSlug, locale)
-        : undefined;
-    case "REPLY":
-    case "MENTION":
-      // The post may be someone else's — the owner's handle rides in the payload.
-      return item.postSlug && item.postAuthorUsername
-        ? postHref(item.postAuthorUsername, item.postSlug, locale)
-        : undefined;
-    default: // LIKE / COMMENT — the recipient is the post's author
-      return item.postSlug && myUsername
-        ? postHref(myUsername, item.postSlug, locale)
-        : undefined;
-  }
 }
 
 const MESSAGE_KEY: Record<Item["type"], string> = {
@@ -159,7 +122,7 @@ export function NotificationItem({
   const rowLabel = subtitle ? `${messageText}, ${subtitle}` : messageText;
   const TypeIcon = TYPE_ICON[item.type];
 
-  const href = resolveHref(item, me?.username ?? null, locale);
+  const href = notificationHref(item, me?.username ?? null, locale);
 
   function handleClick() {
     if (!item.read) markRead.mutate(item.id);

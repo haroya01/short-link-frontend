@@ -37,7 +37,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
-import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelection, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
+import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelection, resolveDeepLink, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -146,17 +146,13 @@ export function PostHighlights({ postId }: { postId: number }) {
   useEffect(() => {
     if (!highlightsLoaded) return;
     const params = new URLSearchParams(window.location.search);
-    const quote = params.get("hl");
-    if (!quote) return;
     // `?hl=…&thread=1` — coming from a surface that pointed AT the conversation (the feed's "답글 N"),
     // not just the sentence. Open that highlight's thread once, so the reader lands on the replies they
     // clicked toward rather than on the passage in the body. New links carry the highlight ID;
     // legacy quote-only links require an unambiguous match or offer a conversation chooser.
-    const highlightId = Number(params.get("highlightId"));
-    const exact = Number.isSafeInteger(highlightId) && highlightId > 0
-      ? highlights.find((h) => h.id === highlightId) : undefined;
-    const matches = highlights.filter((h) => h.quote === quote);
-    const focused = exact ?? (matches.length === 1 ? matches[0] : undefined);
+    const link = resolveDeepLink(params, highlights);
+    if (!link) return;
+    const { quote, focused, matches } = link;
     if (params.get("thread") === "1") {
       if (focused) setThreadFor(focused);
       else if (matches.length > 1) setThreadChoices(matches);
