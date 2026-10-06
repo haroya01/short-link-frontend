@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Heart, MessageCircle, MoreHorizontal, Send } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, SendHorizontal } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
 import { QuotedPostCard } from "./quoted-post-card";
 
-const NOTE_COUNTER_FROM = 50;
+const NOTE_RING_NUMBER_FROM = 20;
 
 export function noteHref(note: Pick<Note, "id" | "author">, locale: string): string {
   return authorHref(note.author.username, locale, `notes/${note.id}`);
@@ -162,7 +162,7 @@ export function NoteCard({
                 className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               />
               <div className="mt-2 flex items-center justify-end gap-2">
-                <NoteCounter length={noteLength(draft)} className="mr-auto" />
+                <NoteLengthRing length={noteLength(draft)} className="mr-auto" />
                 <button
                   type="button"
                   onClick={() => {
@@ -177,7 +177,7 @@ export function NoteCard({
                   type="button"
                   onClick={save}
                   disabled={busy || overLimit || (!draft.trim() && note.media.length === 0)}
-                  className="focus-ring rounded-full bg-slate-900 px-4 py-1.5 text-[13px] font-semibold text-white hover:bg-slate-800 disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                  className="focus-ring rounded-full bg-accent-700 px-4 py-1.5 text-[13px] font-semibold text-white hover:bg-accent-800 disabled:opacity-40"
                 >
                   {t("save")}
                 </button>
@@ -220,7 +220,7 @@ export function NoteCard({
             {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
           </BlogLink>
           <button type="button" onClick={share} aria-label={t("share")} className={action}>
-            <Send className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+            <SendHorizontal className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />
           </button>
         </footer>
       </div>
@@ -229,20 +229,54 @@ export function NoteCard({
   );
 }
 
-export function NoteCounter({ length, className }: { length: number; className?: string }) {
+export function NoteLengthRing({ length, className }: { length: number; className?: string }) {
   const t = useTranslations("notes");
+  if (length === 0) return null;
   const left = NOTE_MAX_LENGTH - length;
-  if (left > NOTE_COUNTER_FROM) return null;
+  const near = left <= NOTE_RING_NUMBER_FROM;
+  const radius = 9;
+  const circumference = 2 * Math.PI * radius;
+  const progress = Math.min(1, length / NOTE_MAX_LENGTH);
+  const label = left < 0 ? t("tooLong", { max: NOTE_MAX_LENGTH }) : t("remaining", { count: left });
   return (
     <span
-      aria-live="polite"
+      role="img"
+      aria-label={label}
+      title={label}
       className={cn(
-        "text-[13px] tabular-nums",
-        left < 0 ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400",
+        "relative inline-grid shrink-0 place-items-center transition-[width,height] duration-200 motion-reduce:transition-none",
+        near ? "h-7 w-7" : "h-[22px] w-[22px]",
         className,
       )}
     >
-      {left < 0 ? t("tooLong", { max: NOTE_MAX_LENGTH }) : t("remaining", { count: left })}
+      <svg viewBox="0 0 22 22" className="absolute inset-0 h-full w-full -rotate-90" aria-hidden>
+        <circle cx="11" cy="11" r={radius} fill="none" strokeWidth="2.5" className="stroke-slate-200 dark:stroke-slate-700" />
+        <circle
+          cx="11"
+          cy="11"
+          r={radius}
+          fill="none"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - progress)}
+          className={cn(
+            "transition-[stroke-dashoffset] duration-200 motion-reduce:transition-none",
+            left < 0 ? "stroke-red-600 dark:stroke-red-400" : "stroke-accent-600",
+          )}
+        />
+      </svg>
+      {near && (
+        <span
+          aria-hidden
+          className={cn(
+            "relative text-[10px] font-semibold tabular-nums",
+            left < 0 ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400",
+          )}
+        >
+          {left}
+        </span>
+      )}
     </span>
   );
 }

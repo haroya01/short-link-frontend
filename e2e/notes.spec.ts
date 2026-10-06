@@ -22,10 +22,12 @@ test("the first note asks about federation once, then posts to the top of the fe
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("오늘 쓴 글의 씨앗")).toBeVisible();
 
-  await composer.fill("가".repeat(470));
-  await expect(page.getByText("30자 남음")).toBeVisible();
+  await composer.fill("가".repeat(485));
+  const ring = page.getByRole("img", { name: "15자 남음" });
+  await expect(ring).toBeVisible();
+  await expect(ring).toContainText("15");
   await composer.fill("e2e에서 쓴 노트 https://kurl.me/about.");
-  await expect(page.getByText(/자 남음/)).toHaveCount(0);
+  await expect(page.getByText("누구나 볼 수 있어요")).toBeVisible();
   await page.getByRole("button", { name: "올리기" }).click();
 
   const notice = page.getByRole("dialog");
@@ -92,4 +94,22 @@ test("photos sit in a sideways strip with ALT, open large, and share copies the 
   await walk.getByRole("button", { name: "공유" }).click();
   await expect(page.getByText("링크를 복사했어요")).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/\/notes\/5$/);
+});
+
+test("a picked photo sits in the composer strip and takes alt text from its +ALT badge", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await composer.click({ timeout: 30_000 });
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGP4z8DwHwQZGBgAJmQF+2Sp1QYAAAAASUVORK5CYII=",
+    "base64",
+  );
+  await page.locator('input[type="file"]').setInputFiles({ name: "walk.png", mimeType: "image/png", buffer: png });
+  const addAlt = page.getByRole("button", { name: "대체 텍스트 추가" });
+  await expect(addAlt).toHaveText("+ALT");
+  await addAlt.click();
+  await page.getByLabel("대체 텍스트", { exact: true }).fill("산책길의 낮은 담장");
+  await page.getByRole("button", { name: "완료" }).click();
+  await expect(addAlt).toHaveText("ALT");
+  await expect(page.getByAltText("산책길의 낮은 담장")).toBeVisible();
 });

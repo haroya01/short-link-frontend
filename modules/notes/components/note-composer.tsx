@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { Check, Globe, ImagePlus, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,7 @@ import {
 } from "@/modules/notes/api/notes";
 import { noteLength } from "@/modules/notes/lib/note-text";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { NoteCounter } from "./note-card";
+import { NoteLengthRing } from "./note-card";
 
 type PendingImage = {
   id: string;
@@ -48,6 +48,7 @@ export function NoteComposer({
   const [posting, setPosting] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [altEditing, setAltEditing] = useState<string | null>(null);
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
@@ -146,7 +147,7 @@ export function NoteComposer({
       className={cn(
         "focus-ring shrink-0 rounded-full border px-4 py-1.5 text-[14px] font-semibold transition-colors disabled:cursor-default",
         canPost
-          ? "border-slate-900 bg-slate-900 text-white hover:bg-slate-800 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+          ? "border-accent-700 bg-accent-700 text-white hover:border-accent-800 hover:bg-accent-800"
           : "border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500",
       )}
     >
@@ -212,53 +213,83 @@ export function NoteComposer({
           {!open && submitButton}
         </div>
       {images.length > 0 && (
-        <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {images.map((image, index) => (
-            <li key={image.id} className="flex flex-col gap-1.5">
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.previewUrl}
-                  alt=""
-                  className={cn(
-                    "aspect-square w-full rounded-lg border border-slate-200 object-cover dark:border-slate-800",
-                    image.key === null && "opacity-60",
-                  )}
-                />
-                {image.key === null && (
-                  <Loader2 className="absolute inset-0 m-auto h-5 w-5 animate-spin text-slate-600" aria-hidden />
+        <div className="-mr-4 mt-2 flex gap-2 overflow-x-auto pr-4 [scrollbar-width:none] sm:mr-0 sm:pr-0 [&::-webkit-scrollbar]:hidden">
+          {images.map((image) => (
+            <figure key={image.id} className="relative shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.previewUrl}
+                alt={image.altText}
+                className={cn(
+                  "block h-44 w-auto min-w-24 max-w-none rounded-card border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
+                  image.key === null && "opacity-60",
                 )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    URL.revokeObjectURL(image.previewUrl);
-                    setImages((current) => current.filter((x) => x.id !== image.id));
-                  }}
-                  aria-label={t("removeImage")}
-                  className="focus-ring absolute right-1 top-1 rounded-full bg-slate-900/70 p-1 text-white hover:bg-slate-900"
-                >
-                  <X className="h-3.5 w-3.5" aria-hidden />
-                </button>
-              </div>
-              <label className="sr-only" htmlFor={`alt-${image.id}`}>
-                {t("altLabel")} {index + 1}
-              </label>
-              <input
-                id={`alt-${image.id}`}
-                value={image.altText}
-                maxLength={NOTE_ALT_MAX_LENGTH}
-                onChange={(e) =>
-                  setImages((current) =>
-                    current.map((x) => (x.id === image.id ? { ...x, altText: e.target.value } : x)),
-                  )
-                }
-                placeholder={t("altLabel")}
-                title={t("altPlaceholder")}
-                className="focus-ring w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               />
-            </li>
+              {image.key === null && (
+                <Loader2 className="absolute inset-0 m-auto h-5 w-5 animate-spin text-slate-600" aria-hidden />
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  URL.revokeObjectURL(image.previewUrl);
+                  setImages((current) => current.filter((x) => x.id !== image.id));
+                  if (altEditing === image.id) setAltEditing(null);
+                }}
+                aria-label={t("removeImage")}
+                className="focus-ring absolute right-1.5 top-1.5 rounded-full bg-slate-950/65 p-1 text-white hover:bg-slate-950/85"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => setAltEditing((current) => (current === image.id ? null : image.id))}
+                aria-label={t("addAlt")}
+                aria-expanded={altEditing === image.id}
+                className="focus-ring absolute bottom-1.5 left-1.5 inline-flex items-center gap-0.5 rounded-full bg-slate-950/65 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-slate-950/85"
+              >
+                {image.altText ? (
+                  <>
+                    <Check className="h-2.5 w-2.5" strokeWidth={3} aria-hidden />
+                    ALT
+                  </>
+                ) : (
+                  "+ALT"
+                )}
+              </button>
+            </figure>
           ))}
-        </ul>
+        </div>
+      )}
+
+      {altEditing !== null && images.some((image) => image.id === altEditing) && (
+        <div className="mt-2 rounded-card border border-slate-200 p-3 dark:border-slate-800">
+          <label htmlFor="note-alt" className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+            {t("altLabel")}
+          </label>
+          <textarea
+            id="note-alt"
+            autoFocus
+            rows={2}
+            maxLength={NOTE_ALT_MAX_LENGTH}
+            value={images.find((image) => image.id === altEditing)?.altText ?? ""}
+            onChange={(e) =>
+              setImages((current) =>
+                current.map((x) => (x.id === altEditing ? { ...x, altText: e.target.value } : x)),
+              )
+            }
+            placeholder={t("altPlaceholder")}
+            className="mt-1 w-full resize-none bg-transparent text-[14px] leading-relaxed text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100"
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setAltEditing(null)}
+              className="focus-ring rounded-full border border-slate-300 px-3 py-1 text-[13px] font-semibold text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+            >
+              {t("done")}
+            </button>
+          </div>
+        </div>
       )}
 
       {quote && (
@@ -311,8 +342,12 @@ export function NoteComposer({
             >
               <ImagePlus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
             </button>
+            <span className="inline-flex min-w-0 items-center gap-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
+              <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              {t("visibilityPublic")}
+            </span>
             <div className="ml-auto flex items-center gap-3">
-              <NoteCounter length={length} />
+              <NoteLengthRing length={length} />
               {submitButton}
             </div>
           </div>
