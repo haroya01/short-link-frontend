@@ -20,6 +20,12 @@ import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { cn } from "@/lib/utils";
 
 const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
+const BLOG_HOME_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/;
+const NOTES_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/;
+const SECTION_LINK =
+  "focus-ring inline-flex h-8 items-center rounded-lg px-2.5 text-[14px] font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800";
+const SECTION_ACTIVE = "text-slate-900 dark:text-slate-100";
+const SECTION_IDLE = "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100";
 
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
@@ -46,16 +52,20 @@ function ChromeNavLink(props: ComponentProps<typeof BlogChromeLink>) {
  * `searchOpen` rests the header search field open (used on the blog feed home, the discovery hub).
  * `slimMobile` hides the right-cluster controls on mobile — used on public surfaces where the bottom
  * tab bar carries search/account/switcher; the authoring workspace keeps the full header (no nav bar).
+ * `sections` adds the 글 · 노트 switch beside the logo — public blog pages only; author pages already
+ * carry their own 글 · 노트 tabs.
  */
 export function AppHeader({
   showMenu = true,
   searchOpen = false,
   slimMobile = false,
+  sections = false,
   product,
 }: {
   showMenu?: boolean;
   searchOpen?: boolean;
   slimMobile?: boolean;
+  sections?: boolean;
   /** The product this header sits on — lets the switcher seed its destination without a load flash. */
   product?: Product;
 }) {
@@ -84,6 +94,8 @@ export function AppHeader({
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
   const inWriting = WRITE_PATH.test(pathname);
+  const onBlogHome = BLOG_HOME_PATH.test(pathname);
+  const onNotes = NOTES_PATH.test(pathname);
 
   const mobileWriteCircle = (authed: boolean) => (
     <ChromeNavLink
@@ -173,6 +185,24 @@ export function AppHeader({
             <Logo variant="blog" animated showText={slimMobile} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </ChromeNavLink>
+          {sections && (
+            <nav aria-label={t("blog")} className="hidden items-center gap-0.5 sm:flex">
+              <ChromeNavLink
+                href={blogHref("/")}
+                aria-current={onBlogHome ? "page" : undefined}
+                className={cn(SECTION_LINK, onBlogHome ? SECTION_ACTIVE : SECTION_IDLE)}
+              >
+                {t("posts")}
+              </ChromeNavLink>
+              <ChromeNavLink
+                href={blogHref("/notes")}
+                aria-current={onNotes ? "page" : undefined}
+                className={cn(SECTION_LINK, onNotes ? SECTION_ACTIVE : SECTION_IDLE)}
+              >
+                {t("notes")}
+              </ChromeNavLink>
+            </nav>
+          )}
         </div>
 
         {/* Right cluster split into two zones: utilities for *this* surface (search + language) on

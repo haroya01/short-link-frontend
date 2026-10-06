@@ -191,6 +191,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     });
   }
+
+  for (const locale of routing.locales) {
+    entries.push({
+      url: `${BLOG_URL}/${locale}/notes`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.5,
+      alternates: {
+        languages: Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}/notes`])),
+      },
+    });
+  }
   const tags = await fetchPopularTags();
   for (const tag of tags) {
     const enc = encodeURIComponent(tag);

@@ -18,7 +18,7 @@ function quoteFromParams(params: URLSearchParams): QuotedPost | null {
   return { id, title, slug, authorUsername };
 }
 
-export function DiscoverNotes() {
+export function NotesFeed() {
   const t = useTranslations("notes");
   const params = useSearchParams();
   const { ready, authenticated, signInWithGoogle } = useAuth();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Home, Search, User } from "lucide-react";
+import { Bell, Home, MessageSquareText, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -17,8 +17,8 @@ const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 검색 · 알림 · 계정. 검색/계정 open
- * full-width sheets; 홈/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
+ * Mobile-only bottom tab bar (blog surfaces). Five tabs: 홈 · 노트 · 검색 · 알림 · 계정. 검색/계정 open
+ * full-width sheets; 홈/노트/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
  * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
 export function BlogBottomNav() {
@@ -39,9 +39,10 @@ export function BlogBottomNav() {
     };
   }, []);
 
-  // Locale-anchored so 홈 highlights on both topologies: production subdomain (pathname = `/ko`) and
-  // dev/preview path (`/ko/blog`, `/ko/blog-preview`).
-  const isHome = sheet === null && /^\/[a-z]{2}(\/(blog|blog-preview))?\/?$/.test(pathname);
+  // Locale optional: the blog host rewrites a no-locale entry in place (pathname `/`, `/notes`), and
+  // also serves `/ko`; dev/preview paths are `/ko/blog`, `/ko/blog-preview`.
+  const isHome = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/.test(pathname);
+  const isNotes = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/.test(pathname);
   const isNotif = sheet === null && /\/notifications(\/|$)/.test(pathname);
   // Signed-out → kurl's branded login (then Google), carrying where they wanted to go.
   const loginHref = (next: string) => `${blogHref("/login")}?next=${encodeURIComponent(next)}`;
@@ -62,6 +63,14 @@ export function BlogBottomNav() {
         >
           <Home className="h-5 w-5" />
           {t("home")}
+        </BlogChromeLink>
+        <BlogChromeLink
+          href={blogHref("/notes")}
+          aria-current={isNotes ? "page" : undefined}
+          className={cn(TAB, isNotes ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
+        >
+          <MessageSquareText className="h-5 w-5" />
+          {t("notes")}
         </BlogChromeLink>
         <button
           type="button"

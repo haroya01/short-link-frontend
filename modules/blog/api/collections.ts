@@ -200,12 +200,6 @@ export async function getCollection(id: number): Promise<CollectionDetail | null
   }
 }
 
-/** Discover — connection flow of curators the viewer follows (newest first). Empty when following 0. */
-export function listDiscoverConnections(): Promise<DiscoverFeed> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockDiscoverConnections());
-  return request<DiscoverFeed>("/api/v1/feed/connections", { method: "GET" });
-}
-
 /**
  * Public — the GLOBAL, non-personalized connection stream (newest first): who connected what, to
  * which public collection/path, and why. Same {@link ConnectionEvent} shape as the authed follow-graph
