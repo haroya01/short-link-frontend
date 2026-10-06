@@ -271,6 +271,33 @@ test("the notes feed has tabs: trending ranks by reactions, following carries re
   await expect(page.getByText("yuna님이 리포스트함")).toBeVisible({ timeout: 15_000 });
 });
 
+test("the following tab turns every repost off and back on", async ({ page }) => {
+  await page.goto("/ko/blog/notes?feed=following");
+  const reposted = page.getByText("yuna님이 리포스트함");
+  await expect(reposted).toBeVisible({ timeout: 30_000 });
+  const toggle = page.getByRole("switch", { name: "리포스트 보기" });
+  await expect(toggle).toHaveAttribute("aria-checked", "true");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-checked", "false");
+  await expect(reposted).toHaveCount(0);
+  await expect(page.getByText("오늘 쓴 글의 씨앗", { exact: false })).toBeVisible();
+  await toggle.click();
+  await expect(reposted).toBeVisible();
+});
+
+test("a followed author's profile menu hides just their reposts", async ({ page }) => {
+  await page.goto("/ko/p/minji");
+  const menu = page.getByRole("button", { name: "프로필 메뉴" });
+  await expect(page.getByRole("heading", { name: "@minji" })).toBeVisible({ timeout: 30_000 });
+  await expect(menu).toHaveCount(0);
+  await page.getByRole("button", { name: "팔로우", exact: true }).click();
+  await menu.click();
+  await page.getByRole("menuitem", { name: "리포스트 숨기기" }).click();
+  await expect(page.getByText("팔로잉 피드에서 minji님의 리포스트를 숨겨요")).toBeVisible();
+  await menu.click();
+  await expect(page.getByRole("menuitem", { name: "리포스트 다시 보기" })).toBeVisible();
+});
+
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const first = page.locator("article[data-note-id]").first();

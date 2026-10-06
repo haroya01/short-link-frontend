@@ -86,6 +86,8 @@ let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "
 
 const topLevel = () => notes.filter((n) => n.inReplyToId === null);
 let bookmarks: number[] = [];
+let showReposts = true;
+const repostsHidden = new Set<string>();
 
 const withQuotes = (n: Note): Note => ({
   ...n,
@@ -100,10 +102,30 @@ export function mockTrendingNotes(page: number): NoteFeed {
   return { items: page === 0 ? ranked.map(withQuotes) : [], page, hasNext: false };
 }
 
+export function mockFeedPreferences(): { showReposts: boolean } {
+  return { showReposts };
+}
+
+export function mockSetShowReposts(on: boolean): { showReposts: boolean } {
+  showReposts = on;
+  return { showReposts };
+}
+
+export function mockRepostVisibility(username: string): { hidden: boolean } {
+  return { hidden: repostsHidden.has(username) };
+}
+
+export function mockSetRepostsHidden(username: string, hidden: boolean): { hidden: boolean } {
+  if (hidden) repostsHidden.add(username);
+  else repostsHidden.delete(username);
+  return { hidden };
+}
+
 export function mockFollowingNotes(page: number): NoteFeed {
   if (page > 0) return { items: [], page, hasNext: false };
   const mine = topLevel().filter((n) => n.author.id === ME.id).map(withQuotes);
-  const reposted = (reposts.get(YUNA.username) ?? [])
+  const shown = showReposts && !repostsHidden.has(YUNA.username);
+  const reposted = (shown ? (reposts.get(YUNA.username) ?? []) : [])
     .map((id) => notes.find((n) => n.id === id))
     .filter((n): n is Note => n !== undefined && n.author.id !== YUNA.id)
     .map((n) => ({ ...withQuotes(n), repostedBy: YUNA }));

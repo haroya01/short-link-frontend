@@ -4,6 +4,7 @@ import { cardHref } from "@/lib/host";
 import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
+import { AuthorMoreMenu } from "@/modules/notes/components/author-more-menu";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
@@ -110,8 +111,9 @@ export async function AuthorHeader({
             @{author.username}
           </h1>
         </div>
-        <div className="shrink-0 pt-1">
+        <div className="flex shrink-0 items-center gap-2 pt-1">
           <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
+          <AuthorMoreMenu username={author.username} />
         </div>
       </div>
 
