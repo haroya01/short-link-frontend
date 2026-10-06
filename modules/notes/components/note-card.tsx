@@ -24,6 +24,7 @@ import { noteLength } from "@/modules/notes/lib/note-text";
 import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
 import { NoteGlyph } from "./note-glyph";
+import { NoteLinkCard } from "./note-link-card";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
@@ -242,6 +243,7 @@ export function NoteCard({
             <NoteMedia media={note.media} />
             {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
             {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
+            {note.linkPreview && <NoteLinkCard preview={note.linkPreview} />}
 
             <footer className="-mb-1 -ml-2 mt-1 flex items-center gap-1.5 text-[13px]">
               <button

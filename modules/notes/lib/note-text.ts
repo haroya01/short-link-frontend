@@ -25,3 +25,11 @@ export function splitLinks(body: string): NoteTextPart[] {
   if (last < body.length) parts.push({ kind: "text", value: body.slice(last) });
   return parts;
 }
+
+/** The address a note's link card is about — the first link, the same pick the server makes. Notes
+ *  with photos or a quote already carry a card and get none. */
+export function previewUrl(body: string, hasMedia: boolean, hasQuote: boolean): string | null {
+  if (hasMedia || hasQuote) return null;
+  const first = splitLinks(body).find((part) => part.kind === "link");
+  return first && first.value.length <= 2048 ? first.value : null;
+}

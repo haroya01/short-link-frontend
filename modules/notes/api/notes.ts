@@ -30,6 +30,13 @@ export interface QuotedPost {
   authorUsername: string;
 }
 
+export interface NoteLinkPreview {
+  url: string;
+  title: string | null;
+  description: string | null;
+  image: string | null;
+}
+
 export interface QuotedNote {
   id: number;
   body: string;
@@ -55,6 +62,8 @@ export interface Note {
   repostCount: number | null;
   repostedByMe: boolean | null;
   quotedNote: QuotedNote | null;
+  /** Open Graph card for the body's first link, fetched by the server after posting. */
+  linkPreview: NoteLinkPreview | null;
 }
 
 export interface NoteFeed {

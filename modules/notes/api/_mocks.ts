@@ -16,6 +16,7 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): No
     repostCount: partial.author.id === ME.id ? 0 : null,
     repostedByMe: false,
     quotedNote: null,
+    linkPreview: null,
     ...partial,
   };
 }
@@ -44,6 +45,12 @@ let notes: Note[] = [
     createdAt: "2026-10-05T11:00:00Z",
     replyCount: 1,
     repostedByMe: true,
+    linkPreview: {
+      url: "https://kurl.me/about",
+      title: "kurl — 짧은 링크와 글이 오래 사는 곳",
+      description: "링크를 줄이고, 글을 쓰고, 그 사이를 엮는다.",
+      image: "https://picsum.photos/seed/kurl-about/960/502",
+    },
   }),
   note({
     id: 5,
