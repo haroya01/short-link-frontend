@@ -113,3 +113,18 @@ test("a picked photo sits in the composer strip and takes alt text from its +ALT
   await expect(addAlt).toHaveText("ALT");
   await expect(page.getByAltText("산책길의 낮은 담장")).toBeVisible();
 });
+
+test("any signed-in reader can file someone's note into a collection, and the note block links back", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const yunaNote = page.locator("article", { hasText: "오늘 쓴 글의 씨앗" });
+  await yunaNote.getByRole("button", { name: "노트 메뉴" }).click({ timeout: 30_000 });
+  await expect(yunaNote.getByRole("menuitem", { name: "고치기" })).toHaveCount(0);
+  await yunaNote.getByRole("menuitem", { name: "컬렉션에 연결" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+
+  await page.goto("/ko/blog/collections/1");
+  const block = page.locator('a[data-bhv-id="note/3"]').first();
+  await expect(block).toBeVisible({ timeout: 30_000 });
+  await expect(block).toContainText("yuna");
+  await expect(block).toHaveAttribute("href", /notes\/3$/);
+});

@@ -48,8 +48,8 @@ function hl(id: number, refId: number, quote: string, postTitle: string, usernam
 function post(id: number, refId: number, title: string, excerpt: string, username: string, slug: string, why: string | null): MockConnection {
   return { id, refId, blockType: "POST", why, title, excerpt, slug, username, quote: null, body: null };
 }
-function note(id: number, body: string, why: string | null): MockConnection {
-  return { id, blockType: "NOTE", why, title: null, excerpt: null, slug: null, username: null, quote: null, body };
+function note(id: number, body: string, why: string | null, author = "yuna", noteId = 3): MockConnection {
+  return { id, blockType: "NOTE", why, title: null, excerpt: null, slug: null, username: author, quote: null, body, noteId };
 }
 
 // The seeded reading path (PATH) — an argument walked sentence by sentence. The `why` on each step is
@@ -213,6 +213,7 @@ export function mockConnect(
     username: null,
     quote: payload.blockType === "HIGHLIGHT" ? "이 문장을 길에 이었어요." : null,
     body: payload.blockType === "NOTE" ? "연결한 노트" : null,
+    noteId: payload.blockType === "NOTE" ? payload.refId : null,
   });
 }
 

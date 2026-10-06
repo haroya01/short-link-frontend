@@ -16,6 +16,7 @@ import { noteLength } from "@/modules/notes/lib/note-text";
 import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
 import { QuotedPostCard } from "./quoted-post-card";
+import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 
 const NOTE_RING_NUMBER_FROM = 20;
 
@@ -49,6 +50,8 @@ export function NoteCard({
   const [liked, setLiked] = useState(note.likedByMe === true);
   const [likeCount, setLikeCount] = useState(note.likeCount);
   const [likeTouched, setLikeTouched] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const tCollections = useTranslations("collections");
 
   useEffect(() => {
     setLiked(note.likedByMe === true);
@@ -146,7 +149,14 @@ export function NoteCard({
             {note.editedAt && <span> · {t("edited")}</span>}
           </BlogLink>
           <div className="-my-2 ml-auto flex shrink-0 items-center">
-            {mine && !editing && <NoteMenu onEdit={() => setEditing(true)} onDelete={remove} disabled={busy} />}
+            {authenticated && !editing && (
+              <NoteMenu
+                onConnect={() => setConnecting(true)}
+                onEdit={mine ? () => setEditing(true) : undefined}
+                onDelete={mine ? remove : undefined}
+                disabled={busy}
+              />
+            )}
           </div>
         </header>
 
@@ -225,6 +235,16 @@ export function NoteCard({
         </footer>
       </div>
       {confirmDialog}
+      {connecting && (
+        <ConnectSheet
+          blockType="NOTE"
+          refId={note.id}
+          targetLabel={tCollections("blockNote")}
+          targetTitle={note.body}
+          onClose={() => setConnecting(false)}
+          onDone={() => setConnecting(false)}
+        />
+      )}
     </article>
   );
 }
@@ -282,12 +302,14 @@ export function NoteLengthRing({ length, className }: { length: number; classNam
 }
 
 function NoteMenu({
+  onConnect,
   onEdit,
   onDelete,
   disabled,
 }: {
-  onEdit: () => void;
-  onDelete: () => void;
+  onConnect: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   disabled: boolean;
 }) {
   const t = useTranslations("notes");
@@ -327,7 +349,7 @@ function NoteMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-8 z-20 w-32 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute right-0 top-8 z-20 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           <button
             type="button"
@@ -335,22 +357,37 @@ function NoteMenu({
             className={cn(item, "text-slate-700 dark:text-slate-200")}
             onClick={() => {
               setOpen(false);
-              onEdit();
+              onConnect();
             }}
           >
-            {t("edit")}
+            {t("connectToCollection")}
           </button>
-          <button
-            type="button"
-            role="menuitem"
-            className={cn(item, "text-red-600 dark:text-red-400")}
-            onClick={() => {
-              setOpen(false);
-              onDelete();
-            }}
-          >
-            {t("delete")}
-          </button>
+          {onEdit && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onEdit();
+              }}
+            >
+              {t("edit")}
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-red-600 dark:text-red-400")}
+              onClick={() => {
+                setOpen(false);
+                onDelete();
+              }}
+            >
+              {t("delete")}
+            </button>
+          )}
         </div>
       )}
     </div>
