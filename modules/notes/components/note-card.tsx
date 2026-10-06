@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import {
   deleteNote,
   editNote,
@@ -53,7 +53,7 @@ export function NoteCard({
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
-  const ago = useRelativeTime();
+  const ago = useCompactTime();
   const { authenticated, me, signInWithGoogle } = useAuth();
   const [confirm, confirmDialog] = useConfirm();
   const { toast } = useToast();
@@ -148,7 +148,7 @@ export function NoteCard({
           <span className="truncate">{t("repostedBy", { username: repostedBy })}</span>
         </p>
       )}
-      <div className="flex gap-3">
+      <div className={emphasis ? "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3" : "flex gap-3"}>
         <BlogLink
           href={authorHref(note.author.username, locale)}
           tabIndex={-1}
@@ -157,7 +157,7 @@ export function NoteCard({
         >
           <Avatar src={note.author.avatarUrl} name={note.author.username} size="md" />
         </BlogLink>
-        <div className="min-w-0 flex-1">
+        <div className={emphasis ? "contents" : "min-w-0 flex-1"}>
           <header className="flex min-h-5 items-center gap-1.5 text-[15px] leading-5">
             <BlogLink
               href={authorHref(note.author.username, locale)}
@@ -169,7 +169,9 @@ export function NoteCard({
               href={noteHref(note, locale)}
               className="shrink-0 rounded text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200"
             >
-              <time dateTime={note.createdAt}>{ago(note.createdAt)}</time>
+              <time dateTime={note.createdAt} suppressHydrationWarning>
+                {ago(note.createdAt)}
+              </time>
               {note.editedAt && <span> · {t("edited")}</span>}
             </BlogLink>
             <div className="-my-2 ml-auto flex shrink-0 items-center">
@@ -184,81 +186,83 @@ export function NoteCard({
             </div>
           </header>
 
-          <div className="mt-1">
-            {editing ? (
-              <div>
-                <textarea
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  rows={3}
-                  autoFocus
-                  aria-label={t("edit")}
-                  className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                />
-                <div className="mt-2 flex items-center justify-end gap-2">
-                  <NoteLengthRing length={noteLength(draft)} className="mr-auto" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDraft(note.body);
-                      setEditing(false);
-                    }}
-                    className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                  >
-                    {t("cancel")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={save}
-                    disabled={busy || overLimit || (!draft.trim() && note.media.length === 0)}
-                    className="focus-ring rounded-full bg-accent-700 px-4 py-1.5 text-[13px] font-semibold text-white hover:bg-accent-800 disabled:opacity-40"
-                  >
-                    {t("save")}
-                  </button>
+          <div className={emphasis ? "col-span-2 mt-3" : undefined}>
+            <div className={emphasis ? undefined : "mt-1"}>
+              {editing ? (
+                <div>
+                  <textarea
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    rows={3}
+                    autoFocus
+                    aria-label={t("edit")}
+                    className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                  />
+                  <div className="mt-2 flex items-center justify-end gap-2">
+                    <NoteLengthRing length={noteLength(draft)} className="mr-auto" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDraft(note.body);
+                        setEditing(false);
+                      }}
+                      className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    >
+                      {t("cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={save}
+                      disabled={busy || overLimit || (!draft.trim() && note.media.length === 0)}
+                      className="focus-ring rounded-full bg-accent-700 px-4 py-1.5 text-[13px] font-semibold text-white hover:bg-accent-800 disabled:opacity-40"
+                    >
+                      {t("save")}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <NoteBody body={note.body} large={emphasis} />
-            )}
-          </div>
-          <NoteMedia media={note.media} />
-          {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
-          {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
-
-          <footer className="-mb-1 -ml-2 mt-1 flex items-center gap-1.5 text-[13px]">
-            <button
-              type="button"
-              onClick={toggleLike}
-              aria-pressed={liked}
-              aria-label={liked ? t("unlike") : t("like")}
-              className={cn(action, liked && "text-accent-700 dark:text-accent-400")}
-            >
-              <span key={liked ? "on" : "off"} className={cn("inline-flex", likeTouched && "subscribe-pop")}>
-                <NoteGlyph
-                  name="heart"
-                  active={liked}
-                  className={cn("h-[18px] w-[18px]", liked && "text-accent-600")}
-                />
-              </span>
-              {mine && likeCount !== null && likeCount > 0 && (
-                <span className="tabular-nums" title={t("likeCount", { count: likeCount })}>
-                  {likeCount}
-                </span>
+              ) : (
+                <NoteBody body={note.body} large={emphasis} />
               )}
-            </button>
-            <BlogLink
-              href={noteHref(note, locale)}
-              className={action}
-              aria-label={t("replyCount", { count: note.replyCount })}
-            >
-              <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
-              {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
-            </BlogLink>
-            <RepostControl note={note} mine={mine} buttonClass={action} onQuote={() => setQuoting(true)} />
-            <button type="button" onClick={share} aria-label={t("share")} className={action}>
-              <NoteGlyph name="share" className="h-[18px] w-[18px]" />
-            </button>
-          </footer>
+            </div>
+            <NoteMedia media={note.media} />
+            {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
+            {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
+
+            <footer className="-mb-1 -ml-2 mt-1 flex items-center gap-1.5 text-[13px]">
+              <button
+                type="button"
+                onClick={toggleLike}
+                aria-pressed={liked}
+                aria-label={liked ? t("unlike") : t("like")}
+                className={cn(action, liked && "text-accent-700 dark:text-accent-400")}
+              >
+                <span key={liked ? "on" : "off"} className={cn("inline-flex", likeTouched && "subscribe-pop")}>
+                  <NoteGlyph
+                    name="heart"
+                    active={liked}
+                    className={cn("h-[18px] w-[18px]", liked && "text-accent-600")}
+                  />
+                </span>
+                {mine && likeCount !== null && likeCount > 0 && (
+                  <span className="tabular-nums" title={t("likeCount", { count: likeCount })}>
+                    {likeCount}
+                  </span>
+                )}
+              </button>
+              <BlogLink
+                href={noteHref(note, locale)}
+                className={action}
+                aria-label={t("replyCount", { count: note.replyCount })}
+              >
+                <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
+                {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
+              </BlogLink>
+              <RepostControl note={note} mine={mine} buttonClass={action} onQuote={() => setQuoting(true)} />
+              <button type="button" onClick={share} aria-label={t("share")} className={action}>
+                <NoteGlyph name="share" className="h-[18px] w-[18px]" />
+              </button>
+            </footer>
+          </div>
         </div>
       </div>
       {confirmDialog}

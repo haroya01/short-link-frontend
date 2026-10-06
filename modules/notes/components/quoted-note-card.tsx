@@ -5,17 +5,17 @@ import type { QuotedNote } from "@/modules/notes/api/notes";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 export function QuotedNoteCard({ note, linked = true }: { note: QuotedNote; linked?: boolean }) {
   const locale = useLocale();
-  const ago = useRelativeTime();
+  const ago = useCompactTime();
   const content = (
     <>
       <span className="flex min-w-0 items-center gap-1.5 text-[14px] leading-5">
         <Avatar src={note.author.avatarUrl} name={note.author.username} size="xs" />
         <span className="truncate font-semibold text-slate-900 dark:text-slate-100">{note.author.username}</span>
-        <time dateTime={note.createdAt} className="shrink-0 text-slate-500 dark:text-slate-400">
+        <time dateTime={note.createdAt} suppressHydrationWarning className="shrink-0 text-slate-500 dark:text-slate-400">
           {ago(note.createdAt)}
         </time>
       </span>
