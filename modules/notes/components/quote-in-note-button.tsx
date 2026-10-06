@@ -24,7 +24,7 @@ export function QuoteInNoteButton({
   });
   return (
     <a
-      href={blogHref(`/connections?tab=notes&${query.toString()}`)}
+      href={blogHref(`/notes?${query.toString()}`)}
       aria-label={t("quoteAction")}
       title={t("quoteAction")}
       className="touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"

@@ -25,7 +25,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
           action={
             own ? (
               <a
-                href={blogHref("/connections?tab=notes")}
+                href={blogHref("/notes")}
                 className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800"
               >
                 {t("writeFirst")}

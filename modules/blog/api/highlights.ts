@@ -1,5 +1,4 @@
 import { request } from "@/lib/api/client";
-import type { FeedSource } from "./collections";
 import type { PublicAuthor } from "./public-posts";
 import { collectionMocks } from "@/modules/blog/api/_mock-gates";
 
@@ -49,42 +48,6 @@ export interface MyHighlightItem {
   createdAt: string;
 }
 
-/** One entry in the "남들 하이라이트" feed — a passage a followed curator drew, carried with the post it
- *  lives in so the reader can jump to that sentence (`?hl=`). `curator` highlighted it; `postAuthorUsername`
- *  wrote the post (they can differ). Mirrors the backend `HighlightFeedItem` / the iOS `HighlightFeedItemView`. */
-export interface HighlightFeedItem {
-  id: number;
-  postId: number;
-  /** Who drew the highlight (the curator) — null only for an optimistic local add. */
-  curator: PublicAuthor | null;
-  postSlug: string;
-  postTitle: string;
-  /** Who wrote the post (attribution + the deep-link's author segment). */
-  postAuthorUsername: string | null;
-  blockOrder: number;
-  endBlockOrder: number;
-  startOffset: number;
-  endOffset: number;
-  quote: string;
-  /** The curator's public margin note, if any. */
-  note: string | null;
-  createdAt: string;
-  /** Replies in the highlight's thread — drives the "conversation here" marker. */
-  replyCount: number;
-}
-
-/** One page of the highlight feed (newest first). Mirrors the backend `HighlightFeedView`. */
-export interface HighlightFeedPage {
-  items: HighlightFeedItem[];
-  page: number;
-  size: number;
-  hasNext: boolean;
-  /** "global" when the backend served the cold-start fallback (following nobody / empty page 0)
-   *  instead of the follow graph. Absent on a server that predates the field → treated as
-   *  "following". See {@link FeedSource}. */
-  source?: FeedSource;
-}
-
 /** One reply in a highlight's thread (the author's note is the thread opener; these sit under it). */
 export interface HighlightReplyView {
   id: number;
@@ -118,25 +81,6 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
 export async function listMyHighlights(): Promise<MyHighlightItem[]> {
   if (collectionMocks) return collectionMocks.mockMyHighlights();
   return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
-}
-
-/**
- * Authenticated — "남들 하이라이트" 피드: 팔로우한 큐레이터가 최근 칠한 공개 구절(최신순, 페이지).
- * 팔로우가 0이거나 개인화 첫 페이지가 비면 백엔드가 전역 스트림으로 폴백하고 `source: "global"` 로
- * 알린다. 그때 이후 페이지는 `scope: "global"` 로 고정해 받아야 팔로잉↔전역 페이지가 섞이지 않는다
- * (page>0 빈 결과는 폴백 안 함 — 정상 끝). scope 미지정 시 백엔드가 폴백 규칙을 스스로 판단.
- */
-export function getHighlightFeed(
-  page = 0,
-  size = 20,
-  scope?: FeedSource,
-): Promise<HighlightFeedPage> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockHighlightFeed(page, size, scope));
-  const scopeParam = scope === "global" ? "&scope=global" : "";
-  return request<HighlightFeedPage>(
-    `/api/v1/highlights/feed?page=${page}&size=${size}${scopeParam}`,
-    { method: "GET" },
-  );
 }
 
 /** Authenticated — create a highlight on a published post. */
