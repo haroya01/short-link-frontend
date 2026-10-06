@@ -1,16 +1,20 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { EmptyState } from "@/components/common/empty-state";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/toast";
 import { FeedSortTabs, type FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
 import {
+  getNoteFeedPreferences,
   listBookmarkedNotes,
   listEveryoneNotes,
   listFollowingNotes,
   listTrendingNotes,
+  setShowReposts,
   type Note,
   type NoteFeed,
   type QuotedPost,
@@ -73,11 +77,22 @@ export function NotesFeed() {
   };
   const signedOut = ready && !authenticated;
   const showsPosted = feed === "everyone" || feed === "following";
+  const reposts = useShowReposts(feed === "following" && ready && authenticated);
 
   return (
     <div>
-      <div className="mb-2 border-b border-slate-100 pb-3.5 dark:border-slate-800">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 pb-3.5 dark:border-slate-800">
         <FeedSortTabs tabs={tabs} />
+        {reposts.shown !== null && (
+          <label className="flex shrink-0 items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
+            {t("showReposts")}
+            <Switch
+              checked={reposts.shown}
+              onCheckedChange={reposts.set}
+              aria-label={t("showReposts")}
+            />
+          </label>
+        )}
       </div>
       <div className="border-b border-slate-100 dark:border-slate-800">
         {ready && authenticated ? (
@@ -106,7 +121,7 @@ export function NotesFeed() {
         />
       ) : (
         <NoteList
-          key={feed}
+          key={`${feed}:${reposts.version}`}
           load={load}
           prepend={showsPosted ? posted : []}
           onQuoted={(note) => setPosted((current) => [note, ...current])}
@@ -115,4 +130,36 @@ export function NotesFeed() {
       )}
     </div>
   );
+}
+
+function useShowReposts(active: boolean) {
+  const t = useTranslations("notes");
+  const { toast } = useToast();
+  const [shown, setShown] = useState<boolean | null>(null);
+  const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    if (!active || shown !== null) return;
+    let live = true;
+    getNoteFeedPreferences()
+      .then((preferences) => live && setShown(preferences.showReposts))
+      .catch(() => live && setShown(true));
+    return () => {
+      live = false;
+    };
+  }, [active, shown]);
+
+  async function set(next: boolean) {
+    const before = shown;
+    setShown(next);
+    try {
+      setShown((await setShowReposts(next)).showReposts);
+      setVersion((v) => v + 1);
+    } catch {
+      setShown(before);
+      toast(t("settingFailed"), "error");
+    }
+  }
+
+  return { shown: active ? shown : null, version, set };
 }

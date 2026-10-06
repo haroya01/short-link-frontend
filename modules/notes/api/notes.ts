@@ -152,6 +152,30 @@ export function setNoteBookmark(id: number, on: boolean): Promise<{ bookmarked: 
   return request(`/api/v1/notes/${id}/bookmark`, { method: on ? "PUT" : "DELETE" });
 }
 
+export function getNoteFeedPreferences(): Promise<{ showReposts: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockFeedPreferences());
+  return request("/api/v1/notes/feed-preferences", { method: "GET" });
+}
+
+export function setShowReposts(showReposts: boolean): Promise<{ showReposts: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSetShowReposts(showReposts));
+  return request("/api/v1/notes/feed-preferences", { method: "PUT", body: { showReposts } });
+}
+
+export function getRepostVisibility(username: string): Promise<{ hidden: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockRepostVisibility(username));
+  return request(`/api/v1/notes/repost-visibility/${encodeURIComponent(username)}`, {
+    method: "GET",
+  });
+}
+
+export function setRepostsHidden(username: string, hidden: boolean): Promise<{ hidden: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSetRepostsHidden(username, hidden));
+  return request(`/api/v1/notes/repost-visibility/${encodeURIComponent(username)}`, {
+    method: hidden ? "PUT" : "DELETE",
+  });
+}
+
 /** Client-side author page (carries the viewer's token, so likedByMe and the author's own counts
  *  come back filled in). */
 export function listAuthorNotes(username: string, page = 0): Promise<NoteFeed> {
