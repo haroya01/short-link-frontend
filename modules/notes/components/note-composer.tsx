@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Globe, ImagePlus, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -16,12 +16,15 @@ import {
   updateFederationSettings,
   uploadNoteImage,
   type Note,
+  type NoteLinkPreview,
   type QuotedNote,
   type QuotedPost,
 } from "@/modules/notes/api/notes";
-import { noteLength } from "@/modules/notes/lib/note-text";
+import { noteLength, previewUrl } from "@/modules/notes/lib/note-text";
+import { getLinkPreview } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { NoteLengthRing } from "./note-card";
+import { NoteLinkCard } from "./note-link-card";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 
@@ -59,6 +62,29 @@ export function NoteComposer({
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
+  const [linkCard, setLinkCard] = useState<NoteLinkPreview | null>(null);
+  const cardUrl = previewUrl(body, images.length > 0, quote !== null || quotedNote !== null);
+
+  useEffect(() => {
+    if (!cardUrl) {
+      setLinkCard(null);
+      return;
+    }
+    let live = true;
+    const timer = setTimeout(() => {
+      getLinkPreview(cardUrl)
+        .then((result) => {
+          if (!live) return;
+          const data = result.ok ? result.data : null;
+          setLinkCard(data && (data.title || data.image) ? data : null);
+        })
+        .catch(() => live && setLinkCard(null));
+    }, 500);
+    return () => {
+      live = false;
+      clearTimeout(timer);
+    };
+  }, [cardUrl]);
 
   const length = noteLength(body);
   const uploading = images.some((image) => image.key === null);
@@ -145,7 +171,8 @@ export function NoteComposer({
       setBody("");
       setImages([]);
       onClearQuote?.();
-      onCreated(note);
+      onCreated(!note.linkPreview && linkCard ? { ...note, linkPreview: linkCard } : note);
+      setLinkCard(null);
     } catch {
       setError(t("postFailed"));
     } finally {
@@ -324,6 +351,7 @@ export function NoteComposer({
       )}
 
       {quotedNote && <QuotedNoteCard note={quotedNote} linked={false} />}
+      {cardUrl && linkCard && linkCard.url === cardUrl && <NoteLinkCard preview={linkCard} linked={false} />}
 
       {error && (
         <p role="alert" className="mt-2 text-[13px] text-red-600 dark:text-red-400">

@@ -224,3 +224,25 @@ test("clicking a note's text opens it, while its links and buttons keep their ow
   await expect(page).toHaveURL(/\/notes\/3$/);
   await expect(page.getByRole("heading", { name: "답글" })).toBeVisible();
 });
+
+test("a note with a link shows its card, and the composer previews one while typing", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const seed = page.locator('article[data-note-id="3"]');
+  const card = seed.locator("a[data-note-link-card]");
+  await expect(card).toHaveAttribute("href", "https://kurl.me/about", { timeout: 30_000 });
+  await expect(card).toContainText("kurl — 짧은 링크와 글이 오래 사는 곳");
+  await expect(card).toContainText("kurl.me");
+
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await composer.fill("읽어 볼 글 https://example.com/essay.");
+  const draftCard = page.locator("div[data-note-link-card]");
+  await expect(draftCard).toContainText("example.com");
+  await page.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
+    .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+
+  const posted = page.locator("article").first();
+  await expect(posted).toContainText("읽어 볼 글");
+  await expect(posted.locator("a[data-note-link-card]")).toHaveAttribute("href", "https://example.com/essay");
+  await expect(draftCard).toHaveCount(0);
+});
