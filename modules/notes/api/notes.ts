@@ -43,6 +43,8 @@ export interface QuotedNote {
   createdAt: string;
   author: NoteAuthor;
   media: NoteMedia[];
+  contentWarning?: string | null;
+  sensitive?: boolean;
 }
 
 /** `likeCount` and `repostCount` are the author's own numbers and null for everyone else (counts are
@@ -71,6 +73,10 @@ export interface Note {
   bookmarkedByMe?: boolean | null;
   /** Members the body mentions who exist — only these handles link to a profile. */
   mentions?: string[];
+  /** Mastodon's content warning: the body, photos and cards fold behind it until the reader opens it. */
+  contentWarning?: string | null;
+  /** Photos are covered until tapped. Always on when there is a warning. */
+  sensitive?: boolean;
 }
 
 export interface NoteFeed {
@@ -96,7 +102,11 @@ export interface NoteDraft {
   quotedPostId: number | null;
   inReplyToId: number | null;
   quotedNoteId: number | null;
+  contentWarning?: string | null;
+  sensitive?: boolean;
 }
+
+export const NOTE_MAX_WARNING_LENGTH = 100;
 
 export interface FederationSettings {
   enabled: boolean;

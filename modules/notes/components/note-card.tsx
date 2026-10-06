@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MoreHorizontal, Quote } from "lucide-react";
+import { EyeOff, MoreHorizontal, Quote, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -66,6 +66,8 @@ export function NoteCard({
   const { toast } = useToast();
   const mine = me?.id === note.author.id;
   const [editing, setEditing] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const [mediaShown, setMediaShown] = useState(false);
   const [draft, setDraft] = useState(note.body);
   const [busy, setBusy] = useState(false);
   const [liked, setLiked] = useState(note.likedByMe === true);
@@ -245,11 +247,35 @@ export function NoteCard({
             </div>
           </header>
 
+          {note.contentWarning && (
+            <div
+              className={cn(
+                "mt-1.5 flex items-center gap-2 rounded-lg bg-slate-100 py-1.5 pl-3 pr-1.5 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
+                emphasis && "col-span-2 mt-3",
+              )}
+              data-note-warning
+            >
+              <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
+              <span className={cn("min-w-0 flex-1 break-words font-medium", emphasis ? "text-[17px]" : "text-[15px]")}>
+                {note.contentWarning}
+              </span>
+              <button
+                type="button"
+                onClick={() => setRevealed((open) => !open)}
+                aria-expanded={revealed}
+                className="focus-ring shrink-0 rounded-full border border-slate-300 bg-white px-3 py-1 text-[13px] font-semibold hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:hover:bg-slate-800"
+              >
+                {revealed ? t("hideContent") : t("showContent")}
+              </button>
+            </div>
+          )}
           <div
             className={emphasis ? "col-span-2 mt-3" : "cursor-pointer"}
             onClick={openFromBody}
             data-note-body
           >
+            {(!note.contentWarning || revealed || editing) && (
+              <>
             <div className={emphasis ? undefined : "mt-1"}>
               {editing ? (
                 <div>
@@ -287,10 +313,24 @@ export function NoteCard({
                 <NoteBody body={note.body} mentions={note.mentions} large={emphasis} />
               )}
             </div>
-            <NoteMedia media={note.media} />
+            {note.sensitive && !note.contentWarning && !mediaShown && note.media.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => setMediaShown(true)}
+                className="focus-ring mt-2.5 flex h-40 w-full items-center justify-center gap-2 rounded-2xl bg-slate-100 text-[13px] font-semibold text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                data-note-sensitive
+              >
+                <EyeOff className="h-4 w-4" aria-hidden />
+                {t("sensitiveMedia")}
+              </button>
+            ) : (
+              <NoteMedia media={note.media} />
+            )}
             {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
             {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
             {note.linkPreview && <NoteLinkCard preview={note.linkPreview} />}
+              </>
+            )}
 
             {emphasis && (
               <p className="mt-4 text-[13px] text-slate-500 dark:text-slate-400">
