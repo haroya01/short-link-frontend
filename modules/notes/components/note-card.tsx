@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MoreHorizontal, Quote } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -54,6 +55,7 @@ export function NoteCard({
   const t = useTranslations("notes");
   const locale = useLocale();
   const ago = useCompactTime();
+  const router = useRouter();
   const { authenticated, me, signInWithGoogle } = useAuth();
   const [confirm, confirmDialog] = useConfirm();
   const { toast } = useToast();
@@ -134,6 +136,15 @@ export function NoteCard({
     }
   }
 
+  function openFromBody(e: React.MouseEvent<HTMLDivElement>) {
+    if (emphasis || editing) return;
+    if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
+    if (window.getSelection()?.toString()) return;
+    const href = noteHref(note, locale);
+    if (/^https?:\/\//.test(href)) window.location.assign(href);
+    else router.push(href);
+  }
+
   const overLimit = noteLength(draft) > NOTE_MAX_LENGTH;
   const action =
     "touch-target inline-flex h-8 items-center gap-1.5 rounded-full px-2 text-slate-700 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800";
@@ -186,7 +197,11 @@ export function NoteCard({
             </div>
           </header>
 
-          <div className={emphasis ? "col-span-2 mt-3" : undefined}>
+          <div
+            className={emphasis ? "col-span-2 mt-3" : "cursor-pointer"}
+            onClick={openFromBody}
+            data-note-body
+          >
             <div className={emphasis ? undefined : "mt-1"}>
               {editing ? (
                 <div>
