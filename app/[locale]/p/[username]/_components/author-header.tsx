@@ -12,7 +12,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import { AuthorTabs } from "./author-tabs";
 import { HeaderBio } from "./header-bio";
 
-type Tab = "posts" | "series" | "collections" | "about";
+type Tab = "posts" | "notes" | "series" | "collections" | "about";
 
 const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
@@ -87,6 +87,7 @@ export async function AuthorHeader({
   // owner-only tabs on a public page.
   const tabs: { key: Tab; href: string; label: string }[] = [
     { key: "posts", href: authorTabHref(author.username, locale), label: t("tabPosts") },
+    { key: "notes", href: authorTabHref(author.username, locale, "notes"), label: t("tabNotes") },
     { key: "series", href: authorTabHref(author.username, locale, "series"), label: t("tabSeries") },
     {
       key: "collections",

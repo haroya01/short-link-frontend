@@ -10,6 +10,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
 import { FollowedTagsSetting } from "@/modules/blog/components/followed-tags-setting";
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
+import { FederationSetting } from "@/modules/notes/components/federation-setting";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -139,6 +140,8 @@ export default function BlogSettingsPage() {
 
       {/* 공개 범위 — 팔로워 수 숨기기 */}
       <FollowerCountSetting />
+
+      <FederationSetting />
 
       {/* 로그아웃 */}
       <section className="mt-8">

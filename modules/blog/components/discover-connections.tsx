@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Library } from "lucide-react";
 import { blogHref, blogPath } from "@/lib/host";
@@ -25,8 +26,9 @@ import { KindredCurators } from "@/modules/blog/components/kindred-curators";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+import { DiscoverNotes } from "@/modules/notes/components/discover-notes";
 
-type DiscoverTab = "entrances" | "recent" | "highlights";
+type DiscoverTab = "entrances" | "recent" | "highlights" | "notes";
 
 /**
  * Discovery — reframed from a chronological activity log into a collection of *entrances*. You don't
@@ -41,10 +43,14 @@ type DiscoverTab = "entrances" | "recent" | "highlights";
  */
 export function DiscoverConnections({ locale }: { locale: string }) {
   const t = useTranslations("collections");
+  const tNotes = useTranslations("notes");
+  const params = useSearchParams();
   const [events, setEvents] = useState<ConnectionEvent[]>([]);
   const [entrances, setEntrances] = useState<Entrance[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
-  const [tab, setTab] = useState<DiscoverTab>("entrances");
+  const [tab, setTab] = useState<DiscoverTab>(() =>
+    params.get("tab") === "notes" ? "notes" : "entrances",
+  );
   // 콜드스타트 폴백 — 팔로우가 없으면 백엔드가 전역 연결 흐름을 내리고 source:"global" 로 알린다. 이 표면은
   // 단일 페치라 scope 고정은 필요 없고(페이지네이션 없음), 전역임을 조용히 알리는 캡션만 붙인다. 구 서버는
   // source 부재(undefined) → 캡션 없음(기존 동작).
@@ -93,9 +99,12 @@ export function DiscoverConnections({ locale }: { locale: string }) {
         entrancesLabel={t("discoverTabEntrances")}
         recentLabel={t("discoverTabRecent")}
         highlightsLabel={t("discoverTabHighlights")}
+        notesLabel={tNotes("title")}
       />
       <div className="mt-6">
-        {tab === "highlights" ? (
+        {tab === "notes" ? (
+          <DiscoverNotes />
+        ) : tab === "highlights" ? (
           <HighlightsFeed locale={locale} onFindWriters={() => setTab("entrances")} />
         ) : state === "loading" ? (
           <ConnectionFeedSkeleton />
@@ -243,12 +252,14 @@ function DiscoverTabs({
   entrancesLabel,
   recentLabel,
   highlightsLabel,
+  notesLabel,
 }: {
   tab: DiscoverTab;
   onChange: (t: DiscoverTab) => void;
   entrancesLabel: string;
   recentLabel: string;
   highlightsLabel: string;
+  notesLabel: string;
 }) {
   return (
     <div role="tablist" className="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800">
@@ -260,6 +271,9 @@ function DiscoverTabs({
       </TabButton>
       <TabButton active={tab === "highlights"} onClick={() => onChange("highlights")}>
         {highlightsLabel}
+      </TabButton>
+      <TabButton active={tab === "notes"} onClick={() => onChange("notes")}>
+        {notesLabel}
       </TabButton>
     </div>
   );
