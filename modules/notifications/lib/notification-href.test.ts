@@ -70,6 +70,12 @@ describe("notificationHref", () => {
     ).toBeUndefined();
   });
 
+  it("opens the note that mentions the recipient, under the member who wrote it", () => {
+    expect(notificationHref(item({ type: "NOTE_MENTION", noteId: 12 }), "me", "ko")).toBe(
+      "/ko/p/minji/notes/12",
+    );
+  });
+
   it("leaves a follow from another server to its external profile", () => {
     expect(
       notificationHref(item({ type: "REMOTE_FOLLOW", actorProfileUrl: "https://m.social/@a" }), "me", "ko"),

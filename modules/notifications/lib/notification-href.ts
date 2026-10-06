@@ -25,6 +25,10 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
       return item.noteId != null && myUsername
         ? authorHref(myUsername, locale, `notes/${item.noteId}`)
         : undefined;
+    case "NOTE_MENTION":
+      return item.noteId != null && item.actorUsername && !item.actorProfileUrl
+        ? authorHref(item.actorUsername, locale, `notes/${item.noteId}`)
+        : undefined;
     case "NOTE_REPLY":
     case "NOTE_QUOTE":
       // The reply or quote is the actor's note; it shows the recipient's note above it.

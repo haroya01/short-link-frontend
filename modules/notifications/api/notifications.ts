@@ -19,6 +19,7 @@ export type NotificationType =
   | "NOTE_REPOST"
   | "NOTE_REPLY"
   | "NOTE_QUOTE"
+  | "NOTE_MENTION"
   | "REMOTE_FOLLOW";
 
 /** One of a group's newest actors. A remote account has no id; its username is name@domain. */

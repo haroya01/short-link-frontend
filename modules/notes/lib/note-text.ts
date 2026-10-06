@@ -6,10 +6,11 @@ export function noteLength(text: string): number {
 export type NoteTextPart =
   | { kind: "text"; value: string }
   | { kind: "link"; value: string }
-  | { kind: "tag"; value: string };
+  | { kind: "tag"; value: string }
+  | { kind: "mention"; value: string };
 
 const TOKEN_PATTERN =
-  /(https?:\/\/[^\s<]+)|(?<![=/)\p{L}\p{M}\p{N}_#])#([\p{L}\p{M}\p{N}_][\p{L}\p{M}\p{N}_·・]*)/gu;
+  /(https?:\/\/[^\s<]+)|(?<![=/)\p{L}\p{M}\p{N}_#])#([\p{L}\p{M}\p{N}_][\p{L}\p{M}\p{N}_·・]*)|(?<![A-Za-z0-9_])@([A-Za-z0-9][A-Za-z0-9_]{2,15})(?![A-Za-z0-9_@])/gu;
 const TRAILING_PUNCTUATION = /[.,!?:;)\]'"]+$/;
 const TAG_TRAILING = /[·・]+$/u;
 const LETTER = /\p{L}/u;
@@ -20,9 +21,11 @@ function tagName(raw: string): string | null {
   return name.length <= MAX_TAG_LENGTH && LETTER.test(name) ? name : null;
 }
 
-/** Splits a note body into plain text, http(s) links and #hashtags — the same rule the server applies
- *  when it files a note under its tags and renders it for other servers. */
-export function splitNoteText(body: string): NoteTextPart[] {
+/** Splits a note body into plain text, http(s) links, #hashtags and @mentions of members — the same
+ *  rules the server applies when it files a note under its tags, tells the members it names and
+ *  renders it for other servers. A handle links only when the server says that member exists. */
+export function splitNoteText(body: string, mentions: readonly string[] = []): NoteTextPart[] {
+  const members = new Set(mentions);
   const parts: NoteTextPart[] = [];
   let last = 0;
   for (const match of body.matchAll(TOKEN_PATTERN)) {
@@ -31,14 +34,18 @@ export function splitNoteText(body: string): NoteTextPart[] {
     if (match[1]) {
       const tail = match[1].match(TRAILING_PUNCTUATION)?.[0] ?? "";
       part = { kind: "link", value: match[1].slice(0, match[1].length - tail.length) };
-    } else {
+    } else if (match[2]) {
       const name = tagName(match[2]);
       if (!name) continue;
       part = { kind: "tag", value: name };
+    } else {
+      const handle = match[3].toLowerCase();
+      if (!members.has(handle)) continue;
+      part = { kind: "mention", value: handle };
     }
     if (start > last) parts.push({ kind: "text", value: body.slice(last, start) });
     parts.push(part);
-    last = start + (part.kind === "tag" ? part.value.length + 1 : part.value.length);
+    last = start + (part.kind === "link" ? part.value.length : part.value.length + 1);
   }
   if (last < body.length) parts.push({ kind: "text", value: body.slice(last) });
   return parts;

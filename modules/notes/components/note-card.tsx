@@ -284,7 +284,7 @@ export function NoteCard({
                   </div>
                 </div>
               ) : (
-                <NoteBody body={note.body} large={emphasis} />
+                <NoteBody body={note.body} mentions={note.mentions} large={emphasis} />
               )}
             </div>
             <NoteMedia media={note.media} />

@@ -48,6 +48,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_REPOST: "note_repost",
   NOTE_REPLY: "note_reply",
   NOTE_QUOTE: "note_quote",
+  NOTE_MENTION: "note_mention",
   REMOTE_FOLLOW: "remote_follow",
 };
 
@@ -68,6 +69,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_REPOST: Repeat2,
   NOTE_REPLY: Reply,
   NOTE_QUOTE: Quote,
+  NOTE_MENTION: AtSign,
   REMOTE_FOLLOW: UserPlus,
 };
 
@@ -80,6 +82,7 @@ function subtitleOf(item: Item): string | null {
       return item.sourceExcerpt ?? null;
     case "NOTE_LIKE":
     case "NOTE_REPOST":
+    case "NOTE_MENTION":
       return item.noteExcerpt ?? null;
     default:
       return item.postTitle;

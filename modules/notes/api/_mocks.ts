@@ -78,7 +78,7 @@ let notes: Note[] = [
     likeCount: 0,
     media: [{ url: "https://picsum.photos/seed/kurl-note/800/600", altText: "비 오는 창밖", contentType: "image/jpeg" }],
   }),
-  note({ id: 4, body: "좋은 생각이에요", author: ME, inReplyToId: 3, likeCount: 0, createdAt: "2026-10-05T12:00:00Z" }),
+  note({ id: 4, body: "@yuna 좋은 생각이에요", mentions: ["yuna"], author: ME, inReplyToId: 3, likeCount: 0, createdAt: "2026-10-05T12:00:00Z" }),
 ];
 let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);

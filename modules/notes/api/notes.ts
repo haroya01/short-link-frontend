@@ -69,6 +69,8 @@ export interface Note {
   quoteCount?: number;
   /** Only the reader's own; null for anonymous readers. */
   bookmarkedByMe?: boolean | null;
+  /** Members the body mentions who exist — only these handles link to a profile. */
+  mentions?: string[];
 }
 
 export interface NoteFeed {
