@@ -729,7 +729,8 @@
     "activitySince": "từ {date}",
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
     "tabNotes": "Ghi chú",
-    "tabReposts": "Đăng lại"
+    "tabReposts": "Đăng lại",
+    "viewAvatar": "Xem ảnh hồ sơ"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -3968,7 +3969,6 @@
     "imageNotImage": "Chỉ thêm được tệp hình ảnh",
     "imageTooLarge": "Ảnh quá lớn",
     "imageFailed": "Không tải ảnh lên được",
-    "quoting": "Bài viết được trích dẫn",
     "removeQuote": "Bỏ trích dẫn",
     "postFailed": "Không đăng được ghi chú",
     "emptyAuthor": "Chưa có ghi chú",
@@ -4019,6 +4019,7 @@
     "quotePosted": "Đã đăng trích dẫn",
     "repostFailed": "Không thể đăng lại",
     "emptyReposts": "Chưa có lượt đăng lại",
-    "repostsTitle": "Đăng lại · @{username}"
+    "repostsTitle": "Đăng lại · @{username}",
+    "quotedPostKind": "Bài blog"
   }
 }

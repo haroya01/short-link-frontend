@@ -715,7 +715,8 @@
     "activitySince": "{date}부터",
     "reportFailed": "신고를 보내지 못했어요. 다시 시도해 주세요.",
     "tabNotes": "노트",
-    "tabReposts": "리포스트"
+    "tabReposts": "리포스트",
+    "viewAvatar": "프로필 사진 크게 보기"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -3968,7 +3969,6 @@
     "imageNotImage": "이미지 파일만 올릴 수 있어요",
     "imageTooLarge": "사진이 너무 커요",
     "imageFailed": "사진을 올리지 못했어요",
-    "quoting": "인용한 글",
     "removeQuote": "인용 빼기",
     "postFailed": "노트를 올리지 못했어요",
     "emptyAuthor": "아직 노트가 없어요",
@@ -4019,6 +4019,7 @@
     "quotePosted": "인용 노트를 올렸어요",
     "repostFailed": "리포스트하지 못했어요",
     "emptyReposts": "아직 리포스트가 없어요",
-    "repostsTitle": "리포스트 · @{username}"
+    "repostsTitle": "리포스트 · @{username}",
+    "quotedPostKind": "블로그 글"
   }
 }

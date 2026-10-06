@@ -54,9 +54,42 @@ test("a blog post opens the composer with the post quoted", async ({ page }) => 
       encodeURIComponent("타입스크립트 제네릭이 어려운 이유") +
       "&quoteSlug=typescript-generics&quoteAuthor=dohyun",
   );
-  await expect(page.getByText("인용한 글")).toBeVisible({ timeout: 30_000 });
+  const quoted = page.locator('div[data-quoted-post-id="5"]');
+  await expect(quoted).toContainText("타입스크립트 제네릭이 어려운 이유", { timeout: 30_000 });
+  await expect(quoted).toContainText("블로그 글");
   await page.getByRole("button", { name: "인용 빼기" }).click();
-  await expect(page.getByText("인용한 글")).toHaveCount(0);
+  await expect(quoted).toHaveCount(0);
+});
+
+test("quoting from a post opens the composer over the post instead of leaving it", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/typescript-generics");
+  const title = (await page.getByRole("heading", { level: 1 }).first().innerText({ timeout: 30_000 })).trim();
+  const quote = page.getByRole("button", { name: "노트로 인용" });
+  await quote.scrollIntoViewIfNeeded();
+  await quote.click();
+
+  const dialog = page.getByRole("dialog", { name: "노트로 인용" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator("[data-quoted-post-id]")).toContainText(title);
+  const field = dialog.getByRole("textbox", { name: "생각을 덧붙여 보세요" });
+  await expect(field).toBeFocused();
+  await field.fill("제네릭은 결국 이름 짓기다");
+  await dialog.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
+    .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+
+  await expect(page.getByText("인용 노트를 올렸어요")).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "노트로 인용" })).toHaveCount(0);
+  await expect(page).toHaveURL(/typescript-generics/);
+});
+
+test("the profile photo opens large", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/notes");
+  await page.getByRole("button", { name: "프로필 사진 크게 보기" }).click({ timeout: 30_000 });
+  const viewer = page.getByRole("dialog");
+  await expect(viewer).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(viewer).toHaveCount(0);
 });
 
 test("the public notes tab lists the author's notes and a note page shows its replies", async ({ page }) => {

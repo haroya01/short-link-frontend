@@ -272,7 +272,7 @@ export function NoteCard({
         />
       )}
       <NoteQuoteDialog
-        quoted={quoting ? note : null}
+        quoted={quoting ? { note } : null}
         onClose={() => setQuoting(false)}
         onPosted={(created) => {
           setQuoting(false);

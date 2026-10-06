@@ -2,7 +2,6 @@ import { ArrowUpRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
 import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
-import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
@@ -10,6 +9,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { DATE_LOCALE } from "@/lib/date";
 import { AuthorTabs } from "./author-tabs";
+import { AvatarZoom } from "./avatar-zoom";
 import { HeaderBio } from "./header-bio";
 
 type Tab = "posts" | "notes" | "reposts" | "series" | "collections" | "about";
@@ -105,7 +105,7 @@ export async function AuthorHeader({
     <header>
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3.5">
-          <Avatar src={author.avatarUrl} name={author.username} size="lg" eager />
+          <AvatarZoom src={author.avatarUrl} name={author.username} />
           <h1 className="min-w-0 truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
             @{author.username}
           </h1>
