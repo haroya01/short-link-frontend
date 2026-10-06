@@ -17,6 +17,8 @@ import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
 import { TagFollowControls } from "@/modules/blog/components/tag-follow-controls";
+import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
+import { TaggedNotes } from "@/modules/notes/components/tagged-notes";
 
 export const revalidate = 30;
 
@@ -76,21 +78,23 @@ export default async function TagFeedPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; tag: string }>;
-  searchParams: Promise<{ sort?: string }>;
+  searchParams: Promise<{ sort?: string; view?: string }>;
 }) {
   const { locale, tag } = await params;
-  const { sort: sortParam } = await searchParams;
+  const { sort: sortParam, view: viewParam } = await searchParams;
   const sort: FeedSort = sortParam === "trending" ? "trending" : "recent";
+  const notesView = viewParam === "notes";
   const decoded = decodeURIComponent(tag);
   const t = await getTranslations({ locale, namespace: "publicFeed" });
 
   const [feedResult, tagsResult, authorsResult] = await Promise.all([
-    listFeedByTag(decoded, sort, 0, 24),
+    notesView ? null : listFeedByTag(decoded, sort, 0, 24),
     listPopularTags(20),
     listSuggestedAuthors(5),
   ]);
-  const items = feedResult.ok ? feedResult.data.items : [];
-  const hasNext = feedResult.ok ? feedResult.data.hasNext : false;
+  const items = feedResult?.ok ? feedResult.data.items : [];
+  const hasNext = feedResult?.ok ? feedResult.data.hasNext : false;
+  const tagHref = blogPath(`/tags/${encodeURIComponent(decoded)}`);
   const tags = tagsResult.ok ? tagsResult.data : [];
   const authors = authorsResult.ok ? authorsResult.data : [];
   // Keep the (authors-only) rail whenever there are authors, so the grid stays 3-up like the feed —
@@ -103,7 +107,7 @@ export default async function TagFeedPage({
           instead of a full-width masthead band that floated left of the centered content. */}
       <div className="mx-auto max-w-2xl">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{decoded}</h1>
-        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("tagFeedSubtitle")}</p>
+        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{notesView ? t("tagFeedSubtitleNotes") : t("tagFeedSubtitle")}</p>
         <TagFollowControls tag={decoded} />
       </div>
 
@@ -112,7 +116,20 @@ export default async function TagFeedPage({
         <TagFilterStrip tags={tags} activeTag={decoded} sort={sort} />
       </div>
 
-        {items.length === 0 ? (
+      <div className="mx-auto mt-5 max-w-2xl border-b border-slate-100 pb-3.5 dark:border-slate-800">
+        <FeedSortTabs
+          tabs={[
+            { key: "posts", label: t("tagViewPosts"), href: tagHref, active: !notesView },
+            { key: "notes", label: t("tagViewNotes"), href: `${tagHref}?view=notes`, active: notesView },
+          ]}
+        />
+      </div>
+
+      {notesView ? (
+        <div className="mx-auto max-w-2xl">
+          <TaggedNotes tag={decoded} />
+        </div>
+      ) : items.length === 0 ? (
           <FeedEmpty
             icon={Hash}
             title={t("emptyTagTitle")}

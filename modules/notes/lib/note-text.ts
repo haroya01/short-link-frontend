@@ -3,24 +3,42 @@ export function noteLength(text: string): number {
   return Array.from(text.trim()).length;
 }
 
-export type NoteTextPart = { kind: "text"; value: string } | { kind: "link"; value: string };
+export type NoteTextPart =
+  | { kind: "text"; value: string }
+  | { kind: "link"; value: string }
+  | { kind: "tag"; value: string };
 
-const URL_PATTERN = /https?:\/\/[^\s<]+/g;
+const TOKEN_PATTERN =
+  /(https?:\/\/[^\s<]+)|(?<![=/)\p{L}\p{M}\p{N}_#])#([\p{L}\p{M}\p{N}_][\p{L}\p{M}\p{N}_·・]*)/gu;
 const TRAILING_PUNCTUATION = /[.,!?:;)\]'"]+$/;
+const TAG_TRAILING = /[·・]+$/u;
+const LETTER = /\p{L}/u;
+const MAX_TAG_LENGTH = 40;
 
-/** Splits a note body into plain text and http(s) links — the same rule the server applies when it
- *  renders the note for other servers, so a link looks the same everywhere. */
-export function splitLinks(body: string): NoteTextPart[] {
+function tagName(raw: string): string | null {
+  const name = raw.replace(TAG_TRAILING, "");
+  return name.length <= MAX_TAG_LENGTH && LETTER.test(name) ? name : null;
+}
+
+/** Splits a note body into plain text, http(s) links and #hashtags — the same rule the server applies
+ *  when it files a note under its tags and renders it for other servers. */
+export function splitNoteText(body: string): NoteTextPart[] {
   const parts: NoteTextPart[] = [];
   let last = 0;
-  for (const match of body.matchAll(URL_PATTERN)) {
+  for (const match of body.matchAll(TOKEN_PATTERN)) {
     const start = match.index ?? 0;
-    const raw = match[0];
-    const tail = raw.match(TRAILING_PUNCTUATION)?.[0] ?? "";
-    const link = raw.slice(0, raw.length - tail.length);
+    let part: NoteTextPart;
+    if (match[1]) {
+      const tail = match[1].match(TRAILING_PUNCTUATION)?.[0] ?? "";
+      part = { kind: "link", value: match[1].slice(0, match[1].length - tail.length) };
+    } else {
+      const name = tagName(match[2]);
+      if (!name) continue;
+      part = { kind: "tag", value: name };
+    }
     if (start > last) parts.push({ kind: "text", value: body.slice(last, start) });
-    parts.push({ kind: "link", value: link });
-    last = start + link.length;
+    parts.push(part);
+    last = start + (part.kind === "tag" ? part.value.length + 1 : part.value.length);
   }
   if (last < body.length) parts.push({ kind: "text", value: body.slice(last) });
   return parts;
@@ -30,6 +48,6 @@ export function splitLinks(body: string): NoteTextPart[] {
  *  with photos or a quote already carry a card and get none. */
 export function previewUrl(body: string, hasMedia: boolean, hasQuote: boolean): string | null {
   if (hasMedia || hasQuote) return null;
-  const first = splitLinks(body).find((part) => part.kind === "link");
+  const first = splitNoteText(body).find((part) => part.kind === "link");
   return first && first.value.length <= 2048 ? first.value : null;
 }

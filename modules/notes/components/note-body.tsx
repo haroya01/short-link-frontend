@@ -1,5 +1,14 @@
 import { cn } from "@/lib/utils";
-import { splitLinks } from "@/modules/notes/lib/note-text";
+import { blogPath } from "@/lib/host";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { splitNoteText } from "@/modules/notes/lib/note-text";
+
+const linkClass =
+  "rounded text-accent-700 decoration-1 underline-offset-[0.2em] hover:underline focus-ring dark:text-accent-400";
+
+export function noteTagHref(tag: string): string {
+  return blogPath(`/tags/${encodeURIComponent(tag)}?view=notes`);
+}
 
 export function NoteBody({ body, large = false }: { body: string; large?: boolean }) {
   if (!body) return null;
@@ -10,17 +19,15 @@ export function NoteBody({ body, large = false }: { body: string; large?: boolea
         large ? "text-[17px]" : "text-[15px]",
       )}
     >
-      {splitLinks(body).map((part, i) =>
+      {splitNoteText(body).map((part, i) =>
         part.kind === "link" ? (
-          <a
-            key={i}
-            href={part.value}
-            target="_blank"
-            rel="nofollow noopener noreferrer"
-            className="rounded text-accent-700 decoration-1 underline-offset-[0.2em] hover:underline focus-ring dark:text-accent-400"
-          >
+          <a key={i} href={part.value} target="_blank" rel="nofollow noopener noreferrer" className={linkClass}>
             {part.value}
           </a>
+        ) : part.kind === "tag" ? (
+          <BlogLink key={i} href={noteTagHref(part.value)} className={linkClass}>
+            #{part.value}
+          </BlogLink>
         ) : (
           <span key={i}>{part.value}</span>
         ),
