@@ -8,6 +8,8 @@ import {
   Link2,
   MessageCircle,
   PenLine,
+  Quote,
+  Repeat2,
   Reply,
   Rss,
   UserPlus,
@@ -42,6 +44,11 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   MENTION: "mention",
   CONNECTED: "connected",
   PATH_GREW: "path_grew",
+  NOTE_LIKE: "note_like",
+  NOTE_REPOST: "note_repost",
+  NOTE_REPLY: "note_reply",
+  NOTE_QUOTE: "note_quote",
+  REMOTE_FOLLOW: "remote_follow",
 };
 
 // 아바타 우하단의 종류 글리프 — 글만으로는 좋아요/댓글/팔로우 행이 전부 같은 얼굴이라,
@@ -57,7 +64,27 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   // 그래프 이벤트: 엮임 = 사슬 고리(Link2), 길에 새 글 = 가지가 뻗음(GitBranch).
   CONNECTED: Link2,
   PATH_GREW: GitBranch,
+  NOTE_LIKE: Heart,
+  NOTE_REPOST: Repeat2,
+  NOTE_REPLY: Reply,
+  NOTE_QUOTE: Quote,
+  REMOTE_FOLLOW: UserPlus,
 };
+
+function subtitleOf(item: Item): string | null {
+  switch (item.type) {
+    case "SERIES_SUBSCRIBE":
+      return item.seriesTitle;
+    case "NOTE_REPLY":
+    case "NOTE_QUOTE":
+      return item.sourceExcerpt ?? null;
+    case "NOTE_LIKE":
+    case "NOTE_REPOST":
+      return item.noteExcerpt ?? null;
+    default:
+      return item.postTitle;
+  }
+}
 
 /**
  * One notification row, shared by the desktop dropdown and the full page (`roomy`). Deep-links by
@@ -86,16 +113,32 @@ export function NotificationItem({
 
   const actor = item.actorUsername ?? t("someone");
   // 행위자 이름/아바타는 그 사람 프로필로 가는 섬 링크 — 행의 기본 액션(글/시리즈)과 별개.
-  const actorHref = item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
+  // 다른 서버 계정은 그 서버의 프로필을 새 탭으로 연다.
+  const remoteHref = item.actorProfileUrl ?? undefined;
+  const actorHref =
+    !remoteHref && item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
+  const others = Math.max((item.count ?? 1) - 1, 0);
+  const messageKey = others > 0 ? `${MESSAGE_KEY[item.type]}_group` : MESSAGE_KEY[item.type];
   // 행위자만 굵게(<b> 태그는 메시지 파일에) — 문장 전체가 같은 무게면 누가/무엇이 안 잡힌다.
   // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   // 컬렉션 이름은 그래프 이벤트 문장에서 강조어(<c>{collection}</c>) — 없으면 안전한 폴백 라벨.
   const collection = item.collectionName ?? t("aCollection");
-  const message = t.rich(MESSAGE_KEY[item.type], {
+  const message = t.rich(messageKey, {
     actor,
     collection,
+    others,
     b: (chunks) =>
-      actorHref ? (
+      remoteHref ? (
+        <a
+          href={remoteHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleClick}
+          className="focus-ring pointer-events-auto rounded font-semibold text-slate-900 transition-colors hover:text-accent-700 hover:underline dark:text-slate-100 dark:hover:text-accent-400"
+        >
+          {chunks}
+        </a>
+      ) : actorHref ? (
         <BlogLink
           href={actorHref}
           onClick={handleClick}
@@ -108,13 +151,14 @@ export function NotificationItem({
       ),
     c: (chunks) => <b className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</b>,
   });
-  const subtitle = item.type === "SERIES_SUBSCRIBE" ? item.seriesTitle : item.postTitle;
+  const subtitle = subtitleOf(item);
   // Plain-text twin of the rich `message` for the row's aria-label (a ReactNode can't be a label). The
   // `<b>` handler returns the actor string as-is, so the whole `t.rich` result is plain strings we join.
   const messageText = flattenText(
-    t.rich(MESSAGE_KEY[item.type], {
+    t.rich(messageKey, {
       actor,
       collection,
+      others,
       b: (chunks) => chunks,
       c: (chunks) => chunks,
     }),
@@ -123,6 +167,7 @@ export function NotificationItem({
   const TypeIcon = TYPE_ICON[item.type];
 
   const href = notificationHref(item, me?.username ?? null, locale);
+  const externalHref = !href && item.type === "REMOTE_FOLLOW" ? remoteHref : undefined;
 
   function handleClick() {
     if (!item.read) markRead.mutate(item.id);
@@ -132,7 +177,18 @@ export function NotificationItem({
   const body = (
     <>
       <span className="relative shrink-0">
-        {actorHref ? (
+        {remoteHref ? (
+          <a
+            href={remoteHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleClick}
+            aria-label={item.actorUsername ?? undefined}
+            className="focus-ring pointer-events-auto block rounded-full"
+          >
+            <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+          </a>
+        ) : actorHref ? (
           <BlogLink
             href={actorHref}
             onClick={handleClick}
@@ -157,7 +213,7 @@ export function NotificationItem({
           <TypeIcon
             className={cn(
               "h-2.5 w-2.5",
-              item.type === "LIKE" && "fill-current",
+              (item.type === "LIKE" || item.type === "NOTE_LIKE") && "fill-current",
               item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
             )}
           />
@@ -204,6 +260,15 @@ export function NotificationItem({
       {href ? (
         <BlogLink
           href={href}
+          onClick={handleClick}
+          aria-label={rowLabel}
+          className="focus-ring absolute inset-0 rounded-lg"
+        />
+      ) : externalHref ? (
+        <a
+          href={externalHref}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={handleClick}
           aria-label={rowLabel}
           className="focus-ring absolute inset-0 rounded-lg"

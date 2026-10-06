@@ -51,4 +51,28 @@ describe("notificationHref", () => {
       notificationHref(item({ type: "NEW_POST", actorUsername: "minji", commentId: 5 }), "me", "ko"),
     ).toBe("/ko/p/minji/my-post");
   });
+
+  it("opens the recipient's own note for likes and reposts", () => {
+    expect(notificationHref(item({ type: "NOTE_LIKE", noteId: 5 }), "me", "ko")).toBe("/ko/p/me/notes/5");
+    expect(notificationHref(item({ type: "NOTE_REPOST", noteId: 5 }), null, "ko")).toBeUndefined();
+  });
+
+  it("opens the reply or quote itself, under the member who wrote it", () => {
+    expect(
+      notificationHref(item({ type: "NOTE_REPLY", noteId: 5, sourceNoteId: 9 }), "me", "en"),
+    ).toBe("/en/p/minji/notes/9");
+    expect(
+      notificationHref(
+        item({ type: "NOTE_QUOTE", sourceNoteId: 9, actorUsername: "a@m.social", actorProfileUrl: "https://m.social/@a" }),
+        "me",
+        "en",
+      ),
+    ).toBeUndefined();
+  });
+
+  it("leaves a follow from another server to its external profile", () => {
+    expect(
+      notificationHref(item({ type: "REMOTE_FOLLOW", actorProfileUrl: "https://m.social/@a" }), "me", "ko"),
+    ).toBeUndefined();
+  });
 });

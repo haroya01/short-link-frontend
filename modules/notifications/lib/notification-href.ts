@@ -18,6 +18,19 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
         : undefined;
     case "FOLLOW":
       return item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
+    case "REMOTE_FOLLOW":
+      return undefined;
+    case "NOTE_LIKE":
+    case "NOTE_REPOST":
+      return item.noteId != null && myUsername
+        ? authorHref(myUsername, locale, `notes/${item.noteId}`)
+        : undefined;
+    case "NOTE_REPLY":
+    case "NOTE_QUOTE":
+      // The reply or quote is the actor's note; it shows the recipient's note above it.
+      return item.sourceNoteId != null && item.actorUsername && !item.actorProfileUrl
+        ? authorHref(item.actorUsername, locale, `notes/${item.sourceNoteId}`)
+        : undefined;
     case "SERIES_SUBSCRIBE":
       return item.seriesSlug && myUsername
         ? authorHref(myUsername, locale, `series/${item.seriesSlug}`)

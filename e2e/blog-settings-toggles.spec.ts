@@ -38,13 +38,13 @@ test.describe("blog settings — toggle switches", () => {
 
     // Both async sections (per-type notification prefs, follower-count privacy) load their state
     // before rendering a switch, so wait for one representative of each.
-    await expect(page.getByRole("switch", { name: "좋아요" })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("switch", { name: "좋아요", exact: true })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole("switch", { name: "팔로워 수 숨기기" })).toBeVisible({
       timeout: 10000,
     });
 
     const switches = await page.getByRole("switch").all();
-    expect(switches.length).toBeGreaterThanOrEqual(10); // 9 notification types + follower count
+    expect(switches.length).toBeGreaterThanOrEqual(15); // 14 notification types + follower count
     for (const el of switches) {
       await expectKnobMatchesState(el);
     }

@@ -9,6 +9,8 @@ import {
   Heart,
   Link2,
   MessageCircle,
+  Quote,
+  Repeat2,
   Reply,
   UserPlus,
 } from "lucide-react";
@@ -50,6 +52,16 @@ const ROWS: { type: NotificationType; icon: LucideIcon; labelKey: string; hintKe
   { type: "NEW_POST", icon: Bell, labelKey: "prefNewPost", hintKey: "prefNewPostHint" },
   { type: "CONNECTED", icon: Link2, labelKey: "prefConnected", hintKey: "prefConnectedHint" },
   { type: "PATH_GREW", icon: GitBranch, labelKey: "prefPathGrew", hintKey: "prefPathGrewHint" },
+  { type: "NOTE_REPLY", icon: Reply, labelKey: "prefNoteReply", hintKey: "prefNoteReplyHint" },
+  { type: "NOTE_QUOTE", icon: Quote, labelKey: "prefNoteQuote", hintKey: "prefNoteQuoteHint" },
+  { type: "NOTE_LIKE", icon: Heart, labelKey: "prefNoteLike", hintKey: "prefNoteLikeHint" },
+  { type: "NOTE_REPOST", icon: Repeat2, labelKey: "prefNoteRepost", hintKey: "prefNoteRepostHint" },
+  {
+    type: "REMOTE_FOLLOW",
+    icon: UserPlus,
+    labelKey: "prefRemoteFollow",
+    hintKey: "prefRemoteFollowHint",
+  },
 ];
 
 export function BlogNotificationSettings() {
