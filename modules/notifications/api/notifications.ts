@@ -14,7 +14,20 @@ export type NotificationType =
   | "NEW_POST"
   | "MENTION"
   | "CONNECTED"
-  | "PATH_GREW";
+  | "PATH_GREW"
+  | "NOTE_LIKE"
+  | "NOTE_REPOST"
+  | "NOTE_REPLY"
+  | "NOTE_QUOTE"
+  | "REMOTE_FOLLOW";
+
+/** One of a group's newest actors. A remote account has no id; its username is name@domain. */
+export interface NotificationActor {
+  id: number | null;
+  username: string | null;
+  avatarUrl: string | null;
+  profileUrl: string | null;
+}
 
 /**
  * Per-type opt-out map for blog (in-app + push) notifications. Every type is present; a missing row
@@ -52,6 +65,16 @@ export interface NotificationItem {
   collectionName: string | null;
   read: boolean;
   createdAt: string;
+  /** Set when the actor is on another server — their profile there. */
+  actorProfileUrl?: string | null;
+  /** Note notices: the recipient's note, and for a reply or quote the note that caused it. */
+  noteId?: number | null;
+  noteExcerpt?: string | null;
+  sourceNoteId?: number | null;
+  sourceExcerpt?: string | null;
+  /** Likes and reposts of one note group by day: the row is the newest, count the group's size. */
+  count?: number;
+  actors?: NotificationActor[];
 }
 
 /** A newest-first page; `nextCursor` feeds the next request's `before`, null when `hasMore` is false. */

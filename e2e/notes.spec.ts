@@ -246,3 +246,15 @@ test("a note with a link shows its card, and the composer previews one while typ
   await expect(posted.locator("a[data-note-link-card]")).toHaveAttribute("href", "https://example.com/essay");
   await expect(draftCard).toHaveCount(0);
 });
+
+test("note notices group likes from any server, open the note, and send a remote follower to their server", async ({ page }) => {
+  await page.goto("/ko/blog/notifications");
+  const likes = page.getByRole("link", { name: /alice@mastodon\.social님 외 3명이 내 노트를 좋아해요/ });
+  await expect(likes).toBeVisible({ timeout: 30_000 });
+  await expect(likes).toHaveAttribute("href", /\/p\/dohyun\/notes\/2$/);
+  const reply = page.getByRole("link", { name: /yuna님이 내 노트에 답글을 남겼어요/ });
+  await expect(reply).toHaveAttribute("href", /\/p\/yuna\/notes\/3$/);
+  const follow = page.getByRole("link", { name: /bob@fosstodon\.org님이 다른 서버에서 나를 팔로우했어요/ });
+  await expect(follow).toHaveAttribute("href", "https://fosstodon.org/@bob");
+  await expect(follow).toHaveAttribute("target", "_blank");
+});
