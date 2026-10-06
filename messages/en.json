@@ -714,7 +714,8 @@
     "activityPosts": "{count, plural, one {# post} other {# posts}}",
     "activitySince": "since {date}",
     "reportFailed": "Couldn't send your report. Please try again.",
-    "tabNotes": "Notes"
+    "tabNotes": "Notes",
+    "tabReposts": "Reposts"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -4007,6 +4008,17 @@
     "quoteLabel": "Quote",
     "publicTitle": "Notes · @{username}",
     "noteBy": "Note by @{username}",
-    "backToNotes": "All notes"
+    "backToNotes": "All notes",
+    "repost": "Repost",
+    "unrepost": "Remove repost",
+    "quoteNote": "Quote",
+    "repostCount": "{count, plural, one {# repost} other {# reposts}}",
+    "repostedBy": "{username} reposted",
+    "quoteTitle": "Quote note",
+    "quotePlaceholder": "Add your thoughts",
+    "quotePosted": "Quote posted",
+    "repostFailed": "Couldn't repost",
+    "emptyReposts": "No reposts yet",
+    "repostsTitle": "Reposts · @{username}"
   }
 }

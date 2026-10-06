@@ -714,7 +714,8 @@
     "activityPosts": "記事 {count}本",
     "activitySince": "{date}から",
     "reportFailed": "通報を送信できませんでした。もう一度お試しください。",
-    "tabNotes": "ノート"
+    "tabNotes": "ノート",
+    "tabReposts": "リポスト"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -4007,6 +4008,17 @@
     "quoteLabel": "引用",
     "publicTitle": "ノート · @{username}",
     "noteBy": "@{username} のノート",
-    "backToNotes": "ノート一覧"
+    "backToNotes": "ノート一覧",
+    "repost": "リポスト",
+    "unrepost": "リポストを取り消す",
+    "quoteNote": "引用",
+    "repostCount": "リポスト {count, number}",
+    "repostedBy": "{username}さんがリポスト",
+    "quoteTitle": "ノートを引用",
+    "quotePlaceholder": "ひとこと添えてみましょう",
+    "quotePosted": "引用ノートを投稿しました",
+    "repostFailed": "リポストできませんでした",
+    "emptyReposts": "まだリポストはありません",
+    "repostsTitle": "リポスト · @{username}"
   }
 }

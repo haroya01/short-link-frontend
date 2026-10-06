@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-const TAB_SEGMENTS = ["notes", "series", "collections", "about", "liked", "bookmarks"];
+const TAB_SEGMENTS = ["notes", "reposts", "series", "collections", "about", "liked", "bookmarks"];
 
 /** True on the author's tab pages (글 · 시리즈 · 컬렉션 · 소개 · 좋아요 · 북마크) — NOT a post (/p/user/{slug})
  *  or a series detail (/p/user/series/{slug}). Static tab segments win route resolution over [slug],

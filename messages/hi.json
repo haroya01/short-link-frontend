@@ -714,7 +714,8 @@
     "activityPosts": "{count} पोस्ट",
     "activitySince": "{date} से",
     "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।",
-    "tabNotes": "नोट्स"
+    "tabNotes": "नोट्स",
+    "tabReposts": "रीपोस्ट"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -4007,6 +4008,17 @@
     "quoteLabel": "उद्धृत करें",
     "publicTitle": "नोट्स · @{username}",
     "noteBy": "@{username} का नोट",
-    "backToNotes": "सभी नोट्स"
+    "backToNotes": "सभी नोट्स",
+    "repost": "रीपोस्ट",
+    "unrepost": "रीपोस्ट हटाएँ",
+    "quoteNote": "कोट करें",
+    "repostCount": "{count, number} रीपोस्ट",
+    "repostedBy": "{username} ने रीपोस्ट किया",
+    "quoteTitle": "नोट कोट करें",
+    "quotePlaceholder": "अपनी बात जोड़ें",
+    "quotePosted": "कोट पोस्ट हो गया",
+    "repostFailed": "रीपोस्ट नहीं हो सका",
+    "emptyReposts": "अभी कोई रीपोस्ट नहीं",
+    "repostsTitle": "रीपोस्ट · @{username}"
   }
 }

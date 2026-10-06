@@ -714,7 +714,8 @@
     "activityPosts": "글 {count}편",
     "activitySince": "{date}부터",
     "reportFailed": "신고를 보내지 못했어요. 다시 시도해 주세요.",
-    "tabNotes": "노트"
+    "tabNotes": "노트",
+    "tabReposts": "리포스트"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -4007,6 +4008,17 @@
     "quoteLabel": "인용",
     "publicTitle": "노트 · @{username}",
     "noteBy": "@{username}의 노트",
-    "backToNotes": "노트 목록"
+    "backToNotes": "노트 목록",
+    "repost": "리포스트",
+    "unrepost": "리포스트 취소",
+    "quoteNote": "인용",
+    "repostCount": "리포스트 {count, number}",
+    "repostedBy": "{username}님이 리포스트함",
+    "quoteTitle": "노트 인용",
+    "quotePlaceholder": "생각을 덧붙여 보세요",
+    "quotePosted": "인용 노트를 올렸어요",
+    "repostFailed": "리포스트하지 못했어요",
+    "emptyReposts": "아직 리포스트가 없어요",
+    "repostsTitle": "리포스트 · @{username}"
   }
 }

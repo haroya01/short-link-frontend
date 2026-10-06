@@ -13,17 +13,37 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): No
     quotedPost: null,
     inReplyToId: null,
     replyCount: 0,
+    repostCount: partial.author.id === ME.id ? 0 : null,
+    repostedByMe: false,
+    quotedNote: null,
     ...partial,
   };
 }
 
 let notes: Note[] = [
   note({
+    id: 6,
+    body: "이 사진들 보고 나도 오늘 걸었다.",
+    author: ME,
+    createdAt: "2026-10-05T11:30:00Z",
+    repostCount: 1,
+    quotedNote: {
+      id: 5,
+      body: "산책하다 찍은 것들. 길이 다 다르게 생겼다.",
+      createdAt: "2026-10-05T10:30:00Z",
+      author: YUNA,
+      media: [
+        { url: "https://picsum.photos/seed/kurl-walk-1/600/800", altText: "골목 끝에 선 가로등", contentType: "image/jpeg" },
+      ],
+    },
+  }),
+  note({
     id: 3,
     body: "오늘 쓴 글의 씨앗: 단축 링크가 사라지면 글도 같이 끊긴다 https://kurl.me/about",
     author: YUNA,
     createdAt: "2026-10-05T11:00:00Z",
     replyCount: 1,
+    repostedByMe: true,
   }),
   note({
     id: 5,
@@ -54,6 +74,7 @@ let notes: Note[] = [
   note({ id: 4, body: "좋은 생각이에요", author: ME, inReplyToId: 3, likeCount: 0, createdAt: "2026-10-05T12:00:00Z" }),
 ];
 let nextId = 100;
+const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
 let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "@dohyun@kurl.me" };
 
 const topLevel = () => notes.filter((n) => n.inReplyToId === null);
@@ -68,6 +89,26 @@ export function mockAuthorNotes(username: string, page: number): NoteFeed {
     page,
     hasNext: false,
   };
+}
+
+export function mockAuthorReposts(username: string, page: number): NoteFeed {
+  const ids = page === 0 ? (reposts.get(username) ?? []) : [];
+  return {
+    items: ids
+      .map((id) => notes.find((n) => n.id === id))
+      .filter((n): n is Note => n !== undefined)
+      .map((n) => ({ ...n, repostedByMe: reposts.get(ME.username)?.includes(n.id) ?? false })),
+    page,
+    hasNext: false,
+  };
+}
+
+export function mockRepost(id: number, on: boolean): { reposted: boolean; repostCount: number } {
+  const mine = (reposts.get(ME.username) ?? []).filter((x) => x !== id);
+  reposts.set(ME.username, on ? [id, ...mine] : mine);
+  notes = notes.map((n) => (n.id === id ? { ...n, repostedByMe: on } : n));
+  const target = notes.find((n) => n.id === id);
+  return { reposted: on, repostCount: target?.author.id === ME.id ? (target.repostCount ?? 0) : 0 };
 }
 
 export function mockThread(id: number): NoteThread | null {
@@ -88,6 +129,7 @@ export function mockCreate(draft: NoteDraft): Note {
     likeCount: 0,
     createdAt: new Date().toISOString(),
     inReplyToId: draft.inReplyToId,
+    quotedNote: quotedNoteOf(draft.quotedNoteId),
     media: draft.images.map((image) => ({
       url: "https://picsum.photos/seed/kurl-upload/800/600",
       altText: image.altText || null,
@@ -99,6 +141,18 @@ export function mockCreate(draft: NoteDraft): Note {
     notes = notes.map((n) => (n.id === draft.inReplyToId ? { ...n, replyCount: n.replyCount + 1 } : n));
   }
   return created;
+}
+
+function quotedNoteOf(id: number | null): Note["quotedNote"] {
+  const quoted = id === null ? undefined : notes.find((n) => n.id === id);
+  if (!quoted) return null;
+  return {
+    id: quoted.id,
+    body: quoted.body,
+    createdAt: quoted.createdAt,
+    author: quoted.author,
+    media: quoted.media,
+  };
 }
 
 export function mockEdit(id: number, body: string): Note {

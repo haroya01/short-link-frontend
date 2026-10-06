@@ -78,7 +78,7 @@ test("photos sit in a sideways strip with ALT, open large, and share copies the 
     Object.defineProperty(Navigator.prototype, "share", { value: undefined, configurable: true });
   });
   await page.goto("/ko/blog/notes");
-  const walk = page.locator("article", { hasText: "산책하다 찍은 것들" });
+  const walk = page.locator('article[data-note-id="5"]');
   await expect(walk.locator("figure")).toHaveCount(3, { timeout: 30_000 });
 
   await walk.getByRole("button", { name: "사진 설명 보기" }).first().click();
@@ -127,4 +127,55 @@ test("any signed-in reader can file someone's note into a collection, and the no
   await expect(block).toBeVisible({ timeout: 30_000 });
   await expect(block).toContainText("yuna");
   await expect(block).toHaveAttribute("href", /notes\/3$/);
+});
+
+test("the repost button reposts from its menu and the same menu takes it back", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const walk = page.locator('article[data-note-id="5"]');
+  const repost = walk.getByRole("button", { name: "리포스트" });
+  await expect(repost).toHaveAttribute("aria-pressed", "false", { timeout: 30_000 });
+
+  await repost.click();
+  await walk.getByRole("menuitem", { name: "리포스트" }).click();
+  const undo = walk.getByRole("button", { name: "리포스트 취소" });
+  await expect(undo).toHaveAttribute("aria-pressed", "true");
+  await expect(walk.getByRole("menu")).toHaveCount(0);
+
+  await undo.click();
+  await walk.getByRole("menuitem", { name: "리포스트 취소" }).click();
+  await expect(walk.getByRole("button", { name: "리포스트" })).toHaveAttribute("aria-pressed", "false");
+});
+
+test("quoting a note opens a composer over the feed with that note under it", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const walk = page.locator('article[data-note-id="5"]');
+  await walk.getByRole("button", { name: "리포스트" }).click({ timeout: 30_000 });
+  await walk.getByRole("menuitem", { name: "인용" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "노트 인용" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('[data-quoted-note-id="5"]')).toContainText("산책하다 찍은 것들");
+  const field = dialog.getByRole("textbox", { name: "생각을 덧붙여 보세요" });
+  await expect(field).toBeFocused();
+  await field.fill("나도 오늘 같은 길을 걸었다");
+  await dialog.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
+    .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+
+  await expect(page.getByText("인용 노트를 올렸어요")).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "노트 인용" })).toHaveCount(0);
+  const posted = page.locator("article").first();
+  await expect(posted).toContainText("나도 오늘 같은 길을 걸었다");
+  await expect(posted.locator('a[data-quoted-note-id="5"]')).toHaveAttribute("href", /notes\/5$/);
+});
+
+test("the reposts tab lists what the author reposted under a reposted-by line", async ({ page }) => {
+  await page.goto("/ko/p/yuna/reposts");
+  await expect(page.getByRole("link", { name: "리포스트" })).toHaveAttribute("aria-current", "page", {
+    timeout: 30_000,
+  });
+  const reposted = page.locator('article[data-note-id="6"]');
+  await expect(reposted).toContainText("yuna님이 리포스트함");
+  await expect(reposted).toContainText("이 사진들 보고 나도 오늘 걸었다.");
+  await expect(reposted.locator('a[data-quoted-note-id="5"]')).toContainText("yuna");
 });
