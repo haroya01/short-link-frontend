@@ -42,6 +42,7 @@ export function NotesFeed() {
       <NoteList
         load={load}
         prepend={posted}
+        onQuoted={(note) => setPosted((current) => [note, ...current])}
         empty={<EmptyState title={t("emptyAuthor")} className="mt-8" />}
       />
     </div>

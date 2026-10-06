@@ -30,8 +30,16 @@ export interface QuotedPost {
   authorUsername: string;
 }
 
-/** `likeCount` is the author's own number and null for everyone else (like counts are not public).
- *  `likedByMe` is null for anonymous readers. */
+export interface QuotedNote {
+  id: number;
+  body: string;
+  createdAt: string;
+  author: NoteAuthor;
+  media: NoteMedia[];
+}
+
+/** `likeCount` and `repostCount` are the author's own numbers and null for everyone else (counts are
+ *  not public). `likedByMe` and `repostedByMe` are null for anonymous readers. */
 export interface Note {
   id: number;
   body: string;
@@ -44,6 +52,9 @@ export interface Note {
   quotedPost: QuotedPost | null;
   inReplyToId: number | null;
   replyCount: number;
+  repostCount: number | null;
+  repostedByMe: boolean | null;
+  quotedNote: QuotedNote | null;
 }
 
 export interface NoteFeed {
@@ -68,6 +79,7 @@ export interface NoteDraft {
   images: NoteDraftImage[];
   quotedPostId: number | null;
   inReplyToId: number | null;
+  quotedNoteId: number | null;
 }
 
 export interface FederationSettings {
@@ -104,6 +116,23 @@ export function listAuthorNotes(username: string, page = 0): Promise<NoteFeed> {
   return request<NoteFeed>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/notes?page=${page}&size=20`,
     { method: "GET" },
+  );
+}
+
+export function listAuthorReposts(username: string, page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockAuthorReposts(username, page));
+  return request<NoteFeed>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/reposts?page=${page}&size=20`,
+    { method: "GET" },
+  );
+}
+
+export function fetchAuthorReposts(username: string): Promise<FetchResult<NoteFeed>> {
+  if (noteMocks) {
+    return Promise.resolve({ ok: true, data: noteMocks.mockAuthorReposts(username, 0) });
+  }
+  return fetchPublic<NoteFeed>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/reposts?page=0&size=20`,
   );
 }
 
@@ -150,6 +179,14 @@ export function deleteNote(id: number): Promise<void> {
 export function setNoteLike(id: number, on: boolean): Promise<{ liked: boolean; likeCount: number }> {
   if (USE_MOCKS) return Promise.resolve({ liked: on, likeCount: 0 });
   return request(`/api/v1/notes/${id}/like`, { method: on ? "PUT" : "DELETE" });
+}
+
+export function setNoteRepost(
+  id: number,
+  on: boolean,
+): Promise<{ reposted: boolean; repostCount: number }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockRepost(id, on));
+  return request(`/api/v1/notes/${id}/repost`, { method: on ? "PUT" : "DELETE" });
 }
 
 export function likedNoteIds(ids: number[]): Promise<number[]> {

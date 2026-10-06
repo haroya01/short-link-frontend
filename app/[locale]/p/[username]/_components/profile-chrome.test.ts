@@ -5,7 +5,7 @@ import { isTabRoute } from "./profile-chrome";
 // It must agree across the three live URL topologies (apex /{locale}/p/{user},
 // blog-host /@{handle}, author-subdomain root) — regressions here silently drop
 // the whole author chrome (avatar / bio / follow / tabs / page frame).
-const TABS = ["series", "collections", "about", "liked", "bookmarks"];
+const TABS = ["notes", "reposts", "series", "collections", "about", "liked", "bookmarks"];
 
 describe("isTabRoute — apex /{locale}/p/{user}", () => {
   it("author home", () => {

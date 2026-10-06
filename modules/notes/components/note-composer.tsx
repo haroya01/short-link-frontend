@@ -16,11 +16,13 @@ import {
   updateFederationSettings,
   uploadNoteImage,
   type Note,
+  type QuotedNote,
   type QuotedPost,
 } from "@/modules/notes/api/notes";
 import { noteLength } from "@/modules/notes/lib/note-text";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { NoteLengthRing } from "./note-card";
+import { QuotedNoteCard } from "./quoted-note-card";
 
 type PendingImage = {
   id: string;
@@ -34,11 +36,15 @@ export function NoteComposer({
   inReplyToId = null,
   quote = null,
   onClearQuote,
+  quotedNote = null,
+  autoFocus = false,
 }: {
   onCreated: (note: Note) => void;
   inReplyToId?: number | null;
   quote?: QuotedPost | null;
   onClearQuote?: () => void;
+  quotedNote?: QuotedNote | null;
+  autoFocus?: boolean;
 }) {
   const t = useTranslations("notes");
   const [confirm, confirmDialog] = useConfirm();
@@ -57,8 +63,14 @@ export function NoteComposer({
   const uploading = images.some((image) => image.key === null);
   const canPost =
     !posting && !uploading && length <= NOTE_MAX_LENGTH && (length > 0 || images.length > 0);
-  const open = focused || length > 0 || images.length > 0 || quote !== null || error !== null;
+  const open =
+    focused || length > 0 || images.length > 0 || quote !== null || quotedNote !== null || error !== null;
   const textarea = useRef<HTMLTextAreaElement>(null);
+  const placeholder = inReplyToId
+    ? t("replyPlaceholder")
+    : quotedNote
+      ? t("quotePlaceholder")
+      : t("composerPlaceholder");
 
   async function addFiles(files: FileList | File[] | null) {
     if (!files) return;
@@ -126,6 +138,7 @@ export function NoteComposer({
         images: images.map((image) => ({ key: image.key as string, altText: image.altText })),
         quotedPostId: quote?.id ?? null,
         inReplyToId,
+        quotedNoteId: quotedNote?.id ?? null,
       });
       images.forEach((image) => URL.revokeObjectURL(image.previewUrl));
       setBody("");
@@ -203,8 +216,9 @@ export function NoteComposer({
               addFiles(pasted);
             }}
             rows={1}
-            placeholder={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
-            aria-label={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
+            autoFocus={autoFocus}
+            placeholder={placeholder}
+            aria-label={placeholder}
             className={cn(
               "max-h-[50vh] w-full resize-none bg-transparent py-1.5 text-[15px] leading-6 text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500",
               open && !inReplyToId ? "min-h-[2lh]" : "min-h-[1lh]",
@@ -312,6 +326,8 @@ export function NoteComposer({
           )}
         </div>
       )}
+
+      {quotedNote && <QuotedNoteCard note={quotedNote} linked={false} />}
 
       {error && (
         <p role="alert" className="mt-2 text-[13px] text-red-600 dark:text-red-400">

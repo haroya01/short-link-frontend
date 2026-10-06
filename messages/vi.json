@@ -728,7 +728,8 @@
     "activityPosts": "{count} bài viết",
     "activitySince": "từ {date}",
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
-    "tabNotes": "Ghi chú"
+    "tabNotes": "Ghi chú",
+    "tabReposts": "Đăng lại"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -4007,6 +4008,17 @@
     "quoteLabel": "Trích dẫn",
     "publicTitle": "Ghi chú · @{username}",
     "noteBy": "Ghi chú của @{username}",
-    "backToNotes": "Tất cả ghi chú"
+    "backToNotes": "Tất cả ghi chú",
+    "repost": "Đăng lại",
+    "unrepost": "Bỏ đăng lại",
+    "quoteNote": "Trích dẫn",
+    "repostCount": "{count, number} lượt đăng lại",
+    "repostedBy": "{username} đã đăng lại",
+    "quoteTitle": "Trích dẫn ghi chú",
+    "quotePlaceholder": "Thêm suy nghĩ của bạn",
+    "quotePosted": "Đã đăng trích dẫn",
+    "repostFailed": "Không thể đăng lại",
+    "emptyReposts": "Chưa có lượt đăng lại",
+    "repostsTitle": "Đăng lại · @{username}"
   }
 }
