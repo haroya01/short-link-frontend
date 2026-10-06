@@ -13,13 +13,11 @@ export function NoteList({
   initial = null,
   empty,
   prepend = [],
-  showAuthor = true,
 }: {
   load: (page: number) => Promise<NoteFeed>;
   initial?: NoteFeed | null;
   empty: React.ReactNode;
   prepend?: Note[];
-  showAuthor?: boolean;
 }) {
   const t = useTranslations("notes");
   const [items, setItems] = useState<Note[]>(initial?.items ?? []);
@@ -80,7 +78,6 @@ export function NoteList({
             key={note.id}
             note={note}
             isNew={fresh.has(note.id)}
-            showAuthor={showAuthor}
             onChange={(next) => setItems((current) => current.map((c) => (c.id === next.id ? next : c)))}
             onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}
           />

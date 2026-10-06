@@ -6,7 +6,7 @@ export function NoteBody({ body, large = false }: { body: string; large?: boolea
   return (
     <p
       className={cn(
-        "whitespace-pre-wrap break-words leading-relaxed text-slate-700 dark:text-slate-300",
+        "whitespace-pre-wrap break-words leading-[1.45] text-slate-800 dark:text-slate-200",
         large ? "text-[17px]" : "text-[15px]",
       )}
     >

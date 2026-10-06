@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import {
@@ -18,6 +19,8 @@ import {
   type QuotedPost,
 } from "@/modules/notes/api/notes";
 import { noteLength } from "@/modules/notes/lib/note-text";
+import { Avatar } from "@/modules/blog/components/avatar";
+import { NoteCounter } from "./note-card";
 
 type PendingImage = {
   id: string;
@@ -44,6 +47,8 @@ export function NoteComposer({
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
 
@@ -51,6 +56,8 @@ export function NoteComposer({
   const uploading = images.some((image) => image.key === null);
   const canPost =
     !posting && !uploading && length <= NOTE_MAX_LENGTH && (length > 0 || images.length > 0);
+  const open = focused || length > 0 || images.length > 0 || quote !== null || error !== null;
+  const textarea = useRef<HTMLTextAreaElement>(null);
 
   async function addFiles(files: FileList | File[] | null) {
     if (!files) return;
@@ -131,8 +138,31 @@ export function NoteComposer({
     }
   }
 
+  const submitButton = (
+    <button
+      type="button"
+      onClick={submit}
+      disabled={!canPost}
+      className={cn(
+        "focus-ring shrink-0 rounded-full border px-4 py-1.5 text-[14px] font-semibold transition-colors disabled:cursor-default",
+        canPost
+          ? "border-slate-900 bg-slate-900 text-white hover:bg-slate-800 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+          : "border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500",
+      )}
+    >
+      {posting ? t("posting") : inReplyToId ? t("replySubmit") : t("submit")}
+    </button>
+  );
+
   return (
     <div
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) textarea.current?.focus();
+      }}
       onDragOver={(e) => {
         if (!e.dataTransfer.types.includes("Files")) return;
         e.preventDefault();
@@ -148,36 +178,39 @@ export function NoteComposer({
         addFiles(e.dataTransfer.files);
       }}
       className={cn(
-        "rounded-2xl border p-4 transition-colors focus-within:border-slate-400 dark:focus-within:border-slate-600",
-        dragging
-          ? "border-accent-600 bg-accent-50/40 dark:bg-accent-500/10"
-          : "border-slate-200 dark:border-slate-800",
+        "flex gap-3 rounded-2xl py-3 transition-colors",
+        dragging && "bg-accent-50/60 outline-dashed outline-1 outline-accent-600 dark:bg-accent-500/10",
       )}
     >
-      <textarea
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-            e.preventDefault();
-            submit();
-          }
-        }}
-        onPaste={(e) => {
-          const pasted = Array.from(e.clipboardData.files).filter((file) => file.type.startsWith("image/"));
-          if (pasted.length === 0) return;
-          e.preventDefault();
-          addFiles(pasted);
-        }}
-        rows={inReplyToId ? 2 : 3}
-        placeholder={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
-        aria-label={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
-        className={cn(
-          "max-h-[50vh] w-full resize-none bg-transparent text-[15px] leading-relaxed text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100",
-          inReplyToId ? "min-h-[2lh]" : "min-h-[3lh]",
-        )}
-      />
-
+      <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} size="md" />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start gap-3">
+          <textarea
+            ref={textarea}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = Array.from(e.clipboardData.files).filter((file) => file.type.startsWith("image/"));
+              if (pasted.length === 0) return;
+              e.preventDefault();
+              addFiles(pasted);
+            }}
+            rows={1}
+            placeholder={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
+            aria-label={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
+            className={cn(
+              "max-h-[50vh] w-full resize-none bg-transparent py-1.5 text-[15px] leading-6 text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500",
+              open && !inReplyToId ? "min-h-[2lh]" : "min-h-[1lh]",
+            )}
+          />
+          {!open && submitButton}
+        </div>
       {images.length > 0 && (
         <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {images.map((image, index) => (
@@ -255,49 +288,58 @@ export function NoteComposer({
         </p>
       )}
 
-      <div className="mt-3 flex items-center gap-3">
-        <input
-          ref={fileInput}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          multiple
-          hidden
-          onChange={(e) => {
-            addFiles(e.target.files);
-            e.target.value = "";
-          }}
-        />
-        <button
-          type="button"
-          onClick={() => fileInput.current?.click()}
-          disabled={images.length >= NOTE_MAX_IMAGES}
-          aria-label={t("addImage")}
-          title={t("addImage")}
-          className="focus-ring rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-        >
-          <ImagePlus className="h-5 w-5" aria-hidden />
-        </button>
-        <span
-          className={cn(
-            "ml-auto text-[12px] tabular-nums",
-            length > NOTE_MAX_LENGTH ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400",
-          )}
-          aria-live="polite"
-        >
-          {length > NOTE_MAX_LENGTH
-            ? t("tooLong", { max: NOTE_MAX_LENGTH })
-            : t("counter", { count: length, max: NOTE_MAX_LENGTH })}
-        </span>
-        <button
-          type="button"
-          onClick={submit}
-          disabled={!canPost}
-          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800 disabled:opacity-50"
-        >
-          {posting ? t("posting") : inReplyToId ? t("replySubmit") : t("submit")}
-        </button>
+        {open && (
+          <div className="-ml-1.5 mt-1 flex items-center gap-3">
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              hidden
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInput.current?.click()}
+              disabled={images.length >= NOTE_MAX_IMAGES}
+              aria-label={t("addImage")}
+              title={t("addImage")}
+              className="focus-ring rounded-full p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            >
+              <ImagePlus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+            </button>
+            <div className="ml-auto flex items-center gap-3">
+              <NoteCounter length={length} />
+              {submitButton}
+            </div>
+          </div>
+        )}
       </div>
       {confirmDialog}
     </div>
+  );
+}
+
+export function NoteSignInRow({ label, placeholder }: { label: string; placeholder: string }) {
+  const tNav = useTranslations("nav");
+  const { signInWithGoogle } = useAuth();
+  return (
+    <button
+      type="button"
+      onClick={signInWithGoogle}
+      aria-label={label}
+      className="group flex w-full items-center gap-3 rounded-2xl py-3 text-left focus-ring"
+    >
+      <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+      <span className="min-w-0 flex-1 truncate text-[15px] text-slate-400 dark:text-slate-500">
+        {placeholder}
+      </span>
+      <span className="shrink-0 rounded-full border border-slate-900 px-4 py-1.5 text-[14px] font-semibold text-slate-900 transition-colors group-hover:bg-slate-900 group-hover:text-white dark:border-slate-100 dark:text-slate-100 dark:group-hover:bg-slate-100 dark:group-hover:text-slate-900">
+        {tNav("login")}
+      </span>
+    </button>
   );
 }

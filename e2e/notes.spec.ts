@@ -22,8 +22,10 @@ test("the first note asks about federation once, then posts to the top of the fe
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("오늘 쓴 글의 씨앗")).toBeVisible();
 
+  await composer.fill("가".repeat(470));
+  await expect(page.getByText("30자 남음")).toBeVisible();
   await composer.fill("e2e에서 쓴 노트 https://kurl.me/about.");
-  await expect(page.getByText("33/500")).toBeVisible();
+  await expect(page.getByText(/자 남음/)).toHaveCount(0);
   await page.getByRole("button", { name: "올리기" }).click();
 
   const notice = page.getByRole("dialog");
@@ -66,4 +68,28 @@ test("the public notes tab lists the author's notes and a note page shows its re
   await expect(page.getByText("오늘 쓴 글의 씨앗")).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole("heading", { name: "답글" })).toBeVisible();
   await expect(page.getByText("좋은 생각이에요")).toBeVisible();
+});
+
+test("photos sit in a sideways strip with ALT, open large, and share copies the note link", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.addInitScript(() => {
+    Object.defineProperty(Navigator.prototype, "share", { value: undefined, configurable: true });
+  });
+  await page.goto("/ko/blog/notes");
+  const walk = page.locator("article", { hasText: "산책하다 찍은 것들" });
+  await expect(walk.locator("figure")).toHaveCount(3, { timeout: 30_000 });
+
+  await walk.getByRole("button", { name: "사진 설명 보기" }).first().click();
+  await expect(walk.getByText("골목 끝에 선 가로등")).toBeVisible();
+
+  await walk.locator("figure").first().getByRole("button").first().click();
+  const viewer = page.getByRole("dialog");
+  await expect(viewer).toBeVisible();
+  await expect(viewer).toContainText("1 / 3");
+  await page.keyboard.press("Escape");
+  await expect(viewer).toHaveCount(0);
+
+  await walk.getByRole("button", { name: "공유" }).click();
+  await expect(page.getByText("링크를 복사했어요")).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/\/notes\/5$/);
 });
