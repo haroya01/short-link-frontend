@@ -212,3 +212,15 @@ test("the reposts tab lists what the author reposted under a reposted-by line", 
   await expect(reposted).toContainText("이 사진들 보고 나도 오늘 걸었다.");
   await expect(reposted.locator('a[data-quoted-note-id="5"]')).toContainText("yuna");
 });
+
+test("clicking a note's text opens it, while its links and buttons keep their own job", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const seed = page.locator('article[data-note-id="3"]');
+  await expect(seed.getByRole("link", { name: "https://kurl.me/about" })).toBeVisible({ timeout: 30_000 });
+  await seed.getByRole("button", { name: "공유" }).click();
+  await expect(page).toHaveURL(/\/blog\/notes$/);
+
+  await seed.locator("p").first().click({ position: { x: 8, y: 8 } });
+  await expect(page).toHaveURL(/\/notes\/3$/);
+  await expect(page.getByRole("heading", { name: "답글" })).toBeVisible();
+});
