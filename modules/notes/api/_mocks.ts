@@ -7,13 +7,13 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): No
   return {
     createdAt: "2026-10-05T09:00:00Z",
     editedAt: null,
-    likeCount: partial.author.id === ME.id ? 0 : null,
+    likeCount: 0,
     likedByMe: false,
     media: [],
     quotedPost: null,
     inReplyToId: null,
     replyCount: 0,
-    repostCount: partial.author.id === ME.id ? 0 : null,
+    repostCount: 0,
     repostedByMe: false,
     quotedNote: null,
     linkPreview: null,
@@ -85,9 +85,64 @@ const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [
 let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "@dohyun@kurl.me" };
 
 const topLevel = () => notes.filter((n) => n.inReplyToId === null);
+let bookmarks: number[] = [];
+
+const withQuotes = (n: Note): Note => ({
+  ...n,
+  quoteCount: notes.filter((q) => q.quotedNote?.id === n.id).length,
+  bookmarkedByMe: bookmarks.includes(n.id),
+});
+
+export function mockTrendingNotes(page: number): NoteFeed {
+  const ranked = [...topLevel()].sort(
+    (a, b) => (b.likeCount ?? 0) + b.replyCount - ((a.likeCount ?? 0) + a.replyCount),
+  );
+  return { items: page === 0 ? ranked.map(withQuotes) : [], page, hasNext: false };
+}
+
+export function mockFollowingNotes(page: number): NoteFeed {
+  if (page > 0) return { items: [], page, hasNext: false };
+  const mine = topLevel().filter((n) => n.author.id === ME.id).map(withQuotes);
+  const reposted = (reposts.get(YUNA.username) ?? [])
+    .map((id) => notes.find((n) => n.id === id))
+    .filter((n): n is Note => n !== undefined && n.author.id !== YUNA.id)
+    .map((n) => ({ ...withQuotes(n), repostedBy: YUNA }));
+  const yunas = topLevel().filter((n) => n.author.id === YUNA.id).map(withQuotes);
+  const seen = new Set<number>();
+  const items = [...reposted, ...yunas, ...mine].filter((n) => !seen.has(n.id) && seen.add(n.id));
+  return { items, page, hasNext: false };
+}
+
+export function mockBookmarkedNotes(page: number): NoteFeed {
+  const items = page === 0 ? bookmarks.map((id) => notes.find((n) => n.id === id)) : [];
+  return {
+    items: items.filter((n): n is Note => n !== undefined).map(withQuotes),
+    page,
+    hasNext: false,
+  };
+}
+
+export function mockNoteQuotes(id: number, page: number): NoteFeed {
+  const items = page === 0 ? notes.filter((n) => n.quotedNote?.id === id) : [];
+  return { items: items.map(withQuotes), page, hasNext: false };
+}
+
+export function mockBookmark(id: number, on: boolean): { bookmarked: boolean } {
+  bookmarks = [...(on ? [id] : []), ...bookmarks.filter((x) => x !== id)];
+  return { bookmarked: on };
+}
+
+export function mockLike(id: number, on: boolean): { liked: boolean; likeCount: number } {
+  notes = notes.map((n) =>
+    n.id === id && n.likedByMe !== on
+      ? { ...n, likedByMe: on, likeCount: Math.max((n.likeCount ?? 0) + (on ? 1 : -1), 0) }
+      : n,
+  );
+  return { liked: on, likeCount: notes.find((n) => n.id === id)?.likeCount ?? 0 };
+}
 
 export function mockEveryoneNotes(page: number): NoteFeed {
-  return { items: page === 0 ? topLevel() : [], page, hasNext: false };
+  return { items: page === 0 ? topLevel().map(withQuotes) : [], page, hasNext: false };
 }
 
 export function mockAuthorNotes(username: string, page: number): NoteFeed {
@@ -115,14 +170,14 @@ export function mockRepost(id: number, on: boolean): { reposted: boolean; repost
   reposts.set(ME.username, on ? [id, ...mine] : mine);
   notes = notes.map((n) => (n.id === id ? { ...n, repostedByMe: on } : n));
   const target = notes.find((n) => n.id === id);
-  return { reposted: on, repostCount: target?.author.id === ME.id ? (target.repostCount ?? 0) : 0 };
+  return { reposted: on, repostCount: target?.repostCount ?? 0 };
 }
 
 export function mockThread(id: number): NoteThread | null {
   const main = notes.find((n) => n.id === id);
   if (!main) return null;
   return {
-    note: main,
+    note: withQuotes(main),
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
     replies: notes.filter((n) => n.inReplyToId === id),
   };

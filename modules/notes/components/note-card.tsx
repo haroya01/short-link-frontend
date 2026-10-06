@@ -16,6 +16,7 @@ import {
   deleteNote,
   editNote,
   NOTE_MAX_LENGTH,
+  setNoteBookmark,
   setNoteLike,
   setNoteRepost,
   type Note,
@@ -69,6 +70,7 @@ export function NoteCard({
   const [likeTouched, setLikeTouched] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [quoting, setQuoting] = useState(false);
+  const [bookmarked, setBookmarked] = useState(note.bookmarkedByMe === true);
   const tCollections = useTranslations("collections");
 
   useEffect(() => {
@@ -76,21 +78,42 @@ export function NoteCard({
     setLikeCount(note.likeCount);
   }, [note.likedByMe, note.likeCount]);
 
+  useEffect(() => {
+    setBookmarked(note.bookmarkedByMe === true);
+  }, [note.bookmarkedByMe]);
+
+  async function toggleBookmark() {
+    if (!authenticated) {
+      signInWithGoogle();
+      return;
+    }
+    const next = !bookmarked;
+    setBookmarked(next);
+    try {
+      await setNoteBookmark(note.id, next);
+      toast(next ? t("bookmarked") : t("unbookmarked"));
+    } catch {
+      setBookmarked(!next);
+      toast(t("bookmarkFailed"), "error");
+    }
+  }
+
   async function toggleLike() {
     if (!authenticated) {
       signInWithGoogle();
       return;
     }
     const next = !liked;
+    const previous = likeCount;
     setLikeTouched(true);
     setLiked(next);
-    if (likeCount !== null) setLikeCount(likeCount + (next ? 1 : -1));
+    setLikeCount(Math.max((likeCount ?? 0) + (next ? 1 : -1), 0));
     try {
       const status = await setNoteLike(note.id, next);
-      if (mine) setLikeCount(status.likeCount);
+      setLikeCount(status.likeCount);
     } catch {
       setLiked(!next);
-      if (likeCount !== null) setLikeCount(likeCount);
+      setLikeCount(previous);
     }
   }
 
@@ -177,18 +200,22 @@ export function NoteCard({
             >
               {note.author.username}
             </BlogLink>
-            <BlogLink
-              href={noteHref(note, locale)}
-              className="shrink-0 rounded text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200"
-            >
-              <time dateTime={note.createdAt} suppressHydrationWarning>
-                {ago(note.createdAt)}
-              </time>
-              {note.editedAt && <span> · {t("edited")}</span>}
-            </BlogLink>
+            {!emphasis && (
+              <BlogLink
+                href={noteHref(note, locale)}
+                className="shrink-0 rounded text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200"
+              >
+                <time dateTime={note.createdAt} suppressHydrationWarning>
+                  {ago(note.createdAt)}
+                </time>
+                {note.editedAt && <span> · {t("edited")}</span>}
+              </BlogLink>
+            )}
             <div className="-my-2 ml-auto flex shrink-0 items-center">
               {authenticated && !editing && (
                 <NoteMenu
+                  bookmarked={bookmarked}
+                  onBookmark={toggleBookmark}
                   onConnect={() => setConnecting(true)}
                   onEdit={mine ? () => setEditing(true) : undefined}
                   onDelete={mine ? remove : undefined}
@@ -245,7 +272,31 @@ export function NoteCard({
             {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
             {note.linkPreview && <NoteLinkCard preview={note.linkPreview} />}
 
-            <footer className="-mb-1 -ml-2 mt-1 flex items-center gap-1.5 text-[13px]">
+            {emphasis && (
+              <p className="mt-4 text-[13px] text-slate-500 dark:text-slate-400">
+                <time dateTime={note.createdAt} suppressHydrationWarning>
+                  {new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }).format(
+                    new Date(note.createdAt),
+                  )}
+                  {" · "}
+                  {new Intl.DateTimeFormat(locale, {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }).format(new Date(note.createdAt))}
+                </time>
+                {note.editedAt && <span> · {t("edited")}</span>}
+              </p>
+            )}
+
+            <footer
+              className={cn(
+                "-mb-1 flex items-center text-[13px]",
+                emphasis
+                  ? "mt-3 justify-between border-t border-slate-100 pt-2 dark:border-slate-800"
+                  : "-ml-2 mt-1 gap-1.5",
+              )}
+            >
               <button
                 type="button"
                 onClick={toggleLike}
@@ -260,7 +311,7 @@ export function NoteCard({
                     className={cn("h-[18px] w-[18px]", liked && "text-accent-600")}
                   />
                 </span>
-                {mine && likeCount !== null && likeCount > 0 && (
+                {likeCount !== null && likeCount > 0 && (
                   <span className="tabular-nums" title={t("likeCount", { count: likeCount })}>
                     {likeCount}
                   </span>
@@ -274,11 +325,31 @@ export function NoteCard({
                 <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
                 {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
               </BlogLink>
-              <RepostControl note={note} mine={mine} buttonClass={action} onQuote={() => setQuoting(true)} />
+              <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />
+              {emphasis && (
+                <button
+                  type="button"
+                  onClick={toggleBookmark}
+                  aria-pressed={bookmarked}
+                  aria-label={bookmarked ? t("unbookmark") : t("bookmark")}
+                  className={cn(action, bookmarked && "text-accent-700 dark:text-accent-400")}
+                >
+                  <NoteGlyph name="bookmark" active={bookmarked} className="h-[18px] w-[18px]" />
+                </button>
+              )}
               <button type="button" onClick={share} aria-label={t("share")} className={action}>
                 <NoteGlyph name="share" className="h-[18px] w-[18px]" />
               </button>
             </footer>
+            {emphasis && (note.quoteCount ?? 0) > 0 && (
+              <BlogLink
+                href={`${noteHref(note, locale)}/quotes`}
+                className="focus-ring mt-3 flex items-center justify-between rounded border-t border-slate-100 pt-3 text-[13px] font-semibold text-slate-500 hover:text-slate-800 dark:border-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+              >
+                {t("quotesLink", { count: note.quoteCount ?? 0 })}
+                <span aria-hidden>›</span>
+              </BlogLink>
+            )}
           </div>
         </div>
       </div>
@@ -308,12 +379,10 @@ export function NoteCard({
 
 function RepostControl({
   note,
-  mine,
   buttonClass,
   onQuote,
 }: {
   note: Note;
-  mine: boolean;
   buttonClass: string;
   onQuote: () => void;
 }) {
@@ -350,15 +419,16 @@ function RepostControl({
   async function toggle() {
     setOpen(false);
     const next = !reposted;
+    const previous = count;
     setTouched(true);
     setReposted(next);
-    if (count !== null) setCount(count + (next ? 1 : -1));
+    setCount(Math.max((count ?? 0) + (next ? 1 : -1), 0));
     try {
       const status = await setNoteRepost(note.id, next);
-      if (mine) setCount(status.repostCount);
+      setCount(status.repostCount);
     } catch {
       setReposted(!next);
-      if (count !== null) setCount(count);
+      setCount(previous);
       toast(t("repostFailed"), "error");
     }
   }
@@ -379,7 +449,7 @@ function RepostControl({
         <span key={reposted ? "on" : "off"} className={cn("inline-flex", touched && "subscribe-pop")}>
           <NoteGlyph name="repost" active={reposted} className="h-[18px] w-[18px]" />
         </span>
-        {mine && count !== null && count > 0 && (
+        {count !== null && count > 0 && (
           <span className="tabular-nums" title={t("repostCount", { count })}>
             {count}
           </span>
@@ -470,11 +540,15 @@ export function NoteLengthRing({ length, className }: { length: number; classNam
 }
 
 function NoteMenu({
+  bookmarked,
+  onBookmark,
   onConnect,
   onEdit,
   onDelete,
   disabled,
 }: {
+  bookmarked: boolean;
+  onBookmark: () => void;
   onConnect: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -519,6 +593,17 @@ function NoteMenu({
           role="menu"
           className="absolute right-0 top-8 z-20 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
+          <button
+            type="button"
+            role="menuitem"
+            className={cn(item, "text-slate-700 dark:text-slate-200")}
+            onClick={() => {
+              setOpen(false);
+              onBookmark();
+            }}
+          >
+            {bookmarked ? t("unbookmark") : t("bookmark")}
+          </button>
           <button
             type="button"
             role="menuitem"

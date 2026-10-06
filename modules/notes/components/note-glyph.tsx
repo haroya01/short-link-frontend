@@ -18,6 +18,9 @@ export const NOTE_GLYPHS = {
     "M20.25 12L4.35 4.6L7.1 12L4.35 19.4Z",
     "M7.1 12H12.9",
   ],
+  bookmark: [
+    "M7 3.75H17C17.83 3.75 18.5 4.42 18.5 5.25V20.25L12 16.25L5.5 20.25V5.25C5.5 4.42 6.17 3.75 7 3.75Z",
+  ],
 } as const;
 
 type Glyph = keyof typeof NOTE_GLYPHS;
@@ -44,7 +47,7 @@ export function NoteGlyph({
       className={cn("shrink-0", className)}
     >
       {paths.map((d) => (
-        <path key={d} d={d} fill={active && name === "heart" ? "currentColor" : undefined} />
+        <path key={d} d={d} fill={active && (name === "heart" || name === "bookmark") ? "currentColor" : undefined} />
       ))}
     </svg>
   );

@@ -4037,6 +4037,24 @@
     "repostFailed": "Couldn't repost",
     "emptyReposts": "No reposts yet",
     "repostsTitle": "Reposts · @{username}",
-    "quotedPostKind": "Blog post"
+    "quotedPostKind": "Blog post",
+    "feedEveryone": "All notes",
+    "feedFollowing": "Following",
+    "feedTrending": "Trending",
+    "feedBookmarks": "Bookmarks",
+    "emptyFollowing": "Notes and reposts from people you follow show up here",
+    "emptyTrending": "No notes this week yet",
+    "emptyBookmarks": "No bookmarked notes. Bookmark one from its … menu",
+    "signInForFollowing": "Sign in to see notes from people you follow",
+    "signInForBookmarks": "Sign in to come back to your bookmarked notes",
+    "signIn": "Sign in",
+    "bookmark": "Bookmark",
+    "unbookmark": "Remove bookmark",
+    "bookmarked": "Added to bookmarks",
+    "unbookmarked": "Removed from bookmarks",
+    "bookmarkFailed": "Couldn't update the bookmark",
+    "quotesLink": "{count, plural, one {# quote} other {# quotes}}",
+    "quotesTitle": "Quotes",
+    "quotesEmpty": "No one has quoted this note yet"
   }
 }

@@ -64,6 +64,11 @@ export interface Note {
   quotedNote: QuotedNote | null;
   /** Open Graph card for the body's first link, fetched by the server after posting. */
   linkPreview: NoteLinkPreview | null;
+  /** Set in the following feed when the note came in through someone's repost. */
+  repostedBy?: NoteAuthor | null;
+  quoteCount?: number;
+  /** Only the reader's own; null for anonymous readers. */
+  bookmarkedByMe?: boolean | null;
 }
 
 export interface NoteFeed {
@@ -116,6 +121,35 @@ export class NoteImageUploadError extends Error {
 export function listEveryoneNotes(page = 0): Promise<NoteFeed> {
   if (noteMocks) return Promise.resolve(noteMocks.mockEveryoneNotes(page));
   return request<NoteFeed>(`/api/v1/public/notes?page=${page}&size=20`, { method: "GET" });
+}
+
+export function listTrendingNotes(page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockTrendingNotes(page));
+  return request<NoteFeed>(`/api/v1/public/notes?sort=trending&page=${page}&size=20`, {
+    method: "GET",
+  });
+}
+
+export function listFollowingNotes(page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockFollowingNotes(page));
+  return request<NoteFeed>(`/api/v1/notes/following?page=${page}&size=20`, { method: "GET" });
+}
+
+export function listBookmarkedNotes(page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockBookmarkedNotes(page));
+  return request<NoteFeed>(`/api/v1/notes/bookmarks?page=${page}&size=20`, { method: "GET" });
+}
+
+export function listNoteQuotes(id: number, page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockNoteQuotes(id, page));
+  return request<NoteFeed>(`/api/v1/public/notes/${id}/quotes?page=${page}&size=20`, {
+    method: "GET",
+  });
+}
+
+export function setNoteBookmark(id: number, on: boolean): Promise<{ bookmarked: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockBookmark(id, on));
+  return request(`/api/v1/notes/${id}/bookmark`, { method: on ? "PUT" : "DELETE" });
 }
 
 /** Client-side author page (carries the viewer's token, so likedByMe and the author's own counts
@@ -186,7 +220,7 @@ export function deleteNote(id: number): Promise<void> {
 }
 
 export function setNoteLike(id: number, on: boolean): Promise<{ liked: boolean; likeCount: number }> {
-  if (USE_MOCKS) return Promise.resolve({ liked: on, likeCount: 0 });
+  if (noteMocks) return Promise.resolve(noteMocks.mockLike(id, on));
   return request(`/api/v1/notes/${id}/like`, { method: on ? "PUT" : "DELETE" });
 }
 

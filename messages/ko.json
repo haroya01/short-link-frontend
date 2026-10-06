@@ -4037,6 +4037,24 @@
     "repostFailed": "리포스트하지 못했어요",
     "emptyReposts": "아직 리포스트가 없어요",
     "repostsTitle": "리포스트 · @{username}",
-    "quotedPostKind": "블로그 글"
+    "quotedPostKind": "블로그 글",
+    "feedEveryone": "모든 노트",
+    "feedFollowing": "팔로잉",
+    "feedTrending": "인기",
+    "feedBookmarks": "북마크",
+    "emptyFollowing": "팔로우한 사람의 노트와 리포스트가 여기 모여요",
+    "emptyTrending": "이번 주에 쓴 노트가 아직 없어요",
+    "emptyBookmarks": "북마크한 노트가 없어요. 노트의 … 메뉴에서 북마크할 수 있어요",
+    "signInForFollowing": "로그인하면 팔로우한 사람의 노트만 모아 볼 수 있어요",
+    "signInForBookmarks": "로그인하면 북마크한 노트를 다시 볼 수 있어요",
+    "signIn": "로그인",
+    "bookmark": "북마크",
+    "unbookmark": "북마크 해제",
+    "bookmarked": "북마크에 넣었어요",
+    "unbookmarked": "북마크에서 뺐어요",
+    "bookmarkFailed": "북마크를 바꾸지 못했어요",
+    "quotesLink": "인용 {count}",
+    "quotesTitle": "인용한 노트",
+    "quotesEmpty": "아직 이 노트를 인용한 노트가 없어요"
   }
 }
