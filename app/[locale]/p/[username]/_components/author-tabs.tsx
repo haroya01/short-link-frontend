@@ -118,9 +118,9 @@ export function AuthorTabs({
           data-tab
           data-active={i === activeIndex ? "true" : undefined}
           aria-current={i === activeIndex ? "page" : undefined}
-          className={`focus-ring touch-target relative shrink-0 whitespace-nowrap rounded-t px-4 py-2.5 transition-colors ${
+          className={`focus-ring touch-target relative min-w-fit flex-1 whitespace-nowrap rounded-t px-4 py-2.5 text-center transition-colors ${
             i === activeIndex
-              ? "text-slate-900 dark:text-slate-100"
+              ? "font-semibold text-slate-900 dark:text-slate-100"
               : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >

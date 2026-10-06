@@ -70,6 +70,8 @@ export interface Connection {
   quote: string | null;
   /** NOTE body. */
   body: string | null;
+  /** NOTE blocks: the note's id, so the block links to it (absent on servers that predate it). */
+  noteId?: number | null;
 }
 
 /** Collection detail — header + ordered connections. Backend `CollectionDetailView`. */
@@ -100,6 +102,8 @@ export interface ConnectionEvent {
   username: string | null;
   quote: string | null;
   body: string | null;
+  /** NOTE blocks: the note's id, so the block links to it (absent on servers that predate it). */
+  noteId?: number | null;
 }
 
 /**

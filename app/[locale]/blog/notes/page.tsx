@@ -41,13 +41,13 @@ export default async function NotesPage({ params }: { params: Promise<{ locale: 
   return (
     <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+        <h1 className="text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-2xl">
           {t("title")}
         </h1>
-        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
+        <p className="mt-1 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
           {t("pageIntro")}
         </p>
-        <div className="mt-6">
+        <div className="mt-4">
           <Suspense>
             <NotesFeed />
           </Suspense>

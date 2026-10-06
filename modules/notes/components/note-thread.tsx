@@ -7,12 +7,12 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { getNoteThread, type Note, type NoteThread } from "@/modules/notes/api/notes";
 import { NoteCard } from "./note-card";
-import { NoteComposer } from "./note-composer";
+import { NoteComposer, NoteSignInRow } from "./note-composer";
 
 export function NoteThreadView({ initial }: { initial: NoteThread }) {
   const t = useTranslations("notes");
   const locale = useLocale();
-  const { ready, authenticated, signInWithGoogle } = useAuth();
+  const { ready, authenticated } = useAuth();
   const [thread, setThread] = useState(initial);
   const [deleted, setDeleted] = useState(false);
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
@@ -46,7 +46,7 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
         <div className="relative">
           <span
             aria-hidden
-            className="absolute -bottom-6 left-[13px] top-[52px] w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
+            className="absolute -bottom-4 left-[17px] top-14 w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
           />
           <NoteCard note={thread.parent} />
         </div>
@@ -58,11 +58,11 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
         onDelete={() => setDeleted(true)}
       />
 
-      <section aria-labelledby="note-replies" className="border-t border-slate-100 pt-6 dark:border-slate-800">
-        <h2 id="note-replies" className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      <section aria-labelledby="note-replies" className="border-t border-slate-100 pt-4 dark:border-slate-800">
+        <h2 id="note-replies" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
           {t("repliesTitle")}
         </h2>
-        <div className="mt-4">
+        <div className="mt-1 border-b border-slate-100 dark:border-slate-800">
           {authenticated ? (
             <NoteComposer
               inReplyToId={thread.note.id}
@@ -76,13 +76,7 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
               }}
             />
           ) : (
-            <button
-              type="button"
-              onClick={signInWithGoogle}
-              className="focus-ring rounded-lg border border-slate-300 px-4 py-2 text-[14px] text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
-            >
-              {t("loginToReply")}
-            </button>
+            <NoteSignInRow label={t("loginToReply")} placeholder={t("replyPlaceholder")} />
           )}
         </div>
         {thread.replies.length === 0 ? (

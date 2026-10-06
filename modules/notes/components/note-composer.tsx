@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { Check, Globe, ImagePlus, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import {
@@ -18,6 +19,8 @@ import {
   type QuotedPost,
 } from "@/modules/notes/api/notes";
 import { noteLength } from "@/modules/notes/lib/note-text";
+import { Avatar } from "@/modules/blog/components/avatar";
+import { NoteLengthRing } from "./note-card";
 
 type PendingImage = {
   id: string;
@@ -44,6 +47,9 @@ export function NoteComposer({
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [altEditing, setAltEditing] = useState<string | null>(null);
+  const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
 
@@ -51,6 +57,8 @@ export function NoteComposer({
   const uploading = images.some((image) => image.key === null);
   const canPost =
     !posting && !uploading && length <= NOTE_MAX_LENGTH && (length > 0 || images.length > 0);
+  const open = focused || length > 0 || images.length > 0 || quote !== null || error !== null;
+  const textarea = useRef<HTMLTextAreaElement>(null);
 
   async function addFiles(files: FileList | File[] | null) {
     if (!files) return;
@@ -131,8 +139,31 @@ export function NoteComposer({
     }
   }
 
+  const submitButton = (
+    <button
+      type="button"
+      onClick={submit}
+      disabled={!canPost}
+      className={cn(
+        "focus-ring shrink-0 rounded-full border px-4 py-1.5 text-[14px] font-semibold transition-colors disabled:cursor-default",
+        canPost
+          ? "border-accent-700 bg-accent-700 text-white hover:border-accent-800 hover:bg-accent-800"
+          : "border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500",
+      )}
+    >
+      {posting ? t("posting") : inReplyToId ? t("replySubmit") : t("submit")}
+    </button>
+  );
+
   return (
     <div
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) textarea.current?.focus();
+      }}
       onDragOver={(e) => {
         if (!e.dataTransfer.types.includes("Files")) return;
         e.preventDefault();
@@ -148,84 +179,117 @@ export function NoteComposer({
         addFiles(e.dataTransfer.files);
       }}
       className={cn(
-        "rounded-2xl border p-4 transition-colors focus-within:border-slate-400 dark:focus-within:border-slate-600",
-        dragging
-          ? "border-accent-600 bg-accent-50/40 dark:bg-accent-500/10"
-          : "border-slate-200 dark:border-slate-800",
+        "flex gap-3 rounded-2xl py-3 transition-colors",
+        dragging && "bg-accent-50/60 outline-dashed outline-1 outline-accent-600 dark:bg-accent-500/10",
       )}
     >
-      <textarea
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-            e.preventDefault();
-            submit();
-          }
-        }}
-        onPaste={(e) => {
-          const pasted = Array.from(e.clipboardData.files).filter((file) => file.type.startsWith("image/"));
-          if (pasted.length === 0) return;
-          e.preventDefault();
-          addFiles(pasted);
-        }}
-        rows={inReplyToId ? 2 : 3}
-        placeholder={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
-        aria-label={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
-        className={cn(
-          "max-h-[50vh] w-full resize-none bg-transparent text-[15px] leading-relaxed text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100",
-          inReplyToId ? "min-h-[2lh]" : "min-h-[3lh]",
-        )}
-      />
-
+      <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} size="md" />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start gap-3">
+          <textarea
+            ref={textarea}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = Array.from(e.clipboardData.files).filter((file) => file.type.startsWith("image/"));
+              if (pasted.length === 0) return;
+              e.preventDefault();
+              addFiles(pasted);
+            }}
+            rows={1}
+            placeholder={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
+            aria-label={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
+            className={cn(
+              "max-h-[50vh] w-full resize-none bg-transparent py-1.5 text-[15px] leading-6 text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500",
+              open && !inReplyToId ? "min-h-[2lh]" : "min-h-[1lh]",
+            )}
+          />
+          {!open && submitButton}
+        </div>
       {images.length > 0 && (
-        <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {images.map((image, index) => (
-            <li key={image.id} className="flex flex-col gap-1.5">
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.previewUrl}
-                  alt=""
-                  className={cn(
-                    "aspect-square w-full rounded-lg border border-slate-200 object-cover dark:border-slate-800",
-                    image.key === null && "opacity-60",
-                  )}
-                />
-                {image.key === null && (
-                  <Loader2 className="absolute inset-0 m-auto h-5 w-5 animate-spin text-slate-600" aria-hidden />
+        <div className="-mr-4 mt-2 flex gap-2 overflow-x-auto pr-4 [scrollbar-width:none] sm:mr-0 sm:pr-0 [&::-webkit-scrollbar]:hidden">
+          {images.map((image) => (
+            <figure key={image.id} className="relative shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.previewUrl}
+                alt={image.altText}
+                className={cn(
+                  "block h-44 w-auto min-w-24 max-w-none rounded-card border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
+                  image.key === null && "opacity-60",
                 )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    URL.revokeObjectURL(image.previewUrl);
-                    setImages((current) => current.filter((x) => x.id !== image.id));
-                  }}
-                  aria-label={t("removeImage")}
-                  className="focus-ring absolute right-1 top-1 rounded-full bg-slate-900/70 p-1 text-white hover:bg-slate-900"
-                >
-                  <X className="h-3.5 w-3.5" aria-hidden />
-                </button>
-              </div>
-              <label className="sr-only" htmlFor={`alt-${image.id}`}>
-                {t("altLabel")} {index + 1}
-              </label>
-              <input
-                id={`alt-${image.id}`}
-                value={image.altText}
-                maxLength={NOTE_ALT_MAX_LENGTH}
-                onChange={(e) =>
-                  setImages((current) =>
-                    current.map((x) => (x.id === image.id ? { ...x, altText: e.target.value } : x)),
-                  )
-                }
-                placeholder={t("altLabel")}
-                title={t("altPlaceholder")}
-                className="focus-ring w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               />
-            </li>
+              {image.key === null && (
+                <Loader2 className="absolute inset-0 m-auto h-5 w-5 animate-spin text-slate-600" aria-hidden />
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  URL.revokeObjectURL(image.previewUrl);
+                  setImages((current) => current.filter((x) => x.id !== image.id));
+                  if (altEditing === image.id) setAltEditing(null);
+                }}
+                aria-label={t("removeImage")}
+                className="focus-ring absolute right-1.5 top-1.5 rounded-full bg-slate-950/65 p-1 text-white hover:bg-slate-950/85"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => setAltEditing((current) => (current === image.id ? null : image.id))}
+                aria-label={t("addAlt")}
+                aria-expanded={altEditing === image.id}
+                className="focus-ring absolute bottom-1.5 left-1.5 inline-flex items-center gap-0.5 rounded-full bg-slate-950/65 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-slate-950/85"
+              >
+                {image.altText ? (
+                  <>
+                    <Check className="h-2.5 w-2.5" strokeWidth={3} aria-hidden />
+                    ALT
+                  </>
+                ) : (
+                  "+ALT"
+                )}
+              </button>
+            </figure>
           ))}
-        </ul>
+        </div>
+      )}
+
+      {altEditing !== null && images.some((image) => image.id === altEditing) && (
+        <div className="mt-2 rounded-card border border-slate-200 p-3 dark:border-slate-800">
+          <label htmlFor="note-alt" className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+            {t("altLabel")}
+          </label>
+          <textarea
+            id="note-alt"
+            autoFocus
+            rows={2}
+            maxLength={NOTE_ALT_MAX_LENGTH}
+            value={images.find((image) => image.id === altEditing)?.altText ?? ""}
+            onChange={(e) =>
+              setImages((current) =>
+                current.map((x) => (x.id === altEditing ? { ...x, altText: e.target.value } : x)),
+              )
+            }
+            placeholder={t("altPlaceholder")}
+            className="mt-1 w-full resize-none bg-transparent text-[14px] leading-relaxed text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100"
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setAltEditing(null)}
+              className="focus-ring rounded-full border border-slate-300 px-3 py-1 text-[13px] font-semibold text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+            >
+              {t("done")}
+            </button>
+          </div>
+        </div>
       )}
 
       {quote && (
@@ -255,49 +319,62 @@ export function NoteComposer({
         </p>
       )}
 
-      <div className="mt-3 flex items-center gap-3">
-        <input
-          ref={fileInput}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          multiple
-          hidden
-          onChange={(e) => {
-            addFiles(e.target.files);
-            e.target.value = "";
-          }}
-        />
-        <button
-          type="button"
-          onClick={() => fileInput.current?.click()}
-          disabled={images.length >= NOTE_MAX_IMAGES}
-          aria-label={t("addImage")}
-          title={t("addImage")}
-          className="focus-ring rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-        >
-          <ImagePlus className="h-5 w-5" aria-hidden />
-        </button>
-        <span
-          className={cn(
-            "ml-auto text-[12px] tabular-nums",
-            length > NOTE_MAX_LENGTH ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400",
-          )}
-          aria-live="polite"
-        >
-          {length > NOTE_MAX_LENGTH
-            ? t("tooLong", { max: NOTE_MAX_LENGTH })
-            : t("counter", { count: length, max: NOTE_MAX_LENGTH })}
-        </span>
-        <button
-          type="button"
-          onClick={submit}
-          disabled={!canPost}
-          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800 disabled:opacity-50"
-        >
-          {posting ? t("posting") : inReplyToId ? t("replySubmit") : t("submit")}
-        </button>
+        {open && (
+          <div className="-ml-1.5 mt-1 flex items-center gap-3">
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              hidden
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInput.current?.click()}
+              disabled={images.length >= NOTE_MAX_IMAGES}
+              aria-label={t("addImage")}
+              title={t("addImage")}
+              className="focus-ring rounded-full p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            >
+              <ImagePlus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+            </button>
+            <span className="inline-flex min-w-0 items-center gap-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
+              <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              {t("visibilityPublic")}
+            </span>
+            <div className="ml-auto flex items-center gap-3">
+              <NoteLengthRing length={length} />
+              {submitButton}
+            </div>
+          </div>
+        )}
       </div>
       {confirmDialog}
     </div>
+  );
+}
+
+export function NoteSignInRow({ label, placeholder }: { label: string; placeholder: string }) {
+  const tNav = useTranslations("nav");
+  const { signInWithGoogle } = useAuth();
+  return (
+    <button
+      type="button"
+      onClick={signInWithGoogle}
+      aria-label={label}
+      className="group flex w-full items-center gap-3 rounded-2xl py-3 text-left focus-ring"
+    >
+      <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+      <span className="min-w-0 flex-1 truncate text-[15px] text-slate-400 dark:text-slate-500">
+        {placeholder}
+      </span>
+      <span className="shrink-0 rounded-full border border-slate-900 px-4 py-1.5 text-[14px] font-semibold text-slate-900 transition-colors group-hover:bg-slate-900 group-hover:text-white dark:border-slate-100 dark:text-slate-100 dark:group-hover:bg-slate-100 dark:group-hover:text-slate-900">
+        {tNav("login")}
+      </span>
+    </button>
   );
 }

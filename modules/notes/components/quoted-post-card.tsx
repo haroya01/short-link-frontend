@@ -10,13 +10,13 @@ export function QuotedPostCard({ post }: { post: QuotedPost }) {
   return (
     <BlogLink
       href={postHref(post.authorUsername, post.slug, locale)}
-      className="focus-ring mt-3 block rounded-lg border border-slate-200 px-4 py-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900"
+      className="focus-ring mt-2.5 block rounded-2xl border border-slate-200 px-4 py-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900"
     >
-      <span className="block text-[15px] font-semibold text-slate-900 dark:text-slate-100">
-        {post.title}
+      <span className="block text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+        {post.authorUsername}
       </span>
-      <span className="mt-0.5 block text-[13px] text-slate-500 dark:text-slate-400">
-        @{post.authorUsername}
+      <span className="mt-0.5 block text-[15px] leading-snug text-slate-800 dark:text-slate-200">
+        {post.title}
       </span>
     </BlogLink>
   );

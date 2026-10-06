@@ -26,6 +26,17 @@ let notes: Note[] = [
     replyCount: 1,
   }),
   note({
+    id: 5,
+    body: "산책하다 찍은 것들. 길이 다 다르게 생겼다.",
+    author: YUNA,
+    createdAt: "2026-10-05T10:30:00Z",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-walk-1/600/800", altText: "골목 끝에 선 가로등", contentType: "image/jpeg" },
+      { url: "https://picsum.photos/seed/kurl-walk-2/900/600", altText: null, contentType: "image/jpeg" },
+      { url: "https://picsum.photos/seed/kurl-walk-3/700/700", altText: "강가의 낮은 다리", contentType: "image/jpeg" },
+    ],
+  }),
+  note({
     id: 2,
     body: "블로그 글을 인용해 봤어요.",
     author: ME,
