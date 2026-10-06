@@ -4037,6 +4037,24 @@
     "repostFailed": "リポストできませんでした",
     "emptyReposts": "まだリポストはありません",
     "repostsTitle": "リポスト · @{username}",
-    "quotedPostKind": "ブログ記事"
+    "quotedPostKind": "ブログ記事",
+    "feedEveryone": "すべてのノート",
+    "feedFollowing": "フォロー中",
+    "feedTrending": "人気",
+    "feedBookmarks": "ブックマーク",
+    "emptyFollowing": "フォロー中の人のノートとリポストがここに集まります",
+    "emptyTrending": "今週のノートはまだありません",
+    "emptyBookmarks": "ブックマークしたノートはありません。ノートの…メニューからブックマークできます",
+    "signInForFollowing": "ログインすると、フォロー中の人のノートだけを読めます",
+    "signInForBookmarks": "ログインすると、ブックマークしたノートをまた読めます",
+    "signIn": "ログイン",
+    "bookmark": "ブックマーク",
+    "unbookmark": "ブックマークを解除",
+    "bookmarked": "ブックマークに追加しました",
+    "unbookmarked": "ブックマークから外しました",
+    "bookmarkFailed": "ブックマークを変更できませんでした",
+    "quotesLink": "引用 {count}件",
+    "quotesTitle": "引用したノート",
+    "quotesEmpty": "まだこのノートを引用したノートはありません"
   }
 }

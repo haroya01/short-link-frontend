@@ -82,7 +82,7 @@ export function NoteList({
             key={note.id}
             note={note}
             isNew={fresh.has(note.id)}
-            repostedBy={repostedBy}
+            repostedBy={repostedBy ?? note.repostedBy?.username}
             onQuoted={onQuoted}
             onChange={(next) => setItems((current) => current.map((c) => (c.id === next.id ? next : c)))}
             onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}

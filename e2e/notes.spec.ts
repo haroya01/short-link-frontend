@@ -258,3 +258,39 @@ test("note notices group likes from any server, open the note, and send a remote
   await expect(follow).toHaveAttribute("href", "https://fosstodon.org/@bob");
   await expect(follow).toHaveAttribute("target", "_blank");
 });
+
+test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const tabs = page.getByRole("navigation").filter({ hasText: "모든 노트" });
+  await expect(tabs.getByRole("link", { name: "모든 노트" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
+  await tabs.getByRole("link", { name: "인기" }).click();
+  await expect(page).toHaveURL(/feed=trending/);
+  await expect(tabs.getByRole("link", { name: "인기" })).toHaveAttribute("aria-current", "page");
+  await tabs.getByRole("link", { name: "팔로잉" }).click();
+  await expect(page).toHaveURL(/feed=following/);
+  await expect(page.getByText("yuna님이 리포스트함")).toBeVisible({ timeout: 15_000 });
+});
+
+test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const first = page.locator("article[data-note-id]").first();
+  await expect(first).toBeVisible({ timeout: 30_000 });
+  const id = await first.getAttribute("data-note-id");
+  await first.getByRole("button", { name: "메뉴" }).click();
+  await page.getByRole("menuitem", { name: "북마크" }).click();
+  await expect(page.getByText("북마크에 넣었어요")).toBeVisible();
+  await page.getByRole("navigation").filter({ hasText: "모든 노트" }).getByRole("link", { name: "북마크" }).click();
+  await expect(page).toHaveURL(/feed=bookmarks/);
+  await expect(page.locator(`article[data-note-id="${id}"]`)).toBeVisible({ timeout: 15_000 });
+});
+
+test("a note page counts its quotes and lists them", async ({ page }) => {
+  await page.goto("/ko/p/yuna/notes/5");
+  const quotes = page.getByRole("link", { name: "인용 1" });
+  await expect(quotes).toBeVisible({ timeout: 30_000 });
+  await quotes.click();
+  await expect(page).toHaveURL(/\/notes\/5\/quotes/);
+  await expect(page.getByRole("heading", { name: "인용한 노트" })).toBeVisible();
+  await expect(page.getByText("이 사진들 보고 나도 오늘 걸었다.")).toBeVisible();
+});
+

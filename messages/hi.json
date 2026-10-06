@@ -4037,6 +4037,24 @@
     "repostFailed": "रीपोस्ट नहीं हो सका",
     "emptyReposts": "अभी कोई रीपोस्ट नहीं",
     "repostsTitle": "रीपोस्ट · @{username}",
-    "quotedPostKind": "ब्लॉग पोस्ट"
+    "quotedPostKind": "ब्लॉग पोस्ट",
+    "feedEveryone": "सभी नोट्स",
+    "feedFollowing": "फ़ॉलोइंग",
+    "feedTrending": "ट्रेंडिंग",
+    "feedBookmarks": "बुकमार्क",
+    "emptyFollowing": "जिन्हें आप फ़ॉलो करते हैं उनके नोट्स और रीपोस्ट यहाँ दिखते हैं",
+    "emptyTrending": "इस हफ़्ते अभी कोई नोट नहीं",
+    "emptyBookmarks": "कोई बुकमार्क किया नोट नहीं। नोट के … मेनू से बुकमार्क करें",
+    "signInForFollowing": "फ़ॉलो किए लोगों के नोट्स देखने के लिए साइन इन करें",
+    "signInForBookmarks": "बुकमार्क किए नोट्स दोबारा देखने के लिए साइन इन करें",
+    "signIn": "साइन इन",
+    "bookmark": "बुकमार्क",
+    "unbookmark": "बुकमार्क हटाएँ",
+    "bookmarked": "बुकमार्क में जोड़ा",
+    "unbookmarked": "बुकमार्क से हटाया",
+    "bookmarkFailed": "बुकमार्क नहीं बदल सका",
+    "quotesLink": "{count} उद्धरण",
+    "quotesTitle": "उद्धरण",
+    "quotesEmpty": "अभी तक किसी ने इस नोट को उद्धृत नहीं किया"
   }
 }

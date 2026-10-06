@@ -4037,6 +4037,24 @@
     "repostFailed": "Không thể đăng lại",
     "emptyReposts": "Chưa có lượt đăng lại",
     "repostsTitle": "Đăng lại · @{username}",
-    "quotedPostKind": "Bài blog"
+    "quotedPostKind": "Bài blog",
+    "feedEveryone": "Tất cả ghi chú",
+    "feedFollowing": "Đang theo dõi",
+    "feedTrending": "Thịnh hành",
+    "feedBookmarks": "Đã đánh dấu",
+    "emptyFollowing": "Ghi chú và bài đăng lại từ người bạn theo dõi sẽ hiện ở đây",
+    "emptyTrending": "Tuần này chưa có ghi chú nào",
+    "emptyBookmarks": "Chưa có ghi chú nào được đánh dấu. Đánh dấu từ menu … của ghi chú",
+    "signInForFollowing": "Đăng nhập để xem ghi chú từ người bạn theo dõi",
+    "signInForBookmarks": "Đăng nhập để xem lại các ghi chú đã đánh dấu",
+    "signIn": "Đăng nhập",
+    "bookmark": "Đánh dấu",
+    "unbookmark": "Bỏ đánh dấu",
+    "bookmarked": "Đã thêm vào đánh dấu",
+    "unbookmarked": "Đã bỏ khỏi đánh dấu",
+    "bookmarkFailed": "Không thể cập nhật đánh dấu",
+    "quotesLink": "{count} trích dẫn",
+    "quotesTitle": "Trích dẫn",
+    "quotesEmpty": "Chưa ai trích dẫn ghi chú này"
   }
 }
