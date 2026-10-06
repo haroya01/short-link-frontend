@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Heart, MessageCircle, MoreHorizontal, Quote, Repeat2, SendHorizontal } from "lucide-react";
+import { MoreHorizontal, Quote } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ import {
 import { noteLength } from "@/modules/notes/lib/note-text";
 import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
+import { NoteGlyph } from "./note-glyph";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
@@ -142,7 +143,7 @@ export function NoteCard({
       {repostedBy && (
         <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
           <span className="flex w-9 shrink-0 justify-end">
-            <Repeat2 className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            <NoteGlyph name="repost" className="h-3.5 w-3.5" />
           </span>
           <span className="truncate">{t("repostedBy", { username: repostedBy })}</span>
         </p>
@@ -233,10 +234,10 @@ export function NoteCard({
               className={cn(action, liked && "text-accent-700 dark:text-accent-400")}
             >
               <span key={liked ? "on" : "off"} className={cn("inline-flex", likeTouched && "subscribe-pop")}>
-                <Heart
-                  className={cn("h-[19px] w-[19px]", liked && "fill-accent-600 text-accent-600")}
-                  strokeWidth={1.75}
-                  aria-hidden
+                <NoteGlyph
+                  name="heart"
+                  active={liked}
+                  className={cn("h-[18px] w-[18px]", liked && "text-accent-600")}
                 />
               </span>
               {mine && likeCount !== null && likeCount > 0 && (
@@ -250,12 +251,12 @@ export function NoteCard({
               className={action}
               aria-label={t("replyCount", { count: note.replyCount })}
             >
-              <MessageCircle className="h-[19px] w-[19px] -scale-x-100" strokeWidth={1.75} aria-hidden />
+              <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
               {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
             </BlogLink>
             <RepostControl note={note} mine={mine} buttonClass={action} onQuote={() => setQuoting(true)} />
             <button type="button" onClick={share} aria-label={t("share")} className={action}>
-              <SendHorizontal className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />
+              <NoteGlyph name="share" className="h-[18px] w-[18px]" />
             </button>
           </footer>
         </div>
@@ -355,7 +356,7 @@ function RepostControl({
         className={cn(buttonClass, reposted && "text-accent-700 dark:text-accent-400")}
       >
         <span key={reposted ? "on" : "off"} className={cn("inline-flex", touched && "subscribe-pop")}>
-          <Repeat2 className="h-[19px] w-[19px]" strokeWidth={reposted ? 2.25 : 1.75} aria-hidden />
+          <NoteGlyph name="repost" active={reposted} className="h-[18px] w-[18px]" />
         </span>
         {mine && count !== null && count > 0 && (
           <span className="tabular-nums" title={t("repostCount", { count })}>
@@ -375,7 +376,7 @@ function RepostControl({
             className={cn(item, reposted ? "text-red-600 dark:text-red-400" : "text-slate-800 dark:text-slate-100")}
           >
             {reposted ? t("unrepost") : t("repost")}
-            <Repeat2 className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+            <NoteGlyph name="repost" className="h-[18px] w-[18px]" />
           </button>
           <button
             type="button"
