@@ -715,7 +715,8 @@
     "activitySince": "{date}から",
     "reportFailed": "通報を送信できませんでした。もう一度お試しください。",
     "tabNotes": "ノート",
-    "tabReposts": "リポスト"
+    "tabReposts": "リポスト",
+    "viewAvatar": "プロフィール写真を拡大"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -3968,7 +3969,6 @@
     "imageNotImage": "画像ファイルだけ追加できます",
     "imageTooLarge": "写真が大きすぎます",
     "imageFailed": "写真をアップロードできませんでした",
-    "quoting": "引用した記事",
     "removeQuote": "引用を外す",
     "postFailed": "ノートを投稿できませんでした",
     "emptyAuthor": "まだノートはありません",
@@ -4019,6 +4019,7 @@
     "quotePosted": "引用ノートを投稿しました",
     "repostFailed": "リポストできませんでした",
     "emptyReposts": "まだリポストはありません",
-    "repostsTitle": "リポスト · @{username}"
+    "repostsTitle": "リポスト · @{username}",
+    "quotedPostKind": "ブログ記事"
   }
 }

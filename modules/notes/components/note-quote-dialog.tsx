@@ -6,15 +6,17 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
-import type { Note, QuotedNote } from "@/modules/notes/api/notes";
+import type { Note, QuotedNote, QuotedPost } from "@/modules/notes/api/notes";
 import { NoteComposer } from "./note-composer";
+
+type Quoted = { note: QuotedNote } | { post: QuotedPost };
 
 export function NoteQuoteDialog({
   quoted,
   onClose,
   onPosted,
 }: {
-  quoted: QuotedNote | null;
+  quoted: Quoted | null;
   onClose: () => void;
   onPosted: (note: Note) => void;
 }) {
@@ -23,7 +25,7 @@ export function NoteQuoteDialog({
   const panel = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const [mounted, setMounted] = useState(false);
-  const [shown, setShown] = useState<QuotedNote | null>(quoted);
+  const [shown, setShown] = useState<Quoted | null>(quoted);
   const { mounted: present, closing } = usePresence(open, 160);
 
   useEffect(() => setMounted(true), []);
@@ -77,11 +79,15 @@ export function NoteQuoteDialog({
             {t("cancel")}
           </button>
           <h2 id={titleId} className="text-[16px] font-semibold text-slate-900 dark:text-slate-100">
-            {t("quoteTitle")}
+            {"note" in shown ? t("quoteTitle") : t("quoteAction")}
           </h2>
         </div>
         <div className="px-4 pb-1">
-          <NoteComposer key={shown.id} quotedNote={shown} autoFocus onCreated={onPosted} />
+          {"note" in shown ? (
+            <NoteComposer key={`note-${shown.note.id}`} quotedNote={shown.note} autoFocus onCreated={onPosted} />
+          ) : (
+            <NoteComposer key={`post-${shown.post.id}`} quote={shown.post} autoFocus onCreated={onPosted} />
+          )}
         </div>
       </div>
     </div>,
