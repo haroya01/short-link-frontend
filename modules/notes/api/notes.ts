@@ -97,11 +97,6 @@ export function listEveryoneNotes(page = 0): Promise<NoteFeed> {
   return request<NoteFeed>(`/api/v1/public/notes?page=${page}&size=20`, { method: "GET" });
 }
 
-export function listFollowingNotes(page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockFollowingNotes(page));
-  return request<NoteFeed>(`/api/v1/notes/following?page=${page}&size=20`, { method: "GET" });
-}
-
 /** Client-side author page (carries the viewer's token, so likedByMe and the author's own counts
  *  come back filled in). */
 export function listAuthorNotes(username: string, page = 0): Promise<NoteFeed> {

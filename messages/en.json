@@ -903,8 +903,7 @@
       "curation": "Library",
       "webhooks": "Webhooks",
       "moderation": "Moderation",
-      "adminMetrics": "Metrics",
-      "notes": "Notes"
+      "adminMetrics": "Metrics"
     },
     "links": {
       "links": "Links",
@@ -3971,9 +3970,6 @@
   },
   "notes": {
     "title": "Notes",
-    "tabEveryone": "Everyone",
-    "tabFollowing": "Following",
-    "tabMine": "My notes",
     "composerPlaceholder": "Jot down what's on your mind",
     "replyPlaceholder": "Write a reply",
     "submit": "Post",
@@ -3992,8 +3988,6 @@
     "quoting": "Quoting",
     "removeQuote": "Remove quote",
     "postFailed": "Couldn't post the note",
-    "emptyFollowing": "No notes from people you follow yet",
-    "emptyMine": "You haven't written a note yet",
     "emptyAuthor": "No notes yet",
     "writeFirst": "Write your first note",
     "loadMore": "Load more",
@@ -4014,6 +4008,7 @@
     "edited": "edited",
     "inReplyTo": "Replying to this note",
     "loginToReply": "Sign in to reply",
+    "loginToWrite": "Sign in to write a note",
     "noticeTitle": "Notes reach other servers too",
     "noticeBody": "kurl notes are also delivered to your followers on other servers such as Mastodon and Misskey. If you delete a note we ask those servers to delete it too, but we can't guarantee that copies already shared are removed. You can turn this off in settings at any time.",
     "noticeConfirm": "Got it, post",
@@ -4022,6 +4017,7 @@
     "settingsHint": "People on Mastodon and Misskey can find and follow you as {handle}. Turning this off tells your followers' servers to delete your account and clears your followers.",
     "settingsHintNoHandle": "People on Mastodon and Misskey can find and follow you. Turning this off tells your followers' servers to delete your account and clears your followers.",
     "quoteAction": "Quote in a note",
+    "quoteLabel": "Quote",
     "publicTitle": "Notes · @{username}",
     "noteBy": "Note by @{username}",
     "backToNotes": "All notes"

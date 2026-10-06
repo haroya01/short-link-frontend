@@ -436,8 +436,8 @@ export default async function PublicPostPage({
             <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
             <ConnectButton postId={post.id} postTitle={post.title} />
-            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
+            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             <ReportButton subjectType="POST" subjectId={post.id} ownerUsername={author.username} leadingRule />
           </div>
         </div>

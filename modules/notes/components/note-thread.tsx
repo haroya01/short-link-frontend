@@ -15,6 +15,7 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
   const { ready, authenticated, signInWithGoogle } = useAuth();
   const [thread, setThread] = useState(initial);
   const [deleted, setDeleted] = useState(false);
+  const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -42,7 +43,11 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
   return (
     <div>
       {thread.parent && (
-        <div className="border-b border-slate-200 opacity-80 dark:border-slate-800">
+        <div className="relative">
+          <span
+            aria-hidden
+            className="absolute -bottom-6 left-[13px] top-[52px] w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
+          />
           <NoteCard note={thread.parent} />
         </div>
       )}
@@ -53,21 +58,22 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
         onDelete={() => setDeleted(true)}
       />
 
-      <section aria-labelledby="note-replies" className="border-t border-slate-200 pt-6 dark:border-slate-800">
-        <h2 id="note-replies" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+      <section aria-labelledby="note-replies" className="border-t border-slate-100 pt-6 dark:border-slate-800">
+        <h2 id="note-replies" className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
           {t("repliesTitle")}
         </h2>
         <div className="mt-4">
           {authenticated ? (
             <NoteComposer
               inReplyToId={thread.note.id}
-              onCreated={(reply) =>
+              onCreated={(reply) => {
+                setFreshReplies((current) => new Set(current).add(reply.id));
                 setThread((current) => ({
                   ...current,
                   note: { ...current.note, replyCount: current.note.replyCount + 1 },
                   replies: [...current.replies, reply],
-                }))
-              }
+                }));
+              }}
             />
           ) : (
             <button
@@ -82,11 +88,12 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
         {thread.replies.length === 0 ? (
           <p className="py-6 text-[14px] text-slate-500 dark:text-slate-400">{t("noReplies")}</p>
         ) : (
-          <div className="divide-y divide-slate-200 dark:divide-slate-800">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {thread.replies.map((reply) => (
               <NoteCard
                 key={reply.id}
                 note={reply}
+                isNew={freshReplies.has(reply.id)}
                 onChange={replaceReply}
                 onDelete={(id) =>
                   setThread((current) => ({

@@ -2,13 +2,14 @@ import { test, expect } from "@playwright/test";
 
 /**
  * Notes in MOCK-ON: the in-memory note mock serves @dohyun's and @yuna's notes, and the mock session
- * is always @dohyun. Covers the workspace (first-note notice → post), the public notes tab, and a
- * note page with its reply.
+ * is always @dohyun. Covers the notes tab of discovery (first-note notice → post), the public notes
+ * tab, and a note page with its reply.
  */
 test.use({ viewport: { width: 1280, height: 900 } });
 
 test("the first note asks about federation once, then posts to the top of the feed", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog/connections");
+  await page.getByRole("tab", { name: "노트" }).click();
   const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("오늘 쓴 글의 씨앗")).toBeVisible();
@@ -37,7 +38,7 @@ test("the first note asks about federation once, then posts to the top of the fe
 
 test("a blog post opens the composer with the post quoted", async ({ page }) => {
   await page.goto(
-    "/ko/blog/notes?quote=5&quoteTitle=" +
+    "/ko/blog/connections?tab=notes&quote=5&quoteTitle=" +
       encodeURIComponent("타입스크립트 제네릭이 어려운 이유") +
       "&quoteSlug=typescript-generics&quoteAuthor=dohyun",
   );

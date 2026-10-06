@@ -24,12 +24,13 @@ export function QuoteInNoteButton({
   });
   return (
     <a
-      href={blogHref(`/notes?${query.toString()}`)}
+      href={blogHref(`/connections?tab=notes&${query.toString()}`)}
       aria-label={t("quoteAction")}
       title={t("quoteAction")}
-      className="touch-target focus-ring inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+      className="touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
     >
       <Quote className="h-4 w-4" aria-hidden />
+      <span>{t("quoteLabel")}</span>
     </a>
   );
 }

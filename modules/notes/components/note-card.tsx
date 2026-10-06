@@ -25,11 +25,16 @@ export function NoteCard({
   onChange,
   onDelete,
   emphasis = false,
+  isNew = false,
+  showAuthor = true,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
   onDelete?: (id: number) => void;
   emphasis?: boolean;
+  isNew?: boolean;
+  /** Off on single-author lists (an author's tab, my notes), where the row would repeat the header. */
+  showAuthor?: boolean;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -42,6 +47,7 @@ export function NoteCard({
   const [busy, setBusy] = useState(false);
   const [liked, setLiked] = useState(note.likedByMe === true);
   const [likeCount, setLikeCount] = useState(note.likeCount);
+  const [likeTouched, setLikeTouched] = useState(false);
 
   useEffect(() => {
     setLiked(note.likedByMe === true);
@@ -54,6 +60,7 @@ export function NoteCard({
       return;
     }
     const next = !liked;
+    setLikeTouched(true);
     setLiked(next);
     if (likeCount !== null) setLikeCount(likeCount + (next ? 1 : -1));
     try {
@@ -93,44 +100,49 @@ export function NoteCard({
   const overLimit = noteLength(draft) > NOTE_MAX_LENGTH;
 
   return (
-    <article className={cn("py-5", emphasis && "py-6")} data-note-id={note.id}>
-      <header className="flex items-center gap-2.5">
-        <BlogLink href={authorHref(note.author.username, locale)} className="focus-ring rounded-full">
-          <Avatar src={note.author.avatarUrl} name={note.author.username} size="sm" />
-        </BlogLink>
-        <div className="flex min-w-0 flex-1 items-baseline gap-1.5 text-[14px]">
+    <article className={cn("py-5", emphasis && "py-6", isNew && "comment-in")} data-note-id={note.id}>
+      <header className="flex items-center gap-2">
+        {showAuthor && (
           <BlogLink
             href={authorHref(note.author.username, locale)}
-            className="focus-ring truncate rounded-md font-semibold text-slate-900 hover:underline dark:text-slate-100"
+            className="group/author flex min-w-0 items-center gap-2 rounded focus-ring"
           >
-            @{note.author.username}
+            <Avatar src={note.author.avatarUrl} name={note.author.username} size="sm" shrink={false} />
+            <span className="truncate text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
+              @{note.author.username}
+            </span>
           </BlogLink>
-          <span aria-hidden className="text-slate-400">·</span>
-          <BlogLink
-            href={noteHref(note, locale)}
-            className="focus-ring shrink-0 rounded-md text-slate-500 hover:underline dark:text-slate-400"
-          >
-            <time dateTime={note.createdAt}>{ago(note.createdAt)}</time>
-          </BlogLink>
-          {note.editedAt && (
-            <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">{t("edited")}</span>
-          )}
+        )}
+        <BlogLink
+          href={noteHref(note, locale)}
+          className="shrink-0 rounded text-[12px] text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200"
+        >
+          <time dateTime={note.createdAt}>{ago(note.createdAt)}</time>
+          {note.editedAt && <span> · {t("edited")}</span>}
+        </BlogLink>
+        <div className="ml-auto flex shrink-0 items-center">
+          {mine && !editing && <NoteMenu onEdit={() => setEditing(true)} onDelete={remove} disabled={busy} />}
         </div>
-        {mine && !editing && <NoteMenu onEdit={() => setEditing(true)} onDelete={remove} disabled={busy} />}
       </header>
 
-      <div className="mt-2 pl-[38px]">
+      <div className={cn("mt-1.5", showAuthor && "pl-9")}>
         {editing ? (
           <div>
             <textarea
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               rows={3}
+              autoFocus
               aria-label={t("edit")}
-              className="focus-ring w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             />
             <div className="mt-2 flex items-center justify-end gap-2">
-              <span className={cn("mr-auto text-[12px] tabular-nums", overLimit ? "text-red-600" : "text-slate-400")}>
+              <span
+                className={cn(
+                  "mr-auto text-[12px] tabular-nums",
+                  overLimit ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400",
+                )}
+              >
                 {t("counter", { count: noteLength(draft), max: NOTE_MAX_LENGTH })}
               </span>
               <button
@@ -154,18 +166,18 @@ export function NoteCard({
             </div>
           </div>
         ) : (
-          <NoteBody body={note.body} />
+          <NoteBody body={note.body} large={emphasis} />
         )}
         <NoteMediaGrid media={note.media} />
         {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
 
-        <footer className="mt-3 flex items-center gap-5 text-[13px] text-slate-500 dark:text-slate-400">
+        <footer className="mt-2 flex items-center gap-4 text-[13px]">
           <BlogLink
             href={noteHref(note, locale)}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-md hover:text-slate-800 dark:hover:text-slate-200"
+            className="touch-target inline-flex items-center gap-1 rounded text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
             aria-label={t("replyCount", { count: note.replyCount })}
           >
-            <MessageCircle className="h-4 w-4" aria-hidden />
+            <MessageCircle className="h-3.5 w-3.5" aria-hidden />
             {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
           </BlogLink>
           <button
@@ -173,9 +185,16 @@ export function NoteCard({
             onClick={toggleLike}
             aria-pressed={liked}
             aria-label={liked ? t("unlike") : t("like")}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-md hover:text-slate-800 dark:hover:text-slate-200"
+            className={cn(
+              "touch-target inline-flex items-center gap-1 rounded transition-colors focus-ring",
+              liked
+                ? "text-accent-700 dark:text-accent-400"
+                : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400",
+            )}
           >
-            <Heart className={cn("h-4 w-4", liked && "fill-accent-600 text-accent-600")} aria-hidden />
+            <span key={liked ? "on" : "off"} className={cn("inline-flex", likeTouched && "subscribe-pop")}>
+              <Heart className={cn("h-3.5 w-3.5", liked && "fill-accent-600 text-accent-600")} aria-hidden />
+            </span>
             {mine && likeCount !== null && likeCount > 0 && (
               <span className="tabular-nums" title={t("likeCount", { count: likeCount })}>
                 {likeCount}
@@ -228,7 +247,7 @@ function NoteMenu({
         aria-expanded={open}
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
-        className="focus-ring rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+        className="touch-target rounded text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200"
       >
         <MoreHorizontal className="h-4 w-4" aria-hidden />
       </button>

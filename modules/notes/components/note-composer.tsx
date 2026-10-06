@@ -43,6 +43,7 @@ export function NoteComposer({
   const [images, setImages] = useState<PendingImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
 
@@ -51,12 +52,14 @@ export function NoteComposer({
   const canPost =
     !posting && !uploading && length <= NOTE_MAX_LENGTH && (length > 0 || images.length > 0);
 
-  async function addFiles(files: FileList | null) {
+  async function addFiles(files: FileList | File[] | null) {
     if (!files) return;
+    const all = Array.from(files).filter((file) => file.type.startsWith("image/"));
+    if (all.length === 0) return;
     setError(null);
     const room = NOTE_MAX_IMAGES - images.length;
-    const picked = Array.from(files).slice(0, room);
-    if (files.length > room) setError(t("imageLimit", { max: NOTE_MAX_IMAGES }));
+    const picked = all.slice(0, room);
+    if (all.length > room) setError(t("imageLimit", { max: NOTE_MAX_IMAGES }));
     for (const file of picked) {
       const id = `${file.name}-${file.size}-${Math.random()}`;
       setImages((current) => [
@@ -129,7 +132,28 @@ export function NoteComposer({
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 p-4 transition-colors focus-within:border-slate-400 dark:border-slate-800 dark:focus-within:border-slate-600">
+    <div
+      onDragOver={(e) => {
+        if (!e.dataTransfer.types.includes("Files")) return;
+        e.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragging(false);
+      }}
+      onDrop={(e) => {
+        if (e.dataTransfer.files.length === 0) return;
+        e.preventDefault();
+        setDragging(false);
+        addFiles(e.dataTransfer.files);
+      }}
+      className={cn(
+        "rounded-2xl border p-4 transition-colors focus-within:border-slate-400 dark:focus-within:border-slate-600",
+        dragging
+          ? "border-accent-600 bg-accent-50/40 dark:bg-accent-500/10"
+          : "border-slate-200 dark:border-slate-800",
+      )}
+    >
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
@@ -139,10 +163,19 @@ export function NoteComposer({
             submit();
           }
         }}
+        onPaste={(e) => {
+          const pasted = Array.from(e.clipboardData.files).filter((file) => file.type.startsWith("image/"));
+          if (pasted.length === 0) return;
+          e.preventDefault();
+          addFiles(pasted);
+        }}
         rows={inReplyToId ? 2 : 3}
         placeholder={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
         aria-label={inReplyToId ? t("replyPlaceholder") : t("composerPlaceholder")}
-        className="w-full resize-none bg-transparent text-[15px] leading-relaxed text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100"
+        className={cn(
+          "max-h-[50vh] w-full resize-none bg-transparent text-[15px] leading-relaxed text-slate-900 outline-none [field-sizing:content] placeholder:text-slate-400 dark:text-slate-100",
+          inReplyToId ? "min-h-[2lh]" : "min-h-[3lh]",
+        )}
       />
 
       {images.length > 0 && (
@@ -247,7 +280,7 @@ export function NoteComposer({
         <span
           className={cn(
             "ml-auto text-[12px] tabular-nums",
-            length > NOTE_MAX_LENGTH ? "text-red-600 dark:text-red-400" : "text-slate-400",
+            length > NOTE_MAX_LENGTH ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400",
           )}
           aria-live="polite"
         >

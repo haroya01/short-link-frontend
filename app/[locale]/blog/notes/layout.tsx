@@ -1,3 +1,0 @@
-import { messagesScopeLayout } from "@/i18n/messages-scope";
-
-export default messagesScopeLayout("blog/notes");

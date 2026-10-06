@@ -17,6 +17,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
     <NoteList
       load={load}
       initial={initial}
+      showAuthor={false}
       empty={
         <EmptyState
           title={t("emptyAuthor")}
@@ -24,7 +25,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
           action={
             own ? (
               <a
-                href={blogHref("/notes")}
+                href={blogHref("/connections?tab=notes")}
                 className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800"
               >
                 {t("writeFirst")}

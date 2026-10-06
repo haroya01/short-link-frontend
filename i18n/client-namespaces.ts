@@ -49,7 +49,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   ],
   "links/visual-fixtures": ["events.public", "publicProfile.contactCard"],
   blog: [
-    "collections", "cookieConsent", "footer", "languageSwitcher", "nav", "notifications",
+    "collections", "cookieConsent", "footer", "languageSwitcher", "nav", "notes", "notifications",
     "publicFeed", "publicPost", "recent", "sidebar.blog", "sidebar.common",
   ],
   "blog/admin": ["abuseReports", "blogAdminMetrics"],
@@ -57,8 +57,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/curation": ["blogWorkspace", "errors", "savedLibrary"],
   "blog/leads": ["errors", "settings.profile.leads"],
   "blog/login": ["auth", "blogLogin"],
-  "blog/notes": ["notes"],
-  "blog/settings": ["blogWorkspace", "notes"],
+  "blog/settings": ["blogWorkspace"],
   "blog/webhooks": ["blogWebhooks"],
   "blog/write": ["blogWorkspace", "errors", "postEditor", "tags"],
   "p/[username]": [

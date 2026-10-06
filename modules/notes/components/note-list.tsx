@@ -13,11 +13,13 @@ export function NoteList({
   initial = null,
   empty,
   prepend = [],
+  showAuthor = true,
 }: {
   load: (page: number) => Promise<NoteFeed>;
   initial?: NoteFeed | null;
   empty: React.ReactNode;
   prepend?: Note[];
+  showAuthor?: boolean;
 }) {
   const t = useTranslations("notes");
   const [items, setItems] = useState<Note[]>(initial?.items ?? []);
@@ -60,6 +62,7 @@ export function NoteList({
   }
 
   const shown = items;
+  const fresh = new Set(prepend.map((n) => n.id));
 
   if (state === "loading" && shown.length === 0) {
     return <div className="py-10" aria-busy />;
@@ -71,11 +74,13 @@ export function NoteList({
 
   return (
     <div>
-      <div className="divide-y divide-slate-200 dark:divide-slate-800">
+      <div className="divide-y divide-slate-100 dark:divide-slate-800">
         {shown.map((note) => (
           <NoteCard
             key={note.id}
             note={note}
+            isNew={fresh.has(note.id)}
+            showAuthor={showAuthor}
             onChange={(next) => setItems((current) => current.map((c) => (c.id === next.id ? next : c)))}
             onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}
           />

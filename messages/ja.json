@@ -903,8 +903,7 @@
       "curation": "ライブラリ",
       "webhooks": "Webhook",
       "moderation": "通報管理",
-      "adminMetrics": "指標",
-      "notes": "ノート"
+      "adminMetrics": "指標"
     },
     "links": {
       "links": "リンク",
@@ -3971,9 +3970,6 @@
   },
   "notes": {
     "title": "ノート",
-    "tabEveryone": "みんな",
-    "tabFollowing": "フォロー中",
-    "tabMine": "自分のノート",
     "composerPlaceholder": "いま考えていることを短く残してみましょう",
     "replyPlaceholder": "返信を書く",
     "submit": "投稿",
@@ -3992,8 +3988,6 @@
     "quoting": "引用した記事",
     "removeQuote": "引用を外す",
     "postFailed": "ノートを投稿できませんでした",
-    "emptyFollowing": "フォロー中の人のノートはまだありません",
-    "emptyMine": "まだノートを書いていません",
     "emptyAuthor": "まだノートはありません",
     "writeFirst": "最初のノートを書く",
     "loadMore": "もっと見る",
@@ -4014,6 +4008,7 @@
     "edited": "編集済み",
     "inReplyTo": "このノートへの返信",
     "loginToReply": "ログインして返信",
+    "loginToWrite": "ログインしてノートを書く",
     "noticeTitle": "ノートはほかのサーバーにも届きます",
     "noticeBody": "kurl のノートは Mastodon・Misskey などほかのサーバーのフォロワーにも届きます。ノートを削除するとそのサーバーにも削除を依頼しますが、すでに広まったコピーが消えることは保証できません。設定からいつでもオフにできます。",
     "noticeConfirm": "わかりました、投稿します",
@@ -4022,6 +4017,7 @@
     "settingsHint": "Mastodon・Misskey から {handle} で見つけてフォローできます。オフにするとフォロワーのサーバーにアカウントの削除を伝え、フォロワーを空にします。",
     "settingsHintNoHandle": "Mastodon・Misskey から見つけてフォローできます。オフにするとフォロワーのサーバーにアカウントの削除を伝え、フォロワーを空にします。",
     "quoteAction": "ノートで引用",
+    "quoteLabel": "引用",
     "publicTitle": "ノート · @{username}",
     "noteBy": "@{username} のノート",
     "backToNotes": "ノート一覧"

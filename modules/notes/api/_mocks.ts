@@ -51,10 +51,6 @@ export function mockEveryoneNotes(page: number): NoteFeed {
   return { items: page === 0 ? topLevel() : [], page, hasNext: false };
 }
 
-export function mockFollowingNotes(page: number): NoteFeed {
-  return { items: page === 0 ? topLevel() : [], page, hasNext: false };
-}
-
 export function mockAuthorNotes(username: string, page: number): NoteFeed {
   return {
     items: page === 0 ? topLevel().filter((n) => n.author.username === username) : [],
