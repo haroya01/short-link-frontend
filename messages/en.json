@@ -4185,6 +4185,32 @@
     "filterEdit": "Edit the {phrase} filter",
     "filterDelete": "Delete the {phrase} filter",
     "filterFailed": "Couldn't change the filter",
-    "searchNotesEmpty": "No notes with “{q}”"
+    "searchNotesEmpty": "No notes with “{q}”",
+    "remoteFollow": "Follow",
+    "remoteFollowing": "Following",
+    "remoteRequested": "Requested",
+    "remoteUnfollow": "Unfollow",
+    "remoteCancelRequest": "Cancel request",
+    "remoteUnfollowConfirm": "Unfollow {acct}?",
+    "remoteCancelRequestConfirm": "Cancel the follow request?",
+    "remoteError": {
+      "disabled": "Turn on note federation in settings to follow accounts on other servers",
+      "missing": "Couldn't find that account on its server",
+      "invalid": "Write it as name@server",
+      "other": "Couldn't update. Try again in a moment"
+    },
+    "remoteAccountSection": "Account on another server",
+    "remoteLookingUp": "Asking that server…",
+    "remoteSignIn": "Sign in to find accounts on other servers",
+    "remoteNotFound": "Couldn't find that account on its server",
+    "remoteCaption": "This account lives on {domain}. Following sends a request to {domain}.",
+    "remoteCaptionFollowing": "This account lives on {domain}. Its new notes arrive in your Following feed.",
+    "remoteCaptionRequested": "Follow requested. You'll be following once {domain} accepts.",
+    "remoteOpenOnServer": "View on {domain}",
+    "remoteNoNotes": "No notes received yet",
+    "remoteNoNotesHint": "Follow to get this account's new notes here and in your Following feed.",
+    "remoteFollowingTitle": "Following elsewhere",
+    "remoteFollowingHint": "Accounts you follow on other servers such as Mastodon. Find one by typing @name@server in search.",
+    "remoteFollowingEmpty": "You don't follow anyone on other servers yet."
   }
 }
