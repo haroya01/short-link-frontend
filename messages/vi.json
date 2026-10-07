@@ -120,7 +120,8 @@
     "feedReasonTopic": "Đang theo dõi ‘{tag}’",
     "feedReasonSeries": "Series đã đăng ký",
     "bookmarkFailed": "Không thể lưu. Vui lòng thử lại.",
-    "seriesSubscribeFailed": "Không thể cập nhật đăng ký. Vui lòng thử lại."
+    "seriesSubscribeFailed": "Không thể cập nhật đăng ký. Vui lòng thử lại.",
+    "searchNotesTab": "Ghi chú"
   },
   "blogWebhooks": {
     "loginRequired": "Cần đăng nhập.",
@@ -4177,6 +4178,7 @@
     "filterAdd": "Thêm bộ lọc",
     "filterEdit": "Sửa bộ lọc {phrase}",
     "filterDelete": "Xóa bộ lọc {phrase}",
-    "filterFailed": "Không thể thay đổi bộ lọc"
+    "filterFailed": "Không thể thay đổi bộ lọc",
+    "searchNotesEmpty": "Không tìm thấy ghi chú có “{q}”"
   }
 }

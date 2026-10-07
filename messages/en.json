@@ -120,7 +120,8 @@
     "feedReasonTopic": "Following ‘{tag}’",
     "feedReasonSeries": "Subscribed series",
     "bookmarkFailed": "Couldn't save. Please try again.",
-    "seriesSubscribeFailed": "Couldn't update subscription. Please try again."
+    "seriesSubscribeFailed": "Couldn't update subscription. Please try again.",
+    "searchNotesTab": "Notes"
   },
   "blogWebhooks": {
     "loginRequired": "Sign in required.",
@@ -4177,6 +4178,7 @@
     "filterAdd": "Add filter",
     "filterEdit": "Edit the {phrase} filter",
     "filterDelete": "Delete the {phrase} filter",
-    "filterFailed": "Couldn't change the filter"
+    "filterFailed": "Couldn't change the filter",
+    "searchNotesEmpty": "No notes with “{q}”"
   }
 }

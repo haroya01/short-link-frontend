@@ -120,7 +120,8 @@
     "feedReasonTopic": "‘{tag}’ 팔로우",
     "feedReasonSeries": "구독 시리즈",
     "bookmarkFailed": "저장하지 못했어요. 다시 시도해 주세요.",
-    "seriesSubscribeFailed": "구독을 변경하지 못했어요. 다시 시도해 주세요."
+    "seriesSubscribeFailed": "구독을 변경하지 못했어요. 다시 시도해 주세요.",
+    "searchNotesTab": "노트"
   },
   "blogWebhooks": {
     "loginRequired": "로그인이 필요해요.",
@@ -4177,6 +4178,7 @@
     "filterAdd": "필터 추가",
     "filterEdit": "{phrase} 필터 고치기",
     "filterDelete": "{phrase} 필터 지우기",
-    "filterFailed": "필터를 바꾸지 못했어요"
+    "filterFailed": "필터를 바꾸지 못했어요",
+    "searchNotesEmpty": "‘{q}’이(가) 든 노트를 찾지 못했어요"
   }
 }
