@@ -872,7 +872,11 @@
     "groupYesterday": "Hôm qua",
     "groupWeek": "Tuần này",
     "groupEarlier": "Trước đó",
-    "unreadLabel": "Chưa đọc"
+    "unreadLabel": "Chưa đọc",
+    "note_poll": "Cuộc bình chọn của <b>{actor}</b> đã kết thúc",
+    "note_poll_mine": "Cuộc bình chọn của bạn đã kết thúc",
+    "prefNotePoll": "Kết quả bình chọn",
+    "prefNotePollHint": "Khi cuộc bình chọn của bạn hoặc cuộc bạn tham gia kết thúc"
   },
   "nav": {
     "events": "Sự kiện",

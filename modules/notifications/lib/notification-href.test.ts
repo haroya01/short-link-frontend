@@ -76,6 +76,12 @@ describe("notificationHref", () => {
     );
   });
 
+  it("opens an ended poll under its author, who is the notice's actor", () => {
+    expect(notificationHref(item({ type: "NOTE_POLL", noteId: 14 }), "me", "ko")).toBe(
+      "/ko/p/minji/notes/14",
+    );
+  });
+
   it("leaves a follow from another server to its external profile", () => {
     expect(
       notificationHref(item({ type: "REMOTE_FOLLOW", actorProfileUrl: "https://m.social/@a" }), "me", "ko"),

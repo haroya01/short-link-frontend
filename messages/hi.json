@@ -872,7 +872,11 @@
     "groupYesterday": "कल",
     "groupWeek": "इस सप्ताह",
     "groupEarlier": "पहले",
-    "unreadLabel": "अपठित"
+    "unreadLabel": "अपठित",
+    "note_poll": "<b>{actor}</b> का पोल समाप्त हो गया",
+    "note_poll_mine": "आपका पोल समाप्त हो गया",
+    "prefNotePoll": "पोल परिणाम",
+    "prefNotePollHint": "जब आपका पोल या जिस पोल में आपने वोट किया वह समाप्त हो"
   },
   "nav": {
     "events": "इवेंट",

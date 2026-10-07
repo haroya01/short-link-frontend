@@ -228,6 +228,7 @@ export function mockBlogNotificationPreferences(): BlogNotificationPreferences {
     NOTE_REPLY: true,
     NOTE_QUOTE: true,
     NOTE_MENTION: true,
+    NOTE_POLL: true,
     REMOTE_FOLLOW: true,
   };
 }

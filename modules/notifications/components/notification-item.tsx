@@ -3,6 +3,7 @@
 import { Children, isValidElement, type ComponentType, type ReactNode } from "react";
 import {
   AtSign,
+  ChartBar,
   GitBranch,
   Heart,
   Link2,
@@ -49,6 +50,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_REPLY: "note_reply",
   NOTE_QUOTE: "note_quote",
   NOTE_MENTION: "note_mention",
+  NOTE_POLL: "note_poll",
   REMOTE_FOLLOW: "remote_follow",
 };
 
@@ -70,6 +72,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_REPLY: Reply,
   NOTE_QUOTE: Quote,
   NOTE_MENTION: AtSign,
+  NOTE_POLL: ChartBar,
   REMOTE_FOLLOW: UserPlus,
 };
 
@@ -83,6 +86,7 @@ function subtitleOf(item: Item): string | null {
     case "NOTE_LIKE":
     case "NOTE_REPOST":
     case "NOTE_MENTION":
+    case "NOTE_POLL":
       return item.noteExcerpt ?? null;
     default:
       return item.postTitle;
@@ -121,7 +125,12 @@ export function NotificationItem({
   const actorHref =
     !remoteHref && item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
   const others = Math.max((item.count ?? 1) - 1, 0);
-  const messageKey = others > 0 ? `${MESSAGE_KEY[item.type]}_group` : MESSAGE_KEY[item.type];
+  const messageKey =
+    item.type === "NOTE_POLL" && item.actorUsername === me?.username
+      ? "note_poll_mine"
+      : others > 0
+        ? `${MESSAGE_KEY[item.type]}_group`
+        : MESSAGE_KEY[item.type];
   // 행위자만 굵게(<b> 태그는 메시지 파일에) — 문장 전체가 같은 무게면 누가/무엇이 안 잡힌다.
   // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   // 컬렉션 이름은 그래프 이벤트 문장에서 강조어(<c>{collection}</c>) — 없으면 안전한 폴백 라벨.

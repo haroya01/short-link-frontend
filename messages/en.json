@@ -872,7 +872,11 @@
     "groupYesterday": "Yesterday",
     "groupWeek": "This week",
     "groupEarlier": "Earlier",
-    "unreadLabel": "Unread"
+    "unreadLabel": "Unread",
+    "note_poll": "<b>{actor}</b>'s poll has ended",
+    "note_poll_mine": "Your poll has ended",
+    "prefNotePoll": "Poll results",
+    "prefNotePollHint": "When your poll or a poll you voted in ends"
   },
   "nav": {
     "events": "Events",

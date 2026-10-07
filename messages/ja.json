@@ -872,7 +872,11 @@
     "groupYesterday": "昨日",
     "groupWeek": "今週",
     "groupEarlier": "それ以前",
-    "unreadLabel": "未読"
+    "unreadLabel": "未読",
+    "note_poll": "<b>{actor}</b>さんの投票が終了しました",
+    "note_poll_mine": "あなたの投票が終了しました",
+    "prefNotePoll": "投票の終了",
+    "prefNotePollHint": "自分の投票や参加した投票が終わったとき"
   },
   "nav": {
     "events": "イベント",
