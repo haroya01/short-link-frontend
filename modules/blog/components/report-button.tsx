@@ -1,14 +1,17 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { Flag, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/lib/auth";
 import { submitAbuseReport, type AbuseReasonCode, type AbuseSubjectType } from "@/lib/api/abuse-reports";
 import { REASON_CODES, reasonLabelKey } from "@/lib/api/abuse-report-reasons";
+
+const HEADER_HEIGHT = 56;
 
 type Props = {
   subjectType: AbuseSubjectType;
@@ -17,6 +20,8 @@ type Props = {
   ownerUsername?: string;
   /** A hairline before the trigger, for when it closes a row of other actions. */
   leadingRule?: boolean;
+  /** The server a note came from: offers to send it an anonymous copy, off unless chosen. */
+  forwardDomain?: string;
 };
 
 /**
@@ -29,7 +34,7 @@ type Props = {
  * open with an error so it can be sent again; success also raises a toast so the confirm isn't lost when
  * the popover closes. Closes on outside-click / Escape.
  */
-export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRule = false }: Props) {
+export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRule = false, forwardDomain }: Props) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("common");
   const { toast } = useToast();
@@ -37,18 +42,26 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
   const [open, setOpen] = useState(false);
   const [reasonCode, setReasonCode] = useState<AbuseReasonCode | null>(null);
   const [detail, setDetail] = useState("");
+  const [forward, setForward] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [below, setBelow] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   useDismiss(open, ref, () => setOpen(false));
+  useLayoutEffect(() => {
+    if (!open || !ref.current || !dialogRef.current) return;
+    const room = ref.current.getBoundingClientRect().top - HEADER_HEIGHT;
+    setBelow(room < dialogRef.current.offsetHeight + 8);
+  }, [open]);
   // Contain Tab within the popover + restore focus to the flag trigger on close.
   useFocusTrap(dialogRef, { active: open, onEscape: () => setOpen(false), autoFocus: true });
 
   function reset() {
     setReasonCode(null);
     setDetail("");
+    setForward(false);
     setSubmitted(false);
   }
 
@@ -57,7 +70,13 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
     if (submitting || submitted || !reasonCode) return;
     setSubmitting(true);
     try {
-      await submitAbuseReport({ subjectType, subjectId, reasonCode, detail: detail.trim() || undefined });
+      await submitAbuseReport({
+        subjectType,
+        subjectId,
+        reasonCode,
+        detail: detail.trim() || undefined,
+        forward: forwardDomain ? forward : undefined,
+      });
     } catch {
       toast(t("reportFailed"), "error");
       return;
@@ -95,10 +114,13 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="absolute bottom-full right-0 z-30 mb-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-850"
+            className={cn(
+              "absolute right-0 z-30 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-850",
+              below ? "top-full mt-2" : "bottom-full mb-2",
+            )}
           >
             <h2 id={titleId} className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
-              {t("reportTitle")}
+              {t(subjectType === "NOTE" ? "reportTitleNote" : "reportTitle")}
             </h2>
             {submitted ? (
               <p role="status" className="text-sm text-slate-600 dark:text-slate-300">{t("reportDone")}</p>
@@ -136,6 +158,20 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
                     placeholder={t("reportPlaceholder")}
                   />
                 </label>
+                {forwardDomain && (
+                  <label className="flex items-start gap-2 text-[13px] text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={forward}
+                      onChange={(e) => setForward(e.target.checked)}
+                      className="mt-0.5 h-3.5 w-3.5"
+                    />
+                    <span>
+                      {t("reportForward", { domain: forwardDomain })}
+                      <span className="block text-[12px] text-slate-500 dark:text-slate-400">{t("reportForwardHint")}</span>
+                    </span>
+                  </label>
+                )}
                 <div className="flex justify-end gap-2">
                   <button
                     type="button"

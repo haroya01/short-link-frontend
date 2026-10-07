@@ -701,6 +701,20 @@ test("a note page reports someone else's note with a reason", async ({ page }) =
   const report = page.getByRole("button", { name: "신고", exact: true }).first();
   await report.click({ timeout: 30_000 });
   const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("checkbox", { name: /에도 전달/ })).toHaveCount(0);
+  await dialog.getByLabel("스팸·광고").check();
+  await dialog.getByRole("button", { name: "신고", exact: true }).click();
+  await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();
+});
+
+test("a note from another server can be reported to that server too, off unless chosen", async ({ page }) => {
+  await page.goto("/ko/blog/remote/9800/notes/12");
+  const report = page.getByRole("button", { name: "신고", exact: true }).first();
+  await report.click({ timeout: 30_000 });
+  const dialog = page.getByRole("dialog");
+  const forward = dialog.getByRole("checkbox", { name: /mastodon\.social에도 전달/ });
+  await expect(forward).not.toBeChecked();
+  await forward.check();
   await dialog.getByLabel("스팸·광고").check();
   await dialog.getByRole("button", { name: "신고", exact: true }).click();
   await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();

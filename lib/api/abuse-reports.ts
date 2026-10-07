@@ -75,6 +75,8 @@ export async function submitAbuseReport(payload: {
   subjectId: number;
   reasonCode: AbuseReasonCode;
   detail?: string;
+  /** A copy goes, without the reporter's name, to the server a note came from (Mastodon's Flag). */
+  forward?: boolean;
 }): Promise<void> {
   // Demo/mock mode: accept the report so the submit flow resolves to its "접수됨" state instead of
   // hitting a backend that isn't there. The real endpoint stays the only path outside mock mode.
