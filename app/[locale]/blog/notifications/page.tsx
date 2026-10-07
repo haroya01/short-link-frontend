@@ -13,6 +13,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
 import { ErrorState } from "@/components/common/error-state";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
+import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
 
 /**
  * Full notification feed — the mobile surface (the desktop header bell offers a dropdown peek) and a
@@ -45,6 +46,7 @@ export default function NotificationsPage() {
   const markAll = useMarkAllRead();
   const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useNotifications();
+  const filters = useNoteFilters();
 
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
   if (ready && !authenticated) {
@@ -62,7 +64,7 @@ export default function NotificationsPage() {
     );
   }
 
-  const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const items = (data?.pages.flatMap((page) => page.items) ?? []).filter((item) => !noticeHidden(item, filters));
   const now = new Date();
   const groups = new Map<GroupKey, Item[]>();
   for (const item of items) {

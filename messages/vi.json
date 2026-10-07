@@ -4156,6 +4156,27 @@
     "muteForever": "Vô thời hạn",
     "mutedToast": "Đã tắt tiếng {username}",
     "unmutedToast": "Đã bật tiếng {username}",
-    "muteFailed": "Không thể thay đổi tắt tiếng"
+    "muteFailed": "Không thể thay đổi tắt tiếng",
+    "filteredBy": "Đã lọc: {phrases}",
+    "showFiltered": "Xem",
+    "filtersTitle": "Bộ lọc từ khóa",
+    "filtersHint": "Thu gọn hoặc ẩn ghi chú có từ bạn không muốn thấy. Ghi chú của bạn không bị lọc, và ứng dụng cũng đồng bộ.",
+    "filterPhrase": "Từ khóa hoặc cụm từ",
+    "filterWhere": "Áp dụng cho",
+    "filterHome": "Đang theo dõi và danh sách",
+    "filterPublic": "Mọi ghi chú, thịnh hành, thẻ",
+    "filterThread": "Trả lời",
+    "filterAccount": "Hồ sơ",
+    "filterNotifications": "Thông báo",
+    "filterWhen": "Khi khớp",
+    "filterWarnLong": "Thu gọn kèm cảnh báo",
+    "filterHideLong": "Ẩn hoàn toàn",
+    "filterWarn": "Thu gọn",
+    "filterHide": "Ẩn",
+    "filterWholeWord": "Chỉ khớp cả từ",
+    "filterAdd": "Thêm bộ lọc",
+    "filterEdit": "Sửa bộ lọc {phrase}",
+    "filterDelete": "Xóa bộ lọc {phrase}",
+    "filterFailed": "Không thể thay đổi bộ lọc"
   }
 }

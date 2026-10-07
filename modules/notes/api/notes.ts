@@ -302,6 +302,42 @@ export function setRepostsHidden(username: string, hidden: boolean): Promise<{ h
   });
 }
 
+export type NoteFilterContext = "home" | "public" | "thread" | "account" | "notifications";
+
+export interface NoteFilter {
+  id: number;
+  phrase: string;
+  wholeWord: boolean;
+  context: NoteFilterContext[];
+  action: "warn" | "hide";
+  expiresAt: string | null;
+}
+
+export interface NoteFilterDraft {
+  phrase: string;
+  wholeWord: boolean;
+  context: NoteFilterContext[];
+  action: "warn" | "hide";
+  expiresIn: number | null;
+}
+
+export function listNoteFilters(): Promise<NoteFilter[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockFilters());
+  return request("/api/v1/notes/filters", { method: "GET" });
+}
+
+export function saveNoteFilter(draft: NoteFilterDraft, id: number | null): Promise<NoteFilter> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSaveFilter(draft, id));
+  return id === null
+    ? request("/api/v1/notes/filters", { method: "POST", body: draft })
+    : request(`/api/v1/notes/filters/${id}`, { method: "PUT", body: draft });
+}
+
+export function deleteNoteFilter(id: number): Promise<void> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockDeleteFilter(id));
+  return request(`/api/v1/notes/filters/${id}`, { method: "DELETE" });
+}
+
 export interface MuteStatus {
   muted: boolean;
   notifications: boolean;

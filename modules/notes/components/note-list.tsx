@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
-import type { Note, NoteFeed } from "@/modules/notes/api/notes";
+import { useAuth } from "@/lib/auth";
+import type { Note, NoteFeed, NoteFilterContext } from "@/modules/notes/api/notes";
+import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { NoteCard } from "./note-card";
 
 /** `initial` is the anonymous server render; page 0 is refetched with the session so the viewer's
@@ -16,6 +18,7 @@ export function NoteList({
   onQuoted,
   repostedBy,
   showsPin = false,
+  filterContext,
 }: {
   load: (page: number) => Promise<NoteFeed>;
   initial?: NoteFeed | null;
@@ -24,8 +27,11 @@ export function NoteList({
   onQuoted?: (note: Note) => void;
   repostedBy?: string;
   showsPin?: boolean;
+  filterContext?: NoteFilterContext;
 }) {
   const t = useTranslations("notes");
+  const filters = useNoteFilters();
+  const { me } = useAuth();
   const [items, setItems] = useState<Note[]>(initial?.items ?? []);
   const [page, setPage] = useState(initial?.page ?? 0);
   const [hasNext, setHasNext] = useState(initial?.hasNext ?? false);
@@ -65,7 +71,8 @@ export function NoteList({
     }
   }
 
-  const shown = items;
+  const verdicts = new Map(items.map((note) => [note.id, noteVerdict(note, filters, filterContext, me?.id)]));
+  const shown = items.filter((note) => verdicts.get(note.id)?.action !== "hide");
   const fresh = new Set(prepend.map((n) => n.id));
 
   if (state === "loading" && shown.length === 0) {
@@ -87,6 +94,10 @@ export function NoteList({
             repostedBy={repostedBy ?? note.repostedBy?.username}
             onQuoted={onQuoted}
             showsPin={showsPin}
+            filteredBy={(() => {
+              const verdict = verdicts.get(note.id);
+              return verdict?.action === "warn" ? verdict.phrases : undefined;
+            })()}
             onChange={(next) => {
               if (next.pinned !== note.pinned) {
                 reload();

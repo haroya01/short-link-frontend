@@ -18,6 +18,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
       load={load}
       initial={initial}
       showsPin
+      filterContext="account"
       empty={
         <EmptyState
           title={t("emptyAuthor")}

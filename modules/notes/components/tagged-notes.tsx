@@ -9,5 +9,12 @@ import { NoteList } from "./note-list";
 export function TaggedNotes({ tag }: { tag: string }) {
   const t = useTranslations("notes");
   const load = useCallback((page: number) => listTaggedNotes(tag, page), [tag]);
-  return <NoteList key={tag} load={load} empty={<EmptyState title={t("emptyTag")} className="mt-8" />} />;
+  return (
+    <NoteList
+      key={tag}
+      load={load}
+      filterContext="public"
+      empty={<EmptyState title={t("emptyTag")} className="mt-8" />}
+    />
+  );
 }

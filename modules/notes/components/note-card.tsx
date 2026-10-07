@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { EyeOff, MoreHorizontal, Pin, Quote, TriangleAlert } from "lucide-react";
+import { EyeOff, ListFilter, MoreHorizontal, Pin, Quote, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api/client";
@@ -55,6 +55,7 @@ export function NoteCard({
   isNew = false,
   repostedBy,
   showsPin = false,
+  filteredBy,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -65,6 +66,7 @@ export function NoteCard({
   repostedBy?: string;
   /** Only the author's profile marks pins; on Mastodon a pin means nothing anywhere else. */
   showsPin?: boolean;
+  filteredBy?: string[];
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -78,6 +80,7 @@ export function NoteCard({
   const [revealed, setRevealed] = useState(false);
   const [mediaShown, setMediaShown] = useState(false);
   const [showingHistory, setShowingHistory] = useState(false);
+  const [filterOpened, setFilterOpened] = useState(false);
   const [draft, setDraft] = useState(note.body);
   const [busy, setBusy] = useState(false);
   const [liked, setLiked] = useState(note.likedByMe === true);
@@ -197,6 +200,24 @@ export function NoteCard({
   const overLimit = noteLength(draft) > NOTE_MAX_LENGTH;
   const action =
     "touch-target inline-flex h-8 items-center gap-1.5 rounded-full px-2 text-slate-700 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800";
+
+  if (filteredBy?.length && !filterOpened) {
+    return (
+      <article className="flex items-center gap-2.5 py-3.5" data-note-id={note.id} data-note-filtered>
+        <ListFilter className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+        <p className="min-w-0 flex-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
+          {t("filteredBy", { phrases: filteredBy.join(", ") })}
+        </p>
+        <button
+          type="button"
+          onClick={() => setFilterOpened(true)}
+          className="focus-ring shrink-0 rounded-full border border-slate-300 px-3 py-1 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          {t("showFiltered")}
+        </button>
+      </article>
+    );
+  }
 
   return (
     <article className={cn("py-4", emphasis && "py-5", isNew && "comment-in")} data-note-id={note.id}>

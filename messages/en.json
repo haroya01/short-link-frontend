@@ -4156,6 +4156,27 @@
     "muteForever": "Indefinitely",
     "mutedToast": "Muted {username}",
     "unmutedToast": "Unmuted {username}",
-    "muteFailed": "Couldn't change the mute"
+    "muteFailed": "Couldn't change the mute",
+    "filteredBy": "Filtered: {phrases}",
+    "showFiltered": "Show",
+    "filtersTitle": "Keyword filters",
+    "filtersHint": "Fold or hide notes with words you'd rather not see. Your own notes are never filtered, and your apps stay in sync.",
+    "filterPhrase": "Keyword or phrase",
+    "filterWhere": "Applies to",
+    "filterHome": "Following and lists",
+    "filterPublic": "All notes, trending, tags",
+    "filterThread": "Replies",
+    "filterAccount": "Profiles",
+    "filterNotifications": "Notifications",
+    "filterWhen": "When matched",
+    "filterWarnLong": "Fold behind a warning",
+    "filterHideLong": "Hide completely",
+    "filterWarn": "Fold",
+    "filterHide": "Hide",
+    "filterWholeWord": "Whole word only",
+    "filterAdd": "Add filter",
+    "filterEdit": "Edit the {phrase} filter",
+    "filterDelete": "Delete the {phrase} filter",
+    "filterFailed": "Couldn't change the filter"
   }
 }

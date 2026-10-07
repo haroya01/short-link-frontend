@@ -14,6 +14,7 @@ export function AuthorReposts({ username, initial }: { username: string; initial
       load={load}
       initial={initial}
       repostedBy={username}
+      filterContext="account"
       empty={<EmptyState title={t("emptyReposts")} className="mt-4" />}
     />
   );
