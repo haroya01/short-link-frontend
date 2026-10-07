@@ -238,7 +238,7 @@ export function NotePollEditor({
 }) {
   const t = useTranslations("notes");
   return (
-    <div className="mt-2 space-y-2 rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+    <div className="mt-2 space-y-2 rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
       {poll.options.map((option, index) => (
         <div key={index} className="flex items-center gap-2">
           <input
