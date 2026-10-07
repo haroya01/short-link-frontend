@@ -11,6 +11,7 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import {
@@ -41,7 +42,13 @@ import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 const NOTE_RING_NUMBER_FROM = 20;
 
 export function noteHref(note: Pick<Note, "id" | "author">, locale: string): string {
+  if (note.author.remoteId) return blogPath(`/remote/${note.author.remoteId}/notes/${note.id}`);
   return authorHref(note.author.username, locale, `notes/${note.id}`);
+}
+
+/** A member's notes on their blog, or an account on another server on its remote page. */
+export function noteAuthorHref(author: Note["author"], locale: string): string {
+  return author.remoteId ? blogPath(`/remote/${author.remoteId}`) : authorHref(author.username, locale);
 }
 
 const FEDERATION_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
@@ -239,7 +246,7 @@ export function NoteCard({
       )}
       <div className={emphasis ? "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3" : "flex gap-3"}>
         <BlogLink
-          href={authorHref(note.author.username, locale)}
+          href={noteAuthorHref(note.author, locale)}
           tabIndex={-1}
           aria-hidden
           className="shrink-0 self-start rounded-full"
@@ -251,24 +258,24 @@ export function NoteCard({
             {emphasis ? (
               <div className="min-w-0">
                 <BlogLink
-                  href={authorHref(note.author.username, locale)}
+                  href={noteAuthorHref(note.author, locale)}
                   className="block truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
                 >
                   {note.author.displayName || note.author.username}
                 </BlogLink>
                 <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">
-                  @{note.author.username}@{FEDERATION_HOST}
+                  {note.author.remoteId ? `@${note.author.username}` : `@${note.author.username}@${FEDERATION_HOST}`}
                 </span>
               </div>
             ) : (
               <BlogLink
-                href={authorHref(note.author.username, locale)}
+                href={noteAuthorHref(note.author, locale)}
                 className="flex min-w-0 items-baseline gap-1 rounded focus-ring hover:underline"
               >
                 <span className="truncate font-semibold text-slate-900 dark:text-slate-100">
                   {note.author.displayName || note.author.username}
                 </span>
-                {note.author.displayName && (
+                {(note.author.displayName || note.author.remoteId) && (
                   <span className="truncate text-slate-500 dark:text-slate-400">@{note.author.username}</span>
                 )}
               </BlogLink>
@@ -292,7 +299,7 @@ export function NoteCard({
               />
             )}
             <div className="-my-2 ml-auto flex shrink-0 items-center gap-2">
-              {emphasis && (
+              {emphasis && !note.author.remoteId && (
                 <FollowButton username={note.author.username} initialFollowerCount={0} compact quiet />
               )}
               {authenticated && !editing && (

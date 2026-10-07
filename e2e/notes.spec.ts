@@ -569,3 +569,31 @@ test("a display name leads the note header with the handle beside it, and settin
   await expect(field).toHaveValue("도현");
   await expect(save).toBeDisabled();
 });
+
+test("a handle in search finds an account on another server, and following it sends a request", async ({ page }) => {
+  await page.goto("/ko/blog?q=%40alice%40mastodon.social");
+  const found = page.getByRole("region", { name: "다른 서버 계정" });
+  await expect(found.getByText("@alice@mastodon.social")).toBeVisible({ timeout: 30_000 });
+  const follow = found.getByRole("button", { name: "팔로우" });
+  await follow.click();
+  await expect(found.getByRole("button", { name: "요청됨" })).toBeVisible();
+
+  await found.getByRole("link", { name: /Alice/ }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Alice" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("button", { name: "팔로잉" })).toBeVisible();
+  await expect(page.getByText("mastodon.social에 있는 계정이에요. 이 계정의 새 노트가 팔로잉 피드에 와요.")).toBeVisible();
+});
+
+test("a note from a followed account elsewhere reaches the following tab and opens its account", async ({ page }) => {
+  await page.goto("/ko/blog/notes?feed=following");
+  const remote = page.locator('article[data-note-id="12"]');
+  await expect(remote).toContainText("Hello from the fediverse", { timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="12"]')).toHaveCount(1);
+  await remote.getByRole("link", { name: "Mina @mina@mastodon.social" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Mina" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="12"]')).toBeVisible();
+
+  await page.goto("/ko/blog/notes");
+  await expect(page.locator('article[data-note-id="6"]')).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="12"]')).toHaveCount(0);
+});

@@ -4185,6 +4185,32 @@
     "filterEdit": "{phrase} 필터 고치기",
     "filterDelete": "{phrase} 필터 지우기",
     "filterFailed": "필터를 바꾸지 못했어요",
-    "searchNotesEmpty": "‘{q}’이(가) 든 노트를 찾지 못했어요"
+    "searchNotesEmpty": "‘{q}’이(가) 든 노트를 찾지 못했어요",
+    "remoteFollow": "팔로우",
+    "remoteFollowing": "팔로잉",
+    "remoteRequested": "요청됨",
+    "remoteUnfollow": "팔로우 끊기",
+    "remoteCancelRequest": "요청 취소",
+    "remoteUnfollowConfirm": "{acct} 팔로우를 끊을까요?",
+    "remoteCancelRequestConfirm": "팔로우 요청을 취소할까요?",
+    "remoteError": {
+      "disabled": "설정에서 노트 연합을 켜야 다른 서버 계정을 팔로우할 수 있어요",
+      "missing": "그 서버에서 계정을 찾지 못했어요",
+      "invalid": "아이디@서버 모양으로 적어 주세요",
+      "other": "반영하지 못했어요. 잠시 뒤 다시 시도해 주세요"
+    },
+    "remoteAccountSection": "다른 서버 계정",
+    "remoteLookingUp": "그 서버에 묻는 중…",
+    "remoteSignIn": "로그인하면 다른 서버 계정을 찾을 수 있어요",
+    "remoteNotFound": "그 서버에서 계정을 찾지 못했어요",
+    "remoteCaption": "{domain}에 있는 계정이에요. 팔로우하면 {domain}에 요청을 보내요.",
+    "remoteCaptionFollowing": "{domain}에 있는 계정이에요. 이 계정의 새 노트가 팔로잉 피드에 와요.",
+    "remoteCaptionRequested": "팔로우를 요청했어요. {domain}이 수락하면 팔로잉이 돼요.",
+    "remoteOpenOnServer": "{domain}에서 보기",
+    "remoteNoNotes": "받은 노트가 없어요",
+    "remoteNoNotesHint": "팔로우하면 이 계정이 쓰는 새 노트가 여기와 팔로잉 피드에 와요.",
+    "remoteFollowingTitle": "다른 서버 팔로잉",
+    "remoteFollowingHint": "마스토돈 같은 다른 서버에서 팔로우하는 계정이에요. 검색에 @아이디@서버를 적으면 찾을 수 있어요.",
+    "remoteFollowingEmpty": "아직 다른 서버에서 팔로우하는 계정이 없어요."
   }
 }

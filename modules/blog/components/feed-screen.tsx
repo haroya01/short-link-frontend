@@ -25,6 +25,8 @@ import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { SearchedNotes } from "@/modules/notes/components/searched-notes";
+import { RemoteAccountResult } from "@/modules/notes/components/remote-account";
+import { looksLikeRemoteHandle } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
@@ -321,6 +323,12 @@ export async function FeedScreen({
 
         {/* Keeps the SSR default-tab cookie in step with the account pref (no UI, no redirect). */}
         <FeedTabCookieSync />
+
+        {searching && looksLikeRemoteHandle(query) && (
+          <ReadingShell className="mt-6">
+            <RemoteAccountResult query={query} />
+          </ReadingShell>
+        )}
 
         {/* Following is its own client surface with its own rail (followed authors), so it animates as
             a whole — there's no shared discovery rail to hold still here. */}

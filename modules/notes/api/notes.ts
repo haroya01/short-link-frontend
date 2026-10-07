@@ -18,6 +18,9 @@ export interface NoteAuthor {
   username: string;
   avatarUrl: string | null;
   displayName?: string | null;
+  /** Set for an account on another server: username is then user@server and id is negative. */
+  remoteId?: number | null;
+  url?: string | null;
 }
 
 export interface NoteMedia {
@@ -191,6 +194,54 @@ export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
     `/api/v1/public/notes/tags/${encodeURIComponent(tag)}?page=${page}&size=20`,
     { method: "GET" },
   );
+}
+
+export interface RemoteAccount {
+  id: number;
+  acct: string;
+  username: string;
+  domain: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  url: string;
+  /** Their server accepted the follow. */
+  following: boolean;
+  /** A follow was sent and their server has not answered yet. */
+  requested: boolean;
+}
+
+export function lookupRemoteAccount(acct: string): Promise<RemoteAccount> {
+  if (noteMocks) return noteMocks.mockLookupRemote(acct.trim());
+  return request<RemoteAccount>(
+    `/api/v1/federation/accounts/lookup?acct=${encodeURIComponent(acct.trim())}`,
+    { method: "GET" },
+  );
+}
+
+export function getRemoteAccount(id: number): Promise<RemoteAccount> {
+  if (noteMocks) return noteMocks.mockRemoteAccount(id);
+  return request<RemoteAccount>(`/api/v1/federation/accounts/${id}`, { method: "GET" });
+}
+
+export function setRemoteFollow(id: number, on: boolean): Promise<RemoteAccount> {
+  if (noteMocks) return noteMocks.mockSetRemoteFollow(id, on);
+  return request<RemoteAccount>(`/api/v1/federation/accounts/${id}/follow`, {
+    method: on ? "POST" : "DELETE",
+  });
+}
+
+export function listRemoteFollowing(page = 0): Promise<RemoteAccount[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockRemoteFollowing());
+  return request<RemoteAccount[]>(`/api/v1/federation/following?page=${page}&size=50`, {
+    method: "GET",
+  });
+}
+
+export function listRemoteAccountNotes(id: number, page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockRemoteAccountNotes(id, page));
+  return request<NoteFeed>(`/api/v1/federation/accounts/${id}/notes?page=${page}&size=20`, {
+    method: "GET",
+  });
 }
 
 export function searchNotes(query: string, page = 0): Promise<NoteFeed> {

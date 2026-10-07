@@ -4185,6 +4185,32 @@
     "filterEdit": "{phrase} फ़िल्टर बदलें",
     "filterDelete": "{phrase} फ़िल्टर हटाएँ",
     "filterFailed": "फ़िल्टर नहीं बदला जा सका",
-    "searchNotesEmpty": "“{q}” वाले कोई नोट नहीं मिले"
+    "searchNotesEmpty": "“{q}” वाले कोई नोट नहीं मिले",
+    "remoteFollow": "फ़ॉलो करें",
+    "remoteFollowing": "फ़ॉलो कर रहे हैं",
+    "remoteRequested": "अनुरोध भेजा",
+    "remoteUnfollow": "अनफ़ॉलो करें",
+    "remoteCancelRequest": "अनुरोध रद्द करें",
+    "remoteUnfollowConfirm": "{acct} को अनफ़ॉलो करें?",
+    "remoteCancelRequestConfirm": "फ़ॉलो अनुरोध रद्द करें?",
+    "remoteError": {
+      "disabled": "दूसरे सर्वर के खाते फ़ॉलो करने के लिए सेटिंग्स में नोट फ़ेडरेशन चालू करें",
+      "missing": "उस सर्वर पर खाता नहीं मिला",
+      "invalid": "इसे नाम@सर्वर के रूप में लिखें",
+      "other": "अपडेट नहीं हो सका। थोड़ी देर बाद फिर कोशिश करें"
+    },
+    "remoteAccountSection": "दूसरे सर्वर का खाता",
+    "remoteLookingUp": "उस सर्वर से पूछ रहे हैं…",
+    "remoteSignIn": "दूसरे सर्वर के खाते ढूँढने के लिए साइन इन करें",
+    "remoteNotFound": "उस सर्वर पर खाता नहीं मिला",
+    "remoteCaption": "यह खाता {domain} पर है। फ़ॉलो करने पर {domain} को अनुरोध जाता है।",
+    "remoteCaptionFollowing": "यह खाता {domain} पर है। इसके नए नोट आपकी फ़ॉलोइंग फ़ीड में आते हैं।",
+    "remoteCaptionRequested": "फ़ॉलो अनुरोध भेजा। {domain} स्वीकार करते ही आप फ़ॉलो करने लगेंगे।",
+    "remoteOpenOnServer": "{domain} पर देखें",
+    "remoteNoNotes": "अभी कोई नोट नहीं मिला",
+    "remoteNoNotesHint": "फ़ॉलो करें — इस खाते के नए नोट यहाँ और आपकी फ़ॉलोइंग फ़ीड में आएँगे।",
+    "remoteFollowingTitle": "दूसरे सर्वर पर फ़ॉलोइंग",
+    "remoteFollowingHint": "Mastodon जैसे दूसरे सर्वर पर आप जिन खातों को फ़ॉलो करते हैं। खोज में @नाम@सर्वर लिखकर ढूँढें।",
+    "remoteFollowingEmpty": "आप अभी दूसरे सर्वर पर किसी को फ़ॉलो नहीं करते।"
   }
 }

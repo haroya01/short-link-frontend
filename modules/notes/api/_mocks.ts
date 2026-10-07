@@ -1,3 +1,4 @@
+import { ApiError } from "@/lib/api/client";
 import type {
   FederationSettings,
   Note,
@@ -11,11 +12,20 @@ import type {
   NoteListSummary,
   NotePoll,
   NoteThread,
+  RemoteAccount,
 } from "./notes";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
 const HARUKA = { id: 21, username: "haruka", avatarUrl: "https://i.pravatar.cc/120?img=32", displayName: "하루카" };
+const MINA = {
+  id: -9800,
+  username: "mina@mastodon.social",
+  avatarUrl: null,
+  displayName: "Mina",
+  remoteId: 9800,
+  url: "https://mastodon.social/@mina",
+};
 
 function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): Note {
   return {
@@ -143,13 +153,23 @@ let notes: Note[] = [
     author: HARUKA,
     createdAt: "2026-10-03T09:00:00Z",
   }),
+  note({
+    id: 12,
+    body: "Hello from the fediverse 👋 #kurl",
+    author: MINA,
+    likeCount: 2,
+    createdAt: "2026-10-03T08:00:00Z",
+  }),
 ];
 let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
 let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "@dohyun@kurl.me" };
 
 const muted = new Map<string, MuteStatus>();
-const topLevel = () => notes.filter((n) => n.inReplyToId === null && !muted.has(n.author.username));
+const topLevel = () =>
+  notes.filter((n) => n.inReplyToId === null && !n.author.remoteId && !muted.has(n.author.username));
+const remoteTopLevel = (remoteId: number) =>
+  notes.filter((n) => n.inReplyToId === null && n.author.remoteId === remoteId);
 
 const FILTERS_KEY = "kurl-mock-note-filters";
 
@@ -258,8 +278,82 @@ export function mockFollowingNotes(page: number): NoteFeed {
     .map((n) => ({ ...withQuotes(n), repostedBy: YUNA }));
   const yunas = topLevel().filter((n) => n.author.id === YUNA.id).map(withQuotes);
   const seen = new Set<number>();
-  const items = [...reposted, ...yunas, ...mine].filter((n) => !seen.has(n.id) && seen.add(n.id));
+  const followedElsewhere = remoteAccounts
+    .filter((a) => a.following)
+    .flatMap((a) => remoteTopLevel(a.id))
+    .map(withQuotes);
+  const items = [...reposted, ...yunas, ...mine, ...followedElsewhere].filter(
+    (n) => !seen.has(n.id) && seen.add(n.id),
+  );
   return { items, page, hasNext: false };
+}
+
+let remoteAccounts: RemoteAccount[] = [
+  {
+    id: 9800,
+    acct: "mina@mastodon.social",
+    username: "mina",
+    domain: "mastodon.social",
+    displayName: "Mina",
+    avatarUrl: null,
+    url: "https://mastodon.social/@mina",
+    following: true,
+    requested: false,
+  },
+];
+let nextRemoteId = 9900;
+
+// A follow request is accepted the next time the account is read, as a server that does not lock
+// accounts answers within seconds.
+export function mockLookupRemote(acct: string): Promise<RemoteAccount> {
+  const [user, domain] = acct.replace(/^@/, "").split("@");
+  if (!user || !domain) {
+    return Promise.reject(new ApiError(400, { status: 400, code: "REMOTE_ACCOUNT_INVALID" }));
+  }
+  const key = `${user}@${domain.toLowerCase()}`;
+  const known = remoteAccounts.find((a) => a.acct === key);
+  if (known) return Promise.resolve(known);
+  const account: RemoteAccount = {
+    id: nextRemoteId++,
+    acct: key,
+    username: user,
+    domain: domain.toLowerCase(),
+    displayName: user.charAt(0).toUpperCase() + user.slice(1),
+    avatarUrl: null,
+    url: `https://${domain.toLowerCase()}/@${user}`,
+    following: false,
+    requested: false,
+  };
+  remoteAccounts = [...remoteAccounts, account];
+  return Promise.resolve(account);
+}
+
+export function mockRemoteAccount(id: number): Promise<RemoteAccount> {
+  const account = remoteAccounts.find((a) => a.id === id);
+  if (!account) {
+    return Promise.reject(new ApiError(404, { status: 404, code: "REMOTE_ACCOUNT_NOT_FOUND" }));
+  }
+  if (account.requested) {
+    remoteAccounts = remoteAccounts.map((a) =>
+      a.id === id ? { ...a, requested: false, following: true } : a,
+    );
+  }
+  return Promise.resolve(remoteAccounts.find((a) => a.id === id)!);
+}
+
+export function mockSetRemoteFollow(id: number, on: boolean): Promise<RemoteAccount> {
+  remoteAccounts = remoteAccounts.map((a) =>
+    a.id === id ? { ...a, requested: on, following: false } : a,
+  );
+  return Promise.resolve(remoteAccounts.find((a) => a.id === id)!);
+}
+
+export function mockRemoteFollowing(): RemoteAccount[] {
+  return remoteAccounts.filter((a) => a.following || a.requested);
+}
+
+export function mockRemoteAccountNotes(id: number, page: number): NoteFeed {
+  return { items: page > 0 ? [] : remoteTopLevel(id).map(withQuotes), page, hasNext: false };
 }
 
 let lists: { id: number; title: string; members: string[] }[] = [];

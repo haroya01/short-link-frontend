@@ -4185,6 +4185,32 @@
     "filterEdit": "Sửa bộ lọc {phrase}",
     "filterDelete": "Xóa bộ lọc {phrase}",
     "filterFailed": "Không thể thay đổi bộ lọc",
-    "searchNotesEmpty": "Không tìm thấy ghi chú có “{q}”"
+    "searchNotesEmpty": "Không tìm thấy ghi chú có “{q}”",
+    "remoteFollow": "Theo dõi",
+    "remoteFollowing": "Đang theo dõi",
+    "remoteRequested": "Đã yêu cầu",
+    "remoteUnfollow": "Bỏ theo dõi",
+    "remoteCancelRequest": "Hủy yêu cầu",
+    "remoteUnfollowConfirm": "Bỏ theo dõi {acct}?",
+    "remoteCancelRequestConfirm": "Hủy yêu cầu theo dõi?",
+    "remoteError": {
+      "disabled": "Bật liên kết ghi chú trong cài đặt để theo dõi tài khoản ở máy chủ khác",
+      "missing": "Không tìm thấy tài khoản trên máy chủ đó",
+      "invalid": "Hãy viết theo dạng tên@máy chủ",
+      "other": "Không thể cập nhật. Hãy thử lại sau giây lát"
+    },
+    "remoteAccountSection": "Tài khoản ở máy chủ khác",
+    "remoteLookingUp": "Đang hỏi máy chủ đó…",
+    "remoteSignIn": "Đăng nhập để tìm tài khoản ở máy chủ khác",
+    "remoteNotFound": "Không tìm thấy tài khoản trên máy chủ đó",
+    "remoteCaption": "Tài khoản này ở {domain}. Theo dõi sẽ gửi yêu cầu đến {domain}.",
+    "remoteCaptionFollowing": "Tài khoản này ở {domain}. Ghi chú mới sẽ đến bảng tin Đang theo dõi.",
+    "remoteCaptionRequested": "Đã gửi yêu cầu theo dõi. Khi {domain} chấp nhận, bạn sẽ theo dõi.",
+    "remoteOpenOnServer": "Xem trên {domain}",
+    "remoteNoNotes": "Chưa nhận được ghi chú nào",
+    "remoteNoNotesHint": "Theo dõi để nhận ghi chú mới của tài khoản này ở đây và trong bảng tin Đang theo dõi.",
+    "remoteFollowingTitle": "Đang theo dõi ở máy chủ khác",
+    "remoteFollowingHint": "Các tài khoản bạn theo dõi ở máy chủ khác như Mastodon. Gõ @tên@máy chủ vào tìm kiếm để tìm.",
+    "remoteFollowingEmpty": "Bạn chưa theo dõi ai ở máy chủ khác."
   }
 }

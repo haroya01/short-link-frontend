@@ -4185,6 +4185,32 @@
     "filterEdit": "{phrase}のフィルターを編集",
     "filterDelete": "{phrase}のフィルターを削除",
     "filterFailed": "フィルターを変更できませんでした",
-    "searchNotesEmpty": "「{q}」を含むノートは見つかりませんでした"
+    "searchNotesEmpty": "「{q}」を含むノートは見つかりませんでした",
+    "remoteFollow": "フォロー",
+    "remoteFollowing": "フォロー中",
+    "remoteRequested": "リクエスト済み",
+    "remoteUnfollow": "フォロー解除",
+    "remoteCancelRequest": "リクエストを取り消す",
+    "remoteUnfollowConfirm": "{acct}のフォローを解除しますか？",
+    "remoteCancelRequestConfirm": "フォローリクエストを取り消しますか？",
+    "remoteError": {
+      "disabled": "設定でノート連合をオンにすると、ほかのサーバーのアカウントをフォローできます",
+      "missing": "そのサーバーでアカウントが見つかりませんでした",
+      "invalid": "ID@サーバーの形で入力してください",
+      "other": "反映できませんでした。少し待ってからもう一度お試しください"
+    },
+    "remoteAccountSection": "ほかのサーバーのアカウント",
+    "remoteLookingUp": "そのサーバーに問い合わせ中…",
+    "remoteSignIn": "ログインすると、ほかのサーバーのアカウントを探せます",
+    "remoteNotFound": "そのサーバーでアカウントが見つかりませんでした",
+    "remoteCaption": "{domain}にあるアカウントです。フォローすると{domain}にリクエストを送ります。",
+    "remoteCaptionFollowing": "{domain}にあるアカウントです。新しいノートがフォロー中のフィードに届きます。",
+    "remoteCaptionRequested": "フォローをリクエストしました。{domain}が承認するとフォロー中になります。",
+    "remoteOpenOnServer": "{domain}で見る",
+    "remoteNoNotes": "受け取ったノートはまだありません",
+    "remoteNoNotesHint": "フォローすると、このアカウントの新しいノートがこことフォロー中のフィードに届きます。",
+    "remoteFollowingTitle": "ほかのサーバーでフォロー中",
+    "remoteFollowingHint": "Mastodonなどほかのサーバーでフォローしているアカウントです。検索に@ID@サーバーと入力すると探せます。",
+    "remoteFollowingEmpty": "ほかのサーバーでフォローしているアカウントはまだありません。"
   }
 }
