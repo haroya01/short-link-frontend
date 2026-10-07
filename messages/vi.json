@@ -4211,6 +4211,11 @@
     "remoteNoNotesHint": "Theo dõi để nhận ghi chú mới của tài khoản này ở đây và trong bảng tin Đang theo dõi.",
     "remoteFollowingTitle": "Đang theo dõi ở máy chủ khác",
     "remoteFollowingHint": "Các tài khoản bạn theo dõi ở máy chủ khác như Mastodon. Gõ @tên@máy chủ vào tìm kiếm để tìm.",
-    "remoteFollowingEmpty": "Bạn chưa theo dõi ai ở máy chủ khác."
+    "remoteFollowingEmpty": "Bạn chưa theo dõi ai ở máy chủ khác.",
+    "muteConversation": "Tắt thông báo cuộc trò chuyện",
+    "unmuteConversation": "Bật thông báo cuộc trò chuyện",
+    "conversationMuted": "Đã tắt thông báo cuộc trò chuyện này",
+    "conversationUnmuted": "Bạn sẽ lại nhận thông báo của cuộc trò chuyện này",
+    "conversationMuteFailed": "Không thể đổi thông báo cuộc trò chuyện"
   }
 }

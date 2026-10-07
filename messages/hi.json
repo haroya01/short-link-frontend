@@ -4211,6 +4211,11 @@
     "remoteNoNotesHint": "फ़ॉलो करें — इस खाते के नए नोट यहाँ और आपकी फ़ॉलोइंग फ़ीड में आएँगे।",
     "remoteFollowingTitle": "दूसरे सर्वर पर फ़ॉलोइंग",
     "remoteFollowingHint": "Mastodon जैसे दूसरे सर्वर पर आप जिन खातों को फ़ॉलो करते हैं। खोज में @नाम@सर्वर लिखकर ढूँढें।",
-    "remoteFollowingEmpty": "आप अभी दूसरे सर्वर पर किसी को फ़ॉलो नहीं करते।"
+    "remoteFollowingEmpty": "आप अभी दूसरे सर्वर पर किसी को फ़ॉलो नहीं करते।",
+    "muteConversation": "बातचीत की सूचनाएँ बंद करें",
+    "unmuteConversation": "बातचीत की सूचनाएँ चालू करें",
+    "conversationMuted": "इस बातचीत की सूचनाएँ बंद कीं",
+    "conversationUnmuted": "इस बातचीत की सूचनाएँ फिर मिलेंगी",
+    "conversationMuteFailed": "बातचीत की सूचनाएँ नहीं बदल सकीं"
   }
 }
