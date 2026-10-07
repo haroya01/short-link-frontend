@@ -888,10 +888,13 @@
     "note_poll": "Cuộc bình chọn của <b>{actor}</b> đã kết thúc",
     "note_poll_mine": "Cuộc bình chọn của bạn đã kết thúc",
     "note_post": "<b>{actor}</b> đã đăng một ghi chú mới",
+    "note_edit": "<b>{actor}</b> đã sửa một ghi chú bạn đăng lại hoặc trích dẫn",
     "prefNotePoll": "Kết quả bình chọn",
     "prefNotePollHint": "Khi cuộc bình chọn của bạn hoặc cuộc bạn tham gia kết thúc",
     "prefNotePost": "Ghi chú mới từ người bạn bật chuông",
-    "prefNotePostHint": "Khi người bạn đã bật chuông trên trang tác giả đăng ghi chú mới"
+    "prefNotePostHint": "Khi người bạn đã bật chuông trên trang tác giả đăng ghi chú mới",
+    "prefNoteEdit": "Chỉnh sửa ghi chú bạn đã chia sẻ",
+    "prefNoteEditHint": "Khi tác giả sửa ghi chú bạn đã đăng lại hoặc trích dẫn"
   },
   "nav": {
     "events": "Sự kiện",

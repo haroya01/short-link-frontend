@@ -888,10 +888,13 @@
     "note_poll": "<b>{actor}</b>님의 투표가 끝났어요",
     "note_poll_mine": "내 투표가 끝났어요",
     "note_post": "<b>{actor}</b>님이 새 노트를 올렸어요",
+    "note_edit": "<b>{actor}</b>님이 내가 리포스트하거나 인용한 노트를 수정했어요",
     "prefNotePoll": "투표 마감",
     "prefNotePollHint": "내 투표나 참여한 투표가 끝났을 때",
     "prefNotePost": "종을 켠 사람의 새 노트",
-    "prefNotePostHint": "작가 페이지에서 종을 켠 사람이 새 노트를 올릴 때"
+    "prefNotePostHint": "작가 페이지에서 종을 켠 사람이 새 노트를 올릴 때",
+    "prefNoteEdit": "공유한 노트의 수정",
+    "prefNoteEditHint": "내가 리포스트하거나 인용한 노트를 작성자가 고칠 때"
   },
   "nav": {
     "events": "모집",

@@ -9,6 +9,7 @@ import {
   Heart,
   Link2,
   MessageCircle,
+  Pencil,
   PenLine,
   Quote,
   Repeat2,
@@ -53,6 +54,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_MENTION: "note_mention",
   NOTE_POLL: "note_poll",
   NOTE_POST: "note_post",
+  NOTE_EDIT: "note_edit",
   REMOTE_FOLLOW: "remote_follow",
 };
 
@@ -76,6 +78,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_MENTION: AtSign,
   NOTE_POLL: ChartBar,
   NOTE_POST: BellRing,
+  NOTE_EDIT: Pencil,
   REMOTE_FOLLOW: UserPlus,
 };
 
@@ -91,6 +94,7 @@ function subtitleOf(item: Item): string | null {
     case "NOTE_MENTION":
     case "NOTE_POLL":
     case "NOTE_POST":
+    case "NOTE_EDIT":
       return item.noteExcerpt ?? null;
     default:
       return item.postTitle;
