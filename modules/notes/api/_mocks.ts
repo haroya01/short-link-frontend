@@ -5,6 +5,7 @@ import type {
   NoteDraft,
   NoteFeed,
   NoteHistory,
+  MuteStatus,
   NoteListSummary,
   NotePoll,
   NoteThread,
@@ -138,7 +139,26 @@ let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
 let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "@dohyun@kurl.me" };
 
-const topLevel = () => notes.filter((n) => n.inReplyToId === null);
+const muted = new Map<string, MuteStatus>();
+const topLevel = () => notes.filter((n) => n.inReplyToId === null && !muted.has(n.author.username));
+
+export function mockMuteStatus(username: string): MuteStatus {
+  return muted.get(username) ?? { muted: false, notifications: false, expiresAt: null };
+}
+
+export function mockMute(username: string, notifications: boolean, duration: number | null): MuteStatus {
+  const status = {
+    muted: true,
+    notifications,
+    expiresAt: duration === null ? null : new Date(Date.now() + duration * 1000).toISOString(),
+  };
+  muted.set(username, status);
+  return status;
+}
+
+export function mockUnmute(username: string): void {
+  muted.delete(username);
+}
 let bookmarks: number[] = [];
 let showReposts = true;
 let pins: number[] = [];

@@ -4145,6 +4145,17 @@
     "pollDays": "{count} दिन",
     "pollMultiple": "एकाधिक विकल्प",
     "pollAdd": "पोल जोड़ें",
-    "pollRemove": "पोल हटाएँ"
+    "pollRemove": "पोल हटाएँ",
+    "muteMenu": "म्यूट करें…",
+    "unmute": "अनम्यूट करें",
+    "mute": "म्यूट",
+    "muteTitle": "{username} को म्यूट करें",
+    "muteHint": "{username} के नोट सभी नोट, फ़ॉलोइंग, सूचियों और जवाबों से छिप जाएँगे। प्रोफ़ाइल पर वे दिखते रहेंगे और उन्हें बताया नहीं जाएगा।",
+    "muteNotifications": "सूचनाएँ भी छिपाएँ",
+    "muteDuration": "अवधि",
+    "muteForever": "अनिश्चित काल तक",
+    "mutedToast": "{username} को म्यूट किया",
+    "unmutedToast": "{username} को अनम्यूट किया",
+    "muteFailed": "म्यूट नहीं बदला जा सका"
   }
 }

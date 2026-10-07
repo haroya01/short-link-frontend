@@ -4145,6 +4145,17 @@
     "pollDays": "{count}일",
     "pollMultiple": "여러 개 선택",
     "pollAdd": "투표 추가",
-    "pollRemove": "투표 빼기"
+    "pollRemove": "투표 빼기",
+    "muteMenu": "뮤트…",
+    "unmute": "뮤트 해제",
+    "mute": "뮤트",
+    "muteTitle": "{username}님 뮤트",
+    "muteHint": "{username}님의 노트가 모든 노트·팔로잉·리스트·답글에서 숨겨져요. 프로필에서는 그대로 보이고, 상대에게 알리지 않아요.",
+    "muteNotifications": "알림도 숨기기",
+    "muteDuration": "기간",
+    "muteForever": "무기한",
+    "mutedToast": "{username}님을 뮤트했어요",
+    "unmutedToast": "{username}님의 뮤트를 해제했어요",
+    "muteFailed": "뮤트를 바꾸지 못했어요"
   }
 }
