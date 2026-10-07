@@ -254,7 +254,7 @@ export function NoteCard({
                   href={authorHref(note.author.username, locale)}
                   className="block truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
                 >
-                  {note.author.username}
+                  {note.author.displayName || note.author.username}
                 </BlogLink>
                 <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">
                   @{note.author.username}@{FEDERATION_HOST}
@@ -263,9 +263,14 @@ export function NoteCard({
             ) : (
               <BlogLink
                 href={authorHref(note.author.username, locale)}
-                className="truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
+                className="flex min-w-0 items-baseline gap-1 rounded focus-ring hover:underline"
               >
-                {note.author.username}
+                <span className="truncate font-semibold text-slate-900 dark:text-slate-100">
+                  {note.author.displayName || note.author.username}
+                </span>
+                {note.author.displayName && (
+                  <span className="truncate text-slate-500 dark:text-slate-400">@{note.author.username}</span>
+                )}
               </BlogLink>
             )}
             {!emphasis && (

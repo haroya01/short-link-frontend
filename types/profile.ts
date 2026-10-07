@@ -39,6 +39,7 @@ export type MyProfile = {
   socials: Social[];
   /** When true, the author's follower/following counts are hidden from everyone (follow still works). */
   hideFollowerCount: boolean;
+  displayName?: string | null;
 };
 
 export type PublicProfile = {

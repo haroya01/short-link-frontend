@@ -25,6 +25,8 @@ export async function updateMyProfile(payload: {
   socials?: string;
   /** Hide the author's follower/following counts everywhere (the follow action itself stays). */
   hideFollowerCount?: boolean;
+  /** Shown before the username on notes and the blog profile; empty clears it. At most 30. */
+  displayName?: string;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }

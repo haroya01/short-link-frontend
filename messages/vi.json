@@ -295,7 +295,13 @@
     "settingsFollowedTagsEmpty": "Bạn chưa theo dõi chủ đề nào.",
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
     "analyticsPeakDay": "Ngày cao nhất {date} · {count, number} lượt xem",
-    "analyticsLifetimeCaption": "Toàn thời gian"
+    "analyticsLifetimeCaption": "Toàn thời gian",
+    "displayNameTitle": "Tên hiển thị",
+    "displayNamePlaceholder": "Tên hoặc biệt danh",
+    "displayNameSave": "Lưu",
+    "displayNameHint": "Hiển thị trước tên người dùng trên ghi chú và hồ sơ blog. Để trống sẽ hiện tên người dùng.",
+    "displayNameSaved": "Đã đổi tên hiển thị",
+    "displayNameFailed": "Không thể đổi tên hiển thị"
   },
   "postEditor": {
     "backToList": "Bài viết",

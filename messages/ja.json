@@ -295,7 +295,13 @@
     "settingsFollowedTagsEmpty": "まだフォロー中のトピックはありません。",
     "settingsUnfollowTag": "{tag} のフォローを解除",
     "analyticsPeakDay": "最多日 {date} · {count, number}回",
-    "analyticsLifetimeCaption": "全期間"
+    "analyticsLifetimeCaption": "全期間",
+    "displayNameTitle": "表示名",
+    "displayNamePlaceholder": "名前やニックネーム",
+    "displayNameSave": "保存",
+    "displayNameHint": "ノートとブログのプロフィールでユーザー名より先に表示されます。空にするとユーザー名が表示されます。",
+    "displayNameSaved": "表示名を変更しました",
+    "displayNameFailed": "表示名を変更できませんでした"
   },
   "postEditor": {
     "backToList": "記事一覧",

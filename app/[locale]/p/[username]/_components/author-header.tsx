@@ -107,9 +107,14 @@ export async function AuthorHeader({
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3.5">
           <AvatarZoom src={author.avatarUrl} name={author.username} />
-          <h1 className="min-w-0 truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
-            @{author.username}
-          </h1>
+          <div className="min-w-0">
+            <h1 className="truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
+              {author.displayName || `@${author.username}`}
+            </h1>
+            {author.displayName && (
+              <p className="truncate text-[14px] text-slate-500 dark:text-slate-400">@{author.username}</p>
+            )}
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 pt-1">
           <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
