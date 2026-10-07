@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
+import { ChartBar, Check, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ import {
   updateFederationSettings,
   uploadNoteImage,
   type Note,
+  type NotePollDraft,
   type NoteVisibility,
   type NoteLinkPreview,
   type QuotedNote,
@@ -28,6 +29,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { NoteLengthRing } from "./note-card";
 import { VisibilityIcon } from "./note-visibility";
 import { NoteLinkCard } from "./note-link-card";
+import { emptyPoll, NotePollEditor, pollReady } from "./note-poll";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 
@@ -66,11 +68,12 @@ export function NoteComposer({
   const [dragging, setDragging] = useState(false);
   const [focused, setFocused] = useState(false);
   const [altEditing, setAltEditing] = useState<string | null>(null);
+  const [poll, setPoll] = useState<NotePollDraft | null>(null);
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
   const [linkCard, setLinkCard] = useState<NoteLinkPreview | null>(null);
-  const cardUrl = previewUrl(body, images.length > 0, quote !== null || quotedNote !== null);
+  const cardUrl = previewUrl(body, images.length > 0 || poll !== null, quote !== null || quotedNote !== null);
 
   useEffect(() => {
     if (!cardUrl) {
@@ -96,9 +99,19 @@ export function NoteComposer({
   const length = noteLength(body);
   const uploading = images.some((image) => image.key === null);
   const canPost =
-    !posting && !uploading && length <= NOTE_MAX_LENGTH && (length > 0 || images.length > 0);
+    !posting &&
+    !uploading &&
+    length <= NOTE_MAX_LENGTH &&
+    (length > 0 || images.length > 0) &&
+    (poll === null || (pollReady(poll) && length > 0));
   const open =
-    focused || length > 0 || images.length > 0 || quote !== null || quotedNote !== null || error !== null;
+    focused ||
+    length > 0 ||
+    images.length > 0 ||
+    poll !== null ||
+    quote !== null ||
+    quotedNote !== null ||
+    error !== null;
   const textarea = useRef<HTMLTextAreaElement>(null);
   const placeholder = inReplyToId
     ? t("replyPlaceholder")
@@ -176,8 +189,10 @@ export function NoteComposer({
         contentWarning: warns && warning.trim() ? warning.trim() : null,
         sensitive: images.length > 0 && sensitive,
         visibility,
+        poll: poll ? { ...poll, options: poll.options.map((option) => option.trim()) } : null,
       });
       images.forEach((image) => URL.revokeObjectURL(image.previewUrl));
+      setPoll(null);
       setBody("");
       setImages([]);
       setWarns(false);
@@ -278,6 +293,7 @@ export function NoteComposer({
           />
           {!open && submitButton}
         </div>
+      {poll && <NotePollEditor poll={poll} onChange={setPoll} />}
       {images.length > 0 && (
         <div className="-mr-4 mt-2 flex gap-2 overflow-x-auto pr-4 [scrollbar-width:none] sm:mr-0 sm:pr-0 [&::-webkit-scrollbar]:hidden">
           {images.map((image) => (
@@ -399,12 +415,28 @@ export function NoteComposer({
             <button
               type="button"
               onClick={() => fileInput.current?.click()}
-              disabled={images.length >= NOTE_MAX_IMAGES}
+              disabled={images.length >= NOTE_MAX_IMAGES || poll !== null}
               aria-label={t("addImage")}
               title={t("addImage")}
               className="focus-ring rounded-full p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
             >
               <ImagePlus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => setPoll((current) => (current ? null : emptyPoll()))}
+              disabled={images.length > 0}
+              aria-pressed={poll !== null}
+              aria-label={poll ? t("pollRemove") : t("pollAdd")}
+              title={poll ? t("pollRemove") : t("pollAdd")}
+              className={cn(
+                "focus-ring rounded-full p-1.5 hover:bg-slate-100 disabled:opacity-40 dark:hover:bg-slate-800",
+                poll
+                  ? "text-slate-900 dark:text-slate-100"
+                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+              )}
+            >
+              <ChartBar className="h-5 w-5" strokeWidth={poll ? 2.25 : 1.75} aria-hidden />
             </button>
             <button
               type="button"

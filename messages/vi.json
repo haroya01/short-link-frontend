@@ -4120,6 +4120,27 @@
     "bookmarkFailed": "Không thể cập nhật đánh dấu",
     "quotesLink": "{count} trích dẫn",
     "quotesTitle": "Trích dẫn",
-    "quotesEmpty": "Chưa ai trích dẫn ghi chú này"
+    "quotesEmpty": "Chưa ai trích dẫn ghi chú này",
+    "pollLabel": "Bình chọn",
+    "pollMine": "Lựa chọn của bạn",
+    "pollVote": "Bình chọn",
+    "pollVoters": "{count} người đã bình chọn",
+    "pollEnded": "Đã kết thúc",
+    "pollMinutesLeft": "Còn {count} phút",
+    "pollHoursLeft": "Còn {count} giờ",
+    "pollDaysLeft": "Còn {count} ngày",
+    "pollShowResults": "Xem kết quả",
+    "pollBackToVote": "Quay lại bình chọn",
+    "pollVoteFailed": "Không thể bình chọn",
+    "pollOptionPlaceholder": "Lựa chọn {n}",
+    "pollRemoveOption": "Xóa lựa chọn",
+    "pollAddOption": "Thêm lựa chọn",
+    "pollDuration": "Thời hạn",
+    "pollMinutes": "{count} phút",
+    "pollHours": "{count} giờ",
+    "pollDays": "{count} ngày",
+    "pollMultiple": "Chọn nhiều",
+    "pollAdd": "Thêm bình chọn",
+    "pollRemove": "Xóa bình chọn"
   }
 }

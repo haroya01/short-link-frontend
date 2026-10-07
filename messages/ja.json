@@ -4120,6 +4120,27 @@
     "bookmarkFailed": "ブックマークを変更できませんでした",
     "quotesLink": "引用 {count}件",
     "quotesTitle": "引用したノート",
-    "quotesEmpty": "まだこのノートを引用したノートはありません"
+    "quotesEmpty": "まだこのノートを引用したノートはありません",
+    "pollLabel": "投票",
+    "pollMine": "あなたの選択",
+    "pollVote": "投票する",
+    "pollVoters": "{count}人が投票",
+    "pollEnded": "終了",
+    "pollMinutesLeft": "残り{count}分",
+    "pollHoursLeft": "残り{count}時間",
+    "pollDaysLeft": "残り{count}日",
+    "pollShowResults": "結果を見る",
+    "pollBackToVote": "投票に戻る",
+    "pollVoteFailed": "投票できませんでした",
+    "pollOptionPlaceholder": "選択肢 {n}",
+    "pollRemoveOption": "選択肢を削除",
+    "pollAddOption": "選択肢を追加",
+    "pollDuration": "期間",
+    "pollMinutes": "{count}分",
+    "pollHours": "{count}時間",
+    "pollDays": "{count}日",
+    "pollMultiple": "複数選択",
+    "pollAdd": "投票を追加",
+    "pollRemove": "投票を削除"
   }
 }

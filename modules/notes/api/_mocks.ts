@@ -6,6 +6,7 @@ import type {
   NoteFeed,
   NoteHistory,
   NoteListSummary,
+  NotePoll,
   NoteThread,
 } from "./notes";
 
@@ -59,6 +60,26 @@ let notes: Note[] = [
       title: "kurl — 짧은 링크와 글이 오래 사는 곳",
       description: "링크를 줄이고, 글을 쓰고, 그 사이를 엮는다.",
       image: "https://picsum.photos/seed/kurl-about/960/502",
+    },
+  }),
+  note({
+    id: 10,
+    body: "회고 끝나고 점심 어디서 먹을까요?",
+    author: YUNA,
+    createdAt: "2026-10-05T10:45:00Z",
+    poll: {
+      expiresAt: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
+      expired: false,
+      multiple: false,
+      votesCount: 9,
+      votersCount: 9,
+      options: [
+        { title: "국밥", votesCount: 5 },
+        { title: "파스타", votesCount: 3 },
+        { title: "샐러드", votesCount: 1 },
+      ],
+      voted: false,
+      ownVotes: [],
     },
   }),
   note({
@@ -319,6 +340,18 @@ export function mockCreate(draft: NoteDraft): Note {
     contentWarning: draft.contentWarning ?? null,
     sensitive: Boolean(draft.sensitive || draft.contentWarning),
     visibility: draft.visibility ?? "public",
+    poll: draft.poll
+      ? {
+          expiresAt: new Date(Date.now() + draft.poll.expiresIn * 1000).toISOString(),
+          expired: false,
+          multiple: draft.poll.multiple,
+          votesCount: 0,
+          votersCount: 0,
+          options: draft.poll.options.map((title) => ({ title, votesCount: 0 })),
+          voted: true,
+          ownVotes: [],
+        }
+      : null,
     media: draft.images.map((image) => ({
       url: "https://picsum.photos/seed/kurl-upload/800/600",
       altText: image.altText || null,
@@ -330,6 +363,24 @@ export function mockCreate(draft: NoteDraft): Note {
     notes = notes.map((n) => (n.id === draft.inReplyToId ? { ...n, replyCount: n.replyCount + 1 } : n));
   }
   return created;
+}
+
+export function mockVote(id: number, choices: number[]): NotePoll {
+  const target = notes.find((n) => n.id === id);
+  if (!target?.poll) throw new Error("no poll");
+  if (target.poll.voted) return target.poll;
+  const poll: NotePoll = {
+    ...target.poll,
+    votesCount: target.poll.votesCount + choices.length,
+    votersCount: target.poll.votersCount + 1,
+    options: target.poll.options.map((option, index) =>
+      choices.includes(index) ? { ...option, votesCount: option.votesCount + 1 } : option,
+    ),
+    voted: true,
+    ownVotes: choices,
+  };
+  notes = notes.map((n) => (n.id === id ? { ...n, poll } : n));
+  return poll;
 }
 
 function quotedNoteOf(id: number | null): Note["quotedNote"] {

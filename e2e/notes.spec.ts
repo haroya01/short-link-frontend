@@ -462,3 +462,41 @@ test("a note page counts its quotes and lists them", async ({ page }) => {
   await expect(page.getByText("이 사진들 보고 나도 오늘 걸었다.")).toBeVisible();
 });
 
+test("voting in a poll reveals the results with the reader's choice", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const poll = page.locator('[data-note-poll="10"]');
+  await expect(poll.getByRole("button", { name: "국밥" })).toBeVisible({ timeout: 30_000 });
+  await expect(poll.locator("[data-poll-result]")).toHaveCount(0);
+  await poll.getByRole("button", { name: "결과 보기" }).click();
+  await expect(poll.locator('[data-poll-result="0"]')).toContainText("56%");
+  await poll.getByRole("button", { name: "투표로 돌아가기" }).click();
+  await poll.getByRole("button", { name: "국밥" }).click();
+  await expect(poll.locator('[data-poll-result="0"]')).toContainText("60%");
+  await expect(poll.locator('[data-poll-result="0"]').getByLabel("내 선택")).toBeVisible();
+  await expect(poll).toContainText("10명 참여");
+  await expect(poll.getByRole("button", { name: "결과 보기" })).toHaveCount(0);
+});
+
+test("the composer posts a poll, and photos and a poll exclude each other", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await expect(composer).toBeVisible({ timeout: 30_000 });
+  await composer.fill("점심 투표");
+  await page.getByRole("button", { name: "투표 추가" }).click();
+  await expect(page.getByRole("button", { name: "사진 추가" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "올리기" })).toBeDisabled();
+  await page.getByRole("textbox", { name: "선택지 1" }).fill("국밥");
+  await page.getByRole("textbox", { name: "선택지 2" }).fill("국밥");
+  await expect(page.getByRole("button", { name: "올리기" })).toBeDisabled();
+  await page.getByRole("textbox", { name: "선택지 2" }).fill("파스타");
+  await page.getByRole("button", { name: "선택지 추가" }).click();
+  await page.getByRole("textbox", { name: "선택지 3" }).fill("샐러드");
+  await page.getByRole("combobox", { name: "기간" }).selectOption("3600");
+  await page.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+  const posted = page.locator("article").first();
+  await expect(posted).toContainText("점심 투표");
+  await expect(posted.locator('[data-poll-result="2"]')).toContainText("샐러드");
+  await expect(posted).toContainText("0명 참여");
+});
+

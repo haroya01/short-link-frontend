@@ -4120,6 +4120,27 @@
     "bookmarkFailed": "북마크를 바꾸지 못했어요",
     "quotesLink": "인용 {count}",
     "quotesTitle": "인용한 노트",
-    "quotesEmpty": "아직 이 노트를 인용한 노트가 없어요"
+    "quotesEmpty": "아직 이 노트를 인용한 노트가 없어요",
+    "pollLabel": "투표",
+    "pollMine": "내 선택",
+    "pollVote": "투표",
+    "pollVoters": "{count}명 참여",
+    "pollEnded": "마감됨",
+    "pollMinutesLeft": "{count}분 남음",
+    "pollHoursLeft": "{count}시간 남음",
+    "pollDaysLeft": "{count}일 남음",
+    "pollShowResults": "결과 보기",
+    "pollBackToVote": "투표로 돌아가기",
+    "pollVoteFailed": "투표하지 못했어요",
+    "pollOptionPlaceholder": "선택지 {n}",
+    "pollRemoveOption": "선택지 빼기",
+    "pollAddOption": "선택지 추가",
+    "pollDuration": "기간",
+    "pollMinutes": "{count}분",
+    "pollHours": "{count}시간",
+    "pollDays": "{count}일",
+    "pollMultiple": "여러 개 선택",
+    "pollAdd": "투표 추가",
+    "pollRemove": "투표 빼기"
   }
 }
