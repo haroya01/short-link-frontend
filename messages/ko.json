@@ -2157,6 +2157,29 @@
       "failed": "요청에 실패했어요",
       "blockShort": "차단",
       "blockedShort": "차단됨"
+    },
+    "servers": {
+      "title": "차단한 서버",
+      "subtitle": "다른 서버 전체를 제한하거나 정지해요(마스토돈과 같아요). 제한하면 그 서버 노트가 인기·태그에서 빠지고, 팔로우하지 않은 회원에게는 알림이 가지 않아요. 정지하면 주고받기를 모두 끊고 그 서버 노트를 어디서도 보이지 않게 해요.",
+      "addPlaceholder": "mastodon.example",
+      "reasonPlaceholder": "사유 (선택, 운영자만 봐요)",
+      "add": "차단",
+      "empty": "차단한 서버가 없어요.",
+      "severity": {
+        "LIMIT": "제한",
+        "SUSPEND": "정지"
+      },
+      "col": {
+        "domain": "서버",
+        "severity": "단계",
+        "reason": "사유",
+        "createdAt": "차단 시각"
+      },
+      "unblock": "해제",
+      "unblockConfirm": "{domain} 차단을 해제할까요? 그 서버 노트가 다시 보이지만, 끊긴 팔로우는 돌아오지 않아요.",
+      "suspendConfirm": "{domain}을(를) 정지할까요? 이 서버와의 팔로우가 양쪽 모두 끊기고 그 서버에서 온 알림이 지워져요.",
+      "changeLabel": "{domain} 차단 단계",
+      "failed": "요청에 실패했어요"
     }
   },
   "common": {

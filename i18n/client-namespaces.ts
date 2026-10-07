@@ -52,7 +52,7 @@ export const CLIENT_MESSAGE_SCOPES = {
     "collections", "cookieConsent", "footer", "languageSwitcher", "nav", "notes", "notifications",
     "publicFeed", "publicPost", "publicProfile.gallery", "recent", "sidebar.blog", "sidebar.common",
   ],
-  "blog/admin": ["abuseReports", "blogAdminMetrics"],
+  "blog/admin": ["abuseReports", "admin.servers", "blogAdminMetrics"],
   "blog/analytics": ["blogWorkspace", "settings.profile.stats", "stats"],
   "blog/curation": ["blogWorkspace", "errors", "savedLibrary"],
   "blog/leads": ["errors", "settings.profile.leads"],

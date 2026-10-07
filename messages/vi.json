@@ -2157,6 +2157,29 @@
       "failed": "Yêu cầu thất bại",
       "blockShort": "Chặn",
       "blockedShort": "Đã chặn"
+    },
+    "servers": {
+      "title": "Máy chủ đã chặn",
+      "subtitle": "Giới hạn hoặc đình chỉ cả một máy chủ, như trên Mastodon. Giới hạn khiến ghi chú của máy chủ đó không xuất hiện ở xu hướng và thẻ, và thành viên không theo dõi tài khoản ở đó sẽ không nhận thông báo từ nó. Đình chỉ cắt mọi trao đổi và ẩn ghi chú của nó ở mọi nơi.",
+      "addPlaceholder": "mastodon.example",
+      "reasonPlaceholder": "Lý do (tùy chọn, chỉ quản trị viên thấy)",
+      "add": "Chặn",
+      "empty": "Chưa chặn máy chủ nào.",
+      "severity": {
+        "LIMIT": "Giới hạn",
+        "SUSPEND": "Đình chỉ"
+      },
+      "col": {
+        "domain": "Máy chủ",
+        "severity": "Mức",
+        "reason": "Lý do",
+        "createdAt": "Thời điểm chặn"
+      },
+      "unblock": "Bỏ chặn",
+      "unblockConfirm": "Bỏ chặn {domain}? Ghi chú của nó sẽ hiện lại, nhưng các lượt theo dõi đã bị hủy sẽ không trở lại.",
+      "suspendConfirm": "Đình chỉ {domain}? Các lượt theo dõi với máy chủ này sẽ bị hủy cả hai chiều và thông báo từ đó bị xóa.",
+      "changeLabel": "Mức chặn của {domain}",
+      "failed": "Yêu cầu thất bại"
     }
   },
   "common": {

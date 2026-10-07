@@ -24,6 +24,8 @@ import type {
   AdminUserRole,
   AdminUsersPage,
   BlockedDomain,
+  ServerBlock,
+  ServerBlockSeverity,
 } from "@/types";
 
 import { request } from "./client";
@@ -148,6 +150,27 @@ export async function blockDomain(domain: string, reason?: string): Promise<Bloc
 
 export async function unblockDomain(domain: string): Promise<void> {
   return request<void>(`/api/v1/admin/blocked-domains/${encodeURIComponent(domain)}`, {
+    method: "DELETE",
+  });
+}
+
+export async function getServerBlocks(): Promise<ServerBlock[]> {
+  return request<ServerBlock[]>("/api/v1/admin/federation/servers", { method: "GET" });
+}
+
+export async function blockServer(
+  domain: string,
+  severity: ServerBlockSeverity,
+  reason?: string,
+): Promise<ServerBlock> {
+  return request<ServerBlock>(`/api/v1/admin/federation/servers/${encodeURIComponent(domain)}`, {
+    method: "PUT",
+    body: { severity, reason: reason || undefined },
+  });
+}
+
+export async function unblockServer(domain: string): Promise<void> {
+  return request<void>(`/api/v1/admin/federation/servers/${encodeURIComponent(domain)}`, {
     method: "DELETE",
   });
 }

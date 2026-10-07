@@ -2157,6 +2157,29 @@
       "failed": "Request failed",
       "blockShort": "Block",
       "blockedShort": "Blocked"
+    },
+    "servers": {
+      "title": "Blocked servers",
+      "subtitle": "Limit or suspend whole servers, as on Mastodon. Limiting keeps a server's notes out of trending and tags, and members who don't follow its accounts get no notices from it. Suspending cuts it off entirely and hides its notes everywhere.",
+      "addPlaceholder": "mastodon.example",
+      "reasonPlaceholder": "Reason (optional, moderators only)",
+      "add": "Block",
+      "empty": "No servers are blocked.",
+      "severity": {
+        "LIMIT": "Limit",
+        "SUSPEND": "Suspend"
+      },
+      "col": {
+        "domain": "Server",
+        "severity": "Level",
+        "reason": "Reason",
+        "createdAt": "Blocked at"
+      },
+      "unblock": "Lift",
+      "unblockConfirm": "Lift the block on {domain}? Its notes show again, but follows that ended do not come back.",
+      "suspendConfirm": "Suspend {domain}? Follows with it end both ways and its notices are deleted.",
+      "changeLabel": "Block level for {domain}",
+      "failed": "The request failed"
     }
   },
   "common": {

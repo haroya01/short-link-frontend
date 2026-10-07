@@ -2157,6 +2157,29 @@
       "failed": "リクエストに失敗しました",
       "blockShort": "ブロック",
       "blockedShort": "ブロック済み"
+    },
+    "servers": {
+      "title": "ブロックしたサーバー",
+      "subtitle": "サーバー全体を制限または停止します(Mastodonと同じ)。制限すると、そのサーバーのノートはトレンドとタグから外れ、フォローしていないメンバーには通知が届きません。停止するとやり取りをすべて断ち、そのサーバーのノートをどこにも表示しません。",
+      "addPlaceholder": "mastodon.example",
+      "reasonPlaceholder": "理由(任意・運営者のみ表示)",
+      "add": "ブロック",
+      "empty": "ブロックしたサーバーはありません。",
+      "severity": {
+        "LIMIT": "制限",
+        "SUSPEND": "停止"
+      },
+      "col": {
+        "domain": "サーバー",
+        "severity": "段階",
+        "reason": "理由",
+        "createdAt": "ブロック日時"
+      },
+      "unblock": "解除",
+      "unblockConfirm": "{domain} のブロックを解除しますか?ノートは再び表示されますが、切れたフォローは戻りません。",
+      "suspendConfirm": "{domain} を停止しますか?このサーバーとのフォローは双方向とも切れ、そこからの通知は削除されます。",
+      "changeLabel": "{domain} のブロック段階",
+      "failed": "リクエストに失敗しました"
     }
   },
   "common": {
