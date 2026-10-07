@@ -553,3 +553,19 @@ test("a search has a notes tab that finds public notes by their words", async ({
   await expect(page.locator('article[data-note-id="9"]')).toHaveCount(0);
 });
 
+
+test("a display name leads the note header with the handle beside it, and settings saves one", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const haruka = page.locator('article[data-note-id="11"]');
+  await expect(haruka.getByRole("link", { name: "하루카 @haruka" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="6"]').getByRole("link", { name: "dohyun", exact: true })).toBeVisible();
+
+  await page.goto("/ko/blog/settings");
+  const field = page.getByRole("textbox", { name: "표시 이름" });
+  await field.fill("  도현  ", { timeout: 30_000 });
+  const save = page.locator("form").filter({ has: field }).getByRole("button", { name: "저장" });
+  await save.click();
+  await expect(page.getByText("표시 이름을 바꿨어요")).toBeVisible();
+  await expect(field).toHaveValue("도현");
+  await expect(save).toBeDisabled();
+});

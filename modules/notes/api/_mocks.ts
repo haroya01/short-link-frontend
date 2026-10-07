@@ -15,6 +15,7 @@ import type {
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
+const HARUKA = { id: 21, username: "haruka", avatarUrl: "https://i.pravatar.cc/120?img=32", displayName: "하루카" };
 
 function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): Note {
   return {
@@ -135,6 +136,12 @@ let notes: Note[] = [
     createdAt: "2026-10-04T08:00:00Z",
     sensitive: true,
     media: [{ url: "https://picsum.photos/seed/kurl-note-d/800/600", altText: "꿰맨 자리", contentType: "image/jpeg" }],
+  }),
+  note({
+    id: 11,
+    body: "포트와 어댑터, 오늘은 어댑터만 세 개 늘었다.",
+    author: HARUKA,
+    createdAt: "2026-10-03T09:00:00Z",
   }),
 ];
 let nextId = 100;
@@ -257,7 +264,7 @@ export function mockFollowingNotes(page: number): NoteFeed {
 
 let lists: { id: number; title: string; members: string[] }[] = [];
 let nextListId = 700;
-const PEOPLE: Record<string, NoteAuthor> = { dohyun: ME, yuna: YUNA };
+const PEOPLE: Record<string, NoteAuthor> = { dohyun: ME, yuna: YUNA, haruka: HARUKA };
 
 export function mockLists(): NoteListSummary[] {
   return lists.map((l) => ({ id: l.id, title: l.title, memberCount: l.members.length }));

@@ -17,6 +17,7 @@ export interface NoteAuthor {
   id: number;
   username: string;
   avatarUrl: string | null;
+  displayName?: string | null;
 }
 
 export interface NoteMedia {

@@ -17,9 +17,34 @@ type MockSplash = { enabled: boolean; message: string | null; seconds: number; c
 const MOCK_SPLASH_OFF: MockSplash = { enabled: false, message: null, seconds: 3, ctaId: null };
 const mockVisitOptions = new Map<string, { openInBrowser: boolean; splash: MockSplash; opensAt: string | null }>();
 
+let mockMyProfile = {
+  username: "dohyun",
+  bio: null as string | null,
+  theme: null,
+  publicUrl: null,
+  avatarUrl: null,
+  bannerUrl: null,
+  socials: [],
+  hideFollowerCount: false,
+  displayName: null as string | null,
+};
+
 export function mockLinksResponse(path: string, method: string, body?: unknown): unknown | undefined {
   const verb = (method || "GET").toUpperCase();
   const p = path.split("?")[0].replace(/\/+$/, "");
+
+  if (p === "/api/v1/users/me/profile") {
+    if (verb === "PUT") {
+      const patch = (body ?? {}) as { displayName?: string; hideFollowerCount?: boolean; bio?: string };
+      mockMyProfile = {
+        ...mockMyProfile,
+        ...(patch.bio !== undefined ? { bio: patch.bio } : {}),
+        ...(patch.hideFollowerCount !== undefined ? { hideFollowerCount: patch.hideFollowerCount } : {}),
+        ...(patch.displayName !== undefined ? { displayName: patch.displayName.trim() || null } : {}),
+      };
+    }
+    return mockMyProfile;
+  }
 
   // Shorten — the blog publish flow auto-shortens in-post links. Return a valid kurl short link so
   // the rewrite recognizes it (kurlShortCode) and the flow is exercisable without a backend.

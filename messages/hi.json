@@ -295,7 +295,13 @@
     "settingsFollowedTagsEmpty": "आपने अभी तक किसी विषय को फ़ॉलो नहीं किया है।",
     "settingsUnfollowTag": "{tag} को अनफ़ॉलो करें",
     "analyticsPeakDay": "सबसे व्यस्त दिन {date} · {count, number} व्यू",
-    "analyticsLifetimeCaption": "अब तक"
+    "analyticsLifetimeCaption": "अब तक",
+    "displayNameTitle": "प्रदर्शित नाम",
+    "displayNamePlaceholder": "नाम या उपनाम",
+    "displayNameSave": "सहेजें",
+    "displayNameHint": "नोट और ब्लॉग प्रोफ़ाइल पर उपयोगकर्ता नाम से पहले दिखता है। खाली छोड़ें तो उपयोगकर्ता नाम दिखेगा।",
+    "displayNameSaved": "प्रदर्शित नाम बदला गया",
+    "displayNameFailed": "प्रदर्शित नाम नहीं बदला जा सका"
   },
   "postEditor": {
     "backToList": "पोस्ट",

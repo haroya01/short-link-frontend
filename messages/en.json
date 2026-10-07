@@ -295,7 +295,13 @@
     "settingsFollowedTagsEmpty": "You're not following any topics yet.",
     "settingsUnfollowTag": "Unfollow {tag}",
     "analyticsPeakDay": "Peak day {date} · {count, number} views",
-    "analyticsLifetimeCaption": "All time"
+    "analyticsLifetimeCaption": "All time",
+    "displayNameTitle": "Display name",
+    "displayNamePlaceholder": "Name or nickname",
+    "displayNameSave": "Save",
+    "displayNameHint": "Shown before your username on notes and your blog profile. Leave it empty to show your username.",
+    "displayNameSaved": "Display name updated",
+    "displayNameFailed": "Couldn't update the display name"
   },
   "postEditor": {
     "backToList": "Posts",
