@@ -6,13 +6,15 @@ import { useAuth } from "@/lib/auth";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { getNoteThread, type Note, type NoteThread } from "@/modules/notes/api/notes";
+import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { NoteCard } from "./note-card";
 import { NoteComposer, NoteSignInRow } from "./note-composer";
 
 export function NoteThreadView({ initial }: { initial: NoteThread }) {
   const t = useTranslations("notes");
   const locale = useLocale();
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
+  const filters = useNoteFilters();
   const [thread, setThread] = useState(initial);
   const [deleted, setDeleted] = useState(false);
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
@@ -83,11 +85,15 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
           <p className="py-6 text-[14px] text-slate-500 dark:text-slate-400">{t("noReplies")}</p>
         ) : (
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {thread.replies.map((reply) => (
+            {thread.replies.map((reply) => {
+              const verdict = noteVerdict(reply, filters, "thread", me?.id);
+              if (verdict?.action === "hide") return null;
+              return (
               <NoteCard
                 key={reply.id}
                 note={reply}
                 isNew={freshReplies.has(reply.id)}
+                filteredBy={verdict?.action === "warn" ? verdict.phrases : undefined}
                 onChange={replaceReply}
                 onDelete={(id) =>
                   setThread((current) => ({
@@ -97,7 +103,8 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
                   }))
                 }
               />
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

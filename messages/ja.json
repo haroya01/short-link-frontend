@@ -4156,6 +4156,27 @@
     "muteForever": "無期限",
     "mutedToast": "{username}さんをミュートしました",
     "unmutedToast": "{username}さんのミュートを解除しました",
-    "muteFailed": "ミュートを変更できませんでした"
+    "muteFailed": "ミュートを変更できませんでした",
+    "filteredBy": "フィルター済み: {phrases}",
+    "showFiltered": "表示",
+    "filtersTitle": "キーワードフィルター",
+    "filtersHint": "見たくない言葉を含むノートを折りたたむか隠します。自分のノートには適用されず、アプリとも同期します。",
+    "filterPhrase": "キーワードまたはフレーズ",
+    "filterWhere": "適用する場所",
+    "filterHome": "フォロー中・リスト",
+    "filterPublic": "すべてのノート・人気・タグ",
+    "filterThread": "返信",
+    "filterAccount": "プロフィール",
+    "filterNotifications": "通知",
+    "filterWhen": "一致したら",
+    "filterWarnLong": "警告付きで折りたたむ",
+    "filterHideLong": "完全に隠す",
+    "filterWarn": "折りたたむ",
+    "filterHide": "隠す",
+    "filterWholeWord": "単語全体が一致するときだけ",
+    "filterAdd": "フィルターを追加",
+    "filterEdit": "{phrase}のフィルターを編集",
+    "filterDelete": "{phrase}のフィルターを削除",
+    "filterFailed": "フィルターを変更できませんでした"
   }
 }

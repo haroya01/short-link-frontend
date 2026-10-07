@@ -4156,6 +4156,27 @@
     "muteForever": "अनिश्चित काल तक",
     "mutedToast": "{username} को म्यूट किया",
     "unmutedToast": "{username} को अनम्यूट किया",
-    "muteFailed": "म्यूट नहीं बदला जा सका"
+    "muteFailed": "म्यूट नहीं बदला जा सका",
+    "filteredBy": "फ़िल्टर किया गया: {phrases}",
+    "showFiltered": "दिखाएँ",
+    "filtersTitle": "कीवर्ड फ़िल्टर",
+    "filtersHint": "जिन शब्दों को आप नहीं देखना चाहते उनवाले नोट मोड़ें या छिपाएँ। आपके अपने नोट फ़िल्टर नहीं होते, और ऐप भी साथ रहते हैं।",
+    "filterPhrase": "कीवर्ड या वाक्यांश",
+    "filterWhere": "कहाँ लागू हो",
+    "filterHome": "फ़ॉलोइंग और सूचियाँ",
+    "filterPublic": "सभी नोट, ट्रेंडिंग, टैग",
+    "filterThread": "जवाब",
+    "filterAccount": "प्रोफ़ाइल",
+    "filterNotifications": "सूचनाएँ",
+    "filterWhen": "मेल खाने पर",
+    "filterWarnLong": "चेतावनी के पीछे मोड़ें",
+    "filterHideLong": "पूरी तरह छिपाएँ",
+    "filterWarn": "मोड़ें",
+    "filterHide": "छिपाएँ",
+    "filterWholeWord": "केवल पूरा शब्द",
+    "filterAdd": "फ़िल्टर जोड़ें",
+    "filterEdit": "{phrase} फ़िल्टर बदलें",
+    "filterDelete": "{phrase} फ़िल्टर हटाएँ",
+    "filterFailed": "फ़िल्टर नहीं बदला जा सका"
   }
 }

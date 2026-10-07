@@ -4156,6 +4156,27 @@
     "muteForever": "무기한",
     "mutedToast": "{username}님을 뮤트했어요",
     "unmutedToast": "{username}님의 뮤트를 해제했어요",
-    "muteFailed": "뮤트를 바꾸지 못했어요"
+    "muteFailed": "뮤트를 바꾸지 못했어요",
+    "filteredBy": "필터됨: {phrases}",
+    "showFiltered": "보기",
+    "filtersTitle": "키워드 필터",
+    "filtersHint": "보고 싶지 않은 말이 든 노트를 접거나 숨겨요. 내 노트에는 걸리지 않고, 앱과 함께 맞춰져요.",
+    "filterPhrase": "키워드나 문구",
+    "filterWhere": "걸리는 곳",
+    "filterHome": "팔로잉·리스트",
+    "filterPublic": "모든 노트·인기·태그",
+    "filterThread": "답글",
+    "filterAccount": "프로필",
+    "filterNotifications": "알림",
+    "filterWhen": "걸리면",
+    "filterWarnLong": "경고와 함께 접기",
+    "filterHideLong": "완전히 숨기기",
+    "filterWarn": "접기",
+    "filterHide": "숨기기",
+    "filterWholeWord": "단어 전체가 맞을 때만",
+    "filterAdd": "필터 추가",
+    "filterEdit": "{phrase} 필터 고치기",
+    "filterDelete": "{phrase} 필터 지우기",
+    "filterFailed": "필터를 바꾸지 못했어요"
   }
 }

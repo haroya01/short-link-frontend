@@ -13,6 +13,7 @@ import {
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
+import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
 
 /**
  * Desktop header bell with an unread badge and a dropdown peek at recent notifications. Desktop only
@@ -68,7 +69,8 @@ function NotificationDropdown({
   const t = useTranslations("notifications");
   const { data, isLoading } = useNotifications();
   const markAll = useMarkAllRead();
-  const items = data?.pages[0]?.items ?? [];
+  const filters = useNoteFilters();
+  const items = (data?.pages[0]?.items ?? []).filter((item) => !noticeHidden(item, filters));
 
   return (
     <div

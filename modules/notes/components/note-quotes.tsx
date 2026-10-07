@@ -9,5 +9,7 @@ import { NoteList } from "./note-list";
 export function NoteQuotes({ noteId }: { noteId: number }) {
   const t = useTranslations("notes");
   const load = useCallback((page: number) => listNoteQuotes(noteId, page), [noteId]);
-  return <NoteList load={load} empty={<EmptyState title={t("quotesEmpty")} className="mt-8" />} />;
+  return (
+    <NoteList load={load} filterContext="public" empty={<EmptyState title={t("quotesEmpty")} className="mt-8" />} />
+  );
 }

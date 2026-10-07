@@ -6,6 +6,8 @@ import type {
   NoteFeed,
   NoteHistory,
   MuteStatus,
+  NoteFilter,
+  NoteFilterDraft,
   NoteListSummary,
   NotePoll,
   NoteThread,
@@ -141,6 +143,48 @@ let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "
 
 const muted = new Map<string, MuteStatus>();
 const topLevel = () => notes.filter((n) => n.inReplyToId === null && !muted.has(n.author.username));
+
+const FILTERS_KEY = "kurl-mock-note-filters";
+
+function storedFilters(): NoteFilter[] {
+  try {
+    return JSON.parse(sessionStorage.getItem(FILTERS_KEY) ?? "[]") as NoteFilter[];
+  } catch {
+    return [];
+  }
+}
+
+function storeFilters(next: NoteFilter[]) {
+  filters = next;
+  try {
+    sessionStorage.setItem(FILTERS_KEY, JSON.stringify(next));
+  } catch {
+    // storage blocked: the filters live for this page only
+  }
+}
+
+let filters: NoteFilter[] = typeof window === "undefined" ? [] : storedFilters();
+
+export function mockFilters(): NoteFilter[] {
+  return filters;
+}
+
+export function mockSaveFilter(draft: NoteFilterDraft, id: number | null): NoteFilter {
+  const saved: NoteFilter = {
+    id: id ?? Math.max(799, ...filters.map((f) => f.id)) + 1,
+    phrase: draft.phrase,
+    wholeWord: draft.wholeWord,
+    context: draft.context,
+    action: draft.action,
+    expiresAt: draft.expiresIn === null ? null : new Date(Date.now() + draft.expiresIn * 1000).toISOString(),
+  };
+  storeFilters(id === null ? [saved, ...filters] : filters.map((f) => (f.id === id ? saved : f)));
+  return saved;
+}
+
+export function mockDeleteFilter(id: number): void {
+  storeFilters(filters.filter((f) => f.id !== id));
+}
 
 export function mockMuteStatus(username: string): MuteStatus {
   return muted.get(username) ?? { muted: false, notifications: false, expiresAt: null };

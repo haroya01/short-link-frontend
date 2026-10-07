@@ -523,3 +523,25 @@ test("muting someone from their profile menu takes their notes out of the feed",
   for (const id of [3, 5, 10]) await expect(page.locator(`article[data-note-id="${id}"]`)).toHaveCount(0);
 });
 
+test("a keyword filter from settings folds matching notes until shown, and hiding drops them", async ({ page }) => {
+  await page.goto("/ko/blog/settings");
+  const section = page.getByRole("region", { name: "키워드 필터" });
+  await section.getByRole("textbox", { name: "키워드나 문구" }).fill("씨앗", { timeout: 30_000 });
+  await section.getByRole("button", { name: "필터 추가" }).click();
+  await expect(section.getByRole("button", { name: "씨앗 필터 고치기" })).toBeVisible();
+
+  await page.goto("/ko/blog/notes");
+  const folded = page.locator('article[data-note-id="3"]');
+  await expect(folded).toContainText("필터됨: 씨앗", { timeout: 30_000 });
+  await folded.getByRole("button", { name: "보기" }).click();
+  await expect(folded).toContainText("오늘 쓴 글의 씨앗");
+
+  await page.goto("/ko/blog/settings");
+  await section.getByRole("button", { name: "씨앗 필터 고치기" }).click({ timeout: 30_000 });
+  await section.getByRole("combobox", { name: "걸리면" }).selectOption("hide");
+  await section.getByRole("button", { name: "저장" }).click();
+  await page.goto("/ko/blog/notes");
+  await expect(page.locator('article[data-note-id="6"]')).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="3"]')).toHaveCount(0);
+});
+

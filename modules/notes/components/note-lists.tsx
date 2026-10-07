@@ -213,7 +213,11 @@ function ListDetail({
           ))}
         </ul>
       )}
-      <NoteList load={load} empty={<EmptyState title={t("listNoNotes")} className="mt-6" />} />
+      <NoteList
+        load={load}
+        filterContext="home"
+        empty={<EmptyState title={t("listNoNotes")} className="mt-6" />}
+      />
       {confirmDialog}
     </section>
   );

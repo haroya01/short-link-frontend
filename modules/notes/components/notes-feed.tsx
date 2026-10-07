@@ -147,6 +147,7 @@ export function NotesFeed() {
           prepend={showsPosted ? posted : []}
           onQuoted={(note) => setPosted((current) => [note, ...current])}
           empty={<EmptyState title={empty[feed]} className="mt-8" />}
+          filterContext={feed === "following" ? "home" : feed === "everyone" || feed === "trending" ? "public" : undefined}
         />
       )}
     </div>
