@@ -1,4 +1,4 @@
-import type { FederationSettings, Note, NoteDraft, NoteFeed, NoteThread } from "./notes";
+import type { FederationSettings, Note, NoteDraft, NoteFeed, NoteHistory, NoteThread } from "./notes";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -104,6 +104,7 @@ const topLevel = () => notes.filter((n) => n.inReplyToId === null);
 let bookmarks: number[] = [];
 let showReposts = true;
 let pins: number[] = [];
+const earlierVersions = new Map<number, NoteHistory["versions"]>();
 const repostsHidden = new Set<string>();
 
 const withQuotes = (n: Note): Note => ({
@@ -272,7 +273,31 @@ function quotedNoteOf(id: number | null): Note["quotedNote"] {
   };
 }
 
+export function mockHistory(id: number): NoteHistory {
+  const current = notes.find((n) => n.id === id);
+  if (!current) throw new Error("not found");
+  return {
+    noteId: id,
+    versions: [
+      {
+        body: current.body,
+        contentWarning: current.contentWarning ?? null,
+        sensitive: current.sensitive ?? false,
+        at: current.editedAt ?? current.createdAt,
+      },
+      ...(earlierVersions.get(id) ?? []),
+    ],
+  };
+}
+
 export function mockEdit(id: number, body: string): Note {
+  const before = notes.find((n) => n.id === id);
+  if (before && before.body !== body) {
+    earlierVersions.set(id, [
+      { body: before.body, contentWarning: before.contentWarning ?? null, sensitive: before.sensitive ?? false, at: before.editedAt ?? before.createdAt },
+      ...(earlierVersions.get(id) ?? []),
+    ]);
+  }
   notes = notes.map((n) => (n.id === id ? { ...n, body, editedAt: new Date().toISOString() } : n));
   return notes.find((n) => n.id === id)!;
 }

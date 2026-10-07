@@ -169,6 +169,17 @@ export function listNoteQuotes(id: number, page = 0): Promise<NoteFeed> {
   });
 }
 
+/** Mastodon's edit history: the note as it reads now first, then each earlier version, newest first. */
+export interface NoteHistory {
+  noteId: number;
+  versions: { body: string; contentWarning: string | null; sensitive: boolean; at: string | null }[];
+}
+
+export function getNoteHistory(id: number): Promise<NoteHistory> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockHistory(id));
+  return request<NoteHistory>(`/api/v1/public/notes/${id}/history`, { method: "GET" });
+}
+
 export function setNotePin(id: number, on: boolean): Promise<{ pinned: boolean }> {
   if (noteMocks) return Promise.resolve(noteMocks.mockPin(id, on));
   return request(`/api/v1/notes/${id}/pin`, { method: on ? "PUT" : "DELETE" });

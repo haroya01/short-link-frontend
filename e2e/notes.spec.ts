@@ -362,6 +362,21 @@ test("pinning my note moves it to the top of my profile under a pinned line", as
   await expect(first.getByText("고정됨")).toBeVisible();
 });
 
+test("an edited note opens its edit history from the note page", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/notes/2");
+  const note = page.locator('article[data-note-id="2"]').first();
+  await expect(note).toBeVisible({ timeout: 30_000 });
+  await note.getByRole("button", { name: "메뉴" }).click();
+  await page.getByRole("menuitem", { name: "고치기" }).click();
+  await note.getByRole("textbox").fill("블로그 글을 인용해 봤어요. 다시 고쳤어요.");
+  await note.getByRole("button", { name: "저장" }).click();
+  await note.getByRole("button", { name: "고침" }).click();
+  const dialog = page.getByRole("dialog", { name: "수정 기록" });
+  await expect(dialog.locator("[data-note-version]")).toHaveCount(2);
+  await expect(dialog.locator('[data-note-version="1"]')).toContainText("블로그 글을 인용해 봤어요.");
+  await expect(dialog.locator('[data-note-version="0"]')).toContainText("다시 고쳤어요.");
+});
+
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const first = page.locator("article[data-note-id]").first();

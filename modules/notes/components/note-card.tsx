@@ -28,6 +28,7 @@ import { FollowButton } from "@/modules/blog/components/follow-button";
 import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
 import { NoteGlyph } from "./note-glyph";
+import { NoteHistoryDialog } from "./note-history-dialog";
 import { NoteLinkCard } from "./note-link-card";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
@@ -73,6 +74,7 @@ export function NoteCard({
   const [editing, setEditing] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [mediaShown, setMediaShown] = useState(false);
+  const [showingHistory, setShowingHistory] = useState(false);
   const [draft, setDraft] = useState(note.body);
   const [busy, setBusy] = useState(false);
   const [liked, setLiked] = useState(note.likedByMe === true);
@@ -370,7 +372,23 @@ export function NoteCard({
                     day: "2-digit",
                   }).format(new Date(note.createdAt))}
                 </time>
-                {note.editedAt && <span> · {t("edited")}</span>}
+                {note.editedAt && (
+                  <>
+                    {" · "}
+                    <button
+                      type="button"
+                      onClick={() => setShowingHistory(true)}
+                      className="focus-ring rounded underline decoration-slate-300 underline-offset-2 hover:text-slate-800 dark:decoration-slate-600 dark:hover:text-slate-200"
+                    >
+                      {t("edited")}
+                    </button>
+                    <NoteHistoryDialog
+                      noteId={note.id}
+                      open={showingHistory}
+                      onClose={() => setShowingHistory(false)}
+                    />
+                  </>
+                )}
               </p>
             )}
 
