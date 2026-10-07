@@ -3552,12 +3552,14 @@
       "UNPUBLISH_POST": "Unpublish post",
       "DELETE_COMMENT": "Delete comment",
       "SUSPEND_USER": "Suspend account",
-      "BAN_USER": "Ban permanently"
+      "BAN_USER": "Ban permanently",
+      "DELETE_NOTE": "Delete note"
     },
     "subjectType": {
       "POST": "Post",
       "USER": "Author",
-      "COMMENT": "Comment"
+      "COMMENT": "Comment",
+      "NOTE": "Note"
     },
     "removed": "Unpublished",
     "reasons": {

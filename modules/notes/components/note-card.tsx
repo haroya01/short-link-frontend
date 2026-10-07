@@ -39,6 +39,7 @@ import { NoteQuoteDialog } from "./note-quote-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
+import { ReportButton } from "@/modules/blog/components/report-button";
 
 const NOTE_RING_NUMBER_FROM = 20;
 
@@ -509,6 +510,11 @@ export function NoteCard({
               <button type="button" onClick={share} aria-label={t("share")} className={action}>
                 <NoteGlyph name="share" className="h-[18px] w-[18px]" />
               </button>
+              {emphasis && !mine && (
+                <span className="ml-auto">
+                  <ReportButton subjectType="NOTE" subjectId={note.id} />
+                </span>
+              )}
             </footer>
             {emphasis && (note.quoteCount ?? 0) > 0 && (
               <BlogLink

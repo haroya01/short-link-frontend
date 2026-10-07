@@ -5,7 +5,7 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 const reportMocks: typeof import("./abuse-reports-mock-data") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./abuse-reports-mock-data") : null;
 
-export type AbuseSubjectType = "POST" | "USER" | "COMMENT";
+export type AbuseSubjectType = "POST" | "USER" | "COMMENT" | "NOTE";
 
 export type AbuseReportStatus = "OPEN" | "REVIEWING" | "RESOLVED" | "REJECTED";
 
@@ -32,7 +32,8 @@ export type AbuseAction =
   | "UNPUBLISH_POST"
   | "DELETE_COMMENT"
   | "SUSPEND_USER"
-  | "BAN_USER";
+  | "BAN_USER"
+  | "DELETE_NOTE";
 
 export interface AbuseReportView {
   id: number;

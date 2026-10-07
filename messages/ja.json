@@ -3552,12 +3552,14 @@
       "UNPUBLISH_POST": "記事を非公開",
       "DELETE_COMMENT": "コメント削除",
       "SUSPEND_USER": "アカウント停止",
-      "BAN_USER": "永久停止"
+      "BAN_USER": "永久停止",
+      "DELETE_NOTE": "ノートを削除"
     },
     "subjectType": {
       "POST": "投稿",
       "USER": "作者",
-      "COMMENT": "コメント"
+      "COMMENT": "コメント",
+      "NOTE": "ノート"
     },
     "removed": "非公開",
     "reasons": {

@@ -30,6 +30,7 @@ const ACTIONS_BY_SUBJECT: Record<AbuseSubjectType, readonly AbuseAction[]> = {
   POST: ["UNPUBLISH_POST"],
   COMMENT: ["DELETE_COMMENT"],
   USER: ["SUSPEND_USER", "BAN_USER"],
+  NOTE: ["DELETE_NOTE"],
 };
 
 /** Actions offered for a subject type, minus any already applied (e.g. a post that's already removed). */
@@ -42,7 +43,9 @@ export function availableActions(
     // Takedowns are idempotent from the queue's view: once the post is unpublished / comment deleted,
     // don't re-offer the destructive button. Suspend/ban stay available (a user can be sanctioned even
     // after their post is gone).
-    return actions.filter((a) => a !== "UNPUBLISH_POST" && a !== "DELETE_COMMENT");
+    return actions.filter(
+      (a) => a !== "UNPUBLISH_POST" && a !== "DELETE_COMMENT" && a !== "DELETE_NOTE",
+    );
   }
   return actions;
 }

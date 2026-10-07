@@ -3552,12 +3552,14 @@
       "UNPUBLISH_POST": "글 비공개",
       "DELETE_COMMENT": "댓글 삭제",
       "SUSPEND_USER": "계정 정지",
-      "BAN_USER": "영구 차단"
+      "BAN_USER": "영구 차단",
+      "DELETE_NOTE": "노트 삭제"
     },
     "subjectType": {
       "POST": "글",
       "USER": "작가",
-      "COMMENT": "댓글"
+      "COMMENT": "댓글",
+      "NOTE": "노트"
     },
     "removed": "비공개됨",
     "reasons": {

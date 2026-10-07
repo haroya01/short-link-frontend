@@ -3552,12 +3552,14 @@
       "UNPUBLISH_POST": "Hủy xuất bản bài",
       "DELETE_COMMENT": "Xóa bình luận",
       "SUSPEND_USER": "Tạm ngưng tài khoản",
-      "BAN_USER": "Cấm vĩnh viễn"
+      "BAN_USER": "Cấm vĩnh viễn",
+      "DELETE_NOTE": "Xóa ghi chú"
     },
     "subjectType": {
       "POST": "Bài viết",
       "USER": "Tác giả",
-      "COMMENT": "Bình luận"
+      "COMMENT": "Bình luận",
+      "NOTE": "Ghi chú"
     },
     "removed": "Đã hủy xuất bản",
     "reasons": {
