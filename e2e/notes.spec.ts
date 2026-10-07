@@ -323,6 +323,28 @@ test("the bell beside following tells of every new note and leaves with the foll
   await expect(ring).toHaveCount(0);
 });
 
+test("blocking a server from its account's menu hides the account until it is unblocked", async ({ page }) => {
+  await page.goto("/ko/blog/remote/9800");
+  await expect(page.getByRole("heading", { name: "Mina" })).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "계정 메뉴" }).click();
+  await page.getByRole("menuitem", { name: "mastodon.social 차단" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("한 사람만 문제라면 차단이나 뮤트로 충분해요");
+  await dialog.getByRole("button", { name: "서버 차단" }).click();
+  await expect(page.getByText("차단한 서버예요")).toBeVisible();
+  await expect(page.getByRole("button", { name: "팔로잉", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "mastodon.social 차단 해제" }).click();
+  await expect(page.getByText("차단한 서버예요")).toHaveCount(0);
+  await expect(page.getByText("mastodon.social 차단을 해제했어요")).toBeVisible();
+});
+
+test("blog settings list blocked servers", async ({ page }) => {
+  await page.goto("/ko/blog/settings");
+  const section = page.getByRole("region", { name: "차단한 서버" });
+  await expect(section).toBeVisible({ timeout: 30_000 });
+  await expect(section.getByText("차단한 서버가 없어요.")).toBeVisible();
+});
+
 test("a hashtag in a note opens the tag on its notes tab, beside the tag's posts", async ({ page }) => {
   await page.goto("/ko/p/yuna/notes/5");
   const tag = page.getByRole("link", { name: "#산책" }).first();

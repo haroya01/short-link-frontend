@@ -4210,6 +4210,7 @@
       "disabled": "दूसरे सर्वर के खाते फ़ॉलो करने के लिए सेटिंग्स में नोट फ़ेडरेशन चालू करें",
       "missing": "उस सर्वर पर खाता नहीं मिला",
       "invalid": "इसे नाम@सर्वर के रूप में लिखें",
+      "blocked": "ब्लॉक किए गए सर्वर के खाते फ़ॉलो नहीं किए जा सकते",
       "other": "अपडेट नहीं हो सका। थोड़ी देर बाद फिर कोशिश करें"
     },
     "remoteAccountSection": "दूसरे सर्वर का खाता",
@@ -4229,6 +4230,21 @@
     "unmuteConversation": "बातचीत की सूचनाएँ चालू करें",
     "conversationMuted": "इस बातचीत की सूचनाएँ बंद कीं",
     "conversationUnmuted": "इस बातचीत की सूचनाएँ फिर मिलेंगी",
-    "conversationMuteFailed": "बातचीत की सूचनाएँ नहीं बदल सकीं"
+    "conversationMuteFailed": "बातचीत की सूचनाएँ नहीं बदल सकीं",
+    "remoteMenu": "खाता मेनू",
+    "domainBlock": "{domain} को ब्लॉक करें",
+    "domainUnblock": "{domain} को अनब्लॉक करें",
+    "domainBlockConfirm": "पूरा {domain} ब्लॉक करें?",
+    "domainBlockConfirmBody": "उस सर्वर के नोट और सूचनाएँ नहीं दिखेंगी, वहाँ के खातों को अनफ़ॉलो कर दिया जाएगा और वहाँ के फ़ॉलोअर हट जाएँगे। अगर समस्या सिर्फ़ एक व्यक्ति है, तो उसे ब्लॉक या म्यूट करना काफ़ी है।",
+    "domainBlockAction": "सर्वर ब्लॉक करें",
+    "domainBlockedToast": "{domain} को ब्लॉक किया",
+    "domainUnblockedToast": "{domain} को अनब्लॉक किया",
+    "domainBlockFailed": "सर्वर ब्लॉक बदला नहीं जा सका। कृपया थोड़ी देर बाद फिर कोशिश करें",
+    "domainBlockedTitle": "आपने यह सर्वर ब्लॉक किया है",
+    "domainBlockedHint": "{domain} के नोट और सूचनाएँ नहीं दिखेंगी।",
+    "domainBlocksTitle": "ब्लॉक किए गए सर्वर",
+    "domainBlocksHint": "इन सर्वरों के नोट, सूचनाएँ और फ़ॉलो सब हटा दिए जाते हैं। किसी खाते के पेज पर ⋯ मेनू से ब्लॉक करें।",
+    "domainBlocksEmpty": "कोई ब्लॉक किया गया सर्वर नहीं।",
+    "domainUnblockShort": "अनब्लॉक"
   }
 }
