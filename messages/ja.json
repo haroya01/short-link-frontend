@@ -4366,6 +4366,10 @@
     "emptyFederated": "ほかのサーバーのノートはまだありません。検索で @名前@サーバー を入力してフォローすると、そのノートがここに届きます。",
     "signInForFederated": "ログインすると、このサーバーが受け取ったほかのサーバーの公開ノートを見られます",
     "trendingTagsTitle": "トレンドのハッシュタグ",
-    "trendingTagsAccounts": "今週 {count} 人が使いました"
+    "trendingTagsAccounts": "今週 {count} 人が使いました",
+    "suggestionsTitle": "おすすめのアカウント",
+    "suggestionsFriends": "フォロー中の{count}人がフォロー",
+    "suggestionsPopular": "最近よくフォローされています",
+    "suggestionsDismiss": "{name}を表示しない"
   }
 }
