@@ -1,5 +1,6 @@
 "use client";
 
+import { TriangleAlert } from "lucide-react";
 import { useLocale } from "next-intl";
 import type { QuotedNote } from "@/modules/notes/api/notes";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -19,12 +20,19 @@ export function QuotedNoteCard({ note, linked = true }: { note: QuotedNote; link
           {ago(note.createdAt)}
         </time>
       </span>
-      {note.body && (
-        <span className="mt-1 line-clamp-4 whitespace-pre-line break-words text-[15px] leading-[1.45] text-slate-800 dark:text-slate-200">
-          {note.body}
+      {note.contentWarning ? (
+        <span className="mt-1 flex items-center gap-1.5 text-[15px] font-medium leading-[1.45] text-slate-800 dark:text-slate-200">
+          <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
+          <span className="line-clamp-2 break-words">{note.contentWarning}</span>
         </span>
+      ) : (
+        note.body && (
+          <span className="mt-1 line-clamp-4 whitespace-pre-line break-words text-[15px] leading-[1.45] text-slate-800 dark:text-slate-200">
+            {note.body}
+          </span>
+        )
       )}
-      {note.media.length > 0 && (
+      {!note.contentWarning && !note.sensitive && note.media.length > 0 && (
         <span className="mt-2 flex gap-1.5">
           {note.media.map((image) => (
             // eslint-disable-next-line @next/next/no-img-element

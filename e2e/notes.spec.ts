@@ -322,6 +322,34 @@ test("a reply's @mention of a member links to their notes, and an unknown handle
   await expect(page).toHaveURL(/\/yuna\/notes$/, { timeout: 30_000 });
 });
 
+test("a content warning folds the note until opened, and a sensitive photo stays covered until tapped", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const warned = page.locator('article[data-note-id="7"]');
+  await expect(warned.getByText("영화 결말 이야기")).toBeVisible({ timeout: 30_000 });
+  await expect(warned.getByText("돌아오지 않는다", { exact: false })).toHaveCount(0);
+  await warned.getByRole("button", { name: "내용 보기" }).click();
+  await expect(warned.getByText("돌아오지 않는다", { exact: false })).toBeVisible();
+
+  const covered = page.locator('article[data-note-id="8"]');
+  await expect(covered.getByRole("img", { name: "꿰맨 자리" })).toHaveCount(0);
+  await covered.getByRole("button", { name: "민감한 사진 · 눌러서 보기" }).click();
+  await expect(covered.getByRole("img", { name: "꿰맨 자리" }).first()).toBeVisible();
+});
+
+test("the composer sends a content warning, and the new note arrives folded", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await expect(composer).toBeVisible({ timeout: 30_000 });
+  await composer.fill("범인은 집사였다");
+  await page.getByRole("button", { name: "열람 주의", exact: true }).click();
+  await page.getByRole("textbox", { name: "열람 주의 문구" }).fill("추리소설 결말");
+  await page.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+  const posted = page.locator("article").first();
+  await expect(posted.getByText("추리소설 결말")).toBeVisible();
+  await expect(posted.getByText("범인은 집사였다")).toHaveCount(0);
+});
+
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const first = page.locator("article[data-note-id]").first();

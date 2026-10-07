@@ -79,6 +79,22 @@ let notes: Note[] = [
     media: [{ url: "https://picsum.photos/seed/kurl-note/800/600", altText: "비 오는 창밖", contentType: "image/jpeg" }],
   }),
   note({ id: 4, body: "@yuna 좋은 생각이에요", mentions: ["yuna"], author: ME, inReplyToId: 3, likeCount: 0, createdAt: "2026-10-05T12:00:00Z" }),
+  note({
+    id: 7,
+    body: "마지막 장면에서 주인공이 결국 돌아오지 않는다. 그래서 더 오래 남는다.",
+    author: YUNA,
+    createdAt: "2026-10-04T09:00:00Z",
+    contentWarning: "영화 결말 이야기",
+    sensitive: true,
+  }),
+  note({
+    id: 8,
+    body: "수술 끝나고 꿰맨 자리. 잘 아물고 있다.",
+    author: YUNA,
+    createdAt: "2026-10-04T08:00:00Z",
+    sensitive: true,
+    media: [{ url: "https://picsum.photos/seed/kurl-note-d/800/600", altText: "꿰맨 자리", contentType: "image/jpeg" }],
+  }),
 ];
 let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
@@ -220,6 +236,8 @@ export function mockCreate(draft: NoteDraft): Note {
     createdAt: new Date().toISOString(),
     inReplyToId: draft.inReplyToId,
     quotedNote: quotedNoteOf(draft.quotedNoteId),
+    contentWarning: draft.contentWarning ?? null,
+    sensitive: Boolean(draft.sensitive || draft.contentWarning),
     media: draft.images.map((image) => ({
       url: "https://picsum.photos/seed/kurl-upload/800/600",
       altText: image.altText || null,
@@ -242,6 +260,8 @@ function quotedNoteOf(id: number | null): Note["quotedNote"] {
     createdAt: quoted.createdAt,
     author: quoted.author,
     media: quoted.media,
+    contentWarning: quoted.contentWarning ?? null,
+    sensitive: quoted.sensitive ?? false,
   };
 }
 

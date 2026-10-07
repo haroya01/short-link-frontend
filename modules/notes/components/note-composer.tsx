@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Globe, ImagePlus, Loader2, X } from "lucide-react";
+import { Check, EyeOff, Globe, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import {
   NOTE_ALT_MAX_LENGTH,
   NOTE_MAX_IMAGES,
   NOTE_MAX_LENGTH,
+  NOTE_MAX_WARNING_LENGTH,
   NoteImageUploadError,
   updateFederationSettings,
   uploadNoteImage,
@@ -53,6 +54,9 @@ export function NoteComposer({
   const t = useTranslations("notes");
   const [confirm, confirmDialog] = useConfirm();
   const [body, setBody] = useState("");
+  const [warns, setWarns] = useState(false);
+  const [warning, setWarning] = useState("");
+  const [sensitive, setSensitive] = useState(false);
   const [images, setImages] = useState<PendingImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
@@ -166,10 +170,15 @@ export function NoteComposer({
         quotedPostId: quote?.id ?? null,
         inReplyToId,
         quotedNoteId: quotedNote?.id ?? null,
+        contentWarning: warns && warning.trim() ? warning.trim() : null,
+        sensitive: images.length > 0 && sensitive,
       });
       images.forEach((image) => URL.revokeObjectURL(image.previewUrl));
       setBody("");
       setImages([]);
+      setWarns(false);
+      setWarning("");
+      setSensitive(false);
       onClearQuote?.();
       onCreated(!note.linkPreview && linkCard ? { ...note, linkPreview: linkCard } : note);
       setLinkCard(null);
@@ -226,6 +235,16 @@ export function NoteComposer({
     >
       <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} size="md" />
       <div className="min-w-0 flex-1">
+        {warns && (
+          <input
+            value={warning}
+            onChange={(e) => setWarning(e.target.value)}
+            maxLength={NOTE_MAX_WARNING_LENGTH}
+            placeholder={t("warningPlaceholder")}
+            aria-label={t("warningLabel")}
+            className="focus-ring mb-1.5 w-full rounded-lg bg-slate-100 px-3 py-1.5 text-[15px] font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+          />
+        )}
         <div className="flex items-start gap-3">
           <textarea
             ref={textarea}
@@ -382,6 +401,38 @@ export function NoteComposer({
             >
               <ImagePlus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
             </button>
+            <button
+              type="button"
+              onClick={() => setWarns((on) => !on)}
+              aria-pressed={warns}
+              aria-label={t("warningToggle")}
+              title={t("warningToggle")}
+              className={cn(
+                "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
+                warns
+                  ? "text-slate-900 dark:text-slate-100"
+                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+              )}
+            >
+              <TriangleAlert className="h-5 w-5" strokeWidth={warns ? 2.25 : 1.75} aria-hidden />
+            </button>
+            {images.length > 0 && !warns && (
+              <button
+                type="button"
+                onClick={() => setSensitive((on) => !on)}
+                aria-pressed={sensitive}
+                aria-label={t("sensitiveToggle")}
+                title={t("sensitiveToggle")}
+                className={cn(
+                  "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
+                  sensitive
+                    ? "text-slate-900 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+                )}
+              >
+                <EyeOff className="h-5 w-5" strokeWidth={sensitive ? 2.25 : 1.75} aria-hidden />
+              </button>
+            )}
             <span className="inline-flex min-w-0 items-center gap-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
               <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {t("visibilityPublic")}
