@@ -306,7 +306,16 @@
     "settingsLockedHint": "Khi bật, người theo dõi mới sẽ gửi yêu cầu và chỉ trở thành người theo dõi khi bạn chấp nhận. Tài khoản ở máy chủ khác cũng vậy.",
     "settingsUnlockTitle": "Tắt tự duyệt người theo dõi?",
     "settingsUnlockBody": "Mọi yêu cầu theo dõi đang chờ sẽ được chấp nhận.",
-    "settingsUnlockConfirm": "Tắt"
+    "settingsUnlockConfirm": "Tắt",
+    "exportTitle": "Xuất dữ liệu",
+    "exportSubtitle": "Tệp CSV giống Mastodon, có thể tải thẳng lên phần nhập của máy chủ khác.",
+    "exportFollowing": "Đang theo dõi",
+    "exportBlocks": "Tài khoản đã chặn",
+    "exportMutes": "Tài khoản đã tắt tiếng",
+    "exportDomainBlocks": "Máy chủ đã chặn",
+    "exportBookmarks": "Dấu trang",
+    "exportLists": "Danh sách",
+    "exportError": "Không thể xuất"
   },
   "postEditor": {
     "backToList": "Bài viết",

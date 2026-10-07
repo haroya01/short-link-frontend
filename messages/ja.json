@@ -306,7 +306,16 @@
     "settingsLockedHint": "オンにすると、新しいフォロワーはリクエストを送り、あなたが承認するとフォロワーになります。他のサーバーのアカウントも同じです。",
     "settingsUnlockTitle": "フォローの手動承認をオフにしますか？",
     "settingsUnlockBody": "待っているフォローリクエストはすべて承認されます。",
-    "settingsUnlockConfirm": "オフにする"
+    "settingsUnlockConfirm": "オフにする",
+    "exportTitle": "データのエクスポート",
+    "exportSubtitle": "Mastodonと同じCSVファイルなので、他のサーバーのインポートにそのまま使えます。",
+    "exportFollowing": "フォロー",
+    "exportBlocks": "ブロックしたアカウント",
+    "exportMutes": "ミュートしたアカウント",
+    "exportDomainBlocks": "ブロックしたサーバー",
+    "exportBookmarks": "ブックマーク",
+    "exportLists": "リスト",
+    "exportError": "エクスポートできませんでした"
   },
   "postEditor": {
     "backToList": "記事一覧",

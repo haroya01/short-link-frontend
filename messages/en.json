@@ -306,7 +306,16 @@
     "settingsLockedHint": "New followers send a request and become followers once you approve. The same goes for accounts on other servers.",
     "settingsUnlockTitle": "Stop approving followers manually?",
     "settingsUnlockBody": "Every pending follow request will be approved.",
-    "settingsUnlockConfirm": "Turn off"
+    "settingsUnlockConfirm": "Turn off",
+    "exportTitle": "Export data",
+    "exportSubtitle": "Mastodon-compatible CSV files, ready to upload to another server's import.",
+    "exportFollowing": "Follows",
+    "exportBlocks": "Blocked accounts",
+    "exportMutes": "Muted accounts",
+    "exportDomainBlocks": "Blocked servers",
+    "exportBookmarks": "Bookmarks",
+    "exportLists": "Lists",
+    "exportError": "Couldn't export"
   },
   "postEditor": {
     "backToList": "Posts",
