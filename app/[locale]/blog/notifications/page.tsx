@@ -1,9 +1,10 @@
 "use client";
 
-import { Bell, ChevronRight, Lock } from "lucide-react";
+import { Bell, ChevronRight, ListFilter, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
+  useFilteredSenders,
   useFollowRequests,
   useMarkAllRead,
   useNotifications,
@@ -50,6 +51,8 @@ export default function NotificationsPage() {
     useNotifications();
   const filters = useNoteFilters();
   const waiting = useFollowRequests().data?.length ?? 0;
+  const filtered = useFilteredSenders().data ?? [];
+  const filteredCount = filtered.reduce((sum, s) => sum + s.count, 0);
 
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
   if (ready && !authenticated) {
@@ -108,6 +111,26 @@ export default function NotificationsPage() {
             {t("followRequestsTitle")}
           </span>
           <span className="text-[13px] tabular-nums text-slate-500 dark:text-slate-400">{waiting}</span>
+          <ChevronRight aria-hidden className="h-4 w-4 text-slate-400" />
+        </BlogLink>
+      )}
+
+      {filtered.length > 0 && (
+        // 알림 거르기가 따로 둔 알림 — 마스토돈 "걸러진 알림" 한 줄.
+        <BlogLink
+          href={blogPath("/notifications/filtered")}
+          data-testid="filtered-entry"
+          className="focus-ring mt-1 flex items-center gap-3 rounded-lg border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <ListFilter aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("filteredTitle")}</span>
+            <span className="text-[12px] text-slate-500 dark:text-slate-400">
+              {t("filteredSummary", { people: filtered.length, count: filteredCount })}
+            </span>
+          </span>
           <ChevronRight aria-hidden className="h-4 w-4 text-slate-400" />
         </BlogLink>
       )}

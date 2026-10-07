@@ -16,6 +16,7 @@ import { DisplayNameSetting } from "@/modules/blog/components/display-name-setti
 import { DomainBlockSettings, RemoteFollowingSettings } from "@/modules/notes/components/remote-account";
 import { NoteLanguageSettings } from "@/modules/notes/components/note-language-settings";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
+import { NotificationPolicySettings } from "@/modules/notifications/components/notification-policy-settings";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { LogoutButton } from "@/components/common/logout-button";
@@ -140,6 +141,9 @@ export default function BlogSettingsPage() {
 
       {/* 알림 종류별 받기/끄기 (좋아요·댓글·팔로우·시리즈·답글·새 글·멘션) */}
       <BlogNotificationSettings />
+
+      {/* 알림 거르기 — 범주마다 받기·거르기·버리기(마스토돈 알림 정책) */}
+      <NotificationPolicySettings />
 
       {/* 피드 */}
       <FeedDefaultTabSetting rowClass={rowClass} />
