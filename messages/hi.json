@@ -120,7 +120,8 @@
     "feedReasonTopic": "‘{tag}’ फ़ॉलो किया गया",
     "feedReasonSeries": "सब्सक्राइब की गई सीरीज़",
     "bookmarkFailed": "सहेजा नहीं जा सका. कृपया फिर से प्रयास करें.",
-    "seriesSubscribeFailed": "सदस्यता अपडेट नहीं हो सकी. कृपया फिर से प्रयास करें."
+    "seriesSubscribeFailed": "सदस्यता अपडेट नहीं हो सकी. कृपया फिर से प्रयास करें.",
+    "searchNotesTab": "नोट"
   },
   "blogWebhooks": {
     "loginRequired": "साइन इन ज़रूरी है।",
@@ -4177,6 +4178,7 @@
     "filterAdd": "फ़िल्टर जोड़ें",
     "filterEdit": "{phrase} फ़िल्टर बदलें",
     "filterDelete": "{phrase} फ़िल्टर हटाएँ",
-    "filterFailed": "फ़िल्टर नहीं बदला जा सका"
+    "filterFailed": "फ़िल्टर नहीं बदला जा सका",
+    "searchNotesEmpty": "“{q}” वाले कोई नोट नहीं मिले"
   }
 }

@@ -24,6 +24,7 @@ import { FeedEmpty } from "./feed-empty";
 import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
+import { SearchedNotes } from "@/modules/notes/components/searched-notes";
 import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
@@ -91,15 +92,18 @@ export async function FeedScreen({
   qParam,
   langParam,
   tagParam,
+  viewParam,
 }: {
   locale: string;
   sortParam?: string;
   qParam?: string;
   langParam?: string;
   tagParam?: string;
+  viewParam?: string;
 }) {
   const query = (qParam ?? "").trim();
   const searching = query.length > 0;
+  const notesView = searching && viewParam === "notes";
   // Tag filter on the discovery feed (flat grid only): clicking a card's #tag narrows to that tag.
   // Ignored during search (search already spans tags). A tag view drops the lead/series emphasis.
   const activeTag = !searching ? (tagParam ?? "").trim() : "";
@@ -243,7 +247,7 @@ export async function FeedScreen({
           locale={locale}
           eyebrow={t("searchLabel")}
           title={
-            hasNext
+            hasNext || notesView
               ? t("searchResultsFor", { q: query })
               : t("searchResultsCount", { q: query, count: items.length })
           }
@@ -264,13 +268,28 @@ export async function FeedScreen({
         <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
           <FeedSortTabs
             tabs={[
-              { key: "recent", label: t("recent"), href: sortHref("recent"), active: activeTab === "recent" },
+              {
+                key: "recent",
+                label: t("recent"),
+                href: sortHref("recent"),
+                active: activeTab === "recent" && !notesView,
+              },
               {
                 key: "trending",
                 label: t("trending"),
                 href: sortHref("trending"),
-                active: activeTab === "trending",
+                active: activeTab === "trending" && !notesView,
               },
+              ...(searching
+                ? [
+                    {
+                      key: "notes",
+                      label: t("searchNotesTab"),
+                      href: `?q=${encodeURIComponent(query)}&view=notes`,
+                      active: notesView,
+                    },
+                  ]
+                : []),
               {
                 key: "for-you",
                 label: t("forYou"),
@@ -305,7 +324,11 @@ export async function FeedScreen({
 
         {/* Following is its own client surface with its own rail (followed authors), so it animates as
             a whole — there's no shared discovery rail to hold still here. */}
-        {tab === "for-you" && !searching ? (
+        {notesView ? (
+          <ReadingShell className="mt-6">
+            <SearchedNotes query={query} />
+          </ReadingShell>
+        ) : tab === "for-you" && !searching ? (
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <ForYouFeed locale={locale} />
           </FeedContentTransition>

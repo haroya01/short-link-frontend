@@ -25,10 +25,10 @@ export default async function BlogFeedBrowsePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sort?: string; q?: string; lang?: string; tag?: string }>;
+  searchParams: Promise<{ sort?: string; q?: string; lang?: string; tag?: string; view?: string }>;
 }) {
   const { locale } = await params;
-  const { sort: sortParam, q: qParam, lang: langParam, tag: tagParam } = await searchParams;
+  const { sort: sortParam, q: qParam, lang: langParam, tag: tagParam, view: viewParam } = await searchParams;
   const searching = (qParam ?? "").trim().length > 0;
   const activeTag = !searching ? (tagParam ?? "").trim() : "";
   // No explicit ?sort, and not in a search/tag context → honor the reader's saved default tab.
@@ -42,6 +42,7 @@ export default async function BlogFeedBrowsePage({
       qParam={qParam}
       langParam={langParam}
       tagParam={tagParam}
+      viewParam={viewParam}
     />
   );
 }

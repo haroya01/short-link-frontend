@@ -313,6 +313,15 @@ export function mockTaggedNotes(tag: string, page: number): NoteFeed {
   return { items: items.map(withQuotes), page, hasNext: false };
 }
 
+export function mockSearchNotes(query: string, page: number): NoteFeed {
+  const needle = query.trim().toLowerCase();
+  const items =
+    page === 0 && needle
+      ? notes.filter((n) => (n.visibility ?? "public") === "public" && n.body.toLowerCase().includes(needle))
+      : [];
+  return { items: items.map(withQuotes), page, hasNext: false };
+}
+
 export function mockBookmarkedNotes(page: number): NoteFeed {
   const items = page === 0 ? bookmarks.map((id) => notes.find((n) => n.id === id)) : [];
   return {

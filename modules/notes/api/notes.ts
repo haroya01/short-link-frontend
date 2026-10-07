@@ -192,6 +192,14 @@ export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
   );
 }
 
+export function searchNotes(query: string, page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSearchNotes(query, page));
+  return request<NoteFeed>(
+    `/api/v1/public/notes/search?q=${encodeURIComponent(query)}&page=${page}&size=20`,
+    { method: "GET" },
+  );
+}
+
 export interface NoteListSummary {
   id: number;
   title: string;

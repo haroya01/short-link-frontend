@@ -120,7 +120,8 @@
     "feedReasonTopic": "「{tag}」をフォロー中",
     "feedReasonSeries": "フォロー中のシリーズ",
     "bookmarkFailed": "保存できませんでした。もう一度お試しください。",
-    "seriesSubscribeFailed": "フォローを変更できませんでした。もう一度お試しください。"
+    "seriesSubscribeFailed": "フォローを変更できませんでした。もう一度お試しください。",
+    "searchNotesTab": "ノート"
   },
   "blogWebhooks": {
     "loginRequired": "ログインが必要です。",
@@ -4177,6 +4178,7 @@
     "filterAdd": "フィルターを追加",
     "filterEdit": "{phrase}のフィルターを編集",
     "filterDelete": "{phrase}のフィルターを削除",
-    "filterFailed": "フィルターを変更できませんでした"
+    "filterFailed": "フィルターを変更できませんでした",
+    "searchNotesEmpty": "「{q}」を含むノートは見つかりませんでした"
   }
 }

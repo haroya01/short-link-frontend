@@ -545,3 +545,11 @@ test("a keyword filter from settings folds matching notes until shown, and hidin
   await expect(page.locator('article[data-note-id="3"]')).toHaveCount(0);
 });
 
+test("a search has a notes tab that finds public notes by their words", async ({ page }) => {
+  await page.goto("/ko/blog?q=%EC%94%A8%EC%95%97");
+  await page.getByRole("link", { name: "노트", exact: true }).last().click({ timeout: 30_000 });
+  await expect(page).toHaveURL(/view=notes/);
+  await expect(page.locator('article[data-note-id="3"]')).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="9"]')).toHaveCount(0);
+});
+
