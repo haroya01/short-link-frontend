@@ -27,6 +27,8 @@ export async function updateMyProfile(payload: {
   hideFollowerCount?: boolean;
   /** Shown before the username on notes and the blog profile; empty clears it. At most 30. */
   displayName?: string;
+  /** Approve each follower by hand (Mastodon's locked account). Unlocking approves everyone waiting. */
+  locked?: boolean;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }

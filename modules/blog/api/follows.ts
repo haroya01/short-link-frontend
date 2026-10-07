@@ -36,17 +36,30 @@ export interface FollowStatus {
   hideFollowerCount: boolean;
   /** The viewer rang this author's bell: a notice for every new note (Mastodon's notify). */
   notifyNotes?: boolean;
+  /** The viewer's follow waits on this locked author's approval. */
+  requested?: boolean;
+  /** The author approves each follower by hand (Mastodon's locked account): following leaves a request. */
+  locked?: boolean;
+}
+
+// Mock lane: haruka approves followers by hand, so following her leaves a request.
+const MOCK_LOCKED = new Set(["haruka"]);
+const mockRequested = new Set<string>();
+
+function mockStatus(username: string, following: boolean): FollowStatus {
+  return {
+    following,
+    followerCount: following ? 129 : 128,
+    followingCount: 12,
+    hideFollowerCount: false,
+    requested: mockRequested.has(username),
+    locked: MOCK_LOCKED.has(username),
+  };
 }
 
 /** Public — follower count for everyone; `following` is false for anonymous viewers. */
 export function getFollowStatus(username: string): Promise<FollowStatus> {
-  if (USE_MOCKS)
-    return Promise.resolve({
-      following: false,
-      followerCount: 128,
-      followingCount: 12,
-      hideFollowerCount: false,
-    });
+  if (USE_MOCKS) return Promise.resolve(mockStatus(username, false));
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "GET",
   });
@@ -57,13 +70,13 @@ export function getFollowStatus(username: string): Promise<FollowStatus> {
  * followed — it powers the per-post "이 글로 늘어난 팔로우" analytics. Omitted for a direct profile follow.
  */
 export function followUser(username: string, sourcePostId?: number): Promise<FollowStatus> {
-  if (USE_MOCKS)
-    return Promise.resolve({
-      following: true,
-      followerCount: 129,
-      followingCount: 12,
-      hideFollowerCount: false,
-    });
+  if (USE_MOCKS) {
+    if (MOCK_LOCKED.has(username)) {
+      mockRequested.add(username);
+      return Promise.resolve(mockStatus(username, false));
+    }
+    return Promise.resolve(mockStatus(username, true));
+  }
   const q = sourcePostId != null ? `?sourcePostId=${sourcePostId}` : "";
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow${q}`, {
     method: "PUT",
@@ -71,13 +84,10 @@ export function followUser(username: string, sourcePostId?: number): Promise<Fol
 }
 
 export function unfollowUser(username: string): Promise<FollowStatus> {
-  if (USE_MOCKS)
-    return Promise.resolve({
-      following: false,
-      followerCount: 128,
-      followingCount: 12,
-      hideFollowerCount: false,
-    });
+  if (USE_MOCKS) {
+    mockRequested.delete(username);
+    return Promise.resolve(mockStatus(username, false));
+  }
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "DELETE",
   });

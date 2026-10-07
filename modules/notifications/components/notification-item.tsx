@@ -8,6 +8,7 @@ import {
   GitBranch,
   Heart,
   Link2,
+  Lock,
   MessageCircle,
   Pencil,
   PenLine,
@@ -24,7 +25,9 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { notificationHref } from "@/modules/notifications/lib/notification-href";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
-import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
+import { requestOrigin, useMarkRead } from "@/modules/notifications/lib/use-notifications";
+import { FollowRequestAnswer } from "@/modules/notifications/components/follow-request-answer";
+import { blogPath } from "@/lib/host";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +59,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_POST: "note_post",
   NOTE_EDIT: "note_edit",
   REMOTE_FOLLOW: "remote_follow",
+  FOLLOW_REQUEST: "follow_request",
 };
 
 // 아바타 우하단의 종류 글리프 — 글만으로는 좋아요/댓글/팔로우 행이 전부 같은 얼굴이라,
@@ -80,6 +84,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_POST: BellRing,
   NOTE_EDIT: Pencil,
   REMOTE_FOLLOW: UserPlus,
+  FOLLOW_REQUEST: Lock,
 };
 
 function subtitleOf(item: Item): string | null {
@@ -129,9 +134,16 @@ export function NotificationItem({
   const actor = item.actorUsername ?? t("someone");
   // 행위자 이름/아바타는 그 사람 프로필로 가는 섬 링크 — 행의 기본 액션(글/시리즈)과 별개.
   // 다른 서버 계정은 그 서버의 프로필을 새 탭으로 연다.
-  const remoteHref = item.actorProfileUrl ?? undefined;
+  // 이 서버가 아는 다른 서버 계정(actorRemoteId)은 앱 안의 그 계정 화면으로 간다.
+  const remoteId = item.actorRemoteId ?? null;
+  const remoteHref = remoteId == null ? (item.actorProfileUrl ?? undefined) : undefined;
   const actorHref =
-    !remoteHref && item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
+    remoteId != null
+      ? blogPath(`/remote/${remoteId}`)
+      : !remoteHref && item.actorUsername
+        ? authorHref(item.actorUsername, locale)
+        : undefined;
+  const origin = item.type === "FOLLOW_REQUEST" ? requestOrigin(item) : null;
   const others = Math.max((item.count ?? 1) - 1, 0);
   const messageKey =
     item.type === "NOTE_POLL" && item.actorUsername === me?.username
@@ -264,6 +276,7 @@ export function NotificationItem({
         <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">
           {relative(item.createdAt)}
         </span>
+        {origin && <FollowRequestAnswer origin={origin} name={actor} className="mt-2" />}
       </span>
     </>
   );

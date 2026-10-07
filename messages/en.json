@@ -301,7 +301,12 @@
     "displayNameSave": "Save",
     "displayNameHint": "Shown before your username on notes and your blog profile. Leave it empty to show your username.",
     "displayNameSaved": "Display name updated",
-    "displayNameFailed": "Couldn't update the display name"
+    "displayNameFailed": "Couldn't update the display name",
+    "settingsLocked": "Approve followers manually",
+    "settingsLockedHint": "New followers send a request and become followers once you approve. The same goes for accounts on other servers.",
+    "settingsUnlockTitle": "Stop approving followers manually?",
+    "settingsUnlockBody": "Every pending follow request will be approved.",
+    "settingsUnlockConfirm": "Turn off"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -734,7 +739,13 @@
     "reportFailed": "Couldn't send your report. Please try again.",
     "tabNotes": "Notes",
     "tabReposts": "Reposts",
-    "viewAvatar": "View profile photo"
+    "viewAvatar": "View profile photo",
+    "requested": "Requested",
+    "withdrawRequestTitle": "Cancel your follow request?",
+    "withdrawRequest": "Cancel request",
+    "followRequestedToast": "Follow requested. You'll be following once they approve",
+    "followLockedHint": "This writer approves followers manually",
+    "lockedAccount": "Approves followers manually"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -897,7 +908,17 @@
     "prefNotePost": "New notes from people with the bell on",
     "prefNotePostHint": "When someone whose bell you turned on posts a new note",
     "prefNoteEdit": "Edits to notes you shared",
-    "prefNoteEditHint": "When the author edits a note you reposted or quoted"
+    "prefNoteEditHint": "When the author edits a note you reposted or quoted",
+    "follow_request": "<b>{actor}</b> requested to follow you",
+    "followRequestsTitle": "Follow requests",
+    "followRequestsEmpty": "No pending follow requests",
+    "followRequestsEmptyHint": "When you approve followers manually, new followers wait here. Turn it on in blog settings.",
+    "followRequestApprove": "Approve",
+    "followRequestReject": "Decline",
+    "followRequestApproved": "{name} is now following you",
+    "followRequestError": "Couldn't answer the request",
+    "prefFollowRequest": "Follow requests",
+    "prefFollowRequestHint": "When someone asks to follow you while you approve followers manually"
   },
   "nav": {
     "events": "Events",

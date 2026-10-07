@@ -40,6 +40,8 @@ export type MyProfile = {
   /** When true, the author's follower/following counts are hidden from everyone (follow still works). */
   hideFollowerCount: boolean;
   displayName?: string | null;
+  /** Every follow waits for the owner's approval (Mastodon's locked account). */
+  locked?: boolean;
 };
 
 export type PublicProfile = {

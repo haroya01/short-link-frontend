@@ -4,6 +4,7 @@ import { cardHref } from "@/lib/host";
 import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
+import { LockedMark } from "@/modules/blog/components/locked-mark";
 import { AuthorMoreMenu } from "@/modules/notes/components/author-more-menu";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -108,9 +109,12 @@ export async function AuthorHeader({
         <div className="flex min-w-0 items-center gap-3.5">
           <AvatarZoom src={author.avatarUrl} name={author.username} />
           <div className="min-w-0">
-            <h1 className="truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
-              {author.displayName || `@${author.username}`}
-            </h1>
+            <div className="flex min-w-0 items-center gap-2">
+              <h1 className="truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
+                {author.displayName || `@${author.username}`}
+              </h1>
+              <LockedMark username={author.username} />
+            </div>
             {author.displayName && (
               <p className="truncate text-[14px] text-slate-500 dark:text-slate-400">@{author.username}</p>
             )}

@@ -1,14 +1,16 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, ChevronRight, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
+  useFollowRequests,
   useMarkAllRead,
   useNotifications,
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
-import { blogHref } from "@/lib/host";
+import { blogHref, blogPath } from "@/lib/host";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
 import { ErrorState } from "@/components/common/error-state";
@@ -47,6 +49,7 @@ export default function NotificationsPage() {
   const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useNotifications();
   const filters = useNoteFilters();
+  const waiting = useFollowRequests().data?.length ?? 0;
 
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
   if (ready && !authenticated) {
@@ -90,6 +93,24 @@ export default function NotificationsPage() {
           </button>
         )}
       </div>
+
+      {waiting > 0 && (
+        // 잠긴 계정에 기다리는 요청이 있으면 맨 위 한 줄 — 마스토돈 알림 위 "팔로우 요청".
+        <BlogLink
+          href={blogPath("/follow-requests")}
+          data-testid="follow-requests-entry"
+          className="focus-ring mt-4 flex items-center gap-3 rounded-lg border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <Lock aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+          </span>
+          <span className="flex-1 text-[14px] font-semibold text-slate-900 dark:text-slate-100">
+            {t("followRequestsTitle")}
+          </span>
+          <span className="text-[13px] tabular-nums text-slate-500 dark:text-slate-400">{waiting}</span>
+          <ChevronRight aria-hidden className="h-4 w-4 text-slate-400" />
+        </BlogLink>
+      )}
 
       <div className="mt-4">
         {!ready || isLoading ? (

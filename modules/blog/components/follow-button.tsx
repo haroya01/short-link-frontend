@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Bell, BellRing, Check } from "lucide-react";
+import { Bell, BellRing, Check, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api/client";
 import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import { followUser, setNoteNotifications, unfollowUser } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
@@ -97,6 +98,10 @@ export function FollowButton({
   const [notifyNotes, setNotifyNotes] = useState(false);
   const [bellBusy, setBellBusy] = useState(false);
   const [bellRung, setBellRung] = useState(false);
+  // A locked author (Mastodon's locked account) turns a follow into a request that waits on approval.
+  const [requested, setRequested] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [confirm, confirmDialog] = useConfirm();
 
   // Until auth resolves we don't know if this is the viewer's own profile. Once `ready`, that's
   // authoritative; before then we fall back to the cached self/visitor verdict so the button doesn't
@@ -128,6 +133,8 @@ export function FollowButton({
     fetchFollowStatus(username)
       .then((s) => {
         setNotifyNotes(s.notifyNotes ?? false);
+        setRequested(s.requested ?? false);
+        setLocked(s.locked ?? false);
         // Hidden author: no count key in the response. Keep the button, drop the count text.
         if (s.hideFollowerCount || s.followerCount == null) {
           setShared({ following: s.following, count: initialFollowerCount, countHidden: true });
@@ -150,11 +157,19 @@ export function FollowButton({
       return;
     }
     if (busy) return;
+    if (requested && !(await confirm({ title: t("withdrawRequestTitle"), confirmLabel: t("withdrawRequest"), destructive: true })))
+      return;
     setBusy(true);
-    const next = !following;
+    const next = !(following || requested);
     const bellBefore = notifyNotes;
-    // Optimistic — write through the shared store so a co-mounted button for this author flips too.
-    setShared({ following: next, count: count + (next ? 1 : -1), countHidden });
+    const requestedBefore = requested;
+    // Optimistic — write through the shared store so a co-mounted button for this author flips too. A
+    // locked author only gets a request, so neither the follow nor the count moves yet.
+    if (next && locked) setRequested(true);
+    else {
+      setShared({ following: next, count: count + (next ? 1 : following ? -1 : 0), countHidden });
+      setRequested(false);
+    }
     if (!next) setNotifyNotes(false);
     try {
       const s = next ? await followUser(username, sourcePostId) : await unfollowUser(username);
@@ -162,6 +177,9 @@ export function FollowButton({
       const hide = s.hideFollowerCount || nextCount == null;
       setShared({ following: s.following, count: nextCount ?? count, countHidden: hide });
       setNotifyNotes(s.notifyNotes ?? false);
+      setRequested(s.requested ?? false);
+      setLocked(s.locked ?? locked);
+      if (s.requested && !requestedBefore) toast(t("followRequestedToast"));
       writeFollowCache(username, {
         following: s.following,
         count: nextCount ?? 0,
@@ -171,7 +189,8 @@ export function FollowButton({
       // The following feed's contents changed — mark it stale so it re-fetches on the next visit.
       emitFollowChanged();
     } catch (e) {
-      setShared({ following: !next, count, countHidden });
+      setShared({ following, count, countHidden });
+      setRequested(requestedBefore);
       setNotifyNotes(bellBefore);
       toast(t(e instanceof ApiError && e.detail.code === "BLOCKED_TARGET" ? "followBlocked" : "followError"), "error");
     } finally {
@@ -199,8 +218,13 @@ export function FollowButton({
 
   const gapCls = compact ? "gap-1" : "gap-1.5";
   const iconCls = compact ? "h-3.5 w-3.5" : "h-4 w-4";
-  const icon = following ? <Check aria-hidden className={iconCls} /> : null;
-  const label = following ? t("following") : t("follow");
+  const icon = following ? (
+    <Check aria-hidden className={iconCls} />
+  ) : requested ? (
+    <Clock aria-hidden className={iconCls} />
+  ) : null;
+  const label = following ? t("following") : requested ? t("requested") : t("follow");
+  const pressed = following || requested;
 
   return (
     <div className="flex items-center gap-3">
@@ -211,15 +235,16 @@ export function FollowButton({
             setInteracted(true);
             void toggle();
           }}
-          aria-pressed={following}
+          aria-pressed={pressed}
+          data-testid="follow-button"
           // Curation framing, not broadcast: following a curator is following the path they weave, not
           // subscribing to a feed. Kept as the quiet hint so the pill itself stays a single word.
-          title={following ? undefined : t("followCuratorHint")}
-          className={followToggleClass(following, compact, quiet)}
+          title={pressed ? undefined : locked ? t("followLockedHint") : t("followCuratorHint")}
+          className={followToggleClass(pressed, compact, quiet)}
         >
           {/* Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle. */}
           <span
-            key={following ? "on" : "off"}
+            key={following ? "on" : requested ? "asked" : "off"}
             className={`${interacted ? "subscribe-pop" : ""} inline-flex items-center ${gapCls}`}
           >
             {icon}
@@ -262,6 +287,7 @@ export function FollowButton({
           {t("followers", { count })}
         </span>
       )}
+      {confirmDialog}
     </div>
   );
 }

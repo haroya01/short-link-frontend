@@ -23,7 +23,8 @@ export type NotificationType =
   | "NOTE_POLL"
   | "NOTE_POST"
   | "NOTE_EDIT"
-  | "REMOTE_FOLLOW";
+  | "REMOTE_FOLLOW"
+  | "FOLLOW_REQUEST";
 
 /** One of a group's newest actors. A remote account has no id; its username is name@domain. */
 export interface NotificationActor {
@@ -71,6 +72,8 @@ export interface NotificationItem {
   createdAt: string;
   /** Set when the actor is on another server — their profile there. */
   actorProfileUrl?: string | null;
+  /** An account elsewhere: its id on this server (its page, and answering its follow request). */
+  actorRemoteId?: number | null;
   /** Note notices: the recipient's note, and for a reply or quote the note that caused it. */
   noteId?: number | null;
   noteExcerpt?: string | null;
