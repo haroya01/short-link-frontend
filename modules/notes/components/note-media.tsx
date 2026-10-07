@@ -7,7 +7,42 @@ import type { NoteMedia as NoteImage } from "@/modules/notes/api/notes";
 import { cn } from "@/lib/utils";
 import { PhotoLightbox } from "@/app/[locale]/u/[username]/_components/photo-lightbox";
 
+// Video and audio come only from other servers (members attach pictures). They play from where they
+// live, with the browser's own controls; nothing autoplays in a feed.
 export function NoteMedia({ media }: { media: NoteImage[] }) {
+  const pictures = media.filter((item) => item.contentType.startsWith("image/"));
+  const videos = media.filter((item) => item.contentType.startsWith("video/"));
+  const sounds = media.filter((item) => item.contentType.startsWith("audio/"));
+  if (videos.length === 0 && sounds.length === 0) return <NotePictures media={pictures} />;
+  return (
+    <>
+      <NotePictures media={pictures} />
+      {videos.map((video) => (
+        <video
+          key={video.url}
+          src={video.url}
+          controls
+          playsInline
+          preload="metadata"
+          aria-label={video.altText ?? undefined}
+          className="mt-2.5 max-h-[430px] w-full rounded-2xl bg-black"
+        />
+      ))}
+      {sounds.map((sound) => (
+        <audio
+          key={sound.url}
+          src={sound.url}
+          controls
+          preload="none"
+          aria-label={sound.altText ?? undefined}
+          className="mt-2.5 w-full"
+        />
+      ))}
+    </>
+  );
+}
+
+function NotePictures({ media }: { media: NoteImage[] }) {
   const [viewing, setViewing] = useState<number | null>(null);
   if (media.length === 0) return null;
   const viewer =

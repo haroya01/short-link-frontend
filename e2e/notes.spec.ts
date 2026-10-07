@@ -618,3 +618,13 @@ test("a note page reports someone else's note with a reason", async ({ page }) =
   await dialog.getByRole("button", { name: "신고", exact: true }).click();
   await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();
 });
+
+test("video and audio from another server play in place with their own controls", async ({ page }) => {
+  await page.goto("/ko/blog/remote/9800");
+  const waves = page.locator('article[data-note-id="13"]');
+  await expect(waves.locator("video")).toHaveAttribute("src", "https://files.mastodon.social/waves.mp4", {
+    timeout: 30_000,
+  });
+  await expect(waves.locator("audio")).toHaveAttribute("controls", "");
+  await expect(waves.locator("video")).toHaveAttribute("aria-label", "밀려오는 파도");
+});

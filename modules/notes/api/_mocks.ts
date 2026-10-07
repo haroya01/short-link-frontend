@@ -160,6 +160,16 @@ let notes: Note[] = [
     likeCount: 2,
     createdAt: "2026-10-03T08:00:00Z",
   }),
+  note({
+    id: 13,
+    body: "오늘 찍은 파도 소리와 영상",
+    author: MINA,
+    createdAt: "2026-10-03T07:00:00Z",
+    media: [
+      { url: "https://files.mastodon.social/waves.mp4", altText: "밀려오는 파도", contentType: "video/mp4" },
+      { url: "https://files.mastodon.social/waves.mp3", altText: "파도 소리", contentType: "audio/mpeg" },
+    ],
+  }),
 ];
 let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
