@@ -888,10 +888,13 @@
     "note_poll": "<b>{actor}</b>'s poll has ended",
     "note_poll_mine": "Your poll has ended",
     "note_post": "<b>{actor}</b> posted a new note",
+    "note_edit": "<b>{actor}</b> edited a note you reposted or quoted",
     "prefNotePoll": "Poll results",
     "prefNotePollHint": "When your poll or a poll you voted in ends",
     "prefNotePost": "New notes from people with the bell on",
-    "prefNotePostHint": "When someone whose bell you turned on posts a new note"
+    "prefNotePostHint": "When someone whose bell you turned on posts a new note",
+    "prefNoteEdit": "Edits to notes you shared",
+    "prefNoteEditHint": "When the author edits a note you reposted or quoted"
   },
   "nav": {
     "events": "Events",

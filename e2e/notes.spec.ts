@@ -261,6 +261,8 @@ test("note notices group likes from any server, open the note, and send a remote
   await expect(follow).toHaveAttribute("target", "_blank");
   const posted = page.getByRole("link", { name: /yuna님이 새 노트를 올렸어요/ });
   await expect(posted).toHaveAttribute("href", /\/p\/yuna\/notes\/6$/);
+  const edited = page.getByRole("link", { name: /yuna님이 내가 리포스트하거나 인용한 노트를 수정했어요/ });
+  await expect(edited).toHaveAttribute("href", /\/p\/yuna\/notes\/5$/);
 });
 
 test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {

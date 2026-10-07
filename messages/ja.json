@@ -888,10 +888,13 @@
     "note_poll": "<b>{actor}</b>さんの投票が終了しました",
     "note_poll_mine": "あなたの投票が終了しました",
     "note_post": "<b>{actor}</b>さんが新しいノートを投稿しました",
+    "note_edit": "<b>{actor}</b>さんがリポストまたは引用したノートを編集しました",
     "prefNotePoll": "投票の終了",
     "prefNotePollHint": "自分の投票や参加した投票が終わったとき",
     "prefNotePost": "ベルをオンにした人の新しいノート",
-    "prefNotePostHint": "作家ページでベルをオンにした人が新しいノートを投稿したとき"
+    "prefNotePostHint": "作家ページでベルをオンにした人が新しいノートを投稿したとき",
+    "prefNoteEdit": "共有したノートの編集",
+    "prefNoteEditHint": "リポストまたは引用したノートを作者が編集したとき"
   },
   "nav": {
     "events": "イベント",
