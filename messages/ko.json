@@ -315,7 +315,16 @@
     "exportDomainBlocks": "차단한 서버",
     "exportBookmarks": "북마크",
     "exportLists": "리스트",
-    "exportError": "내보내지 못했어요"
+    "exportError": "내보내지 못했어요",
+    "importTitle": "데이터 가져오기",
+    "importSubtitle": "다른 마스토돈 서버에서 내보낸 파일을 올리면 지금 것에 더해요. 이 서버 회원과 다른 서버 계정 팔로우, 이 서버 회원 차단·뮤트·리스트, 차단한 서버, 북마크를 옮길 수 있어요.",
+    "importKind": "가져올 종류",
+    "importChoose": "파일 고르기",
+    "importStarted": "{count}줄을 가져오는 중이에요",
+    "importRunning": "앞의 가져오기가 끝나면 다시 해 주세요",
+    "importError": "가져오지 못했어요",
+    "importDone": "끝남",
+    "importProgress": "{total}줄 중 {imported}줄 가져옴 · 실패 {failed}줄"
   },
   "postEditor": {
     "backToList": "글 목록",
