@@ -306,7 +306,16 @@
     "settingsLockedHint": "चालू करने पर नए फ़ॉलोअर अनुरोध भेजेंगे और आपकी मंज़ूरी के बाद फ़ॉलोअर बनेंगे। दूसरे सर्वर के खातों पर भी यही लागू होता है।",
     "settingsUnlockTitle": "फ़ॉलोअर्स को ख़ुद मंज़ूरी देना बंद करें?",
     "settingsUnlockBody": "सभी लंबित फ़ॉलो अनुरोध मंज़ूर हो जाएंगे।",
-    "settingsUnlockConfirm": "बंद करें"
+    "settingsUnlockConfirm": "बंद करें",
+    "exportTitle": "डेटा निर्यात करें",
+    "exportSubtitle": "Mastodon जैसी CSV फ़ाइलें, जिन्हें दूसरे सर्वर के इम्पोर्ट में सीधे अपलोड कर सकते हैं।",
+    "exportFollowing": "फ़ॉलो",
+    "exportBlocks": "ब्लॉक किए गए खाते",
+    "exportMutes": "म्यूट किए गए खाते",
+    "exportDomainBlocks": "ब्लॉक किए गए सर्वर",
+    "exportBookmarks": "बुकमार्क",
+    "exportLists": "सूचियाँ",
+    "exportError": "निर्यात नहीं हो सका"
   },
   "postEditor": {
     "backToList": "पोस्ट",
