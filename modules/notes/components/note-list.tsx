@@ -15,6 +15,7 @@ export function NoteList({
   prepend = [],
   onQuoted,
   repostedBy,
+  showsPin = false,
 }: {
   load: (page: number) => Promise<NoteFeed>;
   initial?: NoteFeed | null;
@@ -22,6 +23,7 @@ export function NoteList({
   prepend?: Note[];
   onQuoted?: (note: Note) => void;
   repostedBy?: string;
+  showsPin?: boolean;
 }) {
   const t = useTranslations("notes");
   const [items, setItems] = useState<Note[]>(initial?.items ?? []);
@@ -84,7 +86,14 @@ export function NoteList({
             isNew={fresh.has(note.id)}
             repostedBy={repostedBy ?? note.repostedBy?.username}
             onQuoted={onQuoted}
-            onChange={(next) => setItems((current) => current.map((c) => (c.id === next.id ? next : c)))}
+            showsPin={showsPin}
+            onChange={(next) => {
+              if (next.pinned !== note.pinned) {
+                reload();
+                return;
+              }
+              setItems((current) => current.map((c) => (c.id === next.id ? next : c)));
+            }}
             onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}
           />
         ))}

@@ -17,6 +17,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
     <NoteList
       load={load}
       initial={initial}
+      showsPin
       empty={
         <EmptyState
           title={t("emptyAuthor")}

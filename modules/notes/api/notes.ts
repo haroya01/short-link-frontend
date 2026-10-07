@@ -77,6 +77,8 @@ export interface Note {
   contentWarning?: string | null;
   /** Photos are covered until tapped. Always on when there is a warning. */
   sensitive?: boolean;
+  /** The author pinned it to the top of their profile (at most five, as on Mastodon). */
+  pinned?: boolean;
 }
 
 export interface NoteFeed {
@@ -165,6 +167,11 @@ export function listNoteQuotes(id: number, page = 0): Promise<NoteFeed> {
   return request<NoteFeed>(`/api/v1/public/notes/${id}/quotes?page=${page}&size=20`, {
     method: "GET",
   });
+}
+
+export function setNotePin(id: number, on: boolean): Promise<{ pinned: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockPin(id, on));
+  return request(`/api/v1/notes/${id}/pin`, { method: on ? "PUT" : "DELETE" });
 }
 
 export function setNoteBookmark(id: number, on: boolean): Promise<{ bookmarked: boolean }> {
