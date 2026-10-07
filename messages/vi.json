@@ -4272,6 +4272,11 @@
       "NOTE_REPLY_BLOCKED": "Bạn không thể trả lời ghi chú này",
       "NOTE_IMAGE_INVALID": "Không tìm thấy ảnh",
       "other": "Không thể đăng"
-    }
+    },
+    "languageLabel": "Ngôn ngữ ghi chú",
+    "languagesTitle": "Ngôn ngữ ghi chú hiển thị",
+    "languagesHint": "Tất cả ghi chú và Thịnh hành chỉ hiện ghi chú bằng ngôn ngữ bạn chọn. Ghi chú không có ngôn ngữ, Đang theo dõi và danh sách vẫn như cũ.",
+    "languagesAll": "Tất cả ngôn ngữ",
+    "languagesFailed": "Không thể thay đổi ngôn ngữ. Vui lòng thử lại sau"
   }
 }

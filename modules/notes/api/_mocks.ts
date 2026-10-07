@@ -260,13 +260,20 @@ export function mockTrendingNotes(page: number): NoteFeed {
   return { items: page === 0 ? ranked.map(withQuotes) : [], page, hasNext: false };
 }
 
-export function mockFeedPreferences(): { showReposts: boolean } {
-  return { showReposts };
+let languages: string[] = [];
+
+export function mockFeedPreferences(): { showReposts: boolean; languages: string[] } {
+  return { showReposts, languages };
 }
 
-export function mockSetShowReposts(on: boolean): { showReposts: boolean } {
+export function mockSetShowReposts(on: boolean): { showReposts: boolean; languages: string[] } {
   showReposts = on;
-  return { showReposts };
+  return { showReposts, languages };
+}
+
+export function mockSetLanguages(codes: string[]): { showReposts: boolean; languages: string[] } {
+  languages = codes;
+  return { showReposts, languages };
 }
 
 export function mockRepostVisibility(username: string): { hidden: boolean } {

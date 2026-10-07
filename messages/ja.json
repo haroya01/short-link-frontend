@@ -4272,6 +4272,11 @@
       "NOTE_REPLY_BLOCKED": "返信できないノートです",
       "NOTE_IMAGE_INVALID": "写真が見つかりませんでした",
       "other": "投稿できませんでした"
-    }
+    },
+    "languageLabel": "ノートの言語",
+    "languagesTitle": "表示するノートの言語",
+    "languagesHint": "すべてのノートと人気には選んだ言語のノートだけが表示されます。言語が決まっていないノートとフォロー中・リストはそのままです。",
+    "languagesAll": "すべての言語",
+    "languagesFailed": "言語の設定を変更できませんでした。しばらくしてからもう一度お試しください"
   }
 }
