@@ -222,6 +222,16 @@ export type BlockedDomain = {
   warnedOwners?: number;
 };
 
+/** Mastodon's server blocks: limit keeps a server out of discovery, suspend cuts it off. */
+export type ServerBlockSeverity = "LIMIT" | "SUSPEND";
+
+export type ServerBlock = {
+  domain: string;
+  severity: ServerBlockSeverity;
+  reason: string | null;
+  createdAt: string;
+};
+
 export type AdminLinkSort = "recent" | "clicks";
 
 /** One row of the admin link browser paired with the same {@link LinkStats} the owner stats page renders. */

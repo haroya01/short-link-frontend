@@ -3,6 +3,7 @@
 import { notFound } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { AbuseReportsManager } from "@/components/admin/abuse-reports-manager";
+import { ServerBlockManager } from "@/components/admin/server-block-manager";
 
 /**
  * Blog moderation queue — the author-workspace home for admins. The blog layout's WorkspaceBody
@@ -18,8 +19,9 @@ export function BlogAdminView() {
   if (!authenticated || !isAdmin) notFound();
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
+    <main className="mx-auto max-w-5xl space-y-10 px-6 py-10">
       <AbuseReportsManager />
+      <ServerBlockManager />
     </main>
   );
 }
