@@ -28,6 +28,7 @@ import { noteLength } from "@/modules/notes/lib/note-text";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
+import { NotePollCard } from "./note-poll";
 import { NoteGlyph } from "./note-glyph";
 import { NoteHistoryDialog } from "./note-history-dialog";
 import { VisibilityIcon } from "./note-visibility";
@@ -349,6 +350,9 @@ export function NoteCard({
                 <NoteBody body={note.body} mentions={note.mentions} large={emphasis} />
               )}
             </div>
+            {note.poll && (
+              <NotePollCard noteId={note.id} poll={note.poll} onVoted={(poll) => onChange?.({ ...note, poll })} />
+            )}
             {note.sensitive && !note.contentWarning && !mediaShown && note.media.length > 0 ? (
               <button
                 type="button"

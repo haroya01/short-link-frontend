@@ -26,6 +26,7 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
         ? authorHref(myUsername, locale, `notes/${item.noteId}`)
         : undefined;
     case "NOTE_MENTION":
+    case "NOTE_POLL":
       return item.noteId != null && item.actorUsername && !item.actorProfileUrl
         ? authorHref(item.actorUsername, locale, `notes/${item.noteId}`)
         : undefined;

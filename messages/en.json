@@ -872,7 +872,11 @@
     "groupYesterday": "Yesterday",
     "groupWeek": "This week",
     "groupEarlier": "Earlier",
-    "unreadLabel": "Unread"
+    "unreadLabel": "Unread",
+    "note_poll": "<b>{actor}</b>'s poll has ended",
+    "note_poll_mine": "Your poll has ended",
+    "prefNotePoll": "Poll results",
+    "prefNotePollHint": "When your poll or a poll you voted in ends"
   },
   "nav": {
     "events": "Events",
@@ -4120,6 +4124,27 @@
     "bookmarkFailed": "Couldn't update the bookmark",
     "quotesLink": "{count, plural, one {# quote} other {# quotes}}",
     "quotesTitle": "Quotes",
-    "quotesEmpty": "No one has quoted this note yet"
+    "quotesEmpty": "No one has quoted this note yet",
+    "pollLabel": "Poll",
+    "pollMine": "Your choice",
+    "pollVote": "Vote",
+    "pollVoters": "{count, plural, one {# person voted} other {# people voted}}",
+    "pollEnded": "Closed",
+    "pollMinutesLeft": "{count}m left",
+    "pollHoursLeft": "{count}h left",
+    "pollDaysLeft": "{count}d left",
+    "pollShowResults": "See results",
+    "pollBackToVote": "Back to voting",
+    "pollVoteFailed": "Couldn't vote",
+    "pollOptionPlaceholder": "Choice {n}",
+    "pollRemoveOption": "Remove choice",
+    "pollAddOption": "Add choice",
+    "pollDuration": "Duration",
+    "pollMinutes": "{count, plural, one {# minute} other {# minutes}}",
+    "pollHours": "{count, plural, one {# hour} other {# hours}}",
+    "pollDays": "{count, plural, one {# day} other {# days}}",
+    "pollMultiple": "Multiple choice",
+    "pollAdd": "Add poll",
+    "pollRemove": "Remove poll"
   }
 }

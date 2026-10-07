@@ -10,6 +10,8 @@ const noteMocks: typeof import("./_mocks") | null =
 export const NOTE_MAX_LENGTH = 500;
 export const NOTE_MAX_IMAGES = 4;
 export const NOTE_ALT_MAX_LENGTH = 1500;
+export const NOTE_POLL_MAX_OPTIONS = 4;
+export const NOTE_POLL_OPTION_MAX_LENGTH = 50;
 
 export interface NoteAuthor {
   id: number;
@@ -80,6 +82,26 @@ export interface Note {
   /** The author pinned it to the top of their profile (at most five, as on Mastodon). */
   pinned?: boolean;
   visibility?: NoteVisibility;
+  poll?: NotePoll | null;
+}
+
+/** Mastodon's poll. Counts are public; the author gets `voted: true` and only sees results.
+ *  `voted` and `ownVotes` are null for anonymous readers. */
+export interface NotePoll {
+  expiresAt: string;
+  expired: boolean;
+  multiple: boolean;
+  votesCount: number;
+  votersCount: number;
+  options: { title: string; votesCount: number }[];
+  voted: boolean | null;
+  ownVotes: number[] | null;
+}
+
+export interface NotePollDraft {
+  options: string[];
+  expiresIn: number;
+  multiple: boolean;
 }
 
 export interface NoteFeed {
@@ -109,6 +131,7 @@ export interface NoteDraft {
   sensitive?: boolean;
   /** Omitted on a reply: the server keeps the parent's visibility, as Mastodon does. */
   visibility?: NoteVisibility | null;
+  poll?: NotePollDraft | null;
 }
 
 export const NOTE_MAX_WARNING_LENGTH = 100;
@@ -339,6 +362,11 @@ export function createNote(draft: NoteDraft): Promise<Note> {
 export function editNote(id: number, body: string): Promise<Note> {
   if (noteMocks) return Promise.resolve(noteMocks.mockEdit(id, body));
   return request<Note>(`/api/v1/notes/${id}`, { method: "PATCH", body: { body } });
+}
+
+export function voteInPoll(id: number, choices: number[]): Promise<NotePoll> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockVote(id, choices));
+  return request<NotePoll>(`/api/v1/notes/${id}/poll/votes`, { method: "POST", body: { choices } });
 }
 
 export function deleteNote(id: number): Promise<void> {

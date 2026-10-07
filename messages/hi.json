@@ -872,7 +872,11 @@
     "groupYesterday": "कल",
     "groupWeek": "इस सप्ताह",
     "groupEarlier": "पहले",
-    "unreadLabel": "अपठित"
+    "unreadLabel": "अपठित",
+    "note_poll": "<b>{actor}</b> का पोल समाप्त हो गया",
+    "note_poll_mine": "आपका पोल समाप्त हो गया",
+    "prefNotePoll": "पोल परिणाम",
+    "prefNotePollHint": "जब आपका पोल या जिस पोल में आपने वोट किया वह समाप्त हो"
   },
   "nav": {
     "events": "इवेंट",
@@ -4120,6 +4124,27 @@
     "bookmarkFailed": "बुकमार्क नहीं बदल सका",
     "quotesLink": "{count} उद्धरण",
     "quotesTitle": "उद्धरण",
-    "quotesEmpty": "अभी तक किसी ने इस नोट को उद्धृत नहीं किया"
+    "quotesEmpty": "अभी तक किसी ने इस नोट को उद्धृत नहीं किया",
+    "pollLabel": "पोल",
+    "pollMine": "आपका चुनाव",
+    "pollVote": "वोट करें",
+    "pollVoters": "{count} लोगों ने वोट किया",
+    "pollEnded": "बंद",
+    "pollMinutesLeft": "{count} मिनट बाकी",
+    "pollHoursLeft": "{count} घंटे बाकी",
+    "pollDaysLeft": "{count} दिन बाकी",
+    "pollShowResults": "परिणाम देखें",
+    "pollBackToVote": "वोटिंग पर वापस जाएँ",
+    "pollVoteFailed": "वोट नहीं हो सका",
+    "pollOptionPlaceholder": "विकल्प {n}",
+    "pollRemoveOption": "विकल्प हटाएँ",
+    "pollAddOption": "विकल्प जोड़ें",
+    "pollDuration": "अवधि",
+    "pollMinutes": "{count} मिनट",
+    "pollHours": "{count} घंटे",
+    "pollDays": "{count} दिन",
+    "pollMultiple": "एकाधिक विकल्प",
+    "pollAdd": "पोल जोड़ें",
+    "pollRemove": "पोल हटाएँ"
   }
 }
