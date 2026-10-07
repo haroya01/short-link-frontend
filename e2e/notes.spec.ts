@@ -225,6 +225,29 @@ test("clicking a note's text opens it, while its links and buttons keep their ow
   await expect(page.getByRole("heading", { name: "답글" })).toBeVisible();
 });
 
+test("a note scheduled from the composer waits under it until it is canceled", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await expect(composer).toBeVisible({ timeout: 30_000 });
+  await composer.fill("내일 아침에 올릴 노트");
+  await page.getByRole("button", { name: "예약", exact: true, pressed: false }).click();
+  await expect(page.getByLabel("올릴 때")).toBeVisible();
+  await page.getByRole("button", { name: "예약", exact: true, pressed: false }).click();
+  await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
+    .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+  await expect(page.getByText(/에 올릴게요$/)).toBeVisible();
+  await expect(composer).toHaveValue("");
+
+  const panel = page.getByRole("button", { name: /예약한 노트 2/ });
+  await panel.click();
+  await expect(page.getByText("답글을 달 노트가 지워졌어요")).toBeVisible();
+  const mine = page.getByRole("listitem").filter({ hasText: "내일 아침에 올릴 노트" });
+  await expect(mine).toBeVisible();
+  await mine.getByRole("button", { name: "취소" }).click();
+  await expect(mine).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /예약한 노트 1/ })).toBeVisible();
+});
+
 test("a note with a link shows its card, and the composer previews one while typing", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const seed = page.locator('article[data-note-id="3"]');

@@ -506,6 +506,47 @@ export function getNoteThread(id: number): Promise<NoteThread> {
   return request<NoteThread>(`/api/v1/public/notes/${id}`, { method: "GET" });
 }
 
+/** Mastodon's scheduled statuses: kept as written and posted when due; failure names why one could not be. */
+export interface ScheduledNote {
+  id: number;
+  scheduledAt: string;
+  body: string | null;
+  contentWarning: string | null;
+  visibility: string | null;
+  imageCount: number;
+  poll: boolean;
+  inReplyToId: number | null;
+  quotedNoteId: number | null;
+  quotedPostId: number | null;
+  failure: string | null;
+}
+
+export function scheduleNote(draft: NoteDraft, scheduledAt: string): Promise<ScheduledNote> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSchedule(draft, scheduledAt));
+  return request<ScheduledNote>("/api/v1/notes/scheduled", {
+    method: "POST",
+    body: { note: draft, scheduledAt },
+  });
+}
+
+export function listScheduledNotes(): Promise<ScheduledNote[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockScheduledNotes());
+  return request<ScheduledNote[]>("/api/v1/notes/scheduled", { method: "GET" });
+}
+
+export function rescheduleNote(id: number, scheduledAt: string): Promise<ScheduledNote> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockReschedule(id, scheduledAt));
+  return request<ScheduledNote>(`/api/v1/notes/scheduled/${id}`, {
+    method: "PATCH",
+    body: { scheduledAt },
+  });
+}
+
+export async function cancelScheduledNote(id: number): Promise<void> {
+  if (noteMocks) return noteMocks.mockCancelScheduled(id);
+  await request<unknown>(`/api/v1/notes/scheduled/${id}`, { method: "DELETE" });
+}
+
 export function createNote(draft: NoteDraft): Promise<Note> {
   if (noteMocks) return Promise.resolve(noteMocks.mockCreate(draft));
   return request<Note>("/api/v1/notes", { method: "POST", body: draft });

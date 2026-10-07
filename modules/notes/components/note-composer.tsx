@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChartBar, Check, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
+import { ChartBar, Check, Clock, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { useToast } from "@/components/ui/toast";
 import {
   createNote,
   getFederationSettings,
+  scheduleNote,
   NOTE_ALT_MAX_LENGTH,
   NOTE_MAX_IMAGES,
   NOTE_MAX_LENGTH,
@@ -32,6 +34,7 @@ import { NoteLinkCard } from "./note-link-card";
 import { emptyPoll, NotePollEditor, pollReady } from "./note-poll";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
+import { defaultLocal, earliestLocal, scheduleError, ScheduledNotesPanel, useWhen } from "./scheduled-notes";
 
 type PendingImage = {
   id: string;
@@ -69,6 +72,10 @@ export function NoteComposer({
   const [focused, setFocused] = useState(false);
   const [altEditing, setAltEditing] = useState<string | null>(null);
   const [poll, setPoll] = useState<NotePollDraft | null>(null);
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [scheduledVersion, setScheduledVersion] = useState(0);
+  const { toast } = useToast();
+  const when = useWhen();
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const noticeChecked = useRef(false);
@@ -180,7 +187,7 @@ export function NoteComposer({
     if (!(await acknowledgeFederation())) return;
     setPosting(true);
     try {
-      const note = await createNote({
+      const draft = {
         body,
         images: images.map((image) => ({ key: image.key as string, altText: image.altText })),
         quotedPostId: quote?.id ?? null,
@@ -190,7 +197,20 @@ export function NoteComposer({
         sensitive: images.length > 0 && sensitive,
         visibility,
         poll: poll ? { ...poll, options: poll.options.map((option) => option.trim()) } : null,
-      });
+      };
+      if (scheduledAt) {
+        let scheduled;
+        try {
+          scheduled = await scheduleNote(draft, new Date(scheduledAt).toISOString());
+        } catch (e) {
+          setError(t(scheduleError(e)));
+          return;
+        }
+        toast(t("scheduledToast", { when: when(scheduled.scheduledAt) }));
+        setScheduledAt("");
+        setScheduledVersion((v) => v + 1);
+      }
+      const note = scheduledAt ? null : await createNote(draft);
       images.forEach((image) => URL.revokeObjectURL(image.previewUrl));
       setPoll(null);
       setBody("");
@@ -200,7 +220,7 @@ export function NoteComposer({
       setSensitive(false);
       setVisibility(inReplyToId ? null : "public");
       onClearQuote?.();
-      onCreated(!note.linkPreview && linkCard ? { ...note, linkPreview: linkCard } : note);
+      if (note) onCreated(!note.linkPreview && linkCard ? { ...note, linkPreview: linkCard } : note);
       setLinkCard(null);
     } catch {
       setError(t("postFailed"));
@@ -221,7 +241,7 @@ export function NoteComposer({
           : "border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500",
       )}
     >
-      {posting ? t("posting") : inReplyToId ? t("replySubmit") : t("submit")}
+      {posting ? t("posting") : scheduledAt ? t("scheduleSubmit") : inReplyToId ? t("replySubmit") : t("submit")}
     </button>
   );
 
@@ -393,6 +413,30 @@ export function NoteComposer({
       {quotedNote && <QuotedNoteCard note={quotedNote} linked={false} />}
       {cardUrl && linkCard && linkCard.url === cardUrl && <NoteLinkCard preview={linkCard} linked={false} />}
 
+      {scheduledAt && (
+        <div className="mt-2 flex items-center gap-2 text-[13px] text-slate-600 dark:text-slate-300">
+          <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <label className="inline-flex items-center gap-2">
+            {t("scheduleLabel")}
+            <input
+              type="datetime-local"
+              value={scheduledAt}
+              min={earliestLocal()}
+              onChange={(e) => setScheduledAt(e.target.value)}
+              className="focus-ring rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => setScheduledAt("")}
+            aria-label={t("scheduleRemove")}
+            className="focus-ring rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden />
+          </button>
+        </div>
+      )}
+
       {error && (
         <p role="alert" className="mt-2 text-[13px] text-red-600 dark:text-red-400">
           {error}
@@ -470,6 +514,21 @@ export function NoteComposer({
                 <EyeOff className="h-5 w-5" strokeWidth={sensitive ? 2.25 : 1.75} aria-hidden />
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => setScheduledAt((current) => (current ? "" : defaultLocal()))}
+              aria-pressed={scheduledAt !== ""}
+              aria-label={t("scheduleToggle")}
+              title={t("scheduleToggle")}
+              className={cn(
+                "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
+                scheduledAt
+                  ? "text-slate-900 dark:text-slate-100"
+                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+              )}
+            >
+              <Clock className="h-5 w-5" strokeWidth={scheduledAt ? 2.25 : 1.75} aria-hidden />
+            </button>
             <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
               <VisibilityIcon visibility={visibility ?? "public"} className="h-3.5 w-3.5 shrink-0" />
               <select
@@ -491,6 +550,7 @@ export function NoteComposer({
             </div>
           </div>
         )}
+        {!inReplyToId && <ScheduledNotesPanel version={scheduledVersion} />}
       </div>
       {confirmDialog}
     </div>

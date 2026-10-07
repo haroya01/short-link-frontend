@@ -4245,6 +4245,33 @@
     "domainBlocksTitle": "Blocked servers",
     "domainBlocksHint": "Notes, notifications and follows from these servers are all removed. Block one from the ⋯ menu on an account's page.",
     "domainBlocksEmpty": "No blocked servers.",
-    "domainUnblockShort": "Unblock"
+    "domainUnblockShort": "Unblock",
+    "scheduleToggle": "Schedule",
+    "scheduleLabel": "Post at",
+    "scheduleRemove": "Remove schedule",
+    "scheduleSubmit": "Schedule",
+    "scheduledToast": "Will post {when}",
+    "scheduleTooSoon": "You can schedule from 5 minutes ahead",
+    "scheduleLimit": "You've reached the limit of scheduled notes",
+    "scheduleFailed": "Couldn't schedule. Please try again shortly",
+    "scheduledTitle": "{count, plural, one {# scheduled note} other {# scheduled notes}}",
+    "scheduledCancel": "Cancel",
+    "scheduledCancelLabel": "Cancel the note scheduled for {when}",
+    "scheduledCanceled": "Schedule canceled",
+    "scheduledMove": "Change time",
+    "scheduledMoved": "Posting time changed",
+    "scheduledSave": "Save",
+    "scheduledImages": "{count, plural, one {# photo} other {# photos}}",
+    "scheduledPoll": "Poll",
+    "scheduledReply": "Reply",
+    "scheduledQuote": "Quote",
+    "scheduledFailure": {
+      "NOTE_NOT_FOUND": "The note you were replying to was deleted",
+      "NOTE_QUOTED_NOTE_NOT_FOUND": "The note you were quoting was deleted",
+      "NOTE_QUOTE_NOT_FOUND": "The post you were quoting was deleted",
+      "NOTE_REPLY_BLOCKED": "You can't reply to that note",
+      "NOTE_IMAGE_INVALID": "Couldn't find the photo",
+      "other": "Couldn't post"
+    }
   }
 }
