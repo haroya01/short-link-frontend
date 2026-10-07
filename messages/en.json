@@ -306,7 +306,25 @@
     "settingsLockedHint": "New followers send a request and become followers once you approve. The same goes for accounts on other servers.",
     "settingsUnlockTitle": "Stop approving followers manually?",
     "settingsUnlockBody": "Every pending follow request will be approved.",
-    "settingsUnlockConfirm": "Turn off"
+    "settingsUnlockConfirm": "Turn off",
+    "exportTitle": "Export data",
+    "exportSubtitle": "Mastodon-compatible CSV files, ready to upload to another server's import.",
+    "exportFollowing": "Follows",
+    "exportBlocks": "Blocked accounts",
+    "exportMutes": "Muted accounts",
+    "exportDomainBlocks": "Blocked servers",
+    "exportBookmarks": "Bookmarks",
+    "exportLists": "Lists",
+    "exportError": "Couldn't export",
+    "importTitle": "Import data",
+    "importSubtitle": "Upload a file exported from another Mastodon server to add it to what you have. You can bring follows of members here and accounts elsewhere, blocks, mutes and lists of members here, blocked servers, and bookmarks.",
+    "importKind": "What to import",
+    "importChoose": "Choose file",
+    "importStarted": "{count, plural, one {Importing # line} other {Importing # lines}}",
+    "importRunning": "Try again when the current import finishes",
+    "importError": "Couldn't import",
+    "importDone": "Done",
+    "importProgress": "Imported {imported} of {total} lines · {failed} failed"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -4358,6 +4376,14 @@
     "emptyFederated": "No notes from other servers yet. Follow someone by searching @name@server and their notes arrive here.",
     "signInForFederated": "Sign in to see public notes this server received from other servers",
     "trendingTagsTitle": "Trending hashtags",
-    "trendingTagsAccounts": "{count, plural, one {# person used it this week} other {# people used it this week}}"
+    "trendingTagsAccounts": "{count, plural, one {# person used it this week} other {# people used it this week}}",
+    "trendingLinksTitle": "Trending links",
+    "trendingLinksAccounts": "{count, plural, one {# person shared it this week} other {# people shared it this week}}",
+    "linkTitle": "Link",
+    "emptyLink": "No notes carry this link yet",
+    "suggestionsTitle": "Who to follow",
+    "suggestionsFriends": "{count, plural, one {Followed by # person you follow} other {Followed by # people you follow}}",
+    "suggestionsPopular": "Popular lately",
+    "suggestionsDismiss": "Don't suggest {name}"
   }
 }

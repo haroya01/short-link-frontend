@@ -306,7 +306,25 @@
     "settingsLockedHint": "Khi bật, người theo dõi mới sẽ gửi yêu cầu và chỉ trở thành người theo dõi khi bạn chấp nhận. Tài khoản ở máy chủ khác cũng vậy.",
     "settingsUnlockTitle": "Tắt tự duyệt người theo dõi?",
     "settingsUnlockBody": "Mọi yêu cầu theo dõi đang chờ sẽ được chấp nhận.",
-    "settingsUnlockConfirm": "Tắt"
+    "settingsUnlockConfirm": "Tắt",
+    "exportTitle": "Xuất dữ liệu",
+    "exportSubtitle": "Tệp CSV giống Mastodon, có thể tải thẳng lên phần nhập của máy chủ khác.",
+    "exportFollowing": "Đang theo dõi",
+    "exportBlocks": "Tài khoản đã chặn",
+    "exportMutes": "Tài khoản đã tắt tiếng",
+    "exportDomainBlocks": "Máy chủ đã chặn",
+    "exportBookmarks": "Dấu trang",
+    "exportLists": "Danh sách",
+    "exportError": "Không thể xuất",
+    "importTitle": "Nhập dữ liệu",
+    "importSubtitle": "Tải lên tệp xuất từ máy chủ Mastodon khác để thêm vào dữ liệu hiện có. Bạn có thể chuyển lượt theo dõi thành viên ở đây và tài khoản nơi khác, chặn·tắt tiếng·danh sách thành viên ở đây, máy chủ đã chặn và dấu trang.",
+    "importKind": "Loại cần nhập",
+    "importChoose": "Chọn tệp",
+    "importStarted": "Đang nhập {count} dòng",
+    "importRunning": "Hãy thử lại khi lần nhập trước xong",
+    "importError": "Không thể nhập",
+    "importDone": "Xong",
+    "importProgress": "Đã nhập {imported}/{total} dòng · {failed} lỗi"
   },
   "postEditor": {
     "backToList": "Bài viết",
@@ -4358,6 +4376,14 @@
     "emptyFederated": "Chưa nhận ghi chú nào từ máy chủ khác. Tìm @tên@máy-chủ để theo dõi, ghi chú của họ sẽ đến đây.",
     "signInForFederated": "Đăng nhập để xem ghi chú công khai mà máy chủ này nhận từ máy chủ khác",
     "trendingTagsTitle": "Thẻ thịnh hành",
-    "trendingTagsAccounts": "{count} người đã dùng tuần này"
+    "trendingTagsAccounts": "{count} người đã dùng tuần này",
+    "trendingLinksTitle": "Liên kết thịnh hành",
+    "trendingLinksAccounts": "{count} người đã chia sẻ tuần này",
+    "linkTitle": "Liên kết",
+    "emptyLink": "Chưa có ghi chú nào chứa liên kết này",
+    "suggestionsTitle": "Gợi ý theo dõi",
+    "suggestionsFriends": "{count} người bạn theo dõi đang theo dõi",
+    "suggestionsPopular": "Gần đây được nhiều người theo dõi",
+    "suggestionsDismiss": "Không gợi ý {name}"
   }
 }

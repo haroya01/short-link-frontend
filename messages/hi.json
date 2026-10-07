@@ -306,7 +306,25 @@
     "settingsLockedHint": "चालू करने पर नए फ़ॉलोअर अनुरोध भेजेंगे और आपकी मंज़ूरी के बाद फ़ॉलोअर बनेंगे। दूसरे सर्वर के खातों पर भी यही लागू होता है।",
     "settingsUnlockTitle": "फ़ॉलोअर्स को ख़ुद मंज़ूरी देना बंद करें?",
     "settingsUnlockBody": "सभी लंबित फ़ॉलो अनुरोध मंज़ूर हो जाएंगे।",
-    "settingsUnlockConfirm": "बंद करें"
+    "settingsUnlockConfirm": "बंद करें",
+    "exportTitle": "डेटा निर्यात करें",
+    "exportSubtitle": "Mastodon जैसी CSV फ़ाइलें, जिन्हें दूसरे सर्वर के इम्पोर्ट में सीधे अपलोड कर सकते हैं।",
+    "exportFollowing": "फ़ॉलो",
+    "exportBlocks": "ब्लॉक किए गए खाते",
+    "exportMutes": "म्यूट किए गए खाते",
+    "exportDomainBlocks": "ब्लॉक किए गए सर्वर",
+    "exportBookmarks": "बुकमार्क",
+    "exportLists": "सूचियाँ",
+    "exportError": "निर्यात नहीं हो सका",
+    "importTitle": "डेटा इम्पोर्ट करें",
+    "importSubtitle": "किसी दूसरे Mastodon सर्वर से निर्यात की गई फ़ाइल अपलोड करें, वह आपके मौजूदा डेटा में जुड़ जाएगी। यहाँ के सदस्यों और दूसरे सर्वर के खातों के फ़ॉलो, यहाँ के सदस्यों के ब्लॉक·म्यूट·सूचियाँ, ब्लॉक किए गए सर्वर और बुकमार्क ला सकते हैं।",
+    "importKind": "क्या इम्पोर्ट करें",
+    "importChoose": "फ़ाइल चुनें",
+    "importStarted": "{count} पंक्तियाँ इम्पोर्ट हो रही हैं",
+    "importRunning": "चल रहा इम्पोर्ट पूरा होने के बाद फिर कोशिश करें",
+    "importError": "इम्पोर्ट नहीं हो सका",
+    "importDone": "पूरा",
+    "importProgress": "{total} में से {imported} पंक्तियाँ इम्पोर्ट · {failed} विफल"
   },
   "postEditor": {
     "backToList": "पोस्ट",
@@ -4358,6 +4376,14 @@
     "emptyFederated": "अभी दूसरे सर्वर से कोई नोट नहीं मिला। खोज में @नाम@सर्वर लिखकर फ़ॉलो करें, उनके नोट यहाँ आएँगे।",
     "signInForFederated": "साइन इन करके देखें कि इस सर्वर को दूसरे सर्वर से कौन से सार्वजनिक नोट मिले",
     "trendingTagsTitle": "ट्रेंडिंग हैशटैग",
-    "trendingTagsAccounts": "इस हफ़्ते {count} लोगों ने इस्तेमाल किया"
+    "trendingTagsAccounts": "इस हफ़्ते {count} लोगों ने इस्तेमाल किया",
+    "trendingLinksTitle": "ट्रेंडिंग लिंक",
+    "trendingLinksAccounts": "इस हफ़्ते {count} लोगों ने साझा किया",
+    "linkTitle": "लिंक",
+    "emptyLink": "इस लिंक वाला कोई नोट अभी नहीं है",
+    "suggestionsTitle": "किसे फ़ॉलो करें",
+    "suggestionsFriends": "आपके फ़ॉलो किए गए {count} लोग फ़ॉलो करते हैं",
+    "suggestionsPopular": "इन दिनों लोकप्रिय",
+    "suggestionsDismiss": "{name} का सुझाव न दें"
   }
 }

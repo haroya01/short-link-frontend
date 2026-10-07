@@ -306,7 +306,25 @@
     "settingsLockedHint": "オンにすると、新しいフォロワーはリクエストを送り、あなたが承認するとフォロワーになります。他のサーバーのアカウントも同じです。",
     "settingsUnlockTitle": "フォローの手動承認をオフにしますか？",
     "settingsUnlockBody": "待っているフォローリクエストはすべて承認されます。",
-    "settingsUnlockConfirm": "オフにする"
+    "settingsUnlockConfirm": "オフにする",
+    "exportTitle": "データのエクスポート",
+    "exportSubtitle": "Mastodonと同じCSVファイルなので、他のサーバーのインポートにそのまま使えます。",
+    "exportFollowing": "フォロー",
+    "exportBlocks": "ブロックしたアカウント",
+    "exportMutes": "ミュートしたアカウント",
+    "exportDomainBlocks": "ブロックしたサーバー",
+    "exportBookmarks": "ブックマーク",
+    "exportLists": "リスト",
+    "exportError": "エクスポートできませんでした",
+    "importTitle": "データのインポート",
+    "importSubtitle": "他のMastodonサーバーからエクスポートしたファイルをアップロードすると、今のものに追加されます。このサーバーの会員と他のサーバーのアカウントのフォロー、このサーバーの会員のブロック・ミュート・リスト、ブロックしたサーバー、ブックマークを移せます。",
+    "importKind": "インポートする種類",
+    "importChoose": "ファイルを選ぶ",
+    "importStarted": "{count}行をインポートしています",
+    "importRunning": "前のインポートが終わってからもう一度お試しください",
+    "importError": "インポートできませんでした",
+    "importDone": "完了",
+    "importProgress": "{total}行中{imported}行をインポート · 失敗{failed}行"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -4358,6 +4376,14 @@
     "emptyFederated": "ほかのサーバーのノートはまだありません。検索で @名前@サーバー を入力してフォローすると、そのノートがここに届きます。",
     "signInForFederated": "ログインすると、このサーバーが受け取ったほかのサーバーの公開ノートを見られます",
     "trendingTagsTitle": "トレンドのハッシュタグ",
-    "trendingTagsAccounts": "今週 {count} 人が使いました"
+    "trendingTagsAccounts": "今週 {count} 人が使いました",
+    "trendingLinksTitle": "トレンドのリンク",
+    "trendingLinksAccounts": "今週 {count} 人が共有しました",
+    "linkTitle": "リンク",
+    "emptyLink": "このリンクを載せたノートはまだありません",
+    "suggestionsTitle": "おすすめのアカウント",
+    "suggestionsFriends": "フォロー中の{count}人がフォロー",
+    "suggestionsPopular": "最近よくフォローされています",
+    "suggestionsDismiss": "{name}を表示しない"
   }
 }

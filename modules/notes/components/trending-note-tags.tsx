@@ -52,7 +52,7 @@ export function TrendingNoteTags() {
   );
 }
 
-function SparkBars({ history }: { history: number[] }) {
+export function SparkBars({ history }: { history: number[] }) {
   const peak = Math.max(1, ...history);
   return (
     <span className="flex h-[22px] shrink-0 items-end gap-[3px]" aria-hidden>
