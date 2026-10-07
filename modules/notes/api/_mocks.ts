@@ -312,6 +312,28 @@ let remoteAccounts: RemoteAccount[] = [
   },
 ];
 let nextRemoteId = 9900;
+let domainBlocks: { domain: string; createdAt: string }[] = [];
+
+const shown = (a: RemoteAccount): RemoteAccount => ({
+  ...a,
+  domainBlocked: domainBlocks.some((b) => b.domain === a.domain),
+});
+
+export function mockDomainBlocks() {
+  return domainBlocks;
+}
+
+export function mockSetDomainBlocked(domain: string, on: boolean): Promise<void> {
+  const key = domain.toLowerCase();
+  domainBlocks = domainBlocks.filter((b) => b.domain !== key);
+  if (on) {
+    domainBlocks = [...domainBlocks, { domain: key, createdAt: new Date().toISOString() }];
+    remoteAccounts = remoteAccounts.map((a) =>
+      a.domain === key ? { ...a, following: false, requested: false } : a,
+    );
+  }
+  return Promise.resolve();
+}
 
 // A follow request is accepted the next time the account is read, as a server that does not lock
 // accounts answers within seconds.
@@ -322,7 +344,7 @@ export function mockLookupRemote(acct: string): Promise<RemoteAccount> {
   }
   const key = `${user}@${domain.toLowerCase()}`;
   const known = remoteAccounts.find((a) => a.acct === key);
-  if (known) return Promise.resolve(known);
+  if (known) return Promise.resolve(shown(known));
   const account: RemoteAccount = {
     id: nextRemoteId++,
     acct: key,
@@ -335,7 +357,7 @@ export function mockLookupRemote(acct: string): Promise<RemoteAccount> {
     requested: false,
   };
   remoteAccounts = [...remoteAccounts, account];
-  return Promise.resolve(account);
+  return Promise.resolve(shown(account));
 }
 
 export function mockRemoteAccount(id: number): Promise<RemoteAccount> {
@@ -348,18 +370,18 @@ export function mockRemoteAccount(id: number): Promise<RemoteAccount> {
       a.id === id ? { ...a, requested: false, following: true } : a,
     );
   }
-  return Promise.resolve(remoteAccounts.find((a) => a.id === id)!);
+  return Promise.resolve(shown(remoteAccounts.find((a) => a.id === id)!));
 }
 
 export function mockSetRemoteFollow(id: number, on: boolean): Promise<RemoteAccount> {
   remoteAccounts = remoteAccounts.map((a) =>
     a.id === id ? { ...a, requested: on, following: false } : a,
   );
-  return Promise.resolve(remoteAccounts.find((a) => a.id === id)!);
+  return Promise.resolve(shown(remoteAccounts.find((a) => a.id === id)!));
 }
 
 export function mockRemoteFollowing(): RemoteAccount[] {
-  return remoteAccounts.filter((a) => a.following || a.requested);
+  return remoteAccounts.filter((a) => a.following || a.requested).map(shown);
 }
 
 export function mockRemoteAccountNotes(id: number, page: number): NoteFeed {

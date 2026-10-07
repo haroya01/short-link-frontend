@@ -210,6 +210,13 @@ export interface RemoteAccount {
   following: boolean;
   /** A follow was sent and their server has not answered yet. */
   requested: boolean;
+  /** The viewer blocked this account's whole server. */
+  domainBlocked?: boolean;
+}
+
+export interface DomainBlock {
+  domain: string;
+  createdAt: string | null;
 }
 
 export function lookupRemoteAccount(acct: string): Promise<RemoteAccount> {
@@ -236,6 +243,19 @@ export function listRemoteFollowing(page = 0): Promise<RemoteAccount[]> {
   if (noteMocks) return Promise.resolve(noteMocks.mockRemoteFollowing());
   return request<RemoteAccount[]>(`/api/v1/federation/following?page=${page}&size=50`, {
     method: "GET",
+  });
+}
+
+export function listDomainBlocks(): Promise<DomainBlock[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockDomainBlocks());
+  return request<DomainBlock[]>("/api/v1/federation/domain-blocks", { method: "GET" });
+}
+
+/** Mastodon's domain block: follows there end, followers there go, its notes and notices stay out. */
+export async function setDomainBlocked(domain: string, on: boolean): Promise<void> {
+  if (noteMocks) return noteMocks.mockSetDomainBlocked(domain, on);
+  await request<unknown>(`/api/v1/federation/domain-blocks/${encodeURIComponent(domain)}`, {
+    method: on ? "PUT" : "DELETE",
   });
 }
 

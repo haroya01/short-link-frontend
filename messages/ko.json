@@ -4210,6 +4210,7 @@
       "disabled": "설정에서 노트 연합을 켜야 다른 서버 계정을 팔로우할 수 있어요",
       "missing": "그 서버에서 계정을 찾지 못했어요",
       "invalid": "아이디@서버 모양으로 적어 주세요",
+      "blocked": "차단한 서버의 계정은 팔로우할 수 없어요",
       "other": "반영하지 못했어요. 잠시 뒤 다시 시도해 주세요"
     },
     "remoteAccountSection": "다른 서버 계정",
@@ -4229,6 +4230,21 @@
     "unmuteConversation": "대화 알림 켜기",
     "conversationMuted": "이 대화의 알림을 껐어요",
     "conversationUnmuted": "이 대화의 알림을 다시 받아요",
-    "conversationMuteFailed": "대화 알림을 바꾸지 못했어요"
+    "conversationMuteFailed": "대화 알림을 바꾸지 못했어요",
+    "remoteMenu": "계정 메뉴",
+    "domainBlock": "{domain} 차단",
+    "domainUnblock": "{domain} 차단 해제",
+    "domainBlockConfirm": "{domain} 전체를 차단할까요?",
+    "domainBlockConfirmBody": "그 서버의 노트와 알림이 보이지 않고, 그 서버 계정 팔로우가 끊기며 그 서버의 팔로워도 빠져요. 한 사람만 문제라면 차단이나 뮤트로 충분해요.",
+    "domainBlockAction": "서버 차단",
+    "domainBlockedToast": "{domain}을 차단했어요",
+    "domainUnblockedToast": "{domain} 차단을 해제했어요",
+    "domainBlockFailed": "서버 차단을 바꾸지 못했어요. 잠시 뒤 다시 시도해 주세요",
+    "domainBlockedTitle": "차단한 서버예요",
+    "domainBlockedHint": "{domain}의 노트와 알림은 보이지 않아요.",
+    "domainBlocksTitle": "차단한 서버",
+    "domainBlocksHint": "그 서버의 노트·알림·팔로우가 모두 빠져요. 다른 서버 계정 페이지의 ⋯ 메뉴에서 차단할 수 있어요.",
+    "domainBlocksEmpty": "차단한 서버가 없어요.",
+    "domainUnblockShort": "차단 해제"
   }
 }

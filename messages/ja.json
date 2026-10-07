@@ -4210,6 +4210,7 @@
       "disabled": "設定でノート連合をオンにすると、ほかのサーバーのアカウントをフォローできます",
       "missing": "そのサーバーでアカウントが見つかりませんでした",
       "invalid": "ID@サーバーの形で入力してください",
+      "blocked": "ブロックしたサーバーのアカウントはフォローできません",
       "other": "反映できませんでした。少し待ってからもう一度お試しください"
     },
     "remoteAccountSection": "ほかのサーバーのアカウント",
@@ -4229,6 +4230,21 @@
     "unmuteConversation": "会話の通知をオン",
     "conversationMuted": "この会話の通知をオフにしました",
     "conversationUnmuted": "この会話の通知をまた受け取ります",
-    "conversationMuteFailed": "会話の通知を変更できませんでした"
+    "conversationMuteFailed": "会話の通知を変更できませんでした",
+    "remoteMenu": "アカウントメニュー",
+    "domainBlock": "{domain}をブロック",
+    "domainUnblock": "{domain}のブロックを解除",
+    "domainBlockConfirm": "{domain}全体をブロックしますか？",
+    "domainBlockConfirmBody": "そのサーバーのノートと通知が表示されなくなり、そのサーバーのアカウントのフォローが解除され、そのサーバーのフォロワーも外れます。一人だけが問題ならブロックやミュートで十分です。",
+    "domainBlockAction": "サーバーをブロック",
+    "domainBlockedToast": "{domain}をブロックしました",
+    "domainUnblockedToast": "{domain}のブロックを解除しました",
+    "domainBlockFailed": "サーバーのブロックを変更できませんでした。しばらくしてからもう一度お試しください",
+    "domainBlockedTitle": "ブロックしたサーバーです",
+    "domainBlockedHint": "{domain}のノートと通知は表示されません。",
+    "domainBlocksTitle": "ブロックしたサーバー",
+    "domainBlocksHint": "そのサーバーのノート・通知・フォローがすべて外れます。他のサーバーのアカウントページの⋯メニューからブロックできます。",
+    "domainBlocksEmpty": "ブロックしたサーバーはありません。",
+    "domainUnblockShort": "解除"
   }
 }

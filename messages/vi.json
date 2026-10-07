@@ -4210,6 +4210,7 @@
       "disabled": "Bật liên kết ghi chú trong cài đặt để theo dõi tài khoản ở máy chủ khác",
       "missing": "Không tìm thấy tài khoản trên máy chủ đó",
       "invalid": "Hãy viết theo dạng tên@máy chủ",
+      "blocked": "Bạn không thể theo dõi tài khoản trên máy chủ đã chặn",
       "other": "Không thể cập nhật. Hãy thử lại sau giây lát"
     },
     "remoteAccountSection": "Tài khoản ở máy chủ khác",
@@ -4229,6 +4230,21 @@
     "unmuteConversation": "Bật thông báo cuộc trò chuyện",
     "conversationMuted": "Đã tắt thông báo cuộc trò chuyện này",
     "conversationUnmuted": "Bạn sẽ lại nhận thông báo của cuộc trò chuyện này",
-    "conversationMuteFailed": "Không thể đổi thông báo cuộc trò chuyện"
+    "conversationMuteFailed": "Không thể đổi thông báo cuộc trò chuyện",
+    "remoteMenu": "Menu tài khoản",
+    "domainBlock": "Chặn {domain}",
+    "domainUnblock": "Bỏ chặn {domain}",
+    "domainBlockConfirm": "Chặn toàn bộ {domain}?",
+    "domainBlockConfirmBody": "Bạn sẽ không thấy ghi chú hay thông báo từ máy chủ đó, sẽ bỏ theo dõi các tài khoản ở đó và người theo dõi từ đó cũng bị xóa. Nếu chỉ một người gây phiền, chặn hoặc tắt tiếng họ là đủ.",
+    "domainBlockAction": "Chặn máy chủ",
+    "domainBlockedToast": "Đã chặn {domain}",
+    "domainUnblockedToast": "Đã bỏ chặn {domain}",
+    "domainBlockFailed": "Không thể thay đổi việc chặn máy chủ. Vui lòng thử lại sau",
+    "domainBlockedTitle": "Bạn đã chặn máy chủ này",
+    "domainBlockedHint": "Ghi chú và thông báo từ {domain} bị ẩn.",
+    "domainBlocksTitle": "Máy chủ đã chặn",
+    "domainBlocksHint": "Mọi ghi chú, thông báo và lượt theo dõi từ các máy chủ này đều bị loại bỏ. Bạn có thể chặn từ menu ⋯ trên trang tài khoản.",
+    "domainBlocksEmpty": "Chưa chặn máy chủ nào.",
+    "domainUnblockShort": "Bỏ chặn"
   }
 }

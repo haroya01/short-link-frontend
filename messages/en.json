@@ -4210,6 +4210,7 @@
       "disabled": "Turn on note federation in settings to follow accounts on other servers",
       "missing": "Couldn't find that account on its server",
       "invalid": "Write it as name@server",
+      "blocked": "You can't follow accounts on a server you blocked",
       "other": "Couldn't update. Try again in a moment"
     },
     "remoteAccountSection": "Account on another server",
@@ -4229,6 +4230,21 @@
     "unmuteConversation": "Unmute conversation",
     "conversationMuted": "Muted this conversation",
     "conversationUnmuted": "You'll hear from this conversation again",
-    "conversationMuteFailed": "Couldn't change the conversation's notifications"
+    "conversationMuteFailed": "Couldn't change the conversation's notifications",
+    "remoteMenu": "Account menu",
+    "domainBlock": "Block {domain}",
+    "domainUnblock": "Unblock {domain}",
+    "domainBlockConfirm": "Block all of {domain}?",
+    "domainBlockConfirmBody": "You won't see notes or notifications from that server, you'll unfollow its accounts, and its followers will be removed. If it's just one person, blocking or muting them is enough.",
+    "domainBlockAction": "Block server",
+    "domainBlockedToast": "Blocked {domain}",
+    "domainUnblockedToast": "Unblocked {domain}",
+    "domainBlockFailed": "Couldn't change the server block. Please try again shortly",
+    "domainBlockedTitle": "You blocked this server",
+    "domainBlockedHint": "Notes and notifications from {domain} are hidden.",
+    "domainBlocksTitle": "Blocked servers",
+    "domainBlocksHint": "Notes, notifications and follows from these servers are all removed. Block one from the ⋯ menu on an account's page.",
+    "domainBlocksEmpty": "No blocked servers.",
+    "domainUnblockShort": "Unblock"
   }
 }
