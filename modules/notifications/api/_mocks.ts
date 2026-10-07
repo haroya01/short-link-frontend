@@ -1,4 +1,5 @@
 import type { BlogNotificationPreferences, NotificationsPage } from "./notifications";
+import { mockPendingFollowRequests } from "./follow-requests";
 
 /** Demo/mock mode — lets the bell + page render and interact without a backend. */
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -16,8 +17,21 @@ const BASE = {
 } as const;
 
 export function mockNotificationsPage(): NotificationsPage {
+  const requests = mockPendingFollowRequests().map((r, i) => ({
+    ...BASE,
+    id: 700 + i,
+    type: "FOLLOW_REQUEST" as const,
+    actorId: null,
+    actorUsername: r.handle,
+    actorAvatarUrl: null,
+    actorProfileUrl: "remoteId" in r.origin ? `https://${r.handle.split("@")[1]}/@${r.handle.split("@")[0]}` : null,
+    actorRemoteId: "remoteId" in r.origin ? r.origin.remoteId : null,
+    read: false,
+    createdAt: r.requestedAt ?? new Date().toISOString(),
+  }));
   return {
     items: [
+      ...requests,
       {
         ...BASE,
         id: 21,
@@ -260,5 +274,6 @@ export function mockBlogNotificationPreferences(): BlogNotificationPreferences {
     NOTE_POST: true,
     NOTE_EDIT: true,
     REMOTE_FOLLOW: true,
+    FOLLOW_REQUEST: true,
   };
 }

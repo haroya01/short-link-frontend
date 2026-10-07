@@ -10,6 +10,7 @@ import {
   GitBranch,
   Heart,
   Link2,
+  Lock,
   MessageCircle,
   Pencil,
   Quote,
@@ -69,6 +70,7 @@ const ROWS: { type: NotificationType; icon: LucideIcon; labelKey: string; hintKe
     labelKey: "prefRemoteFollow",
     hintKey: "prefRemoteFollowHint",
   },
+  { type: "FOLLOW_REQUEST", icon: Lock, labelKey: "prefFollowRequest", hintKey: "prefFollowRequestHint" },
 ];
 
 export function BlogNotificationSettings() {

@@ -301,7 +301,12 @@
     "displayNameSave": "保存",
     "displayNameHint": "ノートとブログのプロフィールでユーザー名より先に表示されます。空にするとユーザー名が表示されます。",
     "displayNameSaved": "表示名を変更しました",
-    "displayNameFailed": "表示名を変更できませんでした"
+    "displayNameFailed": "表示名を変更できませんでした",
+    "settingsLocked": "フォローを手動で承認",
+    "settingsLockedHint": "オンにすると、新しいフォロワーはリクエストを送り、あなたが承認するとフォロワーになります。他のサーバーのアカウントも同じです。",
+    "settingsUnlockTitle": "フォローの手動承認をオフにしますか？",
+    "settingsUnlockBody": "待っているフォローリクエストはすべて承認されます。",
+    "settingsUnlockConfirm": "オフにする"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -734,7 +739,13 @@
     "reportFailed": "通報を送信できませんでした。もう一度お試しください。",
     "tabNotes": "ノート",
     "tabReposts": "リポスト",
-    "viewAvatar": "プロフィール写真を拡大"
+    "viewAvatar": "プロフィール写真を拡大",
+    "requested": "リクエスト済み",
+    "withdrawRequestTitle": "フォローリクエストを取り消しますか？",
+    "withdrawRequest": "リクエストを取り消す",
+    "followRequestedToast": "フォローをリクエストしました。承認されるとフォロー中になります",
+    "followLockedHint": "この作者はフォローを手動で承認します",
+    "lockedAccount": "フォローを手動で承認するアカウント"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -897,7 +908,17 @@
     "prefNotePost": "ベルをオンにした人の新しいノート",
     "prefNotePostHint": "作家ページでベルをオンにした人が新しいノートを投稿したとき",
     "prefNoteEdit": "共有したノートの編集",
-    "prefNoteEditHint": "リポストまたは引用したノートを作者が編集したとき"
+    "prefNoteEditHint": "リポストまたは引用したノートを作者が編集したとき",
+    "follow_request": "<b>{actor}</b>さんがフォローをリクエストしました",
+    "followRequestsTitle": "フォローリクエスト",
+    "followRequestsEmpty": "待っているフォローリクエストはありません",
+    "followRequestsEmptyHint": "フォローを手動で承認すると、新しいフォロワーはここで待ちます。ブログ設定でオンにできます。",
+    "followRequestApprove": "承認",
+    "followRequestReject": "拒否",
+    "followRequestApproved": "{name}さんがフォロワーになりました",
+    "followRequestError": "リクエストに応答できませんでした",
+    "prefFollowRequest": "フォローリクエスト",
+    "prefFollowRequestHint": "フォローを手動で承認しているときに、誰かがフォローをリクエストしたら"
   },
   "nav": {
     "events": "イベント",

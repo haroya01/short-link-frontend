@@ -301,7 +301,12 @@
     "displayNameSave": "सहेजें",
     "displayNameHint": "नोट और ब्लॉग प्रोफ़ाइल पर उपयोगकर्ता नाम से पहले दिखता है। खाली छोड़ें तो उपयोगकर्ता नाम दिखेगा।",
     "displayNameSaved": "प्रदर्शित नाम बदला गया",
-    "displayNameFailed": "प्रदर्शित नाम नहीं बदला जा सका"
+    "displayNameFailed": "प्रदर्शित नाम नहीं बदला जा सका",
+    "settingsLocked": "फ़ॉलोअर्स को ख़ुद मंज़ूरी दें",
+    "settingsLockedHint": "चालू करने पर नए फ़ॉलोअर अनुरोध भेजेंगे और आपकी मंज़ूरी के बाद फ़ॉलोअर बनेंगे। दूसरे सर्वर के खातों पर भी यही लागू होता है।",
+    "settingsUnlockTitle": "फ़ॉलोअर्स को ख़ुद मंज़ूरी देना बंद करें?",
+    "settingsUnlockBody": "सभी लंबित फ़ॉलो अनुरोध मंज़ूर हो जाएंगे।",
+    "settingsUnlockConfirm": "बंद करें"
   },
   "postEditor": {
     "backToList": "पोस्ट",
@@ -734,7 +739,13 @@
     "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।",
     "tabNotes": "नोट्स",
     "tabReposts": "रीपोस्ट",
-    "viewAvatar": "प्रोफ़ाइल फ़ोटो देखें"
+    "viewAvatar": "प्रोफ़ाइल फ़ोटो देखें",
+    "requested": "अनुरोध भेजा",
+    "withdrawRequestTitle": "फ़ॉलो अनुरोध रद्द करें?",
+    "withdrawRequest": "अनुरोध रद्द करें",
+    "followRequestedToast": "फ़ॉलो अनुरोध भेजा गया। मंज़ूरी मिलते ही आप फ़ॉलो करने लगेंगे",
+    "followLockedHint": "यह लेखक फ़ॉलोअर्स को ख़ुद मंज़ूरी देते हैं",
+    "lockedAccount": "फ़ॉलोअर्स को ख़ुद मंज़ूरी देने वाला खाता"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -897,7 +908,17 @@
     "prefNotePost": "जिनकी घंटी चालू है उनके नए नोट",
     "prefNotePostHint": "जब कोई जिसकी घंटी आपने लेखक पेज पर चालू की है, नया नोट पोस्ट करे",
     "prefNoteEdit": "आपके साझा किए नोट में बदलाव",
-    "prefNoteEditHint": "जब लेखक वह नोट संपादित करे जिसे आपने रीपोस्ट या कोट किया था"
+    "prefNoteEditHint": "जब लेखक वह नोट संपादित करे जिसे आपने रीपोस्ट या कोट किया था",
+    "follow_request": "<b>{actor}</b> ने आपको फ़ॉलो करने का अनुरोध किया",
+    "followRequestsTitle": "फ़ॉलो अनुरोध",
+    "followRequestsEmpty": "कोई लंबित फ़ॉलो अनुरोध नहीं",
+    "followRequestsEmptyHint": "फ़ॉलोअर्स को ख़ुद मंज़ूरी देने पर नए फ़ॉलोअर यहाँ इंतज़ार करते हैं। इसे ब्लॉग सेटिंग में चालू करें।",
+    "followRequestApprove": "मंज़ूर करें",
+    "followRequestReject": "अस्वीकार करें",
+    "followRequestApproved": "{name} अब आपको फ़ॉलो कर रहे हैं",
+    "followRequestError": "अनुरोध का जवाब नहीं दिया जा सका",
+    "prefFollowRequest": "फ़ॉलो अनुरोध",
+    "prefFollowRequestHint": "जब आप फ़ॉलोअर्स को ख़ुद मंज़ूरी देते हों और कोई फ़ॉलो का अनुरोध करे"
   },
   "nav": {
     "events": "इवेंट",

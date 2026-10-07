@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EyeOff } from "lucide-react";
+import { EyeOff, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Switch } from "@/components/ui/switch";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { cn } from "@/lib/utils";
 import { getMyProfile, updateMyProfile } from "@/modules/profile/api/profile";
 
@@ -17,13 +18,17 @@ import { getMyProfile, updateMyProfile } from "@/modules/profile/api/profile";
 export function FollowerCountSetting() {
   const t = useTranslations("blogWorkspace");
   const [hidden, setHidden] = useState<boolean | null>(null);
+  const [locked, setLocked] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirm, confirmDialog] = useConfirm();
 
   useEffect(() => {
     let alive = true;
     getMyProfile()
       .then((p) => {
-        if (alive) setHidden(p.hideFollowerCount);
+        if (!alive) return;
+        setHidden(p.hideFollowerCount);
+        setLocked(p.locked ?? false);
       })
       .catch(() => alive && setHidden(false));
     return () => {
@@ -43,6 +48,24 @@ export function FollowerCountSetting() {
       setHidden(p.hideFollowerCount);
     } catch {
       setHidden(!next); // roll back
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Unlocking lets everyone still waiting in (Mastodon does the same), so it asks first.
+  async function toggleLock() {
+    if (busy) return;
+    const next = !locked;
+    if (!next && !(await confirm({ title: t("settingsUnlockTitle"), description: t("settingsUnlockBody"), confirmLabel: t("settingsUnlockConfirm") })))
+      return;
+    setLocked(next);
+    setBusy(true);
+    try {
+      const p = await updateMyProfile({ locked: next });
+      setLocked(p.locked ?? next);
+    } catch {
+      setLocked(!next);
     } finally {
       setBusy(false);
     }
@@ -71,7 +94,24 @@ export function FollowerCountSetting() {
             onClick={toggle}
           />
         </div>
+        <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm">
+          <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
+            <Lock className="h-4 w-4 text-slate-400 dark:text-slate-400" />
+            <span className="flex flex-col">
+              {t("settingsLocked")}
+              <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("settingsLockedHint")}</span>
+            </span>
+          </span>
+          <Switch
+            checked={locked}
+            aria-label={t("settingsLocked")}
+            data-testid="locked-switch"
+            disabled={busy}
+            onClick={toggleLock}
+          />
+        </div>
       </div>
+      {confirmDialog}
     </section>
   );
 }

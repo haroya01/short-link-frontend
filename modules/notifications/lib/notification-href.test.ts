@@ -99,4 +99,20 @@ describe("notificationHref", () => {
       notificationHref(item({ type: "REMOTE_FOLLOW", actorProfileUrl: "https://m.social/@a" }), "me", "ko"),
     ).toBeUndefined();
   });
+
+  it("opens a follow from another server in the app when this server knows the account", () => {
+    expect(
+      notificationHref(
+        item({ type: "REMOTE_FOLLOW", actorProfileUrl: "https://m.social/@a", actorRemoteId: 42 }),
+        "me",
+        "ko",
+      ),
+    ).toMatch(/\/remote\/42$/);
+  });
+
+  it("sends a follow request to the requests page", () => {
+    expect(notificationHref(item({ type: "FOLLOW_REQUEST", actorUsername: "sori" }), "me", "ko")).toMatch(
+      /\/follow-requests$/,
+    );
+  });
 });

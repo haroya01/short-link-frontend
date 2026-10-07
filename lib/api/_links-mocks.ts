@@ -1,5 +1,6 @@
 import type { MyLinksPage, MyLink } from "@/types";
 import { buildDemoLinkStats } from "@/lib/demo-data";
+import { mockApproveAllFollowRequests } from "@/modules/notifications/api/follow-requests";
 /**
  * Links-product mock layer (NEXT_PUBLIC_USE_MOCKS=1). The blog product mocks at its own API functions
  * (modules/blog/api/_mocks.ts) and short-circuits before `request()`; the links product calls
@@ -27,6 +28,7 @@ let mockMyProfile = {
   socials: [],
   hideFollowerCount: false,
   displayName: null as string | null,
+  locked: true,
 };
 
 export function mockLinksResponse(path: string, method: string, body?: unknown): unknown | undefined {
@@ -35,12 +37,19 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
 
   if (p === "/api/v1/users/me/profile") {
     if (verb === "PUT") {
-      const patch = (body ?? {}) as { displayName?: string; hideFollowerCount?: boolean; bio?: string };
+      const patch = (body ?? {}) as {
+        displayName?: string;
+        hideFollowerCount?: boolean;
+        bio?: string;
+        locked?: boolean;
+      };
+      if (patch.locked === false && mockMyProfile.locked) mockApproveAllFollowRequests();
       mockMyProfile = {
         ...mockMyProfile,
         ...(patch.bio !== undefined ? { bio: patch.bio } : {}),
         ...(patch.hideFollowerCount !== undefined ? { hideFollowerCount: patch.hideFollowerCount } : {}),
         ...(patch.displayName !== undefined ? { displayName: patch.displayName.trim() || null } : {}),
+        ...(patch.locked !== undefined ? { locked: patch.locked } : {}),
       };
     }
     return mockMyProfile;

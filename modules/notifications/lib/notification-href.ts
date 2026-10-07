@@ -19,7 +19,9 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
     case "FOLLOW":
       return item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
     case "REMOTE_FOLLOW":
-      return undefined;
+      return item.actorRemoteId != null ? blogPath(`/remote/${item.actorRemoteId}`) : undefined;
+    case "FOLLOW_REQUEST":
+      return blogPath("/follow-requests");
     case "NOTE_LIKE":
     case "NOTE_REPOST":
       return item.noteId != null && myUsername

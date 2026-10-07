@@ -301,7 +301,12 @@
     "displayNameSave": "Lưu",
     "displayNameHint": "Hiển thị trước tên người dùng trên ghi chú và hồ sơ blog. Để trống sẽ hiện tên người dùng.",
     "displayNameSaved": "Đã đổi tên hiển thị",
-    "displayNameFailed": "Không thể đổi tên hiển thị"
+    "displayNameFailed": "Không thể đổi tên hiển thị",
+    "settingsLocked": "Tự duyệt người theo dõi",
+    "settingsLockedHint": "Khi bật, người theo dõi mới sẽ gửi yêu cầu và chỉ trở thành người theo dõi khi bạn chấp nhận. Tài khoản ở máy chủ khác cũng vậy.",
+    "settingsUnlockTitle": "Tắt tự duyệt người theo dõi?",
+    "settingsUnlockBody": "Mọi yêu cầu theo dõi đang chờ sẽ được chấp nhận.",
+    "settingsUnlockConfirm": "Tắt"
   },
   "postEditor": {
     "backToList": "Bài viết",
@@ -748,7 +753,13 @@
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
     "tabNotes": "Ghi chú",
     "tabReposts": "Đăng lại",
-    "viewAvatar": "Xem ảnh hồ sơ"
+    "viewAvatar": "Xem ảnh hồ sơ",
+    "requested": "Đã yêu cầu",
+    "withdrawRequestTitle": "Hủy yêu cầu theo dõi?",
+    "withdrawRequest": "Hủy yêu cầu",
+    "followRequestedToast": "Đã gửi yêu cầu theo dõi. Khi được chấp nhận, bạn sẽ theo dõi họ",
+    "followLockedHint": "Tác giả này tự duyệt người theo dõi",
+    "lockedAccount": "Tài khoản tự duyệt người theo dõi"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -897,7 +908,17 @@
     "prefNotePost": "Ghi chú mới từ người bạn bật chuông",
     "prefNotePostHint": "Khi người bạn đã bật chuông trên trang tác giả đăng ghi chú mới",
     "prefNoteEdit": "Chỉnh sửa ghi chú bạn đã chia sẻ",
-    "prefNoteEditHint": "Khi tác giả sửa ghi chú bạn đã đăng lại hoặc trích dẫn"
+    "prefNoteEditHint": "Khi tác giả sửa ghi chú bạn đã đăng lại hoặc trích dẫn",
+    "follow_request": "<b>{actor}</b> đã yêu cầu theo dõi bạn",
+    "followRequestsTitle": "Yêu cầu theo dõi",
+    "followRequestsEmpty": "Không có yêu cầu theo dõi đang chờ",
+    "followRequestsEmptyHint": "Khi bạn tự duyệt người theo dõi, người theo dõi mới sẽ chờ ở đây. Bật trong cài đặt blog.",
+    "followRequestApprove": "Chấp nhận",
+    "followRequestReject": "Từ chối",
+    "followRequestApproved": "{name} đã trở thành người theo dõi bạn",
+    "followRequestError": "Không thể phản hồi yêu cầu",
+    "prefFollowRequest": "Yêu cầu theo dõi",
+    "prefFollowRequestHint": "Khi bạn đang tự duyệt và có người yêu cầu theo dõi"
   },
   "nav": {
     "events": "Sự kiện",
