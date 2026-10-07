@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { EyeOff, MoreHorizontal, Quote, TriangleAlert } from "lucide-react";
+import { EyeOff, MoreHorizontal, Pin, Quote, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -18,6 +19,7 @@ import {
   NOTE_MAX_LENGTH,
   setNoteBookmark,
   setNoteLike,
+  setNotePin,
   setNoteRepost,
   type Note,
 } from "@/modules/notes/api/notes";
@@ -48,6 +50,7 @@ export function NoteCard({
   emphasis = false,
   isNew = false,
   repostedBy,
+  showsPin = false,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -56,6 +59,8 @@ export function NoteCard({
   emphasis?: boolean;
   isNew?: boolean;
   repostedBy?: string;
+  /** Only the author's profile marks pins; on Mastodon a pin means nothing anywhere else. */
+  showsPin?: boolean;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -134,6 +139,16 @@ export function NoteCard({
     }
   }
 
+  async function togglePin() {
+    try {
+      const { pinned } = await setNotePin(note.id, !note.pinned);
+      onChange?.({ ...note, pinned });
+      toast(pinned ? t("pinned") : t("unpinned"));
+    } catch (e) {
+      toast(e instanceof ApiError && e.detail.code === "NOTE_PIN_LIMIT" ? t("pinLimit") : t("pinFailed"), "error");
+    }
+  }
+
   async function remove() {
     if (!(await confirm({ title: t("deleteConfirm"), confirmLabel: t("delete"), destructive: true }))) {
       return;
@@ -186,6 +201,14 @@ export function NoteCard({
             <NoteGlyph name="repost" className="h-3.5 w-3.5" />
           </span>
           <span className="truncate">{t("repostedBy", { username: repostedBy })}</span>
+        </p>
+      )}
+      {!repostedBy && showsPin && note.pinned && (
+        <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
+          <span className="flex w-9 shrink-0 justify-end">
+            <Pin className="h-3.5 w-3.5" aria-hidden />
+          </span>
+          <span>{t("pinnedLabel")}</span>
         </p>
       )}
       <div className={emphasis ? "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3" : "flex gap-3"}>
@@ -241,6 +264,8 @@ export function NoteCard({
                   onConnect={() => setConnecting(true)}
                   onEdit={mine ? () => setEditing(true) : undefined}
                   onDelete={mine ? remove : undefined}
+                  pinned={note.pinned === true}
+                  onPin={mine && note.inReplyToId === null ? togglePin : undefined}
                   disabled={busy}
                 />
               )}
@@ -605,6 +630,8 @@ function NoteMenu({
   onConnect,
   onEdit,
   onDelete,
+  pinned,
+  onPin,
   disabled,
 }: {
   bookmarked: boolean;
@@ -612,6 +639,8 @@ function NoteMenu({
   onConnect: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  pinned: boolean;
+  onPin?: () => void;
   disabled: boolean;
 }) {
   const t = useTranslations("notes");
@@ -675,6 +704,19 @@ function NoteMenu({
           >
             {t("connectToCollection")}
           </button>
+          {onPin && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onPin();
+              }}
+            >
+              {pinned ? t("unpin") : t("pin")}
+            </button>
+          )}
           {onEdit && (
             <button
               type="button"

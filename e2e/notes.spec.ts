@@ -350,6 +350,18 @@ test("the composer sends a content warning, and the new note arrives folded", as
   await expect(posted.getByText("범인은 집사였다")).toHaveCount(0);
 });
 
+test("pinning my note moves it to the top of my profile under a pinned line", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/notes");
+  const older = page.locator('article[data-note-id="1"]');
+  await expect(older).toBeVisible({ timeout: 30_000 });
+  await older.getByRole("button", { name: "메뉴" }).click();
+  await page.getByRole("menuitem", { name: "프로필에 고정" }).click();
+  await expect(page.getByText("프로필에 고정했어요")).toBeVisible();
+  const first = page.locator("article[data-note-id]").first();
+  await expect(first).toHaveAttribute("data-note-id", "1");
+  await expect(first.getByText("고정됨")).toBeVisible();
+});
+
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const first = page.locator("article[data-note-id]").first();

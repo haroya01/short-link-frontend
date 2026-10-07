@@ -103,6 +103,7 @@ let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "
 const topLevel = () => notes.filter((n) => n.inReplyToId === null);
 let bookmarks: number[] = [];
 let showReposts = true;
+let pins: number[] = [];
 const repostsHidden = new Set<string>();
 
 const withQuotes = (n: Note): Note => ({
@@ -190,11 +191,17 @@ export function mockEveryoneNotes(page: number): NoteFeed {
 }
 
 export function mockAuthorNotes(username: string, page: number): NoteFeed {
-  return {
-    items: page === 0 ? topLevel().filter((n) => n.author.username === username) : [],
-    page,
-    hasNext: false,
-  };
+  const own = topLevel().filter((n) => n.author.username === username);
+  const pinnedFirst = [
+    ...pins.map((id) => own.find((n) => n.id === id)).filter((n): n is Note => n !== undefined),
+    ...own.filter((n) => !pins.includes(n.id)),
+  ].map((n) => ({ ...n, pinned: pins.includes(n.id) }));
+  return { items: page === 0 ? pinnedFirst : [], page, hasNext: false };
+}
+
+export function mockPin(id: number, on: boolean): { pinned: boolean } {
+  pins = [...(on ? [id] : []), ...pins.filter((x) => x !== id)];
+  return { pinned: on };
 }
 
 export function mockAuthorReposts(username: string, page: number): NoteFeed {
