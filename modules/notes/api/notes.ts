@@ -135,6 +135,14 @@ export function listFollowingNotes(page = 0): Promise<NoteFeed> {
   return request<NoteFeed>(`/api/v1/notes/following?page=${page}&size=20`, { method: "GET" });
 }
 
+export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockTaggedNotes(tag, page));
+  return request<NoteFeed>(
+    `/api/v1/public/notes/tags/${encodeURIComponent(tag)}?page=${page}&size=20`,
+    { method: "GET" },
+  );
+}
+
 export function listBookmarkedNotes(page = 0): Promise<NoteFeed> {
   if (noteMocks) return Promise.resolve(noteMocks.mockBookmarkedNotes(page));
   return request<NoteFeed>(`/api/v1/notes/bookmarks?page=${page}&size=20`, { method: "GET" });

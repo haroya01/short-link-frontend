@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { noteLength, previewUrl, splitLinks } from "./note-text";
+import { noteLength, previewUrl, splitNoteText } from "./note-text";
 
 describe("noteLength", () => {
   it("counts code points like the server", () => {
@@ -8,9 +8,9 @@ describe("noteLength", () => {
   });
 });
 
-describe("splitLinks", () => {
+describe("splitNoteText", () => {
   it("keeps trailing punctuation out of links", () => {
-    expect(splitLinks("see https://kurl.me/a?b=1. ok")).toEqual([
+    expect(splitNoteText("see https://kurl.me/a?b=1. ok")).toEqual([
       { kind: "text", value: "see " },
       { kind: "link", value: "https://kurl.me/a?b=1" },
       { kind: "text", value: ". ok" },
@@ -18,8 +18,25 @@ describe("splitLinks", () => {
   });
 
   it("returns plain text untouched and ignores non-http schemes", () => {
-    expect(splitLinks("javascript:alert(1)")).toEqual([{ kind: "text", value: "javascript:alert(1)" }]);
-    expect(splitLinks("")).toEqual([]);
+    expect(splitNoteText("javascript:alert(1)")).toEqual([{ kind: "text", value: "javascript:alert(1)" }]);
+    expect(splitNoteText("")).toEqual([]);
+  });
+
+  it("finds hashtags in any script with the server's boundaries", () => {
+    expect(splitNoteText("#스프링 a#b https://x.com/p#frag #123 #kurl· #हिन्दी")).toEqual([
+      { kind: "tag", value: "스프링" },
+      { kind: "text", value: " a#b " },
+      { kind: "link", value: "https://x.com/p#frag" },
+      { kind: "text", value: " #123 " },
+      { kind: "tag", value: "kurl" },
+      { kind: "text", value: "· " },
+      { kind: "tag", value: "हिन्दी" },
+    ]);
+  });
+
+  it("leaves a hashtag longer than forty characters as text", () => {
+    const long = `#${"a".repeat(41)}`;
+    expect(splitNoteText(long)).toEqual([{ kind: "text", value: long }]);
   });
 });
 

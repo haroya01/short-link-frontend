@@ -54,7 +54,7 @@ let notes: Note[] = [
   }),
   note({
     id: 5,
-    body: "산책하다 찍은 것들. 길이 다 다르게 생겼다.",
+    body: "산책하다 찍은 것들. 길이 다 다르게 생겼다. #산책",
     author: YUNA,
     createdAt: "2026-10-05T10:30:00Z",
     media: [
@@ -133,6 +133,12 @@ export function mockFollowingNotes(page: number): NoteFeed {
   const seen = new Set<number>();
   const items = [...reposted, ...yunas, ...mine].filter((n) => !seen.has(n.id) && seen.add(n.id));
   return { items, page, hasNext: false };
+}
+
+export function mockTaggedNotes(tag: string, page: number): NoteFeed {
+  const needle = `#${tag.toLowerCase()}`;
+  const items = page === 0 ? notes.filter((n) => n.body.toLowerCase().includes(needle)) : [];
+  return { items: items.map(withQuotes), page, hasNext: false };
 }
 
 export function mockBookmarkedNotes(page: number): NoteFeed {

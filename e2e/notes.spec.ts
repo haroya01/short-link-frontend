@@ -298,6 +298,20 @@ test("a followed author's profile menu hides just their reposts", async ({ page 
   await expect(page.getByRole("menuitem", { name: "리포스트 다시 보기" })).toBeVisible();
 });
 
+test("a hashtag in a note opens the tag on its notes tab, beside the tag's posts", async ({ page }) => {
+  await page.goto("/ko/p/yuna/notes/5");
+  const tag = page.getByRole("link", { name: "#산책" }).first();
+  await expect(tag).toBeVisible({ timeout: 30_000 });
+  await tag.click();
+  await expect(page).toHaveURL(/view=notes/, { timeout: 30_000 });
+  const tabs = page.getByRole("navigation").filter({ hasText: "노트" }).last();
+  await expect(tabs.getByRole("link", { name: "노트", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.locator('article[data-note-id="5"]')).toBeVisible({ timeout: 15_000 });
+  await tabs.getByRole("link", { name: "글", exact: true }).click();
+  await expect(page).not.toHaveURL(/view=notes/);
+  await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
+});
+
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const first = page.locator("article[data-note-id]").first();
