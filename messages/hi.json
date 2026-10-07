@@ -4366,6 +4366,10 @@
     "emptyFederated": "अभी दूसरे सर्वर से कोई नोट नहीं मिला। खोज में @नाम@सर्वर लिखकर फ़ॉलो करें, उनके नोट यहाँ आएँगे।",
     "signInForFederated": "साइन इन करके देखें कि इस सर्वर को दूसरे सर्वर से कौन से सार्वजनिक नोट मिले",
     "trendingTagsTitle": "ट्रेंडिंग हैशटैग",
-    "trendingTagsAccounts": "इस हफ़्ते {count} लोगों ने इस्तेमाल किया"
+    "trendingTagsAccounts": "इस हफ़्ते {count} लोगों ने इस्तेमाल किया",
+    "suggestionsTitle": "किसे फ़ॉलो करें",
+    "suggestionsFriends": "आपके फ़ॉलो किए गए {count} लोग फ़ॉलो करते हैं",
+    "suggestionsPopular": "इन दिनों लोकप्रिय",
+    "suggestionsDismiss": "{name} का सुझाव न दें"
   }
 }

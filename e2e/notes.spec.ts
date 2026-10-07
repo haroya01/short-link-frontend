@@ -781,3 +781,15 @@ test("video and audio from another server play in place with their own controls"
   await expect(waves.locator("audio")).toHaveAttribute("controls", "");
   await expect(waves.locator("video")).toHaveAttribute("aria-label", "밀려오는 파도");
 });
+
+test("beside the feed, follow suggestions offer a follow and can be set aside", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/ko/blog/notes");
+  const rail = page.getByTestId("follow-suggestions");
+  await expect(rail.getByRole("heading", { name: "팔로우 추천" })).toBeVisible({ timeout: 30_000 });
+  await expect(rail.getByTestId("suggestion-haruka")).toContainText("내가 팔로우하는 3명이 팔로우");
+  await expect(rail.getByTestId("suggestion-yuna")).toContainText("요즘 많이 팔로우해요");
+  await rail.getByTestId("suggestion-dismiss-minji").click();
+  await expect(rail.getByTestId("suggestion-minji")).toHaveCount(0);
+  await expect(rail.getByTestId("suggestion-haruka").getByTestId("follow-button")).toHaveText("팔로우");
+});

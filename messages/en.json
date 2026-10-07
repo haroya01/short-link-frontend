@@ -4366,6 +4366,10 @@
     "emptyFederated": "No notes from other servers yet. Follow someone by searching @name@server and their notes arrive here.",
     "signInForFederated": "Sign in to see public notes this server received from other servers",
     "trendingTagsTitle": "Trending hashtags",
-    "trendingTagsAccounts": "{count, plural, one {# person used it this week} other {# people used it this week}}"
+    "trendingTagsAccounts": "{count, plural, one {# person used it this week} other {# people used it this week}}",
+    "suggestionsTitle": "Who to follow",
+    "suggestionsFriends": "{count, plural, one {Followed by # person you follow} other {Followed by # people you follow}}",
+    "suggestionsPopular": "Popular lately",
+    "suggestionsDismiss": "Don't suggest {name}"
   }
 }

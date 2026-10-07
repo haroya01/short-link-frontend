@@ -4366,6 +4366,10 @@
     "emptyFederated": "아직 받은 다른 서버 노트가 없어요. 검색에 @아이디@서버를 적어 팔로우하면 그 노트가 여기 와요.",
     "signInForFederated": "로그인하면 이 서버가 받은 다른 서버의 공개 노트를 볼 수 있어요",
     "trendingTagsTitle": "뜨는 해시태그",
-    "trendingTagsAccounts": "{count}명이 이번 주에 썼어요"
+    "trendingTagsAccounts": "{count}명이 이번 주에 썼어요",
+    "suggestionsTitle": "팔로우 추천",
+    "suggestionsFriends": "내가 팔로우하는 {count}명이 팔로우",
+    "suggestionsPopular": "요즘 많이 팔로우해요",
+    "suggestionsDismiss": "{name} 추천 안 보기"
   }
 }

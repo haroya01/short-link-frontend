@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { NotesFeed } from "@/modules/notes/components/notes-feed";
 import { TrendingNoteTags } from "@/modules/notes/components/trending-note-tags";
+import { FollowSuggestions } from "@/modules/notes/components/follow-suggestions";
 
 const BLOG_URL =
   process.env.NEXT_PUBLIC_BLOG_URL ??
@@ -57,6 +58,7 @@ export default async function NotesPage({ params }: { params: Promise<{ locale: 
       <aside className="hidden w-64 shrink-0 lg:block">
         <div className="sticky top-24 pt-16">
           <TrendingNoteTags />
+          <FollowSuggestions />
         </div>
       </aside>
     </div>

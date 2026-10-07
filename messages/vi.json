@@ -4366,6 +4366,10 @@
     "emptyFederated": "Chưa nhận ghi chú nào từ máy chủ khác. Tìm @tên@máy-chủ để theo dõi, ghi chú của họ sẽ đến đây.",
     "signInForFederated": "Đăng nhập để xem ghi chú công khai mà máy chủ này nhận từ máy chủ khác",
     "trendingTagsTitle": "Thẻ thịnh hành",
-    "trendingTagsAccounts": "{count} người đã dùng tuần này"
+    "trendingTagsAccounts": "{count} người đã dùng tuần này",
+    "suggestionsTitle": "Gợi ý theo dõi",
+    "suggestionsFriends": "{count} người bạn theo dõi đang theo dõi",
+    "suggestionsPopular": "Gần đây được nhiều người theo dõi",
+    "suggestionsDismiss": "Không gợi ý {name}"
   }
 }
