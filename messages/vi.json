@@ -4210,7 +4210,7 @@
     "filterPhrase": "Từ khóa hoặc cụm từ",
     "filterWhere": "Áp dụng cho",
     "filterHome": "Đang theo dõi và danh sách",
-    "filterPublic": "Mọi ghi chú, thịnh hành, thẻ",
+    "filterPublic": "Mọi ghi chú, máy chủ khác, thịnh hành, thẻ",
     "filterThread": "Trả lời",
     "filterAccount": "Hồ sơ",
     "filterNotifications": "Thông báo",
@@ -4301,12 +4301,15 @@
     },
     "languageLabel": "Ngôn ngữ ghi chú",
     "languagesTitle": "Ngôn ngữ ghi chú hiển thị",
-    "languagesHint": "Tất cả ghi chú và Thịnh hành chỉ hiện ghi chú bằng ngôn ngữ bạn chọn. Ghi chú không có ngôn ngữ, Đang theo dõi và danh sách vẫn như cũ.",
+    "languagesHint": "Mọi ghi chú, máy chủ khác và xu hướng chỉ hiện ghi chú bằng ngôn ngữ bạn chọn. Ghi chú không có ngôn ngữ, đang theo dõi và danh sách vẫn như cũ.",
     "languagesAll": "Tất cả ngôn ngữ",
     "languagesFailed": "Không thể thay đổi ngôn ngữ. Vui lòng thử lại sau",
     "quotingPostsTitle": "Bài viết đăng ghi chú này",
     "copyLink": "Sao chép liên kết",
     "shareVia": "Chia sẻ qua…",
-    "quoteInPost": "Trích dẫn trong bài blog"
+    "quoteInPost": "Trích dẫn trong bài blog",
+    "feedFederated": "Máy chủ khác",
+    "emptyFederated": "Chưa nhận ghi chú nào từ máy chủ khác. Tìm @tên@máy-chủ để theo dõi, ghi chú của họ sẽ đến đây.",
+    "signInForFederated": "Đăng nhập để xem ghi chú công khai mà máy chủ này nhận từ máy chủ khác"
   }
 }
