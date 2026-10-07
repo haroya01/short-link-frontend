@@ -4211,6 +4211,11 @@
     "remoteNoNotesHint": "팔로우하면 이 계정이 쓰는 새 노트가 여기와 팔로잉 피드에 와요.",
     "remoteFollowingTitle": "다른 서버 팔로잉",
     "remoteFollowingHint": "마스토돈 같은 다른 서버에서 팔로우하는 계정이에요. 검색에 @아이디@서버를 적으면 찾을 수 있어요.",
-    "remoteFollowingEmpty": "아직 다른 서버에서 팔로우하는 계정이 없어요."
+    "remoteFollowingEmpty": "아직 다른 서버에서 팔로우하는 계정이 없어요.",
+    "muteConversation": "대화 알림 끄기",
+    "unmuteConversation": "대화 알림 켜기",
+    "conversationMuted": "이 대화의 알림을 껐어요",
+    "conversationUnmuted": "이 대화의 알림을 다시 받아요",
+    "conversationMuteFailed": "대화 알림을 바꾸지 못했어요"
   }
 }

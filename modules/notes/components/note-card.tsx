@@ -19,6 +19,7 @@ import {
   editNote,
   NOTE_MAX_LENGTH,
   setNoteBookmark,
+  setConversationMuted,
   setNoteLike,
   setNotePin,
   isShareable,
@@ -96,6 +97,7 @@ export function NoteCard({
   const [connecting, setConnecting] = useState(false);
   const [quoting, setQuoting] = useState(false);
   const [bookmarked, setBookmarked] = useState(note.bookmarkedByMe === true);
+  const [conversationMuted, setConversationMutedState] = useState(note.conversationMuted === true);
   const tCollections = useTranslations("collections");
 
   useEffect(() => {
@@ -106,6 +108,22 @@ export function NoteCard({
   useEffect(() => {
     setBookmarked(note.bookmarkedByMe === true);
   }, [note.bookmarkedByMe]);
+
+  useEffect(() => {
+    setConversationMutedState(note.conversationMuted === true);
+  }, [note.conversationMuted]);
+
+  async function toggleConversationMute() {
+    const next = !conversationMuted;
+    setConversationMutedState(next);
+    try {
+      await setConversationMuted(note.id, next);
+      toast(next ? t("conversationMuted") : t("conversationUnmuted"));
+    } catch {
+      setConversationMutedState(!next);
+      toast(t("conversationMuteFailed"), "error");
+    }
+  }
 
   async function toggleBookmark() {
     if (!authenticated) {
@@ -306,6 +324,8 @@ export function NoteCard({
                 <NoteMenu
                   bookmarked={bookmarked}
                   onBookmark={toggleBookmark}
+                  conversationMuted={conversationMuted}
+                  onConversationMute={toggleConversationMute}
                   onConnect={() => setConnecting(true)}
                   onEdit={mine ? () => setEditing(true) : undefined}
                   onDelete={mine ? remove : undefined}
@@ -699,6 +719,8 @@ export function NoteLengthRing({ length, className }: { length: number; classNam
 function NoteMenu({
   bookmarked,
   onBookmark,
+  conversationMuted,
+  onConversationMute,
   onConnect,
   onEdit,
   onDelete,
@@ -708,6 +730,8 @@ function NoteMenu({
 }: {
   bookmarked: boolean;
   onBookmark: () => void;
+  conversationMuted: boolean;
+  onConversationMute: () => void;
   onConnect: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -775,6 +799,17 @@ function NoteMenu({
             }}
           >
             {t("connectToCollection")}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className={cn(item, "text-slate-700 dark:text-slate-200")}
+            onClick={() => {
+              setOpen(false);
+              onConversationMute();
+            }}
+          >
+            {conversationMuted ? t("unmuteConversation") : t("muteConversation")}
           </button>
           {onPin && (
             <button

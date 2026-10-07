@@ -77,6 +77,8 @@ export interface Note {
   quoteCount?: number;
   /** Only the reader's own; null for anonymous readers. */
   bookmarkedByMe?: boolean | null;
+  /** The reader turned off this note's conversation (Mastodon's mute conversation); null when anonymous. */
+  conversationMuted?: boolean | null;
   /** Members the body mentions who exist — only these handles link to a profile. */
   mentions?: string[];
   /** Mastodon's content warning: the body, photos and cards fold behind it until the reader opens it. */
@@ -336,6 +338,11 @@ export function setNotePin(id: number, on: boolean): Promise<{ pinned: boolean }
 export function setNoteBookmark(id: number, on: boolean): Promise<{ bookmarked: boolean }> {
   if (noteMocks) return Promise.resolve(noteMocks.mockBookmark(id, on));
   return request(`/api/v1/notes/${id}/bookmark`, { method: on ? "PUT" : "DELETE" });
+}
+
+export function setConversationMuted(id: number, on: boolean): Promise<{ muted: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockConversationMute(id, on));
+  return request(`/api/v1/notes/${id}/conversation-mute`, { method: on ? "PUT" : "DELETE" });
 }
 
 export function getNoteFeedPreferences(): Promise<{ showReposts: boolean }> {

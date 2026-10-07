@@ -437,6 +437,11 @@ export function mockNoteQuotes(id: number, page: number): NoteFeed {
   return { items: items.map(withQuotes), page, hasNext: false };
 }
 
+export function mockConversationMute(id: number, on: boolean): { muted: boolean } {
+  notes = notes.map((n) => (n.id === id ? { ...n, conversationMuted: on } : n));
+  return { muted: on };
+}
+
 export function mockBookmark(id: number, on: boolean): { bookmarked: boolean } {
   bookmarks = [...(on ? [id] : []), ...bookmarks.filter((x) => x !== id)];
   return { bookmarked: on };

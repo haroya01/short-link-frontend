@@ -4211,6 +4211,11 @@
     "remoteNoNotesHint": "フォローすると、このアカウントの新しいノートがこことフォロー中のフィードに届きます。",
     "remoteFollowingTitle": "ほかのサーバーでフォロー中",
     "remoteFollowingHint": "Mastodonなどほかのサーバーでフォローしているアカウントです。検索に@ID@サーバーと入力すると探せます。",
-    "remoteFollowingEmpty": "ほかのサーバーでフォローしているアカウントはまだありません。"
+    "remoteFollowingEmpty": "ほかのサーバーでフォローしているアカウントはまだありません。",
+    "muteConversation": "会話の通知をオフ",
+    "unmuteConversation": "会話の通知をオン",
+    "conversationMuted": "この会話の通知をオフにしました",
+    "conversationUnmuted": "この会話の通知をまた受け取ります",
+    "conversationMuteFailed": "会話の通知を変更できませんでした"
   }
 }

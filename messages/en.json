@@ -4211,6 +4211,11 @@
     "remoteNoNotesHint": "Follow to get this account's new notes here and in your Following feed.",
     "remoteFollowingTitle": "Following elsewhere",
     "remoteFollowingHint": "Accounts you follow on other servers such as Mastodon. Find one by typing @name@server in search.",
-    "remoteFollowingEmpty": "You don't follow anyone on other servers yet."
+    "remoteFollowingEmpty": "You don't follow anyone on other servers yet.",
+    "muteConversation": "Mute conversation",
+    "unmuteConversation": "Unmute conversation",
+    "conversationMuted": "Muted this conversation",
+    "conversationUnmuted": "You'll hear from this conversation again",
+    "conversationMuteFailed": "Couldn't change the conversation's notifications"
   }
 }

@@ -597,3 +597,14 @@ test("a note from a followed account elsewhere reaches the following tab and ope
   await expect(page.locator('article[data-note-id="6"]')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="12"]')).toHaveCount(0);
 });
+
+test("a note's menu mutes and unmutes its conversation", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const seed = page.locator('article[data-note-id="3"]');
+  await expect(seed).toBeVisible({ timeout: 30_000 });
+  await seed.getByRole("button", { name: "노트 메뉴" }).click();
+  await seed.getByRole("menuitem", { name: "대화 알림 끄기" }).click();
+  await expect(page.getByText("이 대화의 알림을 껐어요")).toBeVisible();
+  await seed.getByRole("button", { name: "노트 메뉴" }).click();
+  await expect(seed.getByRole("menuitem", { name: "대화 알림 켜기" })).toBeVisible();
+});
