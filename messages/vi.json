@@ -4245,6 +4245,33 @@
     "domainBlocksTitle": "Máy chủ đã chặn",
     "domainBlocksHint": "Mọi ghi chú, thông báo và lượt theo dõi từ các máy chủ này đều bị loại bỏ. Bạn có thể chặn từ menu ⋯ trên trang tài khoản.",
     "domainBlocksEmpty": "Chưa chặn máy chủ nào.",
-    "domainUnblockShort": "Bỏ chặn"
+    "domainUnblockShort": "Bỏ chặn",
+    "scheduleToggle": "Đặt lịch",
+    "scheduleLabel": "Đăng lúc",
+    "scheduleRemove": "Bỏ lịch đăng",
+    "scheduleSubmit": "Đặt lịch",
+    "scheduledToast": "Sẽ đăng lúc {when}",
+    "scheduleTooSoon": "Bạn có thể đặt lịch từ 5 phút sau",
+    "scheduleLimit": "Đã vượt quá số ghi chú có thể đặt lịch",
+    "scheduleFailed": "Không thể đặt lịch. Vui lòng thử lại sau",
+    "scheduledTitle": "{count} ghi chú đã đặt lịch",
+    "scheduledCancel": "Hủy",
+    "scheduledCancelLabel": "Hủy ghi chú đặt lịch lúc {when}",
+    "scheduledCanceled": "Đã hủy lịch đăng",
+    "scheduledMove": "Đổi giờ",
+    "scheduledMoved": "Đã đổi thời gian đăng",
+    "scheduledSave": "Lưu",
+    "scheduledImages": "{count} ảnh",
+    "scheduledPoll": "Bình chọn",
+    "scheduledReply": "Trả lời",
+    "scheduledQuote": "Trích dẫn",
+    "scheduledFailure": {
+      "NOTE_NOT_FOUND": "Ghi chú bạn định trả lời đã bị xóa",
+      "NOTE_QUOTED_NOTE_NOT_FOUND": "Ghi chú bạn định trích dẫn đã bị xóa",
+      "NOTE_QUOTE_NOT_FOUND": "Bài viết bạn định trích dẫn đã bị xóa",
+      "NOTE_REPLY_BLOCKED": "Bạn không thể trả lời ghi chú này",
+      "NOTE_IMAGE_INVALID": "Không tìm thấy ảnh",
+      "other": "Không thể đăng"
+    }
   }
 }

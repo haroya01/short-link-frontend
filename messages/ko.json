@@ -4245,6 +4245,33 @@
     "domainBlocksTitle": "차단한 서버",
     "domainBlocksHint": "그 서버의 노트·알림·팔로우가 모두 빠져요. 다른 서버 계정 페이지의 ⋯ 메뉴에서 차단할 수 있어요.",
     "domainBlocksEmpty": "차단한 서버가 없어요.",
-    "domainUnblockShort": "차단 해제"
+    "domainUnblockShort": "차단 해제",
+    "scheduleToggle": "예약",
+    "scheduleLabel": "올릴 때",
+    "scheduleRemove": "예약 해제",
+    "scheduleSubmit": "예약",
+    "scheduledToast": "{when}에 올릴게요",
+    "scheduleTooSoon": "5분 뒤부터 예약할 수 있어요",
+    "scheduleLimit": "예약할 수 있는 노트 수를 넘었어요",
+    "scheduleFailed": "예약하지 못했어요. 잠시 뒤 다시 시도해 주세요",
+    "scheduledTitle": "예약한 노트 {count}",
+    "scheduledCancel": "취소",
+    "scheduledCancelLabel": "{when} 예약 취소",
+    "scheduledCanceled": "예약을 취소했어요",
+    "scheduledMove": "시각 바꾸기",
+    "scheduledMoved": "올릴 시각을 바꿨어요",
+    "scheduledSave": "저장",
+    "scheduledImages": "사진 {count}장",
+    "scheduledPoll": "투표",
+    "scheduledReply": "답글",
+    "scheduledQuote": "인용",
+    "scheduledFailure": {
+      "NOTE_NOT_FOUND": "답글을 달 노트가 지워졌어요",
+      "NOTE_QUOTED_NOTE_NOT_FOUND": "인용할 노트가 지워졌어요",
+      "NOTE_QUOTE_NOT_FOUND": "인용할 글이 지워졌어요",
+      "NOTE_REPLY_BLOCKED": "답글을 달 수 없는 노트예요",
+      "NOTE_IMAGE_INVALID": "사진을 찾지 못했어요",
+      "other": "올리지 못했어요"
+    }
   }
 }

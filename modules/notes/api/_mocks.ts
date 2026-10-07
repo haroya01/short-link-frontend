@@ -13,6 +13,7 @@ import type {
   NotePoll,
   NoteThread,
   RemoteAccount,
+  ScheduledNote,
 } from "./notes";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
@@ -537,6 +538,55 @@ export function mockThread(id: number): NoteThread | null {
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
     replies: notes.filter((n) => n.inReplyToId === id),
   };
+}
+
+let nextScheduledId = 9700;
+let scheduledNotes: ScheduledNote[] = [
+  {
+    id: 9699,
+    scheduledAt: new Date(Date.now() + 86_400_000).toISOString(),
+    body: "그 답글에 덧붙이려던 생각",
+    contentWarning: null,
+    visibility: "PUBLIC",
+    imageCount: 0,
+    poll: false,
+    inReplyToId: 3,
+    quotedNoteId: null,
+    quotedPostId: null,
+    failure: "NOTE_NOT_FOUND",
+  },
+];
+
+export function mockSchedule(draft: NoteDraft, scheduledAt: string): ScheduledNote {
+  const scheduled: ScheduledNote = {
+    id: nextScheduledId++,
+    scheduledAt,
+    body: draft.body.trim(),
+    contentWarning: draft.contentWarning ?? null,
+    visibility: draft.visibility ?? null,
+    imageCount: draft.images.length,
+    poll: Boolean(draft.poll),
+    inReplyToId: draft.inReplyToId,
+    quotedNoteId: draft.quotedNoteId,
+    quotedPostId: draft.quotedPostId,
+    failure: null,
+  };
+  scheduledNotes = [...scheduledNotes, scheduled];
+  return scheduled;
+}
+
+export function mockScheduledNotes(): ScheduledNote[] {
+  return [...scheduledNotes].sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt));
+}
+
+export function mockReschedule(id: number, scheduledAt: string): ScheduledNote {
+  scheduledNotes = scheduledNotes.map((n) => (n.id === id ? { ...n, scheduledAt, failure: null } : n));
+  return scheduledNotes.find((n) => n.id === id)!;
+}
+
+export function mockCancelScheduled(id: number): Promise<void> {
+  scheduledNotes = scheduledNotes.filter((n) => n.id !== id);
+  return Promise.resolve();
 }
 
 export function mockCreate(draft: NoteDraft): Note {

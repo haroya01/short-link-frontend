@@ -4245,6 +4245,33 @@
     "domainBlocksTitle": "ブロックしたサーバー",
     "domainBlocksHint": "そのサーバーのノート・通知・フォローがすべて外れます。他のサーバーのアカウントページの⋯メニューからブロックできます。",
     "domainBlocksEmpty": "ブロックしたサーバーはありません。",
-    "domainUnblockShort": "解除"
+    "domainUnblockShort": "解除",
+    "scheduleToggle": "予約",
+    "scheduleLabel": "投稿日時",
+    "scheduleRemove": "予約を解除",
+    "scheduleSubmit": "予約",
+    "scheduledToast": "{when}に投稿します",
+    "scheduleTooSoon": "5分後から予約できます",
+    "scheduleLimit": "予約できるノートの数を超えました",
+    "scheduleFailed": "予約できませんでした。しばらくしてからもう一度お試しください",
+    "scheduledTitle": "予約したノート {count}",
+    "scheduledCancel": "取り消す",
+    "scheduledCancelLabel": "{when}の予約を取り消す",
+    "scheduledCanceled": "予約を取り消しました",
+    "scheduledMove": "時刻を変更",
+    "scheduledMoved": "投稿時刻を変更しました",
+    "scheduledSave": "保存",
+    "scheduledImages": "写真{count}枚",
+    "scheduledPoll": "投票",
+    "scheduledReply": "返信",
+    "scheduledQuote": "引用",
+    "scheduledFailure": {
+      "NOTE_NOT_FOUND": "返信先のノートが削除されました",
+      "NOTE_QUOTED_NOTE_NOT_FOUND": "引用するノートが削除されました",
+      "NOTE_QUOTE_NOT_FOUND": "引用する投稿が削除されました",
+      "NOTE_REPLY_BLOCKED": "返信できないノートです",
+      "NOTE_IMAGE_INVALID": "写真が見つかりませんでした",
+      "other": "投稿できませんでした"
+    }
   }
 }
