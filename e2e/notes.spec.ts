@@ -340,6 +340,31 @@ test("beside the feed, trending hashtags show who used them this week and open t
   await expect(page).toHaveURL(/\/tags\/.+view=notes/);
 });
 
+test("beside the feed, trending links show who shared them this week and open the notes carrying them", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/ko/blog/notes");
+  const rail = page.getByTestId("trending-note-links");
+  await expect(rail.getByRole("heading", { name: "뜨는 링크" })).toBeVisible({ timeout: 30_000 });
+  const about = rail.getByRole("link", { name: /짧은 링크와 글이 오래 사는 곳/ });
+  await expect(about).toContainText("kurl.me");
+  await expect(about).toContainText("3명이 이번 주에 공유했어요");
+  await expect(rail.getByRole("link", { name: /example\.org/ })).toBeVisible();
+  await about.click();
+  await expect(page).toHaveURL(/\/notes\/link\?url=https%3A%2F%2Fkurl\.me%2Fabout/);
+  const link = page.getByTestId("linked-notes-link");
+  await expect(link).toHaveAttribute("href", "https://kurl.me/about");
+  await expect(link).toContainText("짧은 링크와 글이 오래 사는 곳");
+  await expect(page.locator('article[data-note-id="3"]')).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('article[data-note-id="10"]')).toHaveCount(0);
+});
+
+test("a link page refuses to link out to anything but the web", async ({ page }) => {
+  await page.goto("/ko/blog/notes/link?url=javascript%3Aalert(1)");
+  await expect(page.getByRole("heading", { name: "링크" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("linked-notes-link")).toHaveCount(0);
+  await expect(page.getByText("아직 이 링크를 실은 노트가 없어요")).toBeVisible();
+});
+
 test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const tabs = page.getByRole("navigation").filter({ hasText: "모든 노트" });
