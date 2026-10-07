@@ -27,7 +27,7 @@ test("the first note asks about federation once, then posts to the top of the fe
   await expect(ring).toBeVisible();
   await expect(ring).toContainText("15");
   await composer.fill("e2e에서 쓴 노트 https://kurl.me/about.");
-  await expect(page.getByText("누구나 볼 수 있어요")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "공개 범위" })).toHaveValue("public");
   await page.getByRole("button", { name: "올리기" }).click();
 
   const notice = page.getByRole("dialog");
@@ -375,6 +375,31 @@ test("an edited note opens its edit history from the note page", async ({ page }
   await expect(dialog.locator("[data-note-version]")).toHaveCount(2);
   await expect(dialog.locator('[data-note-version="1"]')).toContainText("블로그 글을 인용해 봤어요.");
   await expect(dialog.locator('[data-note-version="0"]')).toContainText("다시 고쳤어요.");
+});
+
+test("private mentions have their own tab, stay out of all notes, and can't be reposted", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  await expect(page.locator("article[data-note-id]").first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('article[data-note-id="9"]')).toHaveCount(0);
+  await page.getByRole("navigation").filter({ hasText: "모든 노트" }).getByRole("link", { name: "개인 멘션" }).click();
+  await expect(page).toHaveURL(/feed=direct/);
+  const dm = page.locator('article[data-note-id="9"]');
+  await expect(dm).toBeVisible({ timeout: 15_000 });
+  await expect(dm.getByRole("img", { name: "멘션한 사람만" })).toBeVisible();
+  await expect(dm.getByRole("img", { name: "리포스트할 수 없는 노트예요" })).toBeVisible();
+});
+
+test("the composer posts with the chosen visibility", async ({ page }) => {
+  await page.goto("/ko/blog/notes?feed=following");
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await expect(composer).toBeVisible({ timeout: 30_000 });
+  await composer.fill("팔로워에게만 하는 말");
+  await page.getByRole("combobox", { name: "공개 범위" }).selectOption("private");
+  await page.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+  const posted = page.locator("article").first();
+  await expect(posted).toContainText("팔로워에게만 하는 말");
+  await expect(posted.getByRole("img", { name: "팔로워만" })).toBeVisible();
 });
 
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {

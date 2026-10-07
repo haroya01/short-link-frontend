@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, EyeOff, Globe, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
+import { Check, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ import {
   updateFederationSettings,
   uploadNoteImage,
   type Note,
+  type NoteVisibility,
   type NoteLinkPreview,
   type QuotedNote,
   type QuotedPost,
@@ -25,6 +26,7 @@ import { noteLength, previewUrl } from "@/modules/notes/lib/note-text";
 import { getLinkPreview } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { NoteLengthRing } from "./note-card";
+import { VisibilityIcon } from "./note-visibility";
 import { NoteLinkCard } from "./note-link-card";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
@@ -57,6 +59,7 @@ export function NoteComposer({
   const [warns, setWarns] = useState(false);
   const [warning, setWarning] = useState("");
   const [sensitive, setSensitive] = useState(false);
+  const [visibility, setVisibility] = useState<NoteVisibility | null>(inReplyToId ? null : "public");
   const [images, setImages] = useState<PendingImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
@@ -172,6 +175,7 @@ export function NoteComposer({
         quotedNoteId: quotedNote?.id ?? null,
         contentWarning: warns && warning.trim() ? warning.trim() : null,
         sensitive: images.length > 0 && sensitive,
+        visibility,
       });
       images.forEach((image) => URL.revokeObjectURL(image.previewUrl));
       setBody("");
@@ -179,6 +183,7 @@ export function NoteComposer({
       setWarns(false);
       setWarning("");
       setSensitive(false);
+      setVisibility(inReplyToId ? null : "public");
       onClearQuote?.();
       onCreated(!note.linkPreview && linkCard ? { ...note, linkPreview: linkCard } : note);
       setLinkCard(null);
@@ -433,10 +438,21 @@ export function NoteComposer({
                 <EyeOff className="h-5 w-5" strokeWidth={sensitive ? 2.25 : 1.75} aria-hidden />
               </button>
             )}
-            <span className="inline-flex min-w-0 items-center gap-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
-              <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              {t("visibilityPublic")}
-            </span>
+            <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
+              <VisibilityIcon visibility={visibility ?? "public"} className="h-3.5 w-3.5 shrink-0" />
+              <select
+                value={visibility ?? ""}
+                onChange={(e) => setVisibility((e.target.value || null) as NoteVisibility | null)}
+                aria-label={t("visibilityLabel")}
+                className="focus-ring min-w-0 cursor-pointer appearance-none truncate rounded bg-transparent pr-1 hover:text-slate-800 dark:hover:text-slate-200"
+              >
+                {inReplyToId && <option value="">{t("visibilitySameAsParent")}</option>}
+                <option value="public">{t("visibilityPublic")}</option>
+                <option value="unlisted">{t("visibilityUnlisted")}</option>
+                <option value="private">{t("visibilityPrivate")}</option>
+                <option value="direct">{t("visibilityDirect")}</option>
+              </select>
+            </label>
             <div className="ml-auto flex items-center gap-3">
               <NoteLengthRing length={length} />
               {submitButton}

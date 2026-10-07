@@ -20,6 +20,7 @@ import {
   setNoteBookmark,
   setNoteLike,
   setNotePin,
+  isShareable,
   setNoteRepost,
   type Note,
 } from "@/modules/notes/api/notes";
@@ -29,6 +30,7 @@ import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
 import { NoteGlyph } from "./note-glyph";
 import { NoteHistoryDialog } from "./note-history-dialog";
+import { VisibilityIcon } from "./note-visibility";
 import { NoteLinkCard } from "./note-link-card";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
@@ -254,6 +256,13 @@ export function NoteCard({
                 </time>
                 {note.editedAt && <span> · {t("edited")}</span>}
               </BlogLink>
+            )}
+            {note.visibility && note.visibility !== "public" && (
+              <VisibilityIcon
+                visibility={note.visibility}
+                label={t(`visibilityShort.${note.visibility}`)}
+                className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400"
+              />
             )}
             <div className="-my-2 ml-auto flex shrink-0 items-center gap-2">
               {emphasis && (
@@ -492,6 +501,7 @@ function RepostControl({
   const t = useTranslations("notes");
   const { authenticated, signInWithGoogle } = useAuth();
   const { toast } = useToast();
+  const shareable = isShareable(note.visibility);
   const [reposted, setReposted] = useState(note.repostedByMe === true);
   const [count, setCount] = useState(note.repostCount ?? null);
   const [touched, setTouched] = useState(false);
@@ -538,6 +548,13 @@ function RepostControl({
 
   const item =
     "focus-ring flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-[14px] font-medium hover:bg-slate-100 dark:hover:bg-slate-800";
+  if (!shareable) {
+    return (
+      <span className={cn(buttonClass, "cursor-not-allowed opacity-40")} title={t("notShareable")} aria-label={t("notShareable")} role="img">
+        <NoteGlyph name="repost" className="h-[18px] w-[18px]" />
+      </span>
+    );
+  }
   return (
     <div ref={root} className="relative">
       <button
