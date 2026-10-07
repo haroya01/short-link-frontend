@@ -711,6 +711,11 @@
     "resumeDismiss": "Bỏ qua",
     "replyError": "Không thể đăng câu trả lời. Vui lòng thử lại.",
     "followError": "Không cập nhật được theo dõi. Vui lòng thử lại.",
+    "noteBellOn": "Báo cho tôi khi có ghi chú mới",
+    "noteBellOff": "Ngừng báo ghi chú mới",
+    "noteBellOnToast": "Bạn sẽ được báo khi có ghi chú mới",
+    "noteBellOffToast": "Đã tắt thông báo ghi chú mới",
+    "noteBellError": "Không thể thay đổi cài đặt thông báo. Vui lòng thử lại.",
     "followBlocked": "Bạn không thể theo dõi người dùng này.",
     "linkClicks": "lượt nhấp",
     "linkTopCountry": "quốc gia hàng đầu",
@@ -882,8 +887,11 @@
     "unreadLabel": "Chưa đọc",
     "note_poll": "Cuộc bình chọn của <b>{actor}</b> đã kết thúc",
     "note_poll_mine": "Cuộc bình chọn của bạn đã kết thúc",
+    "note_post": "<b>{actor}</b> đã đăng một ghi chú mới",
     "prefNotePoll": "Kết quả bình chọn",
-    "prefNotePollHint": "Khi cuộc bình chọn của bạn hoặc cuộc bạn tham gia kết thúc"
+    "prefNotePollHint": "Khi cuộc bình chọn của bạn hoặc cuộc bạn tham gia kết thúc",
+    "prefNotePost": "Ghi chú mới từ người bạn bật chuông",
+    "prefNotePostHint": "Khi người bạn đã bật chuông trên trang tác giả đăng ghi chú mới"
   },
   "nav": {
     "events": "Sự kiện",

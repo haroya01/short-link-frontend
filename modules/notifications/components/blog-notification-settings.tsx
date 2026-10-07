@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   AtSign,
   Bell,
+  BellRing,
   BookMarked,
   ChartBar,
   GitBranch,
@@ -57,6 +58,7 @@ const ROWS: { type: NotificationType; icon: LucideIcon; labelKey: string; hintKe
   { type: "NOTE_QUOTE", icon: Quote, labelKey: "prefNoteQuote", hintKey: "prefNoteQuoteHint" },
   { type: "NOTE_MENTION", icon: AtSign, labelKey: "prefNoteMention", hintKey: "prefNoteMentionHint" },
   { type: "NOTE_POLL", icon: ChartBar, labelKey: "prefNotePoll", hintKey: "prefNotePollHint" },
+  { type: "NOTE_POST", icon: BellRing, labelKey: "prefNotePost", hintKey: "prefNotePostHint" },
   { type: "NOTE_LIKE", icon: Heart, labelKey: "prefNoteLike", hintKey: "prefNoteLikeHint" },
   { type: "NOTE_REPOST", icon: Repeat2, labelKey: "prefNoteRepost", hintKey: "prefNoteRepostHint" },
   {

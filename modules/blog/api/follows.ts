@@ -34,6 +34,8 @@ export interface FollowStatus {
   followerCount?: number;
   followingCount?: number;
   hideFollowerCount: boolean;
+  /** The viewer rang this author's bell: a notice for every new note (Mastodon's notify). */
+  notifyNotes?: boolean;
 }
 
 /** Public — follower count for everyone; `following` is false for anonymous viewers. */
@@ -78,6 +80,19 @@ export function unfollowUser(username: string): Promise<FollowStatus> {
     });
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "DELETE",
+  });
+}
+
+let mockBell = false;
+
+/** Only a follower can ring the bell; the server answers 409 NOT_FOLLOWING otherwise. */
+export function setNoteNotifications(username: string, on: boolean): Promise<{ notifyNotes: boolean }> {
+  if (USE_MOCKS) {
+    mockBell = on;
+    return Promise.resolve({ notifyNotes: mockBell });
+  }
+  return request<{ notifyNotes: boolean }>(`/api/v1/users/${encodeURIComponent(username)}/follow/notes`, {
+    method: on ? "PUT" : "DELETE",
   });
 }
 

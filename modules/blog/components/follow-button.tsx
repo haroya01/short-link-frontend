@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Check } from "lucide-react";
+import { Bell, BellRing, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api/client";
 import { useToast } from "@/components/ui/toast";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
-import { followUser, unfollowUser } from "@/modules/blog/api/follows";
+import { followUser, setNoteNotifications, unfollowUser } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
 import { emitFollowChanged } from "@/modules/blog/lib/consequence-events";
 import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
+import { cn } from "@/lib/utils";
 
 // useLayoutEffect on the client (seed before paint → no flash), useEffect on the server (no warning).
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -58,6 +59,7 @@ export function FollowButton({
   showCount = false,
   compact = false,
   quiet = false,
+  showBell = false,
   sourcePostId,
 }: {
   username: string;
@@ -68,6 +70,8 @@ export function FollowButton({
   compact?: boolean;
   /** Green outline instead of the fill — for list rows and spots beside the page's own primary. */
   quiet?: boolean;
+  /** Beside 팔로잉, a bell for a notice on every new note (Mastodon's notify). The profile header only. */
+  showBell?: boolean;
   /** When followed from inside a post, attributes the follow to it ("이 글로 늘어난 팔로우" analytics). */
   sourcePostId?: number;
 }) {
@@ -90,6 +94,9 @@ export function FollowButton({
   const [loaded, setLoaded] = useState(false);
   // Button visibility seeded from cache before auth resolves (null = unknown / cold cache).
   const [seedVisible, setSeedVisible] = useState<boolean | null>(null);
+  const [notifyNotes, setNotifyNotes] = useState(false);
+  const [bellBusy, setBellBusy] = useState(false);
+  const [bellRung, setBellRung] = useState(false);
 
   // Until auth resolves we don't know if this is the viewer's own profile. Once `ready`, that's
   // authoritative; before then we fall back to the cached self/visitor verdict so the button doesn't
@@ -120,6 +127,7 @@ export function FollowButton({
     const self = me?.username === username;
     fetchFollowStatus(username)
       .then((s) => {
+        setNotifyNotes(s.notifyNotes ?? false);
         // Hidden author: no count key in the response. Keep the button, drop the count text.
         if (s.hideFollowerCount || s.followerCount == null) {
           setShared({ following: s.following, count: initialFollowerCount, countHidden: true });
@@ -144,13 +152,16 @@ export function FollowButton({
     if (busy) return;
     setBusy(true);
     const next = !following;
+    const bellBefore = notifyNotes;
     // Optimistic — write through the shared store so a co-mounted button for this author flips too.
     setShared({ following: next, count: count + (next ? 1 : -1), countHidden });
+    if (!next) setNotifyNotes(false);
     try {
       const s = next ? await followUser(username, sourcePostId) : await unfollowUser(username);
       const nextCount = s.followerCount;
       const hide = s.hideFollowerCount || nextCount == null;
       setShared({ following: s.following, count: nextCount ?? count, countHidden: hide });
+      setNotifyNotes(s.notifyNotes ?? false);
       writeFollowCache(username, {
         following: s.following,
         count: nextCount ?? 0,
@@ -161,9 +172,28 @@ export function FollowButton({
       emitFollowChanged();
     } catch (e) {
       setShared({ following: !next, count, countHidden });
+      setNotifyNotes(bellBefore);
       toast(t(e instanceof ApiError && e.detail.code === "BLOCKED_TARGET" ? "followBlocked" : "followError"), "error");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function toggleBell() {
+    if (bellBusy) return;
+    setBellBusy(true);
+    setBellRung(true);
+    const next = !notifyNotes;
+    setNotifyNotes(next);
+    try {
+      const s = await setNoteNotifications(username, next);
+      setNotifyNotes(s.notifyNotes);
+      toast(t(s.notifyNotes ? "noteBellOnToast" : "noteBellOffToast"));
+    } catch {
+      setNotifyNotes(!next);
+      toast(t("noteBellError"), "error");
+    } finally {
+      setBellBusy(false);
     }
   }
 
@@ -194,6 +224,29 @@ export function FollowButton({
           >
             {icon}
             {label}
+          </span>
+        </button>
+      )}
+      {showBell && showButton && following && (
+        <button
+          type="button"
+          onClick={() => void toggleBell()}
+          disabled={bellBusy}
+          aria-pressed={notifyNotes}
+          aria-label={t(notifyNotes ? "noteBellOff" : "noteBellOn")}
+          title={t(notifyNotes ? "noteBellOff" : "noteBellOn")}
+          className={cn(
+            "touch-target focus-ring -ml-1.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors duration-200",
+            notifyNotes
+              ? "border-accent-600/50 text-accent-700 hover:border-accent-600 dark:border-accent-400/40 dark:text-accent-300 dark:hover:border-accent-400"
+              : "border-slate-300 text-slate-700 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600",
+          )}
+        >
+          <span
+            key={notifyNotes ? "on" : "off"}
+            className={`${bellRung || interacted ? "subscribe-pop" : ""} inline-flex`}
+          >
+            {notifyNotes ? <BellRing aria-hidden className="h-4 w-4" /> : <Bell aria-hidden className="h-4 w-4" />}
           </span>
         </button>
       )}

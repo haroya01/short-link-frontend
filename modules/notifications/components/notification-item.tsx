@@ -3,6 +3,7 @@
 import { Children, isValidElement, type ComponentType, type ReactNode } from "react";
 import {
   AtSign,
+  BellRing,
   ChartBar,
   GitBranch,
   Heart,
@@ -51,6 +52,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_QUOTE: "note_quote",
   NOTE_MENTION: "note_mention",
   NOTE_POLL: "note_poll",
+  NOTE_POST: "note_post",
   REMOTE_FOLLOW: "remote_follow",
 };
 
@@ -73,6 +75,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_QUOTE: Quote,
   NOTE_MENTION: AtSign,
   NOTE_POLL: ChartBar,
+  NOTE_POST: BellRing,
   REMOTE_FOLLOW: UserPlus,
 };
 
@@ -87,6 +90,7 @@ function subtitleOf(item: Item): string | null {
     case "NOTE_REPOST":
     case "NOTE_MENTION":
     case "NOTE_POLL":
+    case "NOTE_POST":
       return item.noteExcerpt ?? null;
     default:
       return item.postTitle;

@@ -697,6 +697,11 @@
     "resumeDismiss": "이어읽기 닫기",
     "replyError": "답글을 등록하지 못했어요. 다시 시도해 주세요.",
     "followError": "팔로우를 바꾸지 못했어요. 다시 시도해 주세요.",
+    "noteBellOn": "새 노트 알림 켜기",
+    "noteBellOff": "새 노트 알림 끄기",
+    "noteBellOnToast": "새 노트를 올리면 알려 드릴게요",
+    "noteBellOffToast": "새 노트 알림을 껐어요",
+    "noteBellError": "알림 설정을 바꾸지 못했어요. 다시 시도해 주세요.",
     "followBlocked": "이 사용자를 팔로우할 수 없어요.",
     "linkClicks": "클릭",
     "linkTopCountry": "상위 국가",
@@ -882,8 +887,11 @@
     "unreadLabel": "읽지 않음",
     "note_poll": "<b>{actor}</b>님의 투표가 끝났어요",
     "note_poll_mine": "내 투표가 끝났어요",
+    "note_post": "<b>{actor}</b>님이 새 노트를 올렸어요",
     "prefNotePoll": "투표 마감",
-    "prefNotePollHint": "내 투표나 참여한 투표가 끝났을 때"
+    "prefNotePollHint": "내 투표나 참여한 투표가 끝났을 때",
+    "prefNotePost": "종을 켠 사람의 새 노트",
+    "prefNotePostHint": "작가 페이지에서 종을 켠 사람이 새 노트를 올릴 때"
   },
   "nav": {
     "events": "모집",
