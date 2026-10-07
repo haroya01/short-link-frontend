@@ -19,6 +19,11 @@ import {
   type NotificationsPage,
 } from "@/modules/notifications/api/notifications";
 import {
+  answerFilteredSender,
+  listFilteredSenders,
+  type FilteredSender,
+} from "@/modules/notifications/api/notification-policy";
+import {
   answerFollowRequest,
   listFollowRequests,
   type FollowRequest,
@@ -138,4 +143,37 @@ export function requestOrigin(item: NotificationItem): FollowRequest["origin"] |
   if (item.actorRemoteId != null) return { remoteId: item.actorRemoteId };
   if (item.actorUsername) return { member: item.actorUsername };
   return null;
+}
+
+const FILTERED_KEY = ["notifications", "filtered"] as const;
+
+/** Senders whose notices the policy kept aside — the feed's head row and the filtered page share it. */
+export function useFilteredSenders() {
+  const { authenticated } = useAuth();
+  return useQuery({ queryKey: FILTERED_KEY, queryFn: listFilteredSenders, enabled: authenticated });
+}
+
+/** Accepting brings that sender's notices into the feed, so the feed is read again. */
+export function useAnswerFilteredSender() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ sender, accept }: { sender: FilteredSender; accept: boolean }) => answerFilteredSender(sender, accept),
+    onMutate: async ({ sender }) => {
+      await qc.cancelQueries({ queryKey: FILTERED_KEY });
+      const before = qc.getQueryData<FilteredSender[]>(FILTERED_KEY);
+      qc.setQueryData<FilteredSender[]>(FILTERED_KEY, (list) =>
+        list?.filter((s) => !(s.actorUserId === sender.actorUserId && s.actorRemoteId === sender.actorRemoteId)),
+      );
+      return { before };
+    },
+    onError: (_e, _v, context) => {
+      if (context?.before) qc.setQueryData(FILTERED_KEY, context.before);
+    },
+    onSuccess: (_d, { accept }) => {
+      if (accept) {
+        qc.invalidateQueries({ queryKey: LIST_KEY });
+        qc.invalidateQueries({ queryKey: UNREAD_KEY });
+      }
+    },
+  });
 }
