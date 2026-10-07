@@ -608,3 +608,13 @@ test("a note's menu mutes and unmutes its conversation", async ({ page }) => {
   await seed.getByRole("button", { name: "노트 메뉴" }).click();
   await expect(seed.getByRole("menuitem", { name: "대화 알림 켜기" })).toBeVisible();
 });
+
+test("a note page reports someone else's note with a reason", async ({ page }) => {
+  await page.goto("/ko/p/yuna/notes/3");
+  const report = page.getByRole("button", { name: "신고", exact: true }).first();
+  await report.click({ timeout: 30_000 });
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("스팸·광고").check();
+  await dialog.getByRole("button", { name: "신고", exact: true }).click();
+  await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();
+});

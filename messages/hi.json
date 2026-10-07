@@ -3552,12 +3552,14 @@
       "UNPUBLISH_POST": "पोस्ट अप्रकाशित करें",
       "DELETE_COMMENT": "टिप्पणी हटाएँ",
       "SUSPEND_USER": "खाता निलंबित करें",
-      "BAN_USER": "स्थायी रूप से प्रतिबंधित करें"
+      "BAN_USER": "स्थायी रूप से प्रतिबंधित करें",
+      "DELETE_NOTE": "नोट हटाएँ"
     },
     "subjectType": {
       "POST": "पोस्ट",
       "USER": "लेखक",
-      "COMMENT": "टिप्पणी"
+      "COMMENT": "टिप्पणी",
+      "NOTE": "नोट"
     },
     "removed": "अप्रकाशित",
     "reasons": {
