@@ -4310,6 +4310,8 @@
     "quoteInPost": "블로그 글로 인용",
     "feedFederated": "다른 서버",
     "emptyFederated": "아직 받은 다른 서버 노트가 없어요. 검색에 @아이디@서버를 적어 팔로우하면 그 노트가 여기 와요.",
-    "signInForFederated": "로그인하면 이 서버가 받은 다른 서버의 공개 노트를 볼 수 있어요"
+    "signInForFederated": "로그인하면 이 서버가 받은 다른 서버의 공개 노트를 볼 수 있어요",
+    "trendingTagsTitle": "뜨는 해시태그",
+    "trendingTagsAccounts": "{count}명이 이번 주에 썼어요"
   }
 }

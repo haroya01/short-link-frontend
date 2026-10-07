@@ -4310,6 +4310,8 @@
     "quoteInPost": "ブログ記事で引用",
     "feedFederated": "ほかのサーバー",
     "emptyFederated": "ほかのサーバーのノートはまだありません。検索で @名前@サーバー を入力してフォローすると、そのノートがここに届きます。",
-    "signInForFederated": "ログインすると、このサーバーが受け取ったほかのサーバーの公開ノートを見られます"
+    "signInForFederated": "ログインすると、このサーバーが受け取ったほかのサーバーの公開ノートを見られます",
+    "trendingTagsTitle": "トレンドのハッシュタグ",
+    "trendingTagsAccounts": "今週 {count} 人が使いました"
   }
 }
