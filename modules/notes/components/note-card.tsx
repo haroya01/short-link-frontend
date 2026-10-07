@@ -512,7 +512,11 @@ export function NoteCard({
               </button>
               {emphasis && !mine && (
                 <span className="ml-auto">
-                  <ReportButton subjectType="NOTE" subjectId={note.id} />
+                  <ReportButton
+                    subjectType="NOTE"
+                    subjectId={note.id}
+                    forwardDomain={note.author.remoteId ? note.author.username.split("@").pop() : undefined}
+                  />
                 </span>
               )}
             </footer>
