@@ -57,7 +57,8 @@ export function usePostEditor(
     ready,
     authenticated,
     username,
-  }: { ready: boolean; authenticated: boolean; username?: string | null },
+    initialMarkdown = "",
+  }: { ready: boolean; authenticated: boolean; username?: string | null; initialMarkdown?: string },
 ) {
   const t = useTranslations("postEditor");
   const errorMessage = useApiErrorMessage();
@@ -68,7 +69,7 @@ export function usePostEditor(
   const [post, setPost] = useState<PostView | null>(null);
   const [title, setTitleRaw] = useState("");
   const [slug, setSlugRaw] = useState("");
-  const [markdown, setMarkdownRaw] = useState("");
+  const [markdown, setMarkdownRaw] = useState(initialMarkdown);
   const [tags, setTagsRaw] = useState<string[]>([]);
   const [seriesId, setSeriesIdRaw] = useState<number | null>(null);
   const [coverUrl, setCoverRaw] = useState<string | null>(null);

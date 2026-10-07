@@ -4146,8 +4146,8 @@
     "unbookmarked": "ブックマークから外しました",
     "bookmarkFailed": "ブックマークを変更できませんでした",
     "quotesLink": "引用 {count}件",
-    "quotesTitle": "引用したノート",
-    "quotesEmpty": "まだこのノートを引用したノートはありません",
+    "quotesTitle": "引用",
+    "quotesEmpty": "まだこのノートを引用したノートや記事はありません",
     "pollLabel": "投票",
     "pollMine": "あなたの選択",
     "pollVote": "投票する",
@@ -4280,6 +4280,10 @@
     "languagesTitle": "表示するノートの言語",
     "languagesHint": "すべてのノートと人気には選んだ言語のノートだけが表示されます。言語が決まっていないノートとフォロー中・リストはそのままです。",
     "languagesAll": "すべての言語",
-    "languagesFailed": "言語の設定を変更できませんでした。しばらくしてからもう一度お試しください"
+    "languagesFailed": "言語の設定を変更できませんでした。しばらくしてからもう一度お試しください",
+    "quotingPostsTitle": "このノートを載せた記事",
+    "copyLink": "リンクをコピー",
+    "shareVia": "ほかのアプリで共有",
+    "quoteInPost": "ブログ記事で引用"
   }
 }

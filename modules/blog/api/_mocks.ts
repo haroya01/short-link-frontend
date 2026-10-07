@@ -248,6 +248,12 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
     ["H2", "정리"],
     ["PARAGRAPH", "요약하면, 작은 서비스일수록 단순함이 이긴다. 다음 글에서 이어서 다룬다."],
     ...(item.slug === "spring-tx-propagation" ? importedRows() : []),
+    ...(item.slug === "kyoto-workation"
+      ? ([
+          ["PARAGRAPH", "밤 산책은 유나의 이 노트에서 시작됐다."],
+          ["EMBED", "http://localhost/ko/p/yuna/notes/5"],
+        ] as Array<[string, string | null]>)
+      : []),
   ];
   return rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null }));
 }

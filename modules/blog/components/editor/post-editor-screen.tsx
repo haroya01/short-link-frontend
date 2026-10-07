@@ -20,11 +20,11 @@ import { extractExternalLinks } from "@/modules/blog/lib/post-links";
 import { ErrorState } from "@/components/common/error-state";
 
 /** The writing surface for an existing post (`postId`) or a new one that is created on its first save (`null`). */
-export function PostEditorScreen({ postId }: { postId: number | null }) {
+export function PostEditorScreen({ postId, initialMarkdown }: { postId: number | null; initialMarkdown?: string }) {
   const t = useTranslations("postEditor");
   const { ready, authenticated, me } = useAuth();
   const { toast } = useToast();
-  const ed = usePostEditor(postId, { ready, authenticated, username: me?.username });
+  const ed = usePostEditor(postId, { ready, authenticated, username: me?.username, initialMarkdown });
   const [publishOpen, setPublishOpen] = useState(false);
   const focusBody = useRef<(() => void) | null>(null);
   // External links the author wrote in the body — offered for kurl auto-shortening in the publish

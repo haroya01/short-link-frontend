@@ -11,7 +11,9 @@ import { PostCode } from "@/modules/blog/components/post-code";
 import { PostImage } from "@/modules/blog/components/post-image";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
 import type { ImageAlign, ImageWidth } from "@/modules/blog/lib/image-width";
-import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { kurlNoteId, kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { fetchNoteThread } from "@/modules/notes/api/notes";
+import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { headingAnchors, headingPlainText, slugify } from "@/modules/blog/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
@@ -307,6 +309,14 @@ function CodeBlock({ content }: { content: string | null }) {
 }
 
 async function EmbedBlock({ content, postId }: { content: string | null; postId?: number }) {
+  const noteId = content ? kurlNoteId(content) : null;
+  if (noteId && content)
+    return (
+      <Suspense fallback={<LinkPreviewSkeleton />}>
+        <NoteEmbed id={noteId} url={content.trim()} />
+      </Suspense>
+    );
+
   // A kurl short link → live link-stats card (the "post backed by measured links" signal). The
   // outbound url carries ?post= so the click attributes to this post ("이 글이 만든 클릭").
   const code = content ? kurlShortCode(content) : null;
@@ -375,6 +385,18 @@ async function EmbedBlock({ content, postId }: { content: string | null; postId?
     <Suspense fallback={<LinkPreviewSkeleton />}>
       <LinkPreviewCard url={plan.url} />
     </Suspense>
+  );
+}
+
+/** A kurl note carried in the post. Fetched as an anonymous reader, so a note only its author's
+ *  followers may see — or one since deleted — falls back to a plain link card. */
+async function NoteEmbed({ id, url }: { id: number; url: string }) {
+  const res = await fetchNoteThread(id);
+  if (!res.ok) return <LinkPreviewCard url={url} />;
+  return (
+    <div className="my-8 [&_*]:!no-underline" data-note-embed={id}>
+      <QuotedNoteCard note={res.data.note} full />
+    </div>
   );
 }
 

@@ -4146,8 +4146,8 @@
     "unbookmarked": "북마크에서 뺐어요",
     "bookmarkFailed": "북마크를 바꾸지 못했어요",
     "quotesLink": "인용 {count}",
-    "quotesTitle": "인용한 노트",
-    "quotesEmpty": "아직 이 노트를 인용한 노트가 없어요",
+    "quotesTitle": "인용",
+    "quotesEmpty": "아직 이 노트를 인용한 노트나 글이 없어요",
     "pollLabel": "투표",
     "pollMine": "내 선택",
     "pollVote": "투표",
@@ -4280,6 +4280,10 @@
     "languagesTitle": "보이는 노트 언어",
     "languagesHint": "모든 노트와 인기에 고른 언어의 노트만 보여요. 언어를 정하지 않은 노트와 팔로잉·리스트는 그대로예요.",
     "languagesAll": "모든 언어",
-    "languagesFailed": "언어 설정을 바꾸지 못했어요. 잠시 뒤 다시 시도해 주세요"
+    "languagesFailed": "언어 설정을 바꾸지 못했어요. 잠시 뒤 다시 시도해 주세요",
+    "quotingPostsTitle": "이 노트를 실은 글",
+    "copyLink": "링크 복사",
+    "shareVia": "다른 앱으로 공유",
+    "quoteInPost": "블로그 글로 인용"
   }
 }

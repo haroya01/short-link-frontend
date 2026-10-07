@@ -4147,7 +4147,7 @@
     "bookmarkFailed": "Couldn't update the bookmark",
     "quotesLink": "{count, plural, one {# quote} other {# quotes}}",
     "quotesTitle": "Quotes",
-    "quotesEmpty": "No one has quoted this note yet",
+    "quotesEmpty": "No notes or posts have quoted this note yet",
     "pollLabel": "Poll",
     "pollMine": "Your choice",
     "pollVote": "Vote",
@@ -4280,6 +4280,10 @@
     "languagesTitle": "Note languages to show",
     "languagesHint": "All notes and Trending show only notes in the languages you pick. Notes without a language, Following and lists stay as they are.",
     "languagesAll": "All languages",
-    "languagesFailed": "Couldn't change the languages. Please try again shortly"
+    "languagesFailed": "Couldn't change the languages. Please try again shortly",
+    "quotingPostsTitle": "Posts that carry this note",
+    "copyLink": "Copy link",
+    "shareVia": "Share via…",
+    "quoteInPost": "Quote in a blog post"
   }
 }
