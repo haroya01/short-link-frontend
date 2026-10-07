@@ -697,6 +697,11 @@
     "resumeDismiss": "Dismiss",
     "replyError": "Couldn't post your reply. Please try again.",
     "followError": "Couldn't update the follow. Please try again.",
+    "noteBellOn": "Notify me of new notes",
+    "noteBellOff": "Stop notifying me of new notes",
+    "noteBellOnToast": "You'll be notified of their new notes",
+    "noteBellOffToast": "New note notifications are off",
+    "noteBellError": "Couldn't change the notification setting. Please try again.",
     "followBlocked": "You can't follow this user.",
     "linkClicks": "clicks",
     "linkTopCountry": "top country",
@@ -882,8 +887,11 @@
     "unreadLabel": "Unread",
     "note_poll": "<b>{actor}</b>'s poll has ended",
     "note_poll_mine": "Your poll has ended",
+    "note_post": "<b>{actor}</b> posted a new note",
     "prefNotePoll": "Poll results",
-    "prefNotePollHint": "When your poll or a poll you voted in ends"
+    "prefNotePollHint": "When your poll or a poll you voted in ends",
+    "prefNotePost": "New notes from people with the bell on",
+    "prefNotePostHint": "When someone whose bell you turned on posts a new note"
   },
   "nav": {
     "events": "Events",

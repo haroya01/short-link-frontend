@@ -259,6 +259,8 @@ test("note notices group likes from any server, open the note, and send a remote
   const follow = page.getByRole("link", { name: /bob@fosstodon\.org님이 다른 서버에서 나를 팔로우했어요/ });
   await expect(follow).toHaveAttribute("href", "https://fosstodon.org/@bob");
   await expect(follow).toHaveAttribute("target", "_blank");
+  const posted = page.getByRole("link", { name: /yuna님이 새 노트를 올렸어요/ });
+  await expect(posted).toHaveAttribute("href", /\/p\/yuna\/notes\/6$/);
 });
 
 test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
@@ -301,6 +303,22 @@ test("a followed author's profile menu hides just their reposts", async ({ page 
   await expect(page.getByText("팔로잉 피드에서 minji님의 리포스트를 숨겨요")).toBeVisible();
   await menu.click();
   await expect(page.getByRole("menuitem", { name: "리포스트 다시 보기" })).toBeVisible();
+});
+
+test("the bell beside following tells of every new note and leaves with the follow", async ({ page }) => {
+  await page.goto("/ko/p/minji");
+  await expect(page.getByRole("heading", { name: "@minji" })).toBeVisible({ timeout: 30_000 });
+  const ring = page.getByRole("button", { name: "새 노트 알림 켜기" });
+  await expect(ring).toHaveCount(0);
+  await page.getByRole("button", { name: "팔로우", exact: true }).click();
+  await expect(ring).toHaveAttribute("aria-pressed", "false");
+  await ring.click();
+  await expect(page.getByText("새 노트를 올리면 알려 드릴게요")).toBeVisible();
+  const silence = page.getByRole("button", { name: "새 노트 알림 끄기" });
+  await expect(silence).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "팔로잉", exact: true, pressed: true }).click();
+  await expect(silence).toHaveCount(0);
+  await expect(ring).toHaveCount(0);
 });
 
 test("a hashtag in a note opens the tag on its notes tab, beside the tag's posts", async ({ page }) => {

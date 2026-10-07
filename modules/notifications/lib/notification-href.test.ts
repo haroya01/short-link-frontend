@@ -82,6 +82,12 @@ describe("notificationHref", () => {
     );
   });
 
+  it("opens a new note from someone whose bell the recipient rang, under its author", () => {
+    expect(notificationHref(item({ type: "NOTE_POST", noteId: 16 }), "me", "ko")).toBe(
+      "/ko/p/minji/notes/16",
+    );
+  });
+
   it("leaves a follow from another server to its external profile", () => {
     expect(
       notificationHref(item({ type: "REMOTE_FOLLOW", actorProfileUrl: "https://m.social/@a" }), "me", "ko"),

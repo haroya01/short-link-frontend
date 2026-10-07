@@ -697,6 +697,11 @@
     "resumeDismiss": "閉じる",
     "replyError": "返信を投稿できませんでした。もう一度お試しください。",
     "followError": "フォローを変更できませんでした。もう一度お試しください。",
+    "noteBellOn": "新しいノートを通知する",
+    "noteBellOff": "新しいノートの通知をやめる",
+    "noteBellOnToast": "新しいノートを投稿したらお知らせします",
+    "noteBellOffToast": "新しいノートの通知をオフにしました",
+    "noteBellError": "通知設定を変更できませんでした。もう一度お試しください。",
     "followBlocked": "このユーザーはフォローできません。",
     "linkClicks": "クリック",
     "linkTopCountry": "上位の国",
@@ -882,8 +887,11 @@
     "unreadLabel": "未読",
     "note_poll": "<b>{actor}</b>さんの投票が終了しました",
     "note_poll_mine": "あなたの投票が終了しました",
+    "note_post": "<b>{actor}</b>さんが新しいノートを投稿しました",
     "prefNotePoll": "投票の終了",
-    "prefNotePollHint": "自分の投票や参加した投票が終わったとき"
+    "prefNotePollHint": "自分の投票や参加した投票が終わったとき",
+    "prefNotePost": "ベルをオンにした人の新しいノート",
+    "prefNotePostHint": "作家ページでベルをオンにした人が新しいノートを投稿したとき"
   },
   "nav": {
     "events": "イベント",
