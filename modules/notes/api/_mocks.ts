@@ -1,4 +1,5 @@
 import { ApiError } from "@/lib/api/client";
+import type { PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
 import type {
   FederationSettings,
   Note,
@@ -247,11 +248,33 @@ let pins: number[] = [];
 const earlierVersions = new Map<number, NoteHistory["versions"]>();
 const repostsHidden = new Set<string>();
 
+const QUOTING_POSTS: Record<number, PublicFeedItem[]> = {
+  5: [
+    {
+      id: 801,
+      author: { id: 31, username: "kazuki", bio: null, avatarUrl: null },
+      slug: "kyoto-workation",
+      title: "교토에서 한 달 살기: 워케이션 회고",
+      excerpt: "낮엔 카페에서 코드, 밤엔 산책. 생산성과 외로움 사이의 균형.",
+      ogImageUrl: null,
+      languageTag: "ko",
+      tags: ["일상", "여행"],
+      publishedAt: "2026-10-05T12:00:00Z",
+      viewCount: 0,
+      likeCount: 0,
+    },
+  ],
+};
+
 const withQuotes = (n: Note): Note => ({
   ...n,
-  quoteCount: notes.filter((q) => q.quotedNote?.id === n.id).length,
+  quoteCount: notes.filter((q) => q.quotedNote?.id === n.id).length + (QUOTING_POSTS[n.id]?.length ?? 0),
   bookmarkedByMe: bookmarks.includes(n.id),
 });
+
+export function mockQuotingPosts(id: number, page: number): PublicFeedView {
+  return { items: page === 0 ? (QUOTING_POSTS[id] ?? []) : [], page, size: 20, hasNext: false };
+}
 
 export function mockTrendingNotes(page: number): NoteFeed {
   const ranked = [...topLevel().filter((n) => (n.visibility ?? "public") === "public")].sort(

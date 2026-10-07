@@ -8,7 +8,9 @@ import { useTranslations } from "next-intl";
 import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
 import { isImageUrl, planEmbed } from "@/modules/blog/lib/post-embed";
-import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { kurlNoteId, kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { getNoteThread, isShareable, type Note } from "@/modules/notes/api/notes";
+import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 
 /** A bare URL on its own line, pasted into the editor. */
@@ -78,6 +80,20 @@ export const LinkCardNode = Node.create({
   },
 });
 
+function RemoveCardButton({ onRemove, label }: { onRemove: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      contentEditable={false}
+      onClick={() => onRemove()}
+      aria-label={label}
+      className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg bg-white/90 text-slate-400 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover/lc:opacity-100 dark:bg-slate-900/80 dark:hover:text-red-400"
+    >
+      <X className="h-4 w-4" />
+    </button>
+  );
+}
+
 function hostOf(url: string): string {
   try {
     return new URL(url).host.replace(/^www\./, "");
@@ -86,7 +102,50 @@ function hostOf(url: string): string {
   }
 }
 
-function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
+function LinkCardView(props: NodeViewProps) {
+  const url = (props.node.attrs.url as string) || "";
+  const noteId = kurlNoteId(url);
+  return noteId ? <NoteCardView {...props} noteId={noteId} /> : <PreviewCardView {...props} />;
+}
+
+/** Mirrors the reader's NoteEmbed: readers fetch the note anonymously, so a note only some may see
+ *  shows here as the link card they will get. */
+function NoteCardView(props: NodeViewProps & { noteId: number }) {
+  const { node, deleteNode, selected, noteId } = props;
+  const t = useTranslations("postEditor.blockMenu");
+  const url = (node.attrs.url as string) || "";
+  const [note, setNote] = useState<Note | null | undefined>(undefined);
+
+  useEffect(() => {
+    let alive = true;
+    getNoteThread(noteId)
+      .then((thread) => alive && setNote(isShareable(thread.note.visibility) ? thread.note : null))
+      .catch(() => alive && setNote(null));
+    return () => {
+      alive = false;
+    };
+  }, [noteId]);
+
+  if (note === null) return <PreviewCardView {...props} />;
+  return (
+    <NodeViewWrapper
+      className={`group/lc relative my-4 ${selected ? "ring-2 ring-accent-400 rounded-2xl" : ""}`}
+      data-link-card=""
+      data-url={url}
+    >
+      <div contentEditable={false} data-note-embed={noteId}>
+        {note ? (
+          <QuotedNoteCard note={note} linked={false} full />
+        ) : (
+          <div className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900" />
+        )}
+      </div>
+      <RemoveCardButton onRemove={deleteNode} label={t("delete")} />
+    </NodeViewWrapper>
+  );
+}
+
+function PreviewCardView({ node, deleteNode, selected }: NodeViewProps) {
   const t = useTranslations("postEditor.blockMenu");
   const url = (node.attrs.url as string) || "";
   const [data, setData] = useState<LinkPreview | null>(null);
@@ -151,15 +210,7 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
             )}
           </div>
         )}
-        <button
-          type="button"
-          contentEditable={false}
-          onClick={() => deleteNode()}
-          aria-label={t("delete")}
-          className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg bg-white/90 text-slate-400 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover/lc:opacity-100 dark:bg-slate-900/80 dark:hover:text-red-400"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        <RemoveCardButton onRemove={deleteNode} label={t("delete")} />
       </NodeViewWrapper>
     );
   }
@@ -211,15 +262,7 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
         )}
       </a>
       {/* Remove — visible on hover; atoms also delete with Backspace when selected. */}
-      <button
-        type="button"
-        contentEditable={false}
-        onClick={() => deleteNode()}
-        aria-label={t("delete")}
-        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg bg-white/90 text-slate-400 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover/lc:opacity-100 dark:bg-slate-900/80 dark:hover:text-red-400"
-      >
-        <X className="h-4 w-4" />
-      </button>
+      <RemoveCardButton onRemove={deleteNode} label={t("delete")} />
     </NodeViewWrapper>
   );
 }

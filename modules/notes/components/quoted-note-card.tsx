@@ -5,10 +5,20 @@ import { useLocale } from "next-intl";
 import type { QuotedNote } from "@/modules/notes/api/notes";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
-export function QuotedNoteCard({ note, linked = true }: { note: QuotedNote; linked?: boolean }) {
+export function QuotedNoteCard({
+  note,
+  linked = true,
+  full = false,
+}: {
+  note: QuotedNote;
+  linked?: boolean;
+  /** Carried in a blog post: the whole body, and the post spaces it like any other card. */
+  full?: boolean;
+}) {
   const locale = useLocale();
   const ago = useCompactTime();
   const content = (
@@ -27,7 +37,9 @@ export function QuotedNoteCard({ note, linked = true }: { note: QuotedNote; link
         </span>
       ) : (
         note.body && (
-          <span className="mt-1 line-clamp-4 whitespace-pre-line break-words text-[15px] leading-[1.45] text-slate-800 dark:text-slate-200">
+          <span
+            className={`mt-1 whitespace-pre-line break-words text-[15px] leading-[1.45] text-slate-800 dark:text-slate-200${full ? "" : " line-clamp-4"}`}
+          >
             {note.body}
           </span>
         )
@@ -48,7 +60,7 @@ export function QuotedNoteCard({ note, linked = true }: { note: QuotedNote; link
       )}
     </>
   );
-  const frame = "mt-2.5 block rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800";
+  const frame = `${full ? "" : "mt-2.5 "}block rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800`;
   if (!linked) {
     return (
       <div className={frame} data-quoted-note-id={note.id}>
@@ -58,7 +70,11 @@ export function QuotedNoteCard({ note, linked = true }: { note: QuotedNote; link
   }
   return (
     <BlogLink
-      href={authorHref(note.author.username, locale, `notes/${note.id}`)}
+      href={
+        note.author.remoteId
+          ? blogPath(`/remote/${note.author.remoteId}/notes/${note.id}`)
+          : authorHref(note.author.username, locale, `notes/${note.id}`)
+      }
       data-quoted-note-id={note.id}
       className={`focus-ring ${frame} transition-colors hover:bg-slate-50 dark:hover:bg-slate-900`}
     >

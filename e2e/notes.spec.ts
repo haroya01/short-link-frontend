@@ -125,8 +125,39 @@ test("photos sit in a sideways strip with ALT, open large, and share copies the 
   await expect(viewer).toHaveCount(0);
 
   await walk.getByRole("button", { name: "공유" }).click();
+  await expect(walk.getByRole("menuitem", { name: "다른 앱으로 공유" })).toHaveCount(0);
+  await walk.getByRole("menuitem", { name: "링크 복사" }).click();
   await expect(page.getByText("링크를 복사했어요")).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/\/notes\/5$/);
+  await expect(walk.getByRole("menu")).toHaveCount(0);
+});
+
+test("share starts a blog post that carries the note as a card", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const walk = page.locator('article[data-note-id="5"]');
+  await walk.getByRole("button", { name: "공유" }).click({ timeout: 30_000 });
+  await walk.getByRole("menuitem", { name: "블로그 글로 인용" }).click();
+
+  await expect(page).toHaveURL(/\/write\/new\?quote=.*notes%2F5$/, { timeout: 30_000 });
+  const card = page.locator('[data-note-embed="5"]');
+  await expect(card).toContainText("산책하다 찍은 것들", { timeout: 30_000 });
+  await expect(card).toContainText("yuna");
+});
+
+test("a blog post that carries a note shows it as a card that opens the note", async ({ page }) => {
+  await page.goto("/ko/p/kazuki/kyoto-workation");
+  const card = page.locator('[data-note-embed="5"]');
+  await expect(card).toContainText("산책하다 찍은 것들", { timeout: 30_000 });
+  await expect(card.locator('a[data-quoted-note-id="5"]')).toHaveAttribute("href", /\/notes\/5$/);
+});
+
+test("a note's quotes list the blog posts that carry it above the notes that quote it", async ({ page }) => {
+  await page.goto("/ko/p/yuna/notes/5/quotes");
+  const posts = page.getByTestId("quoting-posts");
+  await expect(posts.getByRole("heading", { name: "이 노트를 실은 글" })).toBeVisible({ timeout: 30_000 });
+  await expect(posts.getByRole("link", { name: /교토에서 한 달 살기/ })).toBeVisible();
+  await expect(page.locator('article[data-note-id="6"]')).toContainText("이 사진들 보고 나도 오늘 걸었다.");
+  await expect(page.getByText("아직 이 노트를 인용한 노트나 글이 없어요")).toHaveCount(0);
 });
 
 test("a picked photo sits in the composer strip and takes alt text from its +ALT badge", async ({ page }) => {
@@ -218,6 +249,7 @@ test("clicking a note's text opens it, while its links and buttons keep their ow
   const seed = page.locator('article[data-note-id="3"]');
   await expect(seed.getByRole("link", { name: "https://kurl.me/about" })).toBeVisible({ timeout: 30_000 });
   await seed.getByRole("button", { name: "공유" }).click();
+  await expect(seed.getByRole("menuitem", { name: "링크 복사" })).toBeVisible();
   await expect(page).toHaveURL(/\/blog\/notes$/);
 
   await seed.locator("p").first().click({ position: { x: 8, y: 8 } });
@@ -539,13 +571,13 @@ test("a note page heads the note with the author's fediverse handle and a follow
   await expect(note.getByRole("button", { name: "팔로우", exact: true })).toBeVisible();
 });
 
-test("a note page counts its quotes and lists them", async ({ page }) => {
+test("a note page counts its quotes, a blog post that carries it among them, and lists them", async ({ page }) => {
   await page.goto("/ko/p/yuna/notes/5");
-  const quotes = page.getByRole("link", { name: "인용 1" });
+  const quotes = page.getByRole("link", { name: "인용 2" });
   await expect(quotes).toBeVisible({ timeout: 30_000 });
   await quotes.click();
   await expect(page).toHaveURL(/\/notes\/5\/quotes/);
-  await expect(page.getByRole("heading", { name: "인용한 노트" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "인용", exact: true })).toBeVisible();
   await expect(page.getByText("이 사진들 보고 나도 오늘 걸었다.")).toBeVisible();
 });
 

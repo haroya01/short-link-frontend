@@ -1,6 +1,6 @@
 import { request } from "@/lib/api/client";
 import { stripImageMetadata } from "@/lib/image-resize";
-import { fetchPublic, type FetchResult } from "@/modules/blog/api/public-posts";
+import { fetchPublic, type FetchResult, type PublicFeedView } from "@/modules/blog/api/public-posts";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 노트는 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
@@ -340,6 +340,12 @@ export function listNoteQuotes(id: number, page = 0): Promise<NoteFeed> {
   return request<NoteFeed>(`/api/v1/public/notes/${id}/quotes?page=${page}&size=20`, {
     method: "GET",
   });
+}
+
+/** Published blog posts that carry this note as a card, newest first. */
+export function listQuotingPosts(id: number, page = 0): Promise<PublicFeedView> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockQuotingPosts(id, page));
+  return request<PublicFeedView>(`/api/v1/public/notes/${id}/posts?page=${page}`, { method: "GET" });
 }
 
 /** Mastodon's edit history: the note as it reads now first, then each earlier version, newest first. */

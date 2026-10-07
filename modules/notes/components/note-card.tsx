@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { EyeOff, ListFilter, MoreHorizontal, Pin, Quote, TriangleAlert } from "lucide-react";
+import { EyeOff, Link2, ListFilter, MoreHorizontal, NotebookPen, Pin, Quote, Share, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api/client";
@@ -11,7 +11,7 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { blogPath } from "@/lib/host";
+import { blogHref, blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import {
@@ -193,24 +193,6 @@ export function NoteCard({
       onDelete?.(note.id);
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function share() {
-    const url = new URL(noteHref(note, locale), window.location.href).toString();
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ url });
-      } catch {
-        return;
-      }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      toast(t("linkCopied"));
-    } catch {
-      toast(t("linkCopyFailed"), "error");
     }
   }
 
@@ -507,9 +489,7 @@ export function NoteCard({
                   <NoteGlyph name="bookmark" active={bookmarked} className="h-[18px] w-[18px]" />
                 </button>
               )}
-              <button type="button" onClick={share} aria-label={t("share")} className={action}>
-                <NoteGlyph name="share" className="h-[18px] w-[18px]" />
-              </button>
+              <ShareControl note={note} buttonClass={action} />
               {emphasis && !mine && (
                 <span className="ml-auto">
                   <ReportButton
@@ -572,29 +552,12 @@ function RepostControl({
   const [reposted, setReposted] = useState(note.repostedByMe === true);
   const [count, setCount] = useState(note.repostCount ?? null);
   const [touched, setTouched] = useState(false);
-  const [open, setOpen] = useState(false);
-  const root = useRef<HTMLDivElement>(null);
+  const { open, setOpen, root } = usePopoverMenu();
 
   useEffect(() => {
     setReposted(note.repostedByMe === true);
     setCount(note.repostCount ?? null);
   }, [note.repostedByMe, note.repostCount]);
-
-  useEffect(() => {
-    if (!open) return;
-    function onPointer(e: PointerEvent) {
-      if (!root.current?.contains(e.target as Node)) setOpen(false);
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("pointerdown", onPointer);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointer);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
 
   async function toggle() {
     setOpen(false);
@@ -668,6 +631,111 @@ function RepostControl({
             {t("quoteNote")}
             <Quote className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function usePopoverMenu() {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    function onPointer(e: PointerEvent) {
+      if (!root.current?.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return { open, setOpen, root };
+}
+
+/** Quoting in a blog post is offered only for notes anyone may see: readers of the post fetch the card
+ *  anonymously, so a private note's card would come up empty. */
+function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }) {
+  const t = useTranslations("notes");
+  const locale = useLocale();
+  const { toast } = useToast();
+  const { authenticated } = useAuth();
+  const { open, setOpen, root } = usePopoverMenu();
+  const [canShare, setCanShare] = useState(false);
+
+  useEffect(() => {
+    setCanShare(typeof navigator.share === "function");
+  }, []);
+
+  const url = () => new URL(noteHref(note, locale), window.location.href).toString();
+
+  async function copy() {
+    setOpen(false);
+    try {
+      await navigator.clipboard.writeText(url());
+      toast(t("linkCopied"));
+    } catch {
+      toast(t("linkCopyFailed"), "error");
+    }
+  }
+
+  async function shareVia() {
+    setOpen(false);
+    try {
+      await navigator.share({ url: url() });
+    } catch {
+      return;
+    }
+  }
+
+  function quoteInPost() {
+    setOpen(false);
+    const write = `/write/new?quote=${encodeURIComponent(url())}`;
+    window.location.assign(
+      authenticated ? blogHref(write) : `${blogHref("/login")}?next=${encodeURIComponent(write)}`,
+    );
+  }
+
+  const item =
+    "focus-ring flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-[14px] font-medium text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800";
+  return (
+    <div ref={root} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={t("share")}
+        className={buttonClass}
+      >
+        <NoteGlyph name="share" className="h-[18px] w-[18px]" />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-9 z-20 w-52 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+        >
+          <button type="button" role="menuitem" onClick={copy} className={item}>
+            {t("copyLink")}
+            <Link2 className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+          </button>
+          {canShare && (
+            <button type="button" role="menuitem" onClick={shareVia} className={item}>
+              {t("shareVia")}
+              <Share className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+            </button>
+          )}
+          {isShareable(note.visibility) && (
+            <button type="button" role="menuitem" onClick={quoteInPost} className={item}>
+              {t("quoteInPost")}
+              <NotebookPen className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+            </button>
+          )}
         </div>
       )}
     </div>
