@@ -73,6 +73,8 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
         setDurationMs(prev ? Math.min(MAX_MS, Math.max(MIN_MS, Math.round(dist * MS_PER_PX))) : 0);
         return next;
       });
+    } else {
+      setBar(null);
     }
 
     // Genuine layout changes (window resize / font load) → reposition instantly, no glide. Skip the
