@@ -11,6 +11,7 @@ import { FeedSortTabs, type FeedSortTab } from "@/modules/blog/components/feed-s
 import {
   getNoteFeedPreferences,
   listBookmarkedNotes,
+  listDirectNotes,
   listEveryoneNotes,
   listFollowingNotes,
   listTrendingNotes,
@@ -22,7 +23,7 @@ import {
 import { NoteComposer, NoteSignInRow } from "./note-composer";
 import { NoteList } from "./note-list";
 
-const FEEDS = ["everyone", "following", "trending", "bookmarks"] as const;
+const FEEDS = ["everyone", "following", "trending", "bookmarks", "direct"] as const;
 type Feed = (typeof FEEDS)[number];
 
 const LOADERS: Record<Feed, (page: number) => Promise<NoteFeed>> = {
@@ -30,9 +31,10 @@ const LOADERS: Record<Feed, (page: number) => Promise<NoteFeed>> = {
   following: listFollowingNotes,
   trending: listTrendingNotes,
   bookmarks: listBookmarkedNotes,
+  direct: listDirectNotes,
 };
 
-const PERSONAL: ReadonlySet<Feed> = new Set(["following", "bookmarks"]);
+const PERSONAL: ReadonlySet<Feed> = new Set(["following", "bookmarks", "direct"]);
 
 function feedOf(value: string | null): Feed {
   return FEEDS.find((feed) => feed === value) ?? "everyone";
@@ -61,6 +63,7 @@ export function NotesFeed() {
     following: t("feedFollowing"),
     trending: t("feedTrending"),
     bookmarks: t("feedBookmarks"),
+    direct: t("feedDirect"),
   };
   const tabs: FeedSortTab[] = FEEDS.map((key) => ({
     key,
@@ -74,6 +77,7 @@ export function NotesFeed() {
     following: t("emptyFollowing"),
     trending: t("emptyTrending"),
     bookmarks: t("emptyBookmarks"),
+    direct: t("emptyDirect"),
   };
   const signedOut = ready && !authenticated;
   const showsPosted = feed === "everyone" || feed === "following";
@@ -107,7 +111,13 @@ export function NotesFeed() {
       </div>
       {PERSONAL.has(feed) && signedOut ? (
         <EmptyState
-          title={feed === "following" ? t("signInForFollowing") : t("signInForBookmarks")}
+          title={
+            feed === "following"
+              ? t("signInForFollowing")
+              : feed === "direct"
+                ? t("signInForDirect")
+                : t("signInForBookmarks")
+          }
           className="mt-8"
           action={
             <button

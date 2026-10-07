@@ -88,6 +88,14 @@ let notes: Note[] = [
     sensitive: true,
   }),
   note({
+    id: 9,
+    body: "@dohyun 다음 주 회고, 둘이 먼저 맞춰 볼래요?",
+    author: YUNA,
+    createdAt: "2026-10-04T07:00:00Z",
+    mentions: ["dohyun"],
+    visibility: "direct",
+  }),
+  note({
     id: 8,
     body: "수술 끝나고 꿰맨 자리. 잘 아물고 있다.",
     author: YUNA,
@@ -114,7 +122,7 @@ const withQuotes = (n: Note): Note => ({
 });
 
 export function mockTrendingNotes(page: number): NoteFeed {
-  const ranked = [...topLevel()].sort(
+  const ranked = [...topLevel().filter((n) => (n.visibility ?? "public") === "public")].sort(
     (a, b) => (b.likeCount ?? 0) + b.replyCount - ((a.likeCount ?? 0) + a.replyCount),
   );
   return { items: page === 0 ? ranked.map(withQuotes) : [], page, hasNext: false };
@@ -153,6 +161,14 @@ export function mockFollowingNotes(page: number): NoteFeed {
   return { items, page, hasNext: false };
 }
 
+export function mockDirectNotes(page: number): NoteFeed {
+  const items =
+    page === 0
+      ? notes.filter((n) => n.visibility === "direct" && (n.author.id === ME.id || n.mentions?.includes(ME.username)))
+      : [];
+  return { items: items.map(withQuotes), page, hasNext: false };
+}
+
 export function mockTaggedNotes(tag: string, page: number): NoteFeed {
   const needle = `#${tag.toLowerCase()}`;
   const items = page === 0 ? notes.filter((n) => n.body.toLowerCase().includes(needle)) : [];
@@ -188,11 +204,14 @@ export function mockLike(id: number, on: boolean): { liked: boolean; likeCount: 
 }
 
 export function mockEveryoneNotes(page: number): NoteFeed {
-  return { items: page === 0 ? topLevel().map(withQuotes) : [], page, hasNext: false };
+  const shared = topLevel().filter((n) => (n.visibility ?? "public") === "public");
+  return { items: page === 0 ? shared.map(withQuotes) : [], page, hasNext: false };
 }
 
 export function mockAuthorNotes(username: string, page: number): NoteFeed {
-  const own = topLevel().filter((n) => n.author.username === username);
+  const own = topLevel().filter(
+    (n) => n.author.username === username && (n.visibility !== "direct" || n.author.id === ME.id),
+  );
   const pinnedFirst = [
     ...pins.map((id) => own.find((n) => n.id === id)).filter((n): n is Note => n !== undefined),
     ...own.filter((n) => !pins.includes(n.id)),
@@ -246,6 +265,7 @@ export function mockCreate(draft: NoteDraft): Note {
     quotedNote: quotedNoteOf(draft.quotedNoteId),
     contentWarning: draft.contentWarning ?? null,
     sensitive: Boolean(draft.sensitive || draft.contentWarning),
+    visibility: draft.visibility ?? "public",
     media: draft.images.map((image) => ({
       url: "https://picsum.photos/seed/kurl-upload/800/600",
       altText: image.altText || null,

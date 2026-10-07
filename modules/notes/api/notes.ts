@@ -79,6 +79,7 @@ export interface Note {
   sensitive?: boolean;
   /** The author pinned it to the top of their profile (at most five, as on Mastodon). */
   pinned?: boolean;
+  visibility?: NoteVisibility;
 }
 
 export interface NoteFeed {
@@ -106,9 +107,20 @@ export interface NoteDraft {
   quotedNoteId: number | null;
   contentWarning?: string | null;
   sensitive?: boolean;
+  /** Omitted on a reply: the server keeps the parent's visibility, as Mastodon does. */
+  visibility?: NoteVisibility | null;
 }
 
 export const NOTE_MAX_WARNING_LENGTH = 100;
+
+/** Mastodon's four: public everywhere; unlisted stays out of the shared feeds; private is for
+ *  followers and mentioned members; direct only for mentioned members. Only the first two can be
+ *  reposted or quoted. */
+export type NoteVisibility = "public" | "unlisted" | "private" | "direct";
+
+export function isShareable(visibility: NoteVisibility | undefined): boolean {
+  return visibility === undefined || visibility === "public" || visibility === "unlisted";
+}
 
 export interface FederationSettings {
   enabled: boolean;
@@ -155,6 +167,11 @@ export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
     `/api/v1/public/notes/tags/${encodeURIComponent(tag)}?page=${page}&size=20`,
     { method: "GET" },
   );
+}
+
+export function listDirectNotes(page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockDirectNotes(page));
+  return request<NoteFeed>(`/api/v1/notes/direct?page=${page}&size=20`, { method: "GET" });
 }
 
 export function listBookmarkedNotes(page = 0): Promise<NoteFeed> {
