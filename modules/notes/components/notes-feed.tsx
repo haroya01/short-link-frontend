@@ -13,6 +13,7 @@ import {
   listBookmarkedNotes,
   listDirectNotes,
   listEveryoneNotes,
+  listFederatedNotes,
   listFollowingNotes,
   listTrendingNotes,
   setShowReposts,
@@ -24,18 +25,19 @@ import { NoteComposer, NoteSignInRow } from "./note-composer";
 import { NoteList } from "./note-list";
 import { NoteListsPanel } from "./note-lists";
 
-const FEEDS = ["everyone", "following", "trending", "bookmarks", "direct", "lists"] as const;
+const FEEDS = ["everyone", "federated", "following", "trending", "bookmarks", "direct", "lists"] as const;
 type Feed = (typeof FEEDS)[number];
 
 const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed>> = {
   everyone: listEveryoneNotes,
+  federated: listFederatedNotes,
   following: listFollowingNotes,
   trending: listTrendingNotes,
   bookmarks: listBookmarkedNotes,
   direct: listDirectNotes,
 };
 
-const PERSONAL: ReadonlySet<Feed> = new Set(["following", "bookmarks", "direct", "lists"]);
+const PERSONAL: ReadonlySet<Feed> = new Set(["federated", "following", "bookmarks", "direct", "lists"]);
 
 function feedOf(value: string | null): Feed {
   return FEEDS.find((feed) => feed === value) ?? "everyone";
@@ -65,6 +67,7 @@ export function NotesFeed() {
   const listId = Number(params.get("list")) || null;
   const label: Record<Feed, string> = {
     everyone: t("feedEveryone"),
+    federated: t("feedFederated"),
     following: t("feedFollowing"),
     trending: t("feedTrending"),
     bookmarks: t("feedBookmarks"),
@@ -80,6 +83,7 @@ export function NotesFeed() {
   }));
   const empty: Record<Feed, string> = {
     everyone: t("emptyAuthor"),
+    federated: t("emptyFederated"),
     following: t("emptyFollowing"),
     trending: t("emptyTrending"),
     bookmarks: t("emptyBookmarks"),
@@ -121,7 +125,9 @@ export function NotesFeed() {
           title={
             feed === "following"
               ? t("signInForFollowing")
-              : feed === "direct"
+              : feed === "federated"
+                ? t("signInForFederated")
+                : feed === "direct"
                 ? t("signInForDirect")
                 : feed === "lists"
                   ? t("signInForLists")
@@ -147,7 +153,13 @@ export function NotesFeed() {
           prepend={showsPosted ? posted : []}
           onQuoted={(note) => setPosted((current) => [note, ...current])}
           empty={<EmptyState title={empty[feed]} className="mt-8" />}
-          filterContext={feed === "following" ? "home" : feed === "everyone" || feed === "trending" ? "public" : undefined}
+          filterContext={
+            feed === "following"
+              ? "home"
+              : feed === "everyone" || feed === "federated" || feed === "trending"
+                ? "public"
+                : undefined
+          }
         />
       )}
     </div>

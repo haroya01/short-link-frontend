@@ -4210,7 +4210,7 @@
     "filterPhrase": "キーワードまたはフレーズ",
     "filterWhere": "適用する場所",
     "filterHome": "フォロー中・リスト",
-    "filterPublic": "すべてのノート・人気・タグ",
+    "filterPublic": "すべてのノート・ほかのサーバー・人気・タグ",
     "filterThread": "返信",
     "filterAccount": "プロフィール",
     "filterNotifications": "通知",
@@ -4301,12 +4301,15 @@
     },
     "languageLabel": "ノートの言語",
     "languagesTitle": "表示するノートの言語",
-    "languagesHint": "すべてのノートと人気には選んだ言語のノートだけが表示されます。言語が決まっていないノートとフォロー中・リストはそのままです。",
+    "languagesHint": "すべてのノート・ほかのサーバー・トレンドには選んだ言語のノートだけが表示されます。言語のないノートとフォロー中・リストはそのままです。",
     "languagesAll": "すべての言語",
     "languagesFailed": "言語の設定を変更できませんでした。しばらくしてからもう一度お試しください",
     "quotingPostsTitle": "このノートを載せた記事",
     "copyLink": "リンクをコピー",
     "shareVia": "ほかのアプリで共有",
-    "quoteInPost": "ブログ記事で引用"
+    "quoteInPost": "ブログ記事で引用",
+    "feedFederated": "ほかのサーバー",
+    "emptyFederated": "ほかのサーバーのノートはまだありません。検索で @名前@サーバー を入力してフォローすると、そのノートがここに届きます。",
+    "signInForFederated": "ログインすると、このサーバーが受け取ったほかのサーバーの公開ノートを見られます"
   }
 }

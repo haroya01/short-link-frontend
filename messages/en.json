@@ -4210,7 +4210,7 @@
     "filterPhrase": "Keyword or phrase",
     "filterWhere": "Applies to",
     "filterHome": "Following and lists",
-    "filterPublic": "All notes, trending, tags",
+    "filterPublic": "All notes, other servers, trending, tags",
     "filterThread": "Replies",
     "filterAccount": "Profiles",
     "filterNotifications": "Notifications",
@@ -4301,12 +4301,15 @@
     },
     "languageLabel": "Note language",
     "languagesTitle": "Note languages to show",
-    "languagesHint": "All notes and Trending show only notes in the languages you pick. Notes without a language, Following and lists stay as they are.",
+    "languagesHint": "Everyone, other servers and trending show only notes in the languages you chose. Notes with no language, following and lists stay as they are.",
     "languagesAll": "All languages",
     "languagesFailed": "Couldn't change the languages. Please try again shortly",
     "quotingPostsTitle": "Posts that carry this note",
     "copyLink": "Copy link",
     "shareVia": "Share via…",
-    "quoteInPost": "Quote in a blog post"
+    "quoteInPost": "Quote in a blog post",
+    "feedFederated": "Other servers",
+    "emptyFederated": "No notes from other servers yet. Follow someone by searching @name@server and their notes arrive here.",
+    "signInForFederated": "Sign in to see public notes this server received from other servers"
   }
 }

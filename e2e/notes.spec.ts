@@ -320,6 +320,15 @@ test("note notices group likes from any server, open the note, and send a remote
   await expect(edited).toHaveAttribute("href", /\/p\/yuna\/notes\/5$/);
 });
 
+test("the other servers tab shows notes this server received, and only those", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  await page.getByRole("link", { name: "다른 서버" }).click({ timeout: 30_000 });
+  await expect(page).toHaveURL(/feed=federated/);
+  await expect(page.locator('article[data-note-id="12"]')).toContainText("Hello from the fediverse");
+  await expect(page.locator('article[data-note-id="13"]')).toBeVisible();
+  await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
+});
+
 test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const tabs = page.getByRole("navigation").filter({ hasText: "모든 노트" });

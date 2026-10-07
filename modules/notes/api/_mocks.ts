@@ -276,6 +276,13 @@ export function mockQuotingPosts(id: number, page: number): PublicFeedView {
   return { items: page === 0 ? (QUOTING_POSTS[id] ?? []) : [], page, size: 20, hasNext: false };
 }
 
+export function mockFederatedNotes(page: number): NoteFeed {
+  const received = notes.filter(
+    (n) => n.inReplyToId === null && n.author.remoteId && (n.visibility ?? "public") === "public",
+  );
+  return { items: page === 0 ? received.map(withQuotes) : [], page, hasNext: false };
+}
+
 export function mockTrendingNotes(page: number): NoteFeed {
   const ranked = [...topLevel().filter((n) => (n.visibility ?? "public") === "public")].sort(
     (a, b) => (b.likeCount ?? 0) + b.replyCount - ((a.likeCount ?? 0) + a.replyCount),
