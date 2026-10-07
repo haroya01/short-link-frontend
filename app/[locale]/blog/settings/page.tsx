@@ -14,6 +14,7 @@ import { FederationSetting } from "@/modules/notes/components/federation-setting
 import { NoteFilterSettings } from "@/modules/notes/components/note-filter-settings";
 import { DisplayNameSetting } from "@/modules/blog/components/display-name-setting";
 import { DomainBlockSettings, RemoteFollowingSettings } from "@/modules/notes/components/remote-account";
+import { NoteLanguageSettings } from "@/modules/notes/components/note-language-settings";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -109,6 +110,7 @@ export default function BlogSettingsPage() {
       <DisplayNameSetting />
       <RemoteFollowingSettings />
       <DomainBlockSettings />
+      <NoteLanguageSettings />
 
       {/* 화면 */}
       <section className="mt-8">

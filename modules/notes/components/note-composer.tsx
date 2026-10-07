@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChartBar, Check, Clock, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -26,6 +26,7 @@ import {
   type QuotedPost,
 } from "@/modules/notes/api/notes";
 import { noteLength, previewUrl } from "@/modules/notes/lib/note-text";
+import { languageName, NOTE_LANGUAGES, postingLanguage, rememberLanguage } from "@/modules/notes/lib/note-languages";
 import { getLinkPreview } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { NoteLengthRing } from "./note-card";
@@ -73,6 +74,9 @@ export function NoteComposer({
   const [altEditing, setAltEditing] = useState<string | null>(null);
   const [poll, setPoll] = useState<NotePollDraft | null>(null);
   const [scheduledAt, setScheduledAt] = useState("");
+  const locale = useLocale();
+  const [language, setLanguage] = useState(() => locale.split("-")[0]);
+  useEffect(() => setLanguage(postingLanguage(locale)), [locale]);
   const [scheduledVersion, setScheduledVersion] = useState(0);
   const { toast } = useToast();
   const when = useWhen();
@@ -197,7 +201,9 @@ export function NoteComposer({
         sensitive: images.length > 0 && sensitive,
         visibility,
         poll: poll ? { ...poll, options: poll.options.map((option) => option.trim()) } : null,
+        language,
       };
+      rememberLanguage(language);
       if (scheduledAt) {
         let scheduled;
         try {
@@ -545,6 +551,19 @@ export function NoteComposer({
               </select>
             </label>
             <div className="ml-auto flex items-center gap-3">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                aria-label={t("languageLabel")}
+                title={languageName(language)}
+                className="focus-ring cursor-pointer appearance-none rounded bg-transparent text-[13px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+              >
+                {NOTE_LANGUAGES.map((code) => (
+                  <option key={code} value={code}>
+                    {languageName(code)}
+                  </option>
+                ))}
+              </select>
               <NoteLengthRing length={length} />
               {submitButton}
             </div>

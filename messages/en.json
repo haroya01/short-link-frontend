@@ -4272,6 +4272,11 @@
       "NOTE_REPLY_BLOCKED": "You can't reply to that note",
       "NOTE_IMAGE_INVALID": "Couldn't find the photo",
       "other": "Couldn't post"
-    }
+    },
+    "languageLabel": "Note language",
+    "languagesTitle": "Note languages to show",
+    "languagesHint": "All notes and Trending show only notes in the languages you pick. Notes without a language, Following and lists stay as they are.",
+    "languagesAll": "All languages",
+    "languagesFailed": "Couldn't change the languages. Please try again shortly"
   }
 }

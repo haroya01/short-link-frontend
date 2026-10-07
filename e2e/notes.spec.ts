@@ -361,6 +361,28 @@ test("blocking a server from its account's menu hides the account until it is un
   await expect(page.getByText("mastodon.social 차단을 해제했어요")).toBeVisible();
 });
 
+test("blog settings choose the note languages shown in all notes", async ({ page }) => {
+  await page.goto("/ko/blog/settings");
+  const section = page.getByRole("region", { name: "보이는 노트 언어" });
+  await expect(section).toBeVisible({ timeout: 30_000 });
+  const all = section.getByRole("checkbox", { name: "모든 언어" });
+  await expect(all).toBeChecked();
+  await section.getByText("日本語", { exact: true }).click();
+  await expect(section.getByRole("checkbox", { name: "日本語" })).toBeChecked();
+  await expect(all).not.toBeChecked();
+  await section.getByText("모든 언어", { exact: true }).click();
+  await expect(section.getByRole("checkbox", { name: "日本語" })).not.toBeChecked();
+});
+
+test("the composer writes in a chosen language", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  await page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" }).click({ timeout: 30_000 });
+  const language = page.getByRole("combobox", { name: "노트 언어" });
+  await expect(language).toHaveValue("ko", { timeout: 30_000 });
+  await language.selectOption("en");
+  await expect(language).toHaveValue("en");
+});
+
 test("blog settings list blocked servers", async ({ page }) => {
   await page.goto("/ko/blog/settings");
   const section = page.getByRole("region", { name: "차단한 서버" });

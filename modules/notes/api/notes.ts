@@ -89,6 +89,8 @@ export interface Note {
   pinned?: boolean;
   visibility?: NoteVisibility;
   poll?: NotePoll | null;
+  /** ISO 639-1 as the writer chose it; null when unknown (older notes, other servers that did not say). */
+  language?: string | null;
 }
 
 /** Mastodon's poll. Counts are public; the author gets `voted: true` and only sees results.
@@ -138,6 +140,7 @@ export interface NoteDraft {
   /** Omitted on a reply: the server keeps the parent's visibility, as Mastodon does. */
   visibility?: NoteVisibility | null;
   poll?: NotePollDraft | null;
+  language?: string | null;
 }
 
 export const NOTE_MAX_WARNING_LENGTH = 100;
@@ -365,14 +368,25 @@ export function setConversationMuted(id: number, on: boolean): Promise<{ muted: 
   return request(`/api/v1/notes/${id}/conversation-mute`, { method: on ? "PUT" : "DELETE" });
 }
 
-export function getNoteFeedPreferences(): Promise<{ showReposts: boolean }> {
+export interface NoteFeedPreferences {
+  showReposts: boolean;
+  /** Languages shown in All notes and Trending; empty shows every language (Mastodon's filter languages). */
+  languages: string[];
+}
+
+export function getNoteFeedPreferences(): Promise<NoteFeedPreferences> {
   if (noteMocks) return Promise.resolve(noteMocks.mockFeedPreferences());
   return request("/api/v1/notes/feed-preferences", { method: "GET" });
 }
 
-export function setShowReposts(showReposts: boolean): Promise<{ showReposts: boolean }> {
+export function setShowReposts(showReposts: boolean): Promise<NoteFeedPreferences> {
   if (noteMocks) return Promise.resolve(noteMocks.mockSetShowReposts(showReposts));
   return request("/api/v1/notes/feed-preferences", { method: "PUT", body: { showReposts } });
+}
+
+export function setNoteLanguages(languages: string[]): Promise<NoteFeedPreferences> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSetLanguages(languages));
+  return request("/api/v1/notes/feed-preferences", { method: "PUT", body: { languages } });
 }
 
 export function getRepostVisibility(username: string): Promise<{ hidden: boolean }> {
