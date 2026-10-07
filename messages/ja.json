@@ -4145,6 +4145,17 @@
     "pollDays": "{count}日",
     "pollMultiple": "複数選択",
     "pollAdd": "投票を追加",
-    "pollRemove": "投票を削除"
+    "pollRemove": "投票を削除",
+    "muteMenu": "ミュート…",
+    "unmute": "ミュート解除",
+    "mute": "ミュート",
+    "muteTitle": "{username}さんをミュート",
+    "muteHint": "{username}さんのノートが、すべてのノート・フォロー中・リスト・返信から隠れます。プロフィールではそのまま見え、相手には知らせません。",
+    "muteNotifications": "通知も隠す",
+    "muteDuration": "期間",
+    "muteForever": "無期限",
+    "mutedToast": "{username}さんをミュートしました",
+    "unmutedToast": "{username}さんのミュートを解除しました",
+    "muteFailed": "ミュートを変更できませんでした"
   }
 }

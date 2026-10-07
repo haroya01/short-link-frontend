@@ -500,3 +500,26 @@ test("the composer posts a poll, and photos and a poll exclude each other", asyn
   await expect(posted).toContainText("0명 참여");
 });
 
+test("muting someone from their profile menu takes their notes out of the feed", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const yunaNotes = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "yuna", exact: true }) });
+  await expect(yunaNotes.first()).toBeVisible({ timeout: 30_000 });
+  await yunaNotes.first().getByRole("link", { name: "yuna", exact: true }).first().click();
+  await expect(page.getByRole("heading", { name: "@yuna" })).toBeVisible({ timeout: 30_000 });
+  const menu = page.getByRole("button", { name: "프로필 메뉴" });
+  await menu.click();
+  await page.getByRole("menuitem", { name: "뮤트…" }).click();
+  const dialog = page.getByRole("dialog", { name: "yuna님 뮤트" });
+  await expect(dialog.getByRole("checkbox", { name: "알림도 숨기기" })).toBeChecked();
+  await dialog.getByRole("combobox", { name: "기간" }).selectOption("86400");
+  await dialog.getByRole("button", { name: "뮤트", exact: true }).click();
+  await expect(page.getByText("yuna님을 뮤트했어요")).toBeVisible();
+  await menu.click();
+  await expect(page.getByRole("menuitem", { name: "뮤트 해제" })).toBeVisible();
+  await menu.click();
+
+  await page.goBack();
+  await expect(page.locator('article[data-note-id="6"]')).toBeVisible({ timeout: 30_000 });
+  for (const id of [3, 5, 10]) await expect(page.locator(`article[data-note-id="${id}"]`)).toHaveCount(0);
+});
+

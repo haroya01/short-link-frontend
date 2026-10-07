@@ -4145,6 +4145,17 @@
     "pollDays": "{count, plural, one {# day} other {# days}}",
     "pollMultiple": "Multiple choice",
     "pollAdd": "Add poll",
-    "pollRemove": "Remove poll"
+    "pollRemove": "Remove poll",
+    "muteMenu": "Mute…",
+    "unmute": "Unmute",
+    "mute": "Mute",
+    "muteTitle": "Mute {username}",
+    "muteHint": "{username}'s notes are hidden from all notes, following, lists and replies. Their profile still shows them, and they aren't told.",
+    "muteNotifications": "Hide notifications too",
+    "muteDuration": "Duration",
+    "muteForever": "Indefinitely",
+    "mutedToast": "Muted {username}",
+    "unmutedToast": "Unmuted {username}",
+    "muteFailed": "Couldn't change the mute"
   }
 }

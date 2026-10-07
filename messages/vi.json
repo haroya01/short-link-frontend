@@ -4145,6 +4145,17 @@
     "pollDays": "{count} ngày",
     "pollMultiple": "Chọn nhiều",
     "pollAdd": "Thêm bình chọn",
-    "pollRemove": "Xóa bình chọn"
+    "pollRemove": "Xóa bình chọn",
+    "muteMenu": "Tắt tiếng…",
+    "unmute": "Bật tiếng",
+    "mute": "Tắt tiếng",
+    "muteTitle": "Tắt tiếng {username}",
+    "muteHint": "Ghi chú của {username} sẽ bị ẩn khỏi mọi ghi chú, đang theo dõi, danh sách và trả lời. Hồ sơ vẫn hiển thị và họ không được thông báo.",
+    "muteNotifications": "Ẩn cả thông báo",
+    "muteDuration": "Thời hạn",
+    "muteForever": "Vô thời hạn",
+    "mutedToast": "Đã tắt tiếng {username}",
+    "unmutedToast": "Đã bật tiếng {username}",
+    "muteFailed": "Không thể thay đổi tắt tiếng"
   }
 }

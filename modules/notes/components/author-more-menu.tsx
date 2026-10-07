@@ -7,7 +7,14 @@ import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { useToast } from "@/components/ui/toast";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
-import { getRepostVisibility, setRepostsHidden } from "@/modules/notes/api/notes";
+import {
+  getMuteStatus,
+  getRepostVisibility,
+  setRepostsHidden,
+  unmuteUser,
+  type MuteStatus,
+} from "@/modules/notes/api/notes";
+import { MuteDialog } from "./mute-dialog";
 import { NoteListMembershipDialog } from "./note-list-membership-dialog";
 
 const UNKNOWN = { following: false, count: 0, countHidden: false };
@@ -23,6 +30,8 @@ export function AuthorMoreMenu({ username }: { username: string }) {
   useDismiss(open, root, () => setOpen(false));
 
   const [addingToList, setAddingToList] = useState(false);
+  const [muting, setMuting] = useState(false);
+  const [mute, setMute] = useState<MuteStatus | null>(null);
   const signedInOther = authenticated && me?.username !== username;
   const active = signedInOther && follow.following;
 
@@ -37,7 +46,29 @@ export function AuthorMoreMenu({ username }: { username: string }) {
     };
   }, [active, username]);
 
+  useEffect(() => {
+    if (!signedInOther) return;
+    let live = true;
+    getMuteStatus(username)
+      .then((status) => live && setMute(status))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [signedInOther, username]);
+
   if (!signedInOther) return null;
+
+  async function unmute() {
+    setOpen(false);
+    try {
+      await unmuteUser(username);
+      setMute({ muted: false, notifications: false, expiresAt: null });
+      toast(t("unmutedToast", { username }));
+    } catch {
+      toast(t("muteFailed"), "error");
+    }
+  }
 
   async function toggle() {
     const next = !hidden;
@@ -85,9 +116,28 @@ export function AuthorMoreMenu({ username }: { username: string }) {
               {hidden ? t("showRepostsFrom") : t("hideRepostsFrom")}
             </button>
           )}
+          {mute &&
+            (mute.muted ? (
+              <button type="button" role="menuitem" onClick={unmute} className={item}>
+                {t("unmute")}
+              </button>
+            ) : (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  setMuting(true);
+                }}
+                className={item}
+              >
+                {t("muteMenu")}
+              </button>
+            ))}
         </div>
       )}
       <NoteListMembershipDialog username={username} open={addingToList} onClose={() => setAddingToList(false)} />
+      <MuteDialog username={username} open={muting} onClose={() => setMuting(false)} onMuted={setMute} />
     </div>
   );
 }

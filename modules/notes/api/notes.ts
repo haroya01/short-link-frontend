@@ -302,6 +302,35 @@ export function setRepostsHidden(username: string, hidden: boolean): Promise<{ h
   });
 }
 
+export interface MuteStatus {
+  muted: boolean;
+  notifications: boolean;
+  expiresAt: string | null;
+}
+
+export function getMuteStatus(username: string): Promise<MuteStatus> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockMuteStatus(username));
+  return request(`/api/v1/users/${encodeURIComponent(username)}/mute`, { method: "GET" });
+}
+
+/** `duration` in seconds; null mutes until undone, as on Mastodon. */
+export function muteUser(
+  username: string,
+  notifications: boolean,
+  duration: number | null,
+): Promise<MuteStatus> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockMute(username, notifications, duration));
+  return request(`/api/v1/users/${encodeURIComponent(username)}/mute`, {
+    method: "PUT",
+    body: { notifications, duration },
+  });
+}
+
+export function unmuteUser(username: string): Promise<void> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockUnmute(username));
+  return request(`/api/v1/users/${encodeURIComponent(username)}/mute`, { method: "DELETE" });
+}
+
 /** Client-side author page (carries the viewer's token, so likedByMe and the author's own counts
  *  come back filled in). */
 export function listAuthorNotes(username: string, page = 0): Promise<NoteFeed> {
