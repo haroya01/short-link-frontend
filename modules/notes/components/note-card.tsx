@@ -22,6 +22,7 @@ import {
   type Note,
 } from "@/modules/notes/api/notes";
 import { noteLength } from "@/modules/notes/lib/note-text";
+import { FollowButton } from "@/modules/blog/components/follow-button";
 import { NoteBody } from "./note-body";
 import { NoteMedia } from "./note-media";
 import { NoteGlyph } from "./note-glyph";
@@ -36,6 +37,8 @@ const NOTE_RING_NUMBER_FROM = 20;
 export function noteHref(note: Pick<Note, "id" | "author">, locale: string): string {
   return authorHref(note.author.username, locale, `notes/${note.id}`);
 }
+
+const FEDERATION_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
 
 export function NoteCard({
   note,
@@ -190,16 +193,30 @@ export function NoteCard({
           aria-hidden
           className="shrink-0 self-start rounded-full"
         >
-          <Avatar src={note.author.avatarUrl} name={note.author.username} size="md" />
+          <Avatar src={note.author.avatarUrl} name={note.author.username} size={emphasis ? "lg" : "md"} />
         </BlogLink>
         <div className={emphasis ? "contents" : "min-w-0 flex-1"}>
           <header className="flex min-h-5 items-center gap-1.5 text-[15px] leading-5">
-            <BlogLink
-              href={authorHref(note.author.username, locale)}
-              className="truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
-            >
-              {note.author.username}
-            </BlogLink>
+            {emphasis ? (
+              <div className="min-w-0">
+                <BlogLink
+                  href={authorHref(note.author.username, locale)}
+                  className="block truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
+                >
+                  {note.author.username}
+                </BlogLink>
+                <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">
+                  @{note.author.username}@{FEDERATION_HOST}
+                </span>
+              </div>
+            ) : (
+              <BlogLink
+                href={authorHref(note.author.username, locale)}
+                className="truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
+              >
+                {note.author.username}
+              </BlogLink>
+            )}
             {!emphasis && (
               <BlogLink
                 href={noteHref(note, locale)}
@@ -211,7 +228,10 @@ export function NoteCard({
                 {note.editedAt && <span> · {t("edited")}</span>}
               </BlogLink>
             )}
-            <div className="-my-2 ml-auto flex shrink-0 items-center">
+            <div className="-my-2 ml-auto flex shrink-0 items-center gap-2">
+              {emphasis && (
+                <FollowButton username={note.author.username} initialFollowerCount={0} compact quiet />
+              )}
               {authenticated && !editing && (
                 <NoteMenu
                   bookmarked={bookmarked}
