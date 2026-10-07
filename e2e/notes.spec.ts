@@ -291,7 +291,10 @@ test("a followed author's profile menu hides just their reposts", async ({ page 
   await page.goto("/ko/p/minji");
   const menu = page.getByRole("button", { name: "프로필 메뉴" });
   await expect(page.getByRole("heading", { name: "@minji" })).toBeVisible({ timeout: 30_000 });
-  await expect(menu).toHaveCount(0);
+  await menu.click();
+  await expect(page.getByRole("menuitem", { name: "리스트에 추가…" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "리포스트 숨기기" })).toHaveCount(0);
+  await menu.click();
   await page.getByRole("button", { name: "팔로우", exact: true }).click();
   await menu.click();
   await page.getByRole("menuitem", { name: "리포스트 숨기기" }).click();
@@ -400,6 +403,33 @@ test("the composer posts with the chosen visibility", async ({ page }) => {
   const posted = page.locator("article").first();
   await expect(posted).toContainText("팔로워에게만 하는 말");
   await expect(posted.getByRole("img", { name: "팔로워만" })).toBeVisible();
+});
+
+test("a person added to a list from their profile fills that list's tab", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const byYuna = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "yuna", exact: true }) });
+  await byYuna.first().getByRole("link", { name: "yuna", exact: true }).first().click({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "@yuna" })).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "프로필 메뉴" }).click();
+  await page.getByRole("menuitem", { name: "리스트에 추가…" }).click();
+  const dialog = page.getByRole("dialog", { name: "리스트에 추가" });
+  await dialog.getByRole("textbox", { name: "새 리스트 이름" }).fill("동료");
+  await dialog.getByRole("button", { name: "만들고 담기" }).click();
+  await expect(dialog.getByRole("menuitemcheckbox", { name: "동료" })).toHaveAttribute("aria-checked", "true");
+  await expect(dialog).toContainText("yuna님에게 알리지 않아요");
+  await dialog.getByRole("button", { name: "닫기" }).click();
+
+  await page.goBack();
+  await page.getByRole("navigation").filter({ hasText: "모든 노트" }).getByRole("link", { name: "리스트" }).click({ timeout: 30_000 });
+  await expect(page).toHaveURL(/feed=lists/);
+  await page.getByRole("link", { name: /동료/ }).click();
+  await expect(page).toHaveURL(/list=\d+/);
+  const list = page.getByRole("region", { name: "동료" });
+  await expect(list.locator("article[data-note-id]").first()).toContainText("yuna", { timeout: 15_000 });
+  await expect(list.locator("article[data-note-id]").filter({ hasText: "dohyun" })).toHaveCount(0);
+  await list.getByRole("button", { name: "1명" }).click();
+  await list.getByRole("button", { name: "빼기" }).click();
+  await expect(list.getByRole("button", { name: "0명" })).toBeVisible();
 });
 
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {

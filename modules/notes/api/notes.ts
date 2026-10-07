@@ -169,6 +169,54 @@ export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
   );
 }
 
+export interface NoteListSummary {
+  id: number;
+  title: string;
+  memberCount: number;
+}
+
+export function listNoteLists(): Promise<NoteListSummary[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockLists());
+  return request<NoteListSummary[]>("/api/v1/notes/lists", { method: "GET" });
+}
+
+export function createNoteList(title: string): Promise<NoteListSummary> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockCreateList(title));
+  return request<NoteListSummary>("/api/v1/notes/lists", { method: "POST", body: { title } });
+}
+
+export function renameNoteList(id: number, title: string): Promise<NoteListSummary> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockRenameList(id, title));
+  return request<NoteListSummary>(`/api/v1/notes/lists/${id}`, { method: "PATCH", body: { title } });
+}
+
+export function deleteNoteList(id: number): Promise<void> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockDeleteList(id));
+  return request<void>(`/api/v1/notes/lists/${id}`, { method: "DELETE" });
+}
+
+export function listNoteListMembers(id: number): Promise<NoteAuthor[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockListMembers(id));
+  return request<NoteAuthor[]>(`/api/v1/notes/lists/${id}/members`, { method: "GET" });
+}
+
+export function setNoteListMember(id: number, username: string, on: boolean): Promise<void> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSetListMember(id, username, on));
+  return request<void>(`/api/v1/notes/lists/${id}/members/${encodeURIComponent(username)}`, {
+    method: on ? "PUT" : "DELETE",
+  });
+}
+
+export function listNoteListNotes(id: number, page = 0): Promise<NoteFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockListNotes(id, page));
+  return request<NoteFeed>(`/api/v1/notes/lists/${id}/notes?page=${page}&size=20`, { method: "GET" });
+}
+
+export function listNoteListMemberships(username: string): Promise<{ listIds: number[] }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockListMemberships(username));
+  return request(`/api/v1/notes/list-memberships/${encodeURIComponent(username)}`, { method: "GET" });
+}
+
 export function listDirectNotes(page = 0): Promise<NoteFeed> {
   if (noteMocks) return Promise.resolve(noteMocks.mockDirectNotes(page));
   return request<NoteFeed>(`/api/v1/notes/direct?page=${page}&size=20`, { method: "GET" });

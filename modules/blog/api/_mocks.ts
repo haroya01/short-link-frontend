@@ -36,6 +36,7 @@ const AUTHORS: Record<string, PublicAuthor> = {
   haruka: { id: 3, username: "haruka", bio: "플랫폼 엔지니어", avatarUrl: null },
   kazuki: { id: 4, username: "kazuki", bio: "여행하며 코드 짜는 사람", avatarUrl: avatar(33) },
   sora: { id: 5, username: "sora", bio: "프로덕트 디자이너", avatarUrl: null },
+  yuna: { id: 15, username: "yuna", bio: "짧게 자주 쓰는 사람", avatarUrl: avatar(20) },
 };
 
 type Seed = {

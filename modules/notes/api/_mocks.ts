@@ -1,4 +1,13 @@
-import type { FederationSettings, Note, NoteDraft, NoteFeed, NoteHistory, NoteThread } from "./notes";
+import type {
+  FederationSettings,
+  Note,
+  NoteAuthor,
+  NoteDraft,
+  NoteFeed,
+  NoteHistory,
+  NoteListSummary,
+  NoteThread,
+} from "./notes";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -159,6 +168,50 @@ export function mockFollowingNotes(page: number): NoteFeed {
   const seen = new Set<number>();
   const items = [...reposted, ...yunas, ...mine].filter((n) => !seen.has(n.id) && seen.add(n.id));
   return { items, page, hasNext: false };
+}
+
+let lists: { id: number; title: string; members: string[] }[] = [];
+let nextListId = 700;
+const PEOPLE: Record<string, NoteAuthor> = { dohyun: ME, yuna: YUNA };
+
+export function mockLists(): NoteListSummary[] {
+  return lists.map((l) => ({ id: l.id, title: l.title, memberCount: l.members.length }));
+}
+
+export function mockCreateList(title: string): NoteListSummary {
+  lists = [...lists, { id: nextListId++, title, members: [] }];
+  return { id: nextListId - 1, title, memberCount: 0 };
+}
+
+export function mockRenameList(id: number, title: string): NoteListSummary {
+  lists = lists.map((l) => (l.id === id ? { ...l, title } : l));
+  const list = lists.find((l) => l.id === id)!;
+  return { id, title, memberCount: list.members.length };
+}
+
+export function mockDeleteList(id: number): void {
+  lists = lists.filter((l) => l.id !== id);
+}
+
+export function mockListMembers(id: number): NoteAuthor[] {
+  return (lists.find((l) => l.id === id)?.members ?? []).map((name) => PEOPLE[name]).filter(Boolean);
+}
+
+export function mockSetListMember(id: number, username: string, on: boolean): void {
+  lists = lists.map((l) =>
+    l.id === id ? { ...l, members: [...(on ? [username] : []), ...l.members.filter((m) => m !== username)] } : l,
+  );
+}
+
+export function mockListNotes(id: number, page: number): NoteFeed {
+  const members = new Set(lists.find((l) => l.id === id)?.members ?? []);
+  const items =
+    page === 0 ? topLevel().filter((n) => members.has(n.author.username) && n.visibility !== "direct") : [];
+  return { items: items.map(withQuotes), page, hasNext: false };
+}
+
+export function mockListMemberships(username: string): { listIds: number[] } {
+  return { listIds: lists.filter((l) => l.members.includes(username)).map((l) => l.id) };
 }
 
 export function mockDirectNotes(page: number): NoteFeed {
