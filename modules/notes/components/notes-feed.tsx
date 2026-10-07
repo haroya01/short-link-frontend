@@ -22,11 +22,12 @@ import {
 } from "@/modules/notes/api/notes";
 import { NoteComposer, NoteSignInRow } from "./note-composer";
 import { NoteList } from "./note-list";
+import { NoteListsPanel } from "./note-lists";
 
-const FEEDS = ["everyone", "following", "trending", "bookmarks", "direct"] as const;
+const FEEDS = ["everyone", "following", "trending", "bookmarks", "direct", "lists"] as const;
 type Feed = (typeof FEEDS)[number];
 
-const LOADERS: Record<Feed, (page: number) => Promise<NoteFeed>> = {
+const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed>> = {
   everyone: listEveryoneNotes,
   following: listFollowingNotes,
   trending: listTrendingNotes,
@@ -34,7 +35,7 @@ const LOADERS: Record<Feed, (page: number) => Promise<NoteFeed>> = {
   direct: listDirectNotes,
 };
 
-const PERSONAL: ReadonlySet<Feed> = new Set(["following", "bookmarks", "direct"]);
+const PERSONAL: ReadonlySet<Feed> = new Set(["following", "bookmarks", "direct", "lists"]);
 
 function feedOf(value: string | null): Feed {
   return FEEDS.find((feed) => feed === value) ?? "everyone";
@@ -57,13 +58,18 @@ export function NotesFeed() {
   const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
   const [posted, setPosted] = useState<Note[]>([]);
   const feed = feedOf(params.get("feed"));
-  const load = useCallback((page: number) => LOADERS[feed](page), [feed]);
+  const load = useCallback(
+    (page: number) => (feed === "lists" ? Promise.resolve({ items: [], page, hasNext: false }) : LOADERS[feed](page)),
+    [feed],
+  );
+  const listId = Number(params.get("list")) || null;
   const label: Record<Feed, string> = {
     everyone: t("feedEveryone"),
     following: t("feedFollowing"),
     trending: t("feedTrending"),
     bookmarks: t("feedBookmarks"),
     direct: t("feedDirect"),
+    lists: t("feedLists"),
   };
   const tabs: FeedSortTab[] = FEEDS.map((key) => ({
     key,
@@ -78,6 +84,7 @@ export function NotesFeed() {
     trending: t("emptyTrending"),
     bookmarks: t("emptyBookmarks"),
     direct: t("emptyDirect"),
+    lists: t("listEmpty"),
   };
   const signedOut = ready && !authenticated;
   const showsPosted = feed === "everyone" || feed === "following";
@@ -116,7 +123,9 @@ export function NotesFeed() {
               ? t("signInForFollowing")
               : feed === "direct"
                 ? t("signInForDirect")
-                : t("signInForBookmarks")
+                : feed === "lists"
+                  ? t("signInForLists")
+                  : t("signInForBookmarks")
           }
           className="mt-8"
           action={
@@ -129,6 +138,8 @@ export function NotesFeed() {
             </button>
           }
         />
+      ) : feed === "lists" ? (
+        <NoteListsPanel selectedId={listId} />
       ) : (
         <NoteList
           key={`${feed}:${reposts.version}`}

@@ -8,6 +8,7 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { useToast } from "@/components/ui/toast";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
 import { getRepostVisibility, setRepostsHidden } from "@/modules/notes/api/notes";
+import { NoteListMembershipDialog } from "./note-list-membership-dialog";
 
 const UNKNOWN = { following: false, count: 0, countHidden: false };
 
@@ -21,7 +22,9 @@ export function AuthorMoreMenu({ username }: { username: string }) {
   const root = useRef<HTMLDivElement>(null);
   useDismiss(open, root, () => setOpen(false));
 
-  const active = authenticated && me?.username !== username && follow.following;
+  const [addingToList, setAddingToList] = useState(false);
+  const signedInOther = authenticated && me?.username !== username;
+  const active = signedInOther && follow.following;
 
   useEffect(() => {
     if (!active) return;
@@ -34,7 +37,7 @@ export function AuthorMoreMenu({ username }: { username: string }) {
     };
   }, [active, username]);
 
-  if (!active || hidden === null) return null;
+  if (!signedInOther) return null;
 
   async function toggle() {
     const next = !hidden;
@@ -69,13 +72,25 @@ export function AuthorMoreMenu({ username }: { username: string }) {
           <button
             type="button"
             role="menuitem"
-            onClick={toggle}
-            className="focus-ring block w-full rounded-lg px-3 py-2 text-left text-[13px] text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            onClick={() => {
+              setOpen(false);
+              setAddingToList(true);
+            }}
+            className={item}
           >
-            {hidden ? t("showRepostsFrom") : t("hideRepostsFrom")}
+            {t("addToList")}
           </button>
+          {active && hidden !== null && (
+            <button type="button" role="menuitem" onClick={toggle} className={item}>
+              {hidden ? t("showRepostsFrom") : t("hideRepostsFrom")}
+            </button>
+          )}
         </div>
       )}
+      <NoteListMembershipDialog username={username} open={addingToList} onClose={() => setAddingToList(false)} />
     </div>
   );
 }
+
+const item =
+  "focus-ring block w-full rounded-lg px-3 py-2 text-left text-[13px] text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800";
