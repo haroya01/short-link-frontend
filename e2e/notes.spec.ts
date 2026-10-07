@@ -325,6 +325,13 @@ test("a bookmark from a note's menu shows under the bookmarks tab", async ({ pag
   await expect(page.locator(`article[data-note-id="${id}"]`)).toBeVisible({ timeout: 15_000 });
 });
 
+test("a note page heads the note with the author's fediverse handle and a follow button", async ({ page }) => {
+  await page.goto("/ko/p/yuna/notes/5");
+  const note = page.locator('article[data-note-id="5"]').first();
+  await expect(note.getByText("@yuna@kurl.me")).toBeVisible({ timeout: 30_000 });
+  await expect(note.getByRole("button", { name: "팔로우", exact: true })).toBeVisible();
+});
+
 test("a note page counts its quotes and lists them", async ({ page }) => {
   await page.goto("/ko/p/yuna/notes/5");
   const quotes = page.getByRole("link", { name: "인용 1" });
