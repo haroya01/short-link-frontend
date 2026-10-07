@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * Notes in MOCK-ON: the in-memory note mock serves @dohyun's and @yuna's notes, and the mock session
@@ -6,6 +6,11 @@ import { test, expect } from "@playwright/test";
  * tab, and a note page with its reply.
  */
 test.use({ viewport: { width: 1280, height: 900 } });
+
+async function openMoreFeed(page: Page, name: string) {
+  await page.getByRole("button", { name: "더 보기" }).click({ timeout: 30_000 });
+  await page.getByRole("menuitem", { name }).click();
+}
 
 test("the header leads from posts to notes", async ({ page }) => {
   await page.goto("/ko/blog");
@@ -322,8 +327,9 @@ test("note notices group likes from any server, open the note, and send a remote
 
 test("the other servers tab shows notes this server received, and only those", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  await page.getByRole("link", { name: "다른 서버" }).click({ timeout: 30_000 });
+  await openMoreFeed(page, "다른 서버");
   await expect(page).toHaveURL(/feed=federated/);
+  await expect(page.getByRole("button", { name: "다른 서버" })).toBeVisible();
   await expect(page.locator('article[data-note-id="12"]')).toContainText("Hello from the fediverse");
   await expect(page.locator('article[data-note-id="13"]')).toBeVisible();
   await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
@@ -342,8 +348,9 @@ test("beside the feed, trending hashtags show who used them this week and open t
 
 test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const tabs = page.getByRole("navigation").filter({ hasText: "모든 노트" });
-  await expect(tabs.getByRole("link", { name: "모든 노트" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
+  const tabs = page.getByRole("navigation").filter({ hasText: "최신" });
+  await expect(tabs.getByRole("link", { name: "최신" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
+  await expect(tabs.getByRole("link")).toHaveText(["최신", "인기", "팔로잉"]);
   await tabs.getByRole("link", { name: "인기" }).click();
   await expect(page).toHaveURL(/feed=trending/);
   await expect(tabs.getByRole("link", { name: "인기" })).toHaveAttribute("aria-current", "page");
@@ -523,7 +530,7 @@ test("private mentions have their own tab, stay out of all notes, and can't be r
   await page.goto("/ko/blog/notes");
   await expect(page.locator("article[data-note-id]").first()).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="9"]')).toHaveCount(0);
-  await page.getByRole("navigation").filter({ hasText: "모든 노트" }).getByRole("link", { name: "개인 멘션" }).click();
+  await openMoreFeed(page, "개인 멘션");
   await expect(page).toHaveURL(/feed=direct/);
   const dm = page.locator('article[data-note-id="9"]');
   await expect(dm).toBeVisible({ timeout: 15_000 });
@@ -559,7 +566,7 @@ test("a person added to a list from their profile fills that list's tab", async 
   await dialog.getByRole("button", { name: "닫기" }).click();
 
   await page.goBack();
-  await page.getByRole("navigation").filter({ hasText: "모든 노트" }).getByRole("link", { name: "리스트" }).click({ timeout: 30_000 });
+  await openMoreFeed(page, "리스트");
   await expect(page).toHaveURL(/feed=lists/);
   await page.getByRole("link", { name: /동료/ }).click();
   await expect(page).toHaveURL(/list=\d+/);
@@ -579,7 +586,7 @@ test("a bookmark from a note's menu shows under the bookmarks tab", async ({ pag
   await first.getByRole("button", { name: "메뉴" }).click();
   await page.getByRole("menuitem", { name: "북마크" }).click();
   await expect(page.getByText("북마크에 넣었어요")).toBeVisible();
-  await page.getByRole("navigation").filter({ hasText: "모든 노트" }).getByRole("link", { name: "북마크" }).click();
+  await openMoreFeed(page, "북마크");
   await expect(page).toHaveURL(/feed=bookmarks/);
   await expect(page.locator(`article[data-note-id="${id}"]`)).toBeVisible({ timeout: 15_000 });
 });
