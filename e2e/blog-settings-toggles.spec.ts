@@ -44,7 +44,7 @@ test.describe("blog settings — toggle switches", () => {
     });
 
     const switches = await page.getByRole("switch").all();
-    expect(switches.length).toBeGreaterThanOrEqual(15); // 14 notification types + follower count
+    expect(switches.length).toBeGreaterThanOrEqual(16); // 15 notification types + follower count
     for (const el of switches) {
       await expectKnobMatchesState(el);
     }

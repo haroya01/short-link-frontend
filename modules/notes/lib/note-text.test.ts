@@ -34,6 +34,13 @@ describe("splitNoteText", () => {
     ]);
   });
 
+  it("links a handle only for members the server confirmed, in any case", () => {
+    expect(splitNoteText("@Yuki 와 @ghost, me@kurl.me @yuki@mastodon.social", ["yuki"])).toEqual([
+      { kind: "mention", value: "yuki" },
+      { kind: "text", value: " 와 @ghost, me@kurl.me @yuki@mastodon.social" },
+    ]);
+  });
+
   it("leaves a hashtag longer than forty characters as text", () => {
     const long = `#${"a".repeat(41)}`;
     expect(splitNoteText(long)).toEqual([{ kind: "text", value: long }]);

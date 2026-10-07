@@ -55,6 +55,20 @@ export function mockNotificationsPage(): NotificationsPage {
       },
       {
         ...BASE,
+        id: 21,
+        type: "NOTE_MENTION",
+        actorId: 15,
+        actorUsername: "yuna",
+        actorAvatarUrl: "https://i.pravatar.cc/120?img=20",
+        noteId: 5,
+        noteExcerpt: "산책하다 찍은 것들. 길이 다 다르게 생겼다.",
+        count: 1,
+        actors: [{ id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20", profileUrl: null }],
+        read: false,
+        createdAt: "2026-06-07T11:20:00Z",
+      },
+      {
+        ...BASE,
         id: 19,
         type: "REMOTE_FOLLOW",
         actorId: null,
@@ -213,6 +227,7 @@ export function mockBlogNotificationPreferences(): BlogNotificationPreferences {
     NOTE_REPOST: true,
     NOTE_REPLY: true,
     NOTE_QUOTE: true,
+    NOTE_MENTION: true,
     REMOTE_FOLLOW: true,
   };
 }

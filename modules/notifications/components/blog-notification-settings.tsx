@@ -54,6 +54,7 @@ const ROWS: { type: NotificationType; icon: LucideIcon; labelKey: string; hintKe
   { type: "PATH_GREW", icon: GitBranch, labelKey: "prefPathGrew", hintKey: "prefPathGrewHint" },
   { type: "NOTE_REPLY", icon: Reply, labelKey: "prefNoteReply", hintKey: "prefNoteReplyHint" },
   { type: "NOTE_QUOTE", icon: Quote, labelKey: "prefNoteQuote", hintKey: "prefNoteQuoteHint" },
+  { type: "NOTE_MENTION", icon: AtSign, labelKey: "prefNoteMention", hintKey: "prefNoteMentionHint" },
   { type: "NOTE_LIKE", icon: Heart, labelKey: "prefNoteLike", hintKey: "prefNoteLikeHint" },
   { type: "NOTE_REPOST", icon: Repeat2, labelKey: "prefNoteRepost", hintKey: "prefNoteRepostHint" },
   {

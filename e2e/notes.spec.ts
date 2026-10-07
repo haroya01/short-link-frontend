@@ -254,6 +254,8 @@ test("note notices group likes from any server, open the note, and send a remote
   await expect(likes).toHaveAttribute("href", /\/p\/dohyun\/notes\/2$/);
   const reply = page.getByRole("link", { name: /yuna님이 내 노트에 답글을 남겼어요/ });
   await expect(reply).toHaveAttribute("href", /\/p\/yuna\/notes\/3$/);
+  const mention = page.getByRole("link", { name: /yuna님이 노트에서 나를 언급했어요/ });
+  await expect(mention).toHaveAttribute("href", /\/p\/yuna\/notes\/5$/);
   const follow = page.getByRole("link", { name: /bob@fosstodon\.org님이 다른 서버에서 나를 팔로우했어요/ });
   await expect(follow).toHaveAttribute("href", "https://fosstodon.org/@bob");
   await expect(follow).toHaveAttribute("target", "_blank");
@@ -310,6 +312,14 @@ test("a hashtag in a note opens the tag on its notes tab, beside the tag's posts
   await tabs.getByRole("link", { name: "글", exact: true }).click();
   await expect(page).not.toHaveURL(/view=notes/);
   await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
+});
+
+test("a reply's @mention of a member links to their notes, and an unknown handle stays text", async ({ page }) => {
+  await page.goto("/ko/p/yuna/notes/3");
+  const mention = page.getByRole("link", { name: "@yuna", exact: true });
+  await expect(mention).toBeVisible({ timeout: 30_000 });
+  await mention.click();
+  await expect(page).toHaveURL(/\/yuna\/notes$/, { timeout: 30_000 });
 });
 
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
