@@ -315,7 +315,16 @@
     "exportDomainBlocks": "Máy chủ đã chặn",
     "exportBookmarks": "Dấu trang",
     "exportLists": "Danh sách",
-    "exportError": "Không thể xuất"
+    "exportError": "Không thể xuất",
+    "importTitle": "Nhập dữ liệu",
+    "importSubtitle": "Tải lên tệp xuất từ máy chủ Mastodon khác để thêm vào dữ liệu hiện có. Bạn có thể chuyển lượt theo dõi thành viên ở đây và tài khoản nơi khác, chặn·tắt tiếng·danh sách thành viên ở đây, máy chủ đã chặn và dấu trang.",
+    "importKind": "Loại cần nhập",
+    "importChoose": "Chọn tệp",
+    "importStarted": "Đang nhập {count} dòng",
+    "importRunning": "Hãy thử lại khi lần nhập trước xong",
+    "importError": "Không thể nhập",
+    "importDone": "Xong",
+    "importProgress": "Đã nhập {imported}/{total} dòng · {failed} lỗi"
   },
   "postEditor": {
     "backToList": "Bài viết",

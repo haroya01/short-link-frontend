@@ -315,7 +315,16 @@
     "exportDomainBlocks": "ブロックしたサーバー",
     "exportBookmarks": "ブックマーク",
     "exportLists": "リスト",
-    "exportError": "エクスポートできませんでした"
+    "exportError": "エクスポートできませんでした",
+    "importTitle": "データのインポート",
+    "importSubtitle": "他のMastodonサーバーからエクスポートしたファイルをアップロードすると、今のものに追加されます。このサーバーの会員と他のサーバーのアカウントのフォロー、このサーバーの会員のブロック・ミュート・リスト、ブロックしたサーバー、ブックマークを移せます。",
+    "importKind": "インポートする種類",
+    "importChoose": "ファイルを選ぶ",
+    "importStarted": "{count}行をインポートしています",
+    "importRunning": "前のインポートが終わってからもう一度お試しください",
+    "importError": "インポートできませんでした",
+    "importDone": "完了",
+    "importProgress": "{total}行中{imported}行をインポート · 失敗{failed}行"
   },
   "postEditor": {
     "backToList": "記事一覧",

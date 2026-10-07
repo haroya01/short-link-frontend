@@ -315,7 +315,16 @@
     "exportDomainBlocks": "Blocked servers",
     "exportBookmarks": "Bookmarks",
     "exportLists": "Lists",
-    "exportError": "Couldn't export"
+    "exportError": "Couldn't export",
+    "importTitle": "Import data",
+    "importSubtitle": "Upload a file exported from another Mastodon server to add it to what you have. You can bring follows of members here and accounts elsewhere, blocks, mutes and lists of members here, blocked servers, and bookmarks.",
+    "importKind": "What to import",
+    "importChoose": "Choose file",
+    "importStarted": "{count, plural, one {Importing # line} other {Importing # lines}}",
+    "importRunning": "Try again when the current import finishes",
+    "importError": "Couldn't import",
+    "importDone": "Done",
+    "importProgress": "Imported {imported} of {total} lines · {failed} failed"
   },
   "postEditor": {
     "backToList": "Posts",

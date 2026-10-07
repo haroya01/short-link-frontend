@@ -18,6 +18,7 @@ import { NoteLanguageSettings } from "@/modules/notes/components/note-language-s
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { NotificationPolicySettings } from "@/modules/notifications/components/notification-policy-settings";
 import { DataExportSetting } from "@/modules/blog/components/data-export-setting";
+import { DataImportSetting } from "@/modules/blog/components/data-import-setting";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { LogoutButton } from "@/components/common/logout-button";
@@ -161,6 +162,9 @@ export default function BlogSettingsPage() {
 
       {/* 데이터 내보내기 — 마스토돈과 같은 CSV(다른 서버로 옮길 때) */}
       <DataExportSetting />
+
+      {/* 데이터 가져오기 — 다른 마스토돈 서버에서 내보낸 CSV(합치기) */}
+      <DataImportSetting />
 
       {/* 로그아웃 */}
       <section className="mt-8">
