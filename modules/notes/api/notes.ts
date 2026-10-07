@@ -194,6 +194,19 @@ export function listFederatedNotes(page = 0): Promise<NoteFeed> {
   return request<NoteFeed>(`/api/v1/notes/federated?page=${page}&size=20`, { method: "GET" });
 }
 
+/** Mastodon's trending hashtags: tags several accounts used this week, notes per day oldest first. */
+export interface TrendingNoteTag {
+  tag: string;
+  accounts: number;
+  uses: number;
+  history: number[];
+}
+
+export function listTrendingNoteTags(): Promise<TrendingNoteTag[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockTrendingNoteTags());
+  return request<TrendingNoteTag[]>("/api/v1/public/notes/trending-tags", { method: "GET" });
+}
+
 export function listFollowingNotes(page = 0): Promise<NoteFeed> {
   if (noteMocks) return Promise.resolve(noteMocks.mockFollowingNotes(page));
   return request<NoteFeed>(`/api/v1/notes/following?page=${page}&size=20`, { method: "GET" });

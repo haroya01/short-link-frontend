@@ -329,6 +329,17 @@ test("the other servers tab shows notes this server received, and only those", a
   await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
 });
 
+test("beside the feed, trending hashtags show who used them this week and open their notes", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/ko/blog/notes");
+  const rail = page.getByTestId("trending-note-tags");
+  await expect(rail.getByRole("heading", { name: "뜨는 해시태그" })).toBeVisible({ timeout: 30_000 });
+  const walk = rail.getByRole("link", { name: /#산책/ });
+  await expect(walk).toContainText("3명이 이번 주에 썼어요");
+  await walk.click();
+  await expect(page).toHaveURL(/\/tags\/.+view=notes/);
+});
+
 test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   const tabs = page.getByRole("navigation").filter({ hasText: "모든 노트" });

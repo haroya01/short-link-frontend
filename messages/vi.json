@@ -4310,6 +4310,8 @@
     "quoteInPost": "Trích dẫn trong bài blog",
     "feedFederated": "Máy chủ khác",
     "emptyFederated": "Chưa nhận ghi chú nào từ máy chủ khác. Tìm @tên@máy-chủ để theo dõi, ghi chú của họ sẽ đến đây.",
-    "signInForFederated": "Đăng nhập để xem ghi chú công khai mà máy chủ này nhận từ máy chủ khác"
+    "signInForFederated": "Đăng nhập để xem ghi chú công khai mà máy chủ này nhận từ máy chủ khác",
+    "trendingTagsTitle": "Thẻ thịnh hành",
+    "trendingTagsAccounts": "{count} người đã dùng tuần này"
   }
 }

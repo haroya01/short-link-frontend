@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { NotesFeed } from "@/modules/notes/components/notes-feed";
+import { TrendingNoteTags } from "@/modules/notes/components/trending-note-tags";
 
 const BLOG_URL =
   process.env.NEXT_PUBLIC_BLOG_URL ??
@@ -39,8 +40,8 @@ export default async function NotesPage({ params }: { params: Promise<{ locale: 
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "notes" });
   return (
-    <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-      <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8 lg:flex lg:justify-center lg:gap-10">
+      <div className="mx-auto max-w-2xl lg:mx-0 lg:w-[42rem] lg:shrink">
         <h1 className="text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-2xl">
           {t("title")}
         </h1>
@@ -53,6 +54,11 @@ export default async function NotesPage({ params }: { params: Promise<{ locale: 
           </Suspense>
         </div>
       </div>
+      <aside className="hidden w-64 shrink-0 lg:block">
+        <div className="sticky top-24 pt-16">
+          <TrendingNoteTags />
+        </div>
+      </aside>
     </div>
   );
 }

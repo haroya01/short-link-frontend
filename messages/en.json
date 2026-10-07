@@ -4310,6 +4310,8 @@
     "quoteInPost": "Quote in a blog post",
     "feedFederated": "Other servers",
     "emptyFederated": "No notes from other servers yet. Follow someone by searching @name@server and their notes arrive here.",
-    "signInForFederated": "Sign in to see public notes this server received from other servers"
+    "signInForFederated": "Sign in to see public notes this server received from other servers",
+    "trendingTagsTitle": "Trending hashtags",
+    "trendingTagsAccounts": "{count, plural, one {# person used it this week} other {# people used it this week}}"
   }
 }

@@ -15,6 +15,7 @@ import type {
   NoteThread,
   RemoteAccount,
   ScheduledNote,
+  TrendingNoteTag,
 } from "./notes";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
@@ -281,6 +282,13 @@ export function mockFederatedNotes(page: number): NoteFeed {
     (n) => n.inReplyToId === null && n.author.remoteId && (n.visibility ?? "public") === "public",
   );
   return { items: page === 0 ? received.map(withQuotes) : [], page, hasNext: false };
+}
+
+export function mockTrendingNoteTags(): TrendingNoteTag[] {
+  return [
+    { tag: "산책", accounts: 3, uses: 5, history: [1, 0, 0, 1, 0, 1, 2] },
+    { tag: "kurl", accounts: 2, uses: 2, history: [0, 0, 0, 0, 0, 1, 1] },
+  ];
 }
 
 export function mockTrendingNotes(page: number): NoteFeed {
