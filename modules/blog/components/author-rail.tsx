@@ -55,7 +55,7 @@ export async function AuthorRail({
               <li key={s.slug}>
                 <BlogLink
                   href={authorHref(username, locale, `series/${s.slug}`)}
-                  className="group flex items-baseline justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
+                  className="group flex items-baseline justify-between gap-3 rounded-surface px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
                 >
                   <span
                     lang={contentLang(s.title)}

@@ -144,7 +144,7 @@ export default async function PublicSeriesIndexPage({
               >
                 <BlogLink
                   href={authorHref(username, locale, `series/${s.slug}`)}
-                  className="focus-ring group flex items-center gap-5 rounded-lg py-5"
+                  className="focus-ring group flex items-center gap-5 rounded-surface py-5"
                 >
                   <SeriesIndex n={i + 1} className="text-[13px]" />
                   <span className="min-w-0 flex-1">

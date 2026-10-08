@@ -275,7 +275,7 @@ export function NoteComposer({
         addFiles(e.dataTransfer.files);
       }}
       className={cn(
-        "flex gap-3 rounded-2xl py-3 transition-colors",
+        "flex gap-3 rounded-surface py-3 transition-colors",
         dragging && "bg-accent-50/60 outline-dashed outline-1 outline-accent-600 dark:bg-accent-500/10",
       )}
     >
@@ -288,7 +288,7 @@ export function NoteComposer({
             maxLength={NOTE_MAX_WARNING_LENGTH}
             placeholder={t("warningPlaceholder")}
             aria-label={t("warningLabel")}
-            className="focus-ring mb-1.5 w-full rounded-lg bg-slate-100 px-3 py-1.5 text-[15px] font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+            className="focus-ring mb-1.5 w-full rounded-surface bg-slate-100 px-3 py-1.5 text-[15px] font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         )}
         <div className="flex items-start gap-3">
@@ -329,7 +329,7 @@ export function NoteComposer({
                 src={image.previewUrl}
                 alt={image.altText}
                 className={cn(
-                  "block h-44 w-auto min-w-24 max-w-none rounded-card border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
+                  "block h-44 w-auto min-w-24 max-w-none rounded-surface border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
                   image.key === null && "opacity-60",
                 )}
               />
@@ -370,7 +370,7 @@ export function NoteComposer({
       )}
 
       {altEditing !== null && images.some((image) => image.id === altEditing) && (
-        <div className="mt-2 rounded-card border border-slate-200 p-3 dark:border-slate-800">
+        <div className="mt-2 rounded-surface border border-slate-200 p-3 dark:border-slate-800">
           <label htmlFor="note-alt" className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {t("altLabel")}
           </label>
@@ -429,7 +429,7 @@ export function NoteComposer({
               value={scheduledAt}
               min={earliestLocal()}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="focus-ring rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
+              className="focus-ring rounded-surface border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
             />
           </label>
           <button
@@ -584,7 +584,7 @@ export function NoteSignInRow({ label, placeholder }: { label: string; placehold
       type="button"
       onClick={signInWithGoogle}
       aria-label={label}
-      className="group flex w-full items-center gap-3 rounded-2xl py-3 text-left focus-ring"
+      className="group flex w-full items-center gap-3 rounded-surface py-3 text-left focus-ring"
     >
       <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
       <span className="min-w-0 flex-1 truncate text-[15px] text-slate-400 dark:text-slate-500">

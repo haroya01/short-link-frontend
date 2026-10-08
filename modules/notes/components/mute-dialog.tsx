@@ -67,7 +67,7 @@ export function MuteDialog({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          "relative mx-auto w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-4 shadow-modal dark:border-slate-800 dark:bg-slate-850",
+          "relative mx-auto w-full max-w-sm rounded-surface border border-slate-200 bg-white p-4 shadow-modal dark:border-slate-800 dark:bg-slate-850",
           closing ? "animate-fade-out" : "animate-fade-in",
         )}
       >
@@ -92,7 +92,7 @@ export function MuteDialog({
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="focus-ring rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
+              className="focus-ring rounded-surface border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
             >
               {DURATIONS.map((seconds) => (
                 <option key={seconds} value={seconds}>

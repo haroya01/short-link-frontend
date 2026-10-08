@@ -12,7 +12,7 @@ function host(url: string): string {
 
 export function NoteLinkCard({ preview, linked = true }: { preview: NoteLinkPreview; linked?: boolean }) {
   const domain = host(preview.url);
-  const frame = "mt-2.5 block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800";
+  const frame = "mt-2.5 block overflow-hidden rounded-surface border border-slate-200 dark:border-slate-800";
   const content = (
     <>
       {preview.image && (

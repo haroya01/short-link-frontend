@@ -115,7 +115,7 @@ export function NoteList({
             type="button"
             onClick={more}
             disabled={loadingMore}
-            className="focus-ring rounded-lg border border-slate-300 px-4 py-2 text-[13px] text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
+            className="focus-ring rounded-surface border border-slate-300 px-4 py-2 text-[13px] text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
           >
             {t("loadMore")}
           </button>

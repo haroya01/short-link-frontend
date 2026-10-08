@@ -176,7 +176,7 @@ function ListDetail({
               maxLength={50}
               autoFocus
               aria-label={t("listRename")}
-              className="focus-ring rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[15px] dark:border-slate-700 dark:bg-slate-900"
+              className="focus-ring rounded-surface border border-slate-300 bg-white px-2.5 py-1 text-[15px] dark:border-slate-700 dark:bg-slate-900"
             />
             <button type="submit" disabled={!title.trim()} className={action}>
               {t("save")}

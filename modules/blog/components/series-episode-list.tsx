@@ -56,7 +56,7 @@ export function SeriesEpisodeList({
           >
             <BlogLink
               href={postHref(authorUsername, post.slug, locale)}
-              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-surface px-2 py-1 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
               <SeriesIndex n={i + 1} current={on} className="shrink-0 text-[13px]" />
               <span
@@ -80,7 +80,7 @@ export function SeriesEpisodeList({
         >
           <BlogLink
             href={seriesUrl}
-            className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+            className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-surface px-2 py-1 text-[13px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
           >
             <span aria-hidden className="w-[2ch] shrink-0" />
             <span>{t("seriesMoreCount", { count: more })}</span>

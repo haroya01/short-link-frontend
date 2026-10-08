@@ -323,7 +323,7 @@ export function NoteCard({
           {note.contentWarning && (
             <div
               className={cn(
-                "mt-1.5 flex items-center gap-2 rounded-lg bg-slate-100 py-1.5 pl-3 pr-1.5 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
+                "mt-1.5 flex items-center gap-2 rounded-surface bg-slate-100 py-1.5 pl-3 pr-1.5 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
                 emphasis && "col-span-2 mt-3",
               )}
               data-note-warning
@@ -358,7 +358,7 @@ export function NoteCard({
                     rows={3}
                     autoFocus
                     aria-label={t("edit")}
-                    className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                    className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-surface border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                   />
                   <div className="mt-2 flex items-center justify-end gap-2">
                     <NoteLengthRing length={noteLength(draft)} className="mr-auto" />
@@ -393,7 +393,7 @@ export function NoteCard({
               <button
                 type="button"
                 onClick={() => setMediaShown(true)}
-                className="focus-ring mt-2.5 flex h-40 w-full items-center justify-center gap-2 rounded-2xl bg-slate-100 text-[13px] font-semibold text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                className="focus-ring mt-2.5 flex h-40 w-full items-center justify-center gap-2 rounded-surface bg-slate-100 text-[13px] font-semibold text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                 data-note-sensitive
               >
                 <EyeOff className="h-4 w-4" aria-hidden />
@@ -577,7 +577,7 @@ function RepostControl({
   }
 
   const item =
-    "focus-ring flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-[14px] font-medium hover:bg-slate-100 dark:hover:bg-slate-800";
+    "focus-ring flex w-full items-center justify-between gap-3 rounded-surface px-3 py-2 text-left text-[14px] font-medium hover:bg-slate-100 dark:hover:bg-slate-800";
   if (!shareable) {
     return (
       <span className={cn(buttonClass, "cursor-not-allowed opacity-40")} title={t("notShareable")} aria-label={t("notShareable")} role="img">
@@ -608,7 +608,7 @@ function RepostControl({
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-9 z-20 w-48 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute left-0 top-9 z-20 w-48 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           <button
             type="button"
@@ -702,7 +702,7 @@ function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }
   }
 
   const item =
-    "focus-ring flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-[14px] font-medium text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800";
+    "focus-ring flex w-full items-center justify-between gap-3 rounded-surface px-3 py-2 text-left text-[14px] font-medium text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800";
   return (
     <div ref={root} className="relative">
       <button
@@ -718,7 +718,7 @@ function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-9 z-20 w-52 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute right-0 top-9 z-20 w-52 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           <button type="button" role="menuitem" onClick={copy} className={item}>
             {t("copyLink")}
@@ -838,7 +838,7 @@ function NoteMenu({
   }, [open]);
 
   const item =
-    "focus-ring block w-full rounded-lg px-3 py-2 text-left text-[13px] hover:bg-slate-100 dark:hover:bg-slate-800";
+    "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] hover:bg-slate-100 dark:hover:bg-slate-800";
   return (
     <div ref={root} className="relative">
       <button
@@ -854,7 +854,7 @@ function NoteMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-8 z-20 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute right-0 top-8 z-20 w-40 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           <button
             type="button"

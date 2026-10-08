@@ -102,7 +102,7 @@ export function NoteListMembershipDialog({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          "relative mx-auto w-full max-w-sm rounded-2xl border border-slate-200 bg-white shadow-modal dark:border-slate-800 dark:bg-slate-850",
+          "relative mx-auto w-full max-w-sm rounded-surface border border-slate-200 bg-white shadow-modal dark:border-slate-800 dark:bg-slate-850",
           closing ? "animate-fade-out" : "animate-fade-in",
         )}
       >
@@ -126,7 +126,7 @@ export function NoteListMembershipDialog({
                 role="menuitemcheckbox"
                 aria-checked={inLists.has(list.id)}
                 onClick={() => toggle(list)}
-                className="focus-ring flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-[14px] text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                className="focus-ring flex w-full items-center justify-between rounded-surface px-3 py-2.5 text-left text-[14px] text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 {list.title}
                 {inLists.has(list.id) && <Check className="h-4 w-4 text-accent-700 dark:text-accent-400" aria-hidden />}
@@ -141,7 +141,7 @@ export function NoteListMembershipDialog({
             maxLength={50}
             placeholder={t("listNewTitle")}
             aria-label={t("listNewTitle")}
-            className="focus-ring min-w-0 flex-1 rounded-lg border border-slate-300 bg-transparent px-2.5 py-1.5 text-[14px] dark:border-slate-700"
+            className="focus-ring min-w-0 flex-1 rounded-surface border border-slate-300 bg-transparent px-2.5 py-1.5 text-[14px] dark:border-slate-700"
           />
           <button
             type="submit"

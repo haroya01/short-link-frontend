@@ -382,7 +382,7 @@ export function SeriesSwitchButtons({
   };
 
   const btn =
-    "focus-ring inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-accent-700 disabled:pointer-events-none disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-accent-400";
+    "focus-ring inline-flex items-center gap-1 rounded-surface px-2 py-1 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-accent-700 disabled:pointer-events-none disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-accent-400";
 
   return (
     <div className="flex items-center gap-1">
@@ -431,7 +431,7 @@ function EdgeCard({
         side === "right" ? "left-full ml-4" : "right-full mr-4"
       }`}
     >
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card dark:border-slate-700 dark:bg-slate-900">
+      <div className="rounded-surface border border-slate-200 bg-white p-5 shadow-card dark:border-slate-700 dark:bg-slate-900">
         <span className="flex items-center gap-1.5 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
           {dir === "prev" ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
           {t(dir === "next" ? "seriesNextUp" : "seriesPrevUp")}

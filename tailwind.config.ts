@@ -149,6 +149,13 @@ const config: Config = {
       borderRadius: {
         card: "0.75rem", // 12px — list/row cards
         "card-lg": "1rem", // 16px — grid/cover/deck & wide embed cards
+        /*
+         * 블로그·노트 화면은 iOS 와 같은 두 단계 곡률 — 한 줄 컨트롤은 rounded-full, 여러 줄 면은
+         * surface 하나. border-radius 는 짧은 변의 절반을 넘으면 줄어들어 40px 이하 면은 surface 로도
+         * 캡슐이 된다. inner 는 행·카드 안의 작은 썸네일 전용.
+         */
+        surface: "1.25rem",
+        inner: "0.5rem",
       },
       boxShadow: {
         // Blog surface shadows as named tokens so call sites stop hand-rolling arbitrary values.

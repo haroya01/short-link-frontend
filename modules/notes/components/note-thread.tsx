@@ -35,7 +35,7 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
   if (deleted) {
     return (
       <p className="py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
-        <BlogLink href={authorHref(initial.note.author.username, locale, "notes")} className="focus-ring rounded-md underline">
+        <BlogLink href={authorHref(initial.note.author.username, locale, "notes")} className="focus-ring rounded-surface underline">
           {t("backToNotes")}
         </BlogLink>
       </p>

@@ -80,7 +80,7 @@ export function SavedCard({
 
   return (
     <article
-      className={`group/saved relative rounded-card transition-colors ${selectMode ? "focus-ring -mx-3 cursor-pointer select-none px-3 py-2" : ""} ${selected ? "bg-accent-50/70 dark:bg-accent-500/10" : ""}`}
+      className={`group/saved relative rounded-surface transition-colors ${selectMode ? "focus-ring -mx-3 cursor-pointer select-none px-3 py-2" : ""} ${selected ? "bg-accent-50/70 dark:bg-accent-500/10" : ""}`}
       onClick={selectMode ? () => onToggleSelect?.(item.id) : undefined}
       role={selectMode ? "checkbox" : undefined}
       aria-checked={selectMode ? selected : undefined}
@@ -120,7 +120,7 @@ export function SavedCard({
       {selectMode && (
         <span
           aria-hidden
-          className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-md border transition-colors ${
+          className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded border transition-colors ${
             selected
               ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
               : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
@@ -144,7 +144,7 @@ export function SavedCard({
           <MoreHorizontal className="h-4 w-4" />
         </button>
         {open && (
-          <div className="absolute right-0 z-30 mt-1 w-52 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850">
+          <div className="absolute right-0 z-30 mt-1 w-52 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850">
             <p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">{t("moveTo")}</p>
             <button type="button" onClick={() => { onMove(item.id, null); setOpen(false); }} className={menuItem}>
               <span className="flex-1 text-left">{t("unfiled")}</span>
@@ -164,9 +164,9 @@ export function SavedCard({
                   onChange={(e) => setName(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") submitNew(); }}
                   placeholder={t("newFolderName")}
-                  className="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[13px] text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                  className="min-w-0 flex-1 rounded-surface border border-slate-300 bg-white px-2 py-1 text-[13px] text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 />
-                <button type="button" onClick={submitNew} aria-label={t("create")} className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-accent-700 hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10">
+                <button type="button" onClick={submitNew} aria-label={t("create")} className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-accent-700 hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10">
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
@@ -190,4 +190,4 @@ export function SavedCard({
 }
 
 const menuItem =
-  "flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";
+  "flex w-full items-center gap-2 rounded-surface px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";

@@ -103,7 +103,7 @@ export function CommentBody({ text, locale }: { text: string; locale: string }) 
       while (i < lines.length && !lines[i].startsWith("```")) code.push(lines[i++]);
       i++; // 닫는 펜스
       out.push(
-        <pre key={k++} className="my-1.5 overflow-x-auto rounded-lg bg-slate-900 px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-slate-100">
+        <pre key={k++} className="my-1.5 overflow-x-auto rounded-surface bg-slate-900 px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-slate-100">
           <code>{code.join("\n")}</code>
         </pre>,
       );

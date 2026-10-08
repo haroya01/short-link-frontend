@@ -135,7 +135,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
         aria-label={t("toc")}
         aria-haspopup="dialog"
         tabIndex={hidden ? -1 : undefined}
-        className={`focus-ring fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-[opacity,transform,border-color] duration-200 hover:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 sm:bottom-5 ${
+        className={`focus-ring fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-1.5 rounded-surface border border-slate-300 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-[opacity,transform,border-color] duration-200 hover:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 sm:bottom-5 ${
           hidden ? "pointer-events-none translate-y-3 opacity-0" : ""
         }`}
       >
@@ -163,7 +163,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
             }`}
           />
           <div
-            className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-slate-200 bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
+            className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-surface border-t border-slate-200 bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
               closing ? "animate-[sheet-down_240ms_var(--ease)_both]" : "animate-[sheet-up_280ms_var(--ease)_both]"
             }`}
           >
@@ -189,7 +189,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
                       scrollToHeading(h.id);
                       setOpen(false);
                     }}
-                    className="focus-ring block truncate rounded-lg px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                    className="focus-ring block truncate rounded-surface px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     {h.text}
                   </a>

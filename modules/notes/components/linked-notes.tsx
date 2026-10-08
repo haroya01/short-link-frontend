@@ -47,7 +47,7 @@ export function LinkedNotes({ url }: { url: string }) {
           target="_blank"
           rel="noopener noreferrer nofollow"
           data-testid="linked-notes-link"
-          className="focus-ring -mx-2 mt-2 flex items-start gap-3 rounded-lg px-2 py-3 hover:bg-slate-50 dark:hover:bg-slate-900"
+          className="focus-ring -mx-2 mt-2 flex items-start gap-3 rounded-surface px-2 py-3 hover:bg-slate-50 dark:hover:bg-slate-900"
         >
           <Link2 className="mt-1 h-4 w-4 shrink-0 text-slate-400" aria-hidden />
           {heading}

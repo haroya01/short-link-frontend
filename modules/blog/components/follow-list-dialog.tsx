@@ -109,7 +109,7 @@ export function FollowListDialog({
         aria-modal="true"
         aria-label={tab === "followers" ? t("followersTab") : t("followingTab")}
         tabIndex={-1}
-        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-850"
+        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-surface border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-850"
       >
         {/* Tab header — two segments + a close affordance. */}
         <div className="flex items-center border-b border-slate-100 dark:border-slate-800">
@@ -203,7 +203,7 @@ function FollowRow({
   onNavigate: () => void;
 }) {
   return (
-    <li className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+    <li className="flex items-center gap-3 rounded-surface px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <BlogLink
         href={authorHref(user.username, locale)}
         onClick={onNavigate}

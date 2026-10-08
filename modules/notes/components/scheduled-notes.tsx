@@ -180,7 +180,7 @@ export function ScheduledNotesPanel({ version }: { version: number }) {
                     min={earliestLocal()}
                     onChange={(e) => setDraftAt(e.target.value)}
                     aria-label={t("scheduleLabel")}
-                    className="focus-ring rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
+                    className="focus-ring rounded-surface border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
                   />
                   <button
                     type="button"

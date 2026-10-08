@@ -296,7 +296,7 @@ export function ConnectSheet({
         aria-labelledby="connect-sheet-title"
         // Bottom sheet slides up/down on mobile (same grammar as the account sheet); the sm+
         // centered card keeps the quiet fade pair instead. `relative` lifts it above the absolute scrim.
-        className={`relative flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-modal motion-reduce:animate-none dark:bg-slate-850 sm:max-w-md sm:rounded-2xl ${
+        className={`relative flex max-h-[85vh] w-full flex-col rounded-t-surface bg-white shadow-modal motion-reduce:animate-none dark:bg-slate-850 sm:max-w-md sm:rounded-surface ${
           closing
             ? "animate-[sheet-down_240ms_var(--ease)_both] sm:animate-fade-out"
             : "animate-[sheet-up_280ms_var(--ease)_both] sm:animate-fade-in"
@@ -325,7 +325,7 @@ export function ConnectSheet({
                   <button
                     type="button"
                     onClick={() => setReloadKey((k) => k + 1)}
-                    className="focus-ring mt-3 rounded-lg border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/60"
+                    className="focus-ring mt-3 rounded-surface border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/60"
                   >
                     {tCommon("retry")}
                   </button>
@@ -339,7 +339,7 @@ export function ConnectSheet({
                         {held ? (
                           /* Already in — the label is inert (the unlink control on the right governs it),
                              so the row stays a div with the badge + 해제 beside it. */
-                          <div className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
+                          <div className="flex w-full items-center gap-3 rounded-surface px-3 py-2.5 text-left">
                             <span className="min-w-0 flex-1">
                               <CollectionRowText c={c} t={t} />
                             </span>
@@ -352,7 +352,7 @@ export function ConnectSheet({
                                 type="button"
                                 onClick={() => void unlink(c.id)}
                                 disabled={unlinking != null}
-                                className="focus-ring rounded-md px-1.5 py-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:text-red-400"
+                                className="focus-ring rounded-surface px-1.5 py-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:text-red-400"
                               >
                                 {unlinking === c.id ? (
                                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -371,7 +371,7 @@ export function ConnectSheet({
                             role="checkbox"
                             aria-checked={selected.has(c.id)}
                             onClick={() => toggle(c.id)}
-                            className="focus-ring flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                            className="focus-ring flex w-full items-center gap-3 rounded-surface px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                           >
                             <span className="min-w-0 flex-1">
                               <CollectionRowText c={c} t={t} />
@@ -380,7 +380,7 @@ export function ConnectSheet({
                                 "pick several". */}
                             <span
                               aria-hidden
-                              className={`grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
+                              className={`grid h-5 w-5 shrink-0 place-items-center rounded border ${
                                 selected.has(c.id)
                                   ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
                                   : "border-slate-300 dark:border-slate-600"
@@ -441,7 +441,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={selected.size === 0}
                 onClick={() => setStep(2)}
-                className="focus-ring w-full rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+                className="focus-ring w-full rounded-surface bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
               >
                 {selected.size === 0 ? t("pickToContinue") : t("next")}
               </button>
@@ -489,7 +489,7 @@ export function ConnectSheet({
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="focus-ring rounded-lg px-4 py-3 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="focus-ring rounded-surface px-4 py-3 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 {t("back")}
               </button>
@@ -497,7 +497,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={saving}
                 onClick={() => void connectAll()}
-                className="focus-ring flex flex-1 items-center justify-center rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+                className="focus-ring flex flex-1 items-center justify-center rounded-surface bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : failed ? tCommon("retry") : t("add")}
               </button>
@@ -568,7 +568,7 @@ function NewRow({
       onClick={onClick}
       disabled={disabled}
       aria-busy={busy}
-      className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
+      className="focus-ring flex w-full items-center gap-2.5 rounded-surface px-3 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
     >
       <span className="grid h-5 w-5 place-items-center">
         {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" /> : icon}
@@ -601,7 +601,7 @@ function NewCollectionForm({
   const t = useTranslations("collections");
   const canCreate = value.name.trim().length > 0 && !busy;
   return (
-    <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60">
+    <div className="rounded-surface bg-slate-50 p-3 dark:bg-slate-800/60">
       <input
         autoFocus
         value={value.name}
@@ -626,7 +626,7 @@ function NewCollectionForm({
           <button
             type="button"
             onClick={onCancel}
-            className="focus-ring rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
+            className="focus-ring rounded-surface px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
           >
             {t("cancel")}
           </button>
@@ -634,7 +634,7 @@ function NewCollectionForm({
             type="button"
             disabled={!canCreate}
             onClick={onSubmit}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-surface bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
           >
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {t("create")}
@@ -670,7 +670,7 @@ function NewVisibilityToggle({
     <div
       role="radiogroup"
       aria-label={t("visibilityLabel")}
-      className="inline-flex gap-1 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-700/70"
+      className="inline-flex gap-1 rounded-surface bg-slate-100 p-0.5 dark:bg-slate-700/70"
     >
       {opts.map(({ key, label, Icon }) => {
         const active = value === key;
@@ -681,7 +681,7 @@ function NewVisibilityToggle({
             role="radio"
             aria-checked={active}
             onClick={() => onChange(key)}
-            className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
+            className={`focus-ring inline-flex items-center gap-1.5 rounded-surface px-2.5 py-1 text-[12px] font-medium transition-colors ${
               active
                 ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"

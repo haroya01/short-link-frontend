@@ -19,7 +19,7 @@ export function QuotedPostCard({ post, linked = true }: { post: QuotedPost; link
       </span>
     </>
   );
-  const frame = "mt-2.5 block rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800";
+  const frame = "mt-2.5 block rounded-surface border border-slate-200 px-4 py-3 dark:border-slate-800";
   if (!linked) {
     return (
       <div className={frame} data-quoted-post-id={post.id}>

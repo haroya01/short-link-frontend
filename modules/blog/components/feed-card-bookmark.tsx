@@ -47,7 +47,7 @@ export function FeedCardBookmark({
       title={saved ? t("bookmarkOn") : t("bookmark")}
       // Reveal 은 300ms --ease 페이드 + 0.9→1 스케일의 잔잔한 떠오름 — 전 속성 전환(all) 기본 150ms 는
       // 흰 칩이 hover 순간 탁 켜져 난폭하게 읽혔다.
-      className={`grid h-8 w-8 place-items-center rounded-lg text-slate-600 transition-[opacity,transform,background-color,color] duration-300 ease-[var(--ease)] hover:text-accent-700 focus-ring motion-reduce:transform-none dark:text-slate-300 dark:hover:text-accent-300 ${
+      className={`grid h-8 w-8 place-items-center rounded-full text-slate-600 transition-[opacity,transform,background-color,color] duration-300 ease-[var(--ease)] hover:text-accent-700 focus-ring motion-reduce:transform-none dark:text-slate-300 dark:hover:text-accent-300 ${
         overImage
           ? "bg-white ring-1 ring-slate-200 hover:bg-accent-50 dark:bg-slate-900 dark:ring-slate-700 dark:hover:bg-slate-800"
           : "hover:bg-accent-50 dark:hover:bg-accent-500/15"

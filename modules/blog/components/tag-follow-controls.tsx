@@ -47,7 +47,7 @@ export function TagFollowControls({ tag }: { tag: string }) {
         }}
         aria-pressed={hidden}
         title={hidden ? t("tagUnhide") : t("tagHide")}
-        className={`touch-target focus-ring inline-flex h-9 items-center gap-1.5 rounded-lg border border-transparent px-3 text-[13px] font-medium transition-colors ${
+        className={`touch-target focus-ring inline-flex h-9 items-center gap-1.5 rounded-surface border border-transparent px-3 text-[13px] font-medium transition-colors ${
           hidden
             ? "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
             : "text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300"

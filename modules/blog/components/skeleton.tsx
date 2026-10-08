@@ -45,7 +45,7 @@ export function SkeletonRows({ count = 5, thumb = false }: { count?: number; thu
     <div className="space-y-1">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex items-center gap-3 px-3 py-3">
-          {thumb && <Skeleton className="h-12 w-12 shrink-0 rounded-lg" />}
+          {thumb && <Skeleton className="h-12 w-12 shrink-0 rounded-inner" />}
           <div className="min-w-0 flex-1 space-y-2">
             <Skeleton className="h-4 w-2/3" />
             <Skeleton className="h-3 w-1/3" />

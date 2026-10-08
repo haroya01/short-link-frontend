@@ -156,14 +156,14 @@ export function RichCommentInput({
   if (!editor) {
     return (
       <div
-        className="rounded-lg border border-slate-200 dark:border-slate-700"
+        className="rounded-surface border border-slate-200 dark:border-slate-700"
         style={{ minHeight }}
       />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
+    <div className="overflow-hidden rounded-surface border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
       {/* Format chrome shows only when expanded — the resting field is a bare one-line input. The
           grid-rows 0fr→1fr reveal animates the height with no mount jump; `invisible` keeps the
           clipped toolbar out of the tab order while collapsed. hideToolbar drops it entirely for short
@@ -236,7 +236,7 @@ function RichEditable({
           "[&_code]:rounded [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12.5px] [&_code]:text-slate-800 dark:[&_code]:bg-slate-800 dark:[&_code]:text-slate-200 " +
           "[&_blockquote]:my-1.5 [&_blockquote]:border-l-2 [&_blockquote]:border-accent-200 [&_blockquote]:pl-3 [&_blockquote]:text-slate-500 dark:[&_blockquote]:border-accent-500/40 dark:[&_blockquote]:text-slate-400 " +
           "[&_ul]:my-1.5 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:my-0.5 " +
-          "[&_pre]:my-1.5 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-slate-900 [&_pre]:px-3 [&_pre]:py-2.5 [&_pre]:font-mono [&_pre]:text-[12.5px] [&_pre]:leading-relaxed [&_pre]:text-slate-100 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-slate-100"
+          "[&_pre]:my-1.5 [&_pre]:overflow-x-auto [&_pre]:rounded-surface [&_pre]:bg-slate-900 [&_pre]:px-3 [&_pre]:py-2.5 [&_pre]:font-mono [&_pre]:text-[12.5px] [&_pre]:leading-relaxed [&_pre]:text-slate-100 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-slate-100"
         }
       />
     </div>
@@ -293,7 +293,7 @@ function RichToolbar({
             ev.preventDefault();
             it.run();
           }}
-          className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
+          className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-full transition-colors ${
             it.active
               ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
               : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"

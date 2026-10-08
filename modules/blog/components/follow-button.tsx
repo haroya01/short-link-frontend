@@ -261,7 +261,7 @@ export function FollowButton({
           aria-label={t(notifyNotes ? "noteBellOff" : "noteBellOn")}
           title={t(notifyNotes ? "noteBellOff" : "noteBellOn")}
           className={cn(
-            "touch-target focus-ring -ml-1.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors duration-200",
+            "touch-target focus-ring -ml-1.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-200",
             notifyNotes
               ? "border-accent-600/50 text-accent-700 hover:border-accent-600 dark:border-accent-400/40 dark:text-accent-300 dark:hover:border-accent-400"
               : "border-slate-300 text-slate-700 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600",

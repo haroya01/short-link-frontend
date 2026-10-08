@@ -46,21 +46,21 @@ export function PathReorder({
           <button
             type="button"
             onClick={onCancel}
-            className="focus-ring rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="focus-ring rounded-surface px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             {t("cancel")}
           </button>
           <button
             type="button"
             onClick={() => onSave(items.map((c) => c.id))}
-            className="focus-ring rounded-lg bg-accent-700 px-4 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
+            className="focus-ring rounded-surface bg-accent-700 px-4 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
           >
             {t("save")}
           </button>
         </div>
       </div>
 
-      <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+      <ul className="divide-y divide-slate-100 rounded-surface border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
         {items.map((c, i) => (
           <li
             key={c.id}

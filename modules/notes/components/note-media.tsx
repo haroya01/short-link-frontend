@@ -25,7 +25,7 @@ export function NoteMedia({ media }: { media: NoteImage[] }) {
           playsInline
           preload="metadata"
           aria-label={video.altText ?? undefined}
-          className="mt-2.5 max-h-[430px] w-full rounded-2xl bg-black"
+          className="mt-2.5 max-h-[430px] w-full rounded-surface bg-black"
         />
       ))}
       {sounds.map((sound) => (
@@ -138,7 +138,7 @@ function NoteImageFrame({
   const [showAlt, setShowAlt] = useState(false);
   return (
     <figure className="relative w-fit shrink-0 snap-start">
-      <button type="button" onClick={onOpen} className="focus-ring block cursor-zoom-in rounded-card">
+      <button type="button" onClick={onOpen} className="focus-ring block cursor-zoom-in rounded-surface">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image.url}
@@ -146,7 +146,7 @@ function NoteImageFrame({
           loading="lazy"
           onLoad={onLoad}
           className={cn(
-            "block w-auto rounded-card border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
+            "block w-auto rounded-surface border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
             className,
           )}
         />
@@ -154,7 +154,7 @@ function NoteImageFrame({
       {image.altText && (
         <>
           {showAlt && (
-            <figcaption className="absolute inset-x-0 bottom-0 max-h-full overflow-y-auto rounded-b-card bg-slate-950/80 px-3 pb-9 pt-2.5 text-[13px] leading-snug text-white">
+            <figcaption className="absolute inset-x-0 bottom-0 max-h-full overflow-y-auto rounded-b-surface bg-slate-950/80 px-3 pb-9 pt-2.5 text-[13px] leading-snug text-white">
               {image.altText}
             </figcaption>
           )}
@@ -163,7 +163,7 @@ function NoteImageFrame({
             onClick={() => setShowAlt((v) => !v)}
             aria-expanded={showAlt}
             aria-label={t("altShow")}
-            className="focus-ring absolute bottom-2 left-2 rounded-md bg-slate-950/70 px-1.5 py-0.5 text-[11px] font-bold tracking-wide text-white backdrop-blur-sm hover:bg-slate-950/85"
+            className="focus-ring absolute bottom-2 left-2 rounded-surface bg-slate-950/70 px-1.5 py-0.5 text-[11px] font-bold tracking-wide text-white backdrop-blur-sm hover:bg-slate-950/85"
           >
             ALT
           </button>

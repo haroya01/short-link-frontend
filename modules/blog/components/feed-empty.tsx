@@ -30,7 +30,7 @@ export function FeedEmpty({
       {mark ? (
         <Mark className="h-6 w-auto text-accent-600 dark:text-accent-400" animated />
       ) : (
-        <span className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-500/15 dark:text-accent-400">
+        <span className="grid h-16 w-16 place-items-center rounded-inner bg-accent-50 text-accent-600 dark:bg-accent-500/15 dark:text-accent-400">
           <Icon className="h-7 w-7" />
         </span>
       )}

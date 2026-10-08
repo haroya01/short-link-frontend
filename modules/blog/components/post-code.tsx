@@ -27,14 +27,14 @@ export function PostCode({ lang, code, children }: { lang: string; code: string;
   };
 
   return (
-    <div className="post-code my-6 overflow-hidden rounded-lg bg-slate-900">
+    <div className="post-code my-6 overflow-hidden rounded-surface bg-slate-900">
       <div className="flex items-center justify-between gap-3 px-4 pt-2">
         <span className="select-none font-mono text-[11px] font-medium text-slate-400">{lang}</span>
         <button
           type="button"
           onClick={copy}
           aria-label={t("copy")}
-          className="-mr-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
+          className="-mr-2 inline-flex items-center gap-1 rounded-surface px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
         >
         {status === "copied" ? (
           <>

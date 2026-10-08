@@ -607,7 +607,7 @@ html[data-first-load] .profile-fade {
     @apply rounded bg-slate-100 px-1 py-0.5 text-[12px] font-mono;
   }
   .prose-text-block pre {
-    @apply mb-1.5 overflow-x-auto rounded-md bg-slate-900 p-3 text-[12px] text-slate-100;
+    @apply mb-1.5 overflow-x-auto rounded-surface bg-slate-900 p-3 text-[12px] text-slate-100;
   }
   .prose-text-block pre code {
     @apply bg-transparent p-0 text-slate-100;
@@ -698,7 +698,7 @@ html[data-first-load] .profile-fade {
     @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800 dark:bg-slate-800 dark:text-accent-300;
   }
   .prose-post pre {
-    @apply my-6 overflow-x-auto rounded-xl bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
+    @apply my-6 overflow-x-auto rounded-surface bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
   }
   .prose-post pre code {
     @apply bg-transparent p-0 text-slate-100;
@@ -741,7 +741,7 @@ html[data-first-load] .profile-fade {
     @apply h-auto max-w-full;
   }
   .prose-post figure img {
-    @apply mx-auto rounded-2xl ring-1 ring-slate-200/70 dark:ring-slate-800;
+    @apply mx-auto rounded-surface ring-1 ring-slate-200/70 dark:ring-slate-800;
   }
   .prose-post figcaption {
     @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-500 dark:text-slate-400;
@@ -1952,11 +1952,11 @@ html:not([data-theme-vt])::view-transition-new(root) {
    동안에도 사진은 또렷해야 하므로 old/new 의 기본 crossfade 만 남기고:
    - object-fit: cover + 100%: 비율이 다른 두 스냅샷이 그룹 박스에 늘어붙지 않게(1차 폐기 사유).
    - isolation 해제 + blend 정상화: 교차 중 반투명 겹침이 어둡게 번지는 것 방지.
-   - 그룹에 카드/히어로 공통의 rounded-2xl 을 줘 비행 중에도 모서리가 각지지 않게. */
+   - 그룹에 카드/히어로 공통의 rounded-surface 를 줘 비행 중에도 모서리가 각지지 않게. */
 ::view-transition-group(post-cover) {
   animation-duration: 360ms;
   animation-timing-function: var(--ease);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   overflow: clip;
 }
 ::view-transition-image-pair(post-cover) {

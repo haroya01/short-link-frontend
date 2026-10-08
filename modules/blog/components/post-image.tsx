@@ -114,7 +114,7 @@ export function PostImage({
               src={src}
               alt={label}
               onClick={(e) => e.stopPropagation()}
-              className="post-lightbox-img max-h-[92vh] max-w-[92vw] cursor-default rounded-lg object-contain shadow-modal"
+              className="post-lightbox-img max-h-[92vh] max-w-[92vw] cursor-default rounded-surface object-contain shadow-modal"
             />
             <button
               type="button"

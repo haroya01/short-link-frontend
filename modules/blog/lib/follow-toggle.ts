@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  */
 export function followToggleClass(on: boolean, compact = false, quiet = false) {
   return cn(
-    "touch-target focus-ring inline-flex shrink-0 items-center rounded-lg border font-semibold transition-colors duration-200",
+    "touch-target focus-ring inline-flex shrink-0 items-center rounded-full border font-semibold transition-colors duration-200",
     compact ? "h-7 px-3 text-[12px]" : "h-9 px-4 text-[14px]",
     on
       ? "border-slate-300 text-slate-700 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"

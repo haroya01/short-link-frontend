@@ -90,7 +90,7 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={() => markAll.mutate()}
-            className="touch-target focus-ring rounded-md px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            className="touch-target focus-ring rounded-surface px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
             {t("markAllRead")}
           </button>
@@ -102,7 +102,7 @@ export default function NotificationsPage() {
         <BlogLink
           href={blogPath("/follow-requests")}
           data-testid="follow-requests-entry"
-          className="focus-ring mt-4 flex items-center gap-3 rounded-lg border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+          className="focus-ring mt-4 flex items-center gap-3 rounded-surface border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
         >
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
             <Lock aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
@@ -120,7 +120,7 @@ export default function NotificationsPage() {
         <BlogLink
           href={blogPath("/notifications/filtered")}
           data-testid="filtered-entry"
-          className="focus-ring mt-1 flex items-center gap-3 rounded-lg border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+          className="focus-ring mt-1 flex items-center gap-3 rounded-surface border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
         >
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
             <ListFilter aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
