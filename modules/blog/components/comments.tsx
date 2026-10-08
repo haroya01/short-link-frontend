@@ -358,7 +358,21 @@ export function PostComments({
                         likeLabel={t("like")}
                         onToggleLike={() => void toggleLike(r)}
                         isNew={r.id === justAddedId}
-                      />
+                      >
+                        <button
+                          type="button"
+                          data-testid={`comment-reply-${r.id}`}
+                          onClick={() => {
+                            const handle = r.author?.username;
+                            setReplyTo(c.id);
+                            setReplyBody(handle && handle !== me?.username ? `@${handle} ` : "");
+                          }}
+                          className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+                        >
+                          <CornerDownRight className="h-3.5 w-3.5" />
+                          {t("reply")}
+                        </button>
+                      </CommentRow>
                     </li>
                   ))}
                 </ul>
@@ -462,7 +476,7 @@ function CommentRow({
         </div>
       </div>
       <div className="mt-1.5 pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
-        <CommentBody text={comment.body} locale={locale} />
+        <CommentBody text={comment.body} locale={locale} mentions={comment.mentions} />
       </div>
       <div className="mt-1.5 flex items-center gap-3 pl-9">
         {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop). 카운트 숫자는 표시하지 않고
