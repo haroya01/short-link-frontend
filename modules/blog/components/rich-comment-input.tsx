@@ -9,6 +9,10 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, List, Quote, type LucideIcon } from "lucide-react";
 import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
+import { mentionTokenAt } from "@/modules/mentions/mention-token";
+import { MentionSuggestions } from "@/modules/mentions/mention-suggestions";
+import { useMentionCandidates } from "@/modules/mentions/use-mention-candidates";
+import type { MentionCandidate } from "@/modules/mentions/mention-candidates";
 
 /** tiptap-markdown augments storage at runtime but ships no type for it. */
 function getMarkdown(editor: Editor): string {
@@ -76,6 +80,7 @@ export function RichCommentInput({
   hideToolbar?: boolean;
 }) {
   const t = useTranslations("comments");
+  const tm = useTranslations("mentions");
   const [linkOpen, setLinkOpen] = useState(false);
   // Keep the latest callbacks reachable from the editor's (mount-time) closures without re-creating it.
   const onChangeRef = useRef(onChange);
@@ -85,6 +90,19 @@ export function RichCommentInput({
   // Mirror the value we last emitted so the controlled-reset effect can tell an external clear (after
   // submit) apart from our own keystroke echo, and skip re-seeding the doc on every render.
   const lastEmitted = useRef(value);
+  const [mention, setMention] = useState<{ query: string; from: number; to: number } | null>(null);
+  const [mentionActive, setMentionActive] = useState(0);
+  const mentionCandidates = useMentionCandidates(mention?.query ?? null, true);
+  const mentionOpen = mention != null && mentionCandidates.length > 0;
+  const mentionRef = useRef<{
+    open: boolean;
+    count: number;
+    active: number;
+    candidates: MentionCandidate[];
+    pick: (candidate: MentionCandidate) => void;
+    close: () => void;
+    move: (step: number) => void;
+  }>({ open: false, count: 0, active: 0, candidates: [], pick: () => {}, close: () => {}, move: () => {} });
 
   const editor = useEditor({
     // Next SSR: Tiptap must not render on the server (hydration mismatch otherwise).
@@ -109,6 +127,21 @@ export function RichCommentInput({
       attributes: { class: "tiptap-comment focus:outline-none" },
       // Cmd/Ctrl+Enter 제출(버튼은 그대로) — 길게 쓰다 손 떼지 않고 보낼 수 있게.
       handleKeyDown: (_view, event) => {
+        const m = mentionRef.current;
+        if (m.open && !event.isComposing) {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            m.move(event.key === "ArrowDown" ? 1 : -1);
+            return true;
+          }
+          if ((event.key === "Enter" && !event.metaKey && !event.ctrlKey) || event.key === "Tab") {
+            m.pick(m.candidates[m.active]);
+            return true;
+          }
+          if (event.key === "Escape") {
+            m.close();
+            return true;
+          }
+        }
         if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && onSubmitRef.current) {
           onSubmitRef.current();
           return true;
@@ -122,6 +155,45 @@ export function RichCommentInput({
       onChangeRef.current(md);
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+    const sync = () => {
+      const { $from, empty } = editor.state.selection;
+      if (!empty || !$from.parent.isTextblock) {
+        setMention(null);
+        return;
+      }
+      const before = $from.parent.textBetween(0, $from.parentOffset, undefined, "\ufffc");
+      const token = mentionTokenAt(before, before.length);
+      setMention(token ? { query: token.query, from: $from.pos - (before.length - token.start), to: $from.pos } : null);
+      setMentionActive(0);
+    };
+    const clear = () => setMention(null);
+    editor.on("selectionUpdate", sync);
+    editor.on("update", sync);
+    editor.on("blur", clear);
+    return () => {
+      editor.off("selectionUpdate", sync);
+      editor.off("update", sync);
+      editor.off("blur", clear);
+    };
+  }, [editor]);
+
+  const pickMention = (candidate: MentionCandidate) => {
+    if (!editor || !mention) return;
+    editor.chain().focus().insertContentAt({ from: mention.from, to: mention.to }, `@${candidate.username} `).run();
+    setMention(null);
+  };
+  mentionRef.current = {
+    open: mentionOpen,
+    count: mentionCandidates.length,
+    active: mentionActive,
+    candidates: mentionCandidates,
+    pick: pickMention,
+    close: () => setMention(null),
+    move: (step: number) => setMentionActive((i) => (i + step + mentionCandidates.length) % mentionCandidates.length),
+  };
 
   // Controlled-reset sync: when the host clears `value` (after a successful submit) or sets it from
   // outside, re-seed the doc. Compare against the LAST value we emitted so our own keystroke echo
@@ -163,6 +235,7 @@ export function RichCommentInput({
   }
 
   return (
+    <div className="relative">
     <div className="overflow-hidden rounded-surface border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
       {/* Format chrome shows only when expanded — the resting field is a bare one-line input. The
           grid-rows 0fr→1fr reveal animates the height with no mount jump; `invisible` keeps the
@@ -190,6 +263,16 @@ export function RichCommentInput({
         onSubmit={(url) => applyLink(url)}
         onRemove={() => editor.chain().focus().extendMarkRange("link").unsetLink().run()}
       />
+    </div>
+    {mentionOpen && (
+      <MentionSuggestions
+        className="absolute left-0 top-full mt-1"
+        candidates={mentionCandidates}
+        active={mentionActive}
+        onPick={pickMention}
+        label={tm("suggestions")}
+      />
+    )}
     </div>
   );
 }

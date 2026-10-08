@@ -4408,5 +4408,8 @@
     "suggestionsFriends": "आपके फ़ॉलो किए गए {count} लोग फ़ॉलो करते हैं",
     "suggestionsPopular": "इन दिनों लोकप्रिय",
     "suggestionsDismiss": "{name} का सुझाव न दें"
+  },
+  "mentions": {
+    "suggestions": "उल्लेख करने के लिए लोग"
   }
 }

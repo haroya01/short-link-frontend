@@ -4408,5 +4408,8 @@
     "suggestionsFriends": "{count} người bạn theo dõi đang theo dõi",
     "suggestionsPopular": "Gần đây được nhiều người theo dõi",
     "suggestionsDismiss": "Không gợi ý {name}"
+  },
+  "mentions": {
+    "suggestions": "Người để nhắc đến"
   }
 }
