@@ -8,15 +8,15 @@ test("library switches between saved posts and highlights with browser history",
   await expect(library.getByRole("link", { name: "저장한 글", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(library.getByRole("link", { name: "컬렉션", exact: true })).toHaveAttribute("href", /\/collections$/);
 
-  await library.getByRole("link", { name: "하이라이트·메모", exact: true }).click();
+  await library.getByRole("link", { name: "하이라이트·공개 메모", exact: true }).click();
   await expect(page).toHaveURL(/\/curation\?view=highlights$/);
-  await expect(library.getByRole("link", { name: "하이라이트·메모", exact: true })).toHaveAttribute("aria-current", "page");
-  await expect(page.getByRole("searchbox", { name: "구절, 메모, 글 제목으로 찾기" })).toBeVisible();
+  await expect(library.getByRole("link", { name: "하이라이트·공개 메모", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("searchbox", { name: "문장, 공개 메모, 글 제목으로 찾기" })).toBeVisible();
   await expect(page.locator('a[href*="?hl="]').first()).toBeVisible();
 
   await page.goBack();
   await expect(library.getByRole("link", { name: "저장한 글", exact: true })).toHaveAttribute("aria-current", "page");
-  await expect(page.getByRole("searchbox", { name: "구절, 메모, 글 제목으로 찾기" })).toHaveCount(0);
+  await expect(page.getByRole("searchbox", { name: "문장, 공개 메모, 글 제목으로 찾기" })).toHaveCount(0);
 });
 
 test("mobile account has one library entrance", async ({ page }) => {

@@ -293,12 +293,18 @@ mark.kurl-highlight {
 mark.kurl-highlight--thread {
   box-shadow: inset 0 -2px 0 rgba(5, 150, 105, 0.7);
 }
+mark.kurl-highlight--mine {
+  background-color: rgba(5, 150, 105, 0.2);
+}
 .dark mark.kurl-highlight {
   background-color: rgba(16, 185, 129, 0.16);
   box-shadow: inset 0 -1px 0 rgba(52, 211, 153, 0.45);
 }
 .dark mark.kurl-highlight--thread {
   box-shadow: inset 0 -2px 0 rgba(52, 211, 153, 0.75);
+}
+.dark mark.kurl-highlight--mine {
+  background-color: rgba(16, 185, 129, 0.3);
 }
 
 @layer utilities {

@@ -24,6 +24,7 @@ import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine, Trash2 } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
+import { HighlightCard, hasConversation } from "./highlight-card";
 import {
   listCollectionsContainingHighlight,
   listRelatedBlocks,
@@ -76,6 +77,7 @@ type Anchor = { left: number; top: number; bottom: number };
  */
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
+  const tc = useTranslations("collections");
   const { authenticated, me, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -89,6 +91,9 @@ export function PostHighlights({ postId }: { postId: number }) {
   const [highlightsLoaded, setHighlightsLoaded] = useState(false);
   // When set, the reply-thread sheet is open for this highlight.
   const [threadFor, setThreadFor] = useState<HighlightView | null>(null);
+  const [card, setCard] = useState<{ ids: number[]; rect: DOMRect } | null>(null);
+  const [connectFor, setConnectFor] = useState<HighlightView | null>(null);
+  const closeCard = useCallback(() => setCard(null), []);
   const [threadChoices, setThreadChoices] = useState<HighlightView[]>([]);
   // The live selection → drives the floating action bar.
   const [sel, setSel] = useState<{ anchor: Anchor; payload: NewHighlight } | null>(null);
@@ -134,7 +139,12 @@ export function PostHighlights({ postId }: { postId: number }) {
       if (!toPaint.has(h.id)) continue;
       // Precise span paint (single- or multi-block), using the stored block + char offsets so it hits
       // the right occurrence and crosses inline formatting; quote-search fallback if offsets drifted.
-      wrapHighlight(root, h, { id: h.id, note: h.note, replyCount: h.replyCount });
+      wrapHighlight(root, h, {
+        id: h.id,
+        note: h.note,
+        replyCount: h.replyCount,
+        mine: me?.id != null && h.author?.id === me.id,
+      });
     }
   }, [highlights, me?.id, showHighlights]);
 
@@ -186,19 +196,17 @@ export function PostHighlights({ postId }: { postId: number }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightsLoaded]);
 
-  // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
-  // doesn't emit a click, so it stays out of the highlight-creation path). Enter/Space on a focused
-  // mark does the same, so a keyboard reader reaches the thread the marks are `role="button"`.
+  // Tapping a painted highlight opens a card at that sentence: who marked it, its public notes, and the
+  // way into the conversation (a plain click, not a drag-select — a drag doesn't emit a click, so it
+  // stays out of the highlight-creation path). Enter/Space on a focused mark does the same.
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
     const openFromMark = (mark: HTMLElement | null) => {
       if (!mark) return false;
-      const ids = highlightIdsForMark(mark);
-      const choices = highlights.filter((h) => ids.includes(h.id));
-      if (choices.length === 0) return false;
-      if (choices.length === 1) setThreadFor(choices[0]);
-      else setThreadChoices(choices);
+      const ids = highlightIdsForMark(mark).filter((id) => highlights.some((h) => h.id === id));
+      if (ids.length === 0) return false;
+      setCard({ ids, rect: mark.getBoundingClientRect() });
       return true;
     };
     const markAt = (target: EventTarget | null) =>
@@ -286,7 +294,7 @@ export function PostHighlights({ postId }: { postId: number }) {
       }
       // A failed refresh must not turn a confirmed write into a retry/duplicate creation.
       try { setHighlights(await listHighlights(postId)); } catch { /* keep the last visible marks */ }
-      toast(okMessage, "success");
+      toast(firstPublicHighlight() ? t("highlightPublicFirst") : okMessage, "success");
       return true;
     },
     [postId, t, toast, errorMessage],
@@ -309,23 +317,48 @@ export function PostHighlights({ postId }: { postId: number }) {
   const removeHighlight = useCallback(
     async (h: HighlightView) => {
       setThreadFor(null);
-      const threaded = !!h.note?.trim() || h.replyCount > 0;
-      const ok = await confirm({
-        title: t("highlightDeleteConfirm"),
-        description: threaded ? t("highlightDeleteConfirmBody") : t("highlightDeleteConfirmBodyBare"),
-        destructive: true,
-      });
-      if (!ok) return;
+      setCard(null);
+      if (hasConversation(h)) {
+        const ok = await confirm({
+          title: t("highlightDeleteConfirm"),
+          description: t("highlightDeleteConfirmBody"),
+          destructive: true,
+        });
+        if (!ok) return;
+      }
       const prev = highlights;
       setHighlights((cur) => cur.filter((x) => x.id !== h.id));
       try {
         await deleteHighlight(h.id);
+        toast(t("highlightRemoved"), "success");
       } catch {
         setHighlights(prev);
         toast(t("highlightDeleteError"), "error");
       }
     },
     [confirm, highlights, t, toast],
+  );
+
+  const shareHighlight = useCallback(
+    async (h: HighlightView) => {
+      setCard(null);
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      url.searchParams.set("highlightId", String(h.id));
+      const link = url.toString();
+      try {
+        if (navigator.share) {
+          await navigator.share({ text: `“${h.quote}”`, url: link });
+          return;
+        }
+        await navigator.clipboard.writeText(link);
+        toast(t("highlightLinkCopied"), "success");
+      } catch {
+        /* the reader dismissed the share sheet */
+      }
+    },
+    [t, toast],
   );
 
   // Quick highlight (no memo).
@@ -410,6 +443,35 @@ export function PostHighlights({ postId }: { postId: number }) {
                 title={t("highlightChooseThread")}
                 onClose={() => setThreadChoices([])}
                 onChoose={(highlight) => { setThreadChoices([]); setThreadFor(highlight); }}
+              />
+            )}
+            {card && (
+              <HighlightCard
+                highlights={highlights.filter((h) => card.ids.includes(h.id))}
+                meId={me?.id ?? null}
+                anchor={card.rect}
+                canConnect={authenticated}
+                onOpen={(h) => {
+                  setCard(null);
+                  setThreadFor(h);
+                }}
+                onShare={(h) => void shareHighlight(h)}
+                onConnect={(h) => {
+                  setCard(null);
+                  setConnectFor(h);
+                }}
+                onRemove={(h) => void removeHighlight(h)}
+                onClose={closeCard}
+              />
+            )}
+            {connectFor && (
+              <ConnectSheet
+                blockType="HIGHLIGHT"
+                refId={connectFor.id}
+                targetLabel={tc("blockHighlight")}
+                targetTitle={connectFor.quote}
+                onClose={() => setConnectFor(null)}
+                onDone={() => setConnectFor(null)}
               />
             )}
             {threadFor && (
@@ -954,4 +1016,16 @@ function flashQuote(el: HTMLElement) {
   window.setTimeout(() => {
     el.style.backgroundColor = prev;
   }, 1100);
+}
+
+const PUBLIC_NOTICE_KEY = "kurl:highlight-public-notice";
+
+function firstPublicHighlight(): boolean {
+  try {
+    if (window.localStorage.getItem(PUBLIC_NOTICE_KEY)) return false;
+    window.localStorage.setItem(PUBLIC_NOTICE_KEY, "1");
+    return true;
+  } catch {
+    return false;
+  }
 }
