@@ -75,3 +75,15 @@ test("a comment links the members it mentions and leaves other @names as text", 
   await expect(reply.getByRole("link", { name: "@nobody_here" })).toHaveCount(0);
   await expect(reply).toContainText("@nobody_here");
 });
+
+test("replying to someone's reply stays in the thread and calls them by name", async ({ page }) => {
+  await page.goto(`${POST_PATH}#comment-4`);
+  await waitReady(page);
+
+  await page.getByTestId("comment-reply-4").click();
+  const editor = page.locator("#comments [contenteditable=true]").last();
+  await expect(editor).toHaveText("@kazuki", { timeout: 5_000 });
+
+  await page.getByTestId("comment-reply-2").click();
+  await expect(editor).toHaveText("", { timeout: 5_000 });
+});
