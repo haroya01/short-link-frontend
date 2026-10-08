@@ -522,7 +522,7 @@ export function NoteComposer({
               <div className="flex items-center gap-2">
                 <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{me?.username}</span>
                 <span className="ml-auto" />
-                {count > 0 && <NoteLengthRing length={count} />}
+                {count > NOTE_MAX_LENGTH - 100 && <NoteLengthRing length={count} />}
                 <button
                   type="button"
                   onClick={() => setParts((current) => current.filter((x) => x.id !== part.id))}
