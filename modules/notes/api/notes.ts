@@ -8,6 +8,8 @@ const noteMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
 
 export const NOTE_MAX_LENGTH = 500;
+/** A thread posts 2 to this many notes at once (the server's limit). */
+export const NOTE_MAX_THREAD_NOTES = 10;
 export const NOTE_MAX_IMAGES = 4;
 export const NOTE_ALT_MAX_LENGTH = 1500;
 export const NOTE_POLL_MAX_OPTIONS = 4;
@@ -617,6 +619,12 @@ export async function cancelScheduledNote(id: number): Promise<void> {
 export function createNote(draft: NoteDraft): Promise<Note> {
   if (noteMocks) return Promise.resolve(noteMocks.mockCreate(draft));
   return request<Note>("/api/v1/notes", { method: "POST", body: draft });
+}
+
+/** Posts a thread in one go: the server chains each note as a reply to the one before, all or none. */
+export function createThread(drafts: NoteDraft[]): Promise<Note[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockCreateThread(drafts));
+  return request<Note[]>("/api/v1/notes/threads", { method: "POST", body: { notes: drafts } });
 }
 
 export function editNote(id: number, body: string): Promise<Note> {
