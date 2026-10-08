@@ -12,7 +12,7 @@ import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
 import { mentionTokenAt } from "@/modules/mentions/mention-token";
 import { MentionSuggestions } from "@/modules/mentions/mention-suggestions";
 import { useMentionCandidates } from "@/modules/mentions/use-mention-candidates";
-import type { MentionCandidate } from "@/modules/mentions/mention-candidates";
+import type { MentionCandidate } from "@/modules/mentions/api/mention-candidates";
 
 /** tiptap-markdown augments storage at runtime but ships no type for it. */
 function getMarkdown(editor: Editor): string {

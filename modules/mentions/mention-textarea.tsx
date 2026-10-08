@@ -1,11 +1,11 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useRef, useState, type TextareaHTMLAttributes } from "react";
+import { forwardRef, useId, useImperativeHandle, useRef, useState, type TextareaHTMLAttributes } from "react";
 import { useTranslations } from "next-intl";
 import { applyMention, mentionTokenAt, type MentionToken } from "./mention-token";
 import { MentionSuggestions } from "./mention-suggestions";
 import { useMentionCandidates } from "./use-mention-candidates";
-import type { MentionCandidate } from "./mention-candidates";
+import type { MentionCandidate } from "./api/mention-candidates";
 
 type Props = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange"> & {
   value: string;
@@ -18,6 +18,7 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
   forwarded,
 ) {
   const t = useTranslations("mentions");
+  const listId = useId();
   const inner = useRef<HTMLTextAreaElement>(null);
   useImperativeHandle(forwarded, () => inner.current as HTMLTextAreaElement);
   const [token, setToken] = useState<MentionToken | null>(null);
@@ -80,11 +81,13 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
           onKeyDown?.(e);
         }}
         aria-autocomplete="list"
-        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-activedescendant={open ? `${listId}-${active}` : undefined}
         {...rest}
       />
       {open && (
         <MentionSuggestions
+          id={listId}
           className="absolute left-0 top-full mt-1"
           candidates={candidates}
           active={active}

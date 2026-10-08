@@ -2,15 +2,17 @@
 
 import { Avatar } from "@/modules/blog/components/avatar";
 import { cn } from "@/lib/utils";
-import type { MentionCandidate } from "./mention-candidates";
+import type { MentionCandidate } from "./api/mention-candidates";
 
 export function MentionSuggestions({
+  id,
   candidates,
   active,
   onPick,
   label,
   className,
 }: {
+  id?: string;
   candidates: MentionCandidate[];
   active: number;
   onPick: (candidate: MentionCandidate) => void;
@@ -20,6 +22,7 @@ export function MentionSuggestions({
   if (candidates.length === 0) return null;
   return (
     <ul
+      id={id}
       role="listbox"
       aria-label={label}
       data-testid="mention-suggestions"
@@ -29,9 +32,10 @@ export function MentionSuggestions({
       )}
     >
       {candidates.map((c, i) => (
-        <li key={c.username} role="option" aria-selected={i === active}>
+        <li key={c.username} id={id ? `${id}-${i}` : undefined} role="option" aria-selected={i === active}>
           <button
             type="button"
+            tabIndex={-1}
             onMouseDown={(e) => {
               e.preventDefault();
               onPick(c);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listMentionCandidates, type MentionCandidate } from "./mention-candidates";
+import { listMentionCandidates, type MentionCandidate } from "./api/mention-candidates";
 
 /** Candidates for the @name being typed; null query = not typing a mention. Stale answers are dropped. */
 export function useMentionCandidates(query: string | null, enabled: boolean) {

@@ -49,8 +49,9 @@ export const CLIENT_MESSAGE_SCOPES = {
   ],
   "links/visual-fixtures": ["events.public", "publicProfile.contactCard"],
   blog: [
-    "collections", "cookieConsent", "footer", "languageSwitcher", "nav", "notes", "notifications",
-    "publicFeed", "publicPost", "publicProfile.gallery", "recent", "sidebar.blog", "sidebar.common",
+    "collections", "cookieConsent", "footer", "languageSwitcher", "mentions", "nav", "notes",
+    "notifications", "publicFeed", "publicPost", "publicProfile.gallery", "recent", "sidebar.blog",
+    "sidebar.common",
   ],
   "blog/admin": ["abuseReports", "admin.servers", "blogAdminMetrics"],
   "blog/analytics": ["blogWorkspace", "settings.profile.stats", "stats"],
@@ -61,7 +62,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/webhooks": ["blogWebhooks"],
   "blog/write": ["blogWorkspace", "errors", "postEditor", "tags"],
   "p/[username]": [
-    "collections", "comments", "errors", "languageSwitcher", "nav", "notifications",
+    "collections", "comments", "errors", "languageSwitcher", "mentions", "nav", "notifications",
     "notes", "postEditor.urlDialog", "publicFeed", "publicPost", "publicProfile.gallery", "share",
     "sidebar.blog",
   ],
