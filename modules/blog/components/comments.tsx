@@ -1,6 +1,5 @@
 "use client";
 
-import { DATE_LOCALE } from "@/lib/date";
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
@@ -24,6 +23,7 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { NoteList } from "@/modules/notes/components/note-list";
+import { compactTime } from "@/modules/notes/lib/compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -273,12 +273,7 @@ export function PostComments({
   }
 
   function fmt(iso: string) {
-    return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    timeZone: "Asia/Seoul",
-  });
+    return compactTime(iso, locale);
   }
 
   return (
@@ -539,10 +534,12 @@ function CommentRow({
         >
           <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
           <span className="truncate text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-            @{username}
+            {username}
           </span>
         </BlogLink>
-        <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
+        <time dateTime={comment.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
+          {fmt(comment.createdAt)}
+        </time>
         <div className="ml-auto flex shrink-0 items-center gap-1">
           {/* 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 노출 — 내 것엔 휴지통만. */}
           {canReport && <ReportButton subjectType="COMMENT" subjectId={comment.id} />}

@@ -227,9 +227,9 @@ test("clicking a painted highlight opens a card at the sentence, and the convers
   await expect(thread).toBeVisible({ timeout: 10_000 });
   await expect(thread.locator("#hl-thread-quote")).toContainText(quote);
 
-  // The opener attributes the highlight even without a note: avatar + @handle + date row (a bare
+  // The opener attributes the highlight even without a note: avatar + name + time row (a bare
   // highlight used to render as an anonymous quote with no author or time at all).
-  await expect(thread.getByRole("link", { name: "@dohyun" })).toBeVisible();
+  await expect(thread.getByRole("link", { name: "dohyun" })).toBeVisible();
 });
 
 test("replying in a highlight's thread posts the reply into the thread", async ({ page }) => {

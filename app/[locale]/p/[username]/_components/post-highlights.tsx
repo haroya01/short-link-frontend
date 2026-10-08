@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
-import { DATE_LOCALE } from "@/lib/date";
+import { compactTime } from "@/modules/notes/lib/compact-time";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -550,7 +550,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
           {highlights.map((highlight) => (
             <li key={highlight.id}>
               <button type="button" className="focus-ring w-full rounded-surface py-3 text-left" onClick={() => onChoose(highlight)}>
-                <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">@{highlight.author?.username ?? "?"}</span>
+                <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">{highlight.author?.username ?? "?"}</span>
                 <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note || highlight.quote}</span>
                 {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{tc("highlightReplyCount", { count: highlight.replyCount })}</span>}
               </button>
@@ -696,14 +696,8 @@ function HighlightThread({
     }
   }
 
-  // Same shape as the comment section's date (year included) — the thread reads like comments.
   function fmt(iso: string) {
-    return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      timeZone: "Asia/Seoul",
-    });
+    return compactTime(iso, locale);
   }
 
   return (
@@ -771,18 +765,18 @@ function HighlightThread({
                   shrink={false}
                 />
                 <span className="truncate text-[13px] font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-                  @{highlight.author.username}
+                  {highlight.author.username}
                 </span>
               </BlogLink>
             ) : (
               <span className="flex min-w-0 items-center gap-2">
                 <Avatar src={null} name="?" size="sm" shrink={false} />
-                <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">@?</span>
+                <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">?</span>
               </span>
             )}
-            <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
+            <time dateTime={highlight.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
               {fmt(highlight.createdAt)}
-            </span>
+            </time>
           </div>
           {highlight.note && (
             <div className="mt-1.5 min-w-0 pl-9 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
@@ -817,18 +811,20 @@ function HighlightThread({
                           shrink={false}
                         />
                         <span className="truncate text-[13px] font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-                          @{r.author.username}
+                          {r.author.username}
                         </span>
                       </BlogLink>
                     ) : (
                       <span className="flex min-w-0 items-center gap-2">
                         <Avatar src={null} name="?" size="sm" shrink={false} />
                         <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                          @?
+                          ?
                         </span>
                       </span>
                     )}
-                    <span className="shrink-0 text-[12px] text-slate-500">{fmt(r.createdAt)}</span>
+                    <time dateTime={r.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
+                      {fmt(r.createdAt)}
+                    </time>
                     {meId != null && r.author?.id === meId && (
                       <button
                         type="button"
