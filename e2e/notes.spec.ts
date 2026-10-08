@@ -814,6 +814,50 @@ test("video and audio from another server play in place with their own controls"
   await expect(waves.locator("video")).toHaveAttribute("aria-label", "밀려오는 파도");
 });
 
+test("a video plays silently while mostly on screen and stops when it leaves", async ({ page }) => {
+  await page.addInitScript(() => {
+    const calls: string[] = [];
+    (window as unknown as { mediaCalls: string[] }).mediaCalls = calls;
+    HTMLMediaElement.prototype.play = function () {
+      calls.push(`play:${this.tagName}:${this.muted}`);
+      return Promise.resolve();
+    };
+    HTMLMediaElement.prototype.pause = function () {
+      calls.push(`pause:${this.tagName}`);
+    };
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/ko/blog/remote/9800");
+  const video = page.locator('article[data-note-id="13"] video');
+  await expect(video).toHaveAttribute("loop", "", { timeout: 30_000 });
+  await video.scrollIntoViewIfNeeded();
+  const calls = () => page.evaluate(() => (window as unknown as { mediaCalls: string[] }).mediaCalls);
+  await expect.poll(calls).toContain("play:VIDEO:true");
+  // Less than half of it on screen: the page here is short, so shrink the window instead of scrolling.
+  await page.setViewportSize({ width: 390, height: 120 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(calls).toContain("pause:VIDEO");
+  expect((await calls()).some((call) => call.startsWith("play:AUDIO"))).toBe(false);
+});
+
+test("with reduced motion a video waits for the reader to press play", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    const calls: string[] = [];
+    (window as unknown as { mediaCalls: string[] }).mediaCalls = calls;
+    HTMLMediaElement.prototype.play = function () {
+      calls.push("play");
+      return Promise.resolve();
+    };
+  });
+  await page.goto("/ko/blog/remote/9800");
+  const video = page.locator('article[data-note-id="13"] video');
+  await expect(video).toBeVisible({ timeout: 30_000 });
+  await video.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => (window as unknown as { mediaCalls: string[] }).mediaCalls)).toEqual([]);
+});
+
 test("beside the feed, follow suggestions offer a follow and can be set aside", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/ko/blog/notes");
