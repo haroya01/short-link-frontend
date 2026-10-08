@@ -27,8 +27,9 @@ test.use({ viewport: { width: 1280, height: 900 } });
 // A seeded mock post whose body covers every block type (see modules/blog/api/_mocks.ts).
 const POST_PATH = "/en/p/dohyun/nextjs-14-app-router-blog";
 
-const LIGHT_TINT = { r: 5, g: 150, b: 105, a: 0.1 };
-const DARK_TINT = { r: 16, g: 185, b: 129, a: 0.16 };
+// The highlight these tests paint is the viewer's own, which reads a step stronger than others' (0.10 / 0.16).
+const LIGHT_TINT = { r: 5, g: 150, b: 105, a: 0.2 };
+const DARK_TINT = { r: 16, g: 185, b: 129, a: 0.3 };
 
 type Rgba = { r: number; g: number; b: number; a: number };
 
@@ -142,7 +143,7 @@ test("the highlight <mark> inherits body text color and shows the light-mode gre
   // Text color follows the surrounding body (color: inherit), NOT the UA <mark> black.
   expect(seen.color).toBe(seen.parentColor);
   expect(seen.color, "the mark must not fall back to the UA <mark> black").not.toBe("rgb(0, 0, 0)");
-  // The fill is the document-quiet class tint (accent-600 @ 0.10), not the UA <mark> yellow.
+  // The fill is the class tint (own highlight: accent-600 @ 0.20), not the UA <mark> yellow.
   expectTint(seen.bg, LIGHT_TINT);
 });
 
@@ -168,7 +169,7 @@ test("the highlight <mark> stays readable in dark mode (dark tint + inherited li
   // The killer bug: UA black text on a dark page. The mark must inherit the light body text instead.
   expect(seen.color).toBe(seen.parentColor);
   expect(seen.color, "dark-mode text must not be UA <mark> black").not.toBe("rgb(0, 0, 0)");
-  // Dark tint is the brighter accent-500 @ 0.16 variant (accent-600 muddies into a dark page).
+  // Dark tint is the brighter accent-500 variant (own highlight @ 0.30; accent-600 muddies into a dark page).
   expectTint(seen.bg, DARK_TINT);
 });
 
@@ -186,7 +187,7 @@ test("selecting text → Note saves a memo and paints the mark as a thread carri
   const quote = await selectRun(page);
   const bar = page.getByRole("toolbar");
   await expect(bar).toBeVisible();
-  await bar.getByRole("button", { name: "Note", exact: true }).click();
+  await bar.getByRole("button", { name: "Public note", exact: true }).click();
 
   // The memo composer is a dialog with the same WYSIWYG input as comments (no raw-markdown textarea).
   const sheet = page.getByRole("dialog");
@@ -202,12 +203,25 @@ test("selecting text → Note saves a memo and paints the mark as a thread carri
   await expect(threadMark).toHaveText(quote);
 });
 
-test("clicking a painted highlight opens its thread sheet showing the exact quote", async ({ page }) => {
+test("clicking a painted highlight opens a card at the sentence, and the conversation from there", async ({
+  page,
+}) => {
   await page.goto(POST_PATH);
   await waitReady(page);
   const { mark, quote } = await makeHighlight(page);
 
   await mark.click();
+  const card = page.getByTestId("highlight-card");
+  await expect(card).toBeVisible({ timeout: 10_000 });
+  await expect(card).toContainText("You highlighted this");
+  const markBox = (await mark.boundingBox())!;
+  const cardBox = (await card.boundingBox())!;
+  expect(
+    cardBox.y + cardBox.height <= markBox.y || cardBox.y >= markBox.y + markBox.height,
+    "the card sits beside the sentence, not over it",
+  ).toBe(true);
+  await card.getByTestId("highlight-card-talk").click();
+  await expect(card).toHaveCount(0);
   // The thread dialog is labelled by its quoted passage (aria-labelledby="hl-thread-quote").
   const thread = page.getByRole("dialog");
   await expect(thread).toBeVisible({ timeout: 10_000 });
@@ -224,6 +238,7 @@ test("replying in a highlight's thread posts the reply into the thread", async (
   const { mark } = await makeHighlight(page);
 
   await mark.click();
+  await page.getByTestId("highlight-card-talk").click();
   const thread = page.getByRole("dialog");
   await expect(thread).toBeVisible({ timeout: 10_000 });
   // Empty thread first — the reply composer reads/writes like a comment (WYSIWYG, not a textarea).
@@ -272,27 +287,17 @@ test("a ?hl deep link scrolls into view on a post with ZERO highlights (plain-te
 // recomputes the top-highlight clusters). Backend is a hard cascade (note + replies go with it).
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
-test("deleting your own highlight unpaints its <mark> (create → thread → delete → gone)", async ({
-  page,
-}) => {
+test("removing your own bare highlight from its card unpaints the <mark> at once", async ({ page }) => {
   await page.goto(POST_PATH);
   await waitReady(page);
   const { mark } = await makeHighlight(page);
-  await expect(page.locator("mark.kurl-highlight")).toHaveCount(1);
+  await expect(page.locator("mark.kurl-highlight--mine")).toHaveCount(1);
 
-  // The mark opens its thread, which — because the highlight is the viewer's own — offers delete.
+  // A mark without a note or replies goes in one tap — there is nothing else to lose.
   await mark.click();
-  const thread = page.getByRole("dialog");
-  await expect(thread).toBeVisible({ timeout: 10_000 });
-
-  // Owner delete: closes the thread and raises the destructive confirm over the page.
-  await thread.getByRole("button", { name: "Delete highlight" }).click();
-  const confirm = page.getByRole("dialog");
-  await expect(confirm).toBeVisible();
-  await confirm.getByRole("button", { name: "Delete", exact: true }).click();
-
-  // Optimistic unpaint — the mark is gone from the body.
+  await page.getByTestId("highlight-card-remove").click();
   await expect(page.locator("mark.kurl-highlight")).toHaveCount(0, { timeout: 10_000 });
+  await expect(page.getByTestId("highlight-card")).toHaveCount(0);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -312,14 +317,12 @@ test.describe("connect a highlight to a new collection (mobile)", () => {
     await page.goto(POST_PATH);
     await waitReady(page);
 
-    // Paint a highlight, then open its thread to reach the connect action.
+    // Paint a highlight, then reach the connect action from its card.
     const { mark } = await makeHighlight(page);
-    await mark.click();
-    const thread = page.getByRole("dialog");
-    await expect(thread).toBeVisible({ timeout: 10_000 });
-
-    // The connect (FolderPlus) button opens the ConnectSheet over the thread (its own dialog).
-    await thread.getByRole("button", { name: "Connect to a collection or path" }).click();
+    await mark.tap();
+    const card = page.getByTestId("highlight-card");
+    await expect(card).toBeVisible({ timeout: 10_000 });
+    await card.getByRole("button", { name: "Collection", exact: true }).click();
     const sheet = page.getByRole("dialog").last();
     await expect(sheet).toBeVisible();
 

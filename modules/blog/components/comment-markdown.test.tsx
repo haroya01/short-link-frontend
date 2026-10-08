@@ -14,14 +14,16 @@ function render(text: string, mentions?: string[]) {
 
 describe("comment mentions", () => {
   it("links only the handles the server found among members", () => {
-    const root = render("@minji 고마워요, @nobody_here 도 **@minji** 처럼", ["minji"]);
+    const text = "@minji 고마워요, @nobody_here 도 **@minji** 처럼";
+    const root = render(text, ["minji"]);
     const links = [...root.querySelectorAll("a")].map((a) => a.textContent);
     expect(links).toEqual(["@minji", "@minji"]);
-    expect(root.textContent).toContain("@nobody_here");
+    expect(root.textContent).toBe(text.replaceAll("**", ""));
   });
 
   it("keeps linking every handle where the server has not checked them, like the composer preview", () => {
     const root = render("@minji @nobody_here");
     expect([...root.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["@minji", "@nobody_here"]);
+    expect(root.textContent).toBe("@minji @nobody_here");
   });
 });
