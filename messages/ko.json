@@ -4423,5 +4423,8 @@
     "suggestionsFriends": "내가 팔로우하는 {count}명이 팔로우",
     "suggestionsPopular": "요즘 많이 팔로우해요",
     "suggestionsDismiss": "{name} 추천 안 보기"
+  },
+  "mentions": {
+    "suggestions": "멘션할 사람"
   }
 }

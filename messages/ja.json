@@ -4423,5 +4423,8 @@
     "suggestionsFriends": "フォロー中の{count}人がフォロー",
     "suggestionsPopular": "最近よくフォローされています",
     "suggestionsDismiss": "{name}を表示しない"
+  },
+  "mentions": {
+    "suggestions": "メンションする人"
   }
 }
