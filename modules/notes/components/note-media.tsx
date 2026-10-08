@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
 import { PhotoLightbox } from "@/app/[locale]/u/[username]/_components/photo-lightbox";
 
 // Video and audio come only from other servers (members attach pictures). They play from where they
-// live, with the browser's own controls; nothing autoplays in a feed.
+// live, with the browser's own controls. A video plays silently on a loop while it is mostly on screen,
+// as on Threads and X; sound and full screen stay one tap away in its controls.
 export function NoteMedia({ media }: { media: NoteImage[] }) {
   const pictures = media.filter((item) => item.contentType.startsWith("image/"));
   const videos = media.filter((item) => item.contentType.startsWith("video/"));
@@ -18,15 +19,7 @@ export function NoteMedia({ media }: { media: NoteImage[] }) {
     <>
       <NotePictures media={pictures} />
       {videos.map((video) => (
-        <video
-          key={video.url}
-          src={video.url}
-          controls
-          playsInline
-          preload="metadata"
-          aria-label={video.altText ?? undefined}
-          className="mt-2.5 max-h-[430px] w-full rounded-surface bg-black"
-        />
+        <NoteVideo key={video.url} video={video} />
       ))}
       {sounds.map((sound) => (
         <audio
@@ -39,6 +32,42 @@ export function NoteMedia({ media }: { media: NoteImage[] }) {
         />
       ))}
     </>
+  );
+}
+
+// Reduced motion and data saving keep it still until the reader presses play.
+function NoteVideo({ video }: { video: NoteImage }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const saving = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+    if (reduced || saving) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio >= 0.5) element.play().catch(() => undefined);
+        else element.pause();
+      },
+      { threshold: [0, 0.5, 1] },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <video
+      ref={ref}
+      src={video.url}
+      controls
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      width={video.width ?? undefined}
+      height={video.height ?? undefined}
+      aria-label={video.altText ?? undefined}
+      className="mt-2.5 h-auto max-h-[430px] w-full rounded-surface bg-black"
+    />
   );
 }
 
