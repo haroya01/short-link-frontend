@@ -21,7 +21,8 @@ import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
-import { listPostQuotes, type PostQuotes } from "@/modules/notes/api/notes";
+import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
+import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { NoteList } from "@/modules/notes/components/note-list";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -65,6 +66,8 @@ export function PostComments({
 
   const [comments, setComments] = useState<CommentView[]>([]);
   const [quotes, setQuotes] = useState<PostQuotes | null>(null);
+  const [quotedNow, setQuotedNow] = useState<Note[]>([]);
+  const loadQuotes = useCallback((page: number) => listPostQuotes(postId, page), [postId]);
   const [tab, setTab] = useState<"comments" | "notes">("comments");
 
   useEffect(() => {
@@ -76,6 +79,18 @@ export function PostComments({
       alive = false;
     };
   }, [postId]);
+
+  useEffect(
+    () =>
+      onPostQuoted((quotedPostId, note) => {
+        if (quotedPostId !== postId || !isShareable(note.visibility)) return;
+        setQuotedNow((current) => (current.some((n) => n.id === note.id) ? current : [note, ...current]));
+        setQuotes((current) =>
+          current ? { ...current, total: current.total + 1 } : { items: [], page: 0, hasNext: false, total: 1 },
+        );
+      }),
+    [postId],
+  );
   const [body, setBody] = useState("");
   // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
   const [composerActive, setComposerActive] = useState(false);
@@ -314,8 +329,9 @@ export function PostComments({
             <QuoteInNoteButton postId={postId} title={title} slug={slug} authorUsername={authorUsername} />
           </div>
           <NoteList
-            load={(page) => listPostQuotes(postId, page)}
+            load={loadQuotes}
             initial={quotes}
+            prepend={quotedNow}
             filterContext="public"
             empty={null}
           />

@@ -1,5 +1,7 @@
 "use client";
 
+import type { Note } from "@/modules/notes/api/notes";
+
 /**
  * Cross-tree "a mutation happened, refresh what depends on it" signals — the same window CustomEvent
  * bus `auth:change` uses, for consequences that cross component trees a callback prop can't reach.
@@ -33,4 +35,20 @@ export function onFollowChanged(handler: () => void): () => void {
   const listener = () => handler();
   window.addEventListener("kurl:follow-changed", listener);
   return () => window.removeEventListener("kurl:follow-changed", listener);
+}
+
+/** A note quoting a post was just posted — the post's "notes" tab can show it without a refetch. */
+export function emitPostQuoted(postId: number, note: Note) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent<{ postId: number; note: Note }>("kurl:post-quoted", { detail: { postId, note } }));
+}
+
+export function onPostQuoted(handler: (postId: number, note: Note) => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const listener = (e: Event) => {
+    const { postId, note } = (e as CustomEvent<{ postId: number; note: Note }>).detail;
+    handler(postId, note);
+  };
+  window.addEventListener("kurl:post-quoted", listener);
+  return () => window.removeEventListener("kurl:post-quoted", listener);
 }

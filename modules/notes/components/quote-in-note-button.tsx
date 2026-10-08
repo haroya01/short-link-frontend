@@ -5,6 +5,7 @@ import { Quote } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
+import { emitPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 
 export function QuoteInNoteButton({
@@ -37,9 +38,10 @@ export function QuoteInNoteButton({
       <NoteQuoteDialog
         quoted={open ? { post: { id: postId, title, slug, authorUsername } } : null}
         onClose={() => setOpen(false)}
-        onPosted={() => {
+        onPosted={(note) => {
           setOpen(false);
           toast(t("quotePosted"));
+          emitPostQuoted(postId, note);
         }}
       />
     </>
