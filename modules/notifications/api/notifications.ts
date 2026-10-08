@@ -5,26 +5,35 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 const notificationMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
 
-export type NotificationType =
-  | "LIKE"
-  | "COMMENT"
-  | "FOLLOW"
-  | "SERIES_SUBSCRIBE"
-  | "REPLY"
-  | "NEW_POST"
-  | "MENTION"
-  | "CONNECTED"
-  | "PATH_GREW"
-  | "NOTE_LIKE"
-  | "NOTE_REPOST"
-  | "NOTE_REPLY"
-  | "NOTE_QUOTE"
-  | "NOTE_MENTION"
-  | "NOTE_POLL"
-  | "NOTE_POST"
-  | "NOTE_EDIT"
-  | "REMOTE_FOLLOW"
-  | "FOLLOW_REQUEST";
+export const NOTIFICATION_TYPES = [
+  "LIKE",
+  "COMMENT",
+  "FOLLOW",
+  "SERIES_SUBSCRIBE",
+  "REPLY",
+  "NEW_POST",
+  "MENTION",
+  "CONNECTED",
+  "PATH_GREW",
+  "NOTE_LIKE",
+  "NOTE_REPOST",
+  "NOTE_REPLY",
+  "NOTE_QUOTE",
+  "NOTE_MENTION",
+  "NOTE_POLL",
+  "NOTE_POST",
+  "NOTE_EDIT",
+  "REMOTE_FOLLOW",
+  "FOLLOW_REQUEST",
+  "POST_QUOTE",
+  "NOTE_EMBED",
+  "COMMENT_LIKE",
+  "HIGHLIGHT",
+] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
+const KNOWN_TYPES: ReadonlySet<string> = new Set(NOTIFICATION_TYPES);
 
 /** One of a group's newest actors. A remote account has no id; its username is name@domain. */
 export interface NotificationActor {
@@ -79,7 +88,7 @@ export interface NotificationItem {
   noteExcerpt?: string | null;
   sourceNoteId?: number | null;
   sourceExcerpt?: string | null;
-  /** Likes and reposts of one note group by day: the row is the newest, count the group's size. */
+  /** Likes, reposts and highlights group by subject and day: the row is the newest, count the group's size. */
   count?: number;
   actors?: NotificationActor[];
 }
@@ -96,7 +105,10 @@ export function getNotifications(before?: number, limit = 20): Promise<Notificat
   const q = new URLSearchParams();
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));
-  return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" });
+  return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" }).then((page) => ({
+    ...page,
+    items: page.items.filter((item) => KNOWN_TYPES.has(item.type)),
+  }));
 }
 
 /**
