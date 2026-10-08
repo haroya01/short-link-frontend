@@ -42,7 +42,25 @@ type PendingImage = {
   previewUrl: string;
   key: string | null;
   altText: string;
+  width: number | null;
+  height: number | null;
 };
+
+// The size as the browser shows it (EXIF orientation applied), sent so readers can lay the picture out
+// before it loads. A picture that cannot be measured is sent without one.
+function measureImage(url: string): Promise<{ width: number; height: number } | null> {
+  return new Promise((resolve) => {
+    const probe = new Image();
+    probe.onload = () =>
+      resolve(
+        probe.naturalWidth > 0 && probe.naturalHeight > 0
+          ? { width: probe.naturalWidth, height: probe.naturalHeight }
+          : null,
+      );
+    probe.onerror = () => resolve(null);
+    probe.src = url;
+  });
+}
 
 export function NoteComposer({
   onCreated,
@@ -140,10 +158,15 @@ export function NoteComposer({
     if (all.length > room) setError(t("imageLimit", { max: NOTE_MAX_IMAGES }));
     for (const file of picked) {
       const id = `${file.name}-${file.size}-${Math.random()}`;
+      const previewUrl = URL.createObjectURL(file);
       setImages((current) => [
         ...current,
-        { id, previewUrl: URL.createObjectURL(file), key: null, altText: "" },
+        { id, previewUrl, key: null, altText: "", width: null, height: null },
       ]);
+      void measureImage(previewUrl).then((size) => {
+        if (!size) return;
+        setImages((current) => current.map((image) => (image.id === id ? { ...image, ...size } : image)));
+      });
       try {
         const uploaded = await uploadNoteImage(file);
         setImages((current) =>
@@ -193,7 +216,12 @@ export function NoteComposer({
     try {
       const draft = {
         body,
-        images: images.map((image) => ({ key: image.key as string, altText: image.altText })),
+        images: images.map((image) => ({
+          key: image.key as string,
+          altText: image.altText,
+          width: image.width,
+          height: image.height,
+        })),
         quotedPostId: quote?.id ?? null,
         inReplyToId,
         quotedNoteId: quotedNote?.id ?? null,

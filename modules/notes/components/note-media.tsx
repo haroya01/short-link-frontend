@@ -143,6 +143,8 @@ function NoteImageFrame({
         <img
           src={image.url}
           alt={image.altText ?? ""}
+          width={image.width ?? undefined}
+          height={image.height ?? undefined}
           loading="lazy"
           onLoad={onLoad}
           className={cn(
