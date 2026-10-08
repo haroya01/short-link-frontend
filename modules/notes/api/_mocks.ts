@@ -666,6 +666,17 @@ export function mockCancelScheduled(id: number): Promise<void> {
   return Promise.resolve();
 }
 
+export function mockCreateThread(drafts: NoteDraft[]): Note[] {
+  const created: Note[] = [];
+  for (const draft of drafts) {
+    const previous = created[created.length - 1];
+    created.push(
+      mockCreate(previous ? { ...draft, inReplyToId: previous.id, visibility: previous.visibility } : draft),
+    );
+  }
+  return created;
+}
+
 export function mockCreate(draft: NoteDraft): Note {
   const created = note({
     id: nextId++,

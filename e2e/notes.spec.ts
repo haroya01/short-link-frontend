@@ -838,3 +838,25 @@ test("a picture whose size the server knows holds its shape before it loads", as
   expect(box).not.toBeNull();
   expect(box!.width / box!.height).toBeCloseTo(600 / 800, 1);
 });
+
+// The chain itself (each note answering the one before) is the server's job and is covered there; a note
+// made in the mock lives only in this tab, so its own page cannot be opened here.
+test("a thread is written in one go and its first note leads the feed", async ({ page }) => {
+  await page.goto("/ko/blog/notes");
+  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  await expect(composer).toBeVisible({ timeout: 30_000 });
+  await composer.fill("이어 쓰기 첫 노트");
+  await page.getByRole("button", { name: "스레드에 추가" }).click();
+  const part = page.getByRole("textbox", { name: "이어서 써 보세요" });
+  await expect(part).toBeFocused();
+  await part.fill("이어 쓰기 둘째 노트");
+  await expect(page.getByRole("button", { name: "예약", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "올리기" }).click();
+  const notice = page.getByRole("dialog");
+  await expect(notice).toContainText("노트는 다른 서버에도 전해져요");
+  await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+
+  await expect(page.locator("article").first()).toContainText("이어 쓰기 첫 노트");
+  await expect(part).toHaveCount(0);
+  await expect(composer).toHaveValue("");
+});
