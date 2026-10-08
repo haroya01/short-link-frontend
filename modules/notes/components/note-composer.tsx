@@ -38,6 +38,7 @@ import { emptyPoll, NotePollEditor, pollReady } from "./note-poll";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 import { defaultLocal, earliestLocal, scheduleError, ScheduledNotesPanel, useWhen } from "./scheduled-notes";
+import { MentionTextarea } from "@/modules/mentions/mention-textarea";
 
 type PendingImage = {
   id: string;
@@ -350,10 +351,11 @@ export function NoteComposer({
               />
             )}
             <div className="flex items-start gap-3">
-              <textarea
+              <MentionTextarea
                 ref={textarea}
                 value={body}
-                onChange={(e) => setBody(e.target.value)}
+                onValueChange={setBody}
+                wrapperClassName="relative min-w-0 flex-1"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                     e.preventDefault();
@@ -532,10 +534,10 @@ export function NoteComposer({
                   <X className="h-3.5 w-3.5" aria-hidden />
                 </button>
               </div>
-              <textarea
+              <MentionTextarea
                 value={part.body}
-                onChange={(e) =>
-                  setParts((current) => current.map((x) => (x.id === part.id ? { ...x, body: e.target.value } : x)))
+                onValueChange={(next) =>
+                  setParts((current) => current.map((x) => (x.id === part.id ? { ...x, body: next } : x)))
                 }
                 autoFocus
                 rows={1}

@@ -4426,5 +4426,8 @@
     "suggestionsFriends": "{count, plural, one {Followed by # person you follow} other {Followed by # people you follow}}",
     "suggestionsPopular": "Popular lately",
     "suggestionsDismiss": "Don't suggest {name}"
+  },
+  "mentions": {
+    "suggestions": "People to mention"
   }
 }
