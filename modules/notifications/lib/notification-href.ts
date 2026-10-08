@@ -31,6 +31,7 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
     case "NOTE_POLL":
     case "NOTE_POST":
     case "NOTE_EDIT":
+    case "POST_QUOTE":
       return item.noteId != null && item.actorUsername && !item.actorProfileUrl
         ? authorHref(item.actorUsername, locale, `notes/${item.noteId}`)
         : undefined;
@@ -50,11 +51,16 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
         : undefined;
     case "REPLY":
     case "MENTION":
+    case "NOTE_EMBED":
       // The post may be someone else's — the owner's handle rides in the payload.
       return item.postSlug && item.postAuthorUsername
         ? atSpot(postHref(item.postAuthorUsername, item.postSlug, locale), item)
         : undefined;
-    default: // LIKE / COMMENT — the recipient is the post's author
+    case "COMMENT_LIKE": {
+      const owner = item.postAuthorUsername ?? myUsername;
+      return item.postSlug && owner ? atSpot(postHref(owner, item.postSlug, locale), item) : undefined;
+    }
+    default: // LIKE / COMMENT / HIGHLIGHT — the recipient is the post's author
       return item.postSlug && myUsername
         ? atSpot(postHref(myUsername, item.postSlug, locale), item)
         : undefined;

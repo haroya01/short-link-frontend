@@ -7,6 +7,7 @@ import {
   ChartBar,
   GitBranch,
   Heart,
+  Highlighter,
   Link2,
   Lock,
   MessageCircle,
@@ -60,6 +61,10 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_EDIT: "note_edit",
   REMOTE_FOLLOW: "remote_follow",
   FOLLOW_REQUEST: "follow_request",
+  POST_QUOTE: "post_quote",
+  NOTE_EMBED: "note_embed",
+  COMMENT_LIKE: "comment_like",
+  HIGHLIGHT: "highlight",
 };
 
 // 아바타 우하단의 종류 글리프 — 글만으로는 좋아요/댓글/팔로우 행이 전부 같은 얼굴이라,
@@ -85,6 +90,10 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_EDIT: Pencil,
   REMOTE_FOLLOW: UserPlus,
   FOLLOW_REQUEST: Lock,
+  POST_QUOTE: Quote,
+  NOTE_EMBED: Quote,
+  COMMENT_LIKE: Heart,
+  HIGHLIGHT: Highlighter,
 };
 
 function subtitleOf(item: Item): string | null {
@@ -100,6 +109,7 @@ function subtitleOf(item: Item): string | null {
     case "NOTE_POLL":
     case "NOTE_POST":
     case "NOTE_EDIT":
+    case "POST_QUOTE":
       return item.noteExcerpt ?? null;
     default:
       return item.postTitle;
@@ -245,7 +255,7 @@ export function NotificationItem({
           <TypeIcon
             className={cn(
               "h-2.5 w-2.5",
-              (item.type === "LIKE" || item.type === "NOTE_LIKE") && "fill-current",
+              (item.type === "LIKE" || item.type === "NOTE_LIKE" || item.type === "COMMENT_LIKE") && "fill-current",
               item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
             )}
           />

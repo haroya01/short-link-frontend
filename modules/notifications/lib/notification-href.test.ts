@@ -115,4 +115,31 @@ describe("notificationHref", () => {
       /\/follow-requests$/,
     );
   });
+
+  it("opens the note that quoted the recipient's post, under the member who wrote it", () => {
+    expect(notificationHref(item({ type: "POST_QUOTE", noteId: 18, postSlug: null }), "me", "ko")).toBe(
+      "/ko/p/minji/notes/18",
+    );
+  });
+
+  it("opens the post that quoted the recipient's note, under its author", () => {
+    expect(
+      notificationHref(item({ type: "NOTE_EMBED", postAuthorUsername: "minji", postSlug: "roundup" }), "me", "ko"),
+    ).toBe("/ko/p/minji/roundup");
+  });
+
+  it("lands a comment like on the comment, whoever owns the post", () => {
+    expect(notificationHref(item({ type: "COMMENT_LIKE", commentId: 70 }), "me", "ko")).toBe(
+      "/ko/p/me/my-post#comment-70",
+    );
+    expect(
+      notificationHref(item({ type: "COMMENT_LIKE", postAuthorUsername: "owner", commentId: 71 }), "me", "ko"),
+    ).toBe("/ko/p/owner/my-post#comment-71");
+  });
+
+  it("opens the newest highlight on the recipient's post", () => {
+    expect(notificationHref(item({ type: "HIGHLIGHT", highlightId: 42 }), "me", "ko")).toBe(
+      "/ko/p/me/my-post?highlightId=42&thread=1",
+    );
+  });
 });
