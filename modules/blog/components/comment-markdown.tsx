@@ -16,9 +16,9 @@ function linkifyMentions(
   let m: RegExpExecArray | null;
   MENTION_RE.lastIndex = 0;
   while ((m = MENTION_RE.exec(text)) !== null) {
-    if (m.index > last) nodes.push(text.slice(last, m.index));
     const handle = m[1];
     if (members && !members.includes(handle)) continue;
+    if (m.index > last) nodes.push(text.slice(last, m.index));
     nodes.push(
       <a
         key={`${keyBase}-${m.index}`}
