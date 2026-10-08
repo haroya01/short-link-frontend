@@ -62,7 +62,7 @@ let notes: Note[] = [
       createdAt: "2026-10-05T10:30:00Z",
       author: YUNA,
       media: [
-        { url: "https://picsum.photos/seed/kurl-walk-1/600/800", altText: "골목 끝에 선 가로등", contentType: "image/jpeg" },
+        { url: "https://picsum.photos/seed/kurl-walk-1/600/800", altText: "골목 끝에 선 가로등", contentType: "image/jpeg", width: 600, height: 800 },
       ],
     },
   }),
@@ -106,9 +106,9 @@ let notes: Note[] = [
     author: YUNA,
     createdAt: "2026-10-05T10:30:00Z",
     media: [
-      { url: "https://picsum.photos/seed/kurl-walk-1/600/800", altText: "골목 끝에 선 가로등", contentType: "image/jpeg" },
-      { url: "https://picsum.photos/seed/kurl-walk-2/900/600", altText: null, contentType: "image/jpeg" },
-      { url: "https://picsum.photos/seed/kurl-walk-3/700/700", altText: "강가의 낮은 다리", contentType: "image/jpeg" },
+      { url: "https://picsum.photos/seed/kurl-walk-1/600/800", altText: "골목 끝에 선 가로등", contentType: "image/jpeg", width: 600, height: 800 },
+      { url: "https://picsum.photos/seed/kurl-walk-2/900/600", altText: null, contentType: "image/jpeg", width: 900, height: 600 },
+      { url: "https://picsum.photos/seed/kurl-walk-3/700/700", altText: "강가의 낮은 다리", contentType: "image/jpeg", width: 700, height: 700 },
     ],
   }),
   note({
@@ -124,7 +124,7 @@ let notes: Note[] = [
     body: "창밖 사진",
     author: ME,
     likeCount: 0,
-    media: [{ url: "https://picsum.photos/seed/kurl-note/800/600", altText: "비 오는 창밖", contentType: "image/jpeg" }],
+    media: [{ url: "https://picsum.photos/seed/kurl-note/800/600", altText: "비 오는 창밖", contentType: "image/jpeg", width: 800, height: 600 }],
   }),
   note({ id: 4, body: "@yuna 좋은 생각이에요", mentions: ["yuna"], author: ME, inReplyToId: 3, likeCount: 0, createdAt: "2026-10-05T12:00:00Z" }),
   note({
@@ -149,7 +149,7 @@ let notes: Note[] = [
     author: YUNA,
     createdAt: "2026-10-04T08:00:00Z",
     sensitive: true,
-    media: [{ url: "https://picsum.photos/seed/kurl-note-d/800/600", altText: "꿰맨 자리", contentType: "image/jpeg" }],
+    media: [{ url: "https://picsum.photos/seed/kurl-note-d/800/600", altText: "꿰맨 자리", contentType: "image/jpeg", width: 800, height: 600 }],
   }),
   note({
     id: 11,
@@ -694,6 +694,8 @@ export function mockCreate(draft: NoteDraft): Note {
       url: "https://picsum.photos/seed/kurl-upload/800/600",
       altText: image.altText || null,
       contentType: "image/jpeg",
+      width: image.width ?? null,
+      height: image.height ?? null,
     })),
   });
   notes = [created, ...notes];

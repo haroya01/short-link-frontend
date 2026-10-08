@@ -27,6 +27,9 @@ export interface NoteMedia {
   url: string;
   altText: string | null;
   contentType: string;
+  /** The original size when the server knows it — lets the picture hold its shape before it loads. */
+  width?: number | null;
+  height?: number | null;
 }
 
 export interface QuotedPost {
@@ -127,6 +130,8 @@ export interface NoteThread {
 export interface NoteDraftImage {
   key: string;
   altText: string;
+  width?: number | null;
+  height?: number | null;
 }
 
 export interface NoteDraft {

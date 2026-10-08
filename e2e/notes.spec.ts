@@ -825,3 +825,16 @@ test("beside the feed, follow suggestions offer a follow and can be set aside", 
   await expect(rail.getByTestId("suggestion-minji")).toHaveCount(0);
   await expect(rail.getByTestId("suggestion-haruka").getByTestId("follow-button")).toHaveText("팔로우");
 });
+
+test("a picture whose size the server knows holds its shape before it loads", async ({ page }) => {
+  await page.route(/picsum\.photos/, (route) => route.abort());
+  await page.goto("/ko/blog/notes");
+  // The quoted-note card shows the same picture as a fixed 64px square; the strip is the one that keeps its shape.
+  const tall = page.locator('img[alt="골목 끝에 선 가로등"][width]').first();
+  await expect(tall).toBeVisible({ timeout: 30_000 });
+  await expect(tall).toHaveAttribute("width", "600");
+  await expect(tall).toHaveAttribute("height", "800");
+  const box = await tall.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.width / box!.height).toBeCloseTo(600 / 800, 1);
+});
