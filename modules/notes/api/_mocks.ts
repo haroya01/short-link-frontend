@@ -13,6 +13,7 @@ import type {
   NoteListSummary,
   NotePoll,
   NoteThread,
+  PostQuotes,
   RemoteAccount,
   ScheduledNote,
   TrendingNoteLink,
@@ -545,6 +546,11 @@ export function mockBookmarkedNotes(page: number): NoteFeed {
 export function mockNoteQuotes(id: number, page: number): NoteFeed {
   const items = page === 0 ? notes.filter((n) => n.quotedNote?.id === id) : [];
   return { items: items.map(withQuotes), page, hasNext: false };
+}
+
+export function mockPostQuotes(postId: number, page: number): PostQuotes {
+  const quoting = notes.filter((n) => n.quotedPost?.id === postId);
+  return { items: page === 0 ? quoting.map(withQuotes) : [], page, hasNext: false, total: quoting.length };
 }
 
 export function mockConversationMute(id: number, on: boolean): { muted: boolean } {

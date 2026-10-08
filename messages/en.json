@@ -28,7 +28,10 @@
     "linkText": "link text",
     "submitError": "Couldn't post your comment. Please try again.",
     "deleteError": "Couldn't delete the comment. Please try again.",
-    "loadFailed": "Couldn't load comments."
+    "loadFailed": "Couldn't load comments.",
+    "notesTab": "Notes {count, number}",
+    "discussionTabs": "Comments and notes",
+    "notesTabHint": "Notes that quote this post"
   },
   "publicFeed": {
     "recent": "Latest",

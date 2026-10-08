@@ -28,7 +28,10 @@
     "linkText": "リンクテキスト",
     "submitError": "コメントを投稿できませんでした。もう一度お試しください。",
     "deleteError": "コメントを削除できませんでした。もう一度お試しください。",
-    "loadFailed": "コメントを読み込めませんでした。"
+    "loadFailed": "コメントを読み込めませんでした。",
+    "notesTab": "ノート {count, number}",
+    "discussionTabs": "コメントとノート",
+    "notesTabHint": "この記事を引用したノート"
   },
   "publicFeed": {
     "recent": "最新",

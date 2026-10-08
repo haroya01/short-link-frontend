@@ -391,6 +391,16 @@ export function listNoteQuotes(id: number, page = 0): Promise<NoteFeed> {
   });
 }
 
+/** Notes that quote a post, newest first; `total` sizes the post's "notes" tab. */
+export interface PostQuotes extends NoteFeed {
+  total: number;
+}
+
+export function listPostQuotes(postId: number, page = 0): Promise<PostQuotes> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockPostQuotes(postId, page));
+  return request<PostQuotes>(`/api/v1/public/posts/${postId}/quotes?page=${page}&size=20`, { method: "GET" });
+}
+
 /** Published blog posts that carry this note as a card, newest first. */
 export function listQuotingPosts(id: number, page = 0): Promise<PublicFeedView> {
   if (noteMocks) return Promise.resolve(noteMocks.mockQuotingPosts(id, page));
