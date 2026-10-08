@@ -4425,7 +4425,9 @@
     "suggestionsTitle": "팔로우 추천",
     "suggestionsFriends": "내가 팔로우하는 {count}명이 팔로우",
     "suggestionsPopular": "요즘 많이 팔로우해요",
-    "suggestionsDismiss": "{name} 추천 안 보기"
+    "suggestionsDismiss": "{name} 추천 안 보기",
+    "threadMore": "이어지는 글 {count}개 더",
+    "threadPosition": "이어 쓴 노트 {position}"
   },
   "mentions": {
     "suggestions": "멘션할 사람"

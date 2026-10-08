@@ -4425,7 +4425,9 @@
     "suggestionsTitle": "किसे फ़ॉलो करें",
     "suggestionsFriends": "आपके फ़ॉलो किए गए {count} लोग फ़ॉलो करते हैं",
     "suggestionsPopular": "इन दिनों लोकप्रिय",
-    "suggestionsDismiss": "{name} का सुझाव न दें"
+    "suggestionsDismiss": "{name} का सुझाव न दें",
+    "threadMore": "इस थ्रेड में {count} और",
+    "threadPosition": "थ्रेड भाग {position}"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"

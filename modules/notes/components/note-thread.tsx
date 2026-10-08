@@ -32,6 +32,9 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
       replies: current.replies.map((reply) => (reply.id === next.id ? next : reply)),
     }));
 
+  const parts = thread.continuation ?? [];
+  const numbered = parts.length > 0 && thread.parent?.author.id !== thread.note.author.id;
+
   if (deleted) {
     return (
       <p className="py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
@@ -56,9 +59,36 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
       <NoteCard
         note={thread.note}
         emphasis
+        position={numbered ? `1/${parts.length + 1}` : undefined}
         onChange={(note) => setThread((current) => ({ ...current, note }))}
         onDelete={() => setDeleted(true)}
       />
+      {parts.map((part, index) => (
+        <div key={part.id} className={index < parts.length - 1 ? "relative" : undefined}>
+          {index < parts.length - 1 && (
+            <span
+              aria-hidden
+              className="absolute -bottom-4 left-[17px] top-14 w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
+            />
+          )}
+          <NoteCard
+            note={part}
+            position={numbered ? `${index + 2}/${parts.length + 1}` : undefined}
+            onChange={(changed) =>
+              setThread((current) => ({
+                ...current,
+                continuation: (current.continuation ?? []).map((p) => (p.id === changed.id ? changed : p)),
+              }))
+            }
+            onDelete={(id) =>
+              setThread((current) => ({
+                ...current,
+                continuation: (current.continuation ?? []).filter((p) => p.id !== id),
+              }))
+            }
+          />
+        </div>
+      ))}
 
       <section aria-labelledby="note-replies" className="border-t border-slate-100 pt-4 dark:border-slate-800">
         <h2 id="note-replies" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">

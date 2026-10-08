@@ -96,6 +96,8 @@ export interface Note {
   poll?: NotePoll | null;
   /** ISO 639-1 as the writer chose it; null when unknown (older notes, other servers that did not say). */
   language?: string | null;
+  /** In a feed: the author went on in their own replies — how many parts, and the next one to show. */
+  thread?: NoteSelfThread | null;
 }
 
 /** Mastodon's poll. Counts are public; the author gets `voted: true` and only sees results.
@@ -123,10 +125,17 @@ export interface NoteFeed {
   hasNext: boolean;
 }
 
+export interface NoteSelfThread {
+  total: number;
+  preview: Note[];
+}
+
 export interface NoteThread {
   note: Note;
   parent: Note | null;
   replies: Note[];
+  /** The author's own parts under the note, in order; replies are everyone else's. */
+  continuation?: Note[];
 }
 
 export interface NoteDraftImage {

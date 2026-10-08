@@ -65,6 +65,7 @@ export function NoteCard({
   repostedBy,
   showsPin = false,
   filteredBy,
+  position,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -76,6 +77,8 @@ export function NoteCard({
   /** Only the author's profile marks pins; on Mastodon a pin means nothing anywhere else. */
   showsPin?: boolean;
   filteredBy?: string[];
+  /** Which part of a thread written in parts ("1/3"), shown at the end of the header as on Threads. */
+  position?: string;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -300,6 +303,15 @@ export function NoteCard({
               />
             )}
             <div className="-my-2 ml-auto flex shrink-0 items-center gap-2">
+              {position && (
+                <span
+                  data-testid={`note-position-${note.id}`}
+                  aria-label={t("threadPosition", { position })}
+                  className="text-[13px] tabular-nums text-slate-500 dark:text-slate-400"
+                >
+                  {position}
+                </span>
+              )}
               {emphasis && !note.author.remoteId && (
                 <FollowButton username={note.author.username} initialFollowerCount={0} compact quiet />
               )}
