@@ -462,7 +462,7 @@ function CommentRow({
         </div>
       </div>
       <div className="mt-1.5 pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
-        <CommentBody text={comment.body} locale={locale} />
+        <CommentBody text={comment.body} locale={locale} mentions={comment.mentions} />
       </div>
       <div className="mt-1.5 flex items-center gap-3 pl-9">
         {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop). 카운트 숫자는 표시하지 않고

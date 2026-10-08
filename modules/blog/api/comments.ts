@@ -12,6 +12,8 @@ export interface CommentView {
   body: string;
   createdAt: string;
   likeCount: number;
+  /** The @handles in the body that belong to members; absent on responses that predate it. */
+  mentions?: string[];
 }
 
 export interface CommentLikeStatus {
@@ -36,7 +38,7 @@ export interface MyComment {
 const MOCK_VIEWER: PublicAuthor = { id: 9001, username: "reader", bio: null, avatarUrl: null };
 let mockComments: CommentView[] = [
   { id: 1, parentId: null, author: { id: 2, username: "minji", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=45" }, body: "잘 읽었어요. RSC 전환 부분 특히 공감합니다.", createdAt: "2026-05-30T10:00:00Z", likeCount: 3 },
-  { id: 2, parentId: 1, author: { id: 1, username: "dohyun", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=12" }, body: "감사해요! 다음 글에서 더 자세히 다뤄볼게요.", createdAt: "2026-05-30T11:00:00Z", likeCount: 0 },
+  { id: 2, parentId: 1, author: { id: 1, username: "dohyun", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=12" }, body: "@minji 감사해요! 다음 글에서 더 자세히 다뤄볼게요. @nobody_here 님도요.", createdAt: "2026-05-30T11:00:00Z", likeCount: 0, mentions: ["minji"] },
   { id: 3, parentId: null, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "트레이드오프 정리가 깔끔하네요 👍", createdAt: "2026-05-30T12:30:00Z", likeCount: 1 },
 ];
 let mockCommentSeq = 100;

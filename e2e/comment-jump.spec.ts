@@ -65,3 +65,13 @@ test("a comment in the library's 'my comments' links to that comment", async ({ 
     page.locator('a[href$="/nextjs-14-app-router-blog#comment-9101"]').first(),
   ).toBeVisible({ timeout: 15_000 });
 });
+
+test("a comment links the members it mentions and leaves other @names as text", async ({ page }) => {
+  await page.goto(`${POST_PATH}#comment-2`);
+  await waitReady(page);
+
+  const reply = page.locator("#comment-2");
+  await expect(reply.getByRole("link", { name: "@minji", exact: true })).toHaveAttribute("href", /\/p\/minji$/);
+  await expect(reply.getByRole("link", { name: "@nobody_here" })).toHaveCount(0);
+  await expect(reply).toContainText("@nobody_here");
+});
