@@ -27,7 +27,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
             own ? (
               <a
                 href={blogHref("/notes")}
-                className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800"
+                className="focus-ring rounded-surface bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800"
               >
                 {t("writeFirst")}
               </a>

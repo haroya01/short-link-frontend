@@ -122,7 +122,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           setOpen(true);
         }}
         aria-label={t("searchLabel")}
-        className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
         <Search className="h-4 w-4" />
       </button>
@@ -177,7 +177,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       )}
 
       {value.trim() && panelOpen && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850">
+        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850">
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />

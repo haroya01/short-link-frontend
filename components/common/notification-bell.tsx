@@ -38,7 +38,7 @@ export function NotificationBell() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("title")}
-        className="focus-ring relative inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+        className="focus-ring relative inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
       >
         <Bell className="h-5 w-5" />
         {unread > 0 && (
@@ -75,7 +75,7 @@ function NotificationDropdown({
   return (
     <div
       role="menu"
-      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850 ${
+      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850 ${
         closing ? "animate-dropdown-out" : "animate-dropdown-in"
       }`}
     >

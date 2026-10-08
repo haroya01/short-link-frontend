@@ -277,7 +277,7 @@ export default async function PublicPostPage({
         {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
             the owner knows this isn't the live page. */}
         {isPreview ? (
-          <div className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+          <div className="mb-8 rounded-surface border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
             {t("previewBanner")}
           </div>
         ) : (
@@ -351,10 +351,10 @@ export default async function PublicPostPage({
       </header>
 
       {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
-          "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-2xl + ring 은 그대로 두고, 2:1
+          "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-surface + ring 은 그대로 두고, 2:1
           리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
       {post.ogImageUrl && (
-        <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+        <div className="mb-10 overflow-hidden rounded-surface bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
           {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
               모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
               이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
@@ -483,7 +483,7 @@ export default async function PublicPostPage({
           full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
           겹침 자체를 제거. */}
       {tocHeadings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
+        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-surface bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
           <PostToc headings={tocHeadings} />
         </aside>
       )}

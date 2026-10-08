@@ -41,10 +41,10 @@ export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit
       <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
       <ul className="space-y-1">
         {visible.map(({ author, postCount }) => (
-          <li key={author.username} className="flex items-center gap-3 rounded-lg px-2 py-1.5">
+          <li key={author.username} className="flex items-center gap-3 rounded-surface px-2 py-1.5">
             <BlogLink
               href={authorHref(author.username, locale)}
-              className="focus-ring group flex min-w-0 flex-1 items-center gap-3 rounded-lg"
+              className="focus-ring group flex min-w-0 flex-1 items-center gap-3 rounded-surface"
             >
               <Avatar src={author.avatarUrl} name={author.username} size="md" />
               <span className="flex min-w-0 flex-col">

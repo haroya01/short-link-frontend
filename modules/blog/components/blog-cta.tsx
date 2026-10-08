@@ -10,7 +10,7 @@ import { cva } from "class-variance-authority";
  * (green glow, gap-1.5, padding-based height) intentionally differs from the app `Button`.
  */
 export const blogCta = cva(
-  "focus-ring inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
+  "focus-ring inline-flex items-center gap-1.5 rounded-surface px-4 py-2.5 text-sm font-medium transition-colors",
   {
     variants: {
       variant: {

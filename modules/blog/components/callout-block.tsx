@@ -15,7 +15,7 @@ export function CalloutBlock({ kind, body }: { kind: CalloutKind; body: string }
   const t = useTranslations("publicPost.callout");
   const { icon: Icon, box, accent } = LOOK[kind];
   return (
-    <aside role="note" data-callout={kind} className={`my-6 rounded-lg border-l-4 px-5 py-4 [&>p:last-child]:mb-0 ${box}`}>
+    <aside role="note" data-callout={kind} className={`my-6 rounded-surface border-l-4 px-5 py-4 [&>p:last-child]:mb-0 ${box}`}>
       <div className={`mb-1.5 flex items-center gap-1.5 text-[14px] font-semibold ${accent}`}>
         <Icon className="h-4 w-4" aria-hidden />
         {t(kind)}

@@ -33,7 +33,7 @@ import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const ITEM =
-  "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
+  "flex w-full items-center gap-3 rounded-surface px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
  * The blog's mobile account sheet: the viewer's two surfaces (블로그/프로필), workspace entries
@@ -109,7 +109,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         }`}
       />
       <div
-        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl border-t border-slate-200 bg-white p-2 pb-0 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
+        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-surface border-t border-slate-200 bg-white p-2 pb-0 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
           closing
             ? "animate-[sheet-down_240ms_var(--ease)_both]"
             : "animate-[sheet-up_280ms_var(--ease)_both]"

@@ -26,7 +26,7 @@ export async function SeriesNext({
       {series.next && (
         <BlogLink
           href={postHref(username, series.next.slug, locale)}
-          className="mark-hoverable focus-ring group block rounded-2xl border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
+          className="mark-hoverable focus-ring group block rounded-surface border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
           data-bhv="series"
           data-bhv-id={`${username}/${series.next.slug}`}
         >

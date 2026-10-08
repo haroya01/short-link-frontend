@@ -113,7 +113,7 @@ function PathRow({
   return (
     <BlogLink
       href={blogPath(`/collections/${c.id}`)}
-      className="focus-ring flex items-center gap-2.5 rounded-lg px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+      className="focus-ring flex items-center gap-2.5 rounded-surface px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
       data-bhv="connection"
       data-bhv-id={String(c.id)}
     >

@@ -9,7 +9,7 @@ import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 const RichCommentInput = dynamic(
   () => import("./rich-comment-input").then((module) => module.RichCommentInput),
-  { ssr: false, loading: () => <div className="h-12 rounded-lg border border-slate-200 dark:border-slate-700" /> },
+  { ssr: false, loading: () => <div className="h-12 rounded-surface border border-slate-200 dark:border-slate-700" /> },
 );
 
 /** Keep the quote and draft mounted until the server confirms saving. */
@@ -63,7 +63,7 @@ export function HighlightNoteSheet({ quote, onCancel, onSave }: {
         aria-labelledby="note-sheet-title"
         aria-describedby="note-sheet-scope"
         aria-busy={pending}
-        className="max-h-[85dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-2xl"
+        className="max-h-[85dvh] w-full overflow-y-auto rounded-t-surface bg-white p-5 shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-surface"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <h3 id="note-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("highlightNoteTitle")}</h3>
@@ -93,14 +93,14 @@ export function HighlightNoteSheet({ quote, onCancel, onSave }: {
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("highlightDiscardConfirm")}</p>
             <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("highlightDiscardBody")}</p>
             <div className="mt-3 flex justify-end gap-2">
-              <button type="button" className="focus-ring rounded-lg px-3.5 py-2 text-sm text-slate-600 dark:text-slate-300" onClick={() => setDiscard(false)}>{t("highlightKeepEditing")}</button>
-              <button type="button" className="focus-ring rounded-lg px-3.5 py-2 text-sm font-medium text-red-600 dark:text-red-400" onClick={onCancel}>{t("highlightDiscard")}</button>
+              <button type="button" className="focus-ring rounded-surface px-3.5 py-2 text-sm text-slate-600 dark:text-slate-300" onClick={() => setDiscard(false)}>{t("highlightKeepEditing")}</button>
+              <button type="button" className="focus-ring rounded-surface px-3.5 py-2 text-sm font-medium text-red-600 dark:text-red-400" onClick={onCancel}>{t("highlightDiscard")}</button>
             </div>
           </div>
         ) : (
           <div className="mt-3 flex justify-end gap-2">
-            <button type="button" onClick={requestCancel} disabled={pending} className="focus-ring rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800">{t("highlightNoteCancel")}</button>
-            <button type="button" onClick={() => void submit()} disabled={pending || note.length > 500} className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50">{t(pending ? "highlightSaving" : "highlightNoteSave")}</button>
+            <button type="button" onClick={requestCancel} disabled={pending} className="focus-ring rounded-surface px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800">{t("highlightNoteCancel")}</button>
+            <button type="button" onClick={() => void submit()} disabled={pending || note.length > 500} className="focus-ring rounded-surface bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50">{t(pending ? "highlightSaving" : "highlightNoteSave")}</button>
           </div>
         )}
       </div>

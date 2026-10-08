@@ -63,7 +63,7 @@ export function NoteHistoryDialog({ noteId, open, onClose }: { noteId: number; o
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          "relative mx-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white shadow-modal dark:border-slate-800 dark:bg-slate-850",
+          "relative mx-auto w-full max-w-xl rounded-surface border border-slate-200 bg-white shadow-modal dark:border-slate-800 dark:bg-slate-850",
           closing ? "animate-fade-out" : "animate-fade-in",
         )}
       >

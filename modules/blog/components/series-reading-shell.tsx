@@ -202,7 +202,7 @@ export function SeriesReadingShell({
                           onClick={() => toggle({ kind: "month", value: key })}
                           aria-pressed={active}
                           className={cn(
-                            "focus-ring flex w-full items-baseline justify-between gap-3 rounded-lg px-2 py-1.5 transition-colors",
+                            "focus-ring flex w-full items-baseline justify-between gap-3 rounded-surface px-2 py-1.5 transition-colors",
                             active
                               ? "bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-100"
                               : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50",
@@ -255,7 +255,7 @@ export function SeriesReadingShell({
               >
                 <BlogLink
                   href={postHref(username, p.slug, locale)}
-                  className="-mx-3 flex items-start gap-3 rounded-lg px-3 py-4 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
+                  className="-mx-3 flex items-start gap-3 rounded-surface px-3 py-4 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
                 >
                   <SeriesIndex n={n} className="mt-1 shrink-0 text-[14px]" />
                   {/* No-image rows reserve a right gutter so the title never runs under the save toggle. */}
@@ -279,7 +279,7 @@ export function SeriesReadingShell({
                     )}
                   </span>
                   {hasImage && (
-                    <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 sm:h-24 sm:w-32">
+                    <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-inner bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 sm:h-24 sm:w-32">
                       <CoverThumb
                         src={p.ogImageUrl as string}
                         sizes="(min-width: 640px) 128px, 80px"

@@ -97,13 +97,13 @@ export function NotePollCard({
             return (
               <li
                 key={index}
-                className="relative flex min-h-10 items-center gap-1.5 overflow-hidden rounded-lg border border-slate-200/70 px-3 py-2 dark:border-slate-800"
+                className="relative flex min-h-10 items-center gap-1.5 overflow-hidden rounded-surface border border-slate-200/70 px-3 py-2 dark:border-slate-800"
                 data-poll-result={index}
               >
                 <span
                   aria-hidden
                   className={cn(
-                    "absolute inset-y-0 left-0 rounded-lg transition-[width] duration-500 ease-[var(--ease)] motion-reduce:transition-none",
+                    "absolute inset-y-0 left-0 rounded-surface transition-[width] duration-500 ease-[var(--ease)] motion-reduce:transition-none",
                     top ? "bg-accent-400/30 dark:bg-accent-500/25" : "bg-slate-100 dark:bg-slate-800",
                   )}
                   style={{ width: `${filled ? part * 100 : 0}%` }}
@@ -143,7 +143,7 @@ export function NotePollCard({
                 role={poll.multiple ? "checkbox" : undefined}
                 aria-checked={poll.multiple ? on : undefined}
                 className={cn(
-                  "focus-ring flex min-h-10 w-full items-center gap-2.5 rounded-lg border px-3 py-2 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 disabled:opacity-60 dark:text-slate-100 dark:hover:bg-slate-900",
+                  "focus-ring flex min-h-10 w-full items-center gap-2.5 rounded-surface border px-3 py-2 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 disabled:opacity-60 dark:text-slate-100 dark:hover:bg-slate-900",
                   on ? "border-accent-700 dark:border-accent-400" : "border-slate-200 dark:border-slate-700",
                 )}
               >
@@ -238,7 +238,7 @@ export function NotePollEditor({
 }) {
   const t = useTranslations("notes");
   return (
-    <div className="mt-2 space-y-2 rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
+    <div className="mt-2 space-y-2 rounded-surface border border-slate-200 p-3 dark:border-slate-800">
       {poll.options.map((option, index) => (
         <div key={index} className="flex items-center gap-2">
           <input
@@ -250,7 +250,7 @@ export function NotePollEditor({
             }
             placeholder={t("pollOptionPlaceholder", { n: index + 1 })}
             aria-label={t("pollOptionPlaceholder", { n: index + 1 })}
-            className="focus-ring min-w-0 flex-1 rounded-lg border border-slate-200 bg-transparent px-3 py-2 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-accent-700 dark:border-slate-700 dark:text-slate-100 dark:focus:border-accent-400"
+            className="focus-ring min-w-0 flex-1 rounded-surface border border-slate-200 bg-transparent px-3 py-2 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-accent-700 dark:border-slate-700 dark:text-slate-100 dark:focus:border-accent-400"
           />
           {poll.options.length > 2 && (
             <button

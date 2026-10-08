@@ -33,7 +33,7 @@ export function TrendingNoteTags() {
           <li key={trend.tag}>
             <BlogLink
               href={noteTagHref(trend.tag)}
-              className="focus-ring -mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-900"
+              className="focus-ring -mx-2 flex items-center justify-between gap-3 rounded-surface px-2 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-900"
             >
               <span className="min-w-0">
                 <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">

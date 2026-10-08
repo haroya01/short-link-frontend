@@ -38,7 +38,7 @@ export async function DiscoveryRail({
               <li key={author.username}>
                 <BlogLink
                   href={authorHref(author.username, locale)}
-                  className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
+                  className="group flex items-center gap-3 rounded-surface px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
                 >
                   <Avatar src={author.avatarUrl} name={author.username} size="md" />
                   <span className="flex min-w-0 flex-col">

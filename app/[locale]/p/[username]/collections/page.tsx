@@ -55,7 +55,7 @@ export default async function PublicCollectionsIndexPage({
               <li key={c.id} className="border-b border-slate-100 dark:border-slate-800/80">
                 <BlogLink
                   href={blogPath(`/collections/${c.id}`)}
-                  className="focus-ring group flex items-start gap-4 rounded-lg py-5"
+                  className="focus-ring group flex items-start gap-4 rounded-surface py-5"
                 >
                   <span className="mt-1 shrink-0 text-accent-600 dark:text-accent-500">
                     {c.kind === "PATH" ? (

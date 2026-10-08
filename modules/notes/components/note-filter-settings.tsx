@@ -94,7 +94,7 @@ export function NoteFilterSettings() {
         {t("filtersTitle")}
       </h2>
       <p className="mb-3 text-[12px] text-slate-500 dark:text-slate-400">{t("filtersHint")}</p>
-      <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
+      <div className="rounded-surface border border-slate-200 p-2 dark:border-slate-800">
         {filters.length > 0 && (
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {filters.map((filter) => (
@@ -140,7 +140,7 @@ export function NoteFilterSettings() {
             maxLength={100}
             placeholder={t("filterPhrase")}
             aria-label={t("filterPhrase")}
-            className="focus-ring w-full rounded-lg border border-slate-200 bg-transparent px-3 py-2 text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:text-slate-100"
+            className="focus-ring w-full rounded-surface border border-slate-200 bg-transparent px-3 py-2 text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:text-slate-100"
           />
           <fieldset className="flex flex-wrap gap-x-4 gap-y-2">
             <legend className="mb-1.5 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
@@ -171,7 +171,7 @@ export function NoteFilterSettings() {
               <select
                 value={form.action}
                 onChange={(e) => setForm({ ...form, action: e.target.value as "warn" | "hide" })}
-                className="focus-ring rounded-lg border border-slate-200 bg-transparent px-2 py-1 dark:border-slate-700"
+                className="focus-ring rounded-surface border border-slate-200 bg-transparent px-2 py-1 dark:border-slate-700"
               >
                 <option value="warn">{t("filterWarnLong")}</option>
                 <option value="hide">{t("filterHideLong")}</option>
@@ -182,7 +182,7 @@ export function NoteFilterSettings() {
               <select
                 value={form.expiresIn}
                 onChange={(e) => setForm({ ...form, expiresIn: Number(e.target.value) })}
-                className="focus-ring rounded-lg border border-slate-200 bg-transparent px-2 py-1 dark:border-slate-700"
+                className="focus-ring rounded-surface border border-slate-200 bg-transparent px-2 py-1 dark:border-slate-700"
               >
                 {DURATIONS.map((seconds) => (
                   <option key={seconds} value={seconds}>

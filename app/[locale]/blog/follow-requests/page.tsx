@@ -77,7 +77,7 @@ export default function FollowRequestsPage() {
                   data-testid={`follow-request-${r.handle}`}
                   className="flex flex-wrap items-center gap-3 border-b border-slate-100 px-2 py-3.5 last:border-b-0 dark:border-slate-800/80"
                 >
-                  <BlogLink href={href} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-lg">
+                  <BlogLink href={href} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface">
                     <Avatar src={r.avatarUrl} name={r.handle} size="md" />
                     <span className="min-w-0">
                       <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">

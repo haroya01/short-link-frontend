@@ -40,7 +40,7 @@ export function NoteLanguageSettings() {
         {t("languagesTitle")}
       </h2>
       <p className="mb-2 text-[12px] text-slate-500 dark:text-slate-400">{t("languagesHint")}</p>
-      <fieldset className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
+      <fieldset className="flex flex-wrap gap-2 rounded-surface border border-slate-200 p-3 dark:border-slate-800">
         <legend className="sr-only">{t("languagesTitle")}</legend>
         <label className={chip}>
           <input

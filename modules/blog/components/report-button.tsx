@@ -115,7 +115,7 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
             aria-modal="true"
             aria-labelledby={titleId}
             className={cn(
-              "absolute right-0 z-30 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-850",
+              "absolute right-0 z-30 w-72 rounded-surface border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-850",
               below ? "top-full mt-2" : "bottom-full mb-2",
             )}
           >
@@ -133,7 +133,7 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
                   {REASON_CODES.map((code) => (
                     <label
                       key={code}
-                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60 has-[:checked]:bg-slate-100 dark:has-[:checked]:bg-slate-800"
+                      className="flex cursor-pointer items-center gap-2 rounded-surface px-2 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60 has-[:checked]:bg-slate-100 dark:has-[:checked]:bg-slate-800"
                     >
                       <input
                         type="radio"
@@ -154,7 +154,7 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
                     onChange={(e) => setDetail(e.target.value)}
                     maxLength={2000}
                     rows={2}
-                    className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-accent-400 focus:ring-2 focus:ring-accent-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500 dark:focus:ring-accent-500/20"
+                    className="mt-1 block w-full rounded-surface border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-accent-400 focus:ring-2 focus:ring-accent-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500 dark:focus:ring-accent-500/20"
                     placeholder={t("reportPlaceholder")}
                   />
                 </label>
@@ -176,14 +176,14 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800"
+                    className="rounded-surface px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     {tc("cancel")}
                   </button>
                   <button
                     type="submit"
                     disabled={submitting || !reasonCode}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-surface bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:opacity-50"
                   >
                     {submitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                     {submitting ? t("reportSubmitting") : t("reportSubmit")}

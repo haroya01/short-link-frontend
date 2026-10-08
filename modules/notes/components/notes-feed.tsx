@@ -216,7 +216,7 @@ function MoreFeedsMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-11 z-20 w-48 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute right-0 top-11 z-20 w-48 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           {items.map((item) => (
             <Link
@@ -225,7 +225,7 @@ function MoreFeedsMenu({
               role="menuitem"
               aria-current={item.key === active ? "page" : undefined}
               onClick={() => setOpen(false)}
-              className={`focus-ring block w-full rounded-lg px-3 py-2 text-left text-[13px] hover:bg-slate-100 dark:hover:bg-slate-800 ${
+              className={`focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] hover:bg-slate-100 dark:hover:bg-slate-800 ${
                 item.key === active
                   ? "font-semibold text-slate-900 dark:text-slate-100"
                   : "text-slate-700 dark:text-slate-200"

@@ -132,7 +132,7 @@ export default async function PublicSeriesPage({
   const authorRail = (
     <div className="flex flex-col gap-4">
       <RailHeading>{tf("seriesByAuthor")}</RailHeading>
-      <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-lg">
+      <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-surface">
         <Avatar src={author.avatarUrl} name={author.username} size="lg" />
         <span className="min-w-0 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
           @{author.username}

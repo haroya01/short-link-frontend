@@ -13,9 +13,9 @@ export default function SeriesIndexLoading() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
+          className="flex items-center gap-3 rounded-surface border border-slate-100 p-4 dark:border-slate-800"
         >
-          <Skeleton className="h-10 w-10 shrink-0 rounded-lg" />
+          <Skeleton className="h-10 w-10 shrink-0 rounded-inner" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/2" />
             <Skeleton className="h-3 w-20" />

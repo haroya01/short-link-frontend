@@ -81,7 +81,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
       {mounted && (
         <div
           role="menu"
-          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850 ${
+          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850 ${
             closing ? "animate-dropdown-out" : "animate-dropdown-in"
           }`}
         >
@@ -94,7 +94,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
                 handlePlatform(p.id);
                 setOpen(false);
               }}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+              className="block w-full rounded-surface px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
             >
               {p.label}
             </button>
@@ -103,7 +103,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
             type="button"
             role="menuitem"
             onClick={() => handlePlatform("copy")}
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+            className="flex w-full items-center justify-between rounded-surface px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
           >
             {copied ? tc("copied") : tc("copy")}
             {copied && <Check className="h-3.5 w-3.5 text-accent-600" />}

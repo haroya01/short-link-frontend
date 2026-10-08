@@ -95,7 +95,7 @@ function AccountRow({ account, onChange }: { account: RemoteAccount; onChange: (
     <div className="flex items-center gap-3 py-3">
       <BlogLink
         href={blogPath(`/remote/${account.id}`)}
-        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-lg"
+        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface"
       >
         <Avatar src={account.avatarUrl} name={account.username || account.acct} size="md" />
         <span className="min-w-0">
@@ -197,7 +197,7 @@ function RemoteAccountMenu({ account, onChange }: { account: RemoteAccount; onCh
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-11 z-20 w-56 rounded-lg border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute left-0 top-11 z-20 w-56 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           <button
             type="button"
@@ -205,8 +205,8 @@ function RemoteAccountMenu({ account, onChange }: { account: RemoteAccount; onCh
             onClick={toggle}
             className={
               account.domainBlocked
-                ? "focus-ring block w-full rounded-lg px-3 py-2 text-left text-[13px] text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
-                : "focus-ring block w-full rounded-lg px-3 py-2 text-left text-[13px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                ? "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                : "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
             }
           >
             {account.domainBlocked ? t("domainUnblock", { domain }) : t("domainBlock", { domain })}
@@ -240,7 +240,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
     return <EmptyState title={t("remoteNotFound")} className="mt-16" />;
   }
   if (!account) {
-    return <div className="mt-10 h-24 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-900" aria-hidden />;
+    return <div className="mt-10 h-24 animate-pulse rounded-surface bg-slate-100 dark:bg-slate-900" aria-hidden />;
   }
   const caption = account.following
     ? t("remoteCaptionFollowing", { domain: account.domain })
@@ -333,11 +333,11 @@ export function RemoteFollowingSettings() {
       </h2>
       <p className="mb-2 text-[12px] text-slate-500 dark:text-slate-400">{t("remoteFollowingHint")}</p>
       {accounts.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-5 text-[13px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
+        <p className="rounded-surface border border-dashed border-slate-200 px-4 py-5 text-[13px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
           {t("remoteFollowingEmpty")}
         </p>
       ) : (
-        <div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 px-3 dark:divide-slate-800 dark:border-slate-800">
+        <div className="divide-y divide-slate-200 rounded-surface border border-slate-200 px-3 dark:divide-slate-800 dark:border-slate-800">
           {accounts.map((account) => (
             <AccountRow
               key={account.id}
@@ -385,11 +385,11 @@ export function DomainBlockSettings() {
       </h2>
       <p className="mb-2 text-[12px] text-slate-500 dark:text-slate-400">{t("domainBlocksHint")}</p>
       {blocks.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-5 text-[13px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
+        <p className="rounded-surface border border-dashed border-slate-200 px-4 py-5 text-[13px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
           {t("domainBlocksEmpty")}
         </p>
       ) : (
-        <ul className="divide-y divide-slate-200 rounded-2xl border border-slate-200 px-3 dark:divide-slate-800 dark:border-slate-800">
+        <ul className="divide-y divide-slate-200 rounded-surface border border-slate-200 px-3 dark:divide-slate-800 dark:border-slate-800">
           {blocks.map((block) => (
             <li key={block.domain} className="flex items-center gap-3 py-3">
               <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-100">

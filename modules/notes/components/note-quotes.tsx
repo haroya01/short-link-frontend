@@ -31,7 +31,7 @@ export function NoteQuotes({ noteId }: { noteId: number }) {
         <section
           aria-labelledby="quoting-posts-title"
           data-testid="quoting-posts"
-          className="mb-4 rounded-2xl border border-slate-200 px-4 pt-3 dark:border-slate-800"
+          className="mb-4 rounded-surface border border-slate-200 px-4 pt-3 dark:border-slate-800"
         >
           <h2 id="quoting-posts-title" className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
             {t("quotingPostsTitle")}

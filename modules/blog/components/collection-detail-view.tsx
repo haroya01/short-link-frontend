@@ -218,7 +218,7 @@ export function CollectionDetailView({
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                className="focus-ring inline-flex items-center gap-1.5 rounded-surface px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 {t("edit")}
@@ -227,7 +227,7 @@ export function CollectionDetailView({
                 <button
                   type="button"
                   onClick={() => setReordering(true)}
-                  className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring inline-flex items-center gap-1.5 rounded-surface px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 >
                   <ArrowUpDown className="h-3.5 w-3.5" />
                   {t("reorder")}
@@ -402,7 +402,7 @@ function CollectionEditor({
                 role="radio"
                 aria-checked={active}
                 onClick={() => setVisibility(key)}
-                className={`focus-ring flex items-start gap-3 rounded-lg border p-3.5 text-left transition-colors ${
+                className={`focus-ring flex items-start gap-3 rounded-surface border p-3.5 text-left transition-colors ${
                   active
                     ? "border-accent-600 bg-accent-50/50 dark:border-accent-500 dark:bg-accent-500/10"
                     : "border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
@@ -450,14 +450,14 @@ function CollectionEditor({
           onClick={() =>
             onSave({ title: trimmedTitle, description: description.trim() || null, visibility })
           }
-          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+          className="focus-ring rounded-surface bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
         >
           {t("save")}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="focus-ring rounded-lg px-3 py-2 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+          className="focus-ring rounded-surface px-3 py-2 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           {t("cancel")}
         </button>
@@ -465,7 +465,7 @@ function CollectionEditor({
 
       {/* Danger zone — a separated, red-framed section at the bottom so an irreversible delete can't be
           fired by muscle memory next to Save. The confirm dialog still gates the actual delete. */}
-      <div className="mt-8 rounded-2xl border border-red-200 p-4 dark:border-red-500/30">
+      <div className="mt-8 rounded-surface border border-red-200 p-4 dark:border-red-500/30">
         <p className="text-[11px] font-bold text-red-600/80 dark:text-red-400/80">
           {t("dangerZone")}
         </p>
@@ -476,7 +476,7 @@ function CollectionEditor({
           <button
             type="button"
             onClick={onDelete}
-            className="focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 dark:border-red-500/40 dark:text-red-400 dark:hover:bg-red-500/10"
+            className="focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-surface border border-red-200 px-3 py-1.5 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 dark:border-red-500/40 dark:text-red-400 dark:hover:bg-red-500/10"
           >
             <Trash2 className="h-3.5 w-3.5" />
             {t("deleteCollection")}
@@ -755,7 +755,7 @@ function ContinuityBar({
     <BlogLink
       href={href}
       onClick={onContinue}
-      className="focus-ring mt-3 flex items-center justify-between gap-3 rounded-2xl border border-accent-100 bg-accent-50/60 px-4 py-3 transition-colors hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:bg-accent-500/15"
+      className="focus-ring mt-3 flex items-center justify-between gap-3 rounded-surface border border-accent-100 bg-accent-50/60 px-4 py-3 transition-colors hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:bg-accent-500/15"
     >
       <span className="min-w-0">
         <span className="block text-[12px] font-semibold text-accent-700 dark:text-accent-400">
@@ -831,7 +831,7 @@ function RemoveConnectionButton({
       type="button"
       onClick={onRemove}
       disabled={disabled}
-      className="focus-ring mt-0.5 shrink-0 rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+      className="focus-ring mt-0.5 shrink-0 rounded-surface px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
     >
       {t("unlink")}
     </button>

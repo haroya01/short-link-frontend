@@ -51,9 +51,9 @@ export function FollowSuggestions() {
       </h2>
       <ul className="mt-2 space-y-1">
         {picks.map((pick) => (
-          <li key={pick.username} data-testid={`suggestion-${pick.username}`} className="group relative -mx-2 rounded-lg px-2 py-2">
+          <li key={pick.username} data-testid={`suggestion-${pick.username}`} className="group relative -mx-2 rounded-surface px-2 py-2">
             <div className="flex items-center gap-2.5">
-              <BlogLink href={authorHref(pick.username, locale)} className="focus-ring flex min-w-0 flex-1 items-center gap-2.5 rounded-lg">
+              <BlogLink href={authorHref(pick.username, locale)} className="focus-ring flex min-w-0 flex-1 items-center gap-2.5 rounded-surface">
                 <Avatar src={pick.avatarUrl} name={pick.username} size="sm" />
                 <span className="min-w-0">
                   <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">

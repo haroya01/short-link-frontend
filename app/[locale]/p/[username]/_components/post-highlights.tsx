@@ -53,7 +53,7 @@ const CommentComposer = dynamic(
 
 /** Matches the collapsed rest-state height of the real editor so the mount doesn't shift layout. */
 function ComposerSkeleton() {
-  return <div className="h-12 rounded-lg border border-slate-200 dark:border-slate-700" />;
+  return <div className="h-12 rounded-surface border border-slate-200 dark:border-slate-700" />;
 }
 
 type Anchor = { left: number; top: number; bottom: number };
@@ -482,12 +482,12 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
   useFocusTrap(contentRef, { active: true, onEscape: onClose });
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4" onMouseDown={onClose}>
-      <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-2xl" onMouseDown={(event) => event.stopPropagation()}>
+      <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-surface bg-white p-5 shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-surface" onMouseDown={(event) => event.stopPropagation()}>
         <h3 id="highlight-choices-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
         <ul className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
           {highlights.map((highlight) => (
             <li key={highlight.id}>
-              <button type="button" className="focus-ring w-full rounded-lg py-3 text-left" onClick={() => onChoose(highlight)}>
+              <button type="button" className="focus-ring w-full rounded-surface py-3 text-left" onClick={() => onChoose(highlight)}>
                 <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">@{highlight.author?.username ?? "?"}</span>
                 <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note || highlight.quote}</span>
                 {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{tc("highlightReplyCount", { count: highlight.replyCount })}</span>}
@@ -495,7 +495,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
             </li>
           ))}
         </ul>
-        <button type="button" onClick={onClose} className="focus-ring mt-3 rounded-lg px-3.5 py-2 text-sm text-slate-600 dark:text-slate-300">{t("highlightNoteCancel")}</button>
+        <button type="button" onClick={onClose} className="focus-ring mt-3 rounded-surface px-3.5 py-2 text-sm text-slate-600 dark:text-slate-300">{t("highlightNoteCancel")}</button>
       </div>
     </div>
   );
@@ -656,7 +656,7 @@ function HighlightThread({
         role="dialog"
         aria-modal="true"
         aria-labelledby="hl-thread-quote"
-        className="flex max-h-[80vh] w-full flex-col rounded-t-2xl bg-white shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-2xl"
+        className="flex max-h-[80vh] w-full flex-col rounded-t-surface bg-white shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-surface"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 p-5 dark:border-slate-800">
@@ -673,7 +673,7 @@ function HighlightThread({
                     onClick={() => setConnecting(true)}
                     aria-label={tc("connectThisSentence")}
                     title={tc("connectThisSentence")}
-                    className="focus-ring shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
+                    className="focus-ring shrink-0 rounded-surface p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
                   >
                     <FolderPlus className="h-4 w-4" />
                   </button>
@@ -685,7 +685,7 @@ function HighlightThread({
                     onClick={onDelete}
                     aria-label={t("highlightDelete")}
                     title={t("highlightDelete")}
-                    className="focus-ring shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/15 dark:hover:text-red-400"
+                    className="focus-ring shrink-0 rounded-surface p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/15 dark:hover:text-red-400"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -799,7 +799,7 @@ function HighlightThread({
                   <li key={c.id}>
                     <BlogLink
                       href={blogPath(`/collections/${c.id}`)}
-                      className="focus-ring flex items-center gap-2 rounded-lg px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                      className="focus-ring flex items-center gap-2 rounded-surface px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
                       {c.kind === "PATH" ? (
                         <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-500" />

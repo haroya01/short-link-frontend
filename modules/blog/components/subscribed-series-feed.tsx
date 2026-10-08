@@ -54,7 +54,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
         <button
           type="button"
           onClick={() => setReloadKey((k) => k + 1)}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+          className="inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
         >
           {t("retry")}
         </button>
@@ -66,7 +66,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
     return (
       <div role="status" aria-busy className="mx-auto mt-6 grid max-w-2xl animate-pulse gap-4 sm:grid-cols-2">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="aspect-[4/5] rounded-card-lg bg-slate-200/80 dark:bg-slate-800" />
+          <div key={i} className="aspect-[4/5] rounded-surface bg-slate-200/80 dark:bg-slate-800" />
         ))}
       </div>
     );

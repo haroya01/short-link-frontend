@@ -34,7 +34,7 @@ const CommentComposer = dynamic(
 
 /** Matches the collapsed rest-state height of the real composer so the mount doesn't shift layout. */
 function ComposerSkeleton() {
-  return <div className="h-12 rounded-lg border border-slate-200 dark:border-slate-700" />;
+  return <div className="h-12 rounded-surface border border-slate-200 dark:border-slate-700" />;
 }
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
@@ -283,7 +283,7 @@ export function PostComments({
             type="button"
             data-testid="comment-composer-placeholder"
             onClick={() => setComposerActive(true)}
-            className="flex w-full items-center gap-3 rounded-lg border border-slate-200 px-3 py-2.5 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
+            className="flex w-full items-center gap-3 rounded-full border border-slate-200 px-3 py-2.5 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {ready && authenticated && me && (
               <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} size="sm" shrink={false} />
@@ -428,7 +428,7 @@ function CommentRow({
   return (
     <div
       id={anchorId}
-      className={`-mx-3 -my-2 scroll-mt-24 rounded-lg px-3 py-2 transition-colors duration-700 motion-reduce:transition-none ${
+      className={`-mx-3 -my-2 scroll-mt-24 rounded-surface px-3 py-2 transition-colors duration-700 motion-reduce:transition-none ${
         flash ? "bg-accent-50 dark:bg-accent-900/30" : ""
       } ${isNew ? "comment-in" : ""}`}
     >

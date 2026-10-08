@@ -135,7 +135,7 @@ export function FeedListSkeleton({ count = 4 }: { count?: number }) {
               <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-slate-800" />
               <div className="h-3 w-28 rounded bg-slate-100 dark:bg-slate-800" />
             </div>
-            <div className="h-20 w-20 shrink-0 rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
+            <div className="h-20 w-20 shrink-0 rounded-inner bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
           </div>
         </li>
       ))}
@@ -208,7 +208,7 @@ export function FeedCard({
       {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
           stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
       <div
-        className={`-mx-3 flex gap-4 rounded-card px-3 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
+        className={`-mx-3 flex gap-4 rounded-surface px-3 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
           // A row flush to the top of the feed (the featured lead, or the first row of a lead-less feed)
           // gets only a hair of top padding — any more reads as an empty band under the tabs and pushes
           // the content below the rail. Featured keeps a generous bottom so its larger title has weight.
@@ -279,7 +279,7 @@ export function FeedCard({
             tabIndex={-1}
             data-bhv="post"
             data-bhv-id={`${item.author.username}/${item.slug}`}
-            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 ${
+            className={`block shrink-0 overflow-hidden rounded-inner bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >

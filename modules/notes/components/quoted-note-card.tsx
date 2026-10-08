@@ -53,14 +53,14 @@ export function QuotedNoteCard({
               src={image.url}
               alt={image.altText ?? ""}
               loading="lazy"
-              className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900"
+              className="h-16 w-16 shrink-0 rounded-inner border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900"
             />
           ))}
         </span>
       )}
     </>
   );
-  const frame = `${full ? "" : "mt-2.5 "}block rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800`;
+  const frame = `${full ? "" : "mt-2.5 "}block rounded-surface border border-slate-200 px-4 py-3 dark:border-slate-800`;
   if (!linked) {
     return (
       <div className={frame} data-quoted-note-id={note.id}>
