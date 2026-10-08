@@ -778,7 +778,7 @@ function HighlightThread({
                     )}
                   </div>
                   <div className="mt-1 min-w-0 pl-9 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
-                    <CommentBody text={r.body} locale={locale} />
+                    <CommentBody text={r.body} locale={locale} mentions={r.mentions} />
                   </div>
                 </li>
               ))}

@@ -54,6 +54,8 @@ export interface HighlightReplyView {
   author: PublicAuthor | null;
   body: string;
   createdAt: string;
+  /** The @handles in the body that belong to members; absent on responses that predate it. */
+  mentions?: string[];
 }
 
 // The demo viewer — same identity as the mock `me` (lib/api/client MOCK_ME), so a highlight the viewer
