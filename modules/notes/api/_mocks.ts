@@ -1,5 +1,6 @@
 import { ApiError } from "@/lib/api/client";
 import type { PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
+import { MOCK_ALL_ITEMS } from "@/modules/blog/api/_mocks";
 import type {
   FederationSettings,
   Note,
@@ -692,6 +693,7 @@ export function mockCreate(draft: NoteDraft): Note {
     createdAt: new Date().toISOString(),
     inReplyToId: draft.inReplyToId,
     quotedNote: quotedNoteOf(draft.quotedNoteId),
+    quotedPost: quotedPostOf(draft.quotedPostId),
     contentWarning: draft.contentWarning ?? null,
     sensitive: Boolean(draft.sensitive || draft.contentWarning),
     visibility: draft.visibility ?? "public",
@@ -738,6 +740,11 @@ export function mockVote(id: number, choices: number[]): NotePoll {
   };
   notes = notes.map((n) => (n.id === id ? { ...n, poll } : n));
   return poll;
+}
+
+function quotedPostOf(id: number | null): Note["quotedPost"] {
+  const post = id === null ? undefined : MOCK_ALL_ITEMS.find((p) => p.id === id);
+  return post ? { id: post.id, title: post.title, slug: post.slug, authorUsername: post.author.username } : null;
 }
 
 function quotedNoteOf(id: number | null): Note["quotedNote"] {
