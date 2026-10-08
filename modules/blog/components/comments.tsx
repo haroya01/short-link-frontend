@@ -21,6 +21,9 @@ import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { listPostQuotes, type PostQuotes } from "@/modules/notes/api/notes";
+import { NoteList } from "@/modules/notes/components/note-list";
+import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
 // The composer pulls in the Tiptap/ProseMirror editor (rich-comment-input) — a heavy graph that most
@@ -46,9 +49,13 @@ function appendUnique(prev: CommentView[], created: CommentView): CommentView[] 
 export function PostComments({
   postId,
   authorUsername,
+  title,
+  slug,
 }: {
   postId: number;
   authorUsername: string;
+  title: string;
+  slug: string;
 }) {
   const t = useTranslations("comments");
   const tCommon = useTranslations("common");
@@ -57,6 +64,18 @@ export function PostComments({
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
 
   const [comments, setComments] = useState<CommentView[]>([]);
+  const [quotes, setQuotes] = useState<PostQuotes | null>(null);
+  const [tab, setTab] = useState<"comments" | "notes">("comments");
+
+  useEffect(() => {
+    let alive = true;
+    listPostQuotes(postId)
+      .then((found) => alive && setQuotes(found))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [postId]);
   const [body, setBody] = useState("");
   // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
   const [composerActive, setComposerActive] = useState(false);
@@ -254,9 +273,55 @@ export function PostComments({
     >
       {/* 0일 때 카운트를 그리지 않는다 — "댓글 0개" 헤딩 + 빈 컴포저 + "첫 댓글" 문구로 공허를
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
-      <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-        {comments.length > 0 ? t("count", { count: comments.length }) : t("heading")}
-      </h2>
+      {quotes && quotes.total > 0 ? (
+        <>
+          <h2 className="sr-only">{comments.length > 0 ? t("count", { count: comments.length }) : t("heading")}</h2>
+          <div role="tablist" aria-label={t("discussionTabs")} className="flex items-baseline gap-5">
+            {(
+              [
+                ["comments", comments.length > 0 ? t("count", { count: comments.length }) : t("heading")],
+                ["notes", t("notesTab", { count: quotes.total })],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                data-testid={`discussion-tab-${key}`}
+                onClick={() => setTab(key)}
+                className={`focus-ring rounded text-lg font-bold tracking-tight transition-colors ${
+                  tab === key
+                    ? "text-slate-900 dark:text-slate-100"
+                    : "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          {comments.length > 0 ? t("count", { count: comments.length }) : t("heading")}
+        </h2>
+      )}
+
+      {tab === "notes" && quotes ? (
+        <div className="mt-4" role="tabpanel" data-testid="post-quote-notes">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("notesTabHint")}</p>
+            <QuoteInNoteButton postId={postId} title={title} slug={slug} authorUsername={authorUsername} />
+          </div>
+          <NoteList
+            load={(page) => listPostQuotes(postId, page)}
+            initial={quotes}
+            filterContext="public"
+            empty={null}
+          />
+        </div>
+      ) : (
+      <>
 
       {/* There's ALWAYS a way to comment: a resting one-line placeholder that, on tap, mounts the real
           composer (and lazy-loads its Tiptap chunk) already focused. Signed-out (or pre-auth) submit
@@ -400,6 +465,8 @@ export function PostComments({
             </li>
           ))}
         </ul>
+      )}
+      </>
       )}
       {confirmDialog}
     </section>

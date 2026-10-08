@@ -28,7 +28,10 @@
     "linkText": "링크 텍스트",
     "submitError": "댓글을 등록하지 못했어요. 다시 시도해 주세요.",
     "deleteError": "댓글을 삭제하지 못했어요. 다시 시도해 주세요.",
-    "loadFailed": "댓글을 불러오지 못했어요."
+    "loadFailed": "댓글을 불러오지 못했어요.",
+    "notesTab": "노트 {count, number}",
+    "discussionTabs": "댓글과 노트",
+    "notesTabHint": "이 글을 인용한 노트예요"
   },
   "publicFeed": {
     "recent": "최신",

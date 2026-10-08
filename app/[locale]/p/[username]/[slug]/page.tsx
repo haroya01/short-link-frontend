@@ -458,7 +458,7 @@ export default async function PublicPostPage({
       {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
       {!isPreview && <PublishCelebration slug={post.slug} />}
 
-      <PostComments postId={post.id} authorUsername={author.username} />
+      <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
 
       {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
       {!isPreview && (

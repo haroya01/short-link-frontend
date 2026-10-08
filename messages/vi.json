@@ -28,7 +28,10 @@
     "linkText": "văn bản liên kết",
     "submitError": "Không thể đăng bình luận. Vui lòng thử lại.",
     "deleteError": "Không thể xóa bình luận. Vui lòng thử lại.",
-    "loadFailed": "Không tải được bình luận."
+    "loadFailed": "Không tải được bình luận.",
+    "notesTab": "Ghi chú {count, number}",
+    "discussionTabs": "Bình luận và ghi chú",
+    "notesTabHint": "Ghi chú trích dẫn bài này"
   },
   "publicFeed": {
     "recent": "Mới nhất",
