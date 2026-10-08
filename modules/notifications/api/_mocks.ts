@@ -249,7 +249,7 @@ export function mockNotificationsPage(): NotificationsPage {
         postId: 5,
         postSlug: "typescript-generics",
         postTitle: "타입스크립트 제네릭이 어려운 이유",
-        commentId: 3,
+        commentId: 7,
         count: 1,
         read: true,
         createdAt: "2026-06-07T10:10:00Z",

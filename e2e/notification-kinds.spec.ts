@@ -18,7 +18,7 @@ test("post notices group and quote the way note notices do, and open their spot"
   );
   await expect(main.getByRole("link", { name: /haruki님이 내 댓글을 좋아해요/ })).toHaveAttribute(
     "href",
-    /\/p\/dohyun\/typescript-generics#comment-3$/,
+    /\/p\/dohyun\/typescript-generics#comment-7$/,
   );
   await expect(main.getByRole("link", { name: /yuna님이 노트에서 내 글을 인용했어요, 제네릭은/ })).toHaveAttribute(
     "href",
