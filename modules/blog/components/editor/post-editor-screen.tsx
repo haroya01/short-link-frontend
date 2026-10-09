@@ -176,6 +176,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         busy={ed.busy}
         onSave={ed.save}
         onChangeStatus={ed.changeStatus}
+        onCancelSchedule={ed.cancelSchedule}
         onSchedule={async (iso, opts) => {
           // Confirm the parked publish with its exact date/time — the SCHEDULED badge alone is easy to
           // miss right after the action.

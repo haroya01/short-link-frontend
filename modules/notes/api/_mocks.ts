@@ -6,6 +6,7 @@ import type {
   Note,
   NoteAuthor,
   NoteDraft,
+  NoteEdit,
   NoteFeed,
   NoteHistory,
   MuteStatus,
@@ -825,15 +826,22 @@ export function mockHistory(id: number): NoteHistory {
   };
 }
 
-export function mockEdit(id: number, body: string): Note {
-  const before = notes.find((n) => n.id === id);
-  if (before && before.body !== body) {
-    earlierVersions.set(id, [
-      { body: before.body, contentWarning: before.contentWarning ?? null, sensitive: before.sensitive ?? false, at: before.editedAt ?? before.createdAt },
-      ...(earlierVersions.get(id) ?? []),
-    ]);
-  }
-  notes = notes.map((n) => (n.id === id ? { ...n, body, editedAt: new Date().toISOString() } : n));
+export function mockEdit(id: number, edit: NoteEdit): Note {
+  const before = notes.find((n) => n.id === id)!;
+  const contentWarning = edit.contentWarning.trim() || null;
+  const sensitive = edit.sensitive || contentWarning != null;
+  const unchanged =
+    before.body === edit.body &&
+    (before.contentWarning ?? null) === contentWarning &&
+    (before.sensitive ?? false) === sensitive;
+  if (unchanged) return before;
+  earlierVersions.set(id, [
+    { body: before.body, contentWarning: before.contentWarning ?? null, sensitive: before.sensitive ?? false, at: before.editedAt ?? before.createdAt },
+    ...(earlierVersions.get(id) ?? []),
+  ]);
+  notes = notes.map((n) =>
+    n.id === id ? { ...n, body: edit.body, contentWarning, sensitive, editedAt: new Date().toISOString() } : n,
+  );
   return notes.find((n) => n.id === id)!;
 }
 

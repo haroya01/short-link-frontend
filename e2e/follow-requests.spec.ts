@@ -58,3 +58,20 @@ test("the lock lives in blog settings and unlocking asks first", async ({ page }
   await dialog.getByRole("button", { name: "끄기" }).click();
   await expect(lock).not.toBeChecked();
 });
+
+test("a locked writer's row in a followers list shows the request, not a follow", async ({ page }) => {
+  await page.goto("/ko/p/yuna");
+  await page.getByRole("button", { name: "팔로워", exact: true }).click({ timeout: 30_000 });
+  const list = page.getByRole("dialog", { name: "팔로워" });
+  const row = list.getByRole("listitem").filter({ hasText: "@haruka" });
+  const follow = row.getByRole("button");
+  await expect(follow).toHaveText("팔로우");
+  await follow.click();
+  await expect(follow).toHaveText("요청함");
+  await expect(follow).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("팔로우를 요청했어요. 승인되면 팔로잉이 돼요")).toBeVisible();
+
+  await follow.click();
+  await expect(follow).toHaveText("팔로우");
+  await expect(follow).toHaveAttribute("aria-pressed", "false");
+});

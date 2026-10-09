@@ -1,6 +1,7 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
+import { ApiError } from "@/lib/api/client";
 import type { PostView } from "@/modules/blog/api/posts";
 import { usePostEditor } from "./use-post-editor";
 
@@ -11,10 +12,11 @@ const api = vi.hoisted(() => ({
 }));
 const router = vi.hoisted(() => ({ push: vi.fn() }));
 const translate = vi.hoisted(() => (key: string) => key);
+const confirmLeave = vi.hoisted(() => vi.fn(async () => true));
 vi.mock("@/modules/blog/api/posts", () => api);
 vi.mock("next/navigation", () => ({ useRouter: () => router }));
 vi.mock("next-intl", () => ({ useLocale: () => "en", useTranslations: () => translate }));
-vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [async () => true, null] }));
+vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [confirmLeave, null] }));
 vi.mock("@/modules/blog/api/series", () => ({ assignPostToSeries: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("@/lib/api/links", () => ({ shortenUrl: vi.fn() }));
 vi.mock("@/modules/blog/lib/author-href", () => ({ postHref: () => "/post" }));
@@ -53,7 +55,12 @@ beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   api.getPost.mockResolvedValue(POST);
   api.getBlocks.mockResolvedValue([]);
-  api.updatePostMetadata.mockImplementation(async (id, payload) => ({ ...POST, id, ...payload }));
+  api.updatePostMetadata.mockImplementation(async (id, payload) => {
+    if (payload.slug !== undefined && payload.slug.length < 2) {
+      throw new ApiError(400, { title: "Bad Request", status: 400, detail: "slug length 2~200" });
+    }
+    return { ...POST, id, ...payload };
+  });
   api.replaceBlocks.mockResolvedValue([]);
   api.schedulePost.mockResolvedValue({ ...POST, status: "SCHEDULED" });
   api.restoreRevision.mockResolvedValue(POST);
@@ -236,5 +243,148 @@ describe("a new post exists only once there is something to keep", () => {
     expect(published).toBe(true);
     expect(api.createPost).toHaveBeenCalledOnce();
     expect(api.publishPost).toHaveBeenCalledWith(77);
+  });
+});
+
+describe("the browser's Back leaves the editor like its own back button", () => {
+  let back: MockInstance<History["back"]>;
+  let push: MockInstance<History["pushState"]>;
+  beforeEach(() => {
+    back = vi.spyOn(window.history, "back").mockImplementation(() => {});
+    push = vi.spyOn(window.history, "pushState");
+  });
+  afterEach(() => {
+    back.mockRestore();
+    push.mockRestore();
+  });
+
+  async function pressBack() {
+    await act(async () => {
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+      await vi.advanceTimersByTimeAsync(10);
+    });
+  }
+
+  it("lets Back go untouched while nothing is edited", async () => {
+    await mount();
+    await pressBack();
+    expect(window.history.state?.kurlEditorGuard).toBeUndefined();
+    expect(back).not.toHaveBeenCalled();
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+  });
+
+  it("saves a draft's last keystrokes, then continues Back", async () => {
+    await mount();
+    await act(async () => { editor.setTitle("Typed right before Back"); });
+    expect(window.history.state).toMatchObject({ kurlEditorGuard: true });
+    await pressBack();
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({
+      title: "Typed right before Back",
+    }));
+    expect(back).toHaveBeenCalledOnce();
+  });
+
+  it("stays on the draft and guards Back again when the save fails", async () => {
+    await mount();
+    await act(async () => { editor.setMarkdown("Body the server refuses"); });
+    api.replaceBlocks.mockRejectedValueOnce(new Error("Save unavailable"));
+    await pressBack();
+    expect(back).not.toHaveBeenCalled();
+    expect(editor.error).toBe("saveFailed");
+    expect(push).toHaveBeenCalledTimes(2);
+    expect(window.history.state).toMatchObject({ kurlEditorGuard: true });
+  });
+
+  it("asks before dropping a published post's unsaved edits, and stays when declined", async () => {
+    api.getPost.mockResolvedValue({ ...POST, status: "PUBLISHED" });
+    await mount();
+    await act(async () => { editor.setTitle("Unsaved live edit"); });
+
+    confirmLeave.mockResolvedValueOnce(false);
+    await pressBack();
+    expect(confirmLeave).toHaveBeenCalledOnce();
+    expect(back).not.toHaveBeenCalled();
+    expect(window.history.state).toMatchObject({ kurlEditorGuard: true });
+
+    confirmLeave.mockResolvedValueOnce(true);
+    await pressBack();
+    expect(back).toHaveBeenCalledOnce();
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+  });
+});
+
+describe("a slug the server would refuse never blocks the title and body", () => {
+  it("leaves an emptied or one-letter slug out of the save", async () => {
+    await mount();
+    await act(async () => {
+      editor.setSlug("한글");
+      editor.setMarkdown("Body saved anyway");
+    });
+    expect(editor.slug).toBe("");
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    expect(saved).toBe(true);
+    expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [
+      { type: "PARAGRAPH", content: "Body saved anyway" },
+    ]);
+  });
+
+  it("saves the title and body when the slug is taken, then says so", async () => {
+    await mount();
+    api.updatePostMetadata.mockImplementation(async (id, payload) => {
+      if (payload.slug === "taken") {
+        throw new ApiError(409, { status: 409, title: "Conflict", code: "SLUG_CONFLICT" });
+      }
+      return { ...POST, id, ...payload };
+    });
+    await act(async () => {
+      editor.setSlug("taken");
+      editor.setTitle("Title kept");
+      editor.setMarkdown("Body kept");
+    });
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    expect(saved).toBe(false);
+    expect(editor.error).toBe("slugTaken");
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
+    expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }]);
+  });
+
+  it("holds publishing until the slug is long enough", async () => {
+    await mount();
+    await act(async () => { editor.setSlug("a"); });
+    let published: boolean | undefined;
+    await act(async () => { published = await editor.changeStatus("publish"); });
+    expect(published).toBe(false);
+    expect(editor.error).toBe("slugInvalid");
+    expect(api.publishPost).not.toHaveBeenCalled();
+  });
+});
+
+describe("a scheduled post keeps its title", () => {
+  it("refuses to save the title empty, since the scheduled publish would fail", async () => {
+    api.getPost.mockResolvedValue({ ...POST, status: "SCHEDULED", scheduledAt: "2099-01-01T00:00:00Z" });
+    await mount();
+    await act(async () => { editor.setTitle("   "); });
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    expect(saved).toBe(false);
+    expect(editor.error).toBe("scheduledTitleRequired");
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+  });
+
+  it("still lets a scheduled post with no title go back to draft, saving the edits first", async () => {
+    api.getPost.mockResolvedValue({ ...POST, title: "", status: "SCHEDULED", scheduledAt: "2099-01-01T00:00:00Z" });
+    api.backToDraftPost.mockResolvedValue({ ...POST, title: "", status: "DRAFT" });
+    await mount();
+    await act(async () => { editor.setMarkdown("Edited while scheduled"); });
+    let cancelled: boolean | undefined;
+    await act(async () => { cancelled = await editor.cancelSchedule(); });
+    expect(cancelled).toBe(true);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Edited while scheduled" }]);
+    expect(api.backToDraftPost).toHaveBeenCalledWith(16);
+    expect(api.replaceBlocks.mock.invocationCallOrder[0]).toBeLessThan(api.backToDraftPost.mock.invocationCallOrder[0]);
   });
 });

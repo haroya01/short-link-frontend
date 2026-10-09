@@ -27,7 +27,7 @@ import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { upgradeLegacyCallouts } from "@/modules/blog/lib/callout";
 import { stampPublishCelebration } from "@/modules/blog/lib/celebrate-publish";
-import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
+import { isSavableSlug, normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 import { setEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useConfirm } from "@/components/ui/use-confirm";
 
@@ -40,6 +40,19 @@ export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft"
 
 function randomSlug(): string {
   return "draft-" + Math.random().toString(36).slice(2, 9);
+}
+
+function editorAddress(post: PostView | null): string {
+  const path = window.location.pathname;
+  return (post ? path.replace(/\/new\/?$/, `/${post.id}`) : path) + window.location.search;
+}
+
+const HISTORY_GUARD = "kurlEditorGuard";
+
+// Spreading the current state keeps Next's app-router keys (__NA, tree); an entry without them makes
+// the router reload the page when Back lands on it.
+function pushHistoryGuard(url?: string) {
+  window.history.pushState({ ...window.history.state, [HISTORY_GUARD]: true }, "", url);
 }
 
 /**
@@ -112,6 +125,9 @@ export function usePostEditor(
   const failStreak = useRef(0);
   const autoRetryBlocked = useRef(false);
   const creating = useRef<Promise<PostView> | null>(null);
+  const historyGuarded = useRef(false);
+  const leavingAnyway = useRef(false);
+  const leavingSchedule = useRef(false);
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -126,6 +142,7 @@ export function usePostEditor(
     // 사용자가 내용을 바꿨으니 정지됐던 자동저장 재시도를 다시 허용하고 백오프를 초기화.
     failStreak.current = 0;
     autoRetryBlocked.current = false;
+    leavingAnyway.current = false;
   };
   const setTitle = (v: string) => {
     currentDraft.current.title = v;
@@ -214,7 +231,7 @@ export function usePostEditor(
     const existing = currentDraft.current.post;
     if (existing) return Promise.resolve(existing);
     creating.current ??= (async () => {
-      const chosen = slugForSave(currentDraft.current.slug);
+      const chosen = isSavableSlug(currentDraft.current.slug) ? slugForSave(currentDraft.current.slug) : "";
       for (let attempt = 0; ; attempt++) {
         try {
           const created = await createPost({ slug: chosen || randomSlug(), title: currentDraft.current.title.trim() });
@@ -224,11 +241,7 @@ export function usePostEditor(
             currentDraft.current.slug = created.slug;
             setSlugRaw(created.slug);
           }
-          window.history.replaceState(
-            window.history.state,
-            "",
-            window.location.pathname.replace(/\/new\/?$/, `/${created.id}`) + window.location.search,
-          );
+          window.history.replaceState(window.history.state, "", editorAddress(created));
           return created;
         } catch (e) {
           const generatedSlugCollided = !chosen && attempt === 0 && isSlugConflict(e);
@@ -270,6 +283,10 @@ export function usePostEditor(
           }
           const post = currentDraft.current.post;
           if (post == null) return false;
+          if (post.status === "SCHEDULED" && !title.trim() && !leavingSchedule.current) {
+            setError(t("scheduledTitleRequired"));
+            return false;
+          }
           const { slug } = currentDraft.current;
           const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
           const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", seriesId, md]);
@@ -279,19 +296,24 @@ export function usePostEditor(
             window.setTimeout(() => setSaved(false), 2000);
             return true;
           }
+          const meta = { title: title.trim(), tags, excerpt: excerpt.trim(), ogImageUrl: coverUrl ?? "" };
           // Slug is editable only while DRAFT (frozen once public).
-          const updated = await updatePostMetadata(post.id, {
-            title: title.trim(),
-            tags,
-            excerpt: excerpt.trim(),
-            ogImageUrl: coverUrl ?? "",
-            ...(post.status === "DRAFT" ? { slug: slugPart } : {}),
-          });
+          const sendsSlug = post.status === "DRAFT" && isSavableSlug(slugPart);
+          let slugRejection: unknown = null;
+          let updated: PostView;
+          try {
+            updated = await updatePostMetadata(post.id, sendsSlug ? { ...meta, slug: slugPart } : meta);
+          } catch (e) {
+            if (!sendsSlug || !isSlugConflict(e)) throw e;
+            slugRejection = e;
+            updated = await updatePostMetadata(post.id, meta);
+          }
           await replaceBlocks(post.id, markdownToBlocks(md));
           await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
           const savedPost = { ...updated, seriesId };
           currentDraft.current.post = savedPost;
           setPost(savedPost);
+          if (slugRejection) throw slugRejection;
           lastSaved.current = sig;
           setLastSavedAt(new Date());
           failStreak.current = 0;
@@ -335,6 +357,7 @@ export function usePostEditor(
   useEffect(() => {
     if (!dirty) return;
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (leavingAnyway.current) return;
       e.preventDefault();
       e.returnValue = "";
     };
@@ -350,25 +373,67 @@ export function usePostEditor(
     return () => setEditorDirty(false);
   }, [dirty]);
 
-  // Leave the editor for the list. Save a dirty DRAFT first so the last keystrokes (still inside the
-  // 1.8s autosave debounce) aren't lost to the full-page back navigation — the reported data-loss path.
-  // Published posts persist only via explicit actions, so a dirty one asks before discarding instead
-  // of navigating the edits away without a word.
-  async function leave() {
-    if (dirty && (post ? post.status === "DRAFT" : postId == null)) {
-      // 저장 실패 시 확인 없이 떠나면 편집이 사라진다 — 에디터에 머물러 에러(error)를 보여준다.
-      if (!(await save())) return;
-    } else if (dirty && post != null) {
-      const ok = await confirm({
-        title: t("unsavedLeaveTitle"),
-        description: t("unsavedLeaveDescription"),
-        confirmLabel: t("unsavedLeaveAction"),
-        destructive: true,
-      });
-      if (!ok) return;
-    }
-    router.push(writeBase);
+  // Save a dirty DRAFT first so the last keystrokes (still inside the 1.8s autosave debounce) aren't
+  // lost. Published posts persist only via explicit actions, so a dirty one asks before discarding
+  // instead of navigating the edits away without a word.
+  async function readyToLeave(): Promise<boolean> {
+    if (!dirty) return true;
+    // 저장 실패 시 확인 없이 떠나면 편집이 사라진다 — 에디터에 머물러 에러(error)를 보여준다.
+    if (post ? post.status === "DRAFT" : postId == null) return save();
+    if (post == null) return true;
+    return confirm({
+      title: t("unsavedLeaveTitle"),
+      description: t("unsavedLeaveDescription"),
+      confirmLabel: t("unsavedLeaveAction"),
+      destructive: true,
+    });
   }
+  const readyToLeaveRef = useRef(readyToLeave);
+  readyToLeaveRef.current = readyToLeave;
+
+  async function leave() {
+    if (await readyToLeave()) router.push(writeBase);
+  }
+
+  // Browser Back (trackpad and mobile swipe included) soft-navigates out of the editor and never fires
+  // beforeunload. The first edit pushes a same-URL guard entry, so Back lands on the editor's own entry
+  // instead; the leave check then runs and Back continues, or the guard is restored to stay.
+  useEffect(() => {
+    if (!dirty || historyGuarded.current) return;
+    pushHistoryGuard();
+    historyGuarded.current = true;
+  }, [dirty]);
+
+  useEffect(() => {
+    historyGuarded.current = window.history.state?.[HISTORY_GUARD] === true;
+    let alive = true;
+    let pops = 0;
+    const onPopState = (e: PopStateEvent) => {
+      pops += 1;
+      if (e.state?.[HISTORY_GUARD]) {
+        historyGuarded.current = true;
+        return;
+      }
+      if (!historyGuarded.current) return;
+      historyGuarded.current = false;
+      const at = pops;
+      void readyToLeaveRef.current().then((ok) => {
+        if (!alive || pops !== at) return;
+        if (ok) {
+          leavingAnyway.current = true;
+          window.history.back();
+          return;
+        }
+        pushHistoryGuard(editorAddress(currentDraft.current.post));
+        historyGuarded.current = true;
+      });
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => {
+      alive = false;
+      window.removeEventListener("popstate", onPopState);
+    };
+  }, []);
 
   /**
    * Auto-shorten the given in-post links through the kurl system right before going public, so every
@@ -406,6 +471,10 @@ export function usePostEditor(
     // hint). Republish keeps the post's existing title, so it isn't re-checked here.
     if (action === "publish" && !title.trim()) {
       setError(t("titleRequired"));
+      return false;
+    }
+    if (action === "publish" && !isSavableSlug(currentDraft.current.slug)) {
+      setError(t("slugInvalid"));
       return false;
     }
     // Going public needs at least one topic (tag). The reader's discovery — topic feeds, the author
@@ -453,6 +522,10 @@ export function usePostEditor(
       setError(t("titleRequired"));
       return false;
     }
+    if (currentDraft.current.post?.status === "DRAFT" && !isSavableSlug(currentDraft.current.slug)) {
+      setError(t("slugInvalid"));
+      return false;
+    }
     // Scheduling is a deferred publish → same topic requirement as publishing now.
     if (tags.length === 0) {
       setError(t("tagsRequired"));
@@ -493,6 +566,16 @@ export function usePostEditor(
     } finally {
       setBusy(false);
     }
+  }
+
+  // Saves pending edits first, like every lifecycle action. The post becomes a draft, so the
+  // scheduled-title rule doesn't hold this save back.
+  async function cancelSchedule(): Promise<boolean> {
+    leavingSchedule.current = true;
+    const saved = await save().finally(() => {
+      leavingSchedule.current = false;
+    });
+    return saved && changeStatus("backToDraft");
   }
 
   async function restoreRevision(versionNumber: number) {
@@ -569,6 +652,7 @@ export function usePostEditor(
     ensurePost,
     changeStatus,
     schedule,
+    cancelSchedule,
     restoreRevision,
     remove,
     confirmDialog,
