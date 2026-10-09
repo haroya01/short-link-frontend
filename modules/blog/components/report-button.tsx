@@ -18,8 +18,6 @@ type Props = {
   subjectId: number;
   /** Whose content this is — the owner gets no report control. */
   ownerUsername?: string;
-  /** A hairline before the trigger, for when it closes a row of other actions. */
-  leadingRule?: boolean;
   /** The server a note came from: offers to send it an anonymous copy, off unless chosen. */
   forwardDomain?: string;
   /** Opened from a ⋯ menu instead of the flag: no trigger, the popover anchors to the menu's box. */
@@ -28,9 +26,9 @@ type Props = {
 };
 
 /**
- * Quiet "신고" affordance. The trigger is a small muted flag link that can sit inline beside the other
- * post actions (like / bookmark / share); the report form opens as a popover anchored to it, so it never
- * pushes the action row around or leaves the button orphaned on its own line.
+ * Quiet "신고" affordance. The trigger is a small muted flag link that sits inline among other actions
+ * (an author's page, a note); the report form opens as a popover anchored to it, so it never pushes the
+ * row around. Posts and comments open the same form from their ⋯ menu instead (`open`/`onOpenChange`).
  *
  * The reporter picks one of six reasons (the #611 `reasonCode` enum, mirroring the iOS reason set) and
  * may add free-text `detail`. Submit is disabled until a reason is chosen. A failed submit keeps the form
@@ -41,7 +39,6 @@ export function ReportButton({
   subjectType,
   subjectId,
   ownerUsername,
-  leadingRule = false,
   forwardDomain,
   open: openProp,
   onOpenChange,
@@ -113,7 +110,6 @@ export function ReportButton({
 
   return (
     <>
-      {leadingRule && <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />}
       <div className={fromMenu ? "pointer-events-none absolute inset-0" : "relative"} ref={ref}>
         {!fromMenu && (
           <button

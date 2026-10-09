@@ -14,10 +14,11 @@ async function confirmBlock(page: Page, username: string) {
   await expect(page.getByText(`${username}님을 차단했어요`, { exact: false })).toBeVisible();
 }
 
-test("a reader's ⋯ on a post blocks its author and reports the post", async ({ page }) => {
+test("a reader's ⋯ on a post is the one place to report it, and blocks its author", async ({ page }) => {
   await page.goto("/ko/p/kazuki/kyoto-workation");
   const menu = page.locator("article header").getByRole("button", { name: "글 메뉴", exact: true });
   await menu.click({ timeout: 30_000 });
+  await expect(page.locator("article").getByRole("button", { name: "신고", exact: true })).toHaveCount(0);
   await page.getByRole("menuitem", { name: "신고", exact: true }).click();
   const report = page.getByRole("dialog", { name: "이 글 신고" });
   await expect(report.getByRole("radio").first()).toBeVisible();
