@@ -2455,7 +2455,8 @@
       "openImage": "Mở ảnh",
       "imageN": "Ảnh {idx}"
     },
-    "featured": "Nổi bật"
+    "featured": "Nổi bật",
+    "protectedLink": "Liên kết cần mật khẩu"
   },
   "recent": {
     "claimedToast": "Đã lưu {count} liên kết vào tài khoản của bạn"

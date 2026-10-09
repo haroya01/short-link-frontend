@@ -3,7 +3,9 @@ import { ExternalLink } from "lucide-react";
 import { Favicon } from "@/components/common/favicon";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
+import { isProtectedLink, protectedTitle } from "../_lib/protected-link";
 import { hostOf, isImageUrl, isSpotifyUrl, youtubeId } from "../_lib/url-helpers";
+import { ProtectedMark } from "./protected-mark";
 
 type Props = {
   entry: PublicProfileEntry;
@@ -20,11 +22,13 @@ type Props = {
  *   <li><b>Image</b> — the destination IS the image (URL ends in .jpg/.png/etc). Renders the
  *       image inline as the card body.</li>
  *   <li><b>YouTube</b> — destination is a YouTube URL. Renders the thumbnail + play overlay.</li>
- *   <li><b>Generic</b> — fallback. Favicon + title + host. Spotify gets a small green pill.</li>
+ *   <li><b>Generic</b> — fallback. Favicon + title + host. Spotify gets a small green pill. A password
+ *       link, whose destination the server withholds, gets a lock and its short URL instead.</li>
  * </ul>
  */
 export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
-  const originalUrl = entry.originalUrl ?? "";
+  const locked = isProtectedLink(entry);
+  const originalUrl = locked ? "" : entry.originalUrl ?? "";
   // src=profile-{username} so analytics can split profile-driven clicks from direct kurl.me hits.
   const href = `${entry.shortUrl}?src=profile-${username}`;
 
@@ -108,14 +112,16 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
         rel="noreferrer"
         className={`profile-card group flex items-center gap-3 px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
       >
-        <Favicon url={originalUrl} size={20} className="shrink-0" />
+        {locked ? <ProtectedMark /> : <Favicon url={originalUrl} size={20} className="shrink-0" />}
         <span className="min-w-0 flex-1">
           <span className={`block truncate text-sm font-medium ${colors.primary}`}>
-            {entry.ogTitle ?? hostOf(originalUrl)}
+            {locked ? protectedTitle(entry) : entry.ogTitle ?? hostOf(originalUrl)}
           </span>
-          <span className={`block truncate text-[11px] ${colors.muted}`}>
-            {hostOf(originalUrl)}
-          </span>
+          {!locked && (
+            <span className={`block truncate text-[11px] ${colors.muted}`}>
+              {hostOf(originalUrl)}
+            </span>
+          )}
         </span>
         {isSpotifyUrl(originalUrl) && (
           <span className="shrink-0 rounded-full bg-[#1DB954] px-2 py-0.5 text-[10px] font-medium text-white">

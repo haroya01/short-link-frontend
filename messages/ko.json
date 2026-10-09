@@ -2455,7 +2455,8 @@
       "openImage": "사진 크게 보기",
       "imageN": "{idx}번째 사진"
     },
-    "featured": "대표 링크"
+    "featured": "대표 링크",
+    "protectedLink": "비밀번호가 필요한 링크"
   },
   "recent": {
     "claimedToast": "{count}개 링크를 계정에 저장했어요"
