@@ -4425,7 +4425,9 @@
     "suggestionsTitle": "Who to follow",
     "suggestionsFriends": "{count, plural, one {Followed by # person you follow} other {Followed by # people you follow}}",
     "suggestionsPopular": "Popular lately",
-    "suggestionsDismiss": "Don't suggest {name}"
+    "suggestionsDismiss": "Don't suggest {name}",
+    "threadMore": "{count} more in this thread",
+    "threadPosition": "Thread part {position}"
   },
   "mentions": {
     "suggestions": "People to mention"

@@ -4425,7 +4425,9 @@
     "suggestionsTitle": "おすすめのアカウント",
     "suggestionsFriends": "フォロー中の{count}人がフォロー",
     "suggestionsPopular": "最近よくフォローされています",
-    "suggestionsDismiss": "{name}を表示しない"
+    "suggestionsDismiss": "{name}を表示しない",
+    "threadMore": "スレッドの続き {count}件",
+    "threadPosition": "スレッド {position}"
   },
   "mentions": {
     "suggestions": "メンションする人"

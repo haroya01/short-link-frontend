@@ -176,6 +176,11 @@ let notes: Note[] = [
       { url: "https://files.mastodon.social/waves.mp3", altText: "파도 소리", contentType: "audio/mpeg" },
     ],
   }),
+  note({ id: 30, body: "헥사고날로 옮긴 지 석 달. 남은 것 세 가지를 적어 둔다.", author: HARUKA, createdAt: "2026-09-28T09:00:00Z" }),
+  note({ id: 31, body: "하나. 테스트가 빨라졌다.", author: HARUKA, createdAt: "2026-09-28T09:00:10Z", inReplyToId: 30 }),
+  note({ id: 32, body: "둘. 경계를 먼저 긋게 됐다.", author: HARUKA, createdAt: "2026-09-28T09:00:20Z", inReplyToId: 31 }),
+  note({ id: 33, body: "셋. 이름 짓는 데 시간을 쓴다.", author: HARUKA, createdAt: "2026-09-28T09:00:30Z", inReplyToId: 32 }),
+  note({ id: 34, body: "셋째가 제일 공감돼요.", author: YUNA, createdAt: "2026-09-29T09:00:00Z", inReplyToId: 30 }),
 ];
 let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
@@ -270,11 +275,30 @@ const QUOTING_POSTS: Record<number, PublicFeedItem[]> = {
   ],
 };
 
-const withQuotes = (n: Note): Note => ({
-  ...n,
-  quoteCount: notes.filter((q) => q.quotedNote?.id === n.id).length + (QUOTING_POSTS[n.id]?.length ?? 0),
-  bookmarkedByMe: bookmarks.includes(n.id),
-});
+// The author's own replies under a note, oldest answer first at each step — a thread written in parts.
+function selfChain(root: Note): Note[] {
+  const chain: Note[] = [];
+  let current = root.id;
+  while (chain.length < 9) {
+    const next = notes
+      .filter((n) => n.inReplyToId === current && n.author.id === root.author.id)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))[0];
+    if (!next) break;
+    chain.push(next);
+    current = next.id;
+  }
+  return chain;
+}
+
+const withQuotes = (n: Note): Note => {
+  const chain = n.inReplyToId === null ? selfChain(n) : [];
+  return {
+    ...n,
+    quoteCount: notes.filter((q) => q.quotedNote?.id === n.id).length + (QUOTING_POSTS[n.id]?.length ?? 0),
+    bookmarkedByMe: bookmarks.includes(n.id),
+    thread: chain.length > 0 ? { total: chain.length + 1, preview: [chain[0]] } : null,
+  };
+};
 
 export function mockQuotingPosts(id: number, page: number): PublicFeedView {
   return { items: page === 0 ? (QUOTING_POSTS[id] ?? []) : [], page, size: 20, hasNext: false };
@@ -617,10 +641,13 @@ export function mockRepost(id: number, on: boolean): { reposted: boolean; repost
 export function mockThread(id: number): NoteThread | null {
   const main = notes.find((n) => n.id === id);
   if (!main) return null;
+  const continuation = selfChain(main);
+  const parts = new Set(continuation.map((n) => n.id));
   return {
     note: withQuotes(main),
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
-    replies: notes.filter((n) => n.inReplyToId === id),
+    replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id)),
+    continuation,
   };
 }
 

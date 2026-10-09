@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { useAuth } from "@/lib/auth";
 import type { Note, NoteFeed, NoteFilterContext } from "@/modules/notes/api/notes";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
-import { NoteCard } from "./note-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { NoteCard, noteHref } from "./note-card";
 
 /** `initial` is the anonymous server render; page 0 is refetched with the session so the viewer's
  *  likes and own like counts fill in. */
@@ -30,6 +31,7 @@ export function NoteList({
   filterContext?: NoteFilterContext;
 }) {
   const t = useTranslations("notes");
+  const locale = useLocale();
   const filters = useNoteFilters();
   const { me } = useAuth();
   const [items, setItems] = useState<Note[]>(initial?.items ?? []);
@@ -86,28 +88,62 @@ export function NoteList({
   return (
     <div>
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
-        {shown.map((note) => (
-          <NoteCard
-            key={note.id}
-            note={note}
-            isNew={fresh.has(note.id)}
-            repostedBy={repostedBy ?? note.repostedBy?.username}
-            onQuoted={onQuoted}
-            showsPin={showsPin}
-            filteredBy={(() => {
-              const verdict = verdicts.get(note.id);
-              return verdict?.action === "warn" ? verdict.phrases : undefined;
-            })()}
-            onChange={(next) => {
-              if (next.pinned !== note.pinned) {
-                reload();
-                return;
-              }
-              setItems((current) => current.map((c) => (c.id === next.id ? next : c)));
-            }}
-            onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}
-          />
-        ))}
+        {shown.map((note) => {
+          const thread = note.thread;
+          const next = thread?.preview[0];
+          const replace = (changed: Note) =>
+            setItems((current) => current.map((c) => (c.id === changed.id ? changed : c)));
+          return (
+            <div key={note.id}>
+              <div className={next ? "relative" : undefined}>
+                {next && (
+                  <span
+                    aria-hidden
+                    className="absolute -bottom-4 left-[17px] top-14 w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
+                  />
+                )}
+                <NoteCard
+                  note={note}
+                  isNew={fresh.has(note.id)}
+                  repostedBy={repostedBy ?? note.repostedBy?.username}
+                  onQuoted={onQuoted}
+                  showsPin={showsPin}
+                  position={next && thread ? `1/${thread.total}` : undefined}
+                  filteredBy={(() => {
+                    const verdict = verdicts.get(note.id);
+                    return verdict?.action === "warn" ? verdict.phrases : undefined;
+                  })()}
+                  onChange={(changed) => {
+                    if (changed.pinned !== note.pinned) {
+                      reload();
+                      return;
+                    }
+                    replace({ ...changed, thread: changed.thread ?? note.thread });
+                  }}
+                  onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}
+                />
+              </div>
+              {next && thread && (
+                <NoteCard
+                  note={next}
+                  onQuoted={onQuoted}
+                  position={`2/${thread.total}`}
+                  onChange={(changed) => replace({ ...note, thread: { ...thread, preview: [changed] } })}
+                  onDelete={() => replace({ ...note, thread: null })}
+                />
+              )}
+              {next && thread && thread.total > 2 && (
+                <BlogLink
+                  href={noteHref(note, locale)}
+                  data-testid={`note-thread-more-${note.id}`}
+                  className="focus-ring mb-3 ml-12 inline-block rounded text-[13px] font-medium text-accent-700 hover:underline dark:text-accent-400"
+                >
+                  {t("threadMore", { count: thread.total - 2 })}
+                </BlogLink>
+              )}
+            </div>
+          );
+        })}
       </div>
       {hasNext && (
         <div className="mt-6 flex justify-center">
