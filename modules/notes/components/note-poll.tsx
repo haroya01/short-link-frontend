@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CircleCheck, Clock, Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -36,7 +37,7 @@ export function NotePollCard({
   const [poll, setPoll] = useState(given);
   useEffect(() => setPoll(given), [given]);
   const { toast } = useToast();
-  const { authenticated, signInWithGoogle } = useAuth();
+  const { authenticated } = useAuth();
   const [picked, setPicked] = useState<number[]>([]);
   const [peeking, setPeeking] = useState(false);
   const [voting, setVoting] = useState(false);
@@ -74,7 +75,7 @@ export function NotePollCard({
 
   function choose(index: number) {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("vote");
       return;
     }
     if (!poll.multiple) {

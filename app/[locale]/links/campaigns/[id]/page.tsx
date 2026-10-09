@@ -12,6 +12,7 @@ import {
   Layers,
   PlayCircle,
   Printer,
+  QrCode,
   Repeat,
   StopCircle,
   ExternalLink,
@@ -33,7 +34,7 @@ import { Link } from "@/i18n/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
@@ -85,7 +86,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return <LinksAuthGate title={t("loginRequired")} />;
+    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
   }
 
   return (

@@ -6,6 +6,7 @@ import { Clock, Loader2, UserCheck, UserPlus, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { ApiError } from "@/lib/api/client";
 import { useToast } from "@/components/ui/toast";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -245,7 +246,7 @@ function RowFollowButton({
   initialFollowing: boolean;
 }) {
   const t = useTranslations("publicPost");
-  const { authenticated, ready, me, signInWithGoogle } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const { toast } = useToast();
   const [following, setFollowing] = useState(initialFollowing);
   const [requested, setRequested] = useState(false);
@@ -255,7 +256,7 @@ function RowFollowButton({
 
   async function toggle() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("follow");
       return;
     }
     if (busy) return;

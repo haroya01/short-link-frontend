@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { Button } from "@/components/ui/button";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { AccountMenu } from "@/components/common/account-menu";
 import { HeaderAvatarSlot } from "@/components/common/header-avatar-slot";
 import { AppsGrid } from "@/components/common/apps-grid";
@@ -97,15 +98,18 @@ export function AppHeader({
   const onBlogHome = BLOG_HOME_PATH.test(pathname);
   const onNotes = NOTES_PATH.test(pathname);
 
-  const mobileWriteCircle = (authed: boolean) => (
-    <ChromeNavLink
-      href={authed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
-      aria-label={t("write")}
-      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
-    >
-      <PenSquare className="h-4 w-4" />
-    </ChromeNavLink>
-  );
+  const writeCircleClass =
+    "focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden";
+  const mobileWriteCircle = (authed: boolean) =>
+    authed ? (
+      <ChromeNavLink href={blogHref("/write/new")} aria-label={t("write")} className={writeCircleClass}>
+        <PenSquare className="h-4 w-4" />
+      </ChromeNavLink>
+    ) : (
+      <button type="button" onClick={() => askToSignIn("write")} aria-label={t("write")} className={writeCircleClass}>
+        <PenSquare className="h-4 w-4" />
+      </button>
+    );
 
   // The auth-dependent right cluster, rendered for a known auth state. Pre-`ready` BOTH variants
   // mount in [data-auth-slot] wrappers (display:contents; the pre-paint hint picks one via CSS), so
@@ -164,7 +168,7 @@ export function AppHeader({
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          {showMenu && (
+          {showMenu && showAuthed !== false && (
             <button
               type="button"
               onClick={toggle}

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, ExternalLink, Globe, Hand, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { EmptyState } from "@/components/common/empty-state";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -113,6 +114,7 @@ function AccountRow({ account, onChange }: { account: RemoteAccount; onChange: (
 /** Search results for @user@server: the account, found the way Mastodon finds one. */
 export function RemoteAccountResult({ query }: { query: string }) {
   const t = useTranslations("notes");
+  const tPrompt = useTranslations("loginPrompt");
   const [account, setAccount] = useState<RemoteAccount | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing" | "disabled">("loading");
 
@@ -144,7 +146,19 @@ export function RemoteAccountResult({ query }: { query: string }) {
         <AccountRow account={account} onChange={setAccount} />
       ) : (
         <p className="py-4 text-[14px] text-slate-500 dark:text-slate-400">
-          {state === "loading" ? t("remoteLookingUp") : state === "disabled" ? t("remoteSignIn") : t("remoteNotFound")}
+          {state === "disabled" ? (
+            <button
+              type="button"
+              onClick={() => askToSignIn("remote")}
+              className="focus-ring rounded font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+            >
+              {tPrompt("remote")}
+            </button>
+          ) : state === "loading" ? (
+            t("remoteLookingUp")
+          ) : (
+            t("remoteNotFound")
+          )}
         </p>
       )}
     </section>

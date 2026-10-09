@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { compactTime } from "@/modules/notes/lib/compact-time";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
 import {
@@ -78,7 +79,7 @@ type Anchor = { left: number; top: number; bottom: number };
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
-  const { authenticated, me, signInWithGoogle } = useAuth();
+  const { authenticated, me } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [confirm, confirmDialog] = useConfirm();
@@ -365,26 +366,26 @@ export function PostHighlights({ postId }: { postId: number }) {
   const commitQuick = useCallback(() => {
     if (!sel) return;
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("highlight");
       return;
     }
     const payload = sel.payload;
     setSel(null);
     window.getSelection()?.removeAllRanges();
     void persist(payload, t("highlightSaved"));
-  }, [sel, authenticated, signInWithGoogle, persist, t]);
+  }, [sel, authenticated, persist, t]);
 
   // Open the memo composer. Auth-gate up front so a Google redirect never discards a written note.
   const openNote = useCallback(() => {
     if (!sel) return;
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("highlight");
       return;
     }
     setNoteFor(sel.payload);
     setSel(null);
     window.getSelection()?.removeAllRanges();
-  }, [sel, authenticated, signInWithGoogle]);
+  }, [sel, authenticated]);
 
   const saveNote = useCallback(
     async (note: string) => {
@@ -479,7 +480,7 @@ export function PostHighlights({ postId }: { postId: number }) {
                 highlight={threadFor}
                 meId={me?.id ?? null}
                 authenticated={authenticated}
-                onSignIn={signInWithGoogle}
+                onSignIn={() => askToSignIn("reply")}
                 onClose={() => setThreadFor(null)}
                 onChanged={refreshHighlights}
                 onDelete={() => void removeHighlight(threadFor)}
@@ -906,7 +907,6 @@ function HighlightThread({
             rows={2}
             compact
             hideToolbar
-            footer={authenticated ? "" : t("highlightReplyLogin")}
           />
           {error && (
             <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">

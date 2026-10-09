@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Library } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listSubscribedSeries } from "@/modules/blog/api/series-subscription";
@@ -10,6 +11,7 @@ import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-
 import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
@@ -19,7 +21,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
  */
 export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   const t = useTranslations("publicFeed");
-  const { ready, authenticated, signInWithGoogle } = useAuth();
+  const { ready, authenticated } = useAuth();
   const [series, setSeries] = useState<PublicSeriesCard[] | null>(null);
   // 구독한 시리즈를 작가별로 거르는 필터 — 팔로잉 탭과 동일한 아바타 칩 패턴.
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
@@ -75,20 +77,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   if (!authenticated) {
     return (
       <ReadingShell>
-        <FeedEmpty
-          mark
-          title={t("seriesTabSignedOut")}
-          action={
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
-                {t("seriesTabSignIn")}
-              </button>
-              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
-                {t("followingBrowseLatest")}
-              </Link>
-            </div>
-          }
-        />
+        <SignInEmptyState reason="seriesFeed" icon={Library} />
       </ReadingShell>
     );
   }

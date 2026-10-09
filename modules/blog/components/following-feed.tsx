@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, Users } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -26,6 +26,7 @@ import { onFollowChanged } from "@/modules/blog/lib/consequence-events";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 
 /** Authors that appear in the feed, de-duplicated and in first-seen order — i.e. the followed authors
@@ -80,9 +81,8 @@ const SUGGESTED_AUTHORS = 5;
 
 /**
  * The "피드" tab — posts from authors the signed-in user follows. Authenticated, so it fetches
- * client-side with the access token. Signed-out viewers don't hit a dead end: they get a designed
- * prompt that lets them sign in, keep browsing the latest feed, or follow a suggested author right
- * away (server-fetched, passed in so the panel is meaningful without a round-trip).
+ * client-side with the access token. Signed-out viewers get a sign-in line and suggested authors to
+ * follow (server-fetched, passed in so the panel is meaningful without a round-trip).
  *
  * Signed-in, the right rail (which the recent feed has but this tab lacked) is filled with the context
  * that fits here: the authors you follow (derived from the feed, so no extra request) + suggested
@@ -101,7 +101,7 @@ export function FollowingFeed({
     () => listSuggestedAuthors(SUGGESTED_AUTHORS).then((r) => (r.ok ? r.data : null)),
     String(SUGGESTED_AUTHORS),
   );
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const { prefs } = useTagPrefs();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -230,46 +230,30 @@ export function FollowingFeed({
 
   if (ready && !authenticated) {
     return (
-      <div className="mt-8">
-        <FeedEmpty
-          mark
-          title={t("followingSignedOutTitle")}
-          body={t("followingSignedOut")}
-          action={
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
-                {t("signIn")}
-              </button>
-              {/* Soft-nav back to the public feed — keeps a curious visitor reading instead of bouncing. */}
-              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
-                {t("followingBrowseLatest")}
-              </Link>
-            </div>
-          }
-        >
-          {suggestedAuthors.length > 0 && (
-            <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
-              <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
-              <ul className="flex flex-col gap-1">
-                {suggestedAuthors.map(({ author, postCount }) => (
-                  <AuthorRow
-                    key={author.username}
-                    author={author}
-                    locale={locale}
-                    subtitle={t("railPostCount", { count: postCount })}
-                  />
-                ))}
-              </ul>
-            </section>
-          )}
-          {/* Fallback when the server didn't pass a list (e.g. authenticated cold-start) — self-fetch
-              curators so this never dead-ends. */}
-          {suggestedAuthors.length === 0 && (
-            <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
-              <SuggestedCurators locale={locale} />
-            </section>
-          )}
-        </FeedEmpty>
+      <div className="mt-8 flex flex-col items-center px-6 pb-20 text-center sm:pb-24">
+        <SignInEmptyState reason="followingFeed" icon={Users} className="pb-0" />
+        {suggestedAuthors.length > 0 && (
+          <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
+            <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
+            <ul className="flex flex-col gap-1">
+              {suggestedAuthors.map(({ author, postCount }) => (
+                <AuthorRow
+                  key={author.username}
+                  author={author}
+                  locale={locale}
+                  subtitle={t("railPostCount", { count: postCount })}
+                />
+              ))}
+            </ul>
+          </section>
+        )}
+        {/* Fallback when the server didn't pass a list (e.g. authenticated cold-start) — self-fetch
+            curators so this never dead-ends. */}
+        {suggestedAuthors.length === 0 && (
+          <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
+            <SuggestedCurators locale={locale} />
+          </section>
+        )}
       </div>
     );
   }

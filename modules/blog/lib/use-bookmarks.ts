@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { addBookmark, listBookmarks, removeBookmark } from "@/modules/blog/api/bookmarks";
 import { createSharedSetStore, useSetStore } from "@/modules/blog/lib/shared-set-store";
@@ -23,7 +24,7 @@ const store = createSharedSetStore<string>(async () =>
 );
 
 export function useBookmarks() {
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const set = useSetStore(store, { ready, authenticated });
   const { toast } = useToast();
   const t = useTranslations("publicFeed");
@@ -33,7 +34,7 @@ export function useBookmarks() {
   const toggle = useCallback(
     async (postId: number, username: string, slug: string) => {
       if (!authenticated) {
-        signInWithGoogle();
+        askToSignIn("bookmark");
         return;
       }
       await store.optimisticToggle(
@@ -42,7 +43,7 @@ export function useBookmarks() {
         () => toast(t("bookmarkFailed"), "error"),
       );
     },
-    [authenticated, signInWithGoogle, toast, t],
+    [authenticated, toast, t],
   );
 
   return { isSaved, toggle };
