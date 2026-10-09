@@ -26,20 +26,14 @@ export interface PostView {
   pinOrder: number | null;
   createdAt: string;
   updatedAt: string;
-  /** Moves on every content save. Absent from a server without edit-conflict checks. */
   contentVersion?: number;
 }
 
-/**
- * A content save's conflict check: the server refuses (409 POST_EDIT_CONFLICT) when the post moved
- * past `baseVersion`, unless `overwrite`. Both omitted — an older server — and the save just writes.
- */
 export interface EditGuard {
   baseVersion?: number;
   overwrite?: boolean;
 }
 
-/** A body with the version it was read or written at — null when the server doesn't send one. */
 export interface VersionedBlocks {
   blocks: PostBlockView[];
   contentVersion: number | null;
@@ -166,7 +160,6 @@ export function restoreRevision(id: number, versionNumber: number): Promise<Post
   });
 }
 
-/** The body with `X-Content-Version`, read in the same transaction — the editor's base version. */
 export async function getBlocks(id: number): Promise<VersionedBlocks> {
   if (authoringMocks) return authoringMocks.mockGetBlocks(id);
   const { text, headers } = await requestText(`/api/v1/posts/${id}/blocks`, { method: "GET" });

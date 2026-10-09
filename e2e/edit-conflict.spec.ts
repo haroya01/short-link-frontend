@@ -1,11 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-/**
- * Another device saving the same post, in MOCK-ON. The authoring mock keeps a content version per post
- * and answers a save on a stale base with 409 POST_EDIT_CONFLICT, as the server does (backend #795).
- * `window.__kurlMockAuthoring.editElsewhere` plays the other device. Mock state lives for the SPA
- * session, so the draft is opened from the list with a soft navigation.
- */
+// Mock state lives only for the SPA session, so the draft is opened from the list by soft navigation.
 test.use({ viewport: { width: 1280, height: 900 } });
 
 const DRAFT = "작성 중인 초안";

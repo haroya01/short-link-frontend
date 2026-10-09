@@ -132,7 +132,6 @@ export function mockCreatePost(payload: {
   return p;
 }
 
-// The server's edit-conflict rule (backend #795): a save with a stale baseVersion writes nothing.
 function checkEdit(id: number, guard: EditGuard) {
   const current = posts.get(id)?.contentVersion ?? 0;
   if (guard.baseVersion !== undefined && !guard.overwrite && guard.baseVersion !== current) {
@@ -214,7 +213,6 @@ export async function mockReplaceBlocks(
   return { blocks: next, contentVersion: markEdited(id).contentVersion ?? null };
 }
 
-/** Another device saves this post — e2e reaches it as `window.__kurlMockAuthoring.editElsewhere`. */
 export function mockEditElsewhere(id: number, edit: { title?: string; body?: string }) {
   if (edit.body !== undefined) blocks.set(id, [{ id: 1, type: "PARAGRAPH", content: edit.body, blockOrder: 0 }]);
   markEdited(id, edit.title !== undefined ? { title: edit.title } : {});

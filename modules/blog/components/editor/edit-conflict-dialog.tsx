@@ -6,10 +6,6 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 
-/**
- * Another device saved this post while it was being edited here. The writer picks which version stays;
- * Escape and the backdrop don't decide for them, since either answer replaces something.
- */
 export function EditConflictDialog({
   open,
   onLoadLatest,

@@ -56,7 +56,6 @@ function sameBlocks(server: PostBlockView[], sent: BlockInput[]): boolean {
   );
 }
 
-/** The writer's own unsaved version, kept on this device when they take another device's instead. */
 export type KeptDraft = { title: string; markdown: string; keptAt: string };
 const keptKey = (postId: number) => `kurl:editor-kept:${postId}`;
 const isKept = (v: unknown): v is KeptDraft | null =>
@@ -158,8 +157,6 @@ export function usePostEditor(
   const historyGuarded = useRef(false);
   const leavingAnyway = useRef(false);
   const leavingSchedule = useRef(false);
-  // The server content version this editor's content stands on. Saves send it as baseVersion and the
-  // server refuses (409) when another device saved in between. Null on a server without versions.
   const baseVersion = useRef<number | null>(null);
   const overwriteNext = useRef(false);
   const [conflict, setConflict] = useState(false);
@@ -222,16 +219,14 @@ export function usePostEditor(
   };
 
   const load = useCallback(async () => {
-    // A new post created in this session has no route id, but reloads (revision restore, conflict) still
-    // need it.
     const id = postId ?? currentDraft.current.post?.id ?? null;
     if (id == null || !Number.isFinite(id)) return;
     setLoading(true);
     setError(null);
     setLoadFailed(false);
     try {
-      // The base is the blocks read's version (same read transaction as the body) — not the post's,
-      // which a save landing between the two reads could move ahead of the body shown here.
+      // The base must be the blocks read's version (same read as the body), not the post's: a save landing
+      // between the two reads moves the post ahead of the body shown here.
       const [p, { blocks, contentVersion }] = await Promise.all([getPost(id), getBlocks(id)]);
       baseVersion.current = contentVersion;
       currentDraft.current.post = p;
@@ -304,8 +299,7 @@ export function usePostEditor(
     return creating.current;
   }
 
-  // A save whose answer was lost and goes again on the same base meets its own write as a 409 — the
-  // server can't tell. It was ours when the server already holds everything this save carries.
+  // A save retried after a lost answer meets its own write as a 409; the server can't tell the two apart.
   async function alreadyOnServer(
     id: number,
     meta: { title: string; tags: string[]; excerpt: string; ogImageUrl: string; slug?: string },
@@ -370,7 +364,7 @@ export function usePostEditor(
           // Slug is editable only while DRAFT (frozen once public).
           const sendsSlug = post.status === "DRAFT" && isSavableSlug(slugPart);
           const blocks = markdownToBlocks(md);
-          // The writer's "overwrite" rides only on this save's first write; the next chains on its version.
+          // overwrite goes on this save's first write only; the next write chains on its answer's version.
           const overwrite = overwriteNext.current;
           overwriteNext.current = false;
           let slugRejection: unknown = null;
@@ -427,8 +421,6 @@ export function usePostEditor(
         }
       } catch (e) {
         if (isEditConflict(e)) {
-          // Another device saved this post since our base; the refused write changed nothing. Autosave
-          // stops until the writer picks a side.
           autoRetryBlocked.current = true;
           setConflict(true);
           return false;
@@ -680,7 +672,6 @@ export function usePostEditor(
     return saved && changeStatus("backToDraft");
   }
 
-  // The conflict's two ways out. Taking the latest keeps the writer's own version on this device first.
   async function loadLatest() {
     const current = currentDraft.current.post;
     if (current == null) return;
@@ -722,8 +713,6 @@ export function usePostEditor(
     setKept(null);
   }
 
-  // Back on this tab with nothing unsaved: if another device saved meanwhile, show its version now
-  // rather than meet it as a conflict on the next edit.
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState !== "visible") return;
