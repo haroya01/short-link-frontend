@@ -98,3 +98,13 @@ test("a scheduled post can't be saved without a title", async ({ page }) => {
   await page.getByRole("dialog", { name: "저장하지 않은 변경이 있어요" }).getByRole("button", { name: "나가기" }).click();
   await expect(listRow(page, SCHEDULED)).toBeVisible({ timeout: 30_000 });
 });
+
+test("a scheduled post whose title was emptied can still be taken off the schedule", async ({ page }) => {
+  await openFromList(page, SCHEDULED);
+  await page.getByRole("textbox", { name: "제목" }).fill("");
+  await page.getByRole("button", { name: "글 설정" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "예약 취소" }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "발행", exact: true })).toBeVisible();
+  await expect(page.getByText("예약한 글은 제목을 비울 수 없어요", { exact: false })).toHaveCount(0);
+});

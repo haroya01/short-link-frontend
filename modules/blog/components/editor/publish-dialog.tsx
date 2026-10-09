@@ -55,6 +55,7 @@ export function PublishDialog({
   onSave,
   onChangeStatus,
   onSchedule,
+  onCancelSchedule,
 }: {
   open: boolean;
   onClose: () => void;
@@ -105,6 +106,7 @@ export function PublishDialog({
   onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
   /** Resolves true once the post is parked for a future publish — the dialog closes only then. */
   onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  onCancelSchedule: () => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
   const locale = useLocale();
@@ -646,10 +648,7 @@ export function PublishDialog({
                 if ((await onSave()) === false) return;
                 await onChangeStatus("republish", { shortenLinks: enabledLinks });
               }}
-              onCancelSchedule={async () => {
-                if ((await onSave()) === false) return;
-                await onChangeStatus("backToDraft");
-              }}
+              onCancelSchedule={() => void onCancelSchedule()}
             />
           </div>
           </div>

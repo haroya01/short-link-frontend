@@ -374,4 +374,17 @@ describe("a scheduled post keeps its title", () => {
     expect(editor.error).toBe("scheduledTitleRequired");
     expect(api.updatePostMetadata).not.toHaveBeenCalled();
   });
+
+  it("still lets a scheduled post with no title go back to draft, saving the edits first", async () => {
+    api.getPost.mockResolvedValue({ ...POST, title: "", status: "SCHEDULED", scheduledAt: "2099-01-01T00:00:00Z" });
+    api.backToDraftPost.mockResolvedValue({ ...POST, title: "", status: "DRAFT" });
+    await mount();
+    await act(async () => { editor.setMarkdown("Edited while scheduled"); });
+    let cancelled: boolean | undefined;
+    await act(async () => { cancelled = await editor.cancelSchedule(); });
+    expect(cancelled).toBe(true);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Edited while scheduled" }]);
+    expect(api.backToDraftPost).toHaveBeenCalledWith(16);
+    expect(api.replaceBlocks.mock.invocationCallOrder[0]).toBeLessThan(api.backToDraftPost.mock.invocationCallOrder[0]);
+  });
 });

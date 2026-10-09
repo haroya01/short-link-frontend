@@ -127,6 +127,7 @@ export function usePostEditor(
   const creating = useRef<Promise<PostView> | null>(null);
   const historyGuarded = useRef(false);
   const leavingAnyway = useRef(false);
+  const leavingSchedule = useRef(false);
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -282,7 +283,7 @@ export function usePostEditor(
           }
           const post = currentDraft.current.post;
           if (post == null) return false;
-          if (post.status === "SCHEDULED" && !title.trim()) {
+          if (post.status === "SCHEDULED" && !title.trim() && !leavingSchedule.current) {
             setError(t("scheduledTitleRequired"));
             return false;
           }
@@ -567,6 +568,16 @@ export function usePostEditor(
     }
   }
 
+  // Saves pending edits first, like every lifecycle action. The post becomes a draft, so the
+  // scheduled-title rule doesn't hold this save back.
+  async function cancelSchedule(): Promise<boolean> {
+    leavingSchedule.current = true;
+    const saved = await save().finally(() => {
+      leavingSchedule.current = false;
+    });
+    return saved && changeStatus("backToDraft");
+  }
+
   async function restoreRevision(versionNumber: number) {
     if (post == null || busy) return;
     if (!(await confirm({ title: t("revisionRestoreConfirm"), confirmLabel: t("revisionRestore") }))) return;
@@ -641,6 +652,7 @@ export function usePostEditor(
     ensurePost,
     changeStatus,
     schedule,
+    cancelSchedule,
     restoreRevision,
     remove,
     confirmDialog,
