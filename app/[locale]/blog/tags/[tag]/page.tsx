@@ -22,6 +22,8 @@ import { TaggedNotes } from "@/modules/notes/components/tagged-notes";
 
 export const revalidate = 30;
 
+const RAIL_AUTHORS = 5;
+
 // Same absolute-origin constant as the feed home (and sitemap.ts) — metadata canonicals must be
 // absolute on the blog host, not the kurl.me metadataBase the root layout sets.
 const BLOG_URL =
@@ -90,7 +92,7 @@ export default async function TagFeedPage({
   const [feedResult, tagsResult, authorsResult] = await Promise.all([
     notesView ? null : listFeedByTag(decoded, sort, 0, 24),
     listPopularTags(20),
-    listSuggestedAuthors(5),
+    listSuggestedAuthors(RAIL_AUTHORS),
   ]);
   const items = feedResult?.ok ? feedResult.data.items : [];
   const hasNext = feedResult?.ok ? feedResult.data.hasNext : false;
@@ -144,7 +146,11 @@ export default async function TagFeedPage({
           <ReadingShell
             className="mt-8"
             // Tags live in the strip above now; the rail carries author discovery only.
-            rail={hasRail ? <DiscoveryRail locale={locale} tags={[]} authors={authors} /> : undefined}
+            rail={
+              hasRail ? (
+                <DiscoveryRail locale={locale} tags={[]} authors={authors} authorLimit={RAIL_AUTHORS} />
+              ) : undefined
+            }
           >
             {/* Keyed by topic so only the post list crossfades when switching topics (soft nav) — the
                 title/filter/rail above stay put. */}

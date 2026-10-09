@@ -4,9 +4,17 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type React
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
-import type { FeedSort, PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
+import {
+  listFeedByTag,
+  listPublicFeed,
+  searchPublicFeed,
+  type FeedSort,
+  type PublicFeedItem,
+  type PublicFeedView,
+} from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
+import { useViewerId } from "@/modules/blog/lib/use-viewer-list";
 
 const PAGE_SIZE = 24;
 // 이 시간을 넘긴 세션 스냅샷은 되살리지 않고 새로 시작한다(오래 열려 있던 탭의 낡은 피드 방지).
@@ -14,7 +22,13 @@ const RESTORE_TTL_MS = 30 * 60 * 1000;
 
 const itemKey = (i: PublicFeedItem) => `${i.author.username}/${i.slug}`;
 
-type FeedSnapshot = { items: PublicFeedItem[]; page: number; hasNext: boolean; savedAt: number };
+type FeedSnapshot = {
+  items: PublicFeedItem[];
+  page: number;
+  hasNext: boolean;
+  savedAt: number;
+  viewer?: number | null;
+};
 
 // 재마운트(주로 글 상세 → 뒤로가기) 시, sessionStorage 에 저장해 둔 이 피드의 로드했던 페이지들을
 // 복원한다. page 0 시드는 서버 최신본을 그대로 두고 그 뒤 tail 만 이어 붙여, 목록이 24개로 접히며
@@ -23,6 +37,7 @@ function restoreFeed(
   feedKey: string,
   seedItems: PublicFeedItem[],
   seedHasNext: boolean,
+  viewer: number | null,
 ): { items: PublicFeedItem[]; page: number; hasNext: boolean } | null {
   if (typeof window === "undefined") return null;
   try {
@@ -34,7 +49,8 @@ function restoreFeed(
       !Array.isArray(snap.items) ||
       snap.items.length <= seedItems.length ||
       typeof snap.savedAt !== "number" ||
-      Date.now() - snap.savedAt > RESTORE_TTL_MS
+      Date.now() - snap.savedAt > RESTORE_TTL_MS ||
+      (snap.viewer ?? null) !== viewer
     ) {
       return null;
     }
@@ -116,42 +132,60 @@ export function FeedInfinite({
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   // 진행 중이던 loadMore 응답이 필터 전환 뒤 도착해 새 피드에 섞이지 않게 하는 세대 토큰.
   const requestGen = useRef(0);
-  const feedKeyRef = useRef(feedKey);
+  const viewer = useViewerId();
+  const settled = useRef<string | null>(null);
 
-  // 재마운트 시 이 피드의 이전 페이지들을 세션 스냅샷에서 복원한다. 하이드레이션 불일치를 피하려
-  // 상태는 SSR 시드로 시작하고, 마운트 후에만 목록을 늘린다(이후 필터 변경은 아래 reset effect 담당).
+  // 시드는 서버가 익명으로 받은 page 0 이다. 누가 읽는지 정해지면 이 피드·독자에 맞춘다: 첫 마운트면
+  // 같은 독자가 남긴 세션 스냅샷에서 이전 페이지들을 복원하고(하이드레이션 불일치를 피하려 상태는 SSR
+  // 시드로 시작), 필터가 바뀌었으면 page 0 으로 되돌린다. 로그인 독자면 page 0 을 토큰을 실어 다시 받아
+  // 바꾼다 — 서버가 그 독자가 차단·뮤트한 작가와 그 독자를 차단한 작가를 빼 준다.
   useEffect(() => {
-    const restored = restoreFeed(feedKey, initialItems, initialHasNext);
-    if (restored) {
-      setItems(restored.items);
-      setPage(restored.page);
-      setHasNext(restored.hasNext);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // 필터/정렬이 바뀌면(소프트 nav, 리마운트 없음) 시드가 교체된다 — 새 피드의 page 0 으로 초기화하고
-  // 세대 토큰을 올려 진행 중이던 이전 필터의 페이지 응답을 무효화한다. (마운트는 위 복원 effect 가 담당)
-  useEffect(() => {
-    if (feedKeyRef.current === feedKey) return;
-    feedKeyRef.current = feedKey;
+    if (viewer === undefined) return;
+    const settle = `${feedKey}|${viewer ?? ""}`;
+    if (settled.current === settle) return;
+    const first = settled.current === null;
+    settled.current = settle;
     requestGen.current += 1;
-    setItems(initialItems);
-    setPage(0);
-    setHasNext(initialHasNext);
+    const gen = requestGen.current;
+    const restored = first ? restoreFeed(feedKey, initialItems, initialHasNext, viewer) : null;
+    setItems(restored?.items ?? initialItems);
+    setPage(restored?.page ?? 0);
+    setHasNext(restored?.hasNext ?? initialHasNext);
     setError(false);
-  }, [feedKey, initialItems, initialHasNext]);
+    if (viewer === null) return;
+    const q = query?.trim();
+    const firstPage = tag
+      ? listFeedByTag(tag, sort, 0, PAGE_SIZE)
+      : q
+        ? searchPublicFeed(q, sort, 0, PAGE_SIZE, lang)
+        : listPublicFeed(sort, 0, PAGE_SIZE, lang);
+    firstPage
+      .then((res) => {
+        if (gen !== requestGen.current || !res.ok) return;
+        const fresh = res.data.items;
+        const seen = new Set(fresh.map(itemKey));
+        setItems((current) => [
+          ...fresh,
+          ...current.slice(initialItems.length).filter((i) => !seen.has(itemKey(i))),
+        ]);
+        if (!restored) setHasNext(res.data.hasNext);
+      })
+      .catch(() => {});
+    // query·tag·sort·lang 은 feedKey 에 들어 있다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewer, feedKey, initialItems, initialHasNext]);
 
   // 로드한 페이지 스냅샷을 세션에 저장해 뒤로가기 복원에 쓴다. page 0(추가 로드 전)은 저장 불필요.
+  // 독자를 함께 적어, 다른 독자(로그인 전후 포함)의 목록을 되살리지 않는다.
   useEffect(() => {
     if (typeof window === "undefined" || page === 0) return;
     try {
-      const snapshot: FeedSnapshot = { items, page, hasNext, savedAt: Date.now() };
+      const snapshot: FeedSnapshot = { items, page, hasNext, savedAt: Date.now(), viewer: viewer ?? null };
       window.sessionStorage.setItem(feedKey, JSON.stringify(snapshot));
     } catch {
       // 용량 초과·스토리지 비활성: 복원은 best-effort 이므로 조용히 무시한다.
     }
-  }, [feedKey, items, page, hasNext]);
+  }, [feedKey, items, page, hasNext, viewer]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasNext) return;
