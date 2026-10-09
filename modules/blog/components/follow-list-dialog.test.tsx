@@ -10,6 +10,8 @@ const mocks = vi.hoisted(() => ({
   listFollowing: vi.fn(),
   followUser: vi.fn(),
   unfollowUser: vi.fn(),
+  listBlockedUsers: vi.fn(),
+  me: { username: "dohyun" } as { id?: number; username: string },
 }));
 
 vi.mock("next-intl", () => ({
@@ -17,7 +19,7 @@ vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}`,
 }));
 vi.mock("@/lib/auth", () => ({
-  useAuth: () => ({ authenticated: true, ready: true, me: { username: "dohyun" }, signInWithGoogle: vi.fn() }),
+  useAuth: () => ({ authenticated: true, ready: true, me: mocks.me, signInWithGoogle: vi.fn() }),
 }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/hooks/use-focus-trap", () => ({ useFocusTrap: () => {} }));
@@ -104,5 +106,21 @@ describe("the followers list", () => {
     await act(async () => rowButton("yuna").click());
     expect(rowButton("yuna").textContent).toBe("publicPost.follow");
     expect(mocks.toast).toHaveBeenCalledWith("publicPost.followError", "error");
+  });
+});
+
+describe("someone else's followers list", () => {
+  it("leaves out people I blocked", async () => {
+    mocks.me = { id: 1, username: "dohyun" };
+    mocks.listBlockedUsers.mockResolvedValue([{ id: 9, username: "mallory", avatarUrl: null }]);
+    mocks.listFollowers.mockResolvedValue({
+      items: [person(1, "haneul"), person(9, "mallory")],
+      page: 0,
+      size: 20,
+      hasNext: false,
+    });
+    await open();
+    expect(rows().map((li) => li.querySelector("a")?.textContent)).toEqual(["@haneul"]);
+    mocks.me = { username: "dohyun" };
   });
 });

@@ -7,9 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
-import { useConfirm } from "@/components/ui/use-confirm";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
-import { blockAuthor, unblockAuthor, useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import {
   getMuteStatus,
   getRepostVisibility,
@@ -19,6 +17,7 @@ import {
 } from "@/modules/notes/api/notes";
 import { MuteDialog } from "./mute-dialog";
 import { NoteListMembershipDialog } from "./note-list-membership-dialog";
+import { useBlockAuthor } from "./use-block-author";
 
 const UNKNOWN = { following: false, count: 0, countHidden: false };
 
@@ -27,8 +26,7 @@ export function AuthorMoreMenu({ username }: { username: string }) {
   const { toast } = useToast();
   const { authenticated, me } = useAuth();
   const [follow] = useFollowShared(username, UNKNOWN);
-  const blocked = useBlockedNames().has(username);
-  const [confirm, confirmDialog] = useConfirm();
+  const { blocked, block, unblock, confirmDialog } = useBlockAuthor(username);
   const [hidden, setHidden] = useState<boolean | null>(null);
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
@@ -72,33 +70,6 @@ export function AuthorMoreMenu({ username }: { username: string }) {
       toast(t("unmutedToast", { username }));
     } catch {
       toast(t("muteFailed"), "error");
-    }
-  }
-
-  async function block() {
-    setOpen(false);
-    const ok = await confirm({
-      title: t("blockTitle", { username }),
-      description: t("blockHint"),
-      confirmLabel: t("block"),
-      destructive: true,
-    });
-    if (!ok) return;
-    try {
-      await blockAuthor(username);
-      toast(t("blockedToast", { username }));
-    } catch {
-      toast(t("blockFailed"), "error");
-    }
-  }
-
-  async function unblock() {
-    setOpen(false);
-    try {
-      await unblockAuthor(username);
-      toast(t("unblockedToast", { username }));
-    } catch {
-      toast(t("unblockFailed"), "error");
     }
   }
 
@@ -169,7 +140,10 @@ export function AuthorMoreMenu({ username }: { username: string }) {
           <button
             type="button"
             role="menuitem"
-            onClick={blocked ? unblock : block}
+            onClick={() => {
+              setOpen(false);
+              void (blocked ? unblock() : block());
+            }}
             className={cn(item, !blocked && "text-red-600 dark:text-red-400")}
           >
             {blocked ? t("unblock") : t("blockMenu")}
