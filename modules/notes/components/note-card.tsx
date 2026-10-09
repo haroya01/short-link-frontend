@@ -18,6 +18,7 @@ import {
   deleteNote,
   editNote,
   NOTE_MAX_LENGTH,
+  NOTE_MAX_WARNING_LENGTH,
   setNoteBookmark,
   setConversationMuted,
   setNoteLike,
@@ -95,6 +96,9 @@ export function NoteCard({
   const [showingHistory, setShowingHistory] = useState(false);
   const [filterOpened, setFilterOpened] = useState(false);
   const [draft, setDraft] = useState(note.body);
+  const [warns, setWarns] = useState(false);
+  const [warning, setWarning] = useState("");
+  const [sensitive, setSensitive] = useState(false);
   const [busy, setBusy] = useState(false);
   const [liked, setLiked] = useState(note.likedByMe === true);
   const [likeCount, setLikeCount] = useState(note.likeCount);
@@ -166,11 +170,23 @@ export function NoteCard({
     }
   }
 
+  function startEditing() {
+    setDraft(note.body);
+    setWarns(note.contentWarning != null);
+    setWarning(note.contentWarning ?? "");
+    setSensitive(note.sensitive === true);
+    setEditing(true);
+  }
+
   async function save() {
     if (busy || noteLength(draft) > NOTE_MAX_LENGTH) return;
     setBusy(true);
     try {
-      const saved = await editNote(note.id, draft);
+      const saved = await editNote(note.id, {
+        body: draft,
+        contentWarning: warns ? warning.trim() : "",
+        sensitive: note.media.length > 0 && sensitive,
+      });
       onChange?.(saved);
       setEditing(false);
     } finally {
@@ -324,7 +340,7 @@ export function NoteCard({
                   conversationMuted={conversationMuted}
                   onConversationMute={toggleConversationMute}
                   onConnect={() => setConnecting(true)}
-                  onEdit={mine ? () => setEditing(true) : undefined}
+                  onEdit={mine ? startEditing : undefined}
                   onDelete={mine ? remove : undefined}
                   pinned={note.pinned === true}
                   onPin={mine && note.inReplyToId === null ? togglePin : undefined}
@@ -339,7 +355,7 @@ export function NoteCard({
             </div>
           </header>
 
-          {note.contentWarning && (
+          {note.contentWarning && !editing && (
             <div
               className={cn(
                 "mt-1.5 flex items-center gap-2 rounded-surface bg-slate-100 py-1.5 pl-3 pr-1.5 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
@@ -371,6 +387,16 @@ export function NoteCard({
             <div className={emphasis ? undefined : "mt-1"}>
               {editing ? (
                 <div>
+                  {warns && (
+                    <input
+                      value={warning}
+                      onChange={(e) => setWarning(e.target.value)}
+                      maxLength={NOTE_MAX_WARNING_LENGTH}
+                      placeholder={t("warningPlaceholder")}
+                      aria-label={t("warningLabel")}
+                      className="focus-ring mb-1.5 w-full rounded-surface bg-slate-100 px-3 py-1.5 text-[15px] font-medium text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+                    />
+                  )}
                   <textarea
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
@@ -380,7 +406,41 @@ export function NoteCard({
                     className="focus-ring max-h-[60vh] min-h-[4.5lh] w-full resize-none rounded-surface border border-slate-300 bg-white px-3 py-2 text-[15px] leading-relaxed text-slate-900 [field-sizing:content] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                   />
                   <div className="mt-2 flex items-center justify-end gap-2">
-                    <NoteLengthRing length={noteLength(draft)} className="mr-auto" />
+                    <div className="-ml-1.5 mr-auto flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setWarns((on) => !on)}
+                        aria-pressed={warns}
+                        aria-label={t("warningToggle")}
+                        title={t("warningToggle")}
+                        className={cn(
+                          "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
+                          warns
+                            ? "text-slate-900 dark:text-slate-100"
+                            : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+                        )}
+                      >
+                        <TriangleAlert className="h-5 w-5" strokeWidth={warns ? 2.25 : 1.75} aria-hidden />
+                      </button>
+                      {note.media.length > 0 && !warns && (
+                        <button
+                          type="button"
+                          onClick={() => setSensitive((on) => !on)}
+                          aria-pressed={sensitive}
+                          aria-label={t("sensitiveToggle")}
+                          title={t("sensitiveToggle")}
+                          className={cn(
+                            "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
+                            sensitive
+                              ? "text-slate-900 dark:text-slate-100"
+                              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+                          )}
+                        >
+                          <EyeOff className="h-5 w-5" strokeWidth={sensitive ? 2.25 : 1.75} aria-hidden />
+                        </button>
+                      )}
+                    </div>
+                    <NoteLengthRing length={noteLength(draft)} />
                     <button
                       type="button"
                       onClick={() => {

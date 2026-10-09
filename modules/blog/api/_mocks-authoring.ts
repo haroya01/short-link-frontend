@@ -139,6 +139,12 @@ export function mockUpdatePostMetadata(
     tags?: string[];
   },
 ): PostView {
+  if (payload.slug !== undefined) {
+    if (payload.slug.length < 2) throw new ApiError(400, { status: 400, detail: "slug length 2~200" });
+    if ([...posts.values()].some((p) => p.id !== id && p.slug === payload.slug)) {
+      throw new ApiError(409, { status: 409, code: "SLUG_CONFLICT" });
+    }
+  }
   const patch: Partial<PostView> = {};
   if (payload.title !== undefined) patch.title = payload.title;
   if (payload.slug !== undefined) patch.slug = payload.slug;

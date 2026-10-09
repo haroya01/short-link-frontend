@@ -5,12 +5,13 @@ import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, X } from 
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import type { PostStatus } from "@/modules/blog/api/posts";
-import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
+import { POST_IMAGE_TYPES, postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
+import { isSavableSlug } from "@/modules/blog/lib/slug";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useAuth } from "@/lib/auth";
@@ -54,6 +55,7 @@ export function PublishDialog({
   onSave,
   onChangeStatus,
   onSchedule,
+  onCancelSchedule,
 }: {
   open: boolean;
   onClose: () => void;
@@ -104,6 +106,7 @@ export function PublishDialog({
   onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
   /** Resolves true once the post is parked for a future publish — the dialog closes only then. */
   onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  onCancelSchedule: () => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
   const locale = useLocale();
@@ -114,6 +117,7 @@ export function PublishDialog({
   // 실제 발행 주소(blog.kurl.me/@user/…)를 보여준다 — 이전 표기 "kurl.me/{slug}" 는 단축링크
   // 도메인이라 발행되는 URL 과 달랐다. dev(path-based)에선 /blog-preview/@user/… 로 그대로 표시.
   const addressPrefix = blogHref(`/@${me?.username ?? ""}/`).replace(/^https?:\/\//, "");
+  const slugInvalid = status === "DRAFT" && !isSavableSlug(slug);
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const tagsFieldRef = useRef<HTMLDivElement>(null);
@@ -283,7 +287,7 @@ export function PublishDialog({
               <input
                 ref={fileRef}
                 type="file"
-                accept="image/*"
+                accept={POST_IMAGE_TYPES.join(",")}
                 className="hidden"
                 onChange={(e) => {
                   const f = e.target.files?.[0];
@@ -456,19 +460,29 @@ export function PublishDialog({
                   hint={status === "DRAFT" ? t("slugFreezeWarn") : undefined}
                 >
                   {status === "DRAFT" ? (
-                    <div className="flex items-center gap-1.5">
-                      <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
-                      <input
-                        type="text"
-                        value={slug}
-                        onChange={(e) => onSlugChange(e.target.value)}
-                        maxLength={200}
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[13px] text-slate-700 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:border-accent-500"
-                      />
-                    </div>
+                    <>
+                      <div className="flex items-center gap-1.5">
+                        <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
+                        <input
+                          type="text"
+                          value={slug}
+                          onChange={(e) => onSlugChange(e.target.value)}
+                          maxLength={200}
+                          autoCapitalize="off"
+                          autoCorrect="off"
+                          spellCheck={false}
+                          aria-label={t("slugLabel")}
+                          aria-invalid={slugInvalid}
+                          aria-describedby={slugInvalid ? "publish-slug-invalid" : undefined}
+                          className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[13px] text-slate-700 outline-none transition-colors focus:border-accent-400 aria-[invalid=true]:border-red-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:border-accent-500 dark:aria-[invalid=true]:border-red-500"
+                        />
+                      </div>
+                      {slugInvalid && (
+                        <p id="publish-slug-invalid" className="mt-1 text-[11px] text-red-600 dark:text-red-400">
+                          {t("slugInvalid")}
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <p className="truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
                       {addressPrefix}
@@ -634,10 +648,7 @@ export function PublishDialog({
                 if ((await onSave()) === false) return;
                 await onChangeStatus("republish", { shortenLinks: enabledLinks });
               }}
-              onCancelSchedule={async () => {
-                if ((await onSave()) === false) return;
-                await onChangeStatus("backToDraft");
-              }}
+              onCancelSchedule={() => void onCancelSchedule()}
             />
           </div>
           </div>

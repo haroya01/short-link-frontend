@@ -20,3 +20,8 @@ export function normalizeSlugInput(v: string): string {
 export function slugForSave(v: string): string {
   return normalizeSlugInput(v).replace(/-+$/, "");
 }
+
+/** The backend rejects a slug shorter than 2 characters (`@Size(min = 2)`). */
+export function isSavableSlug(v: string): boolean {
+  return slugForSave(v).length >= 2;
+}
