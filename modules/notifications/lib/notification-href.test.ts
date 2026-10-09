@@ -70,6 +70,38 @@ describe("notificationHref", () => {
     ).toBeUndefined();
   });
 
+  describe("from an account on another server", () => {
+    const remote = { actorId: null, actorUsername: "a@m.social", actorProfileUrl: "https://m.social/@a", actorRemoteId: 42 };
+
+    it("opens the reply on its copy here, which shows the recipient's note above it", () => {
+      expect(
+        notificationHref(item({ ...remote, type: "NOTE_REPLY", noteId: 5, sourceNoteId: 9 }), "me", "en"),
+      ).toMatch(/^\/(blog-preview\/)?remote\/42\/notes\/9$/);
+    });
+
+    it("opens the note that mentions the recipient, or the edited note, on its copy here", () => {
+      expect(notificationHref(item({ ...remote, type: "NOTE_MENTION", noteId: 12 }), "me", "ko")).toMatch(
+        /^\/(blog-preview\/)?remote\/42\/notes\/12$/,
+      );
+      expect(notificationHref(item({ ...remote, type: "NOTE_EDIT", noteId: 17 }), "me", "ko")).toMatch(
+        /^\/(blog-preview\/)?remote\/42\/notes\/17$/,
+      );
+    });
+
+    it("still opens the recipient's own note for a like or a repost", () => {
+      expect(notificationHref(item({ ...remote, type: "NOTE_LIKE", noteId: 5 }), "me", "ko")).toBe("/ko/p/me/notes/5");
+      expect(notificationHref(item({ ...remote, type: "NOTE_REPOST", noteId: 5 }), "me", "ko")).toBe(
+        "/ko/p/me/notes/5",
+      );
+    });
+
+    it("stays unlinked when this server doesn't know the account", () => {
+      expect(
+        notificationHref(item({ ...remote, actorRemoteId: null, type: "NOTE_MENTION", noteId: 12 }), "me", "ko"),
+      ).toBeUndefined();
+    });
+  });
+
   it("opens the note that mentions the recipient, under the member who wrote it", () => {
     expect(notificationHref(item({ type: "NOTE_MENTION", noteId: 12 }), "me", "ko")).toBe(
       "/ko/p/minji/notes/12",

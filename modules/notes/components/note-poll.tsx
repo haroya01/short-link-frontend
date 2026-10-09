@@ -88,6 +88,11 @@ export function NotePollCard({
 
   return (
     <div className="mt-2.5 space-y-2" data-note-poll={noteId}>
+      {!showsResults && !poll.multiple && (
+        <span id={`note-poll-hint-${noteId}`} className="sr-only">
+          {t("pollTapVotes")}
+        </span>
+      )}
       <ul className="space-y-2" aria-label={t("pollLabel")}>
         {poll.options.map((option, index) => {
           if (showsResults) {
@@ -142,6 +147,7 @@ export function NotePollCard({
                 disabled={voting}
                 role={poll.multiple ? "checkbox" : undefined}
                 aria-checked={poll.multiple ? on : undefined}
+                aria-describedby={poll.multiple ? undefined : `note-poll-hint-${noteId}`}
                 className={cn(
                   "focus-ring flex min-h-10 w-full items-center gap-2.5 rounded-surface border px-3 py-2 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 disabled:opacity-60 dark:text-slate-100 dark:hover:bg-slate-900",
                   on ? "border-accent-700 dark:border-accent-400" : "border-slate-200 dark:border-slate-700",
