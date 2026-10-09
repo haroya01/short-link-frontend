@@ -80,6 +80,8 @@ export type PublicProfileEntry = {
   ogImage: string | null;
   clickCount: number | null;
   highlighted: boolean | null;
+  /** LINK behind a password: the server withholds originalUrl and ogImage. Null for blocks. */
+  protected?: boolean | null;
   /**
    * For LINK: null. For TEXT: header text. For IMAGE/EMBED: URL. For EMAIL_FORM / CONTACT_CARD /
    * GALLERY: JSON config — each renderer parses its own shape.

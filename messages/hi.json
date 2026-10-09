@@ -2455,7 +2455,8 @@
       "openImage": "इमेज खोलें",
       "imageN": "इमेज {idx}"
     },
-    "featured": "ख़ास"
+    "featured": "ख़ास",
+    "protectedLink": "पासवर्ड से सुरक्षित लिंक"
   },
   "recent": {
     "claimedToast": "{count} लिंक आपके खाते में सहेजे गए"
