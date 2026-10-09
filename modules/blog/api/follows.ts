@@ -1,13 +1,28 @@
 import { request } from "@/lib/api/client";
-import type { PublicFeedView } from "@/modules/blog/api/public-posts";
+import type { PublicAuthor, PublicFeedView } from "@/modules/blog/api/public-posts";
 import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
+export interface FollowingSeriesNote {
+  id: number;
+  author: PublicAuthor;
+  body: string;
+  contentWarning: string | null;
+  excerpt: string | null;
+  createdAt: string;
+  series: { id: number; slug: string; title: string };
+}
+
+/** A page may carry only notes while hasNext stays true. */
+export interface FollowingFeedView extends PublicFeedView {
+  seriesNotes?: FollowingSeriesNote[];
+}
+
 /** Authenticated — posts from authors the current user follows (the "피드" tab). */
-export function listFollowingFeed(page = 0, size = 24): Promise<PublicFeedView> {
-  if (blogMocks) return Promise.resolve(blogMocks.mockFollowingView());
-  return request<PublicFeedView>(`/api/v1/feed/following?page=${page}&size=${size}`, {
+export function listFollowingFeed(page = 0, size = 24): Promise<FollowingFeedView> {
+  if (blogMocks) return Promise.resolve(blogMocks.mockFollowingFeed(page));
+  return request<FollowingFeedView>(`/api/v1/feed/following?page=${page}&size=${size}`, {
     method: "GET",
   });
 }

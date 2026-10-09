@@ -12,7 +12,9 @@ import type {
   PostStatus,
   PostView,
 } from "@/modules/blog/api/posts";
-import type { SeriesDetailView, SeriesView } from "@/modules/blog/api/series";
+import type { SeriesDetailView, SeriesItemRef, SeriesOwnerItem, SeriesView } from "@/modules/blog/api/series";
+import { ApiError } from "@/lib/api/client";
+import { mockSeriesNoteSummary } from "@/modules/notes/api/_mocks";
 
 const nowIso = () => new Date().toISOString();
 
@@ -186,25 +188,48 @@ export function mockReplaceBlocks(id: number, input: BlockInput[]): PostBlockVie
 
 // ── Series (authoring) ──────────────────────────────────────────────────────
 const series = new Map<number, SeriesView>();
-const seriesPosts = new Map<number, number[]>(); // seriesId → ordered postIds
+const seriesItems = new Map<number, SeriesItemRef[]>(); // seriesId → ordered posts and notes
 let seriesSeq = 8000;
+const MOCK_AUTHOR_ID = 1;
 
 (function seedSeries() {
   const s: SeriesView = {
     id: ++seriesSeq,
     slug: "mock-series",
     title: "로컬 예시 시리즈",
-    postCount: 1,
+    postCount: 0,
+    itemCount: 0,
     createdAt: nowIso(),
     updatedAt: null,
   };
   series.set(s.id, s);
-  seriesPosts.set(s.id, []);
+  seriesItems.set(s.id, []);
+
+  const mixed: SeriesView = {
+    id: ++seriesSeq,
+    slug: "refactoring-diary",
+    title: "리팩터링 일지",
+    postCount: 1,
+    itemCount: 2,
+    createdAt: new Date(Date.now() - 60_000).toISOString(),
+    updatedAt: null,
+  };
+  series.set(mixed.id, mixed);
+  const published = [...posts.values()].find((p) => p.status === "PUBLISHED")!;
+  posts.set(published.id, { ...published, seriesId: mixed.id, seriesOrder: 0 });
+  seriesItems.set(mixed.id, [
+    { type: "POST", id: published.id },
+    { type: "NOTE", id: 40 },
+  ]);
 })();
+
+const postIdsOf = (id: number) =>
+  (seriesItems.get(id) ?? []).filter((ref) => ref.type === "POST").map((ref) => ref.id);
 
 const recount = (id: number): SeriesView => {
   const s = series.get(id)!;
-  const next = { ...s, postCount: (seriesPosts.get(id) ?? []).length, updatedAt: nowIso() };
+  const refs = seriesItems.get(id) ?? [];
+  const next = { ...s, postCount: postIdsOf(id).length, itemCount: refs.length, updatedAt: nowIso() };
   series.set(id, next);
   return next;
 };
@@ -215,16 +240,20 @@ export function mockListSeries(): SeriesView[] {
 
 export function mockGetSeries(id: number): SeriesDetailView {
   const s = series.get(id) ?? { id, slug: `series-${id}`, title: "", postCount: 0, createdAt: nowIso(), updatedAt: null };
-  const ids = seriesPosts.get(id) ?? [];
-  return { series: s, posts: ids.map((pid) => mockGetPost(pid)) };
+  const items = (seriesItems.get(id) ?? []).flatMap<SeriesOwnerItem>((ref) => {
+    if (ref.type === "POST") return [{ type: "POST", post: mockGetPost(ref.id), note: null }];
+    const found = mockSeriesNoteSummary(ref.id);
+    return found ? [{ type: "NOTE", post: null, note: found.summary }] : [];
+  });
+  return { series: s, posts: postIdsOf(id).map((pid) => mockGetPost(pid)), items };
 }
 
 export function mockCreateSeries(payload: { slug: string; title: string }): SeriesDetailView {
   const id = ++seriesSeq;
-  const s: SeriesView = { id, slug: payload.slug, title: payload.title, postCount: 0, createdAt: nowIso(), updatedAt: null };
+  const s: SeriesView = { id, slug: payload.slug, title: payload.title, postCount: 0, itemCount: 0, createdAt: nowIso(), updatedAt: null };
   series.set(id, s);
-  seriesPosts.set(id, []);
-  return { series: s, posts: [] };
+  seriesItems.set(id, []);
+  return { series: s, posts: [], items: [] };
 }
 
 export function mockUpdateSeries(id: number, payload: { title: string; slug: string }): SeriesDetailView {
@@ -233,25 +262,58 @@ export function mockUpdateSeries(id: number, payload: { title: string; slug: str
   return mockGetSeries(id);
 }
 
+function syncPostMembership(id: number) {
+  const ids = postIdsOf(id);
+  for (const p of posts.values()) {
+    const idx = ids.indexOf(p.id);
+    if (idx >= 0) posts.set(p.id, { ...p, seriesId: id, seriesOrder: idx });
+    else if (p.seriesId === id) posts.set(p.id, { ...p, seriesId: null, seriesOrder: null });
+  }
+}
+
+/** The old endpoint refills the post slots in order and leaves notes where they stand. */
 export function mockSetSeriesPosts(id: number, postIds: number[]): SeriesDetailView {
-  const prev = seriesPosts.get(id) ?? [];
-  seriesPosts.set(id, [...postIds]);
-  // Reflect membership on the posts themselves (the real backend owns post.seriesId / seriesOrder).
-  // Dropped members lose their series; current members get this series id + their new order — so a
-  // grouped "시리즈별" view that groups by post.seriesId stays correct after add/remove/reorder.
-  prev.forEach((pid) => {
-    const p = posts.get(pid);
-    if (p && !postIds.includes(pid)) posts.set(pid, { ...p, seriesId: null, seriesOrder: null });
-  });
-  postIds.forEach((pid, i) => {
-    const p = posts.get(pid);
-    if (p) posts.set(pid, { ...p, seriesId: id, seriesOrder: i });
-  });
+  const queue = [...postIds];
+  const next: SeriesItemRef[] = [];
+  for (const ref of seriesItems.get(id) ?? []) {
+    if (ref.type === "NOTE") next.push(ref);
+    else if (queue.length > 0) next.push({ type: "POST", id: queue.shift()! });
+  }
+  seriesItems.set(id, [...next, ...queue.map((pid) => ({ type: "POST" as const, id: pid }))]);
+  syncPostMembership(id);
   recount(id);
   return mockGetSeries(id);
 }
 
+export function mockSetSeriesItems(id: number, items: SeriesItemRef[]): Promise<SeriesDetailView> {
+  for (const ref of items) {
+    if (ref.type !== "NOTE") continue;
+    const found = mockSeriesNoteSummary(ref.id);
+    if (!found) return Promise.reject(new ApiError(404, { status: 404, code: "SERIES_NOTE_NOT_FOUND" }));
+    if (found.authorId !== MOCK_AUTHOR_ID) {
+      return Promise.reject(new ApiError(403, { status: 403, code: "PERMISSION_DENIED" }));
+    }
+    if (found.visibility === "private" || found.visibility === "direct") {
+      return Promise.reject(new ApiError(409, { status: 409, code: "SERIES_NOTE_NOT_SHARED" }));
+    }
+  }
+  const same = (a: SeriesItemRef) => (b: SeriesItemRef) => a.type === b.type && a.id === b.id;
+  for (const [other, refs] of seriesItems) {
+    if (other === id) continue;
+    const kept = refs.filter((ref) => !items.some(same(ref)));
+    if (kept.length !== refs.length) {
+      seriesItems.set(other, kept);
+      syncPostMembership(other);
+      recount(other);
+    }
+  }
+  seriesItems.set(id, items.map((ref) => ({ type: ref.type, id: ref.id })));
+  syncPostMembership(id);
+  recount(id);
+  return Promise.resolve(mockGetSeries(id));
+}
+
 export function mockDeleteSeries(id: number): void {
   series.delete(id);
-  seriesPosts.delete(id);
+  seriesItems.delete(id);
 }

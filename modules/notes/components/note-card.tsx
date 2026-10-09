@@ -36,6 +36,7 @@ import { NoteHistoryDialog } from "./note-history-dialog";
 import { VisibilityIcon } from "./note-visibility";
 import { NoteLinkCard } from "./note-link-card";
 import { NoteQuoteDialog } from "./note-quote-dialog";
+import { NoteSeriesDialog } from "./note-series-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
@@ -100,6 +101,7 @@ export function NoteCard({
   const [likeTouched, setLikeTouched] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [quoting, setQuoting] = useState(false);
+  const [addingToSeries, setAddingToSeries] = useState(false);
   const [bookmarked, setBookmarked] = useState(note.bookmarkedByMe === true);
   const [conversationMuted, setConversationMutedState] = useState(note.conversationMuted === true);
   const tCollections = useTranslations("collections");
@@ -326,6 +328,11 @@ export function NoteCard({
                   onDelete={mine ? remove : undefined}
                   pinned={note.pinned === true}
                   onPin={mine && note.inReplyToId === null ? togglePin : undefined}
+                  onAddToSeries={
+                    mine && !note.author.remoteId && isShareable(note.visibility)
+                      ? () => setAddingToSeries(true)
+                      : undefined
+                  }
                   disabled={busy}
                 />
               )}
@@ -534,6 +541,9 @@ export function NoteCard({
           onClose={() => setConnecting(false)}
           onDone={() => setConnecting(false)}
         />
+      )}
+      {mine && (
+        <NoteSeriesDialog noteId={note.id} open={addingToSeries} onClose={() => setAddingToSeries(false)} />
       )}
       <NoteQuoteDialog
         quoted={quoting ? { note } : null}
@@ -816,6 +826,7 @@ function NoteMenu({
   onDelete,
   pinned,
   onPin,
+  onAddToSeries,
   disabled,
 }: {
   bookmarked: boolean;
@@ -827,6 +838,7 @@ function NoteMenu({
   onDelete?: () => void;
   pinned: boolean;
   onPin?: () => void;
+  onAddToSeries?: () => void;
   disabled: boolean;
 }) {
   const t = useTranslations("notes");
@@ -912,6 +924,19 @@ function NoteMenu({
               }}
             >
               {pinned ? t("unpin") : t("pin")}
+            </button>
+          )}
+          {onAddToSeries && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onAddToSeries();
+              }}
+            >
+              {t("addToSeries")}
             </button>
           )}
           {onEdit && (

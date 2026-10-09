@@ -33,6 +33,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
+import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib/series-items";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
 
@@ -161,10 +162,11 @@ export default async function PublicPostPage({
   const eyebrow = result.data.series ? result.data.series.title : (post.tags[0] ?? null);
   // For a series post, pull the full ordered episode list so the banner can show the whole arc with
   // the current part highlighted (the post payload only carries position/total + prev/next).
-  const seriesEpisodes =
+  const seriesNav = result.data.series ? postSeriesNav(result.data.series) : null;
+  const episodes =
     result.data.series &&
     (await findPublicSeries(author.username, result.data.series.slug).then((r) =>
-      r.ok ? r.data.posts.map((p) => ({ slug: p.slug, title: p.title })) : [],
+      r.ok ? seriesEpisodes(seriesEntries(r.data), author.username, locale) : [],
     ));
 
   // Article schema — the og:article tags above only feed social unfurls; Google's article rich
@@ -263,7 +265,7 @@ export default async function PublicPostPage({
       {/* 시리즈 회차 스와이프 — 시리즈 소속 글에서만(프리뷰 제외) 본문 컬럼을 감싸 좌우 스와이프로
           이전/다음 회차 이동. 시리즈가 없으면 SeriesSwipe 는 렌더되지 않는다(아래 분기). */}
       <SeriesSwipe
-        series={result.data.series ?? undefined}
+        series={seriesNav ?? undefined}
         username={author.username}
         locale={locale}
       >
@@ -384,11 +386,11 @@ export default async function PublicPostPage({
         </div>
       )}
 
-      {result.data.series && (
+      {seriesNav && (
         <SeriesNav
-          series={result.data.series}
-          episodes={seriesEpisodes || []}
-          currentSlug={post.slug}
+          series={seriesNav}
+          episodes={episodes || []}
+          currentKey={post.slug}
           username={author.username}
           locale={locale}
         />
@@ -402,9 +404,7 @@ export default async function PublicPostPage({
           so the article is never a dead end (§10: one green thread, no node-graph). */}
       <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
 
-      {result.data.series && (
-        <SeriesNext series={result.data.series} username={author.username} locale={locale} />
-      )}
+      {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
 
       {post.tags.length > 0 && (
         <div className="mt-10">

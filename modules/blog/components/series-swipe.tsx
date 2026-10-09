@@ -12,9 +12,10 @@ import { useTransitionRouter } from "next-view-transitions";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
-import { postHref } from "@/modules/blog/lib/author-href";
+import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
+import { seriesItemHref, seriesItemKey, type SeriesNavView } from "@/modules/blog/lib/series-items";
 import { trackBehavior } from "@/lib/analytics/behavior";
-import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
+import type { SeriesItemLink } from "@/modules/blog/api/public-posts";
 
 /** 수평 의도 판별: 첫 이동에서 이 각도(≈30°)보다 평평하고 아래 거리 이상이면 스와이프로 본다. */
 const ANGLE_RATIO = 1.7; // |dx| > |dy| * 1.7  → 수평(≈30° 이내)
@@ -63,7 +64,7 @@ export function SeriesSwipe({
   children,
 }: {
   /** 시리즈 회차 네비. undefined(시리즈 아님)면 제스처 없이 children 을 그대로 통과시킨다. */
-  series?: PublicPostSeriesNav;
+  series?: SeriesNavView;
   username: string;
   locale: string;
   children: ReactNode;
@@ -82,7 +83,7 @@ function SeriesSwipeInner({
   locale,
   children,
 }: {
-  series: PublicPostSeriesNav;
+  series: SeriesNavView;
   username: string;
   locale: string;
   children: ReactNode;
@@ -116,10 +117,10 @@ function SeriesSwipeInner({
   );
 
   const pathnameFor = useCallback(
-    (slug: string) => {
+    (link: SeriesItemLink) => {
       // postHref 는 배포에 따라 절대(blog.kurl.me/@user/slug, same-origin) 또는 상대(/{locale}/p/...).
       // 소프트 내비를 위해 항상 pathname 만 뽑는다(same-origin 일 때만 router 가 처리, 아니면 폴백).
-      const href = postHref(username, slug, locale);
+      const href = seriesItemHref(username, link, locale);
       try {
         const url = new URL(href, window.location.origin);
         if (url.origin !== window.location.origin) return href; // cross-origin → 하드
@@ -136,8 +137,8 @@ function SeriesSwipeInner({
       const t = target(dir);
       if (!t) return;
       // 스와이프는 [data-bhv] 클릭 위임 밖의 프로그램적 항해 — 직접 기록한다.
-      trackBehavior({ name: "second_action", targetType: "series", targetId: `${username}/${t.slug}` });
-      const dest = pathnameFor(t.slug);
+      trackBehavior({ name: "second_action", targetType: "series", targetId: `${username}/${seriesItemKey(t)}` });
+      const dest = pathnameFor(t);
       if (dest.startsWith("http")) {
         window.location.assign(dest); // cross-origin 배포 폴백(하드 내비)
       } else {
@@ -281,9 +282,9 @@ function SeriesSwipeInner({
   // 인접 회차 프리로드 — 확정 시 즉발이 되게(덱 느낌엔 옆 카드가 실려 있어야). 데스크톱 배너 버튼
   // 호버 시에도 프리페치되지만, 모바일은 첫 페인트 직후 한 번 깔아둔다.
   useEffect(() => {
-    const slugs = [prev?.slug, next?.slug].filter(Boolean) as string[];
-    for (const slug of slugs) {
-      const dest = pathnameFor(slug);
+    for (const link of [prev, next]) {
+      if (!link) continue;
+      const dest = pathnameFor(link);
       if (!dest.startsWith("http")) {
         try {
           router.prefetch?.(dest);
@@ -292,7 +293,7 @@ function SeriesSwipeInner({
         }
       }
     }
-  }, [prev?.slug, next?.slug, pathnameFor, router]);
+  }, [prev, next, pathnameFor, router]);
 
   // 데스크톱 배너 버튼(SeriesSwitchButtons)이 쏘는 요청 — 같은 카드 슬라이드 전환 후 이동. 모바일 제스처와
   // 로직을 공유(같은 settle+go). reduce-motion 은 settle 안에서 즉시 처리.
@@ -328,10 +329,10 @@ function SeriesSwipeInner({
           transform 을 타도록 트랙 안에 절대배치. peek 방향에 따라 좌/우 바깥에 대기. */}
       <div ref={trackRef} className="will-change-transform">
         {peek === "next" && next && (
-          <EdgeCard side="right" dir="next" title={next.title} n={series.position + 1} />
+          <EdgeCard side="right" dir="next" link={next} n={series.position + 1} />
         )}
         {peek === "prev" && prev && (
-          <EdgeCard side="left" dir="prev" title={prev.title} n={series.position - 1} />
+          <EdgeCard side="left" dir="prev" link={prev} n={series.position - 1} />
         )}
         {children}
       </div>
@@ -349,7 +350,7 @@ export function SeriesSwitchButtons({
   username,
   locale,
 }: {
-  series: PublicPostSeriesNav;
+  series: SeriesNavView;
   username: string;
   locale: string;
 }) {
@@ -364,14 +365,14 @@ export function SeriesSwitchButtons({
     if (host) host.dispatchEvent(new CustomEvent<Dir>("series:go", { detail: dir, bubbles: false }));
     else {
       // 스와이프 래퍼가 없으면(방어) 곧장 이동.
-      const slug = dir === "next" ? series.next?.slug : series.prev?.slug;
-      if (slug) router.push(postHref(username, slug, locale));
+      const link = dir === "next" ? series.next : series.prev;
+      if (link) router.push(seriesItemHref(username, link, locale));
     }
   };
 
-  const prefetch = (slug?: string) => {
-    if (!slug) return;
-    const href = postHref(username, slug, locale);
+  const prefetch = (link: SeriesItemLink | null) => {
+    if (!link) return;
+    const href = seriesItemHref(username, link, locale);
     if (!/^https?:\/\//.test(href)) {
       try {
         router.prefetch?.(href);
@@ -390,7 +391,7 @@ export function SeriesSwitchButtons({
         type="button"
         className={btn}
         disabled={!series.prev}
-        onMouseEnter={() => prefetch(series.prev?.slug)}
+        onMouseEnter={() => prefetch(series.prev)}
         onClick={() => dispatch("prev")}
         aria-label={t("seriesPrevEpisode")}
       >
@@ -400,7 +401,7 @@ export function SeriesSwitchButtons({
         type="button"
         className={btn}
         disabled={!series.next}
-        onMouseEnter={() => prefetch(series.next?.slug)}
+        onMouseEnter={() => prefetch(series.next)}
         onClick={() => dispatch("next")}
         aria-label={t("seriesNextEpisode")}
       >
@@ -415,15 +416,16 @@ export function SeriesSwitchButtons({
 function EdgeCard({
   side,
   dir,
-  title,
+  link,
   n,
 }: {
   side: "left" | "right";
   dir: Dir;
-  title: string;
+  link: SeriesItemLink;
   n: number;
 }) {
   const t = useTranslations("publicPost");
+  const tf = useTranslations("publicFeed");
   return (
     <div
       aria-hidden
@@ -436,9 +438,18 @@ function EdgeCard({
           {dir === "prev" ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
           {t(dir === "next" ? "seriesNextUp" : "seriesPrevUp")}
         </span>
-        <SeriesIndex n={n} className="mt-2 block text-[12px]" />
-        <span className="mt-0.5 block text-[17px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
-          {title}
+        <span className="mt-2 flex items-center gap-2">
+          <SeriesIndex n={n} className="text-[12px]" />
+          {link.type === "NOTE" && <SeriesNoteMarker label={tf("seriesNoteMarker")} />}
+        </span>
+        <span
+          className={
+            link.type === "NOTE"
+              ? "mt-1 line-clamp-3 block text-[15px] leading-relaxed text-slate-600 dark:text-slate-300"
+              : "mt-0.5 block text-[17px] font-semibold leading-snug text-slate-900 dark:text-slate-100"
+          }
+        >
+          {link.title}
         </span>
       </div>
     </div>

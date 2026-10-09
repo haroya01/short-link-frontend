@@ -20,10 +20,15 @@ import type {
   PublicSeriesDetail,
   PublicSeriesList,
   PublicSeriesListItem,
+  PublicSeriesItem,
+  SeriesItemLink,
+  SeriesNoteSummary,
   SuggestedAuthor,
   TagCount,
   TrendingTagSection,
 } from "@/modules/blog/api/public-posts";
+import type { FollowingFeedView, FollowingSeriesNote } from "@/modules/blog/api/follows";
+import type { NoteSeriesNav } from "@/modules/notes/api/notes";
 
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -90,6 +95,26 @@ const ALL_ITEMS = SEEDS.map(toItem);
 
 /** Exposed for the saved/liked (보관함) mocks, which reuse these as the viewer's liked/bookmarked posts. */
 export const MOCK_ALL_ITEMS = ALL_ITEMS;
+
+/** Off the public feeds: reached through 구독함's last page and the 리팩터링 일지 series. */
+const FIRST_COMMIT: PublicFeedItem = {
+  ...toItem(
+    {
+      slug: "first-commit-retro",
+      title: "첫 커밋 회고: 아무도 안 쓸 줄 알았던 링크",
+      excerpt: "처음 만든 단축 링크가 아직 살아 있다는 걸 알고 쓴 짧은 회고.",
+      author: "dohyun",
+      tags: ["회고"],
+      views: 310,
+      likes: 12,
+      day: 12,
+    },
+    SEEDS.length,
+  ),
+  followReason: { kind: "AUTHOR", tag: null },
+};
+
+const READABLE_ITEMS = [...ALL_ITEMS, FIRST_COMMIT];
 
 /** A single page of the feed. `hasNext` stays false so the one mock page renders cleanly (no
  *  load-more round-trip to a backend that isn't there). */
@@ -161,6 +186,15 @@ export function mockFollowingView(): PublicFeedView {
       : { kind: "TOPIC" as const, tag: i.tags.find((t) => MOCK_FOLLOWED_TAGS.includes(t)) ?? null },
   }));
   return { items, page: 0, size: 24, hasNext: false };
+}
+
+/** 구독함 in three pages: posts with a series note between them, a page of series notes alone, then
+ *  one older post — the shape that must keep infinite loading going. */
+export function mockFollowingFeed(page: number): FollowingFeedView {
+  const notesOn = (ids: number[]) => ids.map((id) => followingSeriesNote(id));
+  if (page === 0) return { ...mockFollowingView(), hasNext: true, seriesNotes: notesOn([40]) };
+  if (page === 1) return { items: [], page, size: 24, hasNext: true, seriesNotes: notesOn([41, 42]) };
+  return { items: [FIRST_COMMIT], page, size: 24, hasNext: false, seriesNotes: [] };
 }
 
 /**
@@ -261,8 +295,8 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
 /** Post detail — author + post meta + a body of blocks. First 3 posts belong to a series so the
  * on-post series UI can be exercised (slugs line up with mockSeriesDetail("nextjs-deep-dive")). */
 export function mockPostDetail(_username: string, slug: string): PublicPostDetail {
-  const item = ALL_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
-  const idx = ALL_ITEMS.indexOf(item);
+  const item = READABLE_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
+  const idx = READABLE_ITEMS.indexOf(item);
   const inSeries = idx >= 0 && idx < 3;
   const ref = (i: number) => ({ slug: ALL_ITEMS[i].slug, title: ALL_ITEMS[i].title });
   return {
@@ -278,7 +312,120 @@ export function mockPostDetail(_username: string, slug: string): PublicPostDetai
           prev: idx > 0 ? ref(idx - 1) : null,
           next: idx < 2 ? ref(idx + 1) : null,
         }
-      : null,
+      : mixedSeriesNav(item.slug),
+  };
+}
+
+// ─── Series that hold notes too ─────────────────────────────────────────────────
+
+type MockMember = { type: "POST"; slug: string } | { type: "NOTE"; id: number };
+
+/** @dohyun's notes that sit in a series — the note mocks serve them as his notes too. */
+export const MOCK_SERIES_NOTES: SeriesNoteSummary[] = [
+  {
+    id: 40,
+    body: "이름 하나 바꾸는 데 하루를 썼다. 다음 사람이 덜 헤매면 그걸로 됐다.",
+    contentWarning: null,
+    excerpt: "이름 하나 바꾸는 데 하루를 썼다. 다음 사람이 덜 헤매면 그걸로 됐다.",
+    createdAt: "2026-05-25T15:00:00Z",
+  },
+  {
+    id: 41,
+    body: "회고를 쓰다 보니 팀 이야기가 길어졌다. 이름은 다 뺐다.",
+    contentWarning: "팀 회고 — 조금 무거운 이야기",
+    excerpt: "팀 회고 — 조금 무거운 이야기",
+    createdAt: "2026-05-18T10:00:00Z",
+  },
+  {
+    id: 42,
+    body: "짧게 자주 쓰기로 했다. 길게 쓰려고 하면 안 쓰게 되니까.",
+    contentWarning: null,
+    excerpt: "짧게 자주 쓰기로 했다. 길게 쓰려고 하면 안 쓰게 되니까.",
+    createdAt: "2026-05-17T10:00:00Z",
+  },
+];
+
+const MIXED_SERIES: { series: PublicSeriesListItem; members: MockMember[] }[] = [
+  {
+    series: { id: 904, slug: "refactoring-diary", title: "리팩터링 일지", postCount: 2, itemCount: 3, tags: ["개발", "리팩터링"] },
+    members: [
+      { type: "POST", slug: "spring-tx-propagation" },
+      { type: "NOTE", id: 40 },
+      { type: "POST", slug: "first-commit-retro" },
+    ],
+  },
+  {
+    series: { id: 905, slug: "short-thoughts", title: "짧은 생각들", postCount: 0, itemCount: 2, tags: [] },
+    members: [
+      { type: "NOTE", id: 42 },
+      { type: "NOTE", id: 41 },
+    ],
+  },
+];
+
+const seriesNote = (id: number) => MOCK_SERIES_NOTES.find((n) => n.id === id)!;
+
+function memberLink(member: MockMember): SeriesItemLink {
+  if (member.type === "NOTE") {
+    return { type: "NOTE", slug: null, noteId: member.id, title: seriesNote(member.id).excerpt ?? "" };
+  }
+  const post = READABLE_ITEMS.find((i) => i.slug === member.slug)!;
+  return { type: "POST", slug: post.slug, noteId: null, title: post.title };
+}
+
+function mixedItems(members: MockMember[]): PublicSeriesItem[] {
+  return members.map((member) => {
+    if (member.type === "NOTE") return { type: "NOTE", post: null, note: seriesNote(member.id) };
+    const idx = READABLE_ITEMS.findIndex((i) => i.slug === member.slug);
+    return { type: "POST", post: toListItem(READABLE_ITEMS[idx], idx), note: null };
+  });
+}
+
+function mixedSeriesNav(slug: string): PublicPostDetail["series"] {
+  const owner = MIXED_SERIES.find((m) => m.members.some((x) => x.type === "POST" && x.slug === slug));
+  if (!owner) return null;
+  const members = owner.members;
+  const posts = members.filter((x): x is Extract<MockMember, { type: "POST" }> => x.type === "POST");
+  const at = members.findIndex((x) => x.type === "POST" && x.slug === slug);
+  const postAt = posts.findIndex((x) => x.slug === slug);
+  const postRef = (i: number) => {
+    const link = memberLink(posts[i]);
+    return { slug: link.slug as string, title: link.title };
+  };
+  return {
+    slug: owner.series.slug,
+    title: owner.series.title,
+    position: postAt + 1,
+    total: posts.length,
+    prev: postAt > 0 ? postRef(postAt - 1) : null,
+    next: postAt < posts.length - 1 ? postRef(postAt + 1) : null,
+    itemPosition: at + 1,
+    itemTotal: members.length,
+    prevItem: at > 0 ? memberLink(members[at - 1]) : null,
+    nextItem: at < members.length - 1 ? memberLink(members[at + 1]) : null,
+  };
+}
+
+export function mockNoteSeries(noteId: number): NoteSeriesNav | null {
+  const owner = MIXED_SERIES.find((m) => m.members.some((x) => x.type === "NOTE" && x.id === noteId));
+  if (!owner) return null;
+  const at = owner.members.findIndex((x) => x.type === "NOTE" && x.id === noteId);
+  return {
+    slug: owner.series.slug,
+    title: owner.series.title,
+    position: at + 1,
+    total: owner.members.length,
+    prev: at > 0 ? memberLink(owner.members[at - 1]) : null,
+    next: at < owner.members.length - 1 ? memberLink(owner.members[at + 1]) : null,
+  };
+}
+
+function followingSeriesNote(id: number): FollowingSeriesNote {
+  const owner = MIXED_SERIES.find((m) => m.members.some((x) => x.type === "NOTE" && x.id === id))!;
+  return {
+    ...seriesNote(id),
+    author: AUTHORS.dohyun,
+    series: { id: owner.series.id, slug: owner.series.slug, title: owner.series.title },
   };
 }
 
@@ -307,10 +454,16 @@ const MOCK_SERIES: PublicSeriesListItem[] = [
 ];
 
 export function mockSeriesList(username: string): PublicSeriesList {
-  return { author: resolveAuthor(username), series: MOCK_SERIES };
+  return { author: resolveAuthor(username), series: [...MOCK_SERIES, ...MIXED_SERIES.map((m) => m.series)] };
 }
 
 export function mockSeriesDetail(username: string, slug: string): PublicSeriesDetail {
+  const mixed = MIXED_SERIES.find((m) => m.series.slug === slug);
+  if (mixed) {
+    const items = mixedItems(mixed.members);
+    const posts = items.flatMap((item) => (item.post ? [item.post] : []));
+    return { author: resolveAuthor(username), series: mixed.series, posts, items };
+  }
   const series = MOCK_SERIES.find((s) => s.slug === slug) ?? MOCK_SERIES[0];
   const posts = ALL_ITEMS.slice(0, series.postCount).map((it, i) => toListItem(it, i));
   return { author: resolveAuthor(username), series, posts };
@@ -360,13 +513,33 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
   },
 ];
 
-export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
-  return MOCK_DISCOVER_SERIES.slice(0, limit);
+function mixedCard(slug: string): PublicSeriesCard {
+  const { series, members } = MIXED_SERIES.find((m) => m.series.slug === slug)!;
+  const items = members.map((member) => {
+    const link = memberLink(member);
+    const cover = member.type === "POST" ? (READABLE_ITEMS.find((i) => i.slug === member.slug)?.ogImageUrl ?? null) : null;
+    return { ...link, ogImageUrl: cover };
+  });
+  return {
+    id: series.id,
+    author: AUTHORS.dohyun,
+    slug: series.slug,
+    title: series.title,
+    postCount: series.postCount,
+    itemCount: series.itemCount,
+    lastPublishedAt: "2026-05-25T15:00:00Z",
+    posts: items.flatMap((item) => (item.type === "POST" && item.slug ? [{ slug: item.slug, title: item.title }] : [])),
+    items,
+  };
 }
 
-/** Subscribed series for the home "시리즈" tab — a couple of the discover series as if subscribed. */
+export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
+  return [...MOCK_DISCOVER_SERIES, mixedCard("refactoring-diary")].slice(0, limit);
+}
+
+/** Subscribed series for the home "시리즈" tab — a few of the discover series as if subscribed. */
 export function mockSubscribedSeries(): PublicSeriesCard[] {
-  return MOCK_DISCOVER_SERIES.slice(0, 2);
+  return [...MOCK_DISCOVER_SERIES.slice(0, 2), mixedCard("refactoring-diary")];
 }
 
 export function mockTrendingByTag(tagLimit = 6, perTag = 8): TrendingTagSection[] {

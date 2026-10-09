@@ -6,10 +6,12 @@ import { Loader2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { listFollowingFeed } from "@/modules/blog/api/follows";
+import { listFollowingFeed, type FollowingSeriesNote } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
+import { SeriesNoteFeedCard } from "@/modules/blog/components/series-note-feed-card";
+import { placeSeriesNotes, type FollowingFeedRow } from "@/modules/blog/lib/series-items";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
@@ -22,13 +24,14 @@ import { SuggestedCurators } from "@/modules/blog/components/suggested-curators"
 
 /** Authors that appear in the feed, de-duplicated and in first-seen order — i.e. the followed authors
  *  you're actually reading right now. Capped so the rail stays a glance, not a directory. */
-function feedAuthors(items: PublicFeedItem[], limit = 8): PublicAuthor[] {
+function feedAuthors(rows: FollowingFeedRow[], limit = 8): PublicAuthor[] {
   const seen = new Set<string>();
   const out: PublicAuthor[] = [];
-  for (const it of items) {
-    if (seen.has(it.author.username)) continue;
-    seen.add(it.author.username);
-    out.push(it.author);
+  for (const row of rows) {
+    const author = row.kind === "post" ? row.item.author : row.note.author;
+    if (seen.has(author.username)) continue;
+    seen.add(author.username);
+    out.push(author);
     if (out.length >= limit) break;
   }
   return out;
@@ -89,6 +92,7 @@ export function FollowingFeed({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
+  const [seriesNotes, setSeriesNotes] = useState<FollowingSeriesNote[]>([]);
   // Pagination — without it the feed silently ended at the first 24 posts: the API has had
   // page/size + hasNext all along, the component just never asked for page 1.
   const [page, setPage] = useState(0);
@@ -155,6 +159,7 @@ export function FollowingFeed({
       .then((view) => {
         if (!alive) return;
         setItems(view.items);
+        setSeriesNotes(view.seriesNotes ?? []);
         setHasNext(view.hasNext);
         setPage(0);
       })
@@ -180,6 +185,10 @@ export function FollowingFeed({
       setItems((prev) => {
         const seen = new Set((prev ?? []).map((i) => `${i.author.username}/${i.slug}`));
         return [...(prev ?? []), ...view.items.filter((i) => !seen.has(`${i.author.username}/${i.slug}`))];
+      });
+      setSeriesNotes((prev) => {
+        const seen = new Set(prev.map((n) => n.id));
+        return [...prev, ...(view.seriesNotes ?? []).filter((n) => !seen.has(n.id))];
       });
       setPage(next);
       setHasNext(view.hasNext);
@@ -274,7 +283,7 @@ export function FollowingFeed({
     );
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && seriesNotes.length === 0) {
     return (
       <div className="mt-4">
         <FeedEmpty
@@ -323,7 +332,7 @@ export function FollowingFeed({
 
   // Everything the follow feed had is masked by the reader's hidden topics — explain it (instead of a
   // blank grid) and offer the latest-feed escape hatch. `tagAllHidden` names the muted-topic cause.
-  if (visible.length === 0) {
+  if (visible.length === 0 && seriesNotes.length === 0) {
     return (
       <div className="mt-4">
         <FeedEmpty
@@ -341,7 +350,7 @@ export function FollowingFeed({
   }
 
   // 사람(피드에 등장하는 작가) + 주제(내가 팔로우한 태그 중 이 피드에 실제로 글이 있는 것)를 필터 축으로.
-  const followed = feedAuthors(visible);
+  const followed = feedAuthors(placeSeriesNotes(visible, seriesNotes));
   const followedNames = new Set(followed.map((a) => a.username));
   const hasTag = (it: PublicFeedItem, tag: string) =>
     it.tags?.some((x) => x.toLowerCase() === tag.toLowerCase()) ?? false;
@@ -359,6 +368,11 @@ export function FollowingFeed({
     : activeFacet.kind === "author"
       ? visible.filter((it) => it.author.username === activeFacet.value)
       : visible.filter((it) => hasTag(it, activeFacet.value));
+  const shownNotes = !activeFacet
+    ? seriesNotes
+    : activeFacet.kind === "author"
+      ? seriesNotes.filter((n) => n.author.username === activeFacet.value)
+      : [];
 
   // 다른 발견 탭과 동일한 목록 행. 팔로우(사람+주제) 필터는 사이드 rail 대신 상단 칩으로.
   return (
@@ -366,9 +380,13 @@ export function FollowingFeed({
     <div className="mx-auto mt-4 max-w-2xl animate-fade-in">
       <FollowFilterChips authors={followed} tags={presentTags} active={activeFacet} onSelect={setFacet} />
       <FeedList>
-        {shown.map((item) => (
-          <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-        ))}
+        {placeSeriesNotes(shown, shownNotes).map((row) =>
+          row.kind === "post" ? (
+            <FeedCard key={`${row.item.author.username}/${row.item.slug}`} item={row.item} locale={locale} />
+          ) : (
+            <SeriesNoteFeedCard key={`notes/${row.note.id}`} note={row.note} locale={locale} />
+          ),
+        )}
       </FeedList>
 
       {/* Some (not all) followed posts were dropped by hidden topics — same footnote as the public feed. */}

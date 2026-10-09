@@ -1,6 +1,6 @@
 import { ApiError } from "@/lib/api/client";
 import type { PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
-import { MOCK_ALL_ITEMS } from "@/modules/blog/api/_mocks";
+import { MOCK_ALL_ITEMS, MOCK_SERIES_NOTES, mockNoteSeries } from "@/modules/blog/api/_mocks";
 import type {
   FederationSettings,
   Note,
@@ -181,6 +181,9 @@ let notes: Note[] = [
   note({ id: 32, body: "둘. 경계를 먼저 긋게 됐다.", author: HARUKA, createdAt: "2026-09-28T09:00:20Z", inReplyToId: 31 }),
   note({ id: 33, body: "셋. 이름 짓는 데 시간을 쓴다.", author: HARUKA, createdAt: "2026-09-28T09:00:30Z", inReplyToId: 32 }),
   note({ id: 34, body: "셋째가 제일 공감돼요.", author: YUNA, createdAt: "2026-09-29T09:00:00Z", inReplyToId: 30 }),
+  ...MOCK_SERIES_NOTES.map(({ id, body, contentWarning, createdAt }) =>
+    note({ id, body, contentWarning, sensitive: Boolean(contentWarning), createdAt, author: ME }),
+  ),
 ];
 let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
@@ -648,6 +651,23 @@ export function mockThread(id: number): NoteThread | null {
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
     replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id)),
     continuation,
+    series: mockNoteSeries(id),
+  };
+}
+
+export function mockSeriesNoteSummary(id: number) {
+  const found = notes.find((n) => n.id === id);
+  if (!found) return null;
+  return {
+    summary: {
+      id: found.id,
+      body: found.body,
+      contentWarning: found.contentWarning ?? null,
+      excerpt: found.contentWarning ?? found.body.slice(0, 80),
+      createdAt: found.createdAt,
+    },
+    authorId: found.author.id,
+    visibility: found.visibility ?? "public",
   };
 }
 
