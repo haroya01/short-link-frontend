@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Note, NoteFilter } from "@/modules/notes/api/notes";
-import { noteVerdict, textVerdict } from "./note-filter-match";
+import { noteVerdict, noticeHidden, textVerdict } from "./note-filter-match";
 
 function filter(partial: Partial<NoteFilter>): NoteFilter {
   return {
@@ -65,5 +65,28 @@ describe("note filters", () => {
     expect(noteVerdict(note("평범한 글"), ending, "home", 1)).toEqual({ action: "warn", phrases: ["결말"] });
     expect(noteVerdict(note("평범한 글", 1), ending, "home", 1)).toBeNull();
     expect(noteVerdict(note("결말"), ending, undefined, 1)).toBeNull();
+  });
+});
+
+describe("notice filters", () => {
+  const hide = [filter({ phrase: "헥사고날", action: "hide", context: ["notifications"] })];
+  const excerpt = "오늘 헥사고날 포트 이름 짓는 데 한 시간 썼다.";
+
+  it("hides every notice quoting someone else's note, as the server does", () => {
+    expect(noticeHidden({ type: "NOTE_REPLY", sourceExcerpt: excerpt, noteExcerpt: "내 노트" }, hide)).toBe(true);
+    expect(noticeHidden({ type: "NOTE_QUOTE", sourceExcerpt: excerpt }, hide)).toBe(true);
+    for (const type of ["NOTE_MENTION", "POST_QUOTE", "NOTE_POST", "NOTE_EDIT"]) {
+      expect(noticeHidden({ type, noteExcerpt: excerpt }, hide)).toBe(true);
+    }
+    expect(noticeHidden({ type: "NOTE_POLL", actorId: 2, noteExcerpt: excerpt }, hide, 1)).toBe(true);
+  });
+
+  it("never reads the reader's own note", () => {
+    expect(noticeHidden({ type: "NOTE_REPLY", sourceExcerpt: "고마워요", noteExcerpt: excerpt }, hide)).toBe(false);
+    expect(noticeHidden({ type: "NOTE_LIKE", noteExcerpt: excerpt }, hide)).toBe(false);
+    expect(noticeHidden({ type: "NOTE_POLL", actorId: 1, noteExcerpt: excerpt }, hide, 1)).toBe(false);
+    expect(
+      noticeHidden({ type: "NOTE_MENTION", noteExcerpt: excerpt }, [filter({ phrase: "헥사고날", action: "warn", context: ["notifications"] })]),
+    ).toBe(false);
   });
 });

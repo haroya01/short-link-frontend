@@ -43,17 +43,37 @@ export function noteVerdict(
   return textVerdict(text, filters, context);
 }
 
-/** Notices carry an excerpt of someone else's note only for replies, quotes and mentions; likes and
- *  reposts quote the reader's own note, which filters never touch. */
+type Notice = {
+  type: string;
+  actorId?: number | null;
+  noteExcerpt?: string | null;
+  sourceExcerpt?: string | null;
+};
+
+/** The same notices the server reads (RecordBlogNotificationUseCase.othersText): those quoting
+ *  someone else's note. Likes and reposts quote the reader's own note, which filters never touch. */
+function othersExcerpt(notice: Notice, meId: number | null | undefined): string | null | undefined {
+  switch (notice.type) {
+    case "NOTE_REPLY":
+    case "NOTE_QUOTE":
+      return notice.sourceExcerpt;
+    case "NOTE_MENTION":
+    case "POST_QUOTE":
+    case "NOTE_POST":
+    case "NOTE_EDIT":
+      return notice.noteExcerpt;
+    case "NOTE_POLL":
+      return notice.actorId != null && notice.actorId === meId ? null : notice.noteExcerpt;
+    default:
+      return null;
+  }
+}
+
 export function noticeHidden(
-  notice: { type: string; noteExcerpt?: string | null; sourceExcerpt?: string | null },
+  notice: Notice,
   filters: NoteFilter[],
+  meId?: number | null,
 ): boolean {
-  const text =
-    notice.type === "NOTE_REPLY" || notice.type === "NOTE_QUOTE"
-      ? notice.sourceExcerpt
-      : notice.type === "NOTE_MENTION"
-        ? notice.noteExcerpt
-        : null;
+  const text = othersExcerpt(notice, meId);
   return !!text && textVerdict(text, filters, "notifications")?.action === "hide";
 }
