@@ -4278,6 +4278,7 @@
     "quotesTitle": "Quotes",
     "quotesEmpty": "No notes or posts have quoted this note yet",
     "pollLabel": "Poll",
+    "pollTapVotes": "Choosing an option votes right away and can’t be undone.",
     "pollMine": "Your choice",
     "pollVote": "Vote",
     "pollVoters": "{count, plural, one {# person voted} other {# people voted}}",

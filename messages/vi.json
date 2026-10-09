@@ -4278,6 +4278,7 @@
     "quotesTitle": "Trích dẫn",
     "quotesEmpty": "Chưa có ghi chú hay bài viết nào trích dẫn ghi chú này",
     "pollLabel": "Bình chọn",
+    "pollTapVotes": "Chọn là bỏ phiếu ngay và không thể hoàn tác.",
     "pollMine": "Lựa chọn của bạn",
     "pollVote": "Bình chọn",
     "pollVoters": "{count} người đã bình chọn",

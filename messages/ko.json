@@ -4278,6 +4278,7 @@
     "quotesTitle": "인용",
     "quotesEmpty": "아직 이 노트를 인용한 노트나 글이 없어요",
     "pollLabel": "투표",
+    "pollTapVotes": "누르면 바로 투표돼요. 되돌릴 수 없어요.",
     "pollMine": "내 선택",
     "pollVote": "투표",
     "pollVoters": "{count}명 참여",
