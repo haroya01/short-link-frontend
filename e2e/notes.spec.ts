@@ -567,6 +567,39 @@ test("an edited note opens its edit history from the note page", async ({ page }
   await expect(dialog.locator('[data-note-version="0"]')).toContainText("다시 고쳤어요.");
 });
 
+test("editing my note puts a content warning on it and takes it off again", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/notes/2");
+  const note = page.locator('article[data-note-id="2"]').first();
+  await expect(note).toBeVisible({ timeout: 30_000 });
+  await note.getByRole("button", { name: "메뉴" }).click();
+  await page.getByRole("menuitem", { name: "고치기" }).click();
+  await note.getByRole("button", { name: "열람 주의", exact: true }).click();
+  await note.getByRole("textbox", { name: "열람 주의 문구" }).fill("인용 이야기");
+  await note.getByRole("button", { name: "저장" }).click();
+  await expect(note.locator("[data-note-warning]")).toContainText("인용 이야기");
+  await expect(note.getByText("블로그 글을 인용해 봤어요.")).toHaveCount(0);
+
+  await note.getByRole("button", { name: "메뉴" }).click();
+  await page.getByRole("menuitem", { name: "고치기" }).click();
+  await expect(note.getByRole("textbox", { name: "열람 주의 문구" })).toHaveValue("인용 이야기");
+  await note.getByRole("button", { name: "열람 주의", exact: true }).click();
+  await note.getByRole("button", { name: "저장" }).click();
+  await expect(note.locator("[data-note-warning]")).toHaveCount(0);
+  await expect(note.getByText("블로그 글을 인용해 봤어요.")).toBeVisible();
+});
+
+test("editing my note with a photo marks the photo sensitive", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/notes/1");
+  const note = page.locator('article[data-note-id="1"]').first();
+  await expect(note.getByRole("img", { name: "비 오는 창밖" }).first()).toBeVisible({ timeout: 30_000 });
+  await note.getByRole("button", { name: "메뉴" }).click();
+  await page.getByRole("menuitem", { name: "고치기" }).click();
+  await note.getByRole("button", { name: "민감한 사진으로 표시" }).click();
+  await note.getByRole("button", { name: "저장" }).click();
+  await expect(note.getByRole("button", { name: "민감한 사진 · 눌러서 보기" })).toBeVisible();
+  await expect(note.getByRole("img", { name: "비 오는 창밖" })).toHaveCount(0);
+});
+
 test("private mentions have their own tab, stay out of all notes, and can't be reposted", async ({ page }) => {
   await page.goto("/ko/blog/notes");
   await expect(page.locator("article[data-note-id]").first()).toBeVisible({ timeout: 30_000 });

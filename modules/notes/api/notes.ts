@@ -662,9 +662,16 @@ export function createThread(drafts: NoteDraft[]): Promise<Note[]> {
   return request<Note[]>("/api/v1/notes/threads", { method: "POST", body: { notes: drafts } });
 }
 
-export function editNote(id: number, body: string): Promise<Note> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockEdit(id, body));
-  return request<Note>(`/api/v1/notes/${id}`, { method: "PATCH", body: { body } });
+/** An empty contentWarning takes the warning off; the server turns sensitive on whenever one stays. */
+export interface NoteEdit {
+  body: string;
+  contentWarning: string;
+  sensitive: boolean;
+}
+
+export function editNote(id: number, edit: NoteEdit): Promise<Note> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockEdit(id, edit));
+  return request<Note>(`/api/v1/notes/${id}`, { method: "PATCH", body: edit });
 }
 
 export function voteInPoll(id: number, choices: number[]): Promise<NotePoll> {
