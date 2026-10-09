@@ -7,7 +7,12 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed, type FollowingSeriesNote } from "@/modules/blog/api/follows";
-import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
+import {
+  listSuggestedAuthors,
+  type PublicAuthor,
+  type PublicFeedItem,
+  type SuggestedAuthor,
+} from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { SeriesNoteFeedCard } from "@/modules/blog/components/series-note-feed-card";
@@ -16,6 +21,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
+import { useViewerList } from "@/modules/blog/lib/use-viewer-list";
 import { onFollowChanged } from "@/modules/blog/lib/consequence-events";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -69,6 +75,9 @@ function AuthorRow({
   );
 }
 
+// Matches the feed page's server request for the same list.
+const SUGGESTED_AUTHORS = 5;
+
 /**
  * The "피드" tab — posts from authors the signed-in user follows. Authenticated, so it fetches
  * client-side with the access token. Signed-out viewers don't hit a dead end: they get a designed
@@ -81,12 +90,17 @@ function AuthorRow({
  */
 export function FollowingFeed({
   locale,
-  suggestedAuthors = [],
+  suggestedAuthors: serverSuggestedAuthors = [],
 }: {
   locale: string;
   suggestedAuthors?: SuggestedAuthor[];
 }) {
   const t = useTranslations("publicFeed");
+  const suggestedAuthors = useViewerList(
+    serverSuggestedAuthors,
+    () => listSuggestedAuthors(SUGGESTED_AUTHORS).then((r) => (r.ok ? r.data : null)),
+    String(SUGGESTED_AUTHORS),
+  );
   const { authenticated, ready, signInWithGoogle } = useAuth();
   const { prefs } = useTagPrefs();
   const pathname = usePathname();

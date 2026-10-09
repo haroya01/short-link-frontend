@@ -118,16 +118,22 @@ const READABLE_ITEMS = [...ALL_ITEMS, FIRST_COMMIT];
 
 /** A single page of the feed. `hasNext` stays false so the one mock page renders cleanly (no
  *  load-more round-trip to a backend that isn't there). */
+// kazuki blocked the mock reader, so a signed-in reader's discovery lists leave kazuki out — something
+// only the server knows, unlike the reader's own blocks.
+const MOCK_HIDDEN_FROM_VIEWER = new Set(["kazuki"]);
+
 export function mockFeedView({
   sort = "recent",
   q,
   tag,
+  viewer = false,
 }: {
   sort?: "recent" | "trending";
   q?: string;
   tag?: string;
+  viewer?: boolean;
 } = {}): PublicFeedView {
-  let items = [...ALL_ITEMS];
+  let items = viewer ? ALL_ITEMS.filter((i) => !MOCK_HIDDEN_FROM_VIEWER.has(i.author.username)) : [...ALL_ITEMS];
   if (tag) items = items.filter((i) => i.tags.includes(tag));
   if (q) {
     const needle = q.toLowerCase();
@@ -165,6 +171,13 @@ export const MOCK_SUGGESTED_AUTHORS: SuggestedAuthor[] = [
   { author: AUTHORS.kazuki, postCount: 2 },
   { author: AUTHORS.sora, postCount: 2 },
 ];
+
+export function mockSuggestedAuthors(limit: number, viewer: boolean): SuggestedAuthor[] {
+  const authors = viewer
+    ? MOCK_SUGGESTED_AUTHORS.filter(({ author }) => !MOCK_HIDDEN_FROM_VIEWER.has(author.username))
+    : MOCK_SUGGESTED_AUTHORS;
+  return authors.slice(0, limit);
+}
 
 /**
  * Following feed (the 팔로잉 tab, when signed in) — mirrors the backend union: posts from followed
