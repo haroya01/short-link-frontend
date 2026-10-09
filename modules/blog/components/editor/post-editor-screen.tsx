@@ -119,18 +119,10 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           <span className="flex shrink-0 items-center gap-3">
             <button
               type="button"
-              onClick={() => {
-                const { title, markdown } = ed.kept ?? { title: "", markdown: "" };
-                navigator.clipboard
-                  .writeText(title ? `${title}\n\n${markdown}` : markdown)
-                  .then(
-                    () => toast(t("keptCopied"), "success"),
-                    () => toast(t("keptCopyFailed"), "error"),
-                  );
-              }}
+              onClick={ed.restoreKept}
               className="focus-ring rounded font-medium text-accent-700 hover:underline dark:text-accent-300"
             >
-              {t("keptCopy")}
+              {t("keptRestore")}
             </button>
             <button
               type="button"

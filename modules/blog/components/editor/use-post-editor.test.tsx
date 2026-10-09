@@ -486,6 +486,31 @@ describe("saving against another device's edits", () => {
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ baseVersion: 8 }));
   });
 
+  it("restores the kept version over the latest and saves it on the latest's version", async () => {
+    await mount();
+    api.updatePostMetadata.mockRejectedValueOnce(conflict(8));
+    api.getPost.mockResolvedValue({ ...POST, title: "Edited elsewhere", contentVersion: 8 });
+    api.getBlocks.mockResolvedValue({ blocks: [{ id: 1, type: "PARAGRAPH", content: "Theirs", blockOrder: 0 }], contentVersion: 8 });
+    await act(async () => {
+      editor.setTitle("Mine");
+      editor.setMarkdown("My body");
+    });
+    await act(async () => { await editor.save(); });
+    await act(async () => { await editor.loadLatest(); });
+    const remounts = editor.reloadKey;
+
+    await act(async () => { editor.restoreKept(); });
+    expect(editor.title).toBe("Mine");
+    expect(editor.markdown).toBe("My body");
+    expect(editor.reloadKey).toBe(remounts + 1);
+    expect(editor.kept).toBeNull();
+    expect(window.localStorage.getItem("kurl:editor-kept:16")).toBeNull();
+
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Mine", baseVersion: 8 }));
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "My body" }], { baseVersion: 9 });
+  });
+
   it("counts a conflict with its own earlier write as saved", async () => {
     await mount();
     await act(async () => { editor.setTitle("Mine"); editor.setMarkdown("Same body"); });

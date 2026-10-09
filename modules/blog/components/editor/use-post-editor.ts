@@ -703,6 +703,19 @@ export function usePostEditor(
     return save();
   }
 
+  function restoreKept() {
+    const current = currentDraft.current.post;
+    if (current == null || kept == null) return;
+    currentDraft.current.title = kept.title;
+    currentDraft.current.markdown = kept.markdown;
+    setTitleRaw(kept.title);
+    setMarkdownRaw(kept.markdown);
+    setReloadKey((k) => k + 1);
+    removeStorageItem(keptKey(current.id));
+    setKept(null);
+    touchDirty();
+  }
+
   function discardKept() {
     const current = currentDraft.current.post;
     if (current != null) removeStorageItem(keptKey(current.id));
@@ -812,6 +825,7 @@ export function usePostEditor(
     loadLatest,
     overwriteMine,
     kept,
+    restoreKept,
     discardKept,
     remoteReloads,
   };
