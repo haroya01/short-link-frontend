@@ -66,7 +66,7 @@ import {
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { DropCursorLine } from "@/modules/blog/components/editor/drop-cursor";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
-import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
+import { POST_IMAGE_TYPES, postImageErrorMessageKey, postImageTypeError } from "@/modules/blog/api/post-images";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -273,7 +273,12 @@ export function MarkdownEditor({
   // collapse the caret to just after it before the next insert — otherwise the second setImage replaces
   // the first and only one survives (drop / paste / multi-pick all hit this).
   async function uploadAndInsertMany(ed: Editor, files: File[], width?: ImageWidth) {
-    const placed = files.map((file) => {
+    const refused = files.map(postImageTypeError).find((e) => e != null);
+    if (refused) {
+      const { key, values } = postImageErrorMessageKey(refused);
+      onUploadError?.(t(key, values));
+    }
+    const placed = files.filter((file) => postImageTypeError(file) == null).map((file) => {
       const local = URL.createObjectURL(file);
       ed.chain().focus().setImage({ src: local, alt: altWithWidth(file.name, width) }).run();
       ed.commands.setTextSelection(ed.state.selection.to);
@@ -547,7 +552,7 @@ export function MarkdownEditor({
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept={POST_IMAGE_TYPES.join(",")}
         className="hidden"
         onChange={async (e) => {
           const files = Array.from(e.target.files ?? []);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeSlugInput, slugForSave } from "./slug";
+import { isSavableSlug, normalizeSlugInput, slugForSave } from "./slug";
 
 const BACKEND_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -23,5 +23,13 @@ describe("slug normalization", () => {
   it("slugForSave trims the trailing hyphen", () => {
     expect(slugForSave("a-")).toBe("a");
     expect(slugForSave("my-post-")).toBe("my-post");
+  });
+
+  it("a slug of Korean only or a single character is not savable", () => {
+    expect(isSavableSlug("한글 주소")).toBe(false);
+    expect(isSavableSlug("")).toBe(false);
+    expect(isSavableSlug("a-")).toBe(false);
+    expect(isSavableSlug("ab")).toBe(true);
+    expect(isSavableSlug("글-qa")).toBe(true);
   });
 });
