@@ -7,13 +7,16 @@
  */
 import type {
   BlockInput,
+  EditGuard,
   PostBlockView,
   PostRevisionView,
   PostStatus,
   PostView,
+  VersionedBlocks,
 } from "@/modules/blog/api/posts";
 import type { SeriesDetailView, SeriesItemRef, SeriesOwnerItem, SeriesView } from "@/modules/blog/api/series";
 import { ApiError } from "@/lib/api/client";
+import type { ProblemDetail } from "@/types";
 import { mockSeriesNoteSummary } from "@/modules/notes/api/_mocks";
 
 const nowIso = () => new Date().toISOString();
@@ -37,6 +40,7 @@ function blankPost(over: Partial<PostView>): PostView {
     pinOrder: null,
     createdAt: nowIso(),
     updatedAt: nowIso(),
+    contentVersion: 0,
     ...over,
   };
 }
@@ -128,6 +132,18 @@ export function mockCreatePost(payload: {
   return p;
 }
 
+// The server's edit-conflict rule (backend #795): a save with a stale baseVersion writes nothing.
+function checkEdit(id: number, guard: EditGuard) {
+  const current = posts.get(id)?.contentVersion ?? 0;
+  if (guard.baseVersion !== undefined && !guard.overwrite && guard.baseVersion !== current) {
+    throw new ApiError(409, { status: 409, code: "POST_EDIT_CONFLICT", contentVersion: current } as ProblemDetail);
+  }
+}
+
+function markEdited(id: number, patch: Partial<PostView> = {}): PostView {
+  return touch(id, { ...patch, contentVersion: (posts.get(id)?.contentVersion ?? 0) + 1 });
+}
+
 export function mockUpdatePostMetadata(
   id: number,
   payload: {
@@ -137,8 +153,9 @@ export function mockUpdatePostMetadata(
     ogImageUrl?: string;
     languageTag?: string;
     tags?: string[];
-  },
+  } & EditGuard,
 ): PostView {
+  checkEdit(id, payload);
   if (payload.slug !== undefined) {
     if (payload.slug.length < 2) throw new ApiError(400, { status: 400, detail: "slug length 2~200" });
     if ([...posts.values()].some((p) => p.id !== id && p.slug === payload.slug)) {
@@ -152,7 +169,7 @@ export function mockUpdatePostMetadata(
   if (payload.ogImageUrl !== undefined) patch.ogImageUrl = payload.ogImageUrl;
   if (payload.languageTag !== undefined) patch.languageTag = payload.languageTag;
   if (payload.tags !== undefined) patch.tags = payload.tags;
-  return touch(id, patch);
+  return markEdited(id, patch);
 }
 
 export function mockDeletePost(id: number): void {
@@ -182,14 +199,29 @@ export function mockListRevisions(_id: number): PostRevisionView[] {
   return [];
 }
 
-export function mockGetBlocks(id: number): PostBlockView[] {
-  return blocks.get(id) ?? [];
+export async function mockGetBlocks(id: number): Promise<VersionedBlocks> {
+  return { blocks: blocks.get(id) ?? [], contentVersion: posts.get(id)?.contentVersion ?? 0 };
 }
 
-export function mockReplaceBlocks(id: number, input: BlockInput[]): PostBlockView[] {
+export async function mockReplaceBlocks(
+  id: number,
+  input: BlockInput[],
+  guard: EditGuard = {},
+): Promise<VersionedBlocks> {
+  checkEdit(id, guard);
   const next = input.map((b, i) => ({ id: i + 1, type: b.type, content: b.content, blockOrder: i }));
   blocks.set(id, next);
-  return next;
+  return { blocks: next, contentVersion: markEdited(id).contentVersion ?? null };
+}
+
+/** Another device saves this post — e2e reaches it as `window.__kurlMockAuthoring.editElsewhere`. */
+export function mockEditElsewhere(id: number, edit: { title?: string; body?: string }) {
+  if (edit.body !== undefined) blocks.set(id, [{ id: 1, type: "PARAGRAPH", content: edit.body, blockOrder: 0 }]);
+  markEdited(id, edit.title !== undefined ? { title: edit.title } : {});
+}
+
+if (typeof window !== "undefined") {
+  (window as unknown as { __kurlMockAuthoring: unknown }).__kurlMockAuthoring = { editElsewhere: mockEditElsewhere };
 }
 
 // ── Series (authoring) ──────────────────────────────────────────────────────

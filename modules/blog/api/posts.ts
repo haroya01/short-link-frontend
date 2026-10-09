@@ -1,4 +1,4 @@
-import { request } from "@/lib/api/client";
+import { request, requestText } from "@/lib/api/client";
 import { authoringMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -26,6 +26,29 @@ export interface PostView {
   pinOrder: number | null;
   createdAt: string;
   updatedAt: string;
+  /** Moves on every content save. Absent from a server without edit-conflict checks. */
+  contentVersion?: number;
+}
+
+/**
+ * A content save's conflict check: the server refuses (409 POST_EDIT_CONFLICT) when the post moved
+ * past `baseVersion`, unless `overwrite`. Both omitted — an older server — and the save just writes.
+ */
+export interface EditGuard {
+  baseVersion?: number;
+  overwrite?: boolean;
+}
+
+/** A body with the version it was read or written at — null when the server doesn't send one. */
+export interface VersionedBlocks {
+  blocks: PostBlockView[];
+  contentVersion: number | null;
+}
+
+function contentVersionOf(headers: Headers): number | null {
+  const raw = headers.get("X-Content-Version");
+  const version = raw === null || raw.trim() === "" ? NaN : Number(raw);
+  return Number.isInteger(version) && version >= 0 ? version : null;
 }
 
 export interface BlockInput {
@@ -69,7 +92,7 @@ export function updatePostMetadata(
     ogImageKey?: string;
     languageTag?: string;
     tags?: string[];
-  },
+  } & EditGuard,
 ): Promise<PostView> {
   if (authoringMocks) return Promise.resolve(authoringMocks.mockUpdatePostMetadata(id, payload));
   return request<PostView>(`/api/v1/posts/${id}`, { method: "PATCH", body: payload });
@@ -143,15 +166,18 @@ export function restoreRevision(id: number, versionNumber: number): Promise<Post
   });
 }
 
-export function getBlocks(id: number): Promise<PostBlockView[]> {
-  if (authoringMocks) return Promise.resolve(authoringMocks.mockGetBlocks(id));
-  return request<PostBlockView[]>(`/api/v1/posts/${id}/blocks`, { method: "GET" });
+/** The body with `X-Content-Version`, read in the same transaction — the editor's base version. */
+export async function getBlocks(id: number): Promise<VersionedBlocks> {
+  if (authoringMocks) return authoringMocks.mockGetBlocks(id);
+  const { text, headers } = await requestText(`/api/v1/posts/${id}/blocks`, { method: "GET" });
+  return { blocks: JSON.parse(text) as PostBlockView[], contentVersion: contentVersionOf(headers) };
 }
 
-export function replaceBlocks(id: number, blocks: BlockInput[]): Promise<PostBlockView[]> {
-  if (authoringMocks) return Promise.resolve(authoringMocks.mockReplaceBlocks(id, blocks));
-  return request<PostBlockView[]>(`/api/v1/posts/${id}/blocks`, {
+export async function replaceBlocks(id: number, blocks: BlockInput[], guard: EditGuard = {}): Promise<VersionedBlocks> {
+  if (authoringMocks) return authoringMocks.mockReplaceBlocks(id, blocks, guard);
+  const { text, headers } = await requestText(`/api/v1/posts/${id}/blocks`, {
     method: "PUT",
-    body: { blocks },
+    body: { blocks, ...guard },
   });
+  return { blocks: text ? (JSON.parse(text) as PostBlockView[]) : [], contentVersion: contentVersionOf(headers) };
 }
