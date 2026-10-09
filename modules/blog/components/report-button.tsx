@@ -22,6 +22,9 @@ type Props = {
   leadingRule?: boolean;
   /** The server a note came from: offers to send it an anonymous copy, off unless chosen. */
   forwardDomain?: string;
+  /** Opened from a ⋯ menu instead of the flag: no trigger, the popover anchors to the menu's box. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 /**
@@ -34,12 +37,27 @@ type Props = {
  * open with an error so it can be sent again; success also raises a toast so the confirm isn't lost when
  * the popover closes. Closes on outside-click / Escape.
  */
-export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRule = false, forwardDomain }: Props) {
+export function ReportButton({
+  subjectType,
+  subjectId,
+  ownerUsername,
+  leadingRule = false,
+  forwardDomain,
+  open: openProp,
+  onOpenChange,
+}: Props) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("common");
   const { toast } = useToast();
   const { me } = useAuth();
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const fromMenu = openProp !== undefined;
+  const open = fromMenu ? openProp : openState;
+  const setOpen = (next: boolean | ((current: boolean) => boolean)) => {
+    const value = typeof next === "function" ? next(open) : next;
+    if (fromMenu) onOpenChange?.(value);
+    else setOpenState(value);
+  };
   const [reasonCode, setReasonCode] = useState<AbuseReasonCode | null>(null);
   const [detail, setDetail] = useState("");
   const [forward, setForward] = useState(false);
@@ -96,17 +114,19 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
   return (
     <>
       {leadingRule && <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />}
-      <div className="relative" ref={ref}>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-haspopup="dialog"
-          aria-expanded={open}
-          className="touch-target inline-flex items-center gap-1 rounded text-xs text-slate-500 transition-colors hover:text-slate-600 focus-ring dark:text-slate-400 dark:hover:text-slate-300"
-        >
-          <Flag className="h-3 w-3" />
-          {t("report")}
-        </button>
+      <div className={fromMenu ? "pointer-events-none absolute inset-0" : "relative"} ref={ref}>
+        {!fromMenu && (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-haspopup="dialog"
+            aria-expanded={open}
+            className="touch-target inline-flex items-center gap-1 rounded text-xs text-slate-500 transition-colors hover:text-slate-600 focus-ring dark:text-slate-400 dark:hover:text-slate-300"
+          >
+            <Flag className="h-3 w-3" />
+            {t("report")}
+          </button>
+        )}
 
         {open && (
           <div
@@ -115,7 +135,7 @@ export function ReportButton({ subjectType, subjectId, ownerUsername, leadingRul
             aria-modal="true"
             aria-labelledby={titleId}
             className={cn(
-              "absolute right-0 z-30 w-72 rounded-surface border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-850",
+              "pointer-events-auto absolute right-0 z-30 w-72 rounded-surface border border-slate-200 bg-white p-4 shadow-float dark:border-slate-700 dark:bg-slate-850",
               below ? "top-full mt-2" : "bottom-full mb-2",
             )}
           >

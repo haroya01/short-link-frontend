@@ -23,6 +23,7 @@ import { ArticleBody, extractHeadings, readingMinutes } from "../_components/pos
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
+import { PostReaderMenu } from "../_components/post-reader-menu";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
@@ -349,6 +350,7 @@ export default async function PublicPostPage({
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
             <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
+            <PostReaderMenu postId={post.id} authorUsername={author.username} />
           </div>
         </div>
       </header>

@@ -12,6 +12,7 @@ import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import {
   followUser,
   listFollowers,
@@ -48,6 +49,7 @@ export function FollowListDialog({
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
+  const blocked = useBlockedNames();
   // Portal target (<body>) only exists on the client; gate so SSR/first paint render nothing —
   // matches the closed state and avoids a hydration mismatch.
   const [mounted, setMounted] = useState(false);
@@ -97,7 +99,8 @@ export function FollowListDialog({
 
   if (!open || !mounted) return null;
 
-  const empty = !loading && items.length === 0;
+  const shown = items.filter((u) => !blocked.has(u.username));
+  const empty = !loading && shown.length === 0;
 
   // Portal to <body>: a transformed/animated ancestor (a will-change page wrapper, the post
   // article's enter animation, etc.) would otherwise make this `fixed inset-0` overlay resolve
@@ -142,7 +145,7 @@ export function FollowListDialog({
             </p>
           )}
           <ul>
-            {items.map((u) => (
+            {shown.map((u) => (
               <FollowRow key={u.id} user={u} locale={locale} onNavigate={() => onOpenChange(false)} />
             ))}
           </ul>
