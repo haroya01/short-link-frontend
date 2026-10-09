@@ -7,6 +7,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { getNoteThread, type Note, type NoteThread } from "@/modules/notes/api/notes";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteCard } from "./note-card";
 import { NoteComposer, NoteSignInRow } from "./note-composer";
 
@@ -23,6 +24,7 @@ export function NoteThreadView({
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
   const filters = useNoteFilters();
+  const blocked = useBlockedNames();
   const [thread, setThread] = useState(initial);
   const [deleted, setDeleted] = useState(false);
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
@@ -128,7 +130,7 @@ export function NoteThreadView({
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {thread.replies.map((reply) => {
               const verdict = noteVerdict(reply, filters, "thread", me?.id);
-              if (verdict?.action === "hide") return null;
+              if (verdict?.action === "hide" || blocked.has(reply.author.username)) return null;
               return (
               <NoteCard
                 key={reply.id}

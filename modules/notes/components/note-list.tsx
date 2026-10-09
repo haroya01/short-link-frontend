@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { useAuth } from "@/lib/auth";
 import type { Note, NoteFeed, NoteFilterContext } from "@/modules/notes/api/notes";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { NoteCard, noteHref } from "./note-card";
 
@@ -33,6 +34,7 @@ export function NoteList({
   const t = useTranslations("notes");
   const locale = useLocale();
   const filters = useNoteFilters();
+  const blocked = useBlockedNames();
   const { me } = useAuth();
   const [items, setItems] = useState<Note[]>(initial?.items ?? []);
   const [page, setPage] = useState(initial?.page ?? 0);
@@ -74,7 +76,9 @@ export function NoteList({
   }
 
   const verdicts = new Map(items.map((note) => [note.id, noteVerdict(note, filters, filterContext, me?.id)]));
-  const shown = items.filter((note) => verdicts.get(note.id)?.action !== "hide");
+  const shown = items.filter(
+    (note) => verdicts.get(note.id)?.action !== "hide" && !blocked.has(note.author.username),
+  );
   const fresh = new Set(prepend.map((n) => n.id));
 
   if (state === "loading" && shown.length === 0) {

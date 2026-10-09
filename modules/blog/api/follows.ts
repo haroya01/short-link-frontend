@@ -161,3 +161,37 @@ export function listFollowing(username: string, page = 0, size = 20): Promise<Fo
     { method: "GET" },
   );
 }
+
+/** Someone the viewer blocked — newest first. */
+export interface BlockedUser {
+  id: number;
+  username: string;
+  avatarUrl: string | null;
+}
+
+let mockBlocked: BlockedUser[] = [{ id: 9201, username: "mallory", avatarUrl: null }];
+
+export function listBlockedUsers(): Promise<BlockedUser[]> {
+  if (USE_MOCKS) return Promise.resolve(mockBlocked);
+  return request<BlockedUser[]>("/api/v1/users/me/blocks", { method: "GET" });
+}
+
+/** The server also ends every follow and pending follow request between the two, both ways. */
+export async function blockUser(username: string): Promise<void> {
+  if (USE_MOCKS) {
+    mockRequested.delete(username);
+    if (!mockBlocked.some((u) => u.username === username)) {
+      mockBlocked = [{ id: 9300 + mockBlocked.length, username, avatarUrl: null }, ...mockBlocked];
+    }
+    return;
+  }
+  await request<void>(`/api/v1/users/${encodeURIComponent(username)}/block`, { method: "PUT" });
+}
+
+export async function unblockUser(username: string): Promise<void> {
+  if (USE_MOCKS) {
+    mockBlocked = mockBlocked.filter((u) => u.username !== username);
+    return;
+  }
+  await request<void>(`/api/v1/users/${encodeURIComponent(username)}/block`, { method: "DELETE" });
+}
