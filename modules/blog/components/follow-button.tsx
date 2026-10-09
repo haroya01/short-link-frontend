@@ -11,6 +11,7 @@ import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import { followUser, setNoteNotifications, unfollowUser } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { emitFollowChanged } from "@/modules/blog/lib/consequence-events";
 import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
 import { cn } from "@/lib/utils";
@@ -108,7 +109,21 @@ export function FollowButton({
   // re-hide and pop back in on every hard navigation (the flicker) — only the very first visit (cold
   // cache) waits for auth.
   const isSelf = ready && me?.username === username;
-  const showButton = ready ? !isSelf : seedVisible === true;
+  const blocked = useBlockedNames().has(username);
+  const showButton = !blocked && (ready ? !isSelf : seedVisible === true);
+
+  // Blocking ends the follow and any pending request on the server; mirror it so an unblock doesn't
+  // bring back a stale 팔로잉 from the shared store or the session cache.
+  useEffect(() => {
+    if (!blocked) return;
+    const nextCount = following ? Math.max(count - 1, 0) : count;
+    setShared({ following: false, count: nextCount, countHidden });
+    setRequested(false);
+    setNotifyNotes(false);
+    writeFollowCache(username, { following: false, count: nextCount, self: false, hidden: countHidden });
+    // Runs on the block itself, not on every follow-state change while blocked.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocked, username]);
 
   // Seed from the session cache before paint → no flash on tab navigation. Writes through the shared
   // store so a co-mounted button for the same author seeds identically.

@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import { HideIfBlocked } from "@/modules/blog/components/hide-if-blocked";
 
 const TAB_SEGMENTS = ["notes", "reposts", "series", "collections", "about", "liked", "bookmarks"];
 
@@ -51,11 +52,12 @@ export function isTabRoute(pathname: string): boolean {
  */
 export function ProfileChrome({ header, children }: { header: ReactNode; children: ReactNode }) {
   const pathname = usePathname();
+  const { username } = useParams<{ username: string }>();
   if (!isTabRoute(pathname)) return <>{children}</>;
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-2xl">{header}</div>
-      {children}
+      <HideIfBlocked username={username}>{children}</HideIfBlocked>
     </main>
   );
 }

@@ -1,5 +1,5 @@
 import { DATE_LOCALE } from "@/lib/date";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Layers } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
@@ -8,6 +8,7 @@ import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { HideIfBlocked } from "@/modules/blog/components/hide-if-blocked";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
@@ -149,7 +150,15 @@ export function FeedListSkeleton({ count = 4 }: { count?: number }) {
  * `featured` gives the lead post a slightly larger title + an editorial label. MetaRow stays a sibling
  * of the post link (never nested) so the author link isn't an `<a>` nested in an `<a>`.
  */
-export function FeedCard({
+export function FeedCard(props: ComponentProps<typeof FeedCardRow>) {
+  return (
+    <HideIfBlocked username={props.item.author.username}>
+      <FeedCardRow {...props} />
+    </HideIfBlocked>
+  );
+}
+
+function FeedCardRow({
   item,
   locale,
   className,

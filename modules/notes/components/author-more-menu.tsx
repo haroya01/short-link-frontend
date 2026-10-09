@@ -5,8 +5,11 @@ import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
+import { blockAuthor, unblockAuthor, useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import {
   getMuteStatus,
   getRepostVisibility,
@@ -24,6 +27,8 @@ export function AuthorMoreMenu({ username }: { username: string }) {
   const { toast } = useToast();
   const { authenticated, me } = useAuth();
   const [follow] = useFollowShared(username, UNKNOWN);
+  const blocked = useBlockedNames().has(username);
+  const [confirm, confirmDialog] = useConfirm();
   const [hidden, setHidden] = useState<boolean | null>(null);
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
@@ -67,6 +72,33 @@ export function AuthorMoreMenu({ username }: { username: string }) {
       toast(t("unmutedToast", { username }));
     } catch {
       toast(t("muteFailed"), "error");
+    }
+  }
+
+  async function block() {
+    setOpen(false);
+    const ok = await confirm({
+      title: t("blockTitle", { username }),
+      description: t("blockHint"),
+      confirmLabel: t("block"),
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await blockAuthor(username);
+      toast(t("blockedToast", { username }));
+    } catch {
+      toast(t("blockFailed"), "error");
+    }
+  }
+
+  async function unblock() {
+    setOpen(false);
+    try {
+      await unblockAuthor(username);
+      toast(t("unblockedToast", { username }));
+    } catch {
+      toast(t("unblockFailed"), "error");
     }
   }
 
@@ -134,10 +166,19 @@ export function AuthorMoreMenu({ username }: { username: string }) {
                 {t("muteMenu")}
               </button>
             ))}
+          <button
+            type="button"
+            role="menuitem"
+            onClick={blocked ? unblock : block}
+            className={cn(item, !blocked && "text-red-600 dark:text-red-400")}
+          >
+            {blocked ? t("unblock") : t("blockMenu")}
+          </button>
         </div>
       )}
       <NoteListMembershipDialog username={username} open={addingToList} onClose={() => setAddingToList(false)} />
       <MuteDialog username={username} open={muting} onClose={() => setMuting(false)} onMuted={setMute} />
+      {confirmDialog}
     </div>
   );
 }

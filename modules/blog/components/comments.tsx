@@ -22,6 +22,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteList } from "@/modules/notes/components/note-list";
 import { compactTime } from "@/modules/notes/lib/compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
@@ -65,6 +66,7 @@ export function PostComments({
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
 
   const [comments, setComments] = useState<CommentView[]>([]);
+  const blocked = useBlockedNames();
   const [quotes, setQuotes] = useState<PostQuotes | null>(null);
   const [quotedNow, setQuotedNow] = useState<Note[]>([]);
   const loadQuotes = useCallback((page: number) => listPostQuotes(postId, page), [postId]);
@@ -210,8 +212,9 @@ export function PostComments({
     }
   }
 
-  const tops = comments.filter((c) => c.parentId == null);
-  const repliesOf = (id: number) => comments.filter((c) => c.parentId === id);
+  const shown = comments.filter((c) => !c.author || !blocked.has(c.author.username));
+  const tops = shown.filter((c) => c.parentId == null);
+  const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
   const canDelete = (c: CommentView) =>
     !!me && (c.author?.id === me.id || me.username === authorUsername);
 
@@ -285,11 +288,11 @@ export function PostComments({
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       {quotes && quotes.total > 0 ? (
         <>
-          <h2 className="sr-only">{comments.length > 0 ? t("count", { count: comments.length }) : t("heading")}</h2>
+          <h2 className="sr-only">{shown.length > 0 ? t("count", { count: shown.length }) : t("heading")}</h2>
           <div role="tablist" aria-label={t("discussionTabs")} className="flex items-baseline gap-5">
             {(
               [
-                ["comments", comments.length > 0 ? t("count", { count: comments.length }) : t("heading")],
+                ["comments", shown.length > 0 ? t("count", { count: shown.length }) : t("heading")],
                 ["notes", t("notesTab", { count: quotes.total })],
               ] as const
             ).map(([key, label]) => (
@@ -313,7 +316,7 @@ export function PostComments({
         </>
       ) : (
         <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {comments.length > 0 ? t("count", { count: comments.length }) : t("heading")}
+          {shown.length > 0 ? t("count", { count: shown.length }) : t("heading")}
         </h2>
       )}
 
@@ -386,7 +389,7 @@ export function PostComments({
             {tCommon("retry")}
           </button>
         </p>
-      ) : comments.length === 0 ? null : (
+      ) : shown.length === 0 ? null : (
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
