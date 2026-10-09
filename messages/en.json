@@ -2466,7 +2466,8 @@
       "openImage": "Open image",
       "imageN": "Image {idx}"
     },
-    "featured": "Featured"
+    "featured": "Featured",
+    "protectedLink": "Password-protected link"
   },
   "recent": {
     "claimedToast": "{count, plural, one {Saved # link} other {Saved # links}} to your account"

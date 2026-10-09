@@ -2466,7 +2466,8 @@
       "openImage": "写真を拡大",
       "imageN": "{idx} 番目の写真"
     },
-    "featured": "おすすめ"
+    "featured": "おすすめ",
+    "protectedLink": "パスワードが必要なリンク"
   },
   "recent": {
     "claimedToast": "{count}件のリンクをアカウントに保存しました"
