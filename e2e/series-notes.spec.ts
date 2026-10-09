@@ -97,14 +97,13 @@ test("구독함 places a series note before an older post and loads past a page 
   await expect(page.locator("main").getByRole("button", { name: "더 보기" })).toHaveCount(0);
 });
 
-test("a subscribed series card previews its note", async ({ page }) => {
+test("a subscribed series row lists its note among the episodes and opens the series", async ({ page }) => {
   await page.goto("/ko/blog?sort=series");
-  const card = page.getByRole("region", { name: "리팩터링 일지" });
-  await expect(card).toBeVisible({ timeout: 30_000 });
-  await expect(card).toContainText("/3");
-  await card.getByRole("button", { name: "다음 편" }).click();
-  await expect(card.getByRole("link", { name: new RegExp(NOTE_40) })).toHaveAttribute("href", /\/notes\/40$/);
-  await expect(card).toContainText("노트");
+  const row = page.locator("main li[data-series-row]").filter({ has: page.getByRole("heading", { name: "리팩터링 일지" }) });
+  await expect(row).toBeVisible({ timeout: 30_000 });
+  await expect(row).toContainText("시리즈·3편");
+  await expect(row).toContainText(NOTE_40);
+  await expect(row.getByRole("link", { name: /리팩터링 일지/ })).toHaveAttribute("href", /\/p\/dohyun\/series\/[^/]+$/);
 });
 
 test("the owner adds a note to a series from the picker and reorders it", async ({ page }) => {

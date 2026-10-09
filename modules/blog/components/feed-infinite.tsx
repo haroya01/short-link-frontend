@@ -81,11 +81,8 @@ export function FeedInfinite({
   query,
   tag,
   lang,
-  featuredFirst = false,
-  featuredLabel,
-  interleaveNode,
-  interleaveAfter = 3,
   interleaveNodes,
+  interleaveFirst = 5,
   interleaveEvery = 5,
 }: {
   locale: string;
@@ -97,23 +94,11 @@ export function FeedInfinite({
   tag?: string;
   /** Active post-language filter (ko/ja/en); undefined = all languages. Carried into page fetches. */
   lang?: string;
-  /** Accepted for call-site compatibility; the single-column list no longer varies by rail. */
-  hasRail?: boolean;
-  /** Give the very first item a quiet editorial emphasis (the recent home feed's lead post). */
-  featuredFirst?: boolean;
-  /** Label for the featured lead row (e.g. "오늘의 글"). */
-  featuredLabel?: string;
-  /** A non-post block (e.g. a series card) dropped into the feed after {@link interleaveAfter} rows.
-   *  Only shown when the feed has rows past that point, so it never trails a short feed. */
-  interleaveNode?: ReactNode;
-  /** Zero-based row index the interleaved node is inserted after (default: after the 4th row). */
-  interleaveAfter?: number;
-  /** Several nodes threaded through the feed one every {@link interleaveEvery} rows (the "지금 이어지는
-   *  것들" connection thread). Distinct from {@link interleaveNode} (a single insert): both can coexist
-   *  — the series card at {@link interleaveAfter}, the connection thread spaced after it. Each is only
-   *  placed when the feed actually has a row past that point (never trails a short feed). */
+  /** Rows threaded through the feed (the public connection events): one after row
+   *  {@link interleaveFirst}, then one every {@link interleaveEvery} rows — each only where a post row
+   *  follows, so the thread never trails a short feed. */
   interleaveNodes?: ReactNode[];
-  /** Row spacing between {@link interleaveNodes} inserts (default: one every 5 rows). */
+  interleaveFirst?: number;
   interleaveEvery?: number;
 }) {
   const t = useTranslations("publicFeed");
@@ -240,7 +225,7 @@ export function FeedInfinite({
   const initialKeys = useMemo(() => new Set(initialItems.map(itemKey)), [initialItems]);
 
   // "보고싶은 태그만": drop posts carrying a hidden tag (per-device). The tag currently being viewed
-  // is exempt, so a hidden tag's own page still shows its posts. Featured stays pinned to index 0.
+  // is exempt, so a hidden tag's own page still shows its posts.
   const hiddenSet = new Set(prefs.hidden.filter((h) => h !== tag));
   const visible =
     hiddenSet.size === 0
@@ -248,14 +233,10 @@ export function FeedInfinite({
       : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
   const hiddenCount = items.length - visible.length;
 
-  // Connection thread: place interleaveNodes[k] after row (interleaveAfter + 1) + k*interleaveEvery,
-  // one every few rows — but only where a real post row follows, so the thread never trails the feed.
-  // Keyed by the row index it sits AFTER. The single interleaveNode (series card) is handled inline.
   const connectAfter = new Map<number, ReactNode>();
   if (interleaveNodes && interleaveNodes.length > 0) {
-    const first = interleaveAfter + 2; // clear the series-card slot (at interleaveAfter) by a row
     for (let k = 0; k < interleaveNodes.length; k++) {
-      const rowIdx = first + k * Math.max(1, interleaveEvery);
+      const rowIdx = interleaveFirst + k * Math.max(1, interleaveEvery);
       if (rowIdx < visible.length) connectAfter.set(rowIdx, interleaveNodes[k]);
     }
   }
@@ -268,21 +249,12 @@ export function FeedInfinite({
             <FeedCard
               item={item}
               locale={locale}
-              featured={featuredFirst && i === 0}
-              featuredLabel={featuredLabel}
               eager={i < 4}
               entranceDelay={
                 initialKeys.has(itemKey(item)) ? undefined : Math.min((i % PAGE_SIZE) * 25, 250)
               }
             />
-            {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-              // Bracketed by rules top + bottom so the series block reads as a distinct insert in
-              // the feed flow, not just another post row.
-              <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
-                {interleaveNode}
-              </li>
-            )}
-            {connectAfter.has(i) && <li className="list-none py-2">{connectAfter.get(i)}</li>}
+            {connectAfter.get(i)}
           </Fragment>
         ))}
       </FeedList>
