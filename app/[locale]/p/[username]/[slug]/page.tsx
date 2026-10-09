@@ -8,7 +8,6 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
-import { ReportButton } from "@/modules/blog/components/report-button";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
@@ -23,6 +22,7 @@ import { ArticleBody, extractHeadings, readingMinutes } from "../_components/pos
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
+import { PostReaderMenu } from "../_components/post-reader-menu";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
@@ -349,6 +349,7 @@ export default async function PublicPostPage({
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
             <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
+            <PostReaderMenu postId={post.id} authorUsername={author.username} />
           </div>
         </div>
       </header>
@@ -432,16 +433,14 @@ export default async function PublicPostPage({
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}
           </a>
-          {/* All post actions live in one cluster — like / bookmark / share, then a hairline and the
-              quiet 신고 (a popover, so it never breaks the row) so it reads as a secondary action in the
-              group rather than a button orphaned on its own line below. */}
+          {/* All post actions live in one cluster — like / bookmark / connect / quote / share. 신고 lives in
+              the header's ⋯ (PostReaderMenu), one place as on iOS. */}
           <div className="flex items-center gap-3">
             <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
             <ConnectButton postId={post.id} postTitle={post.title} />
             <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            <ReportButton subjectType="POST" subjectId={post.id} ownerUsername={author.username} leadingRule />
           </div>
         </div>
       </footer>

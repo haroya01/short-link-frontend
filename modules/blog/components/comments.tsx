@@ -17,7 +17,7 @@ import {
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
-import { ReportButton } from "@/modules/blog/components/report-button";
+import { CommentMenu } from "@/modules/blog/components/comment-menu";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
@@ -544,8 +544,8 @@ function CommentRow({
           {fmt(comment.createdAt)}
         </time>
         <div className="ml-auto flex shrink-0 items-center gap-1">
-          {/* 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 노출 — 내 것엔 휴지통만. */}
-          {canReport && <ReportButton subjectType="COMMENT" subjectId={comment.id} />}
+          {/* ⋯: 차단은 남의 댓글이면, 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 — 내 것엔 휴지통만. */}
+          <CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />
           {canDelete && (
             <button
               type="button"
