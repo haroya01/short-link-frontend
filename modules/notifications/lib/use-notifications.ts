@@ -7,8 +7,11 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
 import { useAuth } from "@/lib/auth";
+import type { NoteFilter } from "@/modules/notes/api/notes";
+import { noticeHidden } from "@/modules/notes/lib/note-filter-match";
 import { ApiError } from "@/lib/api/client";
 import {
   getNotifications,
@@ -68,6 +71,27 @@ export function useMarkRead() {
       qc.invalidateQueries({ queryKey: UNREAD_KEY });
     },
   });
+}
+
+/** The server stores what a hiding filter catches as read; notices from before the filter are read
+ *  here once a list finds them hidden, so the badge never counts a row no list shows. */
+export function useReadHiddenNotices(
+  items: NotificationItem[],
+  filters: NoteFilter[],
+  meId: number | null | undefined,
+) {
+  const qc = useQueryClient();
+  const sent = useRef(new Set<number>());
+  useEffect(() => {
+    const ids = items
+      .filter((item) => !item.read && !sent.current.has(item.id) && noticeHidden(item, filters, meId))
+      .map((item) => item.id);
+    if (ids.length === 0) return;
+    ids.forEach((id) => sent.current.add(id));
+    void Promise.allSettled(ids.map((id) => markNotificationRead(id))).then(() =>
+      qc.invalidateQueries({ queryKey: UNREAD_KEY }),
+    );
+  }, [items, filters, meId, qc]);
 }
 
 export function useMarkAllRead() {

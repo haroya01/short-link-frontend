@@ -48,3 +48,18 @@ test("settings pair what happens to a post with what happens to a note", async (
     "true",
   );
 });
+
+test("a hiding notice filter hides every notice that quotes someone else's note", async ({ page }) => {
+  await page.goto("/ko/blog/settings");
+  const section = page.getByRole("region", { name: "키워드 필터" });
+  await section.getByRole("textbox", { name: "키워드나 문구" }).fill("제네릭은", { timeout: 30_000 });
+  await section.getByRole("checkbox", { name: "알림" }).check();
+  await section.getByRole("combobox", { name: "걸리면" }).selectOption("hide");
+  await section.getByRole("button", { name: "필터 추가" }).click();
+  await expect(section.getByRole("button", { name: "제네릭은 필터 고치기" })).toBeVisible();
+
+  await page.goto("/ko/blog/notifications");
+  const main = page.locator("main");
+  await expect(main.getByRole("link", { name: /minji님 외 2명이 내 글을 좋아해요/ })).toBeVisible({ timeout: 30_000 });
+  await expect(main.getByRole("link", { name: /yuna님이 노트에서 내 글을 인용했어요/ })).toHaveCount(0);
+});
