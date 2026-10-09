@@ -5,7 +5,7 @@ import { blogPath } from "@/lib/host";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
-import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { ViewerFeedCards } from "@/modules/blog/components/viewer-feed-cards";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
@@ -13,6 +13,9 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
 // the API is unreachable while the page prerenders at build (fetchPublic catches), so the index
 // can live on the edge cache and refresh every 30s instead of paying per-request SSR.
 export const revalidate = 30;
+
+// A small peek, not a second home feed — the tag cloud is this page's job.
+const RECENT_PEEK = 3;
 
 // Same absolute-origin constant as the feed home (and sitemap.ts) — metadata canonicals must be
 // absolute on the blog host, not the kurl.me metadataBase the root layout sets.
@@ -66,13 +69,12 @@ export default async function TagsIndexPage({
   // chip row over empty space.
   const [tagsResult, recentResult] = await Promise.all([
     listPopularTags(100),
-    // A small peek, not a second home feed — the tag cloud is this page's job.
-    listPublicFeed("recent", 0, 3),
+    listPublicFeed("recent", 0, RECENT_PEEK),
   ]);
   // Drop junk tags (incomplete jamo, single-char, mash) so the cloud only offers real topics.
   const tags = (tagsResult.ok ? tagsResult.data : []).filter((tag) => isDisplayableTag(tag.tag));
   // Slice to a small peek (the mock returns a full page; the real API honors size=3).
-  const recent = recentResult.ok ? recentResult.data.items.slice(0, 3) : [];
+  const recent = recentResult.ok ? recentResult.data.items.slice(0, RECENT_PEEK) : [];
 
   return (
     // Same shell as a single topic's page (/tags/[tag]) so selecting a topic is a seamless soft-nav:
@@ -111,11 +113,7 @@ export default async function TagsIndexPage({
         {recent.length > 0 && (
           <section className="mt-12">
             <RailHeading className="mb-4">{t("topicsRecent")}</RailHeading>
-            <FeedList>
-              {recent.map((item) => (
-                <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-              ))}
-            </FeedList>
+            <ViewerFeedCards locale={locale} initial={recent} sort="recent" size={RECENT_PEEK} />
           </section>
         )}
       </div>

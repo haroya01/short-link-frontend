@@ -3,7 +3,7 @@ import { Mark } from "@/components/common/logo";
 import { blogHref } from "@/lib/host";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { ViewerFeedCards } from "@/modules/blog/components/viewer-feed-cards";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
@@ -48,11 +48,7 @@ export default async function PublishingNotFound() {
       {picks.length > 0 && (
         <div className="mt-16">
           <RailHeading className="mb-3">{t("postTrending")}</RailHeading>
-          <FeedList>
-            {picks.map((item) => (
-              <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-            ))}
-          </FeedList>
+          <ViewerFeedCards locale={locale} initial={picks} sort="trending" size={3} />
         </div>
       )}
     </main>
