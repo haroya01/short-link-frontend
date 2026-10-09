@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, ChevronRight, ListFilter, Lock } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -8,6 +9,7 @@ import {
   useFollowRequests,
   useMarkAllRead,
   useNotifications,
+  useReadHiddenNotices,
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
 import { blogHref, blogPath } from "@/lib/host";
@@ -44,12 +46,14 @@ const GROUP_ORDER: GroupKey[] = ["groupToday", "groupYesterday", "groupWeek", "g
 
 export default function NotificationsPage() {
   const t = useTranslations("notifications");
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const unread = useUnreadCount();
   const markAll = useMarkAllRead();
   const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useNotifications();
   const filters = useNoteFilters();
+  const all = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
+  useReadHiddenNotices(all, filters, me?.id);
   const waiting = useFollowRequests().data?.length ?? 0;
   const filtered = useFilteredSenders().data ?? [];
   const filteredCount = filtered.reduce((sum, s) => sum + s.count, 0);
@@ -70,7 +74,7 @@ export default function NotificationsPage() {
     );
   }
 
-  const items = (data?.pages.flatMap((page) => page.items) ?? []).filter((item) => !noticeHidden(item, filters));
+  const items = all.filter((item) => !noticeHidden(item, filters, me?.id));
   const now = new Date();
   const groups = new Map<GroupKey, Item[]>();
   for (const item of items) {

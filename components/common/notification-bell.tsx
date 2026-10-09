@@ -1,15 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
+import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import {
   useMarkAllRead,
   useNotifications,
+  useReadHiddenNotices,
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
@@ -70,7 +72,10 @@ function NotificationDropdown({
   const { data, isLoading } = useNotifications();
   const markAll = useMarkAllRead();
   const filters = useNoteFilters();
-  const items = (data?.pages[0]?.items ?? []).filter((item) => !noticeHidden(item, filters));
+  const { me } = useAuth();
+  const first = useMemo(() => data?.pages[0]?.items ?? [], [data]);
+  useReadHiddenNotices(first, filters, me?.id);
+  const items = first.filter((item) => !noticeHidden(item, filters, me?.id));
 
   return (
     <div
