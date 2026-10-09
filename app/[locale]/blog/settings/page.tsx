@@ -7,7 +7,6 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
 import { FollowedTagsSetting } from "@/modules/blog/components/followed-tags-setting";
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
 import { FederationSetting } from "@/modules/notes/components/federation-setting";
@@ -148,9 +147,6 @@ export default function BlogSettingsPage() {
 
       {/* 알림 거르기 — 범주마다 받기·거르기·버리기(마스토돈 알림 정책) */}
       <NotificationPolicySettings />
-
-      {/* 피드 */}
-      <FeedDefaultTabSetting rowClass={rowClass} />
 
       {/* 팔로우한 태그 — 최근 글 없는 태그까지 전부 보이는 유일한 관리처 */}
       <FollowedTagsSetting />

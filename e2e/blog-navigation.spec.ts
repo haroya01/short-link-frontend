@@ -95,9 +95,9 @@ test("the theme is shared across blog surfaces via cookie (feed ↔ profile ↔ 
 
 test("feed tabs header stays in the same place on every tab", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  const tabsHeader = page.locator("header").filter({ has: page.getByRole("link", { name: "시리즈" }) }).first();
+  const tabsHeader = page.locator('header[data-feed-switcher="blog"]');
   const boxes = [];
-  for (const sort of ["recent", "trending", "series"]) {
+  for (const sort of ["following", "recent", "trending", "series"]) {
     await page.goto(`/ko/blog?sort=${sort}`);
     await expect(tabsHeader).toBeVisible();
     boxes.push(await tabsHeader.boundingBox());

@@ -1,16 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { useDismiss } from "@/hooks/use-dismiss";
 import { EmptyState } from "@/components/common/empty-state";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
-import { FeedSortTabs, type FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
+import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
+import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
+import type { NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
 import {
   getNoteFeedPreferences,
   listBookmarkedNotes,
@@ -28,11 +27,10 @@ import { NoteComposer, NoteSignInRow } from "./note-composer";
 import { NoteList } from "./note-list";
 import { NoteListsPanel } from "./note-lists";
 
-const TABS = ["everyone", "trending", "following"] as const;
+const TABS = ["following", "everyone", "trending"] as const;
 const MORE = ["federated", "bookmarks", "direct", "lists"] as const;
 const FEEDS = [...TABS, ...MORE] as const;
 type Feed = (typeof FEEDS)[number];
-type MoreFeed = (typeof MORE)[number];
 
 const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed>> = {
   everyone: listEveryoneNotes,
@@ -45,7 +43,8 @@ const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed
 
 const PERSONAL: ReadonlySet<Feed> = new Set(["federated", "following", "bookmarks", "direct", "lists"]);
 
-function feedOf(value: string | null): Feed {
+function feedOf(value: string | null, saved: NotesSwitcherFeed | null): Feed {
+  if (value === null) return saved ?? "everyone";
   return FEEDS.find((feed) => feed === value) ?? "everyone";
 }
 
@@ -58,35 +57,35 @@ function quoteFromParams(params: URLSearchParams): QuotedPost | null {
   return { id, title, slug, authorUsername };
 }
 
-export function NotesFeed() {
+export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed | null }) {
   const t = useTranslations("notes");
+  const tFeed = useTranslations("publicFeed");
   const params = useSearchParams();
   const pathname = usePathname();
   const { ready, authenticated, signInWithGoogle } = useAuth();
   const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
   const [posted, setPosted] = useState<Note[]>([]);
-  const feed = feedOf(params.get("feed"));
+  const feed = feedOf(params.get("feed"), savedFeed);
   const load = useCallback(
     (page: number) => (feed === "lists" ? Promise.resolve({ items: [], page, hasNext: false }) : LOADERS[feed](page)),
     [feed],
   );
   const listId = Number(params.get("list")) || null;
   const label: Record<Feed, string> = {
-    everyone: t("feedEveryone"),
+    everyone: tFeed("recent"),
     federated: t("feedFederated"),
-    following: t("feedFollowing"),
-    trending: t("feedTrending"),
+    following: tFeed("feed"),
+    trending: tFeed("trending"),
     bookmarks: t("feedBookmarks"),
     direct: t("feedDirect"),
     lists: t("feedLists"),
   };
-  const hrefFor = (key: Feed) => (key === "everyone" ? pathname : `${pathname}?feed=${key}`);
+  const hrefFor = (key: Feed) => `${pathname}?feed=${key}`;
   const tabs: FeedSortTab[] = TABS.map((key) => ({
     key,
     label: label[key],
     href: hrefFor(key),
     active: key === feed,
-    personal: PERSONAL.has(key),
   }));
   const empty: Record<Feed, string> = {
     everyone: t("emptyAuthor"),
@@ -103,26 +102,20 @@ export function NotesFeed() {
 
   return (
     <div>
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 pb-3.5 dark:border-slate-800">
-        <FeedSortTabs tabs={tabs} />
-        <div className="flex shrink-0 items-center gap-3">
-          {reposts.shown !== null && (
-            <label className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
-              {t("showReposts")}
-              <Switch
-                checked={reposts.shown}
-                onCheckedChange={reposts.set}
-                aria-label={t("showReposts")}
-              />
-            </label>
-          )}
-          {ready && authenticated && (
-            <MoreFeedsMenu
-              active={(MORE as readonly string[]).includes(feed) ? (feed as MoreFeed) : null}
-              items={MORE.map((key) => ({ key, label: label[key], href: hrefFor(key) }))}
-            />
-          )}
-        </div>
+      <div className="mb-2">
+        <FeedSwitcher
+          surface="notes"
+          tabs={tabs}
+          more={MORE.map((key) => ({ key, label: label[key], href: hrefFor(key), active: key === feed }))}
+          trailing={
+            reposts.shown !== null && (
+              <label className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
+                {t("showReposts")}
+                <Switch checked={reposts.shown} onCheckedChange={reposts.set} aria-label={t("showReposts")} />
+              </label>
+            )
+          }
+        />
       </div>
       <div className="border-b border-slate-100 dark:border-slate-800">
         {ready && authenticated ? (
@@ -176,65 +169,6 @@ export function NotesFeed() {
                 : undefined
           }
         />
-      )}
-    </div>
-  );
-}
-
-function MoreFeedsMenu({
-  active,
-  items,
-}: {
-  active: MoreFeed | null;
-  items: { key: MoreFeed; label: string; href: string }[];
-}) {
-  const t = useTranslations("notes");
-  const [open, setOpen] = useState(false);
-  const root = useRef<HTMLDivElement>(null);
-  useDismiss(open, root, () => setOpen(false));
-  const current = items.find((item) => item.key === active);
-
-  return (
-    <div ref={root} className="relative">
-      <button
-        type="button"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className={`focus-ring touch-target inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors ${
-          current
-            ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-            : "border border-slate-200 text-slate-600 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:text-slate-100"
-        }`}
-      >
-        {current?.label ?? t("feedMore")}
-        <ChevronDown
-          className={`h-3.5 w-3.5 transition-transform duration-200 ease-[var(--ease)] motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
-          aria-hidden
-        />
-      </button>
-      {open && (
-        <div
-          role="menu"
-          className="absolute right-0 top-11 z-20 w-48 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
-        >
-          {items.map((item) => (
-            <Link
-              key={item.key}
-              href={item.href}
-              role="menuitem"
-              aria-current={item.key === active ? "page" : undefined}
-              onClick={() => setOpen(false)}
-              className={`focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] hover:bg-slate-100 dark:hover:bg-slate-800 ${
-                item.key === active
-                  ? "font-semibold text-slate-900 dark:text-slate-100"
-                  : "text-slate-700 dark:text-slate-200"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
       )}
     </div>
   );

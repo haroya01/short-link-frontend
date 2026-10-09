@@ -19,7 +19,7 @@ import { BlogLink } from "./blog-link";
 import { FeedMasthead } from "./feed-masthead";
 import { GuestMasthead } from "./guest-masthead";
 import { FeedContentTransition } from "./feed-content-transition";
-import { FeedSortTabs } from "./feed-sort-tabs";
+import { FeedSwitcher } from "./feed-switcher";
 import { FeedEmpty } from "./feed-empty";
 import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
@@ -30,7 +30,6 @@ import { looksLikeRemoteHandle } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
-import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
 import { TrendingTopics } from "./trending-topics";
 import { ConnectionFeedInsert } from "./connection-feed-insert";
 import { FeedErrorState } from "./feed-error-state";
@@ -131,6 +130,7 @@ export async function FeedScreen({
   const activeTab = searching ? sort : tab;
 
   const t = await getTranslations({ locale, namespace: "publicFeed" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
   // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
@@ -199,17 +199,8 @@ export async function FeedScreen({
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
   // search), so the content block replays its slide instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
-  // Tab order drives the slide direction (FeedContentTransition): recent → trending → following.
-  const tabIndex =
-    activeTab === "trending"
-      ? 1
-      : activeTab === "for-you"
-        ? 2
-        : activeTab === "following"
-          ? 3
-          : activeTab === "series"
-            ? 4
-            : 0;
+  // Tab order drives the slide direction (FeedContentTransition): 팔로잉 → 최신 → 인기, then "더 보기".
+  const tabIndex = ["following", "recent", "trending", "for-you", "series"].indexOf(activeTab);
 
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
@@ -267,9 +258,18 @@ export async function FeedScreen({
           bar, and the body gets extra room while the cookie banner is up (see globals.css).
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
-          <FeedSortTabs
+        <div className="mx-auto max-w-2xl">
+          <FeedSwitcher
+            surface="blog"
             tabs={[
+              {
+                key: "following",
+                label: t("feed"),
+                href: "?sort=following",
+                active: !searching && tab === "following",
+                // A search spans every author, so "following" can't apply — disable it while searching.
+                disabled: searching,
+              },
               {
                 key: "recent",
                 label: t("recent"),
@@ -292,37 +292,24 @@ export async function FeedScreen({
                     },
                   ]
                 : []),
-              {
-                key: "for-you",
-                label: t("forYou"),
-                href: "?sort=for-you",
-                personal: true,
-                active: !searching && tab === "for-you",
-                // For You is per-reader, so it can't apply to a cross-author search.
-                disabled: searching,
-              },
-              {
-                key: "following",
-                label: t("feed"),
-                href: "?sort=following",
-                personal: true,
-                active: !searching && tab === "following",
-                // A search spans every author, so "following" can't apply — disable it while searching.
-                disabled: searching,
-              },
-              {
-                key: "series",
-                label: t("seriesTab"),
-                href: "?sort=series",
-                active: !searching && tab === "series",
-                disabled: searching,
-              },
             ]}
+            more={
+              searching
+                ? undefined
+                : [
+                    { key: "for-you", label: t("forYou"), href: "?sort=for-you", active: tab === "for-you" },
+                    { key: "series", label: t("seriesTab"), href: "?sort=series", active: tab === "series" },
+                    {
+                      key: "followed-topics",
+                      label: t("followedTopics"),
+                      href: blogHref("/curation?open=topics"),
+                      external: true,
+                    },
+                    { key: "collections", label: tNav("myCollections"), href: blogHref("/collections"), external: true },
+                  ]
+            }
           />
-        </header>
-
-        {/* Keeps the SSR default-tab cookie in step with the account pref (no UI, no redirect). */}
-        <FeedTabCookieSync />
+        </div>
 
         {searching && looksLikeRemoteHandle(query) && (
           <ReadingShell className="mt-6">

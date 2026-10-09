@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -25,9 +25,15 @@ export default function SavedPostsPage() {
 
 function Library() {
   const t = useTranslations("blogWorkspace");
-  const showingHighlights = useSearchParams().get("view") === "highlights";
+  const params = useSearchParams();
+  const showingHighlights = params.get("view") === "highlights";
+  const openTopics = params.get("open") === "topics";
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
+
+  useEffect(() => {
+    if (ready && authenticated && openTopics) document.getElementById("followed-topics")?.scrollIntoView({ block: "start" });
+  }, [ready, authenticated, openTopics]);
 
   if (!ready) return null;
   if (!authenticated) {
@@ -88,7 +94,7 @@ function Library() {
           <ReadingHistoryList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>
         {/* 구독한 태그 — 팔로우한 주제를 한눈에, 눌러서 그 주제 피드로. 관리(언팔로우)는 설정에 둔다. */}
-        <CollapsibleSection title={t("curationTags")} hint={t("curationTagsHint")}>
+        <CollapsibleSection id="followed-topics" title={t("curationTags")} hint={t("curationTagsHint")} defaultOpen={openTopics}>
           <FollowedTagsShelf />
         </CollapsibleSection>
       </div>

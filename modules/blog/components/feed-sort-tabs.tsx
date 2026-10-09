@@ -25,13 +25,20 @@ const MIN_MS = 180;
 const MAX_MS = 320;
 
 /**
- * Feed-home sort tabs (최신 · 인기 · 팔로잉) with a single underline that *slides* between tabs — it
+ * Feed switcher tabs (팔로잉 · 최신 · 인기) with a single underline that *slides* between tabs — it
  * translates + resizes from the old tab to the new one (matching the content's left/right slide),
  * instead of each tab growing its own underline in place. Travel time scales with distance, so
  * jumping two tabs sweeps across the one between. The active position is measured client-side (labels
  * are any width); soft-nav keeps this mounted, so the bar transitions rather than jumps.
  */
-export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
+export function FeedSortTabs({
+  tabs: allTabs,
+  onSelect,
+}: {
+  tabs: FeedSortTab[];
+  /** Called on a plain click, before the navigation starts. */
+  onSelect?: (key: string) => void;
+}) {
   const { ready, authenticated } = useAuth();
   const tabs = !(ready && authenticated) ? allTabs.filter((t) => !t.personal || t.active) : allTabs;
   const router = useRouter();
@@ -128,6 +135,7 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
               // Resolve the relative ?sort= href against the current URL before pushing — mirrors
               // BlogChromeLink. Wrapped in a transition so isPending flags the pending nav.
               const url = new URL(t.href, window.location.href);
+              onSelect?.(t.key);
               setPendingKey(t.key);
               startTransition(() => router.push(url.pathname + url.search + url.hash));
             }}

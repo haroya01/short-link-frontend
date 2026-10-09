@@ -94,7 +94,7 @@ test("구독함 places a series note before an older post and loads past a page 
   await expect(page.locator('li[data-series-note="41"]')).toContainText("팀 회고 — 조금 무거운 이야기");
   await expect(page.locator('li[data-series-note="41"]')).not.toContainText("이름은 다 뺐다");
   await expect(page.getByText(FIRST_COMMIT)).toBeVisible();
-  await expect(page.locator("main").getByRole("button", { name: "더 보기" })).toHaveCount(0);
+  await expect(page.locator('main [role="status"]').getByRole("button", { name: "더 보기" })).toHaveCount(0);
 });
 
 test("a subscribed series card previews its note", async ({ page }) => {
