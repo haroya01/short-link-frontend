@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { authorHref } from "@/modules/blog/lib/author-href";
@@ -10,7 +10,15 @@ import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { NoteCard } from "./note-card";
 import { NoteComposer, NoteSignInRow } from "./note-composer";
 
-export function NoteThreadView({ initial }: { initial: NoteThread }) {
+export function NoteThreadView({
+  initial,
+  seriesBanner,
+  seriesNext,
+}: {
+  initial: NoteThread;
+  seriesBanner?: ReactNode;
+  seriesNext?: ReactNode;
+}) {
   const t = useTranslations("notes");
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
@@ -47,6 +55,7 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
 
   return (
     <div>
+      {seriesBanner}
       {thread.parent && (
         <div className="relative">
           <span
@@ -89,6 +98,8 @@ export function NoteThreadView({ initial }: { initial: NoteThread }) {
           />
         </div>
       ))}
+
+      {seriesNext}
 
       <section aria-labelledby="note-replies" className="border-t border-slate-100 pt-4 dark:border-slate-800">
         <h2 id="note-replies" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">

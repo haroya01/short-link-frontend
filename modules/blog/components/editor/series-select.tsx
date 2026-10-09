@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { createSeries, listSeries, type SeriesView } from "@/modules/blog/api/series";
+import { seriesSlugFromTitle } from "@/modules/blog/lib/series-items";
 import { ApiError } from "@/lib/api/client";
 
 type Props = {
@@ -49,9 +50,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
     setError(null);
     try {
       // Auto-derive a slug from the title; non-Latin titles (ko/ja) collapse to empty → random fallback.
-      const base = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-      const slug = base.length >= 2 ? base : `series-${Math.random().toString(36).slice(2, 8)}`;
-      const created = await createSeries({ title, slug });
+      const created = await createSeries({ title, slug: seriesSlugFromTitle(title) });
       setSeries((prev) => [created.series, ...prev]);
       onChange(created.series.id);
       setNewTitle("");

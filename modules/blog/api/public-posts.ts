@@ -50,13 +50,44 @@ export interface PublicSeriesNavLink {
   title: string;
 }
 
+export type SeriesItemType = "POST" | "NOTE";
+
+/** A series neighbour that may be a post (slug) or a note (noteId). A note's title is its excerpt —
+ *  or its content warning when it carries one. */
+export interface SeriesItemLink {
+  type: SeriesItemType;
+  slug: string | null;
+  noteId: number | null;
+  title: string;
+}
+
 export interface PublicPostSeriesNav {
   slug: string;
   title: string;
+  /** Published posts only. */
   position: number;
   total: number;
   prev: PublicSeriesNavLink | null;
   next: PublicSeriesNavLink | null;
+  /** Posts and readable notes in series order. Absent from servers that predate notes in series. */
+  itemPosition?: number;
+  itemTotal?: number;
+  prevItem?: SeriesItemLink | null;
+  nextItem?: SeriesItemLink | null;
+}
+
+export interface SeriesNoteSummary {
+  id: number;
+  body: string;
+  contentWarning: string | null;
+  excerpt: string | null;
+  createdAt: string;
+}
+
+export interface PublicSeriesItem {
+  type: SeriesItemType;
+  post: PublicPostListItem | null;
+  note: SeriesNoteSummary | null;
 }
 
 export interface PublicCtaInfo {
@@ -91,7 +122,9 @@ export interface PublicSeriesListItem {
   id: number;
   slug: string;
   title: string;
+  /** Published posts only; a series of notes alone lists with 0. */
   postCount: number;
+  itemCount?: number;
   /** Distinct tags across the series' member posts — backs the series index's tag filter. Optional:
    *  absent until the backend aggregates it, so the filter rail simply hides rather than mis-filtering
    *  (treated as "no tags" everywhere it's read). */
@@ -112,6 +145,15 @@ export interface SeriesPostRef {
   ogImageUrl?: string | null;
 }
 
+/** A card's preview member — a post (slug) or a note (noteId, its excerpt as the title). */
+export interface SeriesCardItem {
+  type: SeriesItemType;
+  slug: string | null;
+  noteId: number | null;
+  title: string;
+  ogImageUrl: string | null;
+}
+
 /** A series as it appears on the discovery feed (cross-author series card). */
 export interface PublicSeriesCard {
   /** Series id — the target for the subscribe toggle. */
@@ -120,15 +162,21 @@ export interface PublicSeriesCard {
   slug: string;
   title: string;
   postCount: number;
+  itemCount?: number;
   lastPublishedAt: string;
   /** First few published members (in series order) — the card's mini table of contents. */
   posts: SeriesPostRef[];
+  /** First few members, posts and notes mixed in series order. */
+  items?: SeriesCardItem[];
 }
 
 export interface PublicSeriesDetail {
   author: PublicAuthor;
   series: PublicSeriesListItem;
+  /** Published posts only. */
   posts: PublicPostListItem[];
+  /** Posts and readable notes in series order. */
+  items?: PublicSeriesItem[];
 }
 
 export interface PublicFeedItem {

@@ -1,36 +1,111 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
-import { BarChart3, Check, ChevronDown, ChevronUp, FileText, Layers, Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  BarChart3,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  GripVertical,
+  Layers,
+  Loader2,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   createSeries,
   deleteSeries,
+  getSeries,
   listSeries,
-  setSeriesPosts,
+  setSeriesItems,
   updateSeries,
   type SeriesView,
 } from "@/modules/blog/api/series";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
+import { isShareable, listAuthorNotes, type Note } from "@/modules/notes/api/notes";
+import { ApiError } from "@/lib/api/client";
+import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
+import {
+  entryRefs,
+  moveEntry,
+  noteHeadline,
+  ownerSeriesEntries,
+  seriesNoteHref,
+  type OwnerSeriesEntry,
+} from "@/modules/blog/lib/series-items";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
+import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { ErrorState } from "@/components/common/error-state";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
+type Picker = { seriesId: number; kind: "post" | "note" };
+type Drag = { seriesId: number; index: number; original: OwnerSeriesEntry[] };
+
+const sameEntry = (a: OwnerSeriesEntry, b: OwnerSeriesEntry) =>
+  a.type === b.type && (a.type === "POST" ? a.post.id : a.note.id) === (b.type === "POST" ? b.post.id : b.note.id);
+const entryKey = (e: OwnerSeriesEntry) => (e.type === "POST" ? `post-${e.post.id}` : `note-${e.note.id}`);
+
+const addButton =
+  "focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300";
+
+function PickRow({
+  checked,
+  onToggle,
+  children,
+}: {
+  checked: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={checked}
+      className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent-50/60 dark:hover:bg-accent-500/10"
+    >
+      <span
+        aria-hidden
+        className={`grid h-5 w-5 shrink-0 place-items-center rounded border transition-colors ${
+          checked
+            ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+            : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
+        }`}
+      >
+        {checked && <Check className="h-3.5 w-3.5" />}
+      </span>
+      {children}
+    </button>
+  );
+}
+
 /**
  * 내 글의 "시리즈별 보기" — the post list grouped by series (the unified workspace; series is a lens on
  * 내 글, not a separate page). Each series is a group whose header curates it inline (이름 변경 · 정렬 ·
- * 글 추가/제거 · 삭제); posts with no series fall into a "시리즈 없음" group. Membership owns ordering, so
- * every change persists the series' ordered post-id list. Never deletes a post — only its membership.
+ * 글·노트 추가/제거 · 삭제); posts with no series fall into a "시리즈 없음" group. Membership owns ordering,
+ * so every change persists the series' whole ordered list of posts and notes. Never deletes a post or a
+ * note — only its membership.
  */
 export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const t = useTranslations("blogWorkspace");
+  const tf = useTranslations("publicFeed");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const { me } = useAuth();
   // Per-series deep analytics lives at the sibling /analytics/series/{id} route.
   const analyticsBase = writeBase.replace(/\/write$/, "/analytics");
   const [series, setSeries] = useState<SeriesView[]>([]);
   const [posts, setPosts] = useState<PostView[]>([]);
+  const [entries, setEntries] = useState<Record<number, OwnerSeriesEntry[]>>({});
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,17 +121,30 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const [rTitle, setRTitle] = useState("");
   const [rSlug, setRSlug] = useState("");
 
-  // Which series' "글 추가" picker is open, its search query, and the multi-selected candidate ids
-  // (check several unassigned posts → add them all in one commit, instead of one-at-a-time).
-  const [picking, setPicking] = useState<number | null>(null);
+  // Which series' picker is open (글 or 노트), its search query, and the multi-selected candidate ids
+  // (check several → add them all in one commit, instead of one-at-a-time).
+  const [picking, setPicking] = useState<Picker | null>(null);
   const [pickQuery, setPickQuery] = useState("");
   const [pickSelected, setPickSelected] = useState<Set<number>>(new Set());
+
+  const [myNotes, setMyNotes] = useState<Note[] | null>(null);
+  const [notesPage, setNotesPage] = useState(0);
+  const [notesHasNext, setNotesHasNext] = useState(false);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [notesFailed, setNotesFailed] = useState(false);
+
+  const [drag, setDrag] = useState<Drag | null>(null);
+  const dropped = useRef(false);
 
   const load = useCallback(async () => {
     try {
       const [s, p] = await Promise.all([listSeries(), listMyPosts()]);
+      // PUT /items replaces the whole order, so a series is only editable once its notes are known —
+      // one failed detail fails the view rather than letting a save drop notes it never saw.
+      const details = await Promise.all(s.map((x) => getSeries(x.id)));
       setSeries(s);
       setPosts(p);
+      setEntries(Object.fromEntries(s.map((x, i) => [x.id, ownerSeriesEntries(details[i])])));
       setLoadFailed(false);
     } catch {
       setLoadFailed(true);
@@ -69,66 +157,140 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
     void load();
   }, [load]);
 
-  const groups = useMemo(
-    () =>
-      series.map((s) => ({
-        series: s,
-        members: posts
-          .filter((p) => p.seriesId === s.id)
-          .sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0)),
-      })),
-    [series, posts],
+  const loadNotes = useCallback(
+    async (page: number) => {
+      if (!me?.username) return;
+      setNotesLoading(true);
+      setNotesFailed(false);
+      try {
+        const feed = await listAuthorNotes(me.username, page);
+        setMyNotes((prev) => {
+          const kept = page === 0 ? [] : (prev ?? []);
+          const seen = new Set(kept.map((n) => n.id));
+          return [...kept, ...feed.items.filter((n) => !seen.has(n.id))];
+        });
+        setNotesPage(page);
+        setNotesHasNext(feed.hasNext);
+      } catch {
+        setNotesFailed(true);
+      } finally {
+        setNotesLoading(false);
+      }
+    },
+    [me?.username],
   );
-  const ungrouped = useMemo(() => posts.filter((p) => p.seriesId == null), [posts]);
 
-  const memberIds = (seriesId: number) =>
-    groups.find((g) => g.series.id === seriesId)?.members.map((m) => m.id) ?? [];
-
-  // 순서·소속 변경은 로컬 posts 를 먼저 재배열해 즉시 반영하고 PUT 만 발사한다(대표글 applyPins 와 같은
-  // 낙관 패턴). busy 로 뷰 전체를 잠그지 않으므로 화살표 연속 클릭이 매번 왕복을 기다리지 않는다. 실패
-  // 시에만 load() 로 서버 상태에 맞춰 되돌린다.
-  function commitMembers(seriesId: number, ids: number[]) {
-    setPosts((prev) =>
-      prev.map((p) => {
-        const idx = ids.indexOf(p.id);
-        if (idx >= 0) return { ...p, seriesId, seriesOrder: idx };
-        // 이 시리즈에 있었지만 새 목록에서 빠진 글은 '시리즈 없음'으로 되돌린다.
-        if (p.seriesId === seriesId) return { ...p, seriesId: null, seriesOrder: null };
-        return p;
-      }),
+  const membersOf = (seriesId: number) => entries[seriesId] ?? [];
+  const seriesOfNote = useMemo(() => {
+    const owner = new Map<number, SeriesView>();
+    for (const s of series) {
+      for (const e of entries[s.id] ?? []) if (e.type === "NOTE") owner.set(e.note.id, s);
+    }
+    return owner;
+  }, [series, entries]);
+  const ungrouped = useMemo(() => {
+    const grouped = new Set(
+      Object.values(entries).flatMap((list) => list.flatMap((e) => (e.type === "POST" ? [e.post.id] : []))),
     );
+    return posts.filter((p) => !grouped.has(p.id));
+  }, [posts, entries]);
+
+  function itemsError(e: unknown): string {
+    const code = e instanceof ApiError ? e.detail.code : undefined;
+    if (code === "SERIES_NOTE_NOT_SHARED") return t("seriesNoteNotShared");
+    if (code === "SERIES_NOTE_NOT_FOUND") return t("seriesNoteNotFound");
+    if (code === "PERMISSION_DENIED") return t("seriesItemNotYours");
+    return errorMessage(e, t("seriesActionFailed"));
+  }
+
+  // 순서·소속 변경은 로컬 목록을 먼저 재배열해 즉시 반영하고 PUT 만 발사한다(대표글 applyPins 와 같은
+  // 낙관 패턴). busy 로 뷰 전체를 잠그지 않으므로 화살표 연속 클릭이 매번 왕복을 기다리지 않는다. 실패
+  // 시에만 load() 로 서버 상태에 맞춰 되돌린다. 다른 시리즈에 있던 글·노트는 서버가 이리로 옮긴다.
+  function commitMembers(seriesId: number, next: OwnerSeriesEntry[]) {
+    setEntries((prev) => {
+      const out: Record<number, OwnerSeriesEntry[]> = {};
+      for (const [id, list] of Object.entries(prev)) {
+        out[Number(id)] = list.filter((e) => !next.some((n) => sameEntry(n, e)));
+      }
+      out[seriesId] = next;
+      return out;
+    });
     setError(null);
-    void setSeriesPosts(seriesId, ids).catch((e) => {
-      setError(errorMessage(e, t("seriesActionFailed")));
+    void setSeriesItems(seriesId, entryRefs(next)).catch((e) => {
+      setError(itemsError(e));
       void load();
     });
   }
 
   function move(seriesId: number, index: number, dir: -1 | 1) {
-    const ids = [...memberIds(seriesId)];
+    const list = membersOf(seriesId);
     const target = index + dir;
-    if (target < 0 || target >= ids.length) return;
-    [ids[index], ids[target]] = [ids[target], ids[index]];
-    void commitMembers(seriesId, ids);
+    if (target < 0 || target >= list.length) return;
+    commitMembers(seriesId, moveEntry(list, index, target));
   }
 
-  const removeMember = (seriesId: number, postId: number) =>
-    void commitMembers(seriesId, memberIds(seriesId).filter((id) => id !== postId));
+  const removeMember = (seriesId: number, index: number) =>
+    commitMembers(seriesId, membersOf(seriesId).filter((_, i) => i !== index));
 
-  function togglePickPost(postId: number) {
+  function dragOver(e: React.DragEvent, seriesId: number, index: number) {
+    if (!drag || drag.seriesId !== seriesId) return;
+    e.preventDefault();
+    if (drag.index === index) return;
+    setEntries((prev) => ({ ...prev, [seriesId]: moveEntry(prev[seriesId] ?? [], drag.index, index) }));
+    setDrag({ ...drag, index });
+  }
+
+  function dragEnd() {
+    if (!drag) return;
+    const current = membersOf(drag.seriesId);
+    const changed = current.some((e, i) => !sameEntry(e, drag.original[i]));
+    if (dropped.current && changed) commitMembers(drag.seriesId, current);
+    else if (changed) setEntries((prev) => ({ ...prev, [drag.seriesId]: drag.original }));
+    dropped.current = false;
+    setDrag(null);
+  }
+
+  function togglePick(id: number) {
     setPickSelected((prev) => {
       const next = new Set(prev);
-      next.has(postId) ? next.delete(postId) : next.add(postId);
+      next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
+  }
+  function openPicker(seriesId: number, kind: Picker["kind"]) {
+    setPicking({ seriesId, kind });
+    setPickQuery("");
+    setPickSelected(new Set());
+    if (kind === "note" && myNotes === null) void loadNotes(0);
   }
   function closePicker() {
     setPicking(null);
     setPickSelected(new Set());
   }
-  function addSelected(seriesId: number) {
+  function addSelected(seriesId: number, kind: Picker["kind"]) {
     if (pickSelected.size === 0) return;
-    void commitMembers(seriesId, [...memberIds(seriesId), ...pickSelected]);
+    const added: OwnerSeriesEntry[] = [...pickSelected].flatMap<OwnerSeriesEntry>((id) => {
+      if (kind === "post") {
+        const post = posts.find((p) => p.id === id);
+        return post ? [{ type: "POST", post }] : [];
+      }
+      const note = myNotes?.find((n) => n.id === id);
+      return note
+        ? [
+            {
+              type: "NOTE",
+              note: {
+                id: note.id,
+                body: note.body,
+                contentWarning: note.contentWarning ?? null,
+                excerpt: null,
+                createdAt: note.createdAt,
+              },
+            },
+          ]
+        : [];
+    });
+    commitMembers(seriesId, [...membersOf(seriesId), ...added]);
     closePicker();
   }
 
@@ -189,6 +351,20 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
     const q = pickQuery.trim().toLowerCase();
     return ungrouped.filter((p) => !q || (p.title || p.slug).toLowerCase().includes(q));
   }, [ungrouped, pickQuery]);
+
+  // Note candidates: my public / unlisted notes not already in the open series. One in another series
+  // stays pickable — the server moves it — and says where it comes from.
+  const noteCandidates = useMemo(() => {
+    if (picking?.kind !== "note" || !myNotes) return [];
+    const q = pickQuery.trim().toLowerCase();
+    return myNotes.filter(
+      (n) =>
+        n.author.id === me?.id &&
+        isShareable(n.visibility) &&
+        seriesOfNote.get(n.id)?.id !== picking.seriesId &&
+        (!q || `${n.contentWarning ?? ""} ${n.body}`.toLowerCase().includes(q)),
+    );
+  }, [picking, myNotes, pickQuery, me?.id, seriesOfNote]);
 
   if (!loaded) return <SkeletonRows count={5} />;
   if (loadFailed) return <ErrorState onRetry={() => void load()} />;
@@ -252,7 +428,10 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       )}
 
       {/* Series groups */}
-      {groups.map(({ series: s, members }) => (
+      {series.map((s) => {
+        const members = membersOf(s.id);
+        const pickingHere = picking?.seriesId === s.id ? picking.kind : null;
+        return (
         <section
           key={s.id}
           className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800"
@@ -298,7 +477,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                   {s.title}
                 </span>
                 <span className="shrink-0 text-[13px] text-slate-500 dark:text-slate-400">
-                  {t("postCount", { count: members.length })}
+                  {tf("seriesItemCount", { count: members.length })}
                 </span>
                 <span className="flex shrink-0 items-center gap-0.5">
                   <BlogLink
@@ -339,21 +518,66 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
               <p className="px-1 py-1.5 text-sm text-slate-500 dark:text-slate-400">{t("seriesNoMembers")}</p>
             ) : (
               <ol className="space-y-0.5">
-                {members.map((p, i) => (
+                {members.map((entry, i) => (
                   <li
-                    key={p.id}
-                    className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                    key={entryKey(entry)}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", entryKey(entry));
+                      dropped.current = false;
+                      setDrag({ seriesId: s.id, index: i, original: members });
+                    }}
+                    onDragOver={(e) => dragOver(e, s.id, i)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      dropped.current = true;
+                    }}
+                    onDragEnd={dragEnd}
+                    className={cn(
+                      "flex items-center gap-2 rounded-lg px-2 py-2 transition-[background-color,opacity] hover:bg-slate-50 dark:hover:bg-slate-800/40",
+                      drag?.seriesId === s.id && drag.index === i && "bg-slate-50 opacity-60 dark:bg-slate-800/40",
+                    )}
                   >
+                    <span
+                      aria-hidden
+                      title={t("seriesDragHandle")}
+                      className="hidden shrink-0 cursor-grab text-slate-300 active:cursor-grabbing dark:text-slate-600 sm:block"
+                    >
+                      <GripVertical className="h-4 w-4" />
+                    </span>
                     <span className="w-6 shrink-0 text-right text-[13px] tabular-nums text-slate-500 dark:text-slate-400">
                       {i + 1}
                     </span>
-                    <BlogLink
-                      href={`${writeBase}/${p.id}`}
-                      className="focus-ring min-w-0 flex-1 truncate rounded text-sm text-slate-800 transition-colors hover:text-accent-700 dark:text-slate-200 dark:hover:text-accent-300"
-                    >
-                      {p.title || p.slug}
-                    </BlogLink>
-                    <PostStatusBadge status={p.status} />
+                    {entry.type === "POST" ? (
+                      <>
+                        <BlogLink
+                          href={`${writeBase}/${entry.post.id}`}
+                          draggable={false}
+                          className="focus-ring min-w-0 flex-1 truncate rounded text-sm text-slate-800 transition-colors hover:text-accent-700 dark:text-slate-200 dark:hover:text-accent-300"
+                        >
+                          {entry.post.title || entry.post.slug}
+                        </BlogLink>
+                        <PostStatusBadge status={entry.post.status} />
+                      </>
+                    ) : (
+                      <>
+                        {me?.username ? (
+                          <BlogLink
+                            href={seriesNoteHref(me.username, entry.note.id, locale)}
+                            draggable={false}
+                            className="focus-ring min-w-0 flex-1 truncate rounded text-sm text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-300"
+                          >
+                            {noteHeadline(entry.note)}
+                          </BlogLink>
+                        ) : (
+                          <span className="min-w-0 flex-1 truncate text-sm text-slate-600 dark:text-slate-300">
+                            {noteHeadline(entry.note)}
+                          </span>
+                        )}
+                        <SeriesNoteMarker label={tf("seriesNoteMarker")} />
+                      </>
+                    )}
                     <span className="flex shrink-0 items-center gap-0.5">
                       <button
                         type="button"
@@ -375,7 +599,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => removeMember(s.id, p.id)}
+                        onClick={() => removeMember(s.id, i)}
                         disabled={busy}
                         aria-label={t("seriesRemoveFromSeries")}
                         title={t("seriesRemoveFromSeries")}
@@ -389,22 +613,30 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
               </ol>
             )}
 
-            {/* 글 추가 — picker of unassigned posts */}
             <div className="mt-2">
-              {picking !== s.id ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPicking(s.id);
-                    setPickQuery("");
-                    setPickSelected(new Set());
-                  }}
-                  disabled={busy}
-                  className="focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300"
-                >
-                  <Plus className="h-4 w-4" />
-                  {t("seriesAddPost")}
-                </button>
+              {pickingHere === null ? (
+                <div className={cn("grid gap-2", me?.username && "grid-cols-2")}>
+                  <button
+                    type="button"
+                    onClick={() => openPicker(s.id, "post")}
+                    disabled={busy}
+                    className={addButton}
+                  >
+                    <Plus className="h-4 w-4" />
+                    {t("seriesAddPost")}
+                  </button>
+                  {me?.username && (
+                    <button
+                      type="button"
+                      onClick={() => openPicker(s.id, "note")}
+                      disabled={busy}
+                      className={addButton}
+                    >
+                      <Plus className="h-4 w-4" />
+                      {t("seriesAddNote")}
+                    </button>
+                  )}
+                </div>
               ) : (
                 <div className="rounded-lg border border-slate-200 dark:border-slate-800">
                   <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 dark:border-slate-800">
@@ -412,7 +644,8 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     <input
                       value={pickQuery}
                       onChange={(e) => setPickQuery(e.target.value)}
-                      placeholder={t("seriesPickerSearch")}
+                      placeholder={pickingHere === "note" ? t("seriesNotePickerSearch") : t("seriesPickerSearch")}
+                      aria-label={pickingHere === "note" ? t("seriesNotePickerSearch") : t("seriesPickerSearch")}
                       autoFocus
                       className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 dark:text-slate-100"
                     />
@@ -425,47 +658,92 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  {candidates.length === 0 ? (
-                    <p className="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
-                      {t("seriesPickerEmpty")}
-                    </p>
-                  ) : (
-                    <ul className="max-h-60 overflow-y-auto p-1">
-                      {candidates.map((p) => {
-                        const checked = pickSelected.has(p.id);
-                        return (
+                  {pickingHere === "post" ? (
+                    candidates.length === 0 ? (
+                      <p className="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                        {t("seriesPickerEmpty")}
+                      </p>
+                    ) : (
+                      <ul className="max-h-60 overflow-y-auto p-1">
+                        {candidates.map((p) => (
                           <li key={p.id}>
-                            <button
-                              type="button"
-                              onClick={() => togglePickPost(p.id)}
-                              aria-pressed={checked}
-                              className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent-50/60 dark:hover:bg-accent-500/10"
-                            >
-                              <span
-                                aria-hidden
-                                className={`grid h-5 w-5 shrink-0 place-items-center rounded border transition-colors ${
-                                  checked
-                                    ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
-                                    : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
-                                }`}
-                              >
-                                {checked && <Check className="h-3.5 w-3.5" />}
-                              </span>
+                            <PickRow checked={pickSelected.has(p.id)} onToggle={() => togglePick(p.id)}>
                               <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200">
                                 {p.title || p.slug}
                               </span>
-                            </button>
+                            </PickRow>
                           </li>
-                        );
-                      })}
-                    </ul>
+                        ))}
+                      </ul>
+                    )
+                  ) : (
+                    <>
+                      {myNotes === null && notesLoading ? (
+                        <p className="flex justify-center px-3 py-6 text-slate-400">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        </p>
+                      ) : notesFailed && noteCandidates.length === 0 ? (
+                        <p className="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                          {t("seriesNotesLoadFailed")}{" "}
+                          <button
+                            type="button"
+                            onClick={() => void loadNotes(myNotes === null ? 0 : notesPage + 1)}
+                            className="focus-ring rounded underline underline-offset-2 hover:text-slate-800 dark:hover:text-slate-200"
+                          >
+                            {tc("retry")}
+                          </button>
+                        </p>
+                      ) : noteCandidates.length === 0 && !notesHasNext ? (
+                        <p className="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                          {t("seriesNotePickerEmpty")}
+                        </p>
+                      ) : (
+                        <ul className="max-h-72 overflow-y-auto p-1" data-note-picker>
+                          {noteCandidates.map((n) => {
+                            const from = seriesOfNote.get(n.id);
+                            return (
+                              <li key={n.id}>
+                                <PickRow checked={pickSelected.has(n.id)} onToggle={() => togglePick(n.id)}>
+                                  <span className="min-w-0 flex-1">
+                                    <span className="line-clamp-2 text-sm text-slate-700 dark:text-slate-200">
+                                      {n.contentWarning || n.body}
+                                    </span>
+                                    {from && (
+                                      <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
+                                        {t("seriesNoteMovesFrom", { title: from.title })}
+                                      </span>
+                                    )}
+                                  </span>
+                                </PickRow>
+                              </li>
+                            );
+                          })}
+                          {notesHasNext && (
+                            <li className="p-1">
+                              <button
+                                type="button"
+                                onClick={() => void loadNotes(notesPage + 1)}
+                                disabled={notesLoading}
+                                className="focus-ring flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-800 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200"
+                              >
+                                {notesLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                                {notesFailed ? tc("retry") : t("seriesNotesLoadMore")}
+                              </button>
+                            </li>
+                          )}
+                        </ul>
+                      )}
+                      <p className="border-t border-slate-100 px-3 py-2 text-[12px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                        {t("seriesNotePickerHint")}
+                      </p>
+                    </>
                   )}
-                  {/* 선택분 일괄 추가 — 여러 글을 한 commit 으로 시리즈에 넣는다(예전엔 클릭마다 commit). */}
+                  {/* 선택분 일괄 추가 — 여러 개를 한 commit 으로 시리즈에 넣는다(예전엔 클릭마다 commit). */}
                   {pickSelected.size > 0 && (
                     <div className="border-t border-slate-100 p-2 dark:border-slate-800">
                       <button
                         type="button"
-                        onClick={() => addSelected(s.id)}
+                        onClick={() => addSelected(s.id, pickingHere)}
                         disabled={busy}
                         className="focus-ring flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
                       >
@@ -479,7 +757,8 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
             </div>
           </div>
         </section>
-      ))}
+        );
+      })}
 
       {/* 시리즈 없음 */}
       {ungrouped.length > 0 && (

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { seriesItemCount } from "@/modules/blog/lib/series-items";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { RailTagList } from "@/modules/blog/components/rail-tag-list";
@@ -30,6 +31,7 @@ export async function AuthorRail({
   activeTag?: string;
 }) {
   const t = await getTranslations("publicPost");
+  const tf = await getTranslations("publicFeed");
   const authorHome = authorHref(username, locale);
   // Tags scope to THIS author's posts (?tag=) — clicking one filters the author's own writing, not
   // the cross-author topic feed at /tags/{tag}. The active chip links back home to clear the filter.
@@ -64,7 +66,7 @@ export async function AuthorRail({
                     {s.title}
                   </span>
                   <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-                    {t("railPostCount", { count: s.postCount })}
+                    {tf("seriesItemCount", { count: seriesItemCount(s) })}
                   </span>
                 </BlogLink>
               </li>

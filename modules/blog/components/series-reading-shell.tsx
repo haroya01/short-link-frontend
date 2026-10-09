@@ -3,9 +3,11 @@
 import { DATE_LOCALE } from "@/lib/date";
 import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/lib/author-href";
+import { noteHeadline, seriesNoteHref, type SeriesEntry } from "@/modules/blog/lib/series-items";
+import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
@@ -24,6 +26,8 @@ const monthKey = (iso: string) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 };
 
+const entryDate = (entry: SeriesEntry) => (entry.type === "POST" ? entry.post.publishedAt : entry.note.createdAt);
+
 /**
  * The series detail body: a centered episode list with the author card on the left and, on the right,
  * the same rail grammar as the author home — a **태그** chip set and a month **아카이브** — except here
@@ -38,7 +42,7 @@ const monthKey = (iso: string) => {
 export function SeriesReadingShell({
   leftRail,
   header,
-  posts,
+  entries,
   username,
   locale,
 }: {
@@ -46,7 +50,7 @@ export function SeriesReadingShell({
   leftRail: ReactNode;
   /** Server-rendered series header (eyebrow · title · subscribe · author), above the list. */
   header: ReactNode;
-  posts: PublicPostListItem[];
+  entries: SeriesEntry[];
   username: string;
   locale: string;
 }) {
@@ -67,8 +71,9 @@ export function SeriesReadingShell({
   const tags = useMemo(() => {
     const counts = new Map<string, number>();
     const order: string[] = [];
-    for (const p of posts) {
-      for (const tag of p.tags) {
+    for (const entry of entries) {
+      if (entry.type !== "POST") continue;
+      for (const tag of entry.post.tags) {
         if (!isDisplayableTag(tag)) continue; // skip junk tags (incomplete jamo, single-char, mash)
         if (!counts.has(tag)) order.push(tag);
         counts.set(tag, (counts.get(tag) ?? 0) + 1);
@@ -77,14 +82,17 @@ export function SeriesReadingShell({
     return order
       .sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0))
       .map((tag) => [tag, counts.get(tag) ?? 0] as const);
-  }, [posts]);
+  }, [entries]);
 
   // Month archive grouped by year (chronological): each year is a quiet header line, its months listed
   // below as the clickable filters. Grouping (vs. a year prefix on every row) keeps the months in one
   // clean column and reads far better than "2026년 · 5월 · 3" strung across one row.
   const archive = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const p of posts) counts.set(monthKey(p.publishedAt), (counts.get(monthKey(p.publishedAt)) ?? 0) + 1);
+    for (const entry of entries) {
+      const key = monthKey(entryDate(entry));
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
     const flat = [...counts.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
     const groups: { year: string; sample: string; items: { key: string; count: number }[] }[] = [];
     for (const [key, count] of flat) {
@@ -97,17 +105,17 @@ export function SeriesReadingShell({
       g.items.push({ key, count });
     }
     return groups;
-  }, [posts]);
+  }, [entries]);
 
   // Pin the real episode number before filtering, so a narrowed view keeps the series positions.
-  const rows = posts
-    .map((p, i) => ({ post: p, n: i + 1 }))
+  const rows = entries
+    .map((entry, i) => ({ entry, n: i + 1 }))
     .filter((r) =>
       !filter
         ? true
         : filter.kind === "tag"
-          ? r.post.tags.includes(filter.value)
-          : monthKey(r.post.publishedAt) === filter.value,
+          ? r.entry.type === "POST" && r.entry.post.tags.includes(filter.value)
+          : monthKey(entryDate(r.entry)) === filter.value,
     );
 
   const isActive = (f: NonNullable<Filter>) => filter?.kind === f.kind && filter.value === f.value;
@@ -245,7 +253,40 @@ export function SeriesReadingShell({
       ) : (
         // Re-keyed on the active filter so the whole list remounts and the cascade replays on each change.
         <ol key={filterKey} className="divide-y divide-slate-100 dark:divide-slate-800">
-          {rows.map(({ post: p, n }, i) => {
+          {rows.map(({ entry, n }, i) => {
+            if (entry.type === "NOTE") {
+              const note = entry.note;
+              return (
+                <li
+                  key={`notes/${note.id}`}
+                  className="profile-fade group group/row relative"
+                  style={{ ["--idx" as string]: i } as React.CSSProperties}
+                >
+                  <BlogLink
+                    href={seriesNoteHref(username, note.id, locale)}
+                    className="-mx-3 flex items-start gap-3 rounded-surface px-3 py-4 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
+                  >
+                    <SeriesIndex n={n} className="mt-0.5 shrink-0 text-[14px]" />
+                    <span className="min-w-0 flex-1">
+                      <span
+                        lang={contentLang(noteHeadline(note))}
+                        className="line-clamp-3 text-[15px] leading-relaxed text-slate-600 transition-colors group-hover/row:text-accent-700 dark:text-slate-300 dark:group-hover/row:text-accent-400"
+                      >
+                        {note.contentWarning && (
+                          <TriangleAlert aria-hidden className="mr-1 inline h-3.5 w-3.5 align-[-2px]" />
+                        )}
+                        {noteHeadline(note)}
+                      </span>
+                      <span className="mt-1.5 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+                        <SeriesNoteMarker label={tf("seriesNoteMarker")} />
+                        <time dateTime={note.createdAt}>{fmtDate(note.createdAt)}</time>
+                      </span>
+                    </span>
+                  </BlogLink>
+                </li>
+              );
+            }
+            const p = entry.post;
             const hasImage = Boolean(p.ogImageUrl);
             return (
               <li

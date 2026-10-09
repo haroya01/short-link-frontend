@@ -8,6 +8,7 @@ import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-pos
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { seriesItemCount } from "@/modules/blog/lib/series-items";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
@@ -50,6 +51,7 @@ export default async function PublicSeriesIndexPage({
   const { tag: rawTag } = await searchParams;
   const result = await listPublicSeries(username);
   const t = await getTranslations({ locale, namespace: "publicPost" });
+  const tf = await getTranslations({ locale, namespace: "publicFeed" });
   // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
   if (!result.ok) {
     if (result.status !== 404) throw new Error(`public series fetch failed: ${username}`);
@@ -155,7 +157,7 @@ export default async function PublicSeriesIndexPage({
                       {s.title}
                     </span>
                     <span className="mt-0.5 block text-[13px] text-slate-500 dark:text-slate-400">
-                      {t("postCount", { count: s.postCount })}
+                      {tf("seriesItemCount", { count: seriesItemCount(s) })}
                     </span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-[color,transform] ease-[var(--ease)] group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />

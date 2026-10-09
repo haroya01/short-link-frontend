@@ -8,6 +8,8 @@ import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { seriesCardItems, seriesItemCount, seriesItemHref, seriesItemKey } from "@/modules/blog/lib/series-items";
+import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
@@ -34,8 +36,9 @@ export function DiscoverySeriesCard({
   locale: string;
 }) {
   const t = useTranslations("publicFeed");
-  const posts = (series.posts ?? []).slice(0, MAX);
+  const posts = seriesCardItems(series).slice(0, MAX);
   const n = posts.length;
+  const total = seriesItemCount(series);
   const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
   // 카드의 글/시리즈 이동도 발견 카드와 같은 통일 전환(소프트 내비일 때만). 절대경로(prod)는 일반 이동.
   const Nav = seriesUrl.startsWith("/") ? TransitionLink : BlogLink;
@@ -73,7 +76,7 @@ export function DiscoverySeriesCard({
     <section aria-label={series.title} className="group">
       {/* 스크린리더에 현재 보이는 에피소드를 알린다(수동 넘김). 시각적으로는 숨김. */}
       <span className="sr-only" aria-live="polite">
-        {t("seriesEpisodeOf", { current: idx + 1, total: series.postCount })}
+        {t("seriesEpisodeOf", { current: idx + 1, total })}
       </span>
       {/* Episode pages stacked in one spot — only the front one shows; flipping is an in-place
           crossfade(+미세 스케일). 예전의 "덱 peek"(뒷장 모서리를 오른쪽-아래로 노출)은 카드 밑에
@@ -91,7 +94,7 @@ export function DiscoverySeriesCard({
           if (!front && !(flipping && leaving)) return null;
           return (
             <div
-              key={p.slug}
+              key={seriesItemKey(p)}
               aria-hidden={!front}
               // 전 속성 전환(all)은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
               // 전환마다 번쩍였다 — transform/opacity 만 전환한다. 예전엔 translateZ(0) 로 페이지를
@@ -171,7 +174,7 @@ export function DiscoverySeriesCard({
                       {i + 1}
                     </span>
                     <span className={`ml-1.5 align-top text-[22px] font-bold ${p.ogImageUrl ? "text-white/75" : "text-slate-500 dark:text-slate-400"}`}>
-                      /{series.postCount}
+                      /{total}
                     </span>
                   </div>
                 )}
@@ -187,7 +190,7 @@ export function DiscoverySeriesCard({
                   const EpNav = Nav === TransitionLink && p.ogImageUrl ? CoverMorphLink : Nav;
                   return (
                     <EpNav
-                      href={authorHref(series.author.username, locale, p.slug)}
+                      href={seriesItemHref(series.author.username, p, locale)}
                       aria-label={p.title}
                       className="absolute inset-0 z-10"
                     />
@@ -210,9 +213,18 @@ export function DiscoverySeriesCard({
 
                   {/* 제목 — 사진/종이 공통(큰 회차 번호가 표지 주인공, 제목은 하단에 일관 크기로). */}
                   <div>
-                    <h3 lang={contentLang(p.title)} className="line-clamp-3 text-balance text-card-title-md font-bold leading-snug tracking-tight">
-                      {p.title}
-                    </h3>
+                    {p.type === "NOTE" ? (
+                      <>
+                        <SeriesNoteMarker label={t("seriesNoteMarker")} className="mb-2" />
+                        <h3 lang={contentLang(p.title)} className="line-clamp-4 text-[17px] font-medium leading-relaxed text-slate-700 dark:text-slate-200">
+                          {p.title}
+                        </h3>
+                      </>
+                    ) : (
+                      <h3 lang={contentLang(p.title)} className="line-clamp-3 text-balance text-card-title-md font-bold leading-snug tracking-tight">
+                        {p.title}
+                      </h3>
+                    )}
                     <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>
                       {/* Author (avatar + name) opens their profile — an island above the card's post
                           overlay (pointer-events re-enabled), same as the series eyebrow above. */}
@@ -231,7 +243,7 @@ export function DiscoverySeriesCard({
                     <div className={`mt-3 h-[3px] w-full overflow-hidden rounded-full ${p.ogImageUrl ? "bg-white/25" : "bg-slate-200 dark:bg-slate-700/60"}`}>
                       <div
                         className={`h-full rounded-full ${p.ogImageUrl ? "bg-white" : "bg-accent-600 dark:bg-accent-400"}`}
-                        style={{ width: `${Math.round(((i + 1) / Math.max(series.postCount, i + 1)) * 100)}%` }}
+                        style={{ width: `${Math.round(((i + 1) / Math.max(total, i + 1)) * 100)}%` }}
                       />
                     </div>
                   </div>

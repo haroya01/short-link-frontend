@@ -1,6 +1,11 @@
 import { request } from "@/lib/api/client";
 import { stripImageMetadata } from "@/lib/image-resize";
-import { fetchPublic, type FetchResult, type PublicFeedView } from "@/modules/blog/api/public-posts";
+import {
+  fetchPublic,
+  type FetchResult,
+  type PublicFeedView,
+  type SeriesItemLink,
+} from "@/modules/blog/api/public-posts";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 노트는 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
@@ -136,6 +141,17 @@ export interface NoteThread {
   replies: Note[];
   /** The author's own parts under the note, in order; replies are everyone else's. */
   continuation?: Note[];
+  /** The note author's series this note sits in, counted across its posts and notes. */
+  series?: NoteSeriesNav | null;
+}
+
+export interface NoteSeriesNav {
+  slug: string;
+  title: string;
+  position: number;
+  total: number;
+  prev: SeriesItemLink | null;
+  next: SeriesItemLink | null;
 }
 
 export interface NoteDraftImage {

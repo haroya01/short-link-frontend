@@ -1,19 +1,35 @@
 import { request } from "@/lib/api/client";
 import type { PostView } from "./posts";
+import type { SeriesItemType, SeriesNoteSummary } from "./public-posts";
 import { authoringMocks } from "@/modules/blog/api/_mock-gates";
+import { seriesItemRefs } from "@/modules/blog/lib/series-items";
 
 export interface SeriesView {
   id: number;
   slug: string;
   title: string;
   postCount: number;
+  itemCount?: number;
   createdAt: string;
   updatedAt: string | null;
+}
+
+export interface SeriesOwnerItem {
+  type: SeriesItemType;
+  post: PostView | null;
+  note: SeriesNoteSummary | null;
 }
 
 export interface SeriesDetailView {
   series: SeriesView;
   posts: PostView[];
+  /** Posts of every status and notes, in series order. */
+  items?: SeriesOwnerItem[];
+}
+
+export interface SeriesItemRef {
+  type: SeriesItemType;
+  id: number;
 }
 
 export function listSeries(): Promise<SeriesView[]> {
@@ -46,6 +62,21 @@ export function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDet
     method: "PUT",
     body: { postIds },
   });
+}
+
+/** Replaces the whole order: members left out leave the series, and a post or note from another
+ *  series moves here. */
+export function setSeriesItems(id: number, items: SeriesItemRef[]): Promise<SeriesDetailView> {
+  if (authoringMocks) return authoringMocks.mockSetSeriesItems(id, items);
+  return request<SeriesDetailView>(`/api/v1/series/${id}/items`, { method: "PUT", body: { items } });
+}
+
+/** Appends at the end; false when the note is already in this series. */
+export async function appendNoteToSeries(seriesId: number, noteId: number): Promise<boolean> {
+  const refs = seriesItemRefs(await getSeries(seriesId));
+  if (refs.some((ref) => ref.type === "NOTE" && ref.id === noteId)) return false;
+  await setSeriesItems(seriesId, [...refs, { type: "NOTE", id: noteId }]);
+  return true;
 }
 
 export function deleteSeries(id: number): Promise<void> {
