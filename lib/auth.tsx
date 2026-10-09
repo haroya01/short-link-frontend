@@ -15,6 +15,7 @@ import { bootstrapSession } from "./api/client";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import { writeLoginNextCookie } from "./login-next-cookie";
 import { useMe } from "@/hooks/use-me";
+import { disableWebPush } from "@/modules/notifications/lib/web-push";
 import type { Me } from "@/types";
 
 type AuthContextValue = {
@@ -63,6 +64,14 @@ async function tryClaimPendingLinks(retriesLeft = 1) {
       claimInFlight = false;
     }
   }
+}
+
+// The server forgets this browser's push subscription only for its owner, so it must ask before the
+// session ends.
+export async function endSession() {
+  await disableWebPush().catch(() => undefined);
+  await apiLogout();
+  Sentry.setUser(null);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -119,11 +128,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     window.location.href = apiBase + "/oauth2/authorization/google";
   }, []);
 
-  const signOut = useCallback(async () => {
-    await apiLogout();
-    Sentry.setUser(null);
-  }, []);
-
   const value = useMemo<AuthContextValue>(
     () => ({
       authenticated,
@@ -131,9 +135,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       me,
       isAdmin: me?.role === "ADMIN",
       signInWithGoogle,
-      signOut,
+      signOut: endSession,
     }),
-    [authenticated, ready, me, signInWithGoogle, signOut],
+    [authenticated, ready, me, signInWithGoogle],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

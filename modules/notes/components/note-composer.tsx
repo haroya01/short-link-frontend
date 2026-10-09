@@ -159,6 +159,10 @@ export function NoteComposer({
     if (!files) return;
     const all = Array.from(files).filter((file) => file.type.startsWith("image/"));
     if (all.length === 0) return;
+    if (poll !== null) {
+      setError(t("imageWithPoll"));
+      return;
+    }
     setError(null);
     const room = NOTE_MAX_IMAGES - images.length;
     const picked = all.slice(0, room);

@@ -4146,6 +4146,7 @@
     "imageNotImage": "画像ファイルだけ追加できます",
     "imageTooLarge": "写真が大きすぎます",
     "imageFailed": "写真をアップロードできませんでした",
+    "imageWithPoll": "1つのノートには投票か写真のどちらかしか付けられません",
     "removeQuote": "引用を外す",
     "postFailed": "ノートを投稿できませんでした",
     "emptyAuthor": "まだノートはありません",

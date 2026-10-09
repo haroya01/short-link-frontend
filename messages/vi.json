@@ -4146,6 +4146,7 @@
     "imageNotImage": "Chỉ thêm được tệp hình ảnh",
     "imageTooLarge": "Ảnh quá lớn",
     "imageFailed": "Không tải ảnh lên được",
+    "imageWithPoll": "Mỗi ghi chú chỉ có thể kèm bình chọn hoặc ảnh, không thể cả hai",
     "removeQuote": "Bỏ trích dẫn",
     "postFailed": "Không đăng được ghi chú",
     "emptyAuthor": "Chưa có ghi chú",

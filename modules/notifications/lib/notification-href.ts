@@ -32,15 +32,11 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
     case "NOTE_POST":
     case "NOTE_EDIT":
     case "POST_QUOTE":
-      return item.noteId != null && item.actorUsername && !item.actorProfileUrl
-        ? authorHref(item.actorUsername, locale, `notes/${item.noteId}`)
-        : undefined;
+      return actorNoteHref(item, item.noteId, locale);
     case "NOTE_REPLY":
     case "NOTE_QUOTE":
       // The reply or quote is the actor's note; it shows the recipient's note above it.
-      return item.sourceNoteId != null && item.actorUsername && !item.actorProfileUrl
-        ? authorHref(item.actorUsername, locale, `notes/${item.sourceNoteId}`)
-        : undefined;
+      return actorNoteHref(item, item.sourceNoteId, locale);
     case "SERIES_SUBSCRIBE":
       return item.seriesSlug && myUsername
         ? authorHref(myUsername, locale, `series/${item.seriesSlug}`)
@@ -65,6 +61,14 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
         ? atSpot(postHref(myUsername, item.postSlug, locale), item)
         : undefined;
   }
+}
+
+function actorNoteHref(item: Item, noteId: number | null | undefined, locale: string): string | undefined {
+  if (noteId == null) return undefined;
+  if (item.actorRemoteId != null) return blogPath(`/remote/${item.actorRemoteId}/notes/${noteId}`);
+  return item.actorUsername && !item.actorProfileUrl
+    ? authorHref(item.actorUsername, locale, `notes/${noteId}`)
+    : undefined;
 }
 
 function atSpot(href: string, item: Item): string {

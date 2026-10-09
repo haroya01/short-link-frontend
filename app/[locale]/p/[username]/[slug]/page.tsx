@@ -2,6 +2,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import { linksHref } from "@/lib/host";
 import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -400,7 +401,9 @@ export default async function PublicPostPage({
       {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
           nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
           so the article is never a dead end (§10: one green thread, no node-graph). */}
-      <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
+      <Suspense fallback={null}>
+        <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
+      </Suspense>
 
       {result.data.series && (
         <SeriesNext series={result.data.series} username={author.username} locale={locale} />
@@ -443,14 +446,16 @@ export default async function PublicPostPage({
         </div>
       </footer>
 
-      <RelatedPosts
-        locale={locale}
-        author={author}
-        currentSlug={post.slug}
-        currentTitle={post.title}
-        tags={post.tags}
-        seriesSize={result.data.series?.total ?? 0}
-      />
+      <Suspense fallback={null}>
+        <RelatedPosts
+          locale={locale}
+          author={author}
+          currentSlug={post.slug}
+          currentTitle={post.title}
+          tags={post.tags}
+          seriesSize={result.data.series?.total ?? 0}
+        />
+      </Suspense>
 
       {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
       {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}

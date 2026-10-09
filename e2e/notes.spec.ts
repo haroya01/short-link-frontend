@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 
 /**
  * Notes in MOCK-ON: the in-memory note mock serves @dohyun's and @yuna's notes, and the mock session
@@ -7,9 +7,28 @@ import { test, expect, type Page } from "@playwright/test";
  */
 test.use({ viewport: { width: 1280, height: 900 } });
 
+const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGP4z8DwHwQZGBgAJmQF+2Sp1QYAAAAASUVORK5CYII=";
+
 async function openMoreFeed(page: Page, name: string) {
   await page.getByRole("button", { name: "더 보기" }).click({ timeout: 30_000 });
   await page.getByRole("menuitem", { name }).click();
+}
+
+async function handPhoto(field: Locator, how: "paste" | "drop") {
+  await field.evaluate(
+    async (node, { how, png }) => {
+      const photo = new DataTransfer();
+      photo.items.add(new File([Uint8Array.from(atob(png), (c) => c.charCodeAt(0))], "walk.png", { type: "image/png" }));
+      const init = { bubbles: true, cancelable: true };
+      node.dispatchEvent(
+        how === "paste"
+          ? new ClipboardEvent("paste", { ...init, clipboardData: photo })
+          : new DragEvent("drop", { ...init, dataTransfer: photo }),
+      );
+      await new Promise(requestAnimationFrame);
+    },
+    { how, png: PNG },
+  );
 }
 
 test("the header leads from posts to notes", async ({ page }) => {
@@ -169,10 +188,7 @@ test("a picked photo sits in the composer strip and takes alt text from its +ALT
   await page.goto("/ko/blog/notes");
   const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
   await composer.click({ timeout: 30_000 });
-  const png = Buffer.from(
-    "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGP4z8DwHwQZGBgAJmQF+2Sp1QYAAAAASUVORK5CYII=",
-    "base64",
-  );
+  const png = Buffer.from(PNG, "base64");
   await page.locator('input[type="file"]').setInputFiles({ name: "walk.png", mimeType: "image/png", buffer: png });
   const addAlt = page.getByRole("button", { name: "대체 텍스트 추가" });
   await expect(addAlt).toHaveText("+ALT");
@@ -656,6 +672,10 @@ test("the composer posts a poll, and photos and a poll exclude each other", asyn
   await page.getByRole("button", { name: "투표 추가" }).click();
   await expect(page.getByRole("button", { name: "사진 추가" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "올리기" })).toBeDisabled();
+  await handPhoto(composer, "paste");
+  await expect(page.getByText("노트 하나에는 투표나 사진 중 하나만 담을 수 있어요")).toBeVisible();
+  await handPhoto(composer, "drop");
+  await expect(page.getByRole("button", { name: "사진 빼기" })).toHaveCount(0);
   await page.getByRole("textbox", { name: "선택지 1" }).fill("국밥");
   await page.getByRole("textbox", { name: "선택지 2" }).fill("국밥");
   await expect(page.getByRole("button", { name: "올리기" })).toBeDisabled();
