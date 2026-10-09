@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Loader2, UserCheck, UserPlus, X } from "lucide-react";
+import { Clock, Loader2, UserCheck, UserPlus, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { ApiError } from "@/lib/api/client";
+import { useToast } from "@/components/ui/toast";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
@@ -69,7 +71,11 @@ export function FollowListDialog({
       try {
         const fetcher = tab === "followers" ? listFollowers : listFollowing;
         const res = await fetcher(username, next);
-        setItems((prev) => (next === 0 ? res.items : [...prev, ...res.items]));
+        setItems((prev) => {
+          if (next === 0) return res.items;
+          const seen = new Set(prev.map((u) => u.id));
+          return [...prev, ...res.items.filter((u) => !seen.has(u.id))];
+        });
         setPage(res.page);
         setHasNext(res.hasNext);
       } catch {
@@ -237,7 +243,9 @@ function RowFollowButton({
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
   const [following, setFollowing] = useState(initialFollowing);
+  const [requested, setRequested] = useState(false);
   const [busy, setBusy] = useState(false);
 
   if (ready && me?.username === username) return null;
@@ -249,32 +257,45 @@ function RowFollowButton({
     }
     if (busy) return;
     setBusy(true);
-    const next = !following;
+    const next = !(following || requested);
+    const before = { following, requested };
     setFollowing(next);
+    setRequested(false);
     try {
-      if (next) await followUser(username);
-      else await unfollowUser(username);
-    } catch {
-      setFollowing(!next);
+      const s = next ? await followUser(username) : await unfollowUser(username);
+      setFollowing(s.following);
+      setRequested(s.requested ?? false);
+      if (s.requested && !before.requested) toast(t("followRequestedToast"));
+    } catch (e) {
+      setFollowing(before.following);
+      setRequested(before.requested);
+      toast(t(e instanceof ApiError && e.detail.code === "BLOCKED_TARGET" ? "followBlocked" : "followError"), "error");
     } finally {
       setBusy(false);
     }
   }
 
+  const pressed = following || requested;
   return (
     <button
       type="button"
       onClick={() => void toggle()}
-      aria-pressed={following}
+      aria-pressed={pressed}
       className={cn(
         "touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors focus-ring",
-        following
+        pressed
           ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
           : "border-transparent bg-accent-700 text-white hover:bg-accent-800",
       )}
     >
-      {following ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
-      {following ? t("following") : t("follow")}
+      {following ? (
+        <UserCheck className="h-3.5 w-3.5" />
+      ) : requested ? (
+        <Clock className="h-3.5 w-3.5" />
+      ) : (
+        <UserPlus className="h-3.5 w-3.5" />
+      )}
+      {following ? t("following") : requested ? t("requested") : t("follow")}
     </button>
   );
 }
