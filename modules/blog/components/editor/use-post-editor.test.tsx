@@ -54,14 +54,14 @@ beforeEach(() => {
   vi.clearAllMocks();
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   api.getPost.mockResolvedValue(POST);
-  api.getBlocks.mockResolvedValue([]);
+  api.getBlocks.mockResolvedValue({ blocks: [], contentVersion: null });
   api.updatePostMetadata.mockImplementation(async (id, payload) => {
     if (payload.slug !== undefined && payload.slug.length < 2) {
       throw new ApiError(400, { title: "Bad Request", status: 400, detail: "slug length 2~200" });
     }
     return { ...POST, id, ...payload };
   });
-  api.replaceBlocks.mockResolvedValue([]);
+  api.replaceBlocks.mockResolvedValue({ blocks: [], contentVersion: null });
   api.schedulePost.mockResolvedValue({ ...POST, status: "SCHEDULED" });
   api.restoreRevision.mockResolvedValue(POST);
   api.createPost.mockResolvedValue({ ...POST, id: 77, title: "", slug: "draft-new" });
@@ -98,7 +98,7 @@ describe("editor persistence boundaries", () => {
     await act(async () => { pendingBlocks.resolve([]); await saving; });
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [
       { type: "PARAGRAPH", content: liveBody },
-    ]);
+    ], {});
   });
 
   it("includes publish-panel prefills made while saving without marking them as user edits", async () => {
@@ -137,7 +137,7 @@ describe("editor persistence boundaries", () => {
     }));
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [
       { type: "PARAGRAPH", content: "The last body edit" },
-    ]);
+    ], {});
     expect(router.push).toHaveBeenCalledOnce();
   });
 
@@ -215,7 +215,7 @@ describe("a new post exists only once there is something to keep", () => {
     expect(api.createPost).toHaveBeenCalledOnce();
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(77, [
       { type: "PARAGRAPH", content: "Body with a photo" },
-    ]);
+    ], {});
   });
 
   it("discards a never-saved post without deleting anything", async () => {
@@ -327,7 +327,7 @@ describe("a slug the server would refuse never blocks the title and body", () =>
     expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [
       { type: "PARAGRAPH", content: "Body saved anyway" },
-    ]);
+    ], {});
   });
 
   it("saves the title and body when the slug is taken, then says so", async () => {
@@ -349,7 +349,7 @@ describe("a slug the server would refuse never blocks the title and body", () =>
     expect(editor.error).toBe("slugTaken");
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
     expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
-    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }]);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});
   });
 
   it("holds publishing until the slug is long enough", async () => {
@@ -383,8 +383,167 @@ describe("a scheduled post keeps its title", () => {
     let cancelled: boolean | undefined;
     await act(async () => { cancelled = await editor.cancelSchedule(); });
     expect(cancelled).toBe(true);
-    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Edited while scheduled" }]);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Edited while scheduled" }], {});
     expect(api.backToDraftPost).toHaveBeenCalledWith(16);
     expect(api.replaceBlocks.mock.invocationCallOrder[0]).toBeLessThan(api.backToDraftPost.mock.invocationCallOrder[0]);
+  });
+});
+
+describe("saving against another device's edits", () => {
+  const conflict = (version: number) =>
+    new ApiError(409, { status: 409, code: "POST_EDIT_CONFLICT", contentVersion: version } as never);
+
+  beforeEach(() => {
+    window.localStorage.clear();
+    api.getPost.mockResolvedValue({ ...POST, contentVersion: 9 });
+    api.getBlocks.mockResolvedValue({ blocks: [], contentVersion: 7 });
+    api.updatePostMetadata.mockImplementation(async (id, payload) => ({
+      ...POST,
+      id,
+      ...payload,
+      contentVersion: (payload.baseVersion ?? 0) + 1,
+    }));
+    api.replaceBlocks.mockImplementation(async (_id, blocks, guard) => ({
+      blocks,
+      contentVersion: (guard?.baseVersion ?? 0) + 1,
+    }));
+  });
+
+  it("stands on the body's version and chains each write on the last answer", async () => {
+    await mount();
+    await act(async () => { editor.setTitle("First"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ baseVersion: 7 }));
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, expect.any(Array), { baseVersion: 8 });
+
+    await act(async () => { editor.setTitle("Second"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ baseVersion: 9 }));
+  });
+
+  it("saves unchecked on a server that sends no version", async () => {
+    api.getBlocks.mockResolvedValue({ blocks: [], contentVersion: null });
+    api.updatePostMetadata.mockImplementation(async (id, payload) => ({ ...POST, id, ...payload }));
+    api.replaceBlocks.mockResolvedValue({ blocks: [], contentVersion: null });
+    await mount();
+    await act(async () => { editor.setTitle("Old server"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("baseVersion");
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, expect.any(Array), {});
+  });
+
+  it("stops autosave and asks when another device saved in between", async () => {
+    await mount();
+    api.updatePostMetadata.mockRejectedValueOnce(conflict(8));
+    api.getPost.mockResolvedValue({ ...POST, title: "Edited elsewhere", contentVersion: 8 });
+    await act(async () => { editor.setTitle("Mine"); });
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    expect(saved).toBe(false);
+    expect(editor.conflict).toBe(true);
+    expect(api.replaceBlocks).not.toHaveBeenCalled();
+
+    api.updatePostMetadata.mockClear();
+    await act(async () => { await vi.advanceTimersByTimeAsync(60_000); });
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+  });
+
+  it("overwrites on the one request it was asked for", async () => {
+    await mount();
+    api.updatePostMetadata.mockRejectedValueOnce(conflict(8));
+    api.getPost.mockResolvedValue({ ...POST, title: "Edited elsewhere", contentVersion: 8 });
+    await act(async () => { editor.setTitle("Mine"); });
+    await act(async () => { await editor.save(); });
+
+    let ok: boolean | undefined;
+    await act(async () => { ok = await editor.overwriteMine(); });
+    expect(ok).toBe(true);
+    expect(editor.conflict).toBe(false);
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ baseVersion: 7, overwrite: true }));
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, expect.any(Array), { baseVersion: 8 });
+  });
+
+  it("keeps the writer's version on this device before taking the latest", async () => {
+    await mount();
+    api.updatePostMetadata.mockRejectedValueOnce(conflict(8));
+    api.getPost.mockResolvedValue({ ...POST, title: "Edited elsewhere", contentVersion: 8 });
+    api.getBlocks.mockResolvedValue({ blocks: [{ id: 1, type: "PARAGRAPH", content: "Theirs", blockOrder: 0 }], contentVersion: 8 });
+    await act(async () => {
+      editor.setTitle("Mine");
+      editor.setMarkdown("My body");
+    });
+    await act(async () => { await editor.save(); });
+    await act(async () => { await editor.loadLatest(); });
+
+    expect(editor.conflict).toBe(false);
+    expect(editor.title).toBe("Edited elsewhere");
+    expect(editor.markdown).toBe("Theirs");
+    expect(editor.kept).toMatchObject({ title: "Mine", markdown: "My body" });
+    expect(JSON.parse(window.localStorage.getItem("kurl:editor-kept:16") ?? "null")).toMatchObject({ markdown: "My body" });
+
+    await act(async () => { editor.setTitle("Edited again"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ baseVersion: 8 }));
+  });
+
+  it("restores the kept version over the latest and saves it on the latest's version", async () => {
+    await mount();
+    api.updatePostMetadata.mockRejectedValueOnce(conflict(8));
+    api.getPost.mockResolvedValue({ ...POST, title: "Edited elsewhere", contentVersion: 8 });
+    api.getBlocks.mockResolvedValue({ blocks: [{ id: 1, type: "PARAGRAPH", content: "Theirs", blockOrder: 0 }], contentVersion: 8 });
+    await act(async () => {
+      editor.setTitle("Mine");
+      editor.setMarkdown("My body");
+    });
+    await act(async () => { await editor.save(); });
+    await act(async () => { await editor.loadLatest(); });
+    const remounts = editor.reloadKey;
+
+    await act(async () => { editor.restoreKept(); });
+    expect(editor.title).toBe("Mine");
+    expect(editor.markdown).toBe("My body");
+    expect(editor.reloadKey).toBe(remounts + 1);
+    expect(editor.kept).toBeNull();
+    expect(window.localStorage.getItem("kurl:editor-kept:16")).toBeNull();
+
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Mine", baseVersion: 8 }));
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "My body" }], { baseVersion: 9 });
+  });
+
+  it("counts a conflict with its own earlier write as saved", async () => {
+    await mount();
+    await act(async () => { editor.setTitle("Mine"); editor.setMarkdown("Same body"); });
+    api.replaceBlocks.mockRejectedValueOnce(conflict(9));
+    api.getPost.mockResolvedValue({ ...POST, title: "Mine", contentVersion: 9 });
+    api.getBlocks.mockResolvedValue({ blocks: [{ id: 1, type: "paragraph", content: "Same body", blockOrder: 0 }], contentVersion: 9 });
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    expect(saved).toBe(true);
+    expect(editor.conflict).toBe(false);
+
+    await act(async () => { editor.setTitle("Next"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ baseVersion: 9 }));
+  });
+
+  it("re-reads on return to the tab when another device saved and nothing here is unsaved", async () => {
+    await mount();
+    expect(api.getBlocks).toHaveBeenCalledTimes(1);
+    api.getPost.mockResolvedValue({ ...POST, contentVersion: 8 });
+    await act(async () => {
+      document.dispatchEvent(new Event("visibilitychange"));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(api.getBlocks).toHaveBeenCalledTimes(2);
+    expect(editor.remoteReloads).toBe(1);
+
+    await act(async () => { editor.setTitle("Unsaved"); });
+    api.getPost.mockResolvedValue({ ...POST, contentVersion: 12 });
+    await act(async () => {
+      document.dispatchEvent(new Event("visibilitychange"));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(api.getBlocks).toHaveBeenCalledTimes(2);
   });
 });
