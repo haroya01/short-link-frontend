@@ -71,13 +71,13 @@ test("the writer changes who can reply from the note's ⋯ later", async ({ page
   await menu(page, 72, "답글 권한");
   const dialog = page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" });
   await expect(dialog.getByRole("radio", { name: "모두" })).toBeChecked();
-  await dialog.getByRole("radio", { name: "멘션한 사람만" }).check();
+  await dialog.getByRole("radio", { name: "내가 멘션한 사람만" }).check();
   await dialog.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("답글 권한을 바꿨어요")).toBeVisible();
   await expect(dialog).toHaveCount(0);
 
   await menu(page, 72, "답글 권한");
-  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "멘션한 사람만" })).toBeChecked();
+  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "내가 멘션한 사람만" })).toBeChecked();
 });
 
 test("a new note is written with who may reply, and keeps it", async ({ page }) => {
@@ -88,7 +88,7 @@ test("a new note is written with who may reply, and keeps it", async ({ page }) 
   const policy = page.getByRole("combobox", { name: "답글 권한" });
   await expect(policy).toHaveValue("everyone");
   await policy.selectOption("mentioned");
-  await expect(page.getByTestId("reply-policy-hint")).toHaveText("멘션한 사람은 언제나 답글을 달 수 있어요.");
+  await expect(page.getByTestId("reply-policy-hint")).toHaveText("내가 멘션한 사람은 언제나 답글을 달 수 있어요.");
   await page.getByRole("button", { name: "올리기", exact: true }).click();
   const notice = page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" });
   await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
@@ -97,5 +97,5 @@ test("a new note is written with who may reply, and keeps it", async ({ page }) 
   await expect(posted).toBeVisible({ timeout: 30_000 });
   await posted.getByRole("button", { name: "노트 메뉴" }).first().click();
   await page.getByRole("menuitem", { name: "답글 권한", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "멘션한 사람만" })).toBeChecked();
+  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "내가 멘션한 사람만" })).toBeChecked();
 });
