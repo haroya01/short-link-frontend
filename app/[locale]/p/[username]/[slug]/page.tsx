@@ -13,6 +13,8 @@ import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
 import { LegacyHeadingHash, PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
+import { PostDock } from "@/modules/blog/components/post-dock";
+import { PostAuthorCard } from "@/modules/blog/components/post-author-card";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
@@ -274,7 +276,7 @@ export default async function PublicPostPage({
       {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
           났는지의 출처. */}
       <article
-        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 sm:py-20"
+        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 max-sm:pb-[calc(var(--post-dock-h,0px)+3.5rem)] sm:py-20"
         lang={post.languageTag}
         data-bhv-post={post.id}
       >
@@ -344,14 +346,22 @@ export default async function PublicPostPage({
                 />
               </span>
               {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
-                  reader can react without scrolling to the end. */}
-              <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-              <BookmarkButton postId={post.id} />
-              <ConnectButton postId={post.id} postTitle={post.title} />
-              <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+                  reader can react without scrolling to the end. Phones get them in the post dock. */}
+              <span className="hidden sm:contents">
+                <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
+                <BookmarkButton postId={post.id} />
+                <ConnectButton postId={post.id} postTitle={post.title} />
+                <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+              </span>
               {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
               <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
-              <PostReaderMenu postId={post.id} authorUsername={author.username} />
+              <PostReaderMenu
+                postId={post.id}
+                authorUsername={author.username}
+                postTitle={post.title}
+                postSlug={post.slug}
+                postUrl={postUrl}
+              />
             </div>
           </AuthorOnly>
         </div>
@@ -405,17 +415,8 @@ export default async function PublicPostPage({
         <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
         <PostHighlights postId={post.id} />
 
-        {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
-            nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
-            so the article is never a dead end (§10: one green thread, no node-graph). */}
-        <Suspense fallback={null}>
-          <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
-        </Suspense>
-
-        {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
-
         {post.tags.length > 0 && (
-          <div className="mt-10">
+          <div className="mt-10" data-testid="post-tags">
             <TagChips tags={post.tags} />
           </div>
         )}
@@ -426,28 +427,28 @@ export default async function PublicPostPage({
           </p>
         )}
 
-        <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
-            <a
-              href={authorHref(author.username, locale)}
-              className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400 focus-ring"
-              data-bhv="profile"
-              data-bhv-id={author.username}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t("morePosts", { username: author.username })}
-            </a>
-            {/* All post actions live in one cluster — like / bookmark / connect / quote / share. 신고 lives in
-                the header's ⋯ (PostReaderMenu), one place as on iOS. */}
-            <div className="flex items-center gap-3">
-              <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-              <BookmarkButton postId={post.id} />
-              <ConnectButton postId={post.id} postTitle={post.title} />
-              <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
-              <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            </div>
-          </div>
+        {/* All post actions in one row after the body — like / bookmark / connect / quote / share. 신고 lives
+            in the header's ⋯ (PostReaderMenu), as on iOS. Phones use the post dock and the ⋯ instead. */}
+        <footer className="mt-10 hidden items-center gap-3 sm:flex" data-testid="post-actions">
+          <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
+          <BookmarkButton postId={post.id} />
+          <ConnectButton postId={post.id} postTitle={post.title} />
+          <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
+          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
         </footer>
+
+        {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
+
+        <div data-post-end aria-hidden />
+
+        {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
+            nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
+            so the article is never a dead end (§10: one green thread, no node-graph). */}
+        <Suspense fallback={null}>
+          <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
+        </Suspense>
+
+        <PostAuthorCard author={author} locale={locale} postId={post.id} className="mt-12 xl:hidden" />
 
         <Suspense fallback={null}>
           <RelatedPosts
@@ -498,8 +499,9 @@ export default async function PublicPostPage({
           </aside>
         )}
 
-        {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
+        {/* Portrait tablets (640–1099px) get the TOC as a floating button → bottom sheet; phones get it in the dock. */}
         <PostTocMobile headings={tocHeadings} />
+        <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
       </AuthorOnly>
       <LegacyHeadingHash headings={headings} />
     </div>
