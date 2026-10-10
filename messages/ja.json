@@ -3833,7 +3833,7 @@
     "visibilityPublic": "公開",
     "visibilityPrivateDesc": "自分だけが見られます。",
     "visibilityUnlistedDesc": "リンクを知っている人だけが見られます。一覧・発見には出ません。",
-    "visibilityPublicDesc": "誰でも見られ、プロフィールと「つながりの発見」にも流れます。",
+    "visibilityPublicDesc": "誰でも見られます。プロフィールと発見にも表示されます。",
     "dangerZone": "危険な操作",
     "deleteCollectionDesc": "このコレクションを削除します。含まれる項目は削除されません。元に戻せません。",
     "reorder": "並べ替え",

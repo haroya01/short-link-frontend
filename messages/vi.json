@@ -3833,7 +3833,7 @@
     "visibilityPublic": "Công khai",
     "visibilityPrivateDesc": "Chỉ bạn xem được.",
     "visibilityUnlistedDesc": "Chỉ người có liên kết mới xem được. Không xuất hiện trong danh sách hay khám phá.",
-    "visibilityPublicDesc": "Ai cũng xem được, và xuất hiện ở hồ sơ của bạn và mục Khám phá.",
+    "visibilityPublicDesc": "Ai cũng xem được. Xuất hiện ở hồ sơ của bạn và mục khám phá.",
     "dangerZone": "Vùng nguy hiểm",
     "deleteCollectionDesc": "Xóa bộ sưu tập này. Các mục bên trong không bị xóa. Không thể hoàn tác.",
     "reorder": "Sắp xếp lại",

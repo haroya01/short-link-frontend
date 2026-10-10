@@ -71,6 +71,10 @@ describe("message catalog style", () => {
     expect(entries(ja).filter(inBlog).filter(([, value]) => /てみましょう|ましょう[。]?$/.test(value))).toEqual([]);
   });
 
+  it("the compose chooser rows are an icon and a name, with no tagline under them", () => {
+    for (const catalog of [ko, ja, en]) expect(Object.keys(catalog.compose).filter((key) => key.endsWith("Hint"))).toEqual([]);
+  });
+
   it("ko: no particle hangs on a name or address, whose final sound decides 이/가 and 을/를", () => {
     const hanging = /\{[a-zA-Z]+\}(?:<\/[a-zA-Z]+>)?(?:이|가|을|를|은|는|과|와|으로|로)(?=[\s,.!?)…·]|$)/;
     expect(entries(ko).filter(([, value]) => hanging.test(value))).toEqual([]);

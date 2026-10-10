@@ -3833,7 +3833,7 @@
     "visibilityPublic": "Public",
     "visibilityPrivateDesc": "Only you can see it.",
     "visibilityUnlistedDesc": "Only people with the link can see it. It won't appear in lists or discovery.",
-    "visibilityPublicDesc": "Anyone can see it, and it flows into your profile and Discover.",
+    "visibilityPublicDesc": "Anyone can see it. It appears on your profile and in discovery.",
     "dangerZone": "Danger zone",
     "deleteCollectionDesc": "Delete this collection. The items in it aren't deleted. This can't be undone.",
     "reorder": "Reorder",

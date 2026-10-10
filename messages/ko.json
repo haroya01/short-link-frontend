@@ -3833,7 +3833,7 @@
     "visibilityPublic": "공개",
     "visibilityPrivateDesc": "나만 볼 수 있어요.",
     "visibilityUnlistedDesc": "링크가 있는 사람만 볼 수 있어요. 목록·발견에는 안 나와요.",
-    "visibilityPublicDesc": "누구나 볼 수 있고, 내 프로필과 연결 발견에도 흘러요.",
+    "visibilityPublicDesc": "누구나 볼 수 있어요. 내 프로필과 발견에도 나와요.",
     "dangerZone": "위험 구역",
     "deleteCollectionDesc": "이 컬렉션을 삭제해요. 엮인 항목은 삭제되지 않아요. 되돌릴 수 없어요.",
     "reorder": "순서 편집",
