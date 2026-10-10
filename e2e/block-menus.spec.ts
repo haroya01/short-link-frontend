@@ -29,8 +29,8 @@ test("a reader's ⋯ on a post is the one place to report it, and blocks its aut
   await page.getByRole("menuitem", { name: "차단", exact: true }).click();
   await confirmBlock(page, "kazuki");
   await expect(page.locator("#comment-3")).toHaveCount(0, { timeout: 30_000 });
-  await menu.click();
-  await expect(page.getByRole("menuitem", { name: "차단 해제" })).toBeVisible();
+  await expect(menu).toHaveCount(0);
+  await expect(page.getByTestId("author-blocked").getByRole("button", { name: "차단 해제" })).toBeVisible();
 });
 
 test("my own post has no reader's ⋯", async ({ page }) => {

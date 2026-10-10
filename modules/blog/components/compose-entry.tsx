@@ -20,7 +20,7 @@ import { useToast } from "@/components/ui/toast";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { emitNotePosted } from "@/modules/blog/lib/consequence-events";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
-import { compactTime } from "@/modules/notes/lib/compact-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { openNote } from "@/modules/notes/lib/note-href";
 
 const RECENT_DRAFTS = 3;
@@ -53,6 +53,7 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
   const t = useTranslations("compose");
   const locale = useLocale();
   const router = useRouter();
+  const ago = useCompactTime();
   const { toast } = useToast();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -86,7 +87,7 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
   const resume: Choice[] = (drafts?.items ?? []).map((draft) => ({
     key: `draft-${draft.id}`,
     label: draft.title.trim() || t("untitled"),
-    hint: compactTime(draft.updatedAt, locale),
+    hint: ago(draft.updatedAt),
     href: blogHref(`/write/${draft.id}`),
   }));
   if (drafts?.more) resume.push({ key: "all-drafts", label: t("seeAll"), href: blogHref("/write") });

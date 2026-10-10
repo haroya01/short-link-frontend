@@ -1,9 +1,11 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { compactTime } from "./compact-time";
 
 export function useCompactTime() {
   const locale = useLocale();
-  return (iso: string) => compactTime(iso, locale);
+  const t = useTranslations("common");
+  const justNow = t("justNow");
+  return (iso: string) => compactTime(iso, locale, justNow);
 }

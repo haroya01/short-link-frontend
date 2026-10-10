@@ -2353,7 +2353,8 @@
     "errorPrefix": "에러:",
     "offline": "오프라인 상태예요. 연결되면 자동으로 다시 시도해요.",
     "showPassword": "비밀번호 보기",
-    "hidePassword": "비밀번호 숨기기"
+    "hidePassword": "비밀번호 숨기기",
+    "justNow": "방금"
   },
   "notFound": {
     "postTitle": "이 글을 찾을 수 없어요",
@@ -4358,6 +4359,7 @@
     "unblockFailed": "차단을 해제하지 못했어요",
     "blockedAuthorNotice": "차단한 사용자예요. 글·댓글·노트가 보이지 않아요.",
     "authorUnavailable": "이 사용자의 글을 볼 수 없어요.",
+    "postUnavailable": "볼 수 없는 글이에요.",
     "threadUnavailable": "볼 수 없는 노트예요.",
     "blockedUsersTitle": "차단한 사용자",
     "blockedUsersHint": "이 사람들의 글·댓글·노트는 보이지 않아요. 작가 페이지·글·댓글의 ⋯ 메뉴에서 차단할 수 있어요.",

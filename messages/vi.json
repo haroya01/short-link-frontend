@@ -2353,7 +2353,8 @@
     "errorPrefix": "Lỗi:",
     "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại.",
     "showPassword": "Hiện mật khẩu",
-    "hidePassword": "Ẩn mật khẩu"
+    "hidePassword": "Ẩn mật khẩu",
+    "justNow": "vừa xong"
   },
   "notFound": {
     "postTitle": "Không tìm thấy bài viết này",
@@ -4358,6 +4359,7 @@
     "unblockFailed": "Không thể bỏ chặn",
     "blockedAuthorNotice": "Bạn đã chặn tài khoản này. Bài viết, bình luận và ghi chú của họ bị ẩn.",
     "authorUnavailable": "Bạn không thể xem bài viết của người dùng này.",
+    "postUnavailable": "Không thể xem bài viết này.",
     "threadUnavailable": "Không thể xem ghi chú này.",
     "blockedUsersTitle": "Tài khoản đã chặn",
     "blockedUsersHint": "Bài viết, bình luận và ghi chú của họ luôn bị ẩn. Bạn có thể chặn từ menu ⋯ trên trang của họ, bài viết hoặc bình luận.",

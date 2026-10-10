@@ -2353,7 +2353,8 @@
     "errorPrefix": "Error:",
     "offline": "You're offline. We'll reconnect automatically.",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "justNow": "now"
   },
   "notFound": {
     "postTitle": "This post isn't here",
@@ -4358,6 +4359,7 @@
     "unblockFailed": "Couldn't unblock",
     "blockedAuthorNotice": "You blocked this account. Their posts, comments and notes are hidden.",
     "authorUnavailable": "You can't view this user's posts.",
+    "postUnavailable": "This post isn't available.",
     "threadUnavailable": "This note isn't available.",
     "blockedUsersTitle": "Blocked accounts",
     "blockedUsersHint": "Their posts, comments and notes stay hidden. Block someone from the ⋯ menu on their page, a post or a comment.",

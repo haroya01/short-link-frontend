@@ -27,27 +27,37 @@ export function useBlocksViewer(username: string): boolean {
   return ready && authenticated && answer?.username === username && answer.blocks;
 }
 
+export type AuthorGateState = "open" | "blocked" | "blocksViewer";
+
+export function useAuthorGate(username: string): AuthorGateState {
+  const blocked = useBlockedNames().has(username);
+  const blocksViewer = useBlocksViewer(username);
+  if (blocked) return "blocked";
+  return blocksViewer ? "blocksViewer" : "open";
+}
+
 export function AuthorGate({
   username,
   noticeClassName,
+  subject = "author",
   children,
 }: {
   username: string;
   noticeClassName?: string;
+  subject?: "author" | "post";
   children: ReactNode;
 }) {
   const t = useTranslations("notes");
-  const blocked = useBlockedNames().has(username);
-  const blocksViewer = useBlocksViewer(username);
+  const state = useAuthorGate(username);
 
-  if (blocked) {
+  if (state === "blocked") {
     return (
       <div className={noticeClassName}>
         <BlockedAuthorNotice username={username} />
       </div>
     );
   }
-  if (blocksViewer) {
+  if (state === "blocksViewer") {
     return (
       <div className={noticeClassName}>
         <p
@@ -55,10 +65,14 @@ export function AuthorGate({
           data-testid="author-unavailable"
           className="mt-4 rounded-surface border border-slate-200 px-4 py-3 text-[13px] text-slate-600 dark:border-slate-800 dark:text-slate-300"
         >
-          {t("authorUnavailable")}
+          {t(subject === "post" ? "postUnavailable" : "authorUnavailable")}
         </p>
       </div>
     );
   }
   return <>{children}</>;
+}
+
+export function AuthorOnly({ username, children }: { username: string; children: ReactNode }) {
+  return useAuthorGate(username) === "open" ? <>{children}</> : null;
 }
