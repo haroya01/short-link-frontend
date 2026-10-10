@@ -9,10 +9,10 @@ import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { Avatar } from "@/modules/blog/components/avatar";
 
-export function AvatarZoom({ src, name }: { src: string | null; name: string }) {
+export function AvatarZoom({ src, name, seed }: { src: string | null; name: string; seed: number | null }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
-  if (!src) return <Avatar src={null} name={name} size="xl" eager />;
+  if (!src) return <Avatar src={null} name={name} seed={seed} size="xl" eager />;
   return (
     <>
       <button
@@ -21,7 +21,7 @@ export function AvatarZoom({ src, name }: { src: string | null; name: string }) 
         aria-label={t("viewAvatar")}
         className="focus-ring shrink-0 rounded-full transition-opacity hover:opacity-90"
       >
-        <Avatar src={src} name={name} size="xl" eager />
+        <Avatar src={src} name={name} seed={seed} size="xl" eager />
       </button>
       <AvatarViewer src={src} name={name} open={open} onClose={() => setOpen(false)} />
     </>

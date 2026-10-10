@@ -4,6 +4,7 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** Mastodon's follow suggestions: whom the people the viewer follows follow, else active popular accounts. */
 export interface FollowSuggestion {
+  userId: number;
   username: string;
   displayName: string | null;
   avatarUrl: string | null;
@@ -14,9 +15,9 @@ export interface FollowSuggestion {
 }
 
 let mockPicks: FollowSuggestion[] = [
-  { username: "haruka", displayName: "하루카", avatarUrl: null, bio: null, mutuals: 3, reason: "FRIENDS", locked: true },
-  { username: "minji", displayName: null, avatarUrl: null, bio: null, mutuals: 1, reason: "FRIENDS" },
-  { username: "yuna", displayName: null, avatarUrl: null, bio: null, mutuals: 0, reason: "POPULAR" },
+  { userId: 3, username: "haruka", displayName: "하루카", avatarUrl: null, bio: null, mutuals: 3, reason: "FRIENDS", locked: true },
+  { userId: 2, username: "minji", displayName: null, avatarUrl: null, bio: null, mutuals: 1, reason: "FRIENDS" },
+  { userId: 15, username: "yuna", displayName: null, avatarUrl: null, bio: null, mutuals: 0, reason: "POPULAR" },
 ];
 
 export function listFollowSuggestions(): Promise<FollowSuggestion[]> {

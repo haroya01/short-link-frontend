@@ -31,7 +31,7 @@ export function SeriesRow({ series, locale }: { series: PublicSeriesCard; locale
       }
       byline={
         <>
-          <RowAuthor username={username} avatarUrl={series.author.avatarUrl} locale={locale} />
+          <RowAuthor username={username} displayName={series.author.displayName} avatarUrl={series.author.avatarUrl} seed={series.author.id} locale={locale} />
           <RowDot />
           <RowTime iso={series.lastPublishedAt} locale={locale} className="shrink-0" />
         </>

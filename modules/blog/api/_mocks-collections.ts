@@ -28,8 +28,8 @@ import { MOCK_BLOCKS_VIEWER } from "@/modules/blog/api/_mocks";
 const CURATORS = {
   minji: { id: 2, username: "minji", bio: "1인 메이커 · 그로스", avatarUrl: "https://i.pravatar.cc/120?img=45" },
   haruka: { id: 3, username: "haruka", bio: "플랫폼 엔지니어", avatarUrl: null },
-  jinhwa: { id: 4, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
-  doha: { id: 5, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
+  jinhwa: { id: 41, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
+  doha: { id: 42, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
   sol: { id: 6, username: "sol", bio: "작업실에서, 손으로", avatarUrl: null },
 };
 
@@ -74,6 +74,7 @@ const PATH: MockCollectionDetail = {
   kind: "PATH",
   ordered: true,
   curatorUsername: "haruka",
+  curatorUserId: 3,
   connections: pathConnections,
 };
 
@@ -94,6 +95,7 @@ const COLLECTION: MockCollectionDetail = {
   kind: "COLLECTION",
   ordered: false,
   curatorUsername: "dohyun",
+  curatorUserId: 1,
   connections: collectionConnections,
 };
 
@@ -185,6 +187,7 @@ export function mockCreateCollection(payload: NewCollection): CollectionSummary 
     kind: payload.ordered ? "PATH" : "COLLECTION",
     ordered: payload.ordered,
     curatorUsername: "dohyun",
+    curatorUserId: 1,
     connections: [],
   };
   mockStore.unshift(created);

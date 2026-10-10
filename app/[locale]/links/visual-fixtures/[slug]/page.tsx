@@ -130,15 +130,15 @@ function AvatarFixture() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-3">
-        <Avatar src={null} name="dohyeon" size="xs" />
-        <Avatar src={null} name="dohyeon" size="sm" />
-        <Avatar src={null} name="dohyeon" size="md" />
-        <Avatar src={null} name="dohyeon" size="sm" shrink={false} />
+        <Avatar src={null} name="dohyeon" seed={1} size="xs" />
+        <Avatar src={null} name="dohyeon" seed={1} size="sm" />
+        <Avatar src={null} name="dohyeon" seed={1} size="md" />
+        <Avatar src={null} name="dohyeon" seed={1} size="sm" shrink={false} />
       </div>
       <div className="flex items-center gap-3">
-        <Avatar src={SOLID_IMG} name="dohyeon" size="xs" />
-        <Avatar src={SOLID_IMG} name="dohyeon" size="sm" />
-        <Avatar src={SOLID_IMG} name="dohyeon" size="md" />
+        <Avatar src={SOLID_IMG} name="dohyeon" seed={1} size="xs" />
+        <Avatar src={SOLID_IMG} name="dohyeon" seed={1} size="sm" />
+        <Avatar src={SOLID_IMG} name="dohyeon" seed={1} size="md" />
       </div>
     </div>
   );

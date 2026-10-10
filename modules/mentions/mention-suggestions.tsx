@@ -45,7 +45,7 @@ export function MentionSuggestions({
               i === active ? "bg-slate-100 dark:bg-slate-800" : "hover:bg-slate-50 dark:hover:bg-slate-800/60",
             )}
           >
-            <Avatar src={c.avatarUrl} name={c.username} size="sm" />
+            <Avatar src={c.avatarUrl} name={c.displayName || c.username} seed={c.userId} size="sm" />
             <span className="min-w-0">
               <span className="block truncate text-[14px] font-medium text-slate-900 dark:text-slate-100">
                 {c.displayName ?? c.username}

@@ -27,7 +27,7 @@ export function PostAuthorCard({
           data-bhv="profile"
           data-bhv-id={author.username}
         >
-          <Avatar src={author.avatarUrl} name={author.username} size="lg" />
+          <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
           <span className="min-w-0">
             <span className="flex min-w-0 items-baseline gap-1.5">
               {name && (

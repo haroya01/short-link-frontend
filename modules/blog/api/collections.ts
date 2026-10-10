@@ -86,6 +86,7 @@ export interface CollectionDetail {
   kind: CollectionKind;
   ordered?: boolean;
   curatorUsername: string | null;
+  curatorUserId: number | null;
   connections: Connection[];
 }
 
