@@ -1,83 +1,20 @@
-import { DATE_LOCALE } from "@/lib/date";
 import type { ComponentProps, ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
-import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { HideIfBlocked } from "@/modules/blog/components/hide-if-blocked";
-import { CoverThumb } from "@/modules/blog/components/cover-thumb";
+import { FeedRow, RowAuthor, RowDot } from "@/modules/blog/components/feed-row";
+import { RowTime } from "@/modules/blog/components/row-time";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 
-function formatDate(iso: string, locale: string): string {
-  // A weblog reads by recency, so the year is usually noise — "5월 30일" / "May 30". The full date
-  // (with year) lives on the post page itself.
-  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-    month: "long",
-    day: "numeric",
-    timeZone: "Asia/Seoul",
-  });
-}
-
-function Avatar({ author }: { author: PublicFeedItem["author"] }) {
-  return <AuthorAvatar src={author.avatarUrl} name={author.username} size="xs" />;
-}
-
-/**
- * Representative tag = the post's first tag (the author orders them, so tag[0] is their pick). Shown
- * as a quiet muted label — NOT a coloured "category" badge. We have flat tags, not categories, so
- * dressing one up as a category would be a lie; this just hints at the post's subject.
- */
-function TagEyebrow({ tag }: { tag: string }) {
-  return <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{tag}</span>;
-}
-
-/**
- * Meta line: author + date first (who, when — the weblog basics), with the like count demoted to a
- * faint marker on the right and only when there is one. Views are intentionally absent from the card.
- * Lives outside the post anchor so the author link isn't an `<a>` nested in an `<a>`.
- */
-function MetaRow({
-  item,
-  locale,
-  hideAuthor = false,
-}: {
-  item: PublicFeedItem;
-  locale: string;
-  hideAuthor?: boolean;
-}) {
-  return (
-    <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-      {!hideAuthor && (
-        <>
-          <BlogLink
-            href={authorHref(item.author.username, locale)}
-            className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
-          >
-            <Avatar author={item.author} />
-            <span className="truncate font-medium">{item.author.username}</span>
-          </BlogLink>
-          <span aria-hidden>·</span>
-        </>
-      )}
-      <time dateTime={item.publishedAt} className="shrink-0">
-        {formatDate(item.publishedAt, locale)}
-      </time>
-    </div>
-  );
-}
-
-/**
- * Single-column post list — the home recent feed, the following tab, tag pages and the author profile
- * all wrap their {@link FeedCard}s in this. A quiet weblog reads as a vertical list, not a multi-column
- * card grid, so this is a narrow stacked column; the card's own bottom border draws the row dividers.
- */
 export function FeedList({ children }: { children: ReactNode }) {
   return (
     <BelongingProvider>
@@ -100,7 +37,7 @@ function SeriesLine({
     <BlogLink
       href={authorHref(item.author.username, locale, `series/${series.slug}`)}
       data-testid="feed-card-series"
-      className="focus-ring -mx-1 mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded px-1 py-1 text-[12px] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+      className="focus-ring -mx-1 mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded px-1 py-1 text-meta text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
     >
       <Layers aria-hidden className="h-3.5 w-3.5 shrink-0" />
       <span className="truncate">
@@ -116,7 +53,7 @@ function ReasonLabel({ reason }: { reason: NonNullable<PublicFeedItem["followRea
   const t = useTranslations("publicFeed");
   if (reason.kind === "AUTHOR") return null;
   return (
-    <span className="text-[12px] text-slate-500 dark:text-slate-400">
+    <span className="truncate">
       {reason.kind === "TOPIC" ? t("feedReasonTopic", { tag: reason.tag ?? "" }) : t("feedReasonSeries")}
     </span>
   );
@@ -128,28 +65,22 @@ export function FeedListSkeleton({ count = 4 }: { count?: number }) {
   return (
     <ul role="status" aria-busy className="flex max-w-2xl animate-pulse flex-col">
       {Array.from({ length: count }).map((_, i) => (
-        <li key={i} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
-          <div className="flex gap-4 py-5 sm:gap-6">
-            <div className="min-w-0 flex-1 space-y-2.5 py-0.5">
-              <div className="h-3 w-14 rounded bg-slate-100 dark:bg-slate-800" />
+        <li key={i} className="border-b border-slate-100 py-4 last:border-b-0 dark:border-slate-800">
+          <div className="h-3 w-14 rounded bg-slate-100 dark:bg-slate-800" />
+          <div className="mt-2.5 flex items-start gap-3.5 sm:gap-4">
+            <div className="min-w-0 flex-1 space-y-2.5">
               <div className="h-4 w-4/5 rounded bg-slate-200/80 dark:bg-slate-700/80" />
               <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-slate-800" />
-              <div className="h-3 w-28 rounded bg-slate-100 dark:bg-slate-800" />
             </div>
-            <div className="h-20 w-20 shrink-0 rounded-inner bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
+            <div className="h-[72px] w-[72px] shrink-0 rounded-inner bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-24" />
           </div>
+          <div className="mt-2.5 h-3 w-28 rounded bg-slate-100 dark:bg-slate-800" />
         </li>
       ))}
     </ul>
   );
 }
 
-/**
- * Feed card — a typography-led list row: muted tag, title, excerpt, author·date, with an optional
- * small thumbnail on the right. Image-less posts are a complete typographic row (no placeholder).
- * `featured` gives the lead post a slightly larger title + an editorial label. MetaRow stays a sibling
- * of the post link (never nested) so the author link isn't an `<a>` nested in an `<a>`.
- */
 export function FeedCard(props: ComponentProps<typeof FeedCardRow>) {
   return (
     <HideIfBlocked username={props.item.author.username}>
@@ -163,8 +94,6 @@ function FeedCardRow({
   locale,
   className,
   hideAuthor = false,
-  featured = false,
-  featuredLabel,
   flushTop = false,
   showBookmark = true,
   eager = false,
@@ -172,18 +101,9 @@ function FeedCardRow({
 }: {
   item: PublicFeedItem;
   locale: string;
-  /** Extra classes on the card `<li>`. */
   className?: string;
-  /** Drop the author from the meta — for single-author surfaces (the author profile page). */
   hideAuthor?: boolean;
-  /** Lead post of the feed: slightly larger title + an editorial label above it. */
-  featured?: boolean;
-  /** Editorial label for the featured row (e.g. "오늘의 글" / "Today"). */
-  featuredLabel?: string;
-  /** First row of a feed with no featured lead: trim the top padding so it sits flush under the tabs
-   *  (aligned with the rail) instead of floating below an empty band. */
   flushTop?: boolean;
-  /** Show the save-to-reading-list toggle in the card's top-right (needs a numeric post id). */
   showBookmark?: boolean;
   /** Above-fold row: load the thumbnail eagerly. Lazy thumbnails in the first viewport made the
    *  feed's LCP image wait for hydration — Lighthouse modeled that as LCP ≈ TTI. */
@@ -192,125 +112,64 @@ function FeedCardRow({
    *  Left unset on the initial SSR rows so they never re-animate. */
   entranceDelay?: number;
 }) {
-  // A blank-title, no-excerpt post is effectively empty — skip it rather than render hollow chrome.
   if (!isRenderablePost(item)) return null;
-  const postUrl = postHref(item.author.username, item.slug, locale);
-  const hasImage = Boolean(item.ogImageUrl);
   const bookmarkable = showBookmark && typeof item.id === "number";
   // Representative tag = first DISPLAYABLE tag (skip junk — incomplete jamo, single-char, mash), so a
   // reading-surface row never surfaces "#ㄴ" / "#dddd" as its eyebrow.
   const eyebrowTag = item.tags.find(isDisplayableTag);
+  const reason = item.followReason && item.followReason.kind !== "AUTHOR" ? item.followReason : null;
 
   return (
-    <li
-      className={
-        "group relative border-b border-slate-100 last:border-b-0 dark:border-slate-800" +
-        (entranceDelay != null ? " animate-fade-in" : "") +
-        (className ? ` ${className}` : "")
-      }
+    <FeedRow
+      href={postHref(item.author.username, item.slug, locale)}
+      title={item.title}
+      titleLang={contentLang(item.title, item.languageTag)}
+      excerpt={item.excerpt}
+      excerptLang={item.excerpt ? contentLang(item.excerpt, item.languageTag) : undefined}
+      cover={item.ogImageUrl}
+      eager={eager}
+      readId={typeof item.id === "number" ? item.id : null}
+      flushTop={flushTop}
+      className={cn(entranceDelay != null && "animate-fade-in", className)}
       style={
         entranceDelay != null
           ? { animationDelay: `${entranceDelay}ms`, animationFillMode: "backwards" }
           : undefined
       }
-    >
-      {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
-          stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
-      <div
-        className={`-mx-3 flex gap-4 rounded-surface px-3 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
-          // A row flush to the top of the feed (the featured lead, or the first row of a lead-less feed)
-          // gets only a hair of top padding — any more reads as an empty band under the tabs and pushes
-          // the content below the rail. Featured keeps a generous bottom so its larger title has weight.
-          featured || flushTop ? "pt-1.5 sm:pt-2" : "pt-5"
-        } ${featured ? "pb-6 sm:pb-8" : "pb-5"}`}
-      >
-        <div className="min-w-0 flex-1">
-          {/* Text-only rows reserve a right gutter so the title never runs under the bookmark (pinned
-              to the whole card's top-right below); image rows don't need it — the button sits over the
-              thumbnail, clear of the narrower text column. */}
-          <BlogLink
-            href={postUrl}
-            className={`block ${bookmarkable && !hasImage ? "pr-9" : ""}`}
-            data-bhv="post"
-            data-bhv-id={`${item.author.username}/${item.slug}`}
-          >
-            {/* One marker per row. The featured lead shows a quiet editorial label (with a small
-                brand-green dot so it reads as the chosen post); every other row shows its muted
-                representative tag. Never both — stacking them reads as a confusing category pair. */}
-            {featured && featuredLabel ? (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-accent-700 dark:text-accent-400">
-                <span aria-hidden className="h-1 w-1 rounded-full bg-accent-600" />
-                {featuredLabel}
-              </span>
-            ) : (
-              (eyebrowTag || item.followReason) && (
-                <span className="flex items-center gap-1.5">
-                  {eyebrowTag && <TagEyebrow tag={eyebrowTag} />}
-                  {eyebrowTag && item.followReason && item.followReason.kind !== "AUTHOR" && (
-                    <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">·</span>
-                  )}
-                  {item.followReason && <ReasonLabel reason={item.followReason} />}
-                </span>
-              )
-            )}
-            <h2
-              lang={contentLang(item.title, item.languageTag)}
-              className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
-                featured
-                  ? "text-card-title-2xl tracking-headline sm:text-card-title-3xl sm:leading-[1.18]"
-                  : "text-card-title-sm tracking-tight"
-              }`}
-            >
-              {item.title}
-            </h2>
-            {item.excerpt && (
-              <p
-                lang={contentLang(item.excerpt, item.languageTag)}
-                className={`mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 ${
-                  featured ? "line-clamp-2 sm:line-clamp-3" : "line-clamp-2"
-                }`}
-              >
-                {item.excerpt}
-              </p>
-            )}
-          </BlogLink>
-          <MetaRow item={item} locale={locale} hideAuthor={hideAuthor} />
+      linkData={{ "data-bhv": "post", "data-bhv-id": `${item.author.username}/${item.slug}` }}
+      top={
+        (eyebrowTag || reason) && (
+          <>
+            {eyebrowTag && <span className="truncate font-medium">{eyebrowTag}</span>}
+            {eyebrowTag && reason && <RowDot />}
+            {reason && <ReasonLabel reason={reason} />}
+          </>
+        )
+      }
+      byline={
+        <>
+          {!hideAuthor && (
+            <>
+              <RowAuthor username={item.author.username} avatarUrl={item.author.avatarUrl} locale={locale} />
+              <RowDot />
+            </>
+          )}
+          <RowTime iso={item.publishedAt} locale={locale} className="shrink-0" />
+          {bookmarkable && (
+            <span className="-my-1.5 -mr-1.5 ml-auto">
+              <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+            </span>
+          )}
+        </>
+      }
+      after={
+        <>
           {item.series && item.series.postCount > 1 && (
             <SeriesLine item={item} series={item.series} locale={locale} />
           )}
           {typeof item.id === "number" && <PostBelongingLine postId={item.id} />}
-        </div>
-
-        {hasImage && (
-          <BlogLink
-            href={postUrl}
-            aria-hidden
-            tabIndex={-1}
-            data-bhv="post"
-            data-bhv-id={`${item.author.username}/${item.slug}`}
-            className={`block shrink-0 overflow-hidden rounded-inner bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800 ${
-              featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
-            }`}
-          >
-            {/* 96~150px 슬롯에 원본(수 MB 가능)이 통째로 내려오던 자리 — 허용 호스트는
-                next/image 변형, 그 외 원본 폴백. img-fade 는 lazy 행에만(기존 규칙). */}
-            <CoverThumb
-              src={item.ogImageUrl as string}
-              sizes={featured ? "(min-width: 640px) 150px, 96px" : "(min-width: 640px) 128px, 80px"}
-              eager={eager}
-              className="h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
-            />
-          </BlogLink>
-        )}
-      </div>
-
-      {bookmarkable && (
-        // Pinned to the whole card's top-right so it's in the same spot on every row regardless of
-        // whether the row has a thumbnail. Sibling of the post links (never nested in an <a>).
-        <div className="absolute right-3 top-4 z-10">
-          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} overImage={hasImage} />
-        </div>
-      )}
-    </li>
+        </>
+      }
+    />
   );
 }

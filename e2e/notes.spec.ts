@@ -391,7 +391,7 @@ test("the notes feed has tabs: trending ranks by reactions, following carries re
   await page.goto("/ko/blog/notes");
   const tabs = page.getByRole("navigation").filter({ hasText: "최신" });
   await expect(tabs.getByRole("link", { name: "최신" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
-  await expect(tabs.getByRole("link")).toHaveText(["최신", "인기", "팔로잉"]);
+  await expect(tabs.getByRole("link")).toHaveText(["팔로잉", "최신", "인기"]);
   await tabs.getByRole("link", { name: "인기" }).click();
   await expect(page).toHaveURL(/feed=trending/);
   await expect(tabs.getByRole("link", { name: "인기" })).toHaveAttribute("aria-current", "page");

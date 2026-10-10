@@ -331,7 +331,7 @@ export function SeriesReadingShell({
                 </BlogLink>
                 {/* Save toggle — sibling of the post link (never nested), pinned to the row's top-right. */}
                 <div className="absolute right-3 top-4 z-10">
-                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} overImage={hasImage} />
+                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} corner overImage={hasImage} />
                 </div>
               </li>
             );

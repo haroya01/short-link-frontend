@@ -19,7 +19,7 @@ import { BlogLink } from "./blog-link";
 import { FeedMasthead } from "./feed-masthead";
 import { GuestMasthead } from "./guest-masthead";
 import { FeedContentTransition } from "./feed-content-transition";
-import { FeedSortTabs } from "./feed-sort-tabs";
+import { FeedSwitcher } from "./feed-switcher";
 import { FeedEmpty } from "./feed-empty";
 import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
@@ -30,7 +30,6 @@ import { looksLikeRemoteHandle } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
-import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
 import { TrendingTopics } from "./trending-topics";
 import { ConnectionFeedInsert } from "./connection-feed-insert";
 import { FeedErrorState } from "./feed-error-state";
@@ -131,6 +130,7 @@ export async function FeedScreen({
   const activeTab = searching ? sort : tab;
 
   const t = await getTranslations({ locale, namespace: "publicFeed" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
   // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
@@ -138,8 +138,8 @@ export async function FeedScreen({
   const showsServerFeed =
     searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
   const needFlat = showsServerFeed;
-  // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드(최신·인기, 비검색·비태그)에 몇 칸마다 하나씩
-  // 끼운다. 비로그인 포함 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
+  // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
+  // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
   const wantConnections = showsServerFeed && !searching && !activeTag;
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
   // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
@@ -180,41 +180,15 @@ export async function FeedScreen({
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
 
-  // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드에 몇 칸마다 하나씩 끼울 노드로 만든다. 첫
-  // 노드만 섹션 라벨(RailHeading)을 이고, 나머지는 행만 — 스레드가 한 번만 이름을 밝힌다. 라벨 카피는
-  // collections 네임스페이스에서 서버측으로 읽어 leaf 컴포넌트에 넘긴다(클라이언트 훅 불필요).
-  const tCollections = await getTranslations({ locale, namespace: "collections" });
-  const connectionEvents = connectionsResult?.items ?? [];
-  const connectionNodes = connectionEvents.map((event, i) => (
-    <ConnectionFeedInsert
-      key={event.id}
-      event={event}
-      locale={locale}
-      lead={i === 0}
-      idx={i}
-      label={tCollections("connectingNow")}
-    />
+  const connectionNodes = (connectionsResult?.items ?? []).map((event) => (
+    <ConnectionFeedInsert key={`connection/${event.id}`} event={event} locale={locale} />
   ));
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
   // search), so the content block replays its slide instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
-  // Tab order drives the slide direction (FeedContentTransition): recent → trending → following.
-  const tabIndex =
-    activeTab === "trending"
-      ? 1
-      : activeTab === "for-you"
-        ? 2
-        : activeTab === "following"
-          ? 3
-          : activeTab === "series"
-            ? 4
-            : 0;
-
-  // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
-  // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
-  // notch. Trending/search feeds have no lead emphasis.
-  const featuredFirst = false;
+  // Tab order drives the slide direction (FeedContentTransition): 팔로잉 → 최신 → 인기, then "더 보기".
+  const tabIndex = ["following", "recent", "trending", "for-you", "series"].indexOf(activeTab);
 
   // 검색 결과가 1~2건뿐일 땐 와이드 메이슨리 그리드가 반쪽 타일 하나를 덩그러니 남긴다. 이 경우엔
   // 읽기 컬럼(max-w-2xl) 안 전폭 목록 행으로 떨어뜨려, 결과가 완성된 한 줄로 읽히게 한다(0건 빈 상태·
@@ -267,9 +241,18 @@ export async function FeedScreen({
           bar, and the body gets extra room while the cookie banner is up (see globals.css).
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
-          <FeedSortTabs
+        <div className="mx-auto max-w-2xl">
+          <FeedSwitcher
+            surface="blog"
             tabs={[
+              {
+                key: "following",
+                label: t("feed"),
+                href: "?sort=following",
+                active: !searching && tab === "following",
+                // A search spans every author, so "following" can't apply — disable it while searching.
+                disabled: searching,
+              },
               {
                 key: "recent",
                 label: t("recent"),
@@ -292,37 +275,24 @@ export async function FeedScreen({
                     },
                   ]
                 : []),
-              {
-                key: "for-you",
-                label: t("forYou"),
-                href: "?sort=for-you",
-                personal: true,
-                active: !searching && tab === "for-you",
-                // For You is per-reader, so it can't apply to a cross-author search.
-                disabled: searching,
-              },
-              {
-                key: "following",
-                label: t("feed"),
-                href: "?sort=following",
-                personal: true,
-                active: !searching && tab === "following",
-                // A search spans every author, so "following" can't apply — disable it while searching.
-                disabled: searching,
-              },
-              {
-                key: "series",
-                label: t("seriesTab"),
-                href: "?sort=series",
-                active: !searching && tab === "series",
-                disabled: searching,
-              },
             ]}
+            more={
+              searching
+                ? undefined
+                : [
+                    { key: "for-you", label: t("forYou"), href: "?sort=for-you", active: tab === "for-you" },
+                    { key: "series", label: t("seriesTab"), href: "?sort=series", active: tab === "series" },
+                    {
+                      key: "followed-topics",
+                      label: t("followedTopics"),
+                      href: blogHref("/curation?open=topics"),
+                      external: true,
+                    },
+                    { key: "collections", label: tNav("myCollections"), href: blogHref("/collections"), external: true },
+                  ]
+            }
           />
-        </header>
-
-        {/* Keeps the SSR default-tab cookie in step with the account pref (no UI, no redirect). */}
-        <FeedTabCookieSync />
+        </div>
 
         {searching && looksLikeRemoteHandle(query) && (
           <ReadingShell className="mt-6">
@@ -374,8 +344,6 @@ export async function FeedScreen({
                 sort={sort}
                 query={query}
                 lang={activeLang || undefined}
-                featuredFirst={false}
-                featuredLabel={t("featuredLabel")}
               />
             </FeedContentTransition>
           </ReadingShell>
@@ -408,8 +376,6 @@ export async function FeedScreen({
                 tag={activeTag || undefined}
                 query={searching ? query : undefined}
                 lang={activeLang || undefined}
-                featuredFirst={featuredFirst}
-                featuredLabel={t("featuredLabel")}
                 connectionNodes={connectionNodes.length > 0 ? connectionNodes : undefined}
               />
             </FeedContentTransition>
@@ -433,8 +399,6 @@ function FeedColumn({
   sort,
   query,
   lang,
-  featuredFirst,
-  featuredLabel,
   connectionNodes,
   tag,
 }: {
@@ -444,8 +408,6 @@ function FeedColumn({
   sort: FeedSort;
   query?: string;
   lang?: string;
-  featuredFirst: boolean;
-  featuredLabel: string;
   connectionNodes?: ReactNode[];
   tag?: string;
 }) {
@@ -458,8 +420,6 @@ function FeedColumn({
       query={query}
       tag={tag}
       lang={lang}
-      featuredFirst={featuredFirst}
-      featuredLabel={featuredLabel}
       interleaveNodes={connectionNodes}
     />
   );
