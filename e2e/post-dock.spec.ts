@@ -176,7 +176,7 @@ test("휴대폰 글 끝 섹션은 본문 h2 와 같은 32px 간격으로 이어�
 
   const sections = [
     page.locator("aside").filter({ has: all }),
-    page.locator("section").filter({ has: page.getByText("이 글이 놓인 길") }),
+    page.locator("section").filter({ has: page.getByText("이 글이 담긴 컬렉션") }),
     page.getByTestId("post-author-card"),
     page.locator("section[aria-label='다음 읽을 글']"),
   ];
