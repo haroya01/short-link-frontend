@@ -1,26 +1,22 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { BLOG_FEED_COOKIE, rememberedBlogTab } from "./modules/blog/lib/feed-memory";
 
 const intlMiddleware = createMiddleware(routing);
 
-// Mirror of FEED_TAB_COOKIE / FEED_TABS in modules/blog/api/feed-prefs.ts — re-declared here so the
-// edge middleware doesn't pull the API client (and its mock layer) into its bundle. Keep in sync.
-const FEED_TAB_COOKIE = "kurl_blog_default_tab";
-const FEED_TAB_VALUES = new Set(["trending", "following", "series"]);
-
 /**
  * Feed route split. The bare feed URL (/{locale}/blog) is a STATIC ISR page; every parameterized
- * view — ?sort/?q/?tag/?lang, or a visitor whose saved default-tab cookie isn't "recent" — is
- * served by the per-request ./browse sibling. Mutates `url` in place (pathname + sort param);
- * the visitor-facing URL never changes because these are rewrites.
+ * view — ?sort/?q/?tag/?lang, or a visitor whose last switcher tab isn't "recent" — is served by the
+ * per-request ./browse sibling. Mutates `url` in place (pathname + sort param); the visitor-facing
+ * URL never changes because these are rewrites.
  */
 function routeFeedVariant(req: NextRequest, url: URL): void {
   if (!/^\/[a-z]{2}\/blog\/?$/.test(url.pathname)) return;
   const hasParams = ["sort", "q", "tag", "lang"].some((k) => url.searchParams.has(k));
   if (!hasParams) {
-    const saved = req.cookies.get(FEED_TAB_COOKIE)?.value;
-    if (!saved || !FEED_TAB_VALUES.has(saved)) return;
+    const saved = rememberedBlogTab(req.cookies.get(BLOG_FEED_COOKIE)?.value);
+    if (!saved || saved === "recent") return;
     url.searchParams.set("sort", saved);
   }
   url.pathname = `${url.pathname.replace(/\/$/, "")}/browse`;

@@ -10,11 +10,13 @@ import { ChevronDown } from "lucide-react";
  * 위계가 서게 한다. The heading wraps the button (WAI-ARIA accordion) so the section keeps its landmark.
  */
 export function CollapsibleSection({
+  id,
   title,
   hint,
   defaultOpen = false,
   children,
 }: {
+  id?: string;
   title: string;
   hint?: string;
   defaultOpen?: boolean;
@@ -22,7 +24,7 @@ export function CollapsibleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section>
+    <section id={id} className="scroll-mt-20">
       <h2 className="m-0">
         <button
           type="button"
