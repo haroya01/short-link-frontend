@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listSubscribedSeries } from "@/modules/blog/api/series-subscription";
 import type { PublicAuthor, PublicSeriesCard } from "@/modules/blog/api/public-posts";
-import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
+import { FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
+import { SeriesRow } from "@/modules/blog/components/series-row";
 import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -64,10 +65,8 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
 
   if (!ready || series === null) {
     return (
-      <div role="status" aria-busy className="mx-auto mt-6 grid max-w-2xl animate-pulse gap-4 sm:grid-cols-2">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="aspect-[4/5] rounded-surface bg-slate-200/80 dark:bg-slate-800" />
-        ))}
+      <div className="mx-auto mt-4 max-w-2xl">
+        <FeedListSkeleton />
       </div>
     );
   }
@@ -122,16 +121,14 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   const activeAuthor = selectedAuthor && seen.has(selectedAuthor) ? selectedAuthor : null;
   const shown = activeAuthor ? series.filter((s) => s.author.username === activeAuthor) : series;
 
-  // 다른 탭과 같은 읽기 컬럼 폭 — 구독한 시리즈를 시리즈 덱 카드 2열로. 작가별 필터(아바타 칩) 상단.
-  // mt-6: 덱 카드는 크고 위쪽 그림자가 있어 탭에 붙으면 침범처럼 보임 → 다른 탭(mt-4)보다 살짝 더 띄움.
   return (
-    <div className="mx-auto mt-6 max-w-2xl">
+    <div className="mx-auto mt-4 max-w-2xl animate-fade-in">
       <AuthorFilterChips authors={seriesAuthors} active={activeAuthor} onSelect={setSelectedAuthor} />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <FeedList>
         {shown.map((s) => (
-          <DiscoverySeriesCard key={s.id} series={s} locale={locale} />
+          <SeriesRow key={s.id} series={s} locale={locale} />
         ))}
-      </div>
+      </FeedList>
     </div>
   );
 }

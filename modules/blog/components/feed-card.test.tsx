@@ -11,7 +11,9 @@ vi.mock("next-intl", () => ({
 vi.mock("@/modules/blog/components/blog-link", () => ({
   BlogLink: ({ href, children, ...rest }: any) => createElement("a", { href, ...rest }, children),
 }));
-vi.mock("@/modules/blog/components/feed-card-bookmark", () => ({ FeedCardBookmark: () => null }));
+vi.mock("@/modules/blog/components/feed-card-bookmark", () => ({
+  FeedCardBookmark: () => createElement("button", { type: "button", "aria-label": "bookmark", "data-testid": "bookmark" }),
+}));
 vi.mock("@/modules/blog/components/post-belonging-line", () => ({ PostBelongingLine: () => null }));
 vi.mock("@/modules/blog/components/post-belonging-context", () => ({
   BelongingProvider: ({ children }: any) => children,
@@ -34,6 +36,7 @@ const base: PublicFeedItem = {
 let root: Root;
 let host: HTMLDivElement;
 beforeEach(() => {
+  window.localStorage.clear();
   vi.stubGlobal("React", React);
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 });
@@ -43,14 +46,84 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function render(item: PublicFeedItem) {
+async function render(item: PublicFeedItem, showBookmark = false) {
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
   await act(async () => {
-    root.render(createElement(FeedList, null, createElement(FeedCard, { item, locale: "ko", showBookmark: false })));
+    root.render(createElement(FeedList, null, createElement(FeedCard, { item, locale: "ko", showBookmark })));
   });
 }
+
+const row = () => host.querySelector<HTMLLIElement>("li[data-feed-row]")!;
+const classesIn = (el: Element) => [el, ...el.querySelectorAll("*")].flatMap((n) => [...n.classList]);
+
+describe("FeedCard row grammar", () => {
+  it("is a hairline row with no card, rounded container or hover tint", async () => {
+    await render({ ...base, ogImageUrl: "https://example.com/cover.png" }, true);
+    expect(row().className).toContain("border-b");
+    const classes = classesIn(row());
+    expect(classes.filter((c) => /^rounded-surface$|^shadow|^bg-white$/.test(c))).toEqual([]);
+    expect(classes.filter((c) => /hover:bg-/.test(c) && !/^hover:bg-accent/.test(c))).toEqual([]);
+  });
+
+  it("clamps the title to three lines and the excerpt to two", async () => {
+    await render(base);
+    expect(row().querySelector("h2")!.className).toContain("line-clamp-3");
+    expect(row().querySelector("p")!.className).toContain("line-clamp-2");
+  });
+
+  it("puts a square thumbnail beside the title and excerpt, never over them", async () => {
+    await render({ ...base, ogImageUrl: "https://example.com/cover.png" });
+    const thumb = row().querySelector<HTMLAnchorElement>("[data-row-thumb]")!;
+    expect(thumb.className).toMatch(/\bh-\[72px\] w-\[72px\]/);
+    expect(thumb.className).toMatch(/\bsm:h-24 sm:w-24\b/);
+    expect(thumb.className).not.toMatch(/\babsolute\b/);
+    const titleLink = row().querySelector("h2")!.closest("a")!;
+    expect(thumb.parentElement).toBe(row());
+    expect(titleLink.parentElement).toBe(row());
+    expect(thumb.className).toMatch(/\bcol-start-2\b/);
+    expect(titleLink.className).toMatch(/\bcol-start-1\b/);
+    expect(row().querySelector("time")!.parentElement!.contains(thumb)).toBe(false);
+  });
+
+  it("renders no thumbnail slot for a post without a cover", async () => {
+    await render(base);
+    expect(row().querySelector("[data-row-thumb]")).toBeNull();
+    expect(row().className).toMatch(/\bgrid-cols-1\b/);
+    expect(row().className).not.toMatch(/gap-x/);
+  });
+
+  it("ends the byline with the bookmark glyph", async () => {
+    await render(base, true);
+    const bookmark = host.querySelector('[data-testid="bookmark"]')!;
+    const byline = row().querySelector("time")!.parentElement!;
+    expect(byline.contains(bookmark)).toBe(true);
+    expect(byline.lastElementChild!.contains(bookmark)).toBe(true);
+  });
+
+  it("mutes the title of a post this device finished reading and says so to screen readers", async () => {
+    await render(base);
+    expect(row().dataset.read).toBeUndefined();
+    expect(row().querySelector("h2")!.className).toContain("text-slate-900");
+    await act(async () => root.unmount());
+    host.remove();
+
+    window.localStorage.setItem("kurl:read-posts", JSON.stringify([base.id]));
+    vi.resetModules();
+    const fresh = await import("./feed-card");
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () => {
+      root.render(createElement(fresh.FeedList, null, createElement(fresh.FeedCard, { item: base, locale: "ko", showBookmark: false })));
+    });
+    const title = row().querySelector("h2")!;
+    expect(row().dataset.read).toBe("true");
+    expect(title.className).toContain("text-slate-500");
+    expect(title.querySelector(".sr-only")!.textContent).toBe("rowRead");
+  });
+});
 
 describe("FeedCard series line", () => {
   it("links a collapsed series row to its series page with the episode count", async () => {
