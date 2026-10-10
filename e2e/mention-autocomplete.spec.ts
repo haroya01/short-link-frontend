@@ -28,12 +28,12 @@ test("a comment offers the same people and a click puts the handle in", async ({
   const placeholder = page.getByTestId("comment-composer-placeholder");
   await expect(placeholder).toBeVisible({ timeout: 30_000 });
   await placeholder.click();
-  const editor = page.locator('[contenteditable="true"].tiptap-comment').first();
-  await editor.click();
+  const field = page.getByRole("textbox", { name: "Write a comment" });
+  await field.click();
   await page.keyboard.type("thanks @mi");
   const list = page.getByTestId("mention-suggestions");
   await expect(list.getByRole("option")).toHaveCount(1);
   await list.getByRole("button", { name: /@minji/ }).click();
-  await expect(editor).toHaveText("thanks @minji");
+  await expect(field).toHaveValue("thanks @minji ");
   await expect(list).toHaveCount(0);
 });

@@ -1,6 +1,6 @@
 import { readStorageJson, removeStorageItem, writeStorageJson } from "@/lib/storage-json";
 
-export type DraftSurface = "comment" | "comment-reply" | "highlight-reply" | "note-reply";
+export type DraftSurface = "comment" | "comment-reply" | "comment-target" | "highlight-reply" | "note-reply";
 
 export type ConversationDraft = { text: string; target?: number; at: number };
 

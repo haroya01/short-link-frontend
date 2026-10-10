@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
-import { CornerDownRight, Trash2, Heart } from "lucide-react";
+import { CornerDownRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
@@ -17,10 +16,11 @@ import {
   type CommentView,
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
-import { BlogLink } from "@/modules/blog/components/blog-link";
+import { ConversationLike, ConversationRow, ConversationTombstone } from "@/modules/blog/components/conversation-row";
+import { useToast } from "@/components/ui/toast";
+import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
@@ -29,20 +29,6 @@ import { NoteList } from "@/modules/notes/components/note-list";
 import { compactTime } from "@/modules/notes/lib/compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
-
-// The composer pulls in the Tiptap/ProseMirror editor (rich-comment-input) — a heavy graph that most
-// readers never touch. Splitting it into its own chunk keeps the editor out of the post page's initial
-// JS; it loads on the first click of the placeholder field (top-level) or the Reply button. A resting
-// one-line placeholder matching the collapsed field holds its place until then.
-const CommentComposer = dynamic(
-  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
-  { ssr: false, loading: () => <ComposerSkeleton /> },
-);
-
-/** Matches the collapsed rest-state height of the real composer so the mount doesn't shift layout. */
-function ComposerSkeleton() {
-  return <div className="h-12 rounded-surface border border-slate-200 dark:border-slate-700" />;
-}
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
@@ -98,10 +84,13 @@ export function PostComments({
   const [body, setBody] = useState("");
   // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
   const [composerActive, setComposerActive] = useState(false);
-  const [restoredDraft, setRestoredDraft] = useState(false);
   const draftsRestored = useRef(false);
+  const composerInput = useRef<HTMLTextAreaElement>(null);
+  const [dockHeight, setDockHeight] = useState(0);
+  const [announce, setAnnounce] = useState("");
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyBody, setReplyBody] = useState("");
+  const [replyHandle, setReplyHandle] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   // 쓰기 경로(작성·답글·삭제) 실패를 알리는 인라인 문구 — 실패가 조용히 새면 사용자는 등록된 줄 안다.
   const [error, setError] = useState<string | null>(null);
@@ -113,6 +102,9 @@ export function PostComments({
   const [loadFailed, setLoadFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [flashId, setFlashId] = useState<number | null>(null);
+  const [jumpSeq, setJumpSeq] = useState(0);
+  const shownIds = useRef<Set<number>>(new Set());
+  const { toast } = useToast();
   const focusedRef = useRef(false);
   const [confirm, confirmDialog] = useConfirm();
 
@@ -142,13 +134,12 @@ export function PostComments({
     const top = readDraft("comment", postId);
     if (top?.text.trim()) {
       setBody(top.text);
-      setRestoredDraft(true);
       setComposerActive(true);
     }
-    const reply = readDraft("comment-reply", postId);
-    if (reply?.target != null && comments.some((c) => c.id === reply.target && c.parentId == null)) {
-      setReplyTo(reply.target);
-      setReplyBody(reply.text);
+    const target = readDraft("comment-target", postId)?.target;
+    if (target != null && comments.some((c) => c.id === target && c.parentId == null)) {
+      setReplyTo(target);
+      setReplyBody(readDraft("comment-reply", target)?.text ?? "");
     }
   }, [ready, authenticated, loaded, postId, comments]);
 
@@ -160,18 +151,34 @@ export function PostComments({
 
   useEffect(() => {
     if (!draftsRestored.current) return;
-    if (replyTo != null && replyBody.trim()) writeDraft("comment-reply", postId, replyBody, replyTo);
-    else clearDraft("comment-reply", postId);
+    if (replyTo == null) {
+      clearDraft("comment-target", postId);
+      return;
+    }
+    writeDraft("comment-target", postId, "", replyTo);
+    if (replyBody.trim()) writeDraft("comment-reply", replyTo, replyBody);
+    else clearDraft("comment-reply", replyTo);
   }, [replyTo, replyBody, postId]);
 
   // Rows render after the fetch, so the browser's own `#comment-<id>` jump has nothing to land on. Rails
   // above the comments can still load after the jump and push the row out of view — re-aim twice unless
   // the reader has started moving on their own.
   useEffect(() => {
+    const onHash = () => {
+      if (!/^#comment-\d+$/.test(window.location.hash)) return;
+      focusedRef.current = false;
+      setJumpSeq((n) => n + 1);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  useEffect(() => {
     if (!loaded || focusedRef.current) return;
     const match = /^#comment-(\d+)$/.exec(window.location.hash);
     if (!match) return;
     const id = Number(match[1]);
+    if (!shownIds.current.has(id)) toast(t("jumpMissing"));
     const reduceMotion =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     const aim = () => {
@@ -202,7 +209,7 @@ export function PostComments({
       timers.forEach((t) => window.clearTimeout(t));
       inputs.forEach((e) => window.removeEventListener(e, release));
     };
-  }, [loaded]);
+  }, [loaded, jumpSeq, t, toast]);
 
   useEffect(() => {
     if (flashId == null) return;
@@ -249,7 +256,13 @@ export function PostComments({
     }
   }
 
-  const shown = comments.filter((c) => !c.author || !blocked.has(c.author.username));
+  const shown = comments.filter(
+    (c) =>
+      (!c.author || !blocked.has(c.author.username)) &&
+      (!c.deleted || comments.some((r) => r.parentId === c.id && (!r.author || !blocked.has(r.author.username)))),
+  );
+  shownIds.current = new Set(shown.filter((c) => !c.deleted).map((c) => c.id));
+  const counted = shown.filter((c) => !c.deleted).length;
   const tops = shown.filter((c) => c.parentId == null);
   const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
   const canDelete = (c: CommentView) =>
@@ -266,8 +279,10 @@ export function PostComments({
     try {
       const created = await createComment(postId, body.trim());
       setBody("");
+      setComposerActive(false);
       setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id); // animate the new comment in once it renders
+      setAnnounce(t("posted"));
     } catch (e) {
       setError(errorMessage(e, t("submitError")));
     } finally {
@@ -275,8 +290,26 @@ export function PostComments({
     }
   }
 
+  function openComposer() {
+    setComposerActive(true);
+    requestAnimationFrame(() => {
+      composerInput.current?.scrollIntoView({ block: "nearest" });
+      focusEnd(composerInput);
+    });
+  }
+
+  function openReply(parentId: number, handle: string | null, prefill = "") {
+    if (ready && !authenticated) return askToReply(parentId, prefill);
+    const kept = readDraft("comment-reply", parentId)?.text;
+    setReplyTo(parentId);
+    setReplyHandle(handle);
+    setReplyBody(kept?.trim() ? kept : prefill);
+    openComposer();
+  }
+
   function askToReply(parentId: number, prefill = "") {
-    writeDraft("comment-reply", postId, prefill, parentId);
+    writeDraft("comment-target", postId, "", parentId);
+    if (prefill && !readDraft("comment-reply", parentId)?.text.trim()) writeDraft("comment-reply", parentId, prefill);
     const back = new URL(window.location.href);
     back.hash = `comment-${parentId}`;
     askToSignIn("reply", back.toString());
@@ -292,10 +325,13 @@ export function PostComments({
     setError(null);
     try {
       const created = await createComment(postId, replyBody.trim(), parentId);
+      clearDraft("comment-reply", parentId);
       setReplyBody("");
       setReplyTo(null);
+      setComposerActive(false);
       setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id);
+      setAnnounce(t("replyPosted"));
     } catch {
       setError(t("submitError"));
     } finally {
@@ -309,8 +345,14 @@ export function PostComments({
     setError(null);
     try {
       await deleteComment(id);
-      // 삭제한 댓글(+그 답글)만 걷어낸다 — 재조회 대신 로컬 반영으로 목록 증발을 막는다.
-      setComments((prev) => prev.filter((x) => x.id !== id && x.parentId !== id));
+      if (comments.some((x) => x.parentId === id)) {
+        setComments((prev) =>
+          prev.map((x) => (x.id === id ? { ...x, author: null, body: null, likeCount: 0, mentions: [], deleted: true } : x)),
+        );
+        await load();
+      } else {
+        setComments((prev) => prev.filter((x) => x.id !== id));
+      }
     } catch {
       setError(t("deleteError"));
     } finally {
@@ -326,16 +368,20 @@ export function PostComments({
     <section
       id="comments"
       className="mt-16 scroll-mt-24 border-t border-slate-100 pt-10 dark:border-slate-800"
+      style={dockHeight ? { paddingBottom: dockHeight } : undefined}
     >
+      <p aria-live="polite" className="sr-only" data-testid="conversation-announce">
+        {announce}
+      </p>
       {/* 0일 때 카운트를 그리지 않는다 — "댓글 0개" 헤딩 + 빈 컴포저 + "첫 댓글" 문구로 공허를
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       {quotes && quotes.total > 0 ? (
         <>
-          <h2 className="sr-only">{shown.length > 0 ? t("count", { count: shown.length }) : t("heading")}</h2>
+          <h2 className="sr-only">{counted > 0 ? t("count", { count: counted }) : t("heading")}</h2>
           <div role="tablist" aria-label={t("discussionTabs")} className="flex items-baseline gap-5">
             {(
               [
-                ["comments", shown.length > 0 ? t("count", { count: shown.length }) : t("heading")],
+                ["comments", counted > 0 ? t("count", { count: counted }) : t("heading")],
                 ["notes", t("notesTab", { count: quotes.total })],
               ] as const
             ).map(([key, label]) => (
@@ -359,7 +405,7 @@ export function PostComments({
         </>
       ) : (
         <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {shown.length > 0 ? t("count", { count: shown.length }) : t("heading")}
+          {counted > 0 ? t("count", { count: counted }) : t("heading")}
         </h2>
       )}
 
@@ -380,30 +426,36 @@ export function PostComments({
       ) : (
       <>
 
-      {/* There's ALWAYS a way to comment: a resting one-line placeholder that, on tap, mounts the real
-          composer (and lazy-loads its Tiptap chunk) already focused. Signed-out, the tap asks to sign in
-          instead. Once mounted the composer stays (collapsing to a quiet one-line at rest via
-          `collapsible`) so the deferral is a one-time first-tap cost only. */}
       <div className="mt-4">
-        {composerActive ? (
-          <CommentComposer
-            value={body}
-            onChange={setBody}
-            onSubmit={() => void submitTop()}
-            placeholder={t("placeholder")}
-            submitLabel={busy ? t("submitting") : t("submit")}
-            cancelLabel={t("cancel")}
+        {composerActive || replyTo != null ? (
+          <ConversationComposer
+            value={replyTo != null ? replyBody : body}
+            onChange={replyTo != null ? setReplyBody : setBody}
+            onSubmit={() => void (replyTo != null ? submitReply(replyTo) : submitTop())}
+            label={replyTo != null ? t("replyLabel") : t("composerLabel")}
+            placeholder={replyTo != null ? t("replyPlaceholder") : t("placeholder")}
+            submitLabel={busy ? t("submitting") : replyTo != null ? t("reply") : t("submit")}
             submitting={busy}
-            canSubmit={!authenticated || !!body.trim()}
-            rows={2}
-            collapsible
-            autoFocus={!restoredDraft}
+            replyingTo={
+              replyTo != null ? (replyHandle ?? comments.find((c) => c.id === replyTo)?.author?.username ?? "?") : null
+            }
+            onCancelReply={() => {
+              setReplyTo(null);
+              setComposerActive(true);
+            }}
+            onClose={() => {
+              setReplyTo(null);
+              setComposerActive(false);
+            }}
+            docked
+            onDockHeight={setDockHeight}
+            textareaRef={composerInput}
           />
         ) : (
           <button
             type="button"
             data-testid="comment-composer-placeholder"
-            onClick={() => (ready && !authenticated ? askToSignIn("comment") : setComposerActive(true))}
+            onClick={() => (ready && !authenticated ? askToSignIn("comment") : openComposer())}
             className="flex w-full items-center gap-3 rounded-full border border-slate-200 px-3 py-2.5 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {ready && authenticated && me && (
@@ -435,6 +487,9 @@ export function PostComments({
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
+              {c.deleted ? (
+                <ConversationTombstone id={`comment-${c.id}`} flash={flashId === c.id} label={t("deleted")} />
+              ) : (
               <CommentRow
                 anchorId={`comment-${c.id}`}
                 flash={flashId === c.id}
@@ -451,20 +506,17 @@ export function PostComments({
               >
                 <button
                   type="button"
-                  onClick={() => {
-                    if (ready && !authenticated) return askToReply(c.id);
-                    setReplyTo(replyTo === c.id ? null : c.id);
-                    setReplyBody("");
-                  }}
+                  onClick={() => openReply(c.id, c.author?.username ?? null)}
                   className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}
                 </button>
               </CommentRow>
+              )}
 
               {repliesOf(c.id).length > 0 && (
-                <ul className="mt-4 space-y-4 border-l-2 border-slate-100 pl-5 dark:border-slate-800">
+                <ul className="mt-4 space-y-4 pl-12">
                   {repliesOf(c.id).map((r) => (
                     <li key={r.id}>
                       <CommentRow
@@ -481,46 +533,26 @@ export function PostComments({
                         onToggleLike={() => void toggleLike(r)}
                         isNew={r.id === justAddedId}
                       >
-                        <button
-                          type="button"
-                          data-testid={`comment-reply-${r.id}`}
-                          onClick={() => {
-                            const handle = r.author?.username;
-                            const prefill = handle && handle !== me?.username ? `@${handle} ` : "";
-                            if (ready && !authenticated) return askToReply(c.id, prefill);
-                            setReplyTo(c.id);
-                            setReplyBody(prefill);
-                          }}
-                          className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
-                        >
-                          <CornerDownRight className="h-3.5 w-3.5" />
-                          {t("reply")}
-                        </button>
+                        {!c.deleted && (
+                          <button
+                            type="button"
+                            data-testid={`comment-reply-${r.id}`}
+                            onClick={() => {
+                              const handle = r.author?.username;
+                              openReply(c.id, handle ?? null, handle && handle !== me?.username ? `@${handle} ` : "");
+                            }}
+                            className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+                          >
+                            <CornerDownRight className="h-3.5 w-3.5" />
+                            {t("reply")}
+                          </button>
+                        )}
                       </CommentRow>
                     </li>
                   ))}
                 </ul>
               )}
 
-              {replyTo === c.id && (
-                <div className="mt-3 border-l-2 border-slate-100 pl-5 dark:border-slate-800">
-                  <CommentComposer
-                    value={replyBody}
-                    onChange={setReplyBody}
-                    onSubmit={() => void submitReply(c.id)}
-                    placeholder={t("replyPlaceholder")}
-                    submitLabel={t("reply")}
-                    cancelLabel={t("cancel")}
-                    submitting={busy}
-                    canSubmit={!!replyBody.trim()}
-                    rows={2}
-                    autoFocus
-                    compact
-                    collapsible
-                    onCancel={() => setReplyTo(null)}
-                  />
-                </div>
-              )}
             </li>
           ))}
         </ul>
@@ -562,70 +594,26 @@ function CommentRow({
   children?: React.ReactNode;
 }) {
   const locale = useLocale();
-  const username = comment.author?.username ?? "?";
-  const hasAuthor = !!comment.author?.username;
-  const profileHref = hasAuthor ? authorHref(username, locale) : undefined;
   return (
-    <div
+    <ConversationRow
       id={anchorId}
-      className={`-mx-3 -my-2 scroll-mt-24 rounded-surface px-3 py-2 transition-colors duration-700 motion-reduce:transition-none ${
-        flash ? "bg-accent-50 dark:bg-accent-900/30" : ""
-      } ${isNew ? "comment-in" : ""}`}
+      author={comment.author}
+      createdAt={comment.createdAt}
+      time={fmt(comment.createdAt)}
+      nested={comment.parentId != null}
+      flash={flash}
+      isNew={isNew}
+      menu={<CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
+      onDelete={canDelete ? onDelete : undefined}
+      deleteLabel={deleteLabel}
+      actions={
+        <>
+          <ConversationLike liked={liked} count={comment.likeCount} label={likeLabel} onToggle={onToggleLike} />
+          {children}
+        </>
+      }
     >
-      <div className="flex items-center gap-2">
-        {/* Avatar + @handle link to the commenter's profile (soft nav when same-origin, hard on the
-            author subdomain). */}
-        <BlogLink
-          href={profileHref ?? "#"}
-          className={`group/author flex min-w-0 items-center gap-2 rounded focus-ring ${hasAuthor ? "" : "pointer-events-none"}`}
-          aria-disabled={!hasAuthor}
-        >
-          <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
-          <span className="truncate text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-            {username}
-          </span>
-        </BlogLink>
-        <time dateTime={comment.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-          {fmt(comment.createdAt)}
-        </time>
-        <div className="ml-auto flex shrink-0 items-center gap-1">
-          {/* ⋯: 차단은 남의 댓글이면, 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 — 내 것엔 휴지통만. */}
-          <CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />
-          {canDelete && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className="touch-target rounded text-slate-500 transition-colors hover:text-red-600 focus-ring dark:text-slate-400 dark:hover:text-red-400"
-              aria-label={deleteLabel}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="mt-1.5 pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
-        <CommentBody text={comment.body} locale={locale} mentions={comment.mentions} />
-      </div>
-      <div className="mt-1.5 flex items-center gap-3 pl-9">
-        {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop). 카운트 숫자는 표시하지 않고
-            하트 상태로만 전한다(연결·깊이가 점수판이 되지 않도록). 모델·API·aria 는 그대로. */}
-        <button
-          type="button"
-          onClick={onToggleLike}
-          aria-pressed={liked}
-          aria-label={likeLabel}
-          className={`touch-target inline-flex items-center gap-1 rounded text-[13px] transition-colors focus-ring ${
-            liked
-              ? "text-accent-700 dark:text-accent-400"
-              : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
-          }`}
-        >
-          <span key={liked ? "on" : "off"} className="subscribe-pop inline-flex">
-            <Heart className={`h-3.5 w-3.5 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
-          </span>
-        </button>
-        {children}
-      </div>
-    </div>
+      <CommentBody text={comment.body ?? ""} locale={locale} mentions={comment.mentions} />
+    </ConversationRow>
   );
 }

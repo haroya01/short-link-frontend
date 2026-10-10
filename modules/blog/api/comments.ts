@@ -11,11 +11,14 @@ export interface CommentView {
   id: number;
   parentId: number | null;
   author: PublicAuthor | null;
-  body: string;
+  body: string | null;
   createdAt: string;
   likeCount: number;
   /** The @handles in the body that belong to members; absent on responses that predate it. */
   mentions?: string[];
+  /** A deleted parent kept as a placeholder because it still has visible replies (author and body null).
+   *  The server sends these only to readers that ask with `tombstones=1`. */
+  deleted?: boolean;
 }
 
 export interface CommentLikeStatus {
@@ -39,11 +42,13 @@ export interface MyComment {
 // backend. Shared across posts — fine for a demo.
 const MOCK_VIEWER: PublicAuthor = { id: 9001, username: "reader", bio: null, avatarUrl: null };
 let mockComments: CommentView[] = [
-  { id: 1, parentId: null, author: { id: 2, username: "minji", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=45" }, body: "잘 읽었어요. RSC 전환 부분 특히 공감합니다.", createdAt: "2026-05-30T10:00:00Z", likeCount: 3 },
+  { id: 1, parentId: null, author: { id: 2, username: "minji", displayName: "민지", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=45" }, body: "잘 읽었어요. RSC 전환 부분 특히 공감합니다.", createdAt: "2026-05-30T10:00:00Z", likeCount: 3 },
   { id: 2, parentId: 1, author: { id: 1, username: "dohyun", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=12" }, body: "@minji 감사해요! 다음 글에서 더 자세히 다뤄볼게요. @nobody_here 님도요.", createdAt: "2026-05-30T11:00:00Z", likeCount: 0, mentions: ["minji"] },
   { id: 3, parentId: null, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "트레이드오프 정리가 깔끔하네요 👍", createdAt: "2026-05-30T12:30:00Z", likeCount: 1 },
   { id: 4, parentId: 1, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "저도 그 부분이 제일 와닿았어요.", createdAt: "2026-05-30T13:00:00Z", likeCount: 0 },
   { id: 5, parentId: null, author: { id: 16, username: "rin", bio: null, avatarUrl: null }, body: "새벽에 다시 읽으니 더 좋네요.", createdAt: "2026-05-30T14:00:00Z", likeCount: 0 },
+  { id: 6, parentId: null, author: null, body: null, createdAt: "2026-05-31T08:00:00Z", likeCount: 0, mentions: [], deleted: true },
+  { id: 7, parentId: 6, author: { id: 3, username: "haruka", bio: null, avatarUrl: null }, body: "지워진 댓글에 남은 답글이에요.", createdAt: "2026-05-31T09:00:00Z", likeCount: 0 },
 ];
 let mockCommentSeq = 100;
 const mockLiked = new Set<number>();
@@ -55,7 +60,7 @@ export async function listComments(postId: number): Promise<CommentView[]> {
     const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
     return mockComments.filter((c) => !hidden?.has(c.author?.username ?? ""));
   }
-  const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments`, {
+  const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments?tombstones=1`, {
     cache: "no-store",
     headers: await viewerHeaders(),
   });
@@ -90,7 +95,15 @@ export function createComment(
 /** Authenticated — delete own comment (or any, if post owner). */
 export function deleteComment(id: number): Promise<void> {
   if (USE_MOCKS) {
-    mockComments = mockComments.filter((c) => c.id !== id && c.parentId !== id);
+    const target = mockComments.find((c) => c.id === id);
+    const hasReplies = mockComments.some((c) => c.parentId === id);
+    mockComments = hasReplies
+      ? mockComments.map((c) => (c.id === id ? { ...c, author: null, body: null, likeCount: 0, mentions: [], deleted: true } : c))
+      : mockComments.filter((c) => c.id !== id);
+    const parent = mockComments.find((c) => c.id === target?.parentId);
+    if (parent?.deleted && !mockComments.some((c) => c.parentId === parent.id)) {
+      mockComments = mockComments.filter((c) => c.id !== parent.id);
+    }
     return Promise.resolve();
   }
   return request(`/api/v1/comments/${id}`, { method: "DELETE" });

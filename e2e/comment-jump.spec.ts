@@ -76,14 +76,15 @@ test("a comment links the members it mentions and leaves other @names as text", 
   await expect(reply).toContainText("@nobody_here");
 });
 
-test("replying to someone's reply stays in the thread and calls them by name", async ({ page }) => {
+test("replying to someone's reply stays in the thread, calls them by name, and keeps what's typed", async ({ page }) => {
   await page.goto(`${POST_PATH}#comment-4`);
   await waitReady(page);
 
   await page.getByTestId("comment-reply-4").click();
-  const editor = page.locator("#comments [contenteditable=true]").last();
-  await expect(editor).toHaveText("@kazuki", { timeout: 5_000 });
+  const field = page.locator("#comments [data-testid='conversation-composer'] textarea");
+  await expect(field).toHaveValue("@kazuki ", { timeout: 5_000 });
+  await expect(page.getByTestId("composer-replying-to")).toHaveText("Replying to @kazuki");
 
   await page.getByTestId("comment-reply-2").click();
-  await expect(editor).toHaveText("", { timeout: 5_000 });
+  await expect(field).toHaveValue("@kazuki ", { timeout: 5_000 });
 });

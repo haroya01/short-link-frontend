@@ -46,6 +46,14 @@ describe("reading surfaces the server filters per reader", () => {
     });
   }
 
+  it("comments ask for placeholders of deleted parents that still have replies", async () => {
+    await (await import("./comments")).listComments(7);
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/\/api\/v1\/public\/posts\/7\/comments\?tombstones=1$/),
+      expect.anything(),
+    );
+  });
+
   it("the connection stream carries the token from the browser and stays ISR for a visitor", async () => {
     const { fetchPublicConnectionFeed } = await import("./collections");
     mocks.token = "access-token";
