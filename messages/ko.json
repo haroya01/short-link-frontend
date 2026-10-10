@@ -799,7 +799,8 @@
     "highlightCardRemove": "지우기",
     "highlightRemoved": "하이라이트를 지웠어요",
     "highlightLinkCopied": "링크를 복사했어요",
-    "highlightPublicFirst": "하이라이트했어요 · 이름과 함께 공개돼요"
+    "highlightPublicFirst": "하이라이트했어요 · 이름과 함께 공개돼요",
+    "reportTitleHighlightReply": "이 답글 신고"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -3727,13 +3728,15 @@
       "DELETE_COMMENT": "댓글 삭제",
       "SUSPEND_USER": "계정 정지",
       "BAN_USER": "영구 차단",
-      "DELETE_NOTE": "노트 삭제"
+      "DELETE_NOTE": "노트 삭제",
+      "DELETE_HIGHLIGHT_REPLY": "답글 삭제"
     },
     "subjectType": {
       "POST": "글",
       "USER": "작가",
       "COMMENT": "댓글",
-      "NOTE": "노트"
+      "NOTE": "노트",
+      "HIGHLIGHT_REPLY": "하이라이트 답글"
     },
     "removed": "비공개됨",
     "reasons": {
@@ -3747,7 +3750,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "이 글을 비공개로 돌릴까요? 공개 피드에서 내려가요(작성자 초안은 남아요).",
       "DELETE_COMMENT": "이 댓글을 삭제할까요? 되돌릴 수 없어요.",
-      "BAN_USER": "이 계정을 영구 차단할까요? 되돌리기 어려워요."
+      "BAN_USER": "이 계정을 영구 차단할까요? 되돌리기 어려워요.",
+      "DELETE_HIGHLIGHT_REPLY": "이 하이라이트 답글을 삭제할까요? 되돌릴 수 없어요.",
+      "DELETE_NOTE": "이 노트를 삭제할까요? 되돌릴 수 없어요."
     },
     "suspendDaysPrompt": "며칠 동안 정지할까요? (일)",
     "suspendDaysInvalid": "1 이상의 숫자를 입력하세요."

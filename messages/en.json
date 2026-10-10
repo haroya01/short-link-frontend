@@ -799,7 +799,8 @@
     "highlightCardRemove": "Remove",
     "highlightRemoved": "Highlight removed",
     "highlightLinkCopied": "Link copied",
-    "highlightPublicFirst": "Highlighted · public with your name"
+    "highlightPublicFirst": "Highlighted · public with your name",
+    "reportTitleHighlightReply": "Report this reply"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -3727,13 +3728,15 @@
       "DELETE_COMMENT": "Delete comment",
       "SUSPEND_USER": "Suspend account",
       "BAN_USER": "Ban permanently",
-      "DELETE_NOTE": "Delete note"
+      "DELETE_NOTE": "Delete note",
+      "DELETE_HIGHLIGHT_REPLY": "Delete reply"
     },
     "subjectType": {
       "POST": "Post",
       "USER": "Author",
       "COMMENT": "Comment",
-      "NOTE": "Note"
+      "NOTE": "Note",
+      "HIGHLIGHT_REPLY": "Highlight reply"
     },
     "removed": "Unpublished",
     "reasons": {
@@ -3747,7 +3750,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "Unpublish this post? It leaves the public feed (the author keeps the draft).",
       "DELETE_COMMENT": "Delete this comment? This can't be undone.",
-      "BAN_USER": "Permanently ban this account? This is hard to reverse."
+      "BAN_USER": "Permanently ban this account? This is hard to reverse.",
+      "DELETE_HIGHLIGHT_REPLY": "Delete this highlight reply? This can't be undone.",
+      "DELETE_NOTE": "Delete this note? This can't be undone."
     },
     "suspendDaysPrompt": "Suspend for how many days?",
     "suspendDaysInvalid": "Enter a number of 1 or more."

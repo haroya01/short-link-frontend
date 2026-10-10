@@ -39,9 +39,15 @@ describe("availableActions", () => {
     expect(availableActions("USER")).toEqual(["SUSPEND_USER", "BAN_USER"]);
   });
 
+  it("offers only delete for a highlight reply", () => {
+    expect(availableActions("HIGHLIGHT_REPLY")).toEqual(["DELETE_HIGHLIGHT_REPLY"]);
+  });
+
   it("drops the takedown once the post/comment is already removed", () => {
     expect(availableActions("POST", { subjectRemoved: true })).toEqual([]);
     expect(availableActions("COMMENT", { subjectRemoved: true })).toEqual([]);
+    expect(availableActions("NOTE", { subjectRemoved: true })).toEqual([]);
+    expect(availableActions("HIGHLIGHT_REPLY", { subjectRemoved: true })).toEqual([]);
   });
 
   it("keeps suspend/ban available even after a user's content is gone", () => {

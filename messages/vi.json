@@ -813,7 +813,8 @@
     "highlightCardRemove": "Xóa",
     "highlightRemoved": "Đã xóa đánh dấu",
     "highlightLinkCopied": "Đã sao chép liên kết",
-    "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn"
+    "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn",
+    "reportTitleHighlightReply": "Báo cáo trả lời này"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -3727,13 +3728,15 @@
       "DELETE_COMMENT": "Xóa bình luận",
       "SUSPEND_USER": "Tạm ngưng tài khoản",
       "BAN_USER": "Cấm vĩnh viễn",
-      "DELETE_NOTE": "Xóa ghi chú"
+      "DELETE_NOTE": "Xóa ghi chú",
+      "DELETE_HIGHLIGHT_REPLY": "Xóa trả lời"
     },
     "subjectType": {
       "POST": "Bài viết",
       "USER": "Tác giả",
       "COMMENT": "Bình luận",
-      "NOTE": "Ghi chú"
+      "NOTE": "Ghi chú",
+      "HIGHLIGHT_REPLY": "Trả lời đánh dấu"
     },
     "removed": "Đã hủy xuất bản",
     "reasons": {
@@ -3747,7 +3750,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "Hủy xuất bản bài này? Nó rời khỏi dòng tin công khai (tác giả vẫn giữ bản nháp).",
       "DELETE_COMMENT": "Xóa bình luận này? Không thể hoàn tác.",
-      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược."
+      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược.",
+      "DELETE_HIGHLIGHT_REPLY": "Xóa trả lời đánh dấu này? Không thể hoàn tác.",
+      "DELETE_NOTE": "Xóa ghi chú này? Không thể hoàn tác."
     },
     "suspendDaysPrompt": "Tạm ngưng trong bao nhiêu ngày?",
     "suspendDaysInvalid": "Nhập số từ 1 trở lên."

@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   blockUser: vi.fn(),
   unblockUser: vi.fn(),
   askToSignIn: vi.fn(),
+  submitAbuseReport: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
@@ -21,7 +22,7 @@ vi.mock("next-intl", () => ({
 vi.mock("@/lib/auth", () => ({ useAuth: () => mocks.auth }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [mocks.confirm, null] }));
-vi.mock("@/lib/api/abuse-reports", () => ({ submitAbuseReport: vi.fn() }));
+vi.mock("@/lib/api/abuse-reports", () => ({ submitAbuseReport: mocks.submitAbuseReport }));
 vi.mock("@/modules/notes/components/note-quote-dialog", () => ({
   NoteQuoteDialog: ({ quoted, onPosted }: { quoted: unknown; onPosted: (note: unknown) => void }) =>
     quoted
@@ -70,7 +71,7 @@ const items = () => Array.from(host.querySelectorAll('[role="menuitem"]')).map((
 describe("a comment's ⋯", () => {
   const comment = async (authorUsername: string | null, canReport: boolean) => {
     const { CommentMenu } = await import("./comment-menu");
-    return createElement(CommentMenu, { commentId: 3, authorUsername, canReport });
+    return createElement(CommentMenu, { subjectId: 3, authorUsername, canReport });
   };
 
   it("blocks the writer after the shared confirmation, and reports the comment", async () => {
@@ -98,6 +99,28 @@ describe("a comment's ⋯", () => {
     mocks.auth.me = { id: 1, username: "dohyun" };
     await render(() => comment("dohyun", false));
     expect(menuButton("notes.commentMenu")).toBeNull();
+  });
+
+  it("reports a highlight reply as itself, not as a comment", async () => {
+    mocks.submitAbuseReport.mockResolvedValue(undefined);
+    await render(async () => {
+      const { CommentMenu } = await import("./comment-menu");
+      return createElement(CommentMenu, {
+        subjectType: "HIGHLIGHT_REPLY",
+        subjectId: 6001,
+        authorUsername: "haruka",
+        canReport: true,
+      });
+    });
+    await act(async () => menuButton("notes.commentMenu")!.click());
+    await act(async () => (host.querySelectorAll('[role="menuitem"]')[1] as HTMLButtonElement).click());
+    const dialog = host.querySelector('[role="dialog"]')!;
+    expect(dialog.querySelector("h2")!.textContent).toBe("publicPost.reportTitleHighlightReply");
+    await act(async () => dialog.querySelector<HTMLInputElement>('input[value="SPAM"]')!.click());
+    await act(async () => dialog.querySelector<HTMLButtonElement>('button[type="submit"]')!.click());
+    expect(mocks.submitAbuseReport).toHaveBeenCalledWith(
+      expect.objectContaining({ subjectType: "HIGHLIGHT_REPLY", subjectId: 6001, reasonCode: "SPAM" }),
+    );
   });
 });
 

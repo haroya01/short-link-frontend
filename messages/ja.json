@@ -799,7 +799,8 @@
     "highlightCardRemove": "削除",
     "highlightRemoved": "ハイライトを削除しました",
     "highlightLinkCopied": "リンクをコピーしました",
-    "highlightPublicFirst": "ハイライトしました · 名前とともに公開されます"
+    "highlightPublicFirst": "ハイライトしました · 名前とともに公開されます",
+    "reportTitleHighlightReply": "この返信を報告"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -3727,13 +3728,15 @@
       "DELETE_COMMENT": "コメント削除",
       "SUSPEND_USER": "アカウント停止",
       "BAN_USER": "永久停止",
-      "DELETE_NOTE": "ノートを削除"
+      "DELETE_NOTE": "ノートを削除",
+      "DELETE_HIGHLIGHT_REPLY": "返信を削除"
     },
     "subjectType": {
       "POST": "投稿",
       "USER": "作者",
       "COMMENT": "コメント",
-      "NOTE": "ノート"
+      "NOTE": "ノート",
+      "HIGHLIGHT_REPLY": "ハイライトへの返信"
     },
     "removed": "非公開",
     "reasons": {
@@ -3747,7 +3750,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
       "DELETE_COMMENT": "このコメントを削除しますか？元に戻せません。",
-      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。"
+      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。",
+      "DELETE_HIGHLIGHT_REPLY": "このハイライトへの返信を削除しますか？元に戻せません。",
+      "DELETE_NOTE": "このノートを削除しますか？元に戻せません。"
     },
     "suspendDaysPrompt": "何日間停止しますか？（日）",
     "suspendDaysInvalid": "1 以上の数値を入力してください。"

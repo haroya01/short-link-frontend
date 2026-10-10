@@ -799,7 +799,8 @@
     "highlightCardRemove": "हटाएँ",
     "highlightRemoved": "हाइलाइट हटा दिया गया",
     "highlightLinkCopied": "लिंक कॉपी हो गया",
-    "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक"
+    "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक",
+    "reportTitleHighlightReply": "इस जवाब की रिपोर्ट करें"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -3727,13 +3728,15 @@
       "DELETE_COMMENT": "टिप्पणी हटाएँ",
       "SUSPEND_USER": "खाता निलंबित करें",
       "BAN_USER": "स्थायी रूप से प्रतिबंधित करें",
-      "DELETE_NOTE": "नोट हटाएँ"
+      "DELETE_NOTE": "नोट हटाएँ",
+      "DELETE_HIGHLIGHT_REPLY": "जवाब हटाएँ"
     },
     "subjectType": {
       "POST": "पोस्ट",
       "USER": "लेखक",
       "COMMENT": "टिप्पणी",
-      "NOTE": "नोट"
+      "NOTE": "नोट",
+      "HIGHLIGHT_REPLY": "हाइलाइट पर जवाब"
     },
     "removed": "अप्रकाशित",
     "reasons": {
@@ -3747,7 +3750,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "इस पोस्ट को अप्रकाशित करें? यह सार्वजनिक फ़ीड से हट जाती है (लेखक के पास ड्राफ़्ट रहता है)।",
       "DELETE_COMMENT": "यह टिप्पणी हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
-      "BAN_USER": "इस खाते को स्थायी रूप से प्रतिबंधित करें? इसे पलटना कठिन है।"
+      "BAN_USER": "इस खाते को स्थायी रूप से प्रतिबंधित करें? इसे पलटना कठिन है।",
+      "DELETE_HIGHLIGHT_REPLY": "हाइलाइट पर यह जवाब हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
+      "DELETE_NOTE": "यह नोट हटाएँ? इसे पूर्ववत नहीं किया जा सकता।"
     },
     "suspendDaysPrompt": "कितने दिनों के लिए निलंबित करें?",
     "suspendDaysInvalid": "1 या अधिक की संख्या दर्ज करें।"
