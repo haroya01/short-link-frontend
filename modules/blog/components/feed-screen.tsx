@@ -138,8 +138,8 @@ export async function FeedScreen({
   const showsServerFeed =
     searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
   const needFlat = showsServerFeed;
-  // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드(최신·인기, 비검색·비태그)에 몇 칸마다 하나씩
-  // 끼운다. 비로그인 포함 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
+  // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
+  // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
   const wantConnections = showsServerFeed && !searching && !activeTag;
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
   // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
@@ -180,20 +180,8 @@ export async function FeedScreen({
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
 
-  // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드에 몇 칸마다 하나씩 끼울 노드로 만든다. 첫
-  // 노드만 섹션 라벨(RailHeading)을 이고, 나머지는 행만 — 스레드가 한 번만 이름을 밝힌다. 라벨 카피는
-  // collections 네임스페이스에서 서버측으로 읽어 leaf 컴포넌트에 넘긴다(클라이언트 훅 불필요).
-  const tCollections = await getTranslations({ locale, namespace: "collections" });
-  const connectionEvents = connectionsResult?.items ?? [];
-  const connectionNodes = connectionEvents.map((event, i) => (
-    <ConnectionFeedInsert
-      key={event.id}
-      event={event}
-      locale={locale}
-      lead={i === 0}
-      idx={i}
-      label={tCollections("connectingNow")}
-    />
+  const connectionNodes = (connectionsResult?.items ?? []).map((event) => (
+    <ConnectionFeedInsert key={`connection/${event.id}`} event={event} locale={locale} />
   ));
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
@@ -201,11 +189,6 @@ export async function FeedScreen({
   const contentKey = `${activeTab}:${searching ? query : ""}`;
   // Tab order drives the slide direction (FeedContentTransition): 팔로잉 → 최신 → 인기, then "더 보기".
   const tabIndex = ["following", "recent", "trending", "for-you", "series"].indexOf(activeTab);
-
-  // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
-  // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
-  // notch. Trending/search feeds have no lead emphasis.
-  const featuredFirst = false;
 
   // 검색 결과가 1~2건뿐일 땐 와이드 메이슨리 그리드가 반쪽 타일 하나를 덩그러니 남긴다. 이 경우엔
   // 읽기 컬럼(max-w-2xl) 안 전폭 목록 행으로 떨어뜨려, 결과가 완성된 한 줄로 읽히게 한다(0건 빈 상태·
@@ -361,8 +344,6 @@ export async function FeedScreen({
                 sort={sort}
                 query={query}
                 lang={activeLang || undefined}
-                featuredFirst={false}
-                featuredLabel={t("featuredLabel")}
               />
             </FeedContentTransition>
           </ReadingShell>
@@ -395,8 +376,6 @@ export async function FeedScreen({
                 tag={activeTag || undefined}
                 query={searching ? query : undefined}
                 lang={activeLang || undefined}
-                featuredFirst={featuredFirst}
-                featuredLabel={t("featuredLabel")}
                 connectionNodes={connectionNodes.length > 0 ? connectionNodes : undefined}
               />
             </FeedContentTransition>
@@ -420,8 +399,6 @@ function FeedColumn({
   sort,
   query,
   lang,
-  featuredFirst,
-  featuredLabel,
   connectionNodes,
   tag,
 }: {
@@ -431,8 +408,6 @@ function FeedColumn({
   sort: FeedSort;
   query?: string;
   lang?: string;
-  featuredFirst: boolean;
-  featuredLabel: string;
   connectionNodes?: ReactNode[];
   tag?: string;
 }) {
@@ -445,8 +420,6 @@ function FeedColumn({
       query={query}
       tag={tag}
       lang={lang}
-      featuredFirst={featuredFirst}
-      featuredLabel={featuredLabel}
       interleaveNodes={connectionNodes}
     />
   );
