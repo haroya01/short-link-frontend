@@ -140,7 +140,7 @@ export function AuthorTabs({
         data-edge-start={edges.start || undefined}
         data-edge-end={edges.end || undefined}
         style={edges.start || edges.end ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
-        className="relative flex gap-1 overflow-x-auto text-[15px] font-medium [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="relative flex gap-1 overflow-x-auto text-[15px] font-medium [scrollbar-width:none] sm:gap-0 [&::-webkit-scrollbar]:hidden"
       >
         {visible.map((tab, i) => (
           <BlogLink
