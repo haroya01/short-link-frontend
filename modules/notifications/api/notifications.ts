@@ -158,9 +158,10 @@ export function markNotificationRead(id: number): Promise<void> {
   return request<void>(`/api/v1/notifications/${id}/read`, { method: "POST", keepalive: true });
 }
 
-export function markAllNotificationsRead(): Promise<{ count: number }> {
+export function markAllNotificationsRead(filter: NotificationFilter = "all"): Promise<{ count: number }> {
   if (USE_MOCKS) return Promise.resolve({ count: 0 });
-  return request<{ count: number }>(`/api/v1/notifications/read-all`, { method: "POST" });
+  const query = filter === "all" ? "" : `?filter=${filter}`;
+  return request<{ count: number }>(`/api/v1/notifications/read-all${query}`, { method: "POST" });
 }
 
 /** Register a browser web-push subscription (idempotent upsert by endpoint). Backend mirrors the

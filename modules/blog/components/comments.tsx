@@ -20,6 +20,7 @@ import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
 import { ConversationLike, ConversationRow, ConversationTombstone } from "@/modules/blog/components/conversation-row";
 import { useToast } from "@/components/ui/toast";
+import { useLikeFailed } from "@/hooks/use-like-failed";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
@@ -97,6 +98,7 @@ export function PostComments({
   const [justAddedId, setJustAddedId] = useState<number | null>(null);
   // 보는 사람이 좋아요한 댓글 id — 공개 목록은 비인증이라 인증 후 별도 엔드포인트로 한 번 hydrate.
   const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
+  const likeFailed = useLikeFailed();
   // 목록 로드 실패 — "댓글 없음"으로 위장하지 않고 재시도를 내민다(빈 상태 ≠ 에러).
   const [loadFailed, setLoadFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -242,7 +244,7 @@ export function PostComments({
     try {
       const status = wasLiked ? await unlikeComment(c.id) : await likeComment(c.id);
       setComments((prev) => prev.map((x) => (x.id === c.id ? { ...x, likeCount: status.likeCount } : x)));
-    } catch {
+    } catch (error) {
       setLikedIds((prev) => {
         const next = new Set(prev);
         if (wasLiked) next.add(c.id);
@@ -252,6 +254,7 @@ export function PostComments({
       setComments((prev) =>
         prev.map((x) => (x.id === c.id ? { ...x, likeCount: Math.max(0, x.likeCount + (wasLiked ? 1 : -1)) } : x)),
       );
+      likeFailed(error);
     }
   }
 
@@ -600,7 +603,7 @@ function CommentRow({
       nested={comment.parentId != null}
       flash={flash}
       isNew={isNew}
-      menu={<CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
+      menu={<CommentMenu subjectId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
       onDelete={canDelete ? onDelete : undefined}
       deleteLabel={deleteLabel}
       actions={

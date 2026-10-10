@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 type Draft = Record<string, unknown> & { title: string; startsAt: string; capacity?: number | null };
 
@@ -66,7 +67,7 @@ test.describe("event organizer flow", () => {
     await expect(page.getByRole("heading", { name: "마감 테스트" })).toBeVisible();
 
     await page.getByRole("button", { name: "신청 마감하기" }).click();
-    await expect(page.getByText("변경했어요")).toBeVisible();
+    await expectOnTop(toastBy(page, "변경했어요"));
     expect(events[0].status).toBe("CLOSED");
   });
 

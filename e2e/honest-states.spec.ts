@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 /**
  * Screens say what actually happened, in MOCK-ON. `kurl:mock-fail` (comma-separated) makes the named
@@ -113,7 +114,7 @@ test.describe("desktop", () => {
     const report = page.getByRole("dialog", { name: "이 사용자 신고" });
     await report.getByLabel("스팸·광고").check();
     await report.getByRole("button", { name: "신고", exact: true }).click();
-    await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();
+    await expectOnTop(toastBy(page, "신고가 접수됐어요."));
   });
 
   test("a signed-out reader still finds 신고 in the profile ⋯", async ({ page }) => {
@@ -158,10 +159,10 @@ test.describe("desktop", () => {
     await dialog.getByRole("button", { name: "올리기" }).click();
     await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" }).getByRole("button", { name: "알겠어요, 올릴게요" }).click();
 
-    const toast = page.getByRole("status").filter({ hasText: "노트를 올렸어요" });
+    const toast = toastBy(page, "노트를 올렸어요");
     await toast.hover();
     await page.waitForTimeout(5_000);
-    await expect(toast).toBeVisible();
+    await expectOnTop(toast);
     await toast.getByRole("button", { name: "보기" }).click();
     await page.waitForURL(/\/dohyun\/notes\/\d+$/, { timeout: 30_000 });
   });

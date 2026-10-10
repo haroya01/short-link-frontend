@@ -5,6 +5,7 @@ import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getLikeStatus, likePost, unlikePost } from "@/modules/blog/api/likes";
 import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
+import { useLikeFailed } from "@/hooks/use-like-failed";
 import { dockButton } from "@/modules/blog/components/dock-button";
 
 /**
@@ -27,6 +28,7 @@ export function LikeButton({
   const t = useTranslations("publicPost");
   // Pop only on click (not when the liked state loads from the server) — same gate as the follow/구독 button.
   const [interacted, setInteracted] = useState(false);
+  const likeFailed = useLikeFailed();
   const {
     on: liked,
     toggle,
@@ -34,6 +36,7 @@ export function LikeButton({
     depKey: postId,
     syncKey: `like:${postId}`,
     signInReason: "like",
+    onError: likeFailed,
     initialCount,
     load: () => getLikeStatus(postId).then((s) => ({ on: s.liked, count: s.likeCount })),
     mutate: (next) =>

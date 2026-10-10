@@ -27,6 +27,7 @@ export interface PostView {
   createdAt: string;
   updatedAt: string;
   contentVersion?: number;
+  takenDown?: boolean;
 }
 
 export interface EditGuard {

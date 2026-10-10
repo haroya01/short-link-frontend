@@ -1,4 +1,5 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 /**
  * Notes in MOCK-ON: the in-memory note mock serves @dohyun's and @yuna's notes, and the mock session
@@ -102,7 +103,7 @@ test("quoting from a post opens the composer over the post instead of leaving it
   await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
     .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
 
-  await expect(page.getByText("인용 노트를 올렸어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "인용 노트를 올렸어요"));
   await expect(page.getByRole("dialog", { name: "노트로 인용" })).toHaveCount(0);
   await expect(page).toHaveURL(/typescript-generics/);
 });
@@ -151,7 +152,7 @@ test("photos sit in a sideways strip with ALT, open large, and share copies the 
   await walk.getByRole("button", { name: "공유" }).click();
   await expect(walk.getByRole("menuitem", { name: "다른 앱으로 공유" })).toHaveCount(0);
   await walk.getByRole("menuitem", { name: "링크 복사" }).click();
-  await expect(page.getByText("링크를 복사했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "링크를 복사했어요"));
   expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/\/notes\/5$/);
   await expect(walk.getByRole("menu")).toHaveCount(0);
 });
@@ -247,7 +248,7 @@ test("quoting a note opens a composer over the feed with that note under it", as
   await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
     .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
 
-  await expect(page.getByText("인용 노트를 올렸어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "인용 노트를 올렸어요"));
   await expect(page.getByRole("dialog", { name: "노트 인용" })).toHaveCount(0);
   const posted = page.locator("article").first();
   await expect(posted).toContainText("나도 오늘 같은 길을 걸었다");
@@ -288,12 +289,12 @@ test("a note scheduled from the composer waits under it until it is canceled", a
   await page.getByRole("button", { name: "예약", exact: true, pressed: false }).click();
   await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
     .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
-  await expect(page.getByText(/에 올릴게요$/)).toBeVisible();
+  await expectOnTop(toastBy(page, /에 올릴게요$/));
   await expect(composer).toHaveValue("");
 
   const panel = page.getByRole("button", { name: /예약한 노트 2/ });
   await panel.click();
-  await expect(page.getByText("답글을 달 노트가 지워졌어요")).toBeVisible();
+  await expect(page.getByText("답글을 달 노트가 삭제됐어요")).toBeVisible();
   const mine = page.getByRole("listitem").filter({ hasText: "내일 아침에 올릴 노트" });
   await expect(mine).toBeVisible();
   await mine.getByRole("button", { name: "취소" }).click();
@@ -426,7 +427,7 @@ test("a followed author's profile menu hides just their reposts", async ({ page 
   await page.getByRole("button", { name: "팔로우", exact: true }).click();
   await menu.click();
   await page.getByRole("menuitem", { name: "리포스트 숨기기" }).click();
-  await expect(page.getByText("팔로잉 피드에서 minji님의 리포스트를 숨겨요")).toBeVisible();
+  await expectOnTop(toastBy(page, "팔로잉 피드에서 minji님의 리포스트를 숨겨요"));
   await menu.click();
   await expect(page.getByRole("menuitem", { name: "리포스트 다시 보기" })).toBeVisible();
 });
@@ -439,7 +440,7 @@ test("the bell beside following tells of every new note and leaves with the foll
   await page.getByRole("button", { name: "팔로우", exact: true }).click();
   await expect(ring).toHaveAttribute("aria-pressed", "false");
   await ring.click();
-  await expect(page.getByText("새 노트를 올리면 알려 드릴게요")).toBeVisible();
+  await expectOnTop(toastBy(page, "새 노트를 올리면 알려 드릴게요"));
   const silence = page.getByRole("button", { name: "새 노트 알림 끄기" });
   await expect(silence).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "팔로잉", exact: true, pressed: true }).click();
@@ -459,7 +460,7 @@ test("blocking a server from its account's menu hides the account until it is un
   await expect(page.getByRole("button", { name: "팔로잉", exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "mastodon.social 차단 해제" }).click();
   await expect(page.getByText("차단한 서버예요")).toHaveCount(0);
-  await expect(page.getByText("mastodon.social 차단을 해제했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "mastodon.social 차단을 해제했어요"));
 });
 
 test("blog settings choose the note languages shown in all notes", async ({ page }) => {
@@ -547,7 +548,7 @@ test("pinning my note moves it to the top of my profile under a pinned line", as
   await expect(older).toBeVisible({ timeout: 30_000 });
   await older.getByRole("button", { name: "메뉴" }).click();
   await page.getByRole("menuitem", { name: "프로필에 고정" }).click();
-  await expect(page.getByText("프로필에 고정했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "프로필에 고정했어요"));
   const first = page.locator("article[data-note-id]").first();
   await expect(first).toHaveAttribute("data-note-id", "1");
   await expect(first.getByText("고정됨")).toBeVisible();
@@ -660,7 +661,7 @@ test("a bookmark from a note's menu shows under the bookmarks tab", async ({ pag
   const id = await first.getAttribute("data-note-id");
   await first.getByRole("button", { name: "메뉴" }).click();
   await page.getByRole("menuitem", { name: "북마크" }).click();
-  await expect(page.getByText("북마크에 넣었어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "북마크에 넣었어요"));
   await openMoreFeed(page, "북마크");
   await expect(page).toHaveURL(/feed=bookmarks/);
   await expect(page.locator(`article[data-note-id="${id}"]`)).toBeVisible({ timeout: 15_000 });
@@ -738,7 +739,7 @@ test("muting someone from their profile menu takes their notes out of the feed",
   await expect(dialog.getByRole("checkbox", { name: "알림도 숨기기" })).toBeChecked();
   await dialog.getByRole("combobox", { name: "기간" }).selectOption("86400");
   await dialog.getByRole("button", { name: "뮤트", exact: true }).click();
-  await expect(page.getByText("yuna님을 뮤트했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "yuna님을 뮤트했어요"));
   await menu.click();
   await expect(page.getByRole("menuitem", { name: "뮤트 해제" })).toBeVisible();
   await menu.click();
@@ -790,7 +791,7 @@ test("a display name leads the note header with the handle beside it, and settin
   await field.fill("  도현  ", { timeout: 30_000 });
   const save = page.locator("form").filter({ has: field }).getByRole("button", { name: "저장" });
   await save.click();
-  await expect(page.getByText("표시 이름을 바꿨어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "표시 이름을 바꿨어요"));
   await expect(field).toHaveValue("도현");
   await expect(save).toBeDisabled();
 });
@@ -829,7 +830,7 @@ test("a note's menu mutes and unmutes its conversation", async ({ page }) => {
   await expect(seed).toBeVisible({ timeout: 30_000 });
   await seed.getByRole("button", { name: "노트 메뉴" }).click();
   await seed.getByRole("menuitem", { name: "대화 알림 끄기" }).click();
-  await expect(page.getByText("이 대화의 알림을 껐어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "이 대화의 알림을 껐어요"));
   await seed.getByRole("button", { name: "노트 메뉴" }).click();
   await expect(seed.getByRole("menuitem", { name: "대화 알림 켜기" })).toBeVisible();
 });
@@ -842,7 +843,7 @@ test("a note page reports someone else's note with a reason", async ({ page }) =
   await expect(dialog.getByRole("checkbox", { name: /에도 전달/ })).toHaveCount(0);
   await dialog.getByLabel("스팸·광고").check();
   await dialog.getByRole("button", { name: "신고", exact: true }).click();
-  await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();
+  await expectOnTop(toastBy(page, "신고가 접수됐어요."));
 });
 
 test("a note from another server can be reported to that server too, off unless chosen", async ({ page }) => {
@@ -855,7 +856,7 @@ test("a note from another server can be reported to that server too, off unless 
   await forward.check();
   await dialog.getByLabel("스팸·광고").check();
   await dialog.getByRole("button", { name: "신고", exact: true }).click();
-  await expect(page.getByText("신고가 접수됐어요.").first()).toBeVisible();
+  await expectOnTop(toastBy(page, "신고가 접수됐어요."));
 });
 
 test("video and audio from another server play in place with their own controls", async ({ page }) => {

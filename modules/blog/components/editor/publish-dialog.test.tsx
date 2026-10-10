@@ -41,13 +41,14 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function render(status: PostStatus) {
+async function render(status: PostStatus, takenDown = false) {
   await act(async () =>
     root.render(
       <PublishDialog
         open
         onClose={vi.fn()}
         status={status}
+        takenDown={takenDown}
         scheduledAt={status === "SCHEDULED" ? "2026-11-01T09:00:00Z" : null}
         title="밤의 글"
         cover={null}
@@ -109,5 +110,35 @@ describe("publish dialog lifecycle confirms", () => {
 
     await act(async () => button("postEditor.cancelSchedule", ask)!.click());
     expect(onCancelSchedule).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("a post taken down by an admin", () => {
+  it.each([
+    ["UNPUBLISHED", "postEditor.republish"],
+    ["DRAFT", "postEditor.publish"],
+  ] as const)("explains the %s post can be edited but not made public again", async (status, action) => {
+    await render(status, true);
+    const notice = document.querySelector('[data-testid="taken-down-notice"]')!;
+    expect(notice.textContent).toContain("postEditor.takenDownTitle");
+    expect(notice.textContent).toContain("postEditor.takenDownBody");
+    const goPublic = button(action)!;
+    expect(goPublic.disabled).toBe(true);
+    expect(goPublic.getAttribute("aria-describedby")).toBe(notice.id);
+
+    await act(async () => goPublic.click());
+    expect(onChangeStatus).not.toHaveBeenCalled();
+  });
+
+  it("still saves edits", async () => {
+    await render("UNPUBLISHED", true);
+    await act(async () => button("postEditor.save")!.click());
+    expect(onSave).toHaveBeenCalled();
+  });
+
+  it("shows nothing of it on a post that was not taken down", async () => {
+    await render("UNPUBLISHED");
+    expect(document.querySelector('[data-testid="taken-down-notice"]')).toBeNull();
+    expect(button("postEditor.republish")!.disabled).toBe(false);
   });
 });

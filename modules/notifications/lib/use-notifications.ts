@@ -95,12 +95,12 @@ export function useReadHiddenNotices(
   }, [items, filters, meId, qc]);
 }
 
-export function useMarkAllRead() {
+export function useMarkAllRead(filter: NotificationFilter = "all") {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => markAllNotificationsRead(),
-    onSuccess: () => {
-      qc.setQueryData(UNREAD_KEY, { count: 0 });
+    mutationFn: () => markAllNotificationsRead(filter),
+    onSuccess: (left) => {
+      qc.setQueryData(UNREAD_KEY, { count: left?.count ?? 0 });
       qc.invalidateQueries({ queryKey: LIST_KEY });
     },
   });

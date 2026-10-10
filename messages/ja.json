@@ -100,7 +100,7 @@
     "railPostCount": "記事 {count}",
     "railSeeAll": "すべて見る",
     "bookmark": "リーディングリストに保存",
-    "bookmarkOn": "リーディングリストから削除",
+    "bookmarkOn": "リーディングリストから外す",
     "rowRead": "、既読",
     "seriesEyebrow": "シリーズ",
     "seriesEpisodeCount": "{count}本",
@@ -114,7 +114,7 @@
     "seriesFilterNone": "条件に合う記事がありません",
     "seriesTagsMore": "+{count}",
     "seriesTagsLess": "閉じる",
-    "tagFilterClear": "フィルター解除",
+    "tagFilterClear": "フィルターをクリア",
     "seriesNextEpisode": "次の話",
     "feedReasonTopic": "「{tag}」をフォロー中",
     "feedReasonSeries": "フォロー中のシリーズ",
@@ -355,7 +355,7 @@
       "embedPlaceholder": "https://…（リンク・YouTube・Vimeo）",
       "confirm": "確定",
       "cancel": "キャンセル",
-      "remove": "リンクを削除",
+      "remove": "リンクを外す",
       "linkTextPlaceholder": "表示するテキスト（任意）"
     },
     "table": {
@@ -584,7 +584,14 @@
       "warning": "注意",
       "caution": "警告"
     },
-    "bodyPlaceholderTouch": "そのまま書けます。書式は上のツールバーにあります"
+    "bodyPlaceholderTouch": "そのまま書けます。書式は上のツールバーにあります",
+    "statusTakenDown": "運営により非公開",
+    "takenDownTitle": "運営ポリシーにより非公開にされた記事です",
+    "takenDownBody": "編集して保存はできますが、再公開はできません。異議がある場合は利用規約のお問い合わせ先までご連絡ください。",
+    "takenDownTerms": "利用規約を見る",
+    "takenDownBlocked": "運営ポリシーにより非公開にされたため、再公開できません",
+    "accountSuspendedPublic": "アカウントの一時停止中は、記事を公開したり公開中の記事を編集したりできません。下書きは引き続き書けます。",
+    "accountBannedPublic": "利用が制限されたアカウントのため、記事を公開したり公開中の記事を編集したりできません。"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -595,7 +602,7 @@
     "manage": "管理",
     "moveTo": "フォルダへ移動",
     "unfiled": "フォルダなし",
-    "remove": "ブックマークから削除",
+    "remove": "ブックマークから外す",
     "autoGrouped": "自動",
     "select": "選択",
     "selectCancel": "キャンセル",
@@ -608,10 +615,10 @@
     "emptyComments": "まだコメントがありません",
     "browseFeed": "フィードを見る",
     "emptyHistory": "閲覧履歴がまだありません",
-    "clearHistory": "履歴を消去",
-    "clearHistoryConfirm": "履歴をすべて消去しますか？",
+    "clearHistory": "履歴をクリア",
+    "clearHistoryConfirm": "履歴をすべてクリアしますか？",
     "clearHistoryCancel": "キャンセル",
-    "forget": "履歴から削除",
+    "forget": "履歴から外す",
     "loadMore": "もっと見る",
     "highlightsSearch": "文・公開メモ・記事タイトルで検索",
     "noResults": "該当する一節がありません。",
@@ -730,7 +737,7 @@
     "followingEmpty": "まだ誰もフォローしていません。",
     "loadMore": "もっと見る",
     "bookmark": "リーディングリストに保存",
-    "bookmarkOn": "リーディングリストから削除",
+    "bookmarkOn": "リーディングリストから外す",
     "seriesInThis": "このシリーズ",
     "seriesNextUp": "このシリーズの次の回",
     "seriesPrevUp": "このシリーズの前の記事",
@@ -780,6 +787,8 @@
     "activitySince": "{date}から",
     "reportFailed": "通報を送信できませんでした。もう一度お試しください。",
     "tabNotes": "ノート",
+    "tabReplies": "返信",
+    "tabMedia": "メディア",
     "tabReposts": "リポスト",
     "viewAvatar": "プロフィール写真を拡大",
     "requested": "リクエスト済み",
@@ -802,7 +811,8 @@
     "highlightCardRemove": "削除",
     "highlightRemoved": "ハイライトを削除しました",
     "highlightLinkCopied": "リンクをコピーしました",
-    "highlightPublicFirst": "ハイライトしました · 名前とともに公開されます"
+    "highlightPublicFirst": "ハイライトしました · 名前とともに公開されます",
+    "reportTitleHighlightReply": "この返信を報告"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -815,7 +825,7 @@
   "tags": {
     "inputPlaceholder": "Enter または , で追加",
     "label": "タグ",
-    "removeTag": "タグ {name} を削除",
+    "removeTag": "タグ {name} を外す",
     "maxReached": "最大 {max} 件まで追加できます"
   },
   "errors": {
@@ -867,7 +877,9 @@
     "DUPLICATE_REPORT": "すでに報告済みの対象です。",
     "SUBJECT_NOT_FOUND": "対象が見つかりません。",
     "SUSPEND_REQUIRES_EXPIRY": "停止には期限が必要です。",
-    "toggleFailed": "反映できませんでした。しばらくしてからもう一度お試しください。"
+    "toggleFailed": "反映できませんでした。しばらくしてからもう一度お試しください。",
+    "likeFailed": "いいねを反映できませんでした",
+    "POST_TAKEN_DOWN": "運営ポリシーにより非公開にされた記事のため、再公開できません。"
   },
   "cookieConsent": {
     "ariaLabel": "Cookieのお知らせ",
@@ -1008,6 +1020,8 @@
     "like_group": "<b>{actor}</b>さんほか{others}人が記事にいいねしました",
     "comment_like": "<b>{actor}</b>さんがあなたのコメントにいいねしました",
     "comment_like_group": "<b>{actor}</b>さんほか{others}人があなたのコメントにいいねしました",
+    "highlight_reply_like": "<b>{actor}</b>さんがハイライトへのあなたの返信にいいねしました",
+    "highlight_reply_like_group": "<b>{actor}</b>さんほか{others}人がハイライトへのあなたの返信にいいねしました",
     "highlight": "<b>{actor}</b>さんがあなたの記事にハイライトを付けました",
     "highlight_group": "<b>{actor}</b>さんほか{others}人があなたの記事にハイライトを付けました",
     "post_quote": "<b>{actor}</b>さんがノートであなたの記事を引用しました",
@@ -1393,10 +1407,10 @@
     "deleteConfirmTitle": "このリンクを削除しますか？",
     "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
     "deleteOk": "削除",
-    "deleted": "削除しました",
+    "deleted": "リンクを削除しました",
     "deleteFailed": "削除に失敗しました",
     "tagFilterLabel": "タグ:",
-    "clearTagFilter": "タグフィルタを解除",
+    "clearTagFilter": "タグフィルタをクリア",
     "filters": {
       "toggle": "フィルタ",
       "any": "すべて",
@@ -1407,7 +1421,7 @@
       "dateRange": "作成日範囲",
       "after": "以降",
       "before": "以前",
-      "clearAll": "フィルタをすべて解除",
+      "clearAll": "フィルタをすべてクリア",
       "expiry": {
         "ACTIVE": "有効なリンクのみ",
         "NEVER": "期限なし",
@@ -1422,7 +1436,7 @@
     "bulkClearSelection": "選択解除",
     "bulkDeleteAction": "選択を削除",
     "bulkDeleting": "削除中...",
-    "bulkDeleted": "{count}件削除しました",
+    "bulkDeleted": "{count}件のリンクを削除しました",
     "bulkDeleteFailed": "{total}件中 {failed}件の削除に失敗",
     "bulkDeleteConfirmTitle": "選択したリンクを削除しますか？",
     "bulkDeleteConfirmDesc": "{count}件のリンクとクリック統計が完全に削除されます。",
@@ -1586,7 +1600,7 @@
       "disable": "無効化",
       "delete": "削除",
       "deleteConfirm": "この Webhook を削除しますか？",
-      "deleted": "削除しました",
+      "deleted": "Webhook を削除しました",
       "deleteFailed": "削除に失敗しました。",
       "toggleFailed": "有効/無効の更新に失敗しました。",
       "options": "オプション",
@@ -1641,7 +1655,7 @@
       "addFailed": "リンク先の追加に失敗しました。",
       "updateFailed": "リンク先の更新に失敗しました。",
       "deleteConfirm": "このリンク先を削除しますか？",
-      "deleted": "削除しました",
+      "deleted": "リンク先を削除しました",
       "deleteFailed": "削除に失敗しました。",
       "loading": "読み込み中...",
       "empty": "まだリンク先がありません。追加すると重みに応じて振り分けられます。",
@@ -2222,7 +2236,7 @@
           "limitReached": "上限到達"
         },
         "ownerFilter": "所有者 #{id}",
-        "clearFilter": "フィルター解除",
+        "clearFilter": "フィルターをクリア",
         "locked": "パスワード保護",
         "noResults": "該当するリンクがありません"
       },
@@ -2816,7 +2830,7 @@
       "openShort": "開く",
       "yourPage": "公開プロフィール",
       "featuredTitle": "公開プロフィールに表示する項目",
-      "featuredHint": "ドラッグで並び替え (モバイル ↑↓)、★ で 1 つをおすすめとして一番上に、『削除』で外す。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
+      "featuredHint": "ドラッグで並び替え (モバイル ↑↓)、★ で 1 つをおすすめとして一番上に、外すときは『外す』。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
       "sectionExpand": "セクションを開く",
       "sectionCollapse": "セクションを閉じる",
       "sectionItemCount": "{count} 件",
@@ -2826,6 +2840,7 @@
       "addBlockMenu": "追加",
       "addMoreBlocks": "その他のブロック",
       "remove": "削除",
+      "removeLink": "外す",
       "highlight": "おすすめとして一番上に (1 つのみ)",
       "labelEdit": "ラベルを編集 (訪問者に表示)",
       "labelEmpty": "ラベル追加",
@@ -3251,7 +3266,7 @@
       "verified": "検証完了",
       "verifyFailed": "TXT レコードが見つかりませんでした。伝播に 1〜5 分かかる場合があります。",
       "delete": "削除",
-      "deleted": "削除しました",
+      "deleted": "ドメインを削除しました",
       "deleteConfirm": "このドメインを削除しますか？このドメインの短縮リンクはただちに動作を停止します。",
       "deleteFailed": "削除に失敗しました。",
       "dnsTxtHint": "ドメイン所有確認用: DNS に TXT レコードを追加",
@@ -3734,13 +3749,15 @@
       "DELETE_COMMENT": "コメント削除",
       "SUSPEND_USER": "アカウント停止",
       "BAN_USER": "永久停止",
-      "DELETE_NOTE": "ノートを削除"
+      "DELETE_NOTE": "ノートを削除",
+      "DELETE_HIGHLIGHT_REPLY": "返信を削除"
     },
     "subjectType": {
       "POST": "投稿",
       "USER": "作者",
       "COMMENT": "コメント",
-      "NOTE": "ノート"
+      "NOTE": "ノート",
+      "HIGHLIGHT_REPLY": "ハイライトへの返信"
     },
     "removed": "非公開",
     "reasons": {
@@ -3754,7 +3771,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
       "DELETE_COMMENT": "このコメントを削除しますか？元に戻せません。",
-      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。"
+      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。",
+      "DELETE_HIGHLIGHT_REPLY": "このハイライトへの返信を削除しますか？元に戻せません。",
+      "DELETE_NOTE": "このノートを削除しますか？元に戻せません。"
     },
     "suspendDaysPrompt": "何日間停止しますか？（日）",
     "suspendDaysInvalid": "1 以上の数値を入力してください。"
@@ -4232,7 +4251,7 @@
     "edited": "編集済み",
     "inReplyTo": "このノートへの返信",
     "noticeTitle": "ノートはほかのサーバーにも届きます",
-    "noticeBody": "kurl のノートは Mastodon・Misskey などほかのサーバーのフォロワーにも届きます。ノートを削除するとそのサーバーにも削除を依頼しますが、すでに広まったコピーが消えることは保証できません。設定からいつでもオフにできます。",
+    "noticeBody": "kurl のノートは Mastodon・Misskey などほかのサーバーのフォロワーにも届きます。ノートを削除するとそのサーバーにも削除を依頼しますが、すでに広まったコピーが削除されることは保証できません。設定からいつでもオフにできます。",
     "noticeConfirm": "わかりました、投稿します",
     "settingsTitle": "ノートの連合",
     "settingsToggle": "ほかのサーバーとノートを共有",
@@ -4358,7 +4377,7 @@
     "pollBackToVote": "投票に戻る",
     "pollVoteFailed": "投票できませんでした",
     "pollOptionPlaceholder": "選択肢 {n}",
-    "pollRemoveOption": "選択肢を削除",
+    "pollRemoveOption": "選択肢を外す",
     "pollAddOption": "選択肢を追加",
     "pollDuration": "期間",
     "pollMinutes": "{count}分",
@@ -4366,7 +4385,7 @@
     "pollDays": "{count}日",
     "pollMultiple": "複数選択",
     "pollAdd": "投票を追加",
-    "pollRemove": "投票を削除",
+    "pollRemove": "投票を外す",
     "muteMenu": "ミュート…",
     "unmute": "ミュート解除",
     "mute": "ミュート",
@@ -4512,6 +4531,15 @@
     "suggestionsDismiss": "{name}を表示しない",
     "threadMore": "スレッドの続き {count}件",
     "threadPosition": "スレッド {position}",
+    "replyingToAuthor": "@{username}さんへの返信",
+    "replyParentGone": "元の投稿を表示できません",
+    "emptyReplies": "まだ返信はありません",
+    "emptyMedia": "まだ写真はありません",
+    "mediaNoAlt": "写真",
+    "mediaCount": "写真{count}枚",
+    "mediaSensitive": "センシティブな内容",
+    "profileRepliesTitle": "返信 · @{username}",
+    "profileMediaTitle": "メディア · @{username}",
     "drafts": "下書き {count}",
     "draftsTitle": "下書き",
     "draftsEmpty": "下書きはまだありません",

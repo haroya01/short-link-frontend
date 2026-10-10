@@ -100,7 +100,7 @@
     "railPostCount": "{count} पोस्ट",
     "railSeeAll": "सभी देखें",
     "bookmark": "रीडिंग लिस्ट में सहेजें",
-    "bookmarkOn": "रीडिंग लिस्ट से हटाएँ",
+    "bookmarkOn": "रीडिंग लिस्ट से निकालें",
     "rowRead": ", पढ़ा गया",
     "seriesEyebrow": "सीरीज़",
     "seriesEpisodeCount": "{count} पोस्ट",
@@ -355,7 +355,7 @@
       "embedPlaceholder": "https://… (लिंक, YouTube, Vimeo)",
       "confirm": "जोड़ें",
       "cancel": "रद्द करें",
-      "remove": "लिंक हटाएँ",
+      "remove": "लिंक निकालें",
       "linkTextPlaceholder": "दिखाने वाला टेक्स्ट (वैकल्पिक)"
     },
     "table": {
@@ -584,7 +584,14 @@
       "warning": "चेतावनी",
       "caution": "सावधानी"
     },
-    "bodyPlaceholderTouch": "बस लिखना शुरू करें। फ़ॉर्मैटिंग ऊपर टूलबार में है"
+    "bodyPlaceholderTouch": "बस लिखना शुरू करें। फ़ॉर्मैटिंग ऊपर टूलबार में है",
+    "statusTakenDown": "हटाई गई",
+    "takenDownTitle": "यह पोस्ट हमारी सामग्री नीति के तहत हटाई गई है",
+    "takenDownBody": "आप इसे संपादित करके सहेज सकते हैं, लेकिन फिर से सार्वजनिक नहीं कर सकते। असहमत हों तो शर्तों में दिए पते पर हमसे संपर्क करें।",
+    "takenDownTerms": "शर्तें पढ़ें",
+    "takenDownBlocked": "सामग्री नीति के तहत हटाई गई है, इसलिए फिर से सार्वजनिक नहीं की जा सकती",
+    "accountSuspendedPublic": "खाता निलंबित रहने तक आप पोस्ट सार्वजनिक नहीं कर सकते और न ही सार्वजनिक पोस्ट संपादित कर सकते हैं। ड्राफ़्ट लिखना जारी रख सकते हैं।",
+    "accountBannedPublic": "आपका खाता प्रतिबंधित है, इसलिए आप पोस्ट सार्वजनिक नहीं कर सकते और न ही सार्वजनिक पोस्ट संपादित कर सकते हैं।"
   },
   "savedLibrary": {
     "private": "इसे केवल आप देख सकते हैं।",
@@ -595,7 +602,7 @@
     "manage": "प्रबंधित करें",
     "moveTo": "फ़ोल्डर में ले जाएँ",
     "unfiled": "कोई फ़ोल्डर नहीं",
-    "remove": "बुकमार्क हटाएँ",
+    "remove": "बुकमार्क से निकालें",
     "autoGrouped": "स्वतः",
     "select": "चुनें",
     "selectCancel": "रद्द करें",
@@ -611,7 +618,7 @@
     "clearHistory": "इतिहास साफ़ करें",
     "clearHistoryConfirm": "अपना पूरा इतिहास साफ़ करें?",
     "clearHistoryCancel": "रद्द करें",
-    "forget": "इतिहास से हटाएँ",
+    "forget": "इतिहास से निकालें",
     "loadMore": "और देखें",
     "highlightsSearch": "वाक्य, सार्वजनिक नोट या लेख के शीर्षक खोजें",
     "noResults": "कोई मिलता-जुलता अंश नहीं।",
@@ -730,7 +737,7 @@
     "followingEmpty": "अभी तक किसी को फ़ॉलो नहीं किया।",
     "loadMore": "और देखें",
     "bookmark": "रीडिंग लिस्ट में सहेजें",
-    "bookmarkOn": "रीडिंग लिस्ट से हटाएँ",
+    "bookmarkOn": "रीडिंग लिस्ट से निकालें",
     "seriesInThis": "इस सीरीज़ में",
     "seriesNextUp": "इस सीरीज़ में अगला",
     "seriesPrevUp": "इस सीरीज़ में पिछला",
@@ -780,6 +787,8 @@
     "activitySince": "{date} से",
     "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।",
     "tabNotes": "नोट्स",
+    "tabReplies": "जवाब",
+    "tabMedia": "मीडिया",
     "tabReposts": "रीपोस्ट",
     "viewAvatar": "प्रोफ़ाइल फ़ोटो देखें",
     "requested": "अनुरोध भेजा",
@@ -802,7 +811,8 @@
     "highlightCardRemove": "हटाएँ",
     "highlightRemoved": "हाइलाइट हटा दिया गया",
     "highlightLinkCopied": "लिंक कॉपी हो गया",
-    "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक"
+    "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक",
+    "reportTitleHighlightReply": "इस जवाब की रिपोर्ट करें"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -815,7 +825,7 @@
   "tags": {
     "inputPlaceholder": "एक टैग टाइप करें, फिर Enter या अल्पविराम दबाएँ",
     "label": "टैग",
-    "removeTag": "टैग {name} हटाएँ",
+    "removeTag": "टैग {name} निकालें",
     "maxReached": "अधिकतम {max} टैग"
   },
   "errors": {
@@ -867,7 +877,9 @@
     "DUPLICATE_REPORT": "आप इसकी रिपोर्ट पहले ही कर चुके हैं.",
     "SUBJECT_NOT_FOUND": "रिपोर्ट किया गया आइटम नहीं मिला.",
     "SUSPEND_REQUIRES_EXPIRY": "निलंबन के लिए समाप्ति तिथि आवश्यक है.",
-    "toggleFailed": "बदलाव सेव नहीं हो सका। कृपया थोड़ी देर बाद फिर कोशिश करें।"
+    "toggleFailed": "बदलाव सेव नहीं हो सका। कृपया थोड़ी देर बाद फिर कोशिश करें।",
+    "likeFailed": "आपकी पसंद सेव नहीं हो सकी",
+    "POST_TAKEN_DOWN": "यह पोस्ट सामग्री नीति के तहत हटाई गई है, इसलिए फिर से सार्वजनिक नहीं की जा सकती।"
   },
   "cookieConsent": {
     "ariaLabel": "कुकी सूचना",
@@ -1008,6 +1020,8 @@
     "like_group": "<b>{actor}</b> और {others} अन्य ने आपकी पोस्ट पसंद की",
     "comment_like": "<b>{actor}</b> ने आपकी टिप्पणी पसंद की",
     "comment_like_group": "<b>{actor}</b> और {others} अन्य ने आपकी टिप्पणी पसंद की",
+    "highlight_reply_like": "<b>{actor}</b> ने हाइलाइट पर आपका जवाब पसंद किया",
+    "highlight_reply_like_group": "<b>{actor}</b> और {others} अन्य ने हाइलाइट पर आपका जवाब पसंद किया",
     "highlight": "<b>{actor}</b> ने आपकी पोस्ट हाइलाइट की",
     "highlight_group": "<b>{actor}</b> और {others} अन्य ने आपकी पोस्ट हाइलाइट की",
     "post_quote": "<b>{actor}</b> ने एक नोट में आपकी पोस्ट उद्धृत की",
@@ -1393,7 +1407,7 @@
     "deleteConfirmTitle": "इस लिंक को हटाएँ?",
     "deleteConfirmDesc": "हटाए गए लिंक पुनर्प्राप्त नहीं किए जा सकते। क्लिक आँकड़े भी खो जाते हैं।",
     "deleteOk": "हटाएँ",
-    "deleted": "हटाया गया",
+    "deleted": "लिंक हटा दिया",
     "deleteFailed": "हटाना विफल",
     "tagFilterLabel": "टैग:",
     "clearTagFilter": "टैग फ़िल्टर साफ़ करें",
@@ -1422,7 +1436,7 @@
     "bulkClearSelection": "साफ़ करें",
     "bulkDeleteAction": "चुने गए हटाएँ",
     "bulkDeleting": "हटाया जा रहा है...",
-    "bulkDeleted": "{count} हटाए गए",
+    "bulkDeleted": "{count} लिंक हटा दिए",
     "bulkDeleteFailed": "{total} में से {failed} हटाने में विफल",
     "bulkDeleteConfirmTitle": "चुने गए लिंक हटाएँ?",
     "bulkDeleteConfirmDesc": "{count} लिंक और उनके सभी क्लिक आँकड़े स्थायी रूप से हटा दिए जाएँगे।",
@@ -1586,7 +1600,7 @@
       "disable": "अक्षम करें",
       "delete": "हटाएँ",
       "deleteConfirm": "इस वेबहुक को हटाएँ?",
-      "deleted": "हटाया गया",
+      "deleted": "वेबहुक हटा दिया",
       "deleteFailed": "हटाने में विफल।",
       "toggleFailed": "सक्षम फ़्लैग अपडेट करने में विफल।",
       "options": "विकल्प",
@@ -1641,7 +1655,7 @@
       "addFailed": "गंतव्य जोड़ने में विफल।",
       "updateFailed": "गंतव्य अपडेट करने में विफल।",
       "deleteConfirm": "इस गंतव्य को हटाएँ?",
-      "deleted": "हटाया गया",
+      "deleted": "गंतव्य हटा दिया",
       "deleteFailed": "हटाने में विफल।",
       "loading": "लोड हो रहा है...",
       "empty": "अभी तक कोई गंतव्य नहीं। भार के अनुसार ट्रैफ़िक बाँटना शुरू करने के लिए कुछ जोड़ें।",
@@ -2222,7 +2236,7 @@
           "limitReached": "सीमा पूरी"
         },
         "ownerFilter": "स्वामी #{id}",
-        "clearFilter": "फ़िल्टर हटाएँ",
+        "clearFilter": "फ़िल्टर साफ़ करें",
         "locked": "पासवर्ड संरक्षित",
         "noResults": "कोई मिलान करने वाला लिंक नहीं"
       },
@@ -2816,7 +2830,7 @@
       "openShort": "खोलें",
       "yourPage": "सार्वजनिक प्रोफ़ाइल",
       "featuredTitle": "प्रोफ़ाइल फ़ीड",
-      "featuredHint": "क्रम बदलने के लिए खींचें (मोबाइल पर ↑↓), किसी एक को सबसे ऊपर ख़ास के रूप में दिखाने के लिए ★, हटाने के लिए 'हटाएँ'। हेडर जोड़कर आइटम को एक खंड में रखें, जिसे समेटा और एक साथ हिलाया जा सके।",
+      "featuredHint": "क्रम बदलने के लिए खींचें (मोबाइल पर ↑↓), किसी एक को सबसे ऊपर ख़ास के रूप में दिखाने के लिए ★, हटाने के लिए 'निकालें'। हेडर जोड़कर आइटम को एक खंड में रखें, जिसे समेटा और एक साथ हिलाया जा सके।",
       "sectionExpand": "खंड विस्तृत करें",
       "sectionCollapse": "खंड समेटें",
       "sectionItemCount": "{count} आइटम",
@@ -2826,6 +2840,7 @@
       "addBlockMenu": "जोड़ें",
       "addMoreBlocks": "और ब्लॉक",
       "remove": "हटाएँ",
+      "removeLink": "निकालें",
       "highlight": "सबसे ऊपर ख़ास के रूप में दिखाएँ (केवल एक)",
       "labelEdit": "लेबल संपादित करें (जो आगंतुक देखते हैं)",
       "labelEmpty": "लेबल जोड़ें",
@@ -3251,7 +3266,7 @@
       "verified": "सत्यापित",
       "verifyFailed": "TXT रिकॉर्ड नहीं मिला। DNS को फैलने में 1–5 मिनट लग सकते हैं।",
       "delete": "हटाएँ",
-      "deleted": "हटाया गया",
+      "deleted": "डोमेन हटा दिया",
       "deleteConfirm": "इस डोमेन को हटाएँ? इस डोमेन के छोटे लिंक तुरंत काम करना बंद कर देंगे।",
       "deleteFailed": "हटाने में विफल।",
       "dnsTxtHint": "स्वामित्व जाँच: अपने DNS प्रदाता पर यह TXT रिकॉर्ड जोड़ें",
@@ -3734,13 +3749,15 @@
       "DELETE_COMMENT": "टिप्पणी हटाएँ",
       "SUSPEND_USER": "खाता निलंबित करें",
       "BAN_USER": "स्थायी रूप से प्रतिबंधित करें",
-      "DELETE_NOTE": "नोट हटाएँ"
+      "DELETE_NOTE": "नोट हटाएँ",
+      "DELETE_HIGHLIGHT_REPLY": "जवाब हटाएँ"
     },
     "subjectType": {
       "POST": "पोस्ट",
       "USER": "लेखक",
       "COMMENT": "टिप्पणी",
-      "NOTE": "नोट"
+      "NOTE": "नोट",
+      "HIGHLIGHT_REPLY": "हाइलाइट पर जवाब"
     },
     "removed": "अप्रकाशित",
     "reasons": {
@@ -3754,7 +3771,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "इस पोस्ट को अप्रकाशित करें? यह सार्वजनिक फ़ीड से हट जाती है (लेखक के पास ड्राफ़्ट रहता है)।",
       "DELETE_COMMENT": "यह टिप्पणी हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
-      "BAN_USER": "इस खाते को स्थायी रूप से प्रतिबंधित करें? इसे पलटना कठिन है।"
+      "BAN_USER": "इस खाते को स्थायी रूप से प्रतिबंधित करें? इसे पलटना कठिन है।",
+      "DELETE_HIGHLIGHT_REPLY": "हाइलाइट पर यह जवाब हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
+      "DELETE_NOTE": "यह नोट हटाएँ? इसे पूर्ववत नहीं किया जा सकता।"
     },
     "suspendDaysPrompt": "कितने दिनों के लिए निलंबित करें?",
     "suspendDaysInvalid": "1 या अधिक की संख्या दर्ज करें।"
@@ -4358,7 +4377,7 @@
     "pollBackToVote": "वोटिंग पर वापस जाएँ",
     "pollVoteFailed": "वोट नहीं हो सका",
     "pollOptionPlaceholder": "विकल्प {n}",
-    "pollRemoveOption": "विकल्प हटाएँ",
+    "pollRemoveOption": "विकल्प निकालें",
     "pollAddOption": "विकल्प जोड़ें",
     "pollDuration": "अवधि",
     "pollMinutes": "{count} मिनट",
@@ -4366,7 +4385,7 @@
     "pollDays": "{count} दिन",
     "pollMultiple": "एकाधिक विकल्प",
     "pollAdd": "पोल जोड़ें",
-    "pollRemove": "पोल हटाएँ",
+    "pollRemove": "पोल निकालें",
     "muteMenu": "म्यूट करें…",
     "unmute": "अनम्यूट करें",
     "mute": "म्यूट",
@@ -4512,6 +4531,15 @@
     "suggestionsDismiss": "{name} का सुझाव न दें",
     "threadMore": "इस थ्रेड में {count} और",
     "threadPosition": "थ्रेड भाग {position}",
+    "replyingToAuthor": "@{username} को जवाब",
+    "replyParentGone": "मूल पोस्ट उपलब्ध नहीं है",
+    "emptyReplies": "अभी कोई जवाब नहीं",
+    "emptyMedia": "अभी कोई फ़ोटो नहीं",
+    "mediaNoAlt": "फ़ोटो",
+    "mediaCount": "{count} फ़ोटो",
+    "mediaSensitive": "संवेदनशील सामग्री",
+    "profileRepliesTitle": "जवाब · @{username}",
+    "profileMediaTitle": "मीडिया · @{username}",
     "drafts": "ड्राफ़्ट {count}",
     "draftsTitle": "ड्राफ़्ट",
     "draftsEmpty": "अभी कोई ड्राफ़्ट नहीं",

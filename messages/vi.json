@@ -100,7 +100,7 @@
     "railPostCount": "{count} bài",
     "railSeeAll": "Xem tất cả",
     "bookmark": "Lưu vào danh sách đọc",
-    "bookmarkOn": "Xóa khỏi danh sách đọc",
+    "bookmarkOn": "Bỏ khỏi danh sách đọc",
     "rowRead": ", đã đọc",
     "seriesEyebrow": "Loạt bài",
     "seriesEpisodeCount": "{count} bài",
@@ -355,7 +355,7 @@
       "embedPlaceholder": "https://… (liên kết, YouTube, Vimeo)",
       "confirm": "Thêm",
       "cancel": "Hủy",
-      "remove": "Xóa liên kết",
+      "remove": "Gỡ liên kết",
       "linkTextPlaceholder": "Văn bản hiển thị (tùy chọn)"
     },
     "table": {
@@ -584,7 +584,14 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên"
+    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên",
+    "statusTakenDown": "Đã bị gỡ",
+    "takenDownTitle": "Bài viết này đã bị gỡ theo chính sách nội dung",
+    "takenDownBody": "Bạn vẫn có thể chỉnh sửa và lưu, nhưng không thể công khai lại. Nếu không đồng ý, hãy liên hệ qua địa chỉ trong Điều khoản.",
+    "takenDownTerms": "Xem Điều khoản",
+    "takenDownBlocked": "Đã bị gỡ theo chính sách nội dung nên không thể công khai lại",
+    "accountSuspendedPublic": "Trong thời gian tài khoản bị tạm khóa, bạn không thể công khai bài viết hoặc sửa bài đang công khai. Bạn vẫn có thể viết bản nháp.",
+    "accountBannedPublic": "Tài khoản của bạn bị hạn chế nên không thể công khai bài viết hoặc sửa bài đang công khai."
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -595,7 +602,7 @@
     "manage": "Quản lý",
     "moveTo": "Chuyển vào thư mục",
     "unfiled": "Chưa phân loại",
-    "remove": "Xóa dấu trang",
+    "remove": "Bỏ khỏi dấu trang",
     "autoGrouped": "tự động",
     "select": "Chọn",
     "selectCancel": "Hủy",
@@ -611,7 +618,7 @@
     "clearHistory": "Xóa lịch sử",
     "clearHistoryConfirm": "Xóa toàn bộ lịch sử?",
     "clearHistoryCancel": "Hủy",
-    "forget": "Xóa khỏi lịch sử",
+    "forget": "Gỡ khỏi lịch sử",
     "loadMore": "Xem thêm",
     "highlightsSearch": "Tìm câu, ghi chú công khai hoặc tiêu đề bài viết",
     "noResults": "Không có đoạn nào khớp.",
@@ -634,7 +641,7 @@
   "tags": {
     "inputPlaceholder": "Gõ thẻ rồi nhấn Enter hoặc dấu phẩy",
     "label": "Thẻ",
-    "removeTag": "Xóa thẻ {name}",
+    "removeTag": "Gỡ thẻ {name}",
     "maxReached": "Tối đa {max} thẻ"
   },
   "publicPost": {
@@ -744,7 +751,7 @@
     "followingEmpty": "Chưa theo dõi ai.",
     "loadMore": "Xem thêm",
     "bookmark": "Lưu vào danh sách đọc",
-    "bookmarkOn": "Xóa khỏi danh sách đọc",
+    "bookmarkOn": "Bỏ khỏi danh sách đọc",
     "seriesInThis": "Trong series này",
     "seriesNextUp": "Tiếp theo trong series",
     "seriesPrevUp": "Trước đó trong series",
@@ -794,6 +801,8 @@
     "activitySince": "từ {date}",
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
     "tabNotes": "Ghi chú",
+    "tabReplies": "Trả lời",
+    "tabMedia": "Phương tiện",
     "tabReposts": "Đăng lại",
     "viewAvatar": "Xem ảnh hồ sơ",
     "requested": "Đã yêu cầu",
@@ -816,7 +825,8 @@
     "highlightCardRemove": "Xóa",
     "highlightRemoved": "Đã xóa đánh dấu",
     "highlightLinkCopied": "Đã sao chép liên kết",
-    "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn"
+    "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn",
+    "reportTitleHighlightReply": "Báo cáo trả lời này"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -867,7 +877,9 @@
     "DUPLICATE_REPORT": "Bạn đã báo cáo mục này rồi.",
     "SUBJECT_NOT_FOUND": "Không tìm thấy mục được báo cáo.",
     "SUSPEND_REQUIRES_EXPIRY": "Việc tạm ngưng cần có ngày hết hạn.",
-    "toggleFailed": "Không thể lưu thay đổi. Vui lòng thử lại sau."
+    "toggleFailed": "Không thể lưu thay đổi. Vui lòng thử lại sau.",
+    "likeFailed": "Không thể lưu lượt thích",
+    "POST_TAKEN_DOWN": "Bài viết đã bị gỡ theo chính sách nội dung nên không thể công khai lại."
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
@@ -1008,6 +1020,8 @@
     "like_group": "<b>{actor}</b> và {others} người khác đã thích bài của bạn",
     "comment_like": "<b>{actor}</b> đã thích bình luận của bạn",
     "comment_like_group": "<b>{actor}</b> và {others} người khác đã thích bình luận của bạn",
+    "highlight_reply_like": "<b>{actor}</b> đã thích trả lời của bạn trên một đánh dấu",
+    "highlight_reply_like_group": "<b>{actor}</b> và {others} người khác đã thích trả lời của bạn trên một đánh dấu",
     "highlight": "<b>{actor}</b> đã đánh dấu bài của bạn",
     "highlight_group": "<b>{actor}</b> và {others} người khác đã đánh dấu bài của bạn",
     "post_quote": "<b>{actor}</b> đã trích dẫn bài của bạn trong một ghi chú",
@@ -1393,7 +1407,7 @@
     "deleteConfirmTitle": "Xóa liên kết này?",
     "deleteConfirmDesc": "Liên kết đã xóa không thể khôi phục. Thống kê lượt nhấp cũng mất theo.",
     "deleteOk": "Xóa",
-    "deleted": "Đã xóa",
+    "deleted": "Đã xóa liên kết",
     "deleteFailed": "Xóa thất bại",
     "tagFilterLabel": "Thẻ:",
     "clearTagFilter": "Xóa bộ lọc thẻ",
@@ -1422,7 +1436,7 @@
     "bulkClearSelection": "Xóa",
     "bulkDeleteAction": "Xóa mục đã chọn",
     "bulkDeleting": "Đang xóa...",
-    "bulkDeleted": "Đã xóa {count}",
+    "bulkDeleted": "Đã xóa {count} liên kết",
     "bulkDeleteFailed": "{failed} trên {total} xóa thất bại",
     "bulkDeleteConfirmTitle": "Xóa các liên kết đã chọn?",
     "bulkDeleteConfirmDesc": "{count} liên kết và toàn bộ thống kê lượt nhấp của chúng sẽ bị xóa vĩnh viễn.",
@@ -1586,7 +1600,7 @@
       "disable": "Tắt",
       "delete": "Xóa",
       "deleteConfirm": "Xóa webhook này?",
-      "deleted": "Đã xóa",
+      "deleted": "Đã xóa webhook",
       "deleteFailed": "Xóa thất bại.",
       "toggleFailed": "Cập nhật trạng thái bật thất bại.",
       "options": "Tùy chọn",
@@ -1641,7 +1655,7 @@
       "addFailed": "Thêm điểm đến thất bại.",
       "updateFailed": "Cập nhật điểm đến thất bại.",
       "deleteConfirm": "Xóa điểm đến này?",
-      "deleted": "Đã xóa",
+      "deleted": "Đã xóa đích đến",
       "deleteFailed": "Xóa thất bại.",
       "loading": "Đang tải...",
       "empty": "Chưa có điểm đến nào. Thêm vài cái để bắt đầu chia lưu lượng theo trọng số.",
@@ -2816,7 +2830,7 @@
       "openShort": "Mở",
       "yourPage": "Hồ sơ công khai",
       "featuredTitle": "Dòng tin hồ sơ",
-      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓), ★ để đưa một mục lên đầu làm mục nổi bật, 'Xóa' để gỡ. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
+      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓), ★ để đưa một mục lên đầu làm mục nổi bật, 'Gỡ' để gỡ. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
       "sectionExpand": "Mở rộng phần",
       "sectionCollapse": "Thu gọn phần",
       "sectionItemCount": "{count} mục",
@@ -2826,6 +2840,7 @@
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
       "remove": "Xóa",
+      "removeLink": "Gỡ",
       "highlight": "Đưa lên đầu làm mục nổi bật (chỉ một)",
       "labelEdit": "Sửa nhãn (thứ khách nhìn thấy)",
       "labelEmpty": "Thêm nhãn",
@@ -3251,8 +3266,8 @@
       "verified": "Đã xác minh",
       "verifyFailed": "Không tìm thấy bản ghi TXT. DNS có thể mất 1–5 phút để lan truyền.",
       "delete": "Xóa",
-      "deleted": "Đã xóa",
-      "deleteConfirm": "Gỡ tên miền này? Các liên kết ngắn trên tên miền này sẽ ngừng hoạt động ngay lập tức.",
+      "deleted": "Đã xóa tên miền",
+      "deleteConfirm": "Xóa tên miền này? Các liên kết ngắn trên tên miền này sẽ ngừng hoạt động ngay lập tức.",
       "deleteFailed": "Xóa thất bại.",
       "dnsTxtHint": "Kiểm tra quyền sở hữu: thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
       "dnsCnameHint": "Định tuyến lưu lượng: thêm bản ghi CNAME này tại cùng nhà cung cấp"
@@ -3734,13 +3749,15 @@
       "DELETE_COMMENT": "Xóa bình luận",
       "SUSPEND_USER": "Tạm ngưng tài khoản",
       "BAN_USER": "Cấm vĩnh viễn",
-      "DELETE_NOTE": "Xóa ghi chú"
+      "DELETE_NOTE": "Xóa ghi chú",
+      "DELETE_HIGHLIGHT_REPLY": "Xóa trả lời"
     },
     "subjectType": {
       "POST": "Bài viết",
       "USER": "Tác giả",
       "COMMENT": "Bình luận",
-      "NOTE": "Ghi chú"
+      "NOTE": "Ghi chú",
+      "HIGHLIGHT_REPLY": "Trả lời đánh dấu"
     },
     "removed": "Đã hủy xuất bản",
     "reasons": {
@@ -3754,7 +3771,9 @@
     "actionConfirm": {
       "UNPUBLISH_POST": "Hủy xuất bản bài này? Nó rời khỏi dòng tin công khai (tác giả vẫn giữ bản nháp).",
       "DELETE_COMMENT": "Xóa bình luận này? Không thể hoàn tác.",
-      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược."
+      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược.",
+      "DELETE_HIGHLIGHT_REPLY": "Xóa trả lời đánh dấu này? Không thể hoàn tác.",
+      "DELETE_NOTE": "Xóa ghi chú này? Không thể hoàn tác."
     },
     "suspendDaysPrompt": "Tạm ngưng trong bao nhiêu ngày?",
     "suspendDaysInvalid": "Nhập số từ 1 trở lên."
@@ -4358,7 +4377,7 @@
     "pollBackToVote": "Quay lại bình chọn",
     "pollVoteFailed": "Không thể bình chọn",
     "pollOptionPlaceholder": "Lựa chọn {n}",
-    "pollRemoveOption": "Xóa lựa chọn",
+    "pollRemoveOption": "Bỏ lựa chọn",
     "pollAddOption": "Thêm lựa chọn",
     "pollDuration": "Thời hạn",
     "pollMinutes": "{count} phút",
@@ -4366,7 +4385,7 @@
     "pollDays": "{count} ngày",
     "pollMultiple": "Chọn nhiều",
     "pollAdd": "Thêm bình chọn",
-    "pollRemove": "Xóa bình chọn",
+    "pollRemove": "Bỏ bình chọn",
     "muteMenu": "Tắt tiếng…",
     "unmute": "Bật tiếng",
     "mute": "Tắt tiếng",
@@ -4512,6 +4531,15 @@
     "suggestionsDismiss": "Không gợi ý {name}",
     "threadMore": "Thêm {count} trong chuỗi",
     "threadPosition": "Phần {position} của chuỗi",
+    "replyingToAuthor": "Trả lời @{username}",
+    "replyParentGone": "Không xem được bài gốc",
+    "emptyReplies": "Chưa có trả lời nào",
+    "emptyMedia": "Chưa có ảnh nào",
+    "mediaNoAlt": "Ảnh",
+    "mediaCount": "{count} ảnh",
+    "mediaSensitive": "Nội dung nhạy cảm",
+    "profileRepliesTitle": "Trả lời · @{username}",
+    "profileMediaTitle": "Phương tiện · @{username}",
     "drafts": "Bản nháp {count}",
     "draftsTitle": "Bản nháp",
     "draftsEmpty": "Chưa có bản nháp nào",

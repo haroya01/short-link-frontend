@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 /**
  * Blocking someone, in MOCK-ON. The mock session is @dohyun and the mock block list starts with
@@ -35,7 +36,7 @@ test("blocking from a profile hides their posts, notes and follow button, and un
   await expect(page.locator('main a[href^="/ko/p/yuna/"][href$="kyoto-workation"]')).toHaveCount(0);
 
   await notice.getByRole("button", { name: "차단 해제" }).click();
-  await expect(page.getByText("yuna님의 차단을 해제했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "yuna님의 차단을 해제했어요"));
   await expect(notice).toHaveCount(0);
   await expect(page.locator('main a[href$="/kyoto-workation"]').first()).toBeVisible();
   await expect(follow).toHaveText("팔로우");
@@ -74,6 +75,6 @@ test("settings list blocked accounts and unblock them", async ({ page }) => {
   const section = page.getByRole("region", { name: "차단한 사용자" });
   await expect(section.getByRole("link", { name: "@mallory" })).toBeVisible({ timeout: 30_000 });
   await section.getByRole("button", { name: "mallory님 차단 해제" }).click();
-  await expect(page.getByText("mallory님의 차단을 해제했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "mallory님의 차단을 해제했어요"));
   await expect(section).toContainText("차단한 사용자가 없어요.");
 });

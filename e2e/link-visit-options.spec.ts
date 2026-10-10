@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 import { mockLinksResponse } from "../lib/api/_links-mocks";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 const CODE = "e2eVisit";
 
@@ -57,7 +58,7 @@ test.describe("visit options", () => {
     await section.getByRole("combobox").selectOption({ label: "앱 받기" });
     await section.getByRole("button", { name: "저장" }).click();
 
-    await expect(page.getByText("저장했어요.")).toBeVisible();
+    await expectOnTop(toastBy(page, "저장했어요."));
     expect(sent).toEqual({ splash: { enabled: true, message: "쿠폰 SPRING20", seconds: 5, ctaId: 9 } });
   });
 
@@ -77,7 +78,7 @@ test.describe("visit options", () => {
     await section.getByLabel("여는 시각").fill("2099-05-01T10:30");
     await section.getByRole("button", { name: "저장" }).click();
 
-    await expect(page.getByText("저장했어요.")).toBeVisible();
+    await expectOnTop(toastBy(page, "저장했어요."));
     expect(sent?.opensAt).toBe(await page.evaluate(() => new Date("2099-05-01T10:30").toISOString()));
   });
 
@@ -98,7 +99,7 @@ test.describe("visit options", () => {
     await section.getByLabel("만료 시 안내 메시지 (선택)").fill("행사가 끝났어요");
     await section.getByRole("button", { name: "저장" }).click();
 
-    await expect(page.getByText("저장했어요.")).toBeVisible();
+    await expectOnTop(toastBy(page, "저장했어요."));
     expect(sent?.expiresAt).toBe(await page.evaluate(() => new Date("2099-06-01T18:00").toISOString()));
     expect(sent?.expiredMessage).toBe("행사가 끝났어요");
   });
@@ -136,7 +137,7 @@ test.describe("visit options", () => {
     await section.getByLabel("닫는 시각").fill("2099-08-01T18:00");
     await section.getByRole("button", { name: "저장" }).click();
 
-    await expect(page.getByText("저장했어요.")).toBeVisible();
+    await expectOnTop(toastBy(page, "저장했어요."));
     expect(order).toEqual(["expiry", "opens"]);
   });
 

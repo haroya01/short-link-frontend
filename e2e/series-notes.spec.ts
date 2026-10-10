@@ -1,4 +1,5 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 /**
  * Notes inside a series, in MOCK-ON. The mock author @dohyun (also the mock session) keeps
@@ -156,18 +157,18 @@ test("a note's menu puts it into one of my series or a new one", async ({ page }
 
   let dialog = await openDialog();
   await dialog.getByRole("button", { name: /로컬 예시 시리즈/ }).click();
-  await expect(page.getByText("‘로컬 예시 시리즈’에 넣었어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "‘로컬 예시 시리즈’에 넣었어요"));
   await expect(dialog).toHaveCount(0);
 
   dialog = await openDialog();
   await expect(dialog.getByRole("button", { name: /로컬 예시 시리즈/ })).toContainText("1편");
   await dialog.getByRole("button", { name: /로컬 예시 시리즈/ }).click();
-  await expect(page.getByText("이미 ‘로컬 예시 시리즈’에 있어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "이미 ‘로컬 예시 시리즈’에 있어요"));
 
   dialog = await openDialog();
   await dialog.getByRole("textbox", { name: "새 시리즈 이름" }).fill("산책 기록");
   await dialog.getByRole("button", { name: "만들고 넣기" }).click();
-  await expect(page.getByText("‘산책 기록’에 넣었어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "‘산책 기록’에 넣었어요"));
 
   const someoneElse = page.locator('article[data-note-id="3"]');
   await someoneElse.getByRole("button", { name: "노트 메뉴" }).click();

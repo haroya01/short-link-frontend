@@ -23,6 +23,7 @@ export function NoteList({
   repostedBy,
   showsPin = false,
   filterContext,
+  contextFor,
 }: {
   load: (page: number) => Promise<NoteFeed>;
   initial?: NoteFeed | null;
@@ -32,6 +33,7 @@ export function NoteList({
   repostedBy?: string;
   showsPin?: boolean;
   filterContext?: NoteFilterContext;
+  contextFor?: (note: Note) => React.ReactNode;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -114,6 +116,7 @@ export function NoteList({
                   repostedBy={repostedBy ?? note.repostedBy?.username}
                   onQuoted={onQuoted}
                   showsPin={showsPin}
+                  context={contextFor?.(note)}
                   position={next && thread ? `1/${thread.total}` : undefined}
                   filteredBy={(() => {
                     const verdict = verdicts.get(note.id);

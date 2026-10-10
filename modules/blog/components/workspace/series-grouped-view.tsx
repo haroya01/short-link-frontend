@@ -558,7 +558,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                         >
                           {entry.post.title || entry.post.slug}
                         </BlogLink>
-                        <PostStatusBadge status={entry.post.status} />
+                        <PostStatusBadge status={entry.post.status} takenDown={entry.post.takenDown} />
                       </>
                     ) : (
                       <>
@@ -782,7 +782,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                   <span className="min-w-0 flex-1 truncate text-sm text-slate-800 dark:text-slate-200">
                     {p.title || p.slug}
                   </span>
-                  <PostStatusBadge status={p.status} />
+                  <PostStatusBadge status={p.status} takenDown={p.takenDown} />
                 </BlogLink>
               </li>
             ))}

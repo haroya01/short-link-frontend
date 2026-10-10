@@ -88,6 +88,7 @@ export function useOptimisticToggle({
   mutate,
   syncKey,
   signInReason,
+  onError,
 }: {
   depKey: string | number;
   initialOn?: boolean;
@@ -97,6 +98,7 @@ export function useOptimisticToggle({
   mutate: (next: boolean) => Promise<ToggleState>;
   syncKey?: string;
   signInReason: SignInReason;
+  onError?: (error: unknown) => void;
 }) {
   const { authenticated, ready } = useAuth();
   const { toast } = useToast();
@@ -160,7 +162,8 @@ export function useOptimisticToggle({
       const c = entryFor(key, initRef.current).state;
       emit(key, { on: !next, count: tracksCount ? (c.count ?? 0) + (next ? -1 : 1) : c.count });
       // 조용한 롤백은 "눌렀는데 스스로 꺼졌다"로 읽힌다 — 실패였음을 한 줄로 알린다.
-      toast(errorMessage(e, tErr("toggleFailed")), "error");
+      if (onError) onError(e);
+      else toast(errorMessage(e, tErr("toggleFailed")), "error");
     } finally {
       setBusy(false);
     }

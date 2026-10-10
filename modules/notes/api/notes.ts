@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { mockFails } from "@/lib/api/mock-fail";
 import { stripImageMetadata } from "@/lib/image-resize";
 import {
   fetchPublic,
@@ -598,6 +599,72 @@ export function fetchAuthorReposts(username: string): Promise<FetchResult<NoteFe
   );
 }
 
+/** What a profile reply answered. Null when the parent is gone, unheard or not readable by this viewer;
+ *  `excerpt` is null when the parent carries a content warning. */
+export interface ReplyingTo {
+  id: number;
+  author: NoteAuthor;
+  excerpt: string | null;
+  contentWarning: string | null;
+}
+
+export interface ProfileReply {
+  note: Note;
+  replyingTo: ReplyingTo | null;
+}
+
+export interface ProfileRepliesFeed {
+  items: ProfileReply[];
+  page: number;
+  hasNext: boolean;
+}
+
+/** One grid cell of the media tab: the note's first attachment and how many it has. */
+export interface ProfileMediaItem {
+  noteId: number;
+  createdAt: string;
+  media: NoteMedia;
+  mediaCount: number;
+  sensitive: boolean;
+  contentWarning: string | null;
+}
+
+export interface ProfileMediaFeed {
+  items: ProfileMediaItem[];
+  page: number;
+  hasNext: boolean;
+}
+
+export function listAuthorReplies(username: string, page = 0): Promise<ProfileRepliesFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockAuthorReplies(username, page));
+  return request<ProfileRepliesFeed>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/replies?page=${page}&size=20`,
+    { method: "GET" },
+  );
+}
+
+export function fetchAuthorReplies(username: string): Promise<FetchResult<ProfileRepliesFeed>> {
+  if (noteMocks) return Promise.resolve({ ok: true, data: noteMocks.mockAuthorReplies(username, 0) });
+  return fetchPublic<ProfileRepliesFeed>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/replies?page=0&size=20`,
+  );
+}
+
+export function listAuthorMedia(username: string, page = 0): Promise<ProfileMediaFeed> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockAuthorMedia(username, page));
+  return request<ProfileMediaFeed>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/media?page=${page}&size=30`,
+    { method: "GET" },
+  );
+}
+
+export function fetchAuthorMedia(username: string): Promise<FetchResult<ProfileMediaFeed>> {
+  if (noteMocks) return Promise.resolve({ ok: true, data: noteMocks.mockAuthorMedia(username, 0) });
+  return fetchPublic<ProfileMediaFeed>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/media?page=0&size=30`,
+  );
+}
+
 /** Server-side, anonymous first page for the public notes tab. */
 export function fetchAuthorNotes(username: string): Promise<FetchResult<NoteFeed>> {
   if (noteMocks) return Promise.resolve({ ok: true, data: noteMocks.mockAuthorNotes(username, 0) });
@@ -716,7 +783,10 @@ export function deleteNote(id: number): Promise<void> {
 }
 
 export function setNoteLike(id: number, on: boolean): Promise<{ liked: boolean; likeCount: number }> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockLike(id, on));
+  if (noteMocks) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
+    return Promise.resolve(noteMocks.mockLike(id, on));
+  }
   return request(`/api/v1/notes/${id}/like`, { method: on ? "PUT" : "DELETE" });
 }
 

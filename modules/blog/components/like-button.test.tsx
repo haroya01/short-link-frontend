@@ -69,10 +69,10 @@ describe("like failure", () => {
     expect(button.getAttribute("aria-pressed")).toBe("false");
   });
 
-  it("keeps the retry copy for failures the server gave no reason for", async () => {
+  it("says the like didn't go through when the server gave no reason", async () => {
     mocks.like.mockRejectedValueOnce(new TypeError("Failed to fetch"));
     const button = await mountAndClick(102);
-    expect(mocks.toast).toHaveBeenCalledWith("errors.toggleFailed", "error");
+    expect(mocks.toast).toHaveBeenCalledWith("errors.likeFailed", "error");
     expect(button.getAttribute("aria-pressed")).toBe("false");
   });
 });

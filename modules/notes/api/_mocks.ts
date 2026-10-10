@@ -17,6 +17,8 @@ import type {
   NoteReplyPolicy,
   NoteThread,
   PostQuotes,
+  ProfileMediaFeed,
+  ProfileRepliesFeed,
   RemoteAccount,
   ScheduledNote,
   TrendingNoteLink,
@@ -645,6 +647,58 @@ export function mockAuthorReposts(username: string, page: number): NoteFeed {
       .map((id) => notes.find((n) => n.id === id))
       .filter((n): n is Note => n !== undefined)
       .map((n) => ({ ...n, repostedByMe: reposts.get(ME.username)?.includes(n.id) ?? false })),
+    page,
+    hasNext: false,
+  };
+}
+
+// 부모가 지워졌거나 이 서버에 오지 않은 답글 — 프로필 답글 탭은 이런 답글도 남기고 replyingTo 를 비운다.
+const ORPHAN_REPLY = note({
+  id: 990,
+  body: "그때 말한 책, 결국 끝까지 읽었어요.",
+  author: ME,
+  inReplyToId: 9990,
+  createdAt: "2026-10-01T09:00:00Z",
+});
+
+export function mockAuthorReplies(username: string, page: number): ProfileRepliesFeed {
+  if (page > 0) return { items: [], page, hasNext: false };
+  const replies = [...notes, ...(username === ME.username ? [ORPHAN_REPLY] : [])]
+    .filter((n) => n.author.username === username && n.inReplyToId !== null)
+    .map((n) => ({ reply: n, parent: notes.find((p) => p.id === n.inReplyToId) ?? null }))
+    .filter(({ parent }) => parent?.author.username !== username)
+    .sort((a, b) => b.reply.createdAt.localeCompare(a.reply.createdAt));
+  return {
+    items: replies.map(({ reply, parent }) => ({
+      note: reply,
+      replyingTo: parent
+        ? {
+            id: parent.id,
+            author: parent.author,
+            excerpt: parent.contentWarning ? null : parent.body.slice(0, 80),
+            contentWarning: parent.contentWarning ?? null,
+          }
+        : null,
+    })),
+    page,
+    hasNext: false,
+  };
+}
+
+export function mockAuthorMedia(username: string, page: number): ProfileMediaFeed {
+  if (page > 0) return { items: [], page, hasNext: false };
+  return {
+    items: notes
+      .filter((n) => n.author.username === username && n.media.length > 0)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .map((n) => ({
+        noteId: n.id,
+        createdAt: n.createdAt,
+        media: n.media[0],
+        mediaCount: n.media.length,
+        sensitive: Boolean(n.sensitive || n.contentWarning),
+        contentWarning: n.contentWarning ?? null,
+      })),
     page,
     hasNext: false,
   };
