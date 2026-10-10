@@ -2,7 +2,8 @@
 
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { EmptyState } from "@/components/common/empty-state";
+import { Search } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { searchNotes } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
 
@@ -14,7 +15,7 @@ export function SearchedNotes({ query }: { query: string }) {
       key={query}
       load={load}
       filterContext="public"
-      empty={<EmptyState title={t("searchNotesEmpty", { q: query })} className="mt-8" />}
+      empty={<BlogEmpty icon={Search} title={t("searchNoNotes")} />}
     />
   );
 }

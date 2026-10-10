@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { QuotedPost } from "@/modules/notes/api/notes";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 export function QuotedPostCard({ post, linked = true }: { post: QuotedPost; linked?: boolean }) {
   const locale = useLocale();
@@ -14,7 +15,10 @@ export function QuotedPostCard({ post, linked = true }: { post: QuotedPost; link
         <span className="truncate font-semibold text-slate-900 dark:text-slate-100">{post.authorUsername}</span>
         <span className="shrink-0 text-slate-500 dark:text-slate-400">· {t("quotedPostKind")}</span>
       </span>
-      <span className="mt-1 block text-[15px] font-medium leading-snug text-slate-800 dark:text-slate-200">
+      <span
+        lang={contentLang(post.title)}
+        className="mt-1 block text-[15px] font-medium leading-snug text-slate-800 dark:text-slate-200"
+      >
         {post.title}
       </span>
     </>

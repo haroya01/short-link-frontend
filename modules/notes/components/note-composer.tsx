@@ -609,7 +609,7 @@ export function NoteComposer({
       )}
       <div className="pl-12">
         {open && (
-          <div className="-ml-1.5 mt-1 flex items-center gap-3">
+          <div className="-ml-1.5 mt-1 flex flex-wrap items-center gap-x-3 gap-y-2">
             <input
               ref={fileInput}
               type="file"
@@ -696,38 +696,39 @@ export function NoteComposer({
                 <Clock className="h-5 w-5" strokeWidth={scheduledAt ? 2.25 : 1.75} aria-hidden />
               </button>
             )}
-            <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
-              <VisibilityIcon visibility={visibility ?? "public"} className="h-3.5 w-3.5 shrink-0" />
-              <select
-                value={visibility ?? ""}
-                onChange={(e) => setVisibility((e.target.value || null) as NoteVisibility | null)}
-                aria-label={t("visibilityLabel")}
-                className="focus-ring min-w-0 cursor-pointer appearance-none truncate rounded bg-transparent pr-1 hover:text-slate-800 dark:hover:text-slate-200"
-              >
-                {inReplyToId && <option value="">{t("visibilitySameAsParent")}</option>}
-                <option value="public">{t("visibilityPublic")}</option>
-                <option value="unlisted">{t("visibilityUnlisted")}</option>
-                <option value="private">{t("visibilityPrivate")}</option>
-                <option value="direct">{t("visibilityDirect")}</option>
-              </select>
-            </label>
-
-            <div className="ml-auto flex items-center gap-3">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                aria-label={t("languageLabel")}
-                title={languageName(language)}
-                className="focus-ring cursor-pointer appearance-none rounded bg-transparent text-[13px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-              >
-                {NOTE_LANGUAGES.map((code) => (
-                  <option key={code} value={code}>
-                    {languageName(code)}
-                  </option>
-                ))}
-              </select>
-              <NoteLengthRing length={length} />
-              {submitButton}
+            <div className="flex min-w-0 flex-auto items-center gap-3">
+              <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
+                <VisibilityIcon visibility={visibility ?? "public"} className="h-3.5 w-3.5 shrink-0" />
+                <select
+                  value={visibility ?? ""}
+                  onChange={(e) => setVisibility((e.target.value || null) as NoteVisibility | null)}
+                  aria-label={t("visibilityLabel")}
+                  className="focus-ring min-w-0 cursor-pointer appearance-none truncate rounded bg-transparent pr-1 hover:text-slate-800 dark:hover:text-slate-200"
+                >
+                  {inReplyToId && <option value="">{t("visibilitySameAsParent")}</option>}
+                  <option value="public">{t("visibilityPublic")}</option>
+                  <option value="unlisted">{t("visibilityUnlisted")}</option>
+                  <option value="private">{t("visibilityPrivate")}</option>
+                  <option value="direct">{t("visibilityDirect")}</option>
+                </select>
+              </label>
+              <div className="ml-auto flex shrink-0 items-center gap-3">
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  aria-label={t("languageLabel")}
+                  title={languageName(language)}
+                  className="focus-ring cursor-pointer appearance-none rounded bg-transparent text-[13px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                >
+                  {NOTE_LANGUAGES.map((code) => (
+                    <option key={code} value={code}>
+                      {languageName(code)}
+                    </option>
+                  ))}
+                </select>
+                <NoteLengthRing length={length} />
+                {submitButton}
+              </div>
             </div>
           </div>
         )}

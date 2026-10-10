@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 // Matches @username (the backend's handle grammar); the lookbehind keeps it out of emails (foo@bar).
 const MENTION_RE = /(?<![A-Za-z0-9_])@([a-z0-9][a-z0-9_]{2,15})/g;
@@ -151,5 +152,9 @@ export function CommentBody({
     while (i < lines.length && lines[i].trim() !== "" && !/^(```|> |[-*] )/.test(lines[i])) para.push(lines[i++]);
     out.push(<p key={k++}>{renderInline(para.join(" "), locale, `p${k}`, mentions)}</p>);
   }
-  return <div className="space-y-1.5">{out}</div>;
+  return (
+    <div lang={contentLang(text)} className="space-y-1.5">
+      {out}
+    </div>
+  );
 }

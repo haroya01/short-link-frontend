@@ -8,6 +8,7 @@ import {
 } from "@/modules/blog/api/collections";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { END_SECTION } from "@/modules/blog/components/end-section";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { KindredCurators } from "@/modules/blog/components/kindred-curators";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -54,7 +55,7 @@ export async function PostEdges({
   const t = await getTranslations("collections");
 
   return (
-    <section className="mt-12 border-t border-slate-100 pt-8 dark:border-slate-800/80">
+    <section className={END_SECTION}>
       {collections.length > 0 && (
         <div>
           <RailHeading>{t("postEdgesPathsTitle")}</RailHeading>

@@ -21,6 +21,12 @@ describe("comment mentions", () => {
     expect(root.textContent).toBe(text.replaceAll("**", ""));
   });
 
+  it("carries the language the comment is written in, whatever the page language", () => {
+    expect(render("트레이드오프 정리가 깔끔하네요").firstElementChild?.getAttribute("lang")).toBe("ko");
+    expect(render("読者が迷わないことだと気づきました").firstElementChild?.getAttribute("lang")).toBe("ja");
+    expect(render("nice write-up").firstElementChild?.hasAttribute("lang")).toBe(false);
+  });
+
   it("keeps linking every handle where the server has not checked them, like the composer preview", () => {
     const root = render("@minji @nobody_here");
     expect([...root.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["@minji", "@nobody_here"]);

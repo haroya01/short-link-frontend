@@ -145,7 +145,9 @@ export default async function PublicSeriesPage({
         </span>
       </BlogLink>
       {author.bio && (
-        <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{author.bio}</p>
+        <p lang={contentLang(author.bio)} className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+          {author.bio}
+        </p>
       )}
       <FollowButton username={author.username} initialFollowerCount={0} compact quiet />
       <BlogLink

@@ -60,3 +60,20 @@ describe("a note list with a blocked author", () => {
     expect(authors()).toEqual(["yuna", "haruka"]);
   });
 });
+
+describe("a note list still loading", () => {
+  it("shows note-shaped placeholders and announces loading, not a blank gap", async () => {
+    mocks.listBlockedUsers.mockResolvedValue([]);
+    const { NoteList } = await import("./note-list");
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () =>
+      root.render(createElement(NoteList, { load: () => new Promise<NoteFeed>(() => {}), empty: "empty" })),
+    );
+    const skeleton = host.querySelector('[data-testid="note-list-skeleton"]')!;
+    expect(skeleton.getAttribute("aria-busy")).toBe("true");
+    expect(skeleton.querySelector('[role="status"]')!.textContent).toBe("loading");
+    expect(host.textContent).not.toContain("empty");
+  });
+});

@@ -23,6 +23,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { notificationHref } from "@/modules/notifications/lib/notification-href";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
@@ -274,6 +275,7 @@ export function NotificationItem({
         </span>
         {subtitle && (
           <span
+            lang={contentLang(subtitle)}
             className={cn(
               "mt-0.5 block truncate",
               roomy ? "text-[13px]" : "text-[12px]",
