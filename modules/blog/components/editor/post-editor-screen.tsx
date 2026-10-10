@@ -207,6 +207,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           ) : null
         }
         error={ed.error}
+        slugError={ed.slugError}
         saving={ed.saving}
         busy={ed.busy}
         onSave={ed.save}
