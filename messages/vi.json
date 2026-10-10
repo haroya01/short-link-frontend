@@ -1002,6 +1002,8 @@
     "like_group": "<b>{actor}</b> và {others} người khác đã thích bài của bạn",
     "comment_like": "<b>{actor}</b> đã thích bình luận của bạn",
     "comment_like_group": "<b>{actor}</b> và {others} người khác đã thích bình luận của bạn",
+    "highlight_reply_like": "<b>{actor}</b> đã thích trả lời của bạn trên một đánh dấu",
+    "highlight_reply_like_group": "<b>{actor}</b> và {others} người khác đã thích trả lời của bạn trên một đánh dấu",
     "highlight": "<b>{actor}</b> đã đánh dấu bài của bạn",
     "highlight_group": "<b>{actor}</b> và {others} người khác đã đánh dấu bài của bạn",
     "post_quote": "<b>{actor}</b> đã trích dẫn bài của bạn trong một ghi chú",

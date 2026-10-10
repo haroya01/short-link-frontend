@@ -1002,6 +1002,8 @@
     "like_group": "<b>{actor}</b>さんほか{others}人が記事にいいねしました",
     "comment_like": "<b>{actor}</b>さんがあなたのコメントにいいねしました",
     "comment_like_group": "<b>{actor}</b>さんほか{others}人があなたのコメントにいいねしました",
+    "highlight_reply_like": "<b>{actor}</b>さんがハイライトへのあなたの返信にいいねしました",
+    "highlight_reply_like_group": "<b>{actor}</b>さんほか{others}人がハイライトへのあなたの返信にいいねしました",
     "highlight": "<b>{actor}</b>さんがあなたの記事にハイライトを付けました",
     "highlight_group": "<b>{actor}</b>さんほか{others}人があなたの記事にハイライトを付けました",
     "post_quote": "<b>{actor}</b>さんがノートであなたの記事を引用しました",

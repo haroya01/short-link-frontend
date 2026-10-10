@@ -1002,6 +1002,8 @@
     "like_group": "<b>{actor}</b> and {others, plural, one {# other} other {# others}} liked your post",
     "comment_like": "<b>{actor}</b> liked your comment",
     "comment_like_group": "<b>{actor}</b> and {others, plural, one {# other} other {# others}} liked your comment",
+    "highlight_reply_like": "<b>{actor}</b> liked your reply to a highlight",
+    "highlight_reply_like_group": "<b>{actor}</b> and {others, plural, one {# other} other {# others}} liked your reply to a highlight",
     "highlight": "<b>{actor}</b> highlighted your post",
     "highlight_group": "<b>{actor}</b> and {others, plural, one {# other} other {# others}} highlighted your post",
     "post_quote": "<b>{actor}</b> quoted your post in a note",

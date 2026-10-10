@@ -1002,6 +1002,8 @@
     "like_group": "<b>{actor}</b>님 외 {others}명이 내 글을 좋아해요",
     "comment_like": "<b>{actor}</b>님이 내 댓글을 좋아해요",
     "comment_like_group": "<b>{actor}</b>님 외 {others}명이 내 댓글을 좋아해요",
+    "highlight_reply_like": "<b>{actor}</b>님이 하이라이트에 단 내 답글을 좋아해요",
+    "highlight_reply_like_group": "<b>{actor}</b>님 외 {others}명이 하이라이트에 단 내 답글을 좋아해요",
     "highlight": "<b>{actor}</b>님이 내 글에 하이라이트를 남겼어요",
     "highlight_group": "<b>{actor}</b>님 외 {others}명이 내 글에 하이라이트를 남겼어요",
     "post_quote": "<b>{actor}</b>님이 노트에서 내 글을 인용했어요",
