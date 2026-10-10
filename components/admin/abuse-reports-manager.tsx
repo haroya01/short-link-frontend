@@ -39,6 +39,7 @@ const ACTION_DESTRUCTIVE: Record<AbuseAction, boolean> = {
   SUSPEND_USER: false,
   BAN_USER: true,
   DELETE_NOTE: true,
+  DELETE_HIGHLIGHT_REPLY: true,
 };
 
 /**

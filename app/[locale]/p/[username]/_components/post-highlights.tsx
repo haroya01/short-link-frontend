@@ -15,8 +15,10 @@ import {
   createHighlightReply,
   deleteHighlight,
   deleteHighlightReply,
+  likeHighlightReply,
   listHighlightReplies,
   listHighlights,
+  unlikeHighlightReply,
   type HighlightReplyView,
   type HighlightView,
   type NewHighlight,
@@ -35,7 +37,7 @@ import {
 } from "@/modules/blog/api/collections";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
-import { ConversationRow } from "@/modules/blog/components/conversation-row";
+import { ConversationLike, ConversationRow } from "@/modules/blog/components/conversation-row";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -736,6 +738,30 @@ function HighlightThread({
     }
   }
 
+  async function toggleLike(reply: HighlightReplyView) {
+    if (!ready) return;
+    if (!authenticated) {
+      const back = threadAddress();
+      onClose();
+      askToSignIn("like", back);
+      return;
+    }
+    const liked = !reply.liked;
+    const flip = (on: boolean) =>
+      setReplies((prev) =>
+        prev.map((r) =>
+          r.id === reply.id ? { ...r, liked: on, likeCount: Math.max(0, r.likeCount + (on ? 1 : -1)) } : r,
+        ),
+      );
+    flip(liked);
+    try {
+      const status = liked ? await likeHighlightReply(reply.id) : await unlikeHighlightReply(reply.id);
+      setReplies((prev) => prev.map((r) => (r.id === reply.id ? { ...r, ...status } : r)));
+    } catch {
+      flip(!liked);
+    }
+  }
+
   const fmt = useCompactTime();
 
   return (
@@ -825,23 +851,37 @@ function HighlightThread({
                     createdAt={r.createdAt}
                     time={fmt(r.createdAt)}
                     menu={
-                      authenticated && r.author?.username && r.author.id !== meId ? (
-                        <CommentMenu authorUsername={r.author.username} canReport={false} layerClassName="z-[70]" />
+                      meId == null || r.author?.id !== meId ? (
+                        <CommentMenu
+                          subjectType="HIGHLIGHT_REPLY"
+                          subjectId={r.id}
+                          authorUsername={r.author?.username ?? null}
+                          canReport
+                          layerClassName="z-[70]"
+                        />
                       ) : undefined
                     }
                     onDelete={meId != null && r.author?.id === meId ? () => void remove(r.id) : undefined}
                     deleteLabel={t("highlightReplyDelete")}
                     actions={
-                      authenticated && r.author?.username && r.author.id !== meId ? (
-                        <button
-                          type="button"
-                          onClick={() => replyTo(r.author!.username)}
-                          className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
-                        >
-                          <CornerDownRight className="h-3.5 w-3.5" aria-hidden />
-                          {tComments("reply")}
-                        </button>
-                      ) : undefined
+                      <>
+                        <ConversationLike
+                          liked={r.liked}
+                          count={r.likeCount}
+                          label={tComments("like")}
+                          onToggle={() => void toggleLike(r)}
+                        />
+                        {authenticated && r.author?.username && r.author.id !== meId && (
+                          <button
+                            type="button"
+                            onClick={() => replyTo(r.author!.username)}
+                            className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+                          >
+                            <CornerDownRight className="h-3.5 w-3.5" aria-hidden />
+                            {tComments("reply")}
+                          </button>
+                        )}
+                      </>
                     }
                   >
                     <CommentBody text={r.body} locale={locale} mentions={r.mentions} />

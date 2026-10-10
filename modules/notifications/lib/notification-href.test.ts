@@ -169,6 +169,15 @@ describe("notificationHref", () => {
     ).toBe("/ko/p/owner/my-post#comment-71");
   });
 
+  it("opens the highlight's thread for a like on a highlight reply, whoever owns the post", () => {
+    expect(notificationHref(item({ type: "COMMENT_LIKE", highlightId: 4001 }), "me", "ko")).toBe(
+      "/ko/p/me/my-post?highlightId=4001&thread=1",
+    );
+    expect(
+      notificationHref(item({ type: "COMMENT_LIKE", postAuthorUsername: "sora", highlightId: 4001 }), "me", "ko"),
+    ).toBe("/ko/p/sora/my-post?highlightId=4001&thread=1");
+  });
+
   it("opens the newest highlight on the recipient's post", () => {
     expect(notificationHref(item({ type: "HIGHLIGHT", highlightId: 42 }), "me", "ko")).toBe(
       "/ko/p/me/my-post?highlightId=42&thread=1",

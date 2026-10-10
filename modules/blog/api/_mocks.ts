@@ -166,13 +166,17 @@ const SEEDED_HIGHLIGHTS: HighlightView[] = [
 
 const SEEDED_REPLIES: Record<number, HighlightReplyView[]> = {
   4001: [
-    { id: 6001, author: AUTHORS.haruka, body: "저도 이 기준으로 봐요.", createdAt: "2026-05-22T11:00:00Z" },
-    { id: 6002, author: AUTHORS.rin, body: "부하 조건을 더 적어 주면 좋겠어요.", createdAt: "2026-05-22T12:00:00Z" },
+    { id: 6001, author: AUTHORS.haruka, body: "저도 이 기준으로 봐요.", createdAt: "2026-05-22T11:00:00Z", likeCount: 2, liked: false },
+    { id: 6002, author: AUTHORS.rin, body: "부하 조건을 더 적어 주면 좋겠어요.", createdAt: "2026-05-22T12:00:00Z", likeCount: 0, liked: false },
   ],
 };
 
 const visibleTo = (viewer: boolean) => (author: PublicAuthor | null) =>
   !viewer || !MOCK_BLOCKS_VIEWER.has(author?.username ?? "");
+
+export function mockSeededReply(id: number): HighlightReplyView | undefined {
+  return Object.values(SEEDED_REPLIES).flat().find((reply) => reply.id === id);
+}
 
 export function mockSeededReplies(highlightId: number, viewer: boolean): HighlightReplyView[] {
   return (SEEDED_REPLIES[highlightId] ?? []).filter((reply) => visibleTo(viewer)(reply.author));

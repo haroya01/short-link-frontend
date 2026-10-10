@@ -9,14 +9,16 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { useBlockAuthor } from "@/modules/notes/components/use-block-author";
 
-/** ⋯ on someone else's comment: block its writer, report the comment. Nothing to offer → no button. */
+/** ⋯ on someone else's comment or highlight reply: block its writer, report it. Nothing to offer → no button. */
 export function CommentMenu({
-  commentId,
+  subjectType = "COMMENT",
+  subjectId,
   authorUsername,
   canReport,
   layerClassName,
 }: {
-  commentId?: number;
+  subjectType?: "COMMENT" | "HIGHLIGHT_REPLY";
+  subjectId?: number;
   authorUsername: string | null;
   canReport: boolean;
   layerClassName?: string;
@@ -78,8 +80,14 @@ export function CommentMenu({
           )}
         </div>
       )}
-      {canReport && commentId != null && (
-        <ReportButton subjectType="COMMENT" subjectId={commentId} open={reporting} onOpenChange={setReporting} />
+      {canReport && subjectId != null && (
+        <ReportButton
+          subjectType={subjectType}
+          subjectId={subjectId}
+          open={reporting}
+          onOpenChange={setReporting}
+          layerClassName={layerClassName}
+        />
       )}
       {confirmDialog}
     </div>

@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-// Mock lane: the inbox carries grouped likes and highlights on a post, a liked comment, a note that
-// quoted a post and a post that quoted a note — the post side reads like the note side.
+// Mock lane: the inbox carries grouped likes and highlights on a post, a liked comment, a liked highlight
+// reply on sora's post, a note that quoted a post and a post that quoted a note — the post side reads like
+// the note side.
 test.use({ viewport: { width: 1280, height: 900 } });
 
 test("post notices group and quote the way note notices do, and open their spot", async ({ page }) => {
@@ -20,6 +21,11 @@ test("post notices group and quote the way note notices do, and open their spot"
     "href",
     /\/p\/dohyun\/typescript-generics#comment-7$/,
   );
+  await expect(main.getByRole("link", { name: /haruka님이 하이라이트에 단 내 답글을 좋아해요/ })).toHaveAttribute(
+    "href",
+    /\/p\/sora\/posthog-funnel\?highlightId=4001&thread=1$/,
+  );
+  await expect(main.getByRole("link", { name: /haruka님이 내 댓글을 좋아해요/ })).toHaveCount(0);
   await expect(main.getByRole("link", { name: /yuna님이 노트에서 내 글을 인용했어요, 제네릭은/ })).toHaveAttribute(
     "href",
     /\/p\/yuna\/notes\/6$/,
