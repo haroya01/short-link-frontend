@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { markdownLead } from "./markdown-lead";
+import { markdownLead, markdownPlain } from "./markdown-lead";
 
 describe("markdownLead", () => {
   it("passes over a bold table of contents and its list to the first real paragraph", () => {
@@ -56,5 +56,17 @@ describe("markdownLead", () => {
 
   it("cuts a long lead at the limit", () => {
     expect(markdownLead("가".repeat(10), 4)).toBe("가가가가…");
+  });
+});
+
+describe("markdownPlain", () => {
+  it("shows a comment note's links, emphasis and code as the words a reader sees", () => {
+    expect(markdownPlain("[자세히](https://example.com/docs) 보세요")).toBe("자세히 보세요");
+    expect(markdownPlain("**굵게** *기울임* `code`")).toBe("굵게 기울임 code");
+    expect(markdownPlain("<https://kurl.me/a>")).toBe("https://kurl.me/a");
+  });
+
+  it("joins lines and drops list and quote markers", () => {
+    expect(markdownPlain("> 인용\n- 하나\n- 둘")).toBe("인용 하나 둘");
   });
 });
