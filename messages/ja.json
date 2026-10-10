@@ -730,7 +730,9 @@
     "followCuratorHint": "このキュレーターがつなぐコレクションをたどって読む",
     "following": "フォロー中",
     "followers": "フォロワー {count, number}",
-    "followingCount": "フォロー中 {count, number}",
+    "countFollowers": "フォロワー <n>{count, number}</n>",
+    "countFollowing": "フォロー中 <n>{count, number}</n>",
+    "countPosts": "記事 <n>{count, number}</n>本",
     "followersTab": "フォロワー",
     "followingTab": "フォロー中",
     "followersEmpty": "まだフォロワーがいません。",
@@ -774,8 +776,6 @@
       "OTHER": "その他"
     },
     "publishedCelebration": "公開されました",
-    "followersList": "フォロワー",
-    "followingList": "フォロー中",
     "callout": {
       "note": "ノート",
       "tip": "ヒント",
@@ -783,7 +783,6 @@
       "warning": "注意",
       "caution": "警告"
     },
-    "activityPosts": "記事 {count}本",
     "activitySince": "{date}から",
     "reportFailed": "通報を送信できませんでした。もう一度お試しください。",
     "tabNotes": "ノート",

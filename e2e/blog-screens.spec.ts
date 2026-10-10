@@ -67,7 +67,7 @@ const SCREENS: Screen[] = [
     name: "profile · 글",
     path: `/ko/p/${AUTHOR}`,
     async check(page) {
-      await expect(page.getByRole("heading", { name: `@${AUTHOR}` })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: AUTHOR, exact: true })).toBeVisible();
       // Tab bar — all five tabs present (owner view in mock).
       for (const t of ["글", "시리즈", "소개"]) {
         await expect(page.getByRole("link", { name: t, exact: true }).first()).toBeVisible();
@@ -79,7 +79,7 @@ const SCREENS: Screen[] = [
     name: "profile · 시리즈",
     path: `/ko/p/${AUTHOR}/series`,
     async check(page) {
-      await expect(page.getByRole("heading", { name: `@${AUTHOR}` })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: AUTHOR, exact: true })).toBeVisible();
       // Series rows link to series detail.
       await expect(page.locator('a[href*="/series/"]').first()).toBeVisible();
     },
@@ -88,7 +88,7 @@ const SCREENS: Screen[] = [
     name: "profile · 소개",
     path: `/ko/p/${AUTHOR}/about`,
     async check(page) {
-      await expect(page.getByRole("heading", { name: `@${AUTHOR}` })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: AUTHOR, exact: true })).toBeVisible();
       await expect(page.locator("body")).toContainText(/소개|활동|글/);
     },
   },

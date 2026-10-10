@@ -62,7 +62,7 @@ test("the lock lives in blog settings and unlocking asks first", async ({ page }
 
 test("a locked writer's row in a followers list shows the request, not a follow", async ({ page }) => {
   await page.goto("/ko/p/yuna");
-  await page.getByRole("button", { name: "팔로워", exact: true }).click({ timeout: 30_000 });
+  await page.getByRole("button", { name: /^팔로워 \d/ }).click({ timeout: 30_000 });
   const list = page.getByRole("dialog", { name: "팔로워" });
   const row = list.getByRole("listitem").filter({ hasText: "@haruka" });
   const follow = row.getByRole("button");

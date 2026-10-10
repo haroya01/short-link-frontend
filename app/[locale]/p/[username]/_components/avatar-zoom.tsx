@@ -12,7 +12,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 export function AvatarZoom({ src, name }: { src: string | null; name: string }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
-  if (!src) return <Avatar src={null} name={name} size="lg" eager />;
+  if (!src) return <Avatar src={null} name={name} size="xl" eager />;
   return (
     <>
       <button
@@ -21,7 +21,7 @@ export function AvatarZoom({ src, name }: { src: string | null; name: string }) 
         aria-label={t("viewAvatar")}
         className="focus-ring shrink-0 rounded-full transition-opacity hover:opacity-90"
       >
-        <Avatar src={src} name={name} size="lg" eager />
+        <Avatar src={src} name={name} size="xl" eager />
       </button>
       <AvatarViewer src={src} name={name} open={open} onClose={() => setOpen(false)} />
     </>

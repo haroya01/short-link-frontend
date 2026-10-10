@@ -21,7 +21,7 @@ export function visibleAuthorTabs(tabs: AuthorTab[], activeKey: string, isOwner:
 
 // Tab horizontal padding (px-4 = 16px); the underline spans the label, inset past the padding.
 const PAD = 16;
-// Constant glide speed (ms per px travelled), clamped — so distance ≈ time: 글 → 소개 sweeps across
+// Constant glide speed (ms per px travelled), clamped — so distance ≈ time: 글 → 컬렉션 sweeps across
 // 시리즈 and takes visibly longer than an adjacent hop. Mirrors the feed's FeedSortTabs.
 const MS_PER_PX = 3;
 const MIN_MS = 180;
@@ -49,7 +49,7 @@ export function AuthorTabs({
   // Private tabs (좋아요 / 북마크) only on your own profile. They're appended in order, so the visible
   // index doubles as the tab-direction index for both owner and visitor.
   const visible = visibleAuthorTabs(tabs, activeKey, isOwner);
-  const activeIndex = Math.max(0, visible.findIndex((t) => t.key === activeKey));
+  const activeIndex = visible.findIndex((t) => t.key === activeKey);
   const navRef = useRef<HTMLElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
   const [durationMs, setDurationMs] = useState(0);
@@ -66,7 +66,11 @@ export function AuthorTabs({
     };
 
     const target = measure(activeIndex);
-    if (!target) return;
+    if (!target) {
+      prevLeft.current = null;
+      setBar(null);
+      return;
+    }
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Glide from where the bar currently sits to the new active tab. First placement (no prior slot)
