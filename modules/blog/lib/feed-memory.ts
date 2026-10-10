@@ -9,8 +9,6 @@ export const NOTES_SWITCHER = ["following", "everyone", "trending"] as const;
 export type BlogSwitcherTab = (typeof BLOG_SWITCHER)[number];
 export type NotesSwitcherFeed = (typeof NOTES_SWITCHER)[number];
 
-/** One surface's remembered switcher tab: its cookie, the tabs it may hold, the URL param that picks a
- *  tab explicitly, and the tab a visitor with nothing saved opens on. */
 export type FeedMemory = { cookie: string; keys: readonly string[]; param: string; fallback: string };
 
 export const BLOG_MEMORY: FeedMemory = {
@@ -26,8 +24,6 @@ export const NOTES_MEMORY: FeedMemory = {
   fallback: "everyone",
 };
 
-/** The saved blog tab, or null for "open on 최신". A value saved before the switcher had three tabs
- *  (`series`) no longer restores. */
 export function rememberedBlogTab(value: string | null | undefined): BlogSwitcherTab | null {
   return (BLOG_SWITCHER as readonly string[]).includes(value ?? "") ? (value as BlogSwitcherTab) : null;
 }

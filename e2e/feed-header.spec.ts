@@ -1,11 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
 
-/**
- * The blog feed and the notes timeline share one header in MOCK-ON (the mock session is signed in):
- * [팔로잉 · 최신 · 인기] in the same place, the surface's other sources under "더 보기", and the last
- * switcher tab remembered per surface so the bare URL reopens on it.
- */
-
 const BLOG = "/ko/blog";
 const NOTES = "/ko/blog/notes";
 

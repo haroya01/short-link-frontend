@@ -36,7 +36,6 @@ export function FeedSortTabs({
   onSelect,
 }: {
   tabs: FeedSortTab[];
-  /** Called on a plain click, before the navigation starts. */
   onSelect?: (key: string) => void;
 }) {
   const { ready, authenticated } = useAuth();

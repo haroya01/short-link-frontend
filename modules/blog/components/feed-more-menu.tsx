@@ -11,7 +11,6 @@ export type FeedMoreItem = {
   label: string;
   href: string;
   active?: boolean;
-  /** A page of its own rather than a source shown in place — opens with a full navigation. */
   external?: boolean;
 };
 
