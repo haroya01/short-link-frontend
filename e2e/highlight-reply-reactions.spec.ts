@@ -48,7 +48,7 @@ test("남의 하이라이트 답글은 ⋯ 에서 그 답글로 신고한다", a
   await expect(page.getByRole("dialog", { name: /같은 부하로 비교했다/ })).toBeVisible();
 });
 
-test("내 답글에는 ⋯ 없이 하트와 지우기만 있고, 내 답글에도 좋아요를 누를 수 있다", async ({ page }) => {
+test("내 답글에는 ⋯ 없이 하트와 삭제만 있고, 내 답글에도 좋아요를 누를 수 있다", async ({ page }) => {
   await page.goto(HL_THREAD);
   const thread = page.getByRole("dialog");
   const field = thread.getByRole("textbox", { name: "답글 쓰기" });
