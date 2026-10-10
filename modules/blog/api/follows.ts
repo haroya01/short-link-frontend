@@ -145,8 +145,8 @@ export interface FollowListPage {
 const MOCK_FOLLOW_USERS: FollowUser[] = [
   { id: 9101, username: "haneul", bio: "프로덕트 디자이너", avatarUrl: null, followerCount: 320, followedByMe: false },
   { id: 9102, username: "minseo", bio: "백엔드 엔지니어", avatarUrl: null, followerCount: 88, followedByMe: true },
-  { id: 9103, username: "yuna", bio: null, avatarUrl: null, followerCount: 12, followedByMe: false },
-  { id: 9104, username: "haruka", bio: null, avatarUrl: null, followerCount: 40, followedByMe: false },
+  { id: 15, username: "yuna", bio: null, avatarUrl: null, followerCount: 12, followedByMe: false },
+  { id: 3, username: "haruka", bio: null, avatarUrl: null, followerCount: 40, followedByMe: false },
   { id: 9201, username: "mallory", bio: null, avatarUrl: null, followerCount: 3, followedByMe: false },
 ];
 
