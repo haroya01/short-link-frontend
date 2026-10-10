@@ -36,7 +36,7 @@ test("tab switches keep the author header on screen the whole time (no skeleton 
 }) => {
   await page.goto(PROFILE);
   await page.waitForLoadState("networkidle");
-  await expect(page.getByRole("heading", { name: HANDLE })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "dohyun", exact: true })).toBeVisible();
 
   // Public tabs a visitor always sees. The header (handle) must never blink out while the content swaps.
   for (const name of ["Series", "About", "Posts"]) {

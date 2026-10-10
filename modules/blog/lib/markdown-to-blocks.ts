@@ -3,11 +3,6 @@ import { altWithWidth, parseImageAlt } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { isImageUrl, planEmbed } from "@/modules/blog/lib/post-embed";
 
-/**
- * A line that is just a video URL (bare, an `<autolink>`, or a `[text](url)` link) → return that
- * URL when it's an embeddable provider (YouTube / Vimeo). velog-style: drop a YouTube link on its
- * own line and it becomes a player. Other URLs return null and stay a normal paragraph/link.
- */
 // A full markdown image incl. an optional title that may contain escaped quotes — used to test that a
 // line is "nothing but images". Mirrors the capturing regex below; `[^)\s]+` keeps the URL paren-free
 // (kurl-hosted image URLs are), so a `)` inside a title still ends the match at the closing paren.
@@ -32,36 +27,25 @@ function isTableStart(line: string, next: string | undefined): boolean {
 }
 
 /**
- * A line that is just a single URL (bare, an `<autolink>`, or a `[text](url)` link) and is
- * embeddable on its own → return that URL. Embeddable = a video provider (YouTube / Vimeo) or a
- * kurl short link (rendered as a live link-stats card). Other URLs stay a normal paragraph.
+ * Only a bare URL alone on a line stands as its own block (IMAGE or EMBED card). `<url>` and
+ * `[text](url)` alone on a line are links the author kept as links, so they stay in the paragraph.
+ * A trailing `\` is a soft line break, so that line still belongs to its paragraph. The editor writes
+ * a card as the bare URL and a link as `<url>` / `[text](url)`; the backend's MarkdownBlockParser
+ * mirrors this.
  */
-/**
- * A line that is just a bare (or `<autolink>`) URL pointing at an image file (by extension) → that
- * URL, so a pasted external image renders as an IMAGE block instead of a link-preview EMBED. A
- * labeled `[text](url)` link is left to the embed path (the author meant a link). Mirrored by the
- * backend's {@code standaloneImageUrl}.
- */
+function standaloneBareUrl(line: string): string | null {
+  const m = line.trim().match(/^(https?:\/\/\S+)$/);
+  return m && !m[1].endsWith("\\") ? m[1] : null;
+}
+
 function standaloneImageUrl(line: string): string | null {
-  const t = line.trim();
-  const m = t.match(/^<(https?:\/\/[^>\s]+)>$/) || t.match(/^(https?:\/\/\S+)$/);
-  if (!m) return null;
-  return isImageUrl(m[1]) ? m[1] : null;
+  const url = standaloneBareUrl(line);
+  return url && isImageUrl(url) ? url : null;
 }
 
 function standaloneEmbedUrl(line: string): string | null {
-  const t = line.trim();
-  const m =
-    t.match(/^<(https?:\/\/[^>\s]+)>$/) ||
-    t.match(/^\[[^\]]*\]\((https?:\/\/[^)\s]+)\)$/) ||
-    t.match(/^(https?:\/\/\S+)$/);
-  if (!m) return null;
-  const url = m[1];
-  if (kurlShortCode(url)) return url;
-  // velog-style: ANY standalone URL on its own line is a rich card (EMBED) — the editor already turns
-  // a pasted/inserted bare URL into a link card, so the reader must honor it (video→iframe, map→static
-  // map, everything else→OG link-preview card). A URL with surrounding text stays an inline link.
-  return planEmbed(url) ? url : null;
+  const url = standaloneBareUrl(line);
+  return url && (kurlShortCode(url) || planEmbed(url)) ? url : null;
 }
 
 /**
@@ -249,7 +233,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       paraLines.push(lines[i]);
       i++;
     }
-    blocks.push({ type: "PARAGRAPH", content: paraLines.join("\n") });
+    blocks.push({ type: "PARAGRAPH", content: paraLines.join("\n").replace(/(^|[^\\])((?:\\\\)*)\\$/, "$1$2") });
   }
 
   return blocks;

@@ -18,7 +18,6 @@ import { EditConflictDialog } from "@/modules/blog/components/editor/edit-confli
 import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
-import { extractExternalLinks } from "@/modules/blog/lib/post-links";
 import { ErrorState } from "@/components/common/error-state";
 
 /** The writing surface for an existing post (`postId`) or a new one that is created on its first save (`null`). */
@@ -29,9 +28,6 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
   const ed = usePostEditor(postId, { ready, authenticated, username: me?.username, initialMarkdown });
   const [publishOpen, setPublishOpen] = useState(false);
   const focusBody = useRef<(() => void) | null>(null);
-  // External links the author wrote in the body — offered for kurl auto-shortening in the publish
-  // dialog. Computed before the early returns so the hook order stays stable.
-  const bodyLinks = useMemo(() => extractExternalLinks(ed.markdown), [ed.markdown]);
   // First body image — offered as a one-tap cover suggestion in the publish dialog.
   const coverSuggestion = useMemo(() => firstImageUrl(ed.markdown), [ed.markdown]);
   // Followed + popular tags, shared by the canvas tags line and the publish dialog (one fetch).
@@ -200,22 +196,22 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         tagSuggestions={tagSuggestions}
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
-        bodyLinks={bodyLinks}
         previewAction={
           post && post.status !== "PUBLISHED" && !takenDown ? (
             <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
           ) : null
         }
         error={ed.error}
+        slugError={ed.slugError}
         saving={ed.saving}
         busy={ed.busy}
         onSave={ed.save}
         onChangeStatus={ed.changeStatus}
         onCancelSchedule={ed.cancelSchedule}
-        onSchedule={async (iso, opts) => {
+        onSchedule={async (iso) => {
           // Confirm the parked publish with its exact date/time — the SCHEDULED badge alone is easy to
           // miss right after the action.
-          const ok = await ed.schedule(iso, opts);
+          const ok = await ed.schedule(iso);
           if (ok) toast(t("scheduledToast", { when: new Date(iso).toLocaleString() }), "success");
           return ok;
         }}

@@ -22,11 +22,9 @@ import {
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
-import { shortenUrl } from "@/lib/api/links";
 import { ApiError } from "@/lib/api/client";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { postHref } from "@/modules/blog/lib/author-href";
-import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { upgradeLegacyCallouts } from "@/modules/blog/lib/callout";
 import { stampPublishCelebration } from "@/modules/blog/lib/celebrate-publish";
@@ -146,6 +144,7 @@ export function usePostEditor(
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [slugError, setSlugError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   // 마지막 저장이 "언제"였는지 — saved 가 2초 뒤 꺼진 뒤에도 헤더가 시각으로 안심시켜 준다.
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
@@ -211,6 +210,10 @@ export function usePostEditor(
   const setSlug = (v: string) => {
     currentDraft.current.slug = normalizeSlugInput(v);
     setSlugRaw(normalizeSlugInput(v));
+    if (slugError) {
+      setSlugError(null);
+      setError((current) => (current === slugError ? null : current));
+    }
     touchDirty();
   };
   const setMarkdown = (v: string) => {
@@ -244,6 +247,7 @@ export function usePostEditor(
     if (id == null || !Number.isFinite(id)) return;
     setLoading(true);
     setError(null);
+    setSlugError(null);
     setLoadFailed(false);
     try {
       // The base must be the blocks read's version (same read as the body), not the post's: a save landing
@@ -299,7 +303,8 @@ export function usePostEditor(
       const chosen = isSavableSlug(currentDraft.current.slug) ? slugForSave(currentDraft.current.slug) : "";
       for (let attempt = 0; ; attempt++) {
         try {
-          const created = await createPost({ slug: chosen || randomSlug(), title: currentDraft.current.title.trim() });
+          const slugToTry = attempt === 0 && chosen ? chosen : randomSlug();
+          const created = await createPost({ slug: slugToTry, title: currentDraft.current.title.trim() });
           currentDraft.current.post = created;
           baseVersion.current = created.contentVersion ?? null;
           setPost(created);
@@ -310,8 +315,7 @@ export function usePostEditor(
           window.history.replaceState(window.history.state, "", editorAddress(created));
           return created;
         } catch (e) {
-          const generatedSlugCollided = !chosen && attempt === 0 && isSlugConflict(e);
-          if (!generatedSlugCollided) throw e;
+          if (attempt > 0 || !isSlugConflict(e)) throw e;
         }
       }
     })().finally(() => {
@@ -337,6 +341,12 @@ export function usePostEditor(
     if (!same) return null;
     baseVersion.current = body.contentVersion;
     return server;
+  }
+
+  function refuseSlug(e: unknown, fallback: string) {
+    const reason = isSlugConflict(e) ? t("slugTaken") : errorMessage(e, fallback);
+    setSlugError(reason);
+    setError(reason);
   }
 
   // Returns true when the content is persisted (a successful save, or already-saved identical content),
@@ -421,6 +431,7 @@ export function usePostEditor(
           currentDraft.current.post = savedPost;
           setPost(savedPost);
           if (slugRejection) throw slugRejection;
+          setSlugError(null);
           lastSaved.current = sig;
           setLastSavedAt(new Date());
           failStreak.current = 0;
@@ -446,7 +457,7 @@ export function usePostEditor(
           setConflict(true);
           return false;
         }
-        if (isSlugConflict(e)) setError(t("slugTaken"));
+        if (isSlugRefused(e)) refuseSlug(e, t("saveFailed"));
         else setError(errorMessage(e, t("saveFailed")));
         // 자동저장 무한 재시도 차단: 4xx(사용자 개입이 필요한 결정적 실패)는 즉시 정지하고, 그 밖의
         // 실패(네트워크·5xx)는 백오프로 몇 번만 재시도 후 정지. 정지는 다음 편집에서 풀린다.
@@ -547,31 +558,6 @@ export function usePostEditor(
     };
   }, []);
 
-  /**
-   * Auto-shorten the given in-post links through the kurl system right before going public, so every
-   * click is tracked (and surfaces in the post's analytics). Each URL is created as a kurl short link
-   * and swapped into the saved body. A link that fails to shorten is left as the author wrote it — a
-   * tracking miss never blocks publishing. Returns the rewritten markdown (or null if nothing changed).
-   */
-  async function applyLinkShortening(urls: string[]): Promise<string | null> {
-    const post = currentDraft.current.post;
-    if (post == null || urls.length === 0) return null;
-    const md = liveMarkdown.current?.() ?? markdown;
-    const map: Record<string, string> = {};
-    for (const url of urls) {
-      try {
-        map[url] = (await shortenUrl({ url })).shortUrl;
-      } catch {
-        /* keep the original link — partial coverage beats a blocked publish */
-      }
-    }
-    if (Object.keys(map).length === 0) return null;
-    const newMd = rewriteMarkdownLinks(md, map);
-    const put = await replaceBlocks(post.id, markdownToBlocks(newMd), guardFrom(baseVersion.current));
-    baseVersion.current = put.contentVersion ?? baseVersion.current;
-    return newMd;
-  }
-
   /** Returns true once the status change succeeds — the caller can then close the publish dialog. */
   function markTakenDown() {
     const current = currentDraft.current.post;
@@ -581,10 +567,7 @@ export function usePostEditor(
     setPost(next);
   }
 
-  async function changeStatus(
-    action: StatusAction,
-    opts?: { shortenLinks?: string[] },
-  ): Promise<boolean> {
+  async function changeStatus(action: StatusAction): Promise<boolean> {
     const post = currentDraft.current.post;
     if (post == null || busy) return false;
     const goingPublic = action === "publish" || action === "republish";
@@ -607,8 +590,6 @@ export function usePostEditor(
     setBusy(true);
     setError(null);
     try {
-      // Shorten in-post links through kurl before the post goes live (skipped for unpublish/backToDraft).
-      if (goingPublic && opts?.shortenLinks?.length) await applyLinkShortening(opts.shortenLinks);
       const updated =
         action === "publish"
           ? await publishPost(post.id)
@@ -629,7 +610,7 @@ export function usePostEditor(
       return true;
     } catch (e) {
       if (isEditConflict(e)) setConflict(true);
-      else if (isSlugConflict(e)) setError(t("slugTaken"));
+      else if (isSlugRefused(e)) refuseSlug(e, t("statusChangeFailed"));
       else setError(errorMessage(e, t("statusChangeFailed")));
       if (isTakenDown(e)) markTakenDown();
       return false;
@@ -639,7 +620,7 @@ export function usePostEditor(
   }
 
   /** Returns true once the post is parked for a future publish — the caller can then confirm the time. */
-  async function schedule(scheduledAt: string, opts?: { shortenLinks?: string[] }): Promise<boolean> {
+  async function schedule(scheduledAt: string): Promise<boolean> {
     if (busy) return false;
     if (!title.trim()) {
       setError(t("titleRequired"));
@@ -671,20 +652,11 @@ export function usePostEditor(
       if (!(await save())) return false;
       const post = currentDraft.current.post;
       if (post == null) return false;
-      // Shorten in-post links into the scheduled snapshot; reseed the editor so the author (who stays
-      // here after scheduling) sees the rewritten links rather than stale originals.
-      if (opts?.shortenLinks?.length) {
-        const newMd = await applyLinkShortening(opts.shortenLinks);
-        if (newMd != null) {
-          setMarkdownRaw(newMd);
-          setReloadKey((k) => k + 1);
-        }
-      }
       setPost(await schedulePost(post.id, scheduledAtIso));
       return true;
     } catch (e) {
       if (isEditConflict(e)) setConflict(true);
-      else if (isSlugConflict(e)) setError(t("slugTaken"));
+      else if (isSlugRefused(e)) refuseSlug(e, t("scheduleFailed"));
       else setError(errorMessage(e, t("scheduleFailed")));
       if (isTakenDown(e)) markTakenDown();
       return false;
@@ -830,6 +802,7 @@ export function usePostEditor(
     saving,
     busy,
     error,
+    slugError,
     saved,
     lastSavedAt,
     writeBase,

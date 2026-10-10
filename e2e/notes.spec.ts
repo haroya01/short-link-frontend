@@ -418,7 +418,7 @@ test("the following tab turns every repost off and back on", async ({ page }) =>
 test("a followed author's profile menu hides just their reposts", async ({ page }) => {
   await page.goto("/ko/p/minji");
   const menu = page.getByRole("button", { name: "프로필 메뉴" });
-  await expect(page.getByRole("heading", { name: "@minji" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { level: 1, name: "민지" })).toBeVisible({ timeout: 30_000 });
   await menu.click();
   await expect(page.getByRole("menuitem", { name: "리스트에 추가…" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "리포스트 숨기기" })).toHaveCount(0);
@@ -433,7 +433,7 @@ test("a followed author's profile menu hides just their reposts", async ({ page 
 
 test("the bell beside following tells of every new note and leaves with the follow", async ({ page }) => {
   await page.goto("/ko/p/minji");
-  await expect(page.getByRole("heading", { name: "@minji" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { level: 1, name: "민지" })).toBeVisible({ timeout: 30_000 });
   const ring = page.getByRole("button", { name: "새 노트 알림 켜기" });
   await expect(ring).toHaveCount(0);
   await page.getByRole("button", { name: "팔로우", exact: true }).click();
@@ -630,7 +630,7 @@ test("a person added to a list from their profile fills that list's tab", async 
   await page.goto("/ko/blog/notes");
   const byYuna = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "@yuna", exact: true }) });
   await byYuna.first().getByRole("link", { name: "@yuna", exact: true }).first().click({ timeout: 30_000 });
-  await expect(page.getByRole("heading", { name: "@yuna" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { level: 1, name: "yuna", exact: true })).toBeVisible({ timeout: 30_000 });
   await page.getByRole("button", { name: "프로필 메뉴" }).click();
   await page.getByRole("menuitem", { name: "리스트에 추가…" }).click();
   const dialog = page.getByRole("dialog", { name: "리스트에 추가" });
@@ -738,7 +738,7 @@ test("muting someone from their profile menu takes their notes out of the feed",
   const yunaNotes = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "@yuna", exact: true }) });
   await expect(yunaNotes.first()).toBeVisible({ timeout: 30_000 });
   await yunaNotes.first().getByRole("link", { name: "@yuna", exact: true }).first().click();
-  await expect(page.getByRole("heading", { name: "@yuna" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { level: 1, name: "yuna", exact: true })).toBeVisible({ timeout: 30_000 });
   const menu = page.getByRole("button", { name: "프로필 메뉴" });
   await menu.click();
   await page.getByRole("menuitem", { name: "뮤트…" }).click();

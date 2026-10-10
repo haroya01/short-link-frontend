@@ -5,14 +5,14 @@
  * them — the identity element of the weblog.
  *
  * Sizes: xs 20 (inline meta) · sm 28 (comment header) · md 36 (rail / cards) · lg 44 (post rail) ·
- * xl 80 (author header).
+ * xl 64 → 80 from sm (author header).
  */
 const SIZES = {
   xs: { box: "h-5 w-5", text: "text-[10px]" },
   sm: { box: "h-7 w-7", text: "text-[11px]" },
   md: { box: "h-9 w-9", text: "text-[13px]" },
   lg: { box: "h-11 w-11", text: "text-base" },
-  xl: { box: "h-20 w-20", text: "text-2xl" },
+  xl: { box: "h-16 w-16 sm:h-20 sm:w-20", text: "text-xl sm:text-2xl" },
 } as const;
 
 export type AvatarSize = keyof typeof SIZES;

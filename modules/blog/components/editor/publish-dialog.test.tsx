@@ -62,7 +62,6 @@ async function render(status: PostStatus, takenDown = false) {
         onTagsChange={vi.fn()}
         seriesId={null}
         onSeriesChange={vi.fn()}
-        bodyLinks={[]}
         error={null}
         saving={false}
         busy={false}

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 import ko from "../messages/ko.json";
 import ja from "../messages/ja.json";
 import en from "../messages/en.json";
@@ -13,6 +13,16 @@ const activeTab = (page: Page, surface: "blog" | "notes") =>
 
 async function settled(page: Page, surface: "blog" | "notes") {
   await expect(switcher(page, surface).locator("[data-feed-more]")).toBeVisible({ timeout: 30_000 });
+}
+
+async function expectBarWithin(page: Page, surface: "blog" | "notes", target: Locator) {
+  await expect
+    .poll(async () => {
+      const bar = (await switcher(page, surface).locator("[data-switcher-bar]").boundingBox())!;
+      const box = (await target.boundingBox())!;
+      return bar.x >= box.x && bar.x + bar.width <= box.x + box.width;
+    })
+    .toBe(true);
 }
 
 for (const viewport of [
@@ -99,10 +109,7 @@ test.describe("desktop", () => {
     await expect(page).toHaveURL(/sort=for-you/, { timeout: 30_000 });
     await expect(activeTab(page, "blog")).toHaveCount(0);
     await expect(slot).toHaveText("추천");
-    const bar = (await switcher(page, "blog").locator("[data-switcher-bar]").boundingBox())!;
-    const box = (await slot.boundingBox())!;
-    expect(bar.x).toBeGreaterThanOrEqual(box.x);
-    expect(bar.x + bar.width).toBeLessThanOrEqual(box.x + box.width);
+    await expectBarWithin(page, "blog", slot);
 
     await page.goto(NOTES);
     await settled(page, "notes");
@@ -122,10 +129,7 @@ test.describe("desktop", () => {
     await tabs(page, "notes").filter({ hasText: "최신" }).click();
     await expect(page).toHaveURL(/feed=everyone/, { timeout: 30_000 });
     await expect(slot).toHaveAccessibleName("노트 피드 더 보기");
-    const bar = (await switcher(page, "notes").locator("[data-switcher-bar]").boundingBox())!;
-    const latest = (await activeTab(page, "notes").boundingBox())!;
-    expect(bar.x).toBeGreaterThanOrEqual(latest.x);
-    expect(bar.x + bar.width).toBeLessThanOrEqual(latest.x + latest.width);
+    await expectBarWithin(page, "notes", activeTab(page, "notes"));
   });
 
   test("팔로우한 주제 and 내 컬렉션 left the menu for the 서재 page", async ({ page }) => {
