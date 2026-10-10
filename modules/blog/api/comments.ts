@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
 import { blogMocks } from "./_mock-gates";
+import { mockFails } from "@/lib/api/mock-fail";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -50,6 +51,7 @@ const mockLiked = new Set<number>();
 /** Public — anyone can read a post's comments (oldest first, flat with parentId). */
 export async function listComments(postId: number): Promise<CommentView[]> {
   if (USE_MOCKS) {
+    if (mockFails("comments")) throw new Error("comments 500");
     const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
     return mockComments.filter((c) => !hidden?.has(c.author?.username ?? ""));
   }
@@ -57,7 +59,7 @@ export async function listComments(postId: number): Promise<CommentView[]> {
     cache: "no-store",
     headers: await viewerHeaders(),
   });
-  if (!res.ok) return [];
+  if (!res.ok) throw new Error(`comments ${res.status}`);
   return (await res.json()) as CommentView[];
 }
 

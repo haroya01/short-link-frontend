@@ -31,6 +31,8 @@ type DialogProps = {
   maxWidthClass?: string;
   /** Size to content instead of pinning a min height. Defaults to true when there is no form body. */
   compact?: boolean;
+  /** Stacking layer; raise it when the dialog is asked from inside another overlay. */
+  layerClassName?: string;
 };
 
 export function ConfirmDialog({
@@ -47,6 +49,7 @@ export function ConfirmDialog({
   children,
   maxWidthClass = "max-w-md",
   compact,
+  layerClassName = "z-50",
 }: DialogProps) {
   const fitContent = compact ?? !children;
   const t = useTranslations("common");
@@ -99,7 +102,8 @@ export function ConfirmDialog({
       // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
       aria-hidden={closing || undefined}
       className={cn(
-        "fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16",
+        "fixed inset-0 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16",
+        layerClassName,
         closing && "pointer-events-none",
       )}
     >

@@ -9,6 +9,8 @@ import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { SignInRow } from "@/components/auth/sign-in-row";
+import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
 import {
   createHighlight,
   createHighlightReply,
@@ -79,7 +81,7 @@ type Anchor = { left: number; top: number; bottom: number };
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
-  const { authenticated, me } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [confirm, confirmDialog] = useConfirm();
@@ -477,10 +479,11 @@ export function PostHighlights({ postId }: { postId: number }) {
             )}
             {threadFor && (
               <HighlightThread
+                key={threadFor.id}
                 highlight={threadFor}
                 meId={me?.id ?? null}
                 authenticated={authenticated}
-                onSignIn={() => askToSignIn("reply")}
+                ready={ready}
                 onClose={() => setThreadFor(null)}
                 onChanged={refreshHighlights}
                 onDelete={() => void removeHighlight(threadFor)}
@@ -574,7 +577,7 @@ function HighlightThread({
   highlight,
   meId,
   authenticated,
-  onSignIn,
+  ready,
   onClose,
   onChanged,
   onDelete,
@@ -582,7 +585,7 @@ function HighlightThread({
   highlight: HighlightView;
   meId: number | null;
   authenticated: boolean;
-  onSignIn: () => void;
+  ready: boolean;
   onClose: () => void;
   onChanged: () => void;
   onDelete: () => void;
@@ -592,7 +595,11 @@ function HighlightThread({
   const tc = useTranslations("collections");
   const locale = useLocale();
   const [replies, setReplies] = useState<HighlightReplyView[]>([]);
-  const [body, setBody] = useState("");
+  const [repliesLoaded, setRepliesLoaded] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [body, setBody] = useState(() => readDraft("highlight-reply", highlight.id)?.text ?? "");
+  const [confirm, confirmDialog] = useConfirm({ layerClassName: "z-[70]" });
+  const tCommon = useTranslations("common");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // The reply the viewer just posted — after it renders, scroll it into view so a new reply added from
@@ -616,13 +623,51 @@ function HighlightThread({
 
   // Keyboard containment: Escape + Tab cycling + focus restore. Goes inert while the ConnectSheet is
   // open over the thread so the two traps don't fight over Tab (ConnectSheet runs its own then).
-  useFocusTrap(contentRef, { active: !connecting, onEscape: onClose });
+  useFocusTrap(contentRef, { active: !connecting && !confirmDialog, onEscape: () => void requestClose() });
 
+  useEffect(() => {
+    if (body.trim()) writeDraft("highlight-reply", highlight.id, body);
+    else clearDraft("highlight-reply", highlight.id);
+  }, [body, highlight.id]);
+
+  const loadSeq = useRef(0);
   const load = useCallback(() => {
+    const seq = ++loadSeq.current;
     listHighlightReplies(highlight.id)
-      .then(setReplies)
-      .catch(() => setReplies([]));
+      .then((list) => {
+        if (seq !== loadSeq.current) return;
+        setReplies(list);
+        setLoadFailed(false);
+      })
+      .catch(() => {
+        if (seq === loadSeq.current) setLoadFailed(true);
+      })
+      .finally(() => {
+        if (seq === loadSeq.current) setRepliesLoaded(true);
+      });
   }, [highlight.id]);
+
+  async function requestClose() {
+    if (
+      body.trim() &&
+      !(await confirm({
+        title: t("highlightReplyDiscardTitle"),
+        confirmLabel: t("highlightReplyDiscard"),
+        cancelLabel: t("highlightReplyKeepWriting"),
+        destructive: true,
+      }))
+    )
+      return;
+    clearDraft("highlight-reply", highlight.id);
+    onClose();
+  }
+
+  function threadAddress() {
+    const back = new URL(window.location.href);
+    back.searchParams.set("highlightId", String(highlight.id));
+    back.searchParams.set("thread", "1");
+    return back.toString();
+  }
 
   const loadContaining = useCallback(() => {
     if (highlight.id <= 0) return;
@@ -659,15 +704,13 @@ function HighlightThread({
 
   async function submit() {
     if (!authenticated) {
-      onSignIn();
+      askToSignIn("reply", threadAddress());
       return;
     }
     if (!body.trim() || busy) return;
     setBusy(true);
     setError(null);
     try {
-      // Optimistic append with the created reply — a re-fetch (listHighlightReplies) returns [] on a
-      // read failure, which would blank the whole thread on an otherwise-successful post.
       const created = await createHighlightReply(highlight.id, body.trim());
       setReplies((prev) => [...prev, created]);
       setBody("");
@@ -684,6 +727,7 @@ function HighlightThread({
   }
 
   async function remove(id: number) {
+    if (!(await confirm({ title: t("highlightReplyDeleteConfirm"), destructive: true }))) return;
     setBusy(true);
     setError(null);
     try {
@@ -706,7 +750,7 @@ function HighlightThread({
     <div
       className="fixed inset-0 z-[60] flex items-end justify-center scrim sm:items-center sm:p-4"
       style={{ paddingBottom: inset }}
-      onMouseDown={onClose}
+      onMouseDown={() => void requestClose()}
     >
       <div
         ref={contentRef}
@@ -787,13 +831,27 @@ function HighlightThread({
         </div>
 
         <div ref={threadScrollRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          {loadFailed && (
+            <p role="alert" data-testid="highlight-replies-load-failed" className="mb-4 text-[13px] text-slate-500 dark:text-slate-400">
+              {t("highlightRepliesLoadFailed")}{" "}
+              <button
+                type="button"
+                onClick={load}
+                className="focus-ring rounded underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-200"
+              >
+                {tCommon("retry")}
+              </button>
+            </p>
+          )}
           {replies.length === 0 ? (
+            !repliesLoaded || loadFailed ? null : (
             // 답글이 아직 없음 — 하이라이트는 이미 위(따옴표+작성자)에 있으므로, 이 자리는 "답글이 없다"만
             // 조용히 말한다. 예전 "첫 답글을 남겨보세요"는 큰 중앙 블록이라 "여기 비어 있다/하이라이트 없다"
             // 로 오독됐다(사장님 신고) — 왼쪽 정렬 muted 한 줄로 낮춰 답글에 한정된 상태임을 분명히 한다.
             <p className="text-[13px] text-slate-500 dark:text-slate-400">
               {t("highlightThreadNoReplies")}
             </p>
+            )
           ) : (
             <ul className="space-y-4">
               {replies.map((r) => (
@@ -896,18 +954,24 @@ function HighlightThread({
         </div>
 
         <div className="border-t border-slate-100 p-4 dark:border-slate-800">
-          <CommentComposer
-            value={body}
-            onChange={setBody}
-            onSubmit={() => void submit()}
-            placeholder={t("highlightReplyPlaceholder")}
-            submitLabel={t("highlightReplySubmit")}
-            submitting={busy}
-            canSubmit={!authenticated || !!body.trim()}
-            rows={2}
-            compact
-            hideToolbar
-          />
+          {!ready ? (
+            <div aria-hidden className="h-[60px]" />
+          ) : authenticated ? (
+            <CommentComposer
+              value={body}
+              onChange={setBody}
+              onSubmit={() => void submit()}
+              placeholder={t("highlightReplyPlaceholder")}
+              submitLabel={t("highlightReplySubmit")}
+              submitting={busy}
+              canSubmit={!!body.trim()}
+              rows={2}
+              compact
+              hideToolbar
+            />
+          ) : (
+            <SignInRow reason="reply" placeholder={t("highlightReplyPlaceholder")} next={threadAddress} onAsk={onClose} />
+          )}
           {error && (
             <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
               {error}
@@ -929,6 +993,7 @@ function HighlightThread({
         }}
       />
     )}
+    {confirmDialog}
     </>
   );
 }

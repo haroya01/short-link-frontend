@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { SignInReason } from "@/components/auth/login-prompt";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
+import { SignInRow } from "@/components/auth/sign-in-row";
 import { EmptyState } from "@/components/common/empty-state";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
@@ -26,7 +27,7 @@ import {
   type NoteFeed,
   type QuotedPost,
 } from "@/modules/notes/api/notes";
-import { NoteComposer, NoteSignInRow } from "./note-composer";
+import { NoteComposer } from "./note-composer";
 import { NoteList } from "./note-list";
 import { NoteListsPanel } from "./note-lists";
 
@@ -128,14 +129,16 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
         />
       </div>
       <div className="border-b border-slate-100 dark:border-slate-800">
-        {ready && authenticated ? (
+        {!ready ? (
+          <div aria-hidden className="h-[60px]" />
+        ) : authenticated ? (
           <NoteComposer
             quote={quote}
             onClearQuote={() => setQuote(null)}
             onCreated={(note) => setPosted((current) => [note, ...current])}
           />
         ) : (
-          <NoteSignInRow reason="note" placeholder={t("composerPlaceholder")} />
+          <SignInRow reason="note" placeholder={t("composerPlaceholder")} />
         )}
       </div>
       {PERSONAL.has(feed) && signedOut ? (

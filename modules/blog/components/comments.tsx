@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
+import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
 import {
   createComment,
   likeComment,
@@ -97,6 +98,8 @@ export function PostComments({
   const [body, setBody] = useState("");
   // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
   const [composerActive, setComposerActive] = useState(false);
+  const [restoredDraft, setRestoredDraft] = useState(false);
+  const draftsRestored = useRef(false);
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyBody, setReplyBody] = useState("");
   const [busy, setBusy] = useState(false);
@@ -113,13 +116,18 @@ export function PostComments({
   const focusedRef = useRef(false);
   const [confirm, confirmDialog] = useConfirm();
 
+  const loadSeq = useRef(0);
   const load = useCallback(() => {
+    const seq = ++loadSeq.current;
     setLoadFailed(false);
     return listComments(postId)
-      .then(setComments)
+      .then((list) => {
+        if (seq !== loadSeq.current) return;
+        setComments(list);
+        setLoadFailed(false);
+      })
       .catch(() => {
-        setComments([]);
-        setLoadFailed(true);
+        if (seq === loadSeq.current) setLoadFailed(true);
       })
       .finally(() => setLoaded(true));
   }, [postId]);
@@ -127,6 +135,34 @@ export function PostComments({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (!ready || !authenticated || !loaded || draftsRestored.current) return;
+    draftsRestored.current = true;
+    const top = readDraft("comment", postId);
+    if (top?.text.trim()) {
+      setBody(top.text);
+      setRestoredDraft(true);
+      setComposerActive(true);
+    }
+    const reply = readDraft("comment-reply", postId);
+    if (reply?.target != null && comments.some((c) => c.id === reply.target && c.parentId == null)) {
+      setReplyTo(reply.target);
+      setReplyBody(reply.text);
+    }
+  }, [ready, authenticated, loaded, postId, comments]);
+
+  useEffect(() => {
+    if (!draftsRestored.current) return;
+    if (body.trim()) writeDraft("comment", postId, body);
+    else clearDraft("comment", postId);
+  }, [body, postId]);
+
+  useEffect(() => {
+    if (!draftsRestored.current) return;
+    if (replyTo != null && replyBody.trim()) writeDraft("comment-reply", postId, replyBody, replyTo);
+    else clearDraft("comment-reply", postId);
+  }, [replyTo, replyBody, postId]);
 
   // Rows render after the fetch, so the browser's own `#comment-<id>` jump has nothing to land on. Rails
   // above the comments can still load after the jump and push the row out of view — re-aim twice unless
@@ -230,7 +266,6 @@ export function PostComments({
     try {
       const created = await createComment(postId, body.trim());
       setBody("");
-      // 서버가 돌려준 완성 댓글을 낙관 추가 — 전체 재조회(load)는 실패 시 목록을 [] 로 덮으므로 피한다.
       setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id); // animate the new comment in once it renders
     } catch (e) {
@@ -238,6 +273,13 @@ export function PostComments({
     } finally {
       setBusy(false);
     }
+  }
+
+  function askToReply(parentId: number, prefill = "") {
+    writeDraft("comment-reply", postId, prefill, parentId);
+    const back = new URL(window.location.href);
+    back.hash = `comment-${parentId}`;
+    askToSignIn("reply", back.toString());
   }
 
   async function submitReply(parentId: number) {
@@ -355,7 +397,7 @@ export function PostComments({
             canSubmit={!authenticated || !!body.trim()}
             rows={2}
             collapsible
-            autoFocus
+            autoFocus={!restoredDraft}
           />
         ) : (
           <button
@@ -377,8 +419,8 @@ export function PostComments({
         )}
       </div>
 
-      {loadFailed && comments.length === 0 ? (
-        <p className="mt-8 text-sm text-slate-500 dark:text-slate-400" role="alert">
+      {loadFailed && (
+        <p className="mt-8 text-sm text-slate-500 dark:text-slate-400" role="alert" data-testid="comments-load-failed">
           {t("loadFailed")}{" "}
           <button
             type="button"
@@ -388,7 +430,8 @@ export function PostComments({
             {tCommon("retry")}
           </button>
         </p>
-      ) : shown.length === 0 ? null : (
+      )}
+      {shown.length > 0 && (
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
@@ -409,6 +452,7 @@ export function PostComments({
                 <button
                   type="button"
                   onClick={() => {
+                    if (ready && !authenticated) return askToReply(c.id);
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
@@ -442,8 +486,10 @@ export function PostComments({
                           data-testid={`comment-reply-${r.id}`}
                           onClick={() => {
                             const handle = r.author?.username;
+                            const prefill = handle && handle !== me?.username ? `@${handle} ` : "";
+                            if (ready && !authenticated) return askToReply(c.id, prefill);
                             setReplyTo(c.id);
-                            setReplyBody(handle && handle !== me?.username ? `@${handle} ` : "");
+                            setReplyBody(prefill);
                           }}
                           className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
                         >
