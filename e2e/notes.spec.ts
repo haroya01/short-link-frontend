@@ -404,7 +404,8 @@ test("the following tab turns every repost off and back on", async ({ page }) =>
   await page.goto("/ko/blog/notes?feed=following");
   const reposted = page.getByText("yuna님이 리포스트함");
   await expect(reposted).toBeVisible({ timeout: 30_000 });
-  const toggle = page.getByRole("switch", { name: "리포스트 보기" });
+  await page.getByRole("button", { name: "더 보기" }).click();
+  const toggle = page.getByRole("menuitemcheckbox", { name: "리포스트 보기" });
   await expect(toggle).toHaveAttribute("aria-checked", "true");
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-checked", "false");

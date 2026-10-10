@@ -212,6 +212,7 @@ h1, h2, h3, p {
 :lang(ja) {
   word-break: normal;
   word-break: auto-phrase;
+  text-spacing-trim: trim-start;
 }
 
 /* ja 활자 = Pretendard JP 우선(레이아웃이 ja 로케일에서만 스타일시트를 싣는다). KR판 단독으로는

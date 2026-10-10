@@ -9,7 +9,6 @@ import type { SignInReason } from "@/components/auth/login-prompt";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SignInRow } from "@/components/auth/sign-in-row";
 import { EmptyState } from "@/components/common/empty-state";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
 import { onNotePosted } from "@/modules/blog/lib/consequence-events";
@@ -120,13 +119,10 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
           surface="notes"
           tabs={tabs}
           more={MORE.map((key) => ({ key, label: label[key], href: hrefFor(key), active: key === feed }))}
-          trailing={
-            reposts.shown !== null && (
-              <label className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
-                {t("showReposts")}
-                <Switch checked={reposts.shown} onCheckedChange={reposts.set} aria-label={t("showReposts")} />
-              </label>
-            )
+          toggles={
+            reposts.shown === null
+              ? undefined
+              : [{ key: "reposts", label: t("showReposts"), checked: reposts.shown, onChange: reposts.set }]
           }
         />
       </div>
