@@ -136,11 +136,14 @@ export function usePostEditor(
   const [tags, setTagsRaw] = useState<string[]>([]);
   const [seriesId, setSeriesIdRaw] = useState<number | null>(null);
   const [coverUrl, setCoverRaw] = useState<string | null>(null);
+  // Only a cover the author put there becomes the feed thumbnail; the body's first image filled in for
+  // them stays the share-card image only.
+  const [coverChosen, setCoverChosen] = useState(false);
   const [excerpt, setExcerptRaw] = useState("");
   // A save can outlive the render that started it. Keep every editable field current so its next
   // snapshot includes edits made while the preceding request was pending (including metadata).
-  const currentDraft = useRef({ post, title, slug, markdown, tags, seriesId, coverUrl, excerpt });
-  currentDraft.current = { post, title, slug, markdown, tags, seriesId, coverUrl, excerpt };
+  const currentDraft = useRef({ post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt });
+  currentDraft.current = { post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt };
   const [loading, setLoading] = useState(postId != null);
   const [loadFailed, setLoadFailed] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -230,8 +233,14 @@ export function usePostEditor(
   };
   const setCover = (v: string | null) => {
     currentDraft.current.coverUrl = v;
+    currentDraft.current.coverChosen = v != null;
     setCoverRaw(v);
+    setCoverChosen(v != null);
     touchDirty();
+  };
+  const prefillCover = (v: string | null) => {
+    setCoverRaw(v);
+    setCoverChosen(false);
   };
   const setExcerpt = (v: string) => {
     currentDraft.current.excerpt = v;
@@ -258,6 +267,7 @@ export function usePostEditor(
       setTagsRaw(p.tags ?? []);
       setSeriesIdRaw(p.seriesId ?? null);
       setCoverRaw(p.ogImageUrl ?? null);
+      setCoverChosen(p.coverChosen ?? false);
       setExcerptRaw(p.excerpt ?? "");
       setDirty(false); // freshly loaded content isn't a pending edit
       lastSaved.current = ""; // new content baseline — let the first real edit save
@@ -323,7 +333,7 @@ export function usePostEditor(
   // A save retried after a lost answer meets its own write as a 409; the server can't tell the two apart.
   async function alreadyOnServer(
     id: number,
-    meta: { title: string; tags: string[]; excerpt: string; ogImageUrl: string; slug?: string },
+    meta: { title: string; tags: string[]; excerpt: string; ogImageUrl: string; coverChosen: boolean; slug?: string },
     blocks: BlockInput[],
   ): Promise<PostView | null> {
     const [server, body] = await Promise.all([getPost(id), getBlocks(id)]);
@@ -332,6 +342,7 @@ export function usePostEditor(
       JSON.stringify(server.tags ?? []) === JSON.stringify(meta.tags) &&
       (server.excerpt ?? "") === meta.excerpt &&
       (server.ogImageUrl ?? "") === meta.ogImageUrl &&
+      (server.coverChosen ?? false) === meta.coverChosen &&
       (meta.slug === undefined || server.slug === meta.slug) &&
       sameBlocks(body.blocks, blocks);
     if (!same) return null;
@@ -354,7 +365,7 @@ export function usePostEditor(
       setError(null);
       try {
         for (;;) {
-          const { title, markdown, tags, seriesId, coverUrl, excerpt } = currentDraft.current;
+          const { title, markdown, tags, seriesId, coverUrl, coverChosen, excerpt } = currentDraft.current;
           const md = liveMarkdown.current?.() ?? markdown;
           const seqAtSnapshot = editSeq.current;
           if (currentDraft.current.post == null) {
@@ -374,14 +385,21 @@ export function usePostEditor(
           }
           const { slug } = currentDraft.current;
           const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
-          const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", seriesId, md]);
+          const chosen = coverUrl != null && coverChosen;
+          const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, md]);
           if (sig === lastSaved.current) {
             setDirty(false);
             setSaved(true);
             window.setTimeout(() => setSaved(false), 2000);
             return true;
           }
-          const meta = { title: title.trim(), tags, excerpt: excerpt.trim(), ogImageUrl: coverUrl ?? "" };
+          const meta = {
+            title: title.trim(),
+            tags,
+            excerpt: excerpt.trim(),
+            ogImageUrl: coverUrl ?? "",
+            coverChosen: chosen,
+          };
           // Slug is editable only while DRAFT (frozen once public).
           const sendsSlug = post.status === "DRAFT" && isSavableSlug(slugPart);
           const blocks = markdownToBlocks(md);
@@ -433,6 +451,7 @@ export function usePostEditor(
             editSeq.current !== seqAtSnapshot ||
             (liveMarkdown.current?.() ?? md) !== md ||
             currentDraft.current.coverUrl !== coverUrl ||
+            currentDraft.current.coverChosen !== coverChosen ||
             currentDraft.current.excerpt !== excerpt
           ) continue;
           setDirty(false);
@@ -816,9 +835,9 @@ export function usePostEditor(
     setSeriesId,
     coverUrl,
     setCover,
-    // Raw cover setter — bypasses touchDirty so the publish dialog's auto-cover (body's first image)
-    // doesn't mark the post dirty. Used for onCoverPrefill.
-    setCoverRaw,
+    // Fills in the body's first image without marking the post dirty or counting it as the author's
+    // choice. Used for onCoverPrefill.
+    prefillCover,
     excerpt,
     setExcerpt,
     // Raw excerpt setter — bypasses touchDirty so a machine prefill (publish dialog open) doesn't mark

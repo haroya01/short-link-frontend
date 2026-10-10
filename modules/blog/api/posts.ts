@@ -15,6 +15,8 @@ export interface PostView {
   scheduledAt: string | null;
   excerpt: string | null;
   ogImageUrl: string | null;
+  /** The author chose this cover (vs. the body's first image filled in). Absent on older servers. */
+  coverChosen?: boolean;
   viewCount: number;
   /** Lifetime likes — shown in 내 글 when >0. Backend adds this to /api/v1/posts alongside viewCount;
    *  until then it's absent at runtime and the like count simply doesn't render (showLikes gates on >0). */
@@ -85,6 +87,7 @@ export function updatePostMetadata(
     excerpt?: string;
     ogImageUrl?: string;
     ogImageKey?: string;
+    coverChosen?: boolean;
     languageTag?: string;
     tags?: string[];
   } & EditGuard,

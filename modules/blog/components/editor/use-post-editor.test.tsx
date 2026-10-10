@@ -109,11 +109,42 @@ describe("editor persistence boundaries", () => {
     await act(async () => { saving = editor.save(); });
     await act(async () => {
       editor.setExcerptRaw("Prefilled opening line");
-      editor.setCoverRaw("https://example.com/cover.jpg");
+      editor.prefillCover("https://example.com/cover.jpg");
     });
     await act(async () => { pendingBlocks.resolve([]); await saving; });
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({
-      excerpt: "Prefilled opening line", ogImageUrl: "https://example.com/cover.jpg",
+      excerpt: "Prefilled opening line", ogImageUrl: "https://example.com/cover.jpg", coverChosen: false,
+    }));
+  });
+
+  it("sends a cover the author sets as chosen, and keeps a chosen cover chosen on later saves", async () => {
+    await mount();
+    await act(async () => { editor.setCover("https://example.com/picked.jpg"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({
+      ogImageUrl: "https://example.com/picked.jpg", coverChosen: true,
+    }));
+
+    await act(async () => { editor.setTitle("Later edit"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({
+      title: "Later edit", coverChosen: true,
+    }));
+
+    await act(async () => { editor.setCover(null); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({
+      ogImageUrl: "", coverChosen: false,
+    }));
+  });
+
+  it("keeps the server's choice for a cover loaded with the post", async () => {
+    api.getPost.mockResolvedValue({ ...POST, ogImageUrl: "https://example.com/picked.jpg", coverChosen: true });
+    await mount();
+    await act(async () => { editor.setTitle("Edited"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({
+      ogImageUrl: "https://example.com/picked.jpg", coverChosen: true,
     }));
   });
 

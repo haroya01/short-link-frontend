@@ -126,7 +126,7 @@ function FeedCardRow({
       titleLang={contentLang(item.title, item.languageTag)}
       excerpt={item.excerpt}
       excerptLang={item.excerpt ? contentLang(item.excerpt, item.languageTag) : undefined}
-      cover={item.ogImageUrl}
+      cover={item.thumbnailUrl ?? null}
       eager={eager}
       readId={typeof item.id === "number" ? item.id : null}
       flushTop={flushTop}

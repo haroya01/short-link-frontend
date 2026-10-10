@@ -87,6 +87,7 @@ function toItem(s: Seed, i: number): PublicFeedItem {
     title: s.title,
     excerpt: s.excerpt,
     ogImageUrl: s.cover ?? null,
+    thumbnailUrl: s.cover ?? null,
     languageTag: "ko",
     tags: s.tags,
     publishedAt: `2026-05-${String(s.day).padStart(2, "0")}T09:00:00Z`,
