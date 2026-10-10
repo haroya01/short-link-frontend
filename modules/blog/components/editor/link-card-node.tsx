@@ -1,82 +1,26 @@
 "use client";
 
-import { Node, mergeAttributes } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
-import { isImageUrl, planEmbed } from "@/modules/blog/lib/post-embed";
-import { kurlNoteId, kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { planEmbed } from "@/modules/blog/lib/post-embed";
+import { kurlNoteId } from "@/modules/blog/lib/kurl-link";
 import { getNoteThread, isShareable, type Note } from "@/modules/notes/api/notes";
 import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
-
-/** A bare URL on its own line, pasted into the editor. */
-export const LINK_CARD_URL_RE = /^https?:\/\/\S+$/;
+import { LinkCardBase } from "@/modules/blog/components/editor/link-card-base";
 
 /**
  * Live link-preview card block — the editor counterpart to the published post's LinkPreviewCard.
- * Pasting a bare URL on an empty line inserts this; it fetches the OG preview (same endpoint) and
- * draws a velog-style card right in the editor. Serializes back to the bare URL on its own line, so
- * the markdown↔blocks round-trip is unchanged (→ EMBED block → the published card).
+ * Picking 카드 (the paste chip or the link sheet) inserts this; it fetches the OG preview (same
+ * endpoint) and draws the card right in the editor.
  */
-export const LinkCardNode = Node.create({
-  name: "linkCard",
-  group: "block",
-  atom: true,
-  draggable: true,
-  selectable: true,
-
-  addAttributes() {
-    return { url: { default: "" } };
-  },
-
-  parseHTML() {
-    return [
-      {
-        tag: "div[data-link-card]",
-        getAttrs: (el) => ({ url: (el as HTMLElement).getAttribute("data-url") || "" }),
-      },
-    ];
-  },
-
-  renderHTML({ HTMLAttributes }) {
-    return [
-      "div",
-      mergeAttributes(HTMLAttributes, { "data-link-card": "", "data-url": HTMLAttributes.url }),
-    ];
-  },
-
+export const LinkCardNode = LinkCardBase.extend({
   addNodeView() {
     return ReactNodeViewRenderer(LinkCardView);
-  },
-
-  // Serialize → the bare URL on its own line (round-trips to a markdown EMBED block → published card).
-  addStorage() {
-    return {
-      markdown: {
-        serialize(state: { write: (s: string) => void; closeBlock: (n: unknown) => void }, node: { attrs: { url: string } }) {
-          state.write(node.attrs.url || "");
-          state.closeBlock(node);
-        },
-        parse: {
-          updateDOM(element: HTMLElement) {
-            element.querySelectorAll(":scope > p").forEach((p) => {
-              const url = p.textContent?.trim() ?? "";
-              const onlyLink = Array.from(p.children).every((c) => c.tagName === "A" && c.getAttribute("href") === url);
-              if (!onlyLink || !LINK_CARD_URL_RE.test(url) || isImageUrl(url)) return;
-              if (!kurlShortCode(url) && !planEmbed(url)) return;
-              const card = element.ownerDocument.createElement("div");
-              card.setAttribute("data-link-card", "");
-              card.setAttribute("data-url", url);
-              p.replaceWith(card);
-            });
-          },
-        },
-      },
-    };
   },
 });
 

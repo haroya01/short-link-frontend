@@ -1836,6 +1836,42 @@ test("a bare page URL pasted on an empty line goes in as a link, and picking Car
   expect(embed!.content).toContain("example.com/an-article");
 });
 
+test("a video URL kept as a link on its own line saves, reopens and publishes as a link, not a player", async ({ page }) => {
+  const video = "https://youtu.be/dQw4w9WgXcQ";
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  let stored: Block[] = [];
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      stored = route.request().postDataJSON()?.blocks ?? [];
+      captured.blocks = stored;
+    }
+    return route.fulfill({ json: stored.map((b, i) => ({ id: i + 1, blockOrder: i, ...b })) });
+  });
+  await openEditor(page);
+  await pasteInto(page, { text: video });
+  const choice = page.locator(".tiptap").getByRole("group", { name: "Choose how the link appears" });
+  await expect(choice.getByRole("button")).toHaveText(["Link", "Video"]);
+  await choice.getByRole("button", { name: "Link" }).click();
+  await expect(choice).toHaveCount(0);
+
+  const blocks = await save(page, captured);
+  expect(blocks.map((b) => b.type)).not.toContain("EMBED");
+  expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toBe(`<${video}>`);
+
+  await page.reload();
+  await expect(page.locator(`.tiptap a[href="${video}"]`)).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator(".tiptap [data-link-card]")).toHaveCount(0);
+
+  await titleInput(page).fill("A clip kept as a link");
+  const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog);
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("publish");
+  expect(stored.map((b) => b.type)).not.toContain("EMBED");
+  expect(stored.find((b) => b.type === "PARAGRAPH")?.content).toBe(`<${video}>`);
+});
+
 test("paste a bare IMAGE URL on an empty line re-hosts as an IMAGE, not a link card", async ({
   page,
 }) => {
