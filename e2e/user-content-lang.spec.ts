@@ -36,6 +36,10 @@ test("comments, bios and notification excerpts carry their own language on an En
   await page.goto("/en/p/dohyun/nextjs-14-app-router-blog");
   await expect(page.locator("#comment-1 [lang]").first()).toHaveAttribute("lang", "ko", { timeout: 30_000 });
   await expect(page.locator("aside p", { hasText: "백엔드 개발자" }).first()).toHaveAttribute("lang", "ko");
+  await expect(page.getByTestId("post-author-card").locator("span", { hasText: "백엔드 개발자" }).last()).toHaveAttribute(
+    "lang",
+    "ko",
+  );
 
   await page.goto("/en/p/dohyun");
   await expect(page.locator("p", { hasText: "백엔드 개발자" }).first()).toHaveAttribute("lang", "ko", { timeout: 30_000 });
