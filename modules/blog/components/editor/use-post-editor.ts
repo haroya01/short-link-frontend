@@ -44,6 +44,15 @@ function isEditConflict(e: unknown): boolean {
   return e instanceof ApiError && e.detail.code === "POST_EDIT_CONFLICT";
 }
 
+function isTakenDown(e: unknown): boolean {
+  return e instanceof ApiError && e.detail.code === "POST_TAKEN_DOWN";
+}
+
+const PUBLIC_WRITE_BLOCKED: Record<string, string> = {
+  ACCOUNT_SUSPENDED: "accountSuspendedPublic",
+  ACCOUNT_BANNED: "accountBannedPublic",
+};
+
 function guardFrom(base: number | null, overwrite = false): EditGuard {
   if (base == null) return {};
   return overwrite ? { baseVersion: base, overwrite: true } : { baseVersion: base };
@@ -103,7 +112,15 @@ export function usePostEditor(
   }: { ready: boolean; authenticated: boolean; username?: string | null; initialMarkdown?: string },
 ) {
   const t = useTranslations("postEditor");
-  const errorMessage = useApiErrorMessage();
+  const apiErrorMessage = useApiErrorMessage();
+  // 서버는 정지·제한 계정의 편집기 쓰기 가운데 공개 쓰기만 막는다(초안 편집은 허용한다).
+  const errorMessage = useCallback(
+    (e: unknown, fallback: string) => {
+      const blocked = e instanceof ApiError ? PUBLIC_WRITE_BLOCKED[e.detail.code ?? ""] : undefined;
+      return blocked ? t(blocked) : apiErrorMessage(e, fallback);
+    },
+    [t, apiErrorMessage],
+  );
   const router = useRouter();
   const locale = useLocale();
   const [confirm, confirmDialog] = useConfirm();
@@ -552,6 +569,14 @@ export function usePostEditor(
   }
 
   /** Returns true once the status change succeeds — the caller can then close the publish dialog. */
+  function markTakenDown() {
+    const current = currentDraft.current.post;
+    if (current == null || current.takenDown) return;
+    const next = { ...current, takenDown: true };
+    currentDraft.current.post = next;
+    setPost(next);
+  }
+
   async function changeStatus(
     action: StatusAction,
     opts?: { shortenLinks?: string[] },
@@ -602,6 +627,7 @@ export function usePostEditor(
       if (isEditConflict(e)) setConflict(true);
       else if (isSlugConflict(e)) setError(t("slugTaken"));
       else setError(errorMessage(e, t("statusChangeFailed")));
+      if (isTakenDown(e)) markTakenDown();
       return false;
     } finally {
       setBusy(false);
@@ -656,6 +682,7 @@ export function usePostEditor(
       if (isEditConflict(e)) setConflict(true);
       else if (isSlugConflict(e)) setError(t("slugTaken"));
       else setError(errorMessage(e, t("scheduleFailed")));
+      if (isTakenDown(e)) markTakenDown();
       return false;
     } finally {
       setBusy(false);

@@ -336,7 +336,7 @@ export default function WriteIndexPage() {
                   <div className="flex gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-[12px]">
-                        <PostStatusBadge status={p.status} />
+                        <PostStatusBadge status={p.status} takenDown={p.takenDown} />
                         {p.tags[0] && (
                           <span className="truncate text-slate-500 dark:text-slate-400">{p.tags[0]}</span>
                         )}
@@ -355,6 +355,9 @@ export default function WriteIndexPage() {
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-slate-500 dark:text-slate-400">
                         <span className="whitespace-nowrap">{ago(p.updatedAt)}</span>
+                        {p.takenDown && (
+                          <span className="text-red-700 dark:text-red-300">· {t("takenDownTitle")}</span>
+                        )}
                         {p.status === "SCHEDULED" && p.scheduledAt && (
                           // The row time above is 마지막 수정; a scheduled draft's whole point is *when*
                           // it goes live, so surface that instant explicitly (populated but hidden before).

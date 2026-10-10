@@ -11,7 +11,7 @@ const api = vi.hoisted(() => ({
   schedulePost: vi.fn(), restoreRevision: vi.fn(), deletePost: vi.fn(), createPost: vi.fn(),
 }));
 const router = vi.hoisted(() => ({ push: vi.fn() }));
-const translate = vi.hoisted(() => (key: string) => key);
+const translate = vi.hoisted(() => Object.assign((key: string) => key, { has: () => false }));
 const confirmLeave = vi.hoisted(() => vi.fn(async () => true));
 vi.mock("@/modules/blog/api/posts", () => api);
 vi.mock("next/navigation", () => ({ useRouter: () => router }));
@@ -545,5 +545,35 @@ describe("saving against another device's edits", () => {
       await vi.advanceTimersByTimeAsync(0);
     });
     expect(api.getBlocks).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("a post the writer may not make public", () => {
+  const refused = (status: number, code: string) => new ApiError(status, { status, code } as never);
+
+  it("marks the post taken down when making it public again is refused for that", async () => {
+    api.getPost.mockResolvedValue({ ...POST, status: "UNPUBLISHED", publishedAt: "2026-01-02T00:00:00Z" });
+    api.republishPost.mockRejectedValue(refused(409, "POST_TAKEN_DOWN"));
+    await mount();
+    let republished: boolean | undefined;
+    await act(async () => { republished = await editor.changeStatus("republish"); });
+    expect(republished).toBe(false);
+    expect(editor.post?.takenDown).toBe(true);
+    expect(editor.post?.status).toBe("UNPUBLISHED");
+  });
+
+  it("tells a suspended writer that drafts can still be written", async () => {
+    api.publishPost.mockRejectedValue(refused(403, "ACCOUNT_SUSPENDED"));
+    await mount();
+    await act(async () => { await editor.changeStatus("publish"); });
+    expect(editor.error).toBe("accountSuspendedPublic");
+    expect(editor.post?.takenDown).toBeUndefined();
+  });
+
+  it("tells a restricted writer why the schedule was refused", async () => {
+    api.schedulePost.mockRejectedValue(refused(403, "ACCOUNT_BANNED"));
+    await mount();
+    await act(async () => { await editor.schedule("2099-01-01T12:00"); });
+    expect(editor.error).toBe("accountBannedPublic");
   });
 });

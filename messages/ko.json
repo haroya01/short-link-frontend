@@ -582,7 +582,14 @@
       "warning": "주의",
       "caution": "경고"
     },
-    "bodyPlaceholderTouch": "그냥 쓰면 돼요. 서식은 위 도구 막대에 있어요"
+    "bodyPlaceholderTouch": "그냥 쓰면 돼요. 서식은 위 도구 막대에 있어요",
+    "statusTakenDown": "내려짐",
+    "takenDownTitle": "운영 정책으로 내려진 글이에요",
+    "takenDownBody": "고쳐서 저장할 수는 있지만 다시 공개할 수는 없어요. 이의가 있으면 이용약관의 문의처로 연락해 주세요.",
+    "takenDownTerms": "이용약관 보기",
+    "takenDownBlocked": "운영 정책으로 내려진 글이라 다시 공개할 수 없어요",
+    "accountSuspendedPublic": "계정이 일시 정지된 동안에는 글을 공개하거나 공개된 글을 고칠 수 없어요. 초안은 계속 쓸 수 있어요.",
+    "accountBannedPublic": "이용이 제한된 계정이라 글을 공개하거나 공개된 글을 고칠 수 없어요."
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -877,7 +884,8 @@
     "DUPLICATE_REPORT": "이미 신고한 대상이에요.",
     "SUBJECT_NOT_FOUND": "대상을 찾을 수 없어요.",
     "SUSPEND_REQUIRES_EXPIRY": "정지하려면 만료일이 필요해요.",
-    "toggleFailed": "반영하지 못했어요. 잠시 후 다시 시도해 주세요."
+    "toggleFailed": "반영하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    "POST_TAKEN_DOWN": "운영 정책으로 내려진 글이라 다시 공개할 수 없어요."
   },
   "cookieConsent": {
     "ariaLabel": "쿠키 안내",
