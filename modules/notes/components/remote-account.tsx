@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, ExternalLink, Globe, Hand, MoreHorizontal } from "lucide-react";
+import { Check, ExternalLink, Globe, Hand, MessageSquareText, MoreHorizontal, UserX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { EmptyState } from "@/components/common/empty-state";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { useDismiss } from "@/hooks/use-dismiss";
@@ -251,7 +251,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
   }, [id, version]);
 
   if (failed) {
-    return <EmptyState title={t("remoteNotFound")} className="mt-16" />;
+    return <BlogEmpty icon={UserX} title={t("remoteNotFound")} />;
   }
   if (!account) {
     return <div className="mt-10 h-24 animate-pulse rounded-surface bg-slate-100 dark:bg-slate-900" aria-hidden />;
@@ -288,10 +288,9 @@ export function RemoteAccountScreen({ id }: { id: number }) {
       </header>
       <div className="mt-6 border-t border-slate-200 dark:border-slate-800">
         {account.domainBlocked ? (
-          <EmptyState
+          <BlogEmpty
             icon={Hand}
             title={t("domainBlockedTitle")}
-            description={t("domainBlockedHint", { domain: account.domain })}
             action={
               <button
                 type="button"
@@ -309,14 +308,13 @@ export function RemoteAccountScreen({ id }: { id: number }) {
                 {t("domainUnblock", { domain: account.domain })}
               </button>
             }
-            className="mt-8"
           />
         ) : (
           <NoteList
             key={`${id}-${version}`}
             load={load}
             filterContext="account"
-            empty={<EmptyState title={t("remoteNoNotes")} description={t("remoteNoNotesHint")} className="mt-8" />}
+            empty={<BlogEmpty icon={MessageSquareText} title={t("remoteNoNotes")} />}
           />
         )}
       </div>

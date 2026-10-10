@@ -8,6 +8,7 @@ import type { Note, NoteFeed, NoteFilterContext } from "@/modules/notes/api/note
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { SrLoading } from "@/modules/blog/components/sr-loading";
 import { NoteCard } from "./note-card";
 import { noteHref } from "@/modules/notes/lib/note-href";
 
@@ -83,7 +84,7 @@ export function NoteList({
   const fresh = new Set(prepend.map((n) => n.id));
 
   if (state === "loading" && shown.length === 0) {
-    return <div className="py-10" aria-busy />;
+    return <NoteListSkeleton />;
   }
   if (state === "error" && shown.length === 0) {
     return <ErrorState title={t("loadFailed")} onRetry={reload} />;
@@ -162,6 +163,24 @@ export function NoteList({
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function NoteListSkeleton() {
+  return (
+    <div aria-busy="true" data-testid="note-list-skeleton" className="divide-y divide-slate-100 dark:divide-slate-800">
+      <SrLoading />
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className="flex gap-3 py-4">
+          <div className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
+          <div className="min-w-0 flex-1 space-y-2 pt-1">
+            <div className="h-3 w-1/3 animate-pulse rounded bg-slate-200/80 dark:bg-slate-800" />
+            <div className="h-3.5 w-full animate-pulse rounded bg-slate-100 dark:bg-slate-800/60" />
+            <div className="h-3.5 w-2/3 animate-pulse rounded bg-slate-100 dark:bg-slate-800/60" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
