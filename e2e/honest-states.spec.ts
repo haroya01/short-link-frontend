@@ -75,10 +75,10 @@ test.describe("desktop", () => {
   test("saved posts and highlights say they failed to load, each by its own name", async ({ page }) => {
     await failing(page, "saved,highlights");
     await page.goto("/ko/blog/curation");
-    await expect(page.getByText("저장한 글을 불러오지 못했어요.")).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByText("아직 담아둔 글이 없어요")).toHaveCount(0);
+    await expect(page.getByText("북마크를 불러오지 못했어요.")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText("북마크한 글이 없어요")).toHaveCount(0);
 
-    await page.getByRole("navigation", { name: "보관함", exact: true }).getByRole("link", { name: "하이라이트·공개 메모" }).click();
+    await page.getByRole("navigation", { name: "서재", exact: true }).getByRole("link", { name: "하이라이트·공개 메모" }).click();
     await expect(page.getByText("하이라이트를 불러오지 못했어요.")).toBeVisible();
     await expect(page.getByText("읽기 기록을 불러오지 못했어요.")).toHaveCount(0);
 
