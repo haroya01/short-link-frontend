@@ -80,15 +80,7 @@ export function AppHeader({
   const showAuthed: boolean | null = ready ? authenticated : null;
 
   const loginButton = (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => {
-        // Route through kurl's own branded login screen (then Google) instead of bouncing straight
-        // to the Google OAuth consent — carry the current page as the return ?next.
-        window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
-      }}
-    >
+    <Button variant="outline" size="sm" onClick={() => askToSignIn("general")}>
       {t("login")}
     </Button>
   );

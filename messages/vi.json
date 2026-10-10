@@ -115,7 +115,6 @@
     "searchNotesTab": "Ghi chú"
   },
   "blogWebhooks": {
-    "loginRequired": "Cần đăng nhập.",
     "title": "Webhook",
     "subtitle": "Nhận thông báo tại endpoint của bạn khi độc giả thích, bình luận, theo dõi hoặc đăng ký series.",
     "connected": "Webhook đã kết nối",
@@ -161,7 +160,6 @@
     "draftsTitle": "Bản nháp",
     "draftsEmpty": "Không có bản nháp.",
     "views": "{count, number} lượt xem",
-    "loginRequired": "Vui lòng đăng nhập.",
     "loading": "Đang tải…",
     "seriesTitle": "Loạt bài",
     "seriesNewTitle": "Series mới",
@@ -408,7 +406,6 @@
     "uploadTooLarge": "Tệp quá lớn ({sizeMb}MB > {maxMb}MB).",
     "codeLanguage": "Ngôn ngữ mã",
     "pasteImportFailed": "Không thể nhập {count, plural, one {# ảnh} other {# ảnh}} nên đã giữ liên kết gốc. Nếu ảnh không hiển thị, hãy xóa và tải tệp lên.",
-    "loginRequired": "Vui lòng đăng nhập.",
     "loading": "Đang tải…",
     "notFound": "Không tìm thấy bài viết.",
     "statusDRAFT": "Bản nháp",
@@ -1217,7 +1214,8 @@
     "ctas": "Đăng nhập để quản lý CTA",
     "events": "Đăng nhập để quản lý sự kiện",
     "profile": "Đăng nhập để chỉnh sửa hồ sơ",
-    "more": "Đăng nhập để xem công cụ và ứng dụng"
+    "more": "Đăng nhập để xem công cụ và ứng dụng",
+    "general": "Đăng nhập để tiếp tục"
   },
   "auth": {
     "signedIn": "Đã đăng nhập",
@@ -2329,7 +2327,6 @@
     "copied": "Đã sao chép",
     "copyFailed": "Sao chép thất bại.",
     "close": "Đóng",
-    "loginRequired": "Vui lòng đăng nhập.",
     "errorPrefix": "Lỗi:",
     "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại.",
     "showPassword": "Hiện mật khẩu",

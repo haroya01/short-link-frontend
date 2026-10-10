@@ -48,13 +48,16 @@ export type SignInReason =
   | "ctas"
   | "events"
   | "profile"
-  | "more";
+  | "more"
+  | "general";
 
-let asked: SignInReason | null = null;
+type Ask = { reason: SignInReason; next?: string };
+
+let asked: Ask | null = null;
 const listeners = new Set<() => void>();
 
-function set(next: SignInReason | null) {
-  asked = next;
+function set(ask: Ask | null) {
+  asked = ask;
   listeners.forEach((listener) => listener());
 }
 
@@ -65,23 +68,23 @@ function subscribe(listener: () => void) {
   };
 }
 
-export function askToSignIn(reason: SignInReason) {
-  set(reason);
+export function askToSignIn(reason: SignInReason, next?: string) {
+  set({ reason, next });
 }
 
 export function LoginPromptHost() {
-  const reason = useSyncExternalStore(subscribe, () => asked, () => null);
+  const ask = useSyncExternalStore(subscribe, () => asked, () => null);
   const { authenticated } = useAuth();
-  const open = reason !== null && !authenticated;
-  const shown = useRef<SignInReason | null>(null);
-  if (open) shown.current = reason;
+  const open = ask !== null && !authenticated;
+  const shown = useRef<Ask | null>(null);
+  if (open) shown.current = ask;
   const { mounted: present, closing } = usePresence(open, 240);
   const [here, setHere] = useState(false);
   useEffect(() => setHere(true), []);
 
   useEffect(() => {
-    if (reason !== null && authenticated) set(null);
-  }, [reason, authenticated]);
+    if (ask !== null && authenticated) set(null);
+  }, [ask, authenticated]);
 
   useEffect(() => {
     if (!open) return;
@@ -93,10 +96,10 @@ export function LoginPromptHost() {
   }, [open]);
 
   if (!here || !present || !shown.current) return null;
-  return createPortal(<LoginSheet reason={shown.current} open={open} closing={closing} />, document.body);
+  return createPortal(<LoginSheet {...shown.current} open={open} closing={closing} />, document.body);
 }
 
-function LoginSheet({ reason, open, closing }: { reason: SignInReason; open: boolean; closing: boolean }) {
+function LoginSheet({ reason, next, open, closing }: Ask & { open: boolean; closing: boolean }) {
   const t = useTranslations("loginPrompt");
   const tc = useTranslations("common");
   const { signInWithGoogle } = useAuth();
@@ -104,7 +107,7 @@ function LoginSheet({ reason, open, closing }: { reason: SignInReason; open: boo
   const titleId = useId();
   const close = () => set(null);
   useFocusTrap(panel, { active: open, onEscape: close, autoFocus: true });
-  const back = typeof window === "undefined" ? "/" : window.location.href;
+  const back = next ?? (typeof window === "undefined" ? "/" : window.location.href);
   const legal = "underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-300";
 
   return (
@@ -146,7 +149,7 @@ function LoginSheet({ reason, open, closing }: { reason: SignInReason; open: boo
           {t(reason)}
         </h2>
         <div className="mt-6 space-y-2.5">
-          <Button variant="outline" className="h-11 w-full justify-center" onClick={() => signInWithGoogle()}>
+          <Button variant="outline" className="h-11 w-full justify-center" onClick={() => signInWithGoogle(next)}>
             <GoogleIcon className="h-4 w-4" />
             {t("google")}
           </Button>

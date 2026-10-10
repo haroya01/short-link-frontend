@@ -115,7 +115,6 @@
     "searchNotesTab": "ノート"
   },
   "blogWebhooks": {
-    "loginRequired": "ログインが必要です。",
     "title": "Webhook",
     "subtitle": "読者がいいね・コメント・フォロー・シリーズのフォローをすると、指定したエンドポイントに通知します。",
     "connected": "連携中のWebhook",
@@ -161,7 +160,6 @@
     "draftsTitle": "下書き",
     "draftsEmpty": "下書きがありません。",
     "views": "閲覧 {count, number}",
-    "loginRequired": "ログインが必要です。",
     "loading": "読み込み中…",
     "seriesTitle": "シリーズ",
     "seriesNewTitle": "新規シリーズ",
@@ -408,7 +406,6 @@
     "uploadTooLarge": "ファイルが大きすぎます（{sizeMb}MB > {maxMb}MB）。",
     "codeLanguage": "コード言語",
     "pasteImportFailed": "画像{count, plural, one {#枚} other {#枚}}を取り込めなかったため、元のリンクのまま挿入しました。表示されない場合は削除してファイルをアップロードしてください。",
-    "loginRequired": "ログインが必要です。",
     "loading": "読み込み中…",
     "notFound": "記事が見つかりません。",
     "statusDRAFT": "下書き",
@@ -1217,7 +1214,8 @@
     "ctas": "CTAを管理するにはログインしてください",
     "events": "イベントを管理するにはログインしてください",
     "profile": "プロフィールを編集するにはログインしてください",
-    "more": "ツールとアプリを見るにはログインしてください"
+    "more": "ツールとアプリを見るにはログインしてください",
+    "general": "ログインして続けてください"
   },
   "auth": {
     "signedIn": "ログインしました",
@@ -2329,7 +2327,6 @@
     "copied": "コピー済み",
     "copyFailed": "コピーに失敗しました",
     "close": "閉じる",
-    "loginRequired": "ログインが必要です。",
     "errorPrefix": "エラー:",
     "offline": "オフラインです。接続が戻ると自動的に再試行します。",
     "showPassword": "パスワードを表示",

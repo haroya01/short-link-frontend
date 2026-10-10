@@ -115,7 +115,6 @@
     "searchNotesTab": "Notes"
   },
   "blogWebhooks": {
-    "loginRequired": "Sign in required.",
     "title": "Webhooks",
     "subtitle": "Get notified at your endpoint when readers like, comment, follow, or subscribe to a series.",
     "connected": "Connected webhooks",
@@ -161,7 +160,6 @@
     "draftsTitle": "Drafts",
     "draftsEmpty": "No drafts.",
     "views": "{count, plural, one {# view} other {# views}}",
-    "loginRequired": "Please sign in.",
     "loading": "Loading…",
     "seriesTitle": "Series",
     "seriesNewTitle": "New series",
@@ -408,7 +406,6 @@
     "uploadTooLarge": "File is too large ({sizeMb}MB > {maxMb}MB).",
     "codeLanguage": "Code language",
     "pasteImportFailed": "Couldn't import {count, plural, one {# image} other {# images}}, so the original link was kept. If it doesn't show, delete it and upload the file.",
-    "loginRequired": "Please sign in.",
     "loading": "Loading…",
     "notFound": "Post not found.",
     "statusDRAFT": "Draft",
@@ -1217,7 +1214,8 @@
     "ctas": "Sign in to manage CTAs",
     "events": "Sign in to manage events",
     "profile": "Sign in to edit your profile",
-    "more": "Sign in to see tools and apps"
+    "more": "Sign in to see tools and apps",
+    "general": "Sign in to continue"
   },
   "auth": {
     "signedIn": "Signed in",
@@ -2329,7 +2327,6 @@
     "copied": "Copied",
     "copyFailed": "Copy failed.",
     "close": "Close",
-    "loginRequired": "Please sign in.",
     "errorPrefix": "Error:",
     "offline": "You're offline. We'll reconnect automatically.",
     "showPassword": "Show password",

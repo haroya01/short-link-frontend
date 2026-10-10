@@ -54,6 +54,14 @@ describe("the one sign-in sheet", () => {
     expect(auth.signInWithGoogle).toHaveBeenCalledTimes(1);
   });
 
+  it("sends sign-in on to where the asking page said, not back to itself", async () => {
+    await act(async () => root.render(createElement(LoginPromptHost)));
+    await act(async () => askToSignIn("events", "https://kurl.me/ko/events"));
+    const google = [...sheet()!.querySelectorAll("button")].find((b) => b.textContent === "loginPrompt.google")!;
+    await act(async () => google.click());
+    expect(auth.signInWithGoogle).toHaveBeenCalledWith("https://kurl.me/ko/events");
+  });
+
   it("closes on Escape and on its close button", async () => {
     await act(async () => root.render(createElement(LoginPromptHost)));
     await ask("comment");

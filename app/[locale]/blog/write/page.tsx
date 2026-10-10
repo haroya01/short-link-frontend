@@ -123,9 +123,6 @@ export default function WriteIndexPage() {
   );
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="mx-auto max-w-2xl px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   // Per-post analytics lives at the sibling /analytics/{id} route — derive its base from writeBase.
   const analyticsBase = writeBase.replace(/\/write$/, "/analytics");

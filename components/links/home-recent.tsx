@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
-import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { useAuth } from "@/lib/auth";
 import { useRecentLinks } from "@/lib/recent-links";
 
@@ -41,12 +41,13 @@ function BrowserRecent({ exclude }: { exclude: string[] }) {
       footer={
         <p className="mt-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
           {t("recentClaim")}{" "}
-          <Link
-            href="/login"
+          <SignInLink
+            reason="links"
+            next="/dashboard"
             className="focus-ring rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
           >
             {t("recentLogin")}
-          </Link>
+          </SignInLink>
         </p>
       }
     >

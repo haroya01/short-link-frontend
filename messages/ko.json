@@ -115,7 +115,6 @@
     "searchNotesTab": "노트"
   },
   "blogWebhooks": {
-    "loginRequired": "로그인이 필요해요.",
     "title": "웹훅",
     "subtitle": "독자가 좋아요·댓글·팔로우·시리즈 구독을 하면 지정한 엔드포인트로 알림을 보내요.",
     "connected": "연결된 웹훅",
@@ -161,7 +160,6 @@
     "draftsTitle": "임시저장",
     "draftsEmpty": "임시저장한 글이 없어요.",
     "views": "조회 {count, number}",
-    "loginRequired": "로그인이 필요해요.",
     "loading": "불러오는 중…",
     "seriesTitle": "시리즈",
     "seriesNewTitle": "새 시리즈",
@@ -408,7 +406,6 @@
     "uploadTooLarge": "파일이 너무 커요 ({sizeMb}MB > {maxMb}MB).",
     "codeLanguage": "코드 언어",
     "pasteImportFailed": "이미지 {count, plural, one {#장} other {#장}}을 가져오지 못해 원본 링크로 넣었어요. 표시가 안 되면 지우고 파일로 올려주세요.",
-    "loginRequired": "로그인이 필요해요.",
     "loading": "불러오는 중…",
     "notFound": "글을 찾을 수 없어요.",
     "statusDRAFT": "임시저장",
@@ -1217,7 +1214,8 @@
     "ctas": "CTA를 관리하려면 로그인하세요",
     "events": "모집 페이지를 관리하려면 로그인하세요",
     "profile": "프로필을 꾸미려면 로그인하세요",
-    "more": "도구와 앱을 보려면 로그인하세요"
+    "more": "도구와 앱을 보려면 로그인하세요",
+    "general": "로그인하고 계속하세요"
   },
   "auth": {
     "signedIn": "로그인되었어요",
@@ -2329,7 +2327,6 @@
     "copied": "복사됨",
     "copyFailed": "복사에 실패했어요",
     "close": "닫기",
-    "loginRequired": "로그인이 필요해요.",
     "errorPrefix": "에러:",
     "offline": "오프라인 상태예요. 연결되면 자동으로 다시 시도해요.",
     "showPassword": "비밀번호 보기",

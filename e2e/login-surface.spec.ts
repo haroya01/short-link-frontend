@@ -65,3 +65,34 @@ test("로그인 전용 탭과 화면은 같은 빈 상태 하나로 말한다", 
   await expect(empty.getByRole("heading", { name: "내 링크를 보려면 로그인하세요" })).toBeVisible();
   await expect(empty.locator("a, li")).toHaveCount(0);
 });
+
+test("머리글 로그인과 기능 소개의 시작 버튼도 같은 시트를 띄우고, 로그인 페이지는 주소로만 남는다", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.route("**/oauth2/authorization/google", (route) => route.fulfill({ status: 200, body: "google" }));
+  await page.goto("/ko/events");
+  const start = page.getByRole("main").getByRole("link", { name: /로그인하고 시작하기/ }).first();
+  await expect(start).toHaveAttribute("href", /\/login\?next=\/events$/);
+  await start.click();
+  const events = sheet(page, "모집 페이지를 관리하려면 로그인하세요");
+  await expect(events).toBeVisible();
+  await expect(page).toHaveURL(/\/ko\/events$/);
+  await page.keyboard.press("Escape");
+  await expect(events).toHaveCount(0);
+
+  await page.getByRole("banner").getByRole("link", { name: "로그인", exact: true }).first().click();
+  const general = sheet(page, "로그인하고 계속하세요");
+  await Promise.all([
+    page.waitForURL(/\/oauth2\/authorization\/google$/),
+    general.getByRole("button", { name: "Google 계정으로 로그인" }).click(),
+  ]);
+  const next = (await page.context().cookies()).find((c) => c.name === "kurl_login_next");
+  expect(decodeURIComponent(next?.value ?? "")).toMatch(/\/ko\/events$/);
+});
+
+test("블로그 머리글의 로그인도 같은 시트다", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/ko/blog");
+  await page.getByRole("banner").getByRole("button", { name: "로그인", exact: true }).click();
+  await expect(sheet(page, "로그인하고 계속하세요")).toBeVisible();
+  await expect(page).toHaveURL(/\/ko\/blog$/);
+});
