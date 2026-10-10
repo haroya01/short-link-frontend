@@ -121,7 +121,10 @@
     "feedReasonSeries": "Subscribed series",
     "bookmarkFailed": "Couldn't save. Please try again.",
     "seriesSubscribeFailed": "Couldn't update subscription. Please try again.",
-    "searchNotesTab": "Notes"
+    "searchNotesTab": "Notes",
+    "searchPeopleTab": "People",
+    "searchPeopleEmpty": "No people match “{q}”",
+    "searchPeopleHint": "Type at least two characters to find people"
   },
   "blogWebhooks": {
     "title": "Webhooks",
@@ -901,6 +904,10 @@
     "unreadCount": "{count, plural, one {# unread notification} other {# unread notifications}}",
     "loadMore": "Load more",
     "viewAll": "View all notifications",
+    "tabsLabel": "Show notifications",
+    "tabAll": "All",
+    "tabMentions": "Mentions",
+    "mentionsEmpty": "No mentions or replies yet",
     "someone": "Someone",
     "like": "<b>{actor}</b> liked your post",
     "comment": "<b>{actor}</b> commented on your post",

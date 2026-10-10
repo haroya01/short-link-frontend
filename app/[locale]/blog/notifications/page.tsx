@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, ChevronRight, ListFilter, Lock } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -16,8 +16,9 @@ import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
+import { NotificationTabs } from "@/modules/notifications/components/notification-tabs";
 import { ErrorState } from "@/components/common/error-state";
-import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
+import type { NotificationFilter, NotificationItem as Item } from "@/modules/notifications/api/notifications";
 import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
 
 /**
@@ -49,8 +50,9 @@ export default function NotificationsPage() {
   const { ready, authenticated, me } = useAuth();
   const unread = useUnreadCount();
   const markAll = useMarkAllRead();
+  const [filter, setFilter] = useState<NotificationFilter>("all");
   const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useNotifications();
+    useNotifications(filter);
   const filters = useNoteFilters();
   const all = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
   useReadHiddenNotices(all, filters, me?.id);
@@ -94,7 +96,9 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      {waiting > 0 && (
+      <NotificationTabs value={filter} onChange={setFilter} className="mt-4" />
+
+      {filter === "all" && waiting > 0 && (
         // 잠긴 계정에 기다리는 요청이 있으면 맨 위 한 줄 — 마스토돈 알림 위 "팔로우 요청".
         <BlogLink
           href={blogPath("/follow-requests")}
@@ -112,7 +116,7 @@ export default function NotificationsPage() {
         </BlogLink>
       )}
 
-      {filtered.length > 0 && (
+      {filter === "all" && filtered.length > 0 && (
         // 알림 거르기가 따로 둔 알림 — 마스토돈 "걸러진 알림" 한 줄.
         <BlogLink
           href={blogPath("/notifications/filtered")}
@@ -132,7 +136,7 @@ export default function NotificationsPage() {
         </BlogLink>
       )}
 
-      <div className="mt-4">
+      <div role="tabpanel" className="mt-4">
         {!ready || isLoading ? (
           // 실제 행 모양의 펄스 스켈레톤 — "…" 한 글자는 빈 화면과 구분이 안 됐다.
           <div role="status" aria-busy="true" className="space-y-1 py-2">
@@ -152,7 +156,9 @@ export default function NotificationsPage() {
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center py-24 text-center">
             <Bell aria-hidden className="h-6 w-6 text-slate-300 dark:text-slate-600" />
-            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{t("empty")}</p>
+            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+              {t(filter === "mentions" ? "mentionsEmpty" : "empty")}
+            </p>
           </div>
         ) : (
           GROUP_ORDER.filter((key) => groups.has(key)).map((key) => (

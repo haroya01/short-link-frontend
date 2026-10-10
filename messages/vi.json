@@ -121,7 +121,10 @@
     "feedReasonSeries": "Series đã đăng ký",
     "bookmarkFailed": "Không thể lưu. Vui lòng thử lại.",
     "seriesSubscribeFailed": "Không thể cập nhật đăng ký. Vui lòng thử lại.",
-    "searchNotesTab": "Ghi chú"
+    "searchNotesTab": "Ghi chú",
+    "searchPeopleTab": "Mọi người",
+    "searchPeopleEmpty": "Không có ai khớp với “{q}”",
+    "searchPeopleHint": "Nhập ít nhất hai ký tự để tìm người"
   },
   "blogWebhooks": {
     "title": "Webhook",
@@ -901,6 +904,10 @@
     "unreadCount": "{count} thông báo chưa đọc",
     "loadMore": "Xem thêm",
     "viewAll": "Xem tất cả thông báo",
+    "tabsLabel": "Hiển thị thông báo",
+    "tabAll": "Tất cả",
+    "tabMentions": "Nhắc đến",
+    "mentionsEmpty": "Chưa có lượt nhắc đến hay trả lời nào",
     "someone": "Ai đó",
     "like": "<b>{actor}</b> đã thích bài của bạn",
     "comment": "<b>{actor}</b> đã bình luận bài của bạn",
