@@ -204,7 +204,7 @@ test("any signed-in reader can file someone's note into a collection, and the no
   const yunaNote = page.locator("article", { hasText: "오늘 쓴 글의 씨앗" });
   await yunaNote.getByRole("button", { name: "노트 메뉴" }).click({ timeout: 30_000 });
   await expect(yunaNote.getByRole("menuitem", { name: "고치기" })).toHaveCount(0);
-  await yunaNote.getByRole("menuitem", { name: "컬렉션에 연결" }).click();
+  await yunaNote.getByRole("menuitem", { name: "엮기", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
 
   await page.goto("/ko/blog/collections/1");

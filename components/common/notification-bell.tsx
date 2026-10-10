@@ -69,7 +69,8 @@ function NotificationDropdown({
   onClose: () => void;
 }) {
   const t = useTranslations("notifications");
-  const { data, isLoading } = useNotifications();
+  const tc = useTranslations("common");
+  const { data, isLoading, isError, isFetching, refetch } = useNotifications();
   const markAll = useMarkAllRead();
   const filters = useNoteFilters();
   const { me } = useAuth();
@@ -99,7 +100,7 @@ function NotificationDropdown({
       <div className="h-px bg-slate-100 dark:bg-slate-800" />
 
       <div className="max-h-96 overflow-y-auto p-1">
-        {isLoading ? (
+        {isLoading || (isError && isFetching) ? (
           // Row-shaped pulse rows (compact 3) instead of a lone "…", which read as an empty dropdown.
           <div role="status" aria-busy="true" className="space-y-1 py-1">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -111,6 +112,17 @@ function NotificationDropdown({
                 </div>
               </div>
             ))}
+          </div>
+        ) : isError ? (
+          <div role="alert" className="flex flex-col items-center gap-2 px-3 py-8 text-center">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              className="focus-ring rounded-full px-3 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            >
+              {tc("retry")}
+            </button>
           </div>
         ) : items.length === 0 ? (
           <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">

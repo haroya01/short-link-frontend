@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { Quote } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { emitPostQuoted } from "@/modules/blog/lib/consequence-events";
+import { openNote } from "@/modules/notes/lib/note-href";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 
 export function QuoteInNoteButton({
@@ -21,6 +23,8 @@ export function QuoteInNoteButton({
   authorUsername: string;
 }) {
   const t = useTranslations("notes");
+  const locale = useLocale();
+  const router = useRouter();
   const { authenticated } = useAuth();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -41,7 +45,9 @@ export function QuoteInNoteButton({
         onClose={() => setOpen(false)}
         onPosted={(note) => {
           setOpen(false);
-          toast(t("quotePosted"));
+          toast(t("quotePosted"), "default", {
+            action: { label: t("viewNote"), onClick: () => openNote(note, locale, router.push) },
+          });
           emitPostQuoted(postId, note);
         }}
       />

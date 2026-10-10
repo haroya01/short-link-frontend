@@ -79,6 +79,7 @@
     "trendingTopicsLabel": "トピック別の人気記事",
     "searchScopeAll": "検索中はすべての記事から探しています。",
     "searchEmptyTitle": "記事が見つかりません",
+    "searchFailed": "検索できませんでした",
     "searchEmptyBody": "別のキーワードを試すか、トピックを見てみましょう。",
     "searchEmptyHeading": "「{q}」に合う記事はまだありません",
     "searchEmptyTopics": "代わりにこんなトピックは",
@@ -396,6 +397,8 @@
     "coverRemove": "削除",
     "excerptPlaceholder": "一行の要約",
     "unpublish": "公開停止",
+    "unpublishConfirmTitle": "この記事の公開を停止しますか？",
+    "unpublishConfirmDescription": "記事は残りますが、公開アドレスが閉じて誰も見られなくなります。いつでも再公開できます。",
     "republish": "再公開",
     "delete": "削除",
     "deleteConfirm": "本当に削除しますか？本文とすべてのリビジョンも削除されます。",
@@ -450,6 +453,8 @@
     "scheduledToast": "{when}に公開予約しました。",
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
+    "cancelScheduleConfirmTitle": "公開予約を取り消しますか？",
+    "cancelScheduleConfirmDescription": "記事は下書きに戻ります。いつでも予約し直したり、すぐに公開したりできます。",
     "addTopics": "タグを追加",
     "tagsDone": "完了",
     "tagsEdit": "タグを編集",
@@ -609,6 +614,8 @@
     "saveFailed": "変更を保存できませんでした。もう一度お試しください。",
     "bulkMoveFailed": "{count}件を移動できませんでした。もう一度お試しください。",
     "loadError": "読んだ記録を読み込めませんでした。",
+    "highlightsLoadError": "ハイライトを読み込めませんでした。",
+    "bookmarksLoadError": "保存した記事を読み込めませんでした。",
     "retry": "再試行"
   },
   "publicPost": {
@@ -660,6 +667,8 @@
     "report": "報告",
     "reportTitle": "この記事を報告",
     "reportTitleNote": "このノートを報告",
+    "reportTitleUser": "このユーザーを報告",
+    "reportTitleComment": "このコメントを報告",
     "reportReason": "報告理由",
     "reportSubmit": "報告",
     "reportSubmitting": "送信中…",
@@ -874,6 +883,7 @@
     "webPushDenied": "ブラウザで通知がブロックされています。サイト設定で許可してください。",
     "title": "通知",
     "empty": "まだ通知はありません",
+    "loadError": "通知を読み込めませんでした",
     "markAllRead": "すべて既読",
     "unreadCount": "未読の通知{count}件",
     "loadMore": "もっと見る",
@@ -3753,6 +3763,7 @@
   "collections": {
     "metaTitle": "コレクション",
     "notFound": "このコレクションが見つかりませんでした。",
+    "loadError": "コレクションを読み込めませんでした",
     "empty": "まだ何もつながっていません。",
     "pathEyebrow": "道",
     "itemCount": "{count}個",
@@ -4171,7 +4182,7 @@
     "repliesTitle": "返信",
     "noReplies": "まだ返信はありません",
     "menu": "ノートのメニュー",
-    "connectToCollection": "コレクションに追加",
+    "connectToCollection": "つなぐ",
     "edit": "編集",
     "save": "保存",
     "done": "完了",
@@ -4200,6 +4211,7 @@
     "quoteTitle": "ノートを引用",
     "quotePlaceholder": "ひとこと添えてみましょう",
     "quotePosted": "引用ノートを投稿しました",
+    "viewNote": "見る",
     "repostFailed": "リポストできませんでした",
     "emptyReposts": "まだリポストはありません",
     "repostsTitle": "リポスト · @{username}",
@@ -4470,6 +4482,7 @@
     "untitled": "無題の下書き",
     "seeAll": "すべて見る",
     "noteTitle": "新しいノート",
-    "notePosted": "ノートを投稿しました"
+    "notePosted": "ノートを投稿しました",
+    "viewNote": "見る"
   }
 }

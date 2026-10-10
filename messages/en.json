@@ -79,6 +79,7 @@
     "trendingTopicsLabel": "Most-read, by topic",
     "searchScopeAll": "Searching across all posts",
     "searchEmptyTitle": "No posts found",
+    "searchFailed": "Couldn't search",
     "searchEmptyBody": "Try another keyword or browse topics.",
     "searchEmptyHeading": "Nothing matches “{q}” yet",
     "searchEmptyTopics": "Try one of these topics instead",
@@ -396,6 +397,8 @@
     "coverRemove": "Remove",
     "excerptPlaceholder": "One-line summary",
     "unpublish": "Unpublish",
+    "unpublishConfirmTitle": "Unpublish this post?",
+    "unpublishConfirmDescription": "The post stays, but its public address closes and no one can see it. You can publish it again anytime.",
     "republish": "Republish",
     "delete": "Delete",
     "deleteConfirm": "Delete this post? The body and all revisions are removed too.",
@@ -450,6 +453,8 @@
     "scheduledToast": "Scheduled to publish on {when}.",
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
+    "cancelScheduleConfirmTitle": "Cancel the scheduled publish?",
+    "cancelScheduleConfirmDescription": "The post goes back to drafts. You can schedule it again or publish it right away anytime.",
     "addTopics": "Add tags",
     "tagsDone": "Done",
     "tagsEdit": "Edit tags",
@@ -609,6 +614,8 @@
     "saveFailed": "Couldn't save your change. Please try again.",
     "bulkMoveFailed": "Couldn't move {count, plural, one {# item} other {# items}}. Please try again.",
     "loadError": "Couldn't load your reading history.",
+    "highlightsLoadError": "Couldn't load your highlights.",
+    "bookmarksLoadError": "Couldn't load your saved posts.",
     "retry": "Try again"
   },
   "publicPost": {
@@ -660,6 +667,8 @@
     "report": "Report",
     "reportTitle": "Report this post",
     "reportTitleNote": "Report this note",
+    "reportTitleUser": "Report this user",
+    "reportTitleComment": "Report this comment",
     "reportReason": "Reason",
     "reportPlaceholder": "Add any specific details (optional)",
     "reportForward": "Also send to {domain}",
@@ -874,6 +883,7 @@
     "webPushDenied": "Notifications are blocked in your browser. Allow them in site settings.",
     "title": "Notifications",
     "empty": "No notifications yet",
+    "loadError": "Couldn't load notifications",
     "markAllRead": "Mark all read",
     "unreadCount": "{count, plural, one {# unread notification} other {# unread notifications}}",
     "loadMore": "Load more",
@@ -3753,6 +3763,7 @@
   "collections": {
     "metaTitle": "Collection",
     "notFound": "This collection could not be found.",
+    "loadError": "Couldn't load this collection",
     "empty": "Nothing connected yet.",
     "pathEyebrow": "Path",
     "itemCount": "{count}",
@@ -4171,7 +4182,7 @@
     "repliesTitle": "Replies",
     "noReplies": "No replies yet",
     "menu": "Note menu",
-    "connectToCollection": "Add to a collection",
+    "connectToCollection": "Connect",
     "edit": "Edit",
     "save": "Save",
     "done": "Done",
@@ -4200,6 +4211,7 @@
     "quoteTitle": "Quote note",
     "quotePlaceholder": "Add your thoughts",
     "quotePosted": "Quote posted",
+    "viewNote": "View",
     "repostFailed": "Couldn't repost",
     "emptyReposts": "No reposts yet",
     "repostsTitle": "Reposts · @{username}",
@@ -4470,6 +4482,7 @@
     "untitled": "Untitled draft",
     "seeAll": "See all",
     "noteTitle": "New note",
-    "notePosted": "Note posted"
+    "notePosted": "Note posted",
+    "viewNote": "View"
   }
 }

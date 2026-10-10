@@ -7,7 +7,7 @@
  * flat list. The discover feed surfaces curators' connections; the public-highlights endpoint backs
  * "이 문장이 속한 길" (which paths a sentence belongs to).
  */
-import { request } from "@/lib/api/client";
+import { ApiError, mockFailure, request } from "@/lib/api/client";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { collectionMocks } from "@/modules/blog/api/_mock-gates";
 import { fetchPublic, hasViewer, type FetchResult } from "@/modules/blog/api/public-posts";
@@ -197,11 +197,12 @@ export async function listPublicCollectionsByUsername(
  *  private ones need ownership (the backend enforces it). 인증을 실어야 소유자가 자기 비공개
  *  컬렉션을 볼 수 있다 — 이전의 헤더 없는 raw fetch 는 로그인 상태에서도 401 → "찾을 수 없어요". */
 export async function getCollection(id: number): Promise<CollectionDetail | null> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockCollectionDetail(id));
+  if (collectionMocks) return mockFailure("collection") ?? collectionMocks.mockCollectionDetail(id);
   try {
     return await request<CollectionDetail>(`/api/v1/collections/${id}`, { method: "GET" });
-  } catch {
-    return null;
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null;
+    throw e;
   }
 }
 

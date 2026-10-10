@@ -1,4 +1,4 @@
-import { request } from "@/lib/api/client";
+import { mockFailure, request } from "@/lib/api/client";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 import { blogMocks, collectionMocks } from "@/modules/blog/api/_mock-gates";
 
@@ -87,7 +87,7 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
 /** Authenticated — every highlight the viewer has drawn, newest first, each with its source post
  *  (their private "내 서재"). */
 export async function listMyHighlights(): Promise<MyHighlightItem[]> {
-  if (collectionMocks) return collectionMocks.mockMyHighlights();
+  if (collectionMocks) return mockFailure("highlights") ?? collectionMocks.mockMyHighlights();
   return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
 }
 

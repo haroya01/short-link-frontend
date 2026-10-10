@@ -11,6 +11,7 @@ import {
   type RefObject,
 } from "react";
 import { FileText, MessageSquareText } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { blogHref } from "@/lib/host";
 import type { ComposeTriggerProps } from "@/components/common/app-header";
@@ -20,6 +21,7 @@ import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { emitNotePosted } from "@/modules/blog/lib/consequence-events";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
 import { compactTime } from "@/modules/notes/lib/compact-time";
+import { openNote } from "@/modules/notes/lib/note-href";
 
 const RECENT_DRAFTS = 3;
 
@@ -50,6 +52,7 @@ type Choice = { key: string; label: string; hint?: string; href?: string; onSele
 export function ComposeEntry({ variant, className, label, children }: ComposeTriggerProps) {
   const t = useTranslations("compose");
   const locale = useLocale();
+  const router = useRouter();
   const { toast } = useToast();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -123,7 +126,9 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
         onClose={() => setNoteOpen(false)}
         onPosted={(note) => {
           setNoteOpen(false);
-          toast(t("notePosted"));
+          toast(t("notePosted"), "default", {
+            action: { label: t("viewNote"), onClick: () => openNote(note, locale, router.push) },
+          });
           emitNotePosted(note);
         }}
       />

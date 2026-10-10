@@ -216,6 +216,7 @@ test("published post → Unpublish fires POST /unpublish exactly once", async ({
 
   await openPublishDialog(page);
   await page.getByRole("dialog").getByRole("button", { name: "Unpublish" }).click();
+  await page.getByRole("dialog", { name: "Unpublish this post?" }).getByRole("button", { name: "Unpublish" }).click();
   await expect.poll(() => be.countOf("unpublish")).toBe(1);
   // Unpublish must never masquerade as a delete or a fresh publish at the wire.
   expect(be.countOf("(delete)")).toBe(0);

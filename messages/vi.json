@@ -79,6 +79,7 @@
     "trendingTopicsLabel": "Đọc nhiều nhất, theo chủ đề",
     "searchScopeAll": "Tìm trong tất cả bài viết",
     "searchEmptyTitle": "Không tìm thấy bài viết nào",
+    "searchFailed": "Không thể tìm kiếm",
     "searchEmptyBody": "Thử từ khóa khác hoặc duyệt theo chủ đề.",
     "searchEmptyHeading": "Chưa có gì khớp với “{q}”",
     "searchEmptyTopics": "Thử một trong những chủ đề này",
@@ -396,6 +397,8 @@
     "coverRemove": "Xóa",
     "excerptPlaceholder": "Tóm tắt một dòng",
     "unpublish": "Hủy xuất bản",
+    "unpublishConfirmTitle": "Hủy xuất bản bài này?",
+    "unpublishConfirmDescription": "Bài viết vẫn còn, nhưng địa chỉ công khai sẽ đóng lại và không ai xem được. Bạn có thể xuất bản lại bất cứ lúc nào.",
     "republish": "Xuất bản lại",
     "delete": "Xóa",
     "deleteConfirm": "Xóa bài này? Nội dung và mọi phiên bản cũng bị xóa.",
@@ -450,6 +453,8 @@
     "scheduledToast": "Đã lên lịch xuất bản vào {when}.",
     "scheduledFor": "Xuất bản {when}",
     "cancelSchedule": "Hủy lịch",
+    "cancelScheduleConfirmTitle": "Hủy lịch xuất bản?",
+    "cancelScheduleConfirmDescription": "Bài viết sẽ trở về bản nháp. Bạn có thể đặt lịch lại hoặc xuất bản ngay bất cứ lúc nào.",
     "addTopics": "Thêm thẻ",
     "tagsDone": "Xong",
     "tagsEdit": "Sửa thẻ",
@@ -609,6 +614,8 @@
     "saveFailed": "Không thể lưu thay đổi của bạn. Vui lòng thử lại.",
     "bulkMoveFailed": "Không thể di chuyển {count} mục. Vui lòng thử lại.",
     "loadError": "Không thể tải lịch sử đọc của bạn.",
+    "highlightsLoadError": "Không thể tải các đoạn bạn đã tô.",
+    "bookmarksLoadError": "Không thể tải các bài đã lưu.",
     "retry": "Thử lại"
   },
   "imageCropper": {
@@ -674,6 +681,8 @@
     "report": "Báo cáo",
     "reportTitle": "Báo cáo bài này",
     "reportTitleNote": "Báo cáo ghi chú này",
+    "reportTitleUser": "Báo cáo người dùng này",
+    "reportTitleComment": "Báo cáo bình luận này",
     "reportReason": "Lý do",
     "reportPlaceholder": "Thêm chi tiết cụ thể nếu có (tùy chọn)",
     "reportForward": "Gửi cả đến {domain}",
@@ -874,6 +883,7 @@
     "webPushDenied": "Thông báo đang bị chặn trong trình duyệt. Hãy cho phép trong cài đặt trang.",
     "title": "Thông báo",
     "empty": "Chưa có thông báo nào",
+    "loadError": "Không thể tải thông báo",
     "markAllRead": "Đánh dấu tất cả đã đọc",
     "unreadCount": "{count} thông báo chưa đọc",
     "loadMore": "Xem thêm",
@@ -3753,6 +3763,7 @@
   "collections": {
     "metaTitle": "Bộ sưu tập",
     "notFound": "Không tìm thấy bộ sưu tập này.",
+    "loadError": "Không thể tải bộ sưu tập này",
     "empty": "Chưa có kết nối nào.",
     "pathEyebrow": "Lối đi",
     "itemCount": "{count}",
@@ -4171,7 +4182,7 @@
     "repliesTitle": "Trả lời",
     "noReplies": "Chưa có trả lời",
     "menu": "Menu ghi chú",
-    "connectToCollection": "Thêm vào bộ sưu tập",
+    "connectToCollection": "Kết nối",
     "edit": "Sửa",
     "save": "Lưu",
     "done": "Xong",
@@ -4200,6 +4211,7 @@
     "quoteTitle": "Trích dẫn ghi chú",
     "quotePlaceholder": "Thêm suy nghĩ của bạn",
     "quotePosted": "Đã đăng trích dẫn",
+    "viewNote": "Xem",
     "repostFailed": "Không thể đăng lại",
     "emptyReposts": "Chưa có lượt đăng lại",
     "repostsTitle": "Đăng lại · @{username}",
@@ -4470,6 +4482,7 @@
     "untitled": "Bản nháp chưa có tiêu đề",
     "seeAll": "Xem tất cả",
     "noteTitle": "Ghi chú mới",
-    "notePosted": "Đã đăng ghi chú"
+    "notePosted": "Đã đăng ghi chú",
+    "viewNote": "Xem"
   }
 }
