@@ -63,3 +63,17 @@ describe("reading surfaces the server filters per reader", () => {
     );
   });
 });
+
+describe("a failed conversation read is an error, not an empty conversation", () => {
+  const conversations = [
+    ["comments", async () => (await import("./comments")).listComments(7)],
+    ["highlight replies", async () => (await import("./highlights")).listHighlightReplies(41)],
+  ] as const;
+
+  for (const [name, read] of conversations) {
+    it(`${name} reject on a server error`, async () => {
+      fetchSpy.mockImplementationOnce(async () => new Response("", { status: 500 }));
+      await expect(read()).rejects.toThrow("500");
+    });
+  }
+});

@@ -1,6 +1,7 @@
 import { request } from "@/lib/api/client";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 import { blogMocks, collectionMocks } from "@/modules/blog/api/_mock-gates";
+import { mockFails } from "@/lib/api/mock-fail";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -124,13 +125,14 @@ export function deleteHighlight(id: number): Promise<void> {
 /** Public — the reply thread under a highlight (oldest first). */
 export async function listHighlightReplies(highlightId: number): Promise<HighlightReplyView[]> {
   if (USE_MOCKS) {
+    if (mockFails("highlight-replies")) throw new Error("highlight replies 500");
     return [...(blogMocks?.mockSeededReplies(highlightId, hasViewer()) ?? []), ...(mockReplies.get(highlightId) ?? [])];
   }
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/replies`, {
     cache: "no-store",
     headers: await viewerHeaders(),
   });
-  if (!res.ok) return [];
+  if (!res.ok) throw new Error(`highlight replies ${res.status}`);
   return (await res.json()) as HighlightReplyView[];
 }
 

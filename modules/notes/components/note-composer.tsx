@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { ChartBar, Check, Clock, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { askToSignIn, type SignInReason } from "@/components/auth/login-prompt";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
+import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
 import {
   createNote,
   createThread,
@@ -83,8 +83,13 @@ export function NoteComposer({
 }) {
   const t = useTranslations("notes");
   const [confirm, confirmDialog] = useConfirm();
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState(() => (inReplyToId ? readDraft("note-reply", inReplyToId)?.text ?? "" : ""));
   const [warns, setWarns] = useState(false);
+  useEffect(() => {
+    if (!inReplyToId) return;
+    if (body.trim()) writeDraft("note-reply", inReplyToId, body);
+    else clearDraft("note-reply", inReplyToId);
+  }, [body, inReplyToId]);
   const [warning, setWarning] = useState("");
   const [sensitive, setSensitive] = useState(false);
   const [visibility, setVisibility] = useState<NoteVisibility | null>(inReplyToId ? null : "public");
@@ -693,26 +698,5 @@ export function NoteComposer({
       </div>
       {confirmDialog}
     </div>
-  );
-}
-
-export function NoteSignInRow({ reason, placeholder }: { reason: SignInReason; placeholder: string }) {
-  const tNav = useTranslations("nav");
-  const tPrompt = useTranslations("loginPrompt");
-  return (
-    <button
-      type="button"
-      onClick={() => askToSignIn(reason)}
-      aria-label={tPrompt(reason)}
-      className="group flex w-full items-center gap-3 rounded-surface py-3 text-left focus-ring"
-    >
-      <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
-      <span className="min-w-0 flex-1 truncate text-[15px] text-slate-400 dark:text-slate-500">
-        {placeholder}
-      </span>
-      <span className="shrink-0 rounded-full border border-slate-900 px-4 py-1.5 text-[14px] font-semibold text-slate-900 transition-colors group-hover:bg-slate-900 group-hover:text-white dark:border-slate-100 dark:text-slate-100 dark:group-hover:bg-slate-100 dark:group-hover:text-slate-900">
-        {tNav("login")}
-      </span>
-    </button>
   );
 }
