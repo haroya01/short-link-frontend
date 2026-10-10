@@ -30,8 +30,8 @@ test("someone else's thread offers no way to change who replies or to moderate i
   await expect(page.getByRole("menuitem", { name: "답글 권한" })).toHaveCount(0);
   await page.keyboard.press("Escape");
   await note(page, 71).getByRole("button", { name: "노트 메뉴" }).first().click();
-  await expect(page.getByRole("menuitem", { name: "답글 숨기기" })).toHaveCount(0);
-  await expect(page.getByRole("menuitem", { name: "답글 지우기" })).toHaveCount(0);
+  await expect(page.getByRole("menuitem", { name: "숨기기", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("menuitem", { name: "삭제", exact: true })).toHaveCount(0);
 });
 
 test("the thread's writer hides a reply, finds it under 숨긴 답글, and brings it back", async ({ page }) => {
@@ -39,13 +39,13 @@ test("the thread's writer hides a reply, finds it under 숨긴 답글, and bring
   const toggle = page.getByRole("button", { name: /숨긴 답글/ });
   await expect(toggle).toHaveText("숨긴 답글 1개 보기", { timeout: 30_000 });
 
-  await menu(page, 73, "답글 숨기기");
+  await menu(page, 73, "숨기기");
   await expect(page.getByText("답글을 숨겼어요")).toBeVisible();
   await expect(note(page, 73)).toHaveCount(0);
   await expect(toggle).toHaveText("숨긴 답글 2개 보기");
 
   await toggle.click();
-  const hidden = page.getByTestId("hidden-replies");
+  const hidden = page.getByRole("region", { name: "숨긴 답글" });
   await expect(hidden.locator("article[data-note-id]")).toHaveCount(2);
   await expect(hidden).toContainText("여기 광고 링크 남겨요");
 
@@ -57,10 +57,10 @@ test("the thread's writer hides a reply, finds it under 숨긴 답글, and bring
 
 test("the thread's writer removes someone's reply after confirming", async ({ page }) => {
   await page.goto("/ko/p/dohyun/notes/72");
-  await menu(page, 75, "답글 지우기");
-  const ask = page.getByRole("dialog", { name: "이 답글을 지울까요?" });
-  await expect(ask).toContainText("답글을 쓴 사람에게 알리지 않아요");
-  await ask.getByRole("button", { name: "지우기" }).click();
+  await menu(page, 75, "삭제");
+  const ask = page.getByRole("dialog", { name: "이 답글을 스레드에서 지울까요?" });
+  await expect(ask).toContainText("다른 서버에서 온 답글은 kurl에서만 사라져요.");
+  await ask.getByRole("button", { name: "삭제" }).click();
   await expect(page.getByText("답글을 지웠어요")).toBeVisible();
   await expect(note(page, 75)).toHaveCount(0);
   await expect(note(page, 73)).toBeVisible();
@@ -71,13 +71,13 @@ test("the writer changes who can reply from the note's ⋯ later", async ({ page
   await menu(page, 72, "답글 권한");
   const dialog = page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" });
   await expect(dialog.getByRole("radio", { name: "모두" })).toBeChecked();
-  await dialog.getByRole("radio", { name: "멘션한 사람만" }).check();
+  await dialog.getByRole("radio", { name: "내가 멘션한 사람만" }).check();
   await dialog.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("답글 권한을 바꿨어요")).toBeVisible();
   await expect(dialog).toHaveCount(0);
 
   await menu(page, 72, "답글 권한");
-  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "멘션한 사람만" })).toBeChecked();
+  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "내가 멘션한 사람만" })).toBeChecked();
 });
 
 test("a new note is written with who may reply, and keeps it", async ({ page }) => {
@@ -88,7 +88,7 @@ test("a new note is written with who may reply, and keeps it", async ({ page }) 
   const policy = page.getByRole("combobox", { name: "답글 권한" });
   await expect(policy).toHaveValue("everyone");
   await policy.selectOption("mentioned");
-  await expect(page.getByTestId("reply-policy-hint")).toHaveText("멘션한 사람은 언제나 답글을 달 수 있어요.");
+  await expect(page.getByTestId("reply-policy-hint")).toHaveText("내가 멘션한 사람은 언제나 답글을 달 수 있어요");
   await page.getByRole("button", { name: "올리기", exact: true }).click();
   const notice = page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" });
   await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
@@ -97,5 +97,5 @@ test("a new note is written with who may reply, and keeps it", async ({ page }) 
   await expect(posted).toBeVisible({ timeout: 30_000 });
   await posted.getByRole("button", { name: "노트 메뉴" }).first().click();
   await page.getByRole("menuitem", { name: "답글 권한", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "멘션한 사람만" })).toBeChecked();
+  await expect(page.getByRole("dialog", { name: "누가 답글을 달 수 있나요?" }).getByRole("radio", { name: "내가 멘션한 사람만" })).toBeChecked();
 });

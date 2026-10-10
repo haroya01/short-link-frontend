@@ -694,6 +694,7 @@ export function mockViewerThread(id: number): NoteThread {
     note: forViewer(thread.note),
     parent: thread.parent && forViewer(thread.parent),
     replies: thread.replies.map(forViewer),
+    viewerCanModerate: rootOf(thread.note).author.id === ME.id,
   };
 }
 
@@ -728,6 +729,8 @@ export function mockThread(id: number): NoteThread | null {
     replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id) && n.hidden !== true),
     continuation,
     series: mockNoteSeries(id),
+    hiddenReplyCount: notes.filter((n) => n.inReplyToId === id && n.hidden === true).length,
+    viewerCanModerate: false,
   };
 }
 

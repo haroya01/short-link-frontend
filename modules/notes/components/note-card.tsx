@@ -227,7 +227,7 @@ export function NoteCard({
     const ok = await confirm({
       title: t("removeReplyConfirm"),
       description: t("removeReplyHint"),
-      confirmLabel: t("delete"),
+      confirmLabel: t("removeReply"),
       destructive: true,
     });
     if (ok) replyModeration?.onRemove();

@@ -136,7 +136,11 @@ describe("the first note's writer looking after the replies", () => {
     replies: [reply(73, author(15, "yuna")), reply(75, author(21, "haruka")), reply(76, author(1, "dohyun"))],
     continuation: [],
     series: null,
+    hiddenReplyCount: 0,
+    viewerCanModerate: true,
   } as unknown as NoteThread;
+  const hiddenRow = () =>
+    Array.from(host.querySelectorAll("button")).find((b) => b.textContent === "hiddenRepliesShow");
 
   it("offers hide and remove on others' replies only", async () => {
     mocks.getNoteThread.mockResolvedValue(mine);
@@ -149,12 +153,14 @@ describe("the first note's writer looking after the replies", () => {
   it("moves a hidden reply under 숨긴 답글 and back", async () => {
     mocks.getNoteThread.mockResolvedValue(mine);
     await render(mine);
+    expect(hiddenRow()).toBeUndefined();
     await act(async () => host.querySelector<HTMLButtonElement>('[data-moderate="73"]')!.click());
     expect(mocks.setNoteReplyHidden).toHaveBeenCalledWith(73, true);
     expect(host.querySelector('[data-note="73"]')).toBeNull();
-    const row = Array.from(host.querySelectorAll("button")).find((b) => b.textContent === "hiddenRepliesShow")!;
-    await act(async () => row.click());
+    mocks.listHiddenReplies.mockResolvedValue([reply(73, author(15, "yuna"), { hidden: true })]);
+    await act(async () => hiddenRow()!.click());
     const hidden = host.querySelector('[data-testid="hidden-replies"]')!;
+    expect(hidden.querySelector("h3")!.textContent).toBe("hiddenRepliesTitle");
     expect(hidden.querySelector('[data-note="73"]')).not.toBeNull();
     await act(async () => hidden.querySelector<HTMLButtonElement>('[data-moderate="73"]')!.click());
     expect(mocks.setNoteReplyHidden).toHaveBeenLastCalledWith(73, false);
@@ -171,17 +177,54 @@ describe("the first note's writer looking after the replies", () => {
     expect(mocks.toast).toHaveBeenCalledWith("replyRemovedToast");
   });
 
-  it("lists replies hidden before the page opened", async () => {
-    mocks.getNoteThread.mockResolvedValue(mine);
+  it("asks for hidden replies only when the row is tapped", async () => {
+    const withHidden = { ...mine, hiddenReplyCount: 1 } as NoteThread;
+    mocks.getNoteThread.mockResolvedValue(withHidden);
     mocks.listHiddenReplies.mockResolvedValue([reply(74, author(-9800, "mina@mastodon.social"), { hidden: true })]);
-    await render(mine);
+    await render(withHidden);
+    expect(mocks.listHiddenReplies).not.toHaveBeenCalled();
+    await act(async () => hiddenRow()!.click());
     expect(mocks.listHiddenReplies).toHaveBeenCalledWith(72);
-    expect(Array.from(host.querySelectorAll("button")).some((b) => b.textContent === "hiddenRepliesShow")).toBe(true);
+    expect(host.querySelector('[data-testid="hidden-replies"] [data-note="74"]')).not.toBeNull();
   });
 
-  it("gives a reader who isn't the first writer nothing to moderate", async () => {
-    const theirs = { ...mine, note: { ...mine.note, author: author(15, "yuna") } } as unknown as NoteThread;
+  it("keeps the row closed when hidden replies fail to load", async () => {
+    const withHidden = { ...mine, hiddenReplyCount: 1 } as NoteThread;
+    mocks.getNoteThread.mockResolvedValue(withHidden);
+    mocks.listHiddenReplies.mockRejectedValue(new ApiError(503, { status: 503 } as never));
+    await render(withHidden);
+    await act(async () => hiddenRow()!.click());
+    expect(mocks.toast).toHaveBeenCalledWith("hiddenRepliesFailed", "error");
+    expect(host.querySelector('[data-testid="hidden-replies"]')).toBeNull();
+    expect(hiddenRow()!.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("shows no row when the server doesn't count hidden replies", async () => {
+    const uncounted = { ...mine, hiddenReplyCount: undefined } as NoteThread;
+    mocks.getNoteThread.mockResolvedValue(uncounted);
+    await render(uncounted);
+    await act(async () => host.querySelector<HTMLButtonElement>('[data-moderate="73"]')!.click());
+    expect(host.querySelector('[data-note="73"]')).toBeNull();
+    expect(hiddenRow()).toBeUndefined();
+    expect(mocks.listHiddenReplies).not.toHaveBeenCalled();
+  });
+
+  it("follows the server when it says who may moderate", async () => {
+    const denied = { ...mine, viewerCanModerate: false } as NoteThread;
+    mocks.getNoteThread.mockResolvedValue(denied);
+    await render(denied);
+    expect(host.querySelector("[data-moderate]")).toBeNull();
+  });
+
+  it("falls back to the first writer when the server doesn't say", async () => {
+    const unsaid = { ...mine, viewerCanModerate: undefined } as NoteThread;
+    mocks.getNoteThread.mockResolvedValue(unsaid);
+    await render(unsaid);
+    expect(host.querySelector('[data-moderate="73"]')).not.toBeNull();
+    const theirs = { ...unsaid, note: { ...mine.note, author: author(15, "yuna") } } as unknown as NoteThread;
     mocks.getNoteThread.mockResolvedValue(theirs);
+    await act(async () => root.unmount());
+    host.remove();
     await render(theirs);
     expect(host.querySelector("[data-moderate]")).toBeNull();
   });
@@ -199,6 +242,7 @@ describe("before the server knows reply controls", () => {
     mocks.getNoteThread.mockResolvedValue(older);
     await render(older);
     expect(host.querySelector("[data-moderate]")).toBeNull();
+    expect(host.textContent).not.toContain("hiddenRepliesShow");
     expect(mocks.listHiddenReplies).not.toHaveBeenCalled();
   });
 });
