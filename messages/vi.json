@@ -601,7 +601,7 @@
       "addressLabel": "Địa chỉ",
       "fromClipboard": "Lấy từ bộ nhớ tạm",
       "shorten": "Rút gọn bằng kurl",
-      "shortenFailed": "Không rút gọn được nên đã chèn địa chỉ gốc",
+      "shortenFailed": "Không tạo được liên kết rút gọn",
       "insert": "Chèn",
       "cancel": "Hủy",
       "actions": "Liên kết",

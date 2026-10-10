@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { Clipboard } from "lucide-react";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/components/ui/toast";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useNarrowViewport } from "@/hooks/use-narrow-viewport";
 import { shortenUrl } from "@/lib/api/links";
@@ -52,7 +51,7 @@ function LinkForm({
   const [fromClipboard, setFromClipboard] = useState<string | null>(null);
   const [shorten, setShorten] = useState(false);
   const [busy, setBusy] = useState(false);
-  const { toast } = useToast();
+  const [error, setError] = useState<string | null>(null);
   const url = pastedUrl(normalizeAddress(href));
   const [preview, setPreview] = useState<"loading" | "ready" | "failed">("loading");
   const video = url ? isVideoUrl(url) : false;
@@ -80,7 +79,9 @@ function LinkForm({
       try {
         target = (await shortenUrl({ url })).shortUrl;
       } catch {
-        toast(t("shortenFailed"), "error");
+        setBusy(false);
+        setError(t("shortenFailed"));
+        return;
       }
     }
     onSubmit({ mode, text: text.trim(), href: target });
@@ -147,7 +148,10 @@ function LinkForm({
             autoComplete="off"
             autoFocus={!request.text || mode === "card"}
             value={href}
-            onChange={(e) => setHref(e.target.value)}
+            onChange={(e) => {
+              setHref(e.target.value);
+              setError(null);
+            }}
             onKeyDown={onEnter}
             placeholder="https://…"
             aria-describedby={showHint ? hintId : undefined}
@@ -179,8 +183,20 @@ function LinkForm({
             {t("shorten")}
             <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("shortenHint")}</span>
           </span>
-          <Switch checked={shorten} onCheckedChange={setShorten} aria-label={t("shorten")} />
+          <Switch
+            checked={shorten}
+            onCheckedChange={(next) => {
+              setShorten(next);
+              setError(null);
+            }}
+            aria-label={t("shorten")}
+          />
         </label>
+      )}
+      {error && (
+        <p role="alert" className="text-[12px] text-red-600 dark:text-red-400">
+          {error}
+        </p>
       )}
       <div className="flex items-center justify-end gap-2">
         <button

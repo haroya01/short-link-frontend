@@ -601,7 +601,7 @@
       "addressLabel": "पता",
       "fromClipboard": "क्लिपबोर्ड से लिया",
       "shorten": "kurl से छोटा करें",
-      "shortenFailed": "छोटा नहीं हो सका, इसलिए मूल पता जोड़ा गया",
+      "shortenFailed": "छोटा लिंक नहीं बन सका",
       "insert": "जोड़ें",
       "cancel": "रद्द करें",
       "actions": "लिंक",

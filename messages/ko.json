@@ -601,7 +601,7 @@
       "addressLabel": "주소",
       "fromClipboard": "클립보드에서 가져왔어요",
       "shorten": "kurl 단축 주소로",
-      "shortenFailed": "단축하지 못해 원래 주소로 넣었어요",
+      "shortenFailed": "단축 주소를 만들지 못했어요",
       "insert": "넣기",
       "cancel": "취소",
       "actions": "링크",

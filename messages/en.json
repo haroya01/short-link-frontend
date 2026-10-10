@@ -601,7 +601,7 @@
       "addressLabel": "Address",
       "fromClipboard": "From your clipboard",
       "shorten": "Shorten with kurl",
-      "shortenFailed": "Couldn't shorten, so the original address was used",
+      "shortenFailed": "Couldn't make a short link",
       "insert": "Insert",
       "cancel": "Cancel",
       "actions": "Link",

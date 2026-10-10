@@ -1911,7 +1911,9 @@ test("the link dialog's kurl short link switch shortens the address through kurl
   expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain(`Read [the docs](${SHORT_URL})`);
 });
 
-test("when kurl can't shorten the address, the original goes in and a toast says so", async ({ page }) => {
+test("when kurl can't shorten the address, the dialog stays open and says so, and nothing goes in until the author decides", async ({
+  page,
+}) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await page.route("**/api/v1/links", (route) =>
@@ -1926,10 +1928,15 @@ test("when kurl can't shorten the address, the original goes in and a toast says
   const dialog = page.getByRole("dialog", { name: "Insert link" });
   await dialog.getByLabel("Display text", { exact: true }).fill("the docs");
   await dialog.getByLabel("Address", { exact: true }).fill("https://example.com/an-article");
-  await dialog.getByRole("switch", { name: "Shorten with kurl" }).click();
+  const shorten = dialog.getByRole("switch", { name: "Shorten with kurl" });
+  await shorten.click();
   await dialog.getByRole("button", { name: "Insert", exact: true }).click();
 
-  await expect(page.getByText("Couldn't shorten, so the original address was used")).toBeVisible();
+  await expect(dialog.getByRole("alert")).toHaveText("Couldn't make a short link");
+  await expect(page.locator(".tiptap a")).toHaveCount(0);
+  await shorten.click();
+  await expect(dialog.getByRole("alert")).toHaveCount(0);
+  await dialog.getByRole("button", { name: "Insert", exact: true }).click();
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("the docs");
 });
 
