@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   list: { data: undefined as unknown, isLoading: false, isError: false, isFetching: false, refetch: vi.fn() },
   unread: 0,
+  filters: [] as string[],
 }));
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: { count?: number }) =>
@@ -12,7 +13,10 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { id: 1, username: "dohyun" } }) }));
 vi.mock("@/modules/notifications/lib/use-notifications", () => ({
-  useNotifications: () => mocks.list,
+  useNotifications: (filter: string) => {
+    mocks.filters.push(filter);
+    return mocks.list;
+  },
   useMarkAllRead: () => ({ mutate: vi.fn() }),
   useReadHiddenNotices: () => undefined,
   useUnreadCount: () => mocks.unread,
@@ -37,6 +41,7 @@ beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   mocks.list = { data: undefined, isLoading: false, isError: false, isFetching: false, refetch: vi.fn() };
   mocks.unread = 0;
+  mocks.filters = [];
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -62,6 +67,18 @@ describe("bell dropdown", () => {
     expect(host.textContent).not.toContain("notifications.empty");
     await act(async () => alert.querySelector("button")!.click());
     expect(mocks.list.refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens on everything and switches to mentions with their own empty line", async () => {
+    mocks.list.data = { pages: [{ items: [] }] };
+    await open();
+    expect(mocks.filters.at(-1)).toBe("all");
+    const mentions = host.querySelector<HTMLButtonElement>('[data-testid="notification-tab-mentions"]')!;
+    expect(mentions.getAttribute("aria-selected")).toBe("false");
+    await act(async () => mentions.click());
+    expect(mocks.filters.at(-1)).toBe("mentions");
+    expect(mentions.getAttribute("aria-selected")).toBe("true");
+    expect(host.textContent).toContain("notifications.mentionsEmpty");
   });
 
   it("still says there are none when the list is really empty", async () => {

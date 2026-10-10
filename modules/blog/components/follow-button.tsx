@@ -64,6 +64,8 @@ export function FollowButton({
   quiet = false,
   showBell = false,
   sourcePostId,
+  initialFollowing = false,
+  initialRequested = false,
 }: {
   username: string;
   initialFollowerCount: number;
@@ -77,6 +79,8 @@ export function FollowButton({
   showBell?: boolean;
   /** When followed from inside a post, attributes the follow to it ("이 글로 늘어난 팔로우" analytics). */
   sourcePostId?: number;
+  initialFollowing?: boolean;
+  initialRequested?: boolean;
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me } = useAuth();
@@ -85,7 +89,7 @@ export function FollowButton({
   // the same author (rail + header on a post) move in lockstep this session. Seeded from the initial
   // follower count; the cache seed + status load below write through it, so all instances share one truth.
   const [shared, setShared] = useFollowShared(username, {
-    following: false,
+    following: initialFollowing,
     count: initialFollowerCount,
     countHidden: false,
   });
@@ -101,7 +105,7 @@ export function FollowButton({
   const [bellBusy, setBellBusy] = useState(false);
   const [bellRung, setBellRung] = useState(false);
   // A locked author (Mastodon's locked account) turns a follow into a request that waits on approval.
-  const [requested, setRequested] = useState(false);
+  const [requested, setRequested] = useState(initialRequested);
   const [locked, setLocked] = useState(false);
   const [blocksViewer, setBlocksViewer] = useState(false);
   const [confirm, confirmDialog] = useConfirm();

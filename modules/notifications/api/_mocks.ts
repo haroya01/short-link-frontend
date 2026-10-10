@@ -1,4 +1,9 @@
-import type { BlogNotificationPreferences, NotificationsPage } from "./notifications";
+import type {
+  BlogNotificationPreferences,
+  NotificationFilter,
+  NotificationType,
+  NotificationsPage,
+} from "./notifications";
 import { mockPendingFollowRequests } from "./follow-requests";
 
 /** Demo/mock mode — lets the bell + page render and interact without a backend. */
@@ -16,7 +21,20 @@ const BASE = {
   collectionName: null,
 } as const;
 
-export function mockNotificationsPage(): NotificationsPage {
+const MENTION_TYPES: ReadonlySet<NotificationType> = new Set([
+  "MENTION",
+  "NOTE_MENTION",
+  "REPLY",
+  "NOTE_REPLY",
+  "COMMENT",
+]);
+
+export function mockNotificationsPage(filter: NotificationFilter = "all"): NotificationsPage {
+  const page = allNotices();
+  return filter === "mentions" ? { ...page, items: page.items.filter((item) => MENTION_TYPES.has(item.type)) } : page;
+}
+
+function allNotices(): NotificationsPage {
   const requests = mockPendingFollowRequests().map((r, i) => ({
     ...BASE,
     id: 700 + i,

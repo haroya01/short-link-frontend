@@ -134,7 +134,7 @@ test.describe("desktop", () => {
   test("search results drop 팔로잉 and say nothing matched without a broken particle", async ({ page }) => {
     await page.goto("/ko/blog?q=%EC%9A%B0%EC%A3%BC%EC%84%A0");
     const tabs = page.locator('header[data-feed-switcher="blog"]').getByRole("navigation").getByRole("link");
-    await expect(tabs).toHaveText(["최신", "인기", "노트"], { timeout: 30_000 });
+    await expect(tabs).toHaveText(["최신", "인기", "노트", "사람"], { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("‘우주선’ 검색 결과");
     await expect(page.getByRole("heading", { level: 2, name: "맞는 글이 없어요" })).toBeVisible();
 

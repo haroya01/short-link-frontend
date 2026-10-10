@@ -85,7 +85,7 @@ test.describe("desktop", () => {
     await field.fill("일상");
     await field.press("Enter");
     await page.waitForURL(/[?&]q=%EC%9D%BC%EC%83%81/, { timeout: 30_000 });
-    await expect(switcher(page, "blog").getByRole("navigation").getByRole("link")).toHaveText(["최신", "인기", "노트"]);
+    await expect(switcher(page, "blog").getByRole("navigation").getByRole("link")).toHaveText(["최신", "인기", "노트", "사람"]);
   });
 
   test("each surface keeps its own sources under 더 보기", async ({ page }) => {

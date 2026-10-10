@@ -120,7 +120,10 @@
     "feedReasonSeries": "フォロー中のシリーズ",
     "bookmarkFailed": "保存できませんでした。もう一度お試しください。",
     "seriesSubscribeFailed": "フォローを変更できませんでした。もう一度お試しください。",
-    "searchNotesTab": "ノート"
+    "searchNotesTab": "ノート",
+    "searchPeopleTab": "ユーザー",
+    "searchNoPeople": "一致するユーザーはいません",
+    "searchPeopleHint": "2文字以上入力するとユーザーを探せます"
   },
   "blogWebhooks": {
     "title": "Webhook",
@@ -897,6 +900,10 @@
     "unreadCount": "未読の通知{count}件",
     "loadMore": "もっと見る",
     "viewAll": "すべての通知を見る",
+    "tabsLabel": "通知の表示",
+    "tabAll": "すべて",
+    "tabMentions": "メンション",
+    "mentionsEmpty": "メンションや返信はまだありません",
     "someone": "誰か",
     "like": "<b>{actor}</b>さんが記事にいいねしました",
     "comment": "<b>{actor}</b>さんが記事にコメントしました",

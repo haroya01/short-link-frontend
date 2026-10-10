@@ -120,7 +120,10 @@
     "feedReasonSeries": "구독 시리즈",
     "bookmarkFailed": "저장하지 못했어요. 다시 시도해 주세요.",
     "seriesSubscribeFailed": "구독을 변경하지 못했어요. 다시 시도해 주세요.",
-    "searchNotesTab": "노트"
+    "searchNotesTab": "노트",
+    "searchPeopleTab": "사람",
+    "searchNoPeople": "맞는 사람이 없어요",
+    "searchPeopleHint": "두 글자 이상 입력하면 사람을 찾아요"
   },
   "blogWebhooks": {
     "title": "웹훅",
@@ -897,6 +900,10 @@
     "unreadCount": "안 읽은 알림 {count}개",
     "loadMore": "더 보기",
     "viewAll": "모든 알림 보기",
+    "tabsLabel": "알림 보기",
+    "tabAll": "전체",
+    "tabMentions": "멘션",
+    "mentionsEmpty": "아직 멘션이나 답글이 없어요",
     "someone": "누군가",
     "like": "<b>{actor}</b>님이 내 글을 좋아해요",
     "comment": "<b>{actor}</b>님이 내 글에 댓글을 남겼어요",
