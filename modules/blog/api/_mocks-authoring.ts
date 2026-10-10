@@ -148,6 +148,11 @@ function markEdited(id: number, patch: Partial<PostView> = {}): PostView {
   return touch(id, { ...patch, contentVersion: (posts.get(id)?.contentVersion ?? 0) + 1 });
 }
 
+const PROFILE_PATH_SLUGS = new Set([
+  "about", "bookmarks", "collections", "feed", "liked", "media", "notes",
+  "opengraph-image", "replies", "reposts", "series",
+]);
+
 export function mockUpdatePostMetadata(
   id: number,
   payload: {
@@ -162,6 +167,9 @@ export function mockUpdatePostMetadata(
   checkEdit(id, payload);
   if (payload.slug !== undefined) {
     if (payload.slug.length < 2) throw new ApiError(400, { status: 400, detail: "slug length 2~200" });
+    if (payload.slug !== posts.get(id)?.slug && PROFILE_PATH_SLUGS.has(payload.slug)) {
+      throw new ApiError(400, { status: 400, code: "SLUG_RESERVED" });
+    }
     if ([...posts.values()].some((p) => p.id !== id && p.slug === payload.slug)) {
       throw new ApiError(409, { status: 409, code: "SLUG_CONFLICT" });
     }

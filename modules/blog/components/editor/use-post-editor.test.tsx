@@ -11,7 +11,7 @@ const api = vi.hoisted(() => ({
   schedulePost: vi.fn(), restoreRevision: vi.fn(), deletePost: vi.fn(), createPost: vi.fn(),
 }));
 const router = vi.hoisted(() => ({ push: vi.fn() }));
-const translate = vi.hoisted(() => (key: string) => key);
+const translate = vi.hoisted(() => Object.assign((key: string) => key, { has: () => false }));
 const confirmLeave = vi.hoisted(() => vi.fn(async () => true));
 vi.mock("@/modules/blog/api/posts", () => api);
 vi.mock("next/navigation", () => ({ useRouter: () => router }));
@@ -347,6 +347,31 @@ describe("a slug the server would refuse never blocks the title and body", () =>
     await act(async () => { saved = await editor.save(); });
     expect(saved).toBe(false);
     expect(editor.error).toBe("slugTaken");
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
+    expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});
+  });
+
+  it("saves the title and body when the slug is a profile page name, then says why", async () => {
+    await mount();
+    const known = vi.spyOn(translate, "has") as MockInstance<(code: string) => boolean>;
+    known.mockReturnValue(true);
+    api.updatePostMetadata.mockImplementation(async (id, payload) => {
+      if (payload.slug === "notes") {
+        throw new ApiError(400, { status: 400, title: "Bad Request", code: "SLUG_RESERVED" });
+      }
+      return { ...POST, id, ...payload };
+    });
+    await act(async () => {
+      editor.setSlug("notes");
+      editor.setTitle("Title kept");
+      editor.setMarkdown("Body kept");
+    });
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    known.mockRestore();
+    expect(saved).toBe(false);
+    expect(editor.error).toBe("SLUG_RESERVED");
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
     expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});

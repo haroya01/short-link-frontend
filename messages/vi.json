@@ -825,6 +825,7 @@
     "INVALID_CAMPAIGN_PERIOD": "Ngày kết thúc phải sau ngày bắt đầu.",
     "RATE_LIMITED": "Quá nhiều yêu cầu. Vui lòng thử lại sau một phút.",
     "SERIES_SLUG_CONFLICT": "Địa chỉ series này đã được dùng. Hãy chọn địa chỉ khác.",
+    "SLUG_RESERVED": "Địa chỉ này đang được dùng cho một mục trong menu hồ sơ nên không thể dùng. Hãy thử một địa chỉ khác.",
     "INVALID_DESTINATION_URL": "Địa chỉ phải bắt đầu bằng http:// hoặc https://.",
     "BODY_LIMIT": "Bài viết quá dài để lưu. Hãy chia nhỏ bài viết.",
     "OPENS_AFTER_EXPIRY": "Thời điểm mở phải trước thời điểm hết hạn.",
