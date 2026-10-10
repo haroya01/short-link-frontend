@@ -13,7 +13,7 @@ vi.mock("@/modules/blog/components/blog-link", () => ({
   BlogLink: ({ href, children }: { href: string; children: React.ReactNode }) => createElement("a", { href }, children),
 }));
 vi.mock("./note-card", () => ({ NoteCard: ({ note }: { note: Note }) => createElement("article", null, note.body) }));
-vi.mock("./note-composer", () => ({ NoteComposer: () => null, NoteSignInRow: () => null }));
+vi.mock("./note-composer", () => ({ NoteComposer: () => null }));
 
 import { ApiError } from "@/lib/api/client";
 import { NoteThreadView } from "./note-thread";
