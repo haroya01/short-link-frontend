@@ -9,12 +9,12 @@ test.describe("anonymous shorten flow", () => {
   test("home page renders hero and form", async ({ page }) => {
     await page.goto("/ko");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toBeVisible();
+    await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toBeVisible();
   });
 
   test("shortens a valid URL and answers on the line", async ({ page }) => {
     await page.goto("/ko");
-    const input = page.getByPlaceholder(/긴 주소를 여기에/);
+    const input = page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true });
     await input.fill("https://example.com/playwright-test");
     await page.getByRole("button", { name: "단축하기" }).click();
 
@@ -38,7 +38,7 @@ test.describe("anonymous shorten flow", () => {
       if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/links") created += 1;
     });
     await page.goto("/ko");
-    const input = page.getByPlaceholder(/긴 주소를 여기에/);
+    const input = page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true });
     await input.focus();
     await page.evaluate(() => {
       const data = new DataTransfer();
@@ -67,7 +67,7 @@ test.describe("anonymous shorten flow", () => {
 
   test("rejects non-http URL with inline error", async ({ page }) => {
     await page.goto("/ko");
-    await page.getByPlaceholder(/긴 주소를 여기에/).fill("ftp://example.com");
+    await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("ftp://example.com");
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(
       page.getByText(/http:\/\/ 또는 https:\/\/.*올바른 URL/),
@@ -76,7 +76,7 @@ test.describe("anonymous shorten flow", () => {
 
   test("whispers expiry + signup for anonymous user", async ({ page }) => {
     await page.goto("/ko");
-    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/cta-test");
+    await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("https://example.com/cta-test");
     await page.getByRole("button", { name: "단축하기" }).click();
     // 속삭임 행 — 24h 만료 안내와 보관 유도가 답 줄 아래 한 줄로.
     await expect(page.getByText(/24시간 후 만료/)).toBeVisible({ timeout: 10000 });
