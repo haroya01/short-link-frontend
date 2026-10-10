@@ -55,7 +55,7 @@ test("a comment's ⋯ blocks its writer, whose comments then leave the post", as
 
 test("someone else's followers list leaves out people I blocked", async ({ page }) => {
   await page.goto("/ko/p/yuna");
-  await page.getByRole("button", { name: "팔로워", exact: true }).click({ timeout: 30_000 });
+  await page.getByRole("button", { name: /^팔로워 \d/ }).click({ timeout: 30_000 });
   const list = page.getByRole("dialog", { name: "팔로워" });
   await expect(list.getByRole("link", { name: "@haneul" })).toBeVisible();
   await expect(list.getByText("@mallory")).toHaveCount(0);

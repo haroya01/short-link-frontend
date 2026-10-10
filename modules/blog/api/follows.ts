@@ -59,16 +59,17 @@ export interface FollowStatus {
   blocksViewer?: boolean;
 }
 
-// Mock lane: haruka approves followers by hand, so following her leaves a request.
+// Mock lane: haruka approves followers by hand, so following her leaves a request; sora hides follower counts.
 const MOCK_LOCKED = new Set(["haruka"]);
+const MOCK_HIDES_COUNTS = new Set(["sora"]);
 const mockRequested = new Set<string>();
 
 function mockStatus(username: string, following: boolean): FollowStatus {
+  const hidden = MOCK_HIDES_COUNTS.has(username);
   return {
     following,
-    followerCount: following ? 129 : 128,
-    followingCount: 12,
-    hideFollowerCount: false,
+    ...(hidden ? {} : { followerCount: following ? 129 : 128, followingCount: 12 }),
+    hideFollowerCount: hidden,
     requested: mockRequested.has(username),
     locked: MOCK_LOCKED.has(username),
     blocksViewer: blogMocks?.MOCK_BLOCKS_VIEWER.has(username) ?? false,

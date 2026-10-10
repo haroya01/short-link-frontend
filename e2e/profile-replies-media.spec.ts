@@ -9,7 +9,7 @@ const tabs = (page: import("@playwright/test").Page) => page.locator("nav:has([d
 test("프로필 탭은 글 · 노트 · 답글 · 미디어 · 리포스트 순서다", async ({ page }) => {
   await page.goto("/ko/p/dohyun");
   await expect(tabs(page).first()).toBeVisible({ timeout: 30_000 });
-  await expect(tabs(page)).toHaveText(["글", "노트", "답글", "미디어", "리포스트", "시리즈", "컬렉션", "소개"]);
+  await expect(tabs(page)).toHaveText(["글", "노트", "답글", "미디어", "리포스트", "시리즈", "컬렉션"]);
 });
 
 test("답글 탭은 누구에게 단 답글인지 한 줄로 말하고, 그 줄만 원래 글로 간다", async ({ page }) => {

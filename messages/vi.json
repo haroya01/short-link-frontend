@@ -745,7 +745,9 @@
     "followCuratorHint": "Đọc theo các bộ sưu tập mà người tuyển chọn này kết nối",
     "following": "Đang theo dõi",
     "followers": "{count, number} người theo dõi",
-    "followingCount": "Đang theo dõi {count, number}",
+    "countFollowers": "<n>{count, number}</n> người theo dõi",
+    "countFollowing": "Đang theo dõi <n>{count, number}</n>",
+    "countPosts": "<n>{count, number}</n> bài viết",
     "followersTab": "Người theo dõi",
     "followingTab": "Đang theo dõi",
     "followersEmpty": "Chưa có người theo dõi.",
@@ -789,8 +791,6 @@
       "OTHER": "Khác"
     },
     "publishedCelebration": "Bài viết đã được xuất bản",
-    "followersList": "Người theo dõi",
-    "followingList": "Đang theo dõi",
     "callout": {
       "note": "Ghi chú",
       "tip": "Mẹo",
@@ -798,7 +798,6 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "activityPosts": "{count} bài viết",
     "activitySince": "từ {date}",
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
     "tabNotes": "Ghi chú",

@@ -731,7 +731,9 @@
     "followCuratorHint": "इस क्यूरेटर के जोड़े संग्रहों को पढ़ते चलें",
     "following": "फ़ॉलोइंग",
     "followers": "{count, number} फ़ॉलोअर",
-    "followingCount": "{count, number} फ़ॉलोइंग",
+    "countFollowers": "<n>{count, number}</n> फ़ॉलोअर",
+    "countFollowing": "<n>{count, number}</n> फ़ॉलोइंग",
+    "countPosts": "<n>{count, number}</n> पोस्ट",
     "followersTab": "फ़ॉलोअर",
     "followingTab": "फ़ॉलोइंग",
     "followersEmpty": "अभी तक कोई फ़ॉलोअर नहीं।",
@@ -775,8 +777,6 @@
       "OTHER": "अन्य"
     },
     "publishedCelebration": "आपकी पोस्ट प्रकाशित हो गई",
-    "followersList": "फ़ॉलोअर्स",
-    "followingList": "फ़ॉलो कर रहे",
     "callout": {
       "note": "नोट",
       "tip": "सुझाव",
@@ -784,7 +784,6 @@
       "warning": "चेतावनी",
       "caution": "सावधानी"
     },
-    "activityPosts": "{count} पोस्ट",
     "activitySince": "{date} से",
     "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।",
     "tabNotes": "नोट्स",

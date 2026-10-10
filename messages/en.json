@@ -731,7 +731,9 @@
     "followCuratorHint": "Follow the collections this curator connects",
     "following": "Following",
     "followers": "{count, plural, one {# follower} other {# followers}}",
-    "followingCount": "{count, number} following",
+    "countFollowers": "{count, plural, one {<n>#</n> follower} other {<n>#</n> followers}}",
+    "countFollowing": "<n>{count, number}</n> following",
+    "countPosts": "{count, plural, one {<n>#</n> post} other {<n>#</n> posts}}",
     "followersTab": "Followers",
     "followingTab": "Following",
     "followersEmpty": "No followers yet.",
@@ -775,8 +777,6 @@
       "OTHER": "Other"
     },
     "publishedCelebration": "Your post is live",
-    "followersList": "Followers",
-    "followingList": "Following",
     "callout": {
       "note": "Note",
       "tip": "Tip",
@@ -784,7 +784,6 @@
       "warning": "Warning",
       "caution": "Caution"
     },
-    "activityPosts": "{count, plural, one {# post} other {# posts}}",
     "activitySince": "since {date}",
     "reportFailed": "Couldn't send your report. Please try again.",
     "tabNotes": "Notes",
