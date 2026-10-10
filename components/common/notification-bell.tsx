@@ -71,7 +71,7 @@ function NotificationDropdown({
   const tc = useTranslations("common");
   const [filter, setFilter] = useState<NotificationFilter>("all");
   const { data, isLoading, isError, isFetching, refetch } = useNotifications(filter);
-  const markAll = useMarkAllRead();
+  const markAll = useMarkAllRead(filter);
   const filters = useNoteFilters();
   const { me } = useAuth();
   const first = useMemo(() => data?.pages[0]?.items ?? [], [data]);

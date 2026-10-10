@@ -6,6 +6,8 @@ const mocks = vi.hoisted(() => ({
   list: { data: undefined as unknown, isLoading: false, isError: false, isFetching: false, refetch: vi.fn() },
   unread: 0,
   filters: [] as string[],
+  readAllFilters: [] as string[],
+  readAll: vi.fn(),
 }));
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: { count?: number }) =>
@@ -17,7 +19,10 @@ vi.mock("@/modules/notifications/lib/use-notifications", () => ({
     mocks.filters.push(filter);
     return mocks.list;
   },
-  useMarkAllRead: () => ({ mutate: vi.fn() }),
+  useMarkAllRead: (filter: string) => {
+    mocks.readAllFilters.push(filter);
+    return { mutate: mocks.readAll };
+  },
   useReadHiddenNotices: () => undefined,
   useUnreadCount: () => mocks.unread,
 }));
@@ -42,6 +47,7 @@ beforeEach(() => {
   mocks.list = { data: undefined, isLoading: false, isError: false, isFetching: false, refetch: vi.fn() };
   mocks.unread = 0;
   mocks.filters = [];
+  mocks.readAllFilters = [];
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -79,6 +85,20 @@ describe("bell dropdown", () => {
     expect(mocks.filters.at(-1)).toBe("mentions");
     expect(mentions.getAttribute("aria-selected")).toBe("true");
     expect(host.textContent).toContain("notifications.mentionsEmpty");
+  });
+
+  it("reads only mentions when 모두 읽음 is pressed on the mentions tab", async () => {
+    mocks.unread = 3;
+    mocks.list.data = { pages: [{ items: [] }] };
+    await open();
+    expect(mocks.readAllFilters.at(-1)).toBe("all");
+    await act(async () => host.querySelector<HTMLButtonElement>('[data-testid="notification-tab-mentions"]')!.click());
+    expect(mocks.readAllFilters.at(-1)).toBe("mentions");
+    const readAll = Array.from(host.querySelectorAll("button")).find(
+      (b) => b.textContent === "notifications.markAllRead",
+    )!;
+    await act(async () => readAll.click());
+    expect(mocks.readAll).toHaveBeenCalledTimes(1);
   });
 
   it("still says there are none when the list is really empty", async () => {
