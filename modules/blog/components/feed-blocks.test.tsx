@@ -78,7 +78,7 @@ describe("connection event row", () => {
     expect(host.querySelector("h2")!.textContent).toBe("기다림의 기술");
     expect(host.textContent).not.toContain("connectingNow");
 
-    expect(topLine().querySelector('[data-key="connectionMetaPath"]')).not.toBeNull();
+    expect(topLine().querySelector('[data-key="connectionMeta"]')).not.toBeNull();
     expect(topLine().querySelector('a[href*="/collections/11"]')!.textContent).toBe("느린 사고");
     expect(topLine().querySelector("time")!.textContent).toBe("30분");
     expect(topLine().compareDocumentPosition(host.querySelector("h2")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

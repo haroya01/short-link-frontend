@@ -24,6 +24,7 @@ import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { SearchedNotes } from "@/modules/notes/components/searched-notes";
+import { SearchedPeople } from "./searched-people";
 import { RemoteAccountResult } from "@/modules/notes/components/remote-account";
 import { looksLikeRemoteHandle } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
@@ -103,6 +104,7 @@ export async function FeedScreen({
   const query = (qParam ?? "").trim();
   const searching = query.length > 0;
   const notesView = searching && viewParam === "notes";
+  const peopleView = searching && viewParam === "people";
   // Tag filter on the discovery feed (flat grid only): clicking a card's #tag narrows to that tag.
   // Ignored during search (search already spans tags). A tag view drops the lead/series emphasis.
   const activeTag = !searching ? (tagParam ?? "").trim() : "";
@@ -134,7 +136,7 @@ export async function FeedScreen({
   // 인증이 필요한 자체 클라이언트 면(아래에서 각자 그리드로 렌더).
   const showsServerFeed =
     searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
-  const needFlat = showsServerFeed;
+  const needFlat = showsServerFeed && !notesView && !peopleView;
   // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
   // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
   const wantConnections = showsServerFeed && !searching && !activeTag;
@@ -218,7 +220,7 @@ export async function FeedScreen({
           locale={locale}
           eyebrow={t("searchLabel")}
           title={
-            hasNext || notesView || items.length === 0
+            hasNext || notesView || peopleView || items.length === 0
               ? t("searchResultsFor", { q: query })
               : t("searchResultsCount", { q: query, count: items.length })
           }
@@ -247,13 +249,13 @@ export async function FeedScreen({
                 key: "recent",
                 label: t("recent"),
                 href: sortHref("recent"),
-                active: activeTab === "recent" && !notesView,
+                active: activeTab === "recent" && !notesView && !peopleView,
               },
               {
                 key: "trending",
                 label: t("trending"),
                 href: sortHref("trending"),
-                active: activeTab === "trending" && !notesView,
+                active: activeTab === "trending" && !notesView && !peopleView,
               },
               ...(searching
                 ? [
@@ -262,6 +264,12 @@ export async function FeedScreen({
                       label: t("searchNotesTab"),
                       href: `?q=${encodeURIComponent(query)}&view=notes`,
                       active: notesView,
+                    },
+                    {
+                      key: "people",
+                      label: t("searchPeopleTab"),
+                      href: `?q=${encodeURIComponent(query)}&view=people`,
+                      active: peopleView,
                     },
                   ]
                 : []),
@@ -288,6 +296,10 @@ export async function FeedScreen({
         {notesView ? (
           <ReadingShell className="mt-6">
             <SearchedNotes query={query} />
+          </ReadingShell>
+        ) : peopleView ? (
+          <ReadingShell className="mt-6">
+            <SearchedPeople query={query} />
           </ReadingShell>
         ) : tab === "for-you" && !searching ? (
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>

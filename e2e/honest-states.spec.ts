@@ -75,10 +75,10 @@ test.describe("desktop", () => {
   test("saved posts and highlights say they failed to load, each by its own name", async ({ page }) => {
     await failing(page, "saved,highlights");
     await page.goto("/ko/blog/curation");
-    await expect(page.getByText("저장한 글을 불러오지 못했어요.")).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByText("아직 담아둔 글이 없어요")).toHaveCount(0);
+    await expect(page.getByText("북마크를 불러오지 못했어요.")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText("북마크한 글이 없어요")).toHaveCount(0);
 
-    await page.getByRole("navigation", { name: "보관함", exact: true }).getByRole("link", { name: "하이라이트·공개 메모" }).click();
+    await page.getByRole("navigation", { name: "서재", exact: true }).getByRole("link", { name: "하이라이트·공개 메모" }).click();
     await expect(page.getByText("하이라이트를 불러오지 못했어요.")).toBeVisible();
     await expect(page.getByText("읽기 기록을 불러오지 못했어요.")).toHaveCount(0);
 
@@ -134,7 +134,7 @@ test.describe("desktop", () => {
   test("search results drop 팔로잉 and say nothing matched without a broken particle", async ({ page }) => {
     await page.goto("/ko/blog?q=%EC%9A%B0%EC%A3%BC%EC%84%A0");
     const tabs = page.locator('header[data-feed-switcher="blog"]').getByRole("navigation").getByRole("link");
-    await expect(tabs).toHaveText(["최신", "인기", "노트"], { timeout: 30_000 });
+    await expect(tabs).toHaveText(["최신", "인기", "노트", "사람"], { timeout: 30_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("‘우주선’ 검색 결과");
     await expect(page.getByRole("heading", { level: 2, name: "맞는 글이 없어요" })).toBeVisible();
 

@@ -15,6 +15,8 @@ import {
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
+import { NotificationTabs } from "@/modules/notifications/components/notification-tabs";
+import type { NotificationFilter } from "@/modules/notifications/api/notifications";
 import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { UnreadDot } from "@/components/common/unread-dot";
 
@@ -67,7 +69,8 @@ function NotificationDropdown({
 }) {
   const t = useTranslations("notifications");
   const tc = useTranslations("common");
-  const { data, isLoading, isError, isFetching, refetch } = useNotifications();
+  const [filter, setFilter] = useState<NotificationFilter>("all");
+  const { data, isLoading, isError, isFetching, refetch } = useNotifications(filter);
   const markAll = useMarkAllRead();
   const filters = useNoteFilters();
   const { me } = useAuth();
@@ -82,7 +85,7 @@ function NotificationDropdown({
         closing ? "animate-dropdown-out" : "animate-dropdown-in"
       }`}
     >
-      <div className="flex items-center justify-between px-3 py-2.5">
+      <div className="flex items-center justify-between px-3 pt-2.5">
         <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("title")}</p>
         {unread > 0 && (
           <button
@@ -94,9 +97,9 @@ function NotificationDropdown({
           </button>
         )}
       </div>
-      <div className="h-px bg-slate-100 dark:bg-slate-800" />
+      <NotificationTabs value={filter} onChange={setFilter} dense className="mt-1 px-1.5" />
 
-      <div className="max-h-96 overflow-y-auto p-1">
+      <div role="tabpanel" className="max-h-96 overflow-y-auto p-1">
         {isLoading || (isError && isFetching) ? (
           // Row-shaped pulse rows (compact 3) instead of a lone "…", which read as an empty dropdown.
           <div role="status" aria-busy="true" className="space-y-1 py-1">
@@ -123,7 +126,7 @@ function NotificationDropdown({
           </div>
         ) : items.length === 0 ? (
           <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
-            {t("empty")}
+            {t(filter === "mentions" ? "mentionsEmpty" : "empty")}
           </p>
         ) : (
           items.map((item) => (

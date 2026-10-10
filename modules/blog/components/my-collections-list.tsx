@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { CornerDownRight, Globe, Layers, Link as LinkIcon, Loader2, Lock } from "lucide-react";
+import { Globe, Layers, Link as LinkIcon, ListOrdered, Loader2, Lock } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { listMyCollections, type CollectionSummary } from "@/modules/blog/api/collections";
+import { isOrdered, listMyCollections, type CollectionSummary } from "@/modules/blog/api/collections";
 
 /**
- * 내 컬렉션 — the viewer's own collections and paths (private ones included), the reader-side twin of
- * the discover feed. Each row links to the existing collection detail; a PATH is marked with the path
- * arrow. Fetched client-side with the viewer's token (no block context, so no membership enrichment —
+ * 내 컬렉션 — the viewer's own collections (private ones included), the reader-side twin of the
+ * discover feed. Each row links to the existing collection detail; an ordered one is marked
+ * "순서대로 읽기". Fetched client-side with the viewer's token (no block context, so no membership enrichment —
  * just the plain list). Empty state is a quiet nudge into reading, where a first collection begins.
  */
 export function MyCollectionsList() {
@@ -93,10 +93,10 @@ export function MyCollectionsList() {
                 </span>
               )}
               <span className="mt-1 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-                {c.kind === "PATH" && (
+                {isOrdered(c) && (
                   <>
-                    <CornerDownRight className="h-3 w-3 text-accent-600 dark:text-accent-500" />
-                    <span className="text-accent-700 dark:text-accent-400">{t("kindPath")}</span>
+                    <ListOrdered className="h-3 w-3 text-accent-600 dark:text-accent-500" />
+                    <span className="text-accent-700 dark:text-accent-400">{t("ordered")}</span>
                     <span aria-hidden>·</span>
                   </>
                 )}
