@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -20,6 +19,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
 import { ConversationLike, ConversationRow } from "@/modules/blog/components/conversation-row";
+import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
@@ -28,20 +28,6 @@ import { NoteList } from "@/modules/notes/components/note-list";
 import { compactTime } from "@/modules/notes/lib/compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
-
-// The composer pulls in the Tiptap/ProseMirror editor (rich-comment-input) — a heavy graph that most
-// readers never touch. Splitting it into its own chunk keeps the editor out of the post page's initial
-// JS; it loads on the first click of the placeholder field (top-level) or the Reply button. A resting
-// one-line placeholder matching the collapsed field holds its place until then.
-const CommentComposer = dynamic(
-  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
-  { ssr: false, loading: () => <ComposerSkeleton /> },
-);
-
-/** Matches the collapsed rest-state height of the real composer so the mount doesn't shift layout. */
-function ComposerSkeleton() {
-  return <div className="h-12 rounded-surface border border-slate-200 dark:border-slate-700" />;
-}
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
@@ -97,10 +83,13 @@ export function PostComments({
   const [body, setBody] = useState("");
   // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
   const [composerActive, setComposerActive] = useState(false);
-  const [restoredDraft, setRestoredDraft] = useState(false);
   const draftsRestored = useRef(false);
+  const composerInput = useRef<HTMLTextAreaElement>(null);
+  const [dockHeight, setDockHeight] = useState(0);
+  const [announce, setAnnounce] = useState("");
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyBody, setReplyBody] = useState("");
+  const [replyHandle, setReplyHandle] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   // 쓰기 경로(작성·답글·삭제) 실패를 알리는 인라인 문구 — 실패가 조용히 새면 사용자는 등록된 줄 안다.
   const [error, setError] = useState<string | null>(null);
@@ -141,13 +130,12 @@ export function PostComments({
     const top = readDraft("comment", postId);
     if (top?.text.trim()) {
       setBody(top.text);
-      setRestoredDraft(true);
       setComposerActive(true);
     }
-    const reply = readDraft("comment-reply", postId);
-    if (reply?.target != null && comments.some((c) => c.id === reply.target && c.parentId == null)) {
-      setReplyTo(reply.target);
-      setReplyBody(reply.text);
+    const target = readDraft("comment-target", postId)?.target;
+    if (target != null && comments.some((c) => c.id === target && c.parentId == null)) {
+      setReplyTo(target);
+      setReplyBody(readDraft("comment-reply", target)?.text ?? "");
     }
   }, [ready, authenticated, loaded, postId, comments]);
 
@@ -159,8 +147,13 @@ export function PostComments({
 
   useEffect(() => {
     if (!draftsRestored.current) return;
-    if (replyTo != null && replyBody.trim()) writeDraft("comment-reply", postId, replyBody, replyTo);
-    else clearDraft("comment-reply", postId);
+    if (replyTo == null) {
+      clearDraft("comment-target", postId);
+      return;
+    }
+    writeDraft("comment-target", postId, "", replyTo);
+    if (replyBody.trim()) writeDraft("comment-reply", replyTo, replyBody);
+    else clearDraft("comment-reply", replyTo);
   }, [replyTo, replyBody, postId]);
 
   // Rows render after the fetch, so the browser's own `#comment-<id>` jump has nothing to land on. Rails
@@ -265,8 +258,10 @@ export function PostComments({
     try {
       const created = await createComment(postId, body.trim());
       setBody("");
+      setComposerActive(false);
       setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id); // animate the new comment in once it renders
+      setAnnounce(t("posted"));
     } catch (e) {
       setError(errorMessage(e, t("submitError")));
     } finally {
@@ -274,8 +269,26 @@ export function PostComments({
     }
   }
 
+  function openComposer() {
+    setComposerActive(true);
+    requestAnimationFrame(() => {
+      composerInput.current?.scrollIntoView({ block: "nearest" });
+      focusEnd(composerInput);
+    });
+  }
+
+  function openReply(parentId: number, handle: string | null, prefill = "") {
+    if (ready && !authenticated) return askToReply(parentId, prefill);
+    const kept = readDraft("comment-reply", parentId)?.text;
+    setReplyTo(parentId);
+    setReplyHandle(handle);
+    setReplyBody(kept?.trim() ? kept : prefill);
+    openComposer();
+  }
+
   function askToReply(parentId: number, prefill = "") {
-    writeDraft("comment-reply", postId, prefill, parentId);
+    writeDraft("comment-target", postId, "", parentId);
+    if (prefill && !readDraft("comment-reply", parentId)?.text.trim()) writeDraft("comment-reply", parentId, prefill);
     const back = new URL(window.location.href);
     back.hash = `comment-${parentId}`;
     askToSignIn("reply", back.toString());
@@ -291,10 +304,13 @@ export function PostComments({
     setError(null);
     try {
       const created = await createComment(postId, replyBody.trim(), parentId);
+      clearDraft("comment-reply", parentId);
       setReplyBody("");
       setReplyTo(null);
+      setComposerActive(false);
       setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id);
+      setAnnounce(t("replyPosted"));
     } catch {
       setError(t("submitError"));
     } finally {
@@ -325,7 +341,11 @@ export function PostComments({
     <section
       id="comments"
       className="mt-16 scroll-mt-24 border-t border-slate-100 pt-10 dark:border-slate-800"
+      style={dockHeight ? { paddingBottom: dockHeight } : undefined}
     >
+      <p aria-live="polite" className="sr-only" data-testid="conversation-announce">
+        {announce}
+      </p>
       {/* 0일 때 카운트를 그리지 않는다 — "댓글 0개" 헤딩 + 빈 컴포저 + "첫 댓글" 문구로 공허를
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       {quotes && quotes.total > 0 ? (
@@ -379,30 +399,36 @@ export function PostComments({
       ) : (
       <>
 
-      {/* There's ALWAYS a way to comment: a resting one-line placeholder that, on tap, mounts the real
-          composer (and lazy-loads its Tiptap chunk) already focused. Signed-out, the tap asks to sign in
-          instead. Once mounted the composer stays (collapsing to a quiet one-line at rest via
-          `collapsible`) so the deferral is a one-time first-tap cost only. */}
       <div className="mt-4">
-        {composerActive ? (
-          <CommentComposer
-            value={body}
-            onChange={setBody}
-            onSubmit={() => void submitTop()}
-            placeholder={t("placeholder")}
-            submitLabel={busy ? t("submitting") : t("submit")}
-            cancelLabel={t("cancel")}
+        {composerActive || replyTo != null ? (
+          <ConversationComposer
+            value={replyTo != null ? replyBody : body}
+            onChange={replyTo != null ? setReplyBody : setBody}
+            onSubmit={() => void (replyTo != null ? submitReply(replyTo) : submitTop())}
+            label={replyTo != null ? t("replyLabel") : t("composerLabel")}
+            placeholder={replyTo != null ? t("replyPlaceholder") : t("placeholder")}
+            submitLabel={busy ? t("submitting") : replyTo != null ? t("reply") : t("submit")}
             submitting={busy}
-            canSubmit={!authenticated || !!body.trim()}
-            rows={2}
-            collapsible
-            autoFocus={!restoredDraft}
+            replyingTo={
+              replyTo != null ? (replyHandle ?? comments.find((c) => c.id === replyTo)?.author?.username ?? "?") : null
+            }
+            onCancelReply={() => {
+              setReplyTo(null);
+              setComposerActive(true);
+            }}
+            onClose={() => {
+              setReplyTo(null);
+              setComposerActive(false);
+            }}
+            docked
+            onDockHeight={setDockHeight}
+            textareaRef={composerInput}
           />
         ) : (
           <button
             type="button"
             data-testid="comment-composer-placeholder"
-            onClick={() => (ready && !authenticated ? askToSignIn("comment") : setComposerActive(true))}
+            onClick={() => (ready && !authenticated ? askToSignIn("comment") : openComposer())}
             className="flex w-full items-center gap-3 rounded-full border border-slate-200 px-3 py-2.5 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {ready && authenticated && me && (
@@ -450,11 +476,7 @@ export function PostComments({
               >
                 <button
                   type="button"
-                  onClick={() => {
-                    if (ready && !authenticated) return askToReply(c.id);
-                    setReplyTo(replyTo === c.id ? null : c.id);
-                    setReplyBody("");
-                  }}
+                  onClick={() => openReply(c.id, c.author?.username ?? null)}
                   className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
@@ -485,10 +507,7 @@ export function PostComments({
                           data-testid={`comment-reply-${r.id}`}
                           onClick={() => {
                             const handle = r.author?.username;
-                            const prefill = handle && handle !== me?.username ? `@${handle} ` : "";
-                            if (ready && !authenticated) return askToReply(c.id, prefill);
-                            setReplyTo(c.id);
-                            setReplyBody(prefill);
+                            openReply(c.id, handle ?? null, handle && handle !== me?.username ? `@${handle} ` : "");
                           }}
                           className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
                         >
@@ -501,25 +520,6 @@ export function PostComments({
                 </ul>
               )}
 
-              {replyTo === c.id && (
-                <div className="mt-3 pl-12">
-                  <CommentComposer
-                    value={replyBody}
-                    onChange={setReplyBody}
-                    onSubmit={() => void submitReply(c.id)}
-                    placeholder={t("replyPlaceholder")}
-                    submitLabel={t("reply")}
-                    cancelLabel={t("cancel")}
-                    submitting={busy}
-                    canSubmit={!!replyBody.trim()}
-                    rows={2}
-                    autoFocus
-                    compact
-                    collapsible
-                    onCancel={() => setReplyTo(null)}
-                  />
-                </div>
-              )}
             </li>
           ))}
         </ul>

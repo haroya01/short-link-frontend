@@ -30,7 +30,9 @@ test("하이라이트 답글도 같은 줄이고, 답글은 그 사람을 불러
   await expect(row.getByRole("link", { name: "@haruka", exact: true })).toBeVisible({ timeout: 20_000 });
 
   await row.getByRole("button", { name: "답글", exact: true }).click();
-  await expect(thread.locator("[contenteditable='true']")).toContainText("@haruka");
+  const field = thread.getByRole("textbox", { name: "답글 쓰기" });
+  await expect(field).toHaveValue("@haruka ");
+  await expect(field).toBeFocused();
 
   await row.getByRole("button", { name: "댓글 메뉴" }).click();
   await row.getByRole("menuitem", { name: /차단/ }).click();

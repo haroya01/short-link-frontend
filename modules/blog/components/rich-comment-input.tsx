@@ -41,11 +41,11 @@ const RichMaxLength = Extension.create<{ limit: number }>({
 });
 
 /**
- * WYSIWYG 마크다운 입력 — 댓글·답글·하이라이트 노트가 공유하는 한 입력기. 입력칸 자체가 결과를
+ * WYSIWYG 마크다운 입력 — 하이라이트 노트의 입력기. 입력칸 자체가 결과를
  * 보여준다(굵게는 굵게, 인용은 인용 모양) — 마크다운 기호도 별도 미리보기 칸도 없다. 본문 에디터와
  * 같은 엔진(Tiptap)이되 댓글/노트 문법 서브셋만 켠다(헤딩·표·이미지 ❌). 저장은 그대로 마크다운으로
  * 직렬화돼(tiptap-markdown) 렌더(CommentBody)와 1:1. value(markdown) in/out 만 책임지고, 제출 버튼·
- * 글자수 같은 행동은 호출측(CommentComposer / NoteSheet)이 자기 자리에 둔다.
+ * 글자수 같은 행동은 호출측(NoteSheet)이 자기 자리에 둔다.
  */
 export function RichCommentInput({
   value,
@@ -69,7 +69,7 @@ export function RichCommentInput({
   maxLength?: number;
   rows?: number;
   /** Collapsed rest state — hides the format toolbar and shrinks the field to a single line. The
-   *  host (CommentComposer) flips this to `true` on focus / while a draft exists. */
+   *  host flips this to `true` on focus / while a draft exists. */
   expanded?: boolean;
   /** Cap on the auto-grow height; content past it scrolls inside the field. */
   maxHeight?: string;

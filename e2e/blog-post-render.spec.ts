@@ -142,37 +142,25 @@ test("a comment's @author handle links to the commenter's profile", async ({ pag
   await expect(authorLink).toHaveAttribute("href", /\/p\/minji/);
 });
 
-test("the comment composer is WYSIWYG — a rich editor, not a raw-markdown textarea + preview pane", async ({
-  page,
-}) => {
-  // The regression this guards: the comment box used to be a <textarea> where you typed raw markdown
-  // (`**bold**`) with a SEPARATE live "Preview" pane below. It's now a contenteditable WYSIWYG — the
-  // input itself shows the formatting, no markers, no second pane. (A whole writing surface can sit
-  // un-migrated while build/typecheck stay green — only driving the UI catches that.)
+test("the comment composer is plain text, and what it sends still renders the comment markdown", async ({ page }) => {
+  // Authoring is a plain, named text field (no formatting toolbar, no contenteditable). Bodies are still
+  // stored as markdown and rendered by the same CommentBody, so typed markdown and older formatted
+  // comments read exactly as before.
   await page.goto(POST_PATH);
-  const comments = page
-    .locator("section")
-    .filter({ has: page.getByRole("heading", { name: /comment/i }) });
-  await expect(comments).toBeVisible({ timeout: 30_000 });
-
-  // The editor is lazy: the resting field is a placeholder button, and tapping it mounts the real
-  // Tiptap composer (keeping the heavy editor chunk out of the post page's initial JS).
+  const comments = page.locator("#comments");
   const placeholder = comments.getByTestId("comment-composer-placeholder");
-  await expect(placeholder).toBeVisible();
+  await expect(placeholder).toBeVisible({ timeout: 30_000 });
   await placeholder.click();
 
-  // Once mounted the input is a contenteditable rich editor, not a <textarea>, and no "Preview" pane.
-  const editor = comments.locator('[contenteditable="true"].tiptap-comment').first();
-  await expect(editor).toBeVisible();
-  await expect(comments.locator("textarea")).toHaveCount(0);
-  await expect(comments.getByText("Preview", { exact: true })).toHaveCount(0);
+  const field = comments.getByRole("textbox", { name: "Write a comment" });
+  await expect(field).toBeFocused();
+  await expect(comments.locator("[contenteditable]")).toHaveCount(0);
+  await expect(comments.getByRole("button", { name: "Bold" })).toHaveCount(0);
 
-  // Proof it's WYSIWYG: the Bold tool makes the next typing render as a real <strong>, NOT `**text**`.
-  await editor.click();
-  await comments.getByRole("button", { name: "Bold" }).click();
-  await page.keyboard.type("loud");
-  await expect(editor.locator("strong")).toHaveText("loud");
-  await expect(editor).not.toContainText("**");
+  await field.fill("**loud** words");
+  await page.keyboard.press("Control+Enter");
+  await expect(comments.locator("li strong", { hasText: "loud" })).toBeVisible();
+  await expect(comments.getByText("**loud**")).toHaveCount(0);
 });
 
 test("the highlight-note composer is WYSIWYG too — selecting text → Note opens a rich editor, not a textarea", async ({

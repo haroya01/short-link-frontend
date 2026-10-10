@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { compactTime } from "@/modules/notes/lib/compact-time";
@@ -37,6 +36,7 @@ import {
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
 import { ConversationRow } from "@/modules/blog/components/conversation-row";
+import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
@@ -44,21 +44,6 @@ import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
 import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelection, resolveDeepLink, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 import { useApiErrorMessage } from "@/lib/error-messages";
-
-// The reply composer (HighlightThread) and note editor (NoteSheet) both pull in the Tiptap/ProseMirror
-// editor — a heavy graph no reader touches until they open a thread or write a memo. Both only render
-// inside an already-open overlay, so a dynamic (ssr:false) import splits the editor into its own chunk
-// and keeps it out of the post page's initial JS: it loads when the sheet opens, not on page load. A
-// resting skeleton the size of the collapsed field holds its place while the chunk streams in.
-const CommentComposer = dynamic(
-  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
-  { ssr: false, loading: () => <ComposerSkeleton /> },
-);
-
-/** Matches the collapsed rest-state height of the real editor so the mount doesn't shift layout. */
-function ComposerSkeleton() {
-  return <div className="h-12 rounded-surface border border-slate-200 dark:border-slate-700" />;
-}
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -601,6 +586,8 @@ function HighlightThread({
   const [confirm, confirmDialog] = useConfirm({ layerClassName: "z-[70]" });
   const tCommon = useTranslations("common");
   const tComments = useTranslations("comments");
+  const replyInput = useRef<HTMLTextAreaElement>(null);
+  const [announce, setAnnounce] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // The reply the viewer just posted — after it renders, scroll it into view so a new reply added from
@@ -666,7 +653,7 @@ function HighlightThread({
   function replyTo(handle: string) {
     const mention = `@${handle} `;
     setBody((current) => (current.startsWith(mention) ? current : mention + current));
-    requestAnimationFrame(() => contentRef.current?.querySelector<HTMLElement>("[contenteditable='true']")?.focus());
+    requestAnimationFrame(() => focusEnd(replyInput));
   }
 
   function threadAddress() {
@@ -725,6 +712,7 @@ function HighlightThread({
       // otherwise lands below the fold (the scroll area doesn't move on append). The effect below reads
       // this ref after the list re-renders. The composer keeps focus so a follow-up reply flows.
       justPostedIdRef.current = created.id;
+      setAnnounce(tComments("replyPosted"));
       onChanged(); // refresh the marks' replyCount
     } catch (e) {
       setError(errorMessage(e, t("replyError")));
@@ -917,20 +905,21 @@ function HighlightThread({
         </div>
 
         <div className="border-t border-slate-100 p-4 dark:border-slate-800">
+          <p aria-live="polite" className="sr-only" data-testid="conversation-announce">
+            {announce}
+          </p>
           {!ready ? (
             <div aria-hidden className="h-[60px]" />
           ) : authenticated ? (
-            <CommentComposer
+            <ConversationComposer
               value={body}
               onChange={setBody}
               onSubmit={() => void submit()}
+              label={tComments("replyLabel")}
               placeholder={t("highlightReplyPlaceholder")}
               submitLabel={t("highlightReplySubmit")}
               submitting={busy}
-              canSubmit={!!body.trim()}
-              rows={2}
-              compact
-              hideToolbar
+              textareaRef={replyInput}
             />
           ) : (
             <SignInRow reason="reply" placeholder={t("highlightReplyPlaceholder")} next={threadAddress} onAsk={onClose} />

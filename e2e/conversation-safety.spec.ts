@@ -31,7 +31,7 @@ async function signInAndReturn(page: Page) {
   return next;
 }
 
-const editors = (page: Page, scope: string) => page.locator(`${scope} [contenteditable="true"]`);
+const editors = (page: Page, scope: string) => page.locator(`${scope} [data-testid='conversation-composer'] textarea`);
 
 test("비로그인 답글은 먼저 로그인을 묻고, 돌아오면 그 댓글의 답글 칸이 열려 있다", async ({ page }) => {
   await signedOut(page);
@@ -60,7 +60,7 @@ test("쓰던 댓글은 새로고침해도 남고, 올리면 지워진다", async
   await composer.click();
   await page.keyboard.type("새로고침 전 초안");
   await page.reload();
-  await expect(editors(page, "#comments")).toContainText("새로고침 전 초안", { timeout: 20_000 });
+  await expect(editors(page, "#comments")).toHaveValue("새로고침 전 초안", { timeout: 20_000 });
 
   await page.getByRole("button", { name: "댓글 작성" }).click();
   await expect(page.locator("#comments li").getByText("새로고침 전 초안")).toBeVisible();
@@ -117,7 +117,7 @@ test("쓰던 하이라이트 답글은 다시 열어도 남고, 닫기 전에 �
   await page.keyboard.type("쓰던 답글");
 
   await page.goto(HL_THREAD);
-  await expect(editors(page, "[role='dialog']")).toContainText("쓰던 답글", { timeout: 20_000 });
+  await expect(editors(page, "[role='dialog']")).toHaveValue("쓰던 답글", { timeout: 20_000 });
 
   await editors(page, "[role='dialog']").click();
   await page.keyboard.press("Escape");
@@ -125,14 +125,14 @@ test("쓰던 하이라이트 답글은 다시 열어도 남고, 닫기 전에 �
   await ask.getByRole("button", { name: "계속 쓰기" }).click();
   await expect(ask).toHaveCount(0);
   await expect(thread).toBeVisible();
-  await expect(editors(page, "[role='dialog']")).toContainText("쓰던 답글");
+  await expect(editors(page, "[role='dialog']")).toHaveValue("쓰던 답글");
 
   await page.keyboard.press("Escape");
   await page.getByRole("dialog", { name: "쓰던 답글을 버릴까요?" }).getByRole("button", { name: "버리기" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.goto(HL_THREAD);
   await expect(editors(page, "[role='dialog']")).toHaveCount(1, { timeout: 20_000 });
-  await expect(editors(page, "[role='dialog']")).not.toContainText("쓰던 답글");
+  await expect(editors(page, "[role='dialog']")).toHaveValue("");
 });
 
 test("내 하이라이트 답글은 묻고 나서 지운다", async ({ page }) => {

@@ -241,9 +241,8 @@ test("replying in a highlight's thread posts the reply into the thread", async (
   await page.getByTestId("highlight-card-talk").click();
   const thread = page.getByRole("dialog");
   await expect(thread).toBeVisible({ timeout: 10_000 });
-  // Empty thread first — the reply composer reads/writes like a comment (WYSIWYG, not a textarea).
-  await thread.locator(".tiptap-comment").click();
-  await page.keyboard.type("this resonated");
+  // Empty thread first — the reply composer is the same plain, named field as the comments.
+  await thread.getByRole("textbox", { name: "Write a reply" }).fill("this resonated");
   await thread.getByRole("button", { name: "Reply", exact: true }).click();
   await expect(thread.getByText("this resonated")).toBeVisible({ timeout: 10_000 });
 });
