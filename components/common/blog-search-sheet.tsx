@@ -9,13 +9,12 @@ import { blogHref, blogPath } from "@/lib/host";
 import {
   listPopularTags,
   listSuggestedAuthors,
-  searchPublicFeed,
-  type PublicFeedItem,
   type SuggestedAuthor,
   type TagCount,
 } from "@/modules/blog/api/public-posts";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -34,8 +33,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const locale = useLocale();
   const router = useRouter();
   const [value, setValue] = useState("");
-  const [results, setResults] = useState<PublicFeedItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
   // Discovery (popular tags + suggested authors) fills the sheet's resting state — the mobile feed no
   // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
   // client-side (the sheet mounts in the layout, not the feed page) once per open session.
@@ -74,28 +72,6 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       live = false;
     };
   }, [open, discoveryLoaded]);
-
-  // Debounced live search — fires ~250ms after typing stops; stale responses ignored via `live`.
-  useEffect(() => {
-    const q = value.trim();
-    if (!open || !q) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    let live = true;
-    const id = window.setTimeout(async () => {
-      const res = await searchPublicFeed(q, "recent", 0, 6).catch(() => null);
-      if (!live) return;
-      setResults(res?.ok ? res.data.items.slice(0, 6) : []);
-      setLoading(false);
-    }, 250);
-    return () => {
-      live = false;
-      window.clearTimeout(id);
-    };
-  }, [value, open]);
 
   if (!open || !portalReady) return null;
 
@@ -219,7 +195,19 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             ))}
           </ul>
         )}
-        {q && !loading && results.length === 0 && (
+        {q && !loading && results.length === 0 && failed && (
+          <div role="alert" className="flex flex-col items-center gap-2 px-3 py-10 text-center">
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t("searchFailed")}</p>
+            <button
+              type="button"
+              onClick={retry}
+              className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            >
+              {t("retry")}
+            </button>
+          </div>
+        )}
+        {q && !loading && results.length === 0 && !failed && (
           <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
         {results.length > 0 && (

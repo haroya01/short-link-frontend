@@ -10,6 +10,7 @@ import { quoteHref } from "@/modules/blog/components/connection-block";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyHighlights, type MyHighlightItem } from "@/modules/blog/api/highlights";
+import { LoadError } from "@/modules/blog/components/saved/load-error";
 
 /**
  * 내 서재 — every passage the viewer has drawn a highlight on, newest first, each anchored to the post
@@ -63,18 +64,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
     );
   }
   if (error) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-20 text-center">
-        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
-        <button
-          type="button"
-          onClick={() => void load()}
-          className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-        >
-          {t("retry")}
-        </button>
-      </div>
-    );
+    return <LoadError message={t("highlightsLoadError")} onRetry={() => void load()} />;
   }
   if (items.length === 0) {
     return (

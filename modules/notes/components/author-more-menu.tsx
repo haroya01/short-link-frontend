@@ -8,6 +8,7 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
 import { useFollowShared } from "@/modules/blog/lib/follow-store";
+import { ReportButton } from "@/modules/blog/components/report-button";
 import {
   getMuteStatus,
   getRepostVisibility,
@@ -21,10 +22,11 @@ import { useBlockAuthor } from "./use-block-author";
 
 const UNKNOWN = { following: false, count: 0, countHidden: false };
 
-export function AuthorMoreMenu({ username }: { username: string }) {
+export function AuthorMoreMenu({ username, userId }: { username: string; userId: number }) {
   const t = useTranslations("notes");
+  const tp = useTranslations("publicPost");
   const { toast } = useToast();
-  const { authenticated, me } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const [follow] = useFollowShared(username, UNKNOWN);
   const { blocked, block, unblock, confirmDialog } = useBlockAuthor(username);
   const [hidden, setHidden] = useState<boolean | null>(null);
@@ -35,6 +37,7 @@ export function AuthorMoreMenu({ username }: { username: string }) {
   const [addingToList, setAddingToList] = useState(false);
   const [muting, setMuting] = useState(false);
   const [mute, setMute] = useState<MuteStatus | null>(null);
+  const [reporting, setReporting] = useState(false);
   const signedInOther = authenticated && me?.username !== username;
   const active = signedInOther && follow.following;
 
@@ -60,7 +63,7 @@ export function AuthorMoreMenu({ username }: { username: string }) {
     };
   }, [signedInOther, username]);
 
-  if (!signedInOther) return null;
+  if (!ready || me?.username === username) return null;
 
   async function unmute() {
     setOpen(false);
@@ -103,17 +106,19 @@ export function AuthorMoreMenu({ username }: { username: string }) {
           role="menu"
           className="absolute right-0 top-11 z-20 w-48 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false);
-              setAddingToList(true);
-            }}
-            className={item}
-          >
-            {t("addToList")}
-          </button>
+          {signedInOther && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                setAddingToList(true);
+              }}
+              className={item}
+            >
+              {t("addToList")}
+            </button>
+          )}
           {active && hidden !== null && (
             <button type="button" role="menuitem" onClick={toggle} className={item}>
               {hidden ? t("showRepostsFrom") : t("hideRepostsFrom")}
@@ -137,19 +142,33 @@ export function AuthorMoreMenu({ username }: { username: string }) {
                 {t("muteMenu")}
               </button>
             ))}
+          {signedInOther && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                void (blocked ? unblock() : block());
+              }}
+              className={cn(item, !blocked && "text-red-600 dark:text-red-400")}
+            >
+              {blocked ? t("unblock") : t("blockMenu")}
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"
             onClick={() => {
               setOpen(false);
-              void (blocked ? unblock() : block());
+              setReporting(true);
             }}
-            className={cn(item, !blocked && "text-red-600 dark:text-red-400")}
+            className={item}
           >
-            {blocked ? t("unblock") : t("blockMenu")}
+            {tp("report")}
           </button>
         </div>
       )}
+      <ReportButton subjectType="USER" subjectId={userId} open={reporting} onOpenChange={setReporting} />
       <NoteListMembershipDialog username={username} open={addingToList} onClose={() => setAddingToList(false)} />
       <MuteDialog username={username} open={muting} onClose={() => setMuting(false)} onMuted={setMute} />
       {confirmDialog}
