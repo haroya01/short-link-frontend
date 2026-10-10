@@ -29,6 +29,8 @@
     "submitError": "Couldn't post your comment. Please try again.",
     "deleteError": "Couldn't delete the comment. Please try again.",
     "loadFailed": "Couldn't load comments.",
+    "deleted": "This comment was deleted",
+    "jumpMissing": "That comment was deleted or isn't available.",
     "notesTab": "Notes {count, number}",
     "discussionTabs": "Comments and notes",
     "notesTabHint": "Notes that quote this post"

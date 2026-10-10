@@ -8,7 +8,7 @@ vi.mock("@/modules/blog/components/blog-link", () => ({
 }));
 vi.mock("@/modules/blog/lib/author-href", () => ({ authorHref: (u: string) => `/p/${u}` }));
 
-import { ConversationLike, ConversationRow } from "./conversation-row";
+import { ConversationLike, ConversationRow, ConversationTombstone } from "./conversation-row";
 
 let root: Root;
 let container: HTMLDivElement;
@@ -67,5 +67,14 @@ describe("the like", () => {
     await render(<ConversationLike liked count={0} label="좋아요" onToggle={() => {}} />);
     expect(container.querySelector("[data-testid='like-count']")).toBeNull();
     expect(container.querySelector("button")?.getAttribute("aria-pressed")).toBe("true");
+  });
+});
+
+describe("a deleted comment that still has replies", () => {
+  it("keeps only its place: no name, time, link or action", async () => {
+    await render(<ConversationTombstone id="comment-6" label="삭제된 댓글이에요" />);
+    const row = container.querySelector("#comment-6")!;
+    expect(row.textContent).toBe("삭제된 댓글이에요");
+    expect(row.querySelectorAll("a, button, time")).toHaveLength(0);
   });
 });

@@ -29,6 +29,8 @@
     "submitError": "コメントを投稿できませんでした。もう一度お試しください。",
     "deleteError": "コメントを削除できませんでした。もう一度お試しください。",
     "loadFailed": "コメントを読み込めませんでした。",
+    "deleted": "削除されたコメントです",
+    "jumpMissing": "このコメントは削除されたか、表示できません。",
     "notesTab": "ノート {count, number}",
     "discussionTabs": "コメントとノート",
     "notesTabHint": "この記事を引用したノート"

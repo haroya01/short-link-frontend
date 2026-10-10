@@ -143,3 +143,20 @@ export function ConversationRow({
     </div>
   );
 }
+
+export function ConversationTombstone({ id, flash = false, label }: { id?: string; flash?: boolean; label: string }) {
+  return (
+    <div
+      id={id}
+      data-conversation-row
+      data-tombstone
+      className={cn(
+        "-mx-3 -my-2 flex scroll-mt-24 items-center gap-3 rounded-surface px-3 py-2 transition-colors duration-700 motion-reduce:transition-none",
+        flash && "bg-accent-50 dark:bg-accent-900/30",
+      )}
+    >
+      <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+      <p className="text-[14px] text-slate-500 dark:text-slate-400">{label}</p>
+    </div>
+  );
+}

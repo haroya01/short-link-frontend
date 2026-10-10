@@ -16,6 +16,8 @@ export interface CommentView {
   likeCount: number;
   /** The @handles in the body that belong to members; absent on responses that predate it. */
   mentions?: string[];
+  /** A deleted comment kept as a placeholder because it still has replies; its body and author are gone. */
+  deleted?: boolean;
 }
 
 export interface CommentLikeStatus {
@@ -44,6 +46,8 @@ let mockComments: CommentView[] = [
   { id: 3, parentId: null, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "트레이드오프 정리가 깔끔하네요 👍", createdAt: "2026-05-30T12:30:00Z", likeCount: 1 },
   { id: 4, parentId: 1, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "저도 그 부분이 제일 와닿았어요.", createdAt: "2026-05-30T13:00:00Z", likeCount: 0 },
   { id: 5, parentId: null, author: { id: 16, username: "rin", bio: null, avatarUrl: null }, body: "새벽에 다시 읽으니 더 좋네요.", createdAt: "2026-05-30T14:00:00Z", likeCount: 0 },
+  { id: 6, parentId: null, author: null, body: "", createdAt: "2026-05-31T08:00:00Z", likeCount: 0, deleted: true },
+  { id: 7, parentId: 6, author: { id: 3, username: "haruka", bio: null, avatarUrl: null }, body: "지워진 댓글에 남은 답글이에요.", createdAt: "2026-05-31T09:00:00Z", likeCount: 0 },
 ];
 let mockCommentSeq = 100;
 const mockLiked = new Set<number>();

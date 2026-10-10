@@ -18,7 +18,8 @@ import {
 import { Avatar } from "@/modules/blog/components/avatar";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
-import { ConversationLike, ConversationRow } from "@/modules/blog/components/conversation-row";
+import { ConversationLike, ConversationRow, ConversationTombstone } from "@/modules/blog/components/conversation-row";
+import { useToast } from "@/components/ui/toast";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
@@ -101,6 +102,9 @@ export function PostComments({
   const [loadFailed, setLoadFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [flashId, setFlashId] = useState<number | null>(null);
+  const [jumpSeq, setJumpSeq] = useState(0);
+  const shownIds = useRef<Set<number>>(new Set());
+  const { toast } = useToast();
   const focusedRef = useRef(false);
   const [confirm, confirmDialog] = useConfirm();
 
@@ -160,10 +164,21 @@ export function PostComments({
   // above the comments can still load after the jump and push the row out of view — re-aim twice unless
   // the reader has started moving on their own.
   useEffect(() => {
+    const onHash = () => {
+      if (!/^#comment-\d+$/.test(window.location.hash)) return;
+      focusedRef.current = false;
+      setJumpSeq((n) => n + 1);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  useEffect(() => {
     if (!loaded || focusedRef.current) return;
     const match = /^#comment-(\d+)$/.exec(window.location.hash);
     if (!match) return;
     const id = Number(match[1]);
+    if (!shownIds.current.has(id)) toast(t("jumpMissing"));
     const reduceMotion =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     const aim = () => {
@@ -194,7 +209,7 @@ export function PostComments({
       timers.forEach((t) => window.clearTimeout(t));
       inputs.forEach((e) => window.removeEventListener(e, release));
     };
-  }, [loaded]);
+  }, [loaded, jumpSeq, t, toast]);
 
   useEffect(() => {
     if (flashId == null) return;
@@ -241,7 +256,13 @@ export function PostComments({
     }
   }
 
-  const shown = comments.filter((c) => !c.author || !blocked.has(c.author.username));
+  const shown = comments.filter(
+    (c) =>
+      (!c.author || !blocked.has(c.author.username)) &&
+      (!c.deleted || comments.some((r) => r.parentId === c.id && (!r.author || !blocked.has(r.author.username)))),
+  );
+  shownIds.current = new Set(shown.filter((c) => !c.deleted).map((c) => c.id));
+  const counted = shown.filter((c) => !c.deleted).length;
   const tops = shown.filter((c) => c.parentId == null);
   const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
   const canDelete = (c: CommentView) =>
@@ -350,11 +371,11 @@ export function PostComments({
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       {quotes && quotes.total > 0 ? (
         <>
-          <h2 className="sr-only">{shown.length > 0 ? t("count", { count: shown.length }) : t("heading")}</h2>
+          <h2 className="sr-only">{counted > 0 ? t("count", { count: counted }) : t("heading")}</h2>
           <div role="tablist" aria-label={t("discussionTabs")} className="flex items-baseline gap-5">
             {(
               [
-                ["comments", shown.length > 0 ? t("count", { count: shown.length }) : t("heading")],
+                ["comments", counted > 0 ? t("count", { count: counted }) : t("heading")],
                 ["notes", t("notesTab", { count: quotes.total })],
               ] as const
             ).map(([key, label]) => (
@@ -378,7 +399,7 @@ export function PostComments({
         </>
       ) : (
         <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {shown.length > 0 ? t("count", { count: shown.length }) : t("heading")}
+          {counted > 0 ? t("count", { count: counted }) : t("heading")}
         </h2>
       )}
 
@@ -460,6 +481,9 @@ export function PostComments({
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
+              {c.deleted ? (
+                <ConversationTombstone id={`comment-${c.id}`} flash={flashId === c.id} label={t("deleted")} />
+              ) : (
               <CommentRow
                 anchorId={`comment-${c.id}`}
                 flash={flashId === c.id}
@@ -483,6 +507,7 @@ export function PostComments({
                   {t("reply")}
                 </button>
               </CommentRow>
+              )}
 
               {repliesOf(c.id).length > 0 && (
                 <ul className="mt-4 space-y-4 pl-12">
@@ -502,18 +527,20 @@ export function PostComments({
                         onToggleLike={() => void toggleLike(r)}
                         isNew={r.id === justAddedId}
                       >
-                        <button
-                          type="button"
-                          data-testid={`comment-reply-${r.id}`}
-                          onClick={() => {
-                            const handle = r.author?.username;
-                            openReply(c.id, handle ?? null, handle && handle !== me?.username ? `@${handle} ` : "");
-                          }}
-                          className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
-                        >
-                          <CornerDownRight className="h-3.5 w-3.5" />
-                          {t("reply")}
-                        </button>
+                        {!c.deleted && (
+                          <button
+                            type="button"
+                            data-testid={`comment-reply-${r.id}`}
+                            onClick={() => {
+                              const handle = r.author?.username;
+                              openReply(c.id, handle ?? null, handle && handle !== me?.username ? `@${handle} ` : "");
+                            }}
+                            className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+                          >
+                            <CornerDownRight className="h-3.5 w-3.5" />
+                            {t("reply")}
+                          </button>
+                        )}
                       </CommentRow>
                     </li>
                   ))}
