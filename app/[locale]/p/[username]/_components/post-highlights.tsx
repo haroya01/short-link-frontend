@@ -23,7 +23,7 @@ import {
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
-import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine, Trash2 } from "lucide-react";
+import { CornerDownRight, FolderOpen, FolderPlus, Highlighter, PenLine, Trash2 } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { HighlightCard, hasConversation } from "./highlight-card";
@@ -596,7 +596,7 @@ function HighlightThread({
   const justPostedIdRef = useRef<number | null>(null);
   const repliesEndRef = useRef<HTMLDivElement>(null);
   const threadScrollRef = useRef<HTMLDivElement>(null);
-  // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
+  // The public collections this sentence is woven into ("이 문장이 담긴 컬렉션" — A-척추 discovery loop).
   const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
   // Blocks curators wove alongside this sentence in the same public collections ("이것과 이어진 것").
   const [related, setRelated] = useState<RelatedBlock[]>([]);
@@ -680,7 +680,7 @@ function HighlightThread({
 
   // After a just-posted reply renders, bring it into view. Only fires when submit() armed the ref, so a
   // background re-load never yanks the scroll. Scrolls the thread's own container (not the page) to the
-  // reply-list end so the newest reply sits at the bottom of the list — the "이 문장이 속한 길"/"이어진
+  // reply-list end so the newest reply sits at the bottom of the list — the "이 문장이 담긴 컬렉션"/"이어진
   // 것" sections that follow it in the same scroller stay below. Honors reduced-motion (instant jump).
   useEffect(() => {
     if (justPostedIdRef.current == null) return;
@@ -854,7 +854,7 @@ function HighlightThread({
               lands on the newest reply (see the submit scroll effect). */}
           <div ref={repliesEndRef} aria-hidden />
 
-          {/* 이 문장이 속한 길 — from one sentence to the paths/collections it's woven into. */}
+          {/* 이 문장이 담긴 컬렉션 — from one sentence to the collections it's woven into. */}
           {inCollections.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
               <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
@@ -867,16 +867,12 @@ function HighlightThread({
                       href={blogPath(`/collections/${c.id}`)}
                       className="focus-ring flex items-center gap-2 rounded-surface px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
-                      {c.kind === "PATH" ? (
-                        <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-500" />
-                      ) : (
-                        <ContainingGlyph visibility={c.visibility} />
-                      )}
+                      <FolderOpen aria-hidden className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
                       <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-200">
                         {c.title}
                       </span>
                       <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-                        {c.count}
+                        {tc("itemCount", { count: c.count })}
                       </span>
                     </BlogLink>
                   </li>
@@ -946,14 +942,6 @@ function HighlightThread({
     {confirmDialog}
     </>
   );
-}
-
-/** A small glyph for a containing collection's visibility (paths use the path arrow instead). */
-function ContainingGlyph({ visibility }: { visibility: CollectionSummary["visibility"] }) {
-  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400";
-  if (visibility === "PUBLIC") return <Globe className={cls} />;
-  if (visibility === "UNLISTED") return <LinkIcon className={cls} />;
-  return <Lock className={cls} />;
 }
 
 /** Floating two-action bar pinned to the selection. Placed above the span, or below it when the span

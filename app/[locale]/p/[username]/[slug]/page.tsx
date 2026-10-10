@@ -441,7 +441,7 @@ export default async function PublicPostPage({
 
         <div data-post-end aria-hidden />
 
-        {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
+        {/* 이 글이 담긴 컬렉션 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
             nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
             so the article is never a dead end (§10: one green thread, no node-graph). */}
         <Suspense fallback={null}>
