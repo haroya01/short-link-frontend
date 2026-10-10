@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 const header = (page: Page) => page.locator("header.vt-app-header");
 const desktopTrigger = (page: Page) => header(page).locator('[data-compose-trigger="desktop"]');
@@ -36,7 +37,7 @@ test.describe("desktop", () => {
     await dialog.getByRole("button", { name: "올리기" }).click();
     const notice = page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" });
     await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
-    await expect(page.getByText("노트를 올렸어요")).toBeVisible();
+    await expectOnTop(toastBy(page, "노트를 올렸어요"));
     await expect(dialog).toHaveCount(0);
     await expect(page.locator("article", { hasText: "헤더에서 바로 쓴 노트" }).first()).toBeVisible();
     await expect(page).toHaveURL(/\/ko\/blog\/notes$/);

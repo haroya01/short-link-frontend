@@ -46,6 +46,7 @@ import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
 import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelection, resolveDeepLink, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { useLikeFailed } from "@/hooks/use-like-failed";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -579,6 +580,7 @@ function HighlightThread({
 }) {
   const t = useTranslations("publicPost");
   const errorMessage = useApiErrorMessage();
+  const likeFailed = useLikeFailed();
   const tc = useTranslations("collections");
   const locale = useLocale();
   const [replies, setReplies] = useState<HighlightReplyView[]>([]);
@@ -757,8 +759,9 @@ function HighlightThread({
     try {
       const status = liked ? await likeHighlightReply(reply.id) : await unlikeHighlightReply(reply.id);
       setReplies((prev) => prev.map((r) => (r.id === reply.id ? { ...r, ...status } : r)));
-    } catch {
+    } catch (error) {
       flip(!liked);
+      likeFailed(error);
     }
   }
 

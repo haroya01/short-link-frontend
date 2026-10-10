@@ -584,7 +584,14 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên"
+    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên",
+    "statusTakenDown": "Đã bị gỡ",
+    "takenDownTitle": "Bài viết này đã bị gỡ theo chính sách nội dung",
+    "takenDownBody": "Bạn vẫn có thể chỉnh sửa và lưu, nhưng không thể công khai lại. Nếu không đồng ý, hãy liên hệ qua địa chỉ trong Điều khoản.",
+    "takenDownTerms": "Xem Điều khoản",
+    "takenDownBlocked": "Đã bị gỡ theo chính sách nội dung nên không thể công khai lại",
+    "accountSuspendedPublic": "Trong thời gian tài khoản bị tạm khóa, bạn không thể công khai bài viết hoặc sửa bài đang công khai. Bạn vẫn có thể viết bản nháp.",
+    "accountBannedPublic": "Tài khoản của bạn bị hạn chế nên không thể công khai bài viết hoặc sửa bài đang công khai."
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -794,6 +801,8 @@
     "activitySince": "từ {date}",
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
     "tabNotes": "Ghi chú",
+    "tabReplies": "Trả lời",
+    "tabMedia": "Phương tiện",
     "tabReposts": "Đăng lại",
     "viewAvatar": "Xem ảnh hồ sơ",
     "requested": "Đã yêu cầu",
@@ -868,7 +877,9 @@
     "DUPLICATE_REPORT": "Bạn đã báo cáo mục này rồi.",
     "SUBJECT_NOT_FOUND": "Không tìm thấy mục được báo cáo.",
     "SUSPEND_REQUIRES_EXPIRY": "Việc tạm ngưng cần có ngày hết hạn.",
-    "toggleFailed": "Không thể lưu thay đổi. Vui lòng thử lại sau."
+    "toggleFailed": "Không thể lưu thay đổi. Vui lòng thử lại sau.",
+    "likeFailed": "Không thể lưu lượt thích",
+    "POST_TAKEN_DOWN": "Bài viết đã bị gỡ theo chính sách nội dung nên không thể công khai lại."
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
@@ -4519,7 +4530,16 @@
     "suggestionsPopular": "Gần đây được nhiều người theo dõi",
     "suggestionsDismiss": "Không gợi ý {name}",
     "threadMore": "Thêm {count} trong chuỗi",
-    "threadPosition": "Phần {position} của chuỗi"
+    "threadPosition": "Phần {position} của chuỗi",
+    "replyingToAuthor": "Trả lời @{username}",
+    "replyParentGone": "Không xem được bài gốc",
+    "emptyReplies": "Chưa có trả lời nào",
+    "emptyMedia": "Chưa có ảnh nào",
+    "mediaNoAlt": "Ảnh",
+    "mediaCount": "{count} ảnh",
+    "mediaSensitive": "Nội dung nhạy cảm",
+    "profileRepliesTitle": "Trả lời · @{username}",
+    "profileMediaTitle": "Phương tiện · @{username}"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"

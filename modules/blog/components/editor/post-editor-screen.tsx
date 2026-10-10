@@ -15,6 +15,7 @@ import { useTagSuggestions } from "@/modules/blog/components/editor/use-tag-sugg
 import { CanvasTags } from "@/modules/blog/components/editor/canvas-tags";
 import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
 import { EditConflictDialog } from "@/modules/blog/components/editor/edit-conflict-dialog";
+import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { extractExternalLinks } from "@/modules/blog/lib/post-links";
@@ -59,6 +60,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
 
   const post = ed.post;
   const status = post?.status ?? "DRAFT";
+  const takenDown = post?.takenDown === true;
 
   // 글을 frontmatter 포함 .md 로 다운로드 — 데이터 소유권(언제든 들고 나갈 수 있는 문).
   // liveMarkdown(에디터의 동기 getter)을 우선해 마지막 키스트로크까지 담는다.
@@ -95,6 +97,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         backHref={ed.writeBase}
         postId={post?.id ?? null}
         status={status}
+        takenDown={takenDown}
         saving={ed.saving}
         saved={ed.saved}
         lastSavedAt={ed.lastSavedAt}
@@ -106,6 +109,8 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         onExport={exportMarkdown}
         onDelete={ed.remove}
       />
+
+      {takenDown && <TakenDownNotice className="mt-3" />}
 
       {ed.kept && (
         <div
@@ -176,6 +181,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         open={publishOpen}
         onClose={() => setPublishOpen(false)}
         status={status}
+        takenDown={takenDown}
         scheduledAt={post?.scheduledAt ?? null}
         title={ed.title}
         cover={ed.coverUrl}
@@ -196,7 +202,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         onSeriesChange={ed.setSeriesId}
         bodyLinks={bodyLinks}
         previewAction={
-          post && post.status !== "PUBLISHED" ? (
+          post && post.status !== "PUBLISHED" && !takenDown ? (
             <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
           ) : null
         }

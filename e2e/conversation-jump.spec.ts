@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // mock-on 레인: 댓글 6 은 답글(7, haruka)이 남은 채 지워진 댓글이다(deleted: true, 본문·작성자 없음).
 test.use({ viewport: { width: 1280, height: 900 } });
@@ -60,6 +61,6 @@ test("같은 글 안에서 주소의 #댓글만 바뀌어도 그 댓글로 가�
 
 test("가리킨 댓글이 없으면 댓글 맨 위로 가며 그렇다고 말한다", async ({ page }) => {
   await page.goto(`${POST}#comment-999`);
-  await expect(page.getByText("이 댓글은 삭제됐거나 볼 수 없어요.")).toBeVisible({ timeout: 20_000 });
+  await expectOnTop(toastBy(page, "이 댓글은 삭제됐거나 볼 수 없어요."), { timeout: 20_000 });
   await expect(page.locator("#comments")).toBeInViewport();
 });

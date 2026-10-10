@@ -584,7 +584,14 @@
       "warning": "Warning",
       "caution": "Caution"
     },
-    "bodyPlaceholderTouch": "Just start writing. Formatting is in the toolbar above"
+    "bodyPlaceholderTouch": "Just start writing. Formatting is in the toolbar above",
+    "statusTakenDown": "Taken down",
+    "takenDownTitle": "This post was taken down under our content policy",
+    "takenDownBody": "You can still edit and save it, but you can't make it public again. If you disagree, contact us at the address in the Terms.",
+    "takenDownTerms": "Read the Terms",
+    "takenDownBlocked": "Taken down under our content policy, so it can't be made public again",
+    "accountSuspendedPublic": "While your account is suspended, you can't make posts public or edit public posts. You can keep writing drafts.",
+    "accountBannedPublic": "Your account is restricted, so you can't make posts public or edit public posts."
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -780,6 +787,8 @@
     "activitySince": "since {date}",
     "reportFailed": "Couldn't send your report. Please try again.",
     "tabNotes": "Notes",
+    "tabReplies": "Replies",
+    "tabMedia": "Media",
     "tabReposts": "Reposts",
     "viewAvatar": "View profile photo",
     "requested": "Requested",
@@ -868,7 +877,9 @@
     "DUPLICATE_REPORT": "You've already reported this.",
     "SUBJECT_NOT_FOUND": "The reported item no longer exists.",
     "SUSPEND_REQUIRES_EXPIRY": "A suspension needs an expiry date.",
-    "toggleFailed": "Couldn't save that. Please try again in a moment."
+    "toggleFailed": "Couldn't save that. Please try again in a moment.",
+    "likeFailed": "Couldn't save your like",
+    "POST_TAKEN_DOWN": "This post was taken down under our content policy, so it can't be made public again."
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
@@ -4519,7 +4530,16 @@
     "suggestionsPopular": "Popular lately",
     "suggestionsDismiss": "Don't suggest {name}",
     "threadMore": "{count} more in this thread",
-    "threadPosition": "Thread part {position}"
+    "threadPosition": "Thread part {position}",
+    "replyingToAuthor": "Replying to @{username}",
+    "replyParentGone": "The original post isn't available",
+    "emptyReplies": "No replies yet",
+    "emptyMedia": "No photos yet",
+    "mediaNoAlt": "Photo",
+    "mediaCount": "{count, plural, one {# photo} other {# photos}}",
+    "mediaSensitive": "Sensitive content",
+    "profileRepliesTitle": "Replies · @{username}",
+    "profileMediaTitle": "Media · @{username}"
   },
   "mentions": {
     "suggestions": "People to mention"

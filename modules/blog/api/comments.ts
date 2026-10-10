@@ -112,6 +112,7 @@ export function deleteComment(id: number): Promise<void> {
 /** Authenticated — like a comment (idempotent; the response carries the authoritative count). */
 export function likeComment(id: number): Promise<CommentLikeStatus> {
   if (USE_MOCKS) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
     const c = mockComments.find((x) => x.id === id);
     if (c && !mockLiked.has(id)) {
       mockLiked.add(id);
@@ -125,6 +126,7 @@ export function likeComment(id: number): Promise<CommentLikeStatus> {
 /** Authenticated — remove the viewer's like on a comment. */
 export function unlikeComment(id: number): Promise<CommentLikeStatus> {
   if (USE_MOCKS) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
     const c = mockComments.find((x) => x.id === id);
     if (c && mockLiked.has(id)) {
       mockLiked.delete(id);

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock lane: the viewer keeps aside notices from people they don't follow; promo_bot (3) and
 // mina@mastodon.social (1) wait in the filtered inbox.
@@ -27,7 +28,7 @@ test("kept notices wait atop the feed and are accepted or dismissed per sender",
   await expect(promo).toContainText("알림 3개");
   await promo.getByTestId("filtered-accept").click();
   await expect(promo).toHaveCount(0);
-  await expect(page.getByText("promo_bot님의 알림을 받아요")).toBeVisible();
+  await expectOnTop(toastBy(page, "promo_bot님의 알림을 받아요"));
 
   const mina = page.getByTestId("filtered-mina@mastodon.social");
   await expect(mina.getByRole("link")).toHaveAttribute("href", /\/remote\/9800$/);

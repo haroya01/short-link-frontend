@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock state lives only for the SPA session, so the draft is opened from the list by soft navigation.
 test.use({ viewport: { width: 1280, height: 900 } });
@@ -64,7 +65,7 @@ test("the kept version can be thrown away instead", async ({ page }) => {
 test("keeping mine saves over the other device's version, which revisions can bring back", async ({ page }) => {
   const ask = await meetConflict(page);
   await ask.getByRole("button", { name: "내 내용으로 덮기" }).click();
-  await expect(page.getByText("내 내용으로 덮었어요. 덮인 내용은 리비전에서 되돌릴 수 있어요.")).toBeVisible();
+  await expectOnTop(toastBy(page, "내 내용으로 덮었어요. 덮인 내용은 리비전에서 되돌릴 수 있어요."));
   await expect(ask).toHaveCount(0);
 
   await page.getByRole("link", { name: "글 목록" }).click();
@@ -76,5 +77,5 @@ test("coming back to the tab with nothing unsaved shows another device's save", 
   await editElsewhere(page);
   await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
   await expect(page.getByRole("textbox", { name: "제목" })).toHaveValue(THEIRS, { timeout: 10_000 });
-  await expect(page.getByText("다른 기기에서 고친 최신 내용을 불러왔어요.")).toBeVisible();
+  await expectOnTop(toastBy(page, "다른 기기에서 고친 최신 내용을 불러왔어요."));
 });
