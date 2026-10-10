@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from "react";
 import { FileText, MessageSquareText } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { blogHref } from "@/lib/host";
 import type { ComposeTriggerProps } from "@/components/common/app-header";
 import { BottomSheet } from "@/components/common/bottom-sheet";
@@ -19,7 +19,7 @@ import { useToast } from "@/components/ui/toast";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { emitNotePosted } from "@/modules/blog/lib/consequence-events";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
-import { compactTime } from "@/modules/notes/lib/compact-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 const RECENT_DRAFTS = 3;
 
@@ -49,7 +49,7 @@ type Choice = { key: string; label: string; hint?: string; href?: string; onSele
 
 export function ComposeEntry({ variant, className, label, children }: ComposeTriggerProps) {
   const t = useTranslations("compose");
-  const locale = useLocale();
+  const ago = useCompactTime();
   const { toast } = useToast();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -83,7 +83,7 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
   const resume: Choice[] = (drafts?.items ?? []).map((draft) => ({
     key: `draft-${draft.id}`,
     label: draft.title.trim() || t("untitled"),
-    hint: compactTime(draft.updatedAt, locale),
+    hint: ago(draft.updatedAt),
     href: blogHref(`/write/${draft.id}`),
   }));
   if (drafts?.more) resume.push({ key: "all-drafts", label: t("seeAll"), href: blogHref("/write") });

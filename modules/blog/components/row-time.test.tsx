@@ -2,6 +2,12 @@ import React, { act, createElement } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("next-intl", async () => {
+  const ko = (await import("@/messages/ko.json")).default;
+  return { useTranslations: (ns: "common") => (key: "justNow") => ko[ns][key] };
+});
+
 import { RowTime } from "./row-time";
 
 const ISO = "2026-10-10T09:00:00Z";

@@ -63,13 +63,27 @@ test("rin's profile shows the neutral line instead of the tabs' content, with no
   await expect(page.getByTestId("author-blocked")).toHaveCount(0);
 });
 
-test("rin's post keeps its title but not its body or comments", async ({ page }) => {
-  expect(await serverHtml(page, RIN_POST)).toContain("prose-post");
+test("rin's post keeps its title and author but not its body, comments, actions or contents", async ({ page }) => {
+  const html = await serverHtml(page, RIN_POST);
+  expect(html).toContain("prose-post");
+  expect(html).toContain("data-post-actions");
   await page.goto(RIN_POST);
-  await expect(page.getByTestId("author-unavailable")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("author-unavailable")).toHaveText("볼 수 없는 글이에요.", { timeout: 30_000 });
   await expect(page.getByRole("heading", { level: 1, name: "밤 열한 시의 작업 노트" })).toBeVisible();
   await expect(page.locator(".prose-post")).toHaveCount(0);
   await expect(page.getByTestId("follow-button")).toHaveCount(0);
+  await expect(page.locator("[data-post-actions]")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "글 메뉴" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "목차" })).toHaveCount(0);
+  await expect(page.locator("aside").getByRole("link", { name: "@rin" })).toBeVisible();
+});
+
+test("on a phone, rin's post has no 목차 button either", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(RIN_POST);
+  await expect(page.getByTestId("author-unavailable")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("button", { name: "목차" })).toHaveCount(0);
+  await expect(page.locator("[data-post-actions]")).toHaveCount(0);
 });
 
 test("a post by someone the reader blocks shows the blocked notice in place of the body, and unblocking brings it back", async ({ page }) => {
@@ -84,7 +98,11 @@ test("a post by someone the reader blocks shows the blocked notice in place of t
   await expect(notice).toContainText("차단한 사용자예요");
   await expect(page.locator(".prose-post")).toHaveCount(0);
   await expect(page.getByTestId("author-unavailable")).toHaveCount(0);
+  await expect(page.locator("[data-post-actions]")).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "목차" })).toHaveCount(0);
 
   await notice.getByRole("button", { name: "차단 해제" }).click();
   await expect(page.locator(".prose-post")).toBeVisible();
+  await expect(page.locator("[data-post-actions]")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "목차" })).toBeVisible();
 });

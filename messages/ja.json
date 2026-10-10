@@ -2343,7 +2343,8 @@
     "errorPrefix": "エラー:",
     "offline": "オフラインです。接続が戻ると自動的に再試行します。",
     "showPassword": "パスワードを表示",
-    "hidePassword": "パスワードを隠す"
+    "hidePassword": "パスワードを隠す",
+    "justNow": "たった今"
   },
   "notFound": {
     "postTitle": "この記事は見つかりません",
@@ -4346,6 +4347,7 @@
     "unblockFailed": "ブロックを解除できませんでした",
     "blockedAuthorNotice": "ブロック中のユーザーです。記事・コメント・ノートは表示されません。",
     "authorUnavailable": "このユーザーの投稿は表示できません。",
+    "postUnavailable": "この記事は表示できません。",
     "threadUnavailable": "このノートは表示できません。",
     "blockedUsersTitle": "ブロックしたユーザー",
     "blockedUsersHint": "この人たちの記事・コメント・ノートは表示されません。作者ページ・記事・コメントの⋯メニューからブロックできます。",

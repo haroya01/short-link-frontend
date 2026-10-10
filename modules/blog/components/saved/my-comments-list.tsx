@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { CornerDownRight, Heart, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { DATE_LOCALE } from "@/lib/date";
 import { blogHref } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { postHref } from "@/modules/blog/lib/author-href";
@@ -12,6 +11,7 @@ import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { ErrorState } from "@/components/common/error-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyComments, type MyComment } from "@/modules/blog/api/comments";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 /**
  * 내 댓글 모아보기 — every comment the viewer has written, newest first, each anchored to the post it
@@ -20,6 +20,7 @@ import { listMyComments, type MyComment } from "@/modules/blog/api/comments";
  */
 export function MyCommentsList({ locale }: { locale: string }) {
   const t = useTranslations("savedLibrary");
+  const ago = useCompactTime();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<MyComment[]>([]);
   const [error, setError] = useState(false);
@@ -87,7 +88,7 @@ export function MyCommentsList({ locale }: { locale: string }) {
               </div>
 
               <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-                <time dateTime={c.createdAt}>{formatDate(c.createdAt, locale)}</time>
+                <time dateTime={c.createdAt}>{ago(c.createdAt)}</time>
                 {c.likeCount > 0 && (
                   <>
                     <span aria-hidden>·</span>
@@ -104,13 +105,4 @@ export function MyCommentsList({ locale }: { locale: string }) {
       })}
     </ul>
   );
-}
-
-function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "Asia/Seoul",
-  });
 }

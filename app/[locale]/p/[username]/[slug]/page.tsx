@@ -20,7 +20,7 @@ import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
-import { AuthorGate } from "@/modules/blog/components/author-gate";
+import { AuthorGate, AuthorOnly } from "@/modules/blog/components/author-gate";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
@@ -335,37 +335,39 @@ export default async function PublicPostPage({
             {" · "}
             {t("readingTime", { minutes })}
           </p>
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <span className="xl:hidden">
-              <FollowButton
-                username={author.username}
-                initialFollowerCount={0}
-                showCount={false}
-                sourcePostId={post.id}
+          <AuthorOnly username={author.username}>
+            <div data-post-actions className="ml-auto flex shrink-0 items-center gap-2">
+              <span className="xl:hidden">
+                <FollowButton
+                  username={author.username}
+                  initialFollowerCount={0}
+                  showCount={false}
+                  sourcePostId={post.id}
+                />
+              </span>
+              {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
+                  reader can react without scrolling to the end. Phones get them in the post dock. */}
+              <span className="hidden sm:contents">
+                <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
+                <BookmarkButton postId={post.id} />
+                <ConnectButton postId={post.id} postTitle={post.title} />
+                <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+              </span>
+              {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
+              <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
+              <PostReaderMenu
+                postId={post.id}
+                authorUsername={author.username}
+                postTitle={post.title}
+                postSlug={post.slug}
+                postUrl={postUrl}
               />
-            </span>
-            {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
-                reader can react without scrolling to the end. Phones get them in the post dock. */}
-            <span className="hidden sm:contents">
-              <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-              <BookmarkButton postId={post.id} />
-              <ConnectButton postId={post.id} postTitle={post.title} />
-              <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            </span>
-            {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
-            <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
-            <PostReaderMenu
-              postId={post.id}
-              authorUsername={author.username}
-              postTitle={post.title}
-              postSlug={post.slug}
-              postUrl={postUrl}
-            />
-          </div>
+            </div>
+          </AuthorOnly>
         </div>
       </header>
 
-      <AuthorGate username={author.username}>
+      <AuthorGate username={author.username} subject="post">
         {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
             "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-surface + ring 은 그대로 두고, 2:1
             리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
@@ -490,15 +492,17 @@ export default async function PublicPostPage({
           centering. Below that, the floating button → bottom sheet takes over. 불투명 종이 배경:
           full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
           겹침 자체를 제거. */}
-      {tocHeadings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-surface bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
-          <PostToc headings={tocHeadings} />
-        </aside>
-      )}
+      <AuthorOnly username={author.username}>
+        {tocHeadings.length >= 1 && (
+          <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-surface bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
+            <PostToc headings={tocHeadings} />
+          </aside>
+        )}
 
-      {/* Portrait tablets (640–1099px) get the TOC as a floating button → bottom sheet; phones get it in the dock. */}
-      <PostTocMobile headings={tocHeadings} />
-      <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
+        {/* Portrait tablets (640–1099px) get the TOC as a floating button → bottom sheet; phones get it in the dock. */}
+        <PostTocMobile headings={tocHeadings} />
+        <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
+      </AuthorOnly>
       <LegacyHeadingHash headings={headings} />
     </div>
   );
