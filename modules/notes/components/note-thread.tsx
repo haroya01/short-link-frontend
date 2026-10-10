@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -27,13 +28,16 @@ export function NoteThreadView({
   const blocked = useBlockedNames();
   const [thread, setThread] = useState(initial);
   const [deleted, setDeleted] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!ready || !authenticated) return;
     getNoteThread(initial.note.id)
       .then(setThread)
-      .catch(() => undefined);
+      .catch((error) => {
+        if (error instanceof ApiError && error.status === 404) setUnavailable(true);
+      });
   }, [ready, authenticated, initial.note.id]);
 
   const replaceReply = (next: Note) =>
@@ -44,6 +48,14 @@ export function NoteThreadView({
 
   const parts = thread.continuation ?? [];
   const numbered = parts.length > 0 && thread.parent?.author.id !== thread.note.author.id;
+
+  if (unavailable) {
+    return (
+      <p role="status" data-testid="note-unavailable" className="py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
+        {t("threadUnavailable")}
+      </p>
+    );
+  }
 
   if (deleted) {
     return (

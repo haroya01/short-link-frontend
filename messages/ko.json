@@ -4351,6 +4351,8 @@
     "unblockedToast": "{username}님의 차단을 해제했어요",
     "unblockFailed": "차단을 해제하지 못했어요",
     "blockedAuthorNotice": "차단한 사용자예요. 글·댓글·노트가 보이지 않아요.",
+    "authorUnavailable": "이 사용자의 글을 볼 수 없어요.",
+    "threadUnavailable": "볼 수 없는 노트예요.",
     "blockedUsersTitle": "차단한 사용자",
     "blockedUsersHint": "이 사람들의 글·댓글·노트는 보이지 않아요. 작가 페이지·글·댓글의 ⋯ 메뉴에서 차단할 수 있어요.",
     "blockedUsersEmpty": "차단한 사용자가 없어요.",

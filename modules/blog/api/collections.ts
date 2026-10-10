@@ -10,6 +10,7 @@
 import { request } from "@/lib/api/client";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { collectionMocks } from "@/modules/blog/api/_mock-gates";
+import { fetchPublic, hasViewer, type FetchResult } from "@/modules/blog/api/public-posts";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -204,26 +205,16 @@ export async function getCollection(id: number): Promise<CollectionDetail | null
   }
 }
 
-/**
- * Public — the GLOBAL, non-personalized connection stream (newest first): who connected what, to
- * which public collection/path, and why. Same {@link ConnectionEvent} shape as the authed follow-graph
- * feed, so the same cards render it. Readable signed-out (the `/api/v1/public/**` slice is permitAll),
- * so a raw fetch (no auth). A backend/empty response degrades to an empty page, never throws — the
- * feed just shows no connection rows. Non-personalized, so it's ISR-cached (revalidate 30s) to keep
- * `/blog` static — matching the sibling public-post feed reads, not per-request `no-store`.
- */
-export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockPublicConnectionFeed(page, size));
-  try {
-    const res = await fetchWithTimeout(
-      `${API_BASE}/api/v1/public/feed/connections?page=${page}&size=${size}`,
-      { next: { revalidate: 30 } },
-    );
-    if (!res.ok) return { items: [], hasNext: false, page, size };
-    return (await res.json()) as DiscoverFeed;
-  } catch {
-    return { items: [], hasNext: false, page, size };
+export function fetchPublicConnectionFeed(page = 0, size = 12): Promise<FetchResult<DiscoverFeed>> {
+  if (collectionMocks) {
+    return Promise.resolve({ ok: true, data: collectionMocks.mockPublicConnectionFeed(page, size, hasViewer()) });
   }
+  return fetchPublic<DiscoverFeed>(`/api/v1/public/feed/connections?page=${page}&size=${size}`);
+}
+
+export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
+  const result = await fetchPublicConnectionFeed(page, size);
+  return result.ok ? result.data : { items: [], hasNext: false, page, size };
 }
 
 /** Public — which PUBLIC collections/paths a post is connected into (most recently touched first).

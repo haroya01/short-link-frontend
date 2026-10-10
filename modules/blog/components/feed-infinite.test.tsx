@@ -19,6 +19,9 @@ vi.mock("@/modules/blog/api/public-posts", () => ({
   listFeedByTag: mocks.listFeedByTag,
   searchPublicFeed: mocks.searchPublicFeed,
 }));
+vi.mock("@/modules/blog/components/connection-feed-insert", () => ({
+  ConnectionFeedInsert: ({ event }: { event: { id: number } }) => createElement("li", null, `connection/${event.id}`),
+}));
 vi.mock("@/modules/blog/components/feed-card", () => ({
   FeedList: ({ children }: { children: React.ReactNode }) => createElement("ul", null, children),
   FeedCard: ({ item }: { item: PublicFeedItem }) => createElement("li", null, `${item.author.username}/${item.slug}`),

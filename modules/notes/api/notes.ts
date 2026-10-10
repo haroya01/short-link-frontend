@@ -604,8 +604,11 @@ export function fetchNoteThread(id: number): Promise<FetchResult<NoteThread>> {
 
 export function getNoteThread(id: number): Promise<NoteThread> {
   if (noteMocks) {
-    const thread = noteMocks.mockThread(id);
-    return thread ? Promise.resolve(thread) : Promise.reject(new Error("not found"));
+    try {
+      return Promise.resolve(noteMocks.mockViewerThread(id));
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
   return request<NoteThread>(`/api/v1/public/notes/${id}`, { method: "GET" });
 }

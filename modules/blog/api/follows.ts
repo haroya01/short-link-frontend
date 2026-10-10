@@ -55,6 +55,8 @@ export interface FollowStatus {
   requested?: boolean;
   /** The author approves each follower by hand (Mastodon's locked account): following leaves a request. */
   locked?: boolean;
+  blockedByViewer?: boolean;
+  blocksViewer?: boolean;
 }
 
 // Mock lane: haruka approves followers by hand, so following her leaves a request.
@@ -69,6 +71,7 @@ function mockStatus(username: string, following: boolean): FollowStatus {
     hideFollowerCount: false,
     requested: mockRequested.has(username),
     locked: MOCK_LOCKED.has(username),
+    blocksViewer: blogMocks?.MOCK_BLOCKS_VIEWER.has(username) ?? false,
   };
 }
 

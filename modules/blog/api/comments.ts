@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
-import type { PublicAuthor } from "./public-posts";
+import { blogMocks } from "./_mock-gates";
+import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -41,15 +42,20 @@ let mockComments: CommentView[] = [
   { id: 2, parentId: 1, author: { id: 1, username: "dohyun", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=12" }, body: "@minji 감사해요! 다음 글에서 더 자세히 다뤄볼게요. @nobody_here 님도요.", createdAt: "2026-05-30T11:00:00Z", likeCount: 0, mentions: ["minji"] },
   { id: 3, parentId: null, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "트레이드오프 정리가 깔끔하네요 👍", createdAt: "2026-05-30T12:30:00Z", likeCount: 1 },
   { id: 4, parentId: 1, author: { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }, body: "저도 그 부분이 제일 와닿았어요.", createdAt: "2026-05-30T13:00:00Z", likeCount: 0 },
+  { id: 5, parentId: null, author: { id: 16, username: "rin", bio: null, avatarUrl: null }, body: "새벽에 다시 읽으니 더 좋네요.", createdAt: "2026-05-30T14:00:00Z", likeCount: 0 },
 ];
 let mockCommentSeq = 100;
 const mockLiked = new Set<number>();
 
 /** Public — anyone can read a post's comments (oldest first, flat with parentId). */
 export async function listComments(postId: number): Promise<CommentView[]> {
-  if (USE_MOCKS) return [...mockComments];
+  if (USE_MOCKS) {
+    const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
+    return mockComments.filter((c) => !hidden?.has(c.author?.username ?? ""));
+  }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments`, {
     cache: "no-store",
+    headers: await viewerHeaders(),
   });
   if (!res.ok) return [];
   return (await res.json()) as CommentView[];

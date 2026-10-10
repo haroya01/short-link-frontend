@@ -10,7 +10,7 @@ import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
-import { readToken } from "@/lib/api/client";
+import { freshToken, readToken } from "@/lib/api/client";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -229,8 +229,17 @@ export type FetchResult<T> =
 // A signed-in reader's discovery lists are their own: given the token, the server leaves out authors
 // they blocked or muted and authors who blocked them. Only the browser holds the token, so server
 // renders stay anonymous ISR and a cached page never carries one reader's list.
-function viewerToken(): string | null {
-  return typeof window === "undefined" ? null : readToken();
+function viewerToken(): Promise<string | null> {
+  return typeof window === "undefined" ? Promise.resolve(null) : freshToken();
+}
+
+export function hasViewer(): boolean {
+  return typeof window !== "undefined" && !!readToken();
+}
+
+export async function viewerHeaders(): Promise<HeadersInit | undefined> {
+  const token = await viewerToken();
+  return token ? { Authorization: `Bearer ${token}` } : undefined;
 }
 
 export async function fetchPublic<T>(
@@ -238,7 +247,7 @@ export async function fetchPublic<T>(
   opts?: { noStore?: boolean },
 ): Promise<FetchResult<T>> {
   const url = `${API_BASE}${path}`;
-  const token = viewerToken();
+  const token = await viewerToken();
   // Detail lookups fetch with no-store: fetch can't cache only the 200 and skip the 404, so an ISR
   // window would serve a stale 404 on the publish→share path (a just-published post staying 404 for
   // up to the revalidate window). List/feed fetches stay on ISR — a momentarily missing card is far
@@ -275,7 +284,7 @@ export function listPublicFeed(
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks) {
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, viewer: !!viewerToken() }) });
+    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, viewer: hasViewer() }) });
   }
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
@@ -294,7 +303,7 @@ export function listFeedByTag(
   size = 24,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks) {
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ tag, sort, viewer: !!viewerToken() }) });
+    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ tag, sort, viewer: hasViewer() }) });
   }
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&sort=${sort}&page=${page}&size=${size}`,
@@ -310,7 +319,7 @@ export function searchPublicFeed(
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks)
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query, viewer: !!viewerToken() }) });
+    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query, viewer: hasViewer() }) });
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
   );
@@ -375,7 +384,7 @@ export interface SuggestedAuthor {
 /** Authors ranked by published-post count — the discovery rail's 추천 작가 list. */
 export function listSuggestedAuthors(limit = 5): Promise<FetchResult<SuggestedAuthor[]>> {
   if (blogMocks)
-    return Promise.resolve({ ok: true, data: blogMocks.mockSuggestedAuthors(limit, !!viewerToken()) });
+    return Promise.resolve({ ok: true, data: blogMocks.mockSuggestedAuthors(limit, hasViewer()) });
   return fetchPublic<SuggestedAuthor[]>(`/api/v1/public/authors?limit=${limit}`);
 }
 

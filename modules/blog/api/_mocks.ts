@@ -28,6 +28,7 @@ import type {
   TrendingTagSection,
 } from "@/modules/blog/api/public-posts";
 import type { FollowingFeedView, FollowingSeriesNote } from "@/modules/blog/api/follows";
+import type { HighlightReplyView, HighlightView } from "@/modules/blog/api/highlights";
 import type { NoteSeriesNav } from "@/modules/notes/api/notes";
 
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -42,7 +43,11 @@ const AUTHORS: Record<string, PublicAuthor> = {
   kazuki: { id: 4, username: "kazuki", bio: "여행하며 코드 짜는 사람", avatarUrl: avatar(33) },
   sora: { id: 5, username: "sora", bio: "프로덕트 디자이너", avatarUrl: null },
   yuna: { id: 15, username: "yuna", bio: "짧게 자주 쓰는 사람", avatarUrl: avatar(20) },
+  rin: { id: 16, username: "rin", bio: "밤에만 쓰는 사람", avatarUrl: null },
 };
+
+// rin blocked the mock reader: whatever rin wrote is left out of any request that carries the token.
+export const MOCK_BLOCKS_VIEWER: ReadonlySet<string> = new Set(["rin"]);
 
 type Seed = {
   slug: string;
@@ -114,7 +119,72 @@ const FIRST_COMMIT: PublicFeedItem = {
   followReason: { kind: "AUTHOR", tag: null },
 };
 
-const READABLE_ITEMS = [...ALL_ITEMS, FIRST_COMMIT];
+const RIN_POST: PublicFeedItem = toItem(
+  {
+    slug: "quiet-hours",
+    title: "밤 열한 시의 작업 노트",
+    excerpt: "모두 잠든 뒤에야 손에 잡히는 일들에 대해.",
+    author: "rin",
+    tags: ["일상"],
+    views: 120,
+    likes: 4,
+    day: 18,
+  },
+  SEEDS.length + 1,
+);
+
+const READABLE_ITEMS = [...ALL_ITEMS, FIRST_COMMIT, RIN_POST];
+
+const HIGHLIGHTED_SLUG = "posthog-funnel";
+
+const SEEDED_HIGHLIGHTS: HighlightView[] = [
+  {
+    id: 4001,
+    author: AUTHORS.minji,
+    blockOrder: 9,
+    endBlockOrder: 9,
+    startOffset: 0,
+    endOffset: 19,
+    quote: "도입 전후를 같은 부하로 비교했다.",
+    note: "같은 부하로 비교한 게 핵심이에요.",
+    replyCount: 0,
+    createdAt: "2026-05-22T09:00:00Z",
+  },
+  {
+    id: 4002,
+    author: AUTHORS.rin,
+    blockOrder: 14,
+    endBlockOrder: 14,
+    startOffset: 0,
+    endOffset: 25,
+    quote: "요약하면, 작은 서비스일수록 단순함이 이긴다.",
+    note: "밤에 읽어도 맞는 말.",
+    replyCount: 0,
+    createdAt: "2026-05-22T10:00:00Z",
+  },
+];
+
+const SEEDED_REPLIES: Record<number, HighlightReplyView[]> = {
+  4001: [
+    { id: 6001, author: AUTHORS.haruka, body: "저도 이 기준으로 봐요.", createdAt: "2026-05-22T11:00:00Z" },
+    { id: 6002, author: AUTHORS.rin, body: "부하 조건을 더 적어 주면 좋겠어요.", createdAt: "2026-05-22T12:00:00Z" },
+  ],
+};
+
+const visibleTo = (viewer: boolean) => (author: PublicAuthor | null) =>
+  !viewer || !MOCK_BLOCKS_VIEWER.has(author?.username ?? "");
+
+export function mockSeededReplies(highlightId: number, viewer: boolean): HighlightReplyView[] {
+  return (SEEDED_REPLIES[highlightId] ?? []).filter((reply) => visibleTo(viewer)(reply.author));
+}
+
+export function mockSeededHighlights(postId: number, viewer: boolean): HighlightView[] {
+  if (READABLE_ITEMS[postId - 1]?.slug !== HIGHLIGHTED_SLUG) return [];
+  return SEEDED_HIGHLIGHTS.filter((h) => visibleTo(viewer)(h.author)).map((h) => ({
+    ...h,
+    replyCount: mockSeededReplies(h.id, viewer).length,
+  }));
+}
 
 /** A single page of the feed. `hasNext` stays false so the one mock page renders cleanly (no
  *  load-more round-trip to a backend that isn't there). */
