@@ -135,6 +135,7 @@ const config: Config = {
         "card-title-xl": "1.375rem",
         "card-title-2xl": "1.4375rem",
         "card-title-3xl": "1.6875rem",
+        meta: "0.75rem",
       },
       /*
        * Card corner radius — 두 값으로 통일. 카드 표면이 화면마다 rounded-lg(8)/rounded-xl(12)/

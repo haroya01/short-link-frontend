@@ -37,7 +37,7 @@ function SeriesLine({
     <BlogLink
       href={authorHref(item.author.username, locale, `series/${series.slug}`)}
       data-testid="feed-card-series"
-      className="focus-ring -mx-1 mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded px-1 py-1 text-[12px] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+      className="focus-ring -mx-1 mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded px-1 py-1 text-meta text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
     >
       <Layers aria-hidden className="h-3.5 w-3.5 shrink-0" />
       <span className="truncate">

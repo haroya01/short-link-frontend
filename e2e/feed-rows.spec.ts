@@ -87,6 +87,16 @@ test.describe("desktop details", () => {
     }
   });
 
+  test("tag line, byline and belonging line share one meta size", async ({ page }) => {
+    await openFeed(page);
+    const row = page.locator('main li[data-feed-row]:not([data-connection-event]):has(a[href*="/collections/"])').first();
+    await expect(row).toBeVisible({ timeout: 30_000 });
+    const size = (locator: ReturnType<typeof row.locator>) => locator.evaluate((el) => getComputedStyle(el).fontSize);
+    const byline = await size(row.locator("time").first().locator(".."));
+    expect(await size(row.locator("> div").first())).toBe(byline);
+    expect(await size(row.locator('a[href*="/collections/"]').first())).toBe(byline);
+  });
+
   test("a connection row opens with who connected it where, and when", async ({ page }) => {
     await openFeed(page);
     const connection = page.locator("main li[data-connection-event]").first();

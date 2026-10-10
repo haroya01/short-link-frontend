@@ -65,7 +65,7 @@ export function FeedRow({
       {...rowData}
     >
       {top && (
-        <div className="col-span-full row-start-1 mb-1.5 flex min-w-0 items-center gap-1.5 text-[12px] leading-5 text-slate-500 dark:text-slate-400 sm:col-span-1">
+        <div className="col-span-full row-start-1 mb-1.5 flex min-w-0 items-center gap-1.5 text-meta leading-5 text-slate-500 dark:text-slate-400 sm:col-span-1">
           {top}
         </div>
       )}
@@ -114,7 +114,7 @@ export function FeedRow({
           />
         </BlogLink>
       )}
-      <div className="col-span-full row-start-3 mt-2 flex min-h-5 min-w-0 items-center gap-1.5 self-start text-[12px] text-slate-500 dark:text-slate-400 sm:col-span-1">
+      <div className="col-span-full row-start-3 mt-2 flex min-h-5 min-w-0 items-center gap-1.5 self-start text-meta text-slate-500 dark:text-slate-400 sm:col-span-1">
         {byline}
       </div>
       {after && <div className="col-span-full row-start-4 min-w-0">{after}</div>}
