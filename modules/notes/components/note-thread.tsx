@@ -6,11 +6,20 @@ import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { getNoteThread, type Note, type NoteThread } from "@/modules/notes/api/notes";
+import { useToast } from "@/components/ui/toast";
+import {
+  deleteNote,
+  getNoteThread,
+  listHiddenReplies,
+  setNoteReplyHidden,
+  type Note,
+  type NoteThread,
+} from "@/modules/notes/api/notes";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteCard } from "./note-card";
 import { NoteComposer } from "./note-composer";
+import { ReplyRestricted } from "./note-reply-policy";
 import { SignInRow } from "@/components/auth/sign-in-row";
 
 export function NoteThreadView({
@@ -31,6 +40,22 @@ export function NoteThreadView({
   const [deleted, setDeleted] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
+  const [hiddenReplies, setHiddenReplies] = useState<Note[]>([]);
+  const [showingHidden, setShowingHidden] = useState(false);
+  const { toast } = useToast();
+
+  const replyControls = initial.note.replyPolicy !== undefined;
+
+  useEffect(() => {
+    if (!ready || !replyControls) return;
+    let live = true;
+    listHiddenReplies(initial.note.id)
+      .then((notes) => live && setHiddenReplies(notes))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [ready, authenticated, initial.note.id, replyControls]);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -46,6 +71,65 @@ export function NoteThreadView({
       ...current,
       replies: current.replies.map((reply) => (reply.id === next.id ? next : reply)),
     }));
+
+  const rootAuthorId =
+    thread.note.inReplyToId === null
+      ? thread.note.author.id
+      : thread.parent && thread.parent.inReplyToId === null
+        ? thread.parent.author.id
+        : null;
+  const moderates = replyControls && rootAuthorId !== null && rootAuthorId === me?.id;
+
+  const byTime = (a: Note, b: Note) => a.createdAt.localeCompare(b.createdAt);
+
+  async function setHidden(reply: Note, hidden: boolean) {
+    try {
+      await setNoteReplyHidden(reply.id, hidden);
+    } catch {
+      toast(t(hidden ? "hideReplyFailed" : "unhideReplyFailed"), "error");
+      return;
+    }
+    const moved = { ...reply, hidden };
+    setThread((current) => ({
+      ...current,
+      note: { ...current.note, replyCount: Math.max(0, current.note.replyCount + (hidden ? -1 : 1)) },
+      replies: hidden
+        ? current.replies.filter((r) => r.id !== reply.id)
+        : [...current.replies, moved].sort(byTime),
+    }));
+    setHiddenReplies((current) =>
+      hidden ? [...current, moved].sort(byTime) : current.filter((r) => r.id !== reply.id),
+    );
+    toast(t(hidden ? "replyHiddenToast" : "replyUnhiddenToast"));
+  }
+
+  async function removeReply(reply: Note) {
+    try {
+      await deleteNote(reply.id);
+    } catch {
+      toast(t("removeReplyFailed"), "error");
+      return;
+    }
+    setThread((current) => ({
+      ...current,
+      note: {
+        ...current.note,
+        replyCount: reply.hidden ? current.note.replyCount : Math.max(0, current.note.replyCount - 1),
+      },
+      replies: current.replies.filter((r) => r.id !== reply.id),
+    }));
+    setHiddenReplies((current) => current.filter((r) => r.id !== reply.id));
+    toast(t("replyRemovedToast"));
+  }
+
+  const moderationFor = (reply: Note) =>
+    moderates && reply.author.id !== me?.id
+      ? {
+          hidden: reply.hidden === true,
+          onToggleHidden: () => void setHidden(reply, reply.hidden !== true),
+          onRemove: () => void removeReply(reply),
+        }
+      : undefined;
 
   const parts = thread.continuation ?? [];
   const numbered = parts.length > 0 && thread.parent?.author.id !== thread.note.author.id;
@@ -123,9 +207,12 @@ export function NoteThreadView({
         <div className="mt-1 border-b border-slate-100 dark:border-slate-800">
           {!ready ? (
             <div aria-hidden className="h-[60px]" />
+          ) : authenticated && thread.note.canReply === false ? (
+            <ReplyRestricted policy={thread.note.replyPolicy} />
           ) : authenticated ? (
             <NoteComposer
               inReplyToId={thread.note.id}
+              threadReplyPolicy={thread.note.replyPolicy}
               onCreated={(reply) => {
                 setFreshReplies((current) => new Set(current).add(reply.id));
                 setThread((current) => ({
@@ -153,6 +240,7 @@ export function NoteThreadView({
                 isNew={freshReplies.has(reply.id)}
                 filteredBy={verdict?.action === "warn" ? verdict.phrases : undefined}
                 onChange={replaceReply}
+                replyModeration={moderationFor(reply)}
                 onDelete={(id) =>
                   setThread((current) => ({
                     ...current,
@@ -163,6 +251,33 @@ export function NoteThreadView({
               />
               );
             })}
+          </div>
+        )}
+        {hiddenReplies.length > 0 && (
+          <div className="border-t border-slate-100 dark:border-slate-800">
+            <button
+              type="button"
+              aria-expanded={showingHidden}
+              onClick={() => setShowingHidden((v) => !v)}
+              className="focus-ring w-full rounded-surface py-3 text-left text-[14px] font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+            >
+              {showingHidden ? t("hiddenRepliesCollapse") : t("hiddenRepliesShow", { count: hiddenReplies.length })}
+            </button>
+            {showingHidden && (
+              <div data-testid="hidden-replies" className="divide-y divide-slate-100 dark:divide-slate-800">
+                {hiddenReplies.map((reply) => (
+                  <NoteCard
+                    key={reply.id}
+                    note={reply}
+                    onChange={(next) =>
+                      setHiddenReplies((current) => current.map((r) => (r.id === next.id ? next : r)))
+                    }
+                    onDelete={(id) => setHiddenReplies((current) => current.filter((r) => r.id !== id))}
+                    replyModeration={moderationFor(reply)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </section>
