@@ -6,10 +6,10 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { blockAuthor, unblockAuthor, useBlockedNames } from "@/modules/blog/lib/user-blocks";
 
 /** Block / unblock one author with the shared confirmation and toasts — the same in every menu. */
-export function useBlockAuthor(username: string) {
+export function useBlockAuthor(username: string, { layerClassName }: { layerClassName?: string } = {}) {
   const t = useTranslations("notes");
   const { toast } = useToast();
-  const [confirm, confirmDialog] = useConfirm();
+  const [confirm, confirmDialog] = useConfirm({ layerClassName });
   const blocked = useBlockedNames().has(username);
 
   async function block() {

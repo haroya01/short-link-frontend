@@ -10,7 +10,8 @@ import { getNoteThread, type Note, type NoteThread } from "@/modules/notes/api/n
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteCard } from "./note-card";
-import { NoteComposer, NoteSignInRow } from "./note-composer";
+import { NoteComposer } from "./note-composer";
+import { SignInRow } from "@/components/auth/sign-in-row";
 
 export function NoteThreadView({
   initial,
@@ -120,7 +121,9 @@ export function NoteThreadView({
           {t("repliesTitle")}
         </h2>
         <div className="mt-1 border-b border-slate-100 dark:border-slate-800">
-          {authenticated ? (
+          {!ready ? (
+            <div aria-hidden className="h-[60px]" />
+          ) : authenticated ? (
             <NoteComposer
               inReplyToId={thread.note.id}
               onCreated={(reply) => {
@@ -133,7 +136,7 @@ export function NoteThreadView({
               }}
             />
           ) : (
-            <NoteSignInRow reason="reply" placeholder={t("replyPlaceholder")} />
+            <SignInRow reason="reply" placeholder={t("replyPlaceholder")} />
           )}
         </div>
         {thread.replies.length === 0 ? (

@@ -14,10 +14,12 @@ export function CommentMenu({
   commentId,
   authorUsername,
   canReport,
+  layerClassName,
 }: {
-  commentId: number;
+  commentId?: number;
   authorUsername: string | null;
   canReport: boolean;
+  layerClassName?: string;
 }) {
   const t = useTranslations("notes");
   const tp = useTranslations("publicPost");
@@ -26,7 +28,7 @@ export function CommentMenu({
   const [reporting, setReporting] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   useDismiss(open, root, () => setOpen(false));
-  const { blocked, block, unblock, confirmDialog } = useBlockAuthor(authorUsername ?? "");
+  const { blocked, block, unblock, confirmDialog } = useBlockAuthor(authorUsername ?? "", { layerClassName });
 
   const canBlock = authenticated && !!authorUsername && authorUsername !== me?.username;
   if (!canBlock && !canReport) return null;
@@ -76,7 +78,7 @@ export function CommentMenu({
           )}
         </div>
       )}
-      {canReport && (
+      {canReport && commentId != null && (
         <ReportButton subjectType="COMMENT" subjectId={commentId} open={reporting} onOpenChange={setReporting} />
       )}
       {confirmDialog}

@@ -12,6 +12,7 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { ConversationName } from "@/modules/blog/components/conversation-row";
 import { blogHref, blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
@@ -289,13 +290,13 @@ export function NoteCard({
                 href={noteAuthorHref(note.author, locale)}
                 className="flex min-w-0 items-baseline gap-1 rounded focus-ring hover:underline"
               >
-                <span className="truncate font-semibold text-slate-900 dark:text-slate-100">
-                  {note.author.displayName || note.author.username}
-                </span>
-                {(note.author.displayName || note.author.remoteId) && (
-                  <span className="truncate text-slate-500 dark:text-slate-400">@{note.author.username}</span>
-                )}
+                <ConversationName name={note.author.displayName} handle={note.author.username} />
               </BlogLink>
+            )}
+            {!emphasis && (
+              <span aria-hidden className="shrink-0 text-slate-400 dark:text-slate-500">
+                ·
+              </span>
             )}
             {!emphasis && (
               <BlogLink
