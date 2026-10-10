@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { buttonVariants } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
 import { AppsGrid } from "@/components/common/apps-grid";
@@ -12,14 +13,12 @@ import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
-/**
- * 로그인 후 행선지를 ?next= 로 부착. login/callback 양쪽의 ALLOWED_NEXT_PATHS 화이트리스트에 있어야 한다.
- */
-function loginHrefFor(pathname: string): string {
-  if (pathname.startsWith("/qr-campaigns")) return "/login?next=/campaigns";
-  if (pathname.startsWith("/showcase")) return "/login?next=/settings/profile";
-  if (pathname.startsWith("/events")) return "/login?next=/events";
-  return "/login";
+/** 로그인 페이지의 ALLOWED_NEXT_PATHS 안에 있어야 한다(시트가 못 뜰 때 그 페이지로 간다). */
+function loginNextFor(pathname: string): string {
+  if (pathname.startsWith("/qr-campaigns")) return "/campaigns";
+  if (pathname.startsWith("/showcase")) return "/settings/profile";
+  if (pathname.startsWith("/events")) return "/events";
+  return "/dashboard";
 }
 
 type NavEntry = {
@@ -140,9 +139,9 @@ export function Nav() {
                 iconOnly
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
-              <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
+              <SignInLink reason="general" next={loginNextFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
                 {t("login")}
-              </Link>
+              </SignInLink>
             </div>
           )}
         </div>
@@ -170,9 +169,9 @@ export function Nav() {
                 iconOnly
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
-              <Link href={loginHrefFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
+              <SignInLink reason="general" next={loginNextFor(pathname)} className={buttonVariants({ size: "sm", variant: "outline" })}>
                 {t("login")}
-              </Link>
+              </SignInLink>
             </div>
           )}
         </div>

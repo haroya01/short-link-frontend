@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listForYouFeed } from "@/modules/blog/api/follows";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
@@ -20,7 +21,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
  */
 export function ForYouFeed({ locale }: { locale: string }) {
   const t = useTranslations("publicFeed");
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
@@ -88,21 +89,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
   if (ready && !authenticated) {
     return (
       <div className="mt-8">
-        <FeedEmpty
-          mark
-          title={t("forYouSignedOutTitle")}
-          body={t("forYouSignedOut")}
-          action={
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
-                {t("signIn")}
-              </button>
-              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
-                {t("followingBrowseLatest")}
-              </Link>
-            </div>
-          }
-        />
+        <SignInEmptyState reason="forYou" icon={Sparkles} />
       </div>
     );
   }

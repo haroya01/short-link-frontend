@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn, type SignInReason } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -86,6 +87,7 @@ export function useOptimisticToggle({
   load,
   mutate,
   syncKey,
+  signInReason,
 }: {
   depKey: string | number;
   initialOn?: boolean;
@@ -94,8 +96,9 @@ export function useOptimisticToggle({
   load: () => Promise<ToggleState>;
   mutate: (next: boolean) => Promise<ToggleState>;
   syncKey?: string;
+  signInReason: SignInReason;
 }) {
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const { toast } = useToast();
   const tErr = useTranslations("errors");
   const errorMessage = useApiErrorMessage();
@@ -139,7 +142,7 @@ export function useOptimisticToggle({
 
   async function toggle() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn(signInReason);
       return;
     }
     if (busy) return;

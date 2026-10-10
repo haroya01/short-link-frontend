@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { buildDemoHeadline } from "@/lib/demo-data";
 import { formatNumber } from "@/lib/utils";
 
@@ -56,9 +57,9 @@ export function HomeStatsExample() {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Link href="/login" className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <SignInLink reason="stats" next="/dashboard" className={buttonVariants({ variant: "outline", size: "lg" })}>
             {t("ctaStart")}
-          </Link>
+          </SignInLink>
           <Link
             href="/demo"
             className="focus-ring inline-flex items-center gap-1 rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"

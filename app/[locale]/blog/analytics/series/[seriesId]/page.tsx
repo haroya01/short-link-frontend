@@ -42,9 +42,6 @@ export default function SeriesAnalyticsPage() {
   const data = statsQuery.data;
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   // Back to the 시리즈별 보기 (where this analytics entry point lives).
   const backHref = pathname.replace(/\/analytics\/series\/.*$/, "/write?view=series");

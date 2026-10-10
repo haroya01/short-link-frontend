@@ -8,7 +8,7 @@ import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-h
 import { ShareRow } from "@/app/[locale]/u/[username]/_components/share-row";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
-import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -67,13 +67,14 @@ export default async function ShowcaseHandlePage({
       <div className="sticky top-0 z-30 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
         <div className="container flex max-w-md items-center justify-between gap-3 py-2 text-[12px]">
           <span className="min-w-0 truncate font-medium text-slate-700 dark:text-slate-300">{t("sampleBanner")}</span>
-          <Link
-            href="/login?next=/profile/auto"
+          <SignInLink
+            reason="profile"
+            next="/profile/auto"
             className="focus-ring inline-flex min-h-8 shrink-0 items-center gap-1 rounded font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
           >
             {t("sampleCta")}
             <ArrowRight className="h-3 w-3" aria-hidden />
-          </Link>
+          </SignInLink>
         </div>
       </div>
 

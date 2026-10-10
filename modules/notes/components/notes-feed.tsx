@@ -1,9 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { AtSign, Bookmark, Globe, List, Users, type LucideIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import type { SignInReason } from "@/components/auth/login-prompt";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
@@ -42,6 +45,13 @@ const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed
 };
 
 const PERSONAL: ReadonlySet<Feed> = new Set(["federated", "following", "bookmarks", "direct", "lists"]);
+const SIGN_IN: Partial<Record<Feed, { reason: SignInReason; icon: LucideIcon }>> = {
+  following: { reason: "followingNotes", icon: Users },
+  federated: { reason: "federatedNotes", icon: Globe },
+  direct: { reason: "direct", icon: AtSign },
+  lists: { reason: "lists", icon: List },
+  bookmarks: { reason: "noteBookmarks", icon: Bookmark },
+};
 
 function feedOf(value: string | null, saved: NotesSwitcherFeed | null): Feed {
   if (value === null) return saved ?? "everyone";
@@ -62,7 +72,7 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
   const tFeed = useTranslations("publicFeed");
   const params = useSearchParams();
   const pathname = usePathname();
-  const { ready, authenticated, signInWithGoogle } = useAuth();
+  const { ready, authenticated } = useAuth();
   const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
   const [posted, setPosted] = useState<Note[]>([]);
   const feed = feedOf(params.get("feed"), savedFeed);
@@ -125,33 +135,11 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
             onCreated={(note) => setPosted((current) => [note, ...current])}
           />
         ) : (
-          <NoteSignInRow label={t("loginToWrite")} placeholder={t("composerPlaceholder")} />
+          <NoteSignInRow reason="note" placeholder={t("composerPlaceholder")} />
         )}
       </div>
       {PERSONAL.has(feed) && signedOut ? (
-        <EmptyState
-          title={
-            feed === "following"
-              ? t("signInForFollowing")
-              : feed === "federated"
-                ? t("signInForFederated")
-                : feed === "direct"
-                ? t("signInForDirect")
-                : feed === "lists"
-                  ? t("signInForLists")
-                  : t("signInForBookmarks")
-          }
-          className="mt-8"
-          action={
-            <button
-              type="button"
-              onClick={signInWithGoogle}
-              className="focus-ring rounded-full bg-accent-700 px-4 py-2 text-[13px] font-semibold text-white hover:bg-accent-800"
-            >
-              {t("signIn")}
-            </button>
-          }
-        />
+        <SignInEmptyState {...SIGN_IN[feed]!} />
       ) : feed === "lists" ? (
         <NoteListsPanel selectedId={listId} />
       ) : (

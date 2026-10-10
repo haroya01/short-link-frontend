@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Quote } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { emitPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { NoteQuoteDialog } from "./note-quote-dialog";
@@ -20,14 +21,14 @@ export function QuoteInNoteButton({
   authorUsername: string;
 }) {
   const t = useTranslations("notes");
-  const { authenticated, signInWithGoogle } = useAuth();
+  const { authenticated } = useAuth();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   return (
     <>
       <button
         type="button"
-        onClick={() => (authenticated ? setOpen(true) : signInWithGoogle())}
+        onClick={() => (authenticated ? setOpen(true) : askToSignIn("quote"))}
         aria-label={t("quoteAction")}
         title={t("quoteAction")}
         className="touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"

@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, ClipboardPaste, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, ClipboardPaste, Plus, QrCode, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { createCampaignBatchesBulk, getCampaign } from "@/lib/api";
@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignDetail } from "@/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -164,7 +164,7 @@ export default function NewBatchPage() {
   }
 
   if (ready && !authenticated) {
-    return <LinksAuthGate title={t("loginRequired")} />;
+    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
   }
 
   return (

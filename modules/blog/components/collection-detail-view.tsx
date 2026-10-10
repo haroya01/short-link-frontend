@@ -16,6 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -56,7 +57,7 @@ export function CollectionDetailView({
   locale: string;
 }) {
   const t = useTranslations("collections");
-  const { me, authenticated, ready, signInWithGoogle } = useAuth();
+  const { me, authenticated, ready } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [confirm, confirmDialog] = useConfirm();
@@ -267,7 +268,7 @@ export function CollectionDetailView({
               authenticated={authenticated}
               curatorUsername={isOwner ? null : detail.curatorUsername}
               locale={locale}
-              onSignIn={signInWithGoogle}
+              onSignIn={() => askToSignIn("collect")}
             />
           )}
         </>

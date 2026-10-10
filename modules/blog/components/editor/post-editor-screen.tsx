@@ -43,9 +43,6 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
   }, [ed.remoteReloads, toast, t]);
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="mx-auto max-w-[44rem] px-5 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
   // Mirror the editor's real shape so the post swaps in without a jump.
   if (ed.loading) return <EditorSkeleton />;
   if (!ed.post && postId != null) {

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { notFound, usePathname } from "next/navigation";
+import { BarChart3, Bookmark, Mail, PenLine, Settings, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { blogHref } from "@/lib/host";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
+import type { SignInReason } from "@/components/auth/login-prompt";
 import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
 import { BlogBottomNav } from "@/components/common/blog-bottom-nav";
@@ -57,6 +58,14 @@ function stripLocale(pathname: string): string {
 
 function matchesAny(path: string, list: string[]): boolean {
   return list.some((p) => path === p || path.startsWith(p + "/"));
+}
+
+function signInFor(path: string): { reason: SignInReason; icon: LucideIcon } {
+  if (matchesAny(path, ["/analytics"])) return { reason: "stats", icon: BarChart3 };
+  if (matchesAny(path, ["/curation"])) return { reason: "library", icon: Bookmark };
+  if (matchesAny(path, ["/leads"])) return { reason: "manage", icon: Mail };
+  if (matchesAny(path, ["/settings", "/webhooks"])) return { reason: "settings", icon: Settings };
+  return { reason: "write", icon: PenLine };
 }
 
 /** 블로그 제품의 클라이언트 크롬 — 서버 레이아웃(메시지 스코프)이 감싼다. */
@@ -119,9 +128,8 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
 }
 
 // Workspace body — rendered inside AppProviders so it reads the real auth context (BlogChrome sits
-// above the provider and would only ever see the signed-out fallback). The author workspace needs
-// auth: signed-out visitors (and anyone whose session drops mid-edit) get sent to the dedicated blog
-// login screen with a next= back to where they were, and the sidebar only mounts once authenticated.
+// above the provider and would only ever see the signed-out fallback). The sidebar only mounts once
+// authenticated.
 function WorkspaceBody({ children }: { children: React.ReactNode }) {
   const tBlog = useTranslations("sidebar.blog");
   const tCommon = useTranslations("sidebar.common");
@@ -131,38 +139,34 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
   // (or /blog), and the entry hrefs are product-relative — without this prefix they'd 404 into the
   // links product. On the blog host the prefix is stripped by rewrite, so base is "".
   const base = blogBasePath(pathname);
-  // Admin surfaces are hidden behind a hard 404, not the friendly login bounce: a visitor who isn't
-  // a signed-in admin — no token, expired token, or a valid non-admin token — must never learn the
-  // route exists. So the login redirect below is skipped for /admin, and the render-time guard 404s.
+  // Admin surfaces are hidden behind a hard 404, not a sign-in prompt: a visitor who isn't a
+  // signed-in admin — no token, expired token, or a valid non-admin token — must never learn the
+  // route exists.
   const isAdminPath = matchesAny(stripLocale(pathname), ["/admin"]);
-
-  // Once auth resolves to signed-out, route to /login. This is also the safety net for the
-  // expired-session case: an authed page (e.g. the editor saving a draft) hits a 401, the
-  // interceptor clears the token, `authenticated` flips false, and we land here instead of flashing
-  // a confusing "you're logged out" state in place. Admin paths opt out — they 404 instead.
-  useEffect(() => {
-    if (ready && !authenticated && !isAdminPath) {
-      const next = window.location.pathname + window.location.search;
-      window.location.replace(`${blogHref("/login")}?next=${encodeURIComponent(next)}`);
-    }
-  }, [ready, authenticated, isAdminPath]);
 
   // Hard 404 for admin paths the moment auth resolves to anything but a signed-in admin.
   if (isAdminPath && ready && (!authenticated || !isAdmin)) {
     notFound();
   }
 
-  // Hold the sidebar until auth resolves (and while the login redirect above is in flight) so we
-  // never flash it before deciding — but show a content skeleton instead of a blank pane, so a
-  // workspace navigation reads as "loading this page", never an empty white flash. Admin paths only
-  // wait on `ready` (their auth verdict is the 404 above), not on `authenticated`.
-  if (!ready || (!authenticated && !isAdminPath)) {
+  // Hold the sidebar until auth resolves so we never flash it before deciding — but show a content
+  // skeleton instead of a blank pane, so a workspace navigation reads as "loading this page", never
+  // an empty white flash. Admin paths only wait on `ready` (their auth verdict is the 404 above).
+  if (!ready) {
     return (
       <div className="flex flex-1" aria-busy>
         <main className="min-w-0 flex-1">
           <WorkspaceSkeleton />
         </main>
       </div>
+    );
+  }
+
+  if (!authenticated && !isAdminPath) {
+    return (
+      <main className="min-w-0 flex-1">
+        <SignInEmptyState page {...signInFor(stripLocale(pathname))} />
+      </main>
     );
   }
 

@@ -26,6 +26,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, linksHref } from "@/lib/host";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
@@ -249,8 +250,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             type="button"
             onClick={() => {
               onClose();
-              // Through kurl's branded login screen (then Google), not straight to OAuth.
-              window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
+              askToSignIn("general");
             }}
             className={ITEM}
           >

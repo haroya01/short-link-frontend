@@ -37,7 +37,7 @@ import { useSharedUrl } from "@/lib/use-shared-url";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
@@ -172,16 +172,7 @@ export default function DashboardPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("loginRequired")}
-        description={t("loginRequiredDesc")}
-        benefits={[
-          { icon: Link2, label: t("loginRequiredBenefits.links") },
-          { icon: BarChart3, label: t("loginRequiredBenefits.stats") },
-          { icon: QrCode, label: t("loginRequiredBenefits.campaigns") },
-        ]}
-        next="/dashboard"
-      />
+      <SignInEmptyState page reason="links" icon={Link2} />
     );
   }
 

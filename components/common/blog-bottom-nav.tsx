@@ -44,9 +44,6 @@ export function BlogBottomNav() {
   const isHome = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/.test(pathname);
   const isNotes = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/.test(pathname);
   const isNotif = sheet === null && /\/notifications(\/|$)/.test(pathname);
-  // Signed-out → kurl's branded login (then Google), carrying where they wanted to go.
-  const loginHref = (next: string) => `${blogHref("/login")}?next=${encodeURIComponent(next)}`;
-  const notifHref = authenticated ? blogHref("/notifications") : loginHref("/notifications");
 
   return (
     <>
@@ -84,7 +81,7 @@ export function BlogBottomNav() {
         </button>
 
         <BlogChromeLink
-          href={notifHref}
+          href={blogHref("/notifications")}
           aria-current={isNotif ? "page" : undefined}
           // Fold the unread count into the tab's name so a screen reader announces it — the numeric badge
           // is otherwise decorative (aria-hidden) and silent.
