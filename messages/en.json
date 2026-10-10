@@ -834,6 +834,7 @@
     "INVALID_CAMPAIGN_PERIOD": "The end date must be after the start date.",
     "RATE_LIMITED": "Too many requests. Please try again in a minute.",
     "SERIES_SLUG_CONFLICT": "This series address is already in use. Please choose another.",
+    "SLUG_RESERVED": "This address is used by a profile menu, so it can't be used. Try a different one.",
     "INVALID_DESTINATION_URL": "The address must start with http:// or https://.",
     "BODY_LIMIT": "This post is too long to save. Please split it up.",
     "OPENS_AFTER_EXPIRY": "The opening time must be before the expiry time.",

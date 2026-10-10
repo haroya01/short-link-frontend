@@ -834,6 +834,7 @@
     "INVALID_CAMPAIGN_PERIOD": "終了日は開始日より後にしてください。",
     "RATE_LIMITED": "リクエストが多すぎます。1分後にもう一度お試しください。",
     "SERIES_SLUG_CONFLICT": "このシリーズのアドレスはすでに使われています。別のアドレスにしてください。",
+    "SLUG_RESERVED": "このURLはプロフィールのメニューで使われているため使えません。別のURLにしてください。",
     "INVALID_DESTINATION_URL": "アドレスは http:// または https:// で始めてください。",
     "BODY_LIMIT": "記事が長すぎて保存できません。分けてください。",
     "OPENS_AFTER_EXPIRY": "公開日時は期限より前にしてください。",
