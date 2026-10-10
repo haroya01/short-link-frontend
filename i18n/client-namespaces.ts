@@ -50,7 +50,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   blog: [
     "auth", "collections", "compose", "cookieConsent", "errors", "footer", "languageSwitcher", "loginPrompt", "mentions",
     "nav", "notes", "notifications", "publicFeed", "publicPost", "publicProfile.gallery", "recent", "sidebar.blog",
-    "sidebar.common",
+    "sidebar.common", "translation",
   ],
   "blog/admin": ["abuseReports", "admin.servers", "blogAdminMetrics"],
   "blog/analytics": ["blogWorkspace", "settings.profile.stats", "stats"],
@@ -63,7 +63,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "p/[username]": [
     "auth", "collections", "comments", "errors", "languageSwitcher", "loginPrompt", "mentions", "nav",
     "notifications", "notes", "postEditor.urlDialog", "publicFeed", "publicPost", "publicProfile.gallery",
-    "share", "sidebar.blog",
+    "share", "sidebar.blog", "translation",
   ],
   u: ["auth", "loginPrompt", "publicProfile", "qr"],
   e: ["events.public"],

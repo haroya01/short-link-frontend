@@ -647,7 +647,8 @@ html[data-first-load] .profile-fade {
    * wrapper, so element selectors here carry the styling rather than @tailwindcss/typography (which
    * the project deliberately doesn't pull in — one custom surface doesn't justify the plugin).
    */
-  .prose-post > :first-child {
+  .prose-post > :first-child,
+  .prose-post > [hidden]:first-child + [data-translation] {
     margin-top: 0;
   }
   .prose-post > :last-child {

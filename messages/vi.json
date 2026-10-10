@@ -4556,5 +4556,15 @@
     "noteTitle": "Ghi chú mới",
     "notePosted": "Đã đăng ghi chú",
     "viewNote": "Xem"
+  },
+  "translation": {
+    "translate": "Xem bản dịch",
+    "translating": "Đang dịch…",
+    "translatedFrom": "Đã dịch từ {language}",
+    "showOriginal": "Xem bản gốc",
+    "writtenIn": "Bài viết bằng {language}",
+    "showingTranslation": "Đang hiển thị bản dịch",
+    "showingOriginal": "Đang hiển thị bản gốc",
+    "failed": "Không thể dịch nội dung này"
   }
 }

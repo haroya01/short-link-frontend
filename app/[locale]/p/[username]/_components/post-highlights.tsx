@@ -47,6 +47,7 @@ import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelectio
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { useLikeFailed } from "@/hooks/use-like-failed";
+import { usePostTranslated } from "@/modules/translation/lib/post-translated";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -76,6 +77,7 @@ export function PostHighlights({ postId }: { postId: number }) {
   // Reader-level "paint highlights or read clean" toggle (device-local, default ON). Hiding stops the
   // painting but never the ability to create a highlight from a selection.
   const { show: showHighlights, toggle: toggleHighlights } = useShowHighlights();
+  const translated = usePostTranslated();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
   // Whether the highlight fetch has settled (resolved or failed) at least once. The deep-link scroll
   // waits on this — not on there being any highlights — so a post with zero highlights still runs.
@@ -125,7 +127,7 @@ export function PostHighlights({ postId }: { postId: number }) {
     // thread stays reachable via ?hl=) but doesn't clutter the body. See highlight-clustering.ts.
     const toPaint = selectPaintedHighlightIds(highlights, me?.id ?? null);
     setPaintableCount(toPaint.size);
-    if (!showHighlights) return; // reader chose a clean read — leave the prose bare (marks cleared above)
+    if (!showHighlights || translated) return; // a clean read, or marks can't sit on a translation — leave the prose bare
     for (const h of highlights) {
       if (!toPaint.has(h.id)) continue;
       // Precise span paint (single- or multi-block), using the stored block + char offsets so it hits
@@ -137,7 +139,7 @@ export function PostHighlights({ postId }: { postId: number }) {
         mine: me?.id != null && h.author?.id === me.id,
       });
     }
-  }, [highlights, me?.id, showHighlights]);
+  }, [highlights, me?.id, showHighlights, translated]);
 
   // Deep-link to a sentence: a `?hl=<quote>` from a path step / connection / discovery card scrolls to
   // the matching span and flashes it (mirrors the iOS postFocusQuote deep-link). Gated on the highlight
@@ -223,6 +225,10 @@ export function PostHighlights({ postId }: { postId: number }) {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
+    if (translated) {
+      setSel(null);
+      return;
+    }
 
     const finalize = (e: Event) => {
       // Ignore releases on the action bar itself (tapping a button must not re-read / hide it).
@@ -269,7 +275,7 @@ export function PostHighlights({ postId }: { postId: number }) {
       document.removeEventListener("selectionchange", onSelectionChange);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [t, toast]);
+  }, [t, toast, translated]);
 
   // Create a highlight (bare or with a note) and confirm the outcome. The paint pass is the primary
   // "it landed" cue, but the mark can be off-screen (you selected, then the list re-pull repaints below

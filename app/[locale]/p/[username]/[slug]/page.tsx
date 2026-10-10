@@ -23,6 +23,7 @@ import { FollowButton } from "@/modules/blog/components/follow-button";
 import { AuthorGate, AuthorOnly } from "@/modules/blog/components/author-gate";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
+import { PostTranslation } from "@/modules/translation/components/post-translation";
 import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
 import { PostReaderMenu } from "../_components/post-reader-menu";
@@ -310,7 +311,10 @@ export default async function PublicPostPage({
             좁은 뷰포트에서 두 줄로 크게 쏟아져 포트폴리오 목업처럼 읽혔다 — 스텝만 ~6% 줄여 절제하되,
             본문 h2(24px)보다는 항상 확실히 크게(30 > 24) 유지해 위계는 그대로. leading 은 큰 디스플레이의
             tight 감(1.15/1.1)을 이어간다. */}
-        <h1 className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg">
+        <h1
+          data-post-title
+          className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg"
+        >
           {post.title}
         </h1>
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 sm:mt-6">
@@ -369,6 +373,9 @@ export default async function PublicPostPage({
             </div>
           </AuthorOnly>
         </div>
+        <AuthorOnly username={author.username}>
+          <PostTranslation postId={post.id} languageTag={post.languageTag} title={post.title} />
+        </AuthorOnly>
       </header>
 
       <AuthorGate username={author.username} subject="post">

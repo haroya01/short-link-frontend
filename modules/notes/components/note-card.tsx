@@ -48,6 +48,8 @@ import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { noteHref, openNote } from "@/modules/notes/lib/note-href";
 import { ReplyPolicyDialog } from "./note-reply-policy";
+import { TranslateLine } from "@/modules/translation/components/translate-line";
+import { useNoteTranslation } from "@/modules/translation/lib/use-note-translation";
 
 const NOTE_RING_NUMBER_FROM = 20;
 
@@ -100,6 +102,14 @@ export function NoteCard({
   const mine = me?.id === note.author.id;
   const [editing, setEditing] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const noteTranslation = useNoteTranslation({
+    id: note.id,
+    body: note.body,
+    mentions: note.mentions,
+    contentWarning: note.contentWarning,
+    language: note.language,
+    enabled: !editing && (!note.contentWarning || revealed),
+  });
   const [mediaShown, setMediaShown] = useState(false);
   const [showingHistory, setShowingHistory] = useState(false);
   const [filterOpened, setFilterOpened] = useState(false);
@@ -395,10 +405,14 @@ export function NoteCard({
             >
               <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
               <span
-                lang={contentLang(note.contentWarning, note.language)}
+                lang={
+                  noteTranslation.shown?.warning
+                    ? contentLang(noteTranslation.shown.warning, locale)
+                    : contentLang(note.contentWarning, note.language)
+                }
                 className={cn("min-w-0 flex-1 break-words font-medium", emphasis ? "text-[17px]" : "text-[15px]")}
               >
-                {note.contentWarning}
+                {noteTranslation.shown?.warning ?? note.contentWarning}
               </span>
               <button
                 type="button"
@@ -495,9 +509,25 @@ export function NoteCard({
                   </div>
                 </div>
               ) : (
-                <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                <NoteBody
+                  body={note.body}
+                  mentions={note.mentions}
+                  large={emphasis}
+                  language={noteTranslation.shown ? locale : note.language}
+                  parts={noteTranslation.shown?.parts}
+                />
               )}
             </div>
+            {!editing && noteTranslation.source && (
+              <TranslateLine
+                source={noteTranslation.source}
+                state={noteTranslation.translation.state}
+                progress={noteTranslation.translation.progress}
+                onTranslate={() => void noteTranslation.translation.translate()}
+                onShowOriginal={noteTranslation.translation.showOriginal}
+                className="mt-1.5"
+              />
+            )}
             {note.poll && (
               <NotePollCard noteId={note.id} poll={note.poll} onVoted={(poll) => onChange?.({ ...note, poll })} />
             )}

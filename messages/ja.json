@@ -4556,5 +4556,15 @@
     "noteTitle": "新しいノート",
     "notePosted": "ノートを投稿しました",
     "viewNote": "見る"
+  },
+  "translation": {
+    "translate": "翻訳する",
+    "translating": "翻訳中…",
+    "translatedFrom": "{language}から翻訳",
+    "showOriginal": "原文を表示",
+    "writtenIn": "{language}で書かれた記事です",
+    "showingTranslation": "翻訳を表示しています",
+    "showingOriginal": "原文を表示しています",
+    "failed": "翻訳できませんでした"
   }
 }

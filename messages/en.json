@@ -4556,5 +4556,15 @@
     "noteTitle": "New note",
     "notePosted": "Note posted",
     "viewNote": "View"
+  },
+  "translation": {
+    "translate": "Translate",
+    "translating": "Translating…",
+    "translatedFrom": "Translated from {language}",
+    "showOriginal": "Show original",
+    "writtenIn": "Written in {language}",
+    "showingTranslation": "Showing the translation",
+    "showingOriginal": "Showing the original",
+    "failed": "Couldn't translate this"
   }
 }

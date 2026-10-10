@@ -4556,5 +4556,15 @@
     "noteTitle": "새 노트",
     "notePosted": "노트를 올렸어요",
     "viewNote": "보기"
+  },
+  "translation": {
+    "translate": "번역 보기",
+    "translating": "번역하는 중…",
+    "translatedFrom": "{language}에서 번역됨",
+    "showOriginal": "원문 보기",
+    "writtenIn": "{language} 글이에요",
+    "showingTranslation": "번역문을 보여 줘요",
+    "showingOriginal": "원문을 보여 줘요",
+    "failed": "번역하지 못했어요"
   }
 }
