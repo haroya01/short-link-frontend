@@ -15,8 +15,7 @@ export function absoluteRowDate(iso: string, locale: string): string {
 }
 
 export function RowTime({ iso, locale, className }: { iso: string; locale: string; className?: string }) {
-  // The server copy can be served from the ISR cache long after it was rendered, so it carries the
-  // absolute date and the relative one replaces it only once the reader's own clock is available.
+  // The feed HTML can come from the ISR cache, so a relative time must wait for the reader's clock.
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
   return (
     <time dateTime={iso} className={className}>

@@ -15,10 +15,6 @@ import { BelongingProvider } from "@/modules/blog/components/post-belonging-cont
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 
-/**
- * Single-column post list — the home recent feed, the following tab, tag pages and the author profile
- * all wrap their {@link FeedCard}s in this. Each {@link FeedRow}'s own bottom hairline draws the dividers.
- */
 export function FeedList({ children }: { children: ReactNode }) {
   return (
     <BelongingProvider>
@@ -106,11 +102,8 @@ function FeedCardRow({
   item: PublicFeedItem;
   locale: string;
   className?: string;
-  /** Drop the author from the byline — for single-author surfaces (the author profile page). */
   hideAuthor?: boolean;
-  /** First row right under a heading: trim the top padding so it sits flush. */
   flushTop?: boolean;
-  /** Save-to-reading-list toggle at the end of the byline (needs a numeric post id). */
   showBookmark?: boolean;
   /** Above-fold row: load the thumbnail eagerly. Lazy thumbnails in the first viewport made the
    *  feed's LCP image wait for hydration — Lighthouse modeled that as LCP ≈ TTI. */

@@ -6,8 +6,6 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { seriesCardItems, seriesItemCount } from "@/modules/blog/lib/series-items";
 
-/** A series as one feed row — "시리즈 · N편" over its name, the first episodes' titles as the lede, and
- *  the cover of the first episode that has one. The row opens the series. */
 export function SeriesRow({ series, locale }: { series: PublicSeriesCard; locale: string }) {
   const t = useTranslations("publicFeed");
   const items = seriesCardItems(series);

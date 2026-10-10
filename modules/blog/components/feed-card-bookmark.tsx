@@ -5,16 +5,8 @@ import { Bookmark } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useBookmarks } from "@/modules/blog/lib/use-bookmarks";
 
-/**
- * Save-to-reading-list toggle — a small glyph at the end of a feed row's byline, or a corner chip on
- * the series contents list. Saved posts always show it; an unsaved row reveals it on hover/focus
- * (always on touch, where there's no hover).
- * Reads/writes the shared {@link useBookmarks} store, so it's one network call for the whole feed and
- * every row for the same post stays in sync. Anonymous click starts the login flow.
- *
- * Rendered as a sibling of the row's post links (never nested inside an `<a>`), and stops propagation
- * so clicking it never also triggers the row's navigation.
- */
+/** Rendered as a sibling of the row's post links (never nested inside an `<a>`), and stops propagation
+ *  so clicking it never also triggers the row's navigation. */
 export function FeedCardBookmark({
   postId,
   username,
@@ -25,9 +17,7 @@ export function FeedCardBookmark({
   postId: number;
   username: string;
   slug: string;
-  /** Pinned to a row's top-right corner (series contents) instead of sitting in the byline. */
   corner?: boolean;
-  /** Corner variant over a thumbnail — give the icon an opaque chip to sit on. */
   overImage?: boolean;
 }) {
   const t = useTranslations("publicFeed");

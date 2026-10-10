@@ -9,16 +9,6 @@ import { quoteHref } from "@/modules/blog/components/connection-block";
 import { FeedRow, RowAuthor, RowDot } from "@/modules/blog/components/feed-row";
 import { RowTime } from "@/modules/blog/components/row-time";
 
-/**
- * A public connection event woven into the discovery feed as an ordinary feed row: a context line
- * ("@큐레이터가 [컬렉션]에 엮음 · 3시간") over the connected post, highlight or note. Signed-out visitors
- * see it too — this is the graph's first-touch surface.
- *
- * Post → title + the curator's why (else the post's excerpt). Highlight → the post title + the painted
- * passage, deep-linked to that sentence. Note → its body, opening the note (or the collection when the
- * note is the curator's own aside). The payload carries no cover or post-author avatar, so the row has
- * no thumbnail and the byline falls back to the initial avatar.
- */
 export function ConnectionFeedInsert({ event, locale }: { event: ConnectionEvent; locale: string }) {
   const t = useTranslations("collections");
 

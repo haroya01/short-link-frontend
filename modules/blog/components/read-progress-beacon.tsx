@@ -14,9 +14,6 @@ const SHORT_POST_DWELL_MS = 2_500;
  * (visibilitychange-gated) so a background tab never reads as "read for an hour"; sent as a delta
  * on every hide, so partial dwells sum per session server-side instead of needing an unload-time
  * grand total that mobile browsers won't guarantee.
- *
- * It also marks the post read for the feed rows: on reaching the end by scrolling, or — for a post
- * that already fits the first viewport — after a short stay.
  */
 export function ReadProgressBeacon({ postId }: { postId: number }) {
   useEffect(() => {

@@ -1,10 +1,5 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
 
-/**
- * The blog feed in MOCK-ON is one item grammar: every block (post, public connection event, series,
- * subscribed-series note) is the same hairline row in the same column. The mock session is signed in.
- */
-
 type Box = { x: number; y: number; width: number; height: number };
 
 async function boxes(rows: Locator): Promise<Box[]> {
@@ -19,7 +14,6 @@ async function boxes(rows: Locator): Promise<Box[]> {
 async function openFeed(page: Page, path = "/ko/blog") {
   await page.goto(path);
   await expect(page.locator("main li[data-connection-event]").first()).toBeVisible({ timeout: 30_000 });
-  // The signed-in reader's own first page replaces the anonymous server page (kazuki drops out).
   await expect(page.locator('main a[href="/ko/p/kazuki/kyoto-workation"]')).toHaveCount(0, { timeout: 30_000 });
   await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))));
 }

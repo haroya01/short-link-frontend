@@ -94,9 +94,6 @@ export function FeedInfinite({
   tag?: string;
   /** Active post-language filter (ko/ja/en); undefined = all languages. Carried into page fetches. */
   lang?: string;
-  /** Rows threaded through the feed (the public connection events): one after row
-   *  {@link interleaveFirst}, then one every {@link interleaveEvery} rows — each only where a post row
-   *  follows, so the thread never trails a short feed. */
   interleaveNodes?: ReactNode[];
   interleaveFirst?: number;
   interleaveEvery?: number;
