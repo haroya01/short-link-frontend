@@ -22,11 +22,9 @@ import {
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
-import { shortenUrl } from "@/lib/api/links";
 import { ApiError } from "@/lib/api/client";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { postHref } from "@/modules/blog/lib/author-href";
-import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { upgradeLegacyCallouts } from "@/modules/blog/lib/callout";
 import { stampPublishCelebration } from "@/modules/blog/lib/celebrate-publish";
@@ -560,31 +558,6 @@ export function usePostEditor(
     };
   }, []);
 
-  /**
-   * Auto-shorten the given in-post links through the kurl system right before going public, so every
-   * click is tracked (and surfaces in the post's analytics). Each URL is created as a kurl short link
-   * and swapped into the saved body. A link that fails to shorten is left as the author wrote it — a
-   * tracking miss never blocks publishing. Returns the rewritten markdown (or null if nothing changed).
-   */
-  async function applyLinkShortening(urls: string[]): Promise<string | null> {
-    const post = currentDraft.current.post;
-    if (post == null || urls.length === 0) return null;
-    const md = liveMarkdown.current?.() ?? markdown;
-    const map: Record<string, string> = {};
-    for (const url of urls) {
-      try {
-        map[url] = (await shortenUrl({ url })).shortUrl;
-      } catch {
-        /* keep the original link — partial coverage beats a blocked publish */
-      }
-    }
-    if (Object.keys(map).length === 0) return null;
-    const newMd = rewriteMarkdownLinks(md, map);
-    const put = await replaceBlocks(post.id, markdownToBlocks(newMd), guardFrom(baseVersion.current));
-    baseVersion.current = put.contentVersion ?? baseVersion.current;
-    return newMd;
-  }
-
   /** Returns true once the status change succeeds — the caller can then close the publish dialog. */
   function markTakenDown() {
     const current = currentDraft.current.post;
@@ -594,10 +567,7 @@ export function usePostEditor(
     setPost(next);
   }
 
-  async function changeStatus(
-    action: StatusAction,
-    opts?: { shortenLinks?: string[] },
-  ): Promise<boolean> {
+  async function changeStatus(action: StatusAction): Promise<boolean> {
     const post = currentDraft.current.post;
     if (post == null || busy) return false;
     const goingPublic = action === "publish" || action === "republish";
@@ -620,8 +590,6 @@ export function usePostEditor(
     setBusy(true);
     setError(null);
     try {
-      // Shorten in-post links through kurl before the post goes live (skipped for unpublish/backToDraft).
-      if (goingPublic && opts?.shortenLinks?.length) await applyLinkShortening(opts.shortenLinks);
       const updated =
         action === "publish"
           ? await publishPost(post.id)
@@ -652,7 +620,7 @@ export function usePostEditor(
   }
 
   /** Returns true once the post is parked for a future publish — the caller can then confirm the time. */
-  async function schedule(scheduledAt: string, opts?: { shortenLinks?: string[] }): Promise<boolean> {
+  async function schedule(scheduledAt: string): Promise<boolean> {
     if (busy) return false;
     if (!title.trim()) {
       setError(t("titleRequired"));
@@ -684,15 +652,6 @@ export function usePostEditor(
       if (!(await save())) return false;
       const post = currentDraft.current.post;
       if (post == null) return false;
-      // Shorten in-post links into the scheduled snapshot; reseed the editor so the author (who stays
-      // here after scheduling) sees the rewritten links rather than stale originals.
-      if (opts?.shortenLinks?.length) {
-        const newMd = await applyLinkShortening(opts.shortenLinks);
-        if (newMd != null) {
-          setMarkdownRaw(newMd);
-          setReloadKey((k) => k + 1);
-        }
-      }
       setPost(await schedulePost(post.id, scheduledAtIso));
       return true;
     } catch (e) {
