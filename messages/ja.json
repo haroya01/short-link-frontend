@@ -4464,5 +4464,17 @@
   },
   "mentions": {
     "suggestions": "メンションする人"
+  },
+  "compose": {
+    "title": "投稿",
+    "note": "ノート",
+    "noteHint": "短く、すぐに投稿",
+    "longform": "長い記事",
+    "longformHint": "タイトルと本文を下書きで仕上げる",
+    "resume": "続きを書く",
+    "untitled": "無題の下書き",
+    "seeAll": "すべて見る",
+    "noteTitle": "新しいノート",
+    "notePosted": "ノートを投稿しました"
   }
 }

@@ -4464,5 +4464,17 @@
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"
+  },
+  "compose": {
+    "title": "Viết",
+    "note": "Ghi chú",
+    "noteHint": "Ngắn, đăng ngay",
+    "longform": "Bài dài",
+    "longformHint": "Tiêu đề và nội dung, chỉnh dần trong bản nháp",
+    "resume": "Viết tiếp",
+    "untitled": "Bản nháp chưa có tiêu đề",
+    "seeAll": "Xem tất cả",
+    "noteTitle": "Ghi chú mới",
+    "notePosted": "Đã đăng ghi chú"
   }
 }

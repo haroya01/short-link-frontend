@@ -4464,5 +4464,17 @@
   },
   "mentions": {
     "suggestions": "멘션할 사람"
+  },
+  "compose": {
+    "title": "글쓰기",
+    "note": "노트",
+    "noteHint": "짧게, 바로 올리기",
+    "longform": "긴 글",
+    "longformHint": "제목과 본문, 초안으로 다듬기",
+    "resume": "이어 쓰기",
+    "untitled": "제목 없는 초안",
+    "seeAll": "모두 보기",
+    "noteTitle": "새 노트",
+    "notePosted": "노트를 올렸어요"
   }
 }

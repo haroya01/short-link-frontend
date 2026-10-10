@@ -9,7 +9,7 @@ import { usePresence } from "@/hooks/use-presence";
 import type { Note, QuotedNote, QuotedPost } from "@/modules/notes/api/notes";
 import { NoteComposer } from "./note-composer";
 
-type Quoted = { note: QuotedNote } | { post: QuotedPost };
+type Quoted = { note: QuotedNote } | { post: QuotedPost } | { fresh: true; title: string };
 
 export function NoteQuoteDialog({
   quoted,
@@ -79,11 +79,13 @@ export function NoteQuoteDialog({
             {t("cancel")}
           </button>
           <h2 id={titleId} className="text-[16px] font-semibold text-slate-900 dark:text-slate-100">
-            {"note" in shown ? t("quoteTitle") : t("quoteAction")}
+            {"fresh" in shown ? shown.title : "note" in shown ? t("quoteTitle") : t("quoteAction")}
           </h2>
         </div>
         <div className="px-4 pb-1">
-          {"note" in shown ? (
+          {"fresh" in shown ? (
+            <NoteComposer key="fresh" autoFocus onCreated={onPosted} />
+          ) : "note" in shown ? (
             <NoteComposer key={`note-${shown.note.id}`} quotedNote={shown.note} autoFocus onCreated={onPosted} />
           ) : (
             <NoteComposer key={`post-${shown.post.id}`} quote={shown.post} autoFocus onCreated={onPosted} />
