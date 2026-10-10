@@ -10,6 +10,7 @@ import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { relatedPicker } from "@/modules/blog/lib/related-picks";
 import { useViewerList } from "@/modules/blog/lib/use-viewer-list";
+import { END_SECTION } from "@/modules/blog/components/end-section";
 
 export type RelatedRefresh = {
   tag: string;
@@ -56,7 +57,7 @@ export function RelatedPicksList({
   if (picks.length === 0) return null;
 
   return (
-    <section aria-label={heading} className="mt-14 border-t border-slate-100 pt-8 dark:border-slate-800">
+    <section aria-label={heading} className={END_SECTION}>
       <RailHeading className="mb-2">{heading}</RailHeading>
       <FeedList>
         {picks.map((item) => (
