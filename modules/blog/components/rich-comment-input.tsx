@@ -8,7 +8,12 @@ import { Plugin } from "@tiptap/pm/state";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, List, Quote, type LucideIcon } from "lucide-react";
-import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
+import { CommentLink } from "@/modules/blog/components/comment-link";
+import { LinkActions } from "@/modules/blog/components/editor/link-actions";
+import { applyLinkResult, linkAt, linkRequest, type LinkAt, type OpenedLink } from "@/modules/blog/components/editor/link-commands";
+import { LinkDialog } from "@/modules/blog/components/editor/link-dialog";
+import { applyPastePlan, pasteSpot } from "@/modules/blog/components/editor/link-paste-choice";
+import { linkOnly, planPaste } from "@/modules/blog/lib/link-paste";
 import { mentionTokenAt } from "@/modules/mentions/mention-token";
 import { MentionSuggestions } from "@/modules/mentions/mention-suggestions";
 import { useMentionCandidates } from "@/modules/mentions/use-mention-candidates";
@@ -19,13 +24,6 @@ function getMarkdown(editor: Editor): string {
   return (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown?.getMarkdown() ?? "";
 }
 
-/** A link target needs an http(s) scheme to round-trip through the comment renderer (CommentBody only
- *  linkifies `[text](https?://…)`). Bare domains get https:// so the link survives. */
-function withScheme(url: string): string {
-  const trimmed = url.trim();
-  if (!trimmed) return "";
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
 
 /** Hard cap on plain-text length (parity with the old textareas' maxLength) — reject any edit that
  *  would push it over. Deletions always shrink, so they pass. Limit is per-instance via configure(). */
@@ -79,9 +77,10 @@ export function RichCommentInput({
    *  본질(한 줄 답글)만 필요한 경우. 입력기는 여전히 WYSIWYG(contenteditable)로 남는다. */
   hideToolbar?: boolean;
 }) {
-  const t = useTranslations("comments");
   const tm = useTranslations("mentions");
-  const [linkOpen, setLinkOpen] = useState(false);
+  const [opened, setOpened] = useState<OpenedLink | null>(null);
+  const [linkActions, setLinkActions] = useState<LinkAt | null>(null);
+  const editorRef = useRef<Editor | null>(null);
   // Keep the latest callbacks reachable from the editor's (mount-time) closures without re-creating it.
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -115,8 +114,9 @@ export function RichCommentInput({
         orderedList: false,
         horizontalRule: false,
         strike: false,
-        link: { openOnClick: false },
+        link: false,
       }),
+      CommentLink.configure({ openOnClick: false }),
       RichMaxLength.configure({ limit: maxLength }),
       // html:false — 표준 마크다운만. breaks:true 로 single newline 을 줄바꿈으로(본문과 동일).
       Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
@@ -125,6 +125,19 @@ export function RichCommentInput({
     autofocus: autoFocus ? "end" : false,
     editorProps: {
       attributes: { class: "tiptap-comment focus:outline-none" },
+      handlePaste: (view, event) => {
+        const ed = editorRef.current;
+        if (!ed) return false;
+        const plan = linkOnly(planPaste(event.clipboardData?.getData("text/plain"), pasteSpot(view.state)));
+        if (plan.kind === "default") return false;
+        event.preventDefault();
+        applyPastePlan(ed, plan);
+        return true;
+      },
+      handleClick: (view, pos, event) => {
+        setLinkActions(linkAt(view, pos, event));
+        return false;
+      },
       // Cmd/Ctrl+Enter 제출(버튼은 그대로) — 길게 쓰다 손 떼지 않고 보낼 수 있게.
       handleKeyDown: (_view, event) => {
         const m = mentionRef.current;
@@ -155,6 +168,7 @@ export function RichCommentInput({
       onChangeRef.current(md);
     },
   });
+  editorRef.current = editor;
 
   useEffect(() => {
     if (!editor) return;
@@ -205,22 +219,6 @@ export function RichCommentInput({
     editor.commands.setContent(value || "", { emitUpdate: false });
   }, [value, editor]);
 
-  function applyLink(rawUrl: string) {
-    if (!editor) return;
-    const href = withScheme(rawUrl);
-    if (!href) {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-    const { empty, from } = editor.state.selection;
-    if (empty) {
-      // No selection — drop the URL in as its own linked text.
-      editor.chain().focus().insertContent(href).setTextSelection({ from, to: from + href.length }).setLink({ href }).run();
-    } else {
-      editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
-    }
-  }
-
   // Expanded floor honours the caller's rows; collapsed is a single text line so the resting field
   // reads as a quiet one-line affordance (~48px with the vertical padding).
   const minHeight = expanded ? `${rows * 1.6 + 1}rem` : "1.5rem";
@@ -248,22 +246,40 @@ export function RichCommentInput({
           }`}
         >
           <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
-            <RichToolbar editor={editor} compact={compact} onLink={() => setLinkOpen(true)} />
+            <RichToolbar
+              editor={editor}
+              compact={compact}
+              onLink={() => {
+                setLinkActions(null);
+                setOpened(linkRequest(editor, "link", null, { cards: false }));
+              }}
+            />
           </div>
         </div>
       )}
       <RichEditable editor={editor} placeholder={placeholder} minHeight={minHeight} maxHeight={maxHeight} />
-      <UrlDialog
-        open={linkOpen}
-        title={t("link")}
-        placeholder="https://example.com"
-        initialValue={(editor.getAttributes("link").href as string | undefined) ?? ""}
-        allowRemove={editor.isActive("link")}
-        onClose={() => setLinkOpen(false)}
-        onSubmit={(url) => applyLink(url)}
-        onRemove={() => editor.chain().focus().extendMarkRange("link").unsetLink().run()}
-      />
     </div>
+    <LinkDialog
+      request={opened?.request ?? null}
+      onClose={() => {
+        setOpened(null);
+        editor.chain().focus().run();
+      }}
+      onSubmit={(result) => {
+        if (opened) applyLinkResult(editor, result, opened);
+      }}
+    />
+    {linkActions && (
+      <LinkActions
+        editor={editor}
+        actions={linkActions}
+        onEdit={() => {
+          setLinkActions(null);
+          setOpened(linkRequest(editor, "link", linkActions, { cards: false }));
+        }}
+        onClose={() => setLinkActions(null)}
+      />
+    )}
     {mentionOpen && (
       <MentionSuggestions
         className="absolute left-0 top-full mt-1"

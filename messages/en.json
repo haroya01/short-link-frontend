@@ -344,14 +344,7 @@
       "paragraph": "Text"
     },
     "urlDialog": {
-      "linkTitle": "Link",
-      "embedTitle": "Link card · Video",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://… (link, YouTube, Vimeo)",
-      "confirm": "Add",
-      "cancel": "Cancel",
-      "remove": "Remove link",
-      "linkTextPlaceholder": "Text to show (optional)"
+      "remove": "Remove link"
     },
     "table": {
       "addColumn": "Add column",

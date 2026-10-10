@@ -344,14 +344,7 @@
       "paragraph": "テキスト"
     },
     "urlDialog": {
-      "linkTitle": "リンク",
-      "embedTitle": "リンクカード・動画",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://…（リンク・YouTube・Vimeo）",
-      "confirm": "確定",
-      "cancel": "キャンセル",
-      "remove": "リンクを外す",
-      "linkTextPlaceholder": "表示するテキスト（任意）"
+      "remove": "リンクを外す"
     },
     "table": {
       "addColumn": "列を追加",

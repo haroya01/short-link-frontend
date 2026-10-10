@@ -344,14 +344,7 @@
       "paragraph": "टेक्स्ट"
     },
     "urlDialog": {
-      "linkTitle": "लिंक",
-      "embedTitle": "लिंक कार्ड · वीडियो",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://… (लिंक, YouTube, Vimeo)",
-      "confirm": "जोड़ें",
-      "cancel": "रद्द करें",
-      "remove": "लिंक निकालें",
-      "linkTextPlaceholder": "दिखाने वाला टेक्स्ट (वैकल्पिक)"
+      "remove": "लिंक निकालें"
     },
     "table": {
       "addColumn": "कॉलम जोड़ें",

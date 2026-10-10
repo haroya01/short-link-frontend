@@ -344,14 +344,7 @@
       "paragraph": "Văn bản"
     },
     "urlDialog": {
-      "linkTitle": "Liên kết",
-      "embedTitle": "Thẻ liên kết · Video",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://… (liên kết, YouTube, Vimeo)",
-      "confirm": "Thêm",
-      "cancel": "Hủy",
-      "remove": "Gỡ liên kết",
-      "linkTextPlaceholder": "Văn bản hiển thị (tùy chọn)"
+      "remove": "Gỡ liên kết"
     },
     "table": {
       "addColumn": "Thêm cột",
