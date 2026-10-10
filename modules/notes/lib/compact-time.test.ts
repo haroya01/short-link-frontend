@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { compactTime } from "./compact-time";
+import { compactTime, rowDate } from "./compact-time";
 
 const intl = vi.hoisted(() => ({ locale: "ko" }));
 vi.mock("next-intl", async () => {
@@ -52,6 +52,22 @@ describe("compactTime", () => {
   it("falls back to a date after a week, with the year only when it differs", () => {
     expect(compactTime("2026-09-20T12:00:00Z", "ko", "방금", NOW)).toBe("9월 20일");
     expect(compactTime("2025-09-20T12:00:00Z", "ko", "방금", NOW)).toBe("2025년 9월 20일");
+  });
+});
+
+describe("rowDate", () => {
+  it("is the date a week-old row shows, so the server's stand-in never changes after hydration", () => {
+    for (const locale of ["ko", "ja", "en"]) {
+      expect(rowDate("2026-09-20T12:00:00Z", locale, NOW)).toBe(compactTime("2026-09-20T12:00:00Z", locale, "", NOW));
+    }
+    expect(rowDate("2026-10-03T03:00:00Z", "en", NOW)).toBe("Oct 3");
+    expect(rowDate("2026-10-03T03:00:00Z", "ja", NOW)).toBe("10月3日");
+  });
+
+  it("reads the day in Seoul, whatever the device clock's zone", () => {
+    expect(rowDate("2026-10-02T16:30:00Z", "en", NOW)).toBe("Oct 3");
+    expect(rowDate("2025-12-31T16:00:00Z", "en", Date.parse("2026-01-05T00:00:00Z"))).toBe("Jan 1");
+    expect(rowDate("2025-12-31T14:00:00Z", "en", Date.parse("2026-01-05T00:00:00Z"))).toBe("Dec 31, 2025");
   });
 });
 

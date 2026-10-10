@@ -31,6 +31,21 @@ describe("RowTime", () => {
     expect(html).toContain(`dateTime="${ISO}"`);
   });
 
+  it("serves an old row the same date it shows after hydration", async () => {
+    const OLD = "2026-09-20T09:00:00Z";
+    const host = document.createElement("div");
+    host.innerHTML = renderToString(createElement(RowTime, { iso: OLD, locale: "en" }));
+    const served = host.textContent;
+    document.body.append(host);
+    let root: ReturnType<typeof hydrateRoot> | undefined;
+    await act(async () => {
+      root = hydrateRoot(host, createElement(RowTime, { iso: OLD, locale: "en" }));
+    });
+    expect(served).toBe("Sep 20");
+    expect(host.textContent).toBe(served);
+    await act(async () => root!.unmount());
+  });
+
   it("hydrates without a mismatch and then switches to the relative time", async () => {
     const host = document.createElement("div");
     host.innerHTML = renderToString(createElement(RowTime, { iso: ISO, locale: "ko" }));
