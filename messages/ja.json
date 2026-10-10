@@ -4284,7 +4284,7 @@
     "listNewTitle": "新しいリスト名",
     "listCreate": "作成",
     "listCreateAndAdd": "作って追加",
-    "listPick": "上でリストを選ぶと、その人たちのノートだけを読めます",
+    "listPick": "「その他」からリストを選ぶと、その人たちのノートだけを読めます",
     "listEmpty": "まだリストがありません",
     "listEmptyBody": "名前を入れて作り、プロフィールの…メニューから人を追加してください。",
     "listNoNotes": "このリストにはまだノートがありません",
@@ -4548,7 +4548,12 @@
     "draftImagesDropped": "写真{count}枚は下書きに残っていません",
     "draftDeleted": "下書きを削除しました",
     "draftDelete": "下書きを削除",
-    "draftUndo": "元に戻す"
+    "draftUndo": "元に戻す",
+    "feedDirectShort": "メンション",
+    "listManage": "リストを管理",
+    "listSettingsHint": "リストは自分だけが見られます。追加した人のノートは、ノート画面の「その他」から選んで読めます。",
+    "feedMoreBlog": "ほかのブログフィード",
+    "feedMoreNotes": "ほかのノートフィード"
   },
   "mentions": {
     "suggestions": "メンションする人"

@@ -642,16 +642,24 @@ test("a person added to a list from their profile fills that list's tab", async 
   await dialog.getByRole("button", { name: "닫기" }).click();
 
   await page.goBack();
-  await openMoreFeed(page, "리스트");
-  await expect(page).toHaveURL(/feed=lists/);
-  await page.getByRole("link", { name: /동료/ }).click();
-  await expect(page).toHaveURL(/list=\d+/);
+  await openMoreFeed(page, "동료");
+  await expect(page).toHaveURL(/feed=lists&list=\d+/);
+  await expect(page.getByRole("button", { name: "노트 피드 더 보기: 동료" })).toBeVisible();
   const list = page.getByRole("region", { name: "동료" });
   await expect(list.locator("article[data-note-id]").first()).toContainText("yuna", { timeout: 15_000 });
   await expect(list.locator("article[data-note-id]").filter({ hasText: "dohyun" })).toHaveCount(0);
-  await list.getByRole("button", { name: "1명" }).click();
-  await list.getByRole("button", { name: "빼기" }).click();
-  await expect(list.getByRole("button", { name: "0명" })).toBeVisible();
+
+  await list.getByRole("link", { name: "리스트 관리" }).click();
+  await expect(page).toHaveURL(/\/settings#lists$/, { timeout: 30_000 });
+  const managed = page.getByRole("region", { name: "리스트" }).getByRole("listitem", { name: "동료" });
+  await managed.getByRole("button", { name: "1명" }).click({ timeout: 30_000 });
+  await managed.getByRole("button", { name: "빼기" }).click();
+  await expect(managed.getByRole("button", { name: "0명" })).toBeVisible();
+});
+
+test("an old list link with no list picked points to where lists are managed", async ({ page }) => {
+  await page.goto("/ko/blog/notes?feed=lists");
+  await expect(page.getByRole("link", { name: "리스트 관리" })).toHaveAttribute("href", /\/settings#lists$/, { timeout: 30_000 });
 });
 
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {

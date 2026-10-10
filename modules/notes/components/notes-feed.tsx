@@ -11,6 +11,7 @@ import { SignInRow } from "@/components/auth/sign-in-row";
 import { useToast } from "@/components/ui/toast";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
+import type { FeedMoreItem } from "@/modules/blog/components/feed-more-menu";
 import { onNotePosted } from "@/modules/blog/lib/consequence-events";
 import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
 import type { NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
@@ -21,17 +22,19 @@ import {
   listEveryoneNotes,
   listFederatedNotes,
   listFollowingNotes,
+  listNoteLists,
   listTrendingNotes,
   setShowReposts,
   type Note,
   type NoteFeed,
+  type NoteListSummary,
   type QuotedPost,
 } from "@/modules/notes/api/notes";
 import { NoteComposer } from "./note-composer";
 import { NoteDraftsButton } from "./note-drafts-sheet";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { NoteList } from "./note-list";
-import { NoteListsPanel } from "./note-lists";
+import { NoteListTimeline, NoteListUnpicked } from "./note-lists";
 
 const TABS = ["following", "everyone", "trending"] as const;
 const MORE = ["federated", "bookmarks", "direct", "lists"] as const;
@@ -118,6 +121,27 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
   const signedOut = ready && !authenticated;
   const showsPosted = feed === "everyone" || feed === "following";
   const reposts = useShowReposts(feed === "following" && ready && authenticated);
+  const lists = useNoteLists(ready && authenticated);
+  const openList = feed === "lists" ? (lists?.find((list) => list.id === listId) ?? null) : null;
+  const more: FeedMoreItem[] = [
+    { key: "federated", label: label.federated, icon: "globe", href: hrefFor("federated"), active: feed === "federated" },
+    { key: "bookmarks", label: label.bookmarks, icon: "bookmark", href: hrefFor("bookmarks"), active: feed === "bookmarks" },
+    {
+      key: "direct",
+      label: label.direct,
+      shortLabel: t("feedDirectShort"),
+      icon: "mention",
+      href: hrefFor("direct"),
+      active: feed === "direct",
+    },
+    ...(lists ?? []).map((list) => ({
+      key: `list-${list.id}`,
+      label: list.title,
+      icon: "list" as const,
+      href: `${pathname}?feed=lists&list=${list.id}`,
+      active: openList?.id === list.id,
+    })),
+  ];
 
   return (
     <div>
@@ -125,7 +149,7 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
         <FeedSwitcher
           surface="notes"
           tabs={tabs}
-          more={MORE.map((key) => ({ key, label: label[key], href: hrefFor(key), active: key === feed }))}
+          more={more}
           toggles={
             reposts.shown === null
               ? undefined
@@ -163,7 +187,11 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
       {PERSONAL.has(feed) && signedOut ? (
         <SignInEmptyState {...SIGN_IN[feed]!} />
       ) : feed === "lists" ? (
-        <NoteListsPanel selectedId={listId} />
+        openList ? (
+          <NoteListTimeline list={openList} />
+        ) : (
+          lists && <NoteListUnpicked hasLists={lists.length > 0} />
+        )
       ) : (
         <NoteList
           key={`${feed}:${reposts.version}`}
@@ -182,6 +210,21 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
       )}
     </div>
   );
+}
+
+function useNoteLists(active: boolean) {
+  const [lists, setLists] = useState<NoteListSummary[] | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    let live = true;
+    listNoteLists()
+      .then((loaded) => live && setLists(loaded))
+      .catch(() => live && setLists([]));
+    return () => {
+      live = false;
+    };
+  }, [active]);
+  return lists;
 }
 
 function useShowReposts(active: boolean) {

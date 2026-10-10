@@ -15,6 +15,7 @@ import { DisplayNameSetting } from "@/modules/blog/components/display-name-setti
 import { DomainBlockSettings, RemoteFollowingSettings } from "@/modules/notes/components/remote-account";
 import { BlockedUserSettings } from "@/modules/notes/components/blocked-user-settings";
 import { NoteLanguageSettings } from "@/modules/notes/components/note-language-settings";
+import { NoteListSettings } from "@/modules/notes/components/note-lists";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { NotificationPolicySettings } from "@/modules/notifications/components/notification-policy-settings";
 import { DataExportSetting } from "@/modules/blog/components/data-export-setting";
@@ -112,6 +113,8 @@ export default function BlogSettingsPage() {
       <BlockedUserSettings />
       <DomainBlockSettings />
       <NoteLanguageSettings />
+
+      <NoteListSettings />
 
       {/* 화면 */}
       <section className="mt-8">

@@ -4284,7 +4284,7 @@
     "listNewTitle": "Tên danh sách mới",
     "listCreate": "Tạo",
     "listCreateAndAdd": "Tạo và thêm",
-    "listPick": "Chọn một danh sách ở trên để chỉ đọc ghi chú của những người trong đó",
+    "listPick": "Chọn một danh sách trong mục Thêm để chỉ đọc ghi chú của những người trong đó",
     "listEmpty": "Chưa có danh sách",
     "listEmptyBody": "Đặt tên để tạo, rồi thêm người từ menu … của hồ sơ.",
     "listNoNotes": "Danh sách này chưa có ghi chú",
@@ -4548,7 +4548,12 @@
     "draftImagesDropped": "{count} ảnh không được giữ trong bản nháp",
     "draftDeleted": "Đã xóa bản nháp",
     "draftDelete": "Xóa bản nháp",
-    "draftUndo": "Hoàn tác"
+    "draftUndo": "Hoàn tác",
+    "feedDirectShort": "Nhắc đến",
+    "listManage": "Quản lý danh sách",
+    "listSettingsHint": "Chỉ bạn thấy danh sách. Để đọc ghi chú của những người trong một danh sách, hãy chọn nó trong mục Thêm ở trang ghi chú.",
+    "feedMoreBlog": "Thêm bảng tin blog",
+    "feedMoreNotes": "Thêm bảng tin ghi chú"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"

@@ -4284,7 +4284,7 @@
     "listNewTitle": "New list name",
     "listCreate": "Create",
     "listCreateAndAdd": "Create and add",
-    "listPick": "Pick a list above to read just the people in it",
+    "listPick": "Pick a list under More to read just the people in it",
     "listEmpty": "No lists yet",
     "listEmptyBody": "Name one to make it, then add people from a profile's … menu.",
     "listNoNotes": "No notes in this list yet",
@@ -4548,7 +4548,12 @@
     "draftImagesDropped": "{count, plural, one {# photo wasn't} other {# photos weren't}} kept in the draft",
     "draftDeleted": "Draft deleted",
     "draftDelete": "Delete draft",
-    "draftUndo": "Undo"
+    "draftUndo": "Undo",
+    "feedDirectShort": "Mentions",
+    "listManage": "Manage lists",
+    "listSettingsHint": "Only you see your lists. To read the people in one, pick it under More on the notes page.",
+    "feedMoreBlog": "More blog feeds",
+    "feedMoreNotes": "More note feeds"
   },
   "mentions": {
     "suggestions": "People to mention"

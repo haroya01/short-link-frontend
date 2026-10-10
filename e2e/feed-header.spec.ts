@@ -88,29 +88,55 @@ test.describe("desktop", () => {
     await expect(switcher(page, "blog").getByRole("navigation").getByRole("link")).toHaveText(["최신", "인기", "노트", "사람"]);
   });
 
-  test("each surface keeps its own sources under 더 보기", async ({ page }) => {
+  test("더 보기 holds only feeds, and picking one switches in place with the selection moved into the slot", async ({ page }) => {
     await page.goto(BLOG);
     await settled(page, "blog");
-    await switcher(page, "blog").getByRole("button", { name: "더 보기" }).click();
-    await expect(page.getByRole("menuitem")).toHaveText(["추천", "시리즈", "팔로우한 주제", "내 컬렉션"]);
+    const slot = switcher(page, "blog").locator("[data-feed-more] > button");
+    await slot.click();
+    await expect(page.getByRole("menuitem")).toHaveText(["추천", "시리즈"]);
     await page.getByRole("menuitem", { name: "추천" }).click();
+    await expect(slot).toHaveAccessibleName("블로그 피드 더 보기: 추천");
     await expect(page).toHaveURL(/sort=for-you/, { timeout: 30_000 });
-    await expect(switcher(page, "blog").getByRole("button", { name: "추천" })).toBeVisible();
     await expect(activeTab(page, "blog")).toHaveCount(0);
+    await expect(slot).toHaveText("추천");
+    const bar = (await switcher(page, "blog").locator("[data-switcher-bar]").boundingBox())!;
+    const box = (await slot.boundingBox())!;
+    expect(bar.x).toBeGreaterThanOrEqual(box.x);
+    expect(bar.x + bar.width).toBeLessThanOrEqual(box.x + box.width);
 
     await page.goto(NOTES);
     await settled(page, "notes");
-    await switcher(page, "notes").getByRole("button", { name: "더 보기" }).click();
-    await expect(page.getByRole("menuitem")).toHaveText(["다른 서버", "북마크", "개인 멘션", "리스트"]);
+    await switcher(page, "notes").locator("[data-feed-more] > button").click();
+    await expect(page.getByRole("menuitem").nth(0)).toHaveText("다른 서버");
+    await expect(page.getByRole("menuitem").nth(1)).toHaveText("북마크");
+    await expect(page.getByRole("menuitem").nth(2)).toHaveText("개인 멘션");
+    await expect(page.getByRole("menuitem", { name: "리스트", exact: true })).toHaveCount(0);
   });
 
-  test("팔로우한 주제 opens the library with that section unfolded", async ({ page }) => {
+  test("an open 더 보기 feed sits in the slot by its short name, and a tab takes the underline back", async ({ page }) => {
+    await page.goto(`${NOTES}?feed=direct`);
+    await settled(page, "notes");
+    const slot = switcher(page, "notes").locator("[data-feed-more] > button");
+    await expect(slot).toHaveAccessibleName("노트 피드 더 보기: 개인 멘션");
+    await expect(slot).toHaveText("멘션");
+    await tabs(page, "notes").filter({ hasText: "최신" }).click();
+    await expect(page).toHaveURL(/feed=everyone/, { timeout: 30_000 });
+    await expect(slot).toHaveAccessibleName("노트 피드 더 보기");
+    const bar = (await switcher(page, "notes").locator("[data-switcher-bar]").boundingBox())!;
+    const latest = (await activeTab(page, "notes").boundingBox())!;
+    expect(bar.x).toBeGreaterThanOrEqual(latest.x);
+    expect(bar.x + bar.width).toBeLessThanOrEqual(latest.x + latest.width);
+  });
+
+  test("팔로우한 주제 and 내 컬렉션 left the menu for the 서재 page", async ({ page }) => {
     await page.goto(BLOG);
     await settled(page, "blog");
     await switcher(page, "blog").getByRole("button", { name: "더 보기" }).click();
-    await page.getByRole("menuitem", { name: "팔로우한 주제" }).click();
-    await page.waitForURL(/\/curation\?open=topics/, { timeout: 30_000 });
+    await expect(page.getByRole("menuitem", { name: "팔로우한 주제" })).toHaveCount(0);
+    await expect(page.getByRole("menuitem", { name: "내 컬렉션" })).toHaveCount(0);
+    await page.goto("/ko/blog/curation?open=topics");
     await expect(page.locator("#followed-topics").getByRole("button", { expanded: true })).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator("main").getByRole("link", { name: "컬렉션" }).first()).toHaveAttribute("href", /\/collections$/);
   });
 
   for (const [path, surface, param] of [[BLOG, "blog", "sort"], [NOTES, "notes", "feed"]] as const) {
@@ -166,8 +192,8 @@ for (const width of [360, 390]) {
     test.use({ viewport: { width, height: 844 } });
 
     for (const [lang, catalog] of Object.entries(CATALOGS)) {
-      test(`${lang}: the switcher stays one row whatever source is open, with 더 보기 as an icon`, async ({ page }) => {
-        const { feedMore, feedFederated, feedDirect } = catalog.notes;
+      test(`${lang}: the switcher stays one row whatever source is open, the slot showing no words on a phone`, async ({ page }) => {
+        const { feedMoreBlog, feedMoreNotes, feedFederated, feedDirect } = catalog.notes;
         for (const [path, surface, source] of [
           [`/${lang}/blog`, "blog", null],
           [`/${lang}/blog/notes?feed=federated`, "notes", feedFederated],
@@ -177,7 +203,8 @@ for (const width of [360, 390]) {
           await page.goto(path);
           await settled(page, surface);
           const more = switcher(page, surface).locator("[data-feed-more] > button");
-          await expect(more).toHaveAccessibleName(source ? `${feedMore}: ${source}` : feedMore);
+          const name = surface === "blog" ? feedMoreBlog : feedMoreNotes;
+          await expect(more).toHaveAccessibleName(source ? `${name}: ${source}` : name);
           await expect(more).toHaveText("", { useInnerText: true });
           const header = (await switcher(page, surface).boundingBox())!;
           const row = (await switcher(page, surface).getByRole("navigation").boundingBox())!;
