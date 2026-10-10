@@ -546,6 +546,7 @@
     "importMd": ".md インポート",
     "importProgress": "{done}/{total} インポート中…",
     "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。",
+    "importDone": "{count}本をインポートしました",
     "exportAll": "すべてエクスポート",
     "exportAllHint": "すべての記事をMarkdown(.md)のzipでダウンロードします",
     "exportAllFailed": "エクスポートに失敗しました。しばらくしてからもう一度お試しください。",

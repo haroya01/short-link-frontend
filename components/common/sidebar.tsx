@@ -67,8 +67,8 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
         aria-label={t("menu")}
         {...inert(!open)}
         className={cn(
-          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-modal transition-transform duration-[280ms] ease-[var(--ease)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
-          open ? "translate-x-0" : "-translate-x-full",
+          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white transition-[transform,box-shadow] duration-[280ms] ease-[var(--ease)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
+          open ? "translate-x-0 shadow-modal" : "-translate-x-full",
         )}
       >
         <SidebarList sections={sections} pathname={pathname} basePath={basePath} />

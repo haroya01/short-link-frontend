@@ -546,6 +546,7 @@
     "importMd": "Nhập .md",
     "importProgress": "Đang nhập {done}/{total}…",
     "importPartialError": "Một số tệp không nhập được. Kiểm tra lại các tệp và thử lại.",
+    "importDone": "Đã nhập {count} bài",
     "exportAll": "Xuất tất cả",
     "exportAllHint": "Tải toàn bộ bài viết dưới dạng tệp zip Markdown (.md)",
     "exportAllFailed": "Xuất không thành công. Vui lòng thử lại sau.",
