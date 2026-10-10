@@ -1365,7 +1365,7 @@ test("removing the cover image clears ogImageUrl in the metadata PATCH", async (
     .locator('input[type="file"]')
     .setInputFiles({ name: "c.png", mimeType: "image/png", buffer: Buffer.from("c") });
   await expect(dialog.locator("img")).toBeVisible({ timeout: 10_000 });
-  await dialog.getByRole("button", { name: "Remove", exact: true }).click();
+  await dialog.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(dialog.locator("img")).toHaveCount(0);
   // Draft autosave clears the cover URL in the metadata PATCH.
   await expect.poll(() => captured.meta?.ogImageUrl, { timeout: 15_000 }).toBe("");
@@ -1741,7 +1741,7 @@ test("publish dialog: a removed auto-cover stays removed — no re-apply on reop
   const dialog = await openPublishDialog(page);
   await expect(dialog.locator(`img[src="${IMAGE_URL}"]`)).toBeVisible({ timeout: 10_000 });
   // Removing the auto-cover is a real "no cover" decision…
-  await dialog.getByRole("button", { name: "Remove", exact: true }).click();
+  await dialog.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(dialog.locator("img")).toHaveCount(0);
   // …and reopening the dialog must not overrule it: the machine offers (one-tap suggestion), but
   // doesn't re-apply.

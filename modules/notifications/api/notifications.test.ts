@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ request: vi.fn() }));
 vi.mock("@/lib/api/client", () => ({ request: mocks.request, mockFailure: () => null }));
 
-import { getNotifications } from "./notifications";
+import { getNotifications, markAllNotificationsRead } from "./notifications";
 
 beforeEach(() => {
   mocks.request.mockReset();
@@ -20,6 +20,20 @@ describe("getNotifications", () => {
     await getNotifications(41, 20, "mentions");
     expect(mocks.request).toHaveBeenCalledWith("/api/v1/notifications?before=41&limit=20&filter=mentions", {
       method: "GET",
+    });
+  });
+});
+
+describe("markAllNotificationsRead", () => {
+  it("reads everything without a filter", async () => {
+    await markAllNotificationsRead();
+    expect(mocks.request).toHaveBeenCalledWith("/api/v1/notifications/read-all", { method: "POST" });
+  });
+
+  it("reads only what the mentions tab shows", async () => {
+    await markAllNotificationsRead("mentions");
+    expect(mocks.request).toHaveBeenCalledWith("/api/v1/notifications/read-all?filter=mentions", {
+      method: "POST",
     });
   });
 });

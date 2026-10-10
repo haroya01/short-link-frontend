@@ -293,7 +293,7 @@ test("a note scheduled from the composer waits under it until it is canceled", a
 
   const panel = page.getByRole("button", { name: /예약한 노트 2/ });
   await panel.click();
-  await expect(page.getByText("답글을 달 노트가 지워졌어요")).toBeVisible();
+  await expect(page.getByText("답글을 달 노트가 삭제됐어요")).toBeVisible();
   const mine = page.getByRole("listitem").filter({ hasText: "내일 아침에 올릴 노트" });
   await expect(mine).toBeVisible();
   await mine.getByRole("button", { name: "취소" }).click();

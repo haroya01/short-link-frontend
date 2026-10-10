@@ -5,7 +5,7 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 const reportMocks: typeof import("./abuse-reports-mock-data") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./abuse-reports-mock-data") : null;
 
-export type AbuseSubjectType = "POST" | "USER" | "COMMENT" | "NOTE";
+export type AbuseSubjectType = "POST" | "USER" | "COMMENT" | "NOTE" | "HIGHLIGHT_REPLY";
 
 export type AbuseReportStatus = "OPEN" | "REVIEWING" | "RESOLVED" | "REJECTED";
 
@@ -33,7 +33,8 @@ export type AbuseAction =
   | "DELETE_COMMENT"
   | "SUSPEND_USER"
   | "BAN_USER"
-  | "DELETE_NOTE";
+  | "DELETE_NOTE"
+  | "DELETE_HIGHLIGHT_REPLY";
 
 export interface AbuseReportView {
   id: number;
@@ -114,7 +115,11 @@ export async function resolveAbuseReport(
     const base = reportMocks.MOCK_REPORTS.find((r) => r.id === id);
     const now = new Date().toISOString();
     // Mirror the backend: an UNPUBLISH_POST / DELETE_COMMENT action removes the subject.
-    const removes = payload.action === "UNPUBLISH_POST" || payload.action === "DELETE_COMMENT";
+    const removes =
+      payload.action === "UNPUBLISH_POST" ||
+      payload.action === "DELETE_COMMENT" ||
+      payload.action === "DELETE_NOTE" ||
+      payload.action === "DELETE_HIGHLIGHT_REPLY";
     return Promise.resolve({
       id,
       reporterUserId: base?.reporterUserId ?? null,

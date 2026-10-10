@@ -51,8 +51,8 @@ export default function NotificationsPage() {
   const t = useTranslations("notifications");
   const { ready, authenticated, me } = useAuth();
   const unread = useUnreadCount();
-  const markAll = useMarkAllRead();
   const [filter, setFilter] = useState<NotificationFilter>("all");
+  const markAll = useMarkAllRead(filter);
   const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useNotifications(filter);
   const filters = useNoteFilters();
