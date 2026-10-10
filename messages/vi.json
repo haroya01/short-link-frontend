@@ -794,6 +794,8 @@
     "activitySince": "từ {date}",
     "reportFailed": "Không gửi được báo cáo. Vui lòng thử lại.",
     "tabNotes": "Ghi chú",
+    "tabReplies": "Trả lời",
+    "tabMedia": "Phương tiện",
     "tabReposts": "Đăng lại",
     "viewAvatar": "Xem ảnh hồ sơ",
     "requested": "Đã yêu cầu",
@@ -4520,7 +4522,16 @@
     "suggestionsPopular": "Gần đây được nhiều người theo dõi",
     "suggestionsDismiss": "Không gợi ý {name}",
     "threadMore": "Thêm {count} trong chuỗi",
-    "threadPosition": "Phần {position} của chuỗi"
+    "threadPosition": "Phần {position} của chuỗi",
+    "replyingToAuthor": "Trả lời @{username}",
+    "replyParentGone": "Không xem được bài gốc",
+    "emptyReplies": "Chưa có trả lời nào",
+    "emptyMedia": "Chưa có ảnh nào",
+    "mediaNoAlt": "Ảnh",
+    "mediaCount": "{count} ảnh",
+    "mediaSensitive": "Nội dung nhạy cảm",
+    "profileRepliesTitle": "Trả lời · @{username}",
+    "profileMediaTitle": "Phương tiện · @{username}"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"

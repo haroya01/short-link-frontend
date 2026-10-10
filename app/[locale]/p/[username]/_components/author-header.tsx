@@ -1,7 +1,8 @@
 import { ArrowUpRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
-import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
+import { listPublicSeries, type PublicAuthor, type PublicPostListItem } from "@/modules/blog/api/public-posts";
+import { listPublicCollectionsByUsername } from "@/modules/blog/api/collections";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { LockedMark } from "@/modules/blog/components/locked-mark";
@@ -14,7 +15,7 @@ import { AuthorTabs } from "./author-tabs";
 import { AvatarZoom } from "./avatar-zoom";
 import { HeaderBio } from "./header-bio";
 
-type Tab = "posts" | "notes" | "reposts" | "series" | "collections" | "about";
+type Tab = "posts" | "notes" | "replies" | "media" | "reposts" | "series" | "collections" | "about";
 
 const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
@@ -81,21 +82,35 @@ export async function AuthorHeader({
   const tNav = await getTranslations("nav");
   const locale = await getLocale();
   const topics = topTopicTags(posts);
+  const [series, collections] = await Promise.all([
+    listPublicSeries(author.username),
+    listPublicCollectionsByUsername(author.username).catch(() => null),
+  ]);
+  const noSeries = series.ok && series.data.series.length === 0;
+  const noCollections = collections !== null && collections.length === 0;
   // A topic chip filters THIS author's posts (?tag=) — same author-scoped filter the rail uses, never
   // the cross-author topic feed. Relative to the author home so the click soft-navigates.
   const topicHref = (tag: string) => `${authorHref(author.username, locale)}?tag=${encodeURIComponent(tag)}`;
   // The profile is the author's PUBLIC surface; the viewer's own private reading list (좋아요 /
   // 북마크) lives in the workspace (/blog/curation), reachable from the account menu — not as
   // owner-only tabs on a public page.
-  const tabs: { key: Tab; href: string; label: string }[] = [
+  const tabs: { key: Tab; href: string; label: string; empty?: boolean }[] = [
     { key: "posts", href: authorTabHref(author.username, locale), label: t("tabPosts") },
     { key: "notes", href: authorTabHref(author.username, locale, "notes"), label: t("tabNotes") },
+    { key: "replies", href: authorTabHref(author.username, locale, "replies"), label: t("tabReplies") },
+    { key: "media", href: authorTabHref(author.username, locale, "media"), label: t("tabMedia") },
     { key: "reposts", href: authorTabHref(author.username, locale, "reposts"), label: t("tabReposts") },
-    { key: "series", href: authorTabHref(author.username, locale, "series"), label: t("tabSeries") },
+    {
+      key: "series",
+      href: authorTabHref(author.username, locale, "series"),
+      label: t("tabSeries"),
+      empty: noSeries,
+    },
     {
       key: "collections",
       href: authorTabHref(author.username, locale, "collections"),
       label: t("tabCollections"),
+      empty: noCollections,
     },
     { key: "about", href: authorTabHref(author.username, locale, "about"), label: t("tabAbout") },
   ];

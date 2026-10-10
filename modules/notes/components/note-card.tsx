@@ -70,6 +70,7 @@ export function NoteCard({
   filteredBy,
   position,
   replyModeration,
+  context,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -85,6 +86,8 @@ export function NoteCard({
   position?: string;
   /** The reader wrote the thread's first note and this is someone else's reply in it. */
   replyModeration?: { hidden: boolean; onToggleHidden: () => void; onRemove: () => void };
+  /** A line above the header saying where this note sits (the profile replies tab's "@x 님에게 답글"). */
+  context?: React.ReactNode;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -275,7 +278,8 @@ export function NoteCard({
           <span className="truncate">{t("repostedBy", { username: repostedBy })}</span>
         </p>
       )}
-      {!repostedBy && showsPin && note.pinned && (
+      {context}
+      {!repostedBy && !context && showsPin && note.pinned && (
         <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
           <span className="flex w-9 shrink-0 justify-end">
             <Pin className="h-3.5 w-3.5" aria-hidden />

@@ -780,6 +780,8 @@
     "activitySince": "since {date}",
     "reportFailed": "Couldn't send your report. Please try again.",
     "tabNotes": "Notes",
+    "tabReplies": "Replies",
+    "tabMedia": "Media",
     "tabReposts": "Reposts",
     "viewAvatar": "View profile photo",
     "requested": "Requested",
@@ -4520,7 +4522,16 @@
     "suggestionsPopular": "Popular lately",
     "suggestionsDismiss": "Don't suggest {name}",
     "threadMore": "{count} more in this thread",
-    "threadPosition": "Thread part {position}"
+    "threadPosition": "Thread part {position}",
+    "replyingToAuthor": "Replying to @{username}",
+    "replyParentGone": "The original post isn't available",
+    "emptyReplies": "No replies yet",
+    "emptyMedia": "No photos yet",
+    "mediaNoAlt": "Photo",
+    "mediaCount": "{count, plural, one {# photo} other {# photos}}",
+    "mediaSensitive": "Sensitive content",
+    "profileRepliesTitle": "Replies · @{username}",
+    "profileMediaTitle": "Media · @{username}"
   },
   "mentions": {
     "suggestions": "People to mention"

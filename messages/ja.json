@@ -780,6 +780,8 @@
     "activitySince": "{date}から",
     "reportFailed": "通報を送信できませんでした。もう一度お試しください。",
     "tabNotes": "ノート",
+    "tabReplies": "返信",
+    "tabMedia": "メディア",
     "tabReposts": "リポスト",
     "viewAvatar": "プロフィール写真を拡大",
     "requested": "リクエスト済み",
@@ -4520,7 +4522,16 @@
     "suggestionsPopular": "最近よくフォローされています",
     "suggestionsDismiss": "{name}を表示しない",
     "threadMore": "スレッドの続き {count}件",
-    "threadPosition": "スレッド {position}"
+    "threadPosition": "スレッド {position}",
+    "replyingToAuthor": "@{username}さんへの返信",
+    "replyParentGone": "元の投稿を表示できません",
+    "emptyReplies": "まだ返信はありません",
+    "emptyMedia": "まだ写真はありません",
+    "mediaNoAlt": "写真",
+    "mediaCount": "写真{count}枚",
+    "mediaSensitive": "センシティブな内容",
+    "profileRepliesTitle": "返信 · @{username}",
+    "profileMediaTitle": "メディア · @{username}"
   },
   "mentions": {
     "suggestions": "メンションする人"
