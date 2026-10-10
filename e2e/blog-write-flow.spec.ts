@@ -1116,7 +1116,7 @@ test("revisions: restoring a saved version calls the restore endpoint", async ({
     return route.fulfill({ json: POST });
   });
   await openEditor(page);
-  await page.getByRole("button", { name: "Revisions", exact: true }).click();
+  await page.getByRole("button", { name: "Version history", exact: true }).click();
   await page.getByRole("button", { name: "Restore", exact: true }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Restore", exact: true }).click();
   await expect.poll(() => restored).toBe(3);
@@ -1558,7 +1558,7 @@ test("restoring a revision reseeds the editor with the restored content (A17)", 
     return route.fulfill({ json: restored ? [{ type: "H2", content: "Restored heading" }] : [] });
   });
   await openEditor(page);
-  await page.getByRole("button", { name: "Revisions", exact: true }).click();
+  await page.getByRole("button", { name: "Version history", exact: true }).click();
   await page.getByRole("button", { name: "Restore", exact: true }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Restore", exact: true }).click();
   // The restored content is now shown in the editor (remounted from the reloaded blocks).
