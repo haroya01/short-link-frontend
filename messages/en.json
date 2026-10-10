@@ -912,8 +912,7 @@
     "title": "kurl · URL shortener with click analytics",
     "description": "Shorten a long URL and see which device, channel, and country each click came from, with bots left out.",
     "ogHeadlineTop": "Short URLs +",
-    "ogHeadlineBottom": "Click analytics",
-    "ogSubline": "See where every click comes from: device, channel, country, and time of day"
+    "ogHeadlineBottom": "Click analytics"
   },
   "notifications": {
     "webPushLabel": "Browser notifications",
@@ -1165,7 +1164,7 @@
     }
   },
   "shortenForm": {
-    "placeholder": "Paste your long URL here",
+    "placeholder": "Paste a long URL",
     "submit": "Shorten",
     "heroSubmit": "Shorten",
     "advancedToggle": "Advanced options",
@@ -1181,7 +1180,7 @@
       "passwordEmpty": "Enter a password.",
       "invalid": "URL must start with http:// or https://.",
       "malicious": "This URL was flagged as malicious or phishing.",
-      "duplicate": "This custom code is already in use. Try another.",
+      "duplicate": "This code is already in use. Choose another one.",
       "customCodeFormat": "Custom code must be 3-16 letters or digits only.",
       "urlScheme": "URL must start with http:// or https://.",
       "urlBlank": "Please enter a URL.",
@@ -1195,7 +1194,6 @@
   },
   "result": {
     "completed": "Your short link is ready",
-    "nextStepHint": "Copy it, open it, and start tracking how it performs.",
     "originalUrl": "Original",
     "passwordProtected": "Password protected",
     "passwordNotApplied": "The password wasn't applied. Add it again in the link settings.",
@@ -1343,10 +1341,8 @@
       "weekClicks": "7-day human clicks",
       "weekClicksHint": "Last 7 days · excludes automated traffic",
       "zeroClick": "Zero-click links",
-      "zeroClickReview": "Review placement or CTA",
       "zeroClickClear": "Every link has received clicks",
       "expiring": "Expiring soon",
-      "expiringReview": "Extend or clean up soon",
       "expiringClear": "No urgent expirations",
       "topLink": "Top link",
       "weekDelta": "+{count} last 7 days",
@@ -1378,7 +1374,7 @@
     },
     "noResultTitle": "No matches",
     "noResultDesc": "Could not find any link matching \"{query}\".",
-    "noResultDescFiltered": "No links match the current filters. Try adjusting them.",
+    "noResultDescFiltered": "No links match the current filters.",
     "table": {
       "shortUrl": "Link name",
       "originalUrl": "Destination",
@@ -1471,7 +1467,6 @@
       "uploadAnother": "Upload another",
       "done": "Done"
     },
-    "librarySubtitle": "Find and copy your links, then check their performance.",
     "loadFailed": "Could not load links. Please try again.",
     "overviewFailed": "Could not load account statistics.",
     "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
@@ -2821,8 +2816,8 @@
       "sectionFeed": "Profile feed",
       "quickAdd": {
         "title": "Add link",
-        "firstTitle": "Add your first link ↓",
-        "firstHint": "Add any URL, like Instagram, a blog, or YouTube, with a label, and it shows up on your bio link.",
+        "firstTitle": "Add your first link",
+        "firstHint": "Any URL, like Instagram, a blog, or YouTube, goes in with a label and shows on your bio link.",
         "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
         "urlPlaceholder": "https://... or mailto:...",
         "labelPlaceholder": "Label (e.g. 📝 Blog)",
@@ -2845,13 +2840,13 @@
       "openShort": "Open",
       "yourPage": "Public profile",
       "featuredTitle": "Profile feed",
-      "featuredHint": "Drag to reorder (↑↓ on mobile), ★ to feature one at the top, 'Remove' to drop. Add a header to group items into a section you can collapse and move as one.",
+      "featuredHint": "Drag to reorder (↑↓ on mobile). The ★ link sits at the top as your featured one. A header groups the links under it into a section you can collapse and move as one.",
       "sectionExpand": "Expand section",
       "sectionCollapse": "Collapse section",
       "sectionItemCount": "{count, plural, one {# item} other {# items}}",
-      "featuredEmpty": "Add a link from below or insert a header / divider to start a section.",
+      "featuredEmpty": "No links are shown yet.",
       "featuredEmptyTitle": "Your profile feed is empty",
-      "featuredEmptyHasOthers": "Use the 'Add link' form above, or pick from your other links ({count}) below.",
+      "featuredEmptyHasOthers": "No links are shown yet. You have {count, plural, one {# other link} other {# other links}} to pick from.",
       "addBlockMenu": "Add",
       "addMoreBlocks": "More blocks",
       "remove": "Delete",
@@ -3046,7 +3041,7 @@
         "csvExcludesOptedOut": "Entries marked as opted-out are automatically excluded from the CSV.",
         "loading": "Loading...",
         "loadFailed": "Couldn't load leads.",
-        "errorHint": "Please try again in a moment. If it keeps failing, try refreshing the page.",
+        "errorHint": "Please try again in a moment.",
         "retry": "Try again",
         "downloadCsv": "Download CSV",
         "backToEditor": "Back to editor",
@@ -4007,9 +4002,7 @@
     "list": {
       "title": "Events",
       "new": "New event",
-      "loadFailed": "Could not load events.",
-      "emptyTitle": "Create your first event page",
-      "emptyBody": "Make an intro page and a sign-up form, then manage capacity and see where sign-ups came from here."
+      "loadFailed": "Could not load events."
     },
     "form": {
       "newTitle": "New event",
@@ -4125,7 +4118,7 @@
     "attendees": {
       "title": "{count} attendees",
       "exportCsv": "Export CSV",
-      "empty": "No registrations yet. Share your link in a group chat.",
+      "empty": "No registrations yet.",
       "name": "Name",
       "contact": "Contact",
       "channel": "Channel",

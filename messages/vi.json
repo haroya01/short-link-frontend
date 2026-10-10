@@ -912,8 +912,7 @@
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
     "description": "Rút gọn một URL dài và xem mỗi lượt nhấp đến từ thiết bị, kênh và quốc gia nào, không tính bot.",
     "ogHeadlineTop": "URL ngắn +",
-    "ogHeadlineBottom": "Phân tích lượt nhấp",
-    "ogSubline": "Xem mỗi lượt nhấp đến từ đâu: thiết bị, kênh, quốc gia và thời gian"
+    "ogHeadlineBottom": "Phân tích lượt nhấp"
   },
   "notifications": {
     "webPushLabel": "Thông báo trên trình duyệt",
@@ -1165,7 +1164,7 @@
     }
   },
   "shortenForm": {
-    "placeholder": "Dán URL dài của bạn vào đây",
+    "placeholder": "Dán URL dài",
     "submit": "Rút gọn",
     "heroSubmit": "Rút gọn",
     "advancedToggle": "Tùy chọn nâng cao",
@@ -1181,7 +1180,7 @@
       "passwordEmpty": "Vui lòng nhập mật khẩu.",
       "invalid": "URL phải bắt đầu bằng http:// hoặc https://.",
       "malicious": "URL này bị gắn cờ là độc hại hoặc lừa đảo.",
-      "duplicate": "Mã tùy chỉnh này đã được dùng. Thử mã khác.",
+      "duplicate": "Mã này đã được dùng. Hãy chọn mã khác.",
       "customCodeFormat": "Mã tùy chỉnh chỉ được gồm 3-16 chữ cái hoặc chữ số.",
       "urlScheme": "URL phải bắt đầu bằng http:// hoặc https://.",
       "urlBlank": "Vui lòng nhập URL.",
@@ -1195,7 +1194,6 @@
   },
   "result": {
     "completed": "Liên kết ngắn của bạn đã sẵn sàng",
-    "nextStepHint": "Sao chép, mở nó, và bắt đầu theo dõi hiệu quả.",
     "originalUrl": "URL gốc",
     "passwordProtected": "Có mật khẩu",
     "passwordNotApplied": "Chưa đặt được mật khẩu. Hãy đặt lại trong phần quản lý liên kết.",
@@ -1343,10 +1341,8 @@
       "weekClicks": "Lượt nhấp của người trong 7 ngày",
       "weekClicksHint": "7 ngày qua · loại truy cập tự động",
       "zeroClick": "Liên kết không có lượt nhấp",
-      "zeroClickReview": "Xem lại vị trí đặt hoặc CTA",
       "zeroClickClear": "Mọi liên kết đều đã có lượt nhấp",
       "expiring": "Sắp hết hạn",
-      "expiringReview": "Gia hạn hoặc dọn dẹp sớm",
       "expiringClear": "Không có hết hạn gấp",
       "topLink": "Liên kết hàng đầu",
       "weekDelta": "+{count} trong 7 ngày qua",
@@ -1378,7 +1374,7 @@
     },
     "noResultTitle": "Không có kết quả",
     "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
-    "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại. Hãy thử điều chỉnh.",
+    "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại.",
     "table": {
       "shortUrl": "Tên liên kết",
       "originalUrl": "Điểm đến",
@@ -1471,7 +1467,6 @@
       "uploadAnother": "Tải lên tệp khác",
       "done": "Xong"
     },
-    "librarySubtitle": "Tìm và sao chép liên kết, rồi xem hiệu quả.",
     "loadFailed": "Không tải được liên kết. Vui lòng thử lại.",
     "overviewFailed": "Không tải được thống kê tài khoản.",
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
@@ -2821,8 +2816,8 @@
       "sectionFeed": "Dòng tin hồ sơ",
       "quickAdd": {
         "title": "Thêm liên kết",
-        "firstTitle": "Thêm liên kết đầu tiên ↓",
-        "firstHint": "Thêm bất kỳ URL nào như Instagram, blog, YouTube kèm nhãn, và nó sẽ hiện trên liên kết bio của bạn.",
+        "firstTitle": "Thêm liên kết đầu tiên",
+        "firstHint": "Mọi URL như Instagram, blog, YouTube đều hiện trên liên kết bio của bạn kèm nhãn.",
         "hint": "Dán bất kỳ URL nào + một nhãn. Chúng tôi rút gọn và đưa nó nổi bật. Thêm bao nhiêu tùy thích.",
         "urlPlaceholder": "https://... hoặc mailto:...",
         "labelPlaceholder": "Nhãn (ví dụ: 📝 Blog)",
@@ -2845,13 +2840,13 @@
       "openShort": "Mở",
       "yourPage": "Hồ sơ công khai",
       "featuredTitle": "Dòng tin hồ sơ",
-      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓), ★ để đưa một mục lên đầu làm mục nổi bật, 'Gỡ' để gỡ. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
+      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓). Liên kết có ★ nằm trên cùng làm mục nổi bật. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
       "sectionExpand": "Mở rộng phần",
       "sectionCollapse": "Thu gọn phần",
       "sectionItemCount": "{count} mục",
-      "featuredEmpty": "Thêm một liên kết từ bên dưới hoặc chèn tiêu đề / đường phân cách để bắt đầu một phần.",
+      "featuredEmpty": "Chưa có liên kết nào để hiển thị.",
       "featuredEmptyTitle": "Dòng tin hồ sơ của bạn đang trống",
-      "featuredEmptyHasOthers": "Dùng biểu mẫu 'Thêm liên kết' ở trên, hoặc chọn từ các liên kết khác của bạn ({count}) bên dưới.",
+      "featuredEmptyHasOthers": "Chưa có liên kết nào để hiển thị. Bạn có {count} liên kết khác để chọn.",
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
       "remove": "Xóa",
@@ -3046,7 +3041,7 @@
         "csvExcludesOptedOut": "Các mục được đánh dấu từ chối tự động bị loại khỏi CSV.",
         "loading": "Đang tải...",
         "loadFailed": "Không tải được khách tiềm năng.",
-        "errorHint": "Vui lòng thử lại sau giây lát. Nếu vẫn lỗi, thử làm mới trang.",
+        "errorHint": "Vui lòng thử lại sau giây lát.",
         "retry": "Thử lại",
         "downloadCsv": "Tải CSV",
         "backToEditor": "Quay lại trình chỉnh sửa",
@@ -4007,9 +4002,7 @@
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loadFailed": "Không tải được danh sách.",
-      "emptyTitle": "Tạo trang sự kiện đầu tiên",
-      "emptyBody": "Tạo trang giới thiệu và mẫu đăng ký, rồi quản lý sĩ số và xem nguồn đăng ký ngay tại đây."
+      "loadFailed": "Không tải được danh sách."
     },
     "form": {
       "newTitle": "Sự kiện mới",
@@ -4125,7 +4118,7 @@
     "attendees": {
       "title": "{count} người đăng ký",
       "exportCsv": "Xuất CSV",
-      "empty": "Chưa có ai đăng ký. Hãy chia sẻ liên kết vào nhóm chat.",
+      "empty": "Chưa có ai đăng ký.",
       "name": "Họ tên",
       "contact": "Liên hệ",
       "channel": "Kênh",

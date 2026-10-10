@@ -184,7 +184,7 @@ export default function DashboardPage() {
             {t("title")}
           </h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
-            <span>{account ? t("subtitleCount", { count: account.totalLinks }) : t("librarySubtitle")}</span>
+            {account && <span>{t("subtitleCount", { count: account.totalLinks })}</span>}
             <button type="button" onClick={() => setBulkOpen(true)} className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100 sm:hidden">{t("bulkImport.button")}</button>
           </p>
         </div>
