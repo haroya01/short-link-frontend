@@ -26,12 +26,13 @@ export function markdownLead(markdown: string, max = 200): string {
       if (collected.length) break;
       continue;
     }
-    collected.push(line);
+    collected.push(line.replace(/\\$/, ""));
   }
   const text = collected
     .join(" ")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/<([a-z][a-z0-9+.-]*:[^\s<>]+)>/gi, "$1")
     .replace(/[*_`~]+/g, "")
     .replace(/\s+/g, " ")
     .trim();
