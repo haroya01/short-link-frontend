@@ -33,6 +33,8 @@ export const NOTIFICATION_TYPES = [
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
+export type NotificationFilter = "all" | "mentions";
+
 const KNOWN_TYPES: ReadonlySet<string> = new Set(NOTIFICATION_TYPES);
 
 /** One of a group's newest actors. A remote account has no id; its username is name@domain. */
@@ -100,16 +102,21 @@ export interface NotificationsPage {
   hasMore: boolean;
 }
 
-export function getNotifications(before?: number, limit = 20): Promise<NotificationsPage> {
+export function getNotifications(
+  before?: number,
+  limit = 20,
+  filter: NotificationFilter = "all",
+): Promise<NotificationsPage> {
   if (notificationMocks) {
     const page = mockEmpty("notifications")
       ? { items: [], nextCursor: null, hasMore: false }
-      : notificationMocks.mockNotificationsPage();
+      : notificationMocks.mockNotificationsPage(filter);
     return mockFailure("notifications") ?? Promise.resolve(page);
   }
   const q = new URLSearchParams();
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));
+  if (filter !== "all") q.set("filter", filter);
   return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" }).then((page) => ({
     ...page,
     items: page.items.filter((item) => KNOWN_TYPES.has(item.type)),

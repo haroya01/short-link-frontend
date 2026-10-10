@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { Check, CornerDownRight, Globe, Link as LinkIcon, Loader2, Lock, Plus } from "lucide-react";
+import { Check, Globe, Link as LinkIcon, ListOrdered, Loader2, Lock, Plus } from "lucide-react";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { useToast } from "@/components/ui/toast";
+import { Switch } from "@/components/ui/switch";
 import {
   connectBlock,
   createCollection,
   disconnect,
+  isOrdered,
   listMyCollections,
   type CollectionSummary,
   type CollectionVisibility,
@@ -22,8 +24,10 @@ import { emitBelongingChanged } from "@/modules/blog/lib/consequence-events";
  *  connectionId. The 담김 badge only needs the row present; unlink() resolves the real id on demand. */
 const PENDING_CONNECTION = -1;
 
+type NewForm = { name: string; visibility: CollectionVisibility; ordered: boolean };
+
 /**
- * "연결" — the verb. Connect a block (post / highlight / note) to a collection or PATH (not broadcast).
+ * "연결" — the verb. Connect a block (post / highlight / note) to a collection (not broadcast).
  * Two depths: ① where to file it (pick collections, or make a new one) → ② add (the one-line "왜" +
  * confirm). The "왜" is what separates a collection from a plain bookmark, so it gets its own focused
  * moment after picking. A bottom sheet (mobile) / centered card (sm+).
@@ -69,12 +73,11 @@ export function ConnectSheet({
   const [why, setWhy] = useState("");
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
-  // The inline "new collection" mini-form (name + visibility). Null = closed; open replaces the plain
-  // create row with the form so a collection is named on purpose, not silently titled from the post.
-  const [newForm, setNewForm] = useState<{ name: string; visibility: CollectionVisibility } | null>(
-    null,
-  );
-  const [creating, setCreating] = useState<"COLLECTION" | "PATH" | null>(null);
+  // The inline "new collection" mini-form (name + visibility + read in order). Null = closed; open
+  // replaces the plain create row with the form so a collection is named on purpose, not silently
+  // titled from the post.
+  const [newForm, setNewForm] = useState<NewForm | null>(null);
+  const [creating, setCreating] = useState(false);
   const [createFailed, setCreateFailed] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -180,37 +183,20 @@ export function ConnectSheet({
     }
   }
 
-  // Create a PATH from the plain row (unchanged): borrow the target's text as the title, private by
-  // default, then select it. (COLLECTION goes through the mini-form instead — see NewCollectionForm.)
-  async function createPathAndSelect() {
-    if (creating) return;
-    const title = targetTitle.trim().slice(0, 60) || t("newPathFallback");
-    setCreating("PATH");
-    setCreateFailed(false);
-    try {
-      const created = await createCollection({ title, visibility: "PRIVATE", kind: "PATH" });
-      setCollections((prev) => [created, ...prev]);
-      setSelected((prev) => new Set(prev).add(created.id));
-    } catch {
-      setCreateFailed(true);
-    } finally {
-      setCreating(null);
-    }
-  }
-
-  // Create a COLLECTION from the mini-form — a named collection with a chosen visibility. Inserts it at
-  // the top and selects it; closes the form. A failed create is surfaced (the form stays open to retry).
+  // Create from the mini-form — a named collection with a chosen visibility, read in order or not.
+  // Inserts it at the top and selects it; closes the form. A failed create is surfaced (the form stays
+  // open to retry).
   async function createCollectionFromForm() {
     if (creating || !newForm) return;
     const title = newForm.name.trim();
     if (!title) return;
-    setCreating("COLLECTION");
+    setCreating(true);
     setCreateFailed(false);
     try {
       const created = await createCollection({
         title,
         visibility: newForm.visibility,
-        kind: "COLLECTION",
+        ordered: newForm.ordered,
       });
       setCollections((prev) => [created, ...prev]);
       setSelected((prev) => new Set(prev).add(created.id));
@@ -218,7 +204,7 @@ export function ConnectSheet({
     } catch {
       setCreateFailed(true);
     } finally {
-      setCreating(null);
+      setCreating(false);
     }
   }
 
@@ -399,7 +385,7 @@ export function ConnectSheet({
                     {newForm ? (
                       <NewCollectionForm
                         value={newForm}
-                        busy={creating === "COLLECTION"}
+                        busy={creating}
                         onChange={setNewForm}
                         onSubmit={() => void createCollectionFromForm()}
                         onCancel={() => {
@@ -411,20 +397,10 @@ export function ConnectSheet({
                       <NewRow
                         icon={<Plus className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />}
                         label={t("newCollection")}
-                        disabled={creating !== null}
-                        onClick={() => setNewForm({ name: "", visibility: "PRIVATE" })}
+                        disabled={creating}
+                        onClick={() => setNewForm({ name: "", visibility: "PRIVATE", ordered: false })}
                       />
                     )}
-                  </li>
-                  <li>
-                    <NewRow
-                      icon={<CornerDownRight className="h-3.5 w-3.5 text-accent-600 dark:text-accent-500" />}
-                      label={t("newPath")}
-                      hint={t("newPathHint")}
-                      busy={creating === "PATH"}
-                      disabled={creating !== null}
-                      onClick={() => void createPathAndSelect()}
-                    />
                   </li>
                   {createFailed && (
                     <li className="px-3 pb-1 pt-1">
@@ -531,10 +507,10 @@ function CollectionRowText({
         </span>
       )}
       <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-        {c.kind === "PATH" && (
+        {isOrdered(c) && (
           <>
-            <CornerDownRight className="h-3 w-3 text-accent-600 dark:text-accent-500" />
-            <span className="text-accent-700 dark:text-accent-400">{t("kindPath")}</span>
+            <ListOrdered className="h-3 w-3 text-accent-600 dark:text-accent-500" />
+            <span className="text-accent-700 dark:text-accent-400">{t("ordered")}</span>
             <span aria-hidden>·</span>
           </>
         )}
@@ -548,17 +524,12 @@ function CollectionRowText({
 function NewRow({
   icon,
   label,
-  hint,
-  busy = false,
   disabled = false,
   onClick,
 }: {
   icon: React.ReactNode;
   label: string;
-  hint?: string;
-  /** This row's own create is in flight — swaps its glyph for a spinner. */
-  busy?: boolean;
-  /** Any create is in flight — the row is inert (so a double-tap can't fire two creates). */
+  /** A create is in flight — the row is inert (so a double-tap can't fire two creates). */
   disabled?: boolean;
   onClick: () => void;
 }) {
@@ -567,22 +538,19 @@ function NewRow({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      aria-busy={busy}
       className="focus-ring flex w-full items-center gap-2.5 rounded-surface px-3 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
     >
-      <span className="grid h-5 w-5 place-items-center">
-        {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" /> : icon}
-      </span>
+      <span className="grid h-5 w-5 place-items-center">{icon}</span>
       <span className="text-[14px] font-medium text-slate-900 dark:text-slate-100">{label}</span>
-      {hint && <span className="text-[12px] text-slate-500 dark:text-slate-400">{hint}</span>}
     </button>
   );
 }
 
 /**
- * Inline "new collection" mini-form — a required name plus the everyday visibility pair (private /
- * public; UNLISTED stays a detail-editor choice). Replaces the plain create row so a collection is
- * named on purpose, born with the visibility you choose, instead of silently inheriting the post title.
+ * Inline "new collection" mini-form — a required name, "순서대로 읽기", and the everyday visibility pair
+ * (private / public; UNLISTED stays a detail-editor choice). Replaces the plain create row so a
+ * collection is named on purpose, born with the visibility you choose, instead of silently inheriting
+ * the post title.
  * "만들기" is disabled until the name is non-empty.
  */
 function NewCollectionForm({
@@ -592,13 +560,14 @@ function NewCollectionForm({
   onSubmit,
   onCancel,
 }: {
-  value: { name: string; visibility: CollectionVisibility };
+  value: NewForm;
   busy: boolean;
-  onChange: (v: { name: string; visibility: CollectionVisibility }) => void;
+  onChange: (v: NewForm) => void;
   onSubmit: () => void;
   onCancel: () => void;
 }) {
   const t = useTranslations("collections");
+  const orderedId = useId();
   const canCreate = value.name.trim().length > 0 && !busy;
   return (
     <div className="rounded-surface bg-slate-50 p-3 dark:bg-slate-800/60">
@@ -617,6 +586,14 @@ function NewCollectionForm({
         aria-label={t("newCollectionNameLabel")}
         className="w-full border-0 border-b border-slate-200 bg-transparent px-0 py-1.5 text-[14px] font-medium text-slate-900 outline-none transition-colors focus:border-accent-600 dark:border-slate-600 dark:text-slate-100 dark:placeholder:text-slate-500"
       />
+      <label className="mt-3 flex cursor-pointer items-center justify-between gap-3 text-[13px] text-slate-700 dark:text-slate-200">
+        <span id={orderedId}>{t("ordered")}</span>
+        <Switch
+          checked={value.ordered}
+          onCheckedChange={(ordered) => onChange({ ...value, ordered })}
+          aria-labelledby={orderedId}
+        />
+      </label>
       <div className="mt-3 flex items-center justify-between gap-2">
         <NewVisibilityToggle
           value={value.visibility}

@@ -98,7 +98,7 @@ function toItem(s: Seed, i: number): PublicFeedItem {
 
 const ALL_ITEMS = SEEDS.map(toItem);
 
-/** Exposed for the saved/liked (보관함) mocks, which reuse these as the viewer's liked/bookmarked posts. */
+/** Exposed for the saved/liked (서재) mocks, which reuse these as the viewer's liked/bookmarked posts. */
 export const MOCK_ALL_ITEMS = ALL_ITEMS;
 
 /** Off the public feeds: reached through 구독함's last page and the 리팩터링 일지 series. */

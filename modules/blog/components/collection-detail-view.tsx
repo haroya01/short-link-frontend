@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
   ArrowUpDown,
   Check,
-  CornerDownRight,
   Globe,
   Link as LinkIcon,
+  ListOrdered,
   Loader2,
   Lock,
   Pencil,
@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
+import { Switch } from "@/components/ui/switch";
 import {
   currentStepIndex,
   estimatePathMinutes,
@@ -31,6 +32,7 @@ import {
   deleteCollection,
   disconnect,
   getCollection,
+  isOrdered,
   reorderConnections,
   updateCollection,
   type CollectionDetail,
@@ -45,10 +47,11 @@ import { PathReorder } from "@/modules/blog/components/path-reorder";
 import { ErrorState } from "@/components/common/error-state";
 
 /**
- * Collection detail. A PATH renders as a guided walk — numbered steps joined by a connecting line, the
- * curator's `why` as the bridge into each step, the block below it (a highlight deep-links to the
- * source post at that sentence). A COLLECTION renders as a simple connection list. The owner of a
- * multi-step PATH can reorder it (drag), which writes the full ordered id list to the reorder endpoint.
+ * Collection detail. An ordered collection ("순서대로 읽기") renders as a guided walk — numbered steps
+ * joined by a connecting line, the curator's `why` as the bridge into each step, the block below it (a
+ * highlight deep-links to the source post at that sentence). Otherwise it renders as a simple connection
+ * list. The owner of a multi-step ordered collection can reorder it (drag), which writes the full
+ * ordered id list to the reorder endpoint.
  */
 export function CollectionDetailView({
   collectionId,
@@ -65,7 +68,7 @@ export function CollectionDetailView({
   const [detail, setDetail] = useState<CollectionDetail | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing" | "error">("loading");
   const [reordering, setReordering] = useState(false);
-  // Owner-only meta editor (name / blurb / visibility). Off = read view; on = the inline form.
+  // Owner-only meta editor (name / blurb / read in order / visibility). Off = read view; on = the inline form.
   const [editing, setEditing] = useState(false);
   // A connection id currently being removed (disconnect), so its row can dim while the request runs.
   const [removingId, setRemovingId] = useState<number | null>(null);
@@ -85,8 +88,8 @@ export function CollectionDetailView({
   }, [load]);
 
   const isOwner = !!detail?.curatorUsername && detail.curatorUsername === me?.username;
-  const isPath = detail?.kind === "PATH";
-  const canReorder = isOwner && isPath && (detail?.connections.length ?? 0) > 1;
+  const ordered = !!detail && isOrdered(detail);
+  const canReorder = isOwner && ordered && (detail?.connections.length ?? 0) > 1;
 
   const onReorderSave = useCallback(
     async (ids: number[]) => {
@@ -104,16 +107,18 @@ export function CollectionDetailView({
     [detail, load],
   );
 
-  // Save the meta edit — optimistic (the header repaints from the returned summary). A save is a silent
-  // action otherwise (the header just changes), so it confirms with a toast; a failure reverts AND says
-  // so — no 조용한 실패 (the sheet/담기 surfaces already follow this).
+  // Save the meta edit — optimistic, then settled from the returned summary (a server before #807 keeps
+  // the old order setting, and the header shows what it actually saved). A save is a silent action
+  // otherwise (the header just changes), so it confirms with a toast; a failure reverts AND says so —
+  // no 조용한 실패 (the sheet/담기 surfaces already follow this).
   const onEditSave = useCallback(
-    async (patch: { title: string; description: string | null; visibility: CollectionVisibility }) => {
+    async (patch: { title: string; description: string | null; visibility: CollectionVisibility; ordered: boolean }) => {
       if (!detail) return;
       setDetail({ ...detail, ...patch });
       setEditing(false);
       try {
-        await updateCollection(detail.id, patch);
+        const saved = await updateCollection(detail.id, patch);
+        setDetail((d) => (d ? { ...d, kind: saved.kind, ordered: isOrdered(saved) } : d));
         toast(t("editSavedToast"), "success");
       } catch {
         load(); // restore the server copy
@@ -208,7 +213,7 @@ export function CollectionDetailView({
         <CollectionHeader detail={detail} locale={locale} />
       )}
 
-      {reordering && isPath ? (
+      {reordering && ordered ? (
         <PathReorder
           connections={detail.connections}
           onCancel={() => setReordering(false)}
@@ -246,7 +251,7 @@ export function CollectionDetailView({
             <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">
               {t("empty")}
             </p>
-          ) : isPath ? (
+          ) : ordered ? (
             <PathWalk
               collectionId={detail.id}
               connections={detail.connections}
@@ -269,7 +274,6 @@ export function CollectionDetailView({
               while the collection is empty (that state already speaks for itself) and until auth settles. */}
           {detail.connections.length > 0 && ready && (
             <CollectionFooter
-              isPath={isPath}
               authenticated={authenticated}
               curatorUsername={isOwner ? null : detail.curatorUsername}
               locale={locale}
@@ -290,13 +294,11 @@ export function CollectionDetailView({
  * the closing line (+ a follow nudge toward the curator, the connection graph's "discover → follow" step).
  */
 function CollectionFooter({
-  isPath,
   authenticated,
   curatorUsername,
   locale,
   onSignIn,
 }: {
-  isPath: boolean;
   authenticated: boolean;
   curatorUsername: string | null;
   locale: string;
@@ -305,7 +307,7 @@ function CollectionFooter({
   const t = useTranslations("collections");
   return (
     <div className="mt-10 border-t border-slate-100 pt-6 text-[13px] leading-relaxed text-slate-500 dark:border-slate-800 dark:text-slate-400">
-      <p>{isPath ? t("footerPathEnd") : t("footerCollectionEnd")}</p>
+      <p>{t("footerCollectionEnd")}</p>
       {!authenticated ? (
         <p className="mt-1.5">
           {t("footerGuestPrompt")}{" "}
@@ -334,7 +336,7 @@ function CollectionFooter({
 }
 
 /**
- * Owner-only inline meta editor — name / one-line blurb / visibility. Replaces the read header while
+ * Owner-only inline meta editor — name / one-line blurb / read in order / visibility. Replaces the read header while
  * open; saving writes to the edit endpoint and repaints the header. Quiet: bare-underline inputs, a
  * segmented visibility pair (the same three the read badge shows), one save + cancel. Limits mirror the
  * backend `EditCollectionRequest` (title ≤ 120, description ≤ 280).
@@ -351,6 +353,7 @@ function CollectionEditor({
     title: string;
     description: string | null;
     visibility: CollectionVisibility;
+    ordered: boolean;
   }) => void;
   onDelete: () => void;
 }) {
@@ -358,6 +361,8 @@ function CollectionEditor({
   const [title, setTitle] = useState(detail.title);
   const [description, setDescription] = useState(detail.description ?? "");
   const [visibility, setVisibility] = useState<CollectionVisibility>(detail.visibility);
+  const [ordered, setOrdered] = useState(isOrdered(detail));
+  const orderedId = useId();
   const trimmedTitle = title.trim();
 
   // Each visibility is a titled row with a one-line "what this actually does" line — verified against the
@@ -393,6 +398,15 @@ function CollectionEditor({
           aria-label={t("descriptionLabel")}
           className="w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500"
         />
+      </EditorSection>
+
+      <EditorSection label={t("ordered")}>
+        <div className="flex items-center justify-between gap-4">
+          <p id={orderedId} className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+            {t("orderedDesc")}
+          </p>
+          <Switch checked={ordered} onCheckedChange={setOrdered} aria-label={t("ordered")} aria-describedby={orderedId} />
+        </div>
       </EditorSection>
 
       <EditorSection label={t("visibilityLabel")}>
@@ -454,7 +468,7 @@ function CollectionEditor({
           type="button"
           disabled={!trimmedTitle}
           onClick={() =>
-            onSave({ title: trimmedTitle, description: description.trim() || null, visibility })
+            onSave({ title: trimmedTitle, description: description.trim() || null, visibility, ordered })
           }
           className="focus-ring rounded-surface bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
         >
@@ -508,13 +522,13 @@ function EditorSection({ label, children }: { label: string; children: ReactNode
 
 function CollectionHeader({ detail, locale }: { detail: CollectionDetail; locale: string }) {
   const t = useTranslations("collections");
-  const isPath = detail.kind === "PATH";
+  const ordered = isOrdered(detail);
   return (
     <header className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800">
-      {isPath && (
+      {ordered && (
         <span className="mb-2 inline-flex items-center gap-1.5 text-[12px] font-bold text-accent-700 dark:text-accent-400">
-          <CornerDownRight className="h-3.5 w-3.5" />
-          {t("pathEyebrow")}
+          <ListOrdered className="h-3.5 w-3.5" />
+          {t("ordered")}
         </span>
       )}
       <h1 className="text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100">
@@ -545,9 +559,9 @@ function CollectionHeader({ detail, locale }: { detail: CollectionDetail; locale
         <Visibility visibility={detail.visibility} />
         <span aria-hidden>·</span>
         <span>{t("itemCount", { count: detail.connections.length })}</span>
-        {/* A PATH is a reading destination, so its meta carries an estimated duration ("약 N분") — a
-            coarse per-readable-step estimate, since the connection payload has no word counts. */}
-        {isPath && detail.connections.some(isReadableStep) && (
+        {/* An ordered collection is a reading destination, so its meta carries an estimated duration
+            ("약 N분") — a coarse per-readable-step estimate, since the connection payload has no word counts. */}
+        {ordered && detail.connections.some(isReadableStep) && (
           <>
             <span aria-hidden>·</span>
             <span>{t("pathReadTime", { minutes: estimatePathMinutes(detail.connections) })}</span>
@@ -575,7 +589,7 @@ function Visibility({ visibility }: { visibility: CollectionDetail["visibility"]
 }
 
 /**
- * PATH — the guided walk, read as a destination (not a list). Numbered nodes joined by a vertical
+ * Ordered — the guided walk, read as a destination (not a list). Numbered nodes joined by a vertical
  * line; the `why` bridges into each step; the block below deep-links to the source. On top of that
  * base walk (unchanged), a device-local reading layer marks where you are: the current node is
  * FILLED, its thread fades out below it, steps you haven't reached dim, and a quiet green continuity

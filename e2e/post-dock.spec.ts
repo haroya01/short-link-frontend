@@ -13,7 +13,7 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   await expect(dock(page).getByRole("button")).toHaveText(["", "", "", ""]);
   await expect(dock(page).getByRole("button", { name: "목차" })).toBeVisible();
-  await expect(dock(page).getByRole("button", { name: /컬렉션이나 길에 엮기$/ })).toBeVisible();
+  await expect(dock(page).getByRole("button", { name: /컬렉션에 엮기$/ })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: /글 좋아요$/ })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: "북마크에 저장" })).toBeVisible();
   const header = page.locator("article header").first();
@@ -176,7 +176,7 @@ test("휴대폰 글 끝 섹션은 본문 h2 와 같은 32px 간격으로 이어�
 
   const sections = [
     page.locator("aside").filter({ has: all }),
-    page.locator("section").filter({ has: page.getByText("이 글이 놓인 길") }),
+    page.locator("section").filter({ has: page.getByText("이 글이 담긴 컬렉션") }),
     page.getByTestId("post-author-card"),
     page.locator("section[aria-label='다음 읽을 글']"),
   ];

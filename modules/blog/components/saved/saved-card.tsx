@@ -13,7 +13,7 @@ import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
 
 
 /**
- * One saved/bookmarked post in the 보관함 shelf — same quiet typographic grammar as a feed card (tag
+ * One saved/bookmarked post in the 서재 북마크 shelf — same quiet typographic grammar as a feed card (tag
  * eyebrow → title → excerpt → author·date), plus a "⋯" menu to file it into a folder, pull it out, or
  * remove it. Purpose-built (not FeedCard) because the folder control is specific to the owner's shelf.
  */
