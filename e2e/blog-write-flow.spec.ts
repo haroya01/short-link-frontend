@@ -1859,20 +1859,7 @@ test("publish leaves an in-body link exactly as written — nothing is shortened
   await mockShorten(page, seen);
   await openEditor(page);
   await titleInput(page).fill("A post that links out");
-  await page.locator(".tiptap").click();
-  await page.keyboard.type("read this");
-  const link = await awaitBubbleButton(
-    page,
-    async () => {
-      await page.keyboard.press("Home");
-      await page.keyboard.press("Shift+End");
-    },
-    "Link",
-  );
-  await link.click();
-  const linkDialog = page.getByRole("dialog", { name: "Insert link" });
-  await linkDialog.getByLabel("Address", { exact: true }).fill("https://example.com/an-article");
-  await linkDialog.getByRole("button", { name: "Insert", exact: true }).click();
+  await pasteInto(page, { html: '<p><a href="https://example.com/an-article">read this</a></p>', text: "read this" });
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
 
   const dialog = await openPublishDialog(page);

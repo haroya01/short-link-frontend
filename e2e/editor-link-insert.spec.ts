@@ -19,12 +19,21 @@ async function selectBack(page: Page, chars: number, expected: string) {
   await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
 }
 
-async function paste(page: Page, text: string) {
-  await body(page).evaluate((node, value) => {
-    const data = new DataTransfer();
-    data.setData("text/plain", value);
-    node.dispatchEvent(new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData: data }));
-  }, text);
+async function paste(page: Page, text: string, html?: string) {
+  await body(page).evaluate(
+    (node, { text, html }) => {
+      const data = new DataTransfer();
+      data.setData("text/plain", text);
+      if (html) data.setData("text/html", html);
+      node.dispatchEvent(new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData: data }));
+    },
+    { text, html },
+  );
+}
+
+async function pasteLink(page: Page, href: string) {
+  await paste(page, href, `<a href="${href}">${href}</a>`);
+  await expect(body(page).getByRole("link", { name: href })).toBeVisible();
 }
 
 test.describe("desktop", () => {
@@ -109,7 +118,7 @@ test.describe("desktop", () => {
   test("clicking a link offers open · edit · remove link", async ({ page }) => {
     await openDraft(page);
     await page.keyboard.type("자세한 건 ");
-    await paste(page, "https://kurl.me/docs");
+    await pasteLink(page, "https://kurl.me/docs");
     await body(page).getByRole("link", { name: "https://kurl.me/docs" }).click();
     const actions = page.getByRole("group", { name: "링크" });
     await expect(actions.getByRole("button")).toHaveText(["열기", "고치기", "링크 빼기"]);
@@ -129,13 +138,14 @@ test.describe("desktop", () => {
   test("publishing leaves the links in the body as written", async ({ page }) => {
     await openDraft(page);
     await page.keyboard.type("자세한 건 ");
-    await paste(page, "https://example.com/keep");
+    await pasteLink(page, "https://example.com/keep");
     await page.getByRole("button", { name: "발행", exact: true }).click();
     const publish = page.getByRole("dialog");
     await expect(publish).toBeVisible();
     await expect(publish).not.toContainText("단축");
     await publish.getByRole("button", { name: "추가 설정" }).click();
     await expect(publish).not.toContainText("본문 링크");
+    await expect(publish.getByRole("button", { name: /example\.com\/keep/ })).toHaveCount(0);
   });
 });
 

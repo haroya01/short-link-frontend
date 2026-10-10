@@ -98,6 +98,7 @@ function LinkForm({
 
   return (
     <form
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         void submit();

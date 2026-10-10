@@ -56,7 +56,7 @@ export function LinkActions({
       aria-label={t("actions")}
       data-link-actions
       style={{ top: rect.bottom + 6, left: Math.min(Math.max(8, rect.left), window.innerWidth - 280) }}
-      className="fixed z-50 flex items-center gap-0.5 rounded-xl border border-slate-200 bg-white p-1 shadow-float animate-fade-in motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-900"
+      className="fixed z-50 flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-float animate-fade-in motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-850"
     >
       <button
         type="button"
