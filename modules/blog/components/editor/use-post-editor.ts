@@ -16,6 +16,9 @@ import {
   schedulePost,
   unpublishPost,
   updatePostMetadata,
+  type BlockInput,
+  type EditGuard,
+  type PostBlockView,
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
@@ -30,11 +33,37 @@ import { stampPublishCelebration } from "@/modules/blog/lib/celebrate-publish";
 import { isSavableSlug, normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 import { setEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { readStorageJson, removeStorageItem, writeStorageJson } from "@/lib/storage-json";
 
 // 글 오류는 대부분 409 다(주소 충돌·주소 고정·상태 불일치·동시 수정). '주소 사용 중'은 코드로만 가른다.
 function isSlugConflict(e: unknown): boolean {
   return e instanceof ApiError && e.detail.code === "SLUG_CONFLICT";
 }
+
+function isEditConflict(e: unknown): boolean {
+  return e instanceof ApiError && e.detail.code === "POST_EDIT_CONFLICT";
+}
+
+function guardFrom(base: number | null, overwrite = false): EditGuard {
+  if (base == null) return {};
+  return overwrite ? { baseVersion: base, overwrite: true } : { baseVersion: base };
+}
+
+function sameBlocks(server: PostBlockView[], sent: BlockInput[]): boolean {
+  return (
+    server.length === sent.length &&
+    server.every((b, i) => b.type.toLowerCase() === sent[i].type.toLowerCase() && b.content === sent[i].content)
+  );
+}
+
+export type KeptDraft = { title: string; markdown: string; keptAt: string };
+const keptKey = (postId: number) => `kurl:editor-kept:${postId}`;
+const isKept = (v: unknown): v is KeptDraft | null =>
+  v === null ||
+  (typeof v === "object" &&
+    v !== null &&
+    typeof (v as KeptDraft).title === "string" &&
+    typeof (v as KeptDraft).markdown === "string");
 
 export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft";
 
@@ -128,6 +157,15 @@ export function usePostEditor(
   const historyGuarded = useRef(false);
   const leavingAnyway = useRef(false);
   const leavingSchedule = useRef(false);
+  const baseVersion = useRef<number | null>(null);
+  const overwriteNext = useRef(false);
+  const [conflict, setConflict] = useState(false);
+  const conflictRef = useRef(false);
+  conflictRef.current = conflict;
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
+  const [kept, setKept] = useState<KeptDraft | null>(null);
+  const [remoteReloads, setRemoteReloads] = useState(0);
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -181,12 +219,17 @@ export function usePostEditor(
   };
 
   const load = useCallback(async () => {
-    if (postId == null || !Number.isFinite(postId)) return;
+    const id = postId ?? currentDraft.current.post?.id ?? null;
+    if (id == null || !Number.isFinite(id)) return;
     setLoading(true);
     setError(null);
     setLoadFailed(false);
     try {
-      const [p, blocks] = await Promise.all([getPost(postId), getBlocks(postId)]);
+      // The base must be the blocks read's version (same read as the body), not the post's: a save landing
+      // between the two reads moves the post ahead of the body shown here.
+      const [p, { blocks, contentVersion }] = await Promise.all([getPost(id), getBlocks(id)]);
+      baseVersion.current = contentVersion;
+      currentDraft.current.post = p;
       setPost(p);
       setTitleRaw(p.title);
       setSlugRaw(p.slug);
@@ -198,6 +241,7 @@ export function usePostEditor(
       setDirty(false); // freshly loaded content isn't a pending edit
       lastSaved.current = ""; // new content baseline — let the first real edit save
       setReloadKey((k) => k + 1); // remount the editor so it seeds from the (re)loaded content
+      setKept(readStorageJson(keptKey(id), isKept, null));
     } catch (e) {
       if (!(e instanceof ApiError && e.status === 404)) setLoadFailed(true);
     } finally {
@@ -215,7 +259,7 @@ export function usePostEditor(
   // Each edit re-arms the debounce; `dirty` clears on save → effect no-ops until the next edit.
   useEffect(() => {
     const draft = post ? post.status === "DRAFT" : postId == null;
-    if (!draft || !dirty || saving || busy) return;
+    if (!draft || !dirty || saving || busy || conflict) return;
     // 결정적(4xx)·과다 실패로 정지된 상태면 재무장하지 않는다 — 다음 편집(touchDirty)이 해제한다.
     if (autoRetryBlocked.current) return;
     // 연속 실패 시 지수 백오프 — 실패하는 페이로드를 ~2초마다 무한 재전송하지 않도록 간격을 늘린다.
@@ -224,7 +268,7 @@ export function usePostEditor(
     return () => window.clearTimeout(id);
     // save is intentionally omitted — content deps re-arm the timer with the latest closure.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, post, saving, busy]);
+  }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, post, saving, busy, conflict]);
 
   // Single flight: an autosave and an image upload arriving together still create one draft.
   function ensurePost(): Promise<PostView> {
@@ -236,6 +280,7 @@ export function usePostEditor(
         try {
           const created = await createPost({ slug: chosen || randomSlug(), title: currentDraft.current.title.trim() });
           currentDraft.current.post = created;
+          baseVersion.current = created.contentVersion ?? null;
           setPost(created);
           if (!currentDraft.current.slug) {
             currentDraft.current.slug = created.slug;
@@ -252,6 +297,25 @@ export function usePostEditor(
       creating.current = null;
     });
     return creating.current;
+  }
+
+  // A save retried after a lost answer meets its own write as a 409; the server can't tell the two apart.
+  async function alreadyOnServer(
+    id: number,
+    meta: { title: string; tags: string[]; excerpt: string; ogImageUrl: string; slug?: string },
+    blocks: BlockInput[],
+  ): Promise<PostView | null> {
+    const [server, body] = await Promise.all([getPost(id), getBlocks(id)]);
+    const same =
+      server.title === meta.title &&
+      JSON.stringify(server.tags ?? []) === JSON.stringify(meta.tags) &&
+      (server.excerpt ?? "") === meta.excerpt &&
+      (server.ogImageUrl ?? "") === meta.ogImageUrl &&
+      (meta.slug === undefined || server.slug === meta.slug) &&
+      sameBlocks(body.blocks, blocks);
+    if (!same) return null;
+    baseVersion.current = body.contentVersion;
+    return server;
   }
 
   // Returns true when the content is persisted (a successful save, or already-saved identical content),
@@ -299,16 +363,38 @@ export function usePostEditor(
           const meta = { title: title.trim(), tags, excerpt: excerpt.trim(), ogImageUrl: coverUrl ?? "" };
           // Slug is editable only while DRAFT (frozen once public).
           const sendsSlug = post.status === "DRAFT" && isSavableSlug(slugPart);
+          const blocks = markdownToBlocks(md);
+          // overwrite goes on this save's first write only; the next write chains on its answer's version.
+          const overwrite = overwriteNext.current;
+          overwriteNext.current = false;
           let slugRejection: unknown = null;
+          const writeContent = async (): Promise<PostView> => {
+            let patched: PostView;
+            try {
+              patched = await updatePostMetadata(post.id, {
+                ...(sendsSlug ? { ...meta, slug: slugPart } : meta),
+                ...guardFrom(baseVersion.current, overwrite),
+              });
+            } catch (e) {
+              if (!sendsSlug || !isSlugConflict(e)) throw e;
+              slugRejection = e;
+              patched = await updatePostMetadata(post.id, { ...meta, ...guardFrom(baseVersion.current, overwrite) });
+            }
+            baseVersion.current = patched.contentVersion ?? baseVersion.current;
+            const put = await replaceBlocks(post.id, blocks, guardFrom(baseVersion.current));
+            baseVersion.current = put.contentVersion ?? baseVersion.current;
+            return patched;
+          };
           let updated: PostView;
           try {
-            updated = await updatePostMetadata(post.id, sendsSlug ? { ...meta, slug: slugPart } : meta);
+            updated = await writeContent();
           } catch (e) {
-            if (!sendsSlug || !isSlugConflict(e)) throw e;
-            slugRejection = e;
-            updated = await updatePostMetadata(post.id, meta);
+            if (!isEditConflict(e)) throw e;
+            const sentMeta = slugRejection || !sendsSlug ? meta : { ...meta, slug: slugPart };
+            const server = await alreadyOnServer(post.id, sentMeta, blocks);
+            if (!server) throw e;
+            updated = server;
           }
-          await replaceBlocks(post.id, markdownToBlocks(md));
           await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
           const savedPost = { ...updated, seriesId };
           currentDraft.current.post = savedPost;
@@ -334,6 +420,11 @@ export function usePostEditor(
           return true;
         }
       } catch (e) {
+        if (isEditConflict(e)) {
+          autoRetryBlocked.current = true;
+          setConflict(true);
+          return false;
+        }
         if (isSlugConflict(e)) setError(t("slugTaken"));
         else setError(errorMessage(e, t("saveFailed")));
         // 자동저장 무한 재시도 차단: 4xx(사용자 개입이 필요한 결정적 실패)는 즉시 정지하고, 그 밖의
@@ -455,7 +546,8 @@ export function usePostEditor(
     }
     if (Object.keys(map).length === 0) return null;
     const newMd = rewriteMarkdownLinks(md, map);
-    await replaceBlocks(post.id, markdownToBlocks(newMd));
+    const put = await replaceBlocks(post.id, markdownToBlocks(newMd), guardFrom(baseVersion.current));
+    baseVersion.current = put.contentVersion ?? baseVersion.current;
     return newMd;
   }
 
@@ -507,7 +599,8 @@ export function usePostEditor(
       }
       return true;
     } catch (e) {
-      if (isSlugConflict(e)) setError(t("slugTaken"));
+      if (isEditConflict(e)) setConflict(true);
+      else if (isSlugConflict(e)) setError(t("slugTaken"));
       else setError(errorMessage(e, t("statusChangeFailed")));
       return false;
     } finally {
@@ -560,7 +653,8 @@ export function usePostEditor(
       setPost(await schedulePost(post.id, scheduledAtIso));
       return true;
     } catch (e) {
-      if (isSlugConflict(e)) setError(t("slugTaken"));
+      if (isEditConflict(e)) setConflict(true);
+      else if (isSlugConflict(e)) setError(t("slugTaken"));
       else setError(errorMessage(e, t("scheduleFailed")));
       return false;
     } finally {
@@ -577,6 +671,66 @@ export function usePostEditor(
     });
     return saved && changeStatus("backToDraft");
   }
+
+  async function loadLatest() {
+    const current = currentDraft.current.post;
+    if (current == null) return;
+    const mine: KeptDraft = {
+      title: currentDraft.current.title,
+      markdown: liveMarkdown.current?.() ?? currentDraft.current.markdown,
+      keptAt: new Date().toISOString(),
+    };
+    writeStorageJson(keptKey(current.id), mine);
+    setConflict(false);
+    autoRetryBlocked.current = false;
+    await load();
+    setKept(mine);
+  }
+
+  async function overwriteMine(): Promise<boolean> {
+    setConflict(false);
+    autoRetryBlocked.current = false;
+    overwriteNext.current = true;
+    return save();
+  }
+
+  function restoreKept() {
+    const current = currentDraft.current.post;
+    if (current == null || kept == null) return;
+    currentDraft.current.title = kept.title;
+    currentDraft.current.markdown = kept.markdown;
+    setTitleRaw(kept.title);
+    setMarkdownRaw(kept.markdown);
+    setReloadKey((k) => k + 1);
+    removeStorageItem(keptKey(current.id));
+    setKept(null);
+    touchDirty();
+  }
+
+  function discardKept() {
+    const current = currentDraft.current.post;
+    if (current != null) removeStorageItem(keptKey(current.id));
+    setKept(null);
+  }
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      const current = currentDraft.current.post;
+      if (current == null || baseVersion.current == null) return;
+      if (dirtyRef.current || conflictRef.current || inFlightSave.current) return;
+      getPost(current.id)
+        .then(async (latest) => {
+          if (latest.contentVersion == null || latest.contentVersion === baseVersion.current) return;
+          if (dirtyRef.current || conflictRef.current) return;
+          await load();
+          setRemoteReloads((n) => n + 1);
+        })
+        .catch(() => {});
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [load]);
 
   async function restoreRevision(versionNumber: number) {
     if (post == null || busy) return;
@@ -656,5 +810,12 @@ export function usePostEditor(
     restoreRevision,
     remove,
     confirmDialog,
+    conflict,
+    loadLatest,
+    overwriteMine,
+    kept,
+    restoreKept,
+    discardKept,
+    remoteReloads,
   };
 }
