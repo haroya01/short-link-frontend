@@ -129,6 +129,7 @@ export function usePostEditor(
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [slugError, setSlugError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   // 마지막 저장이 "언제"였는지 — saved 가 2초 뒤 꺼진 뒤에도 헤더가 시각으로 안심시켜 준다.
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
@@ -194,6 +195,10 @@ export function usePostEditor(
   const setSlug = (v: string) => {
     currentDraft.current.slug = normalizeSlugInput(v);
     setSlugRaw(normalizeSlugInput(v));
+    if (slugError) {
+      setSlugError(null);
+      setError((current) => (current === slugError ? null : current));
+    }
     touchDirty();
   };
   const setMarkdown = (v: string) => {
@@ -227,6 +232,7 @@ export function usePostEditor(
     if (id == null || !Number.isFinite(id)) return;
     setLoading(true);
     setError(null);
+    setSlugError(null);
     setLoadFailed(false);
     try {
       // The base must be the blocks read's version (same read as the body), not the post's: a save landing
@@ -282,7 +288,8 @@ export function usePostEditor(
       const chosen = isSavableSlug(currentDraft.current.slug) ? slugForSave(currentDraft.current.slug) : "";
       for (let attempt = 0; ; attempt++) {
         try {
-          const created = await createPost({ slug: chosen || randomSlug(), title: currentDraft.current.title.trim() });
+          const slugToTry = attempt === 0 && chosen ? chosen : randomSlug();
+          const created = await createPost({ slug: slugToTry, title: currentDraft.current.title.trim() });
           currentDraft.current.post = created;
           baseVersion.current = created.contentVersion ?? null;
           setPost(created);
@@ -293,8 +300,7 @@ export function usePostEditor(
           window.history.replaceState(window.history.state, "", editorAddress(created));
           return created;
         } catch (e) {
-          const generatedSlugCollided = !chosen && attempt === 0 && isSlugConflict(e);
-          if (!generatedSlugCollided) throw e;
+          if (attempt > 0 || !isSlugConflict(e)) throw e;
         }
       }
     })().finally(() => {
@@ -320,6 +326,12 @@ export function usePostEditor(
     if (!same) return null;
     baseVersion.current = body.contentVersion;
     return server;
+  }
+
+  function refuseSlug(e: unknown, fallback: string) {
+    const reason = isSlugConflict(e) ? t("slugTaken") : errorMessage(e, fallback);
+    setSlugError(reason);
+    setError(reason);
   }
 
   // Returns true when the content is persisted (a successful save, or already-saved identical content),
@@ -404,6 +416,7 @@ export function usePostEditor(
           currentDraft.current.post = savedPost;
           setPost(savedPost);
           if (slugRejection) throw slugRejection;
+          setSlugError(null);
           lastSaved.current = sig;
           setLastSavedAt(new Date());
           failStreak.current = 0;
@@ -429,7 +442,7 @@ export function usePostEditor(
           setConflict(true);
           return false;
         }
-        if (isSlugConflict(e)) setError(t("slugTaken"));
+        if (isSlugRefused(e)) refuseSlug(e, t("saveFailed"));
         else setError(errorMessage(e, t("saveFailed")));
         // 자동저장 무한 재시도 차단: 4xx(사용자 개입이 필요한 결정적 실패)는 즉시 정지하고, 그 밖의
         // 실패(네트워크·5xx)는 백오프로 몇 번만 재시도 후 정지. 정지는 다음 편집에서 풀린다.
@@ -604,7 +617,7 @@ export function usePostEditor(
       return true;
     } catch (e) {
       if (isEditConflict(e)) setConflict(true);
-      else if (isSlugConflict(e)) setError(t("slugTaken"));
+      else if (isSlugRefused(e)) refuseSlug(e, t("statusChangeFailed"));
       else setError(errorMessage(e, t("statusChangeFailed")));
       return false;
     } finally {
@@ -658,7 +671,7 @@ export function usePostEditor(
       return true;
     } catch (e) {
       if (isEditConflict(e)) setConflict(true);
-      else if (isSlugConflict(e)) setError(t("slugTaken"));
+      else if (isSlugRefused(e)) refuseSlug(e, t("scheduleFailed"));
       else setError(errorMessage(e, t("scheduleFailed")));
       return false;
     } finally {
@@ -803,6 +816,7 @@ export function usePostEditor(
     saving,
     busy,
     error,
+    slugError,
     saved,
     lastSavedAt,
     writeBase,

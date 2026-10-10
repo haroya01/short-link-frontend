@@ -109,3 +109,33 @@ test("a scheduled post whose title was emptied can still be taken off the schedu
   await expect(page.getByRole("button", { name: "발행", exact: true })).toBeVisible();
   await expect(page.getByText("예약한 글은 제목을 비울 수 없어요", { exact: false })).toHaveCount(0);
 });
+
+for (const { typed, why } of [
+  { typed: "notes", why: "이 주소는 프로필 메뉴에서 쓰고 있어서 쓸 수 없어요. 다른 주소로 바꿔 주세요." },
+  { typed: "mock-published-note", why: "이 주소는 이미 사용 중이에요. 다른 주소로 바꿔주세요." },
+]) {
+  test(`a refused slug (${typed}) is explained under the field, and the footer only points there`, async ({ page }) => {
+    await openFromList(page, DRAFT);
+    await page.getByRole("button", { name: "발행", exact: true }).click();
+    const publish = page.getByRole("dialog");
+    await publish.getByRole("button", { name: "추가 설정" }).click();
+    const slug = publish.getByRole("textbox", { name: "글 주소(slug)" });
+    await slug.fill(typed);
+
+    const reason = publish.getByText(why);
+    await expect(reason).toBeVisible({ timeout: 15_000 });
+    await expect(reason).toHaveCount(1);
+    await expect(slug).toHaveAttribute("aria-invalid", "true");
+    await expect(slug).toHaveAccessibleDescription(why);
+    const field = (await slug.boundingBox())!;
+    const under = (await reason.boundingBox())!;
+    expect(under.y).toBeGreaterThanOrEqual(field.y + field.height - 1);
+    expect(under.y - (field.y + field.height)).toBeLessThan(24);
+    await expect(publish.getByRole("alert")).toHaveText("주소를 확인해 주세요.");
+
+    await slug.fill("free-address");
+    await expect(reason).toHaveCount(0);
+    await expect(publish.getByRole("alert")).toHaveCount(0);
+    await expect(slug).toHaveAttribute("aria-invalid", "false");
+  });
+}

@@ -347,9 +347,38 @@ describe("a slug the server would refuse never blocks the title and body", () =>
     await act(async () => { saved = await editor.save(); });
     expect(saved).toBe(false);
     expect(editor.error).toBe("slugTaken");
+    expect(editor.slugError).toBe("slugTaken");
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
     expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});
+
+    await act(async () => { editor.setSlug("taken-2"); });
+    expect(editor.slugError).toBeNull();
+    expect(editor.error).toBeNull();
+  });
+
+  it("creates the draft under a generated slug when the typed one is taken, then flags the typed one", async () => {
+    await mount(null);
+    api.createPost.mockImplementation(async ({ slug }) => {
+      if (slug === "taken") throw new ApiError(409, { status: 409, title: "Conflict", code: "SLUG_CONFLICT" });
+      return { ...POST, id: 77, title: "", slug };
+    });
+    api.updatePostMetadata.mockImplementation(async (id, payload) => {
+      if (payload.slug === "taken") {
+        throw new ApiError(409, { status: 409, title: "Conflict", code: "SLUG_CONFLICT" });
+      }
+      return { ...POST, id, ...payload };
+    });
+    await act(async () => {
+      editor.setSlug("taken");
+      editor.setMarkdown("Body kept");
+    });
+    await act(async () => { await editor.save(); });
+    expect(api.createPost).toHaveBeenCalledTimes(2);
+    expect(api.createPost.mock.lastCall?.[0].slug).not.toBe("taken");
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(77, [{ type: "PARAGRAPH", content: "Body kept" }], {});
+    expect(editor.slug).toBe("taken");
+    expect(editor.slugError).toBe("slugTaken");
   });
 
   it("saves the title and body when the slug is a profile page name, then says why", async () => {
@@ -372,6 +401,7 @@ describe("a slug the server would refuse never blocks the title and body", () =>
     known.mockRestore();
     expect(saved).toBe(false);
     expect(editor.error).toBe("SLUG_RESERVED");
+    expect(editor.slugError).toBe("SLUG_RESERVED");
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
     expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});

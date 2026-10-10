@@ -459,6 +459,7 @@
     "slugFreezeWarn": "발행 후에는 주소를 바꿀 수 없어요",
     "scheduleInvalid": "미래 시각을 선택해주세요.",
     "slugTaken": "이 주소는 이미 사용 중이에요. 다른 주소로 바꿔주세요.",
+    "slugCheck": "주소를 확인해 주세요.",
     "slugInvalid": "주소는 영문 소문자·숫자·하이픈으로 2자 이상 써 주세요.",
     "scheduledToast": "{when}에 발행 예약됐어요.",
     "scheduledFor": "{when} 발행 예정",
