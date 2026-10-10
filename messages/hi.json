@@ -834,6 +834,7 @@
     "INVALID_CAMPAIGN_PERIOD": "समाप्ति तिथि शुरू की तिथि के बाद होनी चाहिए।",
     "RATE_LIMITED": "बहुत ज़्यादा अनुरोध। एक मिनट बाद फिर कोशिश करें।",
     "SERIES_SLUG_CONFLICT": "यह सीरीज़ पता पहले से इस्तेमाल में है। कोई दूसरा पता चुनें।",
+    "SLUG_RESERVED": "यह पता प्रोफ़ाइल मेनू में इस्तेमाल होता है, इसलिए इसे नहीं ले सकते। कोई और आज़माएँ।",
     "INVALID_DESTINATION_URL": "पता http:// या https:// से शुरू होना चाहिए।",
     "BODY_LIMIT": "पोस्ट सहेजने के लिए बहुत लंबी है। इसे बाँट दें।",
     "OPENS_AFTER_EXPIRY": "खुलने का समय समाप्ति से पहले होना चाहिए।",
@@ -4283,7 +4284,7 @@
     "listNewTitle": "नई सूची का नाम",
     "listCreate": "बनाएँ",
     "listCreateAndAdd": "बनाएँ और जोड़ें",
-    "listPick": "ऊपर से सूची चुनें, केवल उन लोगों के नोट दिखेंगे",
+    "listPick": "\"और\" से सूची चुनें, केवल उन लोगों के नोट दिखेंगे",
     "listEmpty": "अभी कोई सूची नहीं",
     "listEmptyBody": "नाम लिखकर बनाएँ, फिर प्रोफ़ाइल के … मेनू से लोगों को जोड़ें।",
     "listNoNotes": "इस सूची में अभी नोट नहीं",
@@ -4539,7 +4540,20 @@
     "mediaCount": "{count} फ़ोटो",
     "mediaSensitive": "संवेदनशील सामग्री",
     "profileRepliesTitle": "जवाब · @{username}",
-    "profileMediaTitle": "मीडिया · @{username}"
+    "profileMediaTitle": "मीडिया · @{username}",
+    "drafts": "ड्राफ़्ट {count}",
+    "draftsTitle": "ड्राफ़्ट",
+    "draftsEmpty": "अभी कोई ड्राफ़्ट नहीं",
+    "draftSaved": "ड्राफ़्ट में सहेजा",
+    "draftImagesDropped": "{count} फ़ोटो ड्राफ़्ट में नहीं रखी गईं",
+    "draftDeleted": "ड्राफ़्ट हटा दिया",
+    "draftDelete": "ड्राफ़्ट हटाएँ",
+    "draftUndo": "पूर्ववत करें",
+    "feedDirectShort": "उल्लेख",
+    "listManage": "सूचियाँ प्रबंधित करें",
+    "listSettingsHint": "सूचियाँ केवल आप देखते हैं। किसी सूची के लोगों के नोट पढ़ने के लिए नोट्स पेज पर \"और\" में उसे चुनें।",
+    "feedMoreBlog": "और ब्लॉग फ़ीड",
+    "feedMoreNotes": "और नोट फ़ीड"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"
@@ -4555,6 +4569,7 @@
     "seeAll": "सभी देखें",
     "noteTitle": "नया नोट",
     "notePosted": "नोट पोस्ट हो गया",
-    "viewNote": "देखें"
+    "viewNote": "देखें",
+    "noteParts": "{count} नोट"
   }
 }

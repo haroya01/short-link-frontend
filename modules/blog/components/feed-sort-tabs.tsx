@@ -14,13 +14,15 @@ export type FeedSortTab = {
 };
 
 // Tab horizontal padding (px-2.5 = 10px); the underline spans the label, inset past the padding.
-const PAD = 10;
+export const PAD = 10;
 // Constant glide speed (ms per px travelled), clamped — so distance ≈ time: a far jump (최신 → 팔로잉)
 // takes visibly longer and sweeps across the middle tab, while an adjacent hop stays quick.
 const MS_PER_PX = 3;
 const MIN_MS = 180;
 // Capped at the move tier's ceiling (§10.7) — a two-tab jump still sweeps, just not slowly.
 const MAX_MS = 320;
+
+export const glideMs = (distance: number) => Math.min(MAX_MS, Math.max(MIN_MS, Math.round(distance * MS_PER_PX)));
 
 /**
  * Feed switcher tabs (팔로잉 · 최신 · 인기) with a single underline that *slides* between tabs — it
@@ -32,9 +34,15 @@ const MAX_MS = 320;
 export function FeedSortTabs({
   tabs: allTabs,
   onSelect,
+  underline = true,
+  idle = false,
 }: {
   tabs: FeedSortTab[];
   onSelect?: (key: string) => void;
+  /** Off when the parent draws one underline across the tabs and its own trailing slot. */
+  underline?: boolean;
+  /** The parent is opening something outside the tabs, so no tab is drawn active meanwhile. */
+  idle?: boolean;
 }) {
   const { ready, authenticated } = useAuth();
   const tabs = !(ready && authenticated) ? allTabs.filter((t) => !t.personal || t.active) : allTabs;
@@ -49,7 +57,7 @@ export function FeedSortTabs({
 
   // The tab drawn as active — the optimistic pending tab while its route loads, else the
   // server-resolved one.
-  const activeKey = pendingKey ?? tabs.find((t) => t.active)?.key ?? null;
+  const activeKey = pendingKey ?? (idle ? null : (tabs.find((t) => t.active)?.key ?? null));
 
   // Re-measure whenever the active tab (or its label, on locale change) changes — including the
   // optimistic pending tab, so the underline glides on click, not only when the payload arrives.
@@ -74,7 +82,7 @@ export function FeedSortTabs({
     if (next) {
       setBar((prev) => {
         const dist = prev ? Math.abs(next.left - prev.left) : 0;
-        setDurationMs(prev ? Math.min(MAX_MS, Math.max(MIN_MS, Math.round(dist * MS_PER_PX))) : 0);
+        setDurationMs(prev ? glideMs(dist) : 0);
         return next;
       });
     } else {
@@ -135,7 +143,7 @@ export function FeedSortTabs({
           {t.label}
         </Link>
       ))}
-      {bar && (
+      {underline && bar && (
         <span
           aria-hidden
           className="pointer-events-none absolute bottom-0.5 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"

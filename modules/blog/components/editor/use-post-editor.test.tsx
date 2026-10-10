@@ -352,6 +352,31 @@ describe("a slug the server would refuse never blocks the title and body", () =>
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});
   });
 
+  it("saves the title and body when the slug is a profile page name, then says why", async () => {
+    await mount();
+    const known = vi.spyOn(translate, "has") as MockInstance<(code: string) => boolean>;
+    known.mockReturnValue(true);
+    api.updatePostMetadata.mockImplementation(async (id, payload) => {
+      if (payload.slug === "notes") {
+        throw new ApiError(400, { status: 400, title: "Bad Request", code: "SLUG_RESERVED" });
+      }
+      return { ...POST, id, ...payload };
+    });
+    await act(async () => {
+      editor.setSlug("notes");
+      editor.setTitle("Title kept");
+      editor.setMarkdown("Body kept");
+    });
+    let saved: boolean | undefined;
+    await act(async () => { saved = await editor.save(); });
+    known.mockRestore();
+    expect(saved).toBe(false);
+    expect(editor.error).toBe("SLUG_RESERVED");
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Title kept" }));
+    expect(api.updatePostMetadata.mock.lastCall?.[1]).not.toHaveProperty("slug");
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: "Body kept" }], {});
+  });
+
   it("holds publishing until the slug is long enough", async () => {
     await mount();
     await act(async () => { editor.setSlug("a"); });

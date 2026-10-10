@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChartBar, Check, ChevronDown, Clock, EyeOff, ImagePlus, Loader2, MessageCircle, TriangleAlert, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
@@ -9,6 +9,14 @@ import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
+import {
+  deleteNoteDraft,
+  hasDraftContent,
+  newNoteDraftId,
+  restoredSchedule,
+  saveNoteDraft,
+  type NoteDraft,
+} from "@/modules/notes/lib/note-drafts";
 import {
   createNote,
   createThread,
@@ -77,6 +85,9 @@ export function NoteComposer({
   quotedNote = null,
   autoFocus = false,
   threadReplyPolicy,
+  draft = null,
+  onDraftChange,
+  draftsButton,
 }: {
   onCreated: (note: Note) => void;
   inReplyToId?: number | null;
@@ -85,38 +96,96 @@ export function NoteComposer({
   onClearQuote?: () => void;
   quotedNote?: QuotedNote | null;
   autoFocus?: boolean;
+  /** A device draft to continue; the parent keys the composer by its id. */
+  draft?: NoteDraft | null;
+  /** Whether the composer holds something worth keeping, and the id of the draft that keeps it. */
+  onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
+  /** The inline composer's "임시저장 N", shown beside the text once the composer opens. */
+  draftsButton?: (currentId: string | null, hidden: boolean) => ReactNode;
 }) {
   const t = useTranslations("notes");
   const [confirm, confirmDialog] = useConfirm();
-  const [body, setBody] = useState(() => (inReplyToId ? readDraft("note-reply", inReplyToId)?.text ?? "" : ""));
-  const [warns, setWarns] = useState(false);
+  const [body, setBody] = useState(() =>
+    inReplyToId ? readDraft("note-reply", inReplyToId)?.text ?? "" : draft?.body ?? "",
+  );
+  const [warns, setWarns] = useState(draft ? draft.warning !== null : false);
   useEffect(() => {
     if (!inReplyToId) return;
     if (body.trim()) writeDraft("note-reply", inReplyToId, body);
     else clearDraft("note-reply", inReplyToId);
   }, [body, inReplyToId]);
-  const [warning, setWarning] = useState("");
+  const [warning, setWarning] = useState(draft?.warning ?? "");
   const [sensitive, setSensitive] = useState(false);
-  const [visibility, setVisibility] = useState<NoteVisibility | null>(inReplyToId ? null : "public");
-  const [replyPolicy, setReplyPolicy] = useState<NoteReplyPolicy>("everyone");
+  const [visibility, setVisibility] = useState<NoteVisibility | null>(
+    inReplyToId ? null : (draft?.visibility ?? "public"),
+  );
+  const [replyPolicy, setReplyPolicy] = useState<NoteReplyPolicy>(draft?.replyPolicy ?? "everyone");
   const [images, setImages] = useState<PendingImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [focused, setFocused] = useState(false);
   const [altEditing, setAltEditing] = useState<string | null>(null);
-  const [poll, setPoll] = useState<NotePollDraft | null>(null);
-  const [scheduledAt, setScheduledAt] = useState("");
+  const [poll, setPoll] = useState<NotePollDraft | null>(draft?.poll ?? null);
+  const [scheduledAt, setScheduledAt] = useState(() => restoredSchedule(draft?.scheduledAt ?? ""));
   const choosesReplyPolicy = !inReplyToId && !scheduledAt;
-  const [parts, setParts] = useState<{ id: string; body: string }[]>([]);
+  const [parts, setParts] = useState<{ id: string; body: string }[]>(() =>
+    (draft?.parts ?? []).map((part, index) => ({ id: `draft-${index}`, body: part })),
+  );
   const locale = useLocale();
-  const [language, setLanguage] = useState(() => locale.split("-")[0]);
-  useEffect(() => setLanguage(postingLanguage(locale)), [locale]);
+  const [language, setLanguage] = useState(() => draft?.language ?? locale.split("-")[0]);
+  useEffect(() => {
+    if (!draft) setLanguage(postingLanguage(locale));
+  }, [locale, draft]);
+  const [droppedImages, setDroppedImages] = useState(draft?.imageCount ?? 0);
   const [scheduledVersion, setScheduledVersion] = useState(0);
   const { toast } = useToast();
   const when = useWhen();
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
+  const draftId = useRef<string | null>(draft?.id ?? null);
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(draft?.id ?? null);
+  const keepsDrafts = !inReplyToId && me != null;
+  const snapshot: Omit<NoteDraft, "id" | "updatedAt"> = {
+    body,
+    parts: parts.map((part) => part.body),
+    warning: warns ? warning : null,
+    visibility: visibility ?? "public",
+    replyPolicy,
+    language,
+    poll,
+    scheduledAt,
+    quote: quote ? { post: quote } : quotedNote ? { note: quotedNote } : null,
+    imageCount: images.length,
+  };
+  const hasContent = hasDraftContent(snapshot);
+  const report = useRef<() => void>(() => undefined);
+  report.current = () => onDraftChange?.({ hasContent, id: draftId.current });
+  const persist = useRef<() => void>(() => undefined);
+  persist.current = () => {
+    if (!keepsDrafts || !me) return;
+    if (hasContent) {
+      draftId.current ??= newNoteDraftId();
+      saveNoteDraft(me.id, { ...snapshot, id: draftId.current, updatedAt: Date.now() });
+    } else if (draftId.current) {
+      deleteNoteDraft(me.id, draftId.current);
+      draftId.current = null;
+    }
+    setCurrentDraftId(draftId.current);
+    report.current();
+  };
+  const edited = useRef(false);
+  const snapshotKey = JSON.stringify(snapshot);
+  useEffect(() => {
+    report.current();
+    if (!edited.current) {
+      edited.current = true;
+      return;
+    }
+    const timer = setTimeout(() => persist.current(), 400);
+    return () => clearTimeout(timer);
+  }, [snapshotKey]);
+  useEffect(() => () => persist.current(), []);
   const noticeChecked = useRef(false);
   const [linkCard, setLinkCard] = useState<NoteLinkPreview | null>(null);
   const cardUrl = previewUrl(body, images.length > 0 || poll !== null, quote !== null || quotedNote !== null);
@@ -177,6 +246,7 @@ export function NoteComposer({
       return;
     }
     setError(null);
+    setDroppedImages(0);
     const room = NOTE_MAX_IMAGES - images.length;
     const picked = all.slice(0, room);
     if (all.length > room) setError(t("imageLimit", { max: NOTE_MAX_IMAGES }));
@@ -287,6 +357,10 @@ export function NoteComposer({
               ])
             )[0]
           : await createNote(draft);
+      if (me && draftId.current) deleteNoteDraft(me.id, draftId.current);
+      draftId.current = null;
+      setCurrentDraftId(null);
+      setDroppedImages(0);
       images.forEach((image) => URL.revokeObjectURL(image.previewUrl));
       setPoll(null);
       setBody("");
@@ -401,6 +475,7 @@ export function NoteComposer({
                 )}
               />
               {!open && submitButton}
+              {draftsButton?.(currentDraftId, !open)}
             </div>
           {poll && <NotePollEditor poll={poll} onChange={setPoll} />}
           {images.length > 0 && (
@@ -547,6 +622,12 @@ export function NoteComposer({
               </label>
               {replyPolicy !== "everyone" && <span data-testid="reply-policy-hint">{t("replyPolicyHint")}</span>}
             </div>
+          )}
+
+          {droppedImages > 0 && (
+            <p data-testid="draft-images-dropped" className="mt-2 text-[13px] text-slate-500 dark:text-slate-400">
+              {t("draftImagesDropped", { count: droppedImages })}
+            </p>
           )}
 
           {error && (

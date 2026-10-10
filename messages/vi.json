@@ -834,6 +834,7 @@
     "INVALID_CAMPAIGN_PERIOD": "Ngày kết thúc phải sau ngày bắt đầu.",
     "RATE_LIMITED": "Quá nhiều yêu cầu. Vui lòng thử lại sau một phút.",
     "SERIES_SLUG_CONFLICT": "Địa chỉ series này đã được dùng. Hãy chọn địa chỉ khác.",
+    "SLUG_RESERVED": "Địa chỉ này đang được dùng cho một mục trong menu hồ sơ nên không thể dùng. Hãy thử một địa chỉ khác.",
     "INVALID_DESTINATION_URL": "Địa chỉ phải bắt đầu bằng http:// hoặc https://.",
     "BODY_LIMIT": "Bài viết quá dài để lưu. Hãy chia nhỏ bài viết.",
     "OPENS_AFTER_EXPIRY": "Thời điểm mở phải trước thời điểm hết hạn.",
@@ -4283,7 +4284,7 @@
     "listNewTitle": "Tên danh sách mới",
     "listCreate": "Tạo",
     "listCreateAndAdd": "Tạo và thêm",
-    "listPick": "Chọn một danh sách ở trên để chỉ đọc ghi chú của những người trong đó",
+    "listPick": "Chọn một danh sách trong mục Thêm để chỉ đọc ghi chú của những người trong đó",
     "listEmpty": "Chưa có danh sách",
     "listEmptyBody": "Đặt tên để tạo, rồi thêm người từ menu … của hồ sơ.",
     "listNoNotes": "Danh sách này chưa có ghi chú",
@@ -4539,7 +4540,20 @@
     "mediaCount": "{count} ảnh",
     "mediaSensitive": "Nội dung nhạy cảm",
     "profileRepliesTitle": "Trả lời · @{username}",
-    "profileMediaTitle": "Phương tiện · @{username}"
+    "profileMediaTitle": "Phương tiện · @{username}",
+    "drafts": "Bản nháp {count}",
+    "draftsTitle": "Bản nháp",
+    "draftsEmpty": "Chưa có bản nháp nào",
+    "draftSaved": "Đã lưu vào bản nháp",
+    "draftImagesDropped": "{count} ảnh không được giữ trong bản nháp",
+    "draftDeleted": "Đã xóa bản nháp",
+    "draftDelete": "Xóa bản nháp",
+    "draftUndo": "Hoàn tác",
+    "feedDirectShort": "Nhắc đến",
+    "listManage": "Quản lý danh sách",
+    "listSettingsHint": "Chỉ bạn thấy danh sách. Để đọc ghi chú của những người trong một danh sách, hãy chọn nó trong mục Thêm ở trang ghi chú.",
+    "feedMoreBlog": "Thêm bảng tin blog",
+    "feedMoreNotes": "Thêm bảng tin ghi chú"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"
@@ -4555,6 +4569,7 @@
     "seeAll": "Xem tất cả",
     "noteTitle": "Ghi chú mới",
     "notePosted": "Đã đăng ghi chú",
-    "viewNote": "Xem"
+    "viewNote": "Xem",
+    "noteParts": "{count} ghi chú"
   }
 }

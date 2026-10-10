@@ -23,10 +23,9 @@ const blogTabs = (active = "recent"): FeedSortTab[] => [
   { key: "recent", label: "최신", href: "?sort=recent", active: active === "recent" },
   { key: "trending", label: "인기", href: "?sort=trending", active: active === "trending" },
 ];
-const blogMore = [
-  { key: "for-you", label: "추천", href: "?sort=for-you" },
-  { key: "series", label: "시리즈", href: "?sort=series" },
-  { key: "followed-topics", label: "팔로우한 주제", href: "/blog/curation?open=topics", external: true },
+const blogMore = (active?: string) => [
+  { key: "for-you", label: "추천", icon: "sparkles" as const, href: "?sort=for-you", active: active === "for-you" },
+  { key: "series", label: "시리즈", icon: "series" as const, href: "?sort=series", active: active === "series" },
 ];
 
 let root: Root;
@@ -71,21 +70,55 @@ const click = async (el: Element) => {
 describe("FeedSwitcher", () => {
   it("lays out 팔로잉 · 최신 · 인기 and keeps 팔로잉 for signed-out visitors", async () => {
     mocks.auth.authenticated = false;
-    await render({ surface: "blog", tabs: blogTabs(), more: blogMore });
+    await render({ surface: "blog", tabs: blogTabs(), more: blogMore() });
     expect([...host.querySelectorAll("nav a")].map((a) => a.textContent)).toEqual(["팔로잉", "최신", "인기"]);
     expect(host.querySelector("[data-feed-more]")).toBeNull();
   });
 
-  it("offers the surface's other sources in 더 보기 once signed in", async () => {
-    await render({ surface: "blog", tabs: blogTabs(), more: blogMore });
+  it("offers only the surface's other feeds in 더 보기 once signed in", async () => {
+    await render({ surface: "blog", tabs: blogTabs(), more: blogMore() });
     const more = host.querySelector<HTMLButtonElement>("[data-feed-more] button")!;
-    expect(more.textContent).toContain("feedMore");
+    expect(more.getAttribute("aria-label")).toBe("feedMoreBlog");
     await click(more);
-    expect([...host.querySelectorAll('[role="menuitem"]')].map((a) => a.textContent)).toEqual(["추천", "시리즈", "팔로우한 주제"]);
+    expect([...host.querySelectorAll('[role="menuitem"]')].map((a) => a.textContent)).toEqual(["추천", "시리즈"]);
+  });
+
+  it("switches to a 더 보기 feed in place and moves the selection into the slot at once", async () => {
+    await render({ surface: "blog", tabs: blogTabs("recent"), more: blogMore() });
+    expect(tab("최신").getAttribute("data-active")).toBe("true");
+    await click(host.querySelector("[data-feed-more] button")!);
+    await click([...host.querySelectorAll('[role="menuitem"]')].find((a) => a.textContent === "추천")!);
+    const slot = host.querySelector<HTMLButtonElement>("[data-feed-more] button")!;
+    expect(slot.getAttribute("aria-label")).toBe("feedMoreBlog: 추천");
+    expect(slot.getAttribute("data-active")).toBe("true");
+    expect(host.querySelectorAll('nav a[data-active="true"]')).toHaveLength(0);
+    expect(mocks.push).toHaveBeenCalledWith(expect.stringContaining("?sort=for-you"));
+  });
+
+  it("shows the open 더 보기 feed in the slot by its short name, and a tab takes the selection back", async () => {
+    const notesTabs = (active: string | null): FeedSortTab[] =>
+      ["following", "everyone", "trending"].map((key, i) => ({
+        key,
+        label: ["팔로잉", "최신", "인기"][i],
+        href: `?feed=${key}`,
+        active: key === active,
+      }));
+    const mentions = (active: boolean) => [
+      { key: "direct", label: "개인 멘션", shortLabel: "멘션", icon: "mention" as const, href: "?feed=direct", active },
+    ];
+    await render({ surface: "notes", tabs: notesTabs(null), more: mentions(true) });
+    const slot = host.querySelector<HTMLButtonElement>("[data-feed-more] button")!;
+    expect(slot.getAttribute("aria-label")).toBe("feedMoreNotes: 개인 멘션");
+    expect(slot.textContent).toBe("멘션");
+    await click(tab("최신"));
+    expect(slot.getAttribute("data-active")).toBeNull();
+    await act(async () => root.render(createElement(FeedSwitcher, { surface: "notes", tabs: notesTabs("everyone"), more: mentions(false) })));
+    expect(tab("최신").getAttribute("data-active")).toBe("true");
+    expect(slot.getAttribute("aria-label")).toBe("feedMoreNotes");
   });
 
   it("remembers the switcher tab the reader picks, per surface", async () => {
-    await render({ surface: "blog", tabs: blogTabs(), more: blogMore });
+    await render({ surface: "blog", tabs: blogTabs(), more: blogMore() });
     await click(tab("인기"));
     expect(document.cookie).toContain("kurl_blog_default_tab=trending");
     expect(document.cookie).not.toContain("kurl_notes_feed");
@@ -93,7 +126,7 @@ describe("FeedSwitcher", () => {
   });
 
   it("never remembers a 더 보기 source", async () => {
-    await render({ surface: "blog", tabs: blogTabs("trending"), more: blogMore });
+    await render({ surface: "blog", tabs: blogTabs("trending"), more: blogMore() });
     await click(tab("인기"));
     await click(host.querySelector("[data-feed-more] button")!);
     await click([...host.querySelectorAll('[role="menuitem"]')].find((a) => a.textContent === "추천")!);

@@ -834,6 +834,7 @@
     "INVALID_CAMPAIGN_PERIOD": "終了日は開始日より後にしてください。",
     "RATE_LIMITED": "リクエストが多すぎます。1分後にもう一度お試しください。",
     "SERIES_SLUG_CONFLICT": "このシリーズのアドレスはすでに使われています。別のアドレスにしてください。",
+    "SLUG_RESERVED": "このURLはプロフィールのメニューで使われているため使えません。別のURLにしてください。",
     "INVALID_DESTINATION_URL": "アドレスは http:// または https:// で始めてください。",
     "BODY_LIMIT": "記事が長すぎて保存できません。分けてください。",
     "OPENS_AFTER_EXPIRY": "公開日時は期限より前にしてください。",
@@ -4283,7 +4284,7 @@
     "listNewTitle": "新しいリスト名",
     "listCreate": "作成",
     "listCreateAndAdd": "作って追加",
-    "listPick": "上でリストを選ぶと、その人たちのノートだけを読めます",
+    "listPick": "「その他」からリストを選ぶと、その人たちのノートだけを読めます",
     "listEmpty": "まだリストがありません",
     "listEmptyBody": "名前を入れて作り、プロフィールの…メニューから人を追加してください。",
     "listNoNotes": "このリストにはまだノートがありません",
@@ -4539,7 +4540,20 @@
     "mediaCount": "写真{count}枚",
     "mediaSensitive": "センシティブな内容",
     "profileRepliesTitle": "返信 · @{username}",
-    "profileMediaTitle": "メディア · @{username}"
+    "profileMediaTitle": "メディア · @{username}",
+    "drafts": "下書き {count}",
+    "draftsTitle": "下書き",
+    "draftsEmpty": "下書きはまだありません",
+    "draftSaved": "下書きに保存しました",
+    "draftImagesDropped": "写真{count}枚は下書きに残っていません",
+    "draftDeleted": "下書きを削除しました",
+    "draftDelete": "下書きを削除",
+    "draftUndo": "元に戻す",
+    "feedDirectShort": "メンション",
+    "listManage": "リストを管理",
+    "listSettingsHint": "リストは自分だけが見られます。追加した人のノートは、ノート画面の「その他」から選んで読めます。",
+    "feedMoreBlog": "ほかのブログフィード",
+    "feedMoreNotes": "ほかのノートフィード"
   },
   "mentions": {
     "suggestions": "メンションする人"
@@ -4555,6 +4569,7 @@
     "seeAll": "すべて見る",
     "noteTitle": "新しいノート",
     "notePosted": "ノートを投稿しました",
-    "viewNote": "見る"
+    "viewNote": "見る",
+    "noteParts": "{count}件"
   }
 }

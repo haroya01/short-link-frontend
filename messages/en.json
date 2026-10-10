@@ -834,6 +834,7 @@
     "INVALID_CAMPAIGN_PERIOD": "The end date must be after the start date.",
     "RATE_LIMITED": "Too many requests. Please try again in a minute.",
     "SERIES_SLUG_CONFLICT": "This series address is already in use. Please choose another.",
+    "SLUG_RESERVED": "This address is used by a profile menu, so it can't be used. Try a different one.",
     "INVALID_DESTINATION_URL": "The address must start with http:// or https://.",
     "BODY_LIMIT": "This post is too long to save. Please split it up.",
     "OPENS_AFTER_EXPIRY": "The opening time must be before the expiry time.",
@@ -4283,7 +4284,7 @@
     "listNewTitle": "New list name",
     "listCreate": "Create",
     "listCreateAndAdd": "Create and add",
-    "listPick": "Pick a list above to read just the people in it",
+    "listPick": "Pick a list under More to read just the people in it",
     "listEmpty": "No lists yet",
     "listEmptyBody": "Name one to make it, then add people from a profile's … menu.",
     "listNoNotes": "No notes in this list yet",
@@ -4539,7 +4540,20 @@
     "mediaCount": "{count, plural, one {# photo} other {# photos}}",
     "mediaSensitive": "Sensitive content",
     "profileRepliesTitle": "Replies · @{username}",
-    "profileMediaTitle": "Media · @{username}"
+    "profileMediaTitle": "Media · @{username}",
+    "drafts": "Drafts {count}",
+    "draftsTitle": "Drafts",
+    "draftsEmpty": "No drafts yet",
+    "draftSaved": "Saved to drafts",
+    "draftImagesDropped": "{count, plural, one {# photo wasn't} other {# photos weren't}} kept in the draft",
+    "draftDeleted": "Draft deleted",
+    "draftDelete": "Delete draft",
+    "draftUndo": "Undo",
+    "feedDirectShort": "Mentions",
+    "listManage": "Manage lists",
+    "listSettingsHint": "Only you see your lists. To read the people in one, pick it under More on the notes page.",
+    "feedMoreBlog": "More blog feeds",
+    "feedMoreNotes": "More note feeds"
   },
   "mentions": {
     "suggestions": "People to mention"
@@ -4555,6 +4569,7 @@
     "seeAll": "See all",
     "noteTitle": "New note",
     "notePosted": "Note posted",
-    "viewNote": "View"
+    "viewNote": "View",
+    "noteParts": "{count, plural, one {# note} other {# notes}}"
   }
 }

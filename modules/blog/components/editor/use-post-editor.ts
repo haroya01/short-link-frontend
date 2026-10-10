@@ -40,6 +40,10 @@ function isSlugConflict(e: unknown): boolean {
   return e instanceof ApiError && e.detail.code === "SLUG_CONFLICT";
 }
 
+function isSlugRefused(e: unknown): boolean {
+  return isSlugConflict(e) || (e instanceof ApiError && e.detail.code === "SLUG_RESERVED");
+}
+
 function isEditConflict(e: unknown): boolean {
   return e instanceof ApiError && e.detail.code === "POST_EDIT_CONFLICT";
 }
@@ -393,7 +397,7 @@ export function usePostEditor(
                 ...guardFrom(baseVersion.current, overwrite),
               });
             } catch (e) {
-              if (!sendsSlug || !isSlugConflict(e)) throw e;
+              if (!sendsSlug || !isSlugRefused(e)) throw e;
               slugRejection = e;
               patched = await updatePostMetadata(post.id, { ...meta, ...guardFrom(baseVersion.current, overwrite) });
             }

@@ -61,7 +61,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/webhooks": ["blogWebhooks"],
   "blog/write": ["blogWorkspace", "postEditor", "tags"],
   "p/[username]": [
-    "auth", "collections", "comments", "errors", "languageSwitcher", "loginPrompt", "mentions", "nav",
+    "auth", "collections", "comments", "compose", "errors", "languageSwitcher", "loginPrompt", "mentions", "nav",
     "notifications", "notes", "postEditor.urlDialog", "publicFeed", "publicPost", "publicProfile.gallery",
     "share", "sidebar.blog",
   ],
