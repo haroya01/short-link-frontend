@@ -37,6 +37,18 @@ export function onFollowChanged(handler: () => void): () => void {
   return () => window.removeEventListener("kurl:follow-changed", listener);
 }
 
+export function emitNotePosted(note: Note) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent<{ note: Note }>("kurl:note-posted", { detail: { note } }));
+}
+
+export function onNotePosted(handler: (note: Note) => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const listener = (e: Event) => handler((e as CustomEvent<{ note: Note }>).detail.note);
+  window.addEventListener("kurl:note-posted", listener);
+  return () => window.removeEventListener("kurl:note-posted", listener);
+}
+
 /** A note quoting a post was just posted — the post's "notes" tab can show it without a refetch. */
 export function emitPostQuoted(postId: number, note: Note) {
   if (typeof window === "undefined") return;
