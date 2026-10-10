@@ -38,6 +38,7 @@ import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blo
 import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib/series-items";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -254,7 +255,10 @@ export default async function PublicPostPage({
             </span>
           </a>
           {author.bio && (
-            <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+            <p
+              lang={contentLang(author.bio)}
+              className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400"
+            >
               {author.bio}
             </p>
           )}

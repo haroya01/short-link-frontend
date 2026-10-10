@@ -2,6 +2,7 @@ import type { KindredCurator } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
@@ -39,7 +40,10 @@ export function KindredCurators({
                   @{curator.username}
                 </span>
                 {curator.bio && (
-                  <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
+                  <span
+                    lang={contentLang(curator.bio)}
+                    className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400"
+                  >
                     {curator.bio}
                   </span>
                 )}
