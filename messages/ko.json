@@ -349,14 +349,7 @@
       "paragraph": "텍스트"
     },
     "urlDialog": {
-      "linkTitle": "링크",
-      "embedTitle": "링크 카드·동영상",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://… (링크·YouTube·Vimeo)",
-      "confirm": "확인",
-      "cancel": "취소",
-      "remove": "링크 빼기",
-      "linkTextPlaceholder": "표시할 텍스트 (선택)"
+      "remove": "링크 빼기"
     },
     "table": {
       "addColumn": "열 추가",

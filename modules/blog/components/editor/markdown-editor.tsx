@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { Extension, getMarkRange } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -45,8 +45,9 @@ import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-sho
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode } from "@/modules/blog/components/editor/link-card-node";
 import { LinkPasteChoice, applyPastePlan, pasteSpot } from "@/modules/blog/components/editor/link-paste-choice";
-import { LinkDialog, type LinkDialogRequest, type LinkDialogResult } from "@/modules/blog/components/editor/link-dialog";
+import { LinkDialog } from "@/modules/blog/components/editor/link-dialog";
 import { LinkActions } from "@/modules/blog/components/editor/link-actions";
+import { applyLinkResult, linkAt, linkRequest, type LinkAt, type OpenedLink } from "@/modules/blog/components/editor/link-commands";
 import { planPaste } from "@/modules/blog/lib/link-paste";
 import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
 import { convertCalloutContainers } from "@/modules/blog/lib/callout";
@@ -225,43 +226,12 @@ export function MarkdownEditor({
     },
     [],
   );
-  const [linkRequest, setLinkRequest] = useState<{ request: LinkDialogRequest; range: { from: number; to: number } | null } | null>(null);
-  const [linkActions, setLinkActions] = useState<{ href: string; from: number; to: number; rect: DOMRect } | null>(null);
+  const [opened, setOpened] = useState<OpenedLink | null>(null);
+  const [linkActions, setLinkActions] = useState<LinkAt | null>(null);
 
-  function openLink(ed: Editor, mode: "link" | "card", edit: { from: number; to: number; href: string } | null = null) {
-    const { from, to, empty, $from } = ed.state.selection;
-    const inLink = ed.isActive("link") ? getMarkRange($from, ed.schema.marks.link) : undefined;
-    const span = edit ? { from: edit.from, to: edit.to } : (inLink ?? (empty ? null : { from, to }));
-    const href = edit?.href ?? ((ed.getAttributes("link").href as string | undefined) ?? "");
-    const caret = ed.view.coordsAtPos(span?.from ?? from);
+  function openLink(ed: Editor, mode: "link" | "card", edit: LinkAt | null = null) {
     setLinkActions(null);
-    setLinkRequest({
-      range: span,
-      request: {
-        mode,
-        text: span ? ed.state.doc.textBetween(span.from, span.to, " ") : "",
-        href,
-        canPickCard: !span,
-        editing: !!href,
-        anchor: { left: caret.left, top: caret.top, bottom: caret.bottom },
-      },
-    });
-  }
-
-  function applyLink(ed: Editor, result: LinkDialogResult, opened: { request: LinkDialogRequest; range: { from: number; to: number } | null }) {
-    if (result.mode === "card") {
-      ed.chain().focus().insertContent({ type: "linkCard", attrs: { url: result.href } }).run();
-      return;
-    }
-    const link = { type: "link", attrs: { href: result.href } };
-    const { range, request } = opened;
-    if (range && result.text && result.text !== request.text) {
-      ed.chain().focus().insertContentAt(range, { type: "text", text: result.text, marks: [link] }).unsetMark("link").run();
-    } else if (range) {
-      ed.chain().focus().setTextSelection(range).setLink({ href: result.href }).run();
-    } else {
-      ed.chain().focus().insertContent({ type: "text", text: result.text || result.href, marks: [link] }).unsetMark("link").run();
-    }
+    setOpened(linkRequest(ed, mode, edit, { cards: true }));
   }
 
   // Open the file picker with a target width; "half" + multiple lets you pick 2 for a side-by-side row.
@@ -514,13 +484,7 @@ export function MarkdownEditor({
         return true;
       },
       handleClick: (view, pos, event) => {
-        const anchor = (event.target as HTMLElement | null)?.closest?.("a");
-        const range = anchor ? getMarkRange(view.state.doc.resolve(pos), view.state.schema.marks.link) : undefined;
-        if (!anchor || !range) {
-          setLinkActions(null);
-          return false;
-        }
-        setLinkActions({ href: anchor.getAttribute("href") ?? "", from: range.from, to: range.to, rect: anchor.getBoundingClientRect() });
+        setLinkActions(linkAt(view, pos, event));
         return false;
       },
       handleDrop: (view, event) => {
@@ -642,13 +606,13 @@ export function MarkdownEditor({
         }}
       />
       <LinkDialog
-        request={linkRequest?.request ?? null}
+        request={opened?.request ?? null}
         onClose={() => {
-          setLinkRequest(null);
+          setOpened(null);
           editor.chain().focus().run();
         }}
         onSubmit={(result) => {
-          if (linkRequest) applyLink(editor, result, linkRequest);
+          if (opened) applyLinkResult(editor, result, opened);
         }}
       />
       {linkActions && (
