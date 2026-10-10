@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import {
   createCta,
   deleteCta,
@@ -74,7 +74,7 @@ export default function CtaLibraryPage() {
   }
 
   if (!ready) return null;
-  if (!authenticated) return <LinksAuthGate title={tc("loginRequired")} />;
+  if (!authenticated) return <SignInEmptyState page reason="ctas" icon={MousePointerClick} />;
 
   return (
     <div className="container max-w-3xl space-y-6 py-10">

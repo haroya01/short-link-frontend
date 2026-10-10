@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, QrCode } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listCampaigns } from "@/lib/api";
@@ -10,7 +10,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { CampaignOnboarding } from "@/components/links/campaigns/onboarding";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignSummary } from "@/types";
 import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
 
@@ -49,11 +49,7 @@ export default function CampaignsPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("authTitle")}
-        description={t("authDesc")}
-        next="/campaigns"
-      />
+      <SignInEmptyState page reason="campaigns" icon={QrCode} />
     );
   }
 

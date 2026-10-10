@@ -23,7 +23,7 @@ type AuthContextValue = {
   ready: boolean;
   me: Me | null;
   isAdmin: boolean;
-  signInWithGoogle: () => void;
+  signInWithGoogle: (next?: string) => void;
   signOut: () => Promise<void>;
 };
 
@@ -115,13 +115,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     tryClaimPendingLinks();
   }, [meId, meRole]);
 
-  const signInWithGoogle = useCallback(() => {
+  const signInWithGoogle = useCallback((next?: string) => {
     // Return to where login started (blog, profile, …) instead of always landing on /dashboard.
     // Stash the current path unless we're on /login (which sets its own ?next=) or the callback.
     // A `.kurl.me` cookie (not sessionStorage) carries it through the OAuth round-trip: login often
     // starts on blog.kurl.me / {author}.kurl.me but the callback lands on the apex — a per-origin
     // sessionStorage stash is gone by then, so every blog login fell back to /dashboard.
-    if (!/\/(login|auth\/callback)(\/|$)/.test(window.location.pathname)) {
+    if (typeof next === "string") {
+      writeLoginNextCookie(next);
+    } else if (!/\/(login|auth\/callback)(\/|$)/.test(window.location.pathname)) {
       writeLoginNextCookie(window.location.href);
     }
     const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";

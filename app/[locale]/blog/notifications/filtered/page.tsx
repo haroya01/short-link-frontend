@@ -1,13 +1,13 @@
 "use client";
 
-import { ArrowLeft, ListFilter } from "lucide-react";
+import { ArrowLeft, Bell, ListFilter } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { blogHref, blogPath } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { blogCta } from "@/modules/blog/components/blog-cta";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
 import type { FilteredSender } from "@/modules/notifications/api/notification-policy";
@@ -26,14 +26,8 @@ export default function FilteredNotificationsPage() {
 
   if (ready && !authenticated) {
     return (
-      <main className="flex flex-col items-start gap-4 px-6 py-12">
-        <p className="text-slate-600 dark:text-slate-300">{t("loginRequired")}</p>
-        <a
-          href={`${blogHref("/login")}?next=${encodeURIComponent("/notifications/filtered")}`}
-          className={blogCta({ variant: "secondary" })}
-        >
-          {t("loginCta")}
-        </a>
+      <main>
+        <SignInEmptyState page reason="notifications" icon={Bell} />
       </main>
     );
   }

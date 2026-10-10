@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
-import { Check, CheckCircle2, Copy, ExternalLink, Pencil, Users } from "lucide-react";
+import { CalendarDays, Check, CheckCircle2, Copy, ExternalLink, Pencil, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import type { Attendee, EventAnalytics, MyEvent } from "@/modules/events/api/events";
@@ -63,11 +63,7 @@ export default function EventDetailPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("authTitle")}
-        description={t("authDesc")}
-        next={`/events/${idParam}`}
-      />
+      <SignInEmptyState page reason="events" icon={CalendarDays} />
     );
   }
 

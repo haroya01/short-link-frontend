@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowUpRight, ChevronRight } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { ArrowUpRight, ChevronRight, LayoutGrid } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
 import { Section } from "@/components/common/section";
 import { LogoutButton } from "@/components/common/logout-button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { appStoreUrl, type IosApp } from "@/lib/app-store";
 
 const TOOLS = [
@@ -20,13 +20,9 @@ const APPS = ["links", "blog"] as const satisfies readonly IosApp[];
 
 export default function MorePage() {
   const t = useTranslations("more");
-  const locale = useLocale();
-  const router = useRouter();
   const { authenticated, ready, me } = useAuth();
 
-  useEffect(() => {
-    if (ready && !authenticated) router.replace(`/${locale}/login?next=${encodeURIComponent("/more")}`);
-  }, [ready, authenticated, locale, router]);
+  if (ready && !authenticated) return <SignInEmptyState page reason="more" icon={LayoutGrid} />;
 
   if (!me) {
     return (

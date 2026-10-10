@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
@@ -86,7 +87,7 @@ export function NoteCard({
   const locale = useLocale();
   const ago = useCompactTime();
   const router = useRouter();
-  const { authenticated, me, signInWithGoogle } = useAuth();
+  const { authenticated, me } = useAuth();
   const [confirm, confirmDialog] = useConfirm();
   const { toast } = useToast();
   const mine = me?.id === note.author.id;
@@ -137,7 +138,7 @@ export function NoteCard({
 
   async function toggleBookmark() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("bookmark");
       return;
     }
     const next = !bookmarked;
@@ -153,7 +154,7 @@ export function NoteCard({
 
   async function toggleLike() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("like");
       return;
     }
     const next = !liked;
@@ -628,7 +629,7 @@ function RepostControl({
   onQuote: () => void;
 }) {
   const t = useTranslations("notes");
-  const { authenticated, signInWithGoogle } = useAuth();
+  const { authenticated } = useAuth();
   const { toast } = useToast();
   const shareable = isShareable(note.visibility);
   const [reposted, setReposted] = useState(note.repostedByMe === true);
@@ -671,7 +672,7 @@ function RepostControl({
     <div ref={root} className="relative">
       <button
         type="button"
-        onClick={() => (authenticated ? setOpen((v) => !v) : signInWithGoogle())}
+        onClick={() => (authenticated ? setOpen((v) => !v) : askToSignIn("repost"))}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-pressed={reposted}
@@ -777,10 +778,11 @@ function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }
 
   function quoteInPost() {
     setOpen(false);
-    const write = `/write/new?quote=${encodeURIComponent(url())}`;
-    window.location.assign(
-      authenticated ? blogHref(write) : `${blogHref("/login")}?next=${encodeURIComponent(write)}`,
-    );
+    if (!authenticated) {
+      askToSignIn("quote");
+      return;
+    }
+    window.location.assign(blogHref(`/write/new?quote=${encodeURIComponent(url())}`));
   }
 
   const item =

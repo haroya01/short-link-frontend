@@ -39,9 +39,6 @@ export default function BlogSettingsPage() {
   const { ready, authenticated, me } = useAuth();
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   const username = me?.username ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();

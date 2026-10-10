@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 
 /**
@@ -17,7 +18,7 @@ import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 export function ConnectButton({ postId, postTitle }: { postId: number; postTitle: string }) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
-  const { authenticated, signInWithGoogle } = useAuth();
+  const { authenticated } = useAuth();
   // Pop the icon only on a real click, matching the like/bookmark gate (never on mount).
   const [interacted, setInteracted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -25,7 +26,7 @@ export function ConnectButton({ postId, postTitle }: { postId: number; postTitle
   function onClick() {
     setInteracted(true);
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("collect");
       return;
     }
     setOpen(true);

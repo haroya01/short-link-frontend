@@ -1,5 +1,6 @@
 "use client";
 
+import { BarChart3 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import { useFormatter, useTranslations } from "next-intl";
@@ -11,7 +12,7 @@ import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { WeekLinkRow } from "./_components/week-link-row";
 
 // 하단 탭 '분석'은 어느 화면에서나 프리페치된다 — recharts 는 막대를 그릴 때만 받는다. 막대 칸은
@@ -41,7 +42,7 @@ export default function LinkAnalyticsPage() {
   });
 
   if (ready && !authenticated) {
-    return <LinksAuthGate title={t("loginTitle")} description={t("loginDesc")} next="/analytics" />;
+    return <SignInEmptyState page reason="stats" icon={BarChart3} />;
   }
 
   const data = overview.data;

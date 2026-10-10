@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { buttonVariants } from "@/components/ui/button";
 import { PromoActions, PromoHero, PromoSection } from "@/components/landing/promo";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
@@ -13,8 +14,6 @@ import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { cn, inert } from "@/lib/utils";
 
 const FIRST = SHOWCASE_PROFILES.find((p) => p.username === "haruka.dev") ?? SHOWCASE_PROFILES[0];
-const START_HREF = "/login?next=/profile/auto";
-
 /** The signed-out profile page: the shared feature-page grammar around the examples below. */
 export function ShowcaseLanding() {
   const t = useTranslations("showcase");
@@ -24,18 +23,18 @@ export function ShowcaseLanding() {
         title={t("ctaTitle")}
         lead={t("ctaSubhead")}
         action={
-          <Link href={START_HREF} className={buttonVariants({ variant: "accent", size: "xl" })}>
+          <SignInLink reason="profile" next="/profile/auto" className={buttonVariants({ variant: "accent", size: "xl" })}>
             {t("cta")}
             <ArrowRight aria-hidden className="h-4 w-4" />
-          </Link>
+          </SignInLink>
         }
       />
       <PromoSection title={t("title")} desc={t("subhead")}>
         <ProfileShowcase />
         <PromoActions>
-          <Link href={START_HREF} className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <SignInLink reason="profile" next="/profile/auto" className={buttonVariants({ variant: "outline", size: "lg" })}>
             {t("cta")}
-          </Link>
+          </SignInLink>
         </PromoActions>
       </PromoSection>
     </div>

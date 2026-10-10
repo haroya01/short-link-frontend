@@ -121,7 +121,7 @@ export function NoteThreadView({
               }}
             />
           ) : (
-            <NoteSignInRow label={t("loginToReply")} placeholder={t("replyPlaceholder")} />
+            <NoteSignInRow reason="reply" placeholder={t("replyPlaceholder")} />
           )}
         </div>
         {thread.replies.length === 0 ? (

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { CornerDownRight, Globe, Link as LinkIcon, Loader2, Lock } from "lucide-react";
+import { CornerDownRight, Globe, Layers, Link as LinkIcon, Loader2, Lock } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { listMyCollections, type CollectionSummary } from "@/modules/blog/api/collections";
@@ -37,13 +38,7 @@ export function MyCollectionsList() {
   }, [ready, authenticated]);
 
   if (!ready) return null;
-  if (!authenticated) {
-    return (
-      <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">
-        {t("myCollectionsEmptyBody")}
-      </p>
-    );
-  }
+  if (!authenticated) return <SignInEmptyState reason="collections" icon={Layers} className="py-16" />;
 
   if (state === "loading") {
     return (

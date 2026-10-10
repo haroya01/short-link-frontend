@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Check, Mail } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Check, Mail, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogHref } from "@/lib/host";
 import { SwitchLink } from "@/components/common/switch-link";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/modules/profile/components/mobile-preview-sheet";
 import { ProfileSection, type ProfileDraft } from "@/modules/profile/components/section";
@@ -16,8 +16,6 @@ import { ProfilePublicUrlBanner } from "@/modules/profile/components/public-url-
 
 export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");
-  const router = useRouter();
-  const locale = useLocale();
   const { authenticated, ready, me } = useAuth();
   const [draft, setDraft] = useState<ProfileDraft>({
     username: "",
@@ -40,16 +38,12 @@ export default function ProfileEditPage() {
   const completedSteps = Object.values(steps).filter(Boolean).length;
   const isOnboarding = ready && authenticated && completedSteps < 3;
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.replace(`/${locale}/login`);
-    }
-  }, [ready, authenticated, locale, router]);
-
   // Stable callback so the editor's effect dependency doesn't churn on every render.
   const handleDraft = useCallback((next: ProfileDraft) => setDraft(next), []);
 
-  if (!ready || !authenticated) {
+  if (ready && !authenticated) return <SignInEmptyState page reason="profile" icon={UserRound} />;
+
+  if (!ready) {
     return (
       <div aria-busy className="container max-w-5xl space-y-6 py-12">
         <Skeleton className="h-9 w-40" />

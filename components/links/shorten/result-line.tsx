@@ -6,6 +6,7 @@ import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
 import { QrButton } from "@/components/links/qr/button";
 import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { truncateMiddle } from "@/lib/utils";
 import type { CreateLinkResponse } from "@/types";
 
@@ -94,12 +95,13 @@ export function ResultLine({
         {!authenticated && (
           <span className="inline-flex flex-wrap items-center gap-x-1.5">
             {t("anonymousExpiryInline")}
-            <Link
-              href="/login"
+            <SignInLink
+              reason="stats"
+              next="/dashboard"
               className="focus-ring rounded-sm font-medium text-accent-700 underline decoration-accent-300 decoration-1 underline-offset-[3px] transition-colors hover:text-accent-800 dark:text-accent-400 dark:decoration-accent-700 dark:hover:text-accent-300"
             >
               {t("anonymousExpirySignup")}
-            </Link>
+            </SignInLink>
           </span>
         )}
       </div>

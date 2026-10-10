@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import {
   createComment,
   likeComment,
@@ -63,7 +64,7 @@ export function PostComments({
   const tCommon = useTranslations("common");
   const errorMessage = useApiErrorMessage();
   const locale = useLocale();
-  const { authenticated, ready, me, signInWithGoogle } = useAuth();
+  const { authenticated, ready, me } = useAuth();
 
   const [comments, setComments] = useState<CommentView[]>([]);
   const blocked = useBlockedNames();
@@ -183,7 +184,7 @@ export function PostComments({
   // 낙관 토글: UI 를 먼저 뒤집고 서버의 authoritative count 로 정착, 실패 시 원복.
   async function toggleLike(c: CommentView) {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("like");
       return;
     }
     const wasLiked = likedIds.has(c.id);
@@ -220,7 +221,7 @@ export function PostComments({
 
   async function submitTop() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("comment");
       return;
     }
     if (!body.trim() || busy) return;
@@ -241,7 +242,7 @@ export function PostComments({
 
   async function submitReply(parentId: number) {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("reply");
       return;
     }
     if (!replyBody.trim() || busy) return;
@@ -338,9 +339,9 @@ export function PostComments({
       <>
 
       {/* There's ALWAYS a way to comment: a resting one-line placeholder that, on tap, mounts the real
-          composer (and lazy-loads its Tiptap chunk) already focused. Signed-out (or pre-auth) submit
-          kicks off login instead of hiding the field. Once mounted the composer stays (collapsing to a
-          quiet one-line at rest via `collapsible`) so the deferral is a one-time first-tap cost only. */}
+          composer (and lazy-loads its Tiptap chunk) already focused. Signed-out, the tap asks to sign in
+          instead. Once mounted the composer stays (collapsing to a quiet one-line at rest via
+          `collapsible`) so the deferral is a one-time first-tap cost only. */}
       <div className="mt-4">
         {composerActive ? (
           <CommentComposer
@@ -352,7 +353,6 @@ export function PostComments({
             cancelLabel={t("cancel")}
             submitting={busy}
             canSubmit={!authenticated || !!body.trim()}
-            footer={ready && !authenticated ? t("loginPrompt") : ""}
             rows={2}
             collapsible
             autoFocus
@@ -361,14 +361,13 @@ export function PostComments({
           <button
             type="button"
             data-testid="comment-composer-placeholder"
-            onClick={() => setComposerActive(true)}
+            onClick={() => (ready && !authenticated ? askToSignIn("comment") : setComposerActive(true))}
             className="flex w-full items-center gap-3 rounded-full border border-slate-200 px-3 py-2.5 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {ready && authenticated && me && (
               <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} size="sm" shrink={false} />
             )}
-            {/* 비로그인엔 탭의 결과(로그인 문)를 미리 말해준다 — 무예고 로그인 문은 놀람이다. */}
-            <span className="min-w-0 truncate">{ready && !authenticated ? t("loginPrompt") : t("placeholder")}</span>
+            <span className="min-w-0 truncate">{t("placeholder")}</span>
           </button>
         )}
         {error && (

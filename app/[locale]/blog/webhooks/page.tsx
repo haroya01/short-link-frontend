@@ -29,9 +29,6 @@ export default function BlogWebhooksPage() {
   }, [ready, authenticated]);
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   function refresh() {
     listBlogWebhooks()

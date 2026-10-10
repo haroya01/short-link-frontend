@@ -19,6 +19,7 @@ export function BookmarkButton({ postId }: { postId: number }) {
   const { on: saved, toggle } = useOptimisticToggle({
     depKey: postId,
     syncKey: `bookmark:${postId}`,
+    signInReason: "bookmark",
     load: () => getBookmarkStatus(postId).then((s) => ({ on: s.bookmarked })),
     mutate: (next) =>
       (next ? addBookmark(postId) : removeBookmark(postId)).then((s) => ({ on: s.bookmarked })),

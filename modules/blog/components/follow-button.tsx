@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { Bell, BellRing, Check, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { ApiError } from "@/lib/api/client";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -78,7 +79,7 @@ export function FollowButton({
   sourcePostId?: number;
 }) {
   const t = useTranslations("publicPost");
-  const { authenticated, ready, me, signInWithGoogle } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const { toast } = useToast();
   // following / count / countHidden live in a process-wide store keyed by username, so two buttons for
   // the same author (rail + header on a post) move in lockstep this session. Seeded from the initial
@@ -168,7 +169,7 @@ export function FollowButton({
 
   async function toggle() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("follow");
       return;
     }
     if (busy) return;

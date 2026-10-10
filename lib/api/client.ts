@@ -16,6 +16,7 @@ export const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 /** Demo/mock mode (NEXT_PUBLIC_USE_MOCKS=1) — lets the app render + interact without a backend. */
 const MOCKS_ON = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+const MOCK_SIGNED_OUT_KEY = "kurl:mock-signed-out";
 // 링크 목 응답(데모 통계 포함)은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 와 픽스처가
 // 번들에서 빠진다. 정적 import 로 되돌리면 모든 라우트에 목 데이터가 다시 실린다.
 const linksMocks: typeof import("@/lib/api/_links-mocks") | null =
@@ -75,6 +76,7 @@ export async function bootstrapSession(): Promise<boolean> {
   // mock viewer — making the signed-in UX (follow, comments, following feed, header logout)
   // exercisable without a backend.
   if (MOCKS_ON) {
+    if (readStorageString(MOCK_SIGNED_OUT_KEY) === "1") return false;
     if (!readToken()) setToken("mock-session-token");
     return true;
   }

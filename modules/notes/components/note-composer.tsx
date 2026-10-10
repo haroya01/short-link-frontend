@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChartBar, Check, Clock, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn, type SignInReason } from "@/components/auth/login-prompt";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
@@ -695,14 +696,14 @@ export function NoteComposer({
   );
 }
 
-export function NoteSignInRow({ label, placeholder }: { label: string; placeholder: string }) {
+export function NoteSignInRow({ reason, placeholder }: { reason: SignInReason; placeholder: string }) {
   const tNav = useTranslations("nav");
-  const { signInWithGoogle } = useAuth();
+  const tPrompt = useTranslations("loginPrompt");
   return (
     <button
       type="button"
-      onClick={signInWithGoogle}
-      aria-label={label}
+      onClick={() => askToSignIn(reason)}
+      aria-label={tPrompt(reason)}
       className="group flex w-full items-center gap-3 rounded-surface py-3 text-left focus-ring"
     >
       <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />

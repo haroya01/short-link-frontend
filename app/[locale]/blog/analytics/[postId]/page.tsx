@@ -56,9 +56,6 @@ export default function PostAnalyticsPage() {
   const nextPost = siblings && idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">

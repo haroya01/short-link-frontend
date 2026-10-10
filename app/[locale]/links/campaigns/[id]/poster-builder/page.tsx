@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, FileUp, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, FileUp, QrCode, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -11,7 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignBatch, CampaignDetail } from "@/types";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -195,7 +195,7 @@ export default function PosterBuilderPage() {
   const canCompose = !!pdfBytes && batchCount > 0 && !composing;
 
   if (ready && !authenticated) {
-    return <LinksAuthGate title={t("loginRequired")} />;
+    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
   }
 
   return (
