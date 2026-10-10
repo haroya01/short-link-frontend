@@ -59,7 +59,7 @@ export function FollowSuggestions() {
                   <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">
                     {pick.displayName || pick.username}
                   </span>
-                  <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">
+                  <span className="line-clamp-2 text-[12px] text-slate-500 dark:text-slate-400">
                     {pick.reason === "FRIENDS" ? t("suggestionsFriends", { count: pick.mutuals }) : t("suggestionsPopular")}
                   </span>
                 </span>

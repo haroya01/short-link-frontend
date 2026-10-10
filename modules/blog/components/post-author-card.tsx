@@ -1,5 +1,7 @@
+import { cn } from "@/lib/utils";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { END_SECTION } from "@/modules/blog/components/end-section";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { authorHref } from "@/modules/blog/lib/author-href";
 
@@ -16,10 +18,7 @@ export function PostAuthorCard({
 }) {
   const name = author.displayName?.trim();
   return (
-    <section
-      data-testid="post-author-card"
-      className={`border-t border-slate-100 pt-8 dark:border-slate-800 ${className ?? ""}`}
-    >
+    <section data-testid="post-author-card" className={cn(END_SECTION, className)}>
       <div className="flex items-start gap-4">
         <a
           href={authorHref(author.username, locale)}

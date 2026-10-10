@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, Users } from "lucide-react";
+import { EyeOff, Loader2, Users } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -25,7 +25,7 @@ import { useViewerList } from "@/modules/blog/lib/use-viewer-list";
 import { onFollowChanged } from "@/modules/blog/lib/consequence-events";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { blogCta } from "@/modules/blog/components/blog-cta";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 
@@ -284,8 +284,8 @@ export function FollowingFeed({
   if (items.length === 0 && seriesNotes.length === 0) {
     return (
       <div className="mt-4">
-        <FeedEmpty
-          mark
+        <BlogEmpty
+          icon={Users}
           title={t("emptyFollowingTitle")}
           body={t("followingEmpty")}
           action={
@@ -316,7 +316,7 @@ export function FollowingFeed({
               <SuggestedCurators locale={locale} />
             </section>
           )}
-        </FeedEmpty>
+        </BlogEmpty>
       </div>
     );
   }
@@ -333,8 +333,8 @@ export function FollowingFeed({
   if (visible.length === 0 && seriesNotes.length === 0) {
     return (
       <div className="mt-4">
-        <FeedEmpty
-          mark
+        <BlogEmpty
+          icon={EyeOff}
           title={t("tagAllHiddenTitle")}
           body={t("tagAllHiddenBody", { count: hiddenCount })}
           action={

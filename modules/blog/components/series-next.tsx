@@ -1,9 +1,10 @@
-import { ArrowRight, Layers } from "lucide-react";
+import { ArrowRight, ChevronRight, Layers } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { seriesItemHref, seriesItemKey, type SeriesNavView } from "@/modules/blog/lib/series-items";
 import { cn } from "@/lib/utils";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { END_SECTION } from "@/modules/blog/components/end-section";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
 
@@ -28,7 +29,7 @@ export async function SeriesNext({
   const tf = await getTranslations("publicFeed");
   const next = series.next;
   return (
-    <aside className={cn("mt-16 border-t border-slate-100 pt-8 dark:border-slate-800", className)}>
+    <aside className={cn(END_SECTION, className)}>
       {next && (
         <BlogLink
           href={seriesItemHref(username, next, locale)}
@@ -61,16 +62,28 @@ export async function SeriesNext({
           </span>
         </BlogLink>
       )}
-      <BlogLink
-        href={authorHref(username, locale, `series/${series.slug}`)}
-        className={`focus-ring inline-block rounded text-[13px] text-slate-500 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-400 dark:hover:text-accent-400 ${
-          next ? "mt-3" : ""
-        }`}
-        data-bhv="series"
-        data-bhv-id={series.slug}
-      >
-        {t("seriesViewAll", { total: series.total })}
-      </BlogLink>
+      {next ? (
+        <BlogLink
+          href={authorHref(username, locale, `series/${series.slug}`)}
+          className="focus-ring mt-3 inline-block rounded text-[13px] text-slate-500 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-400 dark:hover:text-accent-400"
+          data-bhv="series"
+          data-bhv-id={series.slug}
+        >
+          {t("seriesViewAll", { total: series.total })}
+        </BlogLink>
+      ) : (
+        <BlogLink
+          href={authorHref(username, locale, `series/${series.slug}`)}
+          className="focus-ring group flex min-h-11 items-center gap-3 rounded-surface border border-slate-200 px-4 py-3 text-[14px] font-medium text-slate-700 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-200 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
+          data-bhv="series"
+          data-bhv-id={series.slug}
+          data-series-all=""
+        >
+          <Layers aria-hidden className="h-4 w-4 shrink-0 text-slate-400 transition-colors group-hover:text-accent-600 dark:text-slate-500" />
+          <span className="min-w-0 flex-1 truncate">{t("seriesViewAll", { total: series.total })}</span>
+          <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-accent-600 dark:text-slate-600" />
+        </BlogLink>
+      )}
     </aside>
   );
 }

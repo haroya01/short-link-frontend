@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { EmptyState } from "@/components/common/empty-state";
+import { List, MessageSquareText } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -102,7 +103,12 @@ export function NoteListsPanel({ selectedId }: { selectedId: number | null }) {
           onDeleted={() => setLists((current) => current?.filter((l) => l.id !== selected.id) ?? null)}
         />
       ) : (
-        lists && <EmptyState title={lists.length ? t("listPick") : t("listEmpty")} className="mt-6" />
+        lists &&
+        (lists.length ? (
+          <BlogEmpty icon={List} title={t("listPick")} />
+        ) : (
+          <BlogEmpty icon={List} title={t("listEmpty")} body={t("listEmptyBody")} />
+        ))
       )}
     </div>
   );
@@ -216,7 +222,7 @@ function ListDetail({
       <NoteList
         load={load}
         filterContext="home"
-        empty={<EmptyState title={t("listNoNotes")} className="mt-6" />}
+        empty={<BlogEmpty icon={MessageSquareText} title={t("listNoNotes")} />}
       />
       {confirmDialog}
     </section>

@@ -4,6 +4,8 @@ import { ArrowLeft, Bell, ListFilter } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
@@ -68,11 +70,15 @@ export default function FilteredNotificationsPage() {
         ) : isError ? (
           <ErrorState onRetry={() => refetch()} />
         ) : !data || data.length === 0 ? (
-          <div className="flex flex-col items-center py-24 text-center">
-            <ListFilter aria-hidden className="h-6 w-6 text-slate-300 dark:text-slate-600" />
-            <p className="mt-3 text-sm font-medium text-slate-600 dark:text-slate-300">{t("filteredEmpty")}</p>
-            <p className="mt-1 max-w-sm text-[13px] text-slate-500 dark:text-slate-400">{t("filteredEmptyHint")}</p>
-          </div>
+          <BlogEmpty
+            icon={ListFilter}
+            title={t("filteredEmpty")}
+            action={
+              <BlogLink href={blogPath("/settings")} className={blogCta({ variant: "secondary" })}>
+                {t("filteredSettings")}
+              </BlogLink>
+            }
+          />
         ) : (
           <>
             <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("filteredHint")}</p>

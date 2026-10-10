@@ -7,6 +7,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 export function QuotedNoteCard({
@@ -33,11 +34,14 @@ export function QuotedNoteCard({
       {note.contentWarning ? (
         <span className="mt-1 flex items-center gap-1.5 text-[15px] font-medium leading-[1.45] text-slate-800 dark:text-slate-200">
           <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
-          <span className="line-clamp-2 break-words">{note.contentWarning}</span>
+          <span lang={contentLang(note.contentWarning)} className="line-clamp-2 break-words">
+            {note.contentWarning}
+          </span>
         </span>
       ) : (
         note.body && (
           <span
+            lang={contentLang(note.body)}
             className={`mt-1 whitespace-pre-line break-words text-[15px] leading-[1.45] text-slate-800 dark:text-slate-200${full ? "" : " line-clamp-4"}`}
           >
             {note.body}

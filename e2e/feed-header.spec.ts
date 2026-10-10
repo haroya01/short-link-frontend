@@ -1,4 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
+import ko from "../messages/ko.json";
+import ja from "../messages/ja.json";
+import en from "../messages/en.json";
 
 const BLOG = "/ko/blog";
 const NOTES = "/ko/blog/notes";
@@ -155,3 +158,42 @@ test.describe("desktop", () => {
     await expect(activeTab(page, "blog")).toHaveText("최신");
   });
 });
+
+const CATALOGS = { ko, ja, en };
+
+for (const width of [360, 390]) {
+  test.describe(`phone ${width}`, () => {
+    test.use({ viewport: { width, height: 844 } });
+
+    for (const [lang, catalog] of Object.entries(CATALOGS)) {
+      test(`${lang}: the switcher stays one row whatever source is open, with 더 보기 as an icon`, async ({ page }) => {
+        const { feedMore, feedFederated, feedDirect } = catalog.notes;
+        for (const [path, surface, source] of [
+          [`/${lang}/blog`, "blog", null],
+          [`/${lang}/blog/notes?feed=federated`, "notes", feedFederated],
+          [`/${lang}/blog/notes?feed=direct`, "notes", feedDirect],
+          [`/${lang}/blog/notes?feed=following`, "notes", null],
+        ] as const) {
+          await page.goto(path);
+          await settled(page, surface);
+          const more = switcher(page, surface).locator("[data-feed-more] > button");
+          await expect(more).toHaveAccessibleName(source ? `${feedMore}: ${source}` : feedMore);
+          await expect(more).toHaveText("", { useInnerText: true });
+          const header = (await switcher(page, surface).boundingBox())!;
+          const row = (await switcher(page, surface).getByRole("navigation").boundingBox())!;
+          const button = (await more.boundingBox())!;
+          expect(header.height, `${path}: one row`).toBeLessThan(60);
+          expect(Math.abs(button.y + button.height / 2 - (row.y + row.height / 2)), `${path}: 더 보기 on the tab row`).toBeLessThan(10);
+        }
+      });
+    }
+
+    test("팔로잉's repost setting lives in 더 보기", async ({ page }) => {
+      await page.goto("/ko/blog/notes?feed=following");
+      await settled(page, "notes");
+      await expect(switcher(page, "notes").getByRole("switch")).toHaveCount(0);
+      await switcher(page, "notes").getByRole("button", { name: "더 보기" }).click();
+      await expect(page.getByRole("menuitemcheckbox", { name: "리포스트 보기" })).toHaveAttribute("aria-checked", "true");
+    });
+  });
+}
