@@ -416,20 +416,20 @@ export default async function PublicPostPage({
         <PostHighlights postId={post.id} />
 
         {post.tags.length > 0 && (
-          <div className="mt-10" data-testid="post-tags">
+          <div className="mt-8" data-testid="post-tags">
             <TagChips tags={post.tags} />
           </div>
         )}
 
         {editedLabel && (
-          <p className="mt-10 text-[12px] text-slate-500 dark:text-slate-400">
+          <p className="mt-4 text-[12px] text-slate-500 dark:text-slate-400">
             {t("editedOn", { date: editedLabel })}
           </p>
         )}
 
         {/* All post actions in one row after the body — like / bookmark / connect / quote / share. 신고 lives
             in the header's ⋯ (PostReaderMenu), as on iOS. Phones use the post dock and the ⋯ instead. */}
-        <footer className="mt-10 hidden items-center gap-3 sm:flex" data-testid="post-actions">
+        <footer className="mt-8 hidden items-center gap-3 sm:flex" data-testid="post-actions">
           <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
           <BookmarkButton postId={post.id} />
           <ConnectButton postId={post.id} postTitle={post.title} />
@@ -448,7 +448,7 @@ export default async function PublicPostPage({
           <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
         </Suspense>
 
-        <PostAuthorCard author={author} locale={locale} postId={post.id} className="mt-12 xl:hidden" />
+        <PostAuthorCard author={author} locale={locale} postId={post.id} className="xl:hidden" />
 
         <Suspense fallback={null}>
           <RelatedPosts
