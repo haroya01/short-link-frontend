@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
@@ -14,6 +14,7 @@ import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor"
 import { useTagSuggestions } from "@/modules/blog/components/editor/use-tag-suggestions";
 import { CanvasTags } from "@/modules/blog/components/editor/canvas-tags";
 import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
+import { EditConflictDialog } from "@/modules/blog/components/editor/edit-conflict-dialog";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { extractExternalLinks } from "@/modules/blog/lib/post-links";
@@ -34,6 +35,12 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
   const coverSuggestion = useMemo(() => firstImageUrl(ed.markdown), [ed.markdown]);
   // Followed + popular tags, shared by the canvas tags line and the publish dialog (one fetch).
   const tagSuggestions = useTagSuggestions();
+  const toldReloads = useRef(0);
+  useEffect(() => {
+    if (ed.remoteReloads <= toldReloads.current) return;
+    toldReloads.current = ed.remoteReloads;
+    toast(t("editConflictReloaded"));
+  }, [ed.remoteReloads, toast, t]);
 
   if (!ready) return null;
   if (!authenticated) {
@@ -102,6 +109,31 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         onExport={exportMarkdown}
         onDelete={ed.remove}
       />
+
+      {ed.kept && (
+        <div
+          data-testid="editor-kept"
+          className="mt-3 flex items-center justify-between gap-3 rounded-surface border border-slate-200 px-3 py-2 text-[13px] text-slate-600 dark:border-slate-800 dark:text-slate-300"
+        >
+          <span>{t("keptNotice")}</span>
+          <span className="flex shrink-0 items-center gap-3">
+            <button
+              type="button"
+              onClick={ed.restoreKept}
+              className="focus-ring rounded font-medium text-accent-700 hover:underline dark:text-accent-300"
+            >
+              {t("keptRestore")}
+            </button>
+            <button
+              type="button"
+              onClick={ed.discardKept}
+              className="focus-ring rounded text-slate-500 hover:underline dark:text-slate-400"
+            >
+              {t("keptDiscard")}
+            </button>
+          </span>
+        </div>
+      )}
 
       <EditorTitle
         value={ed.title}
@@ -186,6 +218,13 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         }}
       />
       {ed.confirmDialog}
+      <EditConflictDialog
+        open={ed.conflict}
+        onLoadLatest={ed.loadLatest}
+        onOverwrite={async () => {
+          if (await ed.overwriteMine()) toast(t("editConflictOverwritten"), "success");
+        }}
+      />
     </main>
   );
 }
