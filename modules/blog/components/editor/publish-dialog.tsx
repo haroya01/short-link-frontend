@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, X } from "lucide-react";
+import { CalendarClock, Check, ChevronDown, ImagePlus, Loader2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { POST_IMAGE_TYPES, postImageErrorMessageKey } from "@/modules/blog/api/post-images";
@@ -52,7 +52,6 @@ export function PublishDialog({
   tagSuggestions,
   seriesId,
   onSeriesChange,
-  bodyLinks,
   previewAction,
   error,
   saving,
@@ -95,8 +94,6 @@ export function PublishDialog({
   tagSuggestions?: string[];
   seriesId: number | null;
   onSeriesChange: (v: number | null) => void;
-  /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
-  bodyLinks: string[];
   /** "미리보기 링크 복사" affordance, rendered in the footer for a not-yet-public post (null otherwise). */
   previewAction?: React.ReactNode;
   /** The editor's current error (failed save / publish), surfaced in the footer so a failed action
@@ -109,9 +106,9 @@ export function PublishDialog({
    *  A permissive void return is treated as "not a failure" for back-compat. */
   onSave: () => Promise<boolean | void> | boolean | void;
   /** Resolves true once the status change succeeds — the dialog closes only then. */
-  onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  onChangeStatus: (a: StatusAction) => Promise<boolean>;
   /** Resolves true once the post is parked for a future publish — the dialog closes only then. */
-  onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  onSchedule: (iso: string) => Promise<boolean>;
   onCancelSchedule: () => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
@@ -143,10 +140,6 @@ export function PublishDialog({
   // Teachable click: instead of a silently-disabled Publish, clicking with no topics scrolls the tag
   // field into view and flags it. Set on a failed publish attempt, cleared once a tag is added.
   const [tagNudge, setTagNudge] = useState(false);
-  // Which in-post links to auto-shorten through kurl on publish — all on by default; the author can
-  // opt any out (kept as the original URL). Seeded when the dialog opens (body isn't edited while it's
-  // open, so the detected set is stable for the session).
-  const [shortenSet, setShortenSet] = useState<Set<string>>(new Set());
 
   // A public post needs at least one topic (tag) — the reader's whole discovery surface is
   // tag-driven — so tags gate the button (disabled) and the tag field nudges. A missing title does
@@ -163,18 +156,6 @@ export function PublishDialog({
   // aria-modal, so keyboard focus must not escape into the editor beneath the backdrop.
   useFocusTrap(panelRef, { active: open, onEscape: onClose });
 
-  useEffect(() => {
-    if (open) setShortenSet(new Set(bodyLinks));
-  }, [open, bodyLinks]);
-
-  const enabledLinks = bodyLinks.filter((l) => shortenSet.has(l));
-  const toggleLink = (url: string) =>
-    setShortenSet((prev) => {
-      const next = new Set(prev);
-      if (next.has(url)) next.delete(url);
-      else next.add(url);
-      return next;
-    });
 
   // Prefill an empty 요약 with the body's opening line when the dialog opens, so the author edits a
   // draft excerpt instead of facing a blank box. Once per open (the ref resets on close); never
@@ -229,9 +210,6 @@ export function PublishDialog({
     onCoverChange(null);
   }
 
-  // 본문 링크 단축은 공개로 나가는 발행에서만 실제로 돈다 — 그때만 접힌 줄에 고지한다.
-  const goingPublic = status === "DRAFT" || status === "UNPUBLISHED";
-  const showLinkNote = goingPublic && enabledLinks.length > 0;
 
   // Card preview mirrors the real FeedCard: eyebrow = first DISPLAYABLE tag, date pinned to Seoul
   // (the hydration rule for date formatting) — the meta line is display-only realism.
@@ -438,12 +416,6 @@ export function PublishDialog({
                 {slug}
               </span>
             </button>
-            {/* 접혀 있어도 링크 재작성은 무언의 변경이면 안 된다 — 한 줄로 알리고, 펼치면 끌 수 있다. */}
-            {!showAdvanced && showLinkNote && (
-              <p className="px-1 pb-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                {t("linkShortenNote", { count: enabledLinks.length })}
-              </p>
-            )}
 
             {showAdvanced && (
               <div className="space-y-5 px-1 pb-1.5 pt-2">
@@ -521,49 +493,6 @@ export function PublishDialog({
                   </Field>
                 )}
 
-                {/* 본문 링크 — 발행 시 kurl 단축링크로 변환해 클릭 추적. 링크별로 끌 수 있음. */}
-                {bodyLinks.length > 0 && (
-                  <Field label={t("bodyLinks")} hint={t("bodyLinksHint")}>
-                    <ul className="space-y-1 rounded-lg border border-slate-200 p-1.5 dark:border-slate-700">
-                      {bodyLinks.map((url) => {
-                        const on = shortenSet.has(url);
-                        let host = url;
-                        try {
-                          host = new URL(url).host.replace(/^www\./, "");
-                        } catch {
-                          /* keep raw */
-                        }
-                        return (
-                          <li key={url}>
-                            <button
-                              type="button"
-                              onClick={() => toggleLink(url)}
-                              aria-pressed={on}
-                              className="focus-ring flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                            >
-                              <span
-                                className={`grid h-4 w-4 shrink-0 place-items-center rounded border transition-colors ${
-                                  on
-                                    ? "border-accent-600 bg-accent-700 text-white dark:border-accent-500 dark:bg-accent-500"
-                                    : "border-slate-300 dark:border-slate-600"
-                                }`}
-                              >
-                                {on && <Check className="h-3 w-3" />}
-                              </span>
-                              <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                              <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
-                                {host}
-                                <span className="text-slate-500 dark:text-slate-400">
-                                  {url.slice(url.indexOf(host) + host.length)}
-                                </span>
-                              </span>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </Field>
-                )}
               </div>
             )}
           </div>
@@ -628,8 +557,8 @@ export function PublishDialog({
                 if ((await onSave()) === false) return;
                 const ok =
                   showSchedule && scheduleAt
-                    ? await onSchedule(scheduleAt, { shortenLinks: enabledLinks })
-                    : await onChangeStatus("publish", { shortenLinks: enabledLinks });
+                    ? await onSchedule(scheduleAt)
+                    : await onChangeStatus("publish");
                 if (ok) onClose();
               }}
               onSaveChanges={async () => {
@@ -658,7 +587,7 @@ export function PublishDialog({
                   return;
                 }
                 if ((await onSave()) === false) return;
-                await onChangeStatus("republish", { shortenLinks: enabledLinks });
+                await onChangeStatus("republish");
               }}
               onCancelSchedule={async () => {
                 const ok = await confirm({

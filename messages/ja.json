@@ -391,9 +391,6 @@
     "seriesNewPlaceholder": "新しいシリーズ名",
     "publishSettings": "公開設定",
     "postSettings": "記事設定",
-    "bodyLinks": "本文のリンク",
-    "bodyLinksHint": "公開時にkurlリンクへ短縮され、クリックが計測されます。オフにすると元のURLのままになります。",
-    "linkShortenNote": "公開時に本文のリンク{count}件がkurlリンクに短縮されます",
     "close": "閉じる",
     "previewCopyLink": "プレビューリンクをコピー",
     "previewCopiedShort": "コピー済み",
@@ -591,7 +588,26 @@
     "takenDownTerms": "利用規約を見る",
     "takenDownBlocked": "運営ポリシーにより非公開にされたため、再公開できません",
     "accountSuspendedPublic": "アカウントの一時停止中は、記事を公開したり公開中の記事を編集したりできません。下書きは引き続き書けます。",
-    "accountBannedPublic": "利用が制限されたアカウントのため、記事を公開したり公開中の記事を編集したりできません。"
+    "accountBannedPublic": "利用が制限されたアカウントのため、記事を公開したり公開中の記事を編集したりできません。",
+    "linkSheet": {
+      "title": "リンクを挿入",
+      "editTitle": "リンクを編集",
+      "kind": "挿入の形式",
+      "asLink": "リンク",
+      "asCard": "カード",
+      "asVideo": "動画",
+      "textLabel": "表示テキスト",
+      "textPlaceholder": "空欄ならURLをそのまま表示します",
+      "addressLabel": "URL",
+      "fromClipboard": "クリップボードから貼り付けました",
+      "shorten": "kurlの短縮URLにする",
+      "shortenFailed": "短縮URLを作成できませんでした",
+      "insert": "挿入",
+      "cancel": "キャンセル",
+      "actions": "リンク",
+      "open": "開く",
+      "edit": "編集"
+    }
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",

@@ -391,9 +391,6 @@
     "seriesNewPlaceholder": "New series name",
     "publishSettings": "Publish settings",
     "postSettings": "Post settings",
-    "bodyLinks": "In-post links",
-    "bodyLinksHint": "Shortened to kurl links on publish so clicks are tracked. Turn one off to keep its original URL.",
-    "linkShortenNote": "{count, plural, one {# link in the post will be shortened to a kurl link on publish} other {# links in the post will be shortened to kurl links on publish}}",
     "close": "Close",
     "previewCopyLink": "Copy preview link",
     "previewCopiedShort": "Copied",
@@ -591,7 +588,26 @@
     "takenDownTerms": "Read the Terms",
     "takenDownBlocked": "Taken down under our content policy, so it can't be made public again",
     "accountSuspendedPublic": "While your account is suspended, you can't make posts public or edit public posts. You can keep writing drafts.",
-    "accountBannedPublic": "Your account is restricted, so you can't make posts public or edit public posts."
+    "accountBannedPublic": "Your account is restricted, so you can't make posts public or edit public posts.",
+    "linkSheet": {
+      "title": "Insert link",
+      "editTitle": "Edit link",
+      "kind": "Insert as",
+      "asLink": "Link",
+      "asCard": "Card",
+      "asVideo": "Video",
+      "textLabel": "Display text",
+      "textPlaceholder": "Leave empty to show the address",
+      "addressLabel": "Address",
+      "fromClipboard": "From your clipboard",
+      "shorten": "Use a kurl short link",
+      "shortenFailed": "Couldn't make a short link",
+      "insert": "Insert",
+      "cancel": "Cancel",
+      "actions": "Link",
+      "open": "Open",
+      "edit": "Edit"
+    }
   },
   "savedLibrary": {
     "private": "Only you can see this.",
