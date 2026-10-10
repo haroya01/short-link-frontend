@@ -192,6 +192,7 @@ test("selecting text → Note saves a memo and paints the mark as a thread carri
   // The memo composer is a dialog with the same WYSIWYG input as comments (no raw-markdown textarea).
   const sheet = page.getByRole("dialog");
   await expect(sheet).toBeVisible();
+  await expect(sheet.locator("svg.lucide-globe")).toHaveCount(0);
   await sheet.locator(".tiptap-comment").click();
   await page.keyboard.type("worth remembering");
   await sheet.getByRole("button", { name: "Save", exact: true }).click();
@@ -214,6 +215,7 @@ test("clicking a painted highlight opens a card at the sentence, and the convers
   const card = page.getByTestId("highlight-card");
   await expect(card).toBeVisible({ timeout: 10_000 });
   await expect(card).toContainText("You highlighted this");
+  await expect(card.locator("svg.lucide-globe")).toHaveCount(0);
   const markBox = (await mark.boundingBox())!;
   const cardBox = (await card.boundingBox())!;
   expect(

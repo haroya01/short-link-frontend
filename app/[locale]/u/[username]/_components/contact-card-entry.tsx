@@ -250,7 +250,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                   </Row>
                 )}
                 {card.website && (
-                  <Row icon={<Globe />}>
+                  <Row icon={<LinkGlyph />}>
                     <a
                       href={card.website}
                       target="_blank"
@@ -501,7 +501,7 @@ function Row({ icon, children }: { icon: React.ReactNode; children: React.ReactN
   );
 }
 
-function Globe() {
+function LinkGlyph() {
   return (
     <svg
       width="14"
@@ -514,8 +514,8 @@ function Globe() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
     </svg>
   );
 }

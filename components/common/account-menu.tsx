@@ -6,7 +6,7 @@ import {
   Bookmark,
   Check,
   ChevronDown,
-  Globe,
+  Languages,
   Layers,
   LogOut,
   Newspaper,
@@ -159,7 +159,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
             className={cn(itemClass, "justify-between")}
           >
             <span className="inline-flex items-center gap-2.5">
-              <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+              <Languages className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               {tLang("label")}
             </span>
             <span className="inline-flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
