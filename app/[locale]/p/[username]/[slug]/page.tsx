@@ -245,7 +245,7 @@ export default async function PublicPostPage({
             data-bhv="profile"
             data-bhv-id={author.username}
           >
-            <Avatar src={author.avatarUrl} name={author.username} size="lg" />
+            <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
             <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
               @{author.username}
             </span>
@@ -316,7 +316,7 @@ export default async function PublicPostPage({
             data-bhv="profile"
             data-bhv-id={author.username}
           >
-            <Avatar src={author.avatarUrl} name={author.username} size="lg" />
+            <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
             <span className="min-w-0">
               <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                 @{author.username}

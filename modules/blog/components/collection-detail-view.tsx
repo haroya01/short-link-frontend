@@ -548,7 +548,7 @@ function CollectionHeader({ detail, locale }: { detail: CollectionDetail; locale
               href={authorHref(detail.curatorUsername, locale)}
               className="focus-ring group inline-flex items-center gap-1.5 rounded"
             >
-              <Avatar src={null} name={detail.curatorUsername} size="xs" />
+              <Avatar src={null} name={detail.curatorUsername} seed={null} size="xs" />
               <span className="font-medium text-slate-700 transition-colors group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
                 @{detail.curatorUsername}
               </span>

@@ -31,18 +31,21 @@ const nameLine = () => container.querySelector("[data-conversation-row] a:not([a
 describe("the conversation row", () => {
   it("reads display name · @handle · time", async () => {
     await render(
-      <ConversationRow author={{ username: "minji", displayName: "민지" }} createdAt="2026-05-30T10:00:00Z" time="3일">
+      <ConversationRow author={{ id: 2, username: "minji", displayName: "민지" }} createdAt="2026-05-30T10:00:00Z" time="3일">
         본문
       </ConversationRow>,
     );
     expect(nameLine()).toBe("민지@minji");
+    const disc = container.querySelector("[data-avatar-tint]");
+    expect(disc?.getAttribute("data-avatar-tint")).toBe("orange");
+    expect(disc?.textContent).toBe("민");
     expect(container.querySelector("time")?.textContent).toBe("3일");
     expect(container.textContent).toContain("·");
   });
 
   it("shows only the @handle when there is no display name", async () => {
     await render(
-      <ConversationRow author={{ username: "dohyun" }} createdAt="2026-05-30T10:00:00Z" time="3일">
+      <ConversationRow author={{ id: 1, username: "dohyun" }} createdAt="2026-05-30T10:00:00Z" time="3일">
         본문
       </ConversationRow>,
     );

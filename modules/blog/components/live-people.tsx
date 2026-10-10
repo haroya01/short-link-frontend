@@ -37,7 +37,7 @@ export function LivePeople({
                   dense ? "px-3 py-2" : "px-3 py-2.5",
                 )}
               >
-                <Avatar src={person.avatarUrl} name={name} size={dense ? "sm" : "md"} />
+                <Avatar src={person.avatarUrl} name={name} seed={null} size={dense ? "sm" : "md"} />
                 <span className="flex min-w-0 flex-col">
                   <span
                     className={cn(
