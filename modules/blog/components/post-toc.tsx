@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { List, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
-import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { usePresence } from "@/hooks/use-presence";
 
 export type TocHeading = { id: string; legacyId?: string; text: string; level: number };
@@ -104,37 +103,6 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
         ))}
       </ul>
     </nav>
-  );
-}
-
-/**
- * Tablet counterpart to {@link PostToc} (the sidebar TOC is ~1100px+; phones get it in the post dock).
- * A floating "목차" button opens a bottom sheet of the headings so long posts stay navigable.
- */
-export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
-  const t = useTranslations("publicPost");
-  const [open, setOpen] = useState(false);
-  const hidden = useHideOnScroll();
-
-  if (headings.length < 3) return null;
-
-  return (
-    <div className="max-sm:hidden min-[1100px]:hidden">
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={t("toc")}
-        aria-haspopup="dialog"
-        tabIndex={hidden ? -1 : undefined}
-        className={`focus-ring fixed bottom-5 right-4 z-30 inline-flex items-center gap-1.5 rounded-surface border border-slate-300 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-[opacity,transform,border-color] duration-200 hover:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 ${
-          hidden ? "pointer-events-none translate-y-3 opacity-0" : ""
-        }`}
-      >
-        <List aria-hidden className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-        {t("toc")}
-      </button>
-      <TocSheet headings={headings} open={open} onClose={() => setOpen(false)} />
-    </div>
   );
 }
 

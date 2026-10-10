@@ -24,7 +24,7 @@ const blogTabs = (active = "recent"): FeedSortTab[] => [
   { key: "trending", label: "인기", href: "?sort=trending", active: active === "trending" },
 ];
 const blogMore = (active?: string) => [
-  { key: "for-you", label: "추천", icon: "sparkles" as const, href: "?sort=for-you", active: active === "for-you" },
+  { key: "for-you", label: "추천", icon: "binoculars" as const, href: "?sort=for-you", active: active === "for-you" },
   { key: "series", label: "시리즈", icon: "series" as const, href: "?sort=series", active: active === "series" },
 ];
 

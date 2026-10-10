@@ -171,3 +171,12 @@ test.describe("desktop details", () => {
     await page.waitForURL(/\/series\//, { timeout: 30_000 });
   });
 });
+
+test("a cover filled in from the body stays out of the row; a chosen cover is its thumbnail", async ({ page }) => {
+  await openFeed(page);
+  const filledIn = page.locator('main li[data-feed-row]:has(a[href="/ko/p/haruka/typescript-generics-hard"])').first();
+  const chosen = page.locator('main li[data-feed-row]:has(a[href="/ko/p/dohyun/nextjs-14-app-router-blog"])').first();
+  await expect(filledIn).toBeVisible();
+  await expect(filledIn.locator("[data-row-thumb]")).toHaveCount(0);
+  await expect(chosen.locator("[data-row-thumb]")).toHaveCount(1);
+});

@@ -8,8 +8,8 @@ import {
   Check,
   ChevronDown,
   FileText,
-  Globe,
   Inbox,
+  Languages,
   Layers,
   LogIn,
   LogOut,
@@ -209,7 +209,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
           className={cn(ITEM, "justify-between")}
         >
           <span className="inline-flex items-center gap-3">
-            <Globe className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+            <Languages className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             {tLang("label")}
           </span>
           <span className="inline-flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">

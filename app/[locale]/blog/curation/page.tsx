@@ -68,10 +68,7 @@ function Library() {
         <h2 id="library-section-title" className="sr-only">
           {t(showingHighlights ? "curationHighlights" : "curationReadingList")}
         </h2>
-        <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t(showingHighlights ? "curationHighlightsHint" : "curationReadingListHint")}
-        </p>
-        <div className="mt-4">
+        <div>
           {showingHighlights ? (
             <HighlightsList username={me?.username ?? ""} locale={locale} />
           ) : (
@@ -81,17 +78,17 @@ function Library() {
       </section>
 
       <div className="mt-10 divide-y divide-slate-100 border-y border-slate-100 dark:divide-slate-800 dark:border-slate-800">
-        <CollapsibleSection title={t("curationLiked")} hint={t("curationLikedHint")}>
+        <CollapsibleSection title={t("curationLiked")}>
           <LikedList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>
-        <CollapsibleSection title={t("curationComments")} hint={t("curationCommentsHint")}>
+        <CollapsibleSection title={t("curationComments")}>
           <MyCommentsList locale={locale} />
         </CollapsibleSection>
         <CollapsibleSection title={t("curationHistory")} hint={t("curationHistoryHint")}>
           <ReadingHistoryList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>
         {/* 구독한 태그 — 팔로우한 주제를 한눈에, 눌러서 그 주제 피드로. 관리(언팔로우)는 설정에 둔다. */}
-        <CollapsibleSection id="followed-topics" title={t("curationTags")} hint={t("curationTagsHint")} defaultOpen={openTopics}>
+        <CollapsibleSection id="followed-topics" title={t("curationTags")} defaultOpen={openTopics}>
           <FollowedTagsShelf />
         </CollapsibleSection>
       </div>

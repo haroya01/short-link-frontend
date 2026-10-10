@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { dockButton } from "@/modules/blog/components/dock-button";
+import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 
 /**
  * "연결" — connect the whole post to a collection or PATH, at the same rank as 공감/저장. The verb
@@ -19,11 +20,11 @@ import { dockButton } from "@/modules/blog/components/dock-button";
 export function ConnectButton({
   postId,
   postTitle,
-  variant = "inline",
+  variant = "icon",
 }: {
   postId: number;
   postTitle: string;
-  variant?: "inline" | "dock";
+  variant?: "icon" | "dock";
 }) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
@@ -48,18 +49,12 @@ export function ConnectButton({
         onClick={onClick}
         aria-haspopup="dialog"
         aria-label={t("connectPost", { title: postTitle })}
-        className={
-          variant === "dock"
-            ? dockButton()
-            : "touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
-        }
+        title={variant === "icon" ? tc("connectLabel") : undefined}
+        className={variant === "dock" ? dockButton() : actionIconButton()}
       >
         <span className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
-          <Link2 className={variant === "dock" ? "h-[18px] w-[18px]" : "h-4 w-4"} />
+          <Link2 className={ACTION_ICON} />
         </span>
-        {/* Icon + word (동형 with the share button) — "연결" is the verb, so labelling it makes the
-            action legible instead of a bare glyph the reader has to guess. */}
-        {variant === "inline" && <span>{tc("connectLabel")}</span>}
       </button>
       {open && (
         <ConnectSheet

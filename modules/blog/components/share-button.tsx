@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 import { usePresence } from "@/hooks/use-presence";
 import {
   buildAuthorShareUrl,
@@ -71,12 +72,13 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
       <button
         type="button"
         onClick={onTrigger}
-        className="touch-target inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
+        className={actionIconButton()}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={t("label")}
+        title={t("label")}
       >
-        <Share2 className="h-3.5 w-3.5" />
-        {t("label")}
+        <Share2 className={ACTION_ICON} aria-hidden />
       </button>
       {mounted && (
         <div

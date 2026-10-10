@@ -49,6 +49,22 @@ test.describe("desktop", () => {
     await expect(box.getByRole("link", { name: /주제 둘러보기/ })).toBeVisible();
   });
 
+  test("no bookmarked notes: the fact alone, no sentence about where the menu is", async ({ page }) => {
+    await page.goto("/ko/blog/notes?feed=bookmarks");
+    const box = empty(page);
+    await grammar(box, { title: "북마크한 노트가 없어요", body: false });
+    await expect(box).not.toContainText("메뉴");
+  });
+
+  test("no followed topics in 서재: one fact line and the way to the topics", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-empty", "tagPrefs"));
+    await page.goto("/ko/blog/curation?open=topics");
+    const shelf = page.locator("#followed-topics");
+    await expect(shelf.getByText("아직 팔로우한 주제가 없어요.", { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(shelf).not.toContainText("보세요");
+    await expect(shelf.getByRole("link", { name: "태그 둘러보기" })).toHaveAttribute("href", /\/tags$/);
+  });
+
   test("no dashed card is left on the notes surfaces", async ({ page }) => {
     await page.goto("/ko/blog?q=%EC%9A%B0%EC%A3%BC%EC%84%A0&view=notes");
     await expect(empty(page)).toBeVisible({ timeout: 30_000 });

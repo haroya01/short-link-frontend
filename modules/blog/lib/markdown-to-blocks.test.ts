@@ -127,10 +127,24 @@ describe("video embeds", () => {
     }
   });
 
-  it("drops the soft-break backslash a URL line leaves at the end of the paragraph above it", () => {
-    expect(markdownToBlocks("intro\\\nhttps://youtu.be/dQw4w9WgXcQ")).toEqual([
+  it("keeps a bare URL on the line after a soft break in the paragraph, whatever it points at", () => {
+    for (const md of ["intro\\\nhttps://youtu.be/dQw4w9WgXcQ", "intro\\\nhttps://cdn.example.com/a.png"]) {
+      expect(markdownToBlocks(md), md).toEqual([{ type: "PARAGRAPH", content: md }]);
+      expect(markdownToBlocks(blocksToMarkdown(markdownToBlocks(md))), md).toEqual([{ type: "PARAGRAPH", content: md }]);
+    }
+  });
+
+  it("still splits a bare URL out after a plain newline", () => {
+    expect(markdownToBlocks("intro\nhttps://youtu.be/dQw4w9WgXcQ")).toEqual([
       { type: "PARAGRAPH", content: "intro" },
       { type: "EMBED", content: "https://youtu.be/dQw4w9WgXcQ" },
+    ]);
+  });
+
+  it("lets a heading after a soft break start its own block and drops the dangling backslash", () => {
+    expect(markdownToBlocks("intro\\\n# 제목")).toEqual([
+      { type: "PARAGRAPH", content: "intro" },
+      { type: "H1", content: "제목" },
     ]);
     expect(markdownToBlocks("a path C:\\\\")).toEqual([{ type: "PARAGRAPH", content: "a path C:\\\\" }]);
   });

@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { Globe } from "lucide-react";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 
@@ -67,8 +66,7 @@ export function HighlightNoteSheet({ quote, onCancel, onSave }: {
         onMouseDown={(event) => event.stopPropagation()}
       >
         <h3 id="note-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("highlightNoteTitle")}</h3>
-        <p id="note-sheet-scope" className="mt-2 flex gap-2 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-          <Globe aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+        <p id="note-sheet-scope" className="mt-2 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
           {t("highlightPublicScope")}
         </p>
         <blockquote className="mt-3 line-clamp-3 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">

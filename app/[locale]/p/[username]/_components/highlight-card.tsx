@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ChevronRight, FolderPlus, Globe, MessageCircle, Share2, Trash2 } from "lucide-react";
+import { ChevronRight, FolderPlus, MessageCircle, Share2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Avatar } from "@/modules/blog/components/avatar";
 import type { HighlightView } from "@/modules/blog/api/highlights";
@@ -106,7 +106,6 @@ export function HighlightCard({
             </span>
           )}
           <span className="flex-1 text-[13px] text-slate-500 dark:text-slate-400">{summary}</span>
-          <Globe className="h-3.5 w-3.5 text-slate-400" aria-label={t("highlightCardPublic")} />
         </div>
 
         <div className="mt-3">

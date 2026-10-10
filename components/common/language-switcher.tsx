@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Check, Globe } from "lucide-react";
+import { Check, Languages } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -38,7 +38,7 @@ export function LanguageSwitcher() {
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <Globe className="h-4 w-4" />
+        <Languages className="h-4 w-4" />
       </button>
       {open && (
         <div

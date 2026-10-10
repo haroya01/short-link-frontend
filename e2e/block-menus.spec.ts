@@ -33,10 +33,10 @@ test("a reader's ⋯ on a post is the one place to report it, and blocks its aut
   await expect(page.getByTestId("author-blocked").getByRole("button", { name: "차단 해제" })).toBeVisible();
 });
 
-test("my own post has no reader's ⋯", async ({ page }) => {
+test("my own post's ⋯ holds 수정 · 삭제, never 차단 or 신고", async ({ page }) => {
   await page.goto("/ko/p/dohyun/nextjs-14-app-router-blog");
-  await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByRole("button", { name: "글 메뉴", exact: true })).toHaveCount(0);
+  await page.locator("article header").getByRole("button", { name: "글 메뉴", exact: true }).click({ timeout: 30_000 });
+  await expect(page.getByRole("menuitem")).toHaveText(["수정", "삭제", "노트로 인용"]);
 });
 
 test("a comment's ⋯ blocks its writer, whose comments then leave the post", async ({ page }) => {

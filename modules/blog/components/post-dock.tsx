@@ -86,7 +86,7 @@ export function PostDock({
         {...inert(away)}
         style={offset > 0 ? { bottom: offset + GAP } : undefined}
         className={cn(
-          "fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-4 z-30 flex flex-col items-center gap-3 transition-[bottom,opacity,transform] duration-300 ease-[var(--ease)] motion-reduce:transition-none sm:hidden",
+          "fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-4 z-30 flex flex-col items-center gap-3 transition-[bottom,opacity,transform] duration-300 ease-[var(--ease)] motion-reduce:transition-none min-[1100px]:hidden",
           away && "pointer-events-none translate-x-4 opacity-0",
         )}
       >

@@ -6,6 +6,7 @@ import { fenceFor, markdownToBlocks } from "@/modules/blog/lib/markdown-to-block
 import { parseCallout } from "@/modules/blog/lib/callout";
 import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "./markdown-serialization";
 import { LinkCardBase } from "./link-card-base";
+import { kurlNoteId } from "@/modules/blog/lib/kurl-link";
 
 function roundTrip(md: string): string {
   const editor = new Editor({
@@ -243,5 +244,31 @@ describe("a link kept as a link on its own line", () => {
     expect(kinds).toEqual(["paragraph:link", "paragraph:link", "linkCard"]);
     expect(out).toBe(md);
     expect(markdownToBlocks(out).map((b) => b.type)).toEqual(["PARAGRAPH", "PARAGRAPH", "EMBED"]);
+  });
+});
+
+describe("a note quoted into a post", () => {
+  it("opens the seeded bare note URL as a card and saves it as the EMBED the note-quote index reads", () => {
+    const noteUrl = "https://kurl.me/ap/notes/3";
+    expect(kurlNoteId(noteUrl)).toBe(3);
+    const editor = new Editor({
+      extensions: [
+        StarterKit.configure({ heading: false, hardBreak: false, text: false, bold: false, italic: false, strike: false }),
+        MarkdownText,
+        MarkdownHardBreak,
+        LinkCardBase,
+        Markdown.configure({ html: false, breaks: true }),
+      ],
+      content: `${noteUrl}\n\n`,
+    });
+    const first = editor.getJSON().content![0];
+    const out = (editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown();
+    editor.destroy();
+    expect(first).toMatchObject({ type: "linkCard", attrs: { url: noteUrl } });
+    expect(markdownToBlocks(out)).toEqual([{ type: "EMBED", content: noteUrl }]);
+  });
+
+  it("keeps a note URL the author kept as a link out of the quote index", () => {
+    expect(markdownToBlocks("<https://kurl.me/ap/notes/3>")).toEqual([{ type: "PARAGRAPH", content: "<https://kurl.me/ap/notes/3>" }]);
   });
 });
