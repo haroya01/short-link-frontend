@@ -97,7 +97,36 @@ let seq = 7000;
   });
   posts.set(scheduled.id, scheduled);
   blocks.set(scheduled.id, toBlocks([["paragraph", "발행 예정 시각이 되면 자동으로 공개됩니다."]]));
+
+  const takenDown = blankPost({
+    id: ++seq,
+    slug: "mock-taken-down",
+    title: "신고로 내려진 글",
+    status: "UNPUBLISHED",
+    publishedAt: new Date(Date.now() - 5 * 86_400_000).toISOString(),
+    excerpt: "운영 정책 위반으로 관리자가 내린 예시 글.",
+    tags: ["회고"],
+    takenDown: true,
+  });
+  posts.set(takenDown.id, takenDown);
+  blocks.set(takenDown.id, toBlocks([["paragraph", "고쳐서 저장할 수는 있지만 다시 공개할 수는 없습니다."]]));
 })();
+
+let moderation: "ACCOUNT_SUSPENDED" | "ACCOUNT_BANNED" | null = null;
+
+function requireCanWritePublicly() {
+  if (moderation) throw new ApiError(403, { status: 403, code: moderation } as ProblemDetail);
+}
+
+function requireNotTakenDown(id: number) {
+  if (posts.get(id)?.takenDown) {
+    throw new ApiError(409, { status: 409, code: "POST_TAKEN_DOWN" } as ProblemDetail);
+  }
+}
+
+function guardLiveEdit(id: number) {
+  if (posts.get(id)?.status === "PUBLISHED") requireCanWritePublicly();
+}
 
 function touch(id: number, patch: Partial<PostView>): PostView {
   const cur = posts.get(id) ?? blankPost({ id });
@@ -159,6 +188,7 @@ export function mockUpdatePostMetadata(
     tags?: string[];
   } & EditGuard,
 ): PostView {
+  guardLiveEdit(id);
   checkEdit(id, payload);
   if (payload.slug !== undefined) {
     if (payload.slug.length < 2) throw new ApiError(400, { status: 400, detail: "slug length 2~200" });
@@ -182,6 +212,10 @@ export function mockDeletePost(id: number): void {
 }
 
 export function mockSetStatus(id: number, status: PostStatus, scheduledAt?: string): PostView {
+  if (status === "PUBLISHED" || status === "SCHEDULED") {
+    requireNotTakenDown(id);
+    requireCanWritePublicly();
+  }
   return touch(id, {
     status,
     publishedAt: status === "PUBLISHED" ? posts.get(id)?.publishedAt ?? nowIso() : posts.get(id)?.publishedAt ?? null,
@@ -212,6 +246,7 @@ export async function mockReplaceBlocks(
   input: BlockInput[],
   guard: EditGuard = {},
 ): Promise<VersionedBlocks> {
+  guardLiveEdit(id);
   checkEdit(id, guard);
   const next = input.map((b, i) => ({ id: i + 1, type: b.type, content: b.content, blockOrder: i }));
   blocks.set(id, next);
@@ -223,8 +258,15 @@ export function mockEditElsewhere(id: number, edit: { title?: string; body?: str
   markEdited(id, edit.title !== undefined ? { title: edit.title } : {});
 }
 
+function mockModerate(next: typeof moderation) {
+  moderation = next;
+}
+
 if (typeof window !== "undefined") {
-  (window as unknown as { __kurlMockAuthoring: unknown }).__kurlMockAuthoring = { editElsewhere: mockEditElsewhere };
+  (window as unknown as { __kurlMockAuthoring: unknown }).__kurlMockAuthoring = {
+    editElsewhere: mockEditElsewhere,
+    moderate: mockModerate,
+  };
 }
 
 // ── Series (authoring) ──────────────────────────────────────────────────────

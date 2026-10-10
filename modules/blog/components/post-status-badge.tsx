@@ -12,15 +12,16 @@ const TONE: Record<PostStatus, string> = {
   SCHEDULED: "bg-accent-50 text-accent-800 dark:bg-accent-500/15 dark:text-accent-300",
   UNPUBLISHED: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
 };
+const TAKEN_DOWN_TONE = "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300";
 
 /** The single post-status pill. Label comes from the `postEditor.status{STATUS}` messages. */
-export function PostStatusBadge({ status }: { status: PostStatus }) {
+export function PostStatusBadge({ status, takenDown = false }: { status: PostStatus; takenDown?: boolean }) {
   const t = useTranslations("postEditor");
   return (
     <span
-      className={`inline-flex items-center rounded-full py-0.5 text-[12px] font-medium ${status === "PUBLISHED" ? "" : "px-2.5"} ${TONE[status]}`}
+      className={`inline-flex items-center rounded-full py-0.5 text-[12px] font-medium ${status === "PUBLISHED" && !takenDown ? "" : "px-2.5"} ${takenDown ? TAKEN_DOWN_TONE : TONE[status]}`}
     >
-      {t(`status${status}`)}
+      {takenDown ? t("statusTakenDown") : t(`status${status}`)}
     </span>
   );
 }

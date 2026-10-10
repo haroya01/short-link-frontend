@@ -8,6 +8,7 @@ import { POST_IMAGE_TYPES, postImageErrorMessageKey } from "@/modules/blog/api/p
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
+import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { isSavableSlug } from "@/modules/blog/lib/slug";
@@ -17,6 +18,8 @@ import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
+
+const TAKEN_DOWN_NOTICE_ID = "publish-taken-down";
 
 /**
  * Publish panel — a confirmation, not a form. The centerpiece is a live card preview (cover · title ·
@@ -30,6 +33,7 @@ export function PublishDialog({
   open,
   onClose,
   status,
+  takenDown = false,
   scheduledAt,
   title,
   cover,
@@ -61,6 +65,7 @@ export function PublishDialog({
   open: boolean;
   onClose: () => void;
   status: PostStatus;
+  takenDown?: boolean;
   scheduledAt: string | null;
   /** Canvas title, mirrored read-only in the card preview (empty → the 제목 없음 placeholder). */
   title: string;
@@ -566,6 +571,7 @@ export function PublishDialog({
 
         {/* Footer — status-aware actions */}
         <footer className="border-t border-slate-100 px-5 py-3.5 dark:border-slate-800">
+          {takenDown && <TakenDownNotice id={TAKEN_DOWN_NOTICE_ID} className="mb-2.5" />}
           {/* Action error (failed publish/schedule/save) — keeps the dialog open with the reason so a
               failed action never reads as a silent success. */}
           {error && (
@@ -600,6 +606,7 @@ export function PublishDialog({
             )}
             <PrimaryAction
               status={status}
+              takenDown={takenDown}
               busy={busy}
               scheduleMode={showSchedule}
               scheduleReady={Boolean(scheduleAt)}
@@ -725,6 +732,7 @@ function Field({
 
 function PrimaryAction({
   status,
+  takenDown,
   busy,
   scheduleMode,
   scheduleReady,
@@ -736,6 +744,7 @@ function PrimaryAction({
   onCancelSchedule,
 }: {
   status: PostStatus;
+  takenDown: boolean;
   busy: boolean;
   /** The schedule panel is open — the primary action parks the post instead of publishing now. */
   scheduleMode: boolean;
@@ -750,6 +759,18 @@ function PrimaryAction({
 }) {
   const solid =
     "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
+  if (takenDown && (status === "DRAFT" || status === "UNPUBLISHED"))
+    return (
+      <button
+        type="button"
+        disabled
+        aria-describedby={TAKEN_DOWN_NOTICE_ID}
+        title={t("takenDownBlocked")}
+        className={solid}
+      >
+        {status === "DRAFT" ? t("publish") : t("republish")}
+      </button>
+    );
   if (status === "DRAFT") {
     // The tag requirement is a teachable click (onPublish nudges the tag field) rather than a
     // disabled button, so Publish/Schedule stay enabled. Schedule still gates on a picked time —

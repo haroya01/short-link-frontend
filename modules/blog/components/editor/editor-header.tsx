@@ -15,6 +15,7 @@ export function EditorHeader({
   backHref,
   postId,
   status,
+  takenDown = false,
   saving,
   saved,
   lastSavedAt,
@@ -30,6 +31,7 @@ export function EditorHeader({
   /** null until a new post's first save creates it — there are no revisions yet. */
   postId: number | null;
   status: PostStatus;
+  takenDown?: boolean;
   saving: boolean;
   saved: boolean;
   /** 이 세션의 마지막 성공 저장 시각 — "✓ 저장됨" 2초가 지나간 뒤에도 시각으로 안심. */
@@ -92,7 +94,7 @@ export function EditorHeader({
           // Published / unpublished / scheduled don't autosave (the live post must not change
           // mid-edit) — keep the explicit 저장 button.
           <>
-            <PostStatusBadge status={status} />
+            <PostStatusBadge status={status} takenDown={takenDown} />
             {/* 공개 글은 명시 저장 — 버튼 옆 시각이 "마지막으로 반영된 때"를 말해 준다. */}
             {!saving && !saved && savedTime && (
               <span className="hidden text-[12px] text-slate-500 dark:text-slate-400 sm:inline">
