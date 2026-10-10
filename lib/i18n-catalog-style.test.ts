@@ -61,6 +61,16 @@ describe("message catalog style", () => {
     expect(entries(ja).filter(inBlog).filter(([, value]) => spaced.test(value))).toEqual([]);
   });
 
+  it("ko: no blog sentence is joined to the next by an em dash (a heading's '제목 — 부제' is fine)", () => {
+    const joined = /[요다죠까][.!?]?\s+—\s+/;
+    expect(entries(ko).filter(inBlog).filter(([, value]) => joined.test(value))).toEqual([]);
+  });
+
+  it("ko/ja: the blog never invites ('~해 보세요', '〜てみましょう') in a placeholder or an empty state", () => {
+    expect(entries(ko).filter(inBlog).filter(([, value]) => /보세요/.test(value))).toEqual([]);
+    expect(entries(ja).filter(inBlog).filter(([, value]) => /てみましょう|ましょう[。]?$/.test(value))).toEqual([]);
+  });
+
   it("ko: no particle hangs on a name or address, whose final sound decides 이/가 and 을/를", () => {
     const hanging = /\{[a-zA-Z]+\}(?:<\/[a-zA-Z]+>)?(?:이|가|을|를|은|는|과|와|으로|로)(?=[\s,.!?)…·]|$)/;
     expect(entries(ko).filter(([, value]) => hanging.test(value))).toEqual([]);

@@ -6,7 +6,7 @@ test.use({ viewport: { width: 1280, height: 900 } });
 const header = (page: Page) => page.locator("header.vt-app-header");
 const trigger = (page: Page) => header(page).locator('[data-compose-trigger="desktop"]');
 const dialog = (page: Page) => page.getByRole("dialog", { name: "새 노트" });
-const body = (page: Page) => dialog(page).getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+const body = (page: Page) => dialog(page).getByRole("textbox", { name: "노트 쓰기" });
 
 async function openNote(page: Page) {
   await trigger(page).click({ timeout: 30_000 });
@@ -40,7 +40,7 @@ test("쓰다 닫으면 '임시저장했어요'가 뜨고, 이어 쓰기에서 �
   await dialog(page).getByRole("button", { name: "열람 주의" }).click();
   await dialog(page).getByRole("textbox", { name: "열람 주의 문구" }).fill("결말 포함");
   await dialog(page).getByRole("button", { name: "스레드에 추가" }).click();
-  await dialog(page).getByRole("textbox", { name: "이어서 써 보세요" }).fill("둘째 노트");
+  await dialog(page).getByRole("textbox", { name: "이어 쓰기" }).fill("둘째 노트");
   await dialog(page).getByRole("button", { name: "취소" }).click();
   await expect(page.getByText("임시저장했어요")).toBeVisible();
   await expect(dialog(page)).toHaveCount(0);
@@ -52,7 +52,7 @@ test("쓰다 닫으면 '임시저장했어요'가 뜨고, 이어 쓰기에서 �
   await row.click();
   await expect(body(page)).toHaveValue("닫아도 남아야 하는 노트");
   await expect(dialog(page).getByRole("textbox", { name: "열람 주의 문구" })).toHaveValue("결말 포함");
-  await expect(dialog(page).getByRole("textbox", { name: "이어서 써 보세요" })).toHaveValue("둘째 노트");
+  await expect(dialog(page).getByRole("textbox", { name: "이어 쓰기" })).toHaveValue("둘째 노트");
 });
 
 test("빈 작성창을 닫으면 아무 알림도 없고 임시저장도 생기지 않는다", async ({ page }) => {
@@ -117,11 +117,11 @@ test("사진이 있던 임시저장은 사진이 남지 않았다고 말한다",
 test("노트 피드의 작성창은 펼쳤을 때만 '임시저장 N'을 보여 주고, 고른 임시저장을 그 자리에서 잇는다", async ({ page }) => {
   await seed(page, "kurl:note-drafts:1", [draft()]);
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId("note-drafts-button")).toHaveCount(0);
   await composer.click();
   await page.getByTestId("note-drafts-button").click();
   await page.getByRole("dialog", { name: "임시저장" }).getByRole("button", { name: /어제 쓰던 노트/ }).click();
-  await expect(page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" })).toHaveValue("어제 쓰던 노트");
+  await expect(page.getByRole("textbox", { name: "노트 쓰기" })).toHaveValue("어제 쓰던 노트");
 });
