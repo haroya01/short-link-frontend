@@ -108,13 +108,38 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
 }
 
 /**
- * Mobile counterpart to {@link PostToc} (the sidebar TOC is ~1100px+). A floating "목차" button opens a
- * bottom sheet of the headings so long posts stay navigable on a phone — no jump links otherwise.
+ * Tablet counterpart to {@link PostToc} (the sidebar TOC is ~1100px+; phones get it in the post dock).
+ * A floating "목차" button opens a bottom sheet of the headings so long posts stay navigable.
  */
 export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
   const hidden = useHideOnScroll();
+
+  if (headings.length < 3) return null;
+
+  return (
+    <div className="max-sm:hidden min-[1100px]:hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={t("toc")}
+        aria-haspopup="dialog"
+        tabIndex={hidden ? -1 : undefined}
+        className={`focus-ring fixed bottom-5 right-4 z-30 inline-flex items-center gap-1.5 rounded-surface border border-slate-300 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-[opacity,transform,border-color] duration-200 hover:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 ${
+          hidden ? "pointer-events-none translate-y-3 opacity-0" : ""
+        }`}
+      >
+        <List aria-hidden className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+        {t("toc")}
+      </button>
+      <TocSheet headings={headings} open={open} onClose={() => setOpen(false)} />
+    </div>
+  );
+}
+
+export function TocSheet({ headings, open, onClose }: { headings: TocHeading[]; open: boolean; onClose: () => void }) {
+  const t = useTranslations("publicPost");
   const dialogRef = useRef<HTMLDivElement>(null);
   // Hold the sheet mounted through its exit (sheet-down / scrim fade) instead of popping on close.
   const { mounted, closing } = usePresence(open, 240);
@@ -123,83 +148,66 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   useEffect(() => setPortalReady(true), []);
 
   // Escape + Tab cycling within the sheet + focus restore to the 목차 button on close.
-  useFocusTrap(dialogRef, { active: open, onEscape: () => setOpen(false) });
+  useFocusTrap(dialogRef, { active: open, onEscape: onClose });
 
-  if (headings.length < 3) return null;
+  if (!mounted || !portalReady) return null;
 
-  return (
-    <div className="min-[1100px]:hidden">
+  return createPortal(
+    // Portal to <body>: a transformed / will-change ancestor would clip this `fixed inset-0` sheet.
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("toc")}
+      // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
+      aria-hidden={closing || undefined}
+      className={`fixed inset-0 z-50 ${closing ? "pointer-events-none" : ""}`}
+    >
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        aria-label={t("toc")}
-        aria-haspopup="dialog"
-        tabIndex={hidden ? -1 : undefined}
-        className={`focus-ring fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-1.5 rounded-surface border border-slate-300 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-[opacity,transform,border-color] duration-200 hover:border-slate-400 motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 sm:bottom-5 ${
-          hidden ? "pointer-events-none translate-y-3 opacity-0" : ""
+        aria-hidden
+        tabIndex={-1}
+        onClick={onClose}
+        className={`absolute inset-0 scrim motion-reduce:animate-none ${
+          closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
+        }`}
+      />
+      <div
+        className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-surface border-t border-slate-200 bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
+          closing ? "animate-[sheet-down_240ms_var(--ease)_both]" : "animate-[sheet-up_280ms_var(--ease)_both]"
         }`}
       >
-        <List aria-hidden className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-        {t("toc")}
-      </button>
-      {mounted && portalReady && createPortal(
-        // Portal to <body>: a transformed / will-change ancestor would clip this `fixed inset-0` sheet.
-        <div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("toc")}
-          // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
-          aria-hidden={closing || undefined}
-          className={`fixed inset-0 z-50 ${closing ? "pointer-events-none" : ""}`}
-        >
+        <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
+        <div className="flex items-center justify-between px-3 pb-1">
+          <RailHeading>{t("toc")}</RailHeading>
           <button
             type="button"
-            aria-hidden
-            tabIndex={-1}
-            onClick={() => setOpen(false)}
-            className={`absolute inset-0 scrim motion-reduce:animate-none ${
-              closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
-            }`}
-          />
-          <div
-            className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-surface border-t border-slate-200 bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
-              closing ? "animate-[sheet-down_240ms_var(--ease)_both]" : "animate-[sheet-up_280ms_var(--ease)_both]"
-            }`}
+            onClick={onClose}
+            aria-label={t("toc")}
+            className="focus-ring grid h-8 w-8 place-items-center rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
-            <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
-            <div className="flex items-center justify-between px-3 pb-1">
-              <RailHeading>{t("toc")}</RailHeading>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label={t("toc")}
-                className="focus-ring grid h-8 w-8 place-items-center rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <ul className="pb-1">
+          {headings.map((h) => (
+            <li key={h.id} style={{ paddingLeft: `${(h.level - 1) * 12}px` }}>
+              <a
+                href={`#${h.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToHeading(h.id);
+                  onClose();
+                }}
+                className="focus-ring block truncate rounded-surface px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <ul className="pb-1">
-              {headings.map((h) => (
-                <li key={h.id} style={{ paddingLeft: `${(h.level - 1) * 12}px` }}>
-                  <a
-                    href={`#${h.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToHeading(h.id);
-                      setOpen(false);
-                    }}
-                    className="focus-ring block truncate rounded-surface px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
-                  >
-                    {h.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>,
-        document.body,
-      )}
-    </div>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>,
+    document.body,
   );
 }

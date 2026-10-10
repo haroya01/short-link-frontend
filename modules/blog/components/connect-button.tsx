@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
+import { dockButton } from "@/modules/blog/components/dock-button";
 
 /**
  * "연결" — connect the whole post to a collection or PATH, at the same rank as 공감/저장. The verb
@@ -15,7 +16,15 @@ import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
  * connection is authored per user. The sheet itself (pick collection → the one-line 왜) is the shared
  * ConnectSheet already used on highlights; here it just targets the post block.
  */
-export function ConnectButton({ postId, postTitle }: { postId: number; postTitle: string }) {
+export function ConnectButton({
+  postId,
+  postTitle,
+  variant = "inline",
+}: {
+  postId: number;
+  postTitle: string;
+  variant?: "inline" | "dock";
+}) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
   const { authenticated } = useAuth();
@@ -39,14 +48,18 @@ export function ConnectButton({ postId, postTitle }: { postId: number; postTitle
         onClick={onClick}
         aria-haspopup="dialog"
         aria-label={t("connectPost", { title: postTitle })}
-        className="touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+        className={
+          variant === "dock"
+            ? dockButton()
+            : "touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+        }
       >
         <span className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
-          <Link2 className="h-4 w-4" />
+          <Link2 className={variant === "dock" ? "h-[18px] w-[18px]" : "h-4 w-4"} />
         </span>
         {/* Icon + word (동형 with the share button) — "연결" is the verb, so labelling it makes the
             action legible instead of a bare glyph the reader has to guess. */}
-        <span>{tc("connectLabel")}</span>
+        {variant === "inline" && <span>{tc("connectLabel")}</span>}
       </button>
       {open && (
         <ConnectSheet

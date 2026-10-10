@@ -241,14 +241,9 @@ export async function FeedScreen({
           <FeedSwitcher
             surface="blog"
             tabs={[
-              {
-                key: "following",
-                label: t("feed"),
-                href: "?sort=following",
-                active: !searching && tab === "following",
-                // A search spans every author, so "following" can't apply — disable it while searching.
-                disabled: searching,
-              },
+              ...(searching
+                ? []
+                : [{ key: "following", label: t("feed"), href: "?sort=following", active: tab === "following" }]),
               {
                 key: "recent",
                 label: t("recent"),

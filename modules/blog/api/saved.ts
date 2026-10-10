@@ -5,7 +5,7 @@
  * API doesn't have yet, so in mock this is an in-memory store; against a real backend these map to
  * /api/v1/me/{liked,saved} + /api/v1/bookmarks/folders (backend work — owner's domain).
  */
-import { request } from "@/lib/api/client";
+import { mockFailure, request } from "@/lib/api/client";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { savedMocks } from "@/modules/blog/api/_mock-gates";
 
@@ -24,7 +24,7 @@ export function listLikedFeed(): Promise<PublicFeedItem[]> {
 }
 
 export function listSavedFeed(): Promise<SavedPost[]> {
-  if (savedMocks) return Promise.resolve(savedMocks.mockListSavedFeed());
+  if (savedMocks) return mockFailure("saved") ?? Promise.resolve(savedMocks.mockListSavedFeed());
   return request<SavedPost[]>("/api/v1/me/saved", { method: "GET" });
 }
 

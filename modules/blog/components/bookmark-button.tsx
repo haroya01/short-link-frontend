@@ -5,6 +5,7 @@ import { Bookmark } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { addBookmark, getBookmarkStatus, removeBookmark } from "@/modules/blog/api/bookmarks";
 import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
+import { dockButton } from "@/modules/blog/components/dock-button";
 
 /**
  * Save-to-reading-list toggle on the public post page. Account-backed: the bookmark is stored per
@@ -12,7 +13,7 @@ import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
  * devices. Anonymous click starts the login flow (same as the like button). Optimistic with
  * rollback on error.
  */
-export function BookmarkButton({ postId }: { postId: number }) {
+export function BookmarkButton({ postId, variant = "inline" }: { postId: number; variant?: "inline" | "dock" }) {
   const t = useTranslations("publicPost");
   // Pop only on click (not when the saved state loads from the server) — same gate as the follow/구독 button.
   const [interacted, setInteracted] = useState(false);
@@ -34,15 +35,25 @@ export function BookmarkButton({ postId }: { postId: number }) {
       }}
       aria-pressed={saved}
       aria-label={saved ? t("bookmarkOn") : t("bookmark")}
-      className={`touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium transition-colors focus-ring ${
-        saved
-          ? "text-accent-700 dark:text-accent-400"
-          : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
-      }`}
+      className={
+        variant === "dock"
+          ? dockButton(saved)
+          : `touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium transition-colors focus-ring ${
+              saved
+                ? "text-accent-700 dark:text-accent-400"
+                : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+            }`
+      }
     >
       {/* Keyed by state so it remounts + replays the pop on each toggle (only after a click). */}
       <span key={saved ? "on" : "off"} className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
-        <Bookmark className={`h-4 w-4 ${saved ? "fill-accent-600 text-accent-600" : ""}`} />
+        <Bookmark
+          className={
+            variant === "dock"
+              ? `h-[18px] w-[18px] ${saved ? "fill-current" : ""}`
+              : `h-4 w-4 ${saved ? "fill-accent-600 text-accent-600" : ""}`
+          }
+        />
       </span>
     </button>
   );

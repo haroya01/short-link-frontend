@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useDockOffset } from "@/hooks/use-dock-offset";
 import { useNarrowViewport } from "@/hooks/use-narrow-viewport";
+import { useMarkDockedComposer } from "@/modules/blog/lib/docked-composer";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/modules/mentions/mention-textarea";
 
@@ -52,6 +53,7 @@ export function ConversationComposer({
   const narrow = useNarrowViewport();
   const floating = docked && narrow;
   const offset = useDockOffset(floating);
+  useMarkDockedComposer(floating);
   const remaining = maxLength - value.length;
   const over = remaining < 0;
   const canSubmit = !!value.trim() && !over && !submitting;

@@ -10,7 +10,7 @@ import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
-import { freshToken, readToken } from "@/lib/api/client";
+import { freshToken, mockFailure, readToken } from "@/lib/api/client";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -319,7 +319,10 @@ export function searchPublicFeed(
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks)
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query, viewer: hasViewer() }) });
+    return (
+      mockFailure("search") ??
+      Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query, viewer: hasViewer() }) })
+    );
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
   );

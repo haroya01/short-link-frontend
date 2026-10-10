@@ -3,13 +3,21 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PostView } from "@/modules/blog/api/posts";
 
-const mocks = vi.hoisted(() => ({ listMyPosts: vi.fn(), noteDialog: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  listMyPosts: vi.fn(),
+  noteDialog: vi.fn(),
+  onPosted: null as ((note: unknown) => void) | null,
+  toast: vi.fn(),
+  push: vi.fn(),
+}));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key, useLocale: () => "ko" }));
-vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
+vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.push }) }));
 vi.mock("@/modules/blog/api/posts", () => ({ listMyPosts: mocks.listMyPosts }));
 vi.mock("@/modules/notes/components/note-quote-dialog", () => ({
-  NoteQuoteDialog: (props: { quoted: unknown }) => {
+  NoteQuoteDialog: (props: { quoted: unknown; onPosted: (note: unknown) => void }) => {
     mocks.noteDialog(props.quoted);
+    mocks.onPosted = props.onPosted;
     return props.quoted ? createElement("div", { "data-testid": "note-dialog" }) : null;
   },
 }));
@@ -133,6 +141,18 @@ describe("the 글쓰기 chooser", () => {
     expect(mocks.noteDialog).toHaveBeenLastCalledWith({ fresh: true, title: "noteTitle" });
     expect(document.querySelector('[role="menu"]')).toBeNull();
     expect(document.activeElement).toBe(trigger());
+  });
+
+  it("a posted note toasts with 보기, which opens the new note", async () => {
+    await render("desktop");
+    await open();
+    await act(async () => choices()[0].click());
+    await act(async () => mocks.onPosted!({ id: 77, author: { username: "dohyun" } }));
+    expect(mocks.toast).toHaveBeenCalledWith("notePosted", "default", {
+      action: { label: "viewNote", onClick: expect.any(Function) },
+    });
+    mocks.toast.mock.calls[0][2].action.onClick();
+    expect(mocks.push).toHaveBeenCalledWith(expect.stringMatching(/dohyun.*\/notes\/77$/));
   });
 
   it("opens a bottom sheet dialog on mobile with the same choices", async () => {

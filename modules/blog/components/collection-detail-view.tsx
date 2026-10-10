@@ -42,6 +42,7 @@ import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock, quoteHref } from "@/modules/blog/components/connection-block";
 import { PathReorder } from "@/modules/blog/components/path-reorder";
+import { ErrorState } from "@/components/common/error-state";
 
 /**
  * Collection detail. A PATH renders as a guided walk — numbered steps joined by a connecting line, the
@@ -62,7 +63,7 @@ export function CollectionDetailView({
   const { toast } = useToast();
   const [confirm, confirmDialog] = useConfirm();
   const [detail, setDetail] = useState<CollectionDetail | null>(null);
-  const [state, setState] = useState<"loading" | "ready" | "missing">("loading");
+  const [state, setState] = useState<"loading" | "ready" | "missing" | "error">("loading");
   const [reordering, setReordering] = useState(false);
   // Owner-only meta editor (name / blurb / visibility). Off = read view; on = the inline form.
   const [editing, setEditing] = useState(false);
@@ -76,7 +77,7 @@ export function CollectionDetailView({
         setDetail(d);
         setState(d ? "ready" : "missing");
       })
-      .catch(() => setState("missing"));
+      .catch(() => setState("error"));
   }, [collectionId]);
 
   useEffect(() => {
@@ -180,6 +181,10 @@ export function CollectionDetailView({
         <Loader2 className="h-5 w-5 animate-spin" />
       </div>
     );
+  }
+
+  if (state === "error") {
+    return <ErrorState title={t("loadError")} onRetry={load} />;
   }
 
   if (state === "missing" || !detail) {

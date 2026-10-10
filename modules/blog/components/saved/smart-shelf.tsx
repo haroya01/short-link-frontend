@@ -20,6 +20,7 @@ import {
 import { SavedCard } from "@/modules/blog/components/saved/saved-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+import { LoadError } from "@/modules/blog/components/saved/load-error";
 
 /**
  * 스마트 셸프 — the owner's bookmarks, hybrid-organized: manual folders the user makes, plus the
@@ -35,6 +36,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   const isOwner = ready && me?.username === username;
 
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [saved, setSaved] = useState<SavedPost[]>([]);
   const [folders, setFolders] = useState<BookmarkFolder[]>([]);
   const [selected, setSelected] = useState<number | "all">("all");
@@ -47,17 +50,20 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   useEffect(() => {
     if (!isOwner) return;
     let alive = true;
+    setLoading(true);
+    setLoadFailed(false);
     Promise.all([listSavedFeed(), listFolders()])
       .then(([s, f]) => {
         if (!alive) return;
         setSaved(s);
         setFolders(f);
       })
+      .catch(() => alive && setLoadFailed(true))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, [isOwner]);
+  }, [isOwner, attempt]);
 
   const recount = (list: SavedPost[]): BookmarkFolder[] =>
     folders.map((f) => ({ ...f, count: list.filter((s) => s.folderId === f.id).length }));
@@ -167,6 +173,9 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
         <Loader2 className="h-5 w-5 animate-spin" />
       </div>
     );
+  }
+  if (loadFailed) {
+    return <LoadError message={t("bookmarksLoadError")} onRetry={() => setAttempt((n) => n + 1)} />;
   }
   if (saved.length === 0) {
     return (
