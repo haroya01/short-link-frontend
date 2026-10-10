@@ -13,7 +13,7 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   await expect(dock(page).getByRole("button")).toHaveText(["", "", "", ""]);
   await expect(dock(page).getByRole("button", { name: "목차" })).toBeVisible();
-  await expect(dock(page).getByRole("button", { name: /컬렉션이나 길에 엮기$/ })).toBeVisible();
+  await expect(dock(page).getByRole("button", { name: /컬렉션에 엮기$/ })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: /글 좋아요$/ })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: "북마크에 저장" })).toBeVisible();
   const header = page.locator("article header").first();

@@ -78,7 +78,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   SERIES_SUBSCRIBE: Rss,
   NEW_POST: PenLine,
   MENTION: AtSign,
-  // 그래프 이벤트: 엮임 = 사슬 고리(Link2), 길에 새 글 = 가지가 뻗음(GitBranch).
+  // 그래프 이벤트: 엮임 = 사슬 고리(Link2), 엮인 컬렉션에 새 글 = 가지가 뻗음(GitBranch).
   CONNECTED: Link2,
   PATH_GREW: GitBranch,
   NOTE_LIKE: Heart,
