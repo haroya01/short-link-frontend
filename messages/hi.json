@@ -333,7 +333,7 @@
     "backToList": "पोस्ट",
     "titlePlaceholder": "शीर्षक",
     "imageCaptionPlaceholder": "कैप्शन जोड़ें (वैकल्पिक)",
-    "bodyPlaceholder": "ब्लॉक जोड़ने के लिए '/' टाइप करें, या बस लिखना शुरू करें",
+    "bodyPlaceholder": "ब्लॉक के लिए / टाइप करें",
     "blockMenu": {
       "add": "नीचे ब्लॉक जोड़ें",
       "embedMedia": "एम्बेड मीडिया",
@@ -392,7 +392,7 @@
     "previewCopied": "पूर्वावलोकन लिंक कॉपी किया गया",
     "previewCopyError": "लिंक कॉपी नहीं हो सका",
     "saveChanges": "बदलाव सहेजें",
-    "previewCardLabel": "आपकी पोस्ट ऐसी दिखाई देगी",
+    "previewCardLabel": "ऐसी दिखेगी",
     "coverAdd": "इमेज जोड़ें",
     "coverUploading": "अपलोड हो रहा है…",
     "coverReplace": "बदलें",
@@ -577,7 +577,7 @@
       "warning": "चेतावनी",
       "caution": "सावधानी"
     },
-    "bodyPlaceholderTouch": "बस लिखना शुरू करें। फ़ॉर्मैटिंग ऊपर टूलबार में है",
+    "bodyPlaceholderTouch": "मुख्य पाठ",
     "statusTakenDown": "हटाई गई",
     "takenDownTitle": "यह पोस्ट हमारी सामग्री नीति के तहत हटाई गई है",
     "takenDownBody": "आप इसे संपादित करके सहेज सकते हैं, लेकिन फिर से सार्वजनिक नहीं कर सकते। असहमत हों तो शर्तों में दिए पते पर हमसे संपर्क करें।",
@@ -607,7 +607,10 @@
       "update": "सहेजें",
       "previewLoading": "प्रीव्यू लोड हो रहा है…",
       "previewFailed": "प्रीव्यू लोड नहीं हो सका"
-    }
+    },
+    "saveFailedRetry": "सहेजा नहीं गया · फिर कोशिश करें",
+    "reschedule": "समय बदलें",
+    "previewOpenError": "पूर्वावलोकन नहीं खुल सका"
   },
   "savedLibrary": {
     "private": "इसे केवल आप देख सकते हैं।",
@@ -826,7 +829,8 @@
     "highlightRemoved": "हाइलाइट हटा दिया गया",
     "highlightLinkCopied": "लिंक कॉपी हो गया",
     "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक",
-    "reportTitleHighlightReply": "इस जवाब की रिपोर्ट करें"
+    "reportTitleHighlightReply": "इस जवाब की रिपोर्ट करें",
+    "publishedStatus": "प्रकाशित हो गई"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",

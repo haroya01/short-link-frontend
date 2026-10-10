@@ -333,7 +333,7 @@
     "backToList": "글 목록",
     "titlePlaceholder": "제목",
     "imageCaptionPlaceholder": "캡션 추가 (선택)",
-    "bodyPlaceholder": "'/'를 입력하면 블록을 넣을 수 있어요. 그냥 써도 돼요",
+    "bodyPlaceholder": "'/'로 블록 넣기",
     "blockMenu": {
       "add": "아래에 블록 추가",
       "embedMedia": "임베드 미디어",
@@ -392,7 +392,7 @@
     "previewCopied": "미리보기 링크를 복사했어요",
     "previewCopyError": "링크 복사에 실패했어요",
     "saveChanges": "변경사항 저장",
-    "previewCardLabel": "발행되면 이렇게 보여요",
+    "previewCardLabel": "이렇게 보여요",
     "coverAdd": "이미지 추가",
     "coverUploading": "올리는 중…",
     "coverReplace": "교체",
@@ -577,7 +577,7 @@
       "warning": "주의",
       "caution": "경고"
     },
-    "bodyPlaceholderTouch": "그냥 쓰면 돼요. 서식은 위 도구 막대에 있어요",
+    "bodyPlaceholderTouch": "내용",
     "statusTakenDown": "내려짐",
     "takenDownTitle": "운영 정책으로 내려진 글이에요",
     "takenDownBody": "고쳐서 저장할 수는 있지만 다시 공개할 수는 없어요. 이의가 있으면 이용약관의 문의처로 연락해 주세요.",
@@ -607,7 +607,10 @@
       "update": "저장",
       "previewLoading": "미리보기를 불러오는 중…",
       "previewFailed": "미리보기를 불러오지 못했어요"
-    }
+    },
+    "saveFailedRetry": "저장 못 함 · 다시 시도",
+    "reschedule": "시각 바꾸기",
+    "previewOpenError": "미리보기를 열지 못했어요"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -826,7 +829,8 @@
     "highlightRemoved": "하이라이트를 삭제했어요",
     "highlightLinkCopied": "링크를 복사했어요",
     "highlightPublicFirst": "하이라이트했어요 · 이름과 함께 공개돼요",
-    "reportTitleHighlightReply": "이 답글 신고"
+    "reportTitleHighlightReply": "이 답글 신고",
+    "publishedStatus": "발행했어요"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

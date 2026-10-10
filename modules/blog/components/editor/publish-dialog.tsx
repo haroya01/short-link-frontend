@@ -13,6 +13,7 @@ import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { isSavableSlug } from "@/modules/blog/lib/slug";
 import { rowDate } from "@/modules/notes/lib/compact-time";
+import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -25,7 +26,7 @@ const TAKEN_DOWN_NOTICE_ID = "publish-taken-down";
  * Publish panel — a confirmation, not a form. The centerpiece is a live card preview (cover · title ·
  * 요약 · tags) of how the post will appear in the feed and share cards, with the cover auto-filled from
  * the body's first image and the 요약 prefilled from the opening line — so for most posts the author
- * only adds a topic and hits 발행. Everything decided rarely (시리즈 · 주소 · 발행 시점 · 본문 링크)
+ * only adds a topic and hits 발행. Everything decided rarely (시리즈 · 주소)
  * folds into the collapsed 추가 설정 section; the publish address stays readable on its collapsed row.
  * Settings are saved first so a publish/schedule snapshot matches what's set here. Dark-aware.
  */
@@ -132,8 +133,8 @@ export function PublishDialog({
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
-  // 추가 설정(시리즈·주소·발행 시점·본문 링크)은 접어 둔다 — 매번 정하는 게 아닌 것들이라 필수(카드
-  // 미리보기·태그)만 한 열로 보인다. 발행 주소는 접힌 줄에서도 읽힌다.
+  // 추가 설정(시리즈·주소)은 접어 둔다 — 매번 정하는 게 아닌 것들이라 필수(카드
+  // 미리보기·태그·발행 시점)만 한 열로 보인다. 발행 주소는 접힌 줄에서도 읽힌다.
   const [showAdvanced, setShowAdvanced] = useState(false);
   // The current cover came from the auto-apply below (drives the "본문 첫 이미지" badge). Cleared the
   // moment the author uploads or picks one deliberately.
@@ -167,6 +168,11 @@ export function PublishDialog({
   useEffect(() => {
     if (open && slugError && showAdvanced) slugErrorRef.current?.scrollIntoView({ block: "nearest" });
   }, [open, slugError, showAdvanced]);
+
+  const scheduledInput = scheduledAt ? toLocalInput(scheduledAt) : "";
+  useEffect(() => {
+    if (open && status === "SCHEDULED") setScheduleAt(scheduledInput);
+  }, [open, status, scheduledInput]);
 
   // Prefill an empty 요약 with the body's opening line when the dialog opens, so the author edits a
   // draft excerpt instead of facing a blank box. Once per open (the ref resets on close); never
@@ -407,7 +413,38 @@ export function PublishDialog({
             </Field>
           </div>
 
-          {/* ── 추가 설정: 매번 정하지 않는 것들(시리즈 · 주소 · 발행 시점 · 본문 링크)은 접어 둔다.
+          {(status === "DRAFT" || status === "SCHEDULED") && (
+            <div className="mt-5">
+              <Field label={t("publishTiming")}>
+                {status === "DRAFT" && (
+                  <div
+                    role="radiogroup"
+                    aria-label={t("publishTiming")}
+                    className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
+                  >
+                    <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
+                      {t("publishNow")}
+                    </button>
+                    <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
+                      {t("schedule")}
+                    </button>
+                  </div>
+                )}
+                {(status === "SCHEDULED" || showSchedule) && (
+                  <input
+                    type="datetime-local"
+                    min={localMin}
+                    value={scheduleAt}
+                    onChange={(e) => setScheduleAt(e.target.value)}
+                    aria-label={t("publishTiming")}
+                    className={`w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark] ${status === "DRAFT" ? "mt-2" : ""}`}
+                  />
+                )}
+              </Field>
+            </div>
+          )}
+
+          {/* ── 추가 설정: 매번 정하지 않는 것들(시리즈 · 주소)은 접어 둔다.
               발행 주소만은 접힌 줄에서도 읽히게 — 어디로 나가는지는 펼치지 않아도 보여야 한다. */}
           <div className="mt-5 border-t border-slate-100 pt-1.5 dark:border-slate-800">
             <button
@@ -488,33 +525,6 @@ export function PublishDialog({
                   )}
                 </Field>
 
-                {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. */}
-                {status === "DRAFT" && (
-                  <Field label={t("publishTiming")}>
-                    <div
-                      role="radiogroup"
-                      aria-label={t("publishTiming")}
-                      className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
-                    >
-                      <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
-                        {t("publishNow")}
-                      </button>
-                      <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
-                        {t("schedule")}
-                      </button>
-                    </div>
-                    {showSchedule && (
-                      <input
-                        type="datetime-local"
-                        min={localMin}
-                        value={scheduleAt}
-                        onChange={(e) => setScheduleAt(e.target.value)}
-                        className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
-                      />
-                    )}
-                  </Field>
-                )}
-
               </div>
             )}
           </div>
@@ -530,20 +540,20 @@ export function PublishDialog({
               {error === slugError ? t("slugCheck") : error}
             </p>
           )}
-          <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             {status === "SCHEDULED" && scheduledAt && (
               <span className="text-[12px] text-slate-500 dark:text-slate-400">
-                {t("scheduledFor", { when: new Date(scheduledAt).toLocaleString() })}
+                {t("scheduledFor", { when: scheduledLabel(scheduledAt, locale) })}
               </span>
             )}
             {previewAction}
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Standalone save only where there's no autosave + no save-on-action — i.e. NOT a draft.
-                A draft autosaves and Publish saves first, so a separate 임시저장 here was a double-save. */}
-            {status !== "DRAFT" && (
+          <div className="ml-auto flex items-center gap-2">
+            {/* Standalone save only where no action saves: a draft autosaves, 변경사항 저장 saves a live post,
+                and a scheduled post's actions save first. */}
+            {status === "UNPUBLISHED" && (
               <button
                 type="button"
                 onClick={async () => {
@@ -561,6 +571,7 @@ export function PublishDialog({
               busy={busy}
               scheduleMode={showSchedule}
               scheduleReady={Boolean(scheduleAt)}
+              rescheduleReady={Boolean(scheduleAt) && scheduleAt !== scheduledInput}
               t={t}
               // Close ONLY when the lifecycle action actually succeeds — a failed publish/schedule
               // (no title, server 409, …) keeps the dialog open with the error in the footer, instead
@@ -610,6 +621,13 @@ export function PublishDialog({
                 }
                 if ((await onSave()) === false) return;
                 await onChangeStatus("republish");
+              }}
+              onReschedule={async () => {
+                if (await onSchedule(scheduleAt)) onClose();
+              }}
+              onPublishNow={async () => {
+                if ((await onSave()) === false) return;
+                if (await onChangeStatus("publish")) onClose();
               }}
               onCancelSchedule={async () => {
                 const ok = await confirm({
@@ -687,11 +705,14 @@ function PrimaryAction({
   busy,
   scheduleMode,
   scheduleReady,
+  rescheduleReady,
   t,
   onPublish,
   onSaveChanges,
   onUnpublish,
   onRepublish,
+  onReschedule,
+  onPublishNow,
   onCancelSchedule,
 }: {
   status: PostStatus;
@@ -701,11 +722,14 @@ function PrimaryAction({
   scheduleMode: boolean;
   /** A publish time has been picked; gates the schedule action so an empty time can't fall through. */
   scheduleReady: boolean;
+  rescheduleReady: boolean;
   t: ReturnType<typeof useTranslations>;
   onPublish: () => void;
   onSaveChanges: () => void;
   onUnpublish: () => void;
   onRepublish: () => void;
+  onReschedule: () => void;
+  onPublishNow: () => void;
   onCancelSchedule: () => void;
 }) {
   const solid =
@@ -770,13 +794,34 @@ function PrimaryAction({
     );
   // SCHEDULED
   return (
-    <button
-      type="button"
-      onClick={onCancelSchedule}
-      disabled={busy}
-      className="focus-ring rounded-lg border border-amber-300 px-3 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-50 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/15"
-    >
-      {t("cancelSchedule")}
-    </button>
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <button
+        type="button"
+        onClick={onCancelSchedule}
+        disabled={busy}
+        className="focus-ring rounded-lg border border-amber-300 px-3 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-50 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/15"
+      >
+        {t("cancelSchedule")}
+      </button>
+      <button
+        type="button"
+        onClick={onReschedule}
+        disabled={busy || !rescheduleReady}
+        className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800/60"
+      >
+        <CalendarClock className="h-4 w-4" />
+        {t("reschedule")}
+      </button>
+      <button type="button" onClick={onPublishNow} disabled={busy} className={solid}>
+        <Check className="h-4 w-4" />
+        {t("publishNow")}
+      </button>
+    </div>
   );
+}
+
+/** A stored instant as the value a datetime-local field shows: the author's own wall-clock time. */
+function toLocalInput(iso: string): string {
+  const at = new Date(iso);
+  return new Date(at.getTime() - at.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 }

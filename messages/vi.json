@@ -333,7 +333,7 @@
     "backToList": "Bài viết",
     "titlePlaceholder": "Tiêu đề",
     "imageCaptionPlaceholder": "Thêm chú thích (không bắt buộc)",
-    "bodyPlaceholder": "Gõ '/' để chèn khối, hoặc cứ bắt đầu viết",
+    "bodyPlaceholder": "Gõ / để chèn khối",
     "blockMenu": {
       "add": "Thêm khối bên dưới",
       "embedMedia": "Nội dung nhúng",
@@ -392,7 +392,7 @@
     "previewCopied": "Đã sao chép liên kết xem trước",
     "previewCopyError": "Không sao chép được liên kết",
     "saveChanges": "Lưu thay đổi",
-    "previewCardLabel": "Bài viết của bạn sẽ hiển thị thế này",
+    "previewCardLabel": "Hiển thị thế này",
     "coverAdd": "Thêm ảnh",
     "coverUploading": "Đang tải lên…",
     "coverReplace": "Thay thế",
@@ -577,7 +577,7 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên",
+    "bodyPlaceholderTouch": "Nội dung",
     "statusTakenDown": "Đã bị gỡ",
     "takenDownTitle": "Bài viết này đã bị gỡ theo chính sách nội dung",
     "takenDownBody": "Bạn vẫn có thể chỉnh sửa và lưu, nhưng không thể công khai lại. Nếu không đồng ý, hãy liên hệ qua địa chỉ trong Điều khoản.",
@@ -607,7 +607,10 @@
       "update": "Lưu",
       "previewLoading": "Đang tải bản xem trước…",
       "previewFailed": "Không tải được bản xem trước"
-    }
+    },
+    "saveFailedRetry": "Chưa lưu · Thử lại",
+    "reschedule": "Đổi thời gian",
+    "previewOpenError": "Không mở được bản xem trước"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -840,7 +843,8 @@
     "highlightRemoved": "Đã xóa đánh dấu",
     "highlightLinkCopied": "Đã sao chép liên kết",
     "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn",
-    "reportTitleHighlightReply": "Báo cáo trả lời này"
+    "reportTitleHighlightReply": "Báo cáo trả lời này",
+    "publishedStatus": "Đã xuất bản"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",

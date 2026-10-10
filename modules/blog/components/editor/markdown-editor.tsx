@@ -70,6 +70,7 @@ import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { DropCursorLine } from "@/modules/blog/components/editor/drop-cursor";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
 import { POST_IMAGE_TYPES, postImageErrorMessageKey, postImageTypeError } from "@/modules/blog/api/post-images";
+import { useEdgeFade } from "@/hooks/use-edge-fade";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -683,6 +684,10 @@ function EditorToolbar({
   onPickLink: () => void;
 }) {
   const t = useTranslations("postEditor");
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const edgeFade = useEdgeFade(scrollerRef);
+  const [touch, setTouch] = useState(false);
+  useEffect(() => setTouch(window.matchMedia?.("(pointer: coarse)").matches ?? false), []);
   const a = useEditorState({
     editor,
     selector: ({ editor }) => ({
@@ -700,10 +705,12 @@ function EditorToolbar({
   });
 
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
+  const image: Item = { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() };
   const groups: Item[][] = [
     [
       { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
       { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: onPickLink },
+      ...(touch ? [image] : []),
     ],
     [
       { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
@@ -716,7 +723,7 @@ function EditorToolbar({
       { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],
     [
-      { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
+      ...(touch ? [] : [image]),
       { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
       { icon: PanelTop, label: t("slash.embed"), run: onPickEmbed },
       { icon: Minus, label: t("slash.divider"), run: () => editor.chain().focus().setHorizontalRule().run() },
@@ -733,7 +740,10 @@ function EditorToolbar({
   return (
     <div className="relative border-b border-slate-100 dark:border-slate-800">
       <div
+        ref={scrollerRef}
         data-testid="editor-toolbar"
+        {...edgeFade.attrs}
+        style={edgeFade.style}
         className="flex items-center gap-0.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {groups.map((group, gi) => (
@@ -756,10 +766,6 @@ function EditorToolbar({
           </div>
         ))}
       </div>
-      {/* Right-edge fade — signals the toolbar scrolls horizontally where it can't fit (390px crops the
-          trailing groups). Same scroll-fade idiom as the discovery rail; sm+ the toolbar fits, so the
-          hint hides. */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:hidden" />
     </div>
   );
 }

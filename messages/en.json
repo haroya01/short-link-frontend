@@ -333,7 +333,7 @@
     "backToList": "Posts",
     "titlePlaceholder": "Title",
     "imageCaptionPlaceholder": "Add a caption (optional)",
-    "bodyPlaceholder": "Type '/' to add a block, or just start writing",
+    "bodyPlaceholder": "Type / for blocks",
     "blockMenu": {
       "add": "Add block below",
       "embedMedia": "Embedded media",
@@ -392,7 +392,7 @@
     "previewCopied": "Preview link copied",
     "previewCopyError": "Couldn't copy the link",
     "saveChanges": "Save changes",
-    "previewCardLabel": "How your post will appear",
+    "previewCardLabel": "How it appears",
     "coverAdd": "Add image",
     "coverUploading": "Uploading…",
     "coverReplace": "Replace",
@@ -577,7 +577,7 @@
       "warning": "Warning",
       "caution": "Caution"
     },
-    "bodyPlaceholderTouch": "Just start writing. Formatting is in the toolbar above",
+    "bodyPlaceholderTouch": "Body",
     "statusTakenDown": "Taken down",
     "takenDownTitle": "This post was taken down under our content policy",
     "takenDownBody": "You can still edit and save it, but you can't make it public again. If you disagree, contact us at the address in the Terms.",
@@ -607,7 +607,10 @@
       "update": "Save",
       "previewLoading": "Loading preview…",
       "previewFailed": "Couldn't load a preview"
-    }
+    },
+    "saveFailedRetry": "Not saved · Retry",
+    "reschedule": "Change time",
+    "previewOpenError": "Couldn't open the preview"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -826,7 +829,8 @@
     "highlightRemoved": "Highlight deleted",
     "highlightLinkCopied": "Link copied",
     "highlightPublicFirst": "Highlighted · public with your name",
-    "reportTitleHighlightReply": "Report this reply"
+    "reportTitleHighlightReply": "Report this reply",
+    "publishedStatus": "Published"
   },
   "imageCropper": {
     "title": "Crop image",
