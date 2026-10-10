@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { AccountSheet } from "@/components/common/account-sheet";
 import { BlogSearchSheet } from "@/components/common/blog-search-sheet";
+import { UnreadDot } from "@/components/common/unread-dot";
 
 const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
@@ -83,21 +84,12 @@ export function BlogBottomNav() {
         <BlogChromeLink
           href={blogHref("/notifications")}
           aria-current={isNotif ? "page" : undefined}
-          // Fold the unread count into the tab's name so a screen reader announces it — the numeric badge
-          // is otherwise decorative (aria-hidden) and silent.
           aria-label={authenticated && unread > 0 ? `${tNotif("title")}, ${tNotif("unreadCount", { count: unread })}` : undefined}
           className={cn(TAB, isNotif ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <span className="relative">
             <Bell className="h-5 w-5" />
-            {authenticated && unread > 0 && (
-              <span
-                aria-hidden
-                className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white"
-              >
-                {unread > 99 ? "99+" : unread}
-              </span>
-            )}
+            {authenticated && unread > 0 && <UnreadDot className="-right-0.5 -top-0.5" />}
           </span>
           {tNotif("title")}
         </BlogChromeLink>

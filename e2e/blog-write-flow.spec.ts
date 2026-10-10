@@ -954,6 +954,7 @@ test("unpublish: a published post can be taken down (POST /unpublish)", async ({
   await openEditor(page);
   const dialog = await openPublishDialog(page);
   await dialog.getByRole("button", { name: "Unpublish", exact: true }).click();
+  await page.getByRole("dialog", { name: "Unpublish this post?" }).getByRole("button", { name: "Unpublish", exact: true }).click();
   await expect.poll(() => captured.status).toBe("unpublish");
 });
 
@@ -1009,6 +1010,10 @@ test("cancel schedule: a scheduled post returns to draft (POST /back-to-draft)",
   await openEditor(page);
   const dialog = await openPublishDialog(page);
   await dialog.getByRole("button", { name: "Cancel schedule", exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Cancel the scheduled publish?" })
+    .getByRole("button", { name: "Cancel schedule", exact: true })
+    .click();
   await expect.poll(() => captured.status).toBe("back-to-draft");
 });
 

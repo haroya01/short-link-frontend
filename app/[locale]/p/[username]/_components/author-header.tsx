@@ -122,7 +122,7 @@ export async function AuthorHeader({
         </div>
         <div className="flex shrink-0 items-center gap-2 pt-1">
           <FollowButton username={author.username} initialFollowerCount={0} showCount={false} showBell />
-          <AuthorMoreMenu username={author.username} />
+          <AuthorMoreMenu username={author.username} userId={author.id} />
         </div>
       </div>
 

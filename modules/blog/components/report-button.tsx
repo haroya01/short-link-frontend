@@ -13,6 +13,13 @@ import { REASON_CODES, reasonLabelKey } from "@/lib/api/abuse-report-reasons";
 
 const HEADER_HEIGHT = 56;
 
+const REPORT_TITLE: Record<AbuseSubjectType, string> = {
+  POST: "reportTitle",
+  NOTE: "reportTitleNote",
+  USER: "reportTitleUser",
+  COMMENT: "reportTitleComment",
+};
+
 type Props = {
   subjectType: AbuseSubjectType;
   subjectId: number;
@@ -136,7 +143,7 @@ export function ReportButton({
             )}
           >
             <h2 id={titleId} className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
-              {t(subjectType === "NOTE" ? "reportTitleNote" : "reportTitle")}
+              {t(REPORT_TITLE[subjectType])}
             </h2>
             {submitted ? (
               <p role="status" className="text-sm text-slate-600 dark:text-slate-300">{t("reportDone")}</p>
