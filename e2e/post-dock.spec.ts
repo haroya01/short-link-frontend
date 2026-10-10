@@ -51,6 +51,7 @@ test("독은 하단 탭 위에 떠 있고, 탭이 내려가면 따라 내려간�
 
 test("목차 버튼은 제목 시트를 열고, 제목을 고르면 시트가 닫히며 그 자리로 간다", async ({ page }) => {
   await page.setViewportSize(PHONE);
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(POST);
   await dock(page).getByRole("button", { name: "목차" }).click({ timeout: 30_000 });
   const sheet = page.getByRole("dialog", { name: "목차" });
@@ -153,4 +154,13 @@ test("휴대폰 글 끝은 iOS처럼 태그 → 다음 편 → 작가 카드 →
 
   await page.goto("/ko/p/haruka/hexagonal-too-much");
   await expect(page.getByTestId("post-author-card").getByRole("button", { name: /팔로우/ })).toBeVisible({ timeout: 30_000 });
+});
+
+test("나를 차단한 작가의 글엔 휴대폰 독도 없다", async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.goto("/ko/p/rin/quiet-hours");
+  await expect(page.getByTestId("author-unavailable")).toBeVisible({ timeout: 30_000 });
+  await expect(dock(page)).toHaveCount(0);
+  await expect(page.getByTestId("post-author-card")).toHaveCount(0);
+  await expect(page.getByTestId("post-actions")).toHaveCount(0);
 });
