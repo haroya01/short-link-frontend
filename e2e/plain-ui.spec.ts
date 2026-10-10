@@ -34,3 +34,9 @@ test("서재 names its sections without a grey line restating them", async ({ pa
     await expect(page.getByRole("button", { name, exact: true })).toBeVisible({ timeout: 30_000 });
   }
 });
+
+test("the shortener asks for a long URL in a few words, without '여기에' or an invitation", async ({ page }) => {
+  await page.goto("/ko");
+  await expect(page.getByPlaceholder("긴 주소 붙여넣기", { exact: true }).first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator("main")).not.toContainText("보세요");
+});

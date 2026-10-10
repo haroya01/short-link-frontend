@@ -832,8 +832,7 @@
     "title": "kurl · URL 단축과 클릭 분석",
     "description": "긴 주소를 짧게 줄이고, 어느 기기·채널·나라에서 눌렸는지 봇을 빼고 보여 드려요.",
     "ogHeadlineTop": "URL 단축 +",
-    "ogHeadlineBottom": "클릭 분석",
-    "ogSubline": "디바이스 · 채널 · 국가 · 시간대, 누가 어디서 클릭했는지 한눈에"
+    "ogHeadlineBottom": "클릭 분석"
   },
   "imageCropper": {
     "title": "이미지 자르기",
@@ -1165,7 +1164,7 @@
     }
   },
   "shortenForm": {
-    "placeholder": "긴 주소를 여기에 붙여넣으세요",
+    "placeholder": "긴 주소 붙여넣기",
     "submit": "단축하기",
     "heroSubmit": "단축",
     "advancedToggle": "고급 옵션",
@@ -1181,7 +1180,7 @@
       "passwordEmpty": "비밀번호를 입력해 주세요.",
       "invalid": "http:// 또는 https:// 로 시작하는 올바른 URL이 필요해요.",
       "malicious": "악성/피싱으로 분류된 URL이라 단축할 수 없어요.",
-      "duplicate": "이미 쓰이고 있는 코드예요. 다른 코드로 해 보세요.",
+      "duplicate": "이미 쓰이고 있는 코드예요. 다른 코드를 골라 주세요.",
       "customCodeFormat": "코드는 영문·숫자 3~16자만 쓸 수 있어요.",
       "urlScheme": "URL은 http:// 또는 https:// 로 시작해야 해요.",
       "urlBlank": "URL을 입력해 주세요.",
@@ -1195,7 +1194,6 @@
   },
   "result": {
     "completed": "단축 완료",
-    "nextStepHint": "복사하고, 열고, 성과 추적까지 한 번에 이어가세요.",
     "originalUrl": "원래 주소",
     "passwordProtected": "비밀번호 걸림",
     "passwordNotApplied": "비밀번호가 걸리지 않았어요. 링크 관리에서 다시 걸어 주세요.",
@@ -1343,10 +1341,8 @@
       "weekClicks": "7일 사람 클릭",
       "weekClicksHint": "최근 7일 · 자동 접속 제외",
       "zeroClick": "무클릭 링크",
-      "zeroClickReview": "공유 위치나 버튼 문구를 점검해 보세요",
       "zeroClickClear": "모든 링크가 클릭을 받았어요",
       "expiring": "3일 내 만료",
-      "expiringReview": "연장할지 삭제할지 결정해 보세요",
       "expiringClear": "곧 만료될 링크가 없어요",
       "topLink": "성과 최고 링크",
       "weekDelta": "최근 7일 +{count}",
@@ -1378,7 +1374,7 @@
     },
     "noResultTitle": "검색 결과가 없어요",
     "noResultDesc": "\"{query}\"와 일치하는 링크를 찾지 못했어요.",
-    "noResultDescFiltered": "지금 조건에 맞는 링크가 없어요. 필터를 조정해 보세요.",
+    "noResultDescFiltered": "지금 조건에 맞는 링크가 없어요.",
     "table": {
       "shortUrl": "링크 이름",
       "originalUrl": "목적지",
@@ -1471,7 +1467,6 @@
       "uploadAnother": "다른 파일 업로드",
       "done": "완료"
     },
-    "librarySubtitle": "링크를 찾아 복사하고, 성과를 확인하세요.",
     "loadFailed": "링크를 불러오지 못했어요. 다시 시도해 주세요.",
     "overviewFailed": "전체 링크 통계를 불러오지 못했어요.",
     "accountScope": "계정 전체 · {tz} · 자동 접속 포함 누적 {total}회 · 목록 필터와 별도로 집계",
@@ -2821,8 +2816,8 @@
       "sectionFeed": "공개 프로필 피드",
       "quickAdd": {
         "title": "링크 추가",
-        "firstTitle": "첫 링크를 추가해보세요 ↓",
-        "firstHint": "Instagram, 블로그, 유튜브 등 어떤 URL이든 라벨과 함께 추가하세요. SNS 프로필 링크로 쓸 수 있어요.",
+        "firstTitle": "첫 링크 추가",
+        "firstHint": "Instagram, 블로그, 유튜브 등 어떤 주소든 라벨과 함께 넣을 수 있어요. 이 페이지는 SNS 프로필 링크가 돼요.",
         "hint": "URL과 라벨을 넣으면 단축부터 프로필 노출까지 자동이에요. 연달아 여러 개 추가할 수 있어요.",
         "urlPlaceholder": "https://... 또는 mailto:...",
         "labelPlaceholder": "라벨 (예: 📝 블로그)",
@@ -2845,13 +2840,13 @@
       "openShort": "열기",
       "yourPage": "공개 프로필",
       "featuredTitle": "공개 프로필에 보일 항목",
-      "featuredHint": "드래그로 순서 변경 (모바일은 ↑↓), ★로 하나를 대표로 맨 위에, 빼려면 '빼기'. 헤더로 섹션을 만들면 접고 펴거나 통째로 옮길 수 있어요.",
+      "featuredHint": "끌어서 순서를 바꿔요(휴대폰은 ↑↓). ★를 누른 링크가 대표로 맨 위에 와요. 헤더로 섹션을 만들면 접고 펴거나 통째로 옮길 수 있어요.",
       "sectionExpand": "섹션 펴기",
       "sectionCollapse": "섹션 접기",
       "sectionItemCount": "{count}개",
-      "featuredEmpty": "노출할 링크를 아래에서 추가하거나, 헤더나 구분선으로 섹션을 만들어 보세요.",
+      "featuredEmpty": "노출할 링크가 없어요.",
       "featuredEmptyTitle": "공개할 링크가 비어있어요",
-      "featuredEmptyHasOthers": "위 '링크 추가' 폼으로 새로 만들거나, 아래 '다른 내 링크' ({count}개)에서 선택해보세요.",
+      "featuredEmptyHasOthers": "노출할 링크가 없어요. 고를 수 있는 내 링크가 {count}개 있어요.",
       "addBlockMenu": "추가",
       "addMoreBlocks": "그 외 블록",
       "remove": "삭제",
@@ -3046,7 +3041,7 @@
         "csvExcludesOptedOut": "수신 거부로 표시한 항목은 CSV에서 자동으로 빠져요.",
         "loading": "불러오는 중…",
         "loadFailed": "불러오기에 실패했어요.",
-        "errorHint": "잠시 후 다시 시도해 주세요. 문제가 계속되면 새로고침해 보세요.",
+        "errorHint": "잠시 후 다시 시도해 주세요.",
         "retry": "다시 시도",
         "downloadCsv": "CSV 다운로드",
         "backToEditor": "편집으로 돌아가기",
@@ -4007,9 +4002,7 @@
     "list": {
       "title": "모집",
       "new": "새 모집",
-      "loadFailed": "목록을 불러오지 못했어요.",
-      "emptyTitle": "첫 모집 페이지를 만들어 보세요",
-      "emptyBody": "소개 페이지와 신청 폼을 만들면, 마감과 신청자 유입까지 여기서 관리할 수 있어요."
+      "loadFailed": "목록을 불러오지 못했어요."
     },
     "form": {
       "newTitle": "새 모집 만들기",
@@ -4019,7 +4012,7 @@
       "titlePlaceholder": "도쿄 개발자 스터디 3기 모집",
       "description": "소개",
       "descriptionHint": "마크다운을 쓸 수 있어요 (# 제목, - 목록, **강조**)",
-      "descriptionPlaceholder": "무엇을 하는 모임인지, 누구를 기다리는지 알려주세요",
+      "descriptionPlaceholder": "어떤 모임인지, 누구를 기다리는지",
       "whenTitle": "일시",
       "startsAt": "시작",
       "endsAt": "종료 (선택)",
@@ -4125,7 +4118,7 @@
     "attendees": {
       "title": "신청자 {count}명",
       "exportCsv": "CSV 내보내기",
-      "empty": "아직 신청자가 없어요. 공유 링크를 단톡에 올려 보세요.",
+      "empty": "아직 신청자가 없어요.",
       "name": "이름",
       "contact": "연락처",
       "channel": "유입 채널",

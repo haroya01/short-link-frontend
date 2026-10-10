@@ -912,8 +912,7 @@
     "title": "kurl · URL短縮とクリック分析",
     "description": "長いURLを短くして、どの端末・チャネル・国から押されたかを、ボットを除いて表示します。",
     "ogHeadlineTop": "URL短縮 +",
-    "ogHeadlineBottom": "クリック分析",
-    "ogSubline": "デバイス・チャネル・国・時間帯で、誰がどこからクリックしたかがひと目でわかる"
+    "ogHeadlineBottom": "クリック分析"
   },
   "notifications": {
     "webPushLabel": "ブラウザ通知を受け取る",
@@ -1165,7 +1164,7 @@
     }
   },
   "shortenForm": {
-    "placeholder": "長いURLをここに貼り付け",
+    "placeholder": "長いURLを貼り付け",
     "submit": "短縮する",
     "heroSubmit": "短縮",
     "advancedToggle": "詳細オプション",
@@ -1181,7 +1180,7 @@
       "passwordEmpty": "パスワードを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
       "malicious": "悪性/フィッシングと判定されたため短縮できません。",
-      "duplicate": "既に使用中のカスタムコードです。別の名前を試してください。",
+      "duplicate": "既に使用中のコードです。別のコードを選んでください。",
       "customCodeFormat": "カスタムコードは英数字3〜16文字のみ可能です。",
       "urlScheme": "URLは http:// または https:// で始まる必要があります。",
       "urlBlank": "URLを入力してください。",
@@ -1195,7 +1194,6 @@
   },
   "result": {
     "completed": "短縮完了",
-    "nextStepHint": "コピー、表示、成果追跡までここから進められます。",
     "originalUrl": "元のURL",
     "passwordProtected": "パスワード保護",
     "passwordNotApplied": "パスワードがかかっていません。リンク管理でもう一度設定してください。",
@@ -1343,10 +1341,8 @@
       "weekClicks": "7日間の人によるクリック",
       "weekClicksHint": "直近7日 · 自動アクセスを除く",
       "zeroClick": "未クリック",
-      "zeroClickReview": "掲載場所・CTAを見直し",
       "zeroClickClear": "すべてのリンクにクリックがあります",
       "expiring": "期限切れ間近",
-      "expiringReview": "延長または削除を検討",
       "expiringClear": "期限切れ間近はありません",
       "topLink": "トップリンク",
       "weekDelta": "直近7日 +{count}",
@@ -1378,7 +1374,7 @@
     },
     "noResultTitle": "該当する結果がありません",
     "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
-    "noResultDescFiltered": "現在の条件に一致するリンクがありません。フィルターを調整してみてください。",
+    "noResultDescFiltered": "現在の条件に一致するリンクがありません。",
     "table": {
       "shortUrl": "リンク名",
       "originalUrl": "リンク先",
@@ -1471,7 +1467,6 @@
       "uploadAnother": "別のファイルをアップロード",
       "done": "完了"
     },
-    "librarySubtitle": "リンクを探してコピーし、成果を確認できます。",
     "loadFailed": "リンクを読み込めませんでした。もう一度お試しください。",
     "overviewFailed": "アカウントの統計を読み込めませんでした。",
     "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
@@ -2821,8 +2816,8 @@
       "sectionFeed": "公開プロフィールのフィード",
       "quickAdd": {
         "title": "リンクを追加",
-        "firstTitle": "最初のリンクを追加 ↓",
-        "firstHint": "Instagram・ブログ・YouTube などどんな URL でも、ラベルと一緒に追加して bio 用 1 ページに表示できます。",
+        "firstTitle": "最初のリンクを追加",
+        "firstHint": "Instagram・ブログ・YouTube など、どんな URL もラベル付きで bio 用 1 ページに並びます。",
         "hint": "URL + ラベルを入力 → 短縮 + プロフィール表示まで自動。連続で何個でも追加できます。",
         "urlPlaceholder": "https://... または mailto:...",
         "labelPlaceholder": "ラベル (例: 📝 ブログ)",
@@ -2845,13 +2840,13 @@
       "openShort": "開く",
       "yourPage": "公開プロフィール",
       "featuredTitle": "公開プロフィールに表示する項目",
-      "featuredHint": "ドラッグで並び替え (モバイル ↑↓)、★ で 1 つをおすすめとして一番上に、外すときは『外す』。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
+      "featuredHint": "ドラッグで並び替えます（モバイルは ↑↓）。★ を付けたリンクがおすすめとして一番上に来ます。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
       "sectionExpand": "セクションを開く",
       "sectionCollapse": "セクションを閉じる",
       "sectionItemCount": "{count} 件",
-      "featuredEmpty": "下のリストからリンクを追加するか、ヘッダー / 区切り線でセクションを作りましょう。",
+      "featuredEmpty": "表示するリンクがありません。",
       "featuredEmptyTitle": "公開フィードが空です",
-      "featuredEmptyHasOthers": "上の『追加』フォームで新規作成するか、下の『他の自分のリンク』（{count} 件）から選んでください。",
+      "featuredEmptyHasOthers": "表示するリンクがありません。選べる自分のリンクが{count}件あります。",
       "addBlockMenu": "追加",
       "addMoreBlocks": "その他のブロック",
       "remove": "削除",
@@ -3046,7 +3041,7 @@
         "csvExcludesOptedOut": "受信拒否としてマークした項目は CSV から自動的に除外されます。",
         "loading": "読み込み中...",
         "loadFailed": "読み込みに失敗しました。",
-        "errorHint": "しばらくしてからもう一度お試しください。続く場合はページを再読み込みしてください。",
+        "errorHint": "しばらくしてからもう一度お試しください。",
         "retry": "再試行",
         "downloadCsv": "CSV をダウンロード",
         "backToEditor": "編集に戻る",
@@ -4007,9 +4002,7 @@
     "list": {
       "title": "イベント",
       "new": "新規作成",
-      "loadFailed": "読み込みに失敗しました。",
-      "emptyTitle": "最初の募集ページを作りましょう",
-      "emptyBody": "紹介ページと申込フォームを作れば、締切や流入の確認までここで管理できます。"
+      "loadFailed": "読み込みに失敗しました。"
     },
     "form": {
       "newTitle": "新しい募集",
@@ -4019,7 +4012,7 @@
       "titlePlaceholder": "東京エンジニア勉強会 #3",
       "description": "紹介文",
       "descriptionHint": "Markdown が使えます (# 見出し、- リスト、**強調**)",
-      "descriptionPlaceholder": "どんな集まりか、誰に来てほしいかを書きましょう",
+      "descriptionPlaceholder": "どんな集まりか、誰に来てほしいか",
       "whenTitle": "日時",
       "startsAt": "開始",
       "endsAt": "終了 (任意)",
@@ -4125,7 +4118,7 @@
     "attendees": {
       "title": "申込者 {count}名",
       "exportCsv": "CSVエクスポート",
-      "empty": "まだ申込者がいません。リンクをグループチャットで共有してみてください。",
+      "empty": "まだ申込者がいません。",
       "name": "お名前",
       "contact": "連絡先",
       "channel": "流入元",
