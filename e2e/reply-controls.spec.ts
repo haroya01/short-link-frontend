@@ -58,10 +58,10 @@ test("the thread's writer hides a reply, finds it under 숨긴 답글, and bring
 test("the thread's writer removes someone's reply after confirming", async ({ page }) => {
   await page.goto("/ko/p/dohyun/notes/72");
   await menu(page, 75, "삭제");
-  const ask = page.getByRole("dialog", { name: "이 답글을 스레드에서 지울까요?" });
+  const ask = page.getByRole("dialog", { name: "이 답글을 스레드에서 삭제할까요?" });
   await expect(ask).toContainText("다른 서버에서 온 답글은 kurl에서만 사라져요.");
   await ask.getByRole("button", { name: "삭제" }).click();
-  await expect(page.getByText("답글을 지웠어요")).toBeVisible();
+  await expect(page.getByText("답글을 삭제했어요")).toBeVisible();
   await expect(note(page, 75)).toHaveCount(0);
   await expect(note(page, 73)).toBeVisible();
 });
