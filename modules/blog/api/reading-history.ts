@@ -5,6 +5,7 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 /** One entry in the reader's history — the post + its author + when it was last read. */
 export interface ReadingHistoryEntry {
   postId: number;
+  userId: number;
   username: string;
   avatarUrl: string | null;
   title: string;
@@ -24,6 +25,7 @@ export interface ReadingHistoryPage {
 let mockHistory: ReadingHistoryEntry[] = [
   {
     postId: 8001,
+    userId: 9101,
     username: "haneul",
     avatarUrl: null,
     title: "좋은 글쓰기의 조건",

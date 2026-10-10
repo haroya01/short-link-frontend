@@ -74,6 +74,7 @@ const PATH: MockCollectionDetail = {
   kind: "PATH",
   ordered: true,
   curatorUsername: "haruka",
+  curatorUserId: 3,
   connections: pathConnections,
 };
 
@@ -94,6 +95,7 @@ const COLLECTION: MockCollectionDetail = {
   kind: "COLLECTION",
   ordered: false,
   curatorUsername: "dohyun",
+  curatorUserId: 1,
   connections: collectionConnections,
 };
 
@@ -185,6 +187,7 @@ export function mockCreateCollection(payload: NewCollection): CollectionSummary 
     kind: payload.ordered ? "PATH" : "COLLECTION",
     ordered: payload.ordered,
     curatorUsername: "dohyun",
+    curatorUserId: 1,
     connections: [],
   };
   mockStore.unshift(created);

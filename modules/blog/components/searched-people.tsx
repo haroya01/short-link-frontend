@@ -83,7 +83,7 @@ function PersonRow({ person }: { person: PersonMatch }) {
         href={authorHref(person.username, locale)}
         className="focus-ring flex min-w-0 flex-1 items-start gap-3 rounded-surface"
       >
-        <Avatar src={person.avatarUrl} name={name} seed={null} size="lg" />
+        <Avatar src={person.avatarUrl} name={name} seed={person.userId} size="lg" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
           {name !== person.username && (

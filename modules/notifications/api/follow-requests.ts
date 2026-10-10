@@ -7,6 +7,7 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 export interface FollowRequest {
   key: string;
   origin: { member: string } | { remoteId: number };
+  userId: number | null;
   handle: string;
   displayName: string | null;
   avatarUrl: string | null;
@@ -14,6 +15,7 @@ export interface FollowRequest {
 }
 
 interface MemberRow {
+  userId: number;
   username: string;
   displayName: string | null;
   avatarUrl: string | null;
@@ -29,7 +31,7 @@ interface RemoteRow {
 }
 
 const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
-let mockMembers: MemberRow[] = [{ username: "sori", displayName: "소리", avatarUrl: null, requestedAt: minutesAgo(20) }];
+let mockMembers: MemberRow[] = [{ userId: 44, username: "sori", displayName: "소리", avatarUrl: null, requestedAt: minutesAgo(20) }];
 let mockRemotes: RemoteRow[] = [
   { id: 9810, acct: "carol@fosstodon.org", displayName: "Carol", avatarUrl: null, requestedAt: minutesAgo(60) },
 ];
@@ -50,6 +52,7 @@ function merge(members: MemberRow[], remotes: RemoteRow[]): FollowRequest[] {
     ...members.map((m) => ({
       key: `member:${m.username}`,
       origin: { member: m.username },
+      userId: m.userId,
       handle: m.username,
       displayName: m.displayName,
       avatarUrl: m.avatarUrl,
@@ -58,6 +61,7 @@ function merge(members: MemberRow[], remotes: RemoteRow[]): FollowRequest[] {
     ...remotes.map((r) => ({
       key: `remote:${r.id}`,
       origin: { remoteId: r.id },
+      userId: null,
       handle: r.acct,
       displayName: r.displayName,
       avatarUrl: r.avatarUrl,

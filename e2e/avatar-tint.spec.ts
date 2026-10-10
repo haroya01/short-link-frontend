@@ -21,3 +21,9 @@ test("an account on another server has no local id, so it stays on the neutral d
   await expect(disc).toBeVisible({ timeout: 30_000 });
   await expect(disc).toHaveAttribute("data-avatar-tint", "neutral");
 });
+
+test("people search shows a person on the same tint as their own page", async ({ page }) => {
+  await page.goto("/ko/blog?q=har&view=people");
+  const disc = page.getByTestId("person-haruka").locator("[data-avatar-tint]");
+  await expect(disc).toHaveAttribute("data-avatar-tint", "indigo", { timeout: 30_000 });
+});
