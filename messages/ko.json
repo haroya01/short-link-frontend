@@ -459,6 +459,7 @@
     "slugFreezeWarn": "발행 후에는 주소를 바꿀 수 없어요",
     "scheduleInvalid": "미래 시각을 선택해주세요.",
     "slugTaken": "이 주소는 이미 사용 중이에요. 다른 주소로 바꿔주세요.",
+    "slugCheck": "주소를 확인해 주세요.",
     "slugInvalid": "주소는 영문 소문자·숫자·하이픈으로 2자 이상 써 주세요.",
     "scheduledToast": "{when}에 발행 예약됐어요.",
     "scheduledFor": "{when} 발행 예정",
@@ -730,7 +731,9 @@
     "followCuratorHint": "이 큐레이터가 엮는 컬렉션을 따라 읽기",
     "following": "팔로잉",
     "followers": "팔로워 {count, number}",
-    "followingCount": "팔로잉 {count, number}",
+    "countFollowers": "팔로워 <n>{count, number}</n>",
+    "countFollowing": "팔로잉 <n>{count, number}</n>",
+    "countPosts": "글 <n>{count, number}</n>편",
     "followersTab": "팔로워",
     "followingTab": "팔로잉",
     "followersEmpty": "아직 팔로워가 없어요.",
@@ -774,8 +777,6 @@
       "OTHER": "기타"
     },
     "publishedCelebration": "발행됐어요",
-    "followersList": "팔로워",
-    "followingList": "팔로잉",
     "callout": {
       "note": "참고",
       "tip": "팁",
@@ -783,7 +784,6 @@
       "warning": "주의",
       "caution": "경고"
     },
-    "activityPosts": "글 {count}편",
     "activitySince": "{date}부터",
     "reportFailed": "신고를 보내지 못했어요. 다시 시도해 주세요.",
     "tabNotes": "노트",

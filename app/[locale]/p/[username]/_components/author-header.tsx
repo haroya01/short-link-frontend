@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
@@ -11,11 +12,12 @@ import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { DATE_LOCALE } from "@/lib/date";
+import { AboutLink } from "./about-link";
 import { AuthorTabs } from "./author-tabs";
 import { AvatarZoom } from "./avatar-zoom";
 import { HeaderBio } from "./header-bio";
 
-type Tab = "posts" | "notes" | "replies" | "media" | "reposts" | "series" | "collections" | "about";
+type Tab = "posts" | "notes" | "replies" | "media" | "reposts" | "series" | "collections";
 
 const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
@@ -35,6 +37,10 @@ function authorTabHref(username: string, locale: string, sub = ""): string {
   const base = BLOG_HOST ? `/@${username}` : `/${locale}/p/${username}`;
   return sub ? `${base}/${sub}` : base;
 }
+
+const inkNumber = (chunks: ReactNode) => (
+  <span className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</span>
+);
 
 /** The month of the author's first published post — "2026년 5월" / "May 2026". */
 function earliestMonth(posts: PublicPostListItem[], locale: string): string {
@@ -65,9 +71,9 @@ function topTopicTags(posts: PublicPostListItem[]): string[] {
 }
 
 /**
- * Shared header for the author's blog pages: handle as the headline, bio, one line of what they've
- * written (count · since when · followers · their kurl card address), their main topics, then the
- * 글 / 시리즈 / 컬렉션 / 소개 bar. Topics ride the header below xl because the rail only exists there.
+ * Shared header for the author's blog pages: avatar with the follow controls, name over @handle, bio,
+ * the counts (followers · following · posts), one meta line (kurl card address · since when · 소개),
+ * their main topics, then the tab bar. Topics ride the header below xl because the rail only exists there.
  */
 export async function AuthorHeader({
   author,
@@ -112,63 +118,71 @@ export async function AuthorHeader({
       label: t("tabCollections"),
       empty: noCollections,
     },
-    { key: "about", href: authorTabHref(author.username, locale, "about"), label: t("tabAbout") },
   ];
 
   const since = posts.length > 0 ? earliestMonth(posts, locale) : null;
   const cardHost = `${author.username}.${KURL_HOST}`;
 
+  const meta = [
+    author.hasLinkInBio && (
+      <a
+        key="card"
+        href={cardHref(author.username, locale)}
+        title={tNav("profile")}
+        className="focus-ring inline-flex items-center gap-1 rounded-sm font-mono text-[13px] text-slate-600 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-300 dark:hover:text-accent-400"
+      >
+        {cardHost}
+        <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
+      </a>
+    ),
+    since && <span key="since">{t("activitySince", { date: since })}</span>,
+    <AboutLink key="about" href={authorTabHref(author.username, locale, "about")} label={t("tabAbout")} />,
+  ].filter(Boolean);
+
   return (
     <header>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3.5">
-          <AvatarZoom src={author.avatarUrl} name={author.username} />
-          <div className="min-w-0">
-            <div className="flex min-w-0 items-center gap-2">
-              <h1 className="truncate text-[26px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
-                {author.displayName || `@${author.username}`}
-              </h1>
-              <LockedMark username={author.username} />
-            </div>
-            {author.displayName && (
-              <p className="truncate text-[14px] text-slate-500 dark:text-slate-400">@{author.username}</p>
-            )}
-          </div>
-        </div>
-        <div className="flex shrink-0 items-center gap-2 pt-1">
+      <div className="flex items-center justify-between gap-4">
+        <AvatarZoom src={author.avatarUrl} name={author.username} />
+        <div className="flex shrink-0 items-center gap-2">
           <FollowButton username={author.username} initialFollowerCount={0} showCount={false} showBell />
           <AuthorMoreMenu username={author.username} userId={author.id} />
         </div>
       </div>
 
+      <div className="mt-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-2">
+          <h1 className="truncate text-[20px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[24px]">
+            {author.displayName || author.username}
+          </h1>
+          <LockedMark username={author.username} />
+        </div>
+        <p className="mt-0.5 truncate text-[14px] text-slate-500 dark:text-slate-400">@{author.username}</p>
+      </div>
+
       {author.bio && <HeaderBio bio={author.bio} />}
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] text-slate-500 dark:text-slate-400">
-        {posts.length > 0 && (
-          <span className="tabular-nums">
-            {t("activityPosts", { count: posts.length })}
-            {since && (
-              <>
-                <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
-                  ·
-                </span>
-                {t("activitySince", { date: since })}
-              </>
+      <FollowCounts
+        username={author.username}
+        className="mt-3"
+        trailing={
+          posts.length > 0 && (
+            <span className="tabular-nums">{t.rich("countPosts", { count: posts.length, n: inkNumber })}</span>
+          )
+        }
+      />
+
+      <p data-profile-meta className="mt-1.5 flex flex-wrap items-center text-[13px] text-slate-500 dark:text-slate-400">
+        {meta.map((item, i) => (
+          <Fragment key={i}>
+            {i > 0 && (
+              <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
+                ·
+              </span>
             )}
-          </span>
-        )}
-        <FollowCounts username={author.username} />
-        {author.hasLinkInBio && (
-          <a
-            href={cardHref(author.username, locale)}
-            title={tNav("profile")}
-            className="focus-ring inline-flex items-center gap-1 rounded-sm font-mono text-[13px] text-slate-600 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-300 dark:hover:text-accent-400"
-          >
-            {cardHost}
-            <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
-          </a>
-        )}
-      </div>
+            {item}
+          </Fragment>
+        ))}
+      </p>
 
       {topics.length > 0 && (
         <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[13px] xl:hidden">

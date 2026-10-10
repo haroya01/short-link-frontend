@@ -38,7 +38,7 @@ const avatar = (n: number) => `https://i.pravatar.cc/120?img=${n}`;
 
 const AUTHORS: Record<string, PublicAuthor> = {
   dohyun: { id: 1, username: "dohyun", bio: "백엔드 개발자 · 사이드 프로젝트 중독", avatarUrl: avatar(12) },
-  minji: { id: 2, username: "minji", bio: "1인 메이커 · 그로스", avatarUrl: avatar(45) },
+  minji: { id: 2, username: "minji", displayName: "민지", bio: "1인 메이커 · 그로스", avatarUrl: avatar(45) },
   haruka: { id: 3, username: "haruka", bio: "플랫폼 엔지니어", avatarUrl: null },
   kazuki: { id: 4, username: "kazuki", bio: "여행하며 코드 짜는 사람", avatarUrl: avatar(33) },
   sora: { id: 5, username: "sora", bio: "프로덕트 디자이너", avatarUrl: null },
