@@ -48,6 +48,6 @@ test("a suspended writer is told why a public post's edit was refused", async ({
   await page.getByRole("textbox", { name: "제목" }).fill("정지 중에 고친 제목");
   await page.getByRole("button", { name: "저장", exact: true }).click();
   await expect(
-    page.getByText("계정이 일시 정지된 동안에는 글을 공개하거나 공개된 글을 고칠 수 없어요. 초안은 계속 쓸 수 있어요."),
+    page.getByText("계정이 일시 정지된 동안에는 글을 공개하거나 공개된 글을 고칠 수 없어요. 임시저장한 글은 계속 쓸 수 있어요."),
   ).toBeVisible({ timeout: 10_000 });
 });

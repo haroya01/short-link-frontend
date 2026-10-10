@@ -149,7 +149,7 @@ export function NoteDraftsSheet({
   );
 }
 
-/** "초안 N" — opens the drafts sheet; nothing when this account has no other note drafts on this device. */
+/** "임시저장 N" — opens the drafts sheet; nothing when this account has no other note drafts on this device. */
 export function NoteDraftsButton({
   onPick,
   currentId = null,

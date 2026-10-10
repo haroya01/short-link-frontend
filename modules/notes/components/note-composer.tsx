@@ -100,7 +100,7 @@ export function NoteComposer({
   draft?: NoteDraft | null;
   /** Whether the composer holds something worth keeping, and the id of the draft that keeps it. */
   onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
-  /** The inline composer's "초안 N", shown beside the text once the composer opens. */
+  /** The inline composer's "임시저장 N", shown beside the text once the composer opens. */
   draftsButton?: (currentId: string | null, hidden: boolean) => ReactNode;
 }) {
   const t = useTranslations("notes");
