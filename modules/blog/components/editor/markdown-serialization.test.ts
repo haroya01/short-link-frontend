@@ -5,6 +5,7 @@ import { Markdown } from "tiptap-markdown";
 import { fenceFor, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { parseCallout } from "@/modules/blog/lib/callout";
 import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "./markdown-serialization";
+import { LinkCardBase } from "./link-card-base";
 
 function roundTrip(md: string): string {
   const editor = new Editor({
@@ -219,5 +220,28 @@ describe("images still uploading", () => {
     expect(md).toContain("![done.png](https://cdn.kurl.me/a.png)");
     expect(md).toContain("before");
     expect(md).toContain("after");
+  });
+});
+
+describe("a link kept as a link on its own line", () => {
+  it("reopens <url> and [text](url) alone on a line as links, and only a bare URL as a card", () => {
+    const video = "https://youtu.be/dQw4w9WgXcQ";
+    const md = `<${video}>\n\n[읽어 볼 글](https://example.com/a)\n\n${video}`;
+    const editor = new Editor({
+      extensions: [
+        StarterKit.configure({ heading: false, hardBreak: false, text: false, bold: false, italic: false, strike: false }),
+        MarkdownText,
+        MarkdownHardBreak,
+        LinkCardBase,
+        Markdown.configure({ html: false, breaks: true }),
+      ],
+      content: md,
+    });
+    const kinds = editor.getJSON().content!.map((n) => (n.type === "paragraph" ? `paragraph:${n.content?.[0]?.marks?.[0]?.type}` : n.type));
+    const out = (editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown();
+    editor.destroy();
+    expect(kinds).toEqual(["paragraph:link", "paragraph:link", "linkCard"]);
+    expect(out).toBe(md);
+    expect(markdownToBlocks(out).map((b) => b.type)).toEqual(["PARAGRAPH", "PARAGRAPH", "EMBED"]);
   });
 });

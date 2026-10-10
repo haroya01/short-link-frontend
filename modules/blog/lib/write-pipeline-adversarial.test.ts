@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import { markdownToBlocks, blocksToMarkdown } from "@/modules/blog/lib/markdown-to-blocks";
-import { extractExternalLinks, rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 
 /**
@@ -9,7 +8,7 @@ import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
  * (PostWriteStressTest / PostDraftRevisionLifecycleTest) and the iOS editor (WriteV2Adversarial /
  * StressTests), so all three owners of the markdown dialect are held to one contract. Beyond
  * per-function unit tests, the point here is INTEGRATION: a complex document flows through
- * parse → serialize → parse (fixed point), link auto-shorten rewriting, image-width markers and
+ * parse → serialize → parse (fixed point), image-width markers and
  * cover suggestion TOGETHER without one feature corrupting another.
  */
 
@@ -72,28 +71,6 @@ describe("복합 문서 — 왕복 고정점과 기능 간 간섭 없음", () =>
     expect(types).toContain("IMAGE");
     expect(types).toContain("TABLE");
     expect(types).toContain("EMBED");
-  });
-
-  it("자동단축 후보는 인라인 링크뿐 — 임베드·이미지·코드 속 주소는 안 건드린다", () => {
-    const links = extractExternalLinks(COMPLEX_MARKDOWN);
-    expect(links).toEqual(["https://example.com/a"]);
-  });
-
-  it("링크 재작성은 그 링크만 바꾸고 나머지는 바이트 그대로", () => {
-    const rewritten = rewriteMarkdownLinks(COMPLEX_MARKDOWN, {
-      "https://example.com/a": "https://kurl.me/x1",
-    });
-    expect(rewritten).toContain("[링크](https://kurl.me/x1)");
-    expect(rewritten).toContain("https://youtu.be/dQw4w9WgXcQ");
-    expect(rewritten).toContain("https://cdn.example/hero.png");
-    // 링크 하나만 달라진다 — 나머지 전부 동일.
-    expect(rewritten.replace("https://kurl.me/x1", "https://example.com/a")).toBe(
-      COMPLEX_MARKDOWN,
-    );
-    // 재작성 뒤에도 블록 구조가 흔들리지 않는다.
-    expect(markdownToBlocks(rewritten).map((b) => b.type)).toEqual(
-      markdownToBlocks(COMPLEX_MARKDOWN).map((b) => b.type),
-    );
   });
 
   it("커버 제안은 본문 첫 이미지, 폭·치수 마커는 payload 필드로 분리된다", () => {

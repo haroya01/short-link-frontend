@@ -27,6 +27,7 @@ describe("markdownLead", () => {
     ["a plain table-of-contents label", "Table of Contents:"],
     ["a line of links", "[소개](#intro) · [설치](#install) · [사용](#usage)"],
     ["a bare link", "https://example.com/post"],
+    ["a link kept as a link", "<https://example.com/post>"],
     ["an image alone", "![cover](https://cdn.example/c.png)"],
   ])("skips %s", (_, line) => {
     expect(markdownLead(`${line}\n\n본문의 첫 문단이다.`)).toBe("본문의 첫 문단이다.");
@@ -43,6 +44,14 @@ describe("markdownLead", () => {
   it("skips headings and code, and stops at the first blank line", () => {
     const body = "# 제목\n\n```\ncode\n```\n\n첫 줄\n이어지는 줄\n\n둘째 문단";
     expect(markdownLead(body)).toBe("첫 줄 이어지는 줄");
+  });
+
+  it("reads soft line breaks as spaces, not as a backslash", () => {
+    expect(markdownLead("첫 줄\\\n둘째 줄\n\n다음 문단")).toBe("첫 줄 둘째 줄");
+  });
+
+  it("shows a pasted address as the address, without the angle brackets", () => {
+    expect(markdownLead("자세한 건 <https://example.com/keep> 에서")).toBe("자세한 건 https://example.com/keep 에서");
   });
 
   it("cuts a long lead at the limit", () => {

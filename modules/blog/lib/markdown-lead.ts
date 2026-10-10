@@ -10,13 +10,14 @@ const BLOCK_MARKER = /^(#{1,6}\s|>\s|[-*+]\s|\d+\.\s|---$|\|)/;
 const LEADING_IMAGES = /^(?:!\[[^\]]*\]\([^)]*\)\s*)+/;
 const EMPHASIS_ONLY = /^(\*{1,3}|_{1,3})(?=\S)((?:(?!\1).)+)\1\s*:?$/;
 const TOC_LABEL = /^(?:목차|目次|contents|table of contents|toc)\s*:?$/i;
-const LINKS = /\[[^\]]*\]\([^)]*\)|https?:\/\/\S+/g;
+const LINKS = /\[[^\]]*\]\([^)]*\)|<[a-z][a-z0-9+.-]*:[^\s<>]+>|https?:\/\/\S+/gi;
 const INVISIBLE = /[\u200b-\u200d\ufeff]/g;
 
 function plain(line: string): string {
   return line
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/<([a-z][a-z0-9+.-]*:[^\s<>]+)>/gi, "$1")
     .replace(/[*`~]+/g, "")
     .replace(/(^|[^\p{L}\p{N}])_+/gu, "$1")
     .replace(/_+(?=[^\p{L}\p{N}]|$)/gu, "")
@@ -58,7 +59,7 @@ export function markdownLead(markdown: string, max = 200): string {
       if (collected.length) break;
       continue;
     }
-    collected.push(line);
+    collected.push(line.replace(/\\$/, ""));
   }
   const text = plain(collected.join(" "));
   return text.length > max ? text.slice(0, max).trimEnd() + "…" : text;

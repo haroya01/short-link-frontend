@@ -107,12 +107,37 @@ describe("markdownToBlocks", () => {
 });
 
 describe("video embeds", () => {
-  it("turns a standalone video URL (bare / autolink / link) into an EMBED block", () => {
+  it("turns a bare video URL alone on a line into an EMBED block", () => {
     expect(markdownToBlocks("https://youtu.be/dQw4w9WgXcQ")).toEqual([
       { type: "EMBED", content: "https://youtu.be/dQw4w9WgXcQ" },
     ]);
-    expect(markdownToBlocks("<https://www.youtube.com/watch?v=dQw4w9WgXcQ>")[0].type).toBe("EMBED");
-    expect(markdownToBlocks("[clip](https://vimeo.com/123456789)")[0].type).toBe("EMBED");
+  });
+
+  it("keeps a link the author kept as a link (<url> or [text](url) alone on a line) in its paragraph", () => {
+    for (const md of [
+      "<https://www.youtube.com/watch?v=dQw4w9WgXcQ>",
+      "[clip](https://vimeo.com/123456789)",
+      "<https://example.com/article>",
+      "[읽어 볼 글](https://example.com/article)",
+      "<https://kurl.me/AbC123>",
+      "<https://cdn.example.com/a/b.webp>",
+    ]) {
+      expect(markdownToBlocks(md), md).toEqual([{ type: "PARAGRAPH", content: md }]);
+      expect(markdownToBlocks(blocksToMarkdown(markdownToBlocks(md))), md).toEqual([{ type: "PARAGRAPH", content: md }]);
+    }
+  });
+
+  it("drops the soft-break backslash a URL line leaves at the end of the paragraph above it", () => {
+    expect(markdownToBlocks("intro\\\nhttps://youtu.be/dQw4w9WgXcQ")).toEqual([
+      { type: "PARAGRAPH", content: "intro" },
+      { type: "EMBED", content: "https://youtu.be/dQw4w9WgXcQ" },
+    ]);
+    expect(markdownToBlocks("a path C:\\\\")).toEqual([{ type: "PARAGRAPH", content: "a path C:\\\\" }]);
+  });
+
+  it("keeps a URL on a soft line inside a paragraph in that paragraph", () => {
+    const md = "intro\\\nhttps://example.com/article\\\noutro";
+    expect(markdownToBlocks(md)).toEqual([{ type: "PARAGRAPH", content: md }]);
   });
 
   it("turns a standalone non-video URL into an EMBED card too (velog-style)", () => {
@@ -139,11 +164,10 @@ describe("video embeds", () => {
       },
     ]);
     expect(markdownToBlocks("https://cdn.example.com/a/b.png?v=2&w=800")[0].type).toBe("IMAGE");
-    expect(markdownToBlocks("<https://cdn.example.com/a/b.webp>")[0].type).toBe("IMAGE");
   });
 
-  it("keeps a labeled link to an image as an EMBED (author meant a link)", () => {
-    expect(markdownToBlocks("[my photo](https://cdn.example.com/a/b.jpg)")[0].type).toBe("EMBED");
+  it("keeps a labeled link to an image as a paragraph link (author meant a link)", () => {
+    expect(markdownToBlocks("[my photo](https://cdn.example.com/a/b.jpg)")[0].type).toBe("PARAGRAPH");
   });
 
   it("splits a video URL out of surrounding text", () => {

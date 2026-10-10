@@ -680,8 +680,10 @@ test("selection Link (bubble menu + URL dialog) saves a real markdown link", asy
     "docs",
   );
   await link.click();
-  await page.getByPlaceholder("https://example.com").fill("https://kurl.me/help");
-  await page.getByRole("button", { name: "Add", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Insert link" });
+  await expect(dialog.getByLabel("Display text", { exact: true })).toHaveValue("docs");
+  await dialog.getByLabel("Address", { exact: true }).fill("https://kurl.me/help");
+  await dialog.getByRole("button", { name: "Insert", exact: true }).click();
   // Lived proof the bug is fixed: a real clickable anchor lands on the selected word. (Before the
   // onMouseDown fix the selection collapsed and no link was created at all.) We assert the rendered
   // anchor rather than the saved markdown — the link mark IS what serializes, and the anchor is the
@@ -1753,7 +1755,7 @@ test("publish dialog: a removed auto-cover stays removed — no re-apply on reop
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 // Batch 3 — the paths a writer reaches by PASTING or through the ⋮⋮ block gutter rather than by typing:
-// the Notion image re-host, a pasted URL → card, publish-time kurl link-shortening, "turn into", and
+// the Notion image re-host, a pasted URL → link or card, the link dialog's kurl short link, "turn into", and
 // the markdown export. Batches 1–2 drove the keyboard/toolbar/slash surface; these close the rest.
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -1818,20 +1820,56 @@ test("paste from Notion: an image-only HTML paste re-hosts the external <img> in
   expect(img!.content, "the expiring external URL is gone").not.toContain("external.test");
 });
 
-test("paste a bare page URL on an empty line becomes a link card that round-trips to an EMBED block", async ({
+test("a bare page URL pasted on an empty line goes in as a link, and picking Card round-trips it to an EMBED block", async ({
   page,
 }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
-  // The velog/Notion habit: pasting a URL onto an empty line makes a live preview card, not a raw
-  // link — the same EMBED contract the embed dialog proves, but reached by paste.
   await pasteInto(page, { text: "https://example.com/an-article" });
+  await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toBeVisible();
+  await page.locator(".tiptap").getByRole("group", { name: "Choose how the link appears" }).getByRole("button", { name: "Card" }).click();
   await expect(page.locator(".tiptap [data-link-card]")).toBeVisible({ timeout: 10_000 });
   const blocks = await save(page, captured);
   const embed = blocks.find((b) => b.type === "EMBED");
   expect(embed, "an EMBED block was saved from the pasted URL").toBeTruthy();
   expect(embed!.content).toContain("example.com/an-article");
+});
+
+test("a video URL kept as a link on its own line saves, reopens and publishes as a link, not a player", async ({ page }) => {
+  const video = "https://youtu.be/dQw4w9WgXcQ";
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  let stored: Block[] = [];
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      stored = route.request().postDataJSON()?.blocks ?? [];
+      captured.blocks = stored;
+    }
+    return route.fulfill({ json: stored.map((b, i) => ({ id: i + 1, blockOrder: i, ...b })) });
+  });
+  await openEditor(page);
+  await pasteInto(page, { text: video });
+  const choice = page.locator(".tiptap").getByRole("group", { name: "Choose how the link appears" });
+  await expect(choice.getByRole("button")).toHaveText(["Link", "Video"]);
+  await choice.getByRole("button", { name: "Link" }).click();
+  await expect(choice).toHaveCount(0);
+
+  const blocks = await save(page, captured);
+  expect(blocks.map((b) => b.type)).not.toContain("EMBED");
+  expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toBe(`<${video}>`);
+
+  await page.reload();
+  await expect(page.locator(`.tiptap a[href="${video}"]`)).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator(".tiptap [data-link-card]")).toHaveCount(0);
+
+  await titleInput(page).fill("A clip kept as a link");
+  const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog);
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("publish");
+  expect(stored.map((b) => b.type)).not.toContain("EMBED");
+  expect(stored.find((b) => b.type === "PARAGRAPH")?.content).toBe(`<${video}>`);
 });
 
 test("paste a bare IMAGE URL on an empty line re-hosts as an IMAGE, not a link card", async ({
@@ -1850,90 +1888,79 @@ test("paste a bare IMAGE URL on an empty line re-hosts as an IMAGE, not a link c
   expect(blocks.some((b) => b.type === "EMBED"), "an image URL must NOT become an embed card").toBe(false);
 });
 
-test("publish auto-shortens an in-body link through kurl and swaps the short URL into the saved body (#589)", async ({
-  page,
-}) => {
+test("publish leaves an in-body link exactly as written — nothing is shortened behind the author", async ({ page }) => {
   const captured: Captured = { blocks: null };
   const seen = { url: null as string | null };
   await setupMocks(page, captured);
   await mockShorten(page, seen);
   await openEditor(page);
   await titleInput(page).fill("A post that links out");
-  // Write a real markdown link (bubble → Link dialog) — the only form the shortener touches (bare URLs
-  // and image srcs are left alone). See post-links.ts.
-  await page.locator(".tiptap").click();
-  await page.keyboard.type("read this");
-  const link = await awaitBubbleButton(
-    page,
-    async () => {
-      await page.keyboard.press("Home");
-      await page.keyboard.press("Shift+End");
-    },
-    "Link",
-  );
-  await link.click();
-  await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
-  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await pasteInto(page, { html: '<p><a href="https://example.com/an-article">read this</a></p>', text: "read this" });
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
-  await expect(page.locator(".tiptap")).toBeFocused();
-
-  const dialog = await openPublishDialog(page);
-  await addDialogTag(dialog); // topic required to publish
-  // The link shows in the "In-post links" list (inside 추가 설정), on by default (about to be shortened).
-  await openAdvanced(dialog);
-  await expect(dialog.getByRole("button", { name: /example\.com\/an-article/ })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
-
-  await expect.poll(() => captured.status).toBe("publish");
-  expect(seen.url, "the original URL was sent to the shortener").toBe("https://example.com/an-article");
-  // The body that persisted carries the kurl short URL, not the original — clicks are now tracked.
-  await expect
-    .poll(() => captured.blocks?.map((b) => b.content ?? "").join("\n"), { timeout: 15_000 })
-    .toContain(SHORT_URL);
-});
-
-test("publish: an in-post link toggled OFF keeps its original URL (not shortened)", async ({ page }) => {
-  const captured: Captured = { blocks: null };
-  const seen = { url: null as string | null };
-  await setupMocks(page, captured);
-  await mockShorten(page, seen);
-  await openEditor(page);
-  await titleInput(page).fill("Keep my link as-is");
-  await page.locator(".tiptap").click();
-  await page.keyboard.type("read this");
-  const link = await awaitBubbleButton(
-    page,
-    async () => {
-      await page.keyboard.press("Home");
-      await page.keyboard.press("Shift+End");
-    },
-    "Link",
-  );
-  await link.click();
-  await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
-  await page.getByRole("button", { name: "Add", exact: true }).click();
-  await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
-  await expect(page.locator(".tiptap")).toBeFocused();
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog);
-  // Turn the link OFF (inside 추가 설정) so it stays exactly as the author wrote it.
   await openAdvanced(dialog);
-  const toggle = dialog.getByRole("button", { name: /example\.com\/an-article/ });
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(dialog.getByRole("button", { name: /example\.com\/an-article/ })).toHaveCount(0);
   await dialog.getByRole("button", { name: "Publish", exact: true }).click();
 
   await expect.poll(() => captured.status).toBe("publish");
-  // The shortener was never asked, and the saved body still has the original URL.
   expect(seen.url, "no link was sent to the shortener").toBeNull();
   await expect
     .poll(() => captured.blocks?.map((b) => b.content ?? "").join("\n"), { timeout: 15_000 })
     .toContain("example.com/an-article");
   expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).not.toContain(SHORT_URL);
+});
+
+test("the link dialog's kurl short link switch shortens the address through kurl before it goes in", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  const seen = { url: null as string | null };
+  await setupMocks(page, captured);
+  await mockShorten(page, seen);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("Read ");
+  await page.getByTestId("editor-toolbar").getByRole("button", { name: "Link", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Insert link" });
+  await dialog.getByLabel("Display text", { exact: true }).fill("the docs");
+  await dialog.getByLabel("Address", { exact: true }).fill("https://example.com/an-article");
+  await expect(dialog.getByRole("switch", { name: "Shorten with kurl" })).toHaveAttribute("aria-checked", "false");
+  await dialog.getByRole("switch", { name: "Shorten with kurl" }).click();
+  await dialog.getByRole("button", { name: "Insert", exact: true }).click();
+
+  await expect(page.locator(`.tiptap a[href="${SHORT_URL}"]`)).toHaveText("the docs");
+  expect(seen.url, "the original address went to the shortener").toBe("https://example.com/an-article");
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain(`Read [the docs](${SHORT_URL})`);
+});
+
+test("when kurl can't shorten the address, the dialog stays open and says so, and nothing goes in until the author decides", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route("**/api/v1/links", (route) =>
+    route.request().method() === "POST"
+      ? route.fulfill({ status: 500, json: { title: "boom", detail: "shortener down" } })
+      : route.fulfill({ json: [] }),
+  );
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("Read ");
+  await page.getByTestId("editor-toolbar").getByRole("button", { name: "Link", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Insert link" });
+  await dialog.getByLabel("Display text", { exact: true }).fill("the docs");
+  await dialog.getByLabel("Address", { exact: true }).fill("https://example.com/an-article");
+  const shorten = dialog.getByRole("switch", { name: "Shorten with kurl" });
+  await shorten.click();
+  await dialog.getByRole("button", { name: "Insert", exact: true }).click();
+
+  await expect(dialog.getByRole("alert")).toHaveText("Couldn't make a short link");
+  await expect(page.locator(".tiptap a")).toHaveCount(0);
+  await shorten.click();
+  await expect(dialog.getByRole("alert")).toHaveCount(0);
+  await dialog.getByRole("button", { name: "Insert", exact: true }).click();
+  await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("the docs");
 });
 
 // NOTE: the ⋮⋮ block-gutter menu (Turn into · Duplicate · Delete) and drag-to-reorder are NOT
@@ -2072,8 +2099,8 @@ test.describe("on a phone, bold and link are one tap away without selecting text
     await page.getByTestId("editor-toolbar").getByRole("button", { name: "Link", exact: true }).click();
     const dialog = page.getByRole("dialog");
     await dialog.locator('input[type="url"]').fill("https://kurl.me/docs");
-    await dialog.getByRole("textbox", { name: "Text to show (optional)" }).fill("the docs");
-    await dialog.getByRole("textbox", { name: "Text to show (optional)" }).press("Enter");
+    await dialog.getByLabel("Display text", { exact: true }).fill("the docs");
+    await dialog.getByLabel("Display text", { exact: true }).press("Enter");
 
     const blocks = await save(page, captured);
     expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("Read [the docs](https://kurl.me/docs)");
