@@ -345,8 +345,14 @@ export function PostComments({
     setError(null);
     try {
       await deleteComment(id);
-      // 삭제한 댓글(+그 답글)만 걷어낸다 — 재조회 대신 로컬 반영으로 목록 증발을 막는다.
-      setComments((prev) => prev.filter((x) => x.id !== id && x.parentId !== id));
+      if (comments.some((x) => x.parentId === id)) {
+        setComments((prev) =>
+          prev.map((x) => (x.id === id ? { ...x, author: null, body: null, likeCount: 0, mentions: [], deleted: true } : x)),
+        );
+        await load();
+      } else {
+        setComments((prev) => prev.filter((x) => x.id !== id));
+      }
     } catch {
       setError(t("deleteError"));
     } finally {
@@ -607,7 +613,7 @@ function CommentRow({
         </>
       }
     >
-      <CommentBody text={comment.body} locale={locale} mentions={comment.mentions} />
+      <CommentBody text={comment.body ?? ""} locale={locale} mentions={comment.mentions} />
     </ConversationRow>
   );
 }
