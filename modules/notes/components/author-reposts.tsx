@@ -2,7 +2,8 @@
 
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { EmptyState } from "@/components/common/empty-state";
+import { Repeat2 } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { listAuthorReposts, type NoteFeed } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
 
@@ -15,7 +16,7 @@ export function AuthorReposts({ username, initial }: { username: string; initial
       initial={initial}
       repostedBy={username}
       filterContext="account"
-      empty={<EmptyState title={t("emptyReposts")} className="mt-4" />}
+      empty={<BlogEmpty icon={Repeat2} title={t("emptyReposts")} />}
     />
   );
 }
