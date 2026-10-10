@@ -44,7 +44,7 @@
     "seriesTabFreshBadge": "最新更新",
     "trending": "人気",
     "empty": "まだ公開された記事はありません。",
-    "write": "投稿する",
+    "write": "書く",
     "views": "閲覧 {count}",
     "loadMore": "もっと見る",
     "loadingMore": "読み込んでいます",
@@ -427,7 +427,7 @@
     "creating": "新しい記事を作成中…",
     "newPost": "新規作成",
     "viewAnalytics": "分析",
-    "myPosts": "投稿一覧",
+    "myPosts": "記事一覧",
     "featuredManageTitle": "代表記事",
     "featuredPin": "代表記事に固定",
     "featuredUnpin": "固定を解除",
@@ -436,9 +436,9 @@
     "featuredMoveDown": "下へ",
     "viewAll": "一覧",
     "viewBySeries": "シリーズ別",
-    "viewCount": "{count, number} 回閲覧",
-    "likeCount": "{count, number} 件のいいね",
-    "noPosts": "まだ投稿がありません。",
+    "viewCount": "{count, number}回閲覧",
+    "likeCount": "{count, number}件のいいね",
+    "noPosts": "まだ記事がありません。",
     "listLoading": "読み込み中…",
     "slugHint": "公開前は変更可能 · 英小文字・数字・ハイフン",
     "titleRequired": "公開するにはタイトルを入力してください",
@@ -612,7 +612,7 @@
     "emptyHistory": "閲覧履歴がまだありません。",
     "emptyHistoryBody": "記事を読むとここに記録されます。",
     "clearHistory": "履歴を消去",
-    "clearHistoryConfirm": "履歴をすべて消去しますか?",
+    "clearHistoryConfirm": "履歴をすべて消去しますか？",
     "clearHistoryCancel": "キャンセル",
     "forget": "履歴から削除",
     "loadMore": "もっと見る",
@@ -741,7 +741,7 @@
     "seriesNextEpisode": "次の話",
     "ownerEdit": "編集",
     "ownerDelete": "削除",
-    "ownerDeleteConfirm": "この記事を削除しますか?",
+    "ownerDeleteConfirm": "この記事を削除しますか？",
     "ownerDeleteConfirmBody": "削除すると元に戻せません。",
     "ownerDeleteError": "削除できませんでした。もう一度お試しください。",
     "seriesViewAll": "シリーズ全{total}話を見る",
@@ -1055,7 +1055,7 @@
     "theme": "テーマ",
     "themeLight": "ライト",
     "themeDark": "ダーク",
-    "write": "投稿",
+    "write": "書く",
     "apps": {
       "trigger": "他のアプリ",
       "linksLabel": "Links",
@@ -1069,9 +1069,9 @@
     "blog": {
       "overview": "概要",
       "write": "執筆",
-      "myPosts": "投稿",
+      "myPosts": "記事",
       "analytics": "分析",
-      "posts": "投稿",
+      "posts": "公開済み",
       "drafts": "下書き",
       "series": "シリーズ",
       "readers": "読者",
@@ -2292,7 +2292,7 @@
         "blockedAt": "ブロック日時"
       },
       "unblock": "解除",
-      "unblockConfirm": "{domain} のブロックを解除しますか?このドメインへの短縮とリダイレクトが再び許可されます。",
+      "unblockConfirm": "{domain} のブロックを解除しますか？このドメインへの短縮とリダイレクトが再び許可されます。",
       "addFailed": "リクエストに失敗しました",
       "warned": "リンク所有者 {count} 名に、それぞれの言語で警告を送りました。",
       "warnedNone": "{domain} にはアカウント所有のリンクがないため、警告は送っていません。"
@@ -2302,7 +2302,7 @@
       "subtitle": "利用規約に違反するリンクへの対応です。",
       "blockDomain": "{domain} をブロック",
       "domainBlocked": "{domain} ブロック済み",
-      "blockConfirm": "{domain} をブロックしますか?このドメインへの既存リンクも即座に無効になり、新規短縮も拒否されます。リンク所有者には自動で警告が送られます。",
+      "blockConfirm": "{domain} をブロックしますか？このドメインへの既存リンクも即座に無効になり、新規短縮も拒否されます。リンク所有者には自動で警告が送られます。",
       "warnTitle": "所有者に警告を送る",
       "warnHint": "通知インボックスに残り、通知設定に関係なくプッシュされます。",
       "warnPlaceholder": "例: 違法サイトの宣伝リンクは利用規約違反です。当該リンクはブロックされました。繰り返すとアカウントを停止します。",
@@ -2331,8 +2331,8 @@
         "createdAt": "ブロック日時"
       },
       "unblock": "解除",
-      "unblockConfirm": "{domain} のブロックを解除しますか?ノートは再び表示されますが、切れたフォローは戻りません。",
-      "suspendConfirm": "{domain} を停止しますか?このサーバーとのフォローは双方向とも切れ、そこからの通知は削除されます。",
+      "unblockConfirm": "{domain} のブロックを解除しますか？ノートは再び表示されますが、切れたフォローは戻りません。",
+      "suspendConfirm": "{domain} を停止しますか？このサーバーとのフォローは双方向とも切れ、そこからの通知は削除されます。",
       "changeLabel": "{domain} のブロック段階",
       "failed": "リクエストに失敗しました"
     }
@@ -2551,27 +2551,27 @@
     "title": "短縮URLとリンクインバイオ、はじめての方へ",
     "lead": "URL 短縮とは何か、kurl はどんなサービスか、公開プロフィールとの違いなど、よくある質問を 1 ページにまとめました。",
     "q1": {
-      "q": "URL短縮とは何ですか?",
+      "q": "URL短縮とは何ですか？",
       "a": "URL短縮は、長く複雑なアドレス(例: https://example.com/very/long/path?utm_source=...)を、短く覚えやすいアドレス(例: kurl.me/abc1234)に置き換える機能です。短縮URL、ショートリンクも同じ意味です。\n\nSNSの文字数制限がある場面、名刺やポスターのように手入力が必要な場面で活躍します。さらに短縮サービス側がクリック分析を提供してくれるので、どのチャネルから人が流入しているかが分かります。"
     },
     "q2": {
-      "q": "短縮URLとリンクインバイオの違いは?",
+      "q": "短縮URLとリンクインバイオの違いは？",
       "a": "短縮URLは「1つの長いURL → 1つの短いURL」の1対1マッピングです。Twitter投稿、Instagramコメント、名刺の1行など 1 か所だけにリンクするときに最適です。\n\nリンクインバイオは「自分の全リンクをまとめた1つのミニページ」です。Instagramのプロフィール欄にはURLを1つしか入れられないので、yourname.kurl.me のような1つのURLに、連絡先・予約・SNS・ブログ・店舗情報をまとめて見せます。\n\nkurl は両方できます。短縮リンクも、それらをまとめた公開プロフィールも作れます。"
     },
     "q3": {
-      "q": "kurl とはどんなサービスですか?",
+      "q": "kurl とはどんなサービスですか？",
       "a": "kurl は無料のURL短縮とリンクインバイオのサービスです。広告はなく、ログインしなくてもリンクを短縮できます。\n\nログインすると、端末・国・流入チャネル別の統計を見られます。リンクは削除するまで保存され、yourname.kurl.me のようなアドレスで公開プロフィールも作れます。"
     },
     "q4": {
-      "q": "公開プロフィールに何を入れられますか?",
+      "q": "公開プロフィールに何を入れられますか？",
       "a": "写真・自己紹介・連絡先(電話/メール/住所)・SNSリンク・イベント・ギャラリー・商品カード・予約などのブロックを組み合わせます。\n\n例えばカフェオーナーなら、地図・営業時間・Instagram/予約リンク・メニューギャラリー。講師なら、ワークショップのイベント・1:1予約リンク・ポートフォリオ。DJなら、次回の出演予定・Spotify Artistリンク・写真。1ページにまとまります。"
     },
     "q5": {
-      "q": "クリック分析はどこまで見られますか?",
+      "q": "クリック分析はどこまで見られますか？",
       "a": "短縮リンクごとに、総クリック・人間 vs ボット・ユニーク訪問者・日別/時間別チャート・曜日×時間ヒートマップ・国/都市・デバイス/ブラウザ/OS・リファラドメイン・UTMキャンペーン まで見られます。すべて無料です。\n\n公開プロフィールにも訪問統計があり、いつ誰に見られたかを同じ項目で確認できます。"
     },
     "q6": {
-      "q": "有料ですか?",
+      "q": "有料ですか？",
       "a": "すべての機能が無料です。URL短縮、分析、公開プロフィール、各種ブロック、カスタムドメインまで無料で使えます。\n\n有料プランはなく、広告もありません。"
     },
     "ctaButton": "URLを短縮"
@@ -3103,7 +3103,7 @@
       "editTextTitle": "テキストを編集",
       "addTextDescription": "セクション案内 / お知らせ / 短い段落。マークダウン (見出し、太字、リスト、リンクなど) に対応しています。",
       "textFieldContent": "内容",
-      "textFieldPlaceholder": "例: ## 今週のお知らせ\n新メニュー登場! [詳しく](https://...)",
+      "textFieldPlaceholder": "例: ## 今週のお知らせ\n新メニュー登場！[詳しく](https://...)",
       "textMarkdownHint": "マークダウン対応: # 見出し、**太字**、*斜体*、- リスト",
       "textPreviewLabel": "プレビュー",
       "textPreviewEmpty": "ここにマークダウンの結果が表示されます",
@@ -3819,7 +3819,7 @@
     "inPathTitle": "この文が属する道",
     "relatedBlocksTitle": "これとつながるもの",
     "kindredCuratorsTitle": "趣味が重なるキュレーター",
-    "sharedItems": "共通 {count} 件",
+    "sharedItems": "共通 {count}件",
     "postEdgesPathsTitle": "この記事が置かれた道",
     "postEdgesRelatedTitle": "つながるもの",
     "postEdgesCuratorsTitle": "この記事をつないだ人",
@@ -4018,7 +4018,7 @@
         "INSTAGRAM": "Instagram"
       },
       "questionsLocked": "申込者がいるため質問は変更できません。",
-      "questionPlaceholder": "例: 興味のあるテーマは?",
+      "questionPlaceholder": "例: 興味のあるテーマは？",
       "questionLabel": "質問 {n}",
       "questionType": "質問タイプ",
       "typeShortText": "記述式",
@@ -4061,7 +4061,7 @@
       "canceledNote": "中止されたイベントです。",
       "statusChanged": "変更しました",
       "statusChangeFailed": "変更に失敗しました",
-      "cancelDialogTitle": "イベントを中止しますか?",
+      "cancelDialogTitle": "イベントを中止しますか？",
       "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
       "cancelDialogConfirm": "中止する",
       "heroCopy": "リンクをコピー",
@@ -4472,13 +4472,13 @@
     "feedFederated": "ほかのサーバー",
     "emptyFederated": "ほかのサーバーのノートはまだありません。検索で @名前@サーバー を入力してフォローすると、そのノートがここに届きます。",
     "trendingTagsTitle": "トレンドのハッシュタグ",
-    "trendingTagsAccounts": "今週 {count} 人が使いました",
+    "trendingTagsAccounts": "今週 {count}人が使いました",
     "trendingLinksTitle": "トレンドのリンク",
-    "trendingLinksAccounts": "今週 {count} 人が共有しました",
+    "trendingLinksAccounts": "今週 {count}人が共有しました",
     "linkTitle": "リンク",
     "emptyLink": "このリンクを載せたノートはまだありません",
     "suggestionsTitle": "おすすめのアカウント",
-    "suggestionsFriends": "フォロー中の{count}人がフォロー",
+    "suggestionsFriends": "フォロー中の{count}人がフォローしています",
     "suggestionsPopular": "最近よくフォローされています",
     "suggestionsDismiss": "{name}を表示しない",
     "threadMore": "スレッドの続き {count}件",
@@ -4488,7 +4488,7 @@
     "suggestions": "メンションする人"
   },
   "compose": {
-    "title": "投稿",
+    "title": "書く",
     "note": "ノート",
     "noteHint": "短く、すぐに投稿",
     "longform": "長い記事",
