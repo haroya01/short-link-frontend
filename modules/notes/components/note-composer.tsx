@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChartBar, Check, Clock, EyeOff, ImagePlus, Loader2, TriangleAlert, X } from "lucide-react";
+import { ChartBar, Check, ChevronDown, Clock, EyeOff, ImagePlus, Loader2, MessageCircle, TriangleAlert, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -23,6 +24,7 @@ import {
   uploadNoteImage,
   type Note,
   type NotePollDraft,
+  type NoteReplyPolicy,
   type NoteVisibility,
   type NoteLinkPreview,
   type QuotedNote,
@@ -34,6 +36,7 @@ import { getLinkPreview } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { NoteLengthRing } from "./note-card";
 import { VisibilityIcon } from "./note-visibility";
+import { REPLY_POLICIES, REPLY_POLICY_LABEL, replyRestrictedKey } from "./note-reply-policy";
 import { NoteLinkCard } from "./note-link-card";
 import { emptyPoll, NotePollEditor, pollReady } from "./note-poll";
 import { QuotedNoteCard } from "./quoted-note-card";
@@ -73,9 +76,11 @@ export function NoteComposer({
   onClearQuote,
   quotedNote = null,
   autoFocus = false,
+  threadReplyPolicy,
 }: {
   onCreated: (note: Note) => void;
   inReplyToId?: number | null;
+  threadReplyPolicy?: NoteReplyPolicy;
   quote?: QuotedPost | null;
   onClearQuote?: () => void;
   quotedNote?: QuotedNote | null;
@@ -93,6 +98,7 @@ export function NoteComposer({
   const [warning, setWarning] = useState("");
   const [sensitive, setSensitive] = useState(false);
   const [visibility, setVisibility] = useState<NoteVisibility | null>(inReplyToId ? null : "public");
+  const [replyPolicy, setReplyPolicy] = useState<NoteReplyPolicy>("everyone");
   const [images, setImages] = useState<PendingImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
@@ -101,6 +107,7 @@ export function NoteComposer({
   const [altEditing, setAltEditing] = useState<string | null>(null);
   const [poll, setPoll] = useState<NotePollDraft | null>(null);
   const [scheduledAt, setScheduledAt] = useState("");
+  const choosesReplyPolicy = !inReplyToId && !scheduledAt;
   const [parts, setParts] = useState<{ id: string; body: string }[]>([]);
   const locale = useLocale();
   const [language, setLanguage] = useState(() => locale.split("-")[0]);
@@ -247,6 +254,7 @@ export function NoteComposer({
         visibility,
         poll: poll ? { ...poll, options: poll.options.map((option) => option.trim()) } : null,
         language,
+        ...(choosesReplyPolicy && replyPolicy !== "everyone" ? { replyPolicy } : {}),
       };
       rememberLanguage(language);
       if (scheduledAt) {
@@ -288,11 +296,16 @@ export function NoteComposer({
       setWarning("");
       setSensitive(false);
       setVisibility(inReplyToId ? null : "public");
+      setReplyPolicy("everyone");
       onClearQuote?.();
       if (note) onCreated(!note.linkPreview && linkCard ? { ...note, linkPreview: linkCard } : note);
       setLinkCard(null);
-    } catch {
-      setError(t("postFailed"));
+    } catch (e) {
+      setError(
+        e instanceof ApiError && e.detail.code === "NOTE_REPLY_RESTRICTED"
+          ? t(replyRestrictedKey(threadReplyPolicy))
+          : t("postFailed"),
+      );
     } finally {
       setPosting(false);
     }
@@ -513,6 +526,29 @@ export function NoteComposer({
             </div>
           )}
 
+          {open && choosesReplyPolicy && (
+            <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-slate-500 dark:text-slate-400">
+              <label className="inline-flex items-center gap-1">
+                <MessageCircle className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span aria-hidden>{t("replyPolicyPrefix")}</span>
+                <select
+                  value={replyPolicy}
+                  onChange={(e) => setReplyPolicy(e.target.value as NoteReplyPolicy)}
+                  aria-label={t("replyPolicyLabel")}
+                  className="focus-ring cursor-pointer appearance-none rounded bg-transparent font-medium text-slate-700 [field-sizing:content] hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
+                >
+                  {REPLY_POLICIES.map((policy) => (
+                    <option key={policy} value={policy}>
+                      {t(REPLY_POLICY_LABEL[policy])}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              </label>
+              {replyPolicy !== "everyone" && <span data-testid="reply-policy-hint">{t("replyPolicyHint")}</span>}
+            </div>
+          )}
+
           {error && (
             <p role="alert" className="mt-2 text-[13px] text-red-600 dark:text-red-400">
               {error}
@@ -675,6 +711,7 @@ export function NoteComposer({
                 <option value="direct">{t("visibilityDirect")}</option>
               </select>
             </label>
+
             <div className="ml-auto flex items-center gap-3">
               <select
                 value={language}
