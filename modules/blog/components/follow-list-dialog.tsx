@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import {
@@ -225,7 +226,9 @@ function FollowRow({
             @{user.username}
           </span>
           {user.bio && (
-            <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{user.bio}</span>
+            <span lang={contentLang(user.bio)} className="truncate text-[12px] text-slate-500 dark:text-slate-400">
+              {user.bio}
+            </span>
           )}
         </span>
       </BlogLink>

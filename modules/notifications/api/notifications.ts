@@ -1,4 +1,4 @@
-import { mockFailure, request } from "@/lib/api/client";
+import { mockEmpty, mockFailure, request } from "@/lib/api/client";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 알림은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
@@ -101,7 +101,12 @@ export interface NotificationsPage {
 }
 
 export function getNotifications(before?: number, limit = 20): Promise<NotificationsPage> {
-  if (notificationMocks) return mockFailure("notifications") ?? Promise.resolve(notificationMocks.mockNotificationsPage());
+  if (notificationMocks) {
+    const page = mockEmpty("notifications")
+      ? { items: [], nextCursor: null, hasMore: false }
+      : notificationMocks.mockNotificationsPage();
+    return mockFailure("notifications") ?? Promise.resolve(page);
+  }
   const q = new URLSearchParams();
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));

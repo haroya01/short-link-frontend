@@ -4,7 +4,8 @@ import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
-import { EmptyState } from "@/components/common/empty-state";
+import { MessageSquareText } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { listAuthorNotes, type NoteFeed } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
 
@@ -20,9 +21,9 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
       showsPin
       filterContext="account"
       empty={
-        <EmptyState
+        <BlogEmpty
+          icon={MessageSquareText}
           title={t("emptyAuthor")}
-          className="mt-4"
           action={
             own ? (
               <a

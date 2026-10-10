@@ -11,7 +11,7 @@ import { FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card"
 import { SeriesRow } from "@/modules/blog/components/series-row";
 import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
@@ -84,8 +84,8 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   if (series.length === 0) {
     return (
       <ReadingShell>
-        <FeedEmpty
-          mark
+        <BlogEmpty
+          icon={Library}
           title={t("seriesTabEmptyTitle")}
           body={t("seriesTabEmpty")}
           action={

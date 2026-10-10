@@ -19,6 +19,12 @@ const MOCKS_ON = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 const MOCK_SIGNED_OUT_KEY = "kurl:mock-signed-out";
 const MOCK_FAIL_KEY = "kurl:mock-fail";
 
+const MOCK_EMPTY_KEY = "kurl:mock-empty";
+
+export function mockEmpty(name: string): boolean {
+  return MOCKS_ON && readStorageString(MOCK_EMPTY_KEY)?.split(",").includes(name) === true;
+}
+
 export function mockFailure(name: string): Promise<never> | null {
   if (!MOCKS_ON || !readStorageString(MOCK_FAIL_KEY)?.split(",").includes(name)) return null;
   return Promise.reject(new ApiError(500, { status: 500, title: "Mock failure", detail: name }));
