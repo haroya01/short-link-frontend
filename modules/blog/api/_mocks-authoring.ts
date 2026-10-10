@@ -214,7 +214,7 @@ export function mockUpdatePostMetadata(
     patch.ogImageUrl = payload.ogImageUrl;
     patch.coverChosen =
       payload.ogImageUrl !== "" &&
-      (payload.coverChosen ?? (payload.ogImageUrl !== current?.ogImageUrl || Boolean(current?.coverChosen)));
+      (payload.coverChosen ?? (payload.ogImageUrl === current?.ogImageUrl && Boolean(current?.coverChosen)));
   }
   if (payload.languageTag !== undefined) patch.languageTag = payload.languageTag;
   if (payload.tags !== undefined) patch.tags = payload.tags;
