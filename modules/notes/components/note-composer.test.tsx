@@ -2,6 +2,7 @@ import React, { act, createElement, forwardRef } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NoteReplyPolicy } from "@/modules/notes/api/notes";
+import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 
 const mocks = vi.hoisted(() => ({ createNote: vi.fn() }));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key, useLocale: () => "ko" }));
@@ -48,6 +49,7 @@ beforeEach(() => {
   vi.stubGlobal("React", React);
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   window.sessionStorage.clear();
+  window.localStorage.clear();
   mocks.createNote.mockImplementation((draft: { body: string }) =>
     Promise.resolve({ id: 500, body: draft.body, linkPreview: null }),
   );
@@ -62,9 +64,19 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function render(props: { inReplyToId?: number; threadReplyPolicy?: NoteReplyPolicy } = {}) {
+async function render(
+  props: {
+    inReplyToId?: number;
+    threadReplyPolicy?: NoteReplyPolicy;
+    draft?: NoteDraft;
+    onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
+  } = {},
+) {
   await act(async () => root.render(<NoteComposer onCreated={vi.fn()} {...props} />));
 }
+
+const stored = (): NoteDraft[] => JSON.parse(window.localStorage.getItem("kurl:note-drafts:1") ?? "[]");
+const settle = () => act(async () => new Promise((resolve) => setTimeout(resolve, 450)));
 
 async function type(text: string) {
   const field = host.querySelector<HTMLTextAreaElement>('textarea[aria-label="body"]')!;
@@ -118,5 +130,91 @@ describe("who can reply, chosen while writing", () => {
     await submit();
     expect(host.querySelector('[role="alert"]')!.textContent).toBe("replyRestrictedFollowing");
     expect(host.querySelector<HTMLTextAreaElement>('textarea[aria-label="body"]')!.value).toBe("저도 끼워 주세요");
+  });
+});
+
+describe("device drafts", () => {
+  const draft = (over: Partial<NoteDraft> = {}): NoteDraft => ({
+    id: "d1",
+    updatedAt: 1,
+    body: "쓰던 노트",
+    parts: ["둘째 노트"],
+    warning: "스포일러",
+    visibility: "unlisted",
+    replyPolicy: "following",
+    language: "ja",
+    poll: null,
+    scheduledAt: "",
+    quote: null,
+    imageCount: 2,
+    ...over,
+  });
+
+  it("keeps what is typed as this account's draft, and drops it once the text is gone", async () => {
+    const onDraftChange = vi.fn();
+    await render({ onDraftChange });
+    await type("닫아도 남아야 하는 글");
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: null });
+    await settle();
+    expect(stored()).toHaveLength(1);
+    expect(stored()[0]).toMatchObject({ body: "닫아도 남아야 하는 글", visibility: "public", replyPolicy: "everyone" });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: stored()[0].id });
+
+    await type("");
+    await settle();
+    expect(stored()).toEqual([]);
+  });
+
+  it("saves on close even when the pause has not passed yet", async () => {
+    await render();
+    await type("곧바로 닫은 글");
+    await act(async () => root.unmount());
+    expect(stored()[0].body).toBe("곧바로 닫은 글");
+    root = createRoot(host);
+  });
+
+  it("deletes the draft once the note is posted", async () => {
+    await render();
+    await type("올릴 글");
+    await settle();
+    expect(stored()).toHaveLength(1);
+    await submit();
+    expect(mocks.createNote).toHaveBeenCalled();
+    await settle();
+    expect(stored()).toEqual([]);
+  });
+
+  it("restores a draft's text, warning, visibility, reply policy and thread, and says the photos were not kept", async () => {
+    await render({ draft: draft() });
+    expect(host.querySelector<HTMLTextAreaElement>('textarea[aria-label="body"]')!.value).toBe("쓰던 노트");
+    expect(host.querySelector<HTMLInputElement>('input[aria-label="warningLabel"]')!.value).toBe("스포일러");
+    expect(host.querySelector<HTMLSelectElement>('select[aria-label="visibilityLabel"]')!.value).toBe("unlisted");
+    expect(policySelect()!.value).toBe("following");
+    expect(host.querySelector<HTMLSelectElement>('select[aria-label="languageLabel"]')!.value).toBe("ja");
+    expect(Array.from(host.querySelectorAll<HTMLTextAreaElement>("textarea")).map((t) => t.value)).toContain("둘째 노트");
+    expect(host.querySelector('[data-testid="draft-images-dropped"]')!.textContent).toBe("draftImagesDropped");
+  });
+
+  it("does not move a reopened draft to the top until it is edited", async () => {
+    window.localStorage.setItem("kurl:note-drafts:1", JSON.stringify([draft({ updatedAt: 5 })]));
+    await render({ draft: draft({ updatedAt: 5 }) });
+    await settle();
+    expect(stored()[0].updatedAt).toBe(5);
+    await type("고친 글");
+    await settle();
+    expect(stored()[0].updatedAt).toBeGreaterThan(5);
+    expect(stored()[0].id).toBe("d1");
+  });
+
+  it("drops a schedule that has already passed", async () => {
+    await render({ draft: draft({ scheduledAt: "2020-01-01T09:00", parts: [] }) });
+    expect(host.querySelector('input[type="datetime-local"]')).toBeNull();
+  });
+
+  it("never keeps a reply as a device draft", async () => {
+    await render({ inReplyToId: 70 });
+    await type("답글은 그 자리에서만");
+    await settle();
+    expect(stored()).toEqual([]);
   });
 });

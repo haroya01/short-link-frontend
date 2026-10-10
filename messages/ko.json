@@ -4511,7 +4511,15 @@
     "suggestionsPopular": "요즘 많이 팔로우해요",
     "suggestionsDismiss": "{name} 추천 안 보기",
     "threadMore": "이어지는 글 {count}개 더",
-    "threadPosition": "이어 쓴 노트 {position}"
+    "threadPosition": "이어 쓴 노트 {position}",
+    "drafts": "초안 {count}",
+    "draftsTitle": "초안",
+    "draftsEmpty": "아직 초안이 없어요",
+    "draftSaved": "초안에 남겼어요",
+    "draftImagesDropped": "사진 {count}장은 초안에 남지 않았어요",
+    "draftDeleted": "초안을 삭제했어요",
+    "draftDelete": "초안 삭제",
+    "draftUndo": "되돌리기"
   },
   "mentions": {
     "suggestions": "멘션할 사람"
@@ -4527,6 +4535,7 @@
     "seeAll": "모두 보기",
     "noteTitle": "새 노트",
     "notePosted": "노트를 올렸어요",
-    "viewNote": "보기"
+    "viewNote": "보기",
+    "noteParts": "{count}개"
   }
 }

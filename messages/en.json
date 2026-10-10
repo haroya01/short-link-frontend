@@ -4511,7 +4511,15 @@
     "suggestionsPopular": "Popular lately",
     "suggestionsDismiss": "Don't suggest {name}",
     "threadMore": "{count} more in this thread",
-    "threadPosition": "Thread part {position}"
+    "threadPosition": "Thread part {position}",
+    "drafts": "Drafts {count}",
+    "draftsTitle": "Drafts",
+    "draftsEmpty": "No drafts yet",
+    "draftSaved": "Saved to drafts",
+    "draftImagesDropped": "{count, plural, one {# photo wasn't} other {# photos weren't}} kept in the draft",
+    "draftDeleted": "Draft deleted",
+    "draftDelete": "Delete draft",
+    "draftUndo": "Undo"
   },
   "mentions": {
     "suggestions": "People to mention"
@@ -4527,6 +4535,7 @@
     "seeAll": "See all",
     "noteTitle": "New note",
     "notePosted": "Note posted",
-    "viewNote": "View"
+    "viewNote": "View",
+    "noteParts": "{count, plural, one {# note} other {# notes}}"
   }
 }

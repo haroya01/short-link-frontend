@@ -4511,7 +4511,15 @@
     "suggestionsPopular": "Gần đây được nhiều người theo dõi",
     "suggestionsDismiss": "Không gợi ý {name}",
     "threadMore": "Thêm {count} trong chuỗi",
-    "threadPosition": "Phần {position} của chuỗi"
+    "threadPosition": "Phần {position} của chuỗi",
+    "drafts": "Bản nháp {count}",
+    "draftsTitle": "Bản nháp",
+    "draftsEmpty": "Chưa có bản nháp nào",
+    "draftSaved": "Đã lưu vào bản nháp",
+    "draftImagesDropped": "{count} ảnh không được giữ trong bản nháp",
+    "draftDeleted": "Đã xóa bản nháp",
+    "draftDelete": "Xóa bản nháp",
+    "draftUndo": "Hoàn tác"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"
@@ -4527,6 +4535,7 @@
     "seeAll": "Xem tất cả",
     "noteTitle": "Ghi chú mới",
     "notePosted": "Đã đăng ghi chú",
-    "viewNote": "Xem"
+    "viewNote": "Xem",
+    "noteParts": "{count} ghi chú"
   }
 }

@@ -28,6 +28,8 @@ import {
   type QuotedPost,
 } from "@/modules/notes/api/notes";
 import { NoteComposer } from "./note-composer";
+import { NoteDraftsButton } from "./note-drafts-sheet";
+import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { NoteList } from "./note-list";
 import { NoteListsPanel } from "./note-lists";
 
@@ -76,6 +78,11 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
   const { ready, authenticated } = useAuth();
   const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
   const [posted, setPosted] = useState<Note[]>([]);
+  const [draft, setDraft] = useState<NoteDraft | null>(null);
+  const pickDraft = (next: NoteDraft) => {
+    setQuote(next.quote && "post" in next.quote ? next.quote.post : null);
+    setDraft(next);
+  };
   useEffect(() => onNotePosted((note) => setPosted((current) => [note, ...current])), []);
   const feed = feedOf(params.get("feed"), savedFeed);
   const load = useCallback(
@@ -131,9 +138,23 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
           <div aria-hidden className="h-[60px]" />
         ) : authenticated ? (
           <NoteComposer
+            key={draft?.id ?? "feed"}
+            draft={draft}
             quote={quote}
+            quotedNote={draft?.quote && "note" in draft.quote ? draft.quote.note : null}
             onClearQuote={() => setQuote(null)}
-            onCreated={(note) => setPosted((current) => [note, ...current])}
+            onCreated={(note) => {
+              setPosted((current) => [note, ...current]);
+              setDraft(null);
+            }}
+            draftsButton={(currentId, hidden) => (
+              <NoteDraftsButton
+                onPick={pickDraft}
+                currentId={currentId}
+                hidden={hidden}
+                className="shrink-0 self-center whitespace-nowrap"
+              />
+            )}
           />
         ) : (
           <SignInRow reason="note" placeholder={t("composerPlaceholder")} />

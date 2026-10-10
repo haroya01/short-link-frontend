@@ -13,13 +13,16 @@ import {
 import { FileText, MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import type { ComposeTriggerProps } from "@/components/common/app-header";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { useToast } from "@/components/ui/toast";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { emitNotePosted } from "@/modules/blog/lib/consequence-events";
+import { NoteDraftsSheet } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
+import { noteDraftLabel, useNoteDrafts, type NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { openNote } from "@/modules/notes/lib/note-href";
 
@@ -33,13 +36,13 @@ export function recentDrafts(posts: PostView[], limit = RECENT_DRAFTS): { items:
 }
 
 function useRecentDrafts(open: boolean) {
-  const [drafts, setDrafts] = useState<{ items: PostView[]; more: boolean } | null>(null);
+  const [drafts, setDrafts] = useState<PostView[] | null>(null);
   useEffect(() => {
     if (!open) return;
     let live = true;
     listMyPosts()
-      .then((posts) => live && setDrafts(recentDrafts(posts)))
-      .catch(() => live && setDrafts({ items: [], more: false }));
+      .then((posts) => live && setDrafts(recentDrafts(posts, Number.POSITIVE_INFINITY).items))
+      .catch(() => live && setDrafts([]));
     return () => {
       live = false;
     };
@@ -57,8 +60,11 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
   const { toast } = useToast();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
-  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState<{ draft?: NoteDraft } | null>(null);
+  const [draftsOpen, setDraftsOpen] = useState(false);
   const drafts = useRecentDrafts(open);
+  const { me } = useAuth();
+  const noteDrafts = useNoteDrafts(me?.id);
 
   const close = (refocus: boolean) => {
     setOpen(false);
@@ -73,7 +79,7 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
       icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
       onSelect: () => {
         close(true);
-        setNoteOpen(true);
+        setNoteOpen({});
       },
     },
     {
@@ -84,13 +90,44 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
       href: blogHref("/write/new"),
     },
   ];
-  const resume: Choice[] = (drafts?.items ?? []).map((draft) => ({
-    key: `draft-${draft.id}`,
-    label: draft.title.trim() || t("untitled"),
-    hint: ago(draft.updatedAt),
-    href: blogHref(`/write/${draft.id}`),
-  }));
-  if (drafts?.more) resume.push({ key: "all-drafts", label: t("seeAll"), href: blogHref("/write") });
+  const everyDraft: { at: number; choice: Choice }[] = [
+    ...noteDrafts.map((draft) => ({
+      at: draft.updatedAt,
+      choice: {
+        key: `note-draft-${draft.id}`,
+        label: noteDraftLabel(draft),
+        hint: draft.parts.length > 0
+          ? `${ago(new Date(draft.updatedAt).toISOString())} · ${t("noteParts", { count: draft.parts.length + 1 })}`
+          : ago(new Date(draft.updatedAt).toISOString()),
+        icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
+        onSelect: () => {
+          close(true);
+          setNoteOpen({ draft });
+        },
+      },
+    })),
+    ...(drafts ?? []).map((draft) => ({
+      at: Date.parse(draft.updatedAt),
+      choice: {
+        key: `draft-${draft.id}`,
+        label: draft.title.trim() || t("untitled"),
+        hint: ago(draft.updatedAt),
+        icon: <FileText className="h-4 w-4" aria-hidden />,
+        href: blogHref(`/write/${draft.id}`),
+      },
+    })),
+  ].sort((a, b) => b.at - a.at);
+  const resume: Choice[] = everyDraft.slice(0, RECENT_DRAFTS).map((entry) => entry.choice);
+  if (everyDraft.length > RECENT_DRAFTS) {
+    resume.push({
+      key: "all-drafts",
+      label: t("seeAll"),
+      onSelect: () => {
+        close(false);
+        setDraftsOpen(true);
+      },
+    });
+  }
 
   return (
     <>
@@ -122,11 +159,12 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
           <ComposeSheetBody kinds={kinds} resume={resume} resumeLabel={t("resume")} />
         </BottomSheet>
       )}
+      <NoteDraftsSheet open={draftsOpen} onClose={() => setDraftsOpen(false)} onPick={(draft) => setNoteOpen({ draft })} />
       <NoteQuoteDialog
-        quoted={noteOpen ? { fresh: true, title: t("noteTitle") } : null}
-        onClose={() => setNoteOpen(false)}
+        quoted={noteOpen ? { fresh: true, title: t("noteTitle"), ...(noteOpen.draft ? { draft: noteOpen.draft } : {}) } : null}
+        onClose={() => setNoteOpen(null)}
         onPosted={(note) => {
-          setNoteOpen(false);
+          setNoteOpen(null);
           toast(t("notePosted"), "default", {
             action: { label: t("viewNote"), onClick: () => openNote(note, locale, router.push) },
           });

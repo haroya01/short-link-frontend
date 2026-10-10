@@ -4511,7 +4511,15 @@
     "suggestionsPopular": "最近よくフォローされています",
     "suggestionsDismiss": "{name}を表示しない",
     "threadMore": "スレッドの続き {count}件",
-    "threadPosition": "スレッド {position}"
+    "threadPosition": "スレッド {position}",
+    "drafts": "下書き {count}",
+    "draftsTitle": "下書き",
+    "draftsEmpty": "下書きはまだありません",
+    "draftSaved": "下書きに保存しました",
+    "draftImagesDropped": "写真{count}枚は下書きに残っていません",
+    "draftDeleted": "下書きを削除しました",
+    "draftDelete": "下書きを削除",
+    "draftUndo": "元に戻す"
   },
   "mentions": {
     "suggestions": "メンションする人"
@@ -4527,6 +4535,7 @@
     "seeAll": "すべて見る",
     "noteTitle": "新しいノート",
     "notePosted": "ノートを投稿しました",
-    "viewNote": "見る"
+    "viewNote": "見る",
+    "noteParts": "{count}件"
   }
 }

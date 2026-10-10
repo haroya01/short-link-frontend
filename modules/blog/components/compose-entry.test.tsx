@@ -9,6 +9,15 @@ const mocks = vi.hoisted(() => ({
   onPosted: null as ((note: unknown) => void) | null,
   toast: vi.fn(),
   push: vi.fn(),
+  draftsSheet: vi.fn(),
+  me: { id: 7, username: "dohyun" } as { id: number; username: string } | null,
+}));
+vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: mocks.me }) }));
+vi.mock("@/modules/notes/components/note-drafts-sheet", () => ({
+  NoteDraftsSheet: (props: { open: boolean; onPick: (draft: unknown) => void }) => {
+    mocks.draftsSheet(props);
+    return props.open ? createElement("div", { "data-testid": "drafts-sheet" }) : null;
+  },
 }));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key, useLocale: () => "ko" }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
@@ -31,6 +40,8 @@ let root: Root;
 let host: HTMLDivElement;
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
+  mocks.me = { id: 7, username: "dohyun" };
   vi.stubGlobal("React", React);
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   mocks.listMyPosts.mockResolvedValue([]);
@@ -101,7 +112,7 @@ describe("the 글쓰기 chooser", () => {
     expect(document.activeElement).toBe(trigger());
   });
 
-  it("lists recent drafts under 이어 쓰기 with an untitled fallback, and 모두 보기 only when there are more", async () => {
+  it("lists recent drafts under 이어 쓰기 with an untitled fallback, and 모두 보기 opens the drafts sheet when there are more", async () => {
     mocks.listMyPosts.mockResolvedValue([
       post(11, "DRAFT", "2026-10-09T00:00:00Z", "  "),
       post(12, "DRAFT", "2026-10-08T00:00:00Z", "초안 둘"),
@@ -122,7 +133,46 @@ describe("the 글쓰기 chooser", () => {
     const first = choices()[2];
     expect(first.textContent).toContain("untitled");
     expect(first.getAttribute("href")).toContain("/write/11");
-    expect(choices()[5].getAttribute("href")).toMatch(/\/write$/);
+    await act(async () => choices()[5].click());
+    expect(document.querySelector('[data-testid="drafts-sheet"]')).not.toBeNull();
+  });
+
+  it("mixes this device's note drafts into 이어 쓰기 by recency, and one reopens the note composer with it", async () => {
+    mocks.listMyPosts.mockResolvedValue([
+      post(31, "DRAFT", "2026-10-09T00:00:00Z", "긴 글 초안"),
+      post(32, "DRAFT", "2026-10-07T00:00:00Z", "오래된 긴 글"),
+    ]);
+    const note = {
+      id: "n1",
+      updatedAt: Date.parse("2026-10-08T00:00:00Z"),
+      body: "쓰던 노트\n둘째 줄",
+      parts: ["이어지는 노트"],
+      warning: null,
+      visibility: "public",
+      replyPolicy: "everyone",
+      language: "ko",
+      poll: null,
+      scheduledAt: "",
+      quote: null,
+      imageCount: 0,
+    };
+    localStorage.setItem("kurl:note-drafts:7", JSON.stringify([note]));
+    localStorage.setItem("kurl:note-drafts:8", JSON.stringify([{ ...note, id: "other" }]));
+    await render("desktop");
+    await open();
+    expect(choices().map((c) => c.dataset.composeChoice)).toEqual([
+      "note",
+      "longform",
+      "draft-31",
+      "note-draft-n1",
+      "draft-32",
+    ]);
+    const noteRow = choices()[3];
+    expect(noteRow.textContent).toContain("쓰던 노트");
+    expect(noteRow.textContent).not.toContain("둘째 줄");
+    expect(noteRow.textContent).toContain("noteParts");
+    await act(async () => noteRow.click());
+    expect(mocks.noteDialog).toHaveBeenLastCalledWith({ fresh: true, title: "noteTitle", draft: note });
   });
 
   it("hides 이어 쓰기 when there are no drafts", async () => {

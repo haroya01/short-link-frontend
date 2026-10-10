@@ -4511,7 +4511,15 @@
     "suggestionsPopular": "इन दिनों लोकप्रिय",
     "suggestionsDismiss": "{name} का सुझाव न दें",
     "threadMore": "इस थ्रेड में {count} और",
-    "threadPosition": "थ्रेड भाग {position}"
+    "threadPosition": "थ्रेड भाग {position}",
+    "drafts": "ड्राफ़्ट {count}",
+    "draftsTitle": "ड्राफ़्ट",
+    "draftsEmpty": "अभी कोई ड्राफ़्ट नहीं",
+    "draftSaved": "ड्राफ़्ट में सहेजा",
+    "draftImagesDropped": "{count} फ़ोटो ड्राफ़्ट में नहीं रखी गईं",
+    "draftDeleted": "ड्राफ़्ट हटा दिया",
+    "draftDelete": "ड्राफ़्ट हटाएँ",
+    "draftUndo": "पूर्ववत करें"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"
@@ -4527,6 +4535,7 @@
     "seeAll": "सभी देखें",
     "noteTitle": "नया नोट",
     "notePosted": "नोट पोस्ट हो गया",
-    "viewNote": "देखें"
+    "viewNote": "देखें",
+    "noteParts": "{count} नोट"
   }
 }
