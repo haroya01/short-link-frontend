@@ -22,7 +22,8 @@ async function signInAndReturn(page: Page) {
   ]);
   const next = decodeURIComponent((await page.context().cookies()).find((c) => c.name === "kurl_login_next")?.value ?? "");
   expect(next).not.toBe("");
-  await page.evaluate(() => {
+  // Google 시작 주소는 API 오리진(CI 에선 localhost:0)이라, 로그인은 앱 오리진에 돌아와서 해야 한다.
+  await page.addInitScript(() => {
     window.sessionStorage.setItem("e2e:signed-in", "1");
     window.localStorage.removeItem("kurl:mock-signed-out");
   });
