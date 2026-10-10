@@ -33,13 +33,16 @@ const feeds: FeedMoreItem[] = [
 ];
 
 describe("the 더 보기 menu", () => {
-  it("is named 더 보기, and names the source it is showing when one of its sources is open", async () => {
-    await render(<FeedMoreMenu items={feeds} label="더 보기" activeKey={null} />);
-    expect(trigger().getAttribute("aria-label")).toBe("더 보기");
+  it("is named for its surface, shows only the chevron besides the word, and names the feed it has open", async () => {
+    await render(<FeedMoreMenu items={feeds} label="더 보기" name="노트 피드 더 보기" activeKey={null} />);
+    expect(trigger().getAttribute("aria-label")).toBe("노트 피드 더 보기");
     expect(trigger().hasAttribute("data-active")).toBe(false);
-    await render(<FeedMoreMenu items={feeds} label="더 보기" activeKey="federated" />);
-    expect(trigger().getAttribute("aria-label")).toBe("더 보기: 다른 서버");
+    expect(trigger().querySelectorAll("svg")).toHaveLength(1);
+    expect(trigger().textContent).toBe("더 보기");
+    await render(<FeedMoreMenu items={feeds} label="더 보기" name="노트 피드 더 보기" activeKey="federated" />);
+    expect(trigger().getAttribute("aria-label")).toBe("노트 피드 더 보기: 다른 서버");
     expect(trigger().getAttribute("data-active")).toBe("true");
+    expect(trigger().querySelectorAll("svg")).toHaveLength(2);
     expect(trigger().textContent).toBe("다른 서버");
   });
 
@@ -50,6 +53,7 @@ describe("the 더 보기 menu", () => {
         items={feeds}
         toggles={[{ key: "reposts", label: "리포스트 보기", checked: true, onChange }]}
         label="더 보기"
+        name="노트 피드 더 보기"
         activeKey={null}
       />,
     );

@@ -4514,7 +4514,9 @@
     "threadPosition": "スレッド {position}",
     "feedDirectShort": "メンション",
     "listManage": "リストを管理",
-    "listSettingsHint": "リストは自分だけが見られます。追加した人のノートは、ノート画面の「その他」から選んで読めます。"
+    "listSettingsHint": "リストは自分だけが見られます。追加した人のノートは、ノート画面の「その他」から選んで読めます。",
+    "feedMoreBlog": "ほかのブログフィード",
+    "feedMoreNotes": "ほかのノートフィード"
   },
   "mentions": {
     "suggestions": "メンションする人"

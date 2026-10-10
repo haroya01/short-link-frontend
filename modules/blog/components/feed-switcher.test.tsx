@@ -78,7 +78,7 @@ describe("FeedSwitcher", () => {
   it("offers only the surface's other feeds in 더 보기 once signed in", async () => {
     await render({ surface: "blog", tabs: blogTabs(), more: blogMore() });
     const more = host.querySelector<HTMLButtonElement>("[data-feed-more] button")!;
-    expect(more.getAttribute("aria-label")).toBe("feedMore");
+    expect(more.getAttribute("aria-label")).toBe("feedMoreBlog");
     await click(more);
     expect([...host.querySelectorAll('[role="menuitem"]')].map((a) => a.textContent)).toEqual(["추천", "시리즈"]);
   });
@@ -89,7 +89,7 @@ describe("FeedSwitcher", () => {
     await click(host.querySelector("[data-feed-more] button")!);
     await click([...host.querySelectorAll('[role="menuitem"]')].find((a) => a.textContent === "추천")!);
     const slot = host.querySelector<HTMLButtonElement>("[data-feed-more] button")!;
-    expect(slot.getAttribute("aria-label")).toBe("feedMore: 추천");
+    expect(slot.getAttribute("aria-label")).toBe("feedMoreBlog: 추천");
     expect(slot.getAttribute("data-active")).toBe("true");
     expect(host.querySelectorAll('nav a[data-active="true"]')).toHaveLength(0);
     expect(mocks.push).toHaveBeenCalledWith(expect.stringContaining("?sort=for-you"));
@@ -108,13 +108,13 @@ describe("FeedSwitcher", () => {
     ];
     await render({ surface: "notes", tabs: notesTabs(null), more: mentions(true) });
     const slot = host.querySelector<HTMLButtonElement>("[data-feed-more] button")!;
-    expect(slot.getAttribute("aria-label")).toBe("feedMore: 개인 멘션");
+    expect(slot.getAttribute("aria-label")).toBe("feedMoreNotes: 개인 멘션");
     expect(slot.textContent).toBe("멘션");
     await click(tab("최신"));
     expect(slot.getAttribute("data-active")).toBeNull();
     await act(async () => root.render(createElement(FeedSwitcher, { surface: "notes", tabs: notesTabs("everyone"), more: mentions(false) })));
     expect(tab("최신").getAttribute("data-active")).toBe("true");
-    expect(slot.getAttribute("aria-label")).toBe("feedMore");
+    expect(slot.getAttribute("aria-label")).toBe("feedMoreNotes");
   });
 
   it("remembers the switcher tab the reader picks, per surface", async () => {

@@ -30,6 +30,14 @@ export function NoteListTimeline({ list }: { list: NoteListSummary }) {
   const load = useCallback((page: number) => listNoteListNotes(list.id, page), [list.id]);
   return (
     <section aria-label={list.title}>
+      <div className="flex justify-end py-2">
+        <BlogLink
+          href={NOTE_LISTS_SETTINGS}
+          className="focus-ring rounded text-[13px] text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+        >
+          {t("listManage")}
+        </BlogLink>
+      </div>
       <NoteList key={list.id} load={load} filterContext="home" empty={<BlogEmpty icon={MessageSquareText} title={t("listNoNotes")} />} />
     </section>
   );

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { AtSign, Bookmark, Check, ChevronDown, Globe, Layers, List, MoreHorizontal, Sparkles } from "lucide-react";
+import { AtSign, Bookmark, Check, ChevronDown, Globe, Layers, List, Sparkles } from "lucide-react";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
@@ -30,12 +30,15 @@ export function FeedMoreMenu({
   items,
   toggles = [],
   label,
+  name,
   activeKey,
   onPick,
 }: {
   items: FeedMoreItem[];
   toggles?: FeedMoreToggle[];
   label: string;
+  /** The slot's accessible name — which surface's feeds it holds. */
+  name: string;
   activeKey: string | null;
   onPick?: (item: FeedMoreItem) => void;
 }) {
@@ -43,7 +46,7 @@ export function FeedMoreMenu({
   const root = useRef<HTMLDivElement>(null);
   useDismiss(open, root, () => setOpen(false));
   const current = items.find((item) => item.key === activeKey) ?? null;
-  const Icon = current ? ICONS[current.icon] : MoreHorizontal;
+  const Icon = current ? ICONS[current.icon] : null;
 
   return (
     <div ref={root} className="relative" data-feed-more>
@@ -51,7 +54,7 @@ export function FeedMoreMenu({
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={current ? `${label}: ${current.label}` : label}
+        aria-label={current ? `${name}: ${current.label}` : name}
         data-active={current ? "true" : undefined}
         onClick={() => setOpen((v) => !v)}
         className={cn(
@@ -61,7 +64,7 @@ export function FeedMoreMenu({
             : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
         )}
       >
-        <Icon aria-hidden className={cn("h-4 w-4 shrink-0", !current && "sm:hidden")} strokeWidth={current ? 2.25 : 2} />
+        {Icon && <Icon aria-hidden className="h-4 w-4 shrink-0" strokeWidth={2.25} />}
         <span className="hidden max-w-[10rem] truncate sm:inline">{current ? (current.shortLabel ?? current.label) : label}</span>
         <ChevronDown
           className={cn(
@@ -74,7 +77,7 @@ export function FeedMoreMenu({
       {open && (
         <div
           role="menu"
-          aria-label={label}
+          aria-label={name}
           className="absolute right-0 top-11 z-20 w-56 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           {items.map((item) => {

@@ -4514,7 +4514,9 @@
     "threadPosition": "Thread part {position}",
     "feedDirectShort": "Mentions",
     "listManage": "Manage lists",
-    "listSettingsHint": "Only you see your lists. To read the people in one, pick it under More on the notes page."
+    "listSettingsHint": "Only you see your lists. To read the people in one, pick it under More on the notes page.",
+    "feedMoreBlog": "More blog feeds",
+    "feedMoreNotes": "More note feeds"
   },
   "mentions": {
     "suggestions": "People to mention"

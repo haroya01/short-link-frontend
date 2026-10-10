@@ -640,15 +640,16 @@ test("a person added to a list from their profile fills that list's tab", async 
   await expect(dialog).toContainText("yuna님에게 알리지 않아요");
   await dialog.getByRole("button", { name: "닫기" }).click();
 
-  await page.goto("/ko/blog/notes");
+  await page.goBack();
   await openMoreFeed(page, "동료");
   await expect(page).toHaveURL(/feed=lists&list=\d+/);
-  await expect(page.getByRole("button", { name: "더 보기: 동료" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "노트 피드 더 보기: 동료" })).toBeVisible();
   const list = page.getByRole("region", { name: "동료" });
   await expect(list.locator("article[data-note-id]").first()).toContainText("yuna", { timeout: 15_000 });
   await expect(list.locator("article[data-note-id]").filter({ hasText: "dohyun" })).toHaveCount(0);
 
-  await page.goto("/ko/blog/settings#lists");
+  await list.getByRole("link", { name: "리스트 관리" }).click();
+  await expect(page).toHaveURL(/\/settings#lists$/, { timeout: 30_000 });
   const managed = page.getByRole("region", { name: "리스트" }).getByRole("listitem", { name: "동료" });
   await managed.getByRole("button", { name: "1명" }).click({ timeout: 30_000 });
   await managed.getByRole("button", { name: "빼기" }).click();

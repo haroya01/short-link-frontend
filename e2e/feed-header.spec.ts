@@ -95,7 +95,7 @@ test.describe("desktop", () => {
     await slot.click();
     await expect(page.getByRole("menuitem")).toHaveText(["추천", "시리즈"]);
     await page.getByRole("menuitem", { name: "추천" }).click();
-    await expect(slot).toHaveAccessibleName("더 보기: 추천");
+    await expect(slot).toHaveAccessibleName("블로그 피드 더 보기: 추천");
     await expect(page).toHaveURL(/sort=for-you/, { timeout: 30_000 });
     await expect(activeTab(page, "blog")).toHaveCount(0);
     await expect(slot).toHaveText("추천");
@@ -117,11 +117,11 @@ test.describe("desktop", () => {
     await page.goto(`${NOTES}?feed=direct`);
     await settled(page, "notes");
     const slot = switcher(page, "notes").locator("[data-feed-more] > button");
-    await expect(slot).toHaveAccessibleName("더 보기: 개인 멘션");
+    await expect(slot).toHaveAccessibleName("노트 피드 더 보기: 개인 멘션");
     await expect(slot).toHaveText("멘션");
     await tabs(page, "notes").filter({ hasText: "최신" }).click();
     await expect(page).toHaveURL(/feed=everyone/, { timeout: 30_000 });
-    await expect(slot).toHaveAccessibleName("더 보기");
+    await expect(slot).toHaveAccessibleName("노트 피드 더 보기");
     const bar = (await switcher(page, "notes").locator("[data-switcher-bar]").boundingBox())!;
     const latest = (await activeTab(page, "notes").boundingBox())!;
     expect(bar.x).toBeGreaterThanOrEqual(latest.x);
@@ -192,8 +192,8 @@ for (const width of [360, 390]) {
     test.use({ viewport: { width, height: 844 } });
 
     for (const [lang, catalog] of Object.entries(CATALOGS)) {
-      test(`${lang}: the switcher stays one row whatever source is open, with 더 보기 as an icon`, async ({ page }) => {
-        const { feedMore, feedFederated, feedDirect } = catalog.notes;
+      test(`${lang}: the switcher stays one row whatever source is open, the slot showing no words on a phone`, async ({ page }) => {
+        const { feedMoreBlog, feedMoreNotes, feedFederated, feedDirect } = catalog.notes;
         for (const [path, surface, source] of [
           [`/${lang}/blog`, "blog", null],
           [`/${lang}/blog/notes?feed=federated`, "notes", feedFederated],
@@ -203,7 +203,8 @@ for (const width of [360, 390]) {
           await page.goto(path);
           await settled(page, surface);
           const more = switcher(page, surface).locator("[data-feed-more] > button");
-          await expect(more).toHaveAccessibleName(source ? `${feedMore}: ${source}` : feedMore);
+          const name = surface === "blog" ? feedMoreBlog : feedMoreNotes;
+          await expect(more).toHaveAccessibleName(source ? `${name}: ${source}` : name);
           await expect(more).toHaveText("", { useInnerText: true });
           const header = (await switcher(page, surface).boundingBox())!;
           const row = (await switcher(page, surface).getByRole("navigation").boundingBox())!;

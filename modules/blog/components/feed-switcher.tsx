@@ -113,6 +113,7 @@ export function FeedSwitcher({
             items={more}
             toggles={toggles}
             label={t("feedMore")}
+            name={t(surface === "blog" ? "feedMoreBlog" : "feedMoreNotes")}
             activeKey={tabPicked ? null : (pendingMore ?? openMore)}
             onPick={(item) => {
               setTabPicked(false);

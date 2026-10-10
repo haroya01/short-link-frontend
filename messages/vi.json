@@ -4514,7 +4514,9 @@
     "threadPosition": "Phần {position} của chuỗi",
     "feedDirectShort": "Nhắc đến",
     "listManage": "Quản lý danh sách",
-    "listSettingsHint": "Chỉ bạn thấy danh sách. Để đọc ghi chú của những người trong một danh sách, hãy chọn nó trong mục Thêm ở trang ghi chú."
+    "listSettingsHint": "Chỉ bạn thấy danh sách. Để đọc ghi chú của những người trong một danh sách, hãy chọn nó trong mục Thêm ở trang ghi chú.",
+    "feedMoreBlog": "Thêm bảng tin blog",
+    "feedMoreNotes": "Thêm bảng tin ghi chú"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"
