@@ -7,34 +7,16 @@ import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "
 import { ExportMdButton } from "@/modules/blog/components/workspace/export-md-button";
 import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
-import { dateLocale } from "@/lib/date";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ErrorState } from "@/components/common/error-state";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
-
-/** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3
- *  days". Pinned to Asia/Seoul (the app's canonical publish clock) so server and client agree and it
- *  doesn't drift with the reader's device timezone. */
-function scheduledLabel(iso: string, locale: string): string {
-  const when = new Date(iso);
-  // Show the year only when it isn't this year — a post scheduled for next January reading as just
-  // "Jan 3" would be ambiguous, but carrying the year on every near-term row is noise.
-  const showYear = when.getFullYear() !== new Date().getFullYear();
-  return when.toLocaleString(dateLocale(locale), {
-    ...(showYear ? { year: "numeric" } : {}),
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Asia/Seoul",
-  });
-}
 
 export default function WriteIndexPage() {
   const t = useTranslations("postEditor");

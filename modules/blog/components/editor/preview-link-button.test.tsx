@@ -1,7 +1,7 @@
 import React, { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { PreviewLinkButton } from "./preview-link-button";
+import { PreviewLinkButton, PreviewOpenButton } from "./preview-link-button";
 
 const mocks = vi.hoisted(() => ({
   save: vi.fn(), getPost: vi.fn(), issuePreviewToken: vi.fn(), writeText: vi.fn(), toast: vi.fn(),
@@ -73,3 +73,62 @@ describe("draft preview sharing", () => {
     expect(mocks.writeText).toHaveBeenCalledWith(`${window.location.origin}/en/p/writer/persisted-slug?preview=preview-token`);
   });
 });
+
+describe("opening the draft preview", () => {
+  async function mountOpen() {
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () => {
+      root.render(createElement(PreviewOpenButton, { postId: 16, username: "writer", onSave: mocks.save }));
+    });
+  }
+
+  it("opens the tab inside the click, then points it at the saved draft's token link", async () => {
+    const tab = { opener: {} as unknown, location: { href: "" }, close: vi.fn() };
+    const open = vi.fn(() => tab);
+    vi.stubGlobal("open", open);
+    let finishSave!: (saved: boolean) => void;
+    mocks.save.mockReturnValueOnce(new Promise<boolean>((resolve) => { finishSave = resolve; }));
+    await mountOpen();
+    await act(async () => { host.querySelector("button")!.click(); });
+    expect(open).toHaveBeenCalledWith("", "_blank");
+    expect(tab.location.href).toBe("");
+    await act(async () => { finishSave(true); });
+    expect(tab.location.href).toBe("https://blog.kurl.me/@writer/persisted-slug?preview=preview-token");
+    expect(tab.opener).toBeNull();
+  });
+
+  it("closes the tab it opened when the draft failed to save", async () => {
+    const tab = { opener: null, location: { href: "" }, close: vi.fn() };
+    vi.stubGlobal("open", vi.fn(() => tab));
+    mocks.save.mockResolvedValueOnce(false);
+    await mountOpen();
+    await act(async () => { host.querySelector("button")!.click(); });
+    expect(tab.close).toHaveBeenCalled();
+    expect(mocks.issuePreviewToken).not.toHaveBeenCalled();
+  });
+
+  it("opens the link itself when a blocker refused the early tab", async () => {
+    const open = vi.fn<(url?: string, target?: string, features?: string) => null>(() => null);
+    vi.stubGlobal("open", open);
+    await mountOpen();
+    await act(async () => { host.querySelector("button")!.click(); });
+    expect(open).toHaveBeenLastCalledWith(
+      "https://blog.kurl.me/@writer/persisted-slug?preview=preview-token",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  });
+
+  it("closes the tab and says so when the token can't be issued", async () => {
+    const tab = { opener: null, location: { href: "" }, close: vi.fn() };
+    vi.stubGlobal("open", vi.fn(() => tab));
+    mocks.issuePreviewToken.mockRejectedValueOnce(new Error("down"));
+    await mountOpen();
+    await act(async () => { host.querySelector("button")!.click(); });
+    expect(tab.close).toHaveBeenCalled();
+    expect(mocks.toast).toHaveBeenCalledWith(expect.any(String), "error");
+  });
+});
+

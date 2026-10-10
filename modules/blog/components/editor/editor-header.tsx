@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, Download, Send, Settings2, Trash2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Check, Download, Send, Settings2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
@@ -18,9 +18,12 @@ export function EditorHeader({
   takenDown = false,
   saving,
   saved,
+  saveFailed = false,
   lastSavedAt,
   busy,
+  preview,
   onSave,
+  onRetrySave,
   onBack,
   onOpenPublish,
   onRestoreRevision,
@@ -34,10 +37,13 @@ export function EditorHeader({
   takenDown?: boolean;
   saving: boolean;
   saved: boolean;
+  saveFailed?: boolean;
   /** 이 세션의 마지막 성공 저장 시각 — "✓ 저장됨" 2초가 지나간 뒤에도 시각으로 안심. */
   lastSavedAt: Date | null;
   busy: boolean;
+  preview?: React.ReactNode;
   onSave: () => void;
+  onRetrySave?: () => void;
   /** Plain-click leaves via here (saves a dirty draft first). Modified clicks keep the raw link. */
   onBack: () => void;
   onOpenPublish: () => void;
@@ -51,6 +57,19 @@ export function EditorHeader({
   // 로케일 무관 HH:MM — 분 단위면 충분하고, 상대 시각("2분 전")은 1분마다 틱이 필요해 과함.
   const savedTime =
     lastSavedAt?.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false }) ?? null;
+  const failure =
+    saveFailed && !saving ? (
+      <button
+        type="button"
+        onClick={onRetrySave ?? onSave}
+        disabled={busy}
+        data-save-failed
+        className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/15"
+      >
+        <AlertCircle className="h-4 w-4" aria-hidden />
+        {t("saveFailedRetry")}
+      </button>
+    ) : null;
   return (
     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
       <a
@@ -69,7 +88,9 @@ export function EditorHeader({
         <span className="hidden sm:inline">{t("backToList")}</span>
       </a>
       <div className="flex items-center gap-2">
-        {isDraft ? (
+        {isDraft && failure ? (
+          failure
+        ) : isDraft ? (
           // Drafts autosave (1.8s idle) — no manual 저장 button (velog/Notion model). A quiet status
           // reassures: 저장 중… → 저장됨, and 자동 저장 at rest so it's clear saving is automatic.
           <span
@@ -101,15 +122,17 @@ export function EditorHeader({
                 {t("savedAt", { time: savedTime })}
               </span>
             )}
-            <button
-              type="button"
-              onClick={onSave}
-              disabled={saving || busy}
-              className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
-            >
-              {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
-              {saving ? t("saving") : saved ? t("saved") : t("save")}
-            </button>
+            {failure ?? (
+              <button
+                type="button"
+                onClick={onSave}
+                disabled={saving || busy}
+                className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+                {saving ? t("saving") : saved ? t("saved") : t("save")}
+              </button>
+            )}
           </>
         )}
         <button
@@ -123,6 +146,7 @@ export function EditorHeader({
               reads as 글 설정, not 발행 설정 (which only fits a draft about to go live). */}
           {isDraft ? t("publish") : t("postSettings")}
         </button>
+        {preview}
         {postId != null && <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />}
         <button
           type="button"

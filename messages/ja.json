@@ -333,7 +333,7 @@
     "backToList": "記事一覧",
     "titlePlaceholder": "タイトル",
     "imageCaptionPlaceholder": "キャプションを追加（任意）",
-    "bodyPlaceholder": "'/' でブロックを追加できます。そのまま書いても大丈夫です",
+    "bodyPlaceholder": "「/」でブロックを挿入",
     "blockMenu": {
       "add": "下にブロックを追加",
       "embedMedia": "埋め込みメディア",
@@ -392,7 +392,7 @@
     "previewCopied": "プレビューリンクをコピーしました",
     "previewCopyError": "リンクのコピーに失敗しました",
     "saveChanges": "変更を保存",
-    "previewCardLabel": "公開後はこう表示されます",
+    "previewCardLabel": "このように表示されます",
     "coverAdd": "画像を追加",
     "coverUploading": "アップロード中…",
     "coverReplace": "変更",
@@ -577,7 +577,7 @@
       "warning": "注意",
       "caution": "警告"
     },
-    "bodyPlaceholderTouch": "そのまま書けます。書式は上のツールバーにあります",
+    "bodyPlaceholderTouch": "本文",
     "statusTakenDown": "運営により非公開",
     "takenDownTitle": "運営ポリシーにより非公開にされた記事です",
     "takenDownBody": "編集して保存はできますが、再公開はできません。異議がある場合は利用規約のお問い合わせ先までご連絡ください。",
@@ -607,7 +607,10 @@
       "update": "保存",
       "previewLoading": "プレビューを読み込み中…",
       "previewFailed": "プレビューを読み込めませんでした"
-    }
+    },
+    "saveFailedRetry": "保存できません · 再試行",
+    "reschedule": "時刻を変更",
+    "previewOpenError": "プレビューを開けませんでした"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -826,7 +829,8 @@
     "highlightRemoved": "ハイライトを削除しました",
     "highlightLinkCopied": "リンクをコピーしました",
     "highlightPublicFirst": "ハイライトしました · 名前とともに公開されます",
-    "reportTitleHighlightReply": "この返信を報告"
+    "reportTitleHighlightReply": "この返信を報告",
+    "publishedStatus": "公開しました"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
