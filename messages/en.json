@@ -546,6 +546,7 @@
     "importMd": "Import .md",
     "importProgress": "Importing {done}/{total}…",
     "importPartialError": "Some files could not be imported. Check the files and try again.",
+    "importDone": "Imported {count, plural, one {# post} other {# posts}}",
     "exportAll": "Export all",
     "exportAllHint": "Download every post as a zip of Markdown (.md) files",
     "exportAllFailed": "Export failed. Please try again in a moment.",

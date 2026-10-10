@@ -154,6 +154,9 @@ export function mockCreatePost(payload: {
   title: string;
   languageTag?: string;
 }): PostView {
+  if ([...posts.values()].some((p) => p.slug === payload.slug)) {
+    throw new ApiError(409, { status: 409, code: "SLUG_CONFLICT" });
+  }
   const id = ++seq;
   const p = blankPost({
     id,

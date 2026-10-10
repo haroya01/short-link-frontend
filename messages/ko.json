@@ -546,6 +546,7 @@
     "importMd": ".md 가져오기",
     "importProgress": "{done}/{total} 가져오는 중…",
     "importPartialError": "일부 파일을 가져오지 못했어요. 파일을 확인하고 다시 시도해주세요.",
+    "importDone": "{count}편을 가져왔어요",
     "exportAll": "전체 내보내기",
     "exportAllHint": "내 글 전부를 마크다운(.md) zip으로 내려받아요",
     "exportAllFailed": "내보내기에 실패했어요. 잠시 후 다시 시도해주세요.",

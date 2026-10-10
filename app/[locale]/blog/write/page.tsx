@@ -64,6 +64,8 @@ export default function WriteIndexPage() {
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
     if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
+    // /series forwards with a client replace, which renders this page before the URL changes.
+    if (new URLSearchParams(window.location.search).get("view") === "series") setView("series");
   }, []);
 
   function changeView(v: "all" | "series") {
