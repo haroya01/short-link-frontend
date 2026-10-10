@@ -19,11 +19,12 @@ import { FeedMasthead } from "./feed-masthead";
 import { GuestMasthead } from "./guest-masthead";
 import { FeedContentTransition } from "./feed-content-transition";
 import { FeedSwitcher } from "./feed-switcher";
-import { FeedEmpty } from "./feed-empty";
+import { BlogEmpty } from "./blog-empty";
 import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { SearchedNotes } from "@/modules/notes/components/searched-notes";
+import { SearchedPeople } from "./searched-people";
 import { RemoteAccountResult } from "@/modules/notes/components/remote-account";
 import { looksLikeRemoteHandle } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
@@ -103,6 +104,7 @@ export async function FeedScreen({
   const query = (qParam ?? "").trim();
   const searching = query.length > 0;
   const notesView = searching && viewParam === "notes";
+  const peopleView = searching && viewParam === "people";
   // Tag filter on the discovery feed (flat grid only): clicking a card's #tag narrows to that tag.
   // Ignored during search (search already spans tags). A tag view drops the lead/series emphasis.
   const activeTag = !searching ? (tagParam ?? "").trim() : "";
@@ -135,7 +137,7 @@ export async function FeedScreen({
   // 인증이 필요한 자체 클라이언트 면(아래에서 각자 그리드로 렌더).
   const showsServerFeed =
     searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
-  const needFlat = showsServerFeed;
+  const needFlat = showsServerFeed && !notesView && !peopleView;
   // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
   // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
   const wantConnections = showsServerFeed && !searching && !activeTag;
@@ -164,7 +166,7 @@ export async function FeedScreen({
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
   const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
   // A server feed fetch that failed outright (backend/network down) — distinct from a genuinely empty
-  // feed. Collapsing it to [] would render FeedEmpty ("첫 글을 써보세요"), disguising an outage as a fresh
+  // feed. Collapsing it to [] would render the empty state ("첫 글을 써보세요"), disguising an outage as a fresh
   // account. `status: "error"` is the fetch-failure case (a 404/410 is a real "nothing here"); when it's
   // that, we show a retry state instead of the empty state. Mirrors for-you-feed's initialError branch.
   const feedErrored =
@@ -219,7 +221,7 @@ export async function FeedScreen({
           locale={locale}
           eyebrow={t("searchLabel")}
           title={
-            hasNext || notesView
+            hasNext || notesView || peopleView || items.length === 0
               ? t("searchResultsFor", { q: query })
               : t("searchResultsCount", { q: query, count: items.length })
           }
@@ -248,13 +250,13 @@ export async function FeedScreen({
                 key: "recent",
                 label: t("recent"),
                 href: sortHref("recent"),
-                active: activeTab === "recent" && !notesView,
+                active: activeTab === "recent" && !notesView && !peopleView,
               },
               {
                 key: "trending",
                 label: t("trending"),
                 href: sortHref("trending"),
-                active: activeTab === "trending" && !notesView,
+                active: activeTab === "trending" && !notesView && !peopleView,
               },
               ...(searching
                 ? [
@@ -263,6 +265,12 @@ export async function FeedScreen({
                       label: t("searchNotesTab"),
                       href: `?q=${encodeURIComponent(query)}&view=notes`,
                       active: notesView,
+                    },
+                    {
+                      key: "people",
+                      label: t("searchPeopleTab"),
+                      href: `?q=${encodeURIComponent(query)}&view=people`,
+                      active: peopleView,
                     },
                   ]
                 : []),
@@ -297,6 +305,10 @@ export async function FeedScreen({
           <ReadingShell className="mt-6">
             <SearchedNotes query={query} />
           </ReadingShell>
+        ) : peopleView ? (
+          <ReadingShell className="mt-6">
+            <SearchedPeople query={query} />
+          </ReadingShell>
         ) : tab === "for-you" && !searching ? (
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <ForYouFeed locale={locale} />
@@ -319,7 +331,7 @@ export async function FeedScreen({
               ) : searching ? (
                 <SearchEmpty query={query} tags={emptySearchTopics?.ok ? emptySearchTopics.data : []} locale={locale} />
               ) : (
-                <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                <BlogEmpty icon={PenSquare} title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}
             </FeedContentTransition>
           </ReadingShell>

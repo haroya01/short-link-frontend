@@ -34,11 +34,31 @@ describe("report dialog title", () => {
     ["NOTE", "publicPost.reportTitleNote"],
     ["USER", "publicPost.reportTitleUser"],
     ["COMMENT", "publicPost.reportTitleComment"],
+    ["HIGHLIGHT_REPLY", "publicPost.reportTitleHighlightReply"],
   ])("names a %s report by what is reported", async (subjectType, title) => {
     await act(async () =>
       root.render(<ReportButton subjectType={subjectType} subjectId={7} open onOpenChange={vi.fn()} />),
     );
     const dialog = host.querySelector('[role="dialog"]')!;
     expect(dialog.querySelector("h2")!.textContent).toBe(title);
+  });
+});
+
+describe("a report asked from inside another overlay", () => {
+  it("rises above it as its own layer and closes only from outside the form", async () => {
+    const onOpenChange = vi.fn();
+    await act(async () =>
+      root.render(
+        <ReportButton subjectType="HIGHLIGHT_REPLY" subjectId={6001} open onOpenChange={onOpenChange} layerClassName="z-[70]" />,
+      ),
+    );
+    expect(host.querySelector('[role="dialog"]')).toBeNull();
+    const dialog = document.body.querySelector<HTMLElement>('[role="dialog"]')!;
+    expect(dialog.parentElement!.className).toContain("z-[70]");
+
+    dialog.querySelector("input")!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    expect(onOpenChange).not.toHaveBeenCalled();
+    dialog.parentElement!.querySelector(".scrim")!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

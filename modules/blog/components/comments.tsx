@@ -600,7 +600,7 @@ function CommentRow({
       nested={comment.parentId != null}
       flash={flash}
       isNew={isNew}
-      menu={<CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
+      menu={<CommentMenu subjectId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
       onDelete={canDelete ? onDelete : undefined}
       deleteLabel={deleteLabel}
       actions={

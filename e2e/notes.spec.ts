@@ -293,7 +293,7 @@ test("a note scheduled from the composer waits under it until it is canceled", a
 
   const panel = page.getByRole("button", { name: /예약한 노트 2/ });
   await panel.click();
-  await expect(page.getByText("답글을 달 노트가 지워졌어요")).toBeVisible();
+  await expect(page.getByText("답글을 달 노트가 삭제됐어요")).toBeVisible();
   const mine = page.getByRole("listitem").filter({ hasText: "내일 아침에 올릴 노트" });
   await expect(mine).toBeVisible();
   await mine.getByRole("button", { name: "취소" }).click();
@@ -382,7 +382,7 @@ test("beside the feed, trending links show who shared them this week and open th
 
 test("a link page refuses to link out to anything but the web", async ({ page }) => {
   await page.goto("/ko/blog/notes/link?url=javascript%3Aalert(1)");
-  await expect(page.getByRole("heading", { name: "링크" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "링크", exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId("linked-notes-link")).toHaveCount(0);
   await expect(page.getByText("아직 이 링크를 실은 노트가 없어요")).toBeVisible();
 });
@@ -404,7 +404,8 @@ test("the following tab turns every repost off and back on", async ({ page }) =>
   await page.goto("/ko/blog/notes?feed=following");
   const reposted = page.getByText("yuna님이 리포스트함");
   await expect(reposted).toBeVisible({ timeout: 30_000 });
-  const toggle = page.getByRole("switch", { name: "리포스트 보기" });
+  await page.getByRole("button", { name: "더 보기" }).click();
+  const toggle = page.getByRole("menuitemcheckbox", { name: "리포스트 보기" });
   await expect(toggle).toHaveAttribute("aria-checked", "true");
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-checked", "false");

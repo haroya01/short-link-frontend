@@ -18,6 +18,7 @@ import {
   getUnreadCount,
   markAllNotificationsRead,
   markNotificationRead,
+  type NotificationFilter,
   type NotificationItem,
   type NotificationsPage,
 } from "@/modules/notifications/api/notifications";
@@ -49,11 +50,11 @@ export function useUnreadCount() {
 }
 
 /** The notification feed, cursor-paginated. Used by both the dropdown (first page) and the page. */
-export function useNotifications() {
+export function useNotifications(filter: NotificationFilter = "all") {
   const { authenticated } = useAuth();
   return useInfiniteQuery({
-    queryKey: LIST_KEY,
-    queryFn: ({ pageParam }) => getNotifications(pageParam ?? undefined),
+    queryKey: filter === "all" ? LIST_KEY : [...LIST_KEY, filter],
+    queryFn: ({ pageParam }) => getNotifications(pageParam ?? undefined, 20, filter),
     enabled: authenticated,
     initialPageParam: undefined as number | undefined,
     getNextPageParam: (last: NotificationsPage) =>
@@ -94,12 +95,12 @@ export function useReadHiddenNotices(
   }, [items, filters, meId, qc]);
 }
 
-export function useMarkAllRead() {
+export function useMarkAllRead(filter: NotificationFilter = "all") {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => markAllNotificationsRead(),
-    onSuccess: () => {
-      qc.setQueryData(UNREAD_KEY, { count: 0 });
+    mutationFn: () => markAllNotificationsRead(filter),
+    onSuccess: (left) => {
+      qc.setQueryData(UNREAD_KEY, { count: left?.count ?? 0 });
       qc.invalidateQueries({ queryKey: LIST_KEY });
     },
   });

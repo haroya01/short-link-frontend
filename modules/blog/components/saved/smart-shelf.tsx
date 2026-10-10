@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
+import { Bookmark, Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -18,7 +18,7 @@ import {
   removeSaved,
 } from "@/modules/blog/api/saved";
 import { SavedCard } from "@/modules/blog/components/saved/saved-card";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { LoadError } from "@/modules/blog/components/saved/load-error";
 
@@ -179,10 +179,9 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   }
   if (saved.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={Bookmark}
         title={t("emptyBookmarks")}
-        body={t("emptyBookmarksBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}

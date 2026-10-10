@@ -1,7 +1,10 @@
+import { cn } from "@/lib/utils";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { END_SECTION } from "@/modules/blog/components/end-section";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 export function PostAuthorCard({
   author,
@@ -16,10 +19,7 @@ export function PostAuthorCard({
 }) {
   const name = author.displayName?.trim();
   return (
-    <section
-      data-testid="post-author-card"
-      className={`border-t border-slate-100 pt-8 dark:border-slate-800 ${className ?? ""}`}
-    >
+    <section data-testid="post-author-card" className={cn(END_SECTION, className)}>
       <div className="flex items-start gap-4">
         <a
           href={authorHref(author.username, locale)}
@@ -46,7 +46,10 @@ export function PostAuthorCard({
               </span>
             </span>
             {author.bio && (
-              <span className="mt-1 line-clamp-2 block text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400">
+              <span
+                lang={contentLang(author.bio)}
+                className="mt-1 line-clamp-2 block text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400"
+              >
                 {author.bio}
               </span>
             )}

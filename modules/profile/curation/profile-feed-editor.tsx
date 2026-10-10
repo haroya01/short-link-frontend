@@ -797,7 +797,7 @@ function FeedItemRow({
           disabled={pendingShortCode === link.shortCode}
           className="text-[11px] text-slate-500 hover:text-red-600 dark:text-slate-400"
         >
-          {t("remove")}
+          {t("removeLink")}
         </button>
       </div>
     </li>

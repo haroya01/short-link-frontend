@@ -15,15 +15,17 @@ import {
   createHighlightReply,
   deleteHighlight,
   deleteHighlightReply,
+  likeHighlightReply,
   listHighlightReplies,
   listHighlights,
+  unlikeHighlightReply,
   type HighlightReplyView,
   type HighlightView,
   type NewHighlight,
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
-import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine, Trash2 } from "lucide-react";
+import { CornerDownRight, FolderOpen, FolderPlus, Highlighter, PenLine, Trash2 } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { HighlightCard, hasConversation } from "./highlight-card";
@@ -35,7 +37,7 @@ import {
 } from "@/modules/blog/api/collections";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
-import { ConversationRow } from "@/modules/blog/components/conversation-row";
+import { ConversationLike, ConversationRow } from "@/modules/blog/components/conversation-row";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -596,7 +598,7 @@ function HighlightThread({
   const justPostedIdRef = useRef<number | null>(null);
   const repliesEndRef = useRef<HTMLDivElement>(null);
   const threadScrollRef = useRef<HTMLDivElement>(null);
-  // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
+  // The public collections this sentence is woven into ("이 문장이 담긴 컬렉션" — A-척추 discovery loop).
   const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
   // Blocks curators wove alongside this sentence in the same public collections ("이것과 이어진 것").
   const [related, setRelated] = useState<RelatedBlock[]>([]);
@@ -680,7 +682,7 @@ function HighlightThread({
 
   // After a just-posted reply renders, bring it into view. Only fires when submit() armed the ref, so a
   // background re-load never yanks the scroll. Scrolls the thread's own container (not the page) to the
-  // reply-list end so the newest reply sits at the bottom of the list — the "이 문장이 속한 길"/"이어진
+  // reply-list end so the newest reply sits at the bottom of the list — the "이 문장이 담긴 컬렉션"/"이어진
   // 것" sections that follow it in the same scroller stay below. Honors reduced-motion (instant jump).
   useEffect(() => {
     if (justPostedIdRef.current == null) return;
@@ -733,6 +735,30 @@ function HighlightThread({
       setError(errorMessage(e, t("replyError")));
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function toggleLike(reply: HighlightReplyView) {
+    if (!ready) return;
+    if (!authenticated) {
+      const back = threadAddress();
+      onClose();
+      askToSignIn("like", back);
+      return;
+    }
+    const liked = !reply.liked;
+    const flip = (on: boolean) =>
+      setReplies((prev) =>
+        prev.map((r) =>
+          r.id === reply.id ? { ...r, liked: on, likeCount: Math.max(0, r.likeCount + (on ? 1 : -1)) } : r,
+        ),
+      );
+    flip(liked);
+    try {
+      const status = liked ? await likeHighlightReply(reply.id) : await unlikeHighlightReply(reply.id);
+      setReplies((prev) => prev.map((r) => (r.id === reply.id ? { ...r, ...status } : r)));
+    } catch {
+      flip(!liked);
     }
   }
 
@@ -825,23 +851,37 @@ function HighlightThread({
                     createdAt={r.createdAt}
                     time={fmt(r.createdAt)}
                     menu={
-                      authenticated && r.author?.username && r.author.id !== meId ? (
-                        <CommentMenu authorUsername={r.author.username} canReport={false} layerClassName="z-[70]" />
+                      meId == null || r.author?.id !== meId ? (
+                        <CommentMenu
+                          subjectType="HIGHLIGHT_REPLY"
+                          subjectId={r.id}
+                          authorUsername={r.author?.username ?? null}
+                          canReport
+                          layerClassName="z-[70]"
+                        />
                       ) : undefined
                     }
                     onDelete={meId != null && r.author?.id === meId ? () => void remove(r.id) : undefined}
                     deleteLabel={t("highlightReplyDelete")}
                     actions={
-                      authenticated && r.author?.username && r.author.id !== meId ? (
-                        <button
-                          type="button"
-                          onClick={() => replyTo(r.author!.username)}
-                          className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
-                        >
-                          <CornerDownRight className="h-3.5 w-3.5" aria-hidden />
-                          {tComments("reply")}
-                        </button>
-                      ) : undefined
+                      <>
+                        <ConversationLike
+                          liked={r.liked}
+                          count={r.likeCount}
+                          label={tComments("like")}
+                          onToggle={() => void toggleLike(r)}
+                        />
+                        {authenticated && r.author?.username && r.author.id !== meId && (
+                          <button
+                            type="button"
+                            onClick={() => replyTo(r.author!.username)}
+                            className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+                          >
+                            <CornerDownRight className="h-3.5 w-3.5" aria-hidden />
+                            {tComments("reply")}
+                          </button>
+                        )}
+                      </>
                     }
                   >
                     <CommentBody text={r.body} locale={locale} mentions={r.mentions} />
@@ -854,7 +894,7 @@ function HighlightThread({
               lands on the newest reply (see the submit scroll effect). */}
           <div ref={repliesEndRef} aria-hidden />
 
-          {/* 이 문장이 속한 길 — from one sentence to the paths/collections it's woven into. */}
+          {/* 이 문장이 담긴 컬렉션 — from one sentence to the collections it's woven into. */}
           {inCollections.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
               <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
@@ -867,16 +907,12 @@ function HighlightThread({
                       href={blogPath(`/collections/${c.id}`)}
                       className="focus-ring flex items-center gap-2 rounded-surface px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
-                      {c.kind === "PATH" ? (
-                        <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-500" />
-                      ) : (
-                        <ContainingGlyph visibility={c.visibility} />
-                      )}
+                      <FolderOpen aria-hidden className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
                       <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-200">
                         {c.title}
                       </span>
                       <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-                        {c.count}
+                        {tc("itemCount", { count: c.count })}
                       </span>
                     </BlogLink>
                   </li>
@@ -946,14 +982,6 @@ function HighlightThread({
     {confirmDialog}
     </>
   );
-}
-
-/** A small glyph for a containing collection's visibility (paths use the path arrow instead). */
-function ContainingGlyph({ visibility }: { visibility: CollectionSummary["visibility"] }) {
-  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400";
-  if (visibility === "PUBLIC") return <Globe className={cls} />;
-  if (visibility === "UNLISTED") return <LinkIcon className={cls} />;
-  return <Lock className={cls} />;
 }
 
 /** Floating two-action bar pinned to the selection. Placed above the span, or below it when the span

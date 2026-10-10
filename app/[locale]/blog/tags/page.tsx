@@ -6,7 +6,8 @@ import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { ViewerFeedCards } from "@/modules/blog/components/viewer-feed-cards";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { Hash } from "lucide-react";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 // Static + ISR: nothing here is per-visitor, and the public fetches degrade to an empty state if
@@ -94,7 +95,7 @@ export default async function TagsIndexPage({
           crossfades in (tag-list-enter) so arriving via "모두 보기" reads smooth, not a hard swap. */}
       <div className="tag-list-enter mx-auto mt-5 max-w-2xl">
         {tags.length === 0 ? (
-          <FeedEmpty title={t("empty")} />
+          <BlogEmpty icon={Hash} title={t("empty")} />
         ) : (
           <ul className="flex flex-wrap gap-2">
             {tags.map((tag) => (

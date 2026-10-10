@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { DATE_LOCALE } from "@/lib/date";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { POST_IMAGE_TYPES, postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
@@ -13,6 +12,7 @@ import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-not
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { isSavableSlug } from "@/modules/blog/lib/slug";
+import { rowDate } from "@/modules/notes/lib/compact-time";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -236,11 +236,7 @@ export function PublishDialog({
   // Card preview mirrors the real FeedCard: eyebrow = first DISPLAYABLE tag, date pinned to Seoul
   // (the hydration rule for date formatting) — the meta line is display-only realism.
   const eyebrowTag = tags.find(isDisplayableTag);
-  const todayLabel = new Date().toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-    month: "long",
-    day: "numeric",
-    timeZone: "Asia/Seoul",
-  });
+  const todayLabel = rowDate(new Date().toISOString(), locale);
 
   // local datetime min (now) for the schedule input.
   const now = new Date();

@@ -56,7 +56,7 @@ test("loading the latest keeps mine, which can be brought back over it and saved
 
 test("the kept version can be thrown away instead", async ({ page }) => {
   const kept = await loadLatest(page);
-  await kept.getByRole("button", { name: "지우기" }).click();
+  await kept.getByRole("button", { name: "삭제" }).click();
   await expect(kept).toHaveCount(0);
   await expect(page.getByRole("textbox", { name: "제목" })).toHaveValue(THEIRS);
 });

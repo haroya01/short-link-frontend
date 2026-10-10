@@ -23,8 +23,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { notificationHref } from "@/modules/notifications/lib/notification-href";
+import { notificationMessageKey } from "@/modules/notifications/lib/notification-message-key";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { requestOrigin, useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import { FollowRequestAnswer } from "@/modules/notifications/components/follow-request-answer";
@@ -41,32 +43,6 @@ function flattenText(node: ReactNode): string {
   return "";
 }
 
-const MESSAGE_KEY: Record<Item["type"], string> = {
-  LIKE: "like",
-  COMMENT: "comment",
-  FOLLOW: "follow",
-  SERIES_SUBSCRIBE: "series_subscribe",
-  REPLY: "reply",
-  NEW_POST: "new_post",
-  MENTION: "mention",
-  CONNECTED: "connected",
-  PATH_GREW: "path_grew",
-  NOTE_LIKE: "note_like",
-  NOTE_REPOST: "note_repost",
-  NOTE_REPLY: "note_reply",
-  NOTE_QUOTE: "note_quote",
-  NOTE_MENTION: "note_mention",
-  NOTE_POLL: "note_poll",
-  NOTE_POST: "note_post",
-  NOTE_EDIT: "note_edit",
-  REMOTE_FOLLOW: "remote_follow",
-  FOLLOW_REQUEST: "follow_request",
-  POST_QUOTE: "post_quote",
-  NOTE_EMBED: "note_embed",
-  COMMENT_LIKE: "comment_like",
-  HIGHLIGHT: "highlight",
-};
-
 // 아바타 우하단의 종류 글리프 — 글만으로는 좋아요/댓글/팔로우 행이 전부 같은 얼굴이라,
 // 스캔할 때 "무슨 일"인지부터 읽히게 한다.
 const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
@@ -77,7 +53,7 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   SERIES_SUBSCRIBE: Rss,
   NEW_POST: PenLine,
   MENTION: AtSign,
-  // 그래프 이벤트: 엮임 = 사슬 고리(Link2), 길에 새 글 = 가지가 뻗음(GitBranch).
+  // 그래프 이벤트: 엮임 = 사슬 고리(Link2), 엮인 컬렉션에 새 글 = 가지가 뻗음(GitBranch).
   CONNECTED: Link2,
   PATH_GREW: GitBranch,
   NOTE_LIKE: Heart,
@@ -155,12 +131,7 @@ export function NotificationItem({
         : undefined;
   const origin = item.type === "FOLLOW_REQUEST" ? requestOrigin(item) : null;
   const others = Math.max((item.count ?? 1) - 1, 0);
-  const messageKey =
-    item.type === "NOTE_POLL" && item.actorUsername === me?.username
-      ? "note_poll_mine"
-      : others > 0
-        ? `${MESSAGE_KEY[item.type]}_group`
-        : MESSAGE_KEY[item.type];
+  const messageKey = notificationMessageKey(item, me?.username ?? null);
   // 행위자만 굵게(<b> 태그는 메시지 파일에) — 문장 전체가 같은 무게면 누가/무엇이 안 잡힌다.
   // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   // 컬렉션 이름은 그래프 이벤트 문장에서 강조어(<c>{collection}</c>) — 없으면 안전한 폴백 라벨.
@@ -274,6 +245,7 @@ export function NotificationItem({
         </span>
         {subtitle && (
           <span
+            lang={contentLang(subtitle)}
             className={cn(
               "mt-0.5 block truncate",
               roomy ? "text-[13px]" : "text-[12px]",

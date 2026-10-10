@@ -48,7 +48,7 @@ export function ConnectionFeedInsert({ event, locale }: { event: ConnectionEvent
       top={
         <>
           <span className="min-w-0 truncate">
-            {t.rich(event.collectionKind === "PATH" ? "connectionMetaPath" : "connectionMeta", {
+            {t.rich("connectionMeta", {
               curator: (chunks) => (
                 <BlogLink
                   href={authorHref(event.curator.username, locale)}

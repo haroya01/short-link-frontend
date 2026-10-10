@@ -1,4 +1,4 @@
-import { mockFailure, request } from "@/lib/api/client";
+import { mockEmpty, mockFailure, request } from "@/lib/api/client";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 알림은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
@@ -32,6 +32,8 @@ export const NOTIFICATION_TYPES = [
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
+export type NotificationFilter = "all" | "mentions";
 
 const KNOWN_TYPES: ReadonlySet<string> = new Set(NOTIFICATION_TYPES);
 
@@ -100,11 +102,21 @@ export interface NotificationsPage {
   hasMore: boolean;
 }
 
-export function getNotifications(before?: number, limit = 20): Promise<NotificationsPage> {
-  if (notificationMocks) return mockFailure("notifications") ?? Promise.resolve(notificationMocks.mockNotificationsPage());
+export function getNotifications(
+  before?: number,
+  limit = 20,
+  filter: NotificationFilter = "all",
+): Promise<NotificationsPage> {
+  if (notificationMocks) {
+    const page = mockEmpty("notifications")
+      ? { items: [], nextCursor: null, hasMore: false }
+      : notificationMocks.mockNotificationsPage(filter);
+    return mockFailure("notifications") ?? Promise.resolve(page);
+  }
   const q = new URLSearchParams();
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));
+  if (filter !== "all") q.set("filter", filter);
   return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" }).then((page) => ({
     ...page,
     items: page.items.filter((item) => KNOWN_TYPES.has(item.type)),
@@ -146,9 +158,10 @@ export function markNotificationRead(id: number): Promise<void> {
   return request<void>(`/api/v1/notifications/${id}/read`, { method: "POST", keepalive: true });
 }
 
-export function markAllNotificationsRead(): Promise<{ count: number }> {
+export function markAllNotificationsRead(filter: NotificationFilter = "all"): Promise<{ count: number }> {
   if (USE_MOCKS) return Promise.resolve({ count: 0 });
-  return request<{ count: number }>(`/api/v1/notifications/read-all`, { method: "POST" });
+  const query = filter === "all" ? "" : `?filter=${filter}`;
+  return request<{ count: number }>(`/api/v1/notifications/read-all${query}`, { method: "POST" });
 }
 
 /** Register a browser web-push subscription (idempotent upsert by endpoint). Backend mirrors the

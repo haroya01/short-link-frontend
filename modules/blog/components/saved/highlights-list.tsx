@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Highlighter, Loader2, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { quoteHref } from "@/modules/blog/components/connection-block";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyHighlights, type MyHighlightItem } from "@/modules/blog/api/highlights";
 import { LoadError } from "@/modules/blog/components/saved/load-error";
@@ -68,10 +68,9 @@ export function HighlightsList({ username, locale }: { username: string; locale:
   }
   if (items.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={Highlighter}
         title={t("emptyHighlights")}
-        body={t("emptyHighlightsBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}

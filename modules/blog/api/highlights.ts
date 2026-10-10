@@ -57,6 +57,14 @@ export interface HighlightReplyView {
   createdAt: string;
   /** The @handles in the body that belong to members; absent on responses that predate it. */
   mentions?: string[];
+  likeCount: number;
+  /** Whether the viewer liked it; always false for a signed-out reader. */
+  liked: boolean;
+}
+
+export interface HighlightReplyLikeStatus {
+  likeCount: number;
+  liked: boolean;
 }
 
 // The demo viewer — same identity as the mock `me` (lib/api/client MOCK_ME), so a highlight the viewer
@@ -68,6 +76,17 @@ let mockSeq = 5000;
 // highlightId → its replies (demo mode).
 const mockReplies = new Map<number, HighlightReplyView[]>();
 let mockReplySeq = 7000;
+const mockLikedReplies = new Set<number>();
+
+function mockReplyLike(id: number, liked: boolean): HighlightReplyLikeStatus {
+  const reply = [...mockReplies.values()].flat().find((r) => r.id === id) ?? blogMocks?.mockSeededReply(id);
+  if (reply && mockLikedReplies.has(id) !== liked) {
+    reply.likeCount = Math.max(0, reply.likeCount + (liked ? 1 : -1));
+    if (liked) mockLikedReplies.add(id);
+    else mockLikedReplies.delete(id);
+  }
+  return { likeCount: reply?.likeCount ?? 0, liked };
+}
 
 /** Public — every attributed highlight on a post (Medium-style social highlights). */
 export async function listHighlights(postId: number): Promise<HighlightView[]> {
@@ -126,7 +145,10 @@ export function deleteHighlight(id: number): Promise<void> {
 export async function listHighlightReplies(highlightId: number): Promise<HighlightReplyView[]> {
   if (USE_MOCKS) {
     if (mockFails("highlight-replies")) throw new Error("highlight replies 500");
-    return [...(blogMocks?.mockSeededReplies(highlightId, hasViewer()) ?? []), ...(mockReplies.get(highlightId) ?? [])];
+    const viewer = hasViewer();
+    return [...(blogMocks?.mockSeededReplies(highlightId, viewer) ?? []), ...(mockReplies.get(highlightId) ?? [])].map(
+      (reply) => ({ ...reply, liked: viewer && mockLikedReplies.has(reply.id) }),
+    );
   }
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/replies`, {
     cache: "no-store",
@@ -144,6 +166,8 @@ export function createHighlightReply(highlightId: number, body: string): Promise
       author: MOCK_VIEWER,
       body,
       createdAt: new Date().toISOString(),
+      likeCount: 0,
+      liked: false,
     };
     mockReplies.set(highlightId, [...(mockReplies.get(highlightId) ?? []), reply]);
     return Promise.resolve(reply);
@@ -164,4 +188,22 @@ export function deleteHighlightReply(id: number): Promise<void> {
     return Promise.resolve();
   }
   return request(`/api/v1/highlight-replies/${id}`, { method: "DELETE" });
+}
+
+/** Authenticated — like a reply; liking twice counts once. */
+export function likeHighlightReply(id: number): Promise<HighlightReplyLikeStatus> {
+  if (USE_MOCKS) {
+    if (mockFails("highlight-reply-like")) return Promise.reject(new Error("highlight reply like 500"));
+    return Promise.resolve(mockReplyLike(id, true));
+  }
+  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "POST" });
+}
+
+/** Authenticated — take the viewer's like off a reply. */
+export function unlikeHighlightReply(id: number): Promise<HighlightReplyLikeStatus> {
+  if (USE_MOCKS) {
+    if (mockFails("highlight-reply-like")) return Promise.reject(new Error("highlight reply like 500"));
+    return Promise.resolve(mockReplyLike(id, false));
+  }
+  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "DELETE" });
 }

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { CornerDownRight, FolderOpen } from "lucide-react";
+import { FolderOpen } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogPath } from "@/lib/host";
 import {
+  isOrdered,
   listKindredCurators,
   listPublicCollectionsByUsername,
 } from "@/modules/blog/api/collections";
@@ -46,10 +48,10 @@ export default async function PublicCollectionsIndexPage({
     <ReadingShell className="mt-4 sm:mt-8">
       <AuthorContentTransition>
         {collections.length === 0 ? (
-          <p className="text-slate-500 dark:text-slate-400">{t("collectionsEmpty")}</p>
+          <BlogEmpty icon={FolderOpen} title={t("collectionsEmpty")} />
         ) : (
           // Quiet editorial index — same hairline-row spine as the series index, so 시리즈↔컬렉션 read
-          // as siblings. A path gets the ↳ glyph; a plain collection the folder.
+          // as siblings. Every collection gets the folder; "순서대로 읽기" rides the meta line.
           <ol className="border-t border-slate-100 dark:border-slate-800/80">
             {collections.map((c) => (
               <li key={c.id} className="border-b border-slate-100 dark:border-slate-800/80">
@@ -58,11 +60,7 @@ export default async function PublicCollectionsIndexPage({
                   className="focus-ring group flex items-start gap-4 rounded-surface py-5"
                 >
                   <span className="mt-1 shrink-0 text-accent-600 dark:text-accent-500">
-                    {c.kind === "PATH" ? (
-                      <CornerDownRight className="h-4 w-4" />
-                    ) : (
-                      <FolderOpen className="h-4 w-4" />
-                    )}
+                    <FolderOpen className="h-4 w-4" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[18px] font-semibold tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
@@ -74,7 +72,7 @@ export default async function PublicCollectionsIndexPage({
                       </span>
                     )}
                     <span className="mt-1 block text-[13px] text-slate-500 dark:text-slate-400">
-                      {c.kind === "PATH" ? `${tc("kindPath")} · ` : ""}
+                      {isOrdered(c) ? `${tc("ordered")} · ` : ""}
                       {tc("itemCount", { count: c.count })}
                     </span>
                   </span>
