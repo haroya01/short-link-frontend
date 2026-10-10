@@ -46,6 +46,7 @@ import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { noteHref, openNote } from "@/modules/notes/lib/note-href";
+import { ReplyPolicyDialog } from "./note-reply-policy";
 
 const NOTE_RING_NUMBER_FROM = 20;
 
@@ -67,6 +68,7 @@ export function NoteCard({
   showsPin = false,
   filteredBy,
   position,
+  replyModeration,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -80,6 +82,8 @@ export function NoteCard({
   filteredBy?: string[];
   /** Which part of a thread written in parts ("1/3"), shown at the end of the header as on Threads. */
   position?: string;
+  /** The reader wrote the thread's first note and this is someone else's reply in it. */
+  replyModeration?: { hidden: boolean; onToggleHidden: () => void; onRemove: () => void };
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -107,6 +111,9 @@ export function NoteCard({
   const [addingToSeries, setAddingToSeries] = useState(false);
   const [bookmarked, setBookmarked] = useState(note.bookmarkedByMe === true);
   const [conversationMuted, setConversationMutedState] = useState(note.conversationMuted === true);
+  const [choosingReplyPolicy, setChoosingReplyPolicy] = useState(false);
+  const setsReplyPolicy =
+    mine && note.inReplyToId === null && !note.author.remoteId && note.replyPolicy !== undefined;
   const tCollections = useTranslations("collections");
 
   useEffect(() => {
@@ -214,6 +221,16 @@ export function NoteCard({
     } finally {
       setBusy(false);
     }
+  }
+
+  async function removeReply() {
+    const ok = await confirm({
+      title: t("removeReplyConfirm"),
+      description: t("removeReplyHint"),
+      confirmLabel: t("removeReply"),
+      destructive: true,
+    });
+    if (ok) replyModeration?.onRemove();
   }
 
   function openFromBody(e: React.MouseEvent<HTMLDivElement>) {
@@ -346,12 +363,21 @@ export function NoteCard({
                       ? () => setAddingToSeries(true)
                       : undefined
                   }
+                  onReplyPolicy={setsReplyPolicy ? () => setChoosingReplyPolicy(true) : undefined}
+                  replyHidden={replyModeration?.hidden}
+                  onToggleReplyHidden={replyModeration?.onToggleHidden}
+                  onRemoveReply={replyModeration ? removeReply : undefined}
                   disabled={busy}
                 />
               )}
             </div>
           </header>
 
+          {emphasis && note.hidden && (
+            <p data-testid="note-hidden-reply" className="col-span-2 mt-3 text-[13px] text-slate-500 dark:text-slate-400">
+              {t("hiddenReplyNotice")}
+            </p>
+          )}
           {note.contentWarning && !editing && (
             <div
               className={cn(
@@ -604,6 +630,15 @@ export function NoteCard({
       )}
       {mine && (
         <NoteSeriesDialog noteId={note.id} open={addingToSeries} onClose={() => setAddingToSeries(false)} />
+      )}
+      {setsReplyPolicy && (
+        <ReplyPolicyDialog
+          noteId={note.id}
+          current={note.replyPolicy ?? "everyone"}
+          open={choosingReplyPolicy}
+          onClose={() => setChoosingReplyPolicy(false)}
+          onSaved={(replyPolicy) => onChange?.({ ...note, replyPolicy })}
+        />
       )}
       <NoteQuoteDialog
         quoted={quoting ? { note } : null}
@@ -888,6 +923,10 @@ function NoteMenu({
   pinned,
   onPin,
   onAddToSeries,
+  onReplyPolicy,
+  replyHidden,
+  onToggleReplyHidden,
+  onRemoveReply,
   disabled,
 }: {
   bookmarked: boolean;
@@ -900,6 +939,10 @@ function NoteMenu({
   pinned: boolean;
   onPin?: () => void;
   onAddToSeries?: () => void;
+  onReplyPolicy?: () => void;
+  replyHidden?: boolean;
+  onToggleReplyHidden?: () => void;
+  onRemoveReply?: () => void;
   disabled: boolean;
 }) {
   const t = useTranslations("notes");
@@ -1000,6 +1043,32 @@ function NoteMenu({
               {t("addToSeries")}
             </button>
           )}
+          {onReplyPolicy && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onReplyPolicy();
+              }}
+            >
+              {t("replyPolicyLabel")}
+            </button>
+          )}
+          {onToggleReplyHidden && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onToggleReplyHidden();
+              }}
+            >
+              {replyHidden ? t("unhideReply") : t("hideReply")}
+            </button>
+          )}
           {onEdit && (
             <button
               type="button"
@@ -1024,6 +1093,19 @@ function NoteMenu({
               }}
             >
               {t("delete")}
+            </button>
+          )}
+          {onRemoveReply && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-red-600 dark:text-red-400")}
+              onClick={() => {
+                setOpen(false);
+                onRemoveReply();
+              }}
+            >
+              {t("removeReply")}
             </button>
           )}
         </div>

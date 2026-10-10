@@ -141,7 +141,7 @@ export default function WriteIndexPage() {
   };
 
   return (
-    // max-w-3xl: 분석·리드·저장한 글과 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
+    // max-w-3xl: 분석·리드·서재와 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
     // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
     <main className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">

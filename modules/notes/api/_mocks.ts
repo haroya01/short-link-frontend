@@ -14,6 +14,7 @@ import type {
   NoteFilterDraft,
   NoteListSummary,
   NotePoll,
+  NoteReplyPolicy,
   NoteThread,
   PostQuotes,
   RemoteAccount,
@@ -48,6 +49,7 @@ function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): No
     repostedByMe: false,
     quotedNote: null,
     linkPreview: null,
+    replyPolicy: "everyone",
     ...partial,
   };
 }
@@ -182,6 +184,20 @@ let notes: Note[] = [
   note({ id: 32, body: "둘. 경계를 먼저 긋게 됐다.", author: HARUKA, createdAt: "2026-09-28T09:00:20Z", inReplyToId: 31 }),
   note({ id: 33, body: "셋. 이름 짓는 데 시간을 쓴다.", author: HARUKA, createdAt: "2026-09-28T09:00:30Z", inReplyToId: 32 }),
   note({ id: 34, body: "셋째가 제일 공감돼요.", author: YUNA, createdAt: "2026-09-29T09:00:00Z", inReplyToId: 30 }),
+  note({
+    id: 70,
+    body: "다음 주 회고 안건, 같이 준비하는 사람만 답해 주세요 @haruka",
+    author: YUNA,
+    mentions: ["haruka"],
+    replyPolicy: "mentioned",
+    replyCount: 1,
+    createdAt: "2026-09-20T09:00:00Z",
+  }),
+  note({ id: 71, body: "안건 셋이면 될 것 같아요.", author: HARUKA, inReplyToId: 70, replyPolicy: "mentioned", createdAt: "2026-09-20T10:00:00Z" }),
+  note({ id: 72, body: "산책 코스 추천받아요.", author: ME, replyCount: 2, createdAt: "2026-09-19T09:00:00Z" }),
+  note({ id: 73, body: "강변 쪽이 좋아요.", author: YUNA, inReplyToId: 72, createdAt: "2026-09-19T10:00:00Z" }),
+  note({ id: 74, body: "여기 광고 링크 남겨요 https://example.com/deal", author: MINA, inReplyToId: 72, hidden: true, createdAt: "2026-09-19T10:30:00Z" }),
+  note({ id: 75, body: "언덕길 끝 카페까지 추천.", author: HARUKA, inReplyToId: 72, createdAt: "2026-09-19T11:00:00Z" }),
   ...MOCK_SERIES_NOTES.map(({ id, body, contentWarning, createdAt }) =>
     note({ id, body, contentWarning, sensitive: Boolean(contentWarning), createdAt, author: ME }),
   ),
@@ -649,12 +665,56 @@ const RIN_NOTE = note({
   createdAt: "2026-10-04T23:00:00Z",
 });
 
+function rootOf(target: Note): Note {
+  let current = target;
+  while (current.inReplyToId !== null) {
+    const parent = notes.find((n) => n.id === current.inReplyToId);
+    if (!parent) break;
+    current = parent;
+  }
+  return current;
+}
+
+function viewerCanReply(target: Note): boolean {
+  const root = rootOf(target);
+  const policy = root.replyPolicy ?? "everyone";
+  if (policy === "everyone" || root.author.id === ME.id) return true;
+  return root.mentions?.includes(ME.username) === true;
+}
+
+const forViewer = (n: Note): Note => ({ ...n, canReply: viewerCanReply(n) });
+
 export function mockViewerThread(id: number): NoteThread {
   const thread = mockThread(id);
   if (!thread || MOCK_BLOCKS_VIEWER.has(thread.note.author.username)) {
     throw new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" });
   }
-  return thread;
+  return {
+    ...thread,
+    note: forViewer(thread.note),
+    parent: thread.parent && forViewer(thread.parent),
+    replies: thread.replies.map(forViewer),
+    viewerCanModerate: rootOf(thread.note).author.id === ME.id,
+  };
+}
+
+export function mockHiddenReplies(id: number): Note[] {
+  return notes.filter((n) => n.inReplyToId === id && n.hidden === true).map(forViewer);
+}
+
+export function mockSetReplyHidden(id: number, hidden: boolean): { hidden: boolean } {
+  const target = notes.find((n) => n.id === id);
+  notes = notes.map((n) => {
+    if (n.id === id) return { ...n, hidden };
+    if (target && n.id === target.inReplyToId) return { ...n, replyCount: Math.max(0, n.replyCount + (hidden ? -1 : 1)) };
+    return n;
+  });
+  return { hidden };
+}
+
+export function mockSetReplyPolicy(id: number, replyPolicy: NoteReplyPolicy): { replyPolicy: NoteReplyPolicy } {
+  notes = notes.map((n) => (n.id === id || rootOf(n).id === id ? { ...n, replyPolicy } : n));
+  return { replyPolicy };
 }
 
 export function mockThread(id: number): NoteThread | null {
@@ -666,9 +726,11 @@ export function mockThread(id: number): NoteThread | null {
   return {
     note: withQuotes(main),
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
-    replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id)),
+    replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id) && n.hidden !== true),
     continuation,
     series: mockNoteSeries(id),
+    hiddenReplyCount: notes.filter((n) => n.inReplyToId === id && n.hidden === true).length,
+    viewerCanModerate: false,
   };
 }
 
@@ -749,6 +811,10 @@ export function mockCreateThread(drafts: NoteDraft[]): Note[] {
 }
 
 export function mockCreate(draft: NoteDraft): Note {
+  const parent = draft.inReplyToId === null ? null : notes.find((n) => n.id === draft.inReplyToId);
+  if (parent && !viewerCanReply(parent)) {
+    throw new ApiError(403, { status: 403, code: "NOTE_REPLY_RESTRICTED" });
+  }
   const created = note({
     id: nextId++,
     body: draft.body.trim(),
@@ -761,6 +827,7 @@ export function mockCreate(draft: NoteDraft): Note {
     contentWarning: draft.contentWarning ?? null,
     sensitive: Boolean(draft.sensitive || draft.contentWarning),
     visibility: draft.visibility ?? "public",
+    replyPolicy: parent ? (rootOf(parent).replyPolicy ?? "everyone") : (draft.replyPolicy ?? "everyone"),
     poll: draft.poll
       ? {
           expiresAt: new Date(Date.now() + draft.poll.expiresIn * 1000).toISOString(),

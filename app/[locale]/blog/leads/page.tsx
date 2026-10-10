@@ -118,7 +118,7 @@ export default function ProfileLeadsPage() {
   const hasLeads = total > 0;
 
   return (
-    // 워크스페이스 공통 그리드(글·분석·저장한 글과 같은 폭·헤더 문법).
+    // 워크스페이스 공통 그리드(글·분석·서재와 같은 폭·헤더 문법).
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">

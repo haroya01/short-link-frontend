@@ -103,7 +103,15 @@ export interface Note {
   language?: string | null;
   /** In a feed: the author went on in their own replies — how many parts, and the next one to show. */
   thread?: NoteSelfThread | null;
+  /** The thread's policy, carried by every note in it (a reply holds its first note's). */
+  replyPolicy?: NoteReplyPolicy;
+  /** Null for anonymous readers; absent before the server knows reply policies. */
+  canReply?: boolean | null;
+  /** The thread's first author hid this reply. */
+  hidden?: boolean;
 }
+
+export type NoteReplyPolicy = "everyone" | "following" | "mentioned";
 
 /** Mastodon's poll. Counts are public; the author gets `voted: true` and only sees results.
  *  `voted` and `ownVotes` are null for anonymous readers. */
@@ -143,6 +151,9 @@ export interface NoteThread {
   continuation?: Note[];
   /** The note author's series this note sits in, counted across its posts and notes. */
   series?: NoteSeriesNav | null;
+  hiddenReplyCount?: number;
+  /** The reader may hide or remove others' replies here; absent from servers that predate it. */
+  viewerCanModerate?: boolean;
 }
 
 export interface NoteSeriesNav {
@@ -173,6 +184,8 @@ export interface NoteDraft {
   visibility?: NoteVisibility | null;
   poll?: NotePollDraft | null;
   language?: string | null;
+  /** Ignored on a reply: a thread follows its first note's policy. */
+  replyPolicy?: NoteReplyPolicy | null;
 }
 
 export const NOTE_MAX_WARNING_LENGTH = 100;
@@ -680,6 +693,21 @@ export function editNote(id: number, edit: NoteEdit): Promise<Note> {
 export function voteInPoll(id: number, choices: number[]): Promise<NotePoll> {
   if (noteMocks) return Promise.resolve(noteMocks.mockVote(id, choices));
   return request<NotePoll>(`/api/v1/notes/${id}/poll/votes`, { method: "POST", body: { choices } });
+}
+
+export function setNoteReplyPolicy(id: number, replyPolicy: NoteReplyPolicy): Promise<{ replyPolicy: NoteReplyPolicy }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSetReplyPolicy(id, replyPolicy));
+  return request(`/api/v1/notes/${id}/reply-policy`, { method: "PUT", body: { replyPolicy } });
+}
+
+export function setNoteReplyHidden(id: number, hidden: boolean): Promise<{ hidden: boolean }> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockSetReplyHidden(id, hidden));
+  return request(`/api/v1/notes/${id}/hidden`, { method: hidden ? "PUT" : "DELETE" });
+}
+
+export function listHiddenReplies(id: number): Promise<Note[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockHiddenReplies(id));
+  return request<Note[]>(`/api/v1/public/notes/${id}/hidden-replies`, { method: "GET" });
 }
 
 export function deleteNote(id: number): Promise<void> {

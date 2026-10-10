@@ -1,11 +1,11 @@
 /**
- * "내 보관함" — the signed-in viewer's own liked + bookmarked posts, shown privately on their own
+ * "내 서재" — the signed-in viewer's own liked + bookmarked posts, shown privately on their own
  * author profile (only when me === profile owner). Bookmarks support user folders ("스마트 셸프": auto
  * tag grouping for unfiled items + manual folders). Folders are a NEW capability the flat bookmarks
  * API doesn't have yet, so in mock this is an in-memory store; against a real backend these map to
  * /api/v1/me/{liked,saved} + /api/v1/bookmarks/folders (backend work — owner's domain).
  */
-import { mockFailure, request } from "@/lib/api/client";
+import { mockEmpty, mockFailure, request } from "@/lib/api/client";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { savedMocks } from "@/modules/blog/api/_mock-gates";
 
@@ -24,7 +24,7 @@ export function listLikedFeed(): Promise<PublicFeedItem[]> {
 }
 
 export function listSavedFeed(): Promise<SavedPost[]> {
-  if (savedMocks) return mockFailure("saved") ?? Promise.resolve(savedMocks.mockListSavedFeed());
+  if (savedMocks) return mockFailure("saved") ?? Promise.resolve(mockEmpty("saved") ? [] : savedMocks.mockListSavedFeed());
   return request<SavedPost[]>("/api/v1/me/saved", { method: "GET" });
 }
 

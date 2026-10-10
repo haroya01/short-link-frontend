@@ -1,5 +1,5 @@
 /**
- * In-memory mocks for the viewer's 보관함 (liked + bookmarked posts with folders). Reuses the public
+ * In-memory mocks for the viewer's 서재 (liked + bookmarked posts with folders). Reuses the public
  * feed items as the "posts I saved/liked". Module-level so edits (move to folder, new folder, remove)
  * persist across the SPA session; a reload reseeds. See saved.ts for the public contract.
  */
