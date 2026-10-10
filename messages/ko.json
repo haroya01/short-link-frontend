@@ -2343,7 +2343,8 @@
     "errorPrefix": "에러:",
     "offline": "오프라인 상태예요. 연결되면 자동으로 다시 시도해요.",
     "showPassword": "비밀번호 보기",
-    "hidePassword": "비밀번호 숨기기"
+    "hidePassword": "비밀번호 숨기기",
+    "justNow": "방금"
   },
   "notFound": {
     "postTitle": "이 글을 찾을 수 없어요",

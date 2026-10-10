@@ -16,26 +16,7 @@ import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-gr
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ErrorState } from "@/components/common/error-state";
-
-const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
-  ["year", 31_536_000_000],
-  ["month", 2_592_000_000],
-  ["week", 604_800_000],
-  ["day", 86_400_000],
-  ["hour", 3_600_000],
-  ["minute", 60_000],
-];
-
-/** "3 hours ago" style, locale-aware — so the draft list reads as "what was I working on". */
-function relativeTime(iso: string, locale: string): string {
-  const diff = new Date(iso).getTime() - Date.now();
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-  for (const [unit, ms] of RELATIVE_UNITS) {
-    if (Math.abs(diff) >= ms) return rtf.format(Math.round(diff / ms), unit);
-  }
-  // 1분 미만은 second/0 → "지금". minute/0 은 ko 에서 "현재 분"으로 깨진다.
-  return rtf.format(0, "second");
-}
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 /** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3
  *  days". Pinned to Asia/Seoul (the app's canonical publish clock) so server and client agree and it
@@ -58,6 +39,7 @@ function scheduledLabel(iso: string, locale: string): string {
 export default function WriteIndexPage() {
   const t = useTranslations("postEditor");
   const locale = useLocale();
+  const ago = useCompactTime();
   const { ready, authenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -207,7 +189,7 @@ export default function WriteIndexPage() {
             </span>
           </span>
           <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-            {relativeTime(latestDraft.updatedAt, locale)}
+            {ago(latestDraft.updatedAt)}
           </span>
         </BlogLink>
       )}
@@ -372,7 +354,7 @@ export default function WriteIndexPage() {
                         </p>
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-slate-500 dark:text-slate-400">
-                        <span className="whitespace-nowrap">{relativeTime(p.updatedAt, locale)}</span>
+                        <span className="whitespace-nowrap">{ago(p.updatedAt)}</span>
                         {p.status === "SCHEDULED" && p.scheduledAt && (
                           // The row time above is 마지막 수정; a scheduled draft's whole point is *when*
                           // it goes live, so surface that instant explicitly (populated but hidden before).

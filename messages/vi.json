@@ -2343,7 +2343,8 @@
     "errorPrefix": "Lỗi:",
     "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại.",
     "showPassword": "Hiện mật khẩu",
-    "hidePassword": "Ẩn mật khẩu"
+    "hidePassword": "Ẩn mật khẩu",
+    "justNow": "vừa xong"
   },
   "notFound": {
     "postTitle": "Không tìm thấy bài viết này",

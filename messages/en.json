@@ -2343,7 +2343,8 @@
     "errorPrefix": "Error:",
     "offline": "You're offline. We'll reconnect automatically.",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "justNow": "now"
   },
   "notFound": {
     "postTitle": "This post isn't here",

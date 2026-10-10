@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
-import { compactTime } from "@/modules/notes/lib/compact-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
@@ -736,9 +736,7 @@ function HighlightThread({
     }
   }
 
-  function fmt(iso: string) {
-    return compactTime(iso, locale);
-  }
+  const fmt = useCompactTime();
 
   return (
     <>
