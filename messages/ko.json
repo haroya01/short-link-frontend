@@ -122,7 +122,7 @@
     "seriesSubscribeFailed": "구독을 변경하지 못했어요. 다시 시도해 주세요.",
     "searchNotesTab": "노트",
     "searchPeopleTab": "사람",
-    "searchPeopleEmpty": "‘{q}’에 맞는 사람이 없어요",
+    "searchNoPeople": "맞는 사람이 없어요",
     "searchPeopleHint": "두 글자 이상 입력하면 사람을 찾아요"
   },
   "blogWebhooks": {

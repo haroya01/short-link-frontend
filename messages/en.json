@@ -122,7 +122,7 @@
     "seriesSubscribeFailed": "Couldn't update subscription. Please try again.",
     "searchNotesTab": "Notes",
     "searchPeopleTab": "People",
-    "searchPeopleEmpty": "No people match “{q}”",
+    "searchNoPeople": "No matching people",
     "searchPeopleHint": "Type at least two characters to find people"
   },
   "blogWebhooks": {

@@ -122,7 +122,7 @@
     "seriesSubscribeFailed": "フォローを変更できませんでした。もう一度お試しください。",
     "searchNotesTab": "ノート",
     "searchPeopleTab": "ユーザー",
-    "searchPeopleEmpty": "「{q}」に一致するユーザーはいません",
+    "searchNoPeople": "一致するユーザーはいません",
     "searchPeopleHint": "2文字以上入力するとユーザーを探せます"
   },
   "blogWebhooks": {

@@ -98,17 +98,17 @@ describe("people search results", () => {
     expect(host.querySelector('[data-testid="follow-minji"]')!.textContent).toBe("following");
   });
 
-  it("says nobody matched, naming the query", async () => {
+  it("says nobody matched", async () => {
     mocks.searchPeople.mockResolvedValue({ items: [], page: 0, size: 20, hasNext: false });
     await show("zz");
-    expect(host.textContent).toContain("publicFeed.searchPeopleEmpty:zz");
+    expect(host.textContent).toContain("publicFeed.searchNoPeople");
   });
 
   it("tells a failed search apart from nobody", async () => {
     mocks.searchPeople.mockRejectedValue(new Error("down"));
     await show("zz");
     expect(host.textContent).toContain("publicFeed.searchFailed");
-    expect(host.textContent).not.toContain("searchPeopleEmpty");
+    expect(host.textContent).not.toContain("searchNoPeople");
   });
 
   it("leaves out someone blocked this session and loads the next page on request", async () => {

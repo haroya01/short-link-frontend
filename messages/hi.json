@@ -122,7 +122,7 @@
     "seriesSubscribeFailed": "सदस्यता अपडेट नहीं हो सकी. कृपया फिर से प्रयास करें.",
     "searchNotesTab": "नोट",
     "searchPeopleTab": "लोग",
-    "searchPeopleEmpty": "“{q}” से मेल खाता कोई व्यक्ति नहीं मिला",
+    "searchNoPeople": "कोई मेल खाता व्यक्ति नहीं",
     "searchPeopleHint": "लोगों को खोजने के लिए कम से कम दो अक्षर लिखें"
   },
   "blogWebhooks": {

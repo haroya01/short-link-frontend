@@ -28,12 +28,13 @@ test.describe("desktop", () => {
     await expect(page.getByText("두 글자 이상 입력하면 사람을 찾아요")).toBeVisible({ timeout: 30_000 });
 
     await page.goto("/ko/blog?q=zz&view=people");
-    await expect(page.getByText("‘zz’에 맞는 사람이 없어요")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("‘zz’ 검색 결과", { timeout: 30_000 });
+    await expect(page.getByRole("heading", { level: 2, name: "맞는 사람이 없어요" })).toBeVisible();
 
     await failing(page, "people");
     await page.goto("/ko/blog?q=har&view=people");
     await expect(page.getByText("검색하지 못했어요")).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByText("‘har’에 맞는 사람이 없어요")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "맞는 사람이 없어요" })).toHaveCount(0);
   });
 
   test("the header search puts matching people above the posts", async ({ page }) => {

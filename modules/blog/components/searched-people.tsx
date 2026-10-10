@@ -3,12 +3,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Search, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { searchPeople, searchablePeopleQuery, type PeoplePage, type PersonMatch } from "@/modules/blog/api/people";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { Avatar } from "./avatar";
+import { BlogEmpty } from "./blog-empty";
 import { BlogLink } from "./blog-link";
 import { FollowButton } from "./follow-button";
 
@@ -25,7 +25,7 @@ export function SearchedPeople({ query }: { query: string }) {
   });
 
   if (!searchable) {
-    return <EmptyState icon={Search} title={t("searchPeopleHint")} className="mt-2" />;
+    return <BlogEmpty icon={UserRound} title={t("searchPeopleHint")} />;
   }
   if (isLoading) {
     return (
@@ -46,7 +46,7 @@ export function SearchedPeople({ query }: { query: string }) {
 
   const people = (data?.pages.flatMap((page) => page.items) ?? []).filter((p) => !blocked.has(p.username));
   if (people.length === 0) {
-    return <EmptyState icon={UserRound} title={t("searchPeopleEmpty", { q: query })} className="mt-2" />;
+    return <BlogEmpty icon={Search} title={t("searchNoPeople")} />;
   }
 
   return (

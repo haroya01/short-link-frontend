@@ -122,7 +122,7 @@
     "seriesSubscribeFailed": "Không thể cập nhật đăng ký. Vui lòng thử lại.",
     "searchNotesTab": "Ghi chú",
     "searchPeopleTab": "Mọi người",
-    "searchPeopleEmpty": "Không có ai khớp với “{q}”",
+    "searchNoPeople": "Không có người phù hợp",
     "searchPeopleHint": "Nhập ít nhất hai ký tự để tìm người"
   },
   "blogWebhooks": {
