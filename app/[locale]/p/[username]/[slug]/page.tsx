@@ -418,7 +418,7 @@ export default async function PublicPostPage({
           </p>
         )}
 
-        <footer className="mt-8 hidden min-[1100px]:block" data-testid="post-actions">
+        <footer className="-ml-2.5 mt-8 hidden min-[1100px]:block" data-testid="post-actions">
           <PostActionRow
             postId={post.id}
             postTitle={post.title}
