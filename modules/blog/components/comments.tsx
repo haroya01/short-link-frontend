@@ -26,7 +26,7 @@ import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modul
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteList } from "@/modules/notes/components/note-list";
-import { compactTime } from "@/modules/notes/lib/compact-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -50,7 +50,6 @@ export function PostComments({
   const t = useTranslations("comments");
   const tCommon = useTranslations("common");
   const errorMessage = useApiErrorMessage();
-  const locale = useLocale();
   const { authenticated, ready, me } = useAuth();
 
   const [comments, setComments] = useState<CommentView[]>([]);
@@ -360,9 +359,7 @@ export function PostComments({
     }
   }
 
-  function fmt(iso: string) {
-    return compactTime(iso, locale);
-  }
+  const fmt = useCompactTime();
 
   return (
     <section

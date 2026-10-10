@@ -11,14 +11,14 @@ import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
 import type { FilteredSender } from "@/modules/notifications/api/notification-policy";
-import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { useAnswerFilteredSender, useFilteredSenders } from "@/modules/notifications/lib/use-notifications";
 
 /** 알림 거르기가 따로 둔 알림 — 보낸 사람별로 받기(그 뒤로도 옴)·버리기(모아 둔 알림 삭제). */
 export default function FilteredNotificationsPage() {
   const t = useTranslations("notifications");
   const locale = useLocale();
-  const relative = useRelativeTime();
+  const relative = useCompactTime();
   const { toast } = useToast();
   const { ready, authenticated } = useAuth();
   const { data, isLoading, isError, refetch } = useFilteredSenders();

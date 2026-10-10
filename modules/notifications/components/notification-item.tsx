@@ -25,7 +25,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { notificationHref } from "@/modules/notifications/lib/notification-href";
-import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { requestOrigin, useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import { FollowRequestAnswer } from "@/modules/notifications/components/follow-request-answer";
 import { blogPath } from "@/lib/host";
@@ -138,7 +138,7 @@ export function NotificationItem({
   const t = useTranslations("notifications");
   const locale = useLocale();
   const { me } = useAuth();
-  const relative = useRelativeTime();
+  const relative = useCompactTime();
   const markRead = useMarkRead();
 
   const actor = item.actorUsername ?? t("someone");

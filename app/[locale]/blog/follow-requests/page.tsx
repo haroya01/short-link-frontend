@@ -10,14 +10,14 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { FollowRequestAnswer } from "@/modules/notifications/components/follow-request-answer";
-import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { useFollowRequests } from "@/modules/notifications/lib/use-notifications";
 
 /** 기다리는 팔로우 요청 — 이 서버 회원과 다른 서버 계정을 한 목록에서 승인·거절한다(마스토돈 잠긴 계정). */
 export default function FollowRequestsPage() {
   const t = useTranslations("notifications");
   const locale = useLocale();
-  const relative = useRelativeTime();
+  const relative = useCompactTime();
   const { ready, authenticated } = useAuth();
   const { data, isLoading, isError, refetch } = useFollowRequests();
 
