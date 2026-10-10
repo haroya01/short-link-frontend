@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { addBookmark, getBookmarkStatus, removeBookmark } from "@/modules/blog/api/bookmarks";
 import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
 import { dockButton } from "@/modules/blog/components/dock-button";
+import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 
 /**
  * Save-to-reading-list toggle on the public post page. Account-backed: the bookmark is stored per
@@ -13,7 +14,7 @@ import { dockButton } from "@/modules/blog/components/dock-button";
  * devices. Anonymous click starts the login flow (same as the like button). Optimistic with
  * rollback on error.
  */
-export function BookmarkButton({ postId, variant = "inline" }: { postId: number; variant?: "inline" | "dock" }) {
+export function BookmarkButton({ postId, variant = "icon" }: { postId: number; variant?: "icon" | "dock" }) {
   const t = useTranslations("publicPost");
   // Pop only on click (not when the saved state loads from the server) — same gate as the follow/구독 button.
   const [interacted, setInteracted] = useState(false);
@@ -35,15 +36,8 @@ export function BookmarkButton({ postId, variant = "inline" }: { postId: number;
       }}
       aria-pressed={saved}
       aria-label={saved ? t("bookmarkOn") : t("bookmark")}
-      className={
-        variant === "dock"
-          ? dockButton(saved)
-          : `touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium transition-colors focus-ring ${
-              saved
-                ? "text-accent-700 dark:text-accent-400"
-                : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
-            }`
-      }
+      title={variant === "icon" ? (saved ? t("bookmarkOn") : t("bookmark")) : undefined}
+      className={variant === "dock" ? dockButton(saved) : actionIconButton(saved)}
     >
       {/* Keyed by state so it remounts + replays the pop on each toggle (only after a click). */}
       <span key={saved ? "on" : "off"} className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
@@ -51,7 +45,7 @@ export function BookmarkButton({ postId, variant = "inline" }: { postId: number;
           className={
             variant === "dock"
               ? `h-[18px] w-[18px] ${saved ? "fill-current" : ""}`
-              : `h-4 w-4 ${saved ? "fill-accent-600 text-accent-600" : ""}`
+              : `${ACTION_ICON} ${saved ? "fill-accent-600 text-accent-600" : ""}`
           }
         />
       </span>

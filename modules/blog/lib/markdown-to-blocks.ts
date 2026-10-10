@@ -29,10 +29,12 @@ function isTableStart(line: string, next: string | undefined): boolean {
 /**
  * Only a bare URL alone on a line stands as its own block (IMAGE or EMBED card). `<url>` and
  * `[text](url)` alone on a line are links the author kept as links, so they stay in the paragraph.
- * A trailing `\` is a soft line break, so that line still belongs to its paragraph. The editor writes
- * a card as the bare URL and a link as `<url>` / `[text](url)`; the backend's MarkdownBlockParser
- * mirrors this.
+ * A trailing `\` is a soft line break: that line and the line after it stay in the paragraph whatever
+ * their URL shape. The editor writes a card as the bare URL and a link as `<url>` / `[text](url)`; the
+ * backend's MarkdownBlockParser mirrors this.
  */
+const HARD_BREAK_END = /(^|[^\\])((?:\\\\)*)\\$/;
+
 function standaloneBareUrl(line: string): string | null {
   const m = line.trim().match(/^(https?:\/\/\S+)$/);
   return m && !m[1].endsWith("\\") ? m[1] : null;
@@ -227,13 +229,12 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       !/^(```|~~~)/.test(lines[i]) &&
       !isTableStart(lines[i], lines[i + 1]) &&
       !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i]) &&
-      !standaloneImageUrl(lines[i]) &&
-      !standaloneEmbedUrl(lines[i])
+      (HARD_BREAK_END.test(lines[i - 1].trimEnd()) || (!standaloneImageUrl(lines[i]) && !standaloneEmbedUrl(lines[i])))
     ) {
       paraLines.push(lines[i]);
       i++;
     }
-    blocks.push({ type: "PARAGRAPH", content: paraLines.join("\n").replace(/(^|[^\\])((?:\\\\)*)\\$/, "$1$2") });
+    blocks.push({ type: "PARAGRAPH", content: paraLines.join("\n").replace(HARD_BREAK_END, "$1$2") });
   }
 
   return blocks;

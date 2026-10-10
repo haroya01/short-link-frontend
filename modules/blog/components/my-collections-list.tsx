@@ -62,9 +62,6 @@ export function MyCollectionsList() {
         <p className="text-[15px] font-medium text-slate-700 dark:text-slate-200">
           {t("myCollectionsEmptyTitle")}
         </p>
-        <p className="mx-auto mt-1.5 max-w-sm text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t("myCollectionsEmptyBody")}
-        </p>
         <BlogLink
           href={blogPath("/")}
           className="focus-ring mt-5 inline-flex rounded-surface bg-accent-700 px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800"

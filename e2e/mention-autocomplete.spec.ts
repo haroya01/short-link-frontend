@@ -7,7 +7,7 @@ test("typing @ in a note offers the people you follow, letters narrow it, Enter 
   page,
 }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.click();
   await page.keyboard.type("오늘 @");

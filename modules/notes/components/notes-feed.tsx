@@ -114,9 +114,9 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
     federated: { icon: Globe, title: t("emptyFederated"), body: t("emptyFederatedBody") },
     following: { icon: Users, title: t("emptyFollowingTitle"), body: t("emptyFollowing") },
     trending: { icon: Flame, title: t("emptyTrending") },
-    bookmarks: { icon: Bookmark, title: t("emptyBookmarks"), body: t("emptyBookmarksBody") },
+    bookmarks: { icon: Bookmark, title: t("emptyBookmarks") },
     direct: { icon: AtSign, title: t("emptyDirect"), body: t("emptyDirectBody") },
-    lists: { icon: List, title: t("listEmpty"), body: t("listEmptyBody") },
+    lists: { icon: List, title: t("listEmpty") },
   };
   const signedOut = ready && !authenticated;
   const showsPosted = feed === "everyone" || feed === "following";

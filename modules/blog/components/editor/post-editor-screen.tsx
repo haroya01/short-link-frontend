@@ -183,7 +183,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         cover={ed.coverUrl}
         onCoverChange={ed.setCover}
         onUploadCover={async (file) => uploadPostImage((await ed.ensurePost()).id, file)}
-        onCoverPrefill={ed.setCoverRaw}
+        onCoverPrefill={ed.prefillCover}
         coverSuggestion={coverSuggestion}
         excerpt={ed.excerpt}
         onExcerptChange={ed.setExcerpt}

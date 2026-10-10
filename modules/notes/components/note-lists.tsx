@@ -49,7 +49,6 @@ export function NoteListUnpicked({ hasLists }: { hasLists: boolean }) {
     <BlogEmpty
       icon={List}
       title={hasLists ? t("listPick") : t("listEmpty")}
-      body={hasLists ? undefined : t("listEmptyBody")}
       action={
         <BlogLink
           href={NOTE_LISTS_SETTINGS}

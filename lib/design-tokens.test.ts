@@ -17,6 +17,8 @@ import { describe, expect, it } from "vitest";
  *    Tailwind 기본 md/lg/xl/2xl 과 임의 shadow-[…] 금지(drop-shadow 는 사진 위 글자용이라 밖).
  *  - 컴포넌트 소스의 cubic-bezier( 하드코딩 금지 — 하우스 곡선(0.16,1,0.3,1) 미러만 허용
  *    (var() 를 못 받는 자리용, globals.css 의 잠긴 키프레임은 이 가드 밖).
+ *  - 아이콘 하나에 뜻 하나(decisions 2026-10-11 AI 티 다섯 규칙): 반짝이는 쓰지 않고('추천'은 쌍안경),
+ *    지구본은 열린 네트워크(공개 범위·다른 서버)를 그리는 파일에만.
  */
 const ROOTS = ["app", "components", "modules", "hooks"];
 // u/_lib/theme.ts 는 12개 프로필 테마의 토큰 원장(테마별 CTA 글로우·네오브루탈 하드 섀도 등이
@@ -42,6 +44,12 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
     pattern: /(?<![\w-])shadow-(?:md|lg|xl|2xl)(?![\w-])/,
     // 명함 카드는 시각 스냅샷(visual.spec)이 잠근 물체 — 바꾸려면 베이스라인 재생성이 같이 가야 한다.
     allowFile: /contact-card-entry\.tsx$/,
+  },
+  { name: "반짝이 아이콘 Sparkles", pattern: /\bSparkles\b/ },
+  {
+    name: "열린 네트워크 밖의 지구본 Globe",
+    pattern: /\bGlobe\b/,
+    allowFile: /(feed-more-menu|notes-feed|note-visibility|remote-account|federation-setting|my-collections-list|collection-detail-view|connect-sheet)\.tsx$/,
   },
   {
     name: "cubic-bezier 하드코딩",

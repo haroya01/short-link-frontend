@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, Sparkles } from "lucide-react";
+import { Binoculars, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listForYouFeed } from "@/modules/blog/api/follows";
@@ -89,7 +89,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
   if (ready && !authenticated) {
     return (
       <div className="mt-8">
-        <SignInEmptyState reason="forYou" icon={Sparkles} />
+        <SignInEmptyState reason="forYou" icon={Binoculars} />
       </div>
     );
   }
@@ -121,7 +121,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
     return (
       <div className="mt-4">
         <BlogEmpty
-          icon={Sparkles}
+          icon={Binoculars}
           title={t("forYouEmptyTitle")}
           body={t("forYouEmpty")}
           action={

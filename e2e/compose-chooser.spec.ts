@@ -13,8 +13,8 @@ test.describe("desktop", () => {
     await desktopTrigger(page).click({ timeout: 30_000 });
     const menu = page.getByRole("menu", { name: "글쓰기" });
     await expect(menu.getByRole("menuitem")).toHaveText([
-      /노트짧게, 바로 올리기/,
-      /긴 글제목과 본문, 임시저장하며 다듬기/,
+      /^노트$/,
+      /^긴 글$/,
       /작성 중인 초안/,
     ]);
     await expect(menu.getByRole("group", { name: "이어 쓰기" })).toBeVisible();
