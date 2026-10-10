@@ -106,9 +106,14 @@ function touch(id: number, patch: Partial<PostView>): PostView {
   return next;
 }
 
+const MOCK_NO_DRAFTS_KEY = "kurl:mock-no-drafts";
+
 export function mockListMyPosts(): PostView[] {
+  const noDrafts = typeof window !== "undefined" && window.localStorage.getItem(MOCK_NO_DRAFTS_KEY) === "1";
   // Newest first, matching the backend's default ordering.
-  return [...posts.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return [...posts.values()]
+    .filter((post) => !noDrafts || post.status !== "DRAFT")
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }
 
 export function mockGetPost(id: number): PostView {

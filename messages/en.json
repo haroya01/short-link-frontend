@@ -4459,5 +4459,17 @@
   },
   "mentions": {
     "suggestions": "People to mention"
+  },
+  "compose": {
+    "title": "Write",
+    "note": "Note",
+    "noteHint": "Short, posted right away",
+    "longform": "Long post",
+    "longformHint": "Title and body, shaped in a draft",
+    "resume": "Continue writing",
+    "untitled": "Untitled draft",
+    "seeAll": "See all",
+    "noteTitle": "New note",
+    "notePosted": "Note posted"
   }
 }

@@ -15,6 +15,7 @@ import { Footer } from "@/components/common/footer";
 import { MobileSidebar, Sidebar } from "@/components/common/sidebar";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { buildBlogSections } from "@/lib/sidebar-entries";
+import { ComposeEntry } from "@/modules/blog/components/compose-entry";
 import { WorkspaceSkeleton } from "@/modules/blog/components/skeleton";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 
@@ -84,7 +85,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
       <AppProviders>
         <SidebarStateProvider>
           <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
-            <AppHeader product="blog" />
+            <AppHeader product="blog" compose={ComposeEntry} />
             <WorkspaceBody>{children}</WorkspaceBody>
             {!isEditorCanvas && <Footer app="blog" />}
           </div>
@@ -114,6 +115,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
             slimMobile
             sections
             product="blog"
+            compose={ComposeEntry}
           />
           <main className="flex-1 pb-20 sm:pb-0">{children}</main>
           <Footer app="blog" />

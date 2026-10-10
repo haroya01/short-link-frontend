@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
+import { onNotePosted } from "@/modules/blog/lib/consequence-events";
 import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
 import type { NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
 import {
@@ -75,6 +76,7 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
   const { ready, authenticated } = useAuth();
   const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
   const [posted, setPosted] = useState<Note[]>([]);
+  useEffect(() => onNotePosted((note) => setPosted((current) => [note, ...current])), []);
   const feed = feedOf(params.get("feed"), savedFeed);
   const load = useCallback(
     (page: number) => (feed === "lists" ? Promise.resolve({ items: [], page, hasNext: false }) : LOADERS[feed](page)),

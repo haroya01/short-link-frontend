@@ -1,6 +1,6 @@
 "use client";
 
-import { type ComponentProps } from "react";
+import { type ComponentProps, type ComponentType, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, PenSquare, X, Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,6 +19,13 @@ import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { cn } from "@/lib/utils";
+
+export type ComposeTriggerProps = {
+  variant: "desktop" | "mobile";
+  className: string;
+  label: string;
+  children: ReactNode;
+};
 
 const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
 const BLOG_HOME_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/;
@@ -61,6 +68,7 @@ export function AppHeader({
   slimMobile = false,
   sections = false,
   product,
+  compose: Compose,
 }: {
   showMenu?: boolean;
   searchOpen?: boolean;
@@ -68,6 +76,7 @@ export function AppHeader({
   sections?: boolean;
   /** The product this header sits on — lets the switcher seed its destination without a load flash. */
   product?: Product;
+  compose?: ComponentType<ComposeTriggerProps>;
 }) {
   const t = useTranslations("nav");
   const { authenticated, ready } = useAuth();
@@ -89,13 +98,21 @@ export function AppHeader({
   const onBlogHome = BLOG_HOME_PATH.test(pathname);
   const onNotes = NOTES_PATH.test(pathname);
 
+  const writeButtonClass =
+    "focus-ring hidden h-8 items-center gap-1.5 rounded-surface px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex";
   const writeCircleClass =
     "focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden";
   const mobileWriteCircle = (authed: boolean) =>
     authed ? (
-      <ChromeNavLink href={blogHref("/write/new")} aria-label={t("write")} className={writeCircleClass}>
-        <PenSquare className="h-4 w-4" />
-      </ChromeNavLink>
+      Compose ? (
+        <Compose variant="mobile" label={t("write")} className={writeCircleClass}>
+          <PenSquare className="h-4 w-4" />
+        </Compose>
+      ) : (
+        <ChromeNavLink href={blogHref("/write/new")} aria-label={t("write")} className={writeCircleClass}>
+          <PenSquare className="h-4 w-4" />
+        </ChromeNavLink>
+      )
     ) : (
       <button type="button" onClick={() => askToSignIn("write")} aria-label={t("write")} className={writeCircleClass}>
         <PenSquare className="h-4 w-4" />
@@ -116,15 +133,19 @@ export function AppHeader({
       {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row.
           Chrome, not content: quiet like the other bar controls, so each page's own primary stays
           the one green action on screen. Mobile uses the bottom tab bar. */}
-      {authed && !inWriting && (
-        <ChromeNavLink
-          href={blogHref("/write/new")}
-          className="focus-ring hidden h-8 items-center gap-1.5 rounded-surface px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex"
-        >
-          <PenSquare className="h-3.5 w-3.5" />
-          {t("write")}
-        </ChromeNavLink>
-      )}
+      {authed &&
+        !inWriting &&
+        (Compose ? (
+          <Compose variant="desktop" label={t("write")} className={writeButtonClass}>
+            <PenSquare className="h-3.5 w-3.5" />
+            {t("write")}
+          </Compose>
+        ) : (
+          <ChromeNavLink href={blogHref("/write/new")} className={writeButtonClass}>
+            <PenSquare className="h-3.5 w-3.5" />
+            {t("write")}
+          </ChromeNavLink>
+        ))}
       {authed &&
         (ready ? (
           <NotificationBell />
