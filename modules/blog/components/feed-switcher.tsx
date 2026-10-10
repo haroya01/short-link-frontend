@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { FeedMoreMenu, type FeedMoreItem } from "@/modules/blog/components/feed-more-menu";
+import { FeedMoreMenu, type FeedMoreItem, type FeedMoreToggle } from "@/modules/blog/components/feed-more-menu";
 import { FeedSortTabs, type FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
 import {
   BLOG_MEMORY,
@@ -19,12 +19,12 @@ export function FeedSwitcher({
   surface,
   tabs,
   more,
-  trailing,
+  toggles,
 }: {
   surface: "blog" | "notes";
   tabs: FeedSortTab[];
   more?: FeedMoreItem[];
-  trailing?: ReactNode;
+  toggles?: FeedMoreToggle[];
 }) {
   const t = useTranslations("notes");
   const router = useRouter();
@@ -43,7 +43,7 @@ export function FeedSwitcher({
   return (
     <header
       data-feed-switcher={surface}
-      className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-slate-100 pb-3 dark:border-slate-800"
+      className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800"
     >
       <FeedSortTabs
         tabs={tabs}
@@ -52,10 +52,11 @@ export function FeedSwitcher({
           writeFeedMemory(memory, key);
         }}
       />
-      <div className="flex shrink-0 items-center gap-3">
-        {trailing}
-        {ready && authenticated && more && more.length > 0 && <FeedMoreMenu items={more} label={t("feedMore")} />}
-      </div>
+      {ready && authenticated && more && more.length > 0 && (
+        <div className="shrink-0">
+          <FeedMoreMenu items={more} toggles={toggles} label={t("feedMore")} />
+        </div>
+      )}
     </header>
   );
 }
