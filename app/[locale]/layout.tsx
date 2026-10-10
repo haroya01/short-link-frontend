@@ -255,25 +255,21 @@ export default async function RootLayout({
           data-pretendard=""
           href="/pretendard/pretendardvariable-dynamic-subset.min.css"
         />
-        {/* ja 로케일만: Pretendard JP(동일 파운드리·메트릭 호환)를 겹쳐 일본 신자체 자형을
-            네이티브로. KR판 단독으로는 신자체 한자(読·気 등) 상당수가 글자 단위 시스템 폴백으로
-            떨어져 자형 혼합("중화폰트" 질감)이 났다 — 일본 독자 즉시 이탈 신호. 로딩 패턴은 위
-            KR판과 동일한 비차단 3종 세트, globals.css 의 :lang(ja) font-family 가 소비한다. */}
+        {/* Pretendard JP — globals.css 의 [lang|="ja"] 가 쓴다. 화면 로케일과 상관없이 lang="ja" 로
+            표시된 사용자 글에도 걸리므로 모든 로케일에 싣는다. */}
         {locale === "ja" && (
-          <>
-            <link
-              rel="preload"
-              as="style"
-              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
-            />
-            <link
-              rel="stylesheet"
-              media="print"
-              data-pretendard=""
-              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
-            />
-          </>
+          <link
+            rel="preload"
+            as="style"
+            href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+          />
         )}
+        <link
+          rel="stylesheet"
+          media="print"
+          data-pretendard=""
+          href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+        />
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
@@ -288,13 +284,11 @@ export default async function RootLayout({
             rel="stylesheet"
             href="/pretendard/pretendardvariable-dynamic-subset.min.css"
           />
-          {locale === "ja" && (
-            // eslint-disable-next-line @next/next/no-css-tags
-            <link
-              rel="stylesheet"
-              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
-            />
-          )}
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link
+            rel="stylesheet"
+            href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+          />
         </noscript>
       </head>
       <body className="min-h-screen flex flex-col">

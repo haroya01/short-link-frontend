@@ -12,7 +12,7 @@ import {
   type FeedSort,
 } from "@/modules/blog/api/public-posts";
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
@@ -132,7 +132,7 @@ export default async function TagFeedPage({
           <TaggedNotes tag={decoded} />
         </div>
       ) : items.length === 0 ? (
-          <FeedEmpty
+          <BlogEmpty
             icon={Hash}
             title={t("emptyTagTitle")}
             action={

@@ -19,7 +19,7 @@ import { FeedMasthead } from "./feed-masthead";
 import { GuestMasthead } from "./guest-masthead";
 import { FeedContentTransition } from "./feed-content-transition";
 import { FeedSwitcher } from "./feed-switcher";
-import { FeedEmpty } from "./feed-empty";
+import { BlogEmpty } from "./blog-empty";
 import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
@@ -166,7 +166,7 @@ export async function FeedScreen({
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
   const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
   // A server feed fetch that failed outright (backend/network down) — distinct from a genuinely empty
-  // feed. Collapsing it to [] would render FeedEmpty ("첫 글을 써보세요"), disguising an outage as a fresh
+  // feed. Collapsing it to [] would render the empty state ("첫 글을 써보세요"), disguising an outage as a fresh
   // account. `status: "error"` is the fetch-failure case (a 404/410 is a real "nothing here"); when it's
   // that, we show a retry state instead of the empty state. Mirrors for-you-feed's initialError branch.
   const feedErrored =
@@ -221,7 +221,7 @@ export async function FeedScreen({
           locale={locale}
           eyebrow={t("searchLabel")}
           title={
-            hasNext || notesView || peopleView
+            hasNext || notesView || peopleView || items.length === 0
               ? t("searchResultsFor", { q: query })
               : t("searchResultsCount", { q: query, count: items.length })
           }
@@ -331,7 +331,7 @@ export async function FeedScreen({
               ) : searching ? (
                 <SearchEmpty query={query} tags={emptySearchTopics?.ok ? emptySearchTopics.data : []} locale={locale} />
               ) : (
-                <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                <BlogEmpty icon={PenSquare} title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}
             </FeedContentTransition>
           </ReadingShell>

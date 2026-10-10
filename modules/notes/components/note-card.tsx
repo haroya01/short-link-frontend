@@ -15,6 +15,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConversationName } from "@/modules/blog/components/conversation-row";
 import { blogHref, blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import {
   deleteNote,
@@ -360,7 +361,10 @@ export function NoteCard({
               data-note-warning
             >
               <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
-              <span className={cn("min-w-0 flex-1 break-words font-medium", emphasis ? "text-[17px]" : "text-[15px]")}>
+              <span
+                lang={contentLang(note.contentWarning, note.language)}
+                className={cn("min-w-0 flex-1 break-words font-medium", emphasis ? "text-[17px]" : "text-[15px]")}
+              >
                 {note.contentWarning}
               </span>
               <button
@@ -458,7 +462,7 @@ export function NoteCard({
                   </div>
                 </div>
               ) : (
-                <NoteBody body={note.body} mentions={note.mentions} large={emphasis} />
+                <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
               )}
             </div>
             {note.poll && (

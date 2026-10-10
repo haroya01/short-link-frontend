@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { listForYouFeed } from "@/modules/blog/api/follows";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -120,8 +120,8 @@ export function ForYouFeed({ locale }: { locale: string }) {
   if (items.length === 0) {
     return (
       <div className="mt-4">
-        <FeedEmpty
-          mark
+        <BlogEmpty
+          icon={Sparkles}
           title={t("forYouEmptyTitle")}
           body={t("forYouEmpty")}
           action={
@@ -132,7 +132,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
         >
           {/* Cold-start: For You can't personalize without follows — seed the graph with curators. */}
           <SuggestedCurators locale={locale} />
-        </FeedEmpty>
+        </BlogEmpty>
       </div>
     );
   }

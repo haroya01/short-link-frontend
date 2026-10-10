@@ -135,10 +135,11 @@ test.describe("desktop", () => {
     await page.goto("/ko/blog?q=%EC%9A%B0%EC%A3%BC%EC%84%A0");
     const tabs = page.locator('header[data-feed-switcher="blog"]').getByRole("navigation").getByRole("link");
     await expect(tabs).toHaveText(["최신", "인기", "노트", "사람"], { timeout: 30_000 });
-    await expect(page.getByRole("heading", { name: "‘우주선’에 맞는 글이 아직 없어요" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("‘우주선’ 검색 결과");
+    await expect(page.getByRole("heading", { level: 2, name: "맞는 글이 없어요" })).toBeVisible();
 
     await tabs.filter({ hasText: "노트" }).click();
-    await expect(page.getByText("‘우주선’에 맞는 노트를 찾지 못했어요")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("heading", { level: 2, name: "맞는 노트가 없어요" })).toBeVisible({ timeout: 30_000 });
   });
 
   test("a subscribed series reads 구독 중", async ({ page }) => {

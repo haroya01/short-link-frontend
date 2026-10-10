@@ -164,3 +164,29 @@ test("나를 차단한 작가의 글엔 휴대폰 독도 없다", async ({ page 
   await expect(page.getByTestId("post-author-card")).toHaveCount(0);
   await expect(page.getByTestId("post-actions")).toHaveCount(0);
 });
+
+test("휴대폰 글 끝 섹션은 본문 h2 와 같은 32px 간격으로 이어지고, 마지막 회차의 '시리즈 전체 보기'는 행이다", async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.goto("/ko/p/haruka/hexagonal-too-much");
+  const all = page.getByRole("link", { name: "시리즈 전체 3편 보기" });
+  await expect(all).toBeVisible({ timeout: 30_000 });
+  const row = (await all.boundingBox())!;
+  expect(row.height).toBeGreaterThanOrEqual(44);
+  expect(row.width).toBeGreaterThan(PHONE.width - 64);
+
+  const sections = [
+    page.locator("aside").filter({ has: all }),
+    page.locator("section").filter({ has: page.getByText("이 글이 놓인 길") }),
+    page.getByTestId("post-author-card"),
+    page.locator("section[aria-label='다음 읽을 글']"),
+  ];
+  await expect(sections[3]).toBeVisible();
+  const tags = (await page.getByTestId("post-tags").boundingBox())!;
+  let above = tags.y + tags.height;
+  for (const section of sections) {
+    const box = (await section.boundingBox())!;
+    expect(Math.round(box.y - above)).toBe(32);
+    expect(await section.evaluate((el) => getComputedStyle(el).paddingTop)).toBe("24px");
+    above = box.y + box.height;
+  }
+});

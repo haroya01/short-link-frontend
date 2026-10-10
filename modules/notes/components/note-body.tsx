@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { splitNoteText } from "@/modules/notes/lib/note-text";
 
 const linkClass =
@@ -16,15 +17,18 @@ export function NoteBody({
   body,
   mentions = [],
   large = false,
+  language,
 }: {
   body: string;
   mentions?: readonly string[];
   large?: boolean;
+  language?: string | null;
 }) {
   const locale = useLocale();
   if (!body) return null;
   return (
     <p
+      lang={contentLang(body, language)}
       className={cn(
         "whitespace-pre-wrap break-words leading-[1.45] text-slate-800 dark:text-slate-200",
         large ? "text-[17px]" : "text-[15px]",

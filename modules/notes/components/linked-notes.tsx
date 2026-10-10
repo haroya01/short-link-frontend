@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { ArrowUpRight, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { EmptyState } from "@/components/common/empty-state";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { listLinkedNotes, type NoteLinkPreview } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
 import { linkHost } from "./trending-note-links";
@@ -61,7 +61,7 @@ export function LinkedNotes({ url }: { url: string }) {
           key={url}
           load={load}
           filterContext="public"
-          empty={<EmptyState title={t("emptyLink")} className="mt-8" />}
+          empty={<BlogEmpty icon={Link2} title={t("emptyLink")} />}
         />
       </div>
     </div>

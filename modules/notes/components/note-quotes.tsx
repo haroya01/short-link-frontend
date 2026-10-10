@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { EmptyState } from "@/components/common/empty-state";
+import { Quote } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { listNoteQuotes, listQuotingPosts } from "@/modules/notes/api/notes";
@@ -46,7 +47,7 @@ export function NoteQuotes({ noteId }: { noteId: number }) {
       <NoteList
         load={load}
         filterContext="public"
-        empty={posts === null || carried ? null : <EmptyState title={t("quotesEmpty")} className="mt-8" />}
+        empty={posts === null || carried ? null : <BlogEmpty icon={Quote} title={t("quotesEmpty")} />}
       />
     </>
   );

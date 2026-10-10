@@ -14,6 +14,8 @@ import {
 } from "@/modules/notifications/lib/use-notifications";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
 import { NotificationTabs } from "@/modules/notifications/components/notification-tabs";
@@ -154,12 +156,16 @@ export default function NotificationsPage() {
           // 로드 실패를 '알림 없음' 빈 상태로 위장하지 않는다 — 명시적 에러 + 재시도.
           <ErrorState onRetry={() => refetch()} />
         ) : items.length === 0 ? (
-          <div className="flex flex-col items-center py-24 text-center">
-            <Bell aria-hidden className="h-6 w-6 text-slate-300 dark:text-slate-600" />
-            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-              {t(filter === "mentions" ? "mentionsEmpty" : "empty")}
-            </p>
-          </div>
+          <BlogEmpty
+            icon={Bell}
+            title={t(filter === "mentions" ? "mentionsEmpty" : "empty")}
+            body={filter === "mentions" ? undefined : t("emptyBody")}
+            action={
+              <BlogLink href={blogPath("/")} className={blogCta({ variant: "secondary" })}>
+                {t("browseFeed")}
+              </BlogLink>
+            }
+          />
         ) : (
           GROUP_ORDER.filter((key) => groups.has(key)).map((key) => (
             <section key={key} className="mt-5 first:mt-1" aria-label={t(key)}>

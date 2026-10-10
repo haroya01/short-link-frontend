@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CornerDownRight, Heart, Loader2 } from "lucide-react";
+import { CornerDownRight, Heart, Loader2, MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blogHref } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { ErrorState } from "@/components/common/error-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyComments, type MyComment } from "@/modules/blog/api/comments";
@@ -54,10 +54,9 @@ export function MyCommentsList({ locale }: { locale: string }) {
   }
   if (items.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={MessageCircle}
         title={t("emptyComments")}
-        body={t("emptyCommentsBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}

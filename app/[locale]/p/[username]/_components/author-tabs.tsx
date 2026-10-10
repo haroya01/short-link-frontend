@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -106,38 +106,65 @@ export function AuthorTabs({
     // isOwner flips the visible tab set (private tabs appear) → re-measure when it resolves.
   }, [activeIndex, isOwner]);
 
+  const [edges, setEdges] = useState({ start: false, end: false });
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const update = () =>
+      setEdges({
+        start: nav.scrollLeft > 1,
+        end: nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 1,
+      });
+    update();
+    nav.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(nav);
+    return () => {
+      nav.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, [isOwner]);
+  const fade = `linear-gradient(to right, ${edges.start ? "transparent, black 2.5rem" : "black"}, ${
+    edges.end ? "black calc(100% - 2.5rem), transparent" : "black"
+  })`;
+
   return (
-    <nav
-      ref={navRef}
-      className="relative mt-6 flex gap-1 overflow-x-auto border-b sm:mt-7 border-slate-200 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
-    >
-      {visible.map((tab, i) => (
-        <BlogLink
-          key={tab.key}
-          href={tab.href}
-          data-tab
-          data-active={i === activeIndex ? "true" : undefined}
-          aria-current={i === activeIndex ? "page" : undefined}
-          className={`focus-ring touch-target relative min-w-fit flex-1 whitespace-nowrap rounded-t px-4 py-2.5 text-center transition-colors ${
-            i === activeIndex
-              ? "font-semibold text-slate-900 dark:text-slate-100"
-              : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-          }`}
-        >
-          {tab.label}
-        </BlogLink>
-      ))}
-      {bar && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"
-          style={{
-            transform: `translateX(${bar.left}px)`,
-            width: `${bar.width}px`,
-            transitionDuration: `${durationMs}ms`,
-          }}
-        />
-      )}
-    </nav>
+    <div className="mt-6 border-b border-slate-200 sm:mt-7 dark:border-slate-800">
+      <nav
+        ref={navRef}
+        data-edge-start={edges.start || undefined}
+        data-edge-end={edges.end || undefined}
+        style={edges.start || edges.end ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
+        className="relative flex gap-1 overflow-x-auto text-[15px] font-medium [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {visible.map((tab, i) => (
+          <BlogLink
+            key={tab.key}
+            href={tab.href}
+            data-tab
+            data-active={i === activeIndex ? "true" : undefined}
+            aria-current={i === activeIndex ? "page" : undefined}
+            className={`focus-ring touch-target relative min-w-fit flex-1 whitespace-nowrap rounded-t px-4 py-2.5 text-center transition-colors ${
+              i === activeIndex
+                ? "font-semibold text-slate-900 dark:text-slate-100"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            {tab.label}
+          </BlogLink>
+        ))}
+        {bar && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"
+            style={{
+              transform: `translateX(${bar.left}px)`,
+              width: `${bar.width}px`,
+              transitionDuration: `${durationMs}ms`,
+            }}
+          />
+        )}
+      </nav>
+    </div>
   );
 }
