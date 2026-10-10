@@ -14,6 +14,7 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { authorSectionMetadata } from "@/modules/blog/lib/author-section-metadata";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 export const revalidate = 30;
 
@@ -75,7 +76,10 @@ export default async function PublicAuthorAboutPage({
           <section>
             <RailHeading className="mb-4">{t("aboutIntro")}</RailHeading>
             {author.bio ? (
-              <p className="whitespace-pre-line text-[18px] leading-[1.85] text-slate-700 dark:text-slate-300">
+              <p
+                lang={contentLang(author.bio)}
+                className="whitespace-pre-line text-[18px] leading-[1.85] text-slate-700 dark:text-slate-300"
+              >
                 {author.bio}
               </p>
             ) : (
