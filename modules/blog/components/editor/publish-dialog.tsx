@@ -14,6 +14,7 @@ import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { isSavableSlug } from "@/modules/blog/lib/slug";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 
@@ -111,6 +112,7 @@ export function PublishDialog({
   const t = useTranslations("postEditor");
   const locale = useLocale();
   const { me } = useAuth();
+  const [confirm, confirmDialog] = useConfirm();
   // On mobile the on-screen keyboard shrinks the visual viewport; lift the sheet by that inset so the
   // sticky footer (Publish) and lower fields stay reachable while a field is focused (0 on desktop).
   const keyboardInset = useKeyboardInset();
@@ -636,6 +638,13 @@ export function PublishDialog({
               // Cancel-schedule / Unpublish silently drops the new content (changeStatus only POSTs the
               // lifecycle endpoint, it doesn't save blocks/meta). Matches Publish / Save changes.
               onUnpublish={async () => {
+                const ok = await confirm({
+                  title: t("unpublishConfirmTitle"),
+                  description: t("unpublishConfirmDescription"),
+                  confirmLabel: t("unpublish"),
+                  destructive: true,
+                });
+                if (!ok) return;
                 if ((await onSave()) === false) return;
                 await onChangeStatus("unpublish");
               }}
@@ -648,12 +657,21 @@ export function PublishDialog({
                 if ((await onSave()) === false) return;
                 await onChangeStatus("republish", { shortenLinks: enabledLinks });
               }}
-              onCancelSchedule={() => void onCancelSchedule()}
+              onCancelSchedule={async () => {
+                const ok = await confirm({
+                  title: t("cancelScheduleConfirmTitle"),
+                  description: t("cancelScheduleConfirmDescription"),
+                  confirmLabel: t("cancelSchedule"),
+                  destructive: true,
+                });
+                if (ok) await onCancelSchedule();
+              }}
             />
           </div>
           </div>
         </footer>
       </div>
+      {confirmDialog}
     </div>
   );
 }

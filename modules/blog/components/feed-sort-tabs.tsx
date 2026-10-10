@@ -10,8 +10,6 @@ export type FeedSortTab = {
   label: string;
   href: string;
   active: boolean;
-  /** Non-interactive (e.g. "팔로잉" while a search is active). */
-  disabled?: boolean;
   personal?: boolean;
 };
 
@@ -111,43 +109,32 @@ export function FeedSortTabs({
       aria-busy={isPending}
       className="relative flex min-w-0 gap-1 overflow-x-auto pb-3.5 -mb-3.5 text-[15px] font-bold [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
-      {tabs.map((t) =>
-        t.disabled ? (
-          <span
-            key={t.key}
-            aria-disabled
-            aria-current={t.active ? "page" : undefined}
-            className="relative cursor-default whitespace-nowrap px-2.5 py-1.5 text-slate-300"
-          >
-            {t.label}
-          </span>
-        ) : (
-          <Link
-            key={t.key}
-            href={t.href}
-            data-active={t.key === activeKey ? "true" : undefined}
-            aria-current={t.key === activeKey ? "page" : undefined}
-            onClick={(e) => {
-              // Modifier / middle clicks keep native anchor behaviour (new tab / window).
-              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-              e.preventDefault();
-              // Resolve the relative ?sort= href against the current URL before pushing — mirrors
-              // BlogChromeLink. Wrapped in a transition so isPending flags the pending nav.
-              const url = new URL(t.href, window.location.href);
-              onSelect?.(t.key);
-              setPendingKey(t.key);
-              startTransition(() => router.push(url.pathname + url.search + url.hash));
-            }}
-            className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
-              t.key === activeKey
-                ? "text-slate-900 dark:text-slate-100"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-            }`}
-          >
-            {t.label}
-          </Link>
-        ),
-      )}
+      {tabs.map((t) => (
+        <Link
+          key={t.key}
+          href={t.href}
+          data-active={t.key === activeKey ? "true" : undefined}
+          aria-current={t.key === activeKey ? "page" : undefined}
+          onClick={(e) => {
+            // Modifier / middle clicks keep native anchor behaviour (new tab / window).
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            // Resolve the relative ?sort= href against the current URL before pushing — mirrors
+            // BlogChromeLink. Wrapped in a transition so isPending flags the pending nav.
+            const url = new URL(t.href, window.location.href);
+            onSelect?.(t.key);
+            setPendingKey(t.key);
+            startTransition(() => router.push(url.pathname + url.search + url.hash));
+          }}
+          className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
+            t.key === activeKey
+              ? "text-slate-900 dark:text-slate-100"
+              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+          }`}
+        >
+          {t.label}
+        </Link>
+      ))}
       {bar && (
         <span
           aria-hidden

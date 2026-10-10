@@ -16,6 +16,7 @@ import {
 } from "@/modules/notifications/lib/use-notifications";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
 import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
+import { UnreadDot } from "@/components/common/unread-dot";
 
 /**
  * Desktop header bell with an unread badge and a dropdown peek at recent notifications. Desktop only
@@ -39,15 +40,11 @@ export function NotificationBell() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={t("title")}
+        aria-label={unread > 0 ? `${t("title")}, ${t("unreadCount", { count: unread })}` : t("title")}
         className="focus-ring relative inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
       >
         <Bell className="h-5 w-5" />
-        {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white">
-            {unread > 99 ? "99+" : unread}
-          </span>
-        )}
+        {unread > 0 && <UnreadDot className="right-1 top-1" />}
       </button>
 
       {/* The list query lives inside the dropdown so it only fires once opened — never on mobile,
@@ -69,7 +66,8 @@ function NotificationDropdown({
   onClose: () => void;
 }) {
   const t = useTranslations("notifications");
-  const { data, isLoading } = useNotifications();
+  const tc = useTranslations("common");
+  const { data, isLoading, isError, isFetching, refetch } = useNotifications();
   const markAll = useMarkAllRead();
   const filters = useNoteFilters();
   const { me } = useAuth();
@@ -99,7 +97,7 @@ function NotificationDropdown({
       <div className="h-px bg-slate-100 dark:bg-slate-800" />
 
       <div className="max-h-96 overflow-y-auto p-1">
-        {isLoading ? (
+        {isLoading || (isError && isFetching) ? (
           // Row-shaped pulse rows (compact 3) instead of a lone "…", which read as an empty dropdown.
           <div role="status" aria-busy="true" className="space-y-1 py-1">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -111,6 +109,17 @@ function NotificationDropdown({
                 </div>
               </div>
             ))}
+          </div>
+        ) : isError ? (
+          <div role="alert" className="flex flex-col items-center gap-2 px-3 py-8 text-center">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              className="focus-ring rounded-full px-3 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            >
+              {tc("retry")}
+            </button>
           </div>
         ) : items.length === 0 ? (
           <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">

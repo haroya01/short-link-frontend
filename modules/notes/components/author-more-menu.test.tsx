@@ -8,15 +8,15 @@ const mocks = vi.hoisted(() => ({
   listBlockedUsers: vi.fn(),
   blockUser: vi.fn(),
   unblockUser: vi.fn(),
+  auth: { authenticated: true, ready: true, me: { id: 1, username: "dohyun" } as { id: number; username: string } | null },
+  report: vi.fn(),
 }));
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string, values?: { username?: string }) =>
     values?.username ? `${namespace}.${key}:${values.username}` : `${namespace}.${key}`,
 }));
-vi.mock("@/lib/auth", () => ({
-  useAuth: () => ({ authenticated: true, ready: true, me: { id: 1, username: "dohyun" } }),
-}));
+vi.mock("@/lib/auth", () => ({ useAuth: () => mocks.auth }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [mocks.confirm, null] }));
 vi.mock("@/modules/notes/api/notes", () => ({
@@ -32,6 +32,12 @@ vi.mock("@/modules/blog/api/follows", () => ({
 }));
 vi.mock("./mute-dialog", () => ({ MuteDialog: () => null }));
 vi.mock("./note-list-membership-dialog", () => ({ NoteListMembershipDialog: () => null }));
+vi.mock("@/modules/blog/components/report-button", () => ({
+  ReportButton: (props: { subjectType: string; subjectId: number; open: boolean }) => {
+    mocks.report(props);
+    return null;
+  },
+}));
 
 let root: Root;
 let host: HTMLDivElement;
@@ -45,6 +51,7 @@ beforeEach(async () => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   mocks.blockUser.mockResolvedValue(undefined);
   mocks.unblockUser.mockResolvedValue(undefined);
+  mocks.auth = { authenticated: true, ready: true, me: { id: 1, username: "dohyun" } };
 });
 afterEach(async () => {
   if (root) await act(async () => root.unmount());
@@ -56,7 +63,7 @@ async function openMenu(username: string) {
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
-  await act(async () => root.render(createElement(AuthorMoreMenu, { username })));
+  await act(async () => root.render(createElement(AuthorMoreMenu, { username, userId: 42 })));
   await act(async () => host.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]')!.click());
 }
 
@@ -96,5 +103,32 @@ describe("blocking from the author menu", () => {
     expect(mocks.confirm).not.toHaveBeenCalled();
     expect(mocks.unblockUser).toHaveBeenCalledWith("mallory");
     expect(mocks.toast).toHaveBeenCalledWith("notes.unblockedToast:mallory");
+  });
+});
+
+describe("reporting from the author menu", () => {
+  const items = () => Array.from(host.querySelectorAll('[role="menuitem"]')).map((b) => b.textContent);
+
+  it("ends the menu with a report that opens the user report", async () => {
+    mocks.listBlockedUsers.mockResolvedValue([]);
+    await openMenu("yuna");
+    expect(items().at(-1)).toBe("publicPost.report");
+    await act(async () => item("publicPost.report")!.click());
+    expect(mocks.report).toHaveBeenLastCalledWith(expect.objectContaining({ subjectType: "USER", subjectId: 42, open: true }));
+    expect(host.querySelector('[role="menu"]')).toBeNull();
+  });
+
+  it("gives a signed-out reader the menu with only the report", async () => {
+    mocks.auth = { authenticated: false, ready: true, me: null };
+    await openMenu("yuna");
+    expect(items()).toEqual(["publicPost.report"]);
+  });
+
+  it("has no menu on my own profile", async () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () => root.render(createElement(AuthorMoreMenu, { username: "dohyun", userId: 1 })));
+    expect(host.querySelector('button[aria-haspopup="menu"]')).toBeNull();
   });
 });

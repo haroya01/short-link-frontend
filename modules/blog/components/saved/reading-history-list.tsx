@@ -11,6 +11,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+import { LoadError } from "@/modules/blog/components/saved/load-error";
 import {
   clearReadingHistory,
   forgetRead,
@@ -86,18 +87,7 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
     );
   }
   if (error && items.length === 0) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-20 text-center">
-        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
-        <button
-          type="button"
-          onClick={() => void load(0)}
-          className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-        >
-          {t("retry")}
-        </button>
-      </div>
-    );
+    return <LoadError message={t("loadError")} onRetry={() => void load(0)} />;
   }
   if (items.length === 0) {
     return (

@@ -44,13 +44,9 @@ import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
+import { noteHref, openNote } from "@/modules/notes/lib/note-href";
 
 const NOTE_RING_NUMBER_FROM = 20;
-
-export function noteHref(note: Pick<Note, "id" | "author">, locale: string): string {
-  if (note.author.remoteId) return blogPath(`/remote/${note.author.remoteId}/notes/${note.id}`);
-  return authorHref(note.author.username, locale, `notes/${note.id}`);
-}
 
 /** A member's notes on their blog, or an account on another server on its remote page. */
 export function noteAuthorHref(author: Note["author"], locale: string): string {
@@ -223,9 +219,7 @@ export function NoteCard({
     if (emphasis || editing) return;
     if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
     if (window.getSelection()?.toString()) return;
-    const href = noteHref(note, locale);
-    if (/^https?:\/\//.test(href)) window.location.assign(href);
-    else router.push(href);
+    openNote(note, locale, router.push);
   }
 
   const overLimit = noteLength(draft) > NOTE_MAX_LENGTH;

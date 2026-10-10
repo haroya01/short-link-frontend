@@ -8,7 +8,8 @@ import type { Note, NoteFeed, NoteFilterContext } from "@/modules/notes/api/note
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { NoteCard, noteHref } from "./note-card";
+import { NoteCard } from "./note-card";
+import { noteHref } from "@/modules/notes/lib/note-href";
 
 /** `initial` is the anonymous server render; page 0 is refetched with the session so the viewer's
  *  likes and own like counts fill in. */

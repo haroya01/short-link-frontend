@@ -87,6 +87,7 @@
     "trendingTopicsLabel": "विषय के अनुसार सबसे ज़्यादा पढ़ी गई",
     "searchScopeAll": "सभी पोस्ट में खोजा जा रहा है",
     "searchEmptyTitle": "कोई पोस्ट नहीं मिली",
+    "searchFailed": "खोज नहीं हो सकी",
     "searchEmptyBody": "कोई और कीवर्ड आज़माएँ या विषय देखें।",
     "searchEmptyHeading": "“{q}” से अभी कुछ मेल नहीं खाता",
     "searchEmptyTopics": "इसके बजाय इनमें से कोई विषय आज़माएँ",
@@ -404,6 +405,8 @@
     "coverRemove": "हटाएँ",
     "excerptPlaceholder": "एक-पंक्ति सारांश",
     "unpublish": "अप्रकाशित करें",
+    "unpublishConfirmTitle": "इस पोस्ट को अप्रकाशित करें?",
+    "unpublishConfirmDescription": "पोस्ट बनी रहेगी, लेकिन उसका सार्वजनिक पता बंद हो जाएगा और कोई उसे नहीं देख पाएगा। आप इसे कभी भी फिर से प्रकाशित कर सकते हैं।",
     "republish": "फिर से प्रकाशित करें",
     "delete": "हटाएँ",
     "deleteConfirm": "इस पोस्ट को हटाएँ? पाठ और सभी रिविज़न भी हट जाएँगे।",
@@ -458,6 +461,8 @@
     "scheduledToast": "{when} को प्रकाशन के लिए शेड्यूल किया गया।",
     "scheduledFor": "{when} को प्रकाशित होगी",
     "cancelSchedule": "शेड्यूल रद्द करें",
+    "cancelScheduleConfirmTitle": "निर्धारित प्रकाशन रद्द करें?",
+    "cancelScheduleConfirmDescription": "पोस्ट ड्राफ़्ट में लौट जाएगी। आप इसे कभी भी फिर से शेड्यूल या तुरंत प्रकाशित कर सकते हैं।",
     "addTopics": "टैग जोड़ें",
     "tagsDone": "पूर्ण",
     "tagsEdit": "टैग संपादित करें",
@@ -617,6 +622,8 @@
     "saveFailed": "आपका बदलाव सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
     "bulkMoveFailed": "{count} आइटम स्थानांतरित नहीं किए जा सके। कृपया फिर से प्रयास करें।",
     "loadError": "आपका पढ़ने का इतिहास लोड नहीं हो सका।",
+    "highlightsLoadError": "आपके चुने हुए अंश लोड नहीं हो सके।",
+    "bookmarksLoadError": "आपकी सहेजी गई पोस्ट लोड नहीं हो सकीं।",
     "retry": "फिर से कोशिश करें"
   },
   "publicPost": {
@@ -673,6 +680,8 @@
     "report": "रिपोर्ट करें",
     "reportTitle": "इस पोस्ट की रिपोर्ट करें",
     "reportTitleNote": "इस नोट की रिपोर्ट करें",
+    "reportTitleUser": "इस उपयोगकर्ता की रिपोर्ट करें",
+    "reportTitleComment": "इस टिप्पणी की रिपोर्ट करें",
     "reportReason": "कारण",
     "reportPlaceholder": "कोई विशिष्ट विवरण जोड़ें (वैकल्पिक)",
     "reportForward": "{domain} को भी भेजें",
@@ -887,6 +896,7 @@
     "webPushDenied": "ब्राउज़र में सूचनाएँ अवरुद्ध हैं। साइट सेटिंग में अनुमति दें।",
     "title": "सूचनाएँ",
     "empty": "अभी तक कोई सूचना नहीं",
+    "loadError": "सूचनाएँ लोड नहीं हो सकीं",
     "markAllRead": "सभी पढ़ा हुआ चिह्नित करें",
     "unreadCount": "{count} अपठित सूचनाएँ",
     "loadMore": "और देखें",
@@ -3767,6 +3777,7 @@
   "collections": {
     "metaTitle": "कलेक्शन",
     "notFound": "यह कलेक्शन नहीं मिल सका।",
+    "loadError": "यह कलेक्शन लोड नहीं हो सका",
     "empty": "अभी तक कुछ नहीं जुड़ा है।",
     "pathEyebrow": "राह",
     "itemCount": "{count}",
@@ -4185,7 +4196,7 @@
     "repliesTitle": "जवाब",
     "noReplies": "अभी कोई जवाब नहीं",
     "menu": "नोट मेनू",
-    "connectToCollection": "संग्रह में जोड़ें",
+    "connectToCollection": "जोड़ें",
     "edit": "संपादित करें",
     "save": "सहेजें",
     "done": "हो गया",
@@ -4214,6 +4225,7 @@
     "quoteTitle": "नोट कोट करें",
     "quotePlaceholder": "अपनी बात जोड़ें",
     "quotePosted": "कोट पोस्ट हो गया",
+    "viewNote": "देखें",
     "repostFailed": "रीपोस्ट नहीं हो सका",
     "emptyReposts": "अभी कोई रीपोस्ट नहीं",
     "repostsTitle": "रीपोस्ट · @{username}",
@@ -4485,6 +4497,7 @@
     "untitled": "बिना शीर्षक का ड्राफ़्ट",
     "seeAll": "सभी देखें",
     "noteTitle": "नया नोट",
-    "notePosted": "नोट पोस्ट हो गया"
+    "notePosted": "नोट पोस्ट हो गया",
+    "viewNote": "देखें"
   }
 }

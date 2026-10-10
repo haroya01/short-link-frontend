@@ -12,7 +12,9 @@ const mocks = vi.hoisted(() => ({
   askToSignIn: vi.fn(),
 }));
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("next-intl", () => ({
+  useLocale: () => "ko",
   useTranslations: (namespace: string) => (key: string, values?: { username?: string }) =>
     values?.username ? `${namespace}.${key}:${values.username}` : `${namespace}.${key}`,
 }));
@@ -21,7 +23,10 @@ vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast 
 vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [mocks.confirm, null] }));
 vi.mock("@/lib/api/abuse-reports", () => ({ submitAbuseReport: vi.fn() }));
 vi.mock("@/modules/notes/components/note-quote-dialog", () => ({
-  NoteQuoteDialog: ({ quoted }: { quoted: unknown }) => (quoted ? createElement("div", { "data-testid": "quote-dialog" }) : null),
+  NoteQuoteDialog: ({ quoted, onPosted }: { quoted: unknown; onPosted: (note: unknown) => void }) =>
+    quoted
+      ? createElement("button", { "data-testid": "quote-dialog", onClick: () => onPosted({ id: 9, authorUsername: "dohyun" }) })
+      : null,
 }));
 vi.mock("@/components/auth/login-prompt", () => ({ askToSignIn: mocks.askToSignIn }));
 vi.mock("@/modules/blog/api/follows", () => ({
@@ -148,11 +153,16 @@ describe("a reader's ⋯ on a post", () => {
     expect(mocks.toast).toHaveBeenCalledWith("notes.linkCopied");
   });
 
-  it("quotes the post in a note, or asks a visitor to sign in first", async () => {
+  it("quotes the post in a note with the view-note toast, or asks a visitor to sign in first", async () => {
     await render(menu);
     await act(async () => menuButton("notes.postMenu")!.click());
     await act(async () => item("notes.quoteAction").click());
-    expect(host.querySelector("[data-testid=quote-dialog]")).not.toBeNull();
+    await act(async () => host.querySelector<HTMLButtonElement>("[data-testid=quote-dialog]")!.click());
+    expect(mocks.toast).toHaveBeenCalledWith(
+      "notes.quotePosted",
+      "default",
+      expect.objectContaining({ action: expect.objectContaining({ label: "notes.viewNote" }) }),
+    );
     await act(async () => root.unmount());
 
     mocks.auth.authenticated = false;
