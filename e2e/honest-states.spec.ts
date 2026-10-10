@@ -40,7 +40,7 @@ test.describe("desktop", () => {
   test("the bell says the list failed and retries, instead of 'no notifications'", async ({ page }) => {
     await failing(page, "notifications");
     await page.goto("/ko/blog");
-    await page.getByRole("button", { name: "알림", exact: true }).click({ timeout: 30_000 });
+    await page.getByRole("button", { name: /^알림/ }).click({ timeout: 30_000 });
     const menu = page.getByRole("menu");
     await expect(menu.getByRole("alert")).toContainText("알림을 불러오지 못했어요");
     await expect(menu.getByText("아직 알림이 없어요")).toHaveCount(0);
@@ -49,6 +49,14 @@ test.describe("desktop", () => {
     await menu.getByRole("button", { name: "다시 시도" }).click();
     await expect(menu.getByRole("link").first()).toBeVisible();
     await expect(menu.getByRole("alert")).toHaveCount(0);
+  });
+
+  test("the header bell marks unread with a dot and tells the count only to screen readers", async ({ page }) => {
+    await page.goto("/ko/blog");
+    const bell = page.locator("header.vt-app-header").getByRole("button", { name: /^알림, 안 읽은 알림 \d+개$/ });
+    await expect(bell).toBeVisible({ timeout: 30_000 });
+    await expect(bell.locator("[data-unread-dot]")).toBeVisible();
+    await expect(bell).toHaveText("");
   });
 
   test("header search says it couldn't search, and retries", async ({ page }) => {
@@ -160,6 +168,14 @@ test.describe("desktop", () => {
 
 test.describe("phone", () => {
   test.use({ viewport: { width: 390, height: 844 } });
+
+  test("the bottom-nav 알림 marks unread with a dot and tells the count only to screen readers", async ({ page }) => {
+    await page.goto("/ko/blog");
+    const tab = page.locator("nav.vt-bottom-nav").getByRole("link", { name: /^알림, 안 읽은 알림 \d+개$/ });
+    await expect(tab).toBeVisible({ timeout: 30_000 });
+    await expect(tab.locator("[data-unread-dot]")).toBeVisible();
+    await expect(tab).toHaveText("알림");
+  });
 
   test("the search sheet says it couldn't search, and retries", async ({ page }) => {
     await failing(page, "search");

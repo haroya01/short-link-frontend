@@ -4,14 +4,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   list: { data: undefined as unknown, isLoading: false, isError: false, isFetching: false, refetch: vi.fn() },
+  unread: 0,
 }));
-vi.mock("next-intl", () => ({ useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}` }));
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace: string) => (key: string, values?: { count?: number }) =>
+    values?.count != null ? `${namespace}.${key}:${values.count}` : `${namespace}.${key}`,
+}));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { id: 1, username: "dohyun" } }) }));
 vi.mock("@/modules/notifications/lib/use-notifications", () => ({
   useNotifications: () => mocks.list,
   useMarkAllRead: () => ({ mutate: vi.fn() }),
   useReadHiddenNotices: () => undefined,
-  useUnreadCount: () => 0,
+  useUnreadCount: () => mocks.unread,
 }));
 vi.mock("@/modules/notes/lib/note-filters", () => ({ useNoteFilters: () => [], noticeHidden: () => false }));
 vi.mock("@/modules/notifications/components/notification-item", () => ({
@@ -32,6 +36,7 @@ beforeEach(() => {
   vi.stubGlobal("matchMedia", () => ({ matches: true }));
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   mocks.list = { data: undefined, isLoading: false, isError: false, isFetching: false, refetch: vi.fn() };
+  mocks.unread = 0;
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -64,5 +69,23 @@ describe("bell dropdown", () => {
     await open();
     expect(host.querySelector('[role="alert"]')).toBeNull();
     expect(host.textContent).toContain("notifications.empty");
+  });
+});
+
+describe("bell unread mark", () => {
+  const bell = () => host.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]')!;
+
+  it("shows a dot, not a number, and puts the count in the name", async () => {
+    mocks.unread = 128;
+    await act(async () => root.render(<NotificationBell />));
+    expect(bell().querySelector("[data-unread-dot]")).not.toBeNull();
+    expect(bell().textContent).toBe("");
+    expect(bell().getAttribute("aria-label")).toBe("notifications.title, notifications.unreadCount:128");
+  });
+
+  it("has no dot and a plain name when everything is read", async () => {
+    await act(async () => root.render(<NotificationBell />));
+    expect(bell().querySelector("[data-unread-dot]")).toBeNull();
+    expect(bell().getAttribute("aria-label")).toBe("notifications.title");
   });
 });

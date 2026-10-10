@@ -16,6 +16,7 @@ import {
 } from "@/modules/notifications/lib/use-notifications";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
 import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
+import { UnreadDot } from "@/components/common/unread-dot";
 
 /**
  * Desktop header bell with an unread badge and a dropdown peek at recent notifications. Desktop only
@@ -39,15 +40,11 @@ export function NotificationBell() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={t("title")}
+        aria-label={unread > 0 ? `${t("title")}, ${t("unreadCount", { count: unread })}` : t("title")}
         className="focus-ring relative inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
       >
         <Bell className="h-5 w-5" />
-        {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white">
-            {unread > 99 ? "99+" : unread}
-          </span>
-        )}
+        {unread > 0 && <UnreadDot className="right-1 top-1" />}
       </button>
 
       {/* The list query lives inside the dropdown so it only fires once opened — never on mobile,
