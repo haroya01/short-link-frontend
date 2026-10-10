@@ -75,7 +75,6 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
     {
       key: "note",
       label: t("note"),
-      hint: t("noteHint"),
       icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
       onSelect: () => {
         close(true);
@@ -85,7 +84,6 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
     {
       key: "longform",
       label: t("longform"),
-      hint: t("longformHint"),
       icon: <FileText className="h-4 w-4" aria-hidden />,
       href: blogHref("/write/new"),
     },

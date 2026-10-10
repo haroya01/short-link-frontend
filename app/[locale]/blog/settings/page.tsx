@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ExternalLink, Globe, Newspaper, User } from "lucide-react";
+import { Check, ExternalLink, Newspaper, Settings, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -90,7 +90,7 @@ export default function BlogSettingsPage() {
             </a>
             <a href={linksHref(`/${locale}/settings`)} className={rowClass}>
               <span className="inline-flex items-center gap-2.5">
-                <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsAccountSettings")}
               </span>
               <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />

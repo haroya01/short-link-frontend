@@ -42,7 +42,7 @@ async function render(props: Partial<React.ComponentProps<typeof ConversationCom
         onChange={() => {}}
         onSubmit={onSubmit}
         label="댓글 쓰기"
-        placeholder="댓글을 남겨보세요"
+        placeholder="댓글 쓰기"
         submitLabel="댓글 작성"
         {...props}
       />,

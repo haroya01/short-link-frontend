@@ -2,12 +2,12 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { AtSign, Bookmark, Check, ChevronDown, Globe, Layers, List, Sparkles } from "lucide-react";
+import { AtSign, Binoculars, Bookmark, Check, ChevronDown, Globe, Layers, List } from "lucide-react";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
 // Names, not components: the blog feed builds its items on the server.
-const ICONS = { sparkles: Sparkles, series: Layers, globe: Globe, bookmark: Bookmark, mention: AtSign, list: List };
+const ICONS = { binoculars: Binoculars, series: Layers, globe: Globe, bookmark: Bookmark, mention: AtSign, list: List };
 
 export type FeedMoreItem = {
   key: string;

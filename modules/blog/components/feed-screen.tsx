@@ -278,7 +278,7 @@ export async function FeedScreen({
               searching
                 ? undefined
                 : [
-                    { key: "for-you", label: t("forYou"), icon: "sparkles", href: "?sort=for-you", active: tab === "for-you" },
+                    { key: "for-you", label: t("forYou"), icon: "binoculars", href: "?sort=for-you", active: tab === "for-you" },
                     { key: "series", label: t("seriesTab"), icon: "series", href: "?sort=series", active: tab === "series" },
                   ]
             }

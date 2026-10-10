@@ -29,7 +29,7 @@ test("a post nobody quoted keeps the plain comments heading", async ({ page }) =
 async function postQuote(page: import("@playwright/test").Page, body: string) {
   const dialog = page.getByRole("dialog", { name: "노트로 인용" });
   await expect(dialog).toBeVisible();
-  await dialog.getByRole("textbox", { name: "생각을 덧붙여 보세요" }).fill(body);
+  await dialog.getByRole("textbox", { name: "생각 덧붙이기" }).fill(body);
   await dialog.getByRole("button", { name: "올리기" }).click();
   await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
     .getByRole("button", { name: "알겠어요, 올릴게요" }).click();

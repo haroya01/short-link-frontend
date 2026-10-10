@@ -43,7 +43,7 @@ test("the header leads from posts to notes", async ({ page }) => {
 
 test("the first note asks about federation once, then posts to the top of the feed", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("오늘 쓴 글의 씨앗")).toBeVisible();
 
@@ -95,7 +95,7 @@ test("quoting from a post opens the composer over the post instead of leaving it
   const dialog = page.getByRole("dialog", { name: "노트로 인용" });
   await expect(dialog).toBeVisible();
   await expect(dialog.locator("[data-quoted-post-id]")).toContainText(title);
-  const field = dialog.getByRole("textbox", { name: "생각을 덧붙여 보세요" });
+  const field = dialog.getByRole("textbox", { name: "생각 덧붙이기" });
   await expect(field).toBeFocused();
   await field.fill("제네릭은 결국 이름 짓기다");
   await dialog.getByRole("button", { name: "올리기" }).click();
@@ -186,7 +186,7 @@ test("a note's quotes list the blog posts that carry it above the notes that quo
 
 test("a picked photo sits in the composer strip and takes alt text from its +ALT badge", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await composer.click({ timeout: 30_000 });
   const png = Buffer.from(PNG, "base64");
   await page.locator('input[type="file"]').setInputFiles({ name: "walk.png", mimeType: "image/png", buffer: png });
@@ -240,7 +240,7 @@ test("quoting a note opens a composer over the feed with that note under it", as
   const dialog = page.getByRole("dialog", { name: "노트 인용" });
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('[data-quoted-note-id="5"]')).toContainText("산책하다 찍은 것들");
-  const field = dialog.getByRole("textbox", { name: "생각을 덧붙여 보세요" });
+  const field = dialog.getByRole("textbox", { name: "생각 덧붙이기" });
   await expect(field).toBeFocused();
   await field.fill("나도 오늘 같은 길을 걸었다");
   await dialog.getByRole("button", { name: "올리기" }).click();
@@ -280,7 +280,7 @@ test("clicking a note's text opens it, while its links and buttons keep their ow
 
 test("a note scheduled from the composer waits under it until it is canceled", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("내일 아침에 올릴 노트");
   await page.getByRole("button", { name: "예약", exact: true, pressed: false }).click();
@@ -309,7 +309,7 @@ test("a note with a link shows its card, and the composer previews one while typ
   await expect(card).toContainText("kurl — 짧은 링크와 글이 오래 사는 곳");
   await expect(card).toContainText("kurl.me");
 
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await composer.fill("읽어 볼 글 https://example.com/essay.");
   const draftCard = page.locator("div[data-note-link-card]");
   await expect(draftCard).toContainText("example.com");
@@ -477,7 +477,7 @@ test("blog settings choose the note languages shown in all notes", async ({ page
 
 test("the composer writes in a chosen language", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  await page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" }).click({ timeout: 30_000 });
+  await page.getByRole("textbox", { name: "노트 쓰기" }).click({ timeout: 30_000 });
   const language = page.getByRole("combobox", { name: "노트 언어" });
   await expect(language).toHaveValue("ko", { timeout: 30_000 });
   await language.selectOption("en");
@@ -529,7 +529,7 @@ test("a content warning folds the note until opened, and a sensitive photo stays
 
 test("the composer sends a content warning, and the new note arrives folded", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("범인은 집사였다");
   await page.getByRole("button", { name: "열람 주의", exact: true }).click();
@@ -615,7 +615,7 @@ test("private mentions have their own tab, stay out of all notes, and can't be r
 
 test("the composer posts with the chosen visibility", async ({ page }) => {
   await page.goto("/ko/blog/notes?feed=following");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("팔로워에게만 하는 말");
   await page.getByRole("combobox", { name: "공개 범위" }).selectOption("private");
@@ -708,7 +708,7 @@ test("voting in a poll reveals the results with the reader's choice", async ({ p
 
 test("the composer posts a poll, and photos and a poll exclude each other", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("점심 투표");
   await page.getByRole("button", { name: "투표 추가" }).click();
@@ -949,11 +949,11 @@ test("a picture whose size the server knows holds its shape before it loads", as
 // made in the mock lives only in this tab, so its own page cannot be opened here.
 test("a thread is written in one go and its first note leads the feed", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const composer = page.getByRole("textbox", { name: "지금 떠오른 생각을 짧게 남겨 보세요" });
+  const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("이어 쓰기 첫 노트");
   await page.getByRole("button", { name: "스레드에 추가" }).click();
-  const part = page.getByRole("textbox", { name: "이어서 써 보세요" });
+  const part = page.getByRole("textbox", { name: "이어 쓰기" });
   await expect(part).toBeFocused();
   await part.fill("이어 쓰기 둘째 노트");
   await expect(page.getByRole("button", { name: "예약", exact: true })).toHaveCount(0);
