@@ -137,9 +137,9 @@ test("a comment's @author handle links to the commenter's profile", async ({ pag
   // plain text — so readers can jump from a comment to who wrote it.
   await page.goto(POST_PATH);
   await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
-  const authorLink = page.locator('a[href*="/p/minji"]').first(); // seeded mock comment by @minji
+  const authorLink = page.locator("#comments").getByRole("link", { name: /@minji/ }).first(); // seeded mock comment by @minji
   await expect(authorLink).toBeVisible();
-  await expect(authorLink).toContainText("minji");
+  await expect(authorLink).toHaveAttribute("href", /\/p\/minji/);
 });
 
 test("the comment composer is WYSIWYG — a rich editor, not a raw-markdown textarea + preview pane", async ({

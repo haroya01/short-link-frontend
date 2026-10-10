@@ -35,9 +35,9 @@ import {
   type RelatedBlock,
 } from "@/modules/blog/api/collections";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
-import { Avatar } from "@/modules/blog/components/avatar";
+import { CommentMenu } from "@/modules/blog/components/comment-menu";
+import { ConversationRow } from "@/modules/blog/components/conversation-row";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { authorHref } from "@/modules/blog/lib/author-href";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
@@ -600,6 +600,7 @@ function HighlightThread({
   const [body, setBody] = useState(() => readDraft("highlight-reply", highlight.id)?.text ?? "");
   const [confirm, confirmDialog] = useConfirm({ layerClassName: "z-[70]" });
   const tCommon = useTranslations("common");
+  const tComments = useTranslations("comments");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // The reply the viewer just posted — after it renders, scroll it into view so a new reply added from
@@ -660,6 +661,12 @@ function HighlightThread({
       return;
     clearDraft("highlight-reply", highlight.id);
     onClose();
+  }
+
+  function replyTo(handle: string) {
+    const mention = `@${handle} `;
+    setBody((current) => (current.startsWith(mention) ? current : mention + current));
+    requestAnimationFrame(() => contentRef.current?.querySelector<HTMLElement>("[contenteditable='true']")?.focus());
   }
 
   function threadAddress() {
@@ -794,40 +801,11 @@ function HighlightThread({
               </div>
             )}
           </div>
-          {/* The opener: who drew the highlight, when — always shown (a bare highlight included, which
-              used to render as an anonymous quote), in the same avatar + @handle + date row grammar as
-              the comment section and the replies below. The curator's note, if any, sits under it. */}
-          <div className="mt-3 flex items-center gap-2">
-            {highlight.author?.username ? (
-              <BlogLink
-                href={authorHref(highlight.author.username, locale)}
-                className="group/author flex min-w-0 items-center gap-2 rounded focus-ring"
-              >
-                <Avatar
-                  src={highlight.author.avatarUrl}
-                  name={highlight.author.username}
-                  size="sm"
-                  shrink={false}
-                />
-                <span className="truncate text-[13px] font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-                  {highlight.author.username}
-                </span>
-              </BlogLink>
-            ) : (
-              <span className="flex min-w-0 items-center gap-2">
-                <Avatar src={null} name="?" size="sm" shrink={false} />
-                <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">?</span>
-              </span>
-            )}
-            <time dateTime={highlight.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-              {fmt(highlight.createdAt)}
-            </time>
+          <div className="mt-3">
+            <ConversationRow author={highlight.author} createdAt={highlight.createdAt} time={fmt(highlight.createdAt)}>
+              {highlight.note && <CommentBody text={highlight.note} locale={locale} />}
+            </ConversationRow>
           </div>
-          {highlight.note && (
-            <div className="mt-1.5 min-w-0 pl-9 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
-              <CommentBody text={highlight.note} locale={locale} />
-            </div>
-          )}
         </div>
 
         <div ref={threadScrollRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
@@ -856,47 +834,32 @@ function HighlightThread({
             <ul className="space-y-4">
               {replies.map((r) => (
                 <li key={r.id}>
-                  {/* Same row grammar as the opener/comments: avatar + @handle + date. */}
-                  <div className="flex items-center gap-2">
-                    {r.author?.username ? (
-                      <BlogLink
-                        href={authorHref(r.author.username, locale)}
-                        className="group/author flex min-w-0 items-center gap-2 rounded focus-ring"
-                      >
-                        <Avatar
-                          src={r.author.avatarUrl}
-                          name={r.author.username}
-                          size="sm"
-                          shrink={false}
-                        />
-                        <span className="truncate text-[13px] font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-                          {r.author.username}
-                        </span>
-                      </BlogLink>
-                    ) : (
-                      <span className="flex min-w-0 items-center gap-2">
-                        <Avatar src={null} name="?" size="sm" shrink={false} />
-                        <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                          ?
-                        </span>
-                      </span>
-                    )}
-                    <time dateTime={r.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-                      {fmt(r.createdAt)}
-                    </time>
-                    {meId != null && r.author?.id === meId && (
-                      <button
-                        type="button"
-                        onClick={() => void remove(r.id)}
-                        className="touch-target ml-auto rounded text-[12px] text-slate-400 transition-colors hover:text-red-500 focus-ring"
-                      >
-                        {t("highlightReplyDelete")}
-                      </button>
-                    )}
-                  </div>
-                  <div className="mt-1 min-w-0 pl-9 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
+                  <ConversationRow
+                    author={r.author}
+                    createdAt={r.createdAt}
+                    time={fmt(r.createdAt)}
+                    menu={
+                      authenticated && r.author?.username && r.author.id !== meId ? (
+                        <CommentMenu authorUsername={r.author.username} canReport={false} layerClassName="z-[70]" />
+                      ) : undefined
+                    }
+                    onDelete={meId != null && r.author?.id === meId ? () => void remove(r.id) : undefined}
+                    deleteLabel={t("highlightReplyDelete")}
+                    actions={
+                      authenticated && r.author?.username && r.author.id !== meId ? (
+                        <button
+                          type="button"
+                          onClick={() => replyTo(r.author!.username)}
+                          className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+                        >
+                          <CornerDownRight className="h-3.5 w-3.5" aria-hidden />
+                          {tComments("reply")}
+                        </button>
+                      ) : undefined
+                    }
+                  >
                     <CommentBody text={r.body} locale={locale} mentions={r.mentions} />
-                  </div>
+                  </ConversationRow>
                 </li>
               ))}
             </ul>

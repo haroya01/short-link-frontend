@@ -142,7 +142,7 @@ test("내 하이라이트 답글은 묻고 나서 지운다", async ({ page }) =
   await expect(composer).toHaveCount(1, { timeout: 20_000 });
   await composer.click();
   await page.keyboard.type("지울 답글");
-  await thread.getByRole("button", { name: "답글", exact: true }).click();
+  await page.keyboard.press("Control+Enter");
   const mine = thread.locator("li").filter({ hasText: "지울 답글" });
   await expect(mine).toBeVisible();
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
-import { CornerDownRight, Trash2, Heart } from "lucide-react";
+import { CornerDownRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
@@ -17,10 +17,9 @@ import {
   type CommentView,
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/lib/author-href";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
-import { BlogLink } from "@/modules/blog/components/blog-link";
+import { ConversationLike, ConversationRow } from "@/modules/blog/components/conversation-row";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
@@ -464,7 +463,7 @@ export function PostComments({
               </CommentRow>
 
               {repliesOf(c.id).length > 0 && (
-                <ul className="mt-4 space-y-4 border-l-2 border-slate-100 pl-5 dark:border-slate-800">
+                <ul className="mt-4 space-y-4 pl-12">
                   {repliesOf(c.id).map((r) => (
                     <li key={r.id}>
                       <CommentRow
@@ -503,7 +502,7 @@ export function PostComments({
               )}
 
               {replyTo === c.id && (
-                <div className="mt-3 border-l-2 border-slate-100 pl-5 dark:border-slate-800">
+                <div className="mt-3 pl-12">
                   <CommentComposer
                     value={replyBody}
                     onChange={setReplyBody}
@@ -562,70 +561,26 @@ function CommentRow({
   children?: React.ReactNode;
 }) {
   const locale = useLocale();
-  const username = comment.author?.username ?? "?";
-  const hasAuthor = !!comment.author?.username;
-  const profileHref = hasAuthor ? authorHref(username, locale) : undefined;
   return (
-    <div
+    <ConversationRow
       id={anchorId}
-      className={`-mx-3 -my-2 scroll-mt-24 rounded-surface px-3 py-2 transition-colors duration-700 motion-reduce:transition-none ${
-        flash ? "bg-accent-50 dark:bg-accent-900/30" : ""
-      } ${isNew ? "comment-in" : ""}`}
+      author={comment.author}
+      createdAt={comment.createdAt}
+      time={fmt(comment.createdAt)}
+      nested={comment.parentId != null}
+      flash={flash}
+      isNew={isNew}
+      menu={<CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
+      onDelete={canDelete ? onDelete : undefined}
+      deleteLabel={deleteLabel}
+      actions={
+        <>
+          <ConversationLike liked={liked} count={comment.likeCount} label={likeLabel} onToggle={onToggleLike} />
+          {children}
+        </>
+      }
     >
-      <div className="flex items-center gap-2">
-        {/* Avatar + @handle link to the commenter's profile (soft nav when same-origin, hard on the
-            author subdomain). */}
-        <BlogLink
-          href={profileHref ?? "#"}
-          className={`group/author flex min-w-0 items-center gap-2 rounded focus-ring ${hasAuthor ? "" : "pointer-events-none"}`}
-          aria-disabled={!hasAuthor}
-        >
-          <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
-          <span className="truncate text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
-            {username}
-          </span>
-        </BlogLink>
-        <time dateTime={comment.createdAt} suppressHydrationWarning className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-          {fmt(comment.createdAt)}
-        </time>
-        <div className="ml-auto flex shrink-0 items-center gap-1">
-          {/* ⋯: 차단은 남의 댓글이면, 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 — 내 것엔 휴지통만. */}
-          <CommentMenu commentId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />
-          {canDelete && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className="touch-target rounded text-slate-500 transition-colors hover:text-red-600 focus-ring dark:text-slate-400 dark:hover:text-red-400"
-              aria-label={deleteLabel}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="mt-1.5 pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
-        <CommentBody text={comment.body} locale={locale} mentions={comment.mentions} />
-      </div>
-      <div className="mt-1.5 flex items-center gap-3 pl-9">
-        {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop). 카운트 숫자는 표시하지 않고
-            하트 상태로만 전한다(연결·깊이가 점수판이 되지 않도록). 모델·API·aria 는 그대로. */}
-        <button
-          type="button"
-          onClick={onToggleLike}
-          aria-pressed={liked}
-          aria-label={likeLabel}
-          className={`touch-target inline-flex items-center gap-1 rounded text-[13px] transition-colors focus-ring ${
-            liked
-              ? "text-accent-700 dark:text-accent-400"
-              : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
-          }`}
-        >
-          <span key={liked ? "on" : "off"} className="subscribe-pop inline-flex">
-            <Heart className={`h-3.5 w-3.5 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
-          </span>
-        </button>
-        {children}
-      </div>
-    </div>
+      <CommentBody text={comment.body} locale={locale} mentions={comment.mentions} />
+    </ConversationRow>
   );
 }

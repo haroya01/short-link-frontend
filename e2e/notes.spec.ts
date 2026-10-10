@@ -627,8 +627,8 @@ test("the composer posts with the chosen visibility", async ({ page }) => {
 
 test("a person added to a list from their profile fills that list's tab", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const byYuna = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "yuna", exact: true }) });
-  await byYuna.first().getByRole("link", { name: "yuna", exact: true }).first().click({ timeout: 30_000 });
+  const byYuna = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "@yuna", exact: true }) });
+  await byYuna.first().getByRole("link", { name: "@yuna", exact: true }).first().click({ timeout: 30_000 });
   await expect(page.getByRole("heading", { name: "@yuna" })).toBeVisible({ timeout: 30_000 });
   await page.getByRole("button", { name: "프로필 메뉴" }).click();
   await page.getByRole("menuitem", { name: "리스트에 추가…" }).click();
@@ -726,9 +726,9 @@ test("the composer posts a poll, and photos and a poll exclude each other", asyn
 
 test("muting someone from their profile menu takes their notes out of the feed", async ({ page }) => {
   await page.goto("/ko/blog/notes");
-  const yunaNotes = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "yuna", exact: true }) });
+  const yunaNotes = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "@yuna", exact: true }) });
   await expect(yunaNotes.first()).toBeVisible({ timeout: 30_000 });
-  await yunaNotes.first().getByRole("link", { name: "yuna", exact: true }).first().click();
+  await yunaNotes.first().getByRole("link", { name: "@yuna", exact: true }).first().click();
   await expect(page.getByRole("heading", { name: "@yuna" })).toBeVisible({ timeout: 30_000 });
   const menu = page.getByRole("button", { name: "프로필 메뉴" });
   await menu.click();
@@ -782,7 +782,7 @@ test("a display name leads the note header with the handle beside it, and settin
   await page.goto("/ko/blog/notes");
   const haruka = page.locator('article[data-note-id="11"]');
   await expect(haruka.getByRole("link", { name: "하루카 @haruka" })).toBeVisible({ timeout: 30_000 });
-  await expect(page.locator('article[data-note-id="6"]').getByRole("link", { name: "dohyun", exact: true })).toBeVisible();
+  await expect(page.locator('article[data-note-id="6"]').getByRole("link", { name: "@dohyun", exact: true })).toBeVisible();
 
   await page.goto("/ko/blog/settings");
   const field = page.getByRole("textbox", { name: "표시 이름" });
