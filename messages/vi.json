@@ -4234,7 +4234,7 @@
     "listNewTitle": "Tên danh sách mới",
     "listCreate": "Tạo",
     "listCreateAndAdd": "Tạo và thêm",
-    "listPick": "Chọn một danh sách ở trên để chỉ đọc ghi chú của những người trong đó",
+    "listPick": "Chọn một danh sách trong mục Thêm để chỉ đọc ghi chú của những người trong đó",
     "listEmpty": "Chưa có danh sách",
     "listEmptyBody": "Đặt tên để tạo, rồi thêm người từ menu … của hồ sơ.",
     "listNoNotes": "Danh sách này chưa có ghi chú",
@@ -4481,7 +4481,10 @@
     "suggestionsPopular": "Gần đây được nhiều người theo dõi",
     "suggestionsDismiss": "Không gợi ý {name}",
     "threadMore": "Thêm {count} trong chuỗi",
-    "threadPosition": "Phần {position} của chuỗi"
+    "threadPosition": "Phần {position} của chuỗi",
+    "feedDirectShort": "Nhắc đến",
+    "listManage": "Quản lý danh sách",
+    "listSettingsHint": "Chỉ bạn thấy danh sách. Để đọc ghi chú của những người trong một danh sách, hãy chọn nó trong mục Thêm ở trang ghi chú."
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"

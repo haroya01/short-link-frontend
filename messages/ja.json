@@ -4234,7 +4234,7 @@
     "listNewTitle": "新しいリスト名",
     "listCreate": "作成",
     "listCreateAndAdd": "作って追加",
-    "listPick": "上でリストを選ぶと、その人たちのノートだけを読めます",
+    "listPick": "「その他」からリストを選ぶと、その人たちのノートだけを読めます",
     "listEmpty": "まだリストがありません",
     "listEmptyBody": "名前を入れて作り、プロフィールの…メニューから人を追加してください。",
     "listNoNotes": "このリストにはまだノートがありません",
@@ -4481,7 +4481,10 @@
     "suggestionsPopular": "最近よくフォローされています",
     "suggestionsDismiss": "{name}を表示しない",
     "threadMore": "スレッドの続き {count}件",
-    "threadPosition": "スレッド {position}"
+    "threadPosition": "スレッド {position}",
+    "feedDirectShort": "メンション",
+    "listManage": "リストを管理",
+    "listSettingsHint": "リストは自分だけが見られます。追加した人のノートは、ノート画面の「その他」から選んで読めます。"
   },
   "mentions": {
     "suggestions": "メンションする人"

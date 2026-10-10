@@ -4234,7 +4234,7 @@
     "listNewTitle": "नई सूची का नाम",
     "listCreate": "बनाएँ",
     "listCreateAndAdd": "बनाएँ और जोड़ें",
-    "listPick": "ऊपर से सूची चुनें, केवल उन लोगों के नोट दिखेंगे",
+    "listPick": "\"और\" से सूची चुनें, केवल उन लोगों के नोट दिखेंगे",
     "listEmpty": "अभी कोई सूची नहीं",
     "listEmptyBody": "नाम लिखकर बनाएँ, फिर प्रोफ़ाइल के … मेनू से लोगों को जोड़ें।",
     "listNoNotes": "इस सूची में अभी नोट नहीं",
@@ -4481,7 +4481,10 @@
     "suggestionsPopular": "इन दिनों लोकप्रिय",
     "suggestionsDismiss": "{name} का सुझाव न दें",
     "threadMore": "इस थ्रेड में {count} और",
-    "threadPosition": "थ्रेड भाग {position}"
+    "threadPosition": "थ्रेड भाग {position}",
+    "feedDirectShort": "उल्लेख",
+    "listManage": "सूचियाँ प्रबंधित करें",
+    "listSettingsHint": "सूचियाँ केवल आप देखते हैं। किसी सूची के लोगों के नोट पढ़ने के लिए नोट्स पेज पर \"और\" में उसे चुनें।"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"

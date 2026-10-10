@@ -128,7 +128,6 @@ export async function FeedScreen({
   const activeTab = searching ? sort : tab;
 
   const t = await getTranslations({ locale, namespace: "publicFeed" });
-  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
   // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
@@ -271,15 +270,8 @@ export async function FeedScreen({
               searching
                 ? undefined
                 : [
-                    { key: "for-you", label: t("forYou"), href: "?sort=for-you", active: tab === "for-you" },
-                    { key: "series", label: t("seriesTab"), href: "?sort=series", active: tab === "series" },
-                    {
-                      key: "followed-topics",
-                      label: t("followedTopics"),
-                      href: blogHref("/curation?open=topics"),
-                      external: true,
-                    },
-                    { key: "collections", label: tNav("myCollections"), href: blogHref("/collections"), external: true },
+                    { key: "for-you", label: t("forYou"), icon: "sparkles", href: "?sort=for-you", active: tab === "for-you" },
+                    { key: "series", label: t("seriesTab"), icon: "series", href: "?sort=series", active: tab === "series" },
                   ]
             }
           />

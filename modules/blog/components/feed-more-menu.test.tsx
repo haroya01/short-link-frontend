@@ -27,21 +27,31 @@ const render = (node: React.ReactNode) => act(async () => root.render(node));
 const trigger = () => container.querySelector<HTMLButtonElement>("[data-feed-more] > button")!;
 const open = () => act(async () => trigger().click());
 
-const feeds = (active?: string): FeedMoreItem[] =>
-  ["federated", "bookmarks"].map((key) => ({ key, label: key === "federated" ? "다른 서버" : "북마크", href: `?feed=${key}`, active: key === active }));
+const feeds: FeedMoreItem[] = [
+  { key: "federated", label: "다른 서버", icon: "globe", href: "?feed=federated" },
+  { key: "bookmarks", label: "북마크", icon: "bookmark", href: "?feed=bookmarks" },
+];
 
 describe("the 더 보기 menu", () => {
   it("is named 더 보기, and names the source it is showing when one of its sources is open", async () => {
-    await render(<FeedMoreMenu items={feeds()} label="더 보기" />);
+    await render(<FeedMoreMenu items={feeds} label="더 보기" activeKey={null} />);
     expect(trigger().getAttribute("aria-label")).toBe("더 보기");
-    await render(<FeedMoreMenu items={feeds("federated")} label="더 보기" />);
+    expect(trigger().hasAttribute("data-active")).toBe(false);
+    await render(<FeedMoreMenu items={feeds} label="더 보기" activeKey="federated" />);
     expect(trigger().getAttribute("aria-label")).toBe("더 보기: 다른 서버");
+    expect(trigger().getAttribute("data-active")).toBe("true");
+    expect(trigger().textContent).toBe("다른 서버");
   });
 
   it("carries a view setting as a checkable item after the sources", async () => {
     const onChange = vi.fn();
     await render(
-      <FeedMoreMenu items={feeds()} toggles={[{ key: "reposts", label: "리포스트 보기", checked: true, onChange }]} label="더 보기" />,
+      <FeedMoreMenu
+        items={feeds}
+        toggles={[{ key: "reposts", label: "리포스트 보기", checked: true, onChange }]}
+        label="더 보기"
+        activeKey={null}
+      />,
     );
     await open();
     const rows = [...container.querySelectorAll('[role="menu"] > *')].map((el) => el.getAttribute("role"));
