@@ -1,16 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // mock-on 레인. kurl:mock-fail:like 가 있는 동안 글·댓글·노트·하이라이트 답글의 좋아요는 모두 실패한다.
-// 어느 좋아요든 원래대로 돌아가면서 같은 한 줄로 실패를 말해야 하고, 그 줄은 시트에 가리지 않아야 한다
-// (trial 클릭이 그 자리의 맨 위 요소인지 확인한다).
+// 어느 좋아요든 원래대로 돌아가면서 같은 한 줄로 실패를 말해야 하고, 그 줄은 시트에 가리지 않아야 한다.
 test.use({ viewport: { width: 1280, height: 900 } });
 
-const failed = (page: Page) => page.getByRole("status").filter({ hasText: "좋아요를 반영하지 못했어요" });
-
-async function saysItFailed(page: Page) {
-  await expect(failed(page)).toBeVisible();
-  await failed(page).click({ trial: true, timeout: 2_000 });
-}
+const saysItFailed = (page: Page) => expectOnTop(toastBy(page, "좋아요를 반영하지 못했어요"));
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => window.localStorage.setItem("kurl:mock-fail:like", "1"));

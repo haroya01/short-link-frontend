@@ -151,6 +151,7 @@ function ToastItem({
       )}
       role="status"
       aria-live="polite"
+      data-testid="toast"
       onPointerEnter={() => setHold("pointer", true)}
       onPointerLeave={() => setHold("pointer", false)}
       onFocus={() => setHold("focus", true)}

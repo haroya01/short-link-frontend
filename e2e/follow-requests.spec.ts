@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock lane: the viewer (dohyun) approves followers by hand; sori (this server) and carol@fosstodon.org
 // wait. haruka approves her followers by hand too.
@@ -19,7 +20,7 @@ test("requests wait atop the notices and are answered there or on their page", a
   const soriRow = main.locator("li").filter({ hasText: "sori님이 팔로우를 요청했어요" });
   await soriRow.getByTestId("follow-request-approve").click();
   await expect(sori).toHaveCount(0);
-  await expect(page.getByText("sori님이 팔로워가 됐어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "sori님이 팔로워가 됐어요"));
   await expect(entry).toContainText("1");
 
   await entry.click();
@@ -40,7 +41,7 @@ test("following a locked writer leaves a request that can be withdrawn", async (
   await follow.click();
   await expect(follow).toHaveText("요청함");
   await expect(follow).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByText("팔로우를 요청했어요. 승인되면 팔로잉이 돼요")).toBeVisible();
+  await expectOnTop(toastBy(page, "팔로우를 요청했어요. 승인되면 팔로잉이 돼요"));
 
   await follow.click();
   const dialog = page.getByRole("dialog").filter({ hasText: "팔로우 요청을 취소할까요?" });
@@ -69,7 +70,7 @@ test("a locked writer's row in a followers list shows the request, not a follow"
   await follow.click();
   await expect(follow).toHaveText("요청함");
   await expect(follow).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByText("팔로우를 요청했어요. 승인되면 팔로잉이 돼요")).toBeVisible();
+  await expectOnTop(toastBy(page, "팔로우를 요청했어요. 승인되면 팔로잉이 돼요"));
 
   await follow.click();
   await expect(follow).toHaveText("팔로우");

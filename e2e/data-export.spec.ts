@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 test.use({ viewport: { width: 1280, height: 900 } });
 
@@ -27,7 +28,7 @@ test("a Mastodon file is imported from blog settings and its progress shows", as
     mimeType: "text/csv",
     buffer: Buffer.from("spam.example\nother.example\n"),
   });
-  await expect(page.getByText("2줄을 가져오는 중이에요")).toBeVisible();
+  await expectOnTop(toastBy(page, "2줄을 가져오는 중이에요"));
   await expect(list.locator("li").first()).toContainText("차단한 서버");
   await expect(list.locator("li").first()).toContainText("끝남", { timeout: 15_000 });
 });

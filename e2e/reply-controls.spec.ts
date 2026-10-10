@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 /**
  * Note reply controls in MOCK-ON. The mock session is @dohyun.
@@ -40,7 +41,7 @@ test("the thread's writer hides a reply, finds it under 숨긴 답글, and bring
   await expect(toggle).toHaveText("숨긴 답글 1개 보기", { timeout: 30_000 });
 
   await menu(page, 73, "숨기기");
-  await expect(page.getByText("답글을 숨겼어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "답글을 숨겼어요"));
   await expect(note(page, 73)).toHaveCount(0);
   await expect(toggle).toHaveText("숨긴 답글 2개 보기");
 
@@ -50,7 +51,7 @@ test("the thread's writer hides a reply, finds it under 숨긴 답글, and bring
   await expect(hidden).toContainText("여기 광고 링크 남겨요");
 
   await menu(page, 73, "숨김 해제");
-  await expect(page.getByText("숨긴 답글을 되돌렸어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "숨긴 답글을 되돌렸어요"));
   await expect(hidden.locator('article[data-note-id="73"]')).toHaveCount(0);
   await expect(page.locator('section[aria-labelledby="note-replies"] article[data-note-id="73"]')).toHaveCount(1);
 });
@@ -61,7 +62,7 @@ test("the thread's writer removes someone's reply after confirming", async ({ pa
   const ask = page.getByRole("dialog", { name: "이 답글을 스레드에서 삭제할까요?" });
   await expect(ask).toContainText("다른 서버에서 온 답글은 kurl에서만 사라져요.");
   await ask.getByRole("button", { name: "삭제" }).click();
-  await expect(page.getByText("답글을 삭제했어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "답글을 삭제했어요"));
   await expect(note(page, 75)).toHaveCount(0);
   await expect(note(page, 73)).toBeVisible();
 });
@@ -73,7 +74,7 @@ test("the writer changes who can reply from the note's ⋯ later", async ({ page
   await expect(dialog.getByRole("radio", { name: "모두" })).toBeChecked();
   await dialog.getByRole("radio", { name: "내가 멘션한 사람만" }).check();
   await dialog.getByRole("button", { name: "저장" }).click();
-  await expect(page.getByText("답글 권한을 바꿨어요")).toBeVisible();
+  await expectOnTop(toastBy(page, "답글 권한을 바꿨어요"));
   await expect(dialog).toHaveCount(0);
 
   await menu(page, 72, "답글 권한");
