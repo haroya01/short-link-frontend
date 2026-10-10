@@ -319,7 +319,7 @@ test("a 409 that is not a slug clash (someone else saved first) does not blame t
   await expect(page.getByText("This address is already taken. Try a different one.")).toHaveCount(0);
 });
 
-// Delete lives only on the PUBLIC post page (PostOwnerActions), which is a server component that
+// Delete lives only on the PUBLIC post page (the ⋯ menu's owner section), which is a server component that
 // fetches the post from the backend with no-store. Playwright routes intercept BROWSER requests, not
 // Next.js server-side fetches, so the page can't render owner actions against a mocked backend — the
 // same reason the whole write-flow suite tests the (client-rendered) editor, never the public page.

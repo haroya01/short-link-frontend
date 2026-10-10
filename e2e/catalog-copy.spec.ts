@@ -21,7 +21,8 @@ test("ja: the compose entry says 書く, my posts say 記事, and 投稿 is left
 
 test("ja: a confirm question ends in a full-width mark", async ({ page }) => {
   await page.goto("/ja/p/dohyun/nextjs-14-app-router-blog");
-  await page.getByRole("button", { name: "削除", exact: true }).first().click({ timeout: 30_000 });
+  await page.locator("article header").getByRole("button", { name: "記事のメニュー", exact: true }).click({ timeout: 30_000 });
+  await page.getByRole("menuitem", { name: "削除", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "この記事を削除しますか？" })).toBeVisible();
 });
 

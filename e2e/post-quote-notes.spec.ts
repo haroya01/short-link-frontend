@@ -54,9 +54,8 @@ test("the first quote of a post raises the notes tab right away", async ({ page 
   await page.goto("/ko/p/dohyun/nextjs-14-app-router-blog");
   await expect(page.getByTestId("comment-composer-placeholder")).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId("discussion-tab-notes")).toHaveCount(0);
-  const quote = page.getByRole("button", { name: "노트로 인용" }).first();
-  await quote.scrollIntoViewIfNeeded();
-  await quote.click();
+  await page.locator("article header").getByRole("button", { name: "글 메뉴", exact: true }).click();
+  await page.getByRole("menuitem", { name: "노트로 인용" }).click();
   await postQuote(page, "앱 라우터로 옮긴 순서가 궁금하다");
 
   const notesTab = page.getByTestId("discussion-tab-notes");
