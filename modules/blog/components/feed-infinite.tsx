@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
@@ -12,9 +12,11 @@ import {
   type PublicFeedItem,
   type PublicFeedView,
 } from "@/modules/blog/api/public-posts";
+import { fetchPublicConnectionFeed, type ConnectionEvent } from "@/modules/blog/api/collections";
+import { ConnectionFeedInsert } from "@/modules/blog/components/connection-feed-insert";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
-import { useViewerId } from "@/modules/blog/lib/use-viewer-list";
+import { useViewerId, useViewerList } from "@/modules/blog/lib/use-viewer-list";
 
 const PAGE_SIZE = 24;
 // 이 시간을 넘긴 세션 스냅샷은 되살리지 않고 새로 시작한다(오래 열려 있던 탭의 낡은 피드 방지).
@@ -81,7 +83,7 @@ export function FeedInfinite({
   query,
   tag,
   lang,
-  interleaveNodes,
+  connectionEvents: serverConnectionEvents,
   interleaveFirst = 5,
   interleaveEvery = 5,
 }: {
@@ -94,7 +96,7 @@ export function FeedInfinite({
   tag?: string;
   /** Active post-language filter (ko/ja/en); undefined = all languages. Carried into page fetches. */
   lang?: string;
-  interleaveNodes?: ReactNode[];
+  connectionEvents?: ConnectionEvent[];
   interleaveFirst?: number;
   interleaveEvery?: number;
 }) {
@@ -115,6 +117,14 @@ export function FeedInfinite({
   // 진행 중이던 loadMore 응답이 필터 전환 뒤 도착해 새 피드에 섞이지 않게 하는 세대 토큰.
   const requestGen = useRef(0);
   const viewer = useViewerId();
+  const connectionEvents = useViewerList(
+    serverConnectionEvents ?? [],
+    () =>
+      serverConnectionEvents
+        ? fetchPublicConnectionFeed(0, serverConnectionEvents.length || 6).then((r) => (r.ok ? r.data.items : null))
+        : Promise.resolve(null),
+    "connections",
+  );
   const settled = useRef<string | null>(null);
 
   // 시드는 서버가 익명으로 받은 page 0 이다. 누가 읽는지 정해지면 이 피드·독자에 맞춘다: 첫 마운트면
@@ -230,12 +240,10 @@ export function FeedInfinite({
       : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
   const hiddenCount = items.length - visible.length;
 
-  const connectAfter = new Map<number, ReactNode>();
-  if (interleaveNodes && interleaveNodes.length > 0) {
-    for (let k = 0; k < interleaveNodes.length; k++) {
-      const rowIdx = interleaveFirst + k * Math.max(1, interleaveEvery);
-      if (rowIdx < visible.length) connectAfter.set(rowIdx, interleaveNodes[k]);
-    }
+  const connectAfter = new Map<number, ConnectionEvent>();
+  for (let k = 0; k < connectionEvents.length; k++) {
+    const rowIdx = interleaveFirst + k * Math.max(1, interleaveEvery);
+    if (rowIdx < visible.length) connectAfter.set(rowIdx, connectionEvents[k]);
   }
 
   return (
@@ -251,7 +259,7 @@ export function FeedInfinite({
                 initialKeys.has(itemKey(item)) ? undefined : Math.min((i % PAGE_SIZE) * 25, 250)
               }
             />
-            {connectAfter.get(i)}
+            {connectAfter.has(i) && <ConnectionFeedInsert event={connectAfter.get(i)!} locale={locale} />}
           </Fragment>
         ))}
       </FeedList>

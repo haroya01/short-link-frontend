@@ -4332,6 +4332,8 @@
     "unblockedToast": "Đã bỏ chặn {username}",
     "unblockFailed": "Không thể bỏ chặn",
     "blockedAuthorNotice": "Bạn đã chặn tài khoản này. Bài viết, bình luận và ghi chú của họ bị ẩn.",
+    "authorUnavailable": "Bạn không thể xem bài viết của người dùng này.",
+    "threadUnavailable": "Không thể xem ghi chú này.",
     "blockedUsersTitle": "Tài khoản đã chặn",
     "blockedUsersHint": "Bài viết, bình luận và ghi chú của họ luôn bị ẩn. Bạn có thể chặn từ menu ⋯ trên trang của họ, bài viết hoặc bình luận.",
     "blockedUsersEmpty": "Chưa chặn tài khoản nào.",

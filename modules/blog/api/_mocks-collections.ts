@@ -22,6 +22,7 @@ import type {
   PostCollectionsView,
 } from "@/modules/blog/api/collections";
 import type { MyHighlightItem } from "@/modules/blog/api/highlights";
+import { MOCK_BLOCKS_VIEWER } from "@/modules/blog/api/_mocks";
 
 // Mock authors (mirror _mocks.ts AUTHORS) — only what the discovery card needs.
 const CURATORS = {
@@ -257,6 +258,22 @@ export function mockCollectionsContainingHighlight(_highlightId: number): Collec
 // 몇 칸마다 하나씩 끼워도 눈이 종류를 한 번에 읽는다. 산문은 현실적인 큐레이션 한 줄.
 const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
   {
+    id: 509,
+    curator: { id: 16, username: "rin", bio: "밤에만 쓰는 사람", avatarUrl: null },
+    collectionId: 19,
+    collectionTitle: "밤의 목록",
+    collectionKind: "COLLECTION",
+    why: "새벽 두 시에 다시 꺼내 읽는 글.",
+    connectedAt: new Date(Date.now() - 9 * 3_600_000).toISOString(),
+    blockType: "POST",
+    title: "밤 열한 시의 작업 노트",
+    excerpt: "모두 잠든 뒤에야 손에 잡히는 일들에 대해.",
+    slug: "quiet-hours",
+    username: "rin",
+    quote: null,
+    body: null,
+  },
+  {
     id: 501,
     curator: CURATORS.jinhwa,
     collectionId: 11,
@@ -354,10 +371,15 @@ const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
   },
 ];
 
-export function mockPublicConnectionFeed(page = 0, size = 12): DiscoverFeed {
+export function mockPublicConnectionFeed(page = 0, size = 12, viewer = false): DiscoverFeed {
   const start = page * size;
-  const items = PUBLIC_CONNECTIONS.slice(start, start + size);
-  return { items, hasNext: start + size < PUBLIC_CONNECTIONS.length, page, size };
+  const visible = viewer
+    ? PUBLIC_CONNECTIONS.filter(
+        (e) => !MOCK_BLOCKS_VIEWER.has(e.curator.username) && !MOCK_BLOCKS_VIEWER.has(e.username ?? ""),
+      )
+    : PUBLIC_CONNECTIONS;
+  const items = visible.slice(start, start + size);
+  return { items, hasNext: start + size < visible.length, page, size };
 }
 
 // "속함" 한 올 — 어떤 글이 어떤 공개 컬렉션에 담겼는지. 몇몇 글만 담겨 있고(없으면 줄 자체가 안 뜬다),

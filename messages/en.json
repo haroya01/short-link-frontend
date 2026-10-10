@@ -4332,6 +4332,8 @@
     "unblockedToast": "Unblocked {username}",
     "unblockFailed": "Couldn't unblock",
     "blockedAuthorNotice": "You blocked this account. Their posts, comments and notes are hidden.",
+    "authorUnavailable": "You can't view this user's posts.",
+    "threadUnavailable": "This note isn't available.",
     "blockedUsersTitle": "Blocked accounts",
     "blockedUsersHint": "Their posts, comments and notes stay hidden. Block someone from the ⋯ menu on their page, a post or a comment.",
     "blockedUsersEmpty": "No blocked accounts.",

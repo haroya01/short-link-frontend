@@ -15,6 +15,7 @@ async function openFeed(page: Page, path = "/ko/blog") {
   await page.goto(path);
   await expect(page.locator("main li[data-connection-event]").first()).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('main a[href="/ko/p/kazuki/kyoto-workation"]')).toHaveCount(0, { timeout: 30_000 });
+  await expect(page.locator('main li[data-connection-event="509"]')).toHaveCount(0, { timeout: 30_000 });
   await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))));
 }
 

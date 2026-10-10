@@ -6,7 +6,6 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { LockedMark } from "@/modules/blog/components/locked-mark";
 import { AuthorMoreMenu } from "@/modules/notes/components/author-more-menu";
-import { BlockedAuthorNotice } from "@/modules/notes/components/blocked-author-notice";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
@@ -169,8 +168,6 @@ export async function AuthorHeader({
           ))}
         </p>
       )}
-
-      <BlockedAuthorNotice username={author.username} />
 
       <AuthorTabs tabs={tabs} username={author.username} />
     </header>

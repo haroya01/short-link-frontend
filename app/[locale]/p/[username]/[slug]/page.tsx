@@ -18,6 +18,7 @@ import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
+import { AuthorGate } from "@/modules/blog/components/author-gate";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
@@ -354,115 +355,117 @@ export default async function PublicPostPage({
         </div>
       </header>
 
-      {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
-          "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-surface + ring 은 그대로 두고, 2:1
-          리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
-      {post.ogImageUrl && (
-        <div className="mb-10 overflow-hidden rounded-surface bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
-          {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
-              모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
-              이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
-          {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
-              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. 허용 호스트는 읽기
-              컬럼 폭에 맞춘 변형(next/image, preload 포함), 그 밖의 호스트는 원본 <img>. */}
-          {canOptimizeCover(post.ogImageUrl) ? (
-            <Image
-              src={post.ogImageUrl}
-              alt=""
-              width={1344}
-              height={672}
-              sizes="(min-width: 672px) 672px, 100vw"
-              priority
-              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
-            />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={post.ogImageUrl}
-              alt=""
-              fetchPriority="high"
-              decoding="async"
-              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
-            />
-          )}
-        </div>
-      )}
-
-      {seriesNav && (
-        <SeriesNav
-          series={seriesNav}
-          episodes={episodes || []}
-          currentKey={post.slug}
-          username={author.username}
-          locale={locale}
-        />
-      )}
-
-      <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
-      <PostHighlights postId={post.id} />
-
-      {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
-          nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
-          so the article is never a dead end (§10: one green thread, no node-graph). */}
-      <Suspense fallback={null}>
-        <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
-      </Suspense>
-
-      {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
-
-      {post.tags.length > 0 && (
-        <div className="mt-10">
-          <TagChips tags={post.tags} />
-        </div>
-      )}
-
-      {editedLabel && (
-        <p className="mt-10 text-[12px] text-slate-500 dark:text-slate-400">
-          {t("editedOn", { date: editedLabel })}
-        </p>
-      )}
-
-      <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
-          <a
-            href={authorHref(author.username, locale)}
-            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400 focus-ring"
-            data-bhv="profile"
-            data-bhv-id={author.username}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t("morePosts", { username: author.username })}
-          </a>
-          {/* All post actions live in one cluster — like / bookmark / connect / quote / share. 신고 lives in
-              the header's ⋯ (PostReaderMenu), one place as on iOS. */}
-          <div className="flex items-center gap-3">
-            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-            <BookmarkButton postId={post.id} />
-            <ConnectButton postId={post.id} postTitle={post.title} />
-            <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
-            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+      <AuthorGate username={author.username}>
+        {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
+            "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-surface + ring 은 그대로 두고, 2:1
+            리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
+        {post.ogImageUrl && (
+          <div className="mb-10 overflow-hidden rounded-surface bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+            {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
+                모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
+                이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
+            {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
+                큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. 허용 호스트는 읽기
+                컬럼 폭에 맞춘 변형(next/image, preload 포함), 그 밖의 호스트는 원본 <img>. */}
+            {canOptimizeCover(post.ogImageUrl) ? (
+              <Image
+                src={post.ogImageUrl}
+                alt=""
+                width={1344}
+                height={672}
+                sizes="(min-width: 672px) 672px, 100vw"
+                priority
+                className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.ogImageUrl}
+                alt=""
+                fetchPriority="high"
+                decoding="async"
+                className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
+              />
+            )}
           </div>
-        </div>
-      </footer>
+        )}
 
-      <Suspense fallback={null}>
-        <RelatedPosts
-          locale={locale}
-          author={author}
-          currentSlug={post.slug}
-          currentTitle={post.title}
-          tags={post.tags}
-          seriesSize={result.data.series?.total ?? 0}
-        />
-      </Suspense>
+        {seriesNav && (
+          <SeriesNav
+            series={seriesNav}
+            episodes={episodes || []}
+            currentKey={post.slug}
+            username={author.username}
+            locale={locale}
+          />
+        )}
 
-      {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
-      {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
+        <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
+        <PostHighlights postId={post.id} />
 
-      {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
-      {!isPreview && <PublishCelebration slug={post.slug} />}
+        {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
+            nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
+            so the article is never a dead end (§10: one green thread, no node-graph). */}
+        <Suspense fallback={null}>
+          <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
+        </Suspense>
 
-      <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
+        {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
+
+        {post.tags.length > 0 && (
+          <div className="mt-10">
+            <TagChips tags={post.tags} />
+          </div>
+        )}
+
+        {editedLabel && (
+          <p className="mt-10 text-[12px] text-slate-500 dark:text-slate-400">
+            {t("editedOn", { date: editedLabel })}
+          </p>
+        )}
+
+        <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
+            <a
+              href={authorHref(author.username, locale)}
+              className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400 focus-ring"
+              data-bhv="profile"
+              data-bhv-id={author.username}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t("morePosts", { username: author.username })}
+            </a>
+            {/* All post actions live in one cluster — like / bookmark / connect / quote / share. 신고 lives in
+                the header's ⋯ (PostReaderMenu), one place as on iOS. */}
+            <div className="flex items-center gap-3">
+              <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
+              <BookmarkButton postId={post.id} />
+              <ConnectButton postId={post.id} postTitle={post.title} />
+              <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
+              <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+            </div>
+          </div>
+        </footer>
+
+        <Suspense fallback={null}>
+          <RelatedPosts
+            locale={locale}
+            author={author}
+            currentSlug={post.slug}
+            currentTitle={post.title}
+            tags={post.tags}
+            seriesSize={result.data.series?.total ?? 0}
+          />
+        </Suspense>
+
+        {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
+        {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
+
+        {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
+        {!isPreview && <PublishCelebration slug={post.slug} />}
+
+        <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
+      </AuthorGate>
 
       {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
       {!isPreview && (

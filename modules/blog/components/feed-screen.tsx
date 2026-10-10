@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { PenSquare, X } from "lucide-react";
@@ -31,9 +30,8 @@ import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { TrendingTopics } from "./trending-topics";
-import { ConnectionFeedInsert } from "./connection-feed-insert";
 import { FeedErrorState } from "./feed-error-state";
-import { listPublicConnectionFeed } from "../api/collections";
+import { listPublicConnectionFeed, type ConnectionEvent } from "../api/collections";
 
 // blog.kurl.me is its own surface — the root layout's canonical/OG point at kurl.me (the URL
 // shortener), so the feed must override them or share links preview as the shortener. og:image is
@@ -180,9 +178,7 @@ export async function FeedScreen({
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
 
-  const connectionNodes = (connectionsResult?.items ?? []).map((event) => (
-    <ConnectionFeedInsert key={`connection/${event.id}`} event={event} locale={locale} />
-  ));
+  const connectionEvents = wantConnections ? (connectionsResult?.items ?? []) : undefined;
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
   // search), so the content block replays its slide instead of swapping abruptly.
@@ -376,7 +372,7 @@ export async function FeedScreen({
                 tag={activeTag || undefined}
                 query={searching ? query : undefined}
                 lang={activeLang || undefined}
-                connectionNodes={connectionNodes.length > 0 ? connectionNodes : undefined}
+                connectionEvents={connectionEvents}
               />
             </FeedContentTransition>
           </div>
@@ -399,7 +395,7 @@ function FeedColumn({
   sort,
   query,
   lang,
-  connectionNodes,
+  connectionEvents,
   tag,
 }: {
   locale: string;
@@ -408,7 +404,7 @@ function FeedColumn({
   sort: FeedSort;
   query?: string;
   lang?: string;
-  connectionNodes?: ReactNode[];
+  connectionEvents?: ConnectionEvent[];
   tag?: string;
 }) {
   return (
@@ -420,7 +416,7 @@ function FeedColumn({
       query={query}
       tag={tag}
       lang={lang}
-      interleaveNodes={connectionNodes}
+      connectionEvents={connectionEvents}
     />
   );
 }

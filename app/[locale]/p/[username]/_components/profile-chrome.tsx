@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useParams, usePathname } from "next/navigation";
-import { HideIfBlocked } from "@/modules/blog/components/hide-if-blocked";
+import { AuthorGate } from "@/modules/blog/components/author-gate";
 
 const TAB_SEGMENTS = ["notes", "reposts", "series", "collections", "about", "liked", "bookmarks"];
 
@@ -57,7 +57,9 @@ export function ProfileChrome({ header, children }: { header: ReactNode; childre
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-2xl">{header}</div>
-      <HideIfBlocked username={username}>{children}</HideIfBlocked>
+      <AuthorGate username={username} noticeClassName="mx-auto max-w-2xl">
+        {children}
+      </AuthorGate>
     </main>
   );
 }

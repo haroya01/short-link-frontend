@@ -1,6 +1,6 @@
 import { ApiError } from "@/lib/api/client";
 import type { PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
-import { MOCK_ALL_ITEMS, MOCK_SERIES_NOTES, mockNoteSeries } from "@/modules/blog/api/_mocks";
+import { MOCK_ALL_ITEMS, MOCK_BLOCKS_VIEWER, MOCK_SERIES_NOTES, mockNoteSeries } from "@/modules/blog/api/_mocks";
 import type {
   FederationSettings,
   Note,
@@ -642,7 +642,23 @@ export function mockRepost(id: number, on: boolean): { reposted: boolean; repost
   return { reposted: on, repostCount: target?.repostCount ?? 0 };
 }
 
+const RIN_NOTE = note({
+  id: 90,
+  body: "불 끄고 나서야 써지는 문장이 있다.",
+  author: { id: 16, username: "rin", avatarUrl: null },
+  createdAt: "2026-10-04T23:00:00Z",
+});
+
+export function mockViewerThread(id: number): NoteThread {
+  const thread = mockThread(id);
+  if (!thread || MOCK_BLOCKS_VIEWER.has(thread.note.author.username)) {
+    throw new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" });
+  }
+  return thread;
+}
+
 export function mockThread(id: number): NoteThread | null {
+  if (id === RIN_NOTE.id) return { note: RIN_NOTE, parent: null, replies: [], continuation: [], series: null };
   const main = notes.find((n) => n.id === id);
   if (!main) return null;
   const continuation = selfChain(main);

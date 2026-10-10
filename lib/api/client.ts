@@ -104,6 +104,27 @@ export async function completeSignIn(): Promise<boolean> {
   return (await tryRefresh()) != null;
 }
 
+const EXPIRY_MARGIN_MS = 30_000;
+
+function expiresAt(token: string): number | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const claims = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as { exp?: unknown };
+    return typeof claims.exp === "number" ? claims.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function freshToken(): Promise<string | null> {
+  const token = readToken();
+  if (!token) return null;
+  const exp = expiresAt(token);
+  if (exp !== null && exp - Date.now() < EXPIRY_MARGIN_MS) return tryRefresh();
+  return token;
+}
+
 async function tryRefresh(): Promise<string | null> {
   if (refreshInFlight) return refreshInFlight;
   refreshInFlight = (async () => {

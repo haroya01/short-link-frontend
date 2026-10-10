@@ -4332,6 +4332,8 @@
     "unblockedToast": "{username}さんのブロックを解除しました",
     "unblockFailed": "ブロックを解除できませんでした",
     "blockedAuthorNotice": "ブロック中のユーザーです。記事・コメント・ノートは表示されません。",
+    "authorUnavailable": "このユーザーの投稿は表示できません。",
+    "threadUnavailable": "このノートは表示できません。",
     "blockedUsersTitle": "ブロックしたユーザー",
     "blockedUsersHint": "この人たちの記事・コメント・ノートは表示されません。作者ページ・記事・コメントの⋯メニューからブロックできます。",
     "blockedUsersEmpty": "ブロックしたユーザーはいません。",

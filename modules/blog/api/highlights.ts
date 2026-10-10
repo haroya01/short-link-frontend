@@ -1,6 +1,6 @@
 import { request } from "@/lib/api/client";
-import type { PublicAuthor } from "./public-posts";
-import { collectionMocks } from "@/modules/blog/api/_mock-gates";
+import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
+import { blogMocks, collectionMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -70,9 +70,15 @@ let mockReplySeq = 7000;
 
 /** Public — every attributed highlight on a post (Medium-style social highlights). */
 export async function listHighlights(postId: number): Promise<HighlightView[]> {
-  if (USE_MOCKS) return mockHighlights.map((h) => ({ ...h, replyCount: mockReplies.get(h.id)?.length ?? 0 }));
+  if (USE_MOCKS) {
+    return [
+      ...(blogMocks?.mockSeededHighlights(postId, hasViewer()) ?? []),
+      ...mockHighlights.map((h) => ({ ...h, replyCount: mockReplies.get(h.id)?.length ?? 0 })),
+    ];
+  }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/highlights`, {
     cache: "no-store",
+    headers: await viewerHeaders(),
   });
   if (!res.ok) throw new Error(`Could not load highlights (${res.status})`);
   return (await res.json()) as HighlightView[];
@@ -117,9 +123,12 @@ export function deleteHighlight(id: number): Promise<void> {
 
 /** Public — the reply thread under a highlight (oldest first). */
 export async function listHighlightReplies(highlightId: number): Promise<HighlightReplyView[]> {
-  if (USE_MOCKS) return [...(mockReplies.get(highlightId) ?? [])];
+  if (USE_MOCKS) {
+    return [...(blogMocks?.mockSeededReplies(highlightId, hasViewer()) ?? []), ...(mockReplies.get(highlightId) ?? [])];
+  }
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/replies`, {
     cache: "no-store",
+    headers: await viewerHeaders(),
   });
   if (!res.ok) return [];
   return (await res.json()) as HighlightReplyView[];

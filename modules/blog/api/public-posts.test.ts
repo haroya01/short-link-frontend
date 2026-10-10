@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ fetchWithTimeout: vi.fn(), readToken: vi.fn() }));
 vi.mock("react", async (original) => ({ ...(await original<typeof import("react")>()), cache: <T>(fn: T) => fn }));
 vi.mock("@/lib/api/fetch-timeout", () => ({ fetchWithTimeout: mocks.fetchWithTimeout }));
-vi.mock("@/lib/api/client", () => ({ readToken: mocks.readToken }));
+vi.mock("@/lib/api/client", () => ({ readToken: mocks.readToken, freshToken: async () => mocks.readToken() }));
 
 const ok = () => new Response(JSON.stringify({ items: [], page: 0, size: 24, hasNext: false }), { status: 200 });
 

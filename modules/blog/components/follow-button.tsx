@@ -103,6 +103,7 @@ export function FollowButton({
   // A locked author (Mastodon's locked account) turns a follow into a request that waits on approval.
   const [requested, setRequested] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [blocksViewer, setBlocksViewer] = useState(false);
   const [confirm, confirmDialog] = useConfirm();
 
   // Until auth resolves we don't know if this is the viewer's own profile. Once `ready`, that's
@@ -111,7 +112,7 @@ export function FollowButton({
   // cache) waits for auth.
   const isSelf = ready && me?.username === username;
   const blocked = useBlockedNames().has(username);
-  const showButton = !blocked && (ready ? !isSelf : seedVisible === true);
+  const showButton = !blocked && !blocksViewer && (ready ? !isSelf : seedVisible === true);
 
   // Blocking ends the follow and any pending request on the server; mirror it so an unblock doesn't
   // bring back a stale 팔로잉 from the shared store or the session cache.
@@ -151,6 +152,7 @@ export function FollowButton({
         setNotifyNotes(s.notifyNotes ?? false);
         setRequested(s.requested ?? false);
         setLocked(s.locked ?? false);
+        setBlocksViewer(s.blocksViewer === true);
         // Hidden author: no count key in the response. Keep the button, drop the count text.
         if (s.hideFollowerCount || s.followerCount == null) {
           setShared({ following: s.following, count: initialFollowerCount, countHidden: true });

@@ -108,7 +108,6 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
     <AppProviders>
       <SidebarStateProvider>
         <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
-          {/* Both feed roots rest the header search open; other public pages keep the compact 🔍. */}
           <AppHeader
             showMenu={false}
             searchOpen={internalPath === "/" || internalPath === "/notes"}
