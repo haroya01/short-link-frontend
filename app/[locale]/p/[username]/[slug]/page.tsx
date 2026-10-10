@@ -8,25 +8,19 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
-import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
-import { LegacyHeadingHash, PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
+import { LegacyHeadingHash, PostToc } from "@/modules/blog/components/post-toc";
 import { PostDock } from "@/modules/blog/components/post-dock";
 import { PostAuthorCard } from "@/modules/blog/components/post-author-card";
 import { PostComments } from "@/modules/blog/components/comments";
-import { LikeButton } from "@/modules/blog/components/like-button";
-import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
-import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { AuthorGate, AuthorOnly } from "@/modules/blog/components/author-gate";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
-import { PostOwnerActions } from "../_components/post-owner-actions";
-import { PostReaderMenu } from "../_components/post-reader-menu";
-import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
+import { PostActionRow } from "../_components/post-action-row";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
 import { PostEdges } from "@/modules/blog/components/post-edges";
@@ -280,7 +274,7 @@ export default async function PublicPostPage({
       {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
           났는지의 출처. */}
       <article
-        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 max-sm:pb-[calc(var(--post-dock-h,0px)+3.5rem)] sm:py-20"
+        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 max-[1100px]:pb-[calc(var(--post-dock-h,0px)+3.5rem)] sm:pt-20 min-[1100px]:pb-20"
         lang={post.languageTag}
         data-bhv-post={post.id}
       >
@@ -349,22 +343,15 @@ export default async function PublicPostPage({
                   sourcePostId={post.id}
                 />
               </span>
-              {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
-                  reader can react without scrolling to the end. Phones get them in the post dock. */}
-              <span className="hidden sm:contents">
-                <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-                <BookmarkButton postId={post.id} />
-                <ConnectButton postId={post.id} postTitle={post.title} />
-                <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-              </span>
-              {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
-              <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
-              <PostReaderMenu
+              <PostActionRow
                 postId={post.id}
-                authorUsername={author.username}
                 postTitle={post.title}
                 postSlug={post.slug}
                 postUrl={postUrl}
+                likeCount={post.likeCount}
+                authorUsername={author.username}
+                locale={locale}
+                menuOnlyBelowWide
               />
             </div>
           </AuthorOnly>
@@ -431,14 +418,16 @@ export default async function PublicPostPage({
           </p>
         )}
 
-        {/* All post actions in one row after the body — like / bookmark / connect / quote / share. 신고 lives
-            in the header's ⋯ (PostReaderMenu), as on iOS. Phones use the post dock and the ⋯ instead. */}
-        <footer className="mt-8 hidden items-center gap-3 sm:flex" data-testid="post-actions">
-          <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-          <BookmarkButton postId={post.id} />
-          <ConnectButton postId={post.id} postTitle={post.title} />
-          <QuoteInNoteButton postId={post.id} title={post.title} slug={post.slug} authorUsername={author.username} />
-          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+        <footer className="mt-8 hidden min-[1100px]:block" data-testid="post-actions">
+          <PostActionRow
+            postId={post.id}
+            postTitle={post.title}
+            postSlug={post.slug}
+            postUrl={postUrl}
+            likeCount={post.likeCount}
+            authorUsername={author.username}
+            locale={locale}
+          />
         </footer>
 
         {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
@@ -493,7 +482,7 @@ export default async function PublicPostPage({
 
       {/* TOC pinned just right of the centered column. Fixed (not a grid gutter) so it shows from
           landscape-tablet width up (~1100px) without shrinking the 42rem reading column or breaking its
-          centering. Below that, the floating button → bottom sheet takes over. 불투명 종이 배경:
+          centering. Below that, the dock's 목차 → bottom sheet takes over. 불투명 종이 배경:
           full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
           겹침 자체를 제거. */}
       <AuthorOnly username={author.username}>
@@ -503,8 +492,6 @@ export default async function PublicPostPage({
           </aside>
         )}
 
-        {/* Portrait tablets (640–1099px) get the TOC as a floating button → bottom sheet; phones get it in the dock. */}
-        <PostTocMobile headings={tocHeadings} />
         <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
       </AuthorOnly>
       <LegacyHeadingHash headings={headings} />

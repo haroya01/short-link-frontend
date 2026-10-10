@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   unblockUser: vi.fn(),
   askToSignIn: vi.fn(),
   submitAbuseReport: vi.fn(),
+  deletePost: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
@@ -30,6 +31,8 @@ vi.mock("@/modules/notes/components/note-quote-dialog", () => ({
       : null,
 }));
 vi.mock("@/components/auth/login-prompt", () => ({ askToSignIn: mocks.askToSignIn }));
+vi.mock("@/modules/blog/api/posts", () => ({ deletePost: mocks.deletePost }));
+vi.mock("@/modules/blog/lib/author-href", () => ({ authorHref: () => "#author-home" }));
 vi.mock("@/modules/blog/api/follows", () => ({
   listBlockedUsers: mocks.listBlockedUsers,
   blockUser: mocks.blockUser,
@@ -133,31 +136,67 @@ describe("a reader's ⋯ on a post", () => {
       postTitle: "제네릭",
       postSlug: "generics",
       postUrl: "https://kazuki.kurl.me/generics",
+      locale: "ko",
     });
   };
   const item = (label: string) =>
     Array.from(host.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')).find((b) => b.textContent === label)!;
 
-  it("blocks the author and reports the post, with share and quote kept for phones", async () => {
+  it("blocks the author and reports the post, with share kept for widths where the dock takes the row", async () => {
     await render(menu);
     await act(async () => menuButton("notes.postMenu")!.click());
     expect(items()).toEqual(["share.label", "notes.quoteAction", "notes.blockMenu", "publicPost.report"]);
-    expect(item("share.label").className).toContain("sm:hidden");
-    expect(item("notes.quoteAction").className).toContain("sm:hidden");
-    expect(item("notes.blockMenu").className).not.toContain("sm:hidden");
+    expect(item("share.label").className).toContain("min-[1100px]:hidden");
+    expect(item("notes.quoteAction").className).not.toContain("hidden");
+    expect(item("notes.blockMenu").className).not.toContain("hidden");
     await act(async () => item("notes.blockMenu").click());
     expect(mocks.blockUser).toHaveBeenCalledWith("kazuki");
     await act(async () => menuButton("notes.postMenu")!.click());
     expect(items()).toEqual(["share.label", "notes.quoteAction", "notes.unblock", "publicPost.report"]);
   });
 
-  it("on my own post holds only share and quote, and only on phones", async () => {
+  it("on my own post leads with 수정 and 삭제, then share and quote, at every width", async () => {
     mocks.auth.me = { id: 4, username: "kazuki" };
     await render(menu);
     const trigger = menuButton("notes.postMenu")!;
-    expect(trigger.parentElement!.className).toContain("sm:hidden");
+    expect(trigger.parentElement!.className).not.toContain("hidden");
     await act(async () => trigger.click());
-    expect(items()).toEqual(["share.label", "notes.quoteAction"]);
+    expect(items()).toEqual(["publicPost.ownerEdit", "publicPost.ownerDelete", "share.label", "notes.quoteAction"]);
+    expect(host.querySelector<HTMLAnchorElement>('a[role="menuitem"]')!.getAttribute("href")).toMatch(/\/write\/16$/);
+    expect(host.querySelector("[data-owner-section]")!.textContent).toBe("publicPost.ownerEditpublicPost.ownerDelete");
+  });
+
+  it("deletes my post only after the confirm, then leaves for my home", async () => {
+    mocks.auth.me = { id: 4, username: "kazuki" };
+    mocks.confirm.mockResolvedValueOnce(false);
+    await render(menu);
+    await act(async () => menuButton("notes.postMenu")!.click());
+    await act(async () => item("publicPost.ownerDelete").click());
+    expect(mocks.confirm).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "publicPost.ownerDeleteConfirm", confirmLabel: "publicPost.ownerDelete", destructive: true }),
+    );
+    expect(mocks.deletePost).not.toHaveBeenCalled();
+
+    mocks.deletePost.mockResolvedValueOnce(undefined);
+    await act(async () => menuButton("notes.postMenu")!.click());
+    await act(async () => item("publicPost.ownerDelete").click());
+    expect(mocks.deletePost).toHaveBeenCalledWith(16);
+    expect(window.location.hash).toBe("#author-home");
+  });
+
+  it("says so when the delete fails, and stays on the post", async () => {
+    mocks.auth.me = { id: 4, username: "kazuki" };
+    mocks.deletePost.mockRejectedValueOnce(new Error("down"));
+    await render(menu);
+    await act(async () => menuButton("notes.postMenu")!.click());
+    await act(async () => item("publicPost.ownerDelete").click());
+    expect(mocks.toast).toHaveBeenCalledWith("publicPost.ownerDeleteError");
+  });
+
+  it("has no owner section on someone else's post", async () => {
+    await render(menu);
+    await act(async () => menuButton("notes.postMenu")!.click());
+    expect(host.querySelector("[data-owner-section]")).toBeNull();
   });
 
   it("shares through the system sheet, or copies the tagged link when there is none", async () => {

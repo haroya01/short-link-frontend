@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// mock-on 레인: 휴대폰(<640px)에선 글 동작(목차·엮기·좋아요·북마크)이 오른쪽 아래 떠 있는 독으로 가고,
-// 데스크톱은 헤더 줄을 그대로 쓴다.
+// mock-on 레인: 1100px 아래(휴대폰·세로 태블릿)에선 글 동작(목차·엮기·좋아요·북마크)이 오른쪽 아래 떠 있는
+// 독으로 가고, 1100px 이상은 헤더의 아이콘 줄을 쓴다.
 const POST = "/ko/p/dohyun/nextjs-14-app-router-blog";
 const PHONE = { width: 390, height: 844 };
 
@@ -11,7 +11,7 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await page.setViewportSize(PHONE);
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
-  await expect(dock(page).getByRole("button")).toHaveText(["", "", "", ""]);
+  await expect(dock(page).getByRole("button")).toHaveText(["", "", /^\d+$/, ""]);
   await expect(dock(page).getByRole("button", { name: "목차" })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: /컬렉션에 엮기$/ })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: /글 좋아요$/ })).toBeVisible();
@@ -106,7 +106,7 @@ test("독만큼 글 아래 여백이 있어 마지막 줄이 독에 가리지 �
     .toBeGreaterThanOrEqual(0);
 });
 
-test("휴대폰 헤더의 ⋯에 공유·노트로 인용이 있고, 데스크톱에선 글 끝 동작 줄에 있다", async ({ page }) => {
+test("휴대폰 헤더의 ⋯에 공유·노트로 인용이 있고, 데스크톱에선 공유가 아이콘 줄로 가고 인용은 ⋯에 남는다", async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto("/ko/p/haruka/hexagonal-too-much");
   const header = page.locator("article header").first();
@@ -121,18 +121,18 @@ test("휴대폰 헤더의 ⋯에 공유·노트로 인용이 있고, 데스크�
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.reload();
   await header.getByRole("button", { name: "글 메뉴", exact: true }).click({ timeout: 30_000 });
-  await expect(page.getByRole("menuitem")).toHaveText(["차단", "신고"]);
+  await expect(page.getByRole("menuitem")).toHaveText(["노트로 인용", "차단", "신고"]);
   const actions = page.getByTestId("post-actions");
-  await expect(actions.getByRole("button", { name: "노트로 인용" })).toBeVisible();
   await expect(actions.getByRole("button", { name: "공유" })).toBeVisible();
+  await expect(actions.getByRole("button", { name: "노트로 인용" })).toHaveCount(0);
 });
 
-test("내 글도 휴대폰에선 ⋯에서 공유·노트로 인용을 고른다", async ({ page }) => {
+test("내 글의 ⋯은 수정·삭제가 먼저이고, 휴대폰에선 공유·노트로 인용이 뒤따른다", async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto(POST);
   const header = page.locator("article header").first();
   await header.getByRole("button", { name: "글 메뉴", exact: true }).click({ timeout: 30_000 });
-  await expect(page.getByRole("menuitem")).toHaveText(["공유", "노트로 인용"]);
+  await expect(page.getByRole("menuitem")).toHaveText(["수정", "삭제", "공유", "노트로 인용"]);
 });
 
 test("휴대폰 글 끝은 iOS처럼 태그 → 다음 편 → 작가 카드 → 다음 읽을 글 → 댓글 순서다", async ({ page }) => {

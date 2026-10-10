@@ -89,9 +89,8 @@ test("a blog post opens the composer with the post quoted", async ({ page }) => 
 test("quoting from a post opens the composer over the post instead of leaving it", async ({ page }) => {
   await page.goto("/ko/p/dohyun/typescript-generics");
   const title = (await page.getByRole("heading", { level: 1 }).first().innerText({ timeout: 30_000 })).trim();
-  const quote = page.getByRole("button", { name: "노트로 인용" });
-  await quote.scrollIntoViewIfNeeded();
-  await quote.click();
+  await page.locator("article header").getByRole("button", { name: "글 메뉴", exact: true }).click();
+  await page.getByRole("menuitem", { name: "노트로 인용" }).click();
 
   const dialog = page.getByRole("dialog", { name: "노트로 인용" });
   await expect(dialog).toBeVisible();
