@@ -49,7 +49,7 @@ function ChromeNavLink(props: ComponentProps<typeof BlogChromeLink>) {
 
 /**
  * `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar.
- * `searchOpen` rests the header search field open (used on the blog feed home, the discovery hub).
+ * `searchOpen` rests the header search field open (used on both blog feed roots — posts and notes).
  * `slimMobile` hides the right-cluster controls on mobile — used on public surfaces where the bottom
  * tab bar carries search/account/switcher; the authoring workspace keeps the full header (no nav bar).
  * `sections` adds the 글 · 노트 switch beside the logo — public blog pages only; author pages already

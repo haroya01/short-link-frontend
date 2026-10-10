@@ -84,7 +84,7 @@
     "emptyTagTitle": "このトピックの記事はまだありません",
     "topicsIntro": "みんなが何について書いているかを見てみましょう。タグを選んで掘り下げても、下の最新記事から読み始めても。",
     "topicsRecent": "最新の記事",
-    "searchPlaceholder": "記事・タグ・作者を検索",
+    "searchPlaceholder": "記事・ノート・タグ・作者",
     "searchLabel": "検索",
     "searchClear": "検索をクリア",
     "searchResultsFor": "「{q}」の検索結果",

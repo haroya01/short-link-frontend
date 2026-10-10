@@ -52,6 +52,39 @@ test.describe("desktop", () => {
     expect(Math.round(boxes[1].y)).toBe(Math.round(boxes[0].y));
   });
 
+  test("the header search is the same open field on both feeds and leads to the same results", async ({ page }) => {
+    const fields = [];
+    for (const [path, surface] of [[BLOG, "blog"], [NOTES, "notes"]] as const) {
+      await page.goto(path);
+      await settled(page, surface);
+      const field = page.locator("header.vt-app-header").getByRole("searchbox", { name: "검색" });
+      await expect(field).toBeVisible();
+      await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))));
+      await page.waitForTimeout(300);
+      const box = (await field.boundingBox())!;
+      const placeholder = await field.getAttribute("placeholder");
+      const fits = await field.evaluate((el: HTMLInputElement) => {
+        const probe = el.cloneNode() as HTMLInputElement;
+        probe.value = el.placeholder;
+        probe.style.width = `${el.offsetWidth}px`;
+        el.after(probe);
+        const ok = probe.scrollWidth <= probe.clientWidth;
+        probe.remove();
+        return ok;
+      });
+      expect(fits, `${surface}: the placeholder fits the field`).toBe(true);
+      fields.push({ x: Math.round(box.x), y: Math.round(box.y), w: Math.round(box.width), h: Math.round(box.height), placeholder });
+    }
+    expect(fields[1]).toEqual(fields[0]);
+    expect(fields[0].placeholder).toContain("노트");
+
+    const field = page.locator("header.vt-app-header").getByRole("searchbox", { name: "검색" });
+    await field.fill("일상");
+    await field.press("Enter");
+    await page.waitForURL(/[?&]q=%EC%9D%BC%EC%83%81/, { timeout: 30_000 });
+    await expect(switcher(page, "blog").getByRole("navigation").getByRole("link")).toHaveText(["최신", "인기", "노트"]);
+  });
+
   test("each surface keeps its own sources under 더 보기", async ({ page }) => {
     await page.goto(BLOG);
     await settled(page, "blog");
