@@ -3,7 +3,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { Clipboard } from "lucide-react";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { Switch } from "@/components/ui/switch";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -160,8 +159,7 @@ function LinkForm({
           />
         </label>
         {showHint && (
-          <p id={hintId} data-clipboard-hint className="flex items-center gap-1 text-[12px] text-accent-700 dark:text-accent-400">
-            <Clipboard aria-hidden className="h-3 w-3" />
+          <p id={hintId} data-clipboard-hint className="text-[12px] text-accent-700 dark:text-accent-400">
             {t("fromClipboard")}
           </p>
         )}
