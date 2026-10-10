@@ -382,7 +382,7 @@ test("beside the feed, trending links show who shared them this week and open th
 
 test("a link page refuses to link out to anything but the web", async ({ page }) => {
   await page.goto("/ko/blog/notes/link?url=javascript%3Aalert(1)");
-  await expect(page.getByRole("heading", { name: "링크" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "링크", exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId("linked-notes-link")).toHaveCount(0);
   await expect(page.getByText("아직 이 링크를 실은 노트가 없어요")).toBeVisible();
 });
