@@ -592,7 +592,7 @@
     "linkSheet": {
       "title": "Insert link",
       "editTitle": "Edit link",
-      "kind": "Insert as",
+      "kind": "Choose how the link appears",
       "asLink": "Link",
       "asCard": "Card",
       "asVideo": "Video",
@@ -600,13 +600,17 @@
       "textPlaceholder": "Leave empty to show the address",
       "addressLabel": "Address",
       "fromClipboard": "From your clipboard",
-      "shorten": "Use a kurl short link",
-      "shortenFailed": "Couldn't make a short link",
+      "shorten": "Shorten with kurl",
+      "shortenFailed": "Couldn't shorten, so the original address was used",
       "insert": "Insert",
       "cancel": "Cancel",
       "actions": "Link",
       "open": "Open",
-      "edit": "Edit"
+      "edit": "Edit",
+      "shortenHint": "Inserts a shortened kurl link",
+      "update": "Save",
+      "previewLoading": "Loading preview…",
+      "previewFailed": "Couldn't load a preview"
     }
   },
   "savedLibrary": {

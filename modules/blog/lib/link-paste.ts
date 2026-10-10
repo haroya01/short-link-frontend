@@ -28,6 +28,12 @@ export function pastedUrl(text: string | null | undefined): string | null {
   }
 }
 
+export function normalizeAddress(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed || /^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+  return /^[^\s/.]+\.[^\s]+$/.test(trimmed) ? `https://${trimmed}` : trimmed;
+}
+
 export function isVideoUrl(url: string): boolean {
   return planEmbed(url)?.kind === "video";
 }

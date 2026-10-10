@@ -22,7 +22,7 @@ function make(content: string) {
     extensions: [
       StarterKit.configure({ link: { openOnClick: false } }),
       LinkCard,
-      LinkPasteChoice.configure({ labels: { group: "넣는 방식", link: "링크", card: "카드", video: "동영상" } }),
+      LinkPasteChoice.configure({ labels: { group: "링크 모양 고르기", link: "링크", card: "카드", video: "동영상" } }),
     ],
     content,
   });

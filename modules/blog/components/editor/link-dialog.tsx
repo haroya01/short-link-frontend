@@ -6,12 +6,13 @@ import { useTranslations } from "next-intl";
 import { Clipboard } from "lucide-react";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/toast";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useNarrowViewport } from "@/hooks/use-narrow-viewport";
 import { shortenUrl } from "@/lib/api/links";
 import { cn } from "@/lib/utils";
 import { LinkCardBody } from "@/modules/blog/components/editor/link-card-node";
-import { isVideoUrl, pastedUrl } from "@/modules/blog/lib/link-paste";
+import { isVideoUrl, normalizeAddress, pastedUrl } from "@/modules/blog/lib/link-paste";
 
 export type LinkDialogResult = { mode: "link" | "card"; text: string; href: string };
 
@@ -51,8 +52,9 @@ function LinkForm({
   const [fromClipboard, setFromClipboard] = useState<string | null>(null);
   const [shorten, setShorten] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const url = pastedUrl(href);
+  const { toast } = useToast();
+  const url = pastedUrl(normalizeAddress(href));
+  const [preview, setPreview] = useState<"loading" | "ready" | "failed">("loading");
   const video = url ? isVideoUrl(url) : false;
   const hintId = useId();
   const showHint = !!fromClipboard && href === fromClipboard;
@@ -78,9 +80,7 @@ function LinkForm({
       try {
         target = (await shortenUrl({ url })).shortUrl;
       } catch {
-        setBusy(false);
-        setError(t("shortenFailed"));
-        return;
+        toast(t("shortenFailed"), "error");
       }
     }
     onSubmit({ mode, text: text.trim(), href: target });
@@ -147,12 +147,9 @@ function LinkForm({
             autoComplete="off"
             autoFocus={!request.text || mode === "card"}
             value={href}
-            onChange={(e) => {
-              setHref(e.target.value);
-              setError(null);
-            }}
+            onChange={(e) => setHref(e.target.value)}
             onKeyDown={onEnter}
-            placeholder="https://"
+            placeholder="https://…"
             aria-describedby={showHint ? hintId : undefined}
             className={field}
           />
@@ -165,20 +162,25 @@ function LinkForm({
         )}
       </div>
       {mode === "card" && url && (
-        <div data-link-preview className="max-h-56 overflow-hidden">
-          <LinkCardBody url={url} />
+        <div className="flex flex-col gap-1.5">
+          <div data-link-preview className="max-h-56 overflow-hidden">
+            <LinkCardBody url={url} onPreview={setPreview} />
+          </div>
+          {preview !== "ready" && (
+            <p role="status" className="text-[12px] text-slate-500 dark:text-slate-400">
+              {preview === "loading" ? t("previewLoading") : t("previewFailed")}
+            </p>
+          )}
         </div>
       )}
       {mode === "link" && (
         <label className="flex items-center justify-between gap-3 text-[13px] text-slate-700 dark:text-slate-200">
-          {t("shorten")}
+          <span className="flex flex-col">
+            {t("shorten")}
+            <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("shortenHint")}</span>
+          </span>
           <Switch checked={shorten} onCheckedChange={setShorten} aria-label={t("shorten")} />
         </label>
-      )}
-      {error && (
-        <p role="alert" className="text-[12px] text-red-600 dark:text-red-400">
-          {error}
-        </p>
       )}
       <div className="flex items-center justify-end gap-2">
         <button
@@ -193,7 +195,7 @@ function LinkForm({
           disabled={!url || busy}
           className="rounded-lg bg-accent-700 px-4 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
         >
-          {t("insert")}
+          {request.editing ? t("update") : t("insert")}
         </button>
       </div>
     </form>

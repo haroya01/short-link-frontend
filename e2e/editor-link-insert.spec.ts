@@ -47,7 +47,7 @@ test.describe("desktop", () => {
     await paste(page, "https://kurl.me/about");
     const link = body(page).getByRole("link", { name: "https://kurl.me/about" });
     await expect(link).toBeVisible();
-    const choice = body(page).getByRole("group", { name: "넣는 방식" });
+    const choice = body(page).getByRole("group", { name: "링크 모양 고르기" });
     await expect(choice.getByRole("button")).toHaveText(["링크", "카드"]);
     await expect(choice.getByRole("button", { name: "링크" })).toHaveAttribute("aria-pressed", "true");
     await choice.getByRole("button", { name: "카드" }).click();
@@ -59,7 +59,7 @@ test.describe("desktop", () => {
   test("typing on after the pasted URL dismisses the choice and keeps the link", async ({ page }) => {
     await openDraft(page);
     await paste(page, "https://youtu.be/dQw4w9WgXcQ");
-    const choice = body(page).getByRole("group", { name: "넣는 방식" });
+    const choice = body(page).getByRole("group", { name: "링크 모양 고르기" });
     await expect(choice.getByRole("button")).toHaveText(["링크", "동영상"]);
     await page.keyboard.type(" 보세요");
     await expect(choice).toHaveCount(0);
@@ -100,7 +100,7 @@ test.describe("desktop", () => {
     await page.getByTestId("editor-toolbar").getByRole("button", { name: "링크 카드·동영상" }).click();
     const dialog = page.getByRole("dialog", { name: "링크 넣기" });
     await expect(dialog.getByRole("radio", { name: "카드" })).toHaveAttribute("aria-checked", "true");
-    await dialog.getByLabel("주소", { exact: true }).fill("https://example.com/post");
+    await dialog.getByLabel("주소", { exact: true }).fill("example.com/post");
     await expect(dialog.locator("[data-link-preview]")).toContainText("example.com");
     await dialog.getByRole("button", { name: "넣기" }).click();
     await expect(body(page).locator('[data-link-card][data-url="https://example.com/post"]')).toBeVisible();
@@ -117,7 +117,7 @@ test.describe("desktop", () => {
     const dialog = page.getByRole("dialog", { name: "링크 고치기" });
     await expect(dialog.getByLabel("주소", { exact: true })).toHaveValue("https://kurl.me/docs");
     await dialog.getByLabel("표시 텍스트", { exact: true }).fill("문서");
-    await dialog.getByRole("button", { name: "넣기" }).click();
+    await dialog.getByRole("button", { name: "저장" }).click();
     const edited = body(page).getByRole("link", { name: "문서", exact: true });
     await expect(edited).toHaveAttribute("href", "https://kurl.me/docs");
     await edited.click();

@@ -1828,7 +1828,7 @@ test("a bare page URL pasted on an empty line goes in as a link, and picking Car
   await openEditor(page);
   await pasteInto(page, { text: "https://example.com/an-article" });
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toBeVisible();
-  await page.locator(".tiptap").getByRole("group", { name: "Insert as" }).getByRole("button", { name: "Card" }).click();
+  await page.locator(".tiptap").getByRole("group", { name: "Choose how the link appears" }).getByRole("button", { name: "Card" }).click();
   await expect(page.locator(".tiptap [data-link-card]")).toBeVisible({ timeout: 10_000 });
   const blocks = await save(page, captured);
   const embed = blocks.find((b) => b.type === "EMBED");
@@ -1901,14 +1901,36 @@ test("the link dialog's kurl short link switch shortens the address through kurl
   const dialog = page.getByRole("dialog", { name: "Insert link" });
   await dialog.getByLabel("Display text", { exact: true }).fill("the docs");
   await dialog.getByLabel("Address", { exact: true }).fill("https://example.com/an-article");
-  await expect(dialog.getByRole("switch", { name: "Use a kurl short link" })).toHaveAttribute("aria-checked", "false");
-  await dialog.getByRole("switch", { name: "Use a kurl short link" }).click();
+  await expect(dialog.getByRole("switch", { name: "Shorten with kurl" })).toHaveAttribute("aria-checked", "false");
+  await dialog.getByRole("switch", { name: "Shorten with kurl" }).click();
   await dialog.getByRole("button", { name: "Insert", exact: true }).click();
 
   await expect(page.locator(`.tiptap a[href="${SHORT_URL}"]`)).toHaveText("the docs");
   expect(seen.url, "the original address went to the shortener").toBe("https://example.com/an-article");
   const blocks = await save(page, captured);
   expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain(`Read [the docs](${SHORT_URL})`);
+});
+
+test("when kurl can't shorten the address, the original goes in and a toast says so", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route("**/api/v1/links", (route) =>
+    route.request().method() === "POST"
+      ? route.fulfill({ status: 500, json: { title: "boom", detail: "shortener down" } })
+      : route.fulfill({ json: [] }),
+  );
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("Read ");
+  await page.getByTestId("editor-toolbar").getByRole("button", { name: "Link", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Insert link" });
+  await dialog.getByLabel("Display text", { exact: true }).fill("the docs");
+  await dialog.getByLabel("Address", { exact: true }).fill("https://example.com/an-article");
+  await dialog.getByRole("switch", { name: "Shorten with kurl" }).click();
+  await dialog.getByRole("button", { name: "Insert", exact: true }).click();
+
+  await expect(page.getByText("Couldn't shorten, so the original address was used")).toBeVisible();
+  await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("the docs");
 });
 
 // NOTE: the ⋮⋮ block-gutter menu (Turn into · Duplicate · Delete) and drag-to-reorder are NOT

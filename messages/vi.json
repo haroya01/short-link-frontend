@@ -592,7 +592,7 @@
     "linkSheet": {
       "title": "Chèn liên kết",
       "editTitle": "Sửa liên kết",
-      "kind": "Chèn dưới dạng",
+      "kind": "Chọn cách hiển thị liên kết",
       "asLink": "Liên kết",
       "asCard": "Thẻ",
       "asVideo": "Video",
@@ -600,13 +600,17 @@
       "textPlaceholder": "Để trống để hiện địa chỉ",
       "addressLabel": "Địa chỉ",
       "fromClipboard": "Lấy từ bộ nhớ tạm",
-      "shorten": "Dùng liên kết rút gọn kurl",
-      "shortenFailed": "Không tạo được liên kết rút gọn",
+      "shorten": "Rút gọn bằng kurl",
+      "shortenFailed": "Không rút gọn được nên đã chèn địa chỉ gốc",
       "insert": "Chèn",
       "cancel": "Hủy",
       "actions": "Liên kết",
       "open": "Mở",
-      "edit": "Sửa"
+      "edit": "Sửa",
+      "shortenHint": "Chèn liên kết kurl đã rút gọn",
+      "update": "Lưu",
+      "previewLoading": "Đang tải bản xem trước…",
+      "previewFailed": "Không tải được bản xem trước"
     }
   },
   "savedLibrary": {

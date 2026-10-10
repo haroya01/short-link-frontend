@@ -3,7 +3,7 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
@@ -145,7 +145,7 @@ function NoteCardView(props: NodeViewProps & { noteId: number }) {
   );
 }
 
-export function LinkCardBody({ url }: { url: string }) {
+export function LinkCardBody({ url, onPreview }: { url: string; onPreview?: (state: "loading" | "ready" | "failed") => void }) {
   const t = useTranslations("postEditor.blockMenu");
   const [data, setData] = useState<LinkPreview | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -155,14 +155,25 @@ export function LinkCardBody({ url }: { url: string }) {
   const plan = planEmbed(url);
   const isMedia = plan?.kind === "video" || plan?.kind === "map";
 
+  const onPreviewRef = useRef(onPreview);
+  onPreviewRef.current = onPreview;
+
   useEffect(() => {
-    if (isMedia) return; // video/map render directly — no OG-preview fetch needed
+    if (isMedia) {
+      onPreviewRef.current?.("ready");
+      return; // video/map render directly — no OG-preview fetch needed
+    }
     let alive = true;
     setLoaded(false);
+    onPreviewRef.current?.("loading");
     getLinkPreview(url)
       .then((r) => {
-        if (alive) setData(r.ok ? r.data : null);
+        if (!alive) return;
+        const preview = r.ok ? r.data : null;
+        setData(preview);
+        onPreviewRef.current?.(preview && (preview.title || preview.image) ? "ready" : "failed");
       })
+      .catch(() => alive && onPreviewRef.current?.("failed"))
       .finally(() => {
         if (alive) setLoaded(true);
       });

@@ -592,21 +592,25 @@
     "linkSheet": {
       "title": "リンクを挿入",
       "editTitle": "リンクを編集",
-      "kind": "挿入の形式",
+      "kind": "リンクの表示を選ぶ",
       "asLink": "リンク",
       "asCard": "カード",
       "asVideo": "動画",
       "textLabel": "表示テキスト",
-      "textPlaceholder": "空欄ならURLをそのまま表示します",
-      "addressLabel": "URL",
-      "fromClipboard": "クリップボードから貼り付けました",
-      "shorten": "kurlの短縮URLにする",
-      "shortenFailed": "短縮URLを作成できませんでした",
+      "textPlaceholder": "空欄ならアドレスを表示します",
+      "addressLabel": "アドレス",
+      "fromClipboard": "クリップボードから取得しました",
+      "shorten": "kurl 短縮URLにする",
+      "shortenFailed": "短縮できなかったため、元のアドレスで挿入しました",
       "insert": "挿入",
       "cancel": "キャンセル",
       "actions": "リンク",
       "open": "開く",
-      "edit": "編集"
+      "edit": "編集",
+      "shortenHint": "kurl リンクに短縮して挿入します",
+      "update": "保存",
+      "previewLoading": "プレビューを読み込み中…",
+      "previewFailed": "プレビューを読み込めませんでした"
     }
   },
   "savedLibrary": {

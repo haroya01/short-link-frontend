@@ -592,21 +592,25 @@
     "linkSheet": {
       "title": "링크 넣기",
       "editTitle": "링크 고치기",
-      "kind": "넣는 방식",
+      "kind": "링크 모양 고르기",
       "asLink": "링크",
       "asCard": "카드",
       "asVideo": "동영상",
       "textLabel": "표시 텍스트",
-      "textPlaceholder": "비우면 주소가 그대로 보여요",
+      "textPlaceholder": "비우면 주소가 보여요",
       "addressLabel": "주소",
       "fromClipboard": "클립보드에서 가져왔어요",
       "shorten": "kurl 단축 주소로",
-      "shortenFailed": "단축 주소를 만들지 못했어요",
+      "shortenFailed": "단축하지 못해 원래 주소로 넣었어요",
       "insert": "넣기",
       "cancel": "취소",
       "actions": "링크",
       "open": "열기",
-      "edit": "고치기"
+      "edit": "고치기",
+      "shortenHint": "kurl 링크로 줄여 넣어요",
+      "update": "저장",
+      "previewLoading": "미리보기를 불러오는 중…",
+      "previewFailed": "미리보기를 불러오지 못했어요"
     }
   },
   "savedLibrary": {

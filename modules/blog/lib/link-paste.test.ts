@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pastedUrl, planPaste } from "./link-paste";
+import { normalizeAddress, pastedUrl, planPaste } from "./link-paste";
 
 const spot = (over: Partial<{ selection: boolean; emptyLine: boolean; code: boolean }> = {}) => ({
   selection: false,
@@ -52,5 +52,25 @@ describe("planPaste", () => {
   it("leaves code and non-URL text alone", () => {
     expect(planPaste("https://kurl.me", spot({ code: true, emptyLine: true }))).toEqual({ kind: "default" });
     expect(planPaste("hello", spot({ emptyLine: true }))).toEqual({ kind: "default" });
+  });
+});
+
+describe("normalizeAddress", () => {
+  it("adds https:// to a typed address that has no scheme", () => {
+    expect(normalizeAddress("kurl.me/about")).toBe("https://kurl.me/about");
+    expect(normalizeAddress("  www.example.com ")).toBe("https://www.example.com");
+  });
+
+  it("leaves an address with a scheme, and text that isn't an address, as typed", () => {
+    expect(normalizeAddress("http://example.com")).toBe("http://example.com");
+    expect(normalizeAddress("mailto:a@b.c")).toBe("mailto:a@b.c");
+    expect(normalizeAddress("not an address")).toBe("not an address");
+    expect(normalizeAddress("example")).toBe("example");
+    expect(normalizeAddress("")).toBe("");
+  });
+
+  it("feeds the same validation as paste, so a normalized address is a usable URL", () => {
+    expect(pastedUrl(normalizeAddress("example.com/post"))).toBe("https://example.com/post");
+    expect(pastedUrl(normalizeAddress("mailto:a@b.c"))).toBeNull();
   });
 });

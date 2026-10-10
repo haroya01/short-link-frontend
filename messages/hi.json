@@ -592,7 +592,7 @@
     "linkSheet": {
       "title": "लिंक जोड़ें",
       "editTitle": "लिंक बदलें",
-      "kind": "किस रूप में",
+      "kind": "लिंक कैसे दिखे, चुनें",
       "asLink": "लिंक",
       "asCard": "कार्ड",
       "asVideo": "वीडियो",
@@ -600,13 +600,17 @@
       "textPlaceholder": "खाली छोड़ें तो पता दिखेगा",
       "addressLabel": "पता",
       "fromClipboard": "क्लिपबोर्ड से लिया",
-      "shorten": "kurl छोटा लिंक बनाएँ",
-      "shortenFailed": "छोटा लिंक नहीं बन सका",
+      "shorten": "kurl से छोटा करें",
+      "shortenFailed": "छोटा नहीं हो सका, इसलिए मूल पता जोड़ा गया",
       "insert": "जोड़ें",
       "cancel": "रद्द करें",
       "actions": "लिंक",
       "open": "खोलें",
-      "edit": "बदलें"
+      "edit": "बदलें",
+      "shortenHint": "छोटा kurl लिंक जोड़ता है",
+      "update": "सहेजें",
+      "previewLoading": "प्रीव्यू लोड हो रहा है…",
+      "previewFailed": "प्रीव्यू लोड नहीं हो सका"
     }
   },
   "savedLibrary": {
