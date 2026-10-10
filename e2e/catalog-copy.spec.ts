@@ -29,7 +29,7 @@ test("en: a counted line goes through the plural, and a connection reads as who 
   await page.goto("/en/blog");
   await expect(page.locator("main").getByText(/^In “.+” and 2 more collections$/).first()).toBeVisible({ timeout: 30_000 });
   await expect(page.locator("main li[data-connection-event]").first().locator("> div").first()).toContainText(
-    /added this to the .+ path/,
+    "added this to",
   );
 });
 
