@@ -875,7 +875,8 @@
     "DUPLICATE_REPORT": "이미 신고한 대상이에요.",
     "SUBJECT_NOT_FOUND": "대상을 찾을 수 없어요.",
     "SUSPEND_REQUIRES_EXPIRY": "정지하려면 만료일이 필요해요.",
-    "toggleFailed": "반영하지 못했어요. 잠시 후 다시 시도해 주세요."
+    "toggleFailed": "반영하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    "likeFailed": "좋아요를 반영하지 못했어요"
   },
   "cookieConsent": {
     "ariaLabel": "쿠키 안내",

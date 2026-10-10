@@ -10,6 +10,7 @@ import { askToSignIn } from "@/components/auth/login-prompt";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
+import { useLikeFailed } from "@/hooks/use-like-failed";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConversationName } from "@/modules/blog/components/conversation-row";
@@ -92,6 +93,7 @@ export function NoteCard({
   const { authenticated, me } = useAuth();
   const [confirm, confirmDialog] = useConfirm();
   const { toast } = useToast();
+  const likeFailed = useLikeFailed();
   const mine = me?.id === note.author.id;
   const [editing, setEditing] = useState(false);
   const [revealed, setRevealed] = useState(false);
@@ -170,9 +172,10 @@ export function NoteCard({
     try {
       const status = await setNoteLike(note.id, next);
       setLikeCount(status.likeCount);
-    } catch {
+    } catch (error) {
       setLiked(!next);
       setLikeCount(previous);
+      likeFailed(error);
     }
   }
 

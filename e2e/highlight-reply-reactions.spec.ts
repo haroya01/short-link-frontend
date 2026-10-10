@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // mock-on 레인. 하이라이트 4001 에는 haruka 의 답글(좋아요 2)과 rin 의 답글이 있다. 목 독자 dohyun 은
-// rin 을 차단해 둬서 로그인하면 rin 의 답글이 빠진다. kurl:mock-fail:highlight-reply-like 가 있는 동안
+// rin 을 차단해 둬서 로그인하면 rin 의 답글이 빠진다. kurl:mock-fail:like 가 있는 동안
 // 답글 좋아요는 실패한다.
 test.use({ viewport: { width: 1280, height: 900 } });
 
@@ -24,7 +24,7 @@ test("하이라이트 답글의 좋아요는 댓글처럼 수와 함께 오르�
 });
 
 test("좋아요가 서버에 닿지 못하면 하트와 수가 원래대로 돌아온다", async ({ page }) => {
-  await page.addInitScript(() => window.localStorage.setItem("kurl:mock-fail:highlight-reply-like", "1"));
+  await page.addInitScript(() => window.localStorage.setItem("kurl:mock-fail:like", "1"));
   await page.goto(HL_THREAD);
   const like = harukaRow(page).getByRole("button", { name: "좋아요" });
   await expect(like).toHaveText("2", { timeout: 20_000 });

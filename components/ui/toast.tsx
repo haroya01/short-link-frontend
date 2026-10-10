@@ -98,7 +98,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {/* bottom offset is variable-driven so toasts clear the mobile bottom tab bar + cookie banner
           (see --toast-bottom in globals.css); sm:bottom-6 restores the desktop resting position where
           the tab bar is hidden. */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-[var(--toast-bottom)] z-[60] flex flex-col items-center gap-2 px-4 sm:bottom-6">
+      <div className="pointer-events-none fixed inset-x-0 bottom-[var(--toast-bottom)] z-[80] flex flex-col items-center gap-2 px-4 sm:bottom-6">
         {toasts.map((t) => (
           <ToastItem
             key={t.id}

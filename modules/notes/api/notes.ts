@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { mockFails } from "@/lib/api/mock-fail";
 import { stripImageMetadata } from "@/lib/image-resize";
 import {
   fetchPublic,
@@ -716,7 +717,10 @@ export function deleteNote(id: number): Promise<void> {
 }
 
 export function setNoteLike(id: number, on: boolean): Promise<{ liked: boolean; likeCount: number }> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockLike(id, on));
+  if (noteMocks) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
+    return Promise.resolve(noteMocks.mockLike(id, on));
+  }
   return request(`/api/v1/notes/${id}/like`, { method: on ? "PUT" : "DELETE" });
 }
 

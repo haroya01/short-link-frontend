@@ -193,7 +193,7 @@ export function deleteHighlightReply(id: number): Promise<void> {
 /** Authenticated — like a reply; liking twice counts once. */
 export function likeHighlightReply(id: number): Promise<HighlightReplyLikeStatus> {
   if (USE_MOCKS) {
-    if (mockFails("highlight-reply-like")) return Promise.reject(new Error("highlight reply like 500"));
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
     return Promise.resolve(mockReplyLike(id, true));
   }
   return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "POST" });
@@ -202,7 +202,7 @@ export function likeHighlightReply(id: number): Promise<HighlightReplyLikeStatus
 /** Authenticated — take the viewer's like off a reply. */
 export function unlikeHighlightReply(id: number): Promise<HighlightReplyLikeStatus> {
   if (USE_MOCKS) {
-    if (mockFails("highlight-reply-like")) return Promise.reject(new Error("highlight reply like 500"));
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
     return Promise.resolve(mockReplyLike(id, false));
   }
   return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "DELETE" });

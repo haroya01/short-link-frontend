@@ -868,7 +868,8 @@
     "DUPLICATE_REPORT": "You've already reported this.",
     "SUBJECT_NOT_FOUND": "The reported item no longer exists.",
     "SUSPEND_REQUIRES_EXPIRY": "A suspension needs an expiry date.",
-    "toggleFailed": "Couldn't save that. Please try again in a moment."
+    "toggleFailed": "Couldn't save that. Please try again in a moment.",
+    "likeFailed": "Couldn't save your like"
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
