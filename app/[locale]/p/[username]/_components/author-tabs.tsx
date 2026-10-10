@@ -5,13 +5,18 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 
-export type AuthorTab = { key: string; href: string; label: string; private?: boolean };
+export type AuthorTab = { key: string; href: string; label: string; private?: boolean; empty?: boolean };
 
 /** Which tab the current path is on. The bar lives in the persistent layout (mounted once), so the
  *  active tab is derived from the live pathname — it updates on a client tab switch without a remount. */
-function activeKeyForPath(pathname: string): string {
+export function activeKeyForPath(pathname: string): string {
   const seg = pathname.replace(/\/+$/, "").split("/").pop() ?? "";
-  return ["notes", "reposts", "series", "collections", "about"].includes(seg) ? seg : "posts";
+  return ["notes", "replies", "media", "reposts", "series", "collections", "about"].includes(seg) ? seg : "posts";
+}
+
+/** Tabs this viewer sees: private ones only for the owner, and an empty one only while it is open. */
+export function visibleAuthorTabs(tabs: AuthorTab[], activeKey: string, isOwner: boolean): AuthorTab[] {
+  return tabs.filter((t) => (!t.private || isOwner) && (!t.empty || t.key === activeKey));
 }
 
 // Tab horizontal padding (px-4 = 16px); the underline spans the label, inset past the padding.
@@ -43,7 +48,7 @@ export function AuthorTabs({
   const isOwner = me?.username === username;
   // Private tabs (좋아요 / 북마크) only on your own profile. They're appended in order, so the visible
   // index doubles as the tab-direction index for both owner and visitor.
-  const visible = tabs.filter((t) => !t.private || isOwner);
+  const visible = visibleAuthorTabs(tabs, activeKey, isOwner);
   const activeIndex = Math.max(0, visible.findIndex((t) => t.key === activeKey));
   const navRef = useRef<HTMLElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);

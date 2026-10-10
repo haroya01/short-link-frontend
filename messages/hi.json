@@ -780,6 +780,8 @@
     "activitySince": "{date} से",
     "reportFailed": "रिपोर्ट नहीं भेजी जा सकी। कृपया फिर से कोशिश करें।",
     "tabNotes": "नोट्स",
+    "tabReplies": "जवाब",
+    "tabMedia": "मीडिया",
     "tabReposts": "रीपोस्ट",
     "viewAvatar": "प्रोफ़ाइल फ़ोटो देखें",
     "requested": "अनुरोध भेजा",
@@ -4519,7 +4521,16 @@
     "suggestionsPopular": "इन दिनों लोकप्रिय",
     "suggestionsDismiss": "{name} का सुझाव न दें",
     "threadMore": "इस थ्रेड में {count} और",
-    "threadPosition": "थ्रेड भाग {position}"
+    "threadPosition": "थ्रेड भाग {position}",
+    "replyingToAuthor": "@{username} को जवाब",
+    "replyParentGone": "मूल पोस्ट उपलब्ध नहीं है",
+    "emptyReplies": "अभी कोई जवाब नहीं",
+    "emptyMedia": "अभी कोई फ़ोटो नहीं",
+    "mediaNoAlt": "फ़ोटो",
+    "mediaCount": "{count} फ़ोटो",
+    "mediaSensitive": "संवेदनशील सामग्री",
+    "profileRepliesTitle": "जवाब · @{username}",
+    "profileMediaTitle": "मीडिया · @{username}"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"

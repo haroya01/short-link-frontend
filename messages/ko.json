@@ -780,6 +780,8 @@
     "activitySince": "{date}부터",
     "reportFailed": "신고를 보내지 못했어요. 다시 시도해 주세요.",
     "tabNotes": "노트",
+    "tabReplies": "답글",
+    "tabMedia": "미디어",
     "tabReposts": "리포스트",
     "viewAvatar": "프로필 사진 크게 보기",
     "requested": "요청함",
@@ -4519,7 +4521,16 @@
     "suggestionsPopular": "요즘 많이 팔로우해요",
     "suggestionsDismiss": "{name} 추천 안 보기",
     "threadMore": "이어지는 글 {count}개 더",
-    "threadPosition": "이어 쓴 노트 {position}"
+    "threadPosition": "이어 쓴 노트 {position}",
+    "replyingToAuthor": "@{username} 님에게 답글",
+    "replyParentGone": "원래 글을 볼 수 없어요",
+    "emptyReplies": "아직 단 답글이 없어요",
+    "emptyMedia": "아직 올린 사진이 없어요",
+    "mediaNoAlt": "사진",
+    "mediaCount": "사진 {count}장",
+    "mediaSensitive": "민감한 내용",
+    "profileRepliesTitle": "답글 · @{username}",
+    "profileMediaTitle": "미디어 · @{username}"
   },
   "mentions": {
     "suggestions": "멘션할 사람"
