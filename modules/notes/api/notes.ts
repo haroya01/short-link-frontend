@@ -151,6 +151,9 @@ export interface NoteThread {
   continuation?: Note[];
   /** The note author's series this note sits in, counted across its posts and notes. */
   series?: NoteSeriesNav | null;
+  hiddenReplyCount?: number;
+  /** The reader may hide or remove others' replies here; absent from servers that predate it. */
+  viewerCanModerate?: boolean;
 }
 
 export interface NoteSeriesNav {

@@ -40,22 +40,9 @@ export function NoteThreadView({
   const [deleted, setDeleted] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
-  const [hiddenReplies, setHiddenReplies] = useState<Note[]>([]);
+  const [hiddenReplies, setHiddenReplies] = useState<Note[] | null>(null);
   const [showingHidden, setShowingHidden] = useState(false);
   const { toast } = useToast();
-
-  const replyControls = initial.note.replyPolicy !== undefined;
-
-  useEffect(() => {
-    if (!ready || !replyControls) return;
-    let live = true;
-    listHiddenReplies(initial.note.id)
-      .then((notes) => live && setHiddenReplies(notes))
-      .catch(() => {});
-    return () => {
-      live = false;
-    };
-  }, [ready, authenticated, initial.note.id, replyControls]);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -78,7 +65,28 @@ export function NoteThreadView({
       : thread.parent && thread.parent.inReplyToId === null
         ? thread.parent.author.id
         : null;
-  const moderates = replyControls && rootAuthorId !== null && rootAuthorId === me?.id;
+  const moderates =
+    thread.viewerCanModerate ??
+    (thread.note.replyPolicy !== undefined && rootAuthorId !== null && rootAuthorId === me?.id);
+  const hiddenCount = thread.hiddenReplyCount ?? 0;
+  const countHidden = (current: NoteThread, change: number) =>
+    current.hiddenReplyCount === undefined ? undefined : Math.max(0, current.hiddenReplyCount + change);
+
+  async function toggleHiddenReplies() {
+    if (showingHidden) {
+      setShowingHidden(false);
+      return;
+    }
+    if (hiddenReplies === null) {
+      try {
+        setHiddenReplies(await listHiddenReplies(thread.note.id));
+      } catch {
+        toast(t("hiddenRepliesFailed"), "error");
+        return;
+      }
+    }
+    setShowingHidden(true);
+  }
 
   const byTime = (a: Note, b: Note) => a.createdAt.localeCompare(b.createdAt);
 
@@ -96,9 +104,14 @@ export function NoteThreadView({
       replies: hidden
         ? current.replies.filter((r) => r.id !== reply.id)
         : [...current.replies, moved].sort(byTime),
+      hiddenReplyCount: countHidden(current, hidden ? 1 : -1),
     }));
     setHiddenReplies((current) =>
-      hidden ? [...current, moved].sort(byTime) : current.filter((r) => r.id !== reply.id),
+      current === null
+        ? null
+        : hidden
+          ? [...current, moved].sort(byTime)
+          : current.filter((r) => r.id !== reply.id),
     );
     toast(t(hidden ? "replyHiddenToast" : "replyUnhiddenToast"));
   }
@@ -117,8 +130,9 @@ export function NoteThreadView({
         replyCount: reply.hidden ? current.note.replyCount : Math.max(0, current.note.replyCount - 1),
       },
       replies: current.replies.filter((r) => r.id !== reply.id),
+      hiddenReplyCount: reply.hidden ? countHidden(current, -1) : current.hiddenReplyCount,
     }));
-    setHiddenReplies((current) => current.filter((r) => r.id !== reply.id));
+    setHiddenReplies((current) => current && current.filter((r) => r.id !== reply.id));
     toast(t("replyRemovedToast"));
   }
 
@@ -253,30 +267,40 @@ export function NoteThreadView({
             })}
           </div>
         )}
-        {hiddenReplies.length > 0 && (
+        {hiddenCount > 0 && (
           <div className="border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               aria-expanded={showingHidden}
-              onClick={() => setShowingHidden((v) => !v)}
+              onClick={() => void toggleHiddenReplies()}
               className="focus-ring w-full rounded-surface py-3 text-left text-[14px] font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             >
-              {showingHidden ? t("hiddenRepliesCollapse") : t("hiddenRepliesShow", { count: hiddenReplies.length })}
+              {showingHidden ? t("hiddenRepliesCollapse") : t("hiddenRepliesShow", { count: hiddenCount })}
             </button>
-            {showingHidden && (
-              <div data-testid="hidden-replies" className="divide-y divide-slate-100 dark:divide-slate-800">
+            {showingHidden && hiddenReplies && (
+              <section
+                data-testid="hidden-replies"
+                aria-labelledby="hidden-replies-title"
+                className="divide-y divide-slate-100 dark:divide-slate-800"
+              >
+                <h3 id="hidden-replies-title" className="pb-2 text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+                  {t("hiddenRepliesTitle")}
+                </h3>
                 {hiddenReplies.map((reply) => (
                   <NoteCard
                     key={reply.id}
                     note={reply}
                     onChange={(next) =>
-                      setHiddenReplies((current) => current.map((r) => (r.id === next.id ? next : r)))
+                      setHiddenReplies((current) => current && current.map((r) => (r.id === next.id ? next : r)))
                     }
-                    onDelete={(id) => setHiddenReplies((current) => current.filter((r) => r.id !== id))}
+                    onDelete={(id) => {
+                      setHiddenReplies((current) => current && current.filter((r) => r.id !== id));
+                      setThread((current) => ({ ...current, hiddenReplyCount: countHidden(current, -1) }));
+                    }}
                     replyModeration={moderationFor(reply)}
                   />
                 ))}
-              </div>
+              </section>
             )}
           </div>
         )}
