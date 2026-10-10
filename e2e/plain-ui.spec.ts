@@ -27,3 +27,10 @@ test("the topics page says what it holds instead of inviting a browse", async ({
   await expect(page.getByText("kurl log 글에 붙은 주제와 최근 글이에요.", { exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(page.locator("main")).not.toContainText("둘러보세요");
 });
+
+test("서재 names its sections without a grey line restating them", async ({ page }) => {
+  await page.goto("/ko/blog/curation");
+  for (const name of ["좋아요한 글", "내 댓글", "팔로우한 주제"]) {
+    await expect(page.getByRole("button", { name, exact: true })).toBeVisible({ timeout: 30_000 });
+  }
+});
