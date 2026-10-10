@@ -60,7 +60,7 @@ const classesIn = (el: Element) => [el, ...el.querySelectorAll("*")].flatMap((n)
 
 describe("FeedCard row grammar", () => {
   it("is a hairline row with no card, rounded container or hover tint", async () => {
-    await render({ ...base, ogImageUrl: "https://example.com/cover.png" }, true);
+    await render({ ...base, ogImageUrl: "https://example.com/cover.png", thumbnailUrl: "https://example.com/cover.png" }, true);
     expect(row().className).toContain("border-b");
     const classes = classesIn(row());
     expect(classes.filter((c) => /^rounded-surface$|^shadow|^bg-white$/.test(c))).toEqual([]);
@@ -74,7 +74,7 @@ describe("FeedCard row grammar", () => {
   });
 
   it("puts a square thumbnail beside the title and excerpt, never over them", async () => {
-    await render({ ...base, ogImageUrl: "https://example.com/cover.png" });
+    await render({ ...base, ogImageUrl: "https://example.com/cover.png", thumbnailUrl: "https://example.com/cover.png" });
     const thumb = row().querySelector<HTMLAnchorElement>("[data-row-thumb]")!;
     expect(thumb.className).toMatch(/\bh-\[72px\] w-\[72px\]/);
     expect(thumb.className).toMatch(/\bsm:h-24 sm:w-24\b/);
@@ -92,6 +92,12 @@ describe("FeedCard row grammar", () => {
     expect(row().querySelector("[data-row-thumb]")).toBeNull();
     expect(row().className).toMatch(/\bgrid-cols-1\b/);
     expect(row().className).not.toMatch(/gap-x/);
+  });
+
+  it("keeps a cover the author didn't choose out of the row", async () => {
+    await render({ ...base, ogImageUrl: "https://example.com/body-first.png", thumbnailUrl: null });
+    expect(row().querySelector("[data-row-thumb]")).toBeNull();
+    expect(row().querySelector("img")).toBeNull();
   });
 
   it("ends the byline with the bookmark glyph", async () => {

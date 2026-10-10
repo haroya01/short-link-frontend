@@ -188,6 +188,8 @@ export interface PublicFeedItem {
   title: string;
   excerpt: string | null;
   ogImageUrl: string | null;
+  /** Feed-row thumbnail: the cover only when the author chose it, else null. Absent on older servers. */
+  thumbnailUrl?: string | null;
   languageTag: string;
   tags: string[];
   publishedAt: string;

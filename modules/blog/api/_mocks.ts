@@ -56,6 +56,8 @@ type Seed = {
   author: keyof typeof AUTHORS;
   tags: string[];
   cover?: string;
+  /** A cover filled in from the body's first image — the share card's, never the feed thumbnail. */
+  autoCover?: string;
   views: number;
   likes: number;
   day: number; // 2026-05-DD
@@ -72,7 +74,7 @@ const SEEDS: Seed[] = [
   { slug: "design-tokens-to-tailwind", title: "디자인 시스템 토큰을 Tailwind로 옮기며", excerpt: "Figma 변수 → CSS 변수 → Tailwind theme. 손실 없이 잇는 법.", author: "sora", tags: ["디자인", "개발"], views: 760, likes: 33, day: 26 },
   { slug: "spring-tx-propagation", title: "Spring Boot 트랜잭션 전파, 다시 정리", excerpt: "REQUIRES_NEW가 만든 버그를 추적하며 전파 옵션을 처음부터 다시.", author: "dohyun", tags: ["개발", "spring"], views: 1320, likes: 39, day: 25 },
   { slug: "killed-side-project", title: "사이드 프로젝트를 6개월 만에 접은 이야기", excerpt: "지표·동기·기회비용. 접는 결정을 데이터로 내린 과정.", author: "minji", tags: ["회고", "상품"], cover: img("kurl-killed"), views: 3050, likes: 121, day: 24 },
-  { slug: "typescript-generics-hard", title: "타입스크립트 제네릭이 어려운 진짜 이유", excerpt: "추론이 무너지는 지점들을 예제로 짚어본다.", author: "haruka", tags: ["개발", "typescript"], views: 1410, likes: 47, day: 23 },
+  { slug: "typescript-generics-hard", title: "타입스크립트 제네릭이 어려운 진짜 이유", excerpt: "추론이 무너지는 지점들을 예제로 짚어본다.", author: "haruka", tags: ["개발", "typescript"], autoCover: img("kurl-generics"), views: 1410, likes: 47, day: 23 },
   { slug: "weekend-hiking-burnout", title: "주말 등산 기록, 그리고 번아웃", excerpt: "정상에서 깨달은 것: 쉬는 것도 일정이다.", author: "kazuki", tags: ["일상"], views: 540, likes: 29, day: 22 },
   { slug: "posthog-funnel", title: "PostHog로 퍼널 분석 붙이기", excerpt: "가입 → 첫 링크 → 공유. 이탈 지점을 숫자로 본 뒤 바뀐 것.", author: "sora", tags: ["상품", "분석"], cover: img("kurl-posthog"), views: 1180, likes: 36, day: 21 },
   { slug: "naming-things", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", excerpt: "좋은 이름은 주석을 지운다. 실제 PR로 본 before/after.", author: "dohyun", tags: ["개발", "리팩터링"], views: 870, likes: 44, day: 20, series: { slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 4 } },
@@ -86,7 +88,8 @@ function toItem(s: Seed, i: number): PublicFeedItem {
     slug: s.slug,
     title: s.title,
     excerpt: s.excerpt,
-    ogImageUrl: s.cover ?? null,
+    ogImageUrl: s.cover ?? s.autoCover ?? null,
+    thumbnailUrl: s.cover ?? null,
     languageTag: "ko",
     tags: s.tags,
     publishedAt: `2026-05-${String(s.day).padStart(2, "0")}T09:00:00Z`,

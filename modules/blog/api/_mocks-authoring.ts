@@ -189,6 +189,7 @@ export function mockUpdatePostMetadata(
     slug?: string;
     excerpt?: string;
     ogImageUrl?: string;
+    coverChosen?: boolean;
     languageTag?: string;
     tags?: string[];
   } & EditGuard,
@@ -208,7 +209,13 @@ export function mockUpdatePostMetadata(
   if (payload.title !== undefined) patch.title = payload.title;
   if (payload.slug !== undefined) patch.slug = payload.slug;
   if (payload.excerpt !== undefined) patch.excerpt = payload.excerpt;
-  if (payload.ogImageUrl !== undefined) patch.ogImageUrl = payload.ogImageUrl;
+  if (payload.ogImageUrl !== undefined) {
+    const current = posts.get(id);
+    patch.ogImageUrl = payload.ogImageUrl;
+    patch.coverChosen =
+      payload.ogImageUrl !== "" &&
+      (payload.coverChosen ?? (payload.ogImageUrl === current?.ogImageUrl && Boolean(current?.coverChosen)));
+  }
   if (payload.languageTag !== undefined) patch.languageTag = payload.languageTag;
   if (payload.tags !== undefined) patch.tags = payload.tags;
   return markEdited(id, patch);
