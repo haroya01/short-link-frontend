@@ -1,5 +1,8 @@
+import type { CSSProperties } from "react";
+import { avatarInitial, avatarTint } from "@/modules/blog/lib/avatar-tint";
+
 /**
- * Author avatar — the "image if present, else the initial on an accent disc" pattern that every surface
+ * Author avatar — the "image if present, else the initial on a tinted disc" pattern that every surface
  * (feed card, following feed, discovery rail, series card, comments, author header, post page) was
  * reimplementing inline. One definition keeps the disc tint consistent in light AND dark across all of
  * them — the identity element of the weblog.
@@ -20,13 +23,16 @@ export type AvatarSize = keyof typeof SIZES;
 export function Avatar({
   src,
   name,
+  seed,
   size = "md",
   shrink = true,
   eager = false,
 }: {
   src: string | null | undefined;
-  /** Author name — its first character is the fallback initial. */
+  /** Display name or username — its first letter is the fallback initial. */
   name: string;
+  /** The person's local user id, which picks the disc tint. null for remote accounts and unknown people. */
+  seed: number | null;
   size?: AvatarSize;
   /** `shrink-0` so the avatar keeps its size in a flex row. Off only where the original markup omitted it. */
   shrink?: boolean;
@@ -50,11 +56,20 @@ export function Avatar({
       />
     );
   }
+  const tint = avatarTint(seed);
+  const colors = {
+    "--avatar-bg": tint.light.bg,
+    "--avatar-fg": tint.light.fg,
+    "--avatar-bg-dark": tint.dark.bg,
+    "--avatar-fg-dark": tint.dark.fg,
+  } as CSSProperties;
   return (
     <span
-      className={`${box} ${shrinkCls}grid place-items-center rounded-full bg-accent-100 ${text} font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300`}
+      data-avatar-tint={tint.name}
+      style={colors}
+      className={`${box} ${shrinkCls}grid place-items-center rounded-full bg-[var(--avatar-bg)] ${text} font-semibold text-[var(--avatar-fg)] dark:bg-[var(--avatar-bg-dark)] dark:text-[var(--avatar-fg-dark)]`}
     >
-      {name.charAt(0).toUpperCase()}
+      {avatarInitial(name)}
     </span>
   );
 }

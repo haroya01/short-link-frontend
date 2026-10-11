@@ -315,7 +315,7 @@ export function PublishDialog({
                       avatar-less author gets in the real feed; not worth a profile fetch here. */}
                   <p className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                     <span className="flex min-w-0 items-center gap-1.5">
-                      <Avatar src={null} name={me?.username ?? ""} size="xs" />
+                      <Avatar src={null} name={me?.username ?? ""} seed={me?.id ?? null} size="xs" />
                       <span className="truncate font-medium">{me?.username}</span>
                     </span>
                     <span aria-hidden>·</span>

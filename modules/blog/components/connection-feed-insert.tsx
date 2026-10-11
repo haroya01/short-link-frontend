@@ -81,6 +81,7 @@ export function ConnectionFeedInsert({ event, locale }: { event: ConnectionEvent
         <RowAuthor
           username={author}
           avatarUrl={author === event.curator.username ? event.curator.avatarUrl : null}
+          seed={author === event.curator.username ? event.curator.id : null}
           locale={locale}
         />
       }

@@ -61,7 +61,7 @@ export function FollowFilterChips({
             onClick={() => toggle(facet)}
             className={cn(base, tone(isOn(facet)), "pl-2 pr-4")}
           >
-            <Avatar src={a.avatarUrl} name={a.username} size="xs" />@{a.username}
+            <Avatar src={a.avatarUrl} name={a.displayName || a.username} seed={a.id} size="xs" />@{a.username}
           </button>
         );
       })}

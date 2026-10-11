@@ -431,7 +431,7 @@ export function NoteComposer({
     >
       <div className="flex gap-3">
         <div className="flex shrink-0 flex-col items-center">
-          <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} size="md" />
+          <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} seed={me?.id ?? null} size="md" />
           {(parts.length > 0 || (open && canAddPart)) && (
             <span aria-hidden className="mt-1 w-0.5 flex-1 rounded-full bg-slate-200 dark:bg-slate-700" />
           )}
@@ -644,7 +644,7 @@ export function NoteComposer({
         return (
           <div key={part.id} className="mt-1 flex gap-3">
             <div className="flex w-9 shrink-0 flex-col items-center">
-              <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} size="sm" />
+              <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} seed={me?.id ?? null} size="sm" />
               {threaded && <span aria-hidden className="mt-1 w-0.5 flex-1 rounded-full bg-slate-200 dark:bg-slate-700" />}
             </div>
             <div className="min-w-0 flex-1 pb-2">
@@ -683,7 +683,7 @@ export function NoteComposer({
           className="focus-ring mt-1 flex w-full items-center gap-3 rounded-surface py-1 text-left text-[14px] text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
         >
           <span className="flex w-9 shrink-0 justify-center opacity-50">
-            <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} size="sm" />
+            <Avatar src={me?.avatarUrl ?? null} name={me?.username ?? "?"} seed={me?.id ?? null} size="sm" />
           </span>
           {t("threadAdd")}
         </button>

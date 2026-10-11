@@ -142,7 +142,7 @@ export async function AuthorHeader({
   return (
     <header>
       <div className="flex items-center justify-between gap-4">
-        <AvatarZoom src={author.avatarUrl} name={author.username} />
+        <AvatarZoom src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} />
         <div className="flex shrink-0 items-center gap-2">
           <FollowButton username={author.username} initialFollowerCount={0} showCount={false} showBell />
           <AuthorMoreMenu username={author.username} userId={author.id} />

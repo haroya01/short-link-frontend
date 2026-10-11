@@ -45,7 +45,7 @@ function feedAuthors(rows: FollowingFeedRow[], limit = 8): PublicAuthor[] {
 }
 
 function AuthorAvatar({ author }: { author: PublicAuthor }) {
-  return <Avatar src={author.avatarUrl} name={author.username} size="md" />;
+  return <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />;
 }
 
 /** One author row in a rail — avatar + name, optional subtitle. Used by the suggested-authors list. */
