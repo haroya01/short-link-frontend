@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
-import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
 import { BlogBottomNav } from "@/components/common/blog-bottom-nav";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { MessagesScope } from "@/i18n/messages-scope";
 import { IOS_APP_ID } from "@/lib/app-store";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
+import { AuthorAppHeader } from "./_components/author-app-header";
 import { AuthorHeader } from "./_components/author-header";
 import { ProfileChrome } from "./_components/profile-chrome";
 
@@ -49,7 +49,7 @@ export default async function AuthorChromeLayout({
           <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
             {/* Author/post pages are the blog product → tell the switcher so it offers "kurl" (links),
                 not "kurl log" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
-            <AppHeader showMenu={false} slimMobile product="blog" />
+            <AuthorAppHeader />
             <div className="flex-1 pb-16 sm:pb-0">
               {/* ProfileChrome renders the header slot ONLY on the tab routes (글·시리즈·소개·…); on a
                   post / series-detail route it drops the header and renders children alone. So the

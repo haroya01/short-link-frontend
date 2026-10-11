@@ -243,6 +243,11 @@ export function NoteCard({
     if (emphasis || editing) return;
     if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
     if (window.getSelection()?.toString()) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+      window.open(noteHref(note, locale), "_blank", "noopener");
+      return;
+    }
+    if (e.button !== 0) return;
     openNote(note, locale, router.push);
   }
 
@@ -413,6 +418,7 @@ export function NoteCard({
           <div
             className={emphasis ? "col-span-2 mt-3" : "cursor-pointer"}
             onClick={openFromBody}
+            onAuxClick={openFromBody}
             data-note-body
           >
             {(!note.contentWarning || revealed || editing) && (
