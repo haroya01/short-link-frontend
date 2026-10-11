@@ -153,6 +153,10 @@ test("on a phone the editor is a bottom sheet with the same fields", async ({ pa
   await page.setViewportSize({ width: 390, height: 844 });
   const dialog = await openEditor(page);
   await expect(dialog.getByLabel("표시 이름")).toBeVisible();
-  const save = await dialog.getByRole("button", { name: "저장", exact: true }).boundingBox();
-  expect(save!.y + save!.height).toBeGreaterThan(844 - 120);
+  const save = dialog.getByRole("button", { name: "저장", exact: true });
+  await expect(save).toBeInViewport({ ratio: 1 });
+  await expect.poll(async () => {
+    const box = await save.boundingBox();
+    return box ? box.y + box.height : 0;
+  }).toBeGreaterThan(844 - 120);
 });
