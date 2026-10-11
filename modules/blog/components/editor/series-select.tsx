@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { createSeries, listSeries, type SeriesView } from "@/modules/blog/api/series";
@@ -31,6 +31,14 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
   const [newTitle, setNewTitle] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const newButton = useRef<HTMLButtonElement>(null);
+
+  function cancelCreate() {
+    setCreating(false);
+    setNewTitle("");
+    setError(null);
+    requestAnimationFrame(() => newButton.current?.focus());
+  }
 
   useEffect(() => {
     setLoadFailed(false);
@@ -80,9 +88,9 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
                 e.preventDefault();
                 void create();
               } else if (e.key === "Escape") {
-                setCreating(false);
-                setNewTitle("");
-                setError(null);
+                e.preventDefault();
+                e.stopPropagation();
+                cancelCreate();
               }
             }}
             maxLength={200}
@@ -100,11 +108,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
           </button>
           <button
             type="button"
-            onClick={() => {
-              setCreating(false);
-              setNewTitle("");
-              setError(null);
-            }}
+            onClick={cancelCreate}
             aria-label={t("close")}
             className="focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           >
@@ -137,6 +141,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
           ))}
         </select>
         <button
+          ref={newButton}
           type="button"
           onClick={() => setCreating(true)}
           className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"

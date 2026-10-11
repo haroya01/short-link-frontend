@@ -745,6 +745,59 @@ test("a picked image shows at once while it uploads, then switches to the hosted
   await expect(figure.locator("img")).toHaveAttribute("src", IMAGE_URL);
 });
 
+async function holdImageCommit(page: Page) {
+  let finish!: () => void;
+  const committed = new Promise<void>((resolve) => (finish = resolve));
+  await page.route(`**/api/v1/posts/${POST_ID}/images/commit`, async (route) => {
+    await committed;
+    return route.fulfill({ json: { imageUrl: IMAGE_URL, key: "k" } });
+  });
+  return finish;
+}
+
+async function pickImageAndHold(page: Page) {
+  await page.locator(".tiptap").click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(page.locator(".tiptap figure")).toHaveClass(/is-uploading/, { timeout: 2_000 });
+}
+
+test("publishing while an image uploads waits for it, so the published body carries the image", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  const finish = await holdImageCommit(page);
+  await openEditor(page);
+  await titleInput(page).fill("Ready to ship");
+  await pickImageAndHold(page);
+
+  const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog);
+  const publish = dialog.getByRole("button", { name: "Publish", exact: true });
+  await publish.click();
+  await expect(publish).toBeDisabled();
+  expect(captured.status, "no /publish while the image is still uploading").toBeFalsy();
+
+  finish();
+  await expect.poll(() => captured.status).toBe("publish");
+  expect(captured.blocks?.find((b) => b.type === "IMAGE")?.content).toContain(IMAGE_URL);
+});
+
+test("leaving a draft while an image uploads waits for it and saves it before going", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  const finish = await holdImageCommit(page);
+  await openEditor(page);
+  await pickImageAndHold(page);
+
+  await page.getByRole("link", { name: "Posts", exact: true }).click();
+  await expect(page).toHaveURL(/\/write\/16$/);
+
+  finish();
+  await page.waitForURL(/\/write$/, { timeout: 10_000 });
+  expect(captured.blocks?.find((b) => b.type === "IMAGE")?.content).toContain(IMAGE_URL);
+});
+
 test("dragging an image and letting go leaves no drop line behind", async ({ page }) => {
   // Selecting the dragged image mounts its bubble menu, which rebuilt the drop-cursor plugin mid-drag
   // and orphaned the line it had drawn — it then sat across the page until a reload.

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { isEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
@@ -75,10 +76,10 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   // host) so the view swaps in without a full reload; only a genuine cross-origin hop hard-navigates.
   function navigate(href: string) {
     const url = new URL(href, window.location.origin);
-    if (url.origin === window.location.origin) {
+    if (url.origin === window.location.origin && !isEditorDirty()) {
       router.push(url.pathname + url.search);
     } else {
-      window.location.href = href;
+      window.location.assign(url.href);
     }
   }
 

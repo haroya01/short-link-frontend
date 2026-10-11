@@ -186,6 +186,8 @@ export function MarkdownEditor({
   onUploadImage,
   onImportImageUrl,
   onUploadError,
+  onUploadingChange,
+  uploadsSettledRef,
   liveMarkdownRef,
   focusEditorRef,
 }: {
@@ -198,6 +200,8 @@ export function MarkdownEditor({
   // <img> HTML falls through to the default handler (which strips it).
   onImportImageUrl?: (url: string) => Promise<string>;
   onUploadError?: (message: string) => void;
+  onUploadingChange?: (uploading: boolean) => void;
+  uploadsSettledRef?: { current: (() => Promise<void>) | null };
   // Exposes a synchronous "serialize the doc to markdown right now" getter to the parent, so Save/
   // Publish can read the LATEST content instead of the debounced onChange state.
   liveMarkdownRef?: { current: (() => string) | null };
@@ -217,6 +221,9 @@ export function MarkdownEditor({
   onChangeRef.current = onChange;
   const onEditRef = useRef(onEdit);
   onEditRef.current = onEdit;
+  const onUploadingChangeRef = useRef(onUploadingChange);
+  onUploadingChangeRef.current = onUploadingChange;
+  const uploads = useRef(new Set<Promise<void>>());
   const flushTimer = useRef<number | undefined>(undefined);
   useEffect(
     () => () => {
@@ -323,7 +330,18 @@ export function MarkdownEditor({
       ed.commands.setTextSelection(ed.state.selection.to);
       return { file, local };
     });
-    for (const { file, local } of placed) await upload(ed, file, local, width);
+    if (placed.length === 0) return;
+    const run = (async () => {
+      for (const { file, local } of placed) await upload(ed, file, local, width);
+    })();
+    uploads.current.add(run);
+    onUploadingChangeRef.current?.(true);
+    const done = () => {
+      uploads.current.delete(run);
+      if (uploads.current.size === 0) onUploadingChangeRef.current?.(false);
+    };
+    run.then(done, done);
+    await run;
   }
 
   // Re-host one external URL; null = failed (caller decides the fallback).
@@ -568,6 +586,16 @@ export function MarkdownEditor({
       if (liveMarkdownRef) liveMarkdownRef.current = null;
     };
   }, [editor, liveMarkdownRef]);
+
+  useEffect(() => {
+    if (!uploadsSettledRef) return;
+    uploadsSettledRef.current = async () => {
+      while (uploads.current.size > 0) await Promise.allSettled([...uploads.current]);
+    };
+    return () => {
+      uploadsSettledRef.current = null;
+    };
+  }, [uploadsSettledRef]);
 
   // The drop line clears itself only when dragend/drop reach the editor DOM. A block dragged by the
   // gutter grip (which lives outside the editor) and released outside the body never tells it, so the

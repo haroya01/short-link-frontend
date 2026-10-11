@@ -98,7 +98,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         saved={ed.saved}
         lastSavedAt={ed.lastSavedAt}
         busy={ed.busy}
-        onSave={ed.save}
+        onSave={ed.flush}
         onBack={ed.leave}
         onOpenPublish={() => setPublishOpen(true)}
         onRestoreRevision={ed.restoreRevision}
@@ -167,6 +167,8 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           // Pasted-from-Notion images carry an external <img src> (expiring/CORS-locked) — re-host it.
           onImportImageUrl={async (url) => importPostImage((await ed.ensurePost()).id, url)}
           onUploadError={(msg) => toast(msg, "error")}
+          onUploadingChange={ed.setUploading}
+          uploadsSettledRef={ed.uploadsSettled}
         />
       </div>
 
@@ -198,14 +200,14 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         onSeriesChange={ed.setSeriesId}
         previewAction={
           post && post.status !== "PUBLISHED" && !takenDown ? (
-            <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
+            <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.flush} />
           ) : null
         }
         error={ed.error}
         slugError={ed.slugError}
         saving={ed.saving}
         busy={ed.busy}
-        onSave={ed.save}
+        onSave={ed.flush}
         onChangeStatus={ed.changeStatus}
         onCancelSchedule={ed.cancelSchedule}
         onSchedule={async (iso) => {

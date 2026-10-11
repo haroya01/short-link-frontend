@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import { ApiError } from "@/lib/api/client";
 import type { PostView } from "@/modules/blog/api/posts";
+import { isEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { usePostEditor } from "./use-post-editor";
 
 const api = vi.hoisted(() => ({
@@ -199,6 +200,82 @@ describe("editor persistence boundaries", () => {
     expect(api.replaceBlocks.mock.invocationCallOrder[0]).toBeLessThan(
       api.restoreRevision.mock.invocationCallOrder[0],
     );
+  });
+});
+
+describe("an image still uploading", () => {
+  const IMAGE_MD = "![shot.png](https://cdn.test/shot.png)";
+
+  async function startUpload() {
+    let body = "Body before the image";
+    editor.liveMarkdown.current = () => body;
+    const upload = deferred<void>();
+    editor.uploadsSettled.current = () => upload.promise;
+    await act(async () => { editor.setUploading(true); });
+    return {
+      finish: async () => {
+        body = `Body before the image\n\n${IMAGE_MD}`;
+        editor.setUploading(false);
+        upload.resolve();
+      },
+    };
+  }
+  const savedImage = () =>
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, expect.arrayContaining([
+      expect.objectContaining({ type: "IMAGE" }),
+    ]), expect.anything());
+
+  it("counts as unsaved, and leaving a draft waits for it and saves it before going", async () => {
+    await mount();
+    const { finish } = await startUpload();
+    expect(isEditorDirty()).toBe(true);
+
+    let leaving!: Promise<void>;
+    await act(async () => { leaving = editor.leave(); });
+    expect(router.push).not.toHaveBeenCalled();
+    expect(api.replaceBlocks).not.toHaveBeenCalled();
+
+    await act(async () => { await finish(); await leaving; });
+    savedImage();
+    expect(router.push).toHaveBeenCalledOnce();
+  });
+
+  it("holds the save a publish starts until the upload lands, with the actions busy meanwhile", async () => {
+    await mount();
+    const { finish } = await startUpload();
+    let flushing!: Promise<boolean>;
+    await act(async () => { flushing = editor.flush(); });
+    expect(editor.busy).toBe(true);
+    expect(api.replaceBlocks).not.toHaveBeenCalled();
+
+    let saved: boolean | undefined;
+    await act(async () => { await finish(); saved = await flushing; });
+    expect(saved).toBe(true);
+    savedImage();
+    expect(editor.busy).toBe(false);
+  });
+});
+
+describe("restoring a version over unsaved edits", () => {
+  it("saves what is on screen first, so the server keeps it as a version", async () => {
+    await mount();
+    await act(async () => { editor.setMarkdown("Edited but not saved"); });
+    await act(async () => { await editor.restoreRevision(3); });
+    expect(api.replaceBlocks).toHaveBeenCalledWith(16, [
+      { type: "PARAGRAPH", content: "Edited but not saved" },
+    ], {});
+    expect(api.replaceBlocks.mock.invocationCallOrder[0]).toBeLessThan(
+      api.restoreRevision.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("keeps the edits and does not restore when that save fails", async () => {
+    await mount();
+    await act(async () => { editor.setMarkdown("Edited but not saved"); });
+    api.replaceBlocks.mockRejectedValueOnce(new Error("Save unavailable"));
+    await act(async () => { await editor.restoreRevision(3); });
+    expect(api.restoreRevision).not.toHaveBeenCalled();
+    expect(editor.error).toBe("saveFailed");
   });
 });
 
