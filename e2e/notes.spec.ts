@@ -794,11 +794,15 @@ test("a display name leads the note header with the handle beside it, and settin
   await expect(page.locator('article[data-note-id="6"]').getByRole("link", { name: "@dohyun", exact: true })).toBeVisible();
 
   await page.goto("/ko/blog/settings");
-  const field = page.getByRole("textbox", { name: "표시 이름" });
-  await field.fill("  도현  ", { timeout: 30_000 });
-  const save = page.locator("form").filter({ has: field }).getByRole("button", { name: "저장" });
+  const edit = page.getByRole("button", { name: "프로필 편집", exact: true });
+  await edit.click({ timeout: 30_000 });
+  const dialog = page.getByRole("dialog", { name: "프로필 편집" });
+  const field = dialog.getByRole("textbox", { name: "표시 이름" });
+  const save = dialog.getByRole("button", { name: "저장", exact: true });
+  await field.fill("  도현  ");
   await save.click();
-  await expectOnTop(toastBy(page, "표시 이름을 바꿨어요"));
+  await expect(dialog).toHaveCount(0);
+  await edit.click();
   await expect(field).toHaveValue("도현");
   await expect(save).toBeDisabled();
 });

@@ -272,6 +272,7 @@
     "settingsSubtitle": "アカウントと表示の設定。",
     "settingsAccount": "アカウント",
     "settingsEditProfile": "プロフィールを編集",
+    "settingsEditCard": "名刺を編集",
     "settingsAccountSettings": "アカウント設定全体",
     "settingsViewBlog": "自分のブログを見る",
     "settingsDisplay": "表示",
@@ -300,12 +301,6 @@
     "settingsUnfollowTag": "{tag} のフォローを解除",
     "analyticsPeakDay": "最多日 {date} · {count, number}回",
     "analyticsLifetimeCaption": "全期間",
-    "displayNameTitle": "表示名",
-    "displayNamePlaceholder": "名前やニックネーム",
-    "displayNameSave": "保存",
-    "displayNameHint": "ノートとブログのプロフィールでユーザー名より先に表示されます。空にするとユーザー名が表示されます。",
-    "displayNameSaved": "表示名を変更しました",
-    "displayNameFailed": "表示名を変更できませんでした",
     "settingsLocked": "フォローを手動で承認",
     "settingsLockedHint": "オンにすると、新しいフォロワーはリクエストを送り、あなたが承認するとフォロワーになります。他のサーバーのアカウントも同じです。",
     "settingsUnlockTitle": "フォローの手動承認をオフにしますか？",
@@ -1292,6 +1287,22 @@
       "toggleToCode": "認証アプリのコードに戻る",
       "expired": "認証の有効期限が切れました。"
     }
+  },
+  "profileEdit": {
+    "title": "プロフィールを編集",
+    "photoAdd": "写真を追加",
+    "photoChange": "写真を変更",
+    "nameLabel": "表示名",
+    "namePlaceholder": "名前やニックネーム",
+    "nameHint": "ノートとブログのプロフィールでユーザー名より先に表示されます。空にするとユーザー名が表示されます。",
+    "bioLabel": "自己紹介",
+    "save": "保存",
+    "saving": "保存中…",
+    "saveFailed": "保存できませんでした",
+    "loadFailed": "プロフィールを読み込めませんでした",
+    "discardTitle": "変更を破棄しますか？",
+    "discard": "破棄",
+    "keepEditing": "編集を続ける"
   },
   "avatar": {
     "change": "プロフィール写真を変更",

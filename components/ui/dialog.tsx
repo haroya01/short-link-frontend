@@ -15,6 +15,7 @@ type DialogProps = {
   description?: string;
   confirmLabel?: string;
   confirmDisabled?: boolean;
+  busyLabel?: string;
   cancelLabel?: string;
   destructive?: boolean;
   /** Override the confirm button variant (e.g. "accent" for a primary save). Defaults to default,
@@ -42,6 +43,7 @@ export function ConfirmDialog({
   description,
   confirmLabel,
   confirmDisabled,
+  busyLabel,
   cancelLabel,
   destructive,
   confirmVariant,
@@ -174,7 +176,7 @@ export function ConfirmDialog({
               }
             }}
           >
-            {busy ? t("processing") : confirmLabel ?? (destructive ? t("delete") : t("confirm"))}
+            {busy ? busyLabel ?? t("processing") : confirmLabel ?? (destructive ? t("delete") : t("confirm"))}
           </Button>
         </div>
       </div>
