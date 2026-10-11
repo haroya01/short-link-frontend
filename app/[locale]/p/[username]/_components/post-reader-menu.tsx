@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { deletePost } from "@/modules/blog/api/posts";
@@ -46,7 +47,20 @@ export function PostReaderMenu({
   const [open, setOpen] = useState(false);
   const [reporting, setReporting] = useState(false);
   const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const menu = useRef<HTMLDivElement>(null);
   useDismiss(open, root, () => setOpen(false));
+  const { onKeyDown, focusFirst } = useMenuKeys(menu, {
+    onClose: (refocus) => {
+      setOpen(false);
+      if (refocus) trigger.current?.focus();
+    },
+  });
+
+  useEffect(() => {
+    if (open) focusFirst();
+  }, [open, focusFirst]);
+
   const { blocked, block, unblock, confirmDialog } = useBlockAuthor(authorUsername);
   const quote = useQuoteInNote({ postId, title: postTitle, slug: postSlug, authorUsername });
   const [confirm, deleteDialog] = useConfirm();
@@ -91,6 +105,7 @@ export function PostReaderMenu({
   return (
     <div ref={root} className="relative">
       <button
+        ref={trigger}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={t("postMenu")}
@@ -103,7 +118,9 @@ export function PostReaderMenu({
       </button>
       {open && (
         <div
+          ref={menu}
           role="menu"
+          onKeyDown={onKeyDown}
           className="absolute right-0 top-full z-20 mt-2 w-44 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           {own && (

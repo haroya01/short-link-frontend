@@ -597,7 +597,6 @@
       "actions": "Link",
       "open": "Open",
       "edit": "Edit",
-      "shortenHint": "Inserts a shortened kurl link",
       "update": "Save",
       "previewLoading": "Loading preview…",
       "previewFailed": "Couldn't load a preview"

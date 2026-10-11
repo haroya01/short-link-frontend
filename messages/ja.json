@@ -597,7 +597,6 @@
       "actions": "リンク",
       "open": "開く",
       "edit": "編集",
-      "shortenHint": "kurl リンクに短縮して挿入します",
       "update": "保存",
       "previewLoading": "プレビューを読み込み中…",
       "previewFailed": "プレビューを読み込めませんでした"
