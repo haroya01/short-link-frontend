@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { readStorageString, writeStorageString } from "@/lib/storage-json";
+import { cn } from "@/lib/utils";
 
 const KEY = "kurl:me-initial";
 const AVATAR_KEY = "kurl:me-avatar";
@@ -31,17 +32,24 @@ export function HeaderAvatarSlot() {
     setInitial(readStorageString(KEY) ?? "");
     setAvatar(readStorageString(AVATAR_KEY) ?? "");
   }, []);
+  return <MeAvatar src={avatar} initial={initial} className="h-8 w-8 text-[13px]" />;
+}
+
+export function MeAvatar({ src, initial, className }: { src: string; initial: string; className?: string }) {
   return (
-    <div
+    <span
       aria-hidden
-      className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
+      className={cn(
+        "grid shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300",
+        className,
+      )}
     >
-      {avatar ? (
+      {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={avatar} alt="" className="h-full w-full object-cover" />
+        <img src={src} alt="" className="h-full w-full object-cover" />
       ) : (
         initial
       )}
-    </div>
+    </span>
   );
 }

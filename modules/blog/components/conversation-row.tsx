@@ -4,24 +4,12 @@ import type { ReactNode } from "react";
 import { Heart, Trash2 } from "lucide-react";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
+import { AuthorName, STRONG_NAME } from "@/modules/blog/components/author-name";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
 
 type Person = { id: number; username: string; displayName?: string | null; avatarUrl?: string | null } | null;
-
-export function ConversationName({ name, handle }: { name?: string | null; handle: string }) {
-  if (!name) {
-    return <span className="min-w-0 truncate font-semibold text-slate-900 dark:text-slate-100">@{handle}</span>;
-  }
-  return (
-    <>
-      <span className="max-w-[70%] shrink-0 truncate font-semibold text-slate-900 dark:text-slate-100">{name}</span>
-      <span className="min-w-0 truncate text-slate-500 dark:text-slate-400">@{handle}</span>
-    </>
-  );
-}
-
 export function ConversationLike({
   liked,
   count,
@@ -108,13 +96,11 @@ export function ConversationRow({
       <div className="min-w-0 flex-1">
         <div className="flex min-h-5 items-center gap-1.5 text-[14px] leading-5">
           {href ? (
-            <BlogLink href={href} className="flex min-w-0 items-baseline gap-1 rounded focus-ring hover:underline">
-              <ConversationName name={author?.displayName} handle={handle} />
+            <BlogLink href={href} className="flex min-w-0 rounded focus-ring hover:underline">
+              <AuthorName name={author?.displayName} handle={handle} className={STRONG_NAME} />
             </BlogLink>
           ) : (
-            <span className="flex min-w-0 items-baseline gap-1">
-              <ConversationName name={null} handle={handle} />
-            </span>
+            <AuthorName name={null} handle={handle} className={STRONG_NAME} />
           )}
           <span aria-hidden className="shrink-0 text-slate-400 dark:text-slate-500">
             ·

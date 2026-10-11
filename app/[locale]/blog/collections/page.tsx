@@ -23,7 +23,7 @@ export default async function MyCollectionsPage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "collections" });
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+    <div className="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
       <header className="mb-6">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("myCollectionsTitle")}
@@ -33,6 +33,6 @@ export default async function MyCollectionsPage({
         </p>
       </header>
       <MyCollectionsList />
-    </main>
+    </div>
   );
 }

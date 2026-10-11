@@ -29,6 +29,7 @@ import { PublishCelebration } from "@/modules/blog/components/publish-celebratio
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { AuthorName } from "@/modules/blog/components/author-name";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib/series-items";
@@ -48,6 +49,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   "https://kurl.me";
+
+const BYLINE_NAME =
+  "text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400";
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
@@ -219,7 +223,7 @@ export default async function PublicPostPage({
     // never shift it. xl:gap-6 (not gap-10) tightens the two gutters so the rail content sits closer to
     // the reading column — the wide gutter left the author block floating alone far to the left; a
     // snugger gap gives the three columns a shared rhythm without touching the 42rem band.
-    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
+    <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
       {articleJsonLd && (
         <script
           type="application/ld+json"
@@ -246,9 +250,7 @@ export default async function PublicPostPage({
             data-bhv-id={author.username}
           >
             <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
-            <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-              @{author.username}
-            </span>
+            <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
           </a>
           {author.bio && (
             <p
@@ -318,9 +320,7 @@ export default async function PublicPostPage({
           >
             <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
             <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-                @{author.username}
-              </span>
+              <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
               <span className="block text-[13px] text-slate-500 dark:text-slate-400">
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
@@ -418,7 +418,7 @@ export default async function PublicPostPage({
           </p>
         )}
 
-        <footer className="-ml-2.5 mt-8 hidden min-[1100px]:block" data-testid="post-actions">
+        <footer className="-ml-2.5 mt-8" data-testid="post-actions">
           <PostActionRow
             postId={post.id}
             postTitle={post.title}
@@ -434,14 +434,16 @@ export default async function PublicPostPage({
 
         <div data-post-end aria-hidden />
 
+        <PostAuthorCard author={author} locale={locale} postId={post.id} />
+
+        <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
+
         {/* 이 글이 담긴 컬렉션 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
             nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
             so the article is never a dead end (§10: one green thread, no node-graph). */}
         <Suspense fallback={null}>
           <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
         </Suspense>
-
-        <PostAuthorCard author={author} locale={locale} postId={post.id} className="xl:hidden" />
 
         <Suspense fallback={null}>
           <RelatedPosts
@@ -459,8 +461,6 @@ export default async function PublicPostPage({
 
         {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
         {!isPreview && <PublishCelebration slug={post.slug} />}
-
-        <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
       </AuthorGate>
 
       {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
@@ -495,7 +495,7 @@ export default async function PublicPostPage({
         <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
       </AuthorOnly>
       <LegacyHeadingHash headings={headings} />
-    </div>
+    </main>
   );
 }
 

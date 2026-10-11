@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { useLikeFailed } from "@/hooks/use-like-failed";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { ConversationName } from "@/modules/blog/components/conversation-row";
+import { AuthorName, STRONG_NAME } from "@/modules/blog/components/author-name";
 import { blogHref, blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
@@ -243,6 +243,11 @@ export function NoteCard({
     if (emphasis || editing) return;
     if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
     if (window.getSelection()?.toString()) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+      window.open(noteHref(note, locale), "_blank", "noopener");
+      return;
+    }
+    if (e.button !== 0) return;
     openNote(note, locale, router.push);
   }
 
@@ -313,9 +318,9 @@ export function NoteCard({
             ) : (
               <BlogLink
                 href={noteAuthorHref(note.author, locale)}
-                className="flex min-w-0 items-baseline gap-1 rounded focus-ring hover:underline"
+                className="flex min-w-0 rounded focus-ring hover:underline"
               >
-                <ConversationName name={note.author.displayName} handle={note.author.username} />
+                <AuthorName name={note.author.displayName} handle={note.author.username} className={STRONG_NAME} />
               </BlogLink>
             )}
             {!emphasis && (
@@ -413,6 +418,7 @@ export function NoteCard({
           <div
             className={emphasis ? "col-span-2 mt-3" : "cursor-pointer"}
             onClick={openFromBody}
+            onAuxClick={openFromBody}
             data-note-body
           >
             {(!note.contentWarning || revealed || editing) && (

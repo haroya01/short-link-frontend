@@ -28,9 +28,9 @@ export default function FilteredNotificationsPage() {
 
   if (ready && !authenticated) {
     return (
-      <main>
+      <div>
         <SignInEmptyState page reason="notifications" icon={Bell} />
-      </main>
+      </div>
     );
   }
 
@@ -45,7 +45,7 @@ export default function FilteredNotificationsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <BlogLink
         href={blogPath("/notifications")}
         className="focus-ring -ml-1 inline-flex items-center gap-1 rounded text-[13px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
@@ -129,6 +129,6 @@ export default function FilteredNotificationsPage() {
           </>
         )}
       </div>
-    </main>
+    </div>
   );
 }

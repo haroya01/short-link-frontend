@@ -2,6 +2,7 @@
   "comments": {
     "heading": "댓글",
     "count": "댓글 {count, number}개",
+    "showAll": "댓글 {count, number}개 모두 보기",
     "placeholder": "댓글 쓰기",
     "submit": "댓글 작성",
     "submitting": "작성 중…",
@@ -592,7 +593,6 @@
       "actions": "링크",
       "open": "열기",
       "edit": "고치기",
-      "shortenHint": "kurl 링크로 줄여 넣어요",
       "update": "저장",
       "previewLoading": "미리보기를 불러오는 중…",
       "previewFailed": "미리보기를 불러오지 못했어요"
@@ -1060,6 +1060,7 @@
     "liked": "좋아요한 글",
     "library": "서재",
     "myCollections": "내 컬렉션",
+    "studio": "스튜디오",
     "showcase": "프로필 예시",
     "campaigns": "QR 캠페인",
     "campaignsTab": "QR 캠페인",

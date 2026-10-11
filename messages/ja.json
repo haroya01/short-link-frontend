@@ -2,6 +2,7 @@
   "comments": {
     "heading": "コメント",
     "count": "コメント{count, number}件",
+    "showAll": "コメント{count, number}件をすべて表示",
     "placeholder": "コメントを書く",
     "submit": "コメント",
     "submitting": "投稿中…",
@@ -592,7 +593,6 @@
       "actions": "リンク",
       "open": "開く",
       "edit": "編集",
-      "shortenHint": "kurl リンクに短縮して挿入します",
       "update": "保存",
       "previewLoading": "プレビューを読み込み中…",
       "previewFailed": "プレビューを読み込めませんでした"
@@ -1060,6 +1060,7 @@
     "liked": "いいねした記事",
     "library": "ライブラリ",
     "myCollections": "マイコレクション",
+    "studio": "スタジオ",
     "showcase": "作例",
     "campaigns": "QRキャンペーン",
     "campaignsTab": "キャンペーン",

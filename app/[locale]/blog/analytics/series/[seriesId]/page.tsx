@@ -47,7 +47,7 @@ export default function SeriesAnalyticsPage() {
   const backHref = pathname.replace(/\/analytics\/series\/.*$/, "/write?view=series");
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10">
       <BlogLink
         href={backHref}
         className="focus-ring inline-flex items-center gap-1.5 rounded text-[13px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
@@ -121,6 +121,6 @@ export default function SeriesAnalyticsPage() {
           )}
         </>
       )}
-    </main>
+    </div>
   );
 }

@@ -50,6 +50,13 @@ let mockComments: CommentView[] = [
   { id: 6, parentId: null, author: null, body: null, createdAt: "2026-05-31T08:00:00Z", likeCount: 0, mentions: [], deleted: true },
   { id: 7, parentId: 6, author: { id: 3, username: "haruka", bio: null, avatarUrl: null }, body: "지워진 댓글에 남은 답글이에요.", createdAt: "2026-05-31T09:00:00Z", likeCount: 0 },
 ];
+const MOCK_LONG_THREAD: CommentView[] = [
+  { id: 51, parentId: null, author: { id: 3, username: "haruka", displayName: "하루카", bio: null, avatarUrl: null }, body: "등산 기록 잘 봤어요.", createdAt: "2026-06-01T09:00:00Z", likeCount: 0 },
+  { id: 52, parentId: null, author: { id: 5, username: "sora", bio: null, avatarUrl: null }, body: "쉬는 것도 일정이라는 말 좋네요.", createdAt: "2026-06-01T10:00:00Z", likeCount: 0 },
+  { id: 53, parentId: null, author: { id: 2, username: "minji", displayName: "민지", bio: null, avatarUrl: null }, body: "다음 산은 어디예요?", createdAt: "2026-06-01T11:00:00Z", likeCount: 0 },
+  { id: 54, parentId: null, author: { id: 1, username: "dohyun", bio: null, avatarUrl: null }, body: "번아웃 얘기 공감해요.", createdAt: "2026-06-01T12:00:00Z", likeCount: 0 },
+  { id: 55, parentId: null, author: { id: 3, username: "haruka", displayName: "하루카", bio: null, avatarUrl: null }, body: "정상 사진도 보고 싶어요.", createdAt: "2026-06-01T13:00:00Z", likeCount: 0 },
+];
 let mockCommentSeq = 100;
 const mockLiked = new Set<number>();
 
@@ -58,7 +65,8 @@ export async function listComments(postId: number): Promise<CommentView[]> {
   if (USE_MOCKS) {
     if (mockFails("comments")) throw new Error("comments 500");
     const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
-    return mockComments.filter((c) => !hidden?.has(c.author?.username ?? ""));
+    const thread = postId === blogMocks?.MOCK_LONG_THREAD_POST_ID ? [...mockComments, ...MOCK_LONG_THREAD] : mockComments;
+    return thread.filter((c) => !hidden?.has(c.author?.username ?? ""));
   }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments?tombstones=1`, {
     cache: "no-store",

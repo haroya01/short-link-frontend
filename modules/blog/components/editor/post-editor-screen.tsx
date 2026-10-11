@@ -46,13 +46,13 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
   if (ed.loading) return <EditorSkeleton />;
   if (!ed.post && postId != null) {
     return (
-      <main className="mx-auto max-w-[44rem] px-5 py-12">
+      <div className="mx-auto max-w-[44rem] px-5 py-12">
         {ed.loadFailed ? (
           <ErrorState onRetry={() => void ed.reload()} />
         ) : (
           <p className="text-red-600 dark:text-red-400">{t("notFound")}</p>
         )}
-      </main>
+      </div>
     );
   }
 
@@ -91,7 +91,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
     // ships in (§10.1). Title, meta and body share one measure and there is no boxed-in editor frame —
     // a quiet paper column, not a SaaS form. The body editor re-centers at the same width (globals.css)
     // and breaks out of the page padding so its text aligns with the title above it.
-    <main className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3">
+    <div className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3">
       <EditorHeader
         backHref={ed.writeBase}
         postId={post?.id ?? null}
@@ -235,6 +235,6 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           if (await ed.overwriteMine()) toast(t("editConflictOverwritten"), "success");
         }}
       />
-    </main>
+    </div>
   );
 }
