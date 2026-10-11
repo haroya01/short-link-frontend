@@ -178,10 +178,7 @@ function LinkForm({
       )}
       {mode === "link" && (
         <label className="flex items-center justify-between gap-3 text-[13px] text-slate-700 dark:text-slate-200">
-          <span className="flex flex-col">
-            {t("shorten")}
-            <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("shortenHint")}</span>
-          </span>
+          <span>{t("shorten")}</span>
           <Switch
             checked={shorten}
             onCheckedChange={(next) => {

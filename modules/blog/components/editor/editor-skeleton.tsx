@@ -6,7 +6,7 @@ import { Skeleton } from "@/modules/blog/components/skeleton";
  */
 export function EditorSkeleton() {
   return (
-    <main
+    <div
       className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3"
       aria-busy
     >
@@ -27,6 +27,6 @@ export function EditorSkeleton() {
           <Skeleton key={i} className={`h-4 ${w}`} />
         ))}
       </div>
-    </main>
+    </div>
   );
 }

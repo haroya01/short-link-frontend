@@ -37,7 +37,7 @@ export default function BlogWebhooksPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
+    <div className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
 
@@ -59,7 +59,7 @@ export default function BlogWebhooksPage() {
       </section>
 
       <CreateForm onCreated={refresh} disabled={(hooks?.length ?? 0) >= 5} />
-    </main>
+    </div>
   );
 }
 

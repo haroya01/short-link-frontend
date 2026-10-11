@@ -61,7 +61,7 @@ afterEach(async () => {
 
 async function open() {
   await act(async () => root.render(<NotificationBell />));
-  await act(async () => host.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]')!.click());
+  await act(async () => host.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!.click());
 }
 
 describe("bell dropdown", () => {
@@ -110,7 +110,7 @@ describe("bell dropdown", () => {
 });
 
 describe("bell unread mark", () => {
-  const bell = () => host.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]')!;
+  const bell = () => host.querySelector<HTMLButtonElement>('button[aria-haspopup="dialog"]')!;
 
   it("shows a dot, not a number, and puts the count in the name", async () => {
     mocks.unread = 128;

@@ -42,7 +42,7 @@ test.describe("desktop", () => {
     await failing(page, "notifications");
     await page.goto("/ko/blog");
     await page.getByRole("button", { name: /^알림/ }).click({ timeout: 30_000 });
-    const menu = page.getByRole("menu");
+    const menu = page.getByRole("dialog", { name: "알림" });
     await expect(menu.getByRole("alert")).toContainText("알림을 불러오지 못했어요");
     await expect(menu.getByText("아직 알림이 없어요")).toHaveCount(0);
 

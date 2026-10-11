@@ -12,6 +12,7 @@ import { useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople } from "@/modules/blog/components/live-people";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 /**
@@ -40,12 +41,26 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   const [panelOpen, setPanelOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   // Only steal focus when the user opens the field by tapping the glyph — not on the resting/URL open.
   const focusOnOpen = useRef(false);
   const { results, loading, failed, retry } = useLiveSearch(value, open, 5);
   const people = useLivePeople(value, open, 3);
 
   useDismiss(panelOpen, formRef, () => setPanelOpen(false));
+  const panelKeys = useMenuKeys(panelRef, {
+    items: "a[href], button",
+    tabCloses: false,
+    onClose: () => {
+      setPanelOpen(false);
+      inputRef.current?.focus();
+    },
+    onEdge: (edge) => {
+      if (edge !== "start") return false;
+      inputRef.current?.focus();
+      return true;
+    },
+  });
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
@@ -125,6 +140,11 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           setPanelOpen(true);
         }}
         onFocus={() => setPanelOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key !== "ArrowDown" || !panelRef.current) return;
+          e.preventDefault();
+          panelKeys.focusFirst();
+        }}
         onBlur={() => {
           // Keep the field open on the hub even when empty; elsewhere an empty blur collapses it.
           if (!value.trim() && !defaultOpen) setOpen(false);
@@ -158,7 +178,11 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       )}
 
       {value.trim() && panelOpen && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850">
+        <div
+          ref={panelRef}
+          onKeyDown={panelKeys.onKeyDown}
+          className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850"
+        >
           <LivePeople people={people} onNavigate={() => setPanelOpen(false)} dense />
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">

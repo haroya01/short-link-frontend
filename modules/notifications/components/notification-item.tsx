@@ -277,6 +277,7 @@ export function NotificationItem({
           href={href}
           onClick={handleClick}
           aria-label={rowLabel}
+          data-notification-row=""
           className="focus-ring absolute inset-0 rounded-lg"
         />
       ) : externalHref ? (
@@ -286,6 +287,7 @@ export function NotificationItem({
           rel="noopener noreferrer"
           onClick={handleClick}
           aria-label={rowLabel}
+          data-notification-row=""
           className="focus-ring absolute inset-0 rounded-lg"
         />
       ) : (
@@ -293,6 +295,7 @@ export function NotificationItem({
           type="button"
           onClick={handleClick}
           aria-label={rowLabel}
+          data-notification-row=""
           className="focus-ring absolute inset-0 rounded-lg"
         />
       )}

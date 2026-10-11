@@ -223,7 +223,7 @@ export default async function PublicPostPage({
     // never shift it. xl:gap-6 (not gap-10) tightens the two gutters so the rail content sits closer to
     // the reading column — the wide gutter left the author block floating alone far to the left; a
     // snugger gap gives the three columns a shared rhythm without touching the 42rem band.
-    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
+    <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
       {articleJsonLd && (
         <script
           type="application/ld+json"
@@ -495,7 +495,7 @@ export default async function PublicPostPage({
         <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
       </AuthorOnly>
       <LegacyHeadingHash headings={headings} />
-    </div>
+    </main>
   );
 }
 
