@@ -30,7 +30,7 @@ let mockMyProfile = {
   bannerUrl: null,
   socials: [],
   hideFollowerCount: false,
-  displayName: (MOCK_VIEWER_AUTHOR.displayName ?? null) as string | null,
+  displayName: "Dohyun Kim" as string | null,
   locked: true,
 };
 

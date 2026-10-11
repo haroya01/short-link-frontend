@@ -20,7 +20,9 @@ export function usePublishOwnProfile() {
   return useCallback(
     (profile: MyProfile) => {
       queryClient.setQueryData(MY_PROFILE_KEY, profile);
-      queryClient.setQueryData<Me>(ME_QUERY_KEY, (me) => (me ? { ...me, avatarUrl: profile.avatarUrl } : me));
+      queryClient.setQueryData<Me>(ME_QUERY_KEY, (me) =>
+        me ? { ...me, avatarUrl: profile.avatarUrl, displayName: profile.displayName ?? null } : me,
+      );
     },
     [queryClient],
   );

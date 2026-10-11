@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useQueryClient } from "@tanstack/react-query";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { AvatarTooBigError, uploadAvatar, useAvatarPick } from "@/components/settings/avatar-picker";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
-import { MY_PROFILE_KEY, usePublishOwnProfile } from "@/modules/blog/lib/own-profile";
+import { usePublishOwnProfile } from "@/modules/blog/lib/own-profile";
 import { deleteAvatar, getMyProfile, updateMyProfile } from "@/modules/profile/api/profile";
 import type { MyProfile } from "@/types";
 
@@ -47,7 +46,6 @@ export function ProfileEditDialog({ open, onClose }: { open: boolean; onClose: (
   const tCommon = useTranslations("common");
   const narrow = useNarrowViewport();
   const { me } = useAuth();
-  const queryClient = useQueryClient();
   const publish = usePublishOwnProfile();
   const errorMessage = useApiErrorMessage();
   const [confirm, confirmDialog] = useConfirm({ layerClassName: "z-[60]" });
@@ -93,7 +91,6 @@ export function ProfileEditDialog({ open, onClose }: { open: boolean; onClose: (
     getMyProfile()
       .then((profile) => {
         if (!alive) return;
-        queryClient.setQueryData(MY_PROFILE_KEY, profile);
         setInitial(profile);
         setName(profile.displayName ?? "");
         setBio(profile.bio ?? "");
@@ -104,7 +101,7 @@ export function ProfileEditDialog({ open, onClose }: { open: boolean; onClose: (
     return () => {
       alive = false;
     };
-  }, [open, attempt, queryClient]);
+  }, [open, attempt]);
 
   const dirty =
     initial !== null &&

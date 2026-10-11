@@ -1,7 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 // mock-on 레인: 목 세션은 @dohyun 이고 /p/dohyun 이 내 작가 페이지다. 프로필 목은 블로그 목의 dohyun
-// (소개 "백엔드 개발자 · 사이드 프로젝트 중독", 사진 pravatar 12)에서 시작하고, 사진 올리기는 pravatar 32 를 돌려준다.
+// (소개 "백엔드 개발자 · 사이드 프로젝트 중독", 사진 pravatar 12)과 목 세션의 표시 이름 "Dohyun Kim"에서 시작하고,
+// 사진 올리기는 pravatar 32 를 돌려준다.
 
 const ORIGINAL_BIO = "백엔드 개발자 · 사이드 프로젝트 중독";
 const ORIGINAL_PHOTO = /img=12$/;
@@ -60,6 +61,19 @@ test.describe("desktop", () => {
     await expect(page.getByRole("dialog", { name: "프로필 편집" })).toHaveCount(0);
     await expect(authorHeader(page).getByText("주말마다 글 한 편", { exact: true })).toBeVisible();
     await expect(authorHeader(page).getByText(ORIGINAL_BIO)).toHaveCount(0);
+  });
+
+  test("a saved display name leads the header and the account menu row", async ({ page }) => {
+    const dialog = await openEditor(page);
+    const name = dialog.getByLabel("표시 이름");
+    await expect(name).toHaveValue("Dohyun Kim");
+    await name.fill("김도현");
+    await dialog.getByRole("button", { name: "저장", exact: true }).click();
+
+    await expect(page.getByRole("dialog", { name: "프로필 편집" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("김도현");
+    await page.getByRole("button", { name: "계정", exact: true }).click();
+    await expect(page.getByRole("menu").getByRole("menuitem").first()).toHaveAccessibleName(/김도현\s*@dohyun/);
   });
 
   test("deleting the photo puts the initial in the header and the nav avatar", async ({ page }) => {
