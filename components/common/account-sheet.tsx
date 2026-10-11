@@ -37,8 +37,9 @@ const ITEM =
   "flex w-full items-center gap-3 rounded-surface px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
- * The blog's mobile account sheet: the top row opens the viewer's author page, then workspace entries
- * (내 글/리드/…), the cross-product switch, theme, language, sign out. 알림 is its own bottom tab.
+ * The blog's mobile account sheet: the same groups as the desktop AccountMenu (author page row /
+ * studio · analytics · library · collections / settings · language · theme / sign out), plus leads,
+ * webhooks and the cross-product switch. 알림 is its own bottom tab.
  */
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
@@ -161,7 +162,10 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               </div>
             )}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-            {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
+            <a href={blogHref("/write")} className={ITEM}>
+              <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              {t("studio")}
+            </a>
             <a href={blogHref("/analytics")} className={ITEM}>
               <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("analytics")}
@@ -176,14 +180,8 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               <Layers className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("myCollections")}
             </a>
-            {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach
-                (the bottom nav only has 홈/검색/글쓰기/계정). 분석은 별도 항목이 아니라 글의 facet 이라
-                여기서도 빼고, 내 글(/write) 상단 요약 strip·글별 성과로 들어간다(#602). */}
+            {/* The desktop sidebar's remaining entries, which mobile otherwise can't reach. */}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-            <a href={blogHref("/write")} className={ITEM}>
-              <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {tBlog("myPosts")}
-            </a>
             <a href={blogHref("/leads")} className={ITEM}>
               <Inbox className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("leads")}
@@ -191,10 +189,6 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <a href={blogHref("/webhooks")} className={ITEM}>
               <Webhook className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("webhooks")}
-            </a>
-            <a href={blogHref("/settings")} className={ITEM}>
-              <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("settings")}
             </a>
           </>
         )}
@@ -206,7 +200,12 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-        <ThemeToggle className={cn(ITEM, "justify-between")} />
+        {authenticated && (
+          <a href={blogHref("/settings")} className={ITEM}>
+            <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+            {t("settings")}
+          </a>
+        )}
         <button
           type="button"
           aria-expanded={langOpen}
@@ -235,6 +234,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               {l === locale && <Check className="h-4 w-4 text-accent-600" />}
             </button>
           ))}
+        <ThemeToggle className={cn(ITEM, "justify-between")} />
 
         <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
         {authenticated ? (
