@@ -42,6 +42,7 @@ export function PostActionRow({
         postSlug={postSlug}
         postUrl={postUrl}
         locale={locale}
+        withShare={menuOnlyBelowWide}
       />
     </div>
   );

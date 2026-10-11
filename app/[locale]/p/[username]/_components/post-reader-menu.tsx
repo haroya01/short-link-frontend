@@ -30,6 +30,7 @@ export function PostReaderMenu({
   postSlug,
   postUrl,
   locale,
+  withShare = true,
 }: {
   postId: number;
   authorUsername: string;
@@ -37,6 +38,7 @@ export function PostReaderMenu({
   postSlug: string;
   postUrl: string;
   locale: string;
+  withShare?: boolean;
 }) {
   const t = useTranslations("notes");
   const tp = useTranslations("publicPost");
@@ -121,14 +123,16 @@ export function PostReaderMenu({
               </button>
             </div>
           )}
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => void share()}
-            className={cn(item, "min-[1100px]:hidden")}
-          >
-            {ts("label")}
-          </button>
+          {withShare && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => void share()}
+              className={cn(item, "min-[1100px]:hidden")}
+            >
+              {ts("label")}
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"

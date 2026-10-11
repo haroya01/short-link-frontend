@@ -93,7 +93,7 @@ test.describe("세로 태블릿 820", () => {
       "북마크에 저장",
     ]);
     await expect(page.getByRole("button", { name: "목차" })).toHaveCount(1);
-    await expect(page.getByTestId("post-actions")).toBeHidden();
+    await expect(page.getByTestId("post-actions")).toBeVisible();
 
     await page.goto(THEIRS);
     const visible = header(page).locator("[data-post-actions]").getByRole("button");

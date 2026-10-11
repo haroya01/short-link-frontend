@@ -2,6 +2,7 @@
   "comments": {
     "heading": "댓글",
     "count": "댓글 {count, number}개",
+    "showAll": "댓글 {count, number}개 모두 보기",
     "placeholder": "댓글 쓰기",
     "submit": "댓글 작성",
     "submitting": "작성 중…",

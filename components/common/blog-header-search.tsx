@@ -12,6 +12,7 @@ import { useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople } from "@/modules/blog/components/live-people";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 /**
  * Global blog search — the single search entry point, in the header so it's reachable from every
@@ -183,9 +184,12 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                     >
                       {item.title}
                     </span>
-                    <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">
-                      @{item.author.username}
-                    </span>
+                    <AuthorName
+                      name={item.author.displayName}
+                      handle={item.author.username}
+                      className="text-[11px] text-slate-500 dark:text-slate-400"
+                      handleClassName={META_HANDLE}
+                    />
                   </a>
                 </li>
               ))}

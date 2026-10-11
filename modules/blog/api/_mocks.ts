@@ -138,6 +138,8 @@ const RIN_POST: PublicFeedItem = toItem(
 
 const READABLE_ITEMS = [...ALL_ITEMS, FIRST_COMMIT, RIN_POST];
 
+export const MOCK_LONG_THREAD_POST_ID = READABLE_ITEMS.findIndex((i) => i.slug === "weekend-hiking-burnout") + 1;
+
 const HIGHLIGHTED_SLUG = "posthog-funnel";
 
 const SEEDED_HIGHLIGHTS: HighlightView[] = [

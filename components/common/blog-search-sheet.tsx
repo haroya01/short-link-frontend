@@ -21,6 +21,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 /**
  * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
@@ -173,9 +174,11 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                       >
                         <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
                         <span className="flex min-w-0 flex-col">
-                          <span className="truncate text-[14px] font-semibold text-slate-800 dark:text-slate-200">
-                            {author.username}
-                          </span>
+                          <AuthorName
+                            name={author.displayName}
+                            handle={author.username}
+                            className="text-[14px] font-semibold text-slate-800 dark:text-slate-200"
+                          />
                           <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">
                             {t("railPostCount", { count: postCount })}
                           </span>
@@ -235,9 +238,12 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                     >
                       {item.title}
                     </span>
-                    <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
-                      @{item.author.username}
-                    </span>
+                    <AuthorName
+                      name={item.author.displayName}
+                      handle={item.author.username}
+                      className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400"
+                      handleClassName={META_HANDLE}
+                    />
                   </span>
                 </a>
               </li>
