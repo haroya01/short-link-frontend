@@ -271,6 +271,7 @@
     "settingsSubtitle": "Cài đặt tài khoản và hiển thị.",
     "settingsAccount": "Tài khoản",
     "settingsEditProfile": "Chỉnh sửa hồ sơ",
+    "settingsEditCard": "Chỉnh sửa danh thiếp",
     "settingsAccountSettings": "Cài đặt tài khoản đầy đủ",
     "settingsViewBlog": "Xem blog của tôi",
     "settingsDisplay": "Hiển thị",
@@ -299,12 +300,6 @@
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
     "analyticsPeakDay": "Ngày cao nhất {date} · {count, number} lượt xem",
     "analyticsLifetimeCaption": "Toàn thời gian",
-    "displayNameTitle": "Tên hiển thị",
-    "displayNamePlaceholder": "Tên hoặc biệt danh",
-    "displayNameSave": "Lưu",
-    "displayNameHint": "Hiển thị trước tên người dùng trên ghi chú và hồ sơ blog. Để trống sẽ hiện tên người dùng.",
-    "displayNameSaved": "Đã đổi tên hiển thị",
-    "displayNameFailed": "Không thể đổi tên hiển thị",
     "settingsLocked": "Tự duyệt người theo dõi",
     "settingsLockedHint": "Khi bật, người theo dõi mới sẽ gửi yêu cầu và chỉ trở thành người theo dõi khi bạn chấp nhận. Tài khoản ở máy chủ khác cũng vậy.",
     "settingsUnlockTitle": "Tắt tự duyệt người theo dõi?",
@@ -1291,6 +1286,22 @@
       "toggleToCode": "Dùng mã từ ứng dụng xác thực",
       "expired": "Phiên xác thực đã hết hạn."
     }
+  },
+  "profileEdit": {
+    "title": "Chỉnh sửa hồ sơ",
+    "photoAdd": "Thêm ảnh",
+    "photoChange": "Đổi ảnh",
+    "nameLabel": "Tên hiển thị",
+    "namePlaceholder": "Tên hoặc biệt danh",
+    "nameHint": "Hiển thị trước tên người dùng trên ghi chú và hồ sơ blog. Để trống sẽ hiện tên người dùng.",
+    "bioLabel": "Giới thiệu",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "saveFailed": "Không lưu được",
+    "loadFailed": "Không tải được hồ sơ",
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục chỉnh sửa"
   },
   "avatar": {
     "change": "Đổi ảnh hồ sơ",

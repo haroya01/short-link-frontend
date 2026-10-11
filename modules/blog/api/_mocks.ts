@@ -46,6 +46,8 @@ const AUTHORS: Record<string, PublicAuthor> = {
   rin: { id: 16, username: "rin", bio: "밤에만 쓰는 사람", avatarUrl: null },
 };
 
+export const MOCK_VIEWER_AUTHOR = AUTHORS.dohyun;
+
 // rin blocked the mock reader: whatever rin wrote is left out of any request that carries the token.
 export const MOCK_BLOCKS_VIEWER: ReadonlySet<string> = new Set(["rin"]);
 

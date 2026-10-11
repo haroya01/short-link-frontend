@@ -246,6 +246,7 @@ export async function uploadAvatarToS3(
   file: File,
   contentType: string,
 ): Promise<void> {
+  if (process.env.NEXT_PUBLIC_USE_MOCKS === "1") return;
   const res = await fetch(uploadUrl, {
     method: "PUT",
     headers: { "Content-Type": contentType },

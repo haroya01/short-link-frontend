@@ -271,6 +271,7 @@
     "settingsSubtitle": "Account and display settings.",
     "settingsAccount": "Account",
     "settingsEditProfile": "Edit profile",
+    "settingsEditCard": "Edit profile card",
     "settingsAccountSettings": "Full account settings",
     "settingsViewBlog": "View my blog",
     "settingsDisplay": "Display",
@@ -299,12 +300,6 @@
     "settingsUnfollowTag": "Unfollow {tag}",
     "analyticsPeakDay": "Peak day {date} · {count, plural, one {# view} other {# views}}",
     "analyticsLifetimeCaption": "All time",
-    "displayNameTitle": "Display name",
-    "displayNamePlaceholder": "Name or nickname",
-    "displayNameSave": "Save",
-    "displayNameHint": "Shown before your username on notes and your blog profile. Leave it empty to show your username.",
-    "displayNameSaved": "Display name updated",
-    "displayNameFailed": "Couldn't update the display name",
     "settingsLocked": "Approve followers manually",
     "settingsLockedHint": "New followers send a request and become followers once you approve. The same goes for accounts on other servers.",
     "settingsUnlockTitle": "Stop approving followers manually?",
@@ -1291,6 +1286,22 @@
       "toggleToCode": "Use authenticator code instead",
       "expired": "This sign-in timed out."
     }
+  },
+  "profileEdit": {
+    "title": "Edit profile",
+    "photoAdd": "Add photo",
+    "photoChange": "Change photo",
+    "nameLabel": "Display name",
+    "namePlaceholder": "Name or nickname",
+    "nameHint": "Shown before your username on notes and your blog profile. Leave it empty to show your username.",
+    "bioLabel": "Bio",
+    "save": "Save",
+    "saving": "Saving…",
+    "saveFailed": "Couldn't save",
+    "loadFailed": "Couldn't load your profile",
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing"
   },
   "avatar": {
     "change": "Change profile photo",
