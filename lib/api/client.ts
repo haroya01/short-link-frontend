@@ -324,12 +324,13 @@ const MOCK_ME: Me = {
   email: "dohyun@kurl.me",
   role: "USER",
   username: "dohyun",
+  displayName: "Dohyun Kim",
   createdAt: "2026-01-01T00:00:00Z",
   avatarUrl: "https://i.pravatar.cc/120?img=12",
 };
 
 export async function fetchMe(): Promise<Me> {
-  if (MOCKS_ON) return Promise.resolve(MOCK_ME);
+  if (MOCKS_ON) return Promise.resolve(mockEmpty("displayName") ? { ...MOCK_ME, displayName: null } : MOCK_ME);
   return request<Me>("/api/v1/users/me", { method: "GET" });
 }
 

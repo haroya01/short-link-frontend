@@ -7,15 +7,14 @@ import {
   Bookmark,
   Check,
   ChevronDown,
+  ChevronRight,
   FileText,
   Inbox,
   Languages,
   Layers,
   LogIn,
   LogOut,
-  Newspaper,
   Settings,
-  User,
   Webhook,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -23,12 +22,13 @@ import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
-import { blogHref, linksHref } from "@/lib/host";
+import { blogHref } from "@/lib/host";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { AppsGrid } from "@/components/common/apps-grid";
+import { MeAvatar } from "@/components/common/header-avatar-slot";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -37,7 +37,7 @@ const ITEM =
   "flex w-full items-center gap-3 rounded-surface px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
- * The blog's mobile account sheet: the viewer's two surfaces (블로그/프로필), workspace entries
+ * The blog's mobile account sheet: the top row opens the viewer's author page, then workspace entries
  * (내 글/리드/…), the cross-product switch, theme, language, sign out. 알림 is its own bottom tab.
  */
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -78,6 +78,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
   if (!mounted || !portalReady) return null;
 
   const username = me?.username ?? "";
+  const displayName = me?.displayName ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();
 
   function switchLocale(next: string) {
@@ -133,33 +134,37 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
 
         {authenticated && (
           <>
-            <div className="flex items-center gap-3 px-3 py-2">
-              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300">
-                {me?.avatarUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={me.avatarUrl} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  initial
-                )}
-              </span>
-              <span className="min-w-0">
-                {username && <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</span>}
-                {me?.email && <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</span>}
-              </span>
-            </div>
+            {username ? (
+              <a href={authorHref(username, locale)} onClick={onClose} className={cn(ITEM, "py-2")}>
+                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} className="h-10 w-10 text-sm" />
+                <span className="min-w-0 flex-1">
+                  {displayName && (
+                    <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{displayName}</span>
+                  )}
+                  <span
+                    className={cn(
+                      "block truncate",
+                      displayName
+                        ? "text-[12px] text-slate-500 dark:text-slate-400"
+                        : "text-sm font-semibold text-slate-900 dark:text-slate-100",
+                    )}
+                  >
+                    @{username}
+                  </span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
+              </a>
+            ) : (
+              <div className="flex items-center gap-3 px-3 py-2">
+                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} className="h-10 w-10 text-sm" />
+                {me?.email && <span className="min-w-0 truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</span>}
+              </div>
+            )}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
             {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
             <a href={blogHref("/analytics")} className={ITEM}>
               <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("analytics")}
-            </a>
-            <a href={authorHref(username, locale)} className={ITEM}>
-              <Newspaper className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("blog")}
-            </a>
-            <a href={linksHref(`/${locale}/u/${username}`)} className={ITEM}>
-              <User className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("profile")}
             </a>
             {/* Reader's library — saved posts, highlights, notes, and collections. */}
             <a href={blogHref("/curation")} className={ITEM}>
