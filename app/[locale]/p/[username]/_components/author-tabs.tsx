@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useEdgeFade } from "@/hooks/use-edge-fade";
 import { useAuth } from "@/lib/auth";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 
@@ -115,35 +116,14 @@ export function AuthorTabs({
     // isOwner flips the visible tab set (private tabs appear) → re-measure when it resolves.
   }, [activeIndex, isOwner]);
 
-  const [edges, setEdges] = useState({ start: false, end: false });
-  useEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-    const update = () =>
-      setEdges({
-        start: nav.scrollLeft > 1,
-        end: nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 1,
-      });
-    update();
-    nav.addEventListener("scroll", update, { passive: true });
-    const ro = new ResizeObserver(update);
-    ro.observe(nav);
-    return () => {
-      nav.removeEventListener("scroll", update);
-      ro.disconnect();
-    };
-  }, [isOwner]);
-  const fade = `linear-gradient(to right, ${edges.start ? "transparent, black 2.5rem" : "black"}, ${
-    edges.end ? "black calc(100% - 2.5rem), transparent" : "black"
-  })`;
+  const edgeFade = useEdgeFade(navRef, [isOwner]);
 
   return (
     <div className="mt-6 border-b border-slate-200 sm:mt-7 dark:border-slate-800">
       <nav
         ref={navRef}
-        data-edge-start={edges.start || undefined}
-        data-edge-end={edges.end || undefined}
-        style={edges.start || edges.end ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
+        {...edgeFade.attrs}
+        style={edgeFade.style}
         className="relative flex gap-1 overflow-x-auto text-[15px] font-medium [scrollbar-width:none] sm:gap-0 [&::-webkit-scrollbar]:hidden"
       >
         {visible.map((tab, i) => (

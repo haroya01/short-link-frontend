@@ -918,7 +918,7 @@ async function addDialogTag(dialog: Locator, name = "dev") {
   await input.press("Enter");
 }
 
-/** 시리즈 · 주소 · 발행 시점 · 본문 링크 live in the collapsed 추가 설정 section — expand it before
+/** 시리즈 · 주소 live in the collapsed 추가 설정 section — expand it before
  *  touching those fields. Substring match (getByRole's default): the toggle's accessible name also
  *  carries the publish address shown on its row. */
 async function openAdvanced(dialog: Locator) {
@@ -994,8 +994,7 @@ test("schedule: a draft can be parked for a future publish (POST /schedule)", as
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // scheduling is a deferred publish → topic required too
-  // The 발행 시점 segment (Publish now / Schedule) folds into 추가 설정 — expand, then pick.
-  await openAdvanced(dialog);
+  // The 발행 시점 segment (Publish now / Schedule) sits in the dialog body, no expanding needed.
   await dialog.getByRole("radio", { name: "Schedule", exact: true }).click();
   // Schedule mode swaps the primary action: "Publish" becomes "Schedule post", disabled until a
   // time is picked (an empty time used to fall through to an immediate publish).
@@ -1529,7 +1528,6 @@ test("scheduling a past time is rejected with no /schedule call (A22)", async ({
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // pass the topic gate so the PAST-TIME guard is what blocks it
-  await openAdvanced(dialog); // the 발행 시점 segment folds into 추가 설정
   await dialog.getByRole("radio", { name: "Schedule", exact: true }).click();
   await dialog.locator('input[type="datetime-local"]').fill("2020-01-01T10:00");
   await dialog.getByRole("button", { name: "Schedule post", exact: true }).click();

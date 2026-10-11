@@ -57,45 +57,50 @@ export function PublishCelebration({ slug }: { slug: string }) {
     };
   }, [slug]);
 
-  if (phase === "off") return null;
-
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
-      {/* 색지 — 브랜드 그린 계열 + 종이 슬레이트, 위에서 흩날리며 떨어진다(모션 축소 시 생략). */}
-      {!reduced &&
-        phase === "in" &&
-        STRIPS.map((s, i) => (
-          <span
-            key={i}
-            className={`absolute top-0 block rounded-sm ${s.cls}`}
-            style={{
-              left: `${s.left}%`,
-              width: s.w,
-              height: s.h,
-              // 낙하는 가속이 자연스러워 단일 이동 곡선(var(--ease)=감속) 대신 linear — 색지들의
-              // 지속시간 편차가 흩날림을 만든다.
-              animation: `celebrate-fall ${s.dur}ms linear ${s.delay}ms both`,
-              "--drift": `${s.drift}px`,
-              "--spin": `${s.spin}deg`,
-            } as React.CSSProperties}
-          />
-        ))}
+    <>
+      <p role="status" className="sr-only">
+        {phase === "in" ? t("publishedStatus") : ""}
+      </p>
+      {phase !== "off" && (
+        <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
+          {/* 색지 — 브랜드 그린 계열 + 종이 슬레이트, 위에서 흩날리며 떨어진다(모션 축소 시 생략). */}
+          {!reduced &&
+            phase === "in" &&
+            STRIPS.map((s, i) => (
+              <span
+                key={i}
+                className={`absolute top-0 block rounded-sm ${s.cls}`}
+                style={{
+                  left: `${s.left}%`,
+                  width: s.w,
+                  height: s.h,
+                  // 낙하는 가속이 자연스러워 단일 이동 곡선(var(--ease)=감속) 대신 linear — 색지들의
+                  // 지속시간 편차가 흩날림을 만든다.
+                  animation: `celebrate-fall ${s.dur}ms linear ${s.delay}ms both`,
+                  "--drift": `${s.drift}px`,
+                  "--spin": `${s.spin}deg`,
+                } as React.CSSProperties}
+              />
+            ))}
 
-      {/* "발행됐어요" 필 — 체크 디스크 + 문구, 아래로 그린 실이 그어진다(웹로그 시그니처).
-          헤더(h-14) 바로 아래 띠에 떠서 제목을 가리지 않는다. */}
-      <div className="absolute left-1/2 top-[4.5rem] -translate-x-1/2">
-        <div className={phase === "in" ? "celebrate-pill-in" : "animate-fade-out"}>
-          <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-2.5 pl-3 pr-5 shadow-card-hover dark:border-slate-700 dark:bg-slate-900">
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-700 text-white">
-              <Check className="h-3.5 w-3.5" />
-            </span>
-            <span className="relative text-[14px] font-semibold text-slate-900 dark:text-slate-100">
-              {t("publishedCelebration")}
-              <span className="celebrate-thread absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-accent-600" />
-            </span>
+          {/* "발행됐어요" 필 — 체크 디스크 + 문구, 아래로 그린 실이 그어진다(웹로그 시그니처).
+              헤더(h-14) 바로 아래 띠에 떠서 제목을 가리지 않는다. */}
+          <div className="absolute left-1/2 top-[4.5rem] -translate-x-1/2">
+            <div className={phase === "in" ? "celebrate-pill-in" : "animate-fade-out"}>
+              <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-2.5 pl-3 pr-5 shadow-card-hover dark:border-slate-700 dark:bg-slate-900">
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-700 text-white">
+                  <Check className="h-3.5 w-3.5" />
+                </span>
+                <span className="relative text-[14px] font-semibold text-slate-900 dark:text-slate-100">
+                  {t("publishedCelebration")}
+                  <span className="celebrate-thread absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-accent-600" />
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
