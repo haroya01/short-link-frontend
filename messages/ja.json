@@ -3861,8 +3861,6 @@
     "kindredCuratorsTitle": "趣味が重なるキュレーター",
     "sharedItems": "共通 {count}件",
     "postEdgesPathsTitle": "この記事が入っているコレクション",
-    "postEdgesRelatedTitle": "つながるもの",
-    "postEdgesCuratorsTitle": "この記事をつないだ人",
     "postEdgesPathPosition": "{total}編中 {position}番目",
     "connectStep1Title": "どこに残しますか？",
     "connectStep2Title": "なぜつなげましたか？",
