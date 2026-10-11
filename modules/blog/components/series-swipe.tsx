@@ -383,30 +383,33 @@ export function SeriesSwitchButtons({
   };
 
   const btn =
-    "focus-ring inline-flex items-center gap-1 rounded-surface px-2 py-1 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-accent-700 disabled:pointer-events-none disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-accent-400";
+    "focus-ring inline-flex items-center gap-1 rounded-surface px-2 py-1 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-accent-700 aria-disabled:pointer-events-none aria-disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-accent-400";
+
+  const arrow = (dir: Dir, link: SeriesItemLink | null, label: string, icon: ReactNode) =>
+    link ? (
+      <a
+        href={seriesItemHref(username, link, locale)}
+        className={btn}
+        onMouseEnter={() => prefetch(link)}
+        onClick={(e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          dispatch(dir);
+        }}
+        aria-label={label}
+      >
+        {icon}
+      </a>
+    ) : (
+      <a role="link" aria-disabled="true" aria-label={label} className={btn}>
+        {icon}
+      </a>
+    );
 
   return (
     <div className="flex items-center gap-1">
-      <button
-        type="button"
-        className={btn}
-        disabled={!series.prev}
-        onMouseEnter={() => prefetch(series.prev)}
-        onClick={() => dispatch("prev")}
-        aria-label={t("seriesPrevEpisode")}
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        className={btn}
-        disabled={!series.next}
-        onMouseEnter={() => prefetch(series.next)}
-        onClick={() => dispatch("next")}
-        aria-label={t("seriesNextEpisode")}
-      >
-        <ArrowRight className="h-4 w-4" />
-      </button>
+      {arrow("prev", series.prev, t("seriesPrevEpisode"), <ArrowLeft className="h-4 w-4" />)}
+      {arrow("next", series.next, t("seriesNextEpisode"), <ArrowRight className="h-4 w-4" />)}
     </div>
   );
 }
