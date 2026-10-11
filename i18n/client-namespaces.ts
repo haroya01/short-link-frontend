@@ -62,8 +62,8 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/write": ["blogWorkspace", "postEditor", "tags"],
   "p/[username]": [
     "auth", "collections", "comments", "compose", "errors", "languageSwitcher", "loginPrompt", "mentions", "nav",
-    "notifications", "notes", "postEditor.urlDialog", "publicFeed", "publicPost", "publicProfile.gallery",
-    "share", "sidebar.blog",
+    "notifications", "notes", "postEditor.blockMenu", "postEditor.linkSheet", "postEditor.urlDialog", "publicFeed",
+    "publicPost", "publicProfile.gallery", "share", "sidebar.blog",
   ],
   u: ["auth", "loginPrompt", "publicProfile", "qr"],
   e: ["events.public"],

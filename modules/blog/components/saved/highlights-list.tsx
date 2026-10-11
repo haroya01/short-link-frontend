@@ -11,6 +11,7 @@ import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyHighlights, type MyHighlightItem } from "@/modules/blog/api/highlights";
 import { LoadError } from "@/modules/blog/components/saved/load-error";
+import { markdownPlain } from "@/modules/blog/lib/markdown-lead";
 
 /**
  * 내 서재 — every passage the viewer has drawn a highlight on, newest first, each anchored to the post
@@ -122,7 +123,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
                     </span>
                     {h.note && (
                       <span className="mt-1.5 block text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-                        {h.note}
+                        {markdownPlain(h.note)}
                       </span>
                     )}
                   </span>

@@ -47,6 +47,7 @@ import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelectio
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { useLikeFailed } from "@/hooks/use-like-failed";
+import { markdownPlain } from "@/modules/blog/lib/markdown-lead";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -543,7 +544,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
             <li key={highlight.id}>
               <button type="button" className="focus-ring w-full rounded-surface py-3 text-left" onClick={() => onChoose(highlight)}>
                 <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">{highlight.author?.username ?? "?"}</span>
-                <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note || highlight.quote}</span>
+                <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note ? markdownPlain(highlight.note) : highlight.quote}</span>
                 {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{tc("highlightReplyCount", { count: highlight.replyCount })}</span>}
               </button>
             </li>

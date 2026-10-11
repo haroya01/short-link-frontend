@@ -124,11 +124,15 @@ export function FeedRow({
 
 export function RowAuthor({
   username,
+  displayName,
   avatarUrl,
+  seed,
   locale,
 }: {
   username: string;
+  displayName?: string | null;
   avatarUrl: string | null | undefined;
+  seed: number | null;
   locale: string;
 }) {
   return (
@@ -136,7 +140,7 @@ export function RowAuthor({
       href={authorHref(username, locale)}
       className="focus-ring flex min-w-0 items-center gap-1.5 rounded transition-colors hover:text-slate-900 dark:hover:text-slate-100"
     >
-      <Avatar src={avatarUrl} name={username} size="xs" />
+      <Avatar src={avatarUrl} name={displayName || username} seed={seed} size="xs" />
       <span className="truncate font-medium">{username}</span>
     </BlogLink>
   );

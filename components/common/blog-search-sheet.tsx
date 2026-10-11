@@ -171,7 +171,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                         onClick={() => onClose()}
                         className="focus-ring flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       >
-                        <Avatar src={author.avatarUrl} name={author.username} size="md" />
+                        <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
                         <span className="flex min-w-0 flex-col">
                           <span className="truncate text-[14px] font-semibold text-slate-800 dark:text-slate-200">
                             {author.username}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeAddress, pastedUrl, planPaste } from "./link-paste";
+import { linkOnly, normalizeAddress, pastedUrl, planPaste } from "./link-paste";
 
 const spot = (over: Partial<{ selection: boolean; emptyLine: boolean; code: boolean }> = {}) => ({
   selection: false,
@@ -72,5 +72,17 @@ describe("normalizeAddress", () => {
   it("feeds the same validation as paste, so a normalized address is a usable URL", () => {
     expect(pastedUrl(normalizeAddress("example.com/post"))).toBe("https://example.com/post");
     expect(pastedUrl(normalizeAddress("mailto:a@b.c"))).toBeNull();
+  });
+});
+
+describe("linkOnly", () => {
+  it("turns the empty-line link · card choice into a plain link where cards don't exist", () => {
+    expect(linkOnly(planPaste("https://kurl.me", spot({ emptyLine: true })))).toEqual({ kind: "link-inline", href: "https://kurl.me" });
+  });
+
+  it("keeps every other plan as it was", () => {
+    expect(linkOnly(planPaste("https://kurl.me", spot({ selection: true })))).toEqual({ kind: "link-selection", href: "https://kurl.me" });
+    expect(linkOnly(planPaste("https://kurl.me", spot()))).toEqual({ kind: "link-inline", href: "https://kurl.me" });
+    expect(linkOnly(planPaste("https://kurl.me", spot({ code: true })))).toEqual({ kind: "default" });
   });
 });

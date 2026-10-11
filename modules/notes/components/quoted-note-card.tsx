@@ -25,7 +25,7 @@ export function QuotedNoteCard({
   const content = (
     <>
       <span className="flex min-w-0 items-center gap-1.5 text-[14px] leading-5">
-        <Avatar src={note.author.avatarUrl} name={note.author.username} size="xs" />
+        <Avatar src={note.author.avatarUrl} name={note.author.displayName || note.author.username} seed={note.author.remoteId ? null : note.author.id} size="xs" />
         <span className="truncate font-semibold text-slate-900 dark:text-slate-100">{note.author.username}</span>
         <time dateTime={note.createdAt} suppressHydrationWarning className="shrink-0 text-slate-500 dark:text-slate-400">
           {ago(note.createdAt)}

@@ -259,7 +259,7 @@ function Popover({
       aria-modal="true"
       aria-label={label}
       style={place ?? { visibility: "hidden" }}
-      className="fixed z-[60] w-[min(26rem,calc(100vw-2rem))] animate-fade-in rounded-2xl border border-slate-200 bg-white p-4 shadow-modal motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-850"
+      className="fixed z-[70] w-[min(26rem,calc(100vw-2rem))] animate-fade-in rounded-2xl border border-slate-200 bg-white p-4 shadow-modal motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-850"
     >
       <p className="mb-3 text-[13px] font-semibold text-slate-700 dark:text-slate-200">{label}</p>
       {children}
@@ -299,7 +299,7 @@ export function LinkDialog({
 
   if (narrow) {
     return (
-      <BottomSheet open={!!request} onClose={onClose} label={label}>
+      <BottomSheet open={!!request} onClose={onClose} label={label} layerClassName="z-[70]">
         <p className="mb-3 text-[15px] font-semibold text-slate-900 dark:text-slate-100">{label}</p>
         {form}
       </BottomSheet>

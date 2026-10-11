@@ -19,6 +19,7 @@ let host: HTMLDivElement;
 const onSave = vi.fn();
 const onChangeStatus = vi.fn();
 const onCancelSchedule = vi.fn();
+const onSchedule = vi.fn();
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -29,6 +30,7 @@ beforeEach(() => {
   onSave.mockResolvedValue(true);
   onChangeStatus.mockResolvedValue(true);
   onCancelSchedule.mockResolvedValue(true);
+  onSchedule.mockResolvedValue(true);
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -67,7 +69,7 @@ async function render(status: PostStatus, takenDown = false) {
         busy={false}
         onSave={onSave}
         onChangeStatus={onChangeStatus}
-        onSchedule={vi.fn()}
+        onSchedule={onSchedule}
         onCancelSchedule={onCancelSchedule}
       />,
     ),
@@ -141,3 +143,54 @@ describe("a post taken down by an admin", () => {
     expect(button("postEditor.republish")!.disabled).toBe(false);
   });
 });
+
+const footerButtons = () => Array.from(document.querySelectorAll("footer button")).map((b) => b.textContent?.trim());
+const timeField = () => document.querySelector<HTMLInputElement>('input[type="datetime-local"]');
+function typeTime(value: string) {
+  const input = timeField()!;
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+function localInput(iso: string) {
+  const at = new Date(iso);
+  return new Date(at.getTime() - at.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+describe("when a post goes out", () => {
+  it("lets a draft pick now or later without opening 추가 설정", async () => {
+    await render("DRAFT");
+    const advanced = document.querySelector<HTMLButtonElement>("button[aria-expanded]")!;
+    expect(advanced.textContent).toContain("postEditor.advancedSettings");
+    expect(advanced.getAttribute("aria-expanded")).toBe("false");
+    expect(document.querySelector('[role="radiogroup"][aria-label="postEditor.publishTiming"]')).not.toBeNull();
+    expect(timeField()).toBeNull();
+    await act(async () => button("postEditor.schedule")!.click());
+    expect(timeField()).not.toBeNull();
+  });
+
+  it("shows a scheduled post's time and offers 시각 바꾸기 and 지금 발행 beside 예약 취소", async () => {
+    await render("SCHEDULED");
+    expect(timeField()!.value).toBe(localInput("2026-11-01T09:00:00Z"));
+    expect(footerButtons()).toEqual(["postEditor.cancelSchedule", "postEditor.reschedule", "postEditor.publishNow"]);
+    expect(button("postEditor.reschedule")!.disabled).toBe(true);
+
+    await act(async () => typeTime("2026-11-02T10:30"));
+    expect(button("postEditor.reschedule")!.disabled).toBe(false);
+    await act(async () => button("postEditor.reschedule")!.click());
+    expect(onSchedule).toHaveBeenCalledWith("2026-11-02T10:30");
+  });
+
+  it("publishes a scheduled post now, saving first", async () => {
+    await render("SCHEDULED");
+    await act(async () => button("postEditor.publishNow")!.click());
+    expect(onSave).toHaveBeenCalled();
+    expect(onChangeStatus).toHaveBeenCalledWith("publish");
+    expect(onSave.mock.invocationCallOrder[0]).toBeLessThan(onChangeStatus.mock.invocationCallOrder[0]);
+  });
+
+  it("gives a live post just 발행 취소 and 변경사항 저장", async () => {
+    await render("PUBLISHED");
+    expect(footerButtons()).toEqual(["postEditor.unpublish", "postEditor.saveChanges"]);
+  });
+});
+

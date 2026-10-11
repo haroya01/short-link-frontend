@@ -54,7 +54,7 @@ export function FollowSuggestions() {
           <li key={pick.username} data-testid={`suggestion-${pick.username}`} className="group relative -mx-2 rounded-surface px-2 py-2">
             <div className="flex items-center gap-2.5">
               <BlogLink href={authorHref(pick.username, locale)} className="focus-ring flex min-w-0 flex-1 items-center gap-2.5 rounded-surface">
-                <Avatar src={pick.avatarUrl} name={pick.username} size="sm" />
+                <Avatar src={pick.avatarUrl} name={pick.displayName || pick.username} seed={pick.userId} size="sm" />
                 <span className="min-w-0">
                   <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">
                     {pick.displayName || pick.username}

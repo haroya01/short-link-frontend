@@ -45,3 +45,7 @@ export function planPaste(text: string | null | undefined, spot: PasteSpot): Pas
   if (spot.emptyLine) return { kind: "link-with-choice", href, video: isVideoUrl(href) };
   return { kind: "link-inline", href };
 }
+
+export function linkOnly(plan: PastePlan): PastePlan {
+  return plan.kind === "link-with-choice" ? { kind: "link-inline", href: plan.href } : plan;
+}

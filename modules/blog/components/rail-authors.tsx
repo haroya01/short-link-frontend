@@ -36,7 +36,7 @@ export function RailAuthors({
               href={authorHref(author.username, locale)}
               className="group flex items-center gap-3 rounded-surface px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
             >
-              <Avatar src={author.avatarUrl} name={author.username} size="md" />
+              <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
               <span className="flex min-w-0 flex-col">
                 <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100">
                   {author.username}

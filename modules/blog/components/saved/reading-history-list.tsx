@@ -142,7 +142,7 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
               href={postHref(item.username, item.slug, locale)}
               className="focus-ring group flex min-w-0 flex-1 items-start gap-3"
             >
-              <Avatar src={item.avatarUrl} name={item.username} size="sm" />
+              <Avatar src={item.avatarUrl} name={item.username} seed={item.userId} size="sm" />
               <span className="flex min-w-0 flex-col">
                 <span
                   lang={contentLang(item.title)}

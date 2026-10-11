@@ -9,7 +9,7 @@ test.describe("dashboard is the signed-in home", () => {
     await page.goto("/ko");
     await expect(page).toHaveURL(/\/ko\/dashboard$/);
     await expect(page.getByRole("heading", { level: 1, name: "내 링크" })).toBeVisible();
-    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toBeVisible();
+    await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toBeVisible();
     await expect(page.getByRole("link", { name: /새 링크/ })).toHaveCount(0);
   });
 
@@ -24,7 +24,7 @@ test.describe("dashboard is the signed-in home", () => {
     });
     await page.goto(`/ko?shared_text=${encodeURIComponent("이거 봐 https://example.com/shared 좋더라")}`);
     await expect(page).toHaveURL(/\/ko\/dashboard$/);
-    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toHaveValue("https://example.com/shared");
+    await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toHaveValue("https://example.com/shared");
     await page.waitForTimeout(500);
     expect(created).toBe(0);
   });

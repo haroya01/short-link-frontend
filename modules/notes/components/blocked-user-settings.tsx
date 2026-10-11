@@ -53,7 +53,7 @@ export function BlockedUserSettings() {
                 href={authorHref(user.username, locale)}
                 className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded"
               >
-                <Avatar src={user.avatarUrl} name={user.username} size="sm" />
+                <Avatar src={user.avatarUrl} name={user.username} seed={user.id} size="sm" />
                 <span className="truncate text-[14px] text-slate-800 dark:text-slate-100">@{user.username}</span>
               </BlogLink>
               <button
