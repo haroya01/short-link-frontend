@@ -753,5 +753,22 @@ describe("a save that fails", () => {
     expect(editor.saveFailed).toBe(false);
     expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Offline edit" }));
   });
+
+  it("tries again the moment the connection comes back, and only while a save has failed", async () => {
+    await mount();
+    await act(async () => { window.dispatchEvent(new Event("online")); });
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+
+    api.updatePostMetadata.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    await act(async () => { editor.setTitle("Offline edit"); });
+    await act(async () => { await editor.save(); });
+    expect(editor.saveFailed).toBe(true);
+    const tries = api.updatePostMetadata.mock.calls.length;
+
+    await act(async () => { window.dispatchEvent(new Event("online")); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+    expect(api.updatePostMetadata).toHaveBeenCalledTimes(tries + 1);
+    expect(editor.saveFailed).toBe(false);
+  });
 });
 

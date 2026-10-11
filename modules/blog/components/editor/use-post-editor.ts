@@ -721,6 +721,15 @@ export function usePostEditor(
     autoRetryBlocked.current = false;
     return flush();
   }
+  const retrySaveRef = useRef(retrySave);
+  retrySaveRef.current = retrySave;
+
+  useEffect(() => {
+    if (!saveFailed) return;
+    const onOnline = () => void retrySaveRef.current();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [saveFailed]);
 
   async function loadLatest() {
     const current = currentDraft.current.post;

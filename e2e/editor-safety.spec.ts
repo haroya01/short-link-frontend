@@ -77,3 +77,17 @@ test("다크 모드의 본문 안내는 본문 글자보다 한참 옅다", asyn
     .poll(() => placeholder.evaluate((el) => getComputedStyle(el, "::before").color))
     .toBe("rgb(79, 86, 82)");
 });
+
+test("저장이 실패한 채로 연결이 끊겼다 돌아오면, 누르지 않아도 다시 저장한다", async ({ page, context }) => {
+  await page.addInitScript(() => window.localStorage.setItem("kurl:mock-fail:post-save", "1"));
+  await editPublished(page);
+  await page.getByRole("button", { name: "저장", exact: true }).click();
+  const retry = page.getByRole("button", { name: "저장 못 함 · 다시 시도" });
+  await expect(retry).toBeVisible();
+
+  await page.evaluate(() => window.localStorage.removeItem("kurl:mock-fail:post-save"));
+  await context.setOffline(true);
+  await context.setOffline(false);
+  await expect(retry).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "저장", exact: true })).toBeVisible();
+});
