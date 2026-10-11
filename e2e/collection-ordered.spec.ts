@@ -12,6 +12,9 @@ test("글 끝은 '이 글이 담긴 컬렉션' 하나로 묶고, 순서 있는 �
   await page.goto(POST);
   const section = page.locator("section").filter({ has: page.getByText("이 글이 담긴 컬렉션", { exact: true }) });
   await expect(section).toBeVisible({ timeout: 30_000 });
+  await expect(section.getByRole("link")).toHaveCount(3);
+  await expect(page.getByText("엮인 것", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("이 글을 엮은 사람", { exact: true })).toHaveCount(0);
 
   const ordered = section.getByRole("link", { name: /결정을 남기는 법/ });
   await expect(ordered).toContainText("@jiwon");

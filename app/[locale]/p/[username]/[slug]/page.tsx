@@ -23,7 +23,7 @@ import { TagChips } from "../_components/post-meta";
 import { PostActionRow } from "../_components/post-action-row";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
-import { PostEdges } from "@/modules/blog/components/post-edges";
+import { PostCollections } from "@/modules/blog/components/post-collections";
 import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { PublishCelebration } from "@/modules/blog/components/publish-celebration";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
@@ -438,11 +438,8 @@ export default async function PublicPostPage({
 
         <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
 
-        {/* 이 글이 담긴 컬렉션 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
-            nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
-            so the article is never a dead end (§10: one green thread, no node-graph). */}
         <Suspense fallback={null}>
-          <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
+          <PostCollections postId={post.id} />
         </Suspense>
 
         <Suspense fallback={null}>

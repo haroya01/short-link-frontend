@@ -39,8 +39,15 @@ test.describe("desktop account menu", () => {
 
   test("스튜디오 opens my posts and 설정 opens blog settings", async ({ page }) => {
     let menu = await openMenu(page);
-    const rows = (await menu.getByRole("menuitem").allInnerTexts()).map((r) => r.trim());
-    expect(rows.slice(1)).toEqual(["스튜디오", "분석", "서재", "내 컬렉션", "설정", "로그아웃"]);
+    await expect(menu.getByRole("menuitem")).toHaveText([
+      /Dohyun Kim\s*@dohyun/,
+      "스튜디오",
+      "분석",
+      "서재",
+      "내 컬렉션",
+      "설정",
+      "로그아웃",
+    ]);
 
     await menu.getByRole("menuitem", { name: "스튜디오", exact: true }).click();
     await expect(page).toHaveURL(/\/write$/);
