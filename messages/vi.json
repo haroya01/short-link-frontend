@@ -2,6 +2,7 @@
   "comments": {
     "heading": "Bình luận",
     "count": "{count, plural, =0 {Bình luận} one {# bình luận} other {# bình luận}}",
+    "showAll": "Xem tất cả {count, number} bình luận",
     "placeholder": "Viết bình luận",
     "submit": "Bình luận",
     "submitting": "Đang đăng…",

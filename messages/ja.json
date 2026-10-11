@@ -2,6 +2,7 @@
   "comments": {
     "heading": "コメント",
     "count": "コメント{count, number}件",
+    "showAll": "コメント{count, number}件をすべて表示",
     "placeholder": "コメントを書く",
     "submit": "コメント",
     "submitting": "投稿中…",

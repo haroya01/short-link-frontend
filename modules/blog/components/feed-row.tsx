@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
@@ -10,7 +11,6 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { useIsPostRead } from "@/modules/blog/lib/read-posts";
 
 type DataAttrs = { [key: `data-${string}`]: string | number | boolean | undefined };
-
 export function FeedRow({
   href,
   title,
@@ -141,7 +141,7 @@ export function RowAuthor({
       className="focus-ring flex min-w-0 items-center gap-1.5 rounded transition-colors hover:text-slate-900 dark:hover:text-slate-100"
     >
       <Avatar src={avatarUrl} name={displayName || username} seed={seed} size="xs" />
-      <span className="truncate font-medium">{username}</span>
+      <AuthorName name={displayName} handle={username} className="font-medium" handleClassName={META_HANDLE} />
     </BlogLink>
   );
 }

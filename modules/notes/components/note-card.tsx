@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { useLikeFailed } from "@/hooks/use-like-failed";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { ConversationName } from "@/modules/blog/components/conversation-row";
+import { AuthorName, STRONG_NAME } from "@/modules/blog/components/author-name";
 import { blogHref, blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
@@ -313,9 +313,9 @@ export function NoteCard({
             ) : (
               <BlogLink
                 href={noteAuthorHref(note.author, locale)}
-                className="flex min-w-0 items-baseline gap-1 rounded focus-ring hover:underline"
+                className="flex min-w-0 rounded focus-ring hover:underline"
               >
-                <ConversationName name={note.author.displayName} handle={note.author.username} />
+                <AuthorName name={note.author.displayName} handle={note.author.username} className={STRONG_NAME} />
               </BlogLink>
             )}
             {!emphasis && (

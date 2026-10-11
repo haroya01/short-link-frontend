@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { clearDraft, readDraft, writeDraft } from "@/modules/blog/lib/conversation-draft";
 import {
@@ -16,6 +17,7 @@ import {
   type CommentView,
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { END_SECTION } from "@/modules/blog/components/end-section";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentMenu } from "@/modules/blog/components/comment-menu";
 import { ConversationLike, ConversationRow, ConversationTombstone } from "@/modules/blog/components/conversation-row";
@@ -33,6 +35,10 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
+const COLLAPSED_TOPS = 5;
+
+const commentHash = () => typeof window !== "undefined" && /^#comment-\d+$/.test(window.location.hash);
+
 function appendUnique(prev: CommentView[], created: CommentView): CommentView[] {
   return [...prev.filter((c) => c.id !== created.id), created];
 }
@@ -104,6 +110,8 @@ export function PostComments({
   const [loaded, setLoaded] = useState(false);
   const [flashId, setFlashId] = useState<number | null>(null);
   const [jumpSeq, setJumpSeq] = useState(0);
+  const [expanded, setExpanded] = useState(commentHash);
+  const revealFrom = useRef<number | null>(null);
   const shownIds = useRef<Set<number>>(new Set());
   const { toast } = useToast();
   const focusedRef = useRef(false);
@@ -166,7 +174,8 @@ export function PostComments({
   // the reader has started moving on their own.
   useEffect(() => {
     const onHash = () => {
-      if (!/^#comment-\d+$/.test(window.location.hash)) return;
+      if (!commentHash()) return;
+      setExpanded(true);
       focusedRef.current = false;
       setJumpSeq((n) => n + 1);
     };
@@ -211,6 +220,13 @@ export function PostComments({
       inputs.forEach((e) => window.removeEventListener(e, release));
     };
   }, [loaded, jumpSeq, t, toast]);
+
+  useEffect(() => {
+    if (!expanded || revealFrom.current == null) return;
+    const row = document.querySelector(`[data-comment-top="${revealFrom.current}"]`);
+    revealFrom.current = null;
+    row?.querySelector<HTMLElement>('a[href]:not([tabindex="-1"]), button')?.focus();
+  }, [expanded]);
 
   useEffect(() => {
     if (flashId == null) return;
@@ -266,7 +282,13 @@ export function PostComments({
   shownIds.current = new Set(shown.filter((c) => !c.deleted).map((c) => c.id));
   const counted = shown.filter((c) => !c.deleted).length;
   const tops = shown.filter((c) => c.parentId == null);
+  const visibleTops = expanded ? tops : tops.slice(0, COLLAPSED_TOPS);
   const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
+  function showAll() {
+    revealFrom.current = tops[COLLAPSED_TOPS]?.id ?? null;
+    setExpanded(true);
+  }
+
   const canDelete = (c: CommentView) =>
     !!me && (c.author?.id === me.id || me.username === authorUsername);
 
@@ -283,6 +305,7 @@ export function PostComments({
       setBody("");
       setComposerActive(false);
       setComments((prev) => appendUnique(prev, created));
+      setExpanded(true);
       setJustAddedId(created.id); // animate the new comment in once it renders
       setAnnounce(t("posted"));
     } catch (e) {
@@ -367,7 +390,7 @@ export function PostComments({
   return (
     <section
       id="comments"
-      className="mt-16 scroll-mt-24 border-t border-slate-100 pt-10 dark:border-slate-800"
+      className={cn(END_SECTION, "flow-root scroll-mt-24")}
       style={dockHeight ? { paddingBottom: dockHeight } : undefined}
     >
       <p aria-live="polite" className="sr-only" data-testid="conversation-announce">
@@ -485,8 +508,8 @@ export function PostComments({
       )}
       {shown.length > 0 && (
         <ul className="mt-8 space-y-6">
-          {tops.map((c) => (
-            <li key={c.id}>
+          {visibleTops.map((c) => (
+            <li key={c.id} data-comment-top={c.id}>
               {c.deleted ? (
                 <ConversationTombstone id={`comment-${c.id}`} flash={flashId === c.id} label={t("deleted")} />
               ) : (
@@ -556,6 +579,16 @@ export function PostComments({
             </li>
           ))}
         </ul>
+      )}
+      {visibleTops.length < tops.length && (
+        <button
+          type="button"
+          onClick={showAll}
+          data-testid="comments-show-all"
+          className="focus-ring mt-6 flex min-h-11 w-full items-center justify-center rounded-surface border border-slate-200 text-[14px] font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800/60"
+        >
+          {t("showAll", { count: counted })}
+        </button>
       )}
       </>
       )}
