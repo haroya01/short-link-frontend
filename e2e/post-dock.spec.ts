@@ -154,6 +154,8 @@ for (const viewport of [PHONE, { width: 1440, height: 900 }]) {
       await top(page.getByRole("heading", { name: "다음 읽을 글" })),
     ];
     expect([...order].sort((a, b) => a - b)).toEqual(order);
+    await expect(page.getByText("엮인 것", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("이 글을 엮은 사람", { exact: true })).toHaveCount(0);
     await expect(page.getByTestId("post-author-card").getByRole("button", { name: /팔로우/ })).toBeVisible();
     await expect(page.locator("article").getByRole("link", { name: "@haruka님의 다른 글" })).toHaveCount(0);
   });

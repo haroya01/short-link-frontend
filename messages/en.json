@@ -3850,8 +3850,6 @@
     "kindredCuratorsTitle": "Curators with kindred taste",
     "sharedItems": "{count} in common",
     "postEdgesPathsTitle": "Collections this post is in",
-    "postEdgesRelatedTitle": "Connected reads",
-    "postEdgesCuratorsTitle": "Curators who connected this post",
     "postEdgesPathPosition": "{position} of {total}",
     "connectStep1Title": "Where should this go?",
     "connectStep2Title": "Why did you connect it?",
