@@ -48,7 +48,7 @@ test.describe("password while shortening", () => {
     await page.getByRole("button", { name: "비밀번호 숨기기" }).click();
     await expect(password).toHaveAttribute("type", "password");
 
-    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/private-deck");
+    await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("https://example.com/private-deck");
     await page.getByRole("button", { name: "단축하기" }).click();
 
     const line = page.getByTestId("result-line").first();
@@ -85,12 +85,12 @@ test.describe("password while shortening", () => {
     await page.getByRole("button", { name: "비밀번호 걸기" }).click();
     // 펼치면 다음 프레임에 비밀번호 칸으로 포커스가 온다 — 그걸 본 뒤에 주소를 넣어야 입력이 엇갈리지 않는다.
     await expect(page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호")).toBeFocused();
-    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/private-deck");
+    await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("https://example.com/private-deck");
     await page.getByRole("button", { name: "단축하기" }).click();
 
     await expect(page.getByText("비밀번호를 입력해 주세요.")).toBeVisible();
     await expect(page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호")).toHaveAttribute("aria-invalid", "true");
-    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toHaveAttribute("aria-invalid", "false");
+    await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toHaveAttribute("aria-invalid", "false");
     await expect(page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호")).toBeFocused();
     expect(posts).toBe(0);
   });

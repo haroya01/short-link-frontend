@@ -229,7 +229,7 @@ function ListRow({
           {members.length === 0 && <li className="py-2 text-[13px] text-slate-500">{t("listNoMembers")}</li>}
           {members.map((member) => (
             <li key={member.id} className="flex items-center gap-3 py-2">
-              <Avatar src={member.avatarUrl} name={member.username} size="sm" />
+              <Avatar src={member.avatarUrl} name={member.displayName || member.username} seed={member.remoteId ? null : member.id} size="sm" />
               <span className="flex-1 truncate text-[14px] text-slate-900 dark:text-slate-100">{member.username}</span>
               <button type="button" onClick={() => drop(member)} className={action}>
                 {t("listRemoveMember")}

@@ -199,7 +199,7 @@ export function NotificationItem({
             aria-label={item.actorUsername ?? undefined}
             className="focus-ring pointer-events-auto block rounded-full"
           >
-            <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+            <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} seed={item.actorId} size="sm" />
           </a>
         ) : actorHref ? (
           <BlogLink
@@ -208,10 +208,10 @@ export function NotificationItem({
             aria-label={item.actorUsername ?? undefined}
             className="focus-ring pointer-events-auto block rounded-full"
           >
-            <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+            <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} seed={item.actorId} size="sm" />
           </BlogLink>
         ) : (
-          <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+          <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} seed={item.actorId} size="sm" />
         )}
         {!item.read && (
           <span

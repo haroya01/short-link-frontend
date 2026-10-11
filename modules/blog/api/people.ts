@@ -7,6 +7,7 @@ export const PEOPLE_MIN_QUERY = 2;
 const PEOPLE_MAX_QUERY = 30;
 
 export interface PersonMatch {
+  userId: number;
   username: string;
   displayName: string | null;
   avatarUrl: string | null;
@@ -36,10 +37,10 @@ export function searchablePeopleQuery(raw: string): boolean {
 }
 
 const mockPeople: PersonMatch[] = [
-  { username: "haruka", displayName: "하루카", avatarUrl: null, bio: "도쿄에서 읽고 씁니다. 책과 산책.", followerCount: 128, following: false, requested: false },
-  { username: "haruki", displayName: "Haruki", avatarUrl: "https://i.pravatar.cc/120?img=8", bio: null, followerCount: 54, following: false, requested: false },
-  { username: "minji", displayName: "민지", avatarUrl: null, bio: "프론트엔드 개발자. 타입스크립트와 접근성 이야기를 씁니다.", followerCount: null, following: false, requested: false },
-  { username: "yuna", displayName: "유나", avatarUrl: null, bio: "디자인 노트", followerCount: 12, following: false, requested: false },
+  { userId: 3, username: "haruka", displayName: "하루카", avatarUrl: null, bio: "도쿄에서 읽고 씁니다. 책과 산책.", followerCount: 128, following: false, requested: false },
+  { userId: 13, username: "haruki", displayName: "Haruki", avatarUrl: "https://i.pravatar.cc/120?img=8", bio: null, followerCount: 54, following: false, requested: false },
+  { userId: 2, username: "minji", displayName: "민지", avatarUrl: null, bio: "프론트엔드 개발자. 타입스크립트와 접근성 이야기를 씁니다.", followerCount: null, following: false, requested: false },
+  { userId: 15, username: "yuna", displayName: "유나", avatarUrl: null, bio: "디자인 노트", followerCount: 12, following: false, requested: false },
 ];
 
 function mockSearchPeople(q: string, page: number, size: number): PeoplePage {

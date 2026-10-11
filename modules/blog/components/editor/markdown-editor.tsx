@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { Extension, getMarkRange } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -45,8 +45,9 @@ import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-sho
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode } from "@/modules/blog/components/editor/link-card-node";
 import { LinkPasteChoice, applyPastePlan, pasteSpot } from "@/modules/blog/components/editor/link-paste-choice";
-import { LinkDialog, type LinkDialogRequest, type LinkDialogResult } from "@/modules/blog/components/editor/link-dialog";
+import { LinkDialog } from "@/modules/blog/components/editor/link-dialog";
 import { LinkActions } from "@/modules/blog/components/editor/link-actions";
+import { applyLinkResult, linkAt, linkRequest, type LinkAt, type OpenedLink } from "@/modules/blog/components/editor/link-commands";
 import { planPaste } from "@/modules/blog/lib/link-paste";
 import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
 import { convertCalloutContainers } from "@/modules/blog/lib/callout";
@@ -70,6 +71,7 @@ import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { DropCursorLine } from "@/modules/blog/components/editor/drop-cursor";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
 import { POST_IMAGE_TYPES, postImageErrorMessageKey, postImageTypeError } from "@/modules/blog/api/post-images";
+import { useEdgeFade } from "@/hooks/use-edge-fade";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -225,43 +227,12 @@ export function MarkdownEditor({
     },
     [],
   );
-  const [linkRequest, setLinkRequest] = useState<{ request: LinkDialogRequest; range: { from: number; to: number } | null } | null>(null);
-  const [linkActions, setLinkActions] = useState<{ href: string; from: number; to: number; rect: DOMRect } | null>(null);
+  const [opened, setOpened] = useState<OpenedLink | null>(null);
+  const [linkActions, setLinkActions] = useState<LinkAt | null>(null);
 
-  function openLink(ed: Editor, mode: "link" | "card", edit: { from: number; to: number; href: string } | null = null) {
-    const { from, to, empty, $from } = ed.state.selection;
-    const inLink = ed.isActive("link") ? getMarkRange($from, ed.schema.marks.link) : undefined;
-    const span = edit ? { from: edit.from, to: edit.to } : (inLink ?? (empty ? null : { from, to }));
-    const href = edit?.href ?? ((ed.getAttributes("link").href as string | undefined) ?? "");
-    const caret = ed.view.coordsAtPos(span?.from ?? from);
+  function openLink(ed: Editor, mode: "link" | "card", edit: LinkAt | null = null) {
     setLinkActions(null);
-    setLinkRequest({
-      range: span,
-      request: {
-        mode,
-        text: span ? ed.state.doc.textBetween(span.from, span.to, " ") : "",
-        href,
-        canPickCard: !span,
-        editing: !!href,
-        anchor: { left: caret.left, top: caret.top, bottom: caret.bottom },
-      },
-    });
-  }
-
-  function applyLink(ed: Editor, result: LinkDialogResult, opened: { request: LinkDialogRequest; range: { from: number; to: number } | null }) {
-    if (result.mode === "card") {
-      ed.chain().focus().insertContent({ type: "linkCard", attrs: { url: result.href } }).run();
-      return;
-    }
-    const link = { type: "link", attrs: { href: result.href } };
-    const { range, request } = opened;
-    if (range && result.text && result.text !== request.text) {
-      ed.chain().focus().insertContentAt(range, { type: "text", text: result.text, marks: [link] }).unsetMark("link").run();
-    } else if (range) {
-      ed.chain().focus().setTextSelection(range).setLink({ href: result.href }).run();
-    } else {
-      ed.chain().focus().insertContent({ type: "text", text: result.text || result.href, marks: [link] }).unsetMark("link").run();
-    }
+    setOpened(linkRequest(ed, mode, edit, { cards: true }));
   }
 
   // Open the file picker with a target width; "half" + multiple lets you pick 2 for a side-by-side row.
@@ -514,13 +485,7 @@ export function MarkdownEditor({
         return true;
       },
       handleClick: (view, pos, event) => {
-        const anchor = (event.target as HTMLElement | null)?.closest?.("a");
-        const range = anchor ? getMarkRange(view.state.doc.resolve(pos), view.state.schema.marks.link) : undefined;
-        if (!anchor || !range) {
-          setLinkActions(null);
-          return false;
-        }
-        setLinkActions({ href: anchor.getAttribute("href") ?? "", from: range.from, to: range.to, rect: anchor.getBoundingClientRect() });
+        setLinkActions(linkAt(view, pos, event));
         return false;
       },
       handleDrop: (view, event) => {
@@ -642,13 +607,13 @@ export function MarkdownEditor({
         }}
       />
       <LinkDialog
-        request={linkRequest?.request ?? null}
+        request={opened?.request ?? null}
         onClose={() => {
-          setLinkRequest(null);
+          setOpened(null);
           editor.chain().focus().run();
         }}
         onSubmit={(result) => {
-          if (linkRequest) applyLink(editor, result, linkRequest);
+          if (opened) applyLinkResult(editor, result, opened);
         }}
       />
       {linkActions && (
@@ -683,6 +648,10 @@ function EditorToolbar({
   onPickLink: () => void;
 }) {
   const t = useTranslations("postEditor");
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const edgeFade = useEdgeFade(scrollerRef);
+  const [touch, setTouch] = useState(false);
+  useEffect(() => setTouch(window.matchMedia?.("(pointer: coarse)").matches ?? false), []);
   const a = useEditorState({
     editor,
     selector: ({ editor }) => ({
@@ -700,10 +669,12 @@ function EditorToolbar({
   });
 
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
+  const image: Item = { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() };
   const groups: Item[][] = [
     [
       { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
       { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: onPickLink },
+      ...(touch ? [image] : []),
     ],
     [
       { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
@@ -716,7 +687,7 @@ function EditorToolbar({
       { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],
     [
-      { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
+      ...(touch ? [] : [image]),
       { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
       { icon: PanelTop, label: t("slash.embed"), run: onPickEmbed },
       { icon: Minus, label: t("slash.divider"), run: () => editor.chain().focus().setHorizontalRule().run() },
@@ -733,7 +704,10 @@ function EditorToolbar({
   return (
     <div className="relative border-b border-slate-100 dark:border-slate-800">
       <div
+        ref={scrollerRef}
         data-testid="editor-toolbar"
+        {...edgeFade.attrs}
+        style={edgeFade.style}
         className="flex items-center gap-0.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {groups.map((group, gi) => (
@@ -756,10 +730,6 @@ function EditorToolbar({
           </div>
         ))}
       </div>
-      {/* Right-edge fade — signals the toolbar scrolls horizontally where it can't fit (390px crops the
-          trailing groups). Same scroll-fade idiom as the discovery rail; sm+ the toolbar fits, so the
-          hint hides. */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:hidden" />
     </div>
   );
 }

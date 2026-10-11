@@ -5,6 +5,7 @@ import { ChevronRight, FolderPlus, MessageCircle, Share2, Trash2 } from "lucide-
 import { useTranslations } from "next-intl";
 import { Avatar } from "@/modules/blog/components/avatar";
 import type { HighlightView } from "@/modules/blog/api/highlights";
+import { markdownPlain } from "@/modules/blog/lib/markdown-lead";
 
 const GAP = 10;
 const EDGE = 16;
@@ -99,7 +100,7 @@ export function HighlightCard({
             <span className="flex -space-x-1.5" aria-hidden>
               {readers.slice(0, 3).map((a) => (
                 <span key={a.id} className="rounded-full ring-2 ring-white dark:ring-slate-850">
-                  <Avatar src={a.avatarUrl} name={a.username} size="xs" />
+                  <Avatar src={a.avatarUrl} name={a.displayName || a.username} seed={a.id} size="xs" />
                 </span>
               ))}
             </span>
@@ -130,7 +131,7 @@ export function HighlightCard({
                   >
                     {h.note?.trim() && (
                       <span className="line-clamp-2 text-[14px] leading-relaxed text-slate-800 dark:text-slate-100">
-                        {h.note}
+                        {markdownPlain(h.note)}
                       </span>
                     )}
                     <span className="mt-1 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">

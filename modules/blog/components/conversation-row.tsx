@@ -8,7 +8,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
 
-type Person = { username: string; displayName?: string | null; avatarUrl?: string | null } | null;
+type Person = { id: number; username: string; displayName?: string | null; avatarUrl?: string | null } | null;
 
 export function ConversationName({ name, handle }: { name?: string | null; handle: string }) {
   if (!name) {
@@ -98,11 +98,11 @@ export function ConversationRow({
     >
       {href ? (
         <BlogLink href={href} tabIndex={-1} aria-hidden className="shrink-0 self-start rounded-full">
-          <Avatar src={author?.avatarUrl ?? null} name={handle} size={nested ? "sm" : "md"} shrink={false} />
+          <Avatar src={author?.avatarUrl ?? null} name={author?.displayName || handle} seed={author?.id ?? null} size={nested ? "sm" : "md"} shrink={false} />
         </BlogLink>
       ) : (
         <span aria-hidden className="shrink-0 self-start">
-          <Avatar src={null} name={handle} size={nested ? "sm" : "md"} shrink={false} />
+          <Avatar src={null} name={handle} seed={null} size={nested ? "sm" : "md"} shrink={false} />
         </span>
       )}
       <div className="min-w-0 flex-1">

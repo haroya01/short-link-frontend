@@ -149,6 +149,7 @@ export function usePostEditor(
   const [error, setError] = useState<string | null>(null);
   const [slugError, setSlugError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   // 마지막 저장이 "언제"였는지 — saved 가 2초 뒤 꺼진 뒤에도 헤더가 시각으로 안심시켜 준다.
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   // Unsaved-edits flag, distinct from `saved` (which is also false right after load) — drives autosave.
@@ -399,6 +400,7 @@ export function usePostEditor(
           const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, md]);
           if (sig === lastSaved.current) {
             setDirty(false);
+            setSaveFailed(false);
             setSaved(true);
             window.setTimeout(() => setSaved(false), 2000);
             return true;
@@ -466,6 +468,7 @@ export function usePostEditor(
             currentDraft.current.excerpt !== excerpt
           ) continue;
           setDirty(false);
+          setSaveFailed(false);
           setSaved(true);
           window.setTimeout(() => setSaved(false), 2000);
           return true;
@@ -477,7 +480,10 @@ export function usePostEditor(
           return false;
         }
         if (isSlugRefused(e)) refuseSlug(e, t("saveFailed"));
-        else setError(errorMessage(e, t("saveFailed")));
+        else {
+          setError(errorMessage(e, t("saveFailed")));
+          setSaveFailed(true);
+        }
         // 자동저장 무한 재시도 차단: 4xx(사용자 개입이 필요한 결정적 실패)는 즉시 정지하고, 그 밖의
         // 실패(네트워크·5xx)는 백오프로 몇 번만 재시도 후 정지. 정지는 다음 편집에서 풀린다.
         failStreak.current += 1;
@@ -694,6 +700,12 @@ export function usePostEditor(
     return saved && changeStatus("backToDraft");
   }
 
+  function retrySave(): Promise<boolean> {
+    failStreak.current = 0;
+    autoRetryBlocked.current = false;
+    return save();
+  }
+
   async function loadLatest() {
     const current = currentDraft.current.post;
     if (current == null) return;
@@ -823,9 +835,11 @@ export function usePostEditor(
     error,
     slugError,
     saved,
+    saveFailed,
     lastSavedAt,
     writeBase,
     save,
+    retrySave,
     ensurePost,
     changeStatus,
     schedule,

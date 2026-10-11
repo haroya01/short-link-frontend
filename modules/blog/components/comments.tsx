@@ -459,7 +459,7 @@ export function PostComments({
             className="flex w-full items-center gap-3 rounded-full border border-slate-200 px-3 py-2.5 text-left text-[15px] text-slate-500 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-400"
           >
             {ready && authenticated && me && (
-              <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} size="sm" shrink={false} />
+              <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} seed={me.id} size="sm" shrink={false} />
             )}
             <span className="min-w-0 truncate">{t("placeholder")}</span>
           </button>

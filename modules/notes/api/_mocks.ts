@@ -27,7 +27,7 @@ import type {
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
-const HARUKA = { id: 21, username: "haruka", avatarUrl: "https://i.pravatar.cc/120?img=32", displayName: "하루카" };
+const HARUKA = { id: 3, username: "haruka", avatarUrl: "https://i.pravatar.cc/120?img=32", displayName: "하루카" };
 const MINA = {
   id: -9800,
   username: "mina@mastodon.social",
@@ -283,7 +283,7 @@ const QUOTING_POSTS: Record<number, PublicFeedItem[]> = {
   5: [
     {
       id: 801,
-      author: { id: 31, username: "kazuki", bio: null, avatarUrl: null },
+      author: { id: 4, username: "kazuki", bio: null, avatarUrl: null },
       slug: "kyoto-workation",
       title: "교토에서 한 달 살기: 워케이션 회고",
       excerpt: "낮엔 카페에서 코드, 밤엔 산책. 생산성과 외로움 사이의 균형.",

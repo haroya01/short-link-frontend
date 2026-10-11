@@ -15,12 +15,14 @@ export function BottomSheet({
   onClose,
   label,
   panelClassName,
+  layerClassName = "z-50",
   children,
 }: {
   open: boolean;
   onClose: () => void;
   label: string;
   panelClassName?: string;
+  layerClassName?: string;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,7 +39,7 @@ export function BottomSheet({
       aria-modal="true"
       aria-label={label}
       aria-hidden={closing || undefined}
-      className={`fixed inset-0 z-50 ${closing ? "pointer-events-none" : ""}`}
+      className={`fixed inset-0 ${layerClassName} ${closing ? "pointer-events-none" : ""}`}
     >
       <button
         type="button"

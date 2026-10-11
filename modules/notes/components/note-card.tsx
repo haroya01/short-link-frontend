@@ -294,7 +294,7 @@ export function NoteCard({
           aria-hidden
           className="shrink-0 self-start rounded-full"
         >
-          <Avatar src={note.author.avatarUrl} name={note.author.username} size={emphasis ? "lg" : "md"} />
+          <Avatar src={note.author.avatarUrl} name={note.author.displayName || note.author.username} seed={note.author.remoteId ? null : note.author.id} size={emphasis ? "lg" : "md"} />
         </BlogLink>
         <div className={emphasis ? "contents" : "min-w-0 flex-1"}>
           <header className="flex min-h-5 items-center gap-1.5 text-[15px] leading-5">
