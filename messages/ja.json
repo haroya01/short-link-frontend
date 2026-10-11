@@ -441,7 +441,7 @@
     "revisionsEmpty": "保存されたバージョンはまだありません。公開すると蓄積されます。",
     "revisionVersion": "バージョン {n}",
     "revisionRestore": "復元",
-    "revisionRestoreConfirm": "このバージョンに戻しますか？現在の内容は新しいリビジョンとして保存されます。",
+    "revisionRestoreConfirm": "このバージョンに戻しますか？現在の内容は新しいバージョンとして保存されます。",
     "schedule": "予約",
     "scheduleAt": "公開日時",
     "scheduleConfirm": "予約する",

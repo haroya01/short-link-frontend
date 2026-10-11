@@ -441,7 +441,7 @@
     "revisionsEmpty": "No saved versions yet. Publishing captures them.",
     "revisionVersion": "Version {n}",
     "revisionRestore": "Restore",
-    "revisionRestoreConfirm": "Restore this version? Your current content is kept as a new revision.",
+    "revisionRestoreConfirm": "Restore this version? Your current content is kept as a new version.",
     "schedule": "Schedule",
     "scheduleAt": "Publish at",
     "scheduleConfirm": "Schedule post",
