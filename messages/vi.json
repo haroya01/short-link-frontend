@@ -2,6 +2,7 @@
   "comments": {
     "heading": "Bình luận",
     "count": "{count, plural, =0 {Bình luận} one {# bình luận} other {# bình luận}}",
+    "showAll": "Xem tất cả {count, number} bình luận",
     "placeholder": "Viết bình luận",
     "submit": "Bình luận",
     "submitting": "Đang đăng…",
@@ -597,7 +598,6 @@
       "actions": "Liên kết",
       "open": "Mở",
       "edit": "Sửa",
-      "shortenHint": "Chèn liên kết kurl đã rút gọn",
       "update": "Lưu",
       "previewLoading": "Đang tải bản xem trước…",
       "previewFailed": "Không tải được bản xem trước"
@@ -1065,6 +1065,7 @@
     "liked": "Bài đã thích",
     "library": "Thư viện",
     "myCollections": "Bộ sưu tập của tôi",
+    "studio": "Studio",
     "showcase": "Ví dụ",
     "campaigns": "Chiến dịch QR",
     "campaignsTab": "Chiến dịch",

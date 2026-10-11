@@ -65,9 +65,9 @@ export default function NotificationsPage() {
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
   if (ready && !authenticated) {
     return (
-      <main>
+      <div>
         <SignInEmptyState page reason="notifications" icon={Bell} />
-      </main>
+      </div>
     );
   }
 
@@ -82,7 +82,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
@@ -199,6 +199,6 @@ export default function NotificationsPage() {
           </button>
         </div>
       )}
-    </main>
+    </div>
   );
 }

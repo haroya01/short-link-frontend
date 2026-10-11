@@ -55,7 +55,7 @@ export default function BlogSettingsPage() {
     "focus-ring flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60";
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
+    <div className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("settingsTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("settingsSubtitle")}</p>
 
@@ -168,6 +168,6 @@ export default function BlogSettingsPage() {
       <section className="mt-8">
         <LogoutButton />
       </section>
-    </main>
+    </div>
   );
 }

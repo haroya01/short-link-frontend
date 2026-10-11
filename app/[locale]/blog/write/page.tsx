@@ -127,7 +127,7 @@ export default function WriteIndexPage() {
   return (
     // max-w-3xl: 분석·리드·서재와 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
     // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <h1 className="whitespace-nowrap text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("myPosts")}</h1>
@@ -406,7 +406,7 @@ export default function WriteIndexPage() {
       )}
         </>
       )}
-    </main>
+    </div>
   );
 }
 

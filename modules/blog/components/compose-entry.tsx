@@ -6,7 +6,6 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type KeyboardEvent,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -14,6 +13,7 @@ import { FileText, MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { blogHref } from "@/lib/host";
 import type { ComposeTriggerProps } from "@/components/common/app-header";
 import { BottomSheet } from "@/components/common/bottom-sheet";
@@ -232,9 +232,11 @@ function ComposeMenu({
     if (rect) setPosition({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
   }, [anchor]);
 
+  const { onKeyDown, focusFirst } = useMenuKeys(menu, { onClose });
+
   useEffect(() => {
-    menu.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
-  }, [position]);
+    if (position) focusFirst();
+  }, [position, focusFirst]);
 
   useEffect(() => {
     const onDown = (event: MouseEvent) => {
@@ -245,20 +247,6 @@ function ComposeMenu({
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, [anchor, onClose]);
-
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const items = Array.from(menu.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []);
-    const index = items.indexOf(document.activeElement as HTMLElement);
-    const focusAt = (next: number) => items[(next + items.length) % items.length]?.focus();
-    if (event.key === "ArrowDown") focusAt(index + 1);
-    else if (event.key === "ArrowUp") focusAt(index - 1);
-    else if (event.key === "Home") focusAt(0);
-    else if (event.key === "End") focusAt(items.length - 1);
-    else if (event.key === "Escape") onClose(true);
-    else if (event.key === "Tab") return onClose(false);
-    else return;
-    event.preventDefault();
-  };
 
   return (
     <div

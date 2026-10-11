@@ -59,8 +59,8 @@ function ChromeNavLink(props: ComponentProps<typeof BlogChromeLink>) {
  * `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar.
  * `slimMobile` hides the right-cluster controls on mobile — used on public surfaces where the bottom
  * tab bar carries search/account/switcher; the authoring workspace keeps the full header (no nav bar).
- * `sections` adds the 글 · 노트 switch beside the logo — public blog pages only; author pages already
- * carry their own 글 · 노트 tabs.
+ * `sections` adds the 글 · 노트 switch beside the logo — every public blog surface, author and post
+ * pages included.
  */
 export function AppHeader({
   showMenu = true,

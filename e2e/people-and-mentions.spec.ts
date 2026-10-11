@@ -68,7 +68,7 @@ test.describe("desktop", () => {
     });
 
     await page.locator("header.vt-app-header").getByRole("button", { name: /^알림/ }).click();
-    const menu = page.getByRole("menu");
+    const menu = page.getByRole("dialog", { name: "알림" });
     await menu.getByRole("tab", { name: "멘션" }).click();
     await expect(menu.getByRole("link", { name: /kazuki님이 댓글에서 나를 언급했어요/ })).toBeVisible();
     await expect(menu.getByRole("link", { name: /haruki님이 나를 팔로우했어요/ })).toHaveCount(0);

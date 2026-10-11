@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Avatar } from "@/modules/blog/components/avatar";
 import type { HighlightView } from "@/modules/blog/api/highlights";
 import { markdownPlain } from "@/modules/blog/lib/markdown-lead";
+import { AuthorName } from "@/modules/blog/components/author-name";
 
 const GAP = 10;
 const EDGE = 16;
@@ -135,7 +136,11 @@ export function HighlightCard({
                       </span>
                     )}
                     <span className="mt-1 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-                      <span className="font-semibold">{isMine(h) ? t("highlightCardMe") : h.author?.username}</span>
+                      {isMine(h) ? (
+                        <span className="font-semibold">{t("highlightCardMe")}</span>
+                      ) : h.author ? (
+                        <AuthorName name={h.author.displayName} handle={h.author.username} className="font-semibold" />
+                      ) : null}
                       {h.replyCount > 0 && <span>{t("highlightCardReplies", { count: h.replyCount })}</span>}
                       <span className="ml-auto inline-flex items-center gap-0.5 text-accent-700 dark:text-accent-400">
                         {t("highlightCardView")}
