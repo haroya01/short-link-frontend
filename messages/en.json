@@ -2617,6 +2617,16 @@
     "title": "Terms of Service",
     "updatedAt": "Last updated: 2026-07-21",
     "intro": "These terms govern your use of kurl (the \"Service\"). By using the Service you agree to them. If you do not agree, do not use the Service.",
+    "notice": {
+      "title": "Upcoming changes to these terms",
+      "body": "The changes below take effect on October 21, 2026. Until then, the current terms on this page still apply.",
+      "items": [
+        "Notes are added to the content these terms cover. Unless you turn it off in Settings, notes are also delivered to your followers on other servers (such as Mastodon), and deleting a note cannot guarantee that copies already delivered are removed (Sections 1 and 4).",
+        "We apply zero tolerance to prohibited content and the users who post it: content confirmed to violate these terms is removed, and the account is acted on under Section 7 (Section 5).",
+        "Notes, highlight replies and notes from other servers can be reported, and we review each report within 48 hours of receiving it (Section 6)."
+      ],
+      "optOut": "If you don't agree to the new terms, you can delete your account in Settings before the effective date. Continuing to use the Service after that date means you accept them."
+    },
     "sections": [
       {
         "h": "1. The Service",
