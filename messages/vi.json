@@ -2615,12 +2615,12 @@
   },
   "terms": {
     "title": "Điều khoản dịch vụ",
-    "updatedAt": "Cập nhật lần cuối: 2026-07-21",
+    "updatedAt": "Cập nhật lần cuối: 2026-10-13",
     "intro": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl (\"Dịch vụ\"). Khi sử dụng Dịch vụ, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng Dịch vụ.",
     "sections": [
       {
         "h": "1. Giới thiệu dịch vụ",
-        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, hồ sơ, bình luận và bộ sưu tập — trên web và ứng dụng iOS. Chúng tôi có thể thêm, thay đổi hoặc gỡ bỏ tính năng theo thời gian."
+        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, ghi chú, hồ sơ, bình luận và bộ sưu tập — trên web và ứng dụng iOS. Chúng tôi có thể thêm, thay đổi hoặc gỡ bỏ tính năng theo thời gian."
       },
       {
         "h": "2. Điều kiện và tài khoản",
@@ -2632,15 +2632,15 @@
       },
       {
         "h": "4. Nội dung của bạn — quyền sở hữu và giấy phép",
-        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu — bao gồm qua các đơn vị xử lý lưu trữ và CDN cần thiết — nhằm vận hành Dịch vụ. Giấy phép này không mở rộng sang tiếp thị hay bán lại. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm."
+        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, ghi chú, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu — bao gồm qua các đơn vị xử lý lưu trữ và CDN cần thiết — nhằm vận hành Dịch vụ. Giấy phép này không mở rộng sang tiếp thị hay bán lại. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm. Trừ khi bạn tắt trong Cài đặt, ghi chú của bạn cũng được gửi qua ActivityPub tới người theo dõi bạn trên các máy chủ khác (như Mastodon). Khi bạn xóa một ghi chú, chúng tôi yêu cầu các máy chủ đó xóa theo, nhưng không thể đảm bảo các bản sao đã được gửi sẽ bị xóa."
       },
       {
         "h": "5. Nội dung và hành vi bị cấm",
-        "p": "Không đăng nội dung bất hợp pháp, nội dung cổ xúy hoặc tôn vinh bạo lực, xâm phạm quyền của người khác, thù ghét, quấy rối hoặc phân biệt đối xử, nội dung khiêu dâm hoặc nội dung tình dục liên quan đến trẻ vị thành niên, spam hoặc mã độc, mạo danh, đăng dữ liệu cá nhân của người khác khi chưa được đồng ý, hoặc thu thập tự động và gây quá tải Dịch vụ."
+        "p": "Không đăng nội dung bất hợp pháp, nội dung cổ xúy hoặc tôn vinh bạo lực, xâm phạm quyền của người khác, thù ghét, quấy rối hoặc phân biệt đối xử, nội dung khiêu dâm hoặc nội dung tình dục liên quan đến trẻ vị thành niên, spam hoặc mã độc, mạo danh, đăng dữ liệu cá nhân của người khác khi chưa được đồng ý, hoặc thu thập tự động và gây quá tải Dịch vụ. Chúng tôi không khoan nhượng với những nội dung như vậy và với người đăng chúng: nội dung được xác nhận vi phạm sẽ bị gỡ, và tài khoản đã đăng sẽ bị xử lý theo Điều 7."
       },
       {
         "h": "6. Báo cáo và gỡ bỏ",
-        "p": "Bất kỳ ai (kể cả khách chưa đăng nhập) có thể báo cáo một bài viết, hồ sơ hoặc bình luận vi phạm các điều khoản này (bất hợp pháp, xâm phạm quyền, thù ghét, quấy rối, doxxing, spam, v.v.) bằng nút báo cáo. Chủ sở hữu bản quyền cũng có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Sau khi xem xét, chúng tôi có thể gỡ nội dung hoặc xử lý tài khoản, và khi có thể, thông báo cho người dùng bị ảnh hưởng về lý do (trừ trường hợp khẩn cấp hoặc theo yêu cầu pháp luật). Người dùng bị xử lý có thể khiếu nại tại cùng địa chỉ liên hệ, và nội dung được khôi phục nếu không xác định được vi phạm. Tài khoản vi phạm nhiều lần có thể bị đình chỉ."
+        "p": "Bất kỳ ai (kể cả khách chưa đăng nhập) có thể báo cáo một bài viết, ghi chú, bình luận, phản hồi tô sáng hoặc hồ sơ vi phạm các điều khoản này (bất hợp pháp, xâm phạm quyền, thù ghét, quấy rối, doxxing, spam, v.v.) bằng nút báo cáo. Ghi chú đến từ máy chủ khác cũng có thể được báo cáo theo cách này, và nếu người báo cáo chọn, báo cáo cũng được chuyển ẩn danh tới nhà vận hành máy chủ đó. Chủ sở hữu bản quyền cũng có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Chúng tôi xem xét mỗi báo cáo trong vòng 48 giờ kể từ khi nhận, sau đó có thể gỡ nội dung hoặc xử lý tài khoản, và khi có thể, thông báo cho người dùng bị ảnh hưởng về lý do (trừ trường hợp khẩn cấp hoặc theo yêu cầu pháp luật). Người dùng bị xử lý có thể khiếu nại tại cùng địa chỉ liên hệ, và nội dung được khôi phục nếu không xác định được vi phạm. Tài khoản vi phạm nhiều lần có thể bị đình chỉ."
       },
       {
         "h": "7. Quyền của nhà vận hành và xử lý lạm dụng",
