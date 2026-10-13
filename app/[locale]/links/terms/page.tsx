@@ -30,12 +30,26 @@ export default async function TermsPage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "terms" });
   const sections = t.raw("sections") as { h: string; p: string }[];
+  const notice = t.raw("notice") as { title: string; body: string; items: string[]; optOut: string };
   return (
     <article className="container max-w-3xl space-y-8 py-16">
       <header className="space-y-2">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <p className="text-xs text-slate-500 dark:text-slate-400">{t("updatedAt")}</p>
       </header>
+      <section
+        aria-labelledby="terms-notice"
+        className="space-y-3 rounded-surface border border-slate-200 bg-slate-50/60 px-5 py-4 dark:border-slate-800 dark:bg-slate-900"
+      >
+        <h2 id="terms-notice" className="text-sm font-semibold text-slate-900 dark:text-slate-100">{notice.title}</h2>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{notice.body}</p>
+        <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {notice.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{notice.optOut}</p>
+      </section>
       <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t("intro")}</p>
       {sections.map((s) => (
         <section key={s.h} className="space-y-2">

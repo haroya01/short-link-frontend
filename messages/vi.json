@@ -2617,6 +2617,16 @@
     "title": "Điều khoản dịch vụ",
     "updatedAt": "Cập nhật lần cuối: 2026-07-21",
     "intro": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl (\"Dịch vụ\"). Khi sử dụng Dịch vụ, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng Dịch vụ.",
+    "notice": {
+      "title": "Thông báo thay đổi điều khoản",
+      "body": "Các thay đổi dưới đây có hiệu lực từ ngày 21/10/2026. Trước ngày đó, điều khoản hiện tại trên trang này vẫn được áp dụng.",
+      "items": [
+        "Ghi chú được thêm vào nội dung mà các điều khoản này điều chỉnh. Trừ khi bạn tắt trong Cài đặt, ghi chú cũng được gửi tới người theo dõi bạn trên các máy chủ khác (như Mastodon), và việc xóa ghi chú không đảm bảo các bản sao đã gửi sẽ bị xóa (Điều 1 và Điều 4).",
+        "Chúng tôi không khoan nhượng với nội dung bị cấm và người đăng: nội dung được xác nhận vi phạm sẽ bị gỡ, và tài khoản sẽ bị xử lý theo Điều 7 (Điều 5).",
+        "Có thể báo cáo ghi chú, phản hồi tô sáng và ghi chú đến từ máy chủ khác; chúng tôi xem xét mỗi báo cáo trong vòng 48 giờ kể từ khi nhận (Điều 6)."
+      ],
+      "optOut": "Nếu không đồng ý với điều khoản mới, bạn có thể xóa tài khoản trong Cài đặt trước ngày có hiệu lực. Tiếp tục sử dụng Dịch vụ sau ngày đó nghĩa là bạn chấp nhận điều khoản mới."
+    },
     "sections": [
       {
         "h": "1. Giới thiệu dịch vụ",
