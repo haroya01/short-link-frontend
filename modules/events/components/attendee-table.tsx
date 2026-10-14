@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Download } from "lucide-react";
 import type { Attendee, EventQuestion } from "@/modules/events/api/events";
 import { downloadAttendeesCsv } from "@/modules/events/api/events";
 
@@ -38,7 +37,6 @@ export function AttendeeTable({
             onClick={exportCsv}
             className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 underline underline-offset-2 transition-colors hover:text-slate-700 dark:text-slate-400"
           >
-            <Download className="h-3.5 w-3.5" />
             {t("exportCsv")}
           </button>
         ) : null}

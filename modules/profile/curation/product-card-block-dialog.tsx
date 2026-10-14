@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ImagePlus,
-  Loader2,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   commitProfileImageUpload,
@@ -318,7 +311,6 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
           disabled={items.length >= MAX_ITEMS}
           className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 px-2.5 py-1.5 text-xs text-slate-600 transition hover:border-slate-400 hover:text-slate-900 disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:text-slate-200"
         >
-          <Plus className="h-3.5 w-3.5" />
           {t("productCardAddItem")}
           <span className="text-[10px] text-slate-500 dark:text-slate-400">
             ({items.length}/{MAX_ITEMS})
