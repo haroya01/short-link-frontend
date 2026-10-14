@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, Copy, Download, Plus } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import type { EventLink, MyEvent } from "@/modules/events/api/events";
@@ -80,15 +79,9 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
             {link.shortCode ? (
               <>
                 <LabeledButton onClick={() => copy(link.shortCode!)}>
-                  {copiedCode === link.shortCode ? (
-                    <Check className="h-3.5 w-3.5 text-accent-500" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5" />
-                  )}
                   {copiedCode === link.shortCode ? t("copied") : t("copy")}
                 </LabeledButton>
                 <LabeledButton onClick={() => downloadQr(link)}>
-                  <Download className="h-3.5 w-3.5" />
                   {t("qr")}
                 </LabeledButton>
               </>
@@ -110,7 +103,6 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
           disabled={busy || !label.trim()}
           className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-3.5 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-500 disabled:opacity-40 dark:border-slate-700 dark:text-slate-300"
         >
-          <Plus className="h-4 w-4" />
           {t("addAlias")}
         </button>
       </form>

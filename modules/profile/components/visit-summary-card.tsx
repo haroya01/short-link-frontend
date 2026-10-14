@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart3 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getProfileStatsSummary } from "@/lib/api";
 import { formatNumber } from "@/lib/utils";
@@ -37,7 +36,6 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
   return (
     <div className="rounded-card-lg border border-slate-200 bg-white p-5 shadow-card-flat dark:bg-slate-900 dark:border-slate-800">
       <div className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
-        <BarChart3 className="h-3.5 w-3.5" />
         {t("summary.title")}
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">

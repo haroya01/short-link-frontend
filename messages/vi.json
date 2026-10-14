@@ -1646,7 +1646,7 @@
       "title": "Chia tách A/B / nhắm theo vị trí",
       "description": "Phân phối lượt nhấp tới các điểm đến theo trọng số, hoặc gửi khách từ một số quốc gia tới trang phù hợp. Biến thể gắn quốc gia chỉ kích hoạt với khách khớp; nếu không, lưu lượng quay về các biến thể không gắn quốc gia, rồi đến điểm đến mặc định. Tối đa 4 mỗi liên kết.",
       "countryLabel": "Quốc gia mục tiêu",
-      "countryAny": "🌐 Mọi quốc gia",
+      "countryAny": "Mọi quốc gia",
       "countryPlaceholder": "Chọn quốc gia",
       "countrySearch": "Tìm quốc gia",
       "countryNoResults": "Không có quốc gia phù hợp",
@@ -2855,7 +2855,6 @@
       "sectionCollapse": "Thu gọn phần",
       "sectionItemCount": "{count} mục",
       "featuredEmpty": "Chưa có liên kết nào để hiển thị.",
-      "featuredEmptyTitle": "Dòng tin hồ sơ của bạn đang trống",
       "featuredEmptyHasOthers": "Chưa có liên kết nào để hiển thị. Bạn có {count} liên kết khác để chọn.",
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
@@ -3416,9 +3415,7 @@
         "title": "Các đợt phát",
         "description": "Một đơn vị phát in dùng cùng một QR. Chia theo người phát hoặc khu vực để phân tích có ý nghĩa.",
         "add": "Thêm đợt",
-        "emptyTitle": "Chưa có đợt phát nào",
-        "emptyDescription": "Thêm đợt đầu tiên để cấp một mã QR. Quét thử trước khi đặt in.",
-        "addFirst": "Thêm đợt đầu tiên"
+        "emptyTitle": "Chưa có đợt phát nào"
       },
       "csvFailed": "Tải CSV thất bại"
     },

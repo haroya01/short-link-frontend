@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, MoreHorizontal, Settings2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
@@ -107,7 +107,6 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
                   onSettings();
                 }}
               >
-                <Settings2 className="h-4 w-4" />
                 {t("linkSettings")}
               </Button>
             )}
@@ -118,7 +117,6 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
               />
             )}
             <Button variant="outline" size="lg" className="w-full" onClick={exportCsv}>
-              <Download className="h-4 w-4" />
               {t("exportCsv")}
             </Button>
           </div>
@@ -128,14 +126,12 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           <QrButton value={display} filename={`${data.shortCode}.png`} />
           {onSettings && (
             <Button variant={settingsActive ? "subtle" : "ghost"} size="sm" className="min-h-9" onClick={onSettings} aria-pressed={settingsActive}>
-              <Settings2 className="h-4 w-4" />
               {t("linkSettings")}
             </Button>
           )}
           {!demo && <PublicStatsToggle shortCode={data.shortCode} className="px-2" />}
           <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">CSV</span>
+            CSV
           </Button>
         </div>
       </div>

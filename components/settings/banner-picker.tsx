@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { ImagePlus, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   commitBannerUpload,
@@ -132,7 +132,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
             disabled={busy}
             className="inline-flex items-center gap-1 hover:text-red-600"
           >
-            <X className="h-3 w-3" /> {t("remove")}
+            {t("remove")}
           </button>
         )}
       </div>

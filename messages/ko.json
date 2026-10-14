@@ -1646,7 +1646,7 @@
       "title": "A/B 분배·국가별 목적지",
       "description": "같은 단축 링크의 클릭을 가중치로 나누거나, 방문자 국가에 맞춰 다른 페이지로 보낼 수 있어요. 국가를 지정한 목적지는 그 나라 방문자에게만 쓰이고, 맞는 게 없으면 국가를 지정하지 않은 목적지로, 그것도 없으면 기본 목적지로 보내요. 링크당 최대 4개.",
       "countryLabel": "대상 국가",
-      "countryAny": "🌐 전체",
+      "countryAny": "모든 국가",
       "countryPlaceholder": "국가 선택",
       "countrySearch": "국가 검색",
       "countryNoResults": "해당하는 국가가 없어요",
@@ -2855,7 +2855,6 @@
       "sectionCollapse": "섹션 접기",
       "sectionItemCount": "{count}개",
       "featuredEmpty": "노출할 링크가 없어요.",
-      "featuredEmptyTitle": "공개할 링크가 비어있어요",
       "featuredEmptyHasOthers": "노출할 링크가 없어요. 고를 수 있는 내 링크가 {count}개 있어요.",
       "addBlockMenu": "추가",
       "addMoreBlocks": "그 외 블록",
@@ -3416,9 +3415,7 @@
         "title": "배포 묶음",
         "description": "QR 한 개를 여러 장 인쇄해서 배포한 한 단위. 배포자·지역별로 나눠야 분석이 의미 있어요.",
         "add": "배포 묶음 추가",
-        "emptyTitle": "아직 배포 묶음이 없어요",
-        "emptyDescription": "첫 묶음을 추가하면 QR 코드가 바로 발급돼요. 인쇄·발주 전에 스캔해서 작동을 확인해 보세요.",
-        "addFirst": "첫 배포 묶음 추가"
+        "emptyTitle": "아직 배포 묶음이 없어요"
       },
       "csvFailed": "CSV를 내려받지 못했어요. 다시 시도해 주세요."
     },

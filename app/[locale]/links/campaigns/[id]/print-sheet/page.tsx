@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { getCampaign, listCampaignBatches } from "@/lib/api";
@@ -111,7 +111,7 @@ export default function PrintSheetPage() {
             </p>
           </div>
           <Button variant="accent" onClick={() => window.print()} disabled={loading || !!error}>
-            <Printer className="h-4 w-4" aria-hidden /> {t("print")}
+            {t("print")}
           </Button>
         </div>
 

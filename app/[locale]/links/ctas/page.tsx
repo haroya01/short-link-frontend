@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { MousePointerClick } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "@/components/ui/button";
@@ -118,7 +117,7 @@ export default function CtaLibraryPage() {
       ) : error ? (
         <ErrorState message={errorMessage(error, tc("errorDesc"))} onRetry={() => void load()} />
       ) : ctas.length === 0 ? (
-        <EmptyState icon={MousePointerClick} title={t("empty")} />
+        <EmptyState title={t("empty")} />
       ) : (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {ctas.map((cta) => (

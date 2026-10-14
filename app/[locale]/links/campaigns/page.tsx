@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Plus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listCampaigns } from "@/lib/api";
@@ -68,7 +67,7 @@ export default function CampaignsPage() {
         </div>
         {items && (
           <Link href="/campaigns/new" className={buttonVariants({ variant: "accent" })}>
-            <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}
+            {t("newCampaign")}
           </Link>
         )}
       </div>
@@ -110,7 +109,7 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
               {formatPeriod(c.startsAt, c.endsAt, locale)}
             </p>
             <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] font-medium text-accent-700 dark:text-accent-400 opacity-0 transition-opacity group-hover:opacity-100">
-              {t("details")} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              {t("details")}
             </div>
           </Link>
         </li>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { buildDemoLinkStats } from "@/lib/demo-data";
@@ -48,7 +47,6 @@ export function DemoStatsPage() {
           className="focus-ring inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3.5 text-[13px] font-medium text-white hover:bg-accent-800"
         >
           {t("createCta")}
-          <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 

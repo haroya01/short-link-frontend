@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   LinkBlockedCountriesSection,
@@ -166,7 +166,6 @@ function DemoSettingsBanner() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-[12px] dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-        <Info className="h-3.5 w-3.5 shrink-0" />
         <div>
           <p className="font-medium">{t("title")}</p>
           <p className="mt-0.5 text-slate-600 dark:text-slate-300">{t("desc")}</p>

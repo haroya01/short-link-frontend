@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BarChart3, FileUp, QrCode, Search, Star } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
@@ -182,7 +182,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
-          <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
+          {t("bulkImport.button")}
         </Button>
       </div>
 
@@ -245,7 +245,6 @@ export default function DashboardPage() {
                           : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
                       )}
                     >
-                      {fav && <Star className="h-3.5 w-3.5" />}
                       {fav ? t("favorite.filter") : t("allLinks")}
                     </button>
                   ))}

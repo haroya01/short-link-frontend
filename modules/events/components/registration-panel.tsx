@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle, CalendarPlus, CheckCircle2, Copy, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
 import { prewarmPowToken } from "@/lib/pow";
 import { Input } from "@/components/ui/input";
@@ -228,7 +228,6 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
       className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 outline-none dark:border-slate-800 dark:bg-slate-900"
     >
       <div className="flex items-center gap-2.5">
-        <CheckCircle2 className="h-5 w-5 text-slate-900 dark:text-slate-100" />
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {t("successTitle")}
         </h2>
@@ -243,7 +242,6 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
           rel="noreferrer"
           className="flex min-h-11 items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800"
         >
-          <CalendarPlus className="h-3.5 w-3.5" />
           {t("addToCalendar")}
         </a>
         <button
@@ -255,7 +253,6 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
           }}
           className="flex min-h-11 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-[14px] font-medium text-slate-900 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         >
-          <Copy className="h-3.5 w-3.5" />
           {copied ? t("cancelLinkCopied") : t("copyCancelLink")}
         </button>
       </div>

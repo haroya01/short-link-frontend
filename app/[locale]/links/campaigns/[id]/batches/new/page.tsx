@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, ClipboardPaste, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { createCampaignBatchesBulk, getCampaign } from "@/lib/api";
@@ -209,10 +209,10 @@ export default function NewBatchPage() {
 
         <div className="flex flex-wrap items-center gap-2">
           <Button type="button" variant="outline" onClick={addRow}>
-            <Plus className="h-4 w-4" aria-hidden /> {t("addRow")}
+            {t("addRow")}
           </Button>
           <Button type="button" variant="outline" onClick={() => setPasteOpen((v) => !v)}>
-            <ClipboardPaste className="h-4 w-4" aria-hidden /> {t("pasteToggle")}
+            {t("pasteToggle")}
           </Button>
         </div>
 

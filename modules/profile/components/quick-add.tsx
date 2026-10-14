@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronDown, Loader2, Plus } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -245,14 +245,7 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
             className="flex-1"
           />
           <Button type="button" size="sm" onClick={submit} disabled={busy || !url.trim()}>
-            {busy ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <>
-                <Plus className="h-3.5 w-3.5" />
-                {t("add")}
-              </>
-            )}
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t("add")}
           </Button>
         </div>
       </div>

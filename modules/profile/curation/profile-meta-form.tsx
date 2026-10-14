@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronDown, Eye, Loader2 } from "lucide-react";
+import { Check, ChevronDown, Loader2 } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { AvatarPicker } from "@/components/settings/avatar-picker";
 import { BannerPicker } from "@/components/settings/banner-picker";
@@ -274,7 +274,6 @@ function SocialsPicker({
     <div className="space-y-1.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/30 p-3 dark:border-slate-800 dark:bg-slate-800/40">
       <div className="flex items-baseline justify-between">
         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
-          <Eye className="h-3 w-3 text-slate-400" />
           {t("socialsLabel")}
         </span>
         <span className="text-[10px] text-slate-500 dark:text-slate-400">

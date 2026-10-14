@@ -7,7 +7,6 @@ import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
 import { Link } from "@/i18n/navigation";
-import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
@@ -94,7 +93,7 @@ export default function StatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/dashboard" className={buttonVariants({ variant: "outline" })}>
+            <Link href="/dashboard" className="focus-ring rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
               {t("backToDashboard")}
             </Link>
           }

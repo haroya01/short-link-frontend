@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowUp,
   CalendarClock,
   CalendarDays,
   ChevronDown,
@@ -17,7 +16,6 @@ import {
   Minus,
   Pencil,
   Play,
-  Plus,
   ShoppingBag,
   Star,
   Type,
@@ -316,7 +314,6 @@ function AddMenu({
         aria-expanded={open}
         className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-800 dark:text-slate-300 dark:hover:border-slate-700"
       >
-        <Plus className="h-3.5 w-3.5" />
         {t("addBlockMenu")}
       </button>
       {open && (
@@ -413,11 +410,6 @@ function MenuItem({
   );
 }
 
-/**
- * Empty-feed state with an arrow pointing toward the existing "Add link" form above. When the
- * user has unfeatured links, surfaces the count + a hint that the disclosure below is the way
- * to add them — clearer than the previous one-line dashed box.
- */
 function FeedEmptyState({
   hasOtherLinks,
   otherCount,
@@ -428,15 +420,9 @@ function FeedEmptyState({
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center dark:border-slate-700 dark:bg-slate-800/40">
-      <ArrowUp className="mx-auto h-4 w-4 text-slate-400" />
-      <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-300">{t("featuredEmptyTitle")}</p>
-      <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-        {hasOtherLinks
-          ? t("featuredEmptyHasOthers", { count: otherCount })
-          : t("featuredEmpty")}
-      </p>
-    </div>
+    <p className="border-t border-slate-200 py-3 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+      {hasOtherLinks ? t("featuredEmptyHasOthers", { count: otherCount }) : t("featuredEmpty")}
+    </p>
   );
 }
 

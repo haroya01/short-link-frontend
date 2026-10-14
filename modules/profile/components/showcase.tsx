@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { SignInLink } from "@/components/auth/sign-in-link";
@@ -25,7 +24,6 @@ export function ShowcaseLanding() {
         action={
           <SignInLink reason="profile" next="/profile/auto" className={buttonVariants({ variant: "accent", size: "xl" })}>
             {t("cta")}
-            <ArrowRight aria-hidden className="h-4 w-4" />
           </SignInLink>
         }
       />
@@ -111,7 +109,6 @@ export function ProfileShowcase() {
                 )}
               >
                 {t("demoCta")}
-                <ArrowRight aria-hidden className="h-3.5 w-3.5" />
               </Link>
             </li>
           );
@@ -154,7 +151,6 @@ export function ProfileShowcase() {
         className="focus-ring inline-flex items-center gap-1 justify-self-start rounded-sm text-[14px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400 lg:hidden"
       >
         @{profile.username} {t("demoCta")}
-        <ArrowRight aria-hidden className="h-3.5 w-3.5" />
       </Link>
     </div>
   );
