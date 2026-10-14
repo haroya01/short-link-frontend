@@ -2748,16 +2748,12 @@
     "toolsTitle": "Tools",
     "tools": {
       "profile": "Public profile",
-      "profileDesc": "All your links on one page",
-      "ctas": "CTA library",
-      "ctasDesc": "Manage banners shown on your links"
+      "ctas": "CTA library"
     },
     "appsTitle": "Apps",
     "apps": {
       "links": "kurl.me app",
-      "linksDesc": "Shorten links and see clicks on iPhone",
-      "blog": "kurl log app",
-      "blogDesc": "Read and write on iPhone"
+      "blog": "kurl log app"
     },
     "appsScanHint": "Scan the QR with your phone camera to open the App Store",
     "accountTitle": "Account",

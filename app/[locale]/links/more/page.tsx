@@ -42,7 +42,7 @@ export default function MorePage() {
       <Section title={t("toolsTitle")}>
         <div className="-mx-2 divide-y divide-slate-100 dark:divide-slate-800">
           {TOOLS.map(([href, key]) => (
-            <MoreRow key={key} href={href} title={t(`tools.${key}`)} description={t(`tools.${key}Desc`)} />
+            <MoreRow key={key} href={href} title={t(`tools.${key}`)} />
           ))}
         </div>
       </Section>
@@ -50,7 +50,7 @@ export default function MorePage() {
       <Section title={t("appsTitle")}>
         <div className="-mx-2 divide-y divide-slate-100 dark:divide-slate-800">
           {APPS.map((app) => (
-            <AppRow key={app} app={app} title={t(`apps.${app}`)} description={t(`apps.${app}Desc`)} />
+            <AppRow key={app} app={app} title={t(`apps.${app}`)} />
           ))}
         </div>
         <p className="mt-3 hidden text-xs text-slate-500 dark:text-slate-400 sm:block">{t("appsScanHint")}</p>
@@ -67,7 +67,7 @@ export default function MorePage() {
   );
 }
 
-function MoreRow({ href, title, description }: { href: string; title: string; description: string }) {
+function MoreRow({ href, title, description }: { href: string; title: string; description?: string }) {
   return (
     <Link
       href={href}
@@ -75,14 +75,14 @@ function MoreRow({ href, title, description }: { href: string; title: string; de
     >
       <span className="min-w-0">
         <span className="block text-sm font-medium text-slate-900 dark:text-slate-100">{title}</span>
-        <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{description}</span>
+        {description && <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{description}</span>}
       </span>
       <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-slate-400" />
     </Link>
   );
 }
 
-function AppRow({ app, title, description }: { app: IosApp; title: string; description: string }) {
+function AppRow({ app, title }: { app: IosApp; title: string }) {
   const href = appStoreUrl(app);
   const [qr, setQr] = useState<string | null>(null);
 
@@ -104,10 +104,7 @@ function AppRow({ app, title, description }: { app: IosApp; title: string; descr
       rel="noreferrer"
       className="focus-ring flex min-h-14 items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
     >
-      <span className="min-w-0">
-        <span className="block text-sm font-medium text-slate-900 dark:text-slate-100">{title}</span>
-        <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{description}</span>
-      </span>
+      <span className="min-w-0 text-sm font-medium text-slate-900 dark:text-slate-100">{title}</span>
       {qr && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={qr} alt="" className="hidden h-[72px] w-[72px] shrink-0 rounded-md sm:block" />

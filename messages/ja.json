@@ -2748,16 +2748,12 @@
     "toolsTitle": "ツール",
     "tools": {
       "profile": "公開プロフィール",
-      "profileDesc": "リンクを1ページにまとめて表示",
-      "ctas": "CTAライブラリ",
-      "ctasDesc": "リンクに表示する案内バナーを管理"
+      "ctas": "CTAライブラリ"
     },
     "appsTitle": "アプリ",
     "apps": {
       "links": "kurl.me アプリ",
-      "linksDesc": "iPhoneでリンクを短縮してクリックを見る",
-      "blog": "kurl ログ アプリ",
-      "blogDesc": "iPhoneで読んで書く"
+      "blog": "kurl ログ アプリ"
     },
     "appsScanHint": "スマホのカメラでQRを読み取るとApp Storeが開きます",
     "accountTitle": "アカウント",
