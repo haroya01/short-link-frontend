@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Check, Mail, UserRound } from "lucide-react";
+import { Check, Mail } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogHref } from "@/lib/host";
@@ -41,7 +41,7 @@ export default function ProfileEditPage() {
   // Stable callback so the editor's effect dependency doesn't churn on every render.
   const handleDraft = useCallback((next: ProfileDraft) => setDraft(next), []);
 
-  if (ready && !authenticated) return <SignInEmptyState page reason="profile" icon={UserRound} />;
+  if (ready && !authenticated) return <SignInEmptyState page reason="profile" />;
 
   if (!ready) {
     return (

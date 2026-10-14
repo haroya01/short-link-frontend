@@ -74,7 +74,7 @@ export default function CtaLibraryPage() {
   }
 
   if (!ready) return null;
-  if (!authenticated) return <SignInEmptyState page reason="ctas" icon={MousePointerClick} />;
+  if (!authenticated) return <SignInEmptyState page reason="ctas" />;
 
   return (
     <div className="container max-w-3xl space-y-6 py-10">

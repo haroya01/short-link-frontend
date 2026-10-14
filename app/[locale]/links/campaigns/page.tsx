@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Plus, QrCode } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listCampaigns } from "@/lib/api";
@@ -49,7 +49,7 @@ export default function CampaignsPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="campaigns" icon={QrCode} />
+      <SignInEmptyState page reason="campaigns" />
     );
   }
 

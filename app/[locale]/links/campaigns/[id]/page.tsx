@@ -12,7 +12,6 @@ import {
   Layers,
   PlayCircle,
   Printer,
-  QrCode,
   Repeat,
   StopCircle,
   ExternalLink,
@@ -86,7 +85,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
+    return <SignInEmptyState page reason="campaigns" />;
   }
 
   return (

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, BarChart3, FlaskConical } from "lucide-react";
+import { ArrowLeft, FlaskConical } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -106,7 +106,7 @@ export default function CampaignStatsPage() {
   }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="stats" icon={BarChart3} />;
+    return <SignInEmptyState page reason="stats" />;
   }
 
   return (

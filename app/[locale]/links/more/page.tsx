@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ChevronRight, LayoutGrid } from "lucide-react";
+import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
@@ -22,7 +22,7 @@ export default function MorePage() {
   const t = useTranslations("more");
   const { authenticated, ready, me } = useAuth();
 
-  if (ready && !authenticated) return <SignInEmptyState page reason="more" icon={LayoutGrid} />;
+  if (ready && !authenticated) return <SignInEmptyState page reason="more" />;
 
   if (!me) {
     return (

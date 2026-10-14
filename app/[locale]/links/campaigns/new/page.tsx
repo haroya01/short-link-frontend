@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, QrCode } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -59,7 +59,7 @@ export default function NewCampaignPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="campaigns" icon={QrCode} />
+      <SignInEmptyState page reason="campaigns" />
     );
   }
 

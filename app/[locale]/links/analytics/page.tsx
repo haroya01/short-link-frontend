@@ -1,6 +1,5 @@
 "use client";
 
-import { BarChart3 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import { useFormatter, useTranslations } from "next-intl";
@@ -42,7 +41,7 @@ export default function LinkAnalyticsPage() {
   });
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="stats" icon={BarChart3} />;
+    return <SignInEmptyState page reason="stats" />;
   }
 
   const data = overview.data;

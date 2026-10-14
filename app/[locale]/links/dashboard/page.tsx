@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  BarChart3,
-  FileUp,
-  Link2,
-  QrCode,
-  Search,
-  Star,
-} from "lucide-react";
+import { BarChart3, FileUp, QrCode, Search, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
@@ -172,7 +165,7 @@ export default function DashboardPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="links" icon={Link2} />
+      <SignInEmptyState page reason="links" />
     );
   }
 

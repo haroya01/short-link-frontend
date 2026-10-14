@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, ClipboardPaste, Plus, QrCode, Trash2, X } from "lucide-react";
+import { ArrowLeft, ClipboardPaste, Plus, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { createCampaignBatchesBulk, getCampaign } from "@/lib/api";
@@ -164,7 +164,7 @@ export default function NewBatchPage() {
   }
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
+    return <SignInEmptyState page reason="campaigns" />;
   }
 
   return (

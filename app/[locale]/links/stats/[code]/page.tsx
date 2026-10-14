@@ -1,6 +1,5 @@
 "use client";
 
-import { BarChart3 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -78,7 +77,7 @@ export default function StatsPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="stats" icon={BarChart3} />
+      <SignInEmptyState page reason="stats" />
     );
   }
 

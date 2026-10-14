@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, FileUp, QrCode, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, FileUp, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -195,7 +195,7 @@ export default function PosterBuilderPage() {
   const canCompose = !!pdfBytes && batchCount > 0 && !composing;
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
+    return <SignInEmptyState page reason="campaigns" />;
   }
 
   return (

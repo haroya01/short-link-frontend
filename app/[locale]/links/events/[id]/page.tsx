@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
-import { CalendarDays, Check, CheckCircle2, Copy, ExternalLink, Pencil, Users } from "lucide-react";
+import { Check, CheckCircle2, Copy, ExternalLink, Pencil, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { ConfirmDialog } from "@/components/ui/dialog";
@@ -63,7 +63,7 @@ export default function EventDetailPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="events" icon={CalendarDays} />
+      <SignInEmptyState page reason="events" />
     );
   }
 
