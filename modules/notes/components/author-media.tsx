@@ -108,7 +108,7 @@ export function AuthorMedia({ username, initial }: { username: string; initial: 
     );
   }
   if (state === "error" && items.length === 0) return <ErrorState title={t("loadFailed")} onRetry={reload} />;
-  if (items.length === 0) return <BlogEmpty icon={ImageIcon} title={t("emptyMedia")} />;
+  if (items.length === 0) return <BlogEmpty title={t("emptyMedia")} />;
 
   return (
     <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import { CornerUpLeft, MessageCircle } from "lucide-react";
+import { CornerUpLeft } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -59,7 +59,7 @@ export function AuthorReplies({ username, initial }: { username: string; initial
       initial={first.current}
       filterContext="account"
       contextFor={(note: Note) => <ReplyContext replyingTo={parents.current.get(note.id) ?? null} />}
-      empty={<BlogEmpty icon={MessageCircle} title={t("emptyReplies")} />}
+      empty={<BlogEmpty title={t("emptyReplies")} />}
     />
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AtSign, Bookmark, Flame, Globe, List, MessageSquareText, Users, type LucideIcon } from "lucide-react";
+import { AtSign, Bookmark, Globe, List, Users, type LucideIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -109,14 +109,14 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
     href: hrefFor(key),
     active: key === feed,
   }));
-  const empty: Record<Feed, { icon: LucideIcon; title: string; body?: string }> = {
-    everyone: { icon: MessageSquareText, title: t("emptyAuthor") },
-    federated: { icon: Globe, title: t("emptyFederated"), body: t("emptyFederatedBody") },
-    following: { icon: Users, title: t("emptyFollowingTitle"), body: t("emptyFollowing") },
-    trending: { icon: Flame, title: t("emptyTrending") },
-    bookmarks: { icon: Bookmark, title: t("emptyBookmarks") },
-    direct: { icon: AtSign, title: t("emptyDirect"), body: t("emptyDirectBody") },
-    lists: { icon: List, title: t("listEmpty") },
+  const empty: Record<Feed, { title: string; body?: string }> = {
+    everyone: { title: t("emptyAuthor") },
+    federated: { title: t("emptyFederated"), body: t("emptyFederatedBody") },
+    following: { title: t("emptyFollowingTitle"), body: t("emptyFollowing") },
+    trending: { title: t("emptyTrending") },
+    bookmarks: { title: t("emptyBookmarks") },
+    direct: { title: t("emptyDirect"), body: t("emptyDirectBody") },
+    lists: { title: t("listEmpty") },
   };
   const signedOut = ready && !authenticated;
   const showsPosted = feed === "everyone" || feed === "following";

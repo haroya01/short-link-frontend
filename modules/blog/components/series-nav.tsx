@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Layers } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import type { SeriesEpisode, SeriesNavView } from "@/modules/blog/lib/series-items";
@@ -34,7 +34,7 @@ export function SeriesNav({
   const seriesHref = authorHref(username, locale, `series/${series.slug}`);
 
   return (
-    <nav className="mb-10 border-l-2 border-accent-600 pl-4 dark:border-accent-400">
+    <nav className="mb-10">
       <div className="flex items-center justify-between gap-3">
         <BlogLink
           href={seriesHref}
@@ -42,7 +42,6 @@ export function SeriesNav({
           data-bhv="series"
           data-bhv-id={series.slug}
         >
-          <Layers aria-hidden className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
           <span className="truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
             {series.title}
           </span>

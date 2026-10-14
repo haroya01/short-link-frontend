@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { blogPath } from "@/lib/host";
-import { List, MessageSquareText } from "lucide-react";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -38,7 +38,7 @@ export function NoteListTimeline({ list }: { list: NoteListSummary }) {
           {t("listManage")}
         </BlogLink>
       </div>
-      <NoteList key={list.id} load={load} filterContext="home" empty={<BlogEmpty icon={MessageSquareText} title={t("listNoNotes")} />} />
+      <NoteList key={list.id} load={load} filterContext="home" empty={<BlogEmpty title={t("listNoNotes")} />} />
     </section>
   );
 }
@@ -47,12 +47,11 @@ export function NoteListUnpicked({ hasLists }: { hasLists: boolean }) {
   const t = useTranslations("notes");
   return (
     <BlogEmpty
-      icon={List}
       title={hasLists ? t("listPick") : t("listEmpty")}
       action={
         <BlogLink
           href={NOTE_LISTS_SETTINGS}
-          className="focus-ring rounded text-[13px] font-semibold text-accent-700 hover:underline dark:text-accent-400"
+          className={blogCta({ variant: "text" })}
         >
           {t("listManage")}
         </BlogLink>

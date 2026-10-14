@@ -59,7 +59,7 @@ export function SparkBars({ history }: { history: number[] }) {
       {history.map((count, i) => (
         <span
           key={i}
-          className={count === 0 ? "w-1 rounded-full bg-slate-200 dark:bg-slate-700" : "w-1 rounded-full bg-accent-600"}
+          className={count === 0 ? "w-1 rounded-full bg-slate-200 dark:bg-slate-700" : "w-1 rounded-full bg-slate-500 dark:bg-slate-400"}
           style={{ height: `${Math.max(3, (22 * count) / peak)}px` }}
         />
       ))}

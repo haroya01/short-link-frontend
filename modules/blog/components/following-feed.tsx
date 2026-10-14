@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { EyeOff, Loader2, Users } from "lucide-react";
+import { Loader2, Users } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -288,11 +288,10 @@ export function FollowingFeed({
     return (
       <div className="mt-4">
         <BlogEmpty
-          icon={Users}
           title={t("emptyFollowingTitle")}
           body={t("followingEmpty")}
           action={
-            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+            <Link href="?sort=recent" className={blogCta({ variant: "text" })}>
               {t("followingBrowseLatest")}
             </Link>
           }
@@ -337,11 +336,10 @@ export function FollowingFeed({
     return (
       <div className="mt-4">
         <BlogEmpty
-          icon={EyeOff}
           title={t("tagAllHiddenTitle")}
           body={t("tagAllHiddenBody", { count: hiddenCount })}
           action={
-            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+            <Link href="?sort=recent" className={blogCta({ variant: "text" })}>
               {t("followingBrowseLatest")}
             </Link>
           }

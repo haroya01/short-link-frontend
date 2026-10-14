@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowUpRight, MousePointerClick } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { getPublicLinkStats } from "@/lib/api/stats";
 import { linksHref } from "@/lib/host";
 import { SHORT_HOST } from "@/modules/blog/lib/kurl-link";
@@ -58,13 +58,10 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="my-8 flex items-center justify-between gap-3 rounded-surface border border-slate-200 bg-slate-50/60 px-5 py-4 no-underline transition-colors hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-accent-500/40 dark:hover:bg-slate-800"
+        className="my-8 flex items-center justify-between gap-3 rounded-surface border border-slate-200 bg-slate-50/60 px-5 py-4 !no-underline transition-colors hover:border-slate-300 hover:bg-slate-100/60 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800"
       >
-        <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
-          <MousePointerClick className="h-4 w-4 shrink-0 text-accent-600" />
-          <span className="truncate">{shortLabel}</span>
-        </span>
-        <ArrowUpRight className="h-4 w-4 shrink-0 text-accent-600" />
+        <span className="min-w-0 truncate text-sm font-medium text-slate-900 dark:text-slate-100">{shortLabel}</span>
+        <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
       </a>
     );
   }
@@ -80,12 +77,9 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/60 px-5 py-2.5 no-underline transition-colors hover:bg-accent-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
+        className="flex items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/60 px-5 py-2.5 !no-underline transition-colors hover:bg-slate-100/60 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
       >
-        <span className="flex min-w-0 items-center gap-1.5 font-mono text-[13px] font-medium text-slate-700 dark:text-slate-300">
-          <MousePointerClick className="h-3.5 w-3.5 shrink-0 text-accent-600" />
-          <span className="truncate">{shortLabel}</span>
-        </span>
+        <span className="min-w-0 truncate font-mono text-[13px] font-medium text-slate-700 dark:text-slate-300">{shortLabel}</span>
         <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-slate-400" />
       </a>
 
@@ -111,7 +105,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
             {spark.map((d, i) => (
               <span
                 key={i}
-                className="w-[3px] rounded-sm bg-accent-200"
+                className="w-[3px] rounded-sm bg-slate-300 dark:bg-slate-600"
                 style={{ height: `${Math.max(8, (d.count / sparkMax) * 100)}%` }}
               />
             ))}
@@ -123,7 +117,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={linksHref(`/stats/${code}/public`)}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-1 border-t border-slate-100 px-5 py-2 text-[12px] font-medium text-accent-700 no-underline transition-colors hover:bg-accent-50/40 dark:border-slate-800 dark:text-accent-400 dark:hover:bg-accent-500/10"
+        className="flex items-center gap-1 border-t border-slate-100 px-5 py-2 text-[12px] font-medium text-slate-700 !no-underline transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
       >
         {t("linkFullStats")}
         <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
@@ -137,7 +131,7 @@ function Metric({ label, value, sub }: { label: string; value: string; sub: stri
     <div className="min-w-0">
       <div className="flex items-baseline gap-1.5">
         <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{value}</span>
-        <span className="text-[12px] font-medium text-accent-700">{sub}</span>
+        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{sub}</span>
       </div>
       <div className="mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">{label}</div>
     </div>

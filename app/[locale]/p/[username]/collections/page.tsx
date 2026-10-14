@@ -48,7 +48,7 @@ export default async function PublicCollectionsIndexPage({
     <ReadingShell className="mt-4 sm:mt-8">
       <AuthorContentTransition>
         {collections.length === 0 ? (
-          <BlogEmpty icon={FolderOpen} title={t("collectionsEmpty")} />
+          <BlogEmpty title={t("collectionsEmpty")} />
         ) : (
           // Quiet editorial index — same hairline-row spine as the series index, so 시리즈↔컬렉션 read
           // as siblings. Every collection gets the folder; "순서대로 읽기" rides the meta line.

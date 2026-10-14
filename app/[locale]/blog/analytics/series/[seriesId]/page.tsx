@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Eye, FileText, Heart, Layers, Users } from "lucide-react";
+import { ArrowLeft, Layers, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -74,10 +74,10 @@ export default function SeriesAnalyticsPage() {
           {detail && (
             <>
               <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-                <StatCard icon={<Users className="h-4 w-4" />} label={t("analyticsSubscribers")} value={detail.series.subscriberCount} />
-                <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPosts")} value={detail.series.postCount} />
-                <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={detail.series.totalViews} />
-                <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={detail.series.totalLikes} />
+                <StatCard label={t("analyticsSubscribers")} value={detail.series.subscriberCount} />
+                <StatCard label={t("analyticsPosts")} value={detail.series.postCount} />
+                <StatCard label={t("analyticsLifetimeViews")} value={detail.series.totalViews} />
+                <StatCard label={t("analyticsLifetimeLikes")} value={detail.series.totalLikes} />
               </div>
 
               {/* 구독자 추이 — 현재까지 유지중인 구독자가 시간에 따라 누적된 곡선. */}

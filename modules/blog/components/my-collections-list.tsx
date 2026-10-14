@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Globe, Layers, Link as LinkIcon, ListOrdered, Loader2, Lock } from "lucide-react";
+import { Globe, Layers, Link as LinkIcon, Loader2, Lock } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogPath } from "@/lib/host";
@@ -92,8 +92,7 @@ export function MyCollectionsList() {
               <span className="mt-1 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
                 {isOrdered(c) && (
                   <>
-                    <ListOrdered className="h-3 w-3 text-accent-600 dark:text-accent-500" />
-                    <span className="text-accent-700 dark:text-accent-400">{t("ordered")}</span>
+                    <span>{t("ordered")}</span>
                     <span aria-hidden>·</span>
                   </>
                 )}

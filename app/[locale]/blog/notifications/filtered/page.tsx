@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Bell, ListFilter } from "lucide-react";
+import { ArrowLeft, Bell } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
@@ -71,10 +71,9 @@ export default function FilteredNotificationsPage() {
           <ErrorState onRetry={() => refetch()} />
         ) : !data || data.length === 0 ? (
           <BlogEmpty
-            icon={ListFilter}
             title={t("filteredEmpty")}
             action={
-              <BlogLink href={blogPath("/settings")} className={blogCta({ variant: "secondary" })}>
+              <BlogLink href={blogPath("/settings")} className={blogCta({ variant: "text" })}>
                 {t("filteredSettings")}
               </BlogLink>
             }

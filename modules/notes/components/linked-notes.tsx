@@ -61,7 +61,7 @@ export function LinkedNotes({ url }: { url: string }) {
           key={url}
           load={load}
           filterContext="public"
-          empty={<BlogEmpty icon={Link2} title={t("emptyLink")} />}
+          empty={<BlogEmpty title={t("emptyLink")} />}
         />
       </div>
     </div>

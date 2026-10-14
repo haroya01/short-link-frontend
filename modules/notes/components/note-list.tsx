@@ -145,7 +145,7 @@ export function NoteList({
                 <BlogLink
                   href={noteHref(note, locale)}
                   data-testid={`note-thread-more-${note.id}`}
-                  className="focus-ring mb-3 ml-12 inline-block rounded text-[13px] font-medium text-accent-700 hover:underline dark:text-accent-400"
+                  className="focus-ring mb-3 ml-12 inline-block rounded text-[13px] font-medium text-slate-700 hover:underline dark:text-slate-300"
                 >
                   {t("threadMore", { count: thread.total - 2 })}
                 </BlogLink>

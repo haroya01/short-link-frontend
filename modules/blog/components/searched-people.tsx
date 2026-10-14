@@ -1,7 +1,6 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Search, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { searchPeople, searchablePeopleQuery, type PeoplePage, type PersonMatch } from "@/modules/blog/api/people";
@@ -25,7 +24,7 @@ export function SearchedPeople({ query }: { query: string }) {
   });
 
   if (!searchable) {
-    return <BlogEmpty icon={UserRound} title={t("searchPeopleHint")} />;
+    return <BlogEmpty title={t("searchPeopleHint")} />;
   }
   if (isLoading) {
     return (
@@ -46,7 +45,7 @@ export function SearchedPeople({ query }: { query: string }) {
 
   const people = (data?.pages.flatMap((page) => page.items) ?? []).filter((p) => !blocked.has(p.username));
   if (people.length === 0) {
-    return <BlogEmpty icon={Search} title={t("searchNoPeople")} />;
+    return <BlogEmpty title={t("searchNoPeople")} />;
   }
 
   return (
