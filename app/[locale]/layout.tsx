@@ -7,7 +7,7 @@ import { CLIENT_MESSAGE_SCOPES, pickMessages } from "@/i18n/client-namespaces";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { FirstLoadMark } from "@/components/common/first-load-mark";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
@@ -29,9 +29,11 @@ import "../globals.css";
  * lean on weight (600/700) + tight tracking (`-0.025em` via `.tracking-headline`) for editorial
  * density instead of a display swap.
  */
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// next/font/google 은 빌드 때 받은 구글 CSS 로 변수 클래스 해시를 정해, 서버·클라이언트 웹팩 캐시가
+// 갈리면 HTML 클래스와 CSS 클래스가 어긋나 --font-mono 가 빈다. 저장소 파일이면 해시가 고정된다.
+const jetbrainsMono = localFont({
+  src: "../fonts/jetbrains-mono/JetBrainsMono-Latin.woff2",
+  weight: "400 600",
   variable: "--font-mono",
   display: "swap",
   // 보조 글꼴(URL·숫자·코드) — 모든 화면 머리의 preload 로 본문 글꼴·스크립트와 대역을 다투지 않게,
