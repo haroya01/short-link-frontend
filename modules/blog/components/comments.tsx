@@ -628,7 +628,7 @@ function CommentRow({
 }) {
   const locale = useLocale();
   const { me } = useAuth();
-  const own = me != null && comment.author?.id === me.id;
+  const own = me != null && (comment.author?.id === me.id || comment.author?.username === me.username);
   return (
     <ConversationRow
       id={anchorId}

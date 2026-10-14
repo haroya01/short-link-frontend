@@ -40,7 +40,7 @@ export interface MyComment {
 
 // In-memory mock thread (demo mode) so the comment list / reply / submit / delete all work without a
 // backend. Shared across posts — fine for a demo.
-const MOCK_VIEWER: PublicAuthor = { id: 9001, username: "reader", bio: null, avatarUrl: null };
+const MOCK_VIEWER: PublicAuthor = { id: 1, username: "dohyun", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=12" };
 let mockComments: CommentView[] = [
   { id: 1, parentId: null, author: { id: 2, username: "minji", displayName: "민지", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=45" }, body: "잘 읽었어요. RSC 전환 부분 특히 공감합니다.", createdAt: "2026-05-30T10:00:00Z", likeCount: 3 },
   { id: 2, parentId: 1, author: { id: 1, username: "dohyun", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=12" }, body: "@minji 감사해요! 다음 글에서 더 자세히 다뤄볼게요. @nobody_here 님도요.", createdAt: "2026-05-30T11:00:00Z", likeCount: 0, mentions: ["minji"] },
