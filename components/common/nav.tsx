@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+import { useLinksPathname } from "@/hooks/use-links-pathname";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { buttonVariants } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
@@ -62,7 +63,7 @@ function authenticatedEntries(t: (k: string) => string): NavEntry[] {
 }
 
 export function Nav() {
-  const pathname = usePathname();
+  const pathname = useLinksPathname();
   const t = useTranslations("nav");
   const { authenticated, ready } = useAuth();
 

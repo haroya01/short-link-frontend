@@ -239,10 +239,10 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
           className={
             "flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed py-6 text-center transition " +
             (remaining <= 0
-              ? "cursor-not-allowed border-slate-200 bg-slate-50/50 text-slate-300"
+              ? "cursor-not-allowed border-slate-200 bg-slate-50/50 text-slate-300 dark:border-slate-800 dark:bg-slate-800/30 dark:text-slate-600"
               : dropzoneHot
-                ? "border-accent-400 bg-accent-50 text-accent-700"
-                : "border-slate-300 bg-slate-50/60 text-slate-600 hover:border-slate-400 hover:text-slate-800")
+                ? "border-accent-400 bg-accent-50 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400"
+                : "border-slate-300 bg-slate-50/60 text-slate-600 hover:border-slate-400 hover:text-slate-800 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-slate-100")
           }
         >
           <ImagePlus className="h-5 w-5" />
@@ -279,8 +279,8 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
                     onDrop={(e) => onThumbDrop(idx, e)}
                     onDragEnd={onThumbDragEnd}
                     className={
-                      "group relative h-20 w-20 shrink-0 overflow-hidden rounded-md border bg-slate-100 transition " +
-                      (isOver ? "ring-2 ring-accent-400 ring-offset-1" : "border-slate-200") +
+                      "group relative h-20 w-20 shrink-0 overflow-hidden rounded-md border bg-slate-100 transition dark:bg-slate-800 " +
+                      (isOver ? "ring-2 ring-accent-400 ring-offset-1" : "border-slate-200 dark:border-slate-700") +
                       (isDragging ? " opacity-50" : "")
                     }
                   >
