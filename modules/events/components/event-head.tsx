@@ -156,7 +156,7 @@ function attendanceLine(
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-baseline gap-4 border-b border-slate-100 py-3 dark:border-slate-800/60">
-      <dt className="w-14 shrink-0 text-[13px] font-semibold text-accent-700 dark:text-accent-400">
+      <dt className="w-14 shrink-0 text-[13px] font-medium text-slate-500 dark:text-slate-400">
         {label}
       </dt>
       <dd className="min-w-0 text-[15px] leading-relaxed text-slate-800 dark:text-slate-200">

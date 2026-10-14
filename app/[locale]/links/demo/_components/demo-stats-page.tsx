@@ -36,11 +36,11 @@ export function DemoStatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-6 sm:py-10">
-      {/* Sample-data banner — minimal, single line, accent-tinted. Keeps the page honest about
+      {/* Sample-data banner — minimal, single line. Keeps the page honest about
           the numbers being seeded without competing with the dashboard chrome below. The CTA
           is intentionally low-weight so the eye lands on the charts. */}
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:border-accent-500/20 dark:bg-accent-500/10 px-4 py-2.5 text-[12px]">
-        <span className="inline-flex min-w-0 items-center gap-2 font-medium text-accent-800 dark:text-accent-300">
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-[12px] dark:border-slate-800 dark:bg-slate-900">
+        <span className="inline-flex min-w-0 items-center gap-2 font-medium text-slate-900 dark:text-slate-100">
           {t("sampleBanner")}
         </span>
         <Link

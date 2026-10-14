@@ -96,6 +96,7 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
 
         <FormField label={t("emailFormFieldTitle")} required>
           <Input
+            aria-required
             value={config.title}
             maxLength={60}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}

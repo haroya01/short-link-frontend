@@ -50,6 +50,7 @@ export function EmbedBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }
       <div className="space-y-3">
         <FormField label={t("embedFieldUrl")} required>
           <Input
+            aria-required
             type="url"
             value={value}
             maxLength={2048}

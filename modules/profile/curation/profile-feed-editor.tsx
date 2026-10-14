@@ -236,7 +236,7 @@ export function ProfileFeedEditor({
                       type="button"
                       onClick={() => onToggle(link.shortCode, true)}
                       disabled={pendingShortCode === link.shortCode}
-                      className="text-[11px] text-accent-700 hover:text-accent-800 dark:text-accent-400"
+                      className="text-[11px] font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
                     >
                       {t("add")}
                     </button>
@@ -443,7 +443,7 @@ function FeedEmptyState({
 /**
  * Section-aware wrapper around the flat item list. Computes which TEXT header anchors each row,
  * hides rows inside a collapsed section (everything except the header itself), and renders a
- * thin accent-color left rail on indented rows so the visual grouping is obvious without an
+ * thin left rail on indented rows so the visual grouping is obvious without an
  * extra wrapper element that would have broken the existing drag-and-drop flat-index contract.
  */
 function FeedItemList({
@@ -630,11 +630,11 @@ function FeedItemRow({
   const draggingState = isDragging
     ? "scale-[0.98] opacity-30 ring-2 ring-accent-400 rounded-md "
     : "";
-  // Indented rows (items that follow a TEXT header) get a thin accent-color rail on the left and
+  // Indented rows (items that follow a TEXT header) get a thin rail on the left and
   // extra padding so the user can see "this belongs to the section above" without breaking the
   // flat-index drag layout — the rail is a left border, not a wrapping element, so drop indices
   // stay 1:1 with the flat items array.
-  const indentRail = indented ? "border-l-2 border-accent-200 pl-4 " : "";
+  const indentRail = indented ? "border-l-2 border-slate-200 pl-4 dark:border-slate-700 " : "";
   // `relative` is permanent (not gated on isOver) so toggling the indicator doesn't reflow the row.
   // Transitions only animate properties that don't affect layout — opacity / transform / box-shadow —
   // so the dragged row fades smoothly without dragging siblings into a transition loop.

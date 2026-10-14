@@ -239,6 +239,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <FormField label={t("productCardFieldName")} required>
                   <Input
+                    aria-required
                     value={item.name}
                     maxLength={60}
                     placeholder={t("productCardFieldNamePlaceholder")}

@@ -16,6 +16,7 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignDetail } from "@/types";
 import { formatNumber } from "@/lib/utils";
+import { RequiredMark } from "@/components/ui/required-mark";
 
 type RowDraft = {
   id: string;
@@ -248,11 +249,11 @@ function DestinationHint({
   const t = useTranslations("campaignApp.batchesNew");
   if (defaultDestinationUrl) {
     return (
-      <div className="rounded-2xl border border-accent-200 bg-accent-50/40 dark:bg-accent-500/10 px-4 py-3">
+      <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
         <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
           {t.rich("defaultUrlActive", {
             strong: (chunks) => (
-              <span className="font-medium text-accent-700 dark:text-accent-400">{chunks}</span>
+              <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>
             ),
             code: () => (
               <code className="rounded bg-white dark:bg-slate-900 px-1 py-0.5 text-[11px]">
@@ -296,12 +297,14 @@ function RowsTable({
       {/* Desktop header */}
       <div className="hidden grid-cols-[1.4fr_1fr_1fr_0.7fr_1.6fr_0.5fr] gap-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 lg:grid">
         <span>
-          {t("fields.name")} <span className="text-accent-700 dark:text-accent-400">*</span>
+          {t("fields.name")}
+          <RequiredMark />
         </span>
         <span>{t("fields.distributor")}</span>
         <span>{t("fields.area")}</span>
         <span>
-          {t("fields.quantity")} <span className="text-accent-700 dark:text-accent-400">*</span>
+          {t("fields.quantity")}
+          <RequiredMark />
         </span>
         <span>{t("fields.destinationUrl")}</span>
         <span></span>
@@ -349,6 +352,7 @@ function RowItem({
       <div className="flex flex-col gap-2 lg:grid lg:grid-cols-[1.4fr_1fr_1fr_0.7fr_1.6fr_0.5fr] lg:items-start lg:gap-2">
         <Cell label={t("fields.name")} required error={errors.name ? t(`errors.${errors.name}`) : undefined}>
           <Input
+            aria-required
             value={row.name}
             onChange={(e) => onUpdate({ name: e.target.value })}
             placeholder={t("placeholders.name")}
@@ -371,6 +375,7 @@ function RowItem({
         </Cell>
         <Cell label={t("fields.quantity")} required error={errors.quantity ? t(`errors.${errors.quantity}`) : undefined}>
           <Input
+            aria-required
             type="number"
             min="1"
             inputMode="numeric"
@@ -428,7 +433,7 @@ function Cell({
     <div className="space-y-1">
       <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 lg:hidden">
         {label}
-        {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
+        {required && <RequiredMark />}
       </label>
       {children}
       {error ? (
