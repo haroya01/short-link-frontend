@@ -7,6 +7,7 @@ import { AvatarPicker } from "@/components/settings/avatar-picker";
 import { BannerPicker } from "@/components/settings/banner-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/share-row";
@@ -107,13 +108,12 @@ export function ProfileMetaForm({
 
       <label className="block space-y-1">
         <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("bioLabel")}</span>
-        <textarea
+        <Textarea
           value={bio}
           onChange={(e) => onBioChange(e.target.value)}
           maxLength={280}
           rows={3}
           placeholder={t("bioPlaceholder")}
-          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 dark:bg-slate-900 dark:border-slate-800"
         />
         <p className="text-[11px] text-slate-500 dark:text-slate-400">{bio.length}/280</p>
       </label>
@@ -226,7 +226,7 @@ function AutoSaveIndicator({
   }
   if (status === "saved") {
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 animate-fade-in">
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-700 animate-fade-in dark:text-accent-400">
         <Check className="h-3 w-3" />
         {t("autosaved")}
       </span>
@@ -297,15 +297,15 @@ function SocialsPicker({
               className={
                 "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors " +
                 (active
-                  ? "border-accent-300 bg-accent-50 text-accent-800"
+                  ? "border-accent-300 bg-accent-50 text-accent-800 dark:border-accent-500/40 dark:bg-accent-500/10 dark:text-accent-300"
                   : disabled
-                    ? "border-slate-100 bg-white text-slate-300"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
+                    ? "border-slate-100 bg-white text-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-600")
               }
             >
               <ChannelIcon channel={ch} className="h-3 w-3" />
               {channelLabel(ch, t)}
-              {active && <span className="text-[10px] text-accent-600">#{order}</span>}
+              {active && <span className="text-[10px] text-accent-700 dark:text-accent-400">#{order}</span>}
             </button>
           );
         })}
@@ -314,7 +314,7 @@ function SocialsPicker({
         <div className="mt-2 space-y-1.5 rounded-md border border-slate-100 bg-slate-50/60 p-2 dark:border-slate-800 dark:bg-slate-800/40">
           {socials.map((s) => (
             <label key={s.channel} className="flex items-center gap-2">
-              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-300">
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
                 <ChannelIcon channel={s.channel} className="h-3 w-3" />
               </span>
               <Input

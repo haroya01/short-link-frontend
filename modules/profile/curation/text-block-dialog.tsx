@@ -126,7 +126,7 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
             <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
               {t("textMarkdownHint")}
             </span>
-            <span className={overLimit ? "text-red-600" : "text-slate-500"}>
+            <span className={overLimit ? "text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400"}>
               {charCount}/{MAX_CHARS}
             </span>
           </div>
@@ -143,8 +143,8 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
                 className={
                   "rounded-full border px-3 py-1 text-[11px] font-medium transition " +
                   (layout === l
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+                    ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-slate-600")
                 }
               >
                 {t(`textLayout_${l}`)}
