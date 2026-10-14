@@ -137,7 +137,7 @@ export default function ProfileLeadsPage() {
             </SwitchLink>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* 0건이면 내보낼 것도 보낼 대상도 없다 — 죽은 액션은 비활성으로 정직하게. */}
           {hasLeads ? (
             <a href={emailLeadsExportUrl()} download>
