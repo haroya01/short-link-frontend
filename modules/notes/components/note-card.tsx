@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { EyeOff, Link2, ListFilter, MoreHorizontal, NotebookPen, Pin, Quote, Share, TriangleAlert } from "lucide-react";
+import { Link2, MoreHorizontal, NotebookPen, Pin, Quote, Share } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api/client";
@@ -34,6 +34,8 @@ import {
 import { noteLength } from "@/modules/notes/lib/note-text";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { NoteBody } from "./note-body";
+import { NoteReplyDialog } from "./note-reply-dialog";
+import { TextToggle } from "./note-composer";
 import { NoteMedia } from "./note-media";
 import { NotePollCard } from "./note-poll";
 import { NoteGlyph } from "./note-glyph";
@@ -47,7 +49,7 @@ import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { noteHref, openNote } from "@/modules/notes/lib/note-href";
-import { ReplyPolicyDialog } from "./note-reply-policy";
+import { ReplyPolicyDialog, replyRestrictedKey } from "./note-reply-policy";
 
 const NOTE_RING_NUMBER_FROM = 20;
 
@@ -71,6 +73,7 @@ export function NoteCard({
   position,
   replyModeration,
   context,
+  onReplied,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -88,6 +91,8 @@ export function NoteCard({
   replyModeration?: { hidden: boolean; onToggleHidden: () => void; onRemove: () => void };
   /** A line above the header saying where this note sits (the profile replies tab's "@x 님에게 답글"). */
   context?: React.ReactNode;
+  /** The page shows the new reply itself; without it the card counts it and offers a way to it. */
+  onReplied?: (reply: Note) => void;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -117,6 +122,8 @@ export function NoteCard({
   const [bookmarked, setBookmarked] = useState(note.bookmarkedByMe === true);
   const [conversationMuted, setConversationMutedState] = useState(note.conversationMuted === true);
   const [choosingReplyPolicy, setChoosingReplyPolicy] = useState(false);
+  const [replying, setReplying] = useState(false);
+  const replyClosed = authenticated && note.canReply === false;
   const setsReplyPolicy =
     mine && note.inReplyToId === null && !note.author.remoteId && note.replyPolicy !== undefined;
   const tCollections = useTranslations("collections");
@@ -239,6 +246,30 @@ export function NoteCard({
     if (ok) replyModeration?.onRemove();
   }
 
+  function startReply() {
+    if (!authenticated) {
+      askToSignIn("reply");
+      return;
+    }
+    if (!replyClosed) setReplying(true);
+  }
+
+  function replied(reply: Note) {
+    setReplying(false);
+    if (onReplied) {
+      onReplied(reply);
+      return;
+    }
+    onChange?.({ ...note, replyCount: note.replyCount + 1 });
+    toast(t("replyPosted"), "default", {
+      action: { label: t("view"), onClick: () => openNote(reply, locale, router.push) },
+    });
+  }
+
+  function reveal() {
+    setRevealed(true);
+  }
+
   function openFromBody(e: React.MouseEvent<HTMLDivElement>) {
     if (emphasis || editing) return;
     if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
@@ -257,21 +288,24 @@ export function NoteCard({
 
   if (filteredBy?.length && !filterOpened) {
     return (
-      <article className="flex items-center gap-2.5 py-3.5" data-note-id={note.id} data-note-filtered>
-        <ListFilter className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
-        <p className="min-w-0 flex-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
-          {t("filteredBy", { phrases: filteredBy.join(", ") })}
-        </p>
+      <article data-note-id={note.id} data-note-filtered>
         <button
           type="button"
           onClick={() => setFilterOpened(true)}
-          className="focus-ring shrink-0 rounded-full border border-slate-300 px-3 py-1 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+          className="focus-ring flex w-full items-baseline gap-1.5 rounded-surface py-3.5 text-left text-[13px]"
         >
-          {t("showFiltered")}
+          <span className="min-w-0 truncate text-slate-500 dark:text-slate-400">
+            {t("filteredBy", { phrases: filteredBy.join(", ") })}
+          </span>
+          <span className="shrink-0 font-medium text-slate-900 dark:text-slate-100">{t("showFiltered")}</span>
         </button>
       </article>
     );
   }
+
+  const folded = Boolean(note.contentWarning) && !revealed && !editing;
+  const mediaConcealed =
+    note.media.length > 0 && (note.contentWarning ? !revealed && !editing : note.sensitive === true && !mediaShown);
 
   return (
     <article className={cn("py-4", emphasis && "py-5", isNew && "comment-in")} data-note-id={note.id}>
@@ -390,41 +424,46 @@ export function NoteCard({
               {t("hiddenReplyNotice")}
             </p>
           )}
-          {note.contentWarning && !editing && (
-            <div
-              className={cn(
-                "mt-1.5 flex items-center gap-2 rounded-surface bg-slate-100 py-1.5 pl-3 pr-1.5 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
-                emphasis && "col-span-2 mt-3",
-              )}
-              data-note-warning
-            >
-              <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
-              <span
-                lang={contentLang(note.contentWarning, note.language)}
-                className={cn("min-w-0 flex-1 break-words font-medium", emphasis ? "text-[17px]" : "text-[15px]")}
-              >
-                {note.contentWarning}
-              </span>
-              <button
-                type="button"
-                onClick={() => setRevealed((open) => !open)}
-                aria-expanded={revealed}
-                className="focus-ring shrink-0 rounded-full border border-slate-300 bg-white px-3 py-1 text-[13px] font-semibold hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:hover:bg-slate-800"
-              >
-                {revealed ? t("hideContent") : t("showContent")}
-              </button>
-            </div>
-          )}
           <div
             className={emphasis ? "col-span-2 mt-3" : "cursor-pointer"}
             onClick={openFromBody}
             onAuxClick={openFromBody}
             data-note-body
           >
-            {(!note.contentWarning || revealed || editing) && (
-              <>
-            <div className={emphasis ? undefined : "mt-1"}>
-              {editing ? (
+            {note.contentWarning && !editing && (
+              <p
+                data-note-warning
+                lang={contentLang(note.contentWarning, note.language)}
+                className={cn(
+                  "whitespace-pre-wrap break-words leading-[1.45] text-slate-900 dark:text-slate-100",
+                  emphasis ? "text-[17px]" : "mt-1 text-[15px]",
+                )}
+              >
+                {note.contentWarning}
+              </p>
+            )}
+            <div className={emphasis ? (note.contentWarning && !editing ? "mt-1" : undefined) : "mt-1"}>
+              {folded ? (
+                note.body && (
+                  <button
+                    type="button"
+                    onClick={reveal}
+                    aria-label={t("concealedShow")}
+                    data-note-reveal
+                    className="focus-ring block w-full cursor-pointer rounded-surface text-left"
+                  >
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "block select-none whitespace-pre-wrap break-words leading-[1.45] text-slate-800 blur-[6px] dark:text-slate-200",
+                        emphasis ? "text-[17px]" : "text-[15px]",
+                      )}
+                    >
+                      {note.body}
+                    </span>
+                  </button>
+                )
+              ) : editing ? (
                 <div>
                   {warns && (
                     <input
@@ -446,37 +485,13 @@ export function NoteCard({
                   />
                   <div className="mt-2 flex items-center justify-end gap-2">
                     <div className="-ml-1.5 mr-auto flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setWarns((on) => !on)}
-                        aria-pressed={warns}
-                        aria-label={t("warningToggle")}
-                        title={t("warningToggle")}
-                        className={cn(
-                          "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
-                          warns
-                            ? "text-slate-900 dark:text-slate-100"
-                            : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
-                        )}
-                      >
-                        <TriangleAlert className="h-5 w-5" strokeWidth={warns ? 2.25 : 1.75} aria-hidden />
-                      </button>
+                      <TextToggle pressed={warns} onToggle={() => setWarns((on) => !on)}>
+                        {t("warningToggle")}
+                      </TextToggle>
                       {note.media.length > 0 && !warns && (
-                        <button
-                          type="button"
-                          onClick={() => setSensitive((on) => !on)}
-                          aria-pressed={sensitive}
-                          aria-label={t("sensitiveToggle")}
-                          title={t("sensitiveToggle")}
-                          className={cn(
-                            "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
-                            sensitive
-                              ? "text-slate-900 dark:text-slate-100"
-                              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
-                          )}
-                        >
-                          <EyeOff className="h-5 w-5" strokeWidth={sensitive ? 2.25 : 1.75} aria-hidden />
-                        </button>
+                        <TextToggle pressed={sensitive} onToggle={() => setSensitive((on) => !on)}>
+                          {t("sensitiveToggle")}
+                        </TextToggle>
                       )}
                     </div>
                     <NoteLengthRing length={noteLength(draft)} />
@@ -501,29 +516,25 @@ export function NoteCard({
                   </div>
                 </div>
               ) : (
-                <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                <div className={revealed ? "animate-fade-in motion-reduce:animate-none" : undefined}>
+                  <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                </div>
               )}
             </div>
-            {note.poll && (
+            {!folded && note.poll && (
               <NotePollCard noteId={note.id} poll={note.poll} onVoted={(poll) => onChange?.({ ...note, poll })} />
             )}
-            {note.sensitive && !note.contentWarning && !mediaShown && note.media.length > 0 ? (
-              <button
-                type="button"
-                onClick={() => setMediaShown(true)}
-                className="focus-ring mt-2.5 flex h-40 w-full items-center justify-center gap-2 rounded-surface bg-slate-100 text-[13px] font-semibold text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-                data-note-sensitive
-              >
-                <EyeOff className="h-4 w-4" aria-hidden />
-                {t("sensitiveMedia")}
-              </button>
-            ) : (
-              <NoteMedia media={note.media} />
-            )}
-            {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
-            {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
-            {note.linkPreview && <NoteLinkCard preview={note.linkPreview} />}
-              </>
+            <NoteMedia
+              media={note.media}
+              concealed={mediaConcealed}
+              onReveal={() => (note.contentWarning ? reveal() : setMediaShown(true))}
+            />
+            {!folded && (
+              <div className={revealed ? "animate-fade-in motion-reduce:animate-none" : undefined}>
+                {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
+                {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
+                {note.linkPreview && <NoteLinkCard preview={note.linkPreview} />}
+              </div>
             )}
 
             {emphasis && (
@@ -587,14 +598,18 @@ export function NoteCard({
                   </span>
                 )}
               </button>
-              <BlogLink
-                href={noteHref(note, locale)}
-                className={action}
-                aria-label={t("replyCount", { count: note.replyCount })}
+              <button
+                type="button"
+                onClick={startReply}
+                disabled={replyClosed}
+                title={replyClosed ? t(replyRestrictedKey(note.replyPolicy)) : undefined}
+                data-note-reply={note.id}
+                className={cn(action, "disabled:cursor-not-allowed disabled:opacity-40")}
               >
                 <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
+                <span className="sr-only">{t("replyLabel")} </span>
                 {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
-              </BlogLink>
+              </button>
               <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />
               {emphasis && (
                 <button
@@ -653,6 +668,7 @@ export function NoteCard({
           onSaved={(replyPolicy) => onChange?.({ ...note, replyPolicy })}
         />
       )}
+      <NoteReplyDialog target={replying ? note : null} onClose={() => setReplying(false)} onReplied={replied} />
       <NoteQuoteDialog
         quoted={quoting ? { note } : null}
         onClose={() => setQuoting(false)}

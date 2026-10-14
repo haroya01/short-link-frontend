@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
@@ -18,9 +19,12 @@ import {
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteCard } from "./note-card";
-import { NoteComposer } from "./note-composer";
 import { ReplyRestricted } from "./note-reply-policy";
-import { SignInRow } from "@/components/auth/sign-in-row";
+import { NoteReplyDialog } from "./note-reply-dialog";
+import { askToSignIn } from "@/components/auth/login-prompt";
+import { Avatar } from "@/modules/blog/components/avatar";
+import { openNote } from "@/modules/notes/lib/note-href";
+import { placeReply } from "@/modules/notes/lib/thread-reply";
 
 export function NoteThreadView({
   initial,
@@ -42,7 +46,40 @@ export function NoteThreadView({
   const [freshReplies, setFreshReplies] = useState<Set<number>>(new Set());
   const [hiddenReplies, setHiddenReplies] = useState<Note[] | null>(null);
   const [showingHidden, setShowingHidden] = useState(false);
+  const [replying, setReplying] = useState(false);
+  const [landed, setLanded] = useState<number | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (landed === null) return;
+    const row = document.querySelector(`[data-note-id="${landed}"]`);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    row?.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+    setLanded(null);
+  }, [landed]);
+
+  function land(reply: Note) {
+    setReplying(false);
+    const placed = placeReply(thread, reply);
+    setThread(placed.thread);
+    if (placed.landing === "elsewhere") {
+      toast(t("replyPosted"), "default", {
+        action: { label: t("view"), onClick: () => openNote(reply, locale, router.push) },
+      });
+      return;
+    }
+    setFreshReplies((current) => new Set(current).add(reply.id));
+    setLanded(reply.id);
+  }
+
+  function startReply() {
+    if (!authenticated) {
+      askToSignIn("reply");
+      return;
+    }
+    setReplying(true);
+  }
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -175,7 +212,7 @@ export function NoteThreadView({
             aria-hidden
             className="absolute -bottom-4 left-[17px] top-14 w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
           />
-          <NoteCard note={thread.parent} />
+          <NoteCard note={thread.parent} onReplied={land} />
         </div>
       )}
       <NoteCard
@@ -184,6 +221,7 @@ export function NoteThreadView({
         position={numbered ? `1/${parts.length + 1}` : undefined}
         onChange={(note) => setThread((current) => ({ ...current, note }))}
         onDelete={() => setDeleted(true)}
+        onReplied={land}
       />
       {parts.map((part, index) => (
         <div key={part.id} className={index < parts.length - 1 ? "relative" : undefined}>
@@ -195,6 +233,8 @@ export function NoteThreadView({
           )}
           <NoteCard
             note={part}
+            isNew={freshReplies.has(part.id)}
+            onReplied={land}
             position={numbered ? `${index + 2}/${parts.length + 1}` : undefined}
             onChange={(changed) =>
               setThread((current) => ({
@@ -214,35 +254,38 @@ export function NoteThreadView({
 
       {seriesNext}
 
-      <section aria-labelledby="note-replies" className="border-t border-slate-100 pt-4 dark:border-slate-800">
-        <h2 id="note-replies" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
-          {t("repliesTitle")}
-        </h2>
-        <div className="mt-1 border-b border-slate-100 dark:border-slate-800">
-          {!ready ? (
-            <div aria-hidden className="h-[60px]" />
-          ) : authenticated && thread.note.canReply === false ? (
-            <ReplyRestricted policy={thread.note.replyPolicy} />
-          ) : authenticated ? (
-            <NoteComposer
-              inReplyToId={thread.note.id}
-              threadReplyPolicy={thread.note.replyPolicy}
-              onCreated={(reply) => {
-                setFreshReplies((current) => new Set(current).add(reply.id));
-                setThread((current) => ({
-                  ...current,
-                  note: { ...current.note, replyCount: current.note.replyCount + 1 },
-                  replies: [...current.replies, reply],
-                }));
-              }}
-            />
-          ) : (
-            <SignInRow reason="reply" placeholder={t("replyPlaceholder")} />
-          )}
-        </div>
-        {thread.replies.length === 0 ? (
-          <p className="py-6 text-[14px] text-slate-500 dark:text-slate-400">{t("noReplies")}</p>
+      <div className="border-y border-slate-100 dark:border-slate-800">
+        {!ready ? (
+          <div aria-hidden className="h-[60px]" />
+        ) : authenticated && thread.note.canReply === false ? (
+          <ReplyRestricted policy={thread.note.replyPolicy} />
         ) : (
+          <button
+            type="button"
+            onClick={startReply}
+            data-testid="note-reply-prompt"
+            className="focus-ring flex w-full items-center gap-3 rounded-surface py-3 text-left"
+          >
+            {me ? (
+              <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} seed={me.id} size="md" />
+            ) : (
+              <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+            )}
+            <span className="min-w-0 flex-1 truncate text-[15px] text-slate-500 dark:text-slate-400">
+              {t("replyPrompt", { name: addressedName(thread.note.author) })}
+            </span>
+          </button>
+        )}
+      </div>
+
+      <section aria-labelledby={thread.replies.length > 0 ? "note-replies" : undefined}>
+        {thread.replies.length > 0 && (
+          <h2 id="note-replies" className="pt-4 text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+            {t("repliesTitle")}{" "}
+            <span className="font-normal tabular-nums text-slate-500 dark:text-slate-400">{thread.replies.length}</span>
+          </h2>
+        )}
+        {thread.replies.length > 0 && (
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {thread.replies.map((reply) => {
               const verdict = noteVerdict(reply, filters, "thread", me?.id);
@@ -254,6 +297,7 @@ export function NoteThreadView({
                 isNew={freshReplies.has(reply.id)}
                 filteredBy={verdict?.action === "warn" ? verdict.phrases : undefined}
                 onChange={replaceReply}
+                onReplied={land}
                 replyModeration={moderationFor(reply)}
                 onDelete={(id) =>
                   setThread((current) => ({
@@ -305,6 +349,11 @@ export function NoteThreadView({
           </div>
         )}
       </section>
+      <NoteReplyDialog target={replying ? thread.note : null} onClose={() => setReplying(false)} onReplied={land} />
     </div>
   );
+}
+
+function addressedName(author: Note["author"]): string {
+  return author.displayName || `@${author.username.split("@")[0]}`;
 }
