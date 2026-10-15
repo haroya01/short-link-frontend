@@ -74,3 +74,31 @@ test("the people tab fits a phone with an account elsewhere in it", async ({ pag
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("a handle or an address shows only what the other server answered, without the post search", async ({ page }) => {
+  for (const [query, answer] of [
+    ["@alice@mastodon.social", "@alice@mastodon.social"],
+    ["https://mastodon.social/@mina/12", "Hello from the fediverse"],
+    ["@nobody@mastodon.social", "mastodon.social 서버에서 찾지 못했어요"],
+    ["@mina@down.example", "down.example 서버가 응답하지 않아요"],
+  ]) {
+    await page.goto(`/ko/blog?q=${encodeURIComponent(query)}`);
+    await expect(elsewhere(page)).toContainText(answer, { timeout: 30_000 });
+    await expect(page.getByText("맞는 글이 없어요")).toHaveCount(0);
+    await expect(page.getByText("대신 이런 주제는 어때요")).toHaveCount(0);
+  }
+});
+
+test("signed out, a handle shows the sign-in line without the post search", async ({ page }) => {
+  await signOut(page);
+  await page.goto(`/ko/blog?q=${encodeURIComponent("@mina@mastodon.social")}`);
+  await expect(elsewhere(page)).toContainText("다른 서버 사람 찾기는 로그인하면 돼요", { timeout: 30_000 });
+  await expect(page.getByText("맞는 글이 없어요")).toHaveCount(0);
+});
+
+test("the post search comes back when the other server cannot be asked", async ({ page }) => {
+  await page.addInitScript(() => window.localStorage.setItem("kurl:mock-fail", "remote-resolve"));
+  await page.goto(`/ko/blog?q=${encodeURIComponent("https://mastodon.social/@mina/12")}`);
+  await expect(page.getByText("맞는 글이 없어요")).toBeVisible({ timeout: 30_000 });
+  await expect(elsewhere(page)).toHaveCount(0);
+});

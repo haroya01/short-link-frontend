@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { askToSignIn } from "@/components/auth/login-prompt";
@@ -30,10 +30,7 @@ function ResolvedNote({ initial }: { initial: Note }) {
   );
 }
 
-export function RemoteSearchResult({ query }: { query: string }) {
-  const t = useTranslations("notes");
-  const tPrompt = useTranslations("loginPrompt");
-  const headingId = useId();
+function useRemoteResolution(query: string): RemoteResolution | null {
   const { authenticated, ready } = useAuth();
   const { data } = useQuery({
     queryKey: ["remote", "resolve", query.trim()],
@@ -41,7 +38,18 @@ export function RemoteSearchResult({ query }: { query: string }) {
     enabled: ready && authenticated,
     staleTime: 60_000,
   });
-  const result: RemoteResolution | null = ready && !authenticated ? { state: "signin" } : (data ?? null);
+  return ready && !authenticated ? { state: "signin" } : (data ?? null);
+}
+
+export function RemoteSearchFallback({ query, children }: { query: string; children: ReactNode }) {
+  return useRemoteResolution(query)?.state === "hidden" ? <>{children}</> : null;
+}
+
+export function RemoteSearchResult({ query }: { query: string }) {
+  const t = useTranslations("notes");
+  const tPrompt = useTranslations("loginPrompt");
+  const headingId = useId();
+  const result = useRemoteResolution(query);
   if (result?.state === "hidden") return null;
 
   return (

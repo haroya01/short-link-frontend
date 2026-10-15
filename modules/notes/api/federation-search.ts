@@ -7,6 +7,8 @@ const noteMocks: typeof import("./_mocks") | null =
 
 export const REMOTE_SEARCH_LIMIT = 5;
 const REMOTE_SEARCH_MIN_QUERY = 2;
+/** The backend's resolve chains two or three calls to the other server, each up to 5s to connect and 10s to read. */
+export const REMOTE_RESOLVE_TIMEOUT_MS = 20_000;
 
 /** Backend contract: GET /api/v1/federation/accounts/search?q=&limit= (anonymous allowed). */
 export interface RemoteAccountSearchBody {
@@ -57,9 +59,10 @@ export async function resolveRemote(raw: string): Promise<RemoteResolution> {
   if (!domain) return { state: "hidden" };
   try {
     const body = noteMocks
-      ? await noteMocks.mockResolveRemote(q)
+      ? await (mockFailure("remote-resolve") ?? noteMocks.mockResolveRemote(q))
       : await request<RemoteResolveBody>(`/api/v1/federation/resolve?${new URLSearchParams({ q }).toString()}`, {
           method: "GET",
+          timeoutMs: REMOTE_RESOLVE_TIMEOUT_MS,
         });
     if (body?.note) return { state: "note", note: body.note };
     if (body?.account) return { state: "account", account: body.account };

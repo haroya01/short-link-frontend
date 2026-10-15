@@ -33,7 +33,7 @@ function serve(routes: Record<string, Reply>) {
       calls.push(url);
       const path = url.split("?")[0];
       const reply = routes[path] ?? (path.endsWith("/auth/refresh") ? { status: 401 } : { status: 599 });
-      if (reply instanceof Error) throw reply;
+      if (reply instanceof Error || reply instanceof DOMException) throw reply;
       return new Response(reply.body === undefined ? "" : JSON.stringify(reply.body), {
         status: reply.status,
         headers: { "Content-Type": "application/json" },
@@ -167,6 +167,29 @@ describe("resolving a handle or an address", () => {
     serve({ [RESOLVE]: new TypeError("Failed to fetch") });
     const { resolveRemote } = await api();
     await expect(resolveRemote("@mina@mastodon.social")).resolves.toEqual({ state: "hidden" });
+  });
+
+  it("waits 20 seconds for resolve while other calls keep the 8-second ceiling", async () => {
+    const timeout = vi.spyOn(AbortSignal, "timeout");
+    serve({
+      [RESOLVE]: { status: 200, body: { account: mina, note: null } },
+      [SEARCH]: { status: 200, body: { items: [] } },
+    });
+    const { resolveRemote, searchRemoteAccounts } = await api();
+    await resolveRemote("@mina@mastodon.social");
+    expect(timeout).toHaveBeenLastCalledWith(20_000);
+    await searchRemoteAccounts("mina");
+    expect(timeout).toHaveBeenLastCalledWith(8000);
+    timeout.mockRestore();
+  });
+
+  it("calls the server unresponsive once the client gives up waiting", async () => {
+    serve({ [RESOLVE]: new DOMException("signal timed out", "TimeoutError") });
+    const { resolveRemote } = await api();
+    await expect(resolveRemote("@mina@slow.example")).resolves.toEqual({
+      state: "unreachable",
+      domain: "slow.example",
+    });
   });
 
   it("does not ask about a plain name", async () => {

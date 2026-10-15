@@ -44,7 +44,7 @@ vi.mock("./note-card", () => ({
 }));
 vi.mock("./note-list", () => ({ NoteList: () => null }));
 
-import { RemotePeople, RemoteSearchResult } from "./remote-search";
+import { RemotePeople, RemoteSearchFallback, RemoteSearchResult } from "./remote-search";
 import { RemoteAccountScreen } from "./remote-account";
 
 const mina: RemoteAccount = {
@@ -137,6 +137,44 @@ describe("a handle or an address in search", () => {
     await show(<RemoteSearchResult query="https://mastodon.social/@mina/12" />);
     expect(host.querySelector('[data-testid="remote-search-result"]')).toBeNull();
     expect(host.textContent).toBe("");
+  });
+});
+
+describe("the post search under a handle or an address", () => {
+  const posts = (
+    <RemoteSearchFallback query="@mina@mastodon.social">
+      <p data-testid="posts">posts</p>
+    </RemoteSearchFallback>
+  );
+
+  it.each([
+    ["while the server is asked", new Promise(() => {})],
+    ["once the account is found", Promise.resolve({ state: "account", account: mina })],
+    ["when the server has no such account", Promise.resolve({ state: "missing", domain: "mastodon.social" })],
+    ["when the server did not answer", Promise.resolve({ state: "unreachable", domain: "mastodon.social" })],
+  ])("stays out of the way %s", async (_, answer) => {
+    mocks.resolveRemote.mockReturnValue(answer);
+    await show(posts);
+    expect(host.querySelector('[data-testid="posts"]')).toBeNull();
+  });
+
+  it("stays out of the way for a signed-out reader", async () => {
+    mocks.auth = { authenticated: false, ready: true };
+    await show(posts);
+    expect(host.querySelector('[data-testid="posts"]')).toBeNull();
+  });
+
+  it("comes back when the backend cannot resolve, so the page is never blank", async () => {
+    mocks.resolveRemote.mockResolvedValue({ state: "hidden" });
+    await show(
+      <>
+        <RemoteSearchResult query="@mina@mastodon.social" />
+        {posts}
+      </>,
+    );
+    expect(host.querySelector('[data-testid="posts"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="remote-search-result"]')).toBeNull();
+    expect(mocks.resolveRemote).toHaveBeenCalledTimes(1);
   });
 });
 

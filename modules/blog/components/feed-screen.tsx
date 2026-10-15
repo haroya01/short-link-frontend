@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { PenSquare, X } from "lucide-react";
@@ -25,7 +26,7 @@ import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { SearchedNotes } from "@/modules/notes/components/searched-notes";
 import { SearchedPeople } from "./searched-people";
-import { RemoteSearchResult } from "@/modules/notes/components/remote-search";
+import { RemoteSearchFallback, RemoteSearchResult } from "@/modules/notes/components/remote-search";
 import { remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
@@ -137,6 +138,7 @@ export async function FeedScreen({
   const showsServerFeed =
     searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
   const needFlat = showsServerFeed && !notesView && !peopleView;
+  const remoteQuery = searching && remoteQueryDomain(query) !== null;
   // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
   // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
   const wantConnections = showsServerFeed && !searching && !activeTag;
@@ -202,6 +204,8 @@ export async function FeedScreen({
   // tab hrefs keep the active search term on recent/trending (and the language filter); following
   // leaves search.
   const langSuffix = activeLang ? `&lang=${activeLang}` : "";
+  const posts = (view: ReactNode) =>
+    remoteQuery ? <RemoteSearchFallback query={query}>{view}</RemoteSearchFallback> : view;
   const sortHref = (s: FeedSort) =>
     searching
       ? `?q=${encodeURIComponent(query)}&sort=${s}${langSuffix}`
@@ -220,7 +224,7 @@ export async function FeedScreen({
           locale={locale}
           eyebrow={t("searchLabel")}
           title={
-            hasNext || notesView || peopleView || items.length === 0
+            hasNext || notesView || peopleView || remoteQuery || items.length === 0
               ? t("searchResultsFor", { q: query })
               : t("searchResultsCount", { q: query, count: items.length })
           }
@@ -285,7 +289,7 @@ export async function FeedScreen({
           />
         </div>
 
-        {searching && remoteQueryDomain(query) && (
+        {remoteQuery && (
           <ReadingShell className="mt-6">
             <RemoteSearchResult query={query} />
           </ReadingShell>
@@ -313,7 +317,7 @@ export async function FeedScreen({
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <SubscribedSeriesFeed locale={locale} />
           </FeedContentTransition>
-        ) : items.length === 0 ? (
+        ) : items.length === 0 ? posts(
           <ReadingShell className={searching ? "mt-6" : "mt-4"}>
             <FeedContentTransition index={tabIndex} contentKey={contentKey}>
               {feedErrored ? (
@@ -327,7 +331,7 @@ export async function FeedScreen({
               )}
             </FeedContentTransition>
           </ReadingShell>
-        ) : sparseSearch ? (
+        ) : sparseSearch ? posts(
           // 검색 결과 1~2건: 그리드가 남기는 고아 반쪽 타일 대신 읽기 컬럼 목록 행으로. 태그 filter chip
           // 이나 series/connection interleave 없이, 결과 자체만 전폭 한 줄씩 읽히게 한다.
           <ReadingShell className="mt-6">
@@ -342,7 +346,7 @@ export async function FeedScreen({
               />
             </FeedContentTransition>
           </ReadingShell>
-        ) : (
+        ) : posts(
 <div className={cn("mx-auto max-w-2xl", searching ? "mt-6" : "mt-4")}>
             {wantTopics && <TrendingTopics topics={topics} locale={locale} activeTag={activeTag} />}
             {/* 인기 탭(주제 strip 노출 중)에선 strip 의 활성 칩이 필터 상태를 보여주므로 별도 해제 칩은 숨김
