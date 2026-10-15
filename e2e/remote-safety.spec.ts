@@ -196,7 +196,13 @@ test.describe("phone", () => {
     expect(await overflow(page)).toBeLessThanOrEqual(0);
   });
 
-  test("the blocked account line, the menu and the settings lists fit a phone", async ({ page }) => {
+  test("the account menu, the blocked account line and the settings lists fit a phone", async ({ page }) => {
+    await page.goto("/ko/blog/remote/9800");
+    await expect(page.locator('article[data-note-id="12"]')).toBeVisible({ timeout: 30_000 });
+    await openAccountMenu(page);
+    await expect(page.getByRole("menuitem", { name: "mastodon.social 차단" })).toBeVisible();
+    expect(await overflow(page)).toBeLessThanOrEqual(0);
+
     await page.goto("/ko/blog/remote/9804");
     await expect(page.getByText("차단한 계정이에요")).toBeVisible({ timeout: 30_000 });
     expect(await overflow(page)).toBeLessThanOrEqual(0);

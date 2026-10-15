@@ -236,7 +236,7 @@ function RemoteAccountMenu({
   }
 
   return (
-    <div ref={root} className="relative">
+    <div ref={root} className="sm:relative">
       <button
         type="button"
         aria-label={t("remoteMenu")}
@@ -250,7 +250,7 @@ function RemoteAccountMenu({
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-11 z-20 w-56 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute left-0 top-11 z-20 w-56 max-w-full rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
           {oneAccount && (
             <>
@@ -366,7 +366,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
             {account.displayName || account.username || account.acct}
           </h1>
           <p className="truncate text-[14px] text-slate-500 dark:text-slate-400">@{account.acct}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="relative mt-3 flex flex-wrap items-center gap-3">
             {!hidden && <RemoteFollowButton account={account} onChange={setAccount} />}
             <RemoteAccountMenu
               account={account}
