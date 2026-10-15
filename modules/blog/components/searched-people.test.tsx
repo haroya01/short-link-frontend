@@ -188,6 +188,14 @@ describe("people on other servers in the same search", () => {
     expect(host.textContent).toContain("notes.remoteSearchHint");
   });
 
+  it("leaves out an account the reader blocked", async () => {
+    mocks.searchPeople.mockResolvedValue(page([]));
+    mocks.searchRemoteAccounts.mockResolvedValue([remote("haruto@misskey.io", { blocking: true })]);
+    await show("haruto");
+    expect(host.querySelector('[data-testid="remote-haruto@misskey.io"]')).toBeNull();
+    expect(host.textContent).toContain("publicFeed.searchNoPeople");
+  });
+
   it("says how to reach someone elsewhere when no other server matched", async () => {
     mocks.searchPeople.mockResolvedValue(page([person("haruka")]));
     mocks.searchRemoteAccounts.mockResolvedValue([]);

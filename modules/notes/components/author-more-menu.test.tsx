@@ -22,6 +22,7 @@ vi.mock("@/components/ui/use-confirm", () => ({ useConfirm: () => [mocks.confirm
 vi.mock("@/modules/notes/api/notes", () => ({
   getMuteStatus: () => Promise.resolve({ muted: false, notifications: false, expiresAt: null }),
   getRepostVisibility: () => Promise.resolve({ hidden: false }),
+  muteUser: vi.fn(),
   setRepostsHidden: vi.fn(),
   unmuteUser: vi.fn(),
 }));

@@ -15,6 +15,7 @@ import { NoteFilterSettings } from "@/modules/notes/components/note-filter-setti
 import { ProfileEditDialog } from "@/modules/blog/components/profile-edit-dialog";
 import { DomainBlockSettings, RemoteFollowingSettings } from "@/modules/notes/components/remote-account";
 import { BlockedUserSettings } from "@/modules/notes/components/blocked-user-settings";
+import { MutedAccountSettings } from "@/modules/notes/components/muted-account-settings";
 import { NoteLanguageSettings } from "@/modules/notes/components/note-language-settings";
 import { NoteListSettings } from "@/modules/notes/components/note-lists";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
@@ -118,6 +119,7 @@ export default function BlogSettingsPage() {
 
       <RemoteFollowingSettings />
       <BlockedUserSettings />
+      <MutedAccountSettings />
       <DomainBlockSettings />
       <NoteLanguageSettings />
 

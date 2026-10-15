@@ -12,6 +12,7 @@ import {
   type RemoteResolution,
 } from "@/modules/notes/api/federation-search";
 import type { Note, RemoteAccount } from "@/modules/notes/api/notes";
+import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
 import { remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
 import { NoteCard } from "./note-card";
 import { RemoteAccountRow } from "./remote-account";
@@ -99,7 +100,7 @@ export function useRemotePeople(query: string, enabled: boolean) {
     enabled: wanted,
     staleTime: 30_000,
   });
-  const accounts = wanted && data ? data.filter((account) => !account.domainBlocked) : null;
+  const accounts = wanted && data ? data.filter((account) => !hiddenFromViewer(account)) : null;
   return { accounts, loading: wanted && isLoading };
 }
 
