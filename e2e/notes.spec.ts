@@ -821,7 +821,7 @@ test("a display name leads the note header with the handle beside it, and settin
 
 test("a handle in search finds an account on another server, and following it sends a request", async ({ page }) => {
   await page.goto("/ko/blog?q=%40alice%40mastodon.social");
-  const found = page.getByRole("region", { name: "다른 서버 계정" });
+  const found = page.getByRole("region", { name: "다른 서버" });
   await expect(found.getByText("@alice@mastodon.social")).toBeVisible({ timeout: 30_000 });
   const follow = found.getByRole("button", { name: "팔로우" });
   await follow.click();

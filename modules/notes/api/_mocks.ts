@@ -24,6 +24,7 @@ import type {
   TrendingNoteLink,
   TrendingNoteTag,
 } from "./notes";
+import type { RemoteAccountSearchBody, RemoteResolveBody } from "./federation-search";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -436,6 +437,17 @@ let remoteAccounts: RemoteAccount[] = [
     following: true,
     requested: false,
   },
+  {
+    id: 9801,
+    acct: "haruto@misskey.io",
+    username: "haruto",
+    domain: "misskey.io",
+    displayName: "Haruto",
+    avatarUrl: null,
+    url: "https://misskey.io/@haruto",
+    following: false,
+    requested: false,
+  },
 ];
 let nextRemoteId = 9900;
 let domainBlocks: { domain: string; createdAt: string }[] = [];
@@ -512,6 +524,39 @@ export function mockRemoteFollowing(): RemoteAccount[] {
 
 export function mockRemoteAccountNotes(id: number, page: number): NoteFeed {
   return { items: page > 0 ? [] : remoteTopLevel(id).map(withQuotes), page, hasNext: false };
+}
+
+export function mockSearchRemote(q: string, limit: number): Promise<RemoteAccountSearchBody> {
+  const needle = q.toLowerCase();
+  const items = remoteAccounts
+    .filter(
+      (a) =>
+        a.username.toLowerCase().startsWith(needle) ||
+        (a.displayName ?? "").toLowerCase().startsWith(needle) ||
+        a.acct.startsWith(needle),
+    )
+    .slice(0, limit)
+    .map(shown);
+  return Promise.resolve({ items });
+}
+
+export function mockResolveRemote(q: string): Promise<RemoteResolveBody> {
+  const address = /^https:\/\//i.test(q) ? new URL(q) : null;
+  const domain = (address ? address.hostname : q.slice(q.lastIndexOf("@") + 1)).toLowerCase();
+  if (domain.startsWith("down.")) {
+    return Promise.reject(new ApiError(502, { status: 502, code: "REMOTE_SERVER_UNREACHABLE" }));
+  }
+  const missing = () => Promise.reject(new ApiError(404, { status: 404, code: "REMOTE_ACCOUNT_NOT_FOUND" }));
+  if (!address) {
+    if (q.replace(/^@/, "").startsWith("nobody@")) return missing();
+    return mockLookupRemote(q).then((account) => ({ account, note: null }));
+  }
+  const [user, noteId] = address.pathname.split("/").filter(Boolean);
+  const account = remoteAccounts.find((a) => a.domain === domain && `@${a.username}` === user);
+  if (!account) return missing();
+  if (!noteId) return Promise.resolve({ account: shown(account), note: null });
+  const found = notes.find((n) => n.author.remoteId === account.id && String(n.id) === noteId);
+  return found ? Promise.resolve({ account: null, note: withQuotes(found) }) : missing();
 }
 
 let lists: { id: number; title: string; members: string[] }[] = [];

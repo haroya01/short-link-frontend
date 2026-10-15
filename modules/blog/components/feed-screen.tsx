@@ -25,8 +25,8 @@ import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { SearchedNotes } from "@/modules/notes/components/searched-notes";
 import { SearchedPeople } from "./searched-people";
-import { RemoteAccountResult } from "@/modules/notes/components/remote-account";
-import { looksLikeRemoteHandle } from "@/modules/notes/lib/remote-handle";
+import { RemoteSearchResult } from "@/modules/notes/components/remote-search";
+import { remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
@@ -285,9 +285,9 @@ export async function FeedScreen({
           />
         </div>
 
-        {searching && looksLikeRemoteHandle(query) && (
+        {searching && remoteQueryDomain(query) && (
           <ReadingShell className="mt-6">
-            <RemoteAccountResult query={query} />
+            <RemoteSearchResult query={query} />
           </ReadingShell>
         )}
 

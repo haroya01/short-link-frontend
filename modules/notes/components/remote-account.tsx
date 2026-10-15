@@ -4,13 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, ExternalLink, Globe, Hand, MessageSquareText, MoreHorizontal, UserX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { askToSignIn } from "@/components/auth/login-prompt";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { useToast } from "@/components/ui/toast";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { ApiError } from "@/lib/api/client";
+import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
+import { cn } from "@/lib/utils";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
 import {
@@ -18,7 +21,6 @@ import {
   listDomainBlocks,
   listRemoteAccountNotes,
   listRemoteFollowing,
-  lookupRemoteAccount,
   setDomainBlocked,
   setRemoteFollow,
   type DomainBlock,
@@ -39,17 +41,24 @@ function failure(error: unknown): "disabled" | "missing" | "invalid" | "blocked"
 export function RemoteFollowButton({
   account,
   onChange,
+  quiet = false,
 }: {
   account: RemoteAccount;
   onChange: (next: RemoteAccount) => void;
+  quiet?: boolean;
 }) {
   const t = useTranslations("notes");
+  const { authenticated } = useAuth();
   const { toast } = useToast();
   const [confirm, confirmDialog] = useConfirm();
   const [busy, setBusy] = useState(false);
   const on = account.following || account.requested;
 
   async function toggle() {
+    if (!authenticated) {
+      askToSignIn("follow");
+      return;
+    }
     if (busy) return;
     if (on) {
       const ok = await confirm({
@@ -81,7 +90,7 @@ export function RemoteFollowButton({
         onClick={toggle}
         disabled={busy}
         aria-pressed={on}
-        className={followToggleClass(on, true)}
+        className={followToggleClass(on, true, quiet)}
       >
         {on && <Check className="mr-1 h-3.5 w-3.5" aria-hidden />}
         {account.following ? t("remoteFollowing") : account.requested ? t("remoteRequested") : t("remoteFollow")}
@@ -91,77 +100,37 @@ export function RemoteFollowButton({
   );
 }
 
-function AccountRow({ account, onChange }: { account: RemoteAccount; onChange: (next: RemoteAccount) => void }) {
+export function RemoteAccountRow({
+  account,
+  onChange,
+  roomy = false,
+}: {
+  account: RemoteAccount;
+  onChange: (next: RemoteAccount) => void;
+  roomy?: boolean;
+}) {
+  const name = account.displayName || account.username || account.acct;
   return (
-    <div className="flex items-center gap-3 py-3">
+    <div
+      data-testid={`remote-account-${account.acct}`}
+      className={cn("flex gap-3", roomy ? "items-start py-3.5" : "items-center py-3")}
+    >
       <BlogLink
         href={blogPath(`/remote/${account.id}`)}
-        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface"
+        className={cn("focus-ring flex min-w-0 flex-1 gap-3 rounded-surface", roomy ? "items-start" : "items-center")}
       >
-        <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size="md" />
+        <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size={roomy ? "lg" : "md"} />
         <span className="min-w-0">
-          <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
-            {account.displayName || account.username || account.acct}
-          </span>
+          <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
           <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
         </span>
       </BlogLink>
-      <RemoteFollowButton account={account} onChange={onChange} />
-    </div>
-  );
-}
-
-/** Search results for @user@server: the account, found the way Mastodon finds one. */
-export function RemoteAccountResult({ query }: { query: string }) {
-  const t = useTranslations("notes");
-  const tPrompt = useTranslations("loginPrompt");
-  const [account, setAccount] = useState<RemoteAccount | null>(null);
-  const [state, setState] = useState<"loading" | "ready" | "missing" | "disabled">("loading");
-
-  useEffect(() => {
-    let alive = true;
-    setState("loading");
-    lookupRemoteAccount(query)
-      .then((found) => {
-        if (!alive) return;
-        setAccount(found);
-        setState("ready");
-      })
-      .catch((error) => {
-        if (!alive) return;
-        setState(error instanceof ApiError && error.status === 401 ? "disabled" : "missing");
-      });
-    return () => {
-      alive = false;
-    };
-  }, [query]);
-
-  return (
-    <section aria-label={t("remoteAccountSection")} className="mb-6 border-b border-slate-200 dark:border-slate-800">
-      <h2 className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-        <Globe className="h-3.5 w-3.5" aria-hidden />
-        {t("remoteAccountSection")}
-      </h2>
-      {state === "ready" && account ? (
-        <AccountRow account={account} onChange={setAccount} />
-      ) : (
-        <p className="py-4 text-[14px] text-slate-500 dark:text-slate-400">
-          {state === "disabled" ? (
-            <button
-              type="button"
-              onClick={() => askToSignIn("remote")}
-              className="focus-ring rounded font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
-            >
-              {tPrompt("remote")}
-            </button>
-          ) : state === "loading" ? (
-            t("remoteLookingUp")
-          ) : (
-            t("remoteNotFound")
-          )}
-        </p>
+      {!account.domainBlocked && (
+        <div className={roomy ? "pt-1.5" : undefined}>
+          <RemoteFollowButton account={account} onChange={onChange} quiet={roomy} />
+        </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -236,7 +205,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
   const t = useTranslations("notes");
   const { toast } = useToast();
   const [account, setAccount] = useState<RemoteAccount | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<"signin" | "missing" | null>(null);
   const [version, setVersion] = useState(0);
   const load = useCallback((page: number) => listRemoteAccountNotes(id, page), [id]);
 
@@ -244,12 +213,15 @@ export function RemoteAccountScreen({ id }: { id: number }) {
     let alive = true;
     getRemoteAccount(id)
       .then((found) => alive && setAccount(found))
-      .catch(() => alive && setFailed(true));
+      .catch((error) => alive && setFailed(error instanceof ApiError && error.status === 401 ? "signin" : "missing"));
     return () => {
       alive = false;
     };
   }, [id, version]);
 
+  if (failed === "signin") {
+    return <SignInEmptyState page reason="remoteAccount" icon={Globe} />;
+  }
   if (failed) {
     return <BlogEmpty icon={UserX} title={t("remoteNotFound")} />;
   }
@@ -351,7 +323,7 @@ export function RemoteFollowingSettings() {
       ) : (
         <div className="divide-y divide-slate-200 rounded-surface border border-slate-200 px-3 dark:divide-slate-800 dark:border-slate-800">
           {accounts.map((account) => (
-            <AccountRow
+            <RemoteAccountRow
               key={account.id}
               account={account}
               onChange={(next) => setAccounts((current) => current?.map((a) => (a.id === next.id ? next : a)) ?? null)}
