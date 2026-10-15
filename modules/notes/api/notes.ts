@@ -303,6 +303,9 @@ export interface RemoteAccount {
   requested: boolean;
   /** The viewer blocked this account's whole server. */
   domainBlocked?: boolean;
+  /** Absent on a backend without account blocks and mutes for other servers. */
+  blocking?: boolean;
+  muting?: boolean;
 }
 
 export interface DomainBlock {
@@ -570,6 +573,19 @@ export function muteUser(
 export function unmuteUser(username: string): Promise<void> {
   if (noteMocks) return Promise.resolve(noteMocks.mockUnmute(username));
   return request(`/api/v1/users/${encodeURIComponent(username)}/mute`, { method: "DELETE" });
+}
+
+export interface MutedUser {
+  id: number;
+  username: string;
+  avatarUrl: string | null;
+  notifications: boolean;
+  expiresAt: string | null;
+}
+
+export function listMutedUsers(): Promise<MutedUser[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockMutedUsers());
+  return request<MutedUser[]>("/api/v1/users/me/mutes", { method: "GET" });
 }
 
 /** Client-side author page (carries the viewer's token, so likedByMe and the author's own counts

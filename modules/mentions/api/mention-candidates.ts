@@ -8,6 +8,8 @@ export interface MentionCandidate {
   displayName: string | null;
   avatarUrl: string | null;
   following: boolean;
+  /** Set for an account on another server: username is then user@server. */
+  remoteId?: number;
 }
 
 const MOCK: MentionCandidate[] = [

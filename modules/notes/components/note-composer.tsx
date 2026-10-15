@@ -452,6 +452,7 @@ export function NoteComposer({
                 ref={textarea}
                 value={body}
                 onValueChange={setBody}
+                remote
                 wrapperClassName="relative min-w-0 flex-1"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -662,6 +663,7 @@ export function NoteComposer({
                 </button>
               </div>
               <MentionTextarea
+                remote
                 value={part.body}
                 onValueChange={(next) =>
                   setParts((current) => current.map((x) => (x.id === part.id ? { ...x, body: next } : x)))

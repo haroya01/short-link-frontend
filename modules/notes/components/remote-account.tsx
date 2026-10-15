@@ -17,6 +17,13 @@ import { cn } from "@/lib/utils";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
 import {
+  hiddenFromViewer,
+  knowsRemoteSafety,
+  muteRemote,
+  setRemoteBlocked,
+  unmuteRemote,
+} from "@/modules/notes/api/remote-safety";
+import {
   getRemoteAccount,
   listDomainBlocks,
   listRemoteAccountNotes,
@@ -26,6 +33,7 @@ import {
   type DomainBlock,
   type RemoteAccount,
 } from "@/modules/notes/api/notes";
+import { MuteDialog } from "./mute-dialog";
 import { NoteList } from "./note-list";
 
 function failure(error: unknown): "disabled" | "missing" | "invalid" | "blocked" | "other" {
@@ -125,7 +133,7 @@ export function RemoteAccountRow({
           <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
         </span>
       </BlogLink>
-      {!account.domainBlocked && (
+      {!hiddenFromViewer(account) && (
         <div className={roomy ? "pt-1.5" : undefined}>
           <RemoteFollowButton account={account} onChange={onChange} quiet={roomy} />
         </div>
@@ -134,21 +142,83 @@ export function RemoteAccountRow({
   );
 }
 
-/** ⋯ beside the follow button: block or unblock the account's whole server (Mastodon's domain block). */
-function RemoteAccountMenu({ account, onChange }: { account: RemoteAccount; onChange: () => void }) {
+const menuItem =
+  "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800";
+const dangerItem =
+  "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10";
+
+function useRemoteAccountSafety(account: RemoteAccount, onChange: (next: RemoteAccount) => void) {
   const t = useTranslations("notes");
   const { toast } = useToast();
   const [confirm, confirmDialog] = useConfirm();
+  const name = account.acct;
+
+  async function block() {
+    const ok = await confirm({
+      title: t("blockTitle", { username: name }),
+      description: t("remoteBlockHint"),
+      confirmLabel: t("block"),
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      onChange(await setRemoteBlocked(account.id, true));
+      toast(t("remoteBlockedToast", { acct: name }));
+    } catch {
+      toast(t("blockFailed"), "error");
+    }
+  }
+
+  async function unblock() {
+    try {
+      onChange(await setRemoteBlocked(account.id, false));
+      toast(t("unblockedToast", { username: name }));
+    } catch {
+      toast(t("unblockFailed"), "error");
+    }
+  }
+
+  async function mute(notifications: boolean, duration: number | null) {
+    onChange(await muteRemote(account.id, notifications, duration));
+  }
+
+  async function unmute() {
+    try {
+      onChange(await unmuteRemote(account.id));
+      toast(t("unmutedToast", { username: name }));
+    } catch {
+      toast(t("muteFailed"), "error");
+    }
+  }
+
+  return { block, unblock, mute, unmute, confirm, confirmDialog };
+}
+
+/** ⋯ beside the follow button: mute or block the account, or block its whole server (Mastodon's domain block). */
+function RemoteAccountMenu({
+  account,
+  onChange,
+  onServerChange,
+}: {
+  account: RemoteAccount;
+  onChange: (next: RemoteAccount) => void;
+  onServerChange: () => void;
+}) {
+  const t = useTranslations("notes");
+  const { toast } = useToast();
+  const safety = useRemoteAccountSafety(account, onChange);
   const [open, setOpen] = useState(false);
+  const [muting, setMuting] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   useDismiss(open, root, () => setOpen(false));
   const { domain } = account;
+  const oneAccount = knowsRemoteSafety(account) && !account.domainBlocked;
 
-  async function toggle() {
+  async function toggleServer() {
     setOpen(false);
     const on = !account.domainBlocked;
     if (on) {
-      const ok = await confirm({
+      const ok = await safety.confirm({
         title: t("domainBlockConfirm", { domain }),
         description: t("domainBlockConfirmBody"),
         confirmLabel: t("domainBlockAction"),
@@ -158,7 +228,7 @@ function RemoteAccountMenu({ account, onChange }: { account: RemoteAccount; onCh
     }
     try {
       await setDomainBlocked(domain, on);
-      onChange();
+      onServerChange();
       toast(on ? t("domainBlockedToast", { domain }) : t("domainUnblockedToast", { domain }));
     } catch {
       toast(t("domainBlockFailed"), "error");
@@ -166,7 +236,7 @@ function RemoteAccountMenu({ account, onChange }: { account: RemoteAccount; onCh
   }
 
   return (
-    <div ref={root} className="relative">
+    <div ref={root} className="sm:relative">
       <button
         type="button"
         aria-label={t("remoteMenu")}
@@ -180,24 +250,77 @@ function RemoteAccountMenu({ account, onChange }: { account: RemoteAccount; onCh
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-11 z-20 w-56 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute left-0 top-11 z-20 w-56 max-w-full rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
+          {oneAccount && (
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  if (account.muting) void safety.unmute();
+                  else setMuting(true);
+                }}
+                className={menuItem}
+              >
+                {account.muting ? t("unmute") : t("muteMenu")}
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  void (account.blocking ? safety.unblock() : safety.block());
+                }}
+                className={account.blocking ? menuItem : dangerItem}
+              >
+                {account.blocking ? t("unblock") : t("blockMenu")}
+              </button>
+            </>
+          )}
           <button
             type="button"
             role="menuitem"
-            onClick={toggle}
-            className={
-              account.domainBlocked
-                ? "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
-                : "focus-ring block w-full rounded-surface px-3 py-2 text-left text-[13px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-            }
+            onClick={toggleServer}
+            className={account.domainBlocked ? menuItem : dangerItem}
           >
             {account.domainBlocked ? t("domainUnblock", { domain }) : t("domainBlock", { domain })}
           </button>
         </div>
       )}
-      {confirmDialog}
+      <MuteDialog
+        subject={account.acct}
+        hint={t("remoteMuteHint", { acct: account.acct })}
+        open={muting}
+        onClose={() => setMuting(false)}
+        mute={safety.mute}
+      />
+      {safety.confirmDialog}
     </div>
+  );
+}
+
+function RemoteBlockedNotice({ account, onChange }: { account: RemoteAccount; onChange: (next: RemoteAccount) => void }) {
+  const t = useTranslations("notes");
+  const { unblock, confirmDialog } = useRemoteAccountSafety(account, onChange);
+  return (
+    <>
+      <BlogEmpty
+        icon={Hand}
+        title={t("remoteBlockedTitle")}
+        action={
+          <button
+            type="button"
+            onClick={() => void unblock()}
+            className="focus-ring rounded text-[13px] font-medium text-accent-700 hover:underline dark:text-accent-300"
+          >
+            {t("unblock")}
+          </button>
+        }
+      />
+      {confirmDialog}
+    </>
   );
 }
 
@@ -228,6 +351,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
   if (!account) {
     return <div className="mt-10 h-24 animate-pulse rounded-surface bg-slate-100 dark:bg-slate-900" aria-hidden />;
   }
+  const hidden = hiddenFromViewer(account);
   const caption = account.following
     ? t("remoteCaptionFollowing", { domain: account.domain })
     : account.requested
@@ -242,9 +366,13 @@ export function RemoteAccountScreen({ id }: { id: number }) {
             {account.displayName || account.username || account.acct}
           </h1>
           <p className="truncate text-[14px] text-slate-500 dark:text-slate-400">@{account.acct}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            {!account.domainBlocked && <RemoteFollowButton account={account} onChange={setAccount} />}
-            <RemoteAccountMenu account={account} onChange={() => setVersion((v) => v + 1)} />
+          <div className="relative mt-3 flex flex-wrap items-center gap-3">
+            {!hidden && <RemoteFollowButton account={account} onChange={setAccount} />}
+            <RemoteAccountMenu
+              account={account}
+              onChange={setAccount}
+              onServerChange={() => setVersion((v) => v + 1)}
+            />
             <a
               href={account.url}
               target="_blank"
@@ -255,7 +383,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
               {t("remoteOpenOnServer", { domain: account.domain })}
             </a>
           </div>
-          {!account.domainBlocked && <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{caption}</p>}
+          {!hidden && <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{caption}</p>}
         </div>
       </header>
       <div className="mt-6 border-t border-slate-200 dark:border-slate-800">
@@ -281,6 +409,8 @@ export function RemoteAccountScreen({ id }: { id: number }) {
               </button>
             }
           />
+        ) : account.blocking ? (
+          <RemoteBlockedNotice account={account} onChange={setAccount} />
         ) : (
           <NoteList
             key={`${id}-${version}`}
