@@ -56,7 +56,7 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
       const owner = item.postAuthorUsername ?? myUsername;
       return item.postSlug && owner ? atSpot(postHref(owner, item.postSlug, locale), item) : undefined;
     }
-    default: // LIKE / COMMENT / HIGHLIGHT — the recipient is the post's author
+    default: // LIKE / COMMENT / HIGHLIGHT / POST_FIRST_READER / POST_READ_MILESTONE — the recipient is the post's author
       return item.postSlug && myUsername
         ? atSpot(postHref(myUsername, item.postSlug, locale), item)
         : undefined;

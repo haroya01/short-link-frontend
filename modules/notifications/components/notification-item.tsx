@@ -17,6 +17,7 @@ import {
   Repeat2,
   Reply,
   Rss,
+  User,
   UserPlus,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -70,7 +71,11 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_EMBED: Quote,
   COMMENT_LIKE: Heart,
   HIGHLIGHT: Highlighter,
+  POST_FIRST_READER: User,
+  POST_READ_MILESTONE: User,
 };
+
+const ACTORLESS: ReadonlySet<Item["type"]> = new Set(["POST_FIRST_READER", "POST_READ_MILESTONE"]);
 
 function subtitleOf(item: Item): string | null {
   switch (item.type) {
@@ -136,10 +141,12 @@ export function NotificationItem({
   // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   // 컬렉션 이름은 그래프 이벤트 문장에서 강조어(<c>{collection}</c>) — 없으면 안전한 폴백 라벨.
   const collection = item.collectionName ?? t("aCollection");
+  const milestone = item.milestone ?? 0;
   const message = t.rich(messageKey, {
     actor,
     collection,
     others,
+    milestone,
     b: (chunks) =>
       remoteHref ? (
         <a
@@ -172,12 +179,14 @@ export function NotificationItem({
       actor,
       collection,
       others,
+      milestone,
       b: (chunks) => chunks,
       c: (chunks) => chunks,
     }),
   );
   const rowLabel = subtitle ? `${messageText}, ${subtitle}` : messageText;
   const TypeIcon = TYPE_ICON[item.type];
+  const actorless = ACTORLESS.has(item.type);
 
   const href = notificationHref(item, me?.username ?? null, locale);
   const externalHref = !href && item.type === "REMOTE_FOLLOW" ? remoteHref : undefined;
@@ -190,7 +199,14 @@ export function NotificationItem({
   const body = (
     <>
       <span className="relative shrink-0">
-        {remoteHref ? (
+        {actorless ? (
+          <span
+            aria-hidden
+            className="grid h-7 w-7 place-items-center rounded-full bg-slate-100 dark:bg-slate-800"
+          >
+            <TypeIcon className="h-3.5 w-3.5 fill-current text-slate-500 dark:text-slate-400" />
+          </span>
+        ) : remoteHref ? (
           <a
             href={remoteHref}
             target="_blank"
@@ -219,18 +235,20 @@ export function NotificationItem({
             className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-accent-600 dark:border-slate-950"
           />
         )}
-        <span
-          aria-hidden
-          className="absolute -bottom-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-white ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700"
-        >
-          <TypeIcon
-            className={cn(
-              "h-2.5 w-2.5",
-              (item.type === "LIKE" || item.type === "NOTE_LIKE" || item.type === "COMMENT_LIKE") && "fill-current",
-              item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
-            )}
-          />
-        </span>
+        {!actorless && (
+          <span
+            aria-hidden
+            className="absolute -bottom-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-white ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700"
+          >
+            <TypeIcon
+              className={cn(
+                "h-2.5 w-2.5",
+                (item.type === "LIKE" || item.type === "NOTE_LIKE" || item.type === "COMMENT_LIKE") && "fill-current",
+                item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
+              )}
+            />
+          </span>
+        )}
       </span>
       <span className="min-w-0 flex-1">
         <span
