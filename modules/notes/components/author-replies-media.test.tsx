@@ -87,12 +87,12 @@ describe("a media grid cell", () => {
     expect(host.querySelector("a")!.getAttribute("aria-label")).toBe("mediaNoAlt, mediaCount(3)");
   });
 
-  it("blurs a sensitive picture behind an eye-off mark", async () => {
+  it("blurs the sensitive picture itself, with no mark laid over it", async () => {
     await render(<MediaCell item={item({ sensitive: true })} username="yuna" />);
     expect(host.querySelector("img")!.className).toContain("blur-xl");
     expect(host.querySelector("a")!.dataset.sensitive).toBe("true");
     expect(host.querySelector("a")!.getAttribute("aria-label")).toBe("가로등, mediaSensitive");
-    expect(host.querySelector("svg.lucide-eye-off")).not.toBeNull();
+    expect(host.querySelector("svg")).toBeNull();
   });
 });
 

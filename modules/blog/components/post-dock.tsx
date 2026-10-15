@@ -14,6 +14,31 @@ import { TocSheet, type TocHeading } from "@/modules/blog/components/post-toc";
 import { useDockedComposerOpen } from "@/modules/blog/lib/docked-composer";
 
 const GAP = 12;
+const READING_TRAVEL = 44;
+const TOP_ZONE = 8;
+
+export function useReadingDown(): boolean {
+  const [down, setDown] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    let turn = last;
+    function onScroll() {
+      const y = window.scrollY;
+      if (y <= TOP_ZONE) {
+        setDown(false);
+        turn = y;
+      } else {
+        if ((y - last) * (last - turn) < 0) turn = last;
+        if (y - turn > READING_TRAVEL) setDown(true);
+        else if (turn - y > READING_TRAVEL) setDown(false);
+      }
+      last = y;
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return down;
+}
 
 function usePastPostEnd(): boolean {
   const [past, setPast] = useState(false);
@@ -52,6 +77,7 @@ export function PostDock({
   const keyboard = useKeyboardInset();
   const composerOpen = useDockedComposerOpen();
   const pastEnd = usePastPostEnd();
+  const reading = useReadingDown();
   const withToc = headings.length >= 2;
   const away = !entered || keyboard > 0 || composerOpen || pastEnd;
 
@@ -82,12 +108,16 @@ export function PostDock({
         ref={ref}
         data-testid="post-dock"
         data-away={away || undefined}
+        data-reading={(!away && reading) || undefined}
         aria-hidden={away || undefined}
         {...inert(away)}
         style={offset > 0 ? { bottom: offset + GAP } : undefined}
         className={cn(
           "fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-4 z-30 flex flex-col items-center gap-3 transition-[bottom,opacity,transform] duration-300 ease-[var(--ease)] motion-reduce:transition-none min-[1100px]:hidden",
           away && "pointer-events-none translate-x-4 opacity-0",
+          !away &&
+            reading &&
+            "pointer-events-none translate-x-4 opacity-0 focus-within:pointer-events-auto focus-within:translate-x-0 focus-within:opacity-100",
         )}
       >
         {withToc && (

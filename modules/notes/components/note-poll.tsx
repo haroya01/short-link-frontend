@@ -94,7 +94,10 @@ export function NotePollCard({
           {t("pollTapVotes")}
         </span>
       )}
-      <ul className="space-y-2" aria-label={t("pollLabel")}>
+      <ul
+        className="divide-y divide-slate-200 overflow-hidden rounded-surface border border-slate-200 dark:divide-slate-700 dark:border-slate-700"
+        aria-label={t("pollLabel")}
+      >
         {poll.options.map((option, index) => {
           if (showsResults) {
             const part = share(poll, option.votesCount);
@@ -103,16 +106,16 @@ export function NotePollCard({
             return (
               <li
                 key={index}
-                className="relative flex min-h-10 items-center gap-1.5 overflow-hidden rounded-surface border border-slate-200/70 px-3 py-2 dark:border-slate-800"
+                className="relative flex min-h-11 items-center gap-1.5 px-3.5 py-2.5"
                 data-poll-result={index}
               >
                 <span
                   aria-hidden
                   className={cn(
-                    "absolute inset-y-0 left-0 rounded-surface transition-[width] duration-500 ease-[var(--ease)] motion-reduce:transition-none",
-                    top ? "bg-accent-400/30 dark:bg-accent-500/25" : "bg-slate-100 dark:bg-slate-800",
+                    "absolute inset-y-0 left-0 transition-[width] duration-500 ease-[var(--ease)] motion-reduce:transition-none",
+                    top ? "bg-slate-200 dark:bg-slate-700" : "bg-slate-100 dark:bg-slate-800",
                   )}
-                  style={{ width: `${filled ? part * 100 : 0}%` }}
+                  style={{ width: filled ? (part > 0 ? `max(6px, ${part * 100}%)` : "0%") : "0%" }}
                 />
                 <span
                   className={cn(
@@ -131,7 +134,7 @@ export function NotePollCard({
                 <span
                   className={cn(
                     "relative ml-auto pl-3 text-[13px] tabular-nums",
-                    top ? "font-bold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
+                    top ? "font-bold text-slate-900 dark:text-slate-100" : "font-medium text-slate-500 dark:text-slate-400",
                   )}
                 >
                   {Math.round(part * 100)}%
@@ -149,19 +152,16 @@ export function NotePollCard({
                 role={poll.multiple ? "checkbox" : undefined}
                 aria-checked={poll.multiple ? on : undefined}
                 aria-describedby={poll.multiple ? undefined : `note-poll-hint-${noteId}`}
-                className={cn(
-                  "focus-ring flex min-h-10 w-full items-center gap-2.5 rounded-surface border px-3 py-2 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 disabled:opacity-60 dark:text-slate-100 dark:hover:bg-slate-900",
-                  on ? "border-accent-700 dark:border-accent-400" : "border-slate-200 dark:border-slate-700",
-                )}
+                className="focus-ring flex min-h-11 w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-60 dark:text-slate-100 dark:hover:bg-slate-800/60 dark:active:bg-slate-800"
               >
                 {poll.multiple && (
                   <span
                     aria-hidden
                     className={cn(
-                      "flex h-4 w-4 shrink-0 items-center justify-center rounded border",
+                      "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[11px] leading-none",
                       on
-                        ? "border-accent-700 bg-accent-700 text-white dark:border-accent-400 dark:bg-accent-400"
-                        : "border-slate-400",
+                        ? "border-accent-700 bg-accent-700 text-white dark:border-accent-400 dark:bg-accent-400 dark:text-slate-950"
+                        : "border-slate-400 dark:border-slate-500",
                     )}
                   >
                     {on && "✓"}
@@ -178,7 +178,7 @@ export function NotePollCard({
           type="button"
           onClick={() => vote(picked)}
           disabled={picked.length === 0 || voting}
-          className="focus-ring w-full rounded-full border border-accent-700 py-1.5 text-[13px] font-semibold text-accent-800 hover:bg-accent-50 disabled:opacity-40 dark:border-accent-400 dark:text-accent-300 dark:hover:bg-accent-500/10"
+          className="focus-ring w-full rounded-full border border-slate-300 py-1.5 text-[13px] font-semibold text-slate-900 hover:bg-slate-50 disabled:opacity-40 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-800"
         >
           {t("pollVote")}
         </button>

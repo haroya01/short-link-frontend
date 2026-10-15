@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChartBar, Check, ChevronDown, Clock, EyeOff, ImagePlus, Loader2, MessageCircle, TriangleAlert, X } from "lucide-react";
+import { ChartBar, Check, ChevronDown, Clock, ImagePlus, Loader2, MessageCircle, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
@@ -221,7 +221,7 @@ export function NoteComposer({
     (poll === null || (pollReady(poll) && length > 0)) &&
     parts.every((part) => noteLength(part.body) <= NOTE_MAX_LENGTH);
   // A thread cannot be scheduled: the server posts it at once.
-  const canAddPart = !scheduledAt && parts.length < NOTE_MAX_THREAD_NOTES - 1;
+  const canAddPart = !inReplyToId && !scheduledAt && parts.length < NOTE_MAX_THREAD_NOTES - 1;
   const open =
     focused ||
     length > 0 ||
@@ -397,7 +397,7 @@ export function NoteComposer({
           : "border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500",
       )}
     >
-      {posting ? t("posting") : scheduledAt ? t("scheduleSubmit") : inReplyToId ? t("replySubmit") : t("submit")}
+      {posting ? t("posting") : scheduledAt ? t("scheduleSubmit") : t("submit")}
     </button>
   );
 
@@ -728,39 +728,15 @@ export function NoteComposer({
             >
               <ChartBar className="h-5 w-5" strokeWidth={poll ? 2.25 : 1.75} aria-hidden />
             </button>
-            <button
-              type="button"
-              onClick={() => setWarns((on) => !on)}
-              aria-pressed={warns}
-              aria-label={t("warningToggle")}
-              title={t("warningToggle")}
-              className={cn(
-                "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
-                warns
-                  ? "text-slate-900 dark:text-slate-100"
-                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
-              )}
-            >
-              <TriangleAlert className="h-5 w-5" strokeWidth={warns ? 2.25 : 1.75} aria-hidden />
-            </button>
+            <TextToggle pressed={warns} onToggle={() => setWarns((on) => !on)}>
+              {t("warningToggle")}
+            </TextToggle>
             {images.length > 0 && !warns && (
-              <button
-                type="button"
-                onClick={() => setSensitive((on) => !on)}
-                aria-pressed={sensitive}
-                aria-label={t("sensitiveToggle")}
-                title={t("sensitiveToggle")}
-                className={cn(
-                  "focus-ring rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800",
-                  sensitive
-                    ? "text-slate-900 dark:text-slate-100"
-                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
-                )}
-              >
-                <EyeOff className="h-5 w-5" strokeWidth={sensitive ? 2.25 : 1.75} aria-hidden />
-              </button>
+              <TextToggle pressed={sensitive} onToggle={() => setSensitive((on) => !on)}>
+                {t("sensitiveToggle")}
+              </TextToggle>
             )}
-            {parts.length === 0 && (
+            {parts.length === 0 && !inReplyToId && (
               <button
                 type="button"
                 onClick={() => setScheduledAt((current) => (current ? "" : defaultLocal()))}
@@ -817,5 +793,31 @@ export function NoteComposer({
       </div>
       {confirmDialog}
     </div>
+  );
+}
+
+export function TextToggle({
+  pressed,
+  onToggle,
+  children,
+}: {
+  pressed: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={pressed}
+      className={cn(
+        "focus-ring shrink-0 rounded-full px-1.5 py-1 text-[13px] hover:bg-slate-100 dark:hover:bg-slate-800",
+        pressed
+          ? "font-semibold text-slate-900 dark:text-slate-100"
+          : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+      )}
+    >
+      {children}
+    </button>
   );
 }

@@ -195,8 +195,8 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                 className={
                   "rounded-full border px-3 py-1 text-[11px] font-medium transition " +
                   (layout === l
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+                    ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-slate-600")
                 }
               >
                 {t(`productCardLayout_${l}`)}
@@ -351,8 +351,8 @@ function BadgeSelector({
         className={
           "rounded-full border px-3 py-1 text-[11px] font-medium transition " +
           (value === ""
-            ? "border-slate-900 bg-slate-900 text-white"
-            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+            ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-slate-600")
         }
       >
         {t("productCardBadgeNone")}
@@ -369,7 +369,7 @@ function BadgeSelector({
               "rounded-full border px-3 py-1 text-[11px] font-semibold transition " +
               (active
                 ? "border-transparent " + colorByBadge[badge]
-                : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+                : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-slate-600")
             }
           >
             {publicT(badge)}

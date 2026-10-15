@@ -141,8 +141,8 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                 className={
                   "group flex flex-col items-center gap-1 rounded-md p-1 transition " +
                   (active
-                    ? "bg-slate-900 text-white"
-                    : "bg-slate-50 text-slate-600 hover:bg-slate-100")
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "bg-slate-50 text-slate-600 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700")
                 }
               >
                 <span
