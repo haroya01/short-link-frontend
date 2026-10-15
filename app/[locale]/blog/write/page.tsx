@@ -7,34 +7,16 @@ import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "
 import { ExportMdButton } from "@/modules/blog/components/workspace/export-md-button";
 import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
-import { dateLocale } from "@/lib/date";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ErrorState } from "@/components/common/error-state";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
-
-/** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3
- *  days". Pinned to Asia/Seoul (the app's canonical publish clock) so server and client agree and it
- *  doesn't drift with the reader's device timezone. */
-function scheduledLabel(iso: string, locale: string): string {
-  const when = new Date(iso);
-  // Show the year only when it isn't this year — a post scheduled for next January reading as just
-  // "Jan 3" would be ambiguous, but carrying the year on every near-term row is noise.
-  const showYear = when.getFullYear() !== new Date().getFullYear();
-  return when.toLocaleString(dateLocale(locale), {
-    ...(showYear ? { year: "numeric" } : {}),
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Asia/Seoul",
-  });
-}
 
 export default function WriteIndexPage() {
   const t = useTranslations("postEditor");
@@ -64,6 +46,8 @@ export default function WriteIndexPage() {
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
     if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
+    // /series forwards with a client replace, which renders this page before the URL changes.
+    if (new URLSearchParams(window.location.search).get("view") === "series") setView("series");
   }, []);
 
   function changeView(v: "all" | "series") {
@@ -143,7 +127,7 @@ export default function WriteIndexPage() {
   return (
     // max-w-3xl: 분석·리드·서재와 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
     // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <h1 className="whitespace-nowrap text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("myPosts")}</h1>
@@ -422,7 +406,7 @@ export default function WriteIndexPage() {
       )}
         </>
       )}
-    </main>
+    </div>
   );
 }
 

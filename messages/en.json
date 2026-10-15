@@ -2,6 +2,7 @@
   "comments": {
     "heading": "Comments",
     "count": "{count, plural, =0 {Comments} one {# comment} other {# comments}}",
+    "showAll": "Show all {count, plural, one {# comment} other {# comments}}",
     "placeholder": "Write a comment",
     "submit": "Comment",
     "submitting": "Posting…",
@@ -271,6 +272,7 @@
     "settingsSubtitle": "Account and display settings.",
     "settingsAccount": "Account",
     "settingsEditProfile": "Edit profile",
+    "settingsEditCard": "Edit profile card",
     "settingsAccountSettings": "Full account settings",
     "settingsViewBlog": "View my blog",
     "settingsDisplay": "Display",
@@ -279,7 +281,7 @@
     "settingsHideFollowerCountHint": "When on, no one sees your follower or following numbers. Following still works.",
     "rowDelete": "Delete",
     "curationLiked": "Liked posts",
-    "curationHighlights": "Highlights & public notes",
+    "curationHighlights": "Highlights & notes",
     "curationComments": "My comments",
     "curationLikedEmpty": "No liked posts yet.",
     "curationHistory": "Reading history",
@@ -299,12 +301,6 @@
     "settingsUnfollowTag": "Unfollow {tag}",
     "analyticsPeakDay": "Peak day {date} · {count, plural, one {# view} other {# views}}",
     "analyticsLifetimeCaption": "All time",
-    "displayNameTitle": "Display name",
-    "displayNamePlaceholder": "Name or nickname",
-    "displayNameSave": "Save",
-    "displayNameHint": "Shown before your username on notes and your blog profile. Leave it empty to show your username.",
-    "displayNameSaved": "Display name updated",
-    "displayNameFailed": "Couldn't update the display name",
     "settingsLocked": "Approve followers manually",
     "settingsLockedHint": "New followers send a request and become followers once you approve. The same goes for accounts on other servers.",
     "settingsUnlockTitle": "Stop approving followers manually?",
@@ -333,7 +329,7 @@
     "backToList": "Posts",
     "titlePlaceholder": "Title",
     "imageCaptionPlaceholder": "Add a caption (optional)",
-    "bodyPlaceholder": "Type '/' to add a block, or just start writing",
+    "bodyPlaceholder": "Type / for blocks",
     "blockMenu": {
       "add": "Add block below",
       "embedMedia": "Embedded media",
@@ -344,14 +340,7 @@
       "paragraph": "Text"
     },
     "urlDialog": {
-      "linkTitle": "Link",
-      "embedTitle": "Link card · Video",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://… (link, YouTube, Vimeo)",
-      "confirm": "Add",
-      "cancel": "Cancel",
-      "remove": "Remove link",
-      "linkTextPlaceholder": "Text to show (optional)"
+      "remove": "Remove link"
     },
     "table": {
       "addColumn": "Add column",
@@ -392,7 +381,7 @@
     "previewCopied": "Preview link copied",
     "previewCopyError": "Couldn't copy the link",
     "saveChanges": "Save changes",
-    "previewCardLabel": "How your post will appear",
+    "previewCardLabel": "How it appears",
     "coverAdd": "Add image",
     "coverUploading": "Uploading…",
     "coverReplace": "Replace",
@@ -546,6 +535,7 @@
     "importMd": "Import .md",
     "importProgress": "Importing {done}/{total}…",
     "importPartialError": "Some files could not be imported. Check the files and try again.",
+    "importDone": "Imported {count, plural, one {# post} other {# posts}}",
     "exportAll": "Export all",
     "exportAllHint": "Download every post as a zip of Markdown (.md) files",
     "exportAllFailed": "Export failed. Please try again in a moment.",
@@ -577,7 +567,7 @@
       "warning": "Warning",
       "caution": "Caution"
     },
-    "bodyPlaceholderTouch": "Just start writing. Formatting is in the toolbar above",
+    "bodyPlaceholderTouch": "Body",
     "statusTakenDown": "Taken down",
     "takenDownTitle": "This post was taken down under our content policy",
     "takenDownBody": "You can still edit and save it, but you can't make it public again. If you disagree, contact us at the address in the Terms.",
@@ -603,11 +593,13 @@
       "actions": "Link",
       "open": "Open",
       "edit": "Edit",
-      "shortenHint": "Inserts a shortened kurl link",
       "update": "Save",
       "previewLoading": "Loading preview…",
       "previewFailed": "Couldn't load a preview"
-    }
+    },
+    "saveFailedRetry": "Not saved · Retry",
+    "reschedule": "Change time",
+    "previewOpenError": "Couldn't open the preview"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -636,7 +628,7 @@
     "clearHistoryCancel": "Cancel",
     "forget": "Remove from history",
     "loadMore": "Load more",
-    "highlightsSearch": "Search sentences, public notes, or post titles",
+    "highlightsSearch": "Search sentences, notes, or post titles",
     "noResults": "No matching passages.",
     "emptyFolder": "This folder is empty.",
     "saveFailed": "Couldn't save your change. Please try again.",
@@ -681,6 +673,8 @@
     "highlightDeleteError": "Couldn't delete. Please try again.",
     "highlightSaved": "Highlighted",
     "highlightNoteSaved": "Note added",
+    "highlightMemoOf": "{name}'s note",
+    "highlightMemoMine": "My note",
     "highlightSaveError": "Couldn't save. Please try again.",
     "highlightsShownCount": "{count, number} highlighted",
     "highlightsHidden": "Highlights hidden",
@@ -826,7 +820,8 @@
     "highlightRemoved": "Highlight deleted",
     "highlightLinkCopied": "Link copied",
     "highlightPublicFirst": "Highlighted · public with your name",
-    "reportTitleHighlightReply": "Report this reply"
+    "reportTitleHighlightReply": "Report this reply",
+    "publishedStatus": "Published"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -912,8 +907,7 @@
     "title": "kurl · URL shortener with click analytics",
     "description": "Shorten a long URL and see which device, channel, and country each click came from, with bots left out.",
     "ogHeadlineTop": "Short URLs +",
-    "ogHeadlineBottom": "Click analytics",
-    "ogSubline": "See where every click comes from: device, channel, country, and time of day"
+    "ogHeadlineBottom": "Click analytics"
   },
   "notifications": {
     "webPushLabel": "Browser notifications",
@@ -1053,7 +1047,14 @@
     "prefSectionNotes": "Your notes",
     "prefSectionConversation": "Conversations",
     "prefSectionPeople": "People",
-    "prefSectionSubscriptions": "Subscriptions"
+    "prefSectionSubscriptions": "Subscriptions",
+    "post_first_reader": "Your post has its first reader",
+    "post_read_milestone": "{milestone, plural, one {# person has} other {# people have}} read your post",
+    "post_read_grew": "More people have read your post",
+    "prefPostFirstReader": "First reader",
+    "prefPostFirstReaderHint": "When your post gets its first reader",
+    "prefPostReadMilestone": "Reader milestones",
+    "prefPostReadMilestoneHint": "When 10, 100 or 1,000 people have read your post. Your own views and bots don't count"
   },
   "nav": {
     "events": "Events",
@@ -1068,6 +1069,7 @@
     "liked": "Liked posts",
     "library": "Library",
     "myCollections": "My collections",
+    "studio": "Studio",
     "showcase": "Examples",
     "campaigns": "QR Campaigns",
     "campaignsTab": "Campaigns",
@@ -1165,7 +1167,7 @@
     }
   },
   "shortenForm": {
-    "placeholder": "Paste your long URL here",
+    "placeholder": "Paste a long URL",
     "submit": "Shorten",
     "heroSubmit": "Shorten",
     "advancedToggle": "Advanced options",
@@ -1181,7 +1183,7 @@
       "passwordEmpty": "Enter a password.",
       "invalid": "URL must start with http:// or https://.",
       "malicious": "This URL was flagged as malicious or phishing.",
-      "duplicate": "This custom code is already in use. Try another.",
+      "duplicate": "This code is already in use. Choose another one.",
       "customCodeFormat": "Custom code must be 3-16 letters or digits only.",
       "urlScheme": "URL must start with http:// or https://.",
       "urlBlank": "Please enter a URL.",
@@ -1195,7 +1197,6 @@
   },
   "result": {
     "completed": "Your short link is ready",
-    "nextStepHint": "Copy it, open it, and start tracking how it performs.",
     "originalUrl": "Original",
     "passwordProtected": "Password protected",
     "passwordNotApplied": "The password wasn't applied. Add it again in the link settings.",
@@ -1263,6 +1264,7 @@
     "lists": "Sign in to see your lists",
     "noteBookmarks": "Sign in to see your bookmarked notes",
     "remote": "Sign in to find accounts on other servers",
+    "remoteAccount": "Sign in to see accounts on other servers",
     "collections": "Sign in to see your collections",
     "links": "Sign in to see your links",
     "campaigns": "Sign in to run QR campaigns",
@@ -1295,6 +1297,22 @@
       "toggleToCode": "Use authenticator code instead",
       "expired": "This sign-in timed out."
     }
+  },
+  "profileEdit": {
+    "title": "Edit profile",
+    "photoAdd": "Add photo",
+    "photoChange": "Change photo",
+    "nameLabel": "Display name",
+    "namePlaceholder": "Name or nickname",
+    "nameHint": "Shown before your username on notes and your blog profile. Leave it empty to show your username.",
+    "bioLabel": "Bio",
+    "save": "Save",
+    "saving": "Saving…",
+    "saveFailed": "Couldn't save",
+    "loadFailed": "Couldn't load your profile",
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing"
   },
   "avatar": {
     "change": "Change profile photo",
@@ -1343,10 +1361,8 @@
       "weekClicks": "7-day human clicks",
       "weekClicksHint": "Last 7 days · excludes automated traffic",
       "zeroClick": "Zero-click links",
-      "zeroClickReview": "Review placement or CTA",
       "zeroClickClear": "Every link has received clicks",
       "expiring": "Expiring soon",
-      "expiringReview": "Extend or clean up soon",
       "expiringClear": "No urgent expirations",
       "topLink": "Top link",
       "weekDelta": "+{count} last 7 days",
@@ -1378,7 +1394,7 @@
     },
     "noResultTitle": "No matches",
     "noResultDesc": "Could not find any link matching \"{query}\".",
-    "noResultDescFiltered": "No links match the current filters. Try adjusting them.",
+    "noResultDescFiltered": "No links match the current filters.",
     "table": {
       "shortUrl": "Link name",
       "originalUrl": "Destination",
@@ -1471,7 +1487,6 @@
       "uploadAnother": "Upload another",
       "done": "Done"
     },
-    "librarySubtitle": "Find and copy your links, then check their performance.",
     "loadFailed": "Could not load links. Please try again.",
     "overviewFailed": "Could not load account statistics.",
     "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
@@ -2610,12 +2625,12 @@
   },
   "terms": {
     "title": "Terms of Service",
-    "updatedAt": "Last updated: 2026-07-21",
+    "updatedAt": "Last updated: 2026-10-13",
     "intro": "These terms govern your use of kurl (the \"Service\"). By using the Service you agree to them. If you do not agree, do not use the Service.",
     "sections": [
       {
         "h": "1. The Service",
-        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections — on the web and in the iOS app. We may add, change, or remove features over time."
+        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, notes, profiles, comments, and collections — on the web and in the iOS app. We may add, change, or remove features over time."
       },
       {
         "h": "2. Eligibility and accounts",
@@ -2627,15 +2642,15 @@
       },
       {
         "h": "4. Your content — ownership and license",
-        "p": "You own the content you create or upload — posts, comments, profile, images. You grant us a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up — including via the hosting and CDN sub-processors needed to do so — to run the Service. This license does not extend to marketing or resale. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
+        "p": "You own the content you create or upload — posts, notes, comments, profile, images. You grant us a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up — including via the hosting and CDN sub-processors needed to do so — to run the Service. This license does not extend to marketing or resale. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches. Unless you turn it off in Settings, your notes are also delivered over ActivityPub to your followers on other servers (such as Mastodon). When you delete a note we ask those servers to delete it too, but we cannot guarantee that copies already delivered are removed."
       },
       {
         "h": "5. Prohibited content and conduct",
-        "p": "No unlawful content, content that promotes or glorifies violence, infringement of others' rights, hate, harassment or discrimination, sexually explicit content or any sexual content involving minors, spam or malware, impersonation, posting others' personal data without consent, or abusive automated scraping or overloading of the Service."
+        "p": "No unlawful content, content that promotes or glorifies violence, infringement of others' rights, hate, harassment or discrimination, sexually explicit content or any sexual content involving minors, spam or malware, impersonation, posting others' personal data without consent, or abusive automated scraping or overloading of the Service. We have zero tolerance for such content and for users who post it: content confirmed to violate these terms is removed, and the posting account is acted on under Section 7."
       },
       {
         "h": "6. Reporting and takedown",
-        "p": "Anyone (including signed-out visitors) can report a post, profile, or comment that violates these terms (unlawful, rights-infringing, hateful, harassing, doxxing, spam, etc.) using its report button. Copyright holders may also report infringement to haroya01@naver.com with the work concerned, the basis of their rights, and contact details. After review we may remove content or act on an account, and where possible we notify the affected user of the reason (except where urgent or legally required). A user subject to action may appeal at the same contact, and content is restored if no violation is confirmed. Repeat infringers' accounts may be suspended."
+        "p": "Anyone (including signed-out visitors) can report a post, note, comment, highlight reply, or profile that violates these terms (unlawful, rights-infringing, hateful, harassing, doxxing, spam, etc.) using its report button. Notes from other servers can be reported the same way, and if the reporter chooses, the report is also forwarded anonymously to that server's operators. Copyright holders may also report infringement to haroya01@naver.com with the work concerned, the basis of their rights, and contact details. We review each report within 48 hours of receiving it, and may then remove content or act on an account, and where possible we notify the affected user of the reason (except where urgent or legally required). A user subject to action may appeal at the same contact, and content is restored if no violation is confirmed. Repeat infringers' accounts may be suspended."
       },
       {
         "h": "7. Operator rights and abuse handling",
@@ -2821,8 +2836,8 @@
       "sectionFeed": "Profile feed",
       "quickAdd": {
         "title": "Add link",
-        "firstTitle": "Add your first link ↓",
-        "firstHint": "Add any URL, like Instagram, a blog, or YouTube, with a label, and it shows up on your bio link.",
+        "firstTitle": "Add your first link",
+        "firstHint": "Any URL, like Instagram, a blog, or YouTube, goes in with a label and shows on your bio link.",
         "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
         "urlPlaceholder": "https://... or mailto:...",
         "labelPlaceholder": "Label (e.g. 📝 Blog)",
@@ -2845,13 +2860,13 @@
       "openShort": "Open",
       "yourPage": "Public profile",
       "featuredTitle": "Profile feed",
-      "featuredHint": "Drag to reorder (↑↓ on mobile), ★ to feature one at the top, 'Remove' to drop. Add a header to group items into a section you can collapse and move as one.",
+      "featuredHint": "Drag to reorder (↑↓ on mobile). The ★ link sits at the top as your featured one. A header groups the links under it into a section you can collapse and move as one.",
       "sectionExpand": "Expand section",
       "sectionCollapse": "Collapse section",
       "sectionItemCount": "{count, plural, one {# item} other {# items}}",
-      "featuredEmpty": "Add a link from below or insert a header / divider to start a section.",
+      "featuredEmpty": "No links are shown yet.",
       "featuredEmptyTitle": "Your profile feed is empty",
-      "featuredEmptyHasOthers": "Use the 'Add link' form above, or pick from your other links ({count}) below.",
+      "featuredEmptyHasOthers": "No links are shown yet. You have {count, plural, one {# other link} other {# other links}} to pick from.",
       "addBlockMenu": "Add",
       "addMoreBlocks": "More blocks",
       "remove": "Delete",
@@ -3046,7 +3061,7 @@
         "csvExcludesOptedOut": "Entries marked as opted-out are automatically excluded from the CSV.",
         "loading": "Loading...",
         "loadFailed": "Couldn't load leads.",
-        "errorHint": "Please try again in a moment. If it keeps failing, try refreshing the page.",
+        "errorHint": "Please try again in a moment.",
         "retry": "Try again",
         "downloadCsv": "Download CSV",
         "backToEditor": "Back to editor",
@@ -3856,8 +3871,6 @@
     "kindredCuratorsTitle": "Curators with kindred taste",
     "sharedItems": "{count} in common",
     "postEdgesPathsTitle": "Collections this post is in",
-    "postEdgesRelatedTitle": "Connected reads",
-    "postEdgesCuratorsTitle": "Curators who connected this post",
     "postEdgesPathPosition": "{position} of {total}",
     "connectStep1Title": "Where should this go?",
     "connectStep2Title": "Why did you connect it?",
@@ -4007,9 +4020,7 @@
     "list": {
       "title": "Events",
       "new": "New event",
-      "loadFailed": "Could not load events.",
-      "emptyTitle": "Create your first event page",
-      "emptyBody": "Make an intro page and a sign-up form, then manage capacity and see where sign-ups came from here."
+      "loadFailed": "Could not load events."
     },
     "form": {
       "newTitle": "New event",
@@ -4125,7 +4136,7 @@
     "attendees": {
       "title": "{count} attendees",
       "exportCsv": "Export CSV",
-      "empty": "No registrations yet. Share your link in a group chat.",
+      "empty": "No registrations yet.",
       "name": "Name",
       "contact": "Contact",
       "channel": "Channel",
@@ -4189,11 +4200,15 @@
     "pageIntro": "Short thoughts and photos, kept light. You can follow them from Mastodon and Misskey too.",
     "composerPlaceholder": "Write a note",
     "replyPlaceholder": "Write a reply",
+    "replyLabel": "Write a reply",
+    "replySheetTitle": "Reply",
+    "replyPrompt": "Reply to {name}",
+    "replyPosted": "Reply posted",
+    "view": "View",
     "threadAdd": "Add to thread",
     "threadPlaceholder": "Keep writing",
     "threadRemove": "Remove this note",
     "submit": "Post",
-    "replySubmit": "Reply",
     "posting": "Posting…",
     "remaining": "{count} left",
     "visibilityPublic": "Anyone can see this",
@@ -4224,7 +4239,6 @@
     "likeCount": "{count, plural, one {# like} other {# likes}}",
     "replyCount": "{count, plural, one {# reply} other {# replies}}",
     "repliesTitle": "Replies",
-    "noReplies": "No replies yet",
     "menu": "Note menu",
     "replyPolicyLabel": "Who can reply",
     "replyPolicyPrefix": "Replies:",
@@ -4348,12 +4362,12 @@
     "seriesNotYours": "Only your own notes can go in your series",
     "seriesSlugTaken": "A series with that address already exists. Try another name",
     "warningToggle": "Content warning",
+    "concealedShow": "Show hidden content",
+    "concealedPhotoShow": "Show hidden photo",
+    "concealedPhoto": "Hidden photo",
     "warningLabel": "Content warning",
-    "warningPlaceholder": "Content warning (e.g. spoilers)",
-    "sensitiveToggle": "Mark photos as sensitive",
-    "showContent": "Show",
-    "hideContent": "Hide",
-    "sensitiveMedia": "Sensitive photos · tap to show",
+    "warningPlaceholder": "Content warning",
+    "sensitiveToggle": "Sensitive photos",
     "showReposts": "Show reposts",
     "settingFailed": "Couldn't change the setting",
     "authorMenu": "Profile menu",
@@ -4398,6 +4412,12 @@
     "pollMultiple": "Multiple choice",
     "pollAdd": "Add poll",
     "pollRemove": "Remove poll",
+    "pollNoDeadline": "No end date",
+    "remoteOpen": "View the original",
+    "remoteVote": "Vote on the original",
+    "remoteVideo": "Video",
+    "remoteOpenLabel": "{title}, view the original ({host})",
+    "remoteOpenHost": "View the original ({host})",
     "muteMenu": "Mute…",
     "unmute": "Unmute",
     "mute": "Mute",
@@ -4425,6 +4445,11 @@
     "blockedUsersTitle": "Blocked accounts",
     "blockedUsersHint": "Their posts, comments and notes stay hidden. Block someone from the ⋯ menu on their page, a post or a comment.",
     "blockedUsersEmpty": "No blocked accounts.",
+    "mutedUsersTitle": "Muted accounts",
+    "mutedUsersHint": "Their notes stay out of feeds and replies, and still show on their profile.",
+    "mutedUsersEmpty": "No muted accounts.",
+    "mutedUntil": "Until {when}",
+    "unmuteUser": "Unmute {username}",
     "unblockUser": "Unblock {username}",
     "filteredBy": "Filtered: {phrases}",
     "showFiltered": "Show",
@@ -4462,7 +4487,11 @@
       "blocked": "You can't follow accounts on a server you blocked",
       "other": "Couldn't update. Try again in a moment"
     },
-    "remoteAccountSection": "Account on another server",
+    "remoteSection": "Other servers",
+    "remoteSearchSignIn": "Sign in to find people on other servers",
+    "remoteSearchNotFound": "Couldn't find it on {domain}",
+    "remoteSearchUnreachable": "{domain} isn't responding",
+    "remoteSearchHint": "Find people on other servers with @name@server",
     "remoteLookingUp": "Asking that server…",
     "remoteNotFound": "Couldn't find that account on its server",
     "remoteCaption": "This account lives on {domain}. Following sends a request to {domain}.",
@@ -4488,6 +4517,10 @@
     "domainUnblockedToast": "Unblocked {domain}",
     "domainBlockFailed": "Couldn't change the server block. Please try again shortly",
     "domainBlockedTitle": "You blocked this server",
+    "remoteBlockedTitle": "You blocked this account",
+    "remoteBlockHint": "You won't see their notes anymore. Follows between you end, both ways.",
+    "remoteBlockedToast": "Blocked {acct}. Their notes are hidden",
+    "remoteMuteHint": "{acct}'s notes are hidden from feeds and replies. Their account page still shows them, and they aren't told.",
     "domainBlocksTitle": "Blocked servers",
     "domainBlocksHint": "Notes, notifications and follows from these servers are all removed. Block one from the ⋯ menu on an account's page.",
     "domainBlocksEmpty": "No blocked servers.",

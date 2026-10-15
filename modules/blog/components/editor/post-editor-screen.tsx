@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import { importPostImage, uploadPostImage } from "@/modules/blog/api/post-images";
@@ -9,7 +9,7 @@ import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor
 import { EditorTitle } from "@/modules/blog/components/editor/editor-title";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
-import { PreviewLinkButton } from "@/modules/blog/components/editor/preview-link-button";
+import { PreviewLinkButton, PreviewOpenButton } from "@/modules/blog/components/editor/preview-link-button";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
 import { useTagSuggestions } from "@/modules/blog/components/editor/use-tag-suggestions";
 import { CanvasTags } from "@/modules/blog/components/editor/canvas-tags";
@@ -17,12 +17,14 @@ import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton
 import { EditConflictDialog } from "@/modules/blog/components/editor/edit-conflict-dialog";
 import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
+import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { ErrorState } from "@/components/common/error-state";
 
 /** The writing surface for an existing post (`postId`) or a new one that is created on its first save (`null`). */
 export function PostEditorScreen({ postId, initialMarkdown }: { postId: number | null; initialMarkdown?: string }) {
   const t = useTranslations("postEditor");
+  const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
   const { toast } = useToast();
   const ed = usePostEditor(postId, { ready, authenticated, username: me?.username, initialMarkdown });
@@ -44,19 +46,20 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
   if (ed.loading) return <EditorSkeleton />;
   if (!ed.post && postId != null) {
     return (
-      <main className="mx-auto max-w-[44rem] px-5 py-12">
+      <div className="mx-auto max-w-[44rem] px-5 py-12">
         {ed.loadFailed ? (
           <ErrorState onRetry={() => void ed.reload()} />
         ) : (
           <p className="text-red-600 dark:text-red-400">{t("notFound")}</p>
         )}
-      </main>
+      </div>
     );
   }
 
   const post = ed.post;
   const status = post?.status ?? "DRAFT";
   const takenDown = post?.takenDown === true;
+  const previewable = post != null && post.status !== "PUBLISHED" && !takenDown;
 
   // 글을 frontmatter 포함 .md 로 다운로드 — 데이터 소유권(언제든 들고 나갈 수 있는 문).
   // liveMarkdown(에디터의 동기 getter)을 우선해 마지막 키스트로크까지 담는다.
@@ -88,7 +91,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
     // ships in (§10.1). Title, meta and body share one measure and there is no boxed-in editor frame —
     // a quiet paper column, not a SaaS form. The body editor re-centers at the same width (globals.css)
     // and breaks out of the page padding so its text aligns with the title above it.
-    <main className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3">
+    <div className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3">
       <EditorHeader
         backHref={ed.writeBase}
         postId={post?.id ?? null}
@@ -96,9 +99,14 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         takenDown={takenDown}
         saving={ed.saving}
         saved={ed.saved}
+        saveFailed={ed.saveFailed}
         lastSavedAt={ed.lastSavedAt}
         busy={ed.busy}
+        preview={
+          previewable ? <PreviewOpenButton postId={post.id} username={me?.username} onSave={ed.save} iconOnly /> : null
+        }
         onSave={ed.save}
+        onRetrySave={() => void ed.retrySave()}
         onBack={ed.leave}
         onOpenPublish={() => setPublishOpen(true)}
         onRestoreRevision={ed.restoreRevision}
@@ -197,8 +205,11 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
         previewAction={
-          post && post.status !== "PUBLISHED" && !takenDown ? (
-            <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
+          previewable ? (
+            <>
+              <PreviewOpenButton postId={post.id} username={me?.username} onSave={ed.save} />
+              <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
+            </>
           ) : null
         }
         error={ed.error}
@@ -212,7 +223,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           // Confirm the parked publish with its exact date/time — the SCHEDULED badge alone is easy to
           // miss right after the action.
           const ok = await ed.schedule(iso);
-          if (ok) toast(t("scheduledToast", { when: new Date(iso).toLocaleString() }), "success");
+          if (ok) toast(t("scheduledToast", { when: scheduledLabel(iso, locale) }), "success");
           return ok;
         }}
       />
@@ -224,6 +235,6 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           if (await ed.overwriteMine()) toast(t("editConflictOverwritten"), "success");
         }}
       />
-    </main>
+    </div>
   );
 }

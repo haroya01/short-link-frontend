@@ -18,8 +18,10 @@ import type {
   Connection,
   ConnectionEvent,
   DiscoverFeed,
+  KindredCurator,
   NewCollection,
   PostCollectionsView,
+  RelatedBlock,
 } from "@/modules/blog/api/collections";
 import type { MyHighlightItem } from "@/modules/blog/api/highlights";
 import { MOCK_BLOCKS_VIEWER } from "@/modules/blog/api/_mocks";
@@ -28,8 +30,8 @@ import { MOCK_BLOCKS_VIEWER } from "@/modules/blog/api/_mocks";
 const CURATORS = {
   minji: { id: 2, username: "minji", bio: "1인 메이커 · 그로스", avatarUrl: "https://i.pravatar.cc/120?img=45" },
   haruka: { id: 3, username: "haruka", bio: "플랫폼 엔지니어", avatarUrl: null },
-  jinhwa: { id: 4, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
-  doha: { id: 5, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
+  jinhwa: { id: 41, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
+  doha: { id: 42, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
   sol: { id: 6, username: "sol", bio: "작업실에서, 손으로", avatarUrl: null },
 };
 
@@ -74,6 +76,7 @@ const PATH: MockCollectionDetail = {
   kind: "PATH",
   ordered: true,
   curatorUsername: "haruka",
+  curatorUserId: 3,
   connections: pathConnections,
 };
 
@@ -94,6 +97,7 @@ const COLLECTION: MockCollectionDetail = {
   kind: "COLLECTION",
   ordered: false,
   curatorUsername: "dohyun",
+  curatorUserId: 1,
   connections: collectionConnections,
 };
 
@@ -185,6 +189,7 @@ export function mockCreateCollection(payload: NewCollection): CollectionSummary 
     kind: payload.ordered ? "PATH" : "COLLECTION",
     ordered: payload.ordered,
     curatorUsername: "dohyun",
+    curatorUserId: 1,
     connections: [],
   };
   mockStore.unshift(created);
@@ -423,6 +428,24 @@ const POST_COLLECTIONS: Record<number, CollectionSummary[]> = {
 
 export function mockPostCollections(postId: number): CollectionSummary[] {
   return POST_COLLECTIONS[postId] ?? [];
+}
+
+const POST_RELATED: Record<number, RelatedBlock[]> = {
+  3: [
+    { blockType: "POST", refId: 1, title: "Next.js 14 App Router로 블로그를 다시 만든 이유", excerpt: "RSC와 서버 액션으로 피드·검색·작성 흐름을 다시 짠 과정과 트레이드오프.", slug: "nextjs-14-app-router-blog", username: "dohyun", quote: null, body: null, sharedCount: 2 },
+  ],
+};
+
+const KINDRED: Record<string, KindredCurator[]> = {
+  haruka: [{ curator: CURATORS.jinhwa, sharedItems: 3 }],
+};
+
+export function mockRelatedBlocks(blockType: string, refId: number): RelatedBlock[] {
+  return blockType === "POST" ? (POST_RELATED[refId] ?? []) : [];
+}
+
+export function mockKindredCurators(username: string): KindredCurator[] {
+  return KINDRED[username] ?? [];
 }
 
 // 배치 목 — 요청한 id 순서 그대로, 담긴 게 없으면 collections:[](줄이 안 뜬다). 실서버 계약과 동일 shape.

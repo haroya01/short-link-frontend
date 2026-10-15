@@ -12,8 +12,6 @@ import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { collectionMocks } from "@/modules/blog/api/_mock-gates";
 import { fetchPublic, hasViewer, type FetchResult } from "@/modules/blog/api/public-posts";
 
-const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
-
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 export type CollectionVisibility = "PRIVATE" | "UNLISTED" | "PUBLIC";
@@ -86,6 +84,7 @@ export interface CollectionDetail {
   kind: CollectionKind;
   ordered?: boolean;
   curatorUsername: string | null;
+  curatorUserId: number | null;
   connections: Connection[];
 }
 
@@ -308,7 +307,7 @@ export async function listRelatedBlocks(
   blockType: ConnectionBlockType,
   refId: number,
 ): Promise<RelatedBlock[]> {
-  if (USE_MOCKS) return Promise.resolve([]);
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockRelatedBlocks(blockType, refId));
   const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/graph/blocks/${encodeURIComponent(blockType)}/${refId}/related`,
     { cache: "no-store" },
@@ -321,7 +320,7 @@ export async function listRelatedBlocks(
  *  collections (most overlap first). Discovery by shared taste, not follows. Readable signed-out; an
  *  unknown handle yields []. */
 export async function listKindredCurators(username: string): Promise<KindredCurator[]> {
-  if (USE_MOCKS) return Promise.resolve([]);
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockKindredCurators(username));
   const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/kindred`,
     { cache: "no-store" },

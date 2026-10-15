@@ -40,6 +40,8 @@ import { CommentMenu } from "@/modules/blog/components/comment-menu";
 import { ConversationLike, ConversationRow } from "@/modules/blog/components/conversation-row";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { cn } from "@/lib/utils";
+import { authorHref } from "@/modules/blog/lib/author-href";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
@@ -47,6 +49,7 @@ import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelectio
 import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { useLikeFailed } from "@/hooks/use-like-failed";
+import { markdownPlain } from "@/modules/blog/lib/markdown-lead";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -543,7 +546,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
             <li key={highlight.id}>
               <button type="button" className="focus-ring w-full rounded-surface py-3 text-left" onClick={() => onChoose(highlight)}>
                 <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">{highlight.author?.username ?? "?"}</span>
-                <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note || highlight.quote}</span>
+                <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note ? markdownPlain(highlight.note) : highlight.quote}</span>
                 {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{tc("highlightReplyCount", { count: highlight.replyCount })}</span>}
               </button>
             </li>
@@ -615,7 +618,17 @@ function HighlightThread({
 
   // Keyboard containment: Escape + Tab cycling + focus restore. Goes inert while the ConnectSheet is
   // open over the thread so the two traps don't fight over Tab (ConnectSheet runs its own then).
-  useFocusTrap(contentRef, { active: !connecting && !confirmDialog, onEscape: () => void requestClose() });
+  const trapActive = !connecting && !confirmDialog;
+  useFocusTrap(contentRef, { active: trapActive, onEscape: () => void requestClose(), autoFocus: false });
+
+  useEffect(() => {
+    if (!trapActive) return;
+    const frame = requestAnimationFrame(() => {
+      const panel = contentRef.current;
+      if (panel && !panel.contains(document.activeElement)) panel.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [trapActive]);
 
   useEffect(() => {
     if (body.trim()) writeDraft("highlight-reply", highlight.id, body);
@@ -779,14 +792,27 @@ function HighlightThread({
         role="dialog"
         aria-modal="true"
         aria-labelledby="hl-thread-quote"
-        className="flex max-h-[80vh] w-full flex-col rounded-t-surface bg-white shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-surface"
+        tabIndex={-1}
+        className="flex max-h-[80vh] outline-none w-full flex-col rounded-t-surface bg-white shadow-modal dark:bg-slate-850 sm:max-w-md sm:rounded-surface"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-slate-100 p-5 dark:border-slate-800">
+        <div ref={threadScrollRef} className="min-h-0 flex-1 overflow-y-auto">
+        <div className="border-b border-slate-100 px-5 pb-5 pt-6 dark:border-slate-800" data-testid="highlight-anchor">
           <div className="flex items-start gap-3">
-            <blockquote id="hl-thread-quote" className="line-clamp-3 flex-1 border-l-2 border-accent-600 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
-              {highlight.quote}
-            </blockquote>
+            <p
+              id="hl-thread-quote"
+              className="min-w-0 flex-1 break-words text-[18px] leading-[1.68] text-slate-900 dark:text-slate-100"
+            >
+              <mark
+                className={cn(
+                  "kurl-highlight !cursor-auto",
+                  (highlight.note || highlight.replyCount > 0 || replies.length > 0) && "kurl-highlight--thread",
+                  isMine && "kurl-highlight--mine",
+                )}
+              >
+                {highlight.quote}
+              </mark>
+            </p>
             {(canConnect || isMine) && (
               <div className="-mr-1 -mt-1 flex shrink-0 items-center gap-0.5">
                 {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
@@ -816,14 +842,40 @@ function HighlightThread({
               </div>
             )}
           </div>
-          <div className="mt-3">
-            <ConversationRow author={highlight.author} createdAt={highlight.createdAt} time={fmt(highlight.createdAt)}>
-              {highlight.note && <CommentBody text={highlight.note} locale={locale} />}
-            </ConversationRow>
-          </div>
+          {highlight.note ? (
+            <div className="mt-6" data-testid="highlight-memo">
+              <p className="flex min-w-0 items-baseline gap-1 text-[15px] leading-5">
+                {highlight.author && !isMine ? (
+                  <BlogLink
+                    href={authorHref(highlight.author.username, locale)}
+                    className="focus-ring min-w-0 truncate rounded font-semibold text-slate-900 hover:underline dark:text-slate-100"
+                  >
+                    {t("highlightMemoOf", { name: highlight.author.displayName || highlight.author.username })}
+                  </BlogLink>
+                ) : (
+                  <span className="min-w-0 truncate font-semibold text-slate-900 dark:text-slate-100">
+                    {t("highlightMemoMine")}
+                  </span>
+                )}
+                <span aria-hidden className="text-slate-400 dark:text-slate-500">
+                  ·
+                </span>
+                <time dateTime={highlight.createdAt} suppressHydrationWarning className="shrink-0 text-slate-500 dark:text-slate-400">
+                  {fmt(highlight.createdAt)}
+                </time>
+              </p>
+              <div className="mt-1 text-[15px] leading-[1.6] text-slate-800 dark:text-slate-200">
+                <CommentBody text={highlight.note} locale={locale} />
+              </div>
+            </div>
+          ) : (
+            <div className="mt-4">
+              <ConversationRow author={highlight.author} createdAt={highlight.createdAt} time={fmt(highlight.createdAt)} />
+            </div>
+          )}
         </div>
 
-        <div ref={threadScrollRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div className="px-5 py-4">
           {loadFailed && (
             <p role="alert" data-testid="highlight-replies-load-failed" className="mb-4 text-[13px] text-slate-500 dark:text-slate-400">
               {t("highlightRepliesLoadFailed")}{" "}
@@ -939,6 +991,7 @@ function HighlightThread({
               </ul>
             </div>
           )}
+        </div>
         </div>
 
         <div className="border-t border-slate-100 p-4 dark:border-slate-800">

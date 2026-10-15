@@ -4,8 +4,11 @@ import { useRef, useState } from "react";
 import { Loader2, Upload } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { ApiError } from "@/lib/api/client";
+import { useToast } from "@/components/ui/toast";
 import { createPost, replaceBlocks, updatePostMetadata } from "@/modules/blog/api/posts";
 import { markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
+import { isSavableSlug, slugForSave } from "@/modules/blog/lib/slug";
 
 function randomSlug(): string {
   return "draft-" + Math.random().toString(36).slice(2, 9);
@@ -16,11 +19,16 @@ function randomSlug(): string {
  * 글이 자산인 플랫폼에서 "들어오는 문"이 없으면 작가가 옮겨올 이유가 없다.
  *
  * 제목 결정 우선순위: frontmatter title → 본문 첫 `# 헤딩`(본문에서 제거 — 발행면 <h1>은 제목이
- * 차지하므로 중복) → 파일명. frontmatter 의 tags 도 가져온다(그 외 키는 무시 — 보수적으로).
+ * 차지하므로 중복) → 파일명. frontmatter 의 tags 와 slug 도 가져온다(slug 는 손대지 않고 그대로
+ * 쓸 수 있을 때만, 그 외 키는 무시 — 보수적으로).
  */
-function parseImport(filename: string, raw: string): { title: string; tags: string[]; body: string } {
+export function parseImport(
+  filename: string,
+  raw: string,
+): { title: string; slug: string | null; tags: string[]; body: string } {
   let body = raw.replace(/^﻿/, "");
   let title = "";
+  let slug: string | null = null;
   let tags: string[] = [];
 
   const fm = body.match(/^---\n([\s\S]*?)\n---\n?/);
@@ -28,6 +36,9 @@ function parseImport(filename: string, raw: string): { title: string; tags: stri
     body = body.slice(fm[0].length);
     const titleLine = fm[1].match(/^title:\s*["']?(.+?)["']?\s*$/m);
     if (titleLine) title = titleLine[1].trim();
+    const slugLine = fm[1].match(/^slug:\s*["']?(.+?)["']?\s*$/m);
+    const wanted = slugLine?.[1].trim().toLowerCase() ?? "";
+    if (wanted.length <= 200 && isSavableSlug(wanted) && slugForSave(wanted) === wanted) slug = wanted;
     // tags: [a, b] 와 "tags:\n  - a" 두 표기 모두 수용
     const inline = fm[1].match(/^tags:\s*\[([^\]]*)\]\s*$/m);
     if (inline) {
@@ -47,12 +58,24 @@ function parseImport(filename: string, raw: string): { title: string; tags: stri
   }
   if (!title) title = filename.replace(/\.(md|markdown)$/i, "");
 
-  return { title: title.slice(0, 200), tags: tags.slice(0, 10), body: body.trim() };
+  return { title: title.slice(0, 200), slug, tags: tags.slice(0, 10), body: body.trim() };
+}
+
+async function createImported(title: string, slug: string | null) {
+  if (slug) {
+    try {
+      return await createPost({ slug, title });
+    } catch (e) {
+      if (!(e instanceof ApiError && e.detail.code === "SLUG_CONFLICT")) throw e;
+    }
+  }
+  return createPost({ slug: randomSlug(), title });
 }
 
 export function ImportMdButton({ onDone }: { onDone?: () => void }) {
   const t = useTranslations("postEditor");
   const router = useRouter();
+  const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState(false);
@@ -66,8 +89,8 @@ export function ImportMdButton({ onDone }: { onDone?: () => void }) {
     for (let i = 0; i < list.length; i++) {
       try {
         const raw = await list[i].text();
-        const { title, tags, body } = parseImport(list[i].name, raw);
-        const post = await createPost({ slug: randomSlug(), title });
+        const { title, slug, tags, body } = parseImport(list[i].name, raw);
+        const post = await createImported(title, slug);
         await replaceBlocks(post.id, markdownToBlocks(body));
         if (tags.length > 0) await updatePostMetadata(post.id, { title, tags });
       } catch (e) {
@@ -78,6 +101,7 @@ export function ImportMdButton({ onDone }: { onDone?: () => void }) {
     }
     setProgress(null);
     if (failed > 0) setError(true);
+    if (failed < list.length) toast(t("importDone", { count: list.length - failed }), "success");
     onDone?.();
     router.refresh();
   }

@@ -162,19 +162,19 @@ test("노트 스레드는 로그인 여부를 확인하기 전에 로그인 줄�
     }).observe(document, { childList: true, subtree: true });
   });
   await page.goto("/ko/p/haruka/notes/30");
-  await expect(page.getByRole("textbox").first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByTestId("note-reply-prompt")).toHaveText("하루카님에게 답글 남기기", { timeout: 20_000 });
   expect(await page.evaluate(() => (window as unknown as { __sawSignInRow?: boolean }).__sawSignInRow ?? false)).toBe(false);
 });
 
 test("쓰던 노트 답글은 새로고침해도 남는다", async ({ page }) => {
   await page.goto("/ko/p/haruka/notes/30");
-  const reply = page.locator("section[aria-labelledby='note-replies']").getByRole("textbox").first();
-  await expect(reply).toBeVisible({ timeout: 20_000 });
-  await reply.click();
+  await page.getByTestId("note-reply-prompt").click({ timeout: 20_000 });
+  const reply = page.getByTestId("note-reply-dialog").getByRole("textbox", { name: "답글 쓰기" });
+  await expect(reply).toBeFocused();
   await page.keyboard.type("노트에 다는 답글 초안");
   await page.reload();
-  await expect(page.locator("section[aria-labelledby='note-replies']").getByRole("textbox").first()).toHaveValue(
+  await page.getByTestId("note-reply-prompt").click({ timeout: 20_000 });
+  await expect(page.getByTestId("note-reply-dialog").getByRole("textbox", { name: "답글 쓰기" })).toHaveValue(
     "노트에 다는 답글 초안",
-    { timeout: 20_000 },
   );
 });

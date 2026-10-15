@@ -10,6 +10,7 @@ import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { noteHeadline, seriesEntries, seriesItemCount } from "@/modules/blog/lib/series-items";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -139,10 +140,12 @@ export default async function PublicSeriesPage({
     <div className="flex flex-col gap-4">
       <RailHeading>{tf("seriesByAuthor")}</RailHeading>
       <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-surface">
-        <Avatar src={author.avatarUrl} name={author.username} size="lg" />
-        <span className="min-w-0 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-          @{author.username}
-        </span>
+        <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
+        <AuthorName
+          name={author.displayName}
+          handle={author.username}
+          className="text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400"
+        />
       </BlogLink>
       {author.bio && (
         <p lang={contentLang(author.bio)} className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
@@ -186,10 +189,13 @@ export default async function PublicSeriesPage({
               href={profileHref}
               className="focus-ring group flex items-center gap-2 rounded transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
-              <Avatar src={author.avatarUrl} name={author.username} size="xs" />
-              <span className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
-                {author.username}
-              </span>
+              <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="xs" />
+              <AuthorName
+                name={author.displayName}
+                handle={author.username}
+                className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400"
+                handleClassName={META_HANDLE}
+              />
             </BlogLink>
             <span aria-hidden>·</span>
             <span>{tf("seriesItemCount", { count: seriesItemCount(series) })}</span>

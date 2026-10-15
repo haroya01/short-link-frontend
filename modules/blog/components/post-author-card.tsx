@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
+import { AuthorName } from "@/modules/blog/components/author-name";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { END_SECTION } from "@/modules/blog/components/end-section";
 import { FollowButton } from "@/modules/blog/components/follow-button";
@@ -17,7 +18,6 @@ export function PostAuthorCard({
   postId: number;
   className?: string;
 }) {
-  const name = author.displayName?.trim();
   return (
     <section data-testid="post-author-card" className={cn(END_SECTION, className)}>
       <div className="flex items-start gap-4">
@@ -27,24 +27,14 @@ export function PostAuthorCard({
           data-bhv="profile"
           data-bhv-id={author.username}
         >
-          <Avatar src={author.avatarUrl} name={author.username} size="lg" />
+          <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
           <span className="min-w-0">
-            <span className="flex min-w-0 items-baseline gap-1.5">
-              {name && (
-                <span className="max-w-[70%] shrink-0 truncate text-[15px] font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-                  {name}
-                </span>
-              )}
-              <span
-                className={
-                  name
-                    ? "min-w-0 truncate text-[13px] text-slate-500 dark:text-slate-400"
-                    : "min-w-0 truncate text-[15px] font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400"
-                }
-              >
-                @{author.username}
-              </span>
-            </span>
+            <AuthorName
+              name={author.displayName}
+              handle={author.username}
+              className="gap-1.5 text-[15px] font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400"
+              handleClassName="text-[13px] text-slate-500 dark:text-slate-400"
+            />
             {author.bio && (
               <span
                 lang={contentLang(author.bio)}

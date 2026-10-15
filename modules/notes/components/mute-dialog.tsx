@@ -7,20 +7,21 @@ import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { useToast } from "@/components/ui/toast";
-import { muteUser, type MuteStatus } from "@/modules/notes/api/notes";
 
 const DURATIONS = [0, 300, 1800, 3600, 21_600, 86_400, 259_200, 604_800] as const;
 
 export function MuteDialog({
-  username,
+  subject,
+  hint,
   open,
   onClose,
-  onMuted,
+  mute,
 }: {
-  username: string;
+  subject: string;
+  hint: string;
   open: boolean;
   onClose: () => void;
-  onMuted: (status: MuteStatus) => void;
+  mute: (notifications: boolean, duration: number | null) => Promise<void>;
 }) {
   const t = useTranslations("notes");
   const { toast } = useToast();
@@ -35,11 +36,11 @@ export function MuteDialog({
   useEffect(() => setMounted(true), []);
   useFocusTrap(panel, { active: open, onEscape: onClose, autoFocus: true });
 
-  async function mute() {
+  async function submit() {
     setSaving(true);
     try {
-      onMuted(await muteUser(username, notifications, duration === 0 ? null : duration));
-      toast(t("mutedToast", { username }));
+      await mute(notifications, duration === 0 ? null : duration);
+      toast(t("mutedToast", { username: subject }));
       onClose();
     } catch {
       toast(t("muteFailed"), "error");
@@ -72,11 +73,9 @@ export function MuteDialog({
         )}
       >
         <h2 id={titleId} className="text-[16px] font-semibold text-slate-900 dark:text-slate-100">
-          {t("muteTitle", { username })}
+          {t("muteTitle", { username: subject })}
         </h2>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t("muteHint", { username })}
-        </p>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{hint}</p>
         <div className="mt-4 space-y-3 text-[14px] text-slate-800 dark:text-slate-200">
           <label className="flex cursor-pointer items-center justify-between gap-3">
             {t("muteNotifications")}
@@ -118,7 +117,7 @@ export function MuteDialog({
           </button>
           <button
             type="button"
-            onClick={mute}
+            onClick={submit}
             disabled={saving}
             className="focus-ring rounded-full bg-slate-900 px-4 py-1.5 text-[13px] font-semibold text-white hover:bg-slate-700 disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
           >

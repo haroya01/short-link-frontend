@@ -3,7 +3,6 @@
 import { DATE_LOCALE } from "@/lib/date";
 import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { noteHeadline, seriesNoteHref, type SeriesEntry } from "@/modules/blog/lib/series-items";
@@ -272,9 +271,6 @@ export function SeriesReadingShell({
                         lang={contentLang(noteHeadline(note))}
                         className="line-clamp-3 text-[15px] leading-relaxed text-slate-600 transition-colors group-hover/row:text-accent-700 dark:text-slate-300 dark:group-hover/row:text-accent-400"
                       >
-                        {note.contentWarning && (
-                          <TriangleAlert aria-hidden className="mr-1 inline h-3.5 w-3.5 align-[-2px]" />
-                        )}
                         {noteHeadline(note)}
                       </span>
                       <span className="mt-1.5 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">

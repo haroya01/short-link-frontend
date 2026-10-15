@@ -28,6 +28,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
+import { AuthorName } from "@/modules/blog/components/author-name";
 
 /** Authors that appear in the feed, de-duplicated and in first-seen order — i.e. the followed authors
  *  you're actually reading right now. Capped so the rail stays a glance, not a directory. */
@@ -45,7 +46,7 @@ function feedAuthors(rows: FollowingFeedRow[], limit = 8): PublicAuthor[] {
 }
 
 function AuthorAvatar({ author }: { author: PublicAuthor }) {
-  return <Avatar src={author.avatarUrl} name={author.username} size="md" />;
+  return <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />;
 }
 
 /** One author row in a rail — avatar + name, optional subtitle. Used by the suggested-authors list. */
@@ -66,9 +67,11 @@ function AuthorRow({
       >
         <AuthorAvatar author={author} />
         <span className="flex min-w-0 flex-col">
-          <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100">
-            {author.username}
-          </span>
+          <AuthorName
+            name={author.displayName}
+            handle={author.username}
+            className="text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100"
+          />
           {subtitle && <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{subtitle}</span>}
         </span>
       </BlogLink>

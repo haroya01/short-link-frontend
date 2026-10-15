@@ -40,7 +40,7 @@ test("tab switches keep the author header on screen the whole time (no skeleton 
 
   // Public tabs a visitor always sees. The header (handle) must never blink out while the content swaps.
   for (const name of ["Series", "About", "Posts"]) {
-    await staysPresentThrough(page, () => page.getByRole("link", { name, exact: true }).first().click(), HANDLE);
+    await staysPresentThrough(page, () => page.getByRole("main").getByRole("link", { name, exact: true }).first().click(), HANDLE);
   }
 });
 

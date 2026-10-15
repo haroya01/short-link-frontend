@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { behaviorSessionId } from "@/lib/analytics/behavior";
+import { bootstrapSession, freshToken } from "@/lib/api/client";
 
 /**
  * Post 페이지 로드 시 view beacon fire. dedup 없음 — 새로고침 / 봇 다 카운트. accurate unique visitor 는 L3
@@ -24,7 +25,17 @@ export function ViewBeacon({ username, slug }: { username: string; slug: string 
       username,
     )}/posts/${encodeURIComponent(slug)}/view${qs}`;
     // fire-and-forget. Beacon API 가 page unload 도 안정적이지만 페이지 진입 시점 fire 는 fetch 로 충분.
-    fetch(url, { method: "POST", keepalive: true }).catch(() => {});
+    bootstrapSession()
+      .then((signedIn) => (signedIn ? freshToken() : null))
+      .catch(() => null)
+      .then((token) =>
+        fetch(url, {
+          method: "POST",
+          keepalive: true,
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        }),
+      )
+      .catch(() => {});
   }, [username, slug]);
   return null;
 }

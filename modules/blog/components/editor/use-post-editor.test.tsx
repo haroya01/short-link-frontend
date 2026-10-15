@@ -663,3 +663,18 @@ describe("a post the writer may not make public", () => {
     expect(editor.error).toBe("accountBannedPublic");
   });
 });
+
+describe("a save that fails", () => {
+  it("says so until a retry lands, and the retry saves right away", async () => {
+    await mount();
+    api.updatePostMetadata.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    await act(async () => { editor.setTitle("Offline edit"); });
+    await act(async () => { await editor.save(); });
+    expect(editor.saveFailed).toBe(true);
+
+    await act(async () => { await editor.retrySave(); });
+    expect(editor.saveFailed).toBe(false);
+    expect(api.updatePostMetadata).toHaveBeenLastCalledWith(16, expect.objectContaining({ title: "Offline edit" }));
+  });
+});
+

@@ -220,7 +220,7 @@ function FollowRow({
         onClick={onNavigate}
         className="focus-ring group flex min-w-0 flex-1 items-center gap-3"
       >
-        <Avatar src={user.avatarUrl} name={user.username} size="md" />
+        <Avatar src={user.avatarUrl} name={user.username} seed={user.id} size="md" />
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200">
             @{user.username}

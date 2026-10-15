@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, ExternalLink, Newspaper, Settings, User } from "lucide-react";
+import { useState } from "react";
+import { Check, Contact, ExternalLink, Newspaper, Settings, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -11,9 +12,10 @@ import { FollowedTagsSetting } from "@/modules/blog/components/followed-tags-set
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
 import { FederationSetting } from "@/modules/notes/components/federation-setting";
 import { NoteFilterSettings } from "@/modules/notes/components/note-filter-settings";
-import { DisplayNameSetting } from "@/modules/blog/components/display-name-setting";
+import { ProfileEditDialog } from "@/modules/blog/components/profile-edit-dialog";
 import { DomainBlockSettings, RemoteFollowingSettings } from "@/modules/notes/components/remote-account";
 import { BlockedUserSettings } from "@/modules/notes/components/blocked-user-settings";
+import { MutedAccountSettings } from "@/modules/notes/components/muted-account-settings";
 import { NoteLanguageSettings } from "@/modules/notes/components/note-language-settings";
 import { NoteListSettings } from "@/modules/notes/components/note-lists";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
@@ -26,10 +28,10 @@ import { LogoutButton } from "@/components/common/logout-button";
 import { cn } from "@/lib/utils";
 
 /**
- * Blog settings. Account-level settings (profile fields, password, danger zone) live on the links
- * product (app/[locale]/links/settings*) — they're one identity across both surfaces — so this page
- * surfaces the account here and deep-links to those rather than duplicating the forms. The
- * blog-local bits (theme, language, the viewer's two public surfaces, sign out) live inline.
+ * Blog settings. Account-level settings (password, danger zone) and the link-in-bio card editor live
+ * on the links product (app/[locale]/links/settings*) — they're one identity across both surfaces — so
+ * this page deep-links to those rather than duplicating the forms. Photo, display name and bio open
+ * the same ProfileEditDialog as the author page; theme, language and sign out live inline.
  */
 export default function BlogSettingsPage() {
   const t = useTranslations("blogWorkspace");
@@ -38,6 +40,7 @@ export default function BlogSettingsPage() {
   const intlRouter = useIntlRouter();
   const pathname = usePathname();
   const { ready, authenticated, me } = useAuth();
+  const [editingProfile, setEditingProfile] = useState(false);
 
   if (!ready) return null;
 
@@ -55,7 +58,7 @@ export default function BlogSettingsPage() {
     "focus-ring flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60";
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
+    <div className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("settingsTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("settingsSubtitle")}</p>
 
@@ -81,10 +84,16 @@ export default function BlogSettingsPage() {
           </div>
 
           <div className="mt-3 space-y-0.5 border-t border-slate-100 pt-2 dark:border-slate-800">
-            <a href={linksHref(`/${locale}/settings/profile`)} className={rowClass}>
+            <button type="button" onClick={() => setEditingProfile(true)} className={cn(rowClass, "w-full")}>
               <span className="inline-flex items-center gap-2.5">
                 <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsEditProfile")}
+              </span>
+            </button>
+            <a href={linksHref(`/${locale}/settings/profile`)} className={rowClass}>
+              <span className="inline-flex items-center gap-2.5">
+                <Contact className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                {t("settingsEditCard")}
               </span>
               <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
@@ -101,16 +110,16 @@ export default function BlogSettingsPage() {
                   <Newspaper className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   {t("settingsViewBlog")}
                 </span>
-                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
               </a>
             )}
           </div>
         </div>
       </section>
+      <ProfileEditDialog open={editingProfile} onClose={() => setEditingProfile(false)} />
 
-      <DisplayNameSetting />
       <RemoteFollowingSettings />
       <BlockedUserSettings />
+      <MutedAccountSettings />
       <DomainBlockSettings />
       <NoteLanguageSettings />
 
@@ -168,6 +177,6 @@ export default function BlogSettingsPage() {
       <section className="mt-8">
         <LogoutButton />
       </section>
-    </main>
+    </div>
   );
 }

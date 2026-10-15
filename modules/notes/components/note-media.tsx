@@ -10,10 +10,21 @@ import { PhotoLightbox } from "@/app/[locale]/u/[username]/_components/photo-lig
 // Video and audio come only from other servers (members attach pictures). They play from where they
 // live, with the browser's own controls. A video plays silently on a loop while it is mostly on screen,
 // as on Threads and X; sound and full screen stay one tap away in its controls.
-export function NoteMedia({ media }: { media: NoteImage[] }) {
+export function NoteMedia({
+  media,
+  concealed = false,
+  onReveal,
+}: {
+  media: NoteImage[];
+  concealed?: boolean;
+  onReveal?: () => void;
+}) {
   const pictures = media.filter((item) => item.contentType.startsWith("image/"));
   const videos = media.filter((item) => item.contentType.startsWith("video/"));
   const sounds = media.filter((item) => item.contentType.startsWith("audio/"));
+  if (concealed && pictures.length + videos.length > 0) {
+    return <ConcealedMedia pictures={pictures} videos={videos} onReveal={onReveal} />;
+  }
   if (videos.length === 0 && sounds.length === 0) return <NotePictures media={pictures} />;
   return (
     <>
@@ -32,6 +43,60 @@ export function NoteMedia({ media }: { media: NoteImage[] }) {
         />
       ))}
     </>
+  );
+}
+
+function ConcealedMedia({
+  pictures,
+  videos,
+  onReveal,
+}: {
+  pictures: NoteImage[];
+  videos: NoteImage[];
+  onReveal?: () => void;
+}) {
+  const t = useTranslations("notes");
+  const single = pictures.length + videos.length === 1;
+  return (
+    <div className="relative mt-2.5" data-note-sensitive>
+      <div aria-hidden className={cn("flex gap-1.5 overflow-hidden", !single && "-mr-4 pr-4 sm:mr-0 sm:pr-0")}>
+        {pictures.map((image) => (
+          <span
+            key={image.url}
+            className={cn(
+              "block shrink-0 overflow-hidden rounded-surface border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900",
+              single ? "w-fit max-w-full" : "h-60",
+            )}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={image.url}
+              alt=""
+              width={image.width ?? undefined}
+              height={image.height ?? undefined}
+              loading="lazy"
+              className={cn(
+                "block w-auto scale-110 object-cover blur-2xl",
+                single ? "max-h-[430px] max-w-full" : "h-60 min-w-28 max-w-none",
+              )}
+            />
+          </span>
+        ))}
+        {videos.map((video) => (
+          <span
+            key={video.url}
+            style={{ aspectRatio: video.width && video.height ? `${video.width} / ${video.height}` : "16 / 9" }}
+            className={cn("block shrink-0 rounded-surface bg-slate-950/90", single ? "w-full max-h-[430px]" : "h-60")}
+          />
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={onReveal}
+        aria-label={t("concealedPhotoShow")}
+        className="focus-ring absolute inset-0 rounded-surface"
+      />
+    </div>
   );
 }
 

@@ -24,6 +24,8 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_EMBED: "note_embed",
   COMMENT_LIKE: "comment_like",
   HIGHLIGHT: "highlight",
+  POST_FIRST_READER: "post_first_reader",
+  POST_READ_MILESTONE: "post_read_milestone",
 };
 
 /**
@@ -32,6 +34,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
  */
 export function notificationMessageKey(item: Item, myUsername: string | null): string {
   if (item.type === "NOTE_POLL" && myUsername != null && item.actorUsername === myUsername) return "note_poll_mine";
+  if (item.type === "POST_READ_MILESTONE" && item.milestone == null) return "post_read_grew";
   const key =
     item.type === "COMMENT_LIKE" && item.commentId == null && item.highlightId != null
       ? "highlight_reply_like"

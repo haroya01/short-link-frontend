@@ -30,23 +30,53 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await expect(header.getByRole("button", { name: "북마크에 저장" })).toBeVisible();
 });
 
-test("독은 하단 탭 위에 떠 있고, 탭이 내려가면 따라 내려간다", async ({ page }) => {
+test("독은 하단 탭 위에 떠 있다가, 읽어 내려가면 숨고 멈춰도 숨은 채이며, 위로 올리면 탭 위로 돌아온다", async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   const nav = page.locator(".vt-bottom-nav");
-  await expect(async () => {
+  const aboveNav = async () => {
     const d = (await dock(page).boundingBox())!;
     const n = (await nav.boundingBox())!;
     expect(d.y + d.height).toBeLessThanOrEqual(n.y - 8);
-  }).toPass();
+  };
+  await expect(aboveNav).toPass();
+  await expect(dock(page)).not.toHaveAttribute("data-reading", "true");
 
   await page.mouse.wheel(0, 600);
-  await expect(nav).toHaveClass(/translate-y-full/);
-  await expect(async () => {
-    const d = (await dock(page).boundingBox())!;
-    expect(PHONE.height - (d.y + d.height)).toBeLessThan(24);
-  }).toPass();
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
+  await expect(dock(page)).not.toHaveAttribute("aria-hidden", "true");
+  await page.waitForTimeout(800);
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
+
+  await page.mouse.wheel(0, -200);
+  await expect(dock(page)).not.toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "1");
+  await expect(nav).not.toHaveClass(/translate-y-full/);
+  await expect(aboveNav).toPass();
+});
+
+test("움직임 줄이기에서도 읽는 동안 독은 숨되, 미끄러지지 않고 바로 숨는다", async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(POST);
+  await expect(dock(page)).toBeVisible({ timeout: 30_000 });
+  await expect(dock(page)).toHaveCSS("transition-property", "none");
+  await page.mouse.wheel(0, 600);
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
+});
+
+test("읽는 동안 숨은 독도 키보드로 들어가면 다시 보인다", async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.goto(POST);
+  await expect(dock(page)).toBeVisible({ timeout: 30_000 });
+  await page.mouse.wheel(0, 600);
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await dock(page).getByRole("button", { name: /글 좋아요$/ }).focus();
+  await expect(dock(page)).toHaveCSS("opacity", "1");
 });
 
 test("목차 버튼은 제목 시트를 열고, 제목을 고르면 시트가 닫히며 그 자리로 간다", async ({ page }) => {
@@ -112,7 +142,7 @@ test("휴대폰 헤더의 ⋯에 공유·노트로 인용이 있고, 데스크�
   const header = page.locator("article header").first();
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   await expect(header.getByRole("button", { name: "공유" })).toBeHidden();
-  await expect(page.getByTestId("post-actions")).toBeHidden();
+  await expect(page.getByTestId("post-actions").getByRole("button", { name: "공유" })).toBeAttached();
   await header.getByRole("button", { name: "글 메뉴", exact: true }).click();
   await expect(page.getByRole("menuitem")).toHaveText(["공유", "노트로 인용", "차단", "신고"]);
   await page.getByRole("menuitem", { name: "노트로 인용" }).click();
@@ -135,26 +165,31 @@ test("내 글의 ⋯은 수정·삭제가 먼저이고, 휴대폰에선 공유·
   await expect(page.getByRole("menuitem")).toHaveText(["수정", "삭제", "공유", "노트로 인용"]);
 });
 
-test("휴대폰 글 끝은 iOS처럼 태그 → 다음 편 → 작가 카드 → 다음 읽을 글 → 댓글 순서다", async ({ page }) => {
-  await page.setViewportSize(PHONE);
-  await page.goto(POST);
-  await expect(page.getByTestId("post-author-card")).toBeAttached({ timeout: 30_000 });
-  const top = async (loc: ReturnType<Page["locator"]>) => (await loc.evaluate((el) => el.getBoundingClientRect().top + window.scrollY));
-  const order = [
-    await top(page.getByTestId("post-tags")),
-    await top(page.getByText("이 시리즈의 다음 편")),
-    await top(page.locator("[data-post-end]")),
-    await top(page.getByTestId("post-author-card")),
-    await top(page.getByRole("heading", { name: "다음 읽을 글" })),
-    await top(page.locator("#comments")),
-  ];
-  expect([...order].sort((a, b) => a - b)).toEqual(order);
-  await expect(page.getByTestId("post-author-card").getByRole("link", { name: /@dohyun/ })).toBeVisible();
-  await expect(page.locator("article").getByRole("link", { name: "@dohyun님의 다른 글" })).toHaveCount(0);
-
-  await page.goto("/ko/p/haruka/hexagonal-too-much");
-  await expect(page.getByTestId("post-author-card").getByRole("button", { name: /팔로우/ })).toBeVisible({ timeout: 30_000 });
-});
+for (const viewport of [PHONE, { width: 1440, height: 900 }]) {
+  test(`${viewport.width}px 글 끝은 태그 → 반응 줄 → 다음 편 → 작가 카드 → 댓글 → 담긴 컬렉션 → 다음 읽을 글 순서다`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/ko/p/haruka/hexagonal-too-much");
+    await expect(page.getByText("이 글이 담긴 컬렉션")).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId("post-actions")).toBeVisible();
+    await expect(page.getByTestId("post-author-card")).toBeVisible();
+    const top = async (loc: ReturnType<Page["locator"]>) => (await loc.evaluate((el) => el.getBoundingClientRect().top + window.scrollY));
+    const order = [
+      await top(page.getByTestId("post-tags")),
+      await top(page.getByTestId("post-actions")),
+      await top(page.getByRole("link", { name: "시리즈 전체 3편 보기" })),
+      await top(page.locator("[data-post-end]")),
+      await top(page.getByTestId("post-author-card")),
+      await top(page.locator("#comments")),
+      await top(page.getByText("이 글이 담긴 컬렉션")),
+      await top(page.getByRole("heading", { name: "다음 읽을 글" })),
+    ];
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    await expect(page.getByText("엮인 것", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("이 글을 엮은 사람", { exact: true })).toHaveCount(0);
+    await expect(page.getByTestId("post-author-card").getByRole("button", { name: /팔로우/ })).toBeVisible();
+    await expect(page.locator("article").getByRole("link", { name: "@haruka님의 다른 글" })).toHaveCount(0);
+  });
+}
 
 test("나를 차단한 작가의 글엔 휴대폰 독도 없다", async ({ page }) => {
   await page.setViewportSize(PHONE);
@@ -176,13 +211,16 @@ test("휴대폰 글 끝 섹션은 본문 h2 와 같은 32px 간격으로 이어�
 
   const sections = [
     page.locator("aside").filter({ has: all }),
-    page.locator("section").filter({ has: page.getByText("이 글이 담긴 컬렉션") }),
     page.getByTestId("post-author-card"),
+    page.locator("section#comments"),
+    page.locator("section").filter({ has: page.getByText("이 글이 담긴 컬렉션") }),
     page.locator("section[aria-label='다음 읽을 글']"),
   ];
-  await expect(sections[3]).toBeVisible();
+  await expect(sections[4]).toBeVisible();
   const tags = (await page.getByTestId("post-tags").boundingBox())!;
-  let above = tags.y + tags.height;
+  const actions = (await page.getByTestId("post-actions").boundingBox())!;
+  expect(Math.round(actions.y - (tags.y + tags.height))).toBe(32);
+  let above = actions.y + actions.height;
   for (const section of sections) {
     const box = (await section.boundingBox())!;
     expect(Math.round(box.y - above)).toBe(32);

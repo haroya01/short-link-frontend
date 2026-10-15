@@ -105,7 +105,7 @@ export default function BlogAnalyticsPage() {
   return (
     // max-w-3xl: 내 글(2xl)·알림(2xl)과 같은 워크스페이스 호흡에 차트·지표 행만큼만 넓게 —
     // 4xl 은 행 목록이 황량하게 벌어져 혼자 대시보드 같았다.
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-6 py-10">
       {/* 분석은 계정 메뉴의 전용 진입점에서 들어오는 독립 화면 — '내 글로 돌아가기' 백링크는 두지 않는다. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("analyticsTitle")}</h1>
@@ -233,7 +233,7 @@ export default function BlogAnalyticsPage() {
             ))}
         </>
       )}
-    </main>
+    </div>
   );
 }
 

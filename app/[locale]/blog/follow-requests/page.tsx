@@ -25,14 +25,14 @@ export default function FollowRequestsPage() {
 
   if (ready && !authenticated) {
     return (
-      <main>
+      <div>
         <SignInEmptyState page reason="followRequests" icon={UserPlus} />
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <BlogLink
         href={blogPath("/notifications")}
         className="focus-ring -ml-1 inline-flex items-center gap-1 rounded text-[13px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
@@ -78,7 +78,7 @@ export default function FollowRequestsPage() {
                   className="flex flex-wrap items-center gap-3 border-b border-slate-100 px-2 py-3.5 last:border-b-0 dark:border-slate-800/80"
                 >
                   <BlogLink href={href} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface">
-                    <Avatar src={r.avatarUrl} name={r.handle} size="md" />
+                    <Avatar src={r.avatarUrl} name={r.displayName || r.handle} seed={r.userId} size="md" />
                     <span className="min-w-0">
                       <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                         {r.displayName || r.handle}
@@ -96,6 +96,6 @@ export default function FollowRequestsPage() {
           </ul>
         )}
       </div>
-    </main>
+    </div>
   );
 }

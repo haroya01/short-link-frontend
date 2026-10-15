@@ -1,7 +1,6 @@
 "use client";
 
-import { TriangleAlert } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { QuotedNote } from "@/modules/notes/api/notes";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -21,23 +20,34 @@ export function QuotedNoteCard({
   full?: boolean;
 }) {
   const locale = useLocale();
+  const tNotes = useTranslations("notes");
   const ago = useCompactTime();
   const content = (
     <>
       <span className="flex min-w-0 items-center gap-1.5 text-[14px] leading-5">
-        <Avatar src={note.author.avatarUrl} name={note.author.username} size="xs" />
+        <Avatar src={note.author.avatarUrl} name={note.author.displayName || note.author.username} seed={note.author.remoteId ? null : note.author.id} size="xs" />
         <span className="truncate font-semibold text-slate-900 dark:text-slate-100">{note.author.username}</span>
         <time dateTime={note.createdAt} suppressHydrationWarning className="shrink-0 text-slate-500 dark:text-slate-400">
           {ago(note.createdAt)}
         </time>
       </span>
       {note.contentWarning ? (
-        <span className="mt-1 flex items-center gap-1.5 text-[15px] font-medium leading-[1.45] text-slate-800 dark:text-slate-200">
-          <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
-          <span lang={contentLang(note.contentWarning)} className="line-clamp-2 break-words">
+        <>
+          <span
+            lang={contentLang(note.contentWarning)}
+            className="mt-1 line-clamp-2 break-words text-[15px] leading-[1.45] text-slate-900 dark:text-slate-100"
+          >
             {note.contentWarning}
           </span>
-        </span>
+          {note.body && (
+            <span
+              aria-hidden
+              className="mt-0.5 line-clamp-2 select-none break-words text-[15px] leading-[1.45] text-slate-800 blur-[6px] dark:text-slate-200"
+            >
+              {note.body}
+            </span>
+          )}
+        </>
       ) : (
         note.body && (
           <span
@@ -48,18 +58,25 @@ export function QuotedNoteCard({
           </span>
         )
       )}
-      {!note.contentWarning && !note.sensitive && note.media.length > 0 && (
+      {note.media.length > 0 && (
         <span className="mt-2 flex gap-1.5">
-          {note.media.map((image) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={image.url}
-              src={image.url}
-              alt={image.altText ?? ""}
-              loading="lazy"
-              className="h-16 w-16 shrink-0 rounded-inner border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900"
-            />
-          ))}
+          {note.media.map((image) => {
+            const concealed = Boolean(note.contentWarning) || note.sensitive === true;
+            return (
+              <span
+                key={image.url}
+                className="block h-16 w-16 shrink-0 overflow-hidden rounded-inner border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={image.url}
+                  alt={concealed ? tNotes("concealedPhoto") : image.altText ?? ""}
+                  loading="lazy"
+                  className={`h-full w-full object-cover${concealed ? " scale-110 blur-md" : ""}`}
+                />
+              </span>
+            );
+          })}
         </span>
       )}
     </>

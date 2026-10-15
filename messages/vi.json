@@ -2,6 +2,7 @@
   "comments": {
     "heading": "Bình luận",
     "count": "{count, plural, =0 {Bình luận} one {# bình luận} other {# bình luận}}",
+    "showAll": "Xem tất cả {count, number} bình luận",
     "placeholder": "Viết bình luận",
     "submit": "Bình luận",
     "submitting": "Đang đăng…",
@@ -271,6 +272,7 @@
     "settingsSubtitle": "Cài đặt tài khoản và hiển thị.",
     "settingsAccount": "Tài khoản",
     "settingsEditProfile": "Chỉnh sửa hồ sơ",
+    "settingsEditCard": "Chỉnh sửa danh thiếp",
     "settingsAccountSettings": "Cài đặt tài khoản đầy đủ",
     "settingsViewBlog": "Xem blog của tôi",
     "settingsDisplay": "Hiển thị",
@@ -279,7 +281,7 @@
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
     "rowDelete": "Xóa",
     "curationLiked": "Bài đã thích",
-    "curationHighlights": "Đánh dấu & ghi chú công khai",
+    "curationHighlights": "Đánh dấu & ghi chú",
     "curationComments": "Bình luận của tôi",
     "curationLikedEmpty": "Chưa có bài nào được thích.",
     "curationHistory": "Lịch sử đọc",
@@ -299,12 +301,6 @@
     "settingsUnfollowTag": "Bỏ theo dõi {tag}",
     "analyticsPeakDay": "Ngày cao nhất {date} · {count, number} lượt xem",
     "analyticsLifetimeCaption": "Toàn thời gian",
-    "displayNameTitle": "Tên hiển thị",
-    "displayNamePlaceholder": "Tên hoặc biệt danh",
-    "displayNameSave": "Lưu",
-    "displayNameHint": "Hiển thị trước tên người dùng trên ghi chú và hồ sơ blog. Để trống sẽ hiện tên người dùng.",
-    "displayNameSaved": "Đã đổi tên hiển thị",
-    "displayNameFailed": "Không thể đổi tên hiển thị",
     "settingsLocked": "Tự duyệt người theo dõi",
     "settingsLockedHint": "Khi bật, người theo dõi mới sẽ gửi yêu cầu và chỉ trở thành người theo dõi khi bạn chấp nhận. Tài khoản ở máy chủ khác cũng vậy.",
     "settingsUnlockTitle": "Tắt tự duyệt người theo dõi?",
@@ -333,7 +329,7 @@
     "backToList": "Bài viết",
     "titlePlaceholder": "Tiêu đề",
     "imageCaptionPlaceholder": "Thêm chú thích (không bắt buộc)",
-    "bodyPlaceholder": "Gõ '/' để chèn khối, hoặc cứ bắt đầu viết",
+    "bodyPlaceholder": "Gõ / để chèn khối",
     "blockMenu": {
       "add": "Thêm khối bên dưới",
       "embedMedia": "Nội dung nhúng",
@@ -344,14 +340,7 @@
       "paragraph": "Văn bản"
     },
     "urlDialog": {
-      "linkTitle": "Liên kết",
-      "embedTitle": "Thẻ liên kết · Video",
-      "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "https://… (liên kết, YouTube, Vimeo)",
-      "confirm": "Thêm",
-      "cancel": "Hủy",
-      "remove": "Gỡ liên kết",
-      "linkTextPlaceholder": "Văn bản hiển thị (tùy chọn)"
+      "remove": "Gỡ liên kết"
     },
     "table": {
       "addColumn": "Thêm cột",
@@ -392,7 +381,7 @@
     "previewCopied": "Đã sao chép liên kết xem trước",
     "previewCopyError": "Không sao chép được liên kết",
     "saveChanges": "Lưu thay đổi",
-    "previewCardLabel": "Bài viết của bạn sẽ hiển thị thế này",
+    "previewCardLabel": "Hiển thị thế này",
     "coverAdd": "Thêm ảnh",
     "coverUploading": "Đang tải lên…",
     "coverReplace": "Thay thế",
@@ -546,6 +535,7 @@
     "importMd": "Nhập .md",
     "importProgress": "Đang nhập {done}/{total}…",
     "importPartialError": "Một số tệp không nhập được. Kiểm tra lại các tệp và thử lại.",
+    "importDone": "Đã nhập {count} bài",
     "exportAll": "Xuất tất cả",
     "exportAllHint": "Tải toàn bộ bài viết dưới dạng tệp zip Markdown (.md)",
     "exportAllFailed": "Xuất không thành công. Vui lòng thử lại sau.",
@@ -577,7 +567,7 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên",
+    "bodyPlaceholderTouch": "Nội dung",
     "statusTakenDown": "Đã bị gỡ",
     "takenDownTitle": "Bài viết này đã bị gỡ theo chính sách nội dung",
     "takenDownBody": "Bạn vẫn có thể chỉnh sửa và lưu, nhưng không thể công khai lại. Nếu không đồng ý, hãy liên hệ qua địa chỉ trong Điều khoản.",
@@ -603,11 +593,13 @@
       "actions": "Liên kết",
       "open": "Mở",
       "edit": "Sửa",
-      "shortenHint": "Chèn liên kết kurl đã rút gọn",
       "update": "Lưu",
       "previewLoading": "Đang tải bản xem trước…",
       "previewFailed": "Không tải được bản xem trước"
-    }
+    },
+    "saveFailedRetry": "Chưa lưu · Thử lại",
+    "reschedule": "Đổi thời gian",
+    "previewOpenError": "Không mở được bản xem trước"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -636,7 +628,7 @@
     "clearHistoryCancel": "Hủy",
     "forget": "Gỡ khỏi lịch sử",
     "loadMore": "Xem thêm",
-    "highlightsSearch": "Tìm câu, ghi chú công khai hoặc tiêu đề bài viết",
+    "highlightsSearch": "Tìm câu, ghi chú hoặc tiêu đề bài viết",
     "noResults": "Không có đoạn nào khớp.",
     "emptyFolder": "Thư mục này trống.",
     "saveFailed": "Không thể lưu thay đổi của bạn. Vui lòng thử lại.",
@@ -695,6 +687,8 @@
     "highlightDeleteError": "Không thể xóa. Vui lòng thử lại.",
     "highlightSaved": "Đã đánh dấu",
     "highlightNoteSaved": "Đã thêm ghi chú",
+    "highlightMemoOf": "Ghi chú của {name}",
+    "highlightMemoMine": "Ghi chú của tôi",
     "highlightSaveError": "Không thể lưu. Vui lòng thử lại.",
     "highlightsShownCount": "{count, number} đánh dấu",
     "highlightsHidden": "Đã ẩn đánh dấu",
@@ -840,7 +834,8 @@
     "highlightRemoved": "Đã xóa đánh dấu",
     "highlightLinkCopied": "Đã sao chép liên kết",
     "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn",
-    "reportTitleHighlightReply": "Báo cáo trả lời này"
+    "reportTitleHighlightReply": "Báo cáo trả lời này",
+    "publishedStatus": "Đã xuất bản"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -912,8 +907,7 @@
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
     "description": "Rút gọn một URL dài và xem mỗi lượt nhấp đến từ thiết bị, kênh và quốc gia nào, không tính bot.",
     "ogHeadlineTop": "URL ngắn +",
-    "ogHeadlineBottom": "Phân tích lượt nhấp",
-    "ogSubline": "Xem mỗi lượt nhấp đến từ đâu: thiết bị, kênh, quốc gia và thời gian"
+    "ogHeadlineBottom": "Phân tích lượt nhấp"
   },
   "notifications": {
     "webPushLabel": "Thông báo trên trình duyệt",
@@ -1053,7 +1047,14 @@
     "prefSectionNotes": "Ghi chú của bạn",
     "prefSectionConversation": "Cuộc trò chuyện",
     "prefSectionPeople": "Mọi người",
-    "prefSectionSubscriptions": "Tin đã đăng ký"
+    "prefSectionSubscriptions": "Tin đã đăng ký",
+    "post_first_reader": "Bài của bạn đã có người đọc đầu tiên",
+    "post_read_milestone": "{milestone, number} người đã đọc bài của bạn",
+    "post_read_grew": "Thêm nhiều người đã đọc bài của bạn",
+    "prefPostFirstReader": "Người đọc đầu tiên",
+    "prefPostFirstReaderHint": "Khi bài của bạn có người đọc đầu tiên",
+    "prefPostReadMilestone": "Các mốc người đọc",
+    "prefPostReadMilestoneHint": "Khi bài của bạn đạt 10, 100, 1.000 người đọc. Không tính lượt xem của chính bạn và bot"
   },
   "nav": {
     "events": "Sự kiện",
@@ -1068,6 +1069,7 @@
     "liked": "Bài đã thích",
     "library": "Thư viện",
     "myCollections": "Bộ sưu tập của tôi",
+    "studio": "Studio",
     "showcase": "Ví dụ",
     "campaigns": "Chiến dịch QR",
     "campaignsTab": "Chiến dịch",
@@ -1165,7 +1167,7 @@
     }
   },
   "shortenForm": {
-    "placeholder": "Dán URL dài của bạn vào đây",
+    "placeholder": "Dán URL dài",
     "submit": "Rút gọn",
     "heroSubmit": "Rút gọn",
     "advancedToggle": "Tùy chọn nâng cao",
@@ -1181,7 +1183,7 @@
       "passwordEmpty": "Vui lòng nhập mật khẩu.",
       "invalid": "URL phải bắt đầu bằng http:// hoặc https://.",
       "malicious": "URL này bị gắn cờ là độc hại hoặc lừa đảo.",
-      "duplicate": "Mã tùy chỉnh này đã được dùng. Thử mã khác.",
+      "duplicate": "Mã này đã được dùng. Hãy chọn mã khác.",
       "customCodeFormat": "Mã tùy chỉnh chỉ được gồm 3-16 chữ cái hoặc chữ số.",
       "urlScheme": "URL phải bắt đầu bằng http:// hoặc https://.",
       "urlBlank": "Vui lòng nhập URL.",
@@ -1195,7 +1197,6 @@
   },
   "result": {
     "completed": "Liên kết ngắn của bạn đã sẵn sàng",
-    "nextStepHint": "Sao chép, mở nó, và bắt đầu theo dõi hiệu quả.",
     "originalUrl": "URL gốc",
     "passwordProtected": "Có mật khẩu",
     "passwordNotApplied": "Chưa đặt được mật khẩu. Hãy đặt lại trong phần quản lý liên kết.",
@@ -1263,6 +1264,7 @@
     "lists": "Đăng nhập để xem danh sách của bạn",
     "noteBookmarks": "Đăng nhập để xem các ghi chú đã đánh dấu",
     "remote": "Đăng nhập để tìm tài khoản ở máy chủ khác",
+    "remoteAccount": "Đăng nhập để xem tài khoản ở máy chủ khác",
     "collections": "Đăng nhập để xem bộ sưu tập của bạn",
     "links": "Đăng nhập để xem liên kết của bạn",
     "campaigns": "Đăng nhập để chạy chiến dịch QR",
@@ -1295,6 +1297,22 @@
       "toggleToCode": "Dùng mã từ ứng dụng xác thực",
       "expired": "Phiên xác thực đã hết hạn."
     }
+  },
+  "profileEdit": {
+    "title": "Chỉnh sửa hồ sơ",
+    "photoAdd": "Thêm ảnh",
+    "photoChange": "Đổi ảnh",
+    "nameLabel": "Tên hiển thị",
+    "namePlaceholder": "Tên hoặc biệt danh",
+    "nameHint": "Hiển thị trước tên người dùng trên ghi chú và hồ sơ blog. Để trống sẽ hiện tên người dùng.",
+    "bioLabel": "Giới thiệu",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "saveFailed": "Không lưu được",
+    "loadFailed": "Không tải được hồ sơ",
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục chỉnh sửa"
   },
   "avatar": {
     "change": "Đổi ảnh hồ sơ",
@@ -1343,10 +1361,8 @@
       "weekClicks": "Lượt nhấp của người trong 7 ngày",
       "weekClicksHint": "7 ngày qua · loại truy cập tự động",
       "zeroClick": "Liên kết không có lượt nhấp",
-      "zeroClickReview": "Xem lại vị trí đặt hoặc CTA",
       "zeroClickClear": "Mọi liên kết đều đã có lượt nhấp",
       "expiring": "Sắp hết hạn",
-      "expiringReview": "Gia hạn hoặc dọn dẹp sớm",
       "expiringClear": "Không có hết hạn gấp",
       "topLink": "Liên kết hàng đầu",
       "weekDelta": "+{count} trong 7 ngày qua",
@@ -1378,7 +1394,7 @@
     },
     "noResultTitle": "Không có kết quả",
     "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
-    "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại. Hãy thử điều chỉnh.",
+    "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại.",
     "table": {
       "shortUrl": "Tên liên kết",
       "originalUrl": "Điểm đến",
@@ -1471,7 +1487,6 @@
       "uploadAnother": "Tải lên tệp khác",
       "done": "Xong"
     },
-    "librarySubtitle": "Tìm và sao chép liên kết, rồi xem hiệu quả.",
     "loadFailed": "Không tải được liên kết. Vui lòng thử lại.",
     "overviewFailed": "Không tải được thống kê tài khoản.",
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
@@ -2610,12 +2625,12 @@
   },
   "terms": {
     "title": "Điều khoản dịch vụ",
-    "updatedAt": "Cập nhật lần cuối: 2026-07-21",
+    "updatedAt": "Cập nhật lần cuối: 2026-10-13",
     "intro": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl (\"Dịch vụ\"). Khi sử dụng Dịch vụ, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng Dịch vụ.",
     "sections": [
       {
         "h": "1. Giới thiệu dịch vụ",
-        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, hồ sơ, bình luận và bộ sưu tập — trên web và ứng dụng iOS. Chúng tôi có thể thêm, thay đổi hoặc gỡ bỏ tính năng theo thời gian."
+        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, ghi chú, hồ sơ, bình luận và bộ sưu tập — trên web và ứng dụng iOS. Chúng tôi có thể thêm, thay đổi hoặc gỡ bỏ tính năng theo thời gian."
       },
       {
         "h": "2. Điều kiện và tài khoản",
@@ -2627,15 +2642,15 @@
       },
       {
         "h": "4. Nội dung của bạn — quyền sở hữu và giấy phép",
-        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu — bao gồm qua các đơn vị xử lý lưu trữ và CDN cần thiết — nhằm vận hành Dịch vụ. Giấy phép này không mở rộng sang tiếp thị hay bán lại. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm."
+        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, ghi chú, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu — bao gồm qua các đơn vị xử lý lưu trữ và CDN cần thiết — nhằm vận hành Dịch vụ. Giấy phép này không mở rộng sang tiếp thị hay bán lại. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm. Trừ khi bạn tắt trong Cài đặt, ghi chú của bạn cũng được gửi qua ActivityPub tới người theo dõi bạn trên các máy chủ khác (như Mastodon). Khi bạn xóa một ghi chú, chúng tôi yêu cầu các máy chủ đó xóa theo, nhưng không thể đảm bảo các bản sao đã được gửi sẽ bị xóa."
       },
       {
         "h": "5. Nội dung và hành vi bị cấm",
-        "p": "Không đăng nội dung bất hợp pháp, nội dung cổ xúy hoặc tôn vinh bạo lực, xâm phạm quyền của người khác, thù ghét, quấy rối hoặc phân biệt đối xử, nội dung khiêu dâm hoặc nội dung tình dục liên quan đến trẻ vị thành niên, spam hoặc mã độc, mạo danh, đăng dữ liệu cá nhân của người khác khi chưa được đồng ý, hoặc thu thập tự động và gây quá tải Dịch vụ."
+        "p": "Không đăng nội dung bất hợp pháp, nội dung cổ xúy hoặc tôn vinh bạo lực, xâm phạm quyền của người khác, thù ghét, quấy rối hoặc phân biệt đối xử, nội dung khiêu dâm hoặc nội dung tình dục liên quan đến trẻ vị thành niên, spam hoặc mã độc, mạo danh, đăng dữ liệu cá nhân của người khác khi chưa được đồng ý, hoặc thu thập tự động và gây quá tải Dịch vụ. Chúng tôi không khoan nhượng với những nội dung như vậy và với người đăng chúng: nội dung được xác nhận vi phạm sẽ bị gỡ, và tài khoản đã đăng sẽ bị xử lý theo Điều 7."
       },
       {
         "h": "6. Báo cáo và gỡ bỏ",
-        "p": "Bất kỳ ai (kể cả khách chưa đăng nhập) có thể báo cáo một bài viết, hồ sơ hoặc bình luận vi phạm các điều khoản này (bất hợp pháp, xâm phạm quyền, thù ghét, quấy rối, doxxing, spam, v.v.) bằng nút báo cáo. Chủ sở hữu bản quyền cũng có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Sau khi xem xét, chúng tôi có thể gỡ nội dung hoặc xử lý tài khoản, và khi có thể, thông báo cho người dùng bị ảnh hưởng về lý do (trừ trường hợp khẩn cấp hoặc theo yêu cầu pháp luật). Người dùng bị xử lý có thể khiếu nại tại cùng địa chỉ liên hệ, và nội dung được khôi phục nếu không xác định được vi phạm. Tài khoản vi phạm nhiều lần có thể bị đình chỉ."
+        "p": "Bất kỳ ai (kể cả khách chưa đăng nhập) có thể báo cáo một bài viết, ghi chú, bình luận, phản hồi tô sáng hoặc hồ sơ vi phạm các điều khoản này (bất hợp pháp, xâm phạm quyền, thù ghét, quấy rối, doxxing, spam, v.v.) bằng nút báo cáo. Ghi chú đến từ máy chủ khác cũng có thể được báo cáo theo cách này, và nếu người báo cáo chọn, báo cáo cũng được chuyển ẩn danh tới nhà vận hành máy chủ đó. Chủ sở hữu bản quyền cũng có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Chúng tôi xem xét mỗi báo cáo trong vòng 48 giờ kể từ khi nhận, sau đó có thể gỡ nội dung hoặc xử lý tài khoản, và khi có thể, thông báo cho người dùng bị ảnh hưởng về lý do (trừ trường hợp khẩn cấp hoặc theo yêu cầu pháp luật). Người dùng bị xử lý có thể khiếu nại tại cùng địa chỉ liên hệ, và nội dung được khôi phục nếu không xác định được vi phạm. Tài khoản vi phạm nhiều lần có thể bị đình chỉ."
       },
       {
         "h": "7. Quyền của nhà vận hành và xử lý lạm dụng",
@@ -2821,8 +2836,8 @@
       "sectionFeed": "Dòng tin hồ sơ",
       "quickAdd": {
         "title": "Thêm liên kết",
-        "firstTitle": "Thêm liên kết đầu tiên ↓",
-        "firstHint": "Thêm bất kỳ URL nào như Instagram, blog, YouTube kèm nhãn, và nó sẽ hiện trên liên kết bio của bạn.",
+        "firstTitle": "Thêm liên kết đầu tiên",
+        "firstHint": "Mọi URL như Instagram, blog, YouTube đều hiện trên liên kết bio của bạn kèm nhãn.",
         "hint": "Dán bất kỳ URL nào + một nhãn. Chúng tôi rút gọn và đưa nó nổi bật. Thêm bao nhiêu tùy thích.",
         "urlPlaceholder": "https://... hoặc mailto:...",
         "labelPlaceholder": "Nhãn (ví dụ: 📝 Blog)",
@@ -2845,13 +2860,13 @@
       "openShort": "Mở",
       "yourPage": "Hồ sơ công khai",
       "featuredTitle": "Dòng tin hồ sơ",
-      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓), ★ để đưa một mục lên đầu làm mục nổi bật, 'Gỡ' để gỡ. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
+      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓). Liên kết có ★ nằm trên cùng làm mục nổi bật. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
       "sectionExpand": "Mở rộng phần",
       "sectionCollapse": "Thu gọn phần",
       "sectionItemCount": "{count} mục",
-      "featuredEmpty": "Thêm một liên kết từ bên dưới hoặc chèn tiêu đề / đường phân cách để bắt đầu một phần.",
+      "featuredEmpty": "Chưa có liên kết nào để hiển thị.",
       "featuredEmptyTitle": "Dòng tin hồ sơ của bạn đang trống",
-      "featuredEmptyHasOthers": "Dùng biểu mẫu 'Thêm liên kết' ở trên, hoặc chọn từ các liên kết khác của bạn ({count}) bên dưới.",
+      "featuredEmptyHasOthers": "Chưa có liên kết nào để hiển thị. Bạn có {count} liên kết khác để chọn.",
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
       "remove": "Xóa",
@@ -3046,7 +3061,7 @@
         "csvExcludesOptedOut": "Các mục được đánh dấu từ chối tự động bị loại khỏi CSV.",
         "loading": "Đang tải...",
         "loadFailed": "Không tải được khách tiềm năng.",
-        "errorHint": "Vui lòng thử lại sau giây lát. Nếu vẫn lỗi, thử làm mới trang.",
+        "errorHint": "Vui lòng thử lại sau giây lát.",
         "retry": "Thử lại",
         "downloadCsv": "Tải CSV",
         "backToEditor": "Quay lại trình chỉnh sửa",
@@ -3856,8 +3871,6 @@
     "kindredCuratorsTitle": "Người tuyển chọn cùng gu",
     "sharedItems": "{count} điểm chung",
     "postEdgesPathsTitle": "Những bộ sưu tập có bài viết này",
-    "postEdgesRelatedTitle": "Đọc liên quan",
-    "postEdgesCuratorsTitle": "Người đã kết nối bài viết này",
     "postEdgesPathPosition": "Bài {position} trên {total}",
     "connectStep1Title": "Đặt vào đâu nhỉ?",
     "connectStep2Title": "Vì sao bạn kết nối nó?",
@@ -4007,9 +4020,7 @@
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loadFailed": "Không tải được danh sách.",
-      "emptyTitle": "Tạo trang sự kiện đầu tiên",
-      "emptyBody": "Tạo trang giới thiệu và mẫu đăng ký, rồi quản lý sĩ số và xem nguồn đăng ký ngay tại đây."
+      "loadFailed": "Không tải được danh sách."
     },
     "form": {
       "newTitle": "Sự kiện mới",
@@ -4125,7 +4136,7 @@
     "attendees": {
       "title": "{count} người đăng ký",
       "exportCsv": "Xuất CSV",
-      "empty": "Chưa có ai đăng ký. Hãy chia sẻ liên kết vào nhóm chat.",
+      "empty": "Chưa có ai đăng ký.",
       "name": "Họ tên",
       "contact": "Liên hệ",
       "channel": "Kênh",
@@ -4189,11 +4200,15 @@
     "pageIntro": "Ghi lại suy nghĩ ngắn và ảnh một cách nhẹ nhàng. Bạn cũng có thể theo dõi từ Mastodon và Misskey.",
     "composerPlaceholder": "Viết ghi chú",
     "replyPlaceholder": "Viết câu trả lời",
+    "replyLabel": "Viết trả lời",
+    "replySheetTitle": "Trả lời",
+    "replyPrompt": "Trả lời {name}",
+    "replyPosted": "Đã đăng trả lời",
+    "view": "Xem",
     "threadAdd": "Thêm vào chuỗi",
     "threadPlaceholder": "Viết tiếp",
     "threadRemove": "Bỏ ghi chú này",
     "submit": "Đăng",
-    "replySubmit": "Trả lời",
     "posting": "Đang đăng…",
     "remaining": "Còn {count} ký tự",
     "visibilityPublic": "Ai cũng có thể xem",
@@ -4224,7 +4239,6 @@
     "likeCount": "{count, number} lượt thích",
     "replyCount": "{count, number} trả lời",
     "repliesTitle": "Trả lời",
-    "noReplies": "Chưa có trả lời",
     "menu": "Menu ghi chú",
     "replyPolicyLabel": "Ai có thể trả lời",
     "replyPolicyPrefix": "Trả lời:",
@@ -4348,12 +4362,12 @@
     "seriesNotYours": "Chỉ có thể thêm ghi chú của bạn vào series của bạn",
     "seriesSlugTaken": "Đã có series với địa chỉ này. Hãy thử tên khác",
     "warningToggle": "Cảnh báo nội dung",
+    "concealedShow": "Xem nội dung bị ẩn",
+    "concealedPhotoShow": "Xem ảnh bị ẩn",
+    "concealedPhoto": "Ảnh bị ẩn",
     "warningLabel": "Cảnh báo nội dung",
-    "warningPlaceholder": "Cảnh báo nội dung (vd: tiết lộ nội dung)",
-    "sensitiveToggle": "Đánh dấu ảnh nhạy cảm",
-    "showContent": "Xem",
-    "hideContent": "Ẩn",
-    "sensitiveMedia": "Ảnh nhạy cảm · chạm để xem",
+    "warningPlaceholder": "Cảnh báo nội dung",
+    "sensitiveToggle": "Ảnh nhạy cảm",
     "showReposts": "Hiện bài đăng lại",
     "settingFailed": "Không thể thay đổi cài đặt",
     "authorMenu": "Menu hồ sơ",
@@ -4398,6 +4412,12 @@
     "pollMultiple": "Chọn nhiều",
     "pollAdd": "Thêm bình chọn",
     "pollRemove": "Bỏ bình chọn",
+    "pollNoDeadline": "Không có hạn chót",
+    "remoteOpen": "Xem bài gốc",
+    "remoteVote": "Bình chọn ở bài gốc",
+    "remoteVideo": "Video",
+    "remoteOpenLabel": "{title}, xem bài gốc ({host})",
+    "remoteOpenHost": "Xem bài gốc ({host})",
     "muteMenu": "Tắt tiếng…",
     "unmute": "Bật tiếng",
     "mute": "Tắt tiếng",
@@ -4425,6 +4445,11 @@
     "blockedUsersTitle": "Tài khoản đã chặn",
     "blockedUsersHint": "Bài viết, bình luận và ghi chú của họ luôn bị ẩn. Bạn có thể chặn từ menu ⋯ trên trang của họ, bài viết hoặc bình luận.",
     "blockedUsersEmpty": "Chưa chặn tài khoản nào.",
+    "mutedUsersTitle": "Tài khoản đã tắt tiếng",
+    "mutedUsersHint": "Ghi chú của họ không xuất hiện trong bảng tin và trả lời, nhưng vẫn hiển thị trên hồ sơ.",
+    "mutedUsersEmpty": "Chưa tắt tiếng tài khoản nào.",
+    "mutedUntil": "Đến {when}",
+    "unmuteUser": "Bật tiếng {username}",
     "unblockUser": "Bỏ chặn {username}",
     "filteredBy": "Đã lọc: {phrases}",
     "showFiltered": "Xem",
@@ -4462,7 +4487,11 @@
       "blocked": "Bạn không thể theo dõi tài khoản trên máy chủ đã chặn",
       "other": "Không thể cập nhật. Hãy thử lại sau giây lát"
     },
-    "remoteAccountSection": "Tài khoản ở máy chủ khác",
+    "remoteSection": "Máy chủ khác",
+    "remoteSearchSignIn": "Đăng nhập để tìm người ở máy chủ khác",
+    "remoteSearchNotFound": "Không tìm thấy trên {domain}",
+    "remoteSearchUnreachable": "{domain} không phản hồi",
+    "remoteSearchHint": "Tìm người ở máy chủ khác bằng @tên@máy-chủ",
     "remoteLookingUp": "Đang hỏi máy chủ đó…",
     "remoteNotFound": "Không tìm thấy tài khoản trên máy chủ đó",
     "remoteCaption": "Tài khoản này ở {domain}. Theo dõi sẽ gửi yêu cầu đến {domain}.",
@@ -4488,6 +4517,10 @@
     "domainUnblockedToast": "Đã bỏ chặn {domain}",
     "domainBlockFailed": "Không thể thay đổi việc chặn máy chủ. Vui lòng thử lại sau",
     "domainBlockedTitle": "Bạn đã chặn máy chủ này",
+    "remoteBlockedTitle": "Bạn đã chặn tài khoản này",
+    "remoteBlockHint": "Bạn sẽ không còn thấy ghi chú của tài khoản này. Lượt theo dõi giữa hai bên cũng bị hủy, theo cả hai chiều.",
+    "remoteBlockedToast": "Đã chặn {acct}. Ghi chú đã được ẩn",
+    "remoteMuteHint": "Ghi chú của {acct} sẽ bị ẩn khỏi bảng tin và trả lời. Trang tài khoản vẫn hiển thị và họ không được thông báo.",
     "domainBlocksTitle": "Máy chủ đã chặn",
     "domainBlocksHint": "Mọi ghi chú, thông báo và lượt theo dõi từ các máy chủ này đều bị loại bỏ. Bạn có thể chặn từ menu ⋯ trên trang tài khoản.",
     "domainBlocksEmpty": "Chưa chặn máy chủ nào.",

@@ -25,6 +25,14 @@ const inBlog = ([key]: [string, string]) => BLOG_ONLY.some((ns) => key === ns ||
 
 const KANA_KANJI = "ぁ-ゖァ-ヺー一-龯々〆";
 
+// The link product's own surfaces: the shortener and its landing, the link dashboard, the link-in-bio
+// editor and events. Landing copy keeps its voice, but the same three habits stay out.
+const LINK_PRODUCT = [
+  "home", "meta", "shortenForm", "composer", "result", "dashboard", "edit", "linkSheet", "expiringBanner",
+  "publicProfile", "settings.profile", "events",
+];
+const inLinkProduct = ([key]: [string, string]) => LINK_PRODUCT.some((ns) => key === ns || key.startsWith(`${ns}.`));
+
 describe("message catalog style", () => {
   it("finds the blog-only namespaces from the client scopes", () => {
     expect(BLOG_ONLY).toEqual(expect.arrayContaining(["comments", "notes", "collections", "publicPost", "postEditor"]));
@@ -69,6 +77,23 @@ describe("message catalog style", () => {
   it("ko/ja: the blog never invites ('~해 보세요', '〜てみましょう') in a placeholder or an empty state", () => {
     expect(entries(ko).filter(inBlog).filter(([, value]) => /보세요/.test(value))).toEqual([]);
     expect(entries(ja).filter(inBlog).filter(([, value]) => /てみましょう|ましょう[。]?$/.test(value))).toEqual([]);
+  });
+
+  it("ko/ja: the link product never invites either, in a tip, a placeholder or an empty state", () => {
+    expect(entries(ko).filter(inLinkProduct).filter(([, value]) => /보세요|해보세요/.test(value))).toEqual([]);
+    expect(entries(ja).filter(inLinkProduct).filter(([, value]) => /てみてください|てみましょう|ましょう[。]?$/.test(value))).toEqual([]);
+  });
+
+  it("ko: no link-product sentence is joined to the next by an em dash", () => {
+    expect(entries(ko).filter(inLinkProduct).filter(([, value]) => /[요다죠까][.!?]?\s+—\s+/.test(value))).toEqual([]);
+  });
+
+  it("no catalog dresses copy in sparkles", () => {
+    for (const catalog of [ko, ja, en]) expect(entries(catalog).filter(([, value]) => /[✨✦]/u.test(value))).toEqual([]);
+  });
+
+  it("ko: the link product never points at a control by where it sits (a trailing '↓', '아래에서', '위 \'…\'')", () => {
+    expect(entries(ko).filter(inLinkProduct).filter(([, value]) => /\s[↓↑]$|아래에서|위 '/.test(value))).toEqual([]);
   });
 
   it("the compose chooser rows are an icon and a name, with no tagline under them", () => {

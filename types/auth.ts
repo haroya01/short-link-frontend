@@ -7,6 +7,7 @@ export type Me = {
   timezone?: string;
   createdAt: string;
   username?: string | null;
+  displayName?: string | null;
   /** The viewer's avatar (header account control renders it, falling back to the initial). */
   avatarUrl?: string | null;
 };

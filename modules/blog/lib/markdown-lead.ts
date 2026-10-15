@@ -64,3 +64,7 @@ export function markdownLead(markdown: string, max = 200): string {
   const text = plain(collected.join(" "));
   return text.length > max ? text.slice(0, max).trimEnd() + "…" : text;
 }
+
+export function markdownPlain(markdown: string): string {
+  return plain(markdown.split("\n").map((line) => line.trim().replace(BLOCK_MARKER, "")).join(" "));
+}

@@ -28,9 +28,9 @@ export default function FilteredNotificationsPage() {
 
   if (ready && !authenticated) {
     return (
-      <main>
+      <div>
         <SignInEmptyState page reason="notifications" icon={Bell} />
-      </main>
+      </div>
     );
   }
 
@@ -45,7 +45,7 @@ export default function FilteredNotificationsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <BlogLink
         href={blogPath("/notifications")}
         className="focus-ring -ml-1 inline-flex items-center gap-1 rounded text-[13px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
@@ -93,7 +93,7 @@ export default function FilteredNotificationsPage() {
                     className="flex flex-wrap items-center gap-3 border-b border-slate-100 px-2 py-3.5 last:border-b-0 dark:border-slate-800/80"
                   >
                     <BlogLink href={href} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface">
-                      <Avatar src={s.avatarUrl} name={s.username} size="md" />
+                      <Avatar src={s.avatarUrl} name={s.username} seed={s.actorUserId} size="md" />
                       <span className="min-w-0">
                         <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                           {s.username}
@@ -129,6 +129,6 @@ export default function FilteredNotificationsPage() {
           </>
         )}
       </div>
-    </main>
+    </div>
   );
 }

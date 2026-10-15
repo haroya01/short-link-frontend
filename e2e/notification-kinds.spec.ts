@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 // Mock lane: the inbox carries grouped likes and highlights on a post, a liked comment, a liked highlight
 // reply on sora's post, a note that quoted a post and a post that quoted a note — the post side reads like
-// the note side.
+// the note side. It also carries a first-reader notice and a 1,000-reader milestone, which have no actor.
 test.use({ viewport: { width: 1280, height: 900 } });
 
 test("post notices group and quote the way note notices do, and open their spot", async ({ page }) => {
@@ -33,6 +33,36 @@ test("post notices group and quote the way note notices do, and open their spot"
   await expect(
     main.getByRole("link", { name: /kazuki님이 글에서 내 노트를 인용했어요, 이번 주 노트 모음/ }),
   ).toHaveAttribute("href", /\/p\/kazuki\/weekly-notes$/);
+});
+
+test("reader notices name no one and open the writer's own post", async ({ page }) => {
+  await page.goto("/ko/blog/notifications");
+  const main = page.locator("main");
+  const milestone = main.getByRole("link", {
+    name: "1,000명이 읽었어요, Next.js 14 App Router로 블로그를 다시 만든 이유",
+    exact: true,
+  });
+  await expect(milestone).toHaveAttribute("href", /\/p\/dohyun\/nextjs-14-app-router-blog$/, { timeout: 30_000 });
+  const first = main.getByRole("link", { name: "첫 독자가 생겼어요, 리팩터링: 이름 짓기에 하루를 쓰는 이유", exact: true });
+  await expect(first).toHaveAttribute("href", /\/p\/dohyun\/naming-things$/);
+  for (const link of [milestone, first]) {
+    const row = link.locator("xpath=..");
+    await expect(row.locator("[data-avatar-tint], img")).toHaveCount(0);
+    await expect(row.locator("svg.lucide-user")).toHaveCount(1);
+  }
+});
+
+test("reader switches sit under the writer's posts and turn off", async ({ page }) => {
+  await page.goto("/ko/blog/settings");
+  const posts = page.locator("div").filter({ has: page.getByRole("heading", { name: "내 글", exact: true }) }).last();
+  const firstReader = posts.getByRole("switch", { name: "첫 독자", exact: true });
+  await expect(firstReader).toHaveAttribute("aria-checked", "true", { timeout: 30_000 });
+  await expect(posts.getByText("내 글을 처음 읽은 사람이 생길 때", { exact: true })).toBeVisible();
+  const readCount = posts.getByRole("switch", { name: "읽은 사람 수", exact: true });
+  await expect(readCount).toHaveAttribute("aria-checked", "true");
+  await readCount.click();
+  await expect(readCount).toHaveAttribute("aria-checked", "false");
+  await expect(firstReader).toHaveAttribute("aria-checked", "true");
 });
 
 test("settings pair what happens to a post with what happens to a note", async ({ page }) => {

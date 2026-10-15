@@ -42,6 +42,7 @@ export type SignInReason =
   | "lists"
   | "noteBookmarks"
   | "remote"
+  | "remoteAccount"
   | "collections"
   | "links"
   | "campaigns"

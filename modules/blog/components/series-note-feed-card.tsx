@@ -1,5 +1,4 @@
 import { useTranslations } from "next-intl";
-import { TriangleAlert } from "lucide-react";
 import type { FollowingSeriesNote } from "@/modules/blog/api/follows";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FeedRow, RowAuthor, RowDot } from "@/modules/blog/components/feed-row";
@@ -16,14 +15,7 @@ export function SeriesNoteFeedCard({ note, locale }: { note: FollowingSeriesNote
     <FeedRow
       href={seriesNoteHref(username, note.id, locale)}
       excerpt={
-        note.contentWarning ? (
-          <>
-            <TriangleAlert aria-hidden className="mr-1 inline h-3.5 w-3.5 align-[-2px]" />
-            {note.contentWarning}
-          </>
-        ) : (
-          note.body
-        )
+        note.contentWarning ?? note.body
       }
       excerptLang={contentLang(note.contentWarning ?? note.body)}
       excerptIsBody={!note.contentWarning}
@@ -44,7 +36,7 @@ export function SeriesNoteFeedCard({ note, locale }: { note: FollowingSeriesNote
       }
       byline={
         <>
-          <RowAuthor username={username} avatarUrl={note.author.avatarUrl} locale={locale} />
+          <RowAuthor username={username} displayName={note.author.displayName} avatarUrl={note.author.avatarUrl} seed={note.author.id} locale={locale} />
           <RowDot />
           <RowTime iso={note.createdAt} locale={locale} className="shrink-0" />
         </>

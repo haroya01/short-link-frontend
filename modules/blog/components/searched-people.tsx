@@ -7,6 +7,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { searchPeople, searchablePeopleQuery, type PeoplePage, type PersonMatch } from "@/modules/blog/api/people";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
+import { RemotePeople, useRemotePeople } from "@/modules/notes/components/remote-search";
 import { Avatar } from "./avatar";
 import { BlogEmpty } from "./blog-empty";
 import { BlogLink } from "./blog-link";
@@ -23,11 +24,13 @@ export function SearchedPeople({ query }: { query: string }) {
     initialPageParam: 0,
     getNextPageParam: (last: PeoplePage) => (last.hasNext ? last.page + 1 : undefined),
   });
+  const remote = useRemotePeople(query, searchable);
 
   if (!searchable) {
     return <BlogEmpty icon={UserRound} title={t("searchPeopleHint")} />;
   }
-  if (isLoading) {
+  const people = (data?.pages.flatMap((page) => page.items) ?? []).filter((p) => !blocked.has(p.username));
+  if (isLoading || (!isError && people.length === 0 && remote.loading)) {
     return (
       <ul role="status" aria-busy="true" className="divide-y divide-slate-100 dark:divide-slate-800">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -42,23 +45,23 @@ export function SearchedPeople({ query }: { query: string }) {
       </ul>
     );
   }
-  if (isError) return <ErrorState title={t("searchFailed")} onRetry={() => void refetch()} />;
-
-  const people = (data?.pages.flatMap((page) => page.items) ?? []).filter((p) => !blocked.has(p.username));
-  if (people.length === 0) {
-    return <BlogEmpty icon={Search} title={t("searchNoPeople")} />;
-  }
 
   return (
     <div>
-      <ul data-testid="people-results" className="divide-y divide-slate-100 dark:divide-slate-800">
-        {people.map((person) => (
-          <li key={person.username}>
-            <PersonRow person={person} />
-          </li>
-        ))}
-      </ul>
-      {hasNextPage && (
+      {isError ? (
+        <ErrorState title={t("searchFailed")} onRetry={() => void refetch()} />
+      ) : people.length > 0 ? (
+        <ul data-testid="people-results" className="divide-y divide-slate-100 dark:divide-slate-800">
+          {people.map((person) => (
+            <li key={person.username}>
+              <PersonRow person={person} />
+            </li>
+          ))}
+        </ul>
+      ) : remote.accounts?.length ? null : (
+        <BlogEmpty icon={Search} title={t("searchNoPeople")} />
+      )}
+      {!isError && hasNextPage && (
         <div className="mt-6 flex justify-center">
           <button
             type="button"
@@ -70,6 +73,7 @@ export function SearchedPeople({ query }: { query: string }) {
           </button>
         </div>
       )}
+      {remote.accounts && <RemotePeople accounts={remote.accounts} />}
     </div>
   );
 }
@@ -83,7 +87,7 @@ function PersonRow({ person }: { person: PersonMatch }) {
         href={authorHref(person.username, locale)}
         className="focus-ring flex min-w-0 flex-1 items-start gap-3 rounded-surface"
       >
-        <Avatar src={person.avatarUrl} name={name} size="lg" />
+        <Avatar src={person.avatarUrl} name={name} seed={person.userId} size="lg" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
           {name !== person.username && (
