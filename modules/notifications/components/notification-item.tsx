@@ -5,6 +5,7 @@ import {
   AtSign,
   BellRing,
   ChartBar,
+  Eye,
   GitBranch,
   Heart,
   Highlighter,
@@ -70,7 +71,11 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   NOTE_EMBED: Quote,
   COMMENT_LIKE: Heart,
   HIGHLIGHT: Highlighter,
+  POST_FIRST_READER: Eye,
+  POST_READ_MILESTONE: Eye,
 };
+
+const READER_TYPES: ReadonlySet<Item["type"]> = new Set(["POST_FIRST_READER", "POST_READ_MILESTONE"]);
 
 function subtitleOf(item: Item): string | null {
   switch (item.type) {
@@ -136,10 +141,12 @@ export function NotificationItem({
   // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   // 컬렉션 이름은 그래프 이벤트 문장에서 강조어(<c>{collection}</c>) — 없으면 안전한 폴백 라벨.
   const collection = item.collectionName ?? t("aCollection");
+  const milestone = item.milestone ?? 0;
   const message = t.rich(messageKey, {
     actor,
     collection,
     others,
+    milestone,
     b: (chunks) =>
       remoteHref ? (
         <a
@@ -172,12 +179,14 @@ export function NotificationItem({
       actor,
       collection,
       others,
+      milestone,
       b: (chunks) => chunks,
       c: (chunks) => chunks,
     }),
   );
   const rowLabel = subtitle ? `${messageText}, ${subtitle}` : messageText;
   const TypeIcon = TYPE_ICON[item.type];
+  const aboutReaders = READER_TYPES.has(item.type);
 
   const href = notificationHref(item, me?.username ?? null, locale);
   const externalHref = !href && item.type === "REMOTE_FOLLOW" ? remoteHref : undefined;
@@ -190,7 +199,15 @@ export function NotificationItem({
   const body = (
     <>
       <span className="relative shrink-0">
-        {remoteHref ? (
+        {aboutReaders ? (
+          <span
+            aria-hidden
+            data-testid="notification-reader-glyph"
+            className="grid h-7 w-7 place-items-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+          >
+            <TypeIcon className="h-3.5 w-3.5" />
+          </span>
+        ) : remoteHref ? (
           <a
             href={remoteHref}
             target="_blank"
@@ -221,7 +238,10 @@ export function NotificationItem({
         )}
         <span
           aria-hidden
-          className="absolute -bottom-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-white ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700"
+          className={cn(
+            "absolute -bottom-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-white ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700",
+            aboutReaders && "hidden",
+          )}
         >
           <TypeIcon
             className={cn(

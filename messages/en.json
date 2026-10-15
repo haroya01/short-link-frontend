@@ -124,7 +124,13 @@
     "searchNotesTab": "Notes",
     "searchPeopleTab": "People",
     "searchNoPeople": "No matching people",
-    "searchPeopleHint": "Type at least two characters to find people"
+    "searchPeopleHint": "Type at least two characters to find people",
+    "sourcePlatform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    }
   },
   "blogWebhooks": {
     "title": "Webhooks",
@@ -821,7 +827,9 @@
     "highlightLinkCopied": "Link copied",
     "highlightPublicFirst": "Highlighted · public with your name",
     "reportTitleHighlightReply": "Report this reply",
-    "publishedStatus": "Published"
+    "publishedStatus": "Published",
+    "sourceOriginal": "Originally published on <a>{platform}</a>",
+    "sourceReadOriginal": "Read the original →"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -1047,7 +1055,13 @@
     "prefSectionNotes": "Your notes",
     "prefSectionConversation": "Conversations",
     "prefSectionPeople": "People",
-    "prefSectionSubscriptions": "Subscriptions"
+    "prefSectionSubscriptions": "Subscriptions",
+    "post_first_reader": "Your post has its first reader",
+    "post_read_milestone": "{milestone, plural, one {# person has} other {# people have}} read your post",
+    "prefFirstReader": "First reader",
+    "prefFirstReaderHint": "When someone reads your post for the first time",
+    "prefReadMilestone": "Reader milestones",
+    "prefReadMilestoneHint": "When 10, 100 or 1,000 people have read your post. Bots don't count"
   },
   "nav": {
     "events": "Events",

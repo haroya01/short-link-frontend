@@ -22,6 +22,9 @@ export function notificationHref(item: Item, myUsername: string | null, locale: 
       return item.actorRemoteId != null ? blogPath(`/remote/${item.actorRemoteId}`) : undefined;
     case "FOLLOW_REQUEST":
       return blogPath("/follow-requests");
+    case "POST_FIRST_READER":
+    case "POST_READ_MILESTONE":
+      return item.postId != null ? blogPath(`/analytics/${item.postId}`) : undefined;
     case "NOTE_LIKE":
     case "NOTE_REPOST":
       return item.noteId != null && myUsername

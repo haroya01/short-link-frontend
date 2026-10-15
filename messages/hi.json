@@ -124,7 +124,13 @@
     "searchNotesTab": "नोट",
     "searchPeopleTab": "लोग",
     "searchNoPeople": "कोई मेल खाता व्यक्ति नहीं",
-    "searchPeopleHint": "लोगों को खोजने के लिए कम से कम दो अक्षर लिखें"
+    "searchPeopleHint": "लोगों को खोजने के लिए कम से कम दो अक्षर लिखें",
+    "sourcePlatform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    }
   },
   "blogWebhooks": {
     "title": "वेबहुक",
@@ -821,7 +827,9 @@
     "highlightLinkCopied": "लिंक कॉपी हो गया",
     "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक",
     "reportTitleHighlightReply": "इस जवाब की रिपोर्ट करें",
-    "publishedStatus": "प्रकाशित हो गई"
+    "publishedStatus": "प्रकाशित हो गई",
+    "sourceOriginal": "मूल पोस्ट: <a>{platform}</a>",
+    "sourceReadOriginal": "मूल पोस्ट पढ़ें →"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -1047,7 +1055,13 @@
     "prefSectionNotes": "आपके नोट",
     "prefSectionConversation": "बातचीत",
     "prefSectionPeople": "लोग",
-    "prefSectionSubscriptions": "सदस्यताएँ"
+    "prefSectionSubscriptions": "सदस्यताएँ",
+    "post_first_reader": "आपकी पोस्ट को पहला पाठक मिला",
+    "post_read_milestone": "आपकी पोस्ट {milestone, number} लोगों ने पढ़ी",
+    "prefFirstReader": "पहला पाठक",
+    "prefFirstReaderHint": "जब आपकी पोस्ट को पहला पाठक मिले",
+    "prefReadMilestone": "पाठकों के पड़ाव",
+    "prefReadMilestoneHint": "जब आपकी पोस्ट 10, 100 या 1,000 लोग पढ़ लें। बॉट नहीं गिने जाते"
   },
   "nav": {
     "events": "इवेंट",
