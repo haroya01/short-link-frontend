@@ -42,6 +42,7 @@ import { NoteGlyph } from "./note-glyph";
 import { NoteHistoryDialog } from "./note-history-dialog";
 import { VisibilityIcon } from "./note-visibility";
 import { NoteLinkCard } from "./note-link-card";
+import { NoteRemoteCard, remoteCardOf, webAddress } from "./note-remote-card";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 import { NoteSeriesDialog } from "./note-series-dialog";
 import { QuotedNoteCard } from "./quoted-note-card";
@@ -306,6 +307,7 @@ export function NoteCard({
   const folded = Boolean(note.contentWarning) && !revealed && !editing;
   const mediaConcealed =
     note.media.length > 0 && (note.contentWarning ? !revealed && !editing : note.sensitive === true && !mediaShown);
+  const remoteCard = remoteCardOf(note);
 
   return (
     <article className={cn("py-4", emphasis && "py-5", isNew && "comment-in")} data-note-id={note.id}>
@@ -517,15 +519,30 @@ export function NoteCard({
                 </div>
               ) : (
                 <div className={revealed ? "animate-fade-in motion-reduce:animate-none" : undefined}>
-                  <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                  {remoteCard ? (
+                    <NoteRemoteCard
+                      shape={remoteCard}
+                      summary={note.body}
+                      picture={mediaConcealed ? null : (note.media.find((m) => m.contentType.startsWith("image/")) ?? null)}
+                      language={note.language}
+                      full={emphasis}
+                    />
+                  ) : (
+                    <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                  )}
                 </div>
               )}
             </div>
             {!folded && note.poll && (
-              <NotePollCard noteId={note.id} poll={note.poll} onVoted={(poll) => onChange?.({ ...note, poll })} />
+              <NotePollCard
+                noteId={note.id}
+                poll={note.poll}
+                onVoted={(poll) => onChange?.({ ...note, poll })}
+                elsewhere={note.author.remoteId ? { url: webAddress(note.remote?.url)?.href ?? null } : undefined}
+              />
             )}
             <NoteMedia
-              media={note.media}
+              media={remoteCard && !mediaConcealed ? [] : note.media}
               concealed={mediaConcealed}
               onReveal={() => (note.contentWarning ? reveal() : setMediaShown(true))}
             />

@@ -15,8 +15,10 @@ import {
   type NotePollDraft,
 } from "@/modules/notes/api/notes";
 
-function closed(poll: NotePoll, now: number | null): boolean {
-  return poll.expired || (now !== null && new Date(poll.expiresAt).getTime() <= now);
+export function closed(poll: NotePoll, now: number | null): boolean {
+  if (poll.expired) return true;
+  if (poll.expiresAt === null || now === null) return false;
+  return new Date(poll.expiresAt).getTime() <= now;
 }
 
 function share(poll: NotePoll, votes: number): number {
@@ -28,10 +30,13 @@ export function NotePollCard({
   noteId,
   poll: given,
   onVoted,
+  elsewhere,
 }: {
   noteId: number;
   poll: NotePoll;
   onVoted: (poll: NotePoll) => void;
+  /** Counted on the author's server, so this one only shows results; `url` is where to vote. */
+  elsewhere?: { url: string | null };
 }) {
   const t = useTranslations("notes");
   const [poll, setPoll] = useState(given);
@@ -44,7 +49,7 @@ export function NotePollCard({
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => setNow(Date.now()), []);
   const ended = closed(poll, now);
-  const showsResults = poll.voted === true || ended || peeking;
+  const showsResults = poll.voted === true || ended || peeking || elsewhere !== undefined;
   const [filled, setFilled] = useState(showsResults);
   const leading = Math.max(0, ...poll.options.map((option) => option.votesCount));
 
@@ -191,7 +196,22 @@ export function NotePollCard({
             <span>{remaining(poll, ended, now ?? 0, t)}</span>
           </>
         )}
-        {poll.voted !== true && !ended && (
+        {elsewhere?.url && (
+          <>
+            <span aria-hidden>·</span>
+            <a
+              href={elsewhere.url}
+              target="_blank"
+              rel="nofollow noopener ugc"
+              onClick={(e) => e.stopPropagation()}
+              data-poll-elsewhere
+              className="focus-ring rounded font-medium text-slate-900 hover:underline dark:text-slate-100"
+            >
+              {ended ? t("remoteOpen") : t("remoteVote")} <span aria-hidden>→</span>
+            </a>
+          </>
+        )}
+        {poll.voted !== true && !ended && elsewhere === undefined && (
           <>
             <span aria-hidden>·</span>
             <button
@@ -215,6 +235,7 @@ function remaining(
   t: ReturnType<typeof useTranslations>,
 ): string {
   if (ended) return t("pollEnded");
+  if (poll.expiresAt === null) return t("pollNoDeadline");
   const seconds = (new Date(poll.expiresAt).getTime() - now) / 1000;
   if (seconds < 3600) return t("pollMinutesLeft", { count: Math.max(1, Math.floor(seconds / 60)) });
   if (seconds < 86_400) return t("pollHoursLeft", { count: Math.floor(seconds / 3600) });
