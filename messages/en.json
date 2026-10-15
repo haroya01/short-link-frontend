@@ -124,7 +124,8 @@
     "searchNotesTab": "Notes",
     "searchPeopleTab": "People",
     "searchNoPeople": "No matching people",
-    "searchPeopleHint": "Type at least two characters to find people"
+    "searchPeopleHint": "Type at least two characters to find people",
+    "importEntry": "Import posts from another blog"
   },
   "blogWebhooks": {
     "title": "Webhooks",
@@ -541,7 +542,6 @@
     "exportAllFailed": "Export failed. Please try again in a moment.",
     "savedAt": "Saved at {time}",
     "continueWriting": "Continue writing",
-    "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish.",
     "seriesCreateConflict": "A series with this name already exists. Try a different name.",
     "seriesCreateError": "Couldn't create the series. Please try again.",
     "seriesLoadFailed": "Couldn't load your series.",
@@ -599,7 +599,8 @@
     },
     "saveFailedRetry": "Not saved · Retry",
     "reschedule": "Change time",
-    "previewOpenError": "Couldn't open the preview"
+    "previewOpenError": "Couldn't open the preview",
+    "importEntry": "Import posts from another blog"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -1265,7 +1266,8 @@
     "events": "Sign in to manage events",
     "profile": "Sign in to edit your profile",
     "more": "Sign in to see tools and apps",
-    "general": "Sign in to continue"
+    "general": "Sign in to continue",
+    "import": "Sign in to import your posts"
   },
   "auth": {
     "signedIn": "Signed in",
@@ -4600,5 +4602,97 @@
     "notePosted": "Note posted",
     "viewNote": "View",
     "noteParts": "{count, plural, one {# note} other {# notes}}"
+  },
+  "blogImport": {
+    "metaTitle": "Import posts",
+    "title": "Import posts from another blog",
+    "stepsLabel": "Import steps",
+    "stepAddress": "Address",
+    "stepVerify": "Verify",
+    "stepImport": "Import",
+    "urlLabel": "Blog address",
+    "urlPlaceholder": "yourname.tistory.com",
+    "rss": {
+      "required": "Your blog's RSS feed has to be public to import.",
+      "TISTORY": "Tistory: whole posts come over only when your blog's RSS setting is “Full”. With “Partial”, only summaries do.",
+      "OPEN": "velog · Brunch: RSS is open by default.",
+      "excerpt": "This blog's RSS shares summaries only, so posts come over as a summary with a link to the original.",
+      "tistoryFull": "Switch your blog's RSS setting to “Full” to import whole posts."
+    },
+    "preview": "Preview",
+    "previewing": "Loading…",
+    "emptyUrl": "Enter your blog address.",
+    "otherAddress": "Different address",
+    "postCount": "{count, plural, one {# post} other {# posts}}",
+    "fullContent": "Full posts come over.",
+    "syncNote": "New posts you write later follow too.",
+    "more": "and {count} more",
+    "import": "Import",
+    "creating": "Getting ready…",
+    "verifyTitle": "Confirm this blog is yours",
+    "verifyBody": "Add this code to your blog's description, save it, then select Verify.",
+    "codeLabel": "Verification code",
+    "copy": "Copy",
+    "copied": "Code copied",
+    "copyFailed": "Couldn't copy",
+    "where": {
+      "TISTORY": "Tistory: Manage › Blog › Blog description",
+      "VELOG": "velog: Settings › Short bio",
+      "BRUNCH": "Brunch: Edit profile › the one-line intro under your author name"
+    },
+    "openBlog": "Open blog",
+    "verify": "Verify",
+    "verifying": "Verifying…",
+    "progressTitle": "Importing your posts",
+    "progressCount": "{done} / {total}",
+    "progressFailed": "{count, plural, one {# post} other {# posts}} couldn't be imported",
+    "progressNote": "You can close this page. The import keeps going.",
+    "doneTitle": "Imported {count, plural, one {# post} other {# posts}}",
+    "doneAnnounce": "When you write something new, it comes over and is announced as a note.",
+    "toMyBlog": "Go to my blog",
+    "manage": "Connected blog settings",
+    "errorTitle": "The import stopped",
+    "errorUnsupported": "Only Tistory, velog and Brunch addresses can be imported.",
+    "errorFeedNotFound": "No posts found at this address. Check that it's your blog's home page.",
+    "errorUnreachable": "Couldn't reach the blog. Try again in a moment.",
+    "errorRateLimited": "Too many requests. Try again in a moment.",
+    "errorTaken": "This blog is already connected to another account.",
+    "errorCodeMissing": "The code isn't in your description yet. A saved description can take a few minutes to show up.",
+    "errorRobots": "Naver Blog blocks automated RSS collection, so it can't be imported.",
+    "errorGeneric": "Couldn't import. Try again in a moment.",
+    "errorSync": "The last sync failed.",
+    "syncUnreachable": "Couldn't reach the blog. It'll try again at the next sync.",
+    "syncFeedNotFound": "Couldn't find the blog's post list. Check whether its address changed.",
+    "status": {
+      "PENDING_VERIFICATION": "Waiting for verification",
+      "IMPORTING": "Importing",
+      "SYNCING": "Connected",
+      "ERROR": "Error",
+      "DISCONNECTED": "Disconnected"
+    },
+    "sectionTitle": "Connected blogs",
+    "sectionEmpty": "No connected blogs.",
+    "connect": "Import posts from another blog",
+    "continueVerify": "Continue verifying",
+    "importedCount": "{count, plural, one {# post} other {# posts}} imported",
+    "lastSynced": "Last synced {time}",
+    "announceLabel": "Announce new posts as notes",
+    "discoverLabel": "Show in discovery",
+    "discoverHint": "When off, imported posts appear only on your blog.",
+    "saveFailed": "Couldn't save the setting",
+    "disconnect": "Disconnect",
+    "disconnectTitle": "Disconnect {blog}?",
+    "disconnectBody": "New posts won't be imported anymore.",
+    "disconnectChoice": "Imported posts",
+    "keepPosts": "Keep imported posts",
+    "deletePosts": "Delete {count, plural, one {# imported post} other {# imported posts}}",
+    "disconnected": "Disconnected",
+    "disconnectFailed": "Couldn't disconnect",
+    "platform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    }
   }
 }

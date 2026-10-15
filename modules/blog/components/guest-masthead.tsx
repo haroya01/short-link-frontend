@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 
 import { useAuth } from "@/lib/auth";
+import { blogPath } from "@/lib/host";
+import { BlogLink } from "./blog-link";
 
 /**
  * Guest-only feed masthead — Fork B. 홈 피드에서 비로그인 방문자에게만 "무엇이 모인 곳인지" 한 줄을
@@ -26,6 +28,12 @@ export function GuestMasthead() {
             <h1 className="text-balance text-[26px] font-bold leading-[1.2] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[34px]">
               {t("mastheadTagline")}
             </h1>
+            <BlogLink
+              href={blogPath("/import")}
+              className="focus-ring mt-3 inline-block rounded text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
+            >
+              {t("importEntry")}
+            </BlogLink>
           </div>
         </div>
       </section>

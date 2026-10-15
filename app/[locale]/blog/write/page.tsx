@@ -15,6 +15,8 @@ import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { blogCta } from "@/modules/blog/components/blog-cta";
+import { cn } from "@/lib/utils";
 import { ErrorState } from "@/components/common/error-state";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
@@ -279,20 +281,13 @@ export default function WriteIndexPage() {
       {loading && <SkeletonRows count={6} thumb />}
       {!loading && loadFailed && <ErrorState onRetry={() => void load()} />}
       {!loading && !loadFailed && posts.length === 0 && (
-        <div className="flex flex-col items-center gap-3 py-16 text-center">
-          <span className="grid h-12 w-12 place-items-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
-            <PenSquare className="h-5 w-5" />
-          </span>
-          <div>
-            <p className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("noPosts")}</p>
-            <p className="mt-1 text-[13.5px] text-slate-500 dark:text-slate-400">{t("noPostsHint")}</p>
-          </div>
+        <div data-testid="write-empty" className="border-t border-slate-100 py-10 dark:border-slate-800">
+          <p className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("noPosts")}</p>
           <BlogLink
-            href={`${writeBase}/new`}
-            className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
+            href={writeBase.replace(/\/write$/, "/import")}
+            className={cn(blogCta({ variant: "secondary" }), "mt-4")}
           >
-            <PenSquare className="h-4 w-4" />
-            {t("newPost")}
+            {t("importEntry")}
           </BlogLink>
         </div>
       )}

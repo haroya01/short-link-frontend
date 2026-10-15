@@ -22,6 +22,7 @@ import { BlogNotificationSettings } from "@/modules/notifications/components/blo
 import { NotificationPolicySettings } from "@/modules/notifications/components/notification-policy-settings";
 import { DataExportSetting } from "@/modules/blog/components/data-export-setting";
 import { DataImportSetting } from "@/modules/blog/components/data-import-setting";
+import { ImportedBlogsSetting } from "@/modules/blog/components/import/imported-blogs-setting";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { LogoutButton } from "@/components/common/logout-button";
@@ -116,6 +117,8 @@ export default function BlogSettingsPage() {
         </div>
       </section>
       <ProfileEditDialog open={editingProfile} onClose={() => setEditingProfile(false)} />
+
+      <ImportedBlogsSetting />
 
       <RemoteFollowingSettings />
       <BlockedUserSettings />

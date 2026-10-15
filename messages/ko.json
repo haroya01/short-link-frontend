@@ -124,7 +124,8 @@
     "searchNotesTab": "노트",
     "searchPeopleTab": "사람",
     "searchNoPeople": "맞는 사람이 없어요",
-    "searchPeopleHint": "두 글자 이상 입력하면 사람을 찾아요"
+    "searchPeopleHint": "두 글자 이상 입력하면 사람을 찾아요",
+    "importEntry": "다른 블로그에 쓴 글 가져오기"
   },
   "blogWebhooks": {
     "title": "웹훅",
@@ -541,7 +542,6 @@
     "exportAllFailed": "내보내기에 실패했어요. 잠시 후 다시 시도해주세요.",
     "savedAt": "{time} 저장됨",
     "continueWriting": "이어서 쓰기",
-    "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요.",
     "seriesCreateConflict": "같은 이름의 시리즈가 이미 있어요. 다른 이름을 써주세요.",
     "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요.",
     "seriesLoadFailed": "시리즈 목록을 불러오지 못했어요.",
@@ -599,7 +599,8 @@
     },
     "saveFailedRetry": "저장 못 함 · 다시 시도",
     "reschedule": "시각 바꾸기",
-    "previewOpenError": "미리보기를 열지 못했어요"
+    "previewOpenError": "미리보기를 열지 못했어요",
+    "importEntry": "다른 블로그에 쓴 글 가져오기"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -1265,7 +1266,8 @@
     "events": "모집 페이지를 관리하려면 로그인하세요",
     "profile": "프로필을 꾸미려면 로그인하세요",
     "more": "도구와 앱을 보려면 로그인하세요",
-    "general": "로그인하고 계속하세요"
+    "general": "로그인하고 계속하세요",
+    "import": "글을 가져오려면 로그인하세요"
   },
   "auth": {
     "signedIn": "로그인되었어요",
@@ -4600,5 +4602,97 @@
     "notePosted": "노트를 올렸어요",
     "viewNote": "보기",
     "noteParts": "{count}개"
+  },
+  "blogImport": {
+    "metaTitle": "글 가져오기",
+    "title": "다른 블로그에 쓴 글 가져오기",
+    "stepsLabel": "가져오기 단계",
+    "stepAddress": "주소",
+    "stepVerify": "소유 확인",
+    "stepImport": "가져오기",
+    "urlLabel": "블로그 주소",
+    "urlPlaceholder": "아이디.tistory.com",
+    "rss": {
+      "required": "블로그의 RSS가 공개돼 있어야 가져올 수 있어요.",
+      "TISTORY": "티스토리: 블로그 관리의 RSS 설정이 '전체 공개'여야 본문까지 가져와요. '부분 공개'면 요약만 와요.",
+      "OPEN": "velog · 브런치: RSS가 기본으로 열려 있어요.",
+      "excerpt": "RSS가 요약만 공개돼 있어 요약과 원문 링크로 가져와요.",
+      "tistoryFull": "블로그 관리의 RSS 설정을 '전체 공개'로 바꾸면 본문까지 가져와요."
+    },
+    "preview": "미리 보기",
+    "previewing": "불러오는 중…",
+    "emptyUrl": "블로그 주소를 넣어 주세요.",
+    "otherAddress": "다른 주소",
+    "postCount": "글 {count}편",
+    "fullContent": "글 전체를 가져와요.",
+    "syncNote": "앞으로 쓰는 새 글도 따라와요.",
+    "more": "외 {count}편",
+    "import": "가져오기",
+    "creating": "준비하는 중…",
+    "verifyTitle": "내 블로그인지 확인해요",
+    "verifyBody": "블로그 소개글에 이 코드를 넣고 저장한 뒤 확인을 눌러요.",
+    "codeLabel": "확인 코드",
+    "copy": "복사",
+    "copied": "코드를 복사했어요",
+    "copyFailed": "복사하지 못했어요",
+    "where": {
+      "TISTORY": "티스토리: 관리 › 블로그 › 블로그 설명",
+      "VELOG": "velog: 설정 › 한 줄 소개",
+      "BRUNCH": "브런치: 프로필 편집 › 작가명 아래 짧은 소개(한 줄)"
+    },
+    "openBlog": "블로그 열기",
+    "verify": "확인",
+    "verifying": "확인하는 중…",
+    "progressTitle": "글을 가져오고 있어요",
+    "progressCount": "{done} / {total}편",
+    "progressFailed": "{count}편은 가져오지 못했어요",
+    "progressNote": "이 화면을 닫아도 계속 가져와요.",
+    "doneTitle": "글 {count}편을 가져왔어요",
+    "doneAnnounce": "앞으로 새 글을 쓰면 가져와서 노트로 알려요.",
+    "toMyBlog": "내 블로그로",
+    "manage": "연결한 블로그 설정",
+    "errorTitle": "가져오기가 멈췄어요",
+    "errorUnsupported": "티스토리 · velog · 브런치 주소만 가져올 수 있어요.",
+    "errorFeedNotFound": "이 주소에서 글을 찾지 못했어요. 블로그 첫 화면 주소인지 확인해 주세요.",
+    "errorUnreachable": "블로그에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.",
+    "errorRateLimited": "요청이 많아요. 잠시 뒤 다시 시도해 주세요.",
+    "errorTaken": "이미 다른 계정에 연결된 블로그예요.",
+    "errorCodeMissing": "소개글에서 코드를 찾지 못했어요. 저장한 소개글이 반영되기까지 몇 분 걸릴 수 있어요.",
+    "errorRobots": "네이버 블로그는 RSS 자동 수집을 막고 있어 가져올 수 없어요.",
+    "errorGeneric": "가져오지 못했어요. 잠시 뒤 다시 시도해 주세요.",
+    "errorSync": "마지막 동기화에 실패했어요.",
+    "syncUnreachable": "블로그에 연결하지 못했어요. 다음 동기화 때 다시 시도해요.",
+    "syncFeedNotFound": "블로그에서 글 목록을 찾지 못했어요. 블로그 주소가 바뀌었는지 확인해 주세요.",
+    "status": {
+      "PENDING_VERIFICATION": "확인 대기",
+      "IMPORTING": "가져오는 중",
+      "SYNCING": "연결됨",
+      "ERROR": "오류",
+      "DISCONNECTED": "연결 끊김"
+    },
+    "sectionTitle": "연결한 블로그",
+    "sectionEmpty": "연결한 블로그가 없어요.",
+    "connect": "다른 블로그에 쓴 글 가져오기",
+    "continueVerify": "소유 확인 이어서 하기",
+    "importedCount": "가져온 글 {count}편",
+    "lastSynced": "마지막 동기화 {time}",
+    "announceLabel": "새 글을 노트로 알리기",
+    "discoverLabel": "발견에 보이기",
+    "discoverHint": "끄면 가져온 글이 내 블로그에만 보여요.",
+    "saveFailed": "설정을 저장하지 못했어요",
+    "disconnect": "연결 끊기",
+    "disconnectTitle": "{blog} 연결을 끊을까요?",
+    "disconnectBody": "새 글을 더 가져오지 않아요.",
+    "disconnectChoice": "가져온 글",
+    "keepPosts": "가져온 글 남기기",
+    "deletePosts": "가져온 글 {count}편 삭제",
+    "disconnected": "연결을 끊었어요",
+    "disconnectFailed": "연결을 끊지 못했어요",
+    "platform": {
+      "NAVER": "네이버 블로그",
+      "TISTORY": "티스토리",
+      "VELOG": "velog",
+      "BRUNCH": "브런치"
+    }
   }
 }

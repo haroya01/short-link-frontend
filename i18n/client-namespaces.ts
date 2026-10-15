@@ -55,9 +55,10 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/admin": ["abuseReports", "admin.servers", "blogAdminMetrics"],
   "blog/analytics": ["blogWorkspace", "settings.profile.stats", "stats"],
   "blog/curation": ["blogWorkspace", "savedLibrary"],
+  "blog/import": ["blogImport"],
   "blog/leads": ["settings.profile.leads"],
   "blog/login": ["blogLogin"],
-  "blog/settings": ["avatar", "blogWorkspace", "imageCropper", "profileEdit"],
+  "blog/settings": ["avatar", "blogImport", "blogWorkspace", "imageCropper", "profileEdit"],
   "blog/webhooks": ["blogWebhooks"],
   "blog/write": ["blogWorkspace", "postEditor", "tags"],
   "p/[username]": [
