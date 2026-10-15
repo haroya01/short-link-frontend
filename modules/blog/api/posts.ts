@@ -1,4 +1,4 @@
-import { request, requestText } from "@/lib/api/client";
+import { mockEmpty, request, requestText } from "@/lib/api/client";
 import { authoringMocks } from "@/modules/blog/api/_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
 
@@ -62,7 +62,7 @@ export interface PostBlockView {
 }
 
 export function listMyPosts(): Promise<PostView[]> {
-  if (authoringMocks) return Promise.resolve(authoringMocks.mockListMyPosts());
+  if (authoringMocks) return Promise.resolve(mockEmpty("myPosts") ? [] : authoringMocks.mockListMyPosts());
   return request<PostView[]>("/api/v1/posts", { method: "GET" });
 }
 

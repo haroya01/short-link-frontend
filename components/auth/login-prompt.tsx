@@ -50,6 +50,7 @@ export type SignInReason =
   | "events"
   | "profile"
   | "more"
+  | "import"
   | "general";
 
 type Ask = { reason: SignInReason; next?: string };
