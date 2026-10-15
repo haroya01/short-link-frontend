@@ -82,14 +82,21 @@ const BLOG_TITLE: Record<ImportPlatform, (id: string) => string> = {
 const FULL_CONTENT: Record<ImportPlatform, boolean> = { NAVER: false, TISTORY: true, VELOG: true, BRUNCH: false };
 
 function items(parsed: Parsed): ImportPreviewItem[] {
-  return TITLES[parsed.platform].map((title, i) => ({
+  const titles = TITLES[parsed.platform];
+  const shown = /noposts/i.test(parsed.id) ? [] : /fewposts/i.test(parsed.id) ? titles.slice(0, 3) : titles;
+  return shown.map((title, i) => ({
     title,
     url: `${parsed.blogUrl}/${100 + i}`,
     publishedAt: new Date(Date.UTC(2026, 9, 14 - i * 3, 1)).toISOString(),
     excerpt: FULL_CONTENT[parsed.platform]
       ? `${title}. 본문 전체를 그대로 옮겨 오는 글이에요.`
       : `${title}에 대해 적은 글의 앞부분이에요. 요약만 오는 플랫폼이라 이 부분까지 보여요……`,
-    imageUrl: i % 3 === 0 ? `https://picsum.photos/seed/import-${parsed.platform}-${i}/320/240` : null,
+    imageUrl:
+      i % 3 !== 0
+        ? null
+        : parsed.platform === "NAVER"
+          ? `https://blogthumb.pstatic.net/MjAyNjEw/${parsed.id}-${i}.jpg`
+          : `https://picsum.photos/seed/import-${parsed.platform}-${i}/320/240`,
   }));
 }
 
@@ -167,11 +174,12 @@ export function mockPreview(url: string): Promise<ImportPreview> {
   if (/notfound/i.test(url)) return fail(404, "IMPORT_FEED_NOT_FOUND");
   if (/offline/i.test(url)) return fail(502, "IMPORT_SOURCE_UNREACHABLE");
   if (/busy/i.test(url)) return fail(429);
+  if (/robots/i.test(url)) return fail(403, "IMPORT_ROBOTS_DISALLOWED");
   return later({
     platform: parsed.platform,
     blogUrl: parsed.blogUrl,
     blogTitle: BLOG_TITLE[parsed.platform](parsed.id),
-    fullContent: FULL_CONTENT[parsed.platform],
+    fullContent: FULL_CONTENT[parsed.platform] && !/partial/i.test(parsed.id),
     items: items(parsed),
   });
 }

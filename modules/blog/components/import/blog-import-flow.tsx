@@ -19,7 +19,19 @@ import {
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { importErrorKey, importStep, progressPercent, syncErrorKey, withQuery } from "@/modules/blog/lib/import-flow";
+import {
+  importErrorKey,
+  importStep,
+  platformOfUrl,
+  previewRssNotes,
+  previewThumb,
+  RSS_GUIDE_KEYS,
+  rssGuideKey,
+  type RssGuideKey,
+  progressPercent,
+  syncErrorKey,
+  withQuery,
+} from "@/modules/blog/lib/import-flow";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 const POLL_MS = 2000;
@@ -48,7 +60,8 @@ export function BlogImportFlow() {
   const [url, setUrl] = useState("");
   const [view, setView] = useState<View>({ step: "address" });
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
+  const error = errorKey ? t(errorKey) : null;
   const resumed = useRef(false);
 
   const showSource = useCallback((source: ImportSource) => {
@@ -59,18 +72,18 @@ export function BlogImportFlow() {
   const runPreview = useCallback(
     async (target: string) => {
       setBusy(true);
-      setError(null);
+      setErrorKey(null);
       try {
         const preview = await previewImport(target);
         setView({ step: "preview", preview, url: target });
         replaceQuery("url", target);
       } catch (e) {
-        setError(t(importErrorKey(e)));
+        setErrorKey(importErrorKey(e));
       } finally {
         setBusy(false);
       }
     },
-    [t],
+    [],
   );
 
   useEffect(() => {
@@ -108,7 +121,7 @@ export function BlogImportFlow() {
     e.preventDefault();
     const target = url.trim();
     if (!target) {
-      setError(t("emptyUrl"));
+      setErrorKey("emptyUrl");
       return;
     }
     void runPreview(target);
@@ -120,11 +133,11 @@ export function BlogImportFlow() {
       return;
     }
     setBusy(true);
-    setError(null);
+    setErrorKey(null);
     try {
       showSource(await createImportSource(target));
     } catch (e) {
-      setError(t(importErrorKey(e)));
+      setErrorKey(importErrorKey(e));
     } finally {
       setBusy(false);
     }
@@ -132,18 +145,18 @@ export function BlogImportFlow() {
 
   async function verify(source: ImportSource) {
     setBusy(true);
-    setError(null);
+    setErrorKey(null);
     try {
       showSource(await verifyImportSource(source.id));
     } catch (e) {
-      setError(t(importErrorKey(e)));
+      setErrorKey(importErrorKey(e));
     } finally {
       setBusy(false);
     }
   }
 
   function startOver() {
-    setError(null);
+    setErrorKey(null);
     setView({ step: "address" });
     replaceQuery("url", null);
   }
@@ -157,6 +170,7 @@ export function BlogImportFlow() {
     }
   }
 
+  const urlPlatform = platformOfUrl(url);
   const stepIndex = view.step === "address" || view.step === "preview" ? 0 : view.step === "verify" ? 1 : 2;
 
   return (
@@ -211,10 +225,8 @@ export function BlogImportFlow() {
                 {busy ? t("previewing") : t("preview")}
               </button>
             </div>
-            <p id="import-url-help" className="mt-2 text-[13px] text-slate-500 dark:text-slate-400">
-              {t("supported")}
-            </p>
             <ErrorLine message={error} />
+            <RssGuide emphasis={errorKey === "errorFeedNotFound" && urlPlatform ? rssGuideKey(urlPlatform) : null} />
           </form>
         )}
 
@@ -322,6 +334,7 @@ function PreviewStep({
   const ago = useCompactTime();
   const shown = preview.items.slice(0, PREVIEW_ROWS);
   const rest = preview.items.length - shown.length;
+  const notes = previewRssNotes(preview.platform, preview.items.length, preview.fullContent);
   return (
     <section aria-labelledby="import-preview-title">
       <div className="flex items-baseline justify-between gap-3">
@@ -340,33 +353,33 @@ function PreviewStep({
       </h2>
       <p className="mt-1 truncate text-[13px] text-slate-500 dark:text-slate-400">{bareUrl(preview.blogUrl)}</p>
       <p data-testid="import-content-kind" className="mt-4 text-[14px] leading-relaxed text-slate-700 dark:text-slate-200">
-        {preview.fullContent ? t("fullContent") : t("excerptOnly")} {t("syncNote")}
+        {preview.fullContent ? t("fullContent") : t("rss.excerpt")} {t("syncNote")}
       </p>
+      {notes.length > 0 && (
+        <div data-testid="import-rss-notes" className="mt-2 space-y-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-200">
+          {notes.map((key) => (
+            <p key={key}>{t(key)}</p>
+          ))}
+        </div>
+      )}
 
-      <ul className="mt-5 border-t border-slate-100 dark:border-slate-800" data-testid="import-preview-list">
-        {shown.map((item) => (
-          <li key={item.url} className="flex gap-3 border-b border-slate-100 py-3 dark:border-slate-800">
-            <span className="min-w-0 flex-1">
-              <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
-                {item.title}
+      {shown.length > 0 && (
+        <ul className="mt-5 border-t border-slate-100 dark:border-slate-800" data-testid="import-preview-list">
+          {shown.map((item) => (
+            <li key={item.url} className="flex gap-3 border-b border-slate-100 py-3 dark:border-slate-800">
+              <span className="min-w-0 flex-1">
+                <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
+                  {item.title}
+                </span>
+                {item.publishedAt && (
+                  <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{ago(item.publishedAt)}</span>
+                )}
               </span>
-              {item.publishedAt && (
-                <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{ago(item.publishedAt)}</span>
-              )}
-            </span>
-            {item.imageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.imageUrl}
-                alt=""
-                loading="lazy"
-                referrerPolicy="no-referrer"
-                className="img-fade h-14 w-14 shrink-0 rounded-inner bg-slate-100 object-cover dark:bg-slate-800"
-              />
-            )}
-          </li>
-        ))}
-      </ul>
+              <PreviewThumb src={previewThumb(preview.platform, item.imageUrl)} />
+            </li>
+          ))}
+        </ul>
+      )}
       {rest > 0 && (
         <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{t("more", { count: rest })}</p>
       )}
@@ -381,6 +394,46 @@ function PreviewStep({
       </button>
       <ErrorLine message={error} />
     </section>
+  );
+}
+
+function RssGuide({ emphasis }: { emphasis: RssGuideKey | null }) {
+  const t = useTranslations("blogImport");
+  return (
+    <div
+      id="import-url-help"
+      data-testid="import-rss-guide"
+      className="mt-5 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400"
+    >
+      <p className="font-medium text-slate-700 dark:text-slate-200">{t("rss.required")}</p>
+      <ul className="mt-1.5 space-y-1">
+        {RSS_GUIDE_KEYS.map((key) => (
+          <li
+            key={key}
+            data-emphasis={emphasis === key ? "" : undefined}
+            className={cn(emphasis === key && "font-medium text-slate-900 dark:text-slate-100")}
+          >
+            {t(`rss.${key}`)}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function PreviewThumb({ src }: { src: string | null }) {
+  const [failed, setFailed] = useState(false);
+  if (!src) return null;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      onError={() => setFailed(true)}
+      data-testid="import-preview-thumb"
+      className={cn("img-fade h-14 w-14 shrink-0 rounded-inner object-cover", failed && "invisible")}
+    />
   );
 }
 

@@ -17,6 +17,9 @@ test.describe("blog import", () => {
     await expect(page.getByTestId("import-content-kind")).toContainText("글 전체를 가져와요.");
     await expect(page.getByTestId("import-preview-list").getByRole("listitem")).toHaveCount(6);
     await expect(page.getByText("외 3편")).toBeVisible();
+    const thumbs = page.getByTestId("import-preview-thumb");
+    await expect(thumbs).toHaveCount(2);
+    await expect(thumbs.first()).not.toHaveAttribute("referrerpolicy", /.+/);
     await expect(page).toHaveURL(/\?url=seoyeon\.tistory\.com$/);
 
     await page.getByRole("button", { name: "가져오기", exact: true }).click();
@@ -40,9 +43,76 @@ test.describe("blog import", () => {
     await preview(page, "https://m.blog.naver.com/haneul");
     await expect(page.getByRole("heading", { name: "haneul님의 블로그" })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("import-content-kind")).toContainText(
-      "이 블로그는 요약만 내보내요. 요약에 원문 링크를 붙여 가져와요.",
+      "RSS가 요약만 공개돼 있어 요약과 원문 링크로 가져와요.",
     );
     await expect(page.getByText("네이버 블로그 · 글 12편")).toBeVisible();
+    await expect(page.getByTestId("import-preview-thumb")).toHaveCount(0);
+    await expect(page.getByTestId("import-rss-notes")).toHaveCount(0);
+  });
+
+  test("the address step says the RSS has to be public, platform by platform", async ({ page }) => {
+    await page.goto("/ko/blog/import");
+    const guide = page.getByTestId("import-rss-guide");
+    await expect(guide).toContainText("블로그의 RSS가 공개돼 있어야 가져올 수 있어요.", { timeout: 30_000 });
+    await expect(guide.getByRole("listitem")).toHaveText([
+      "네이버 블로그: 글마다 '외부 보내기 허용'이 켜진 글만 RSS에 나와요.",
+      "티스토리: 블로그 관리의 RSS 설정이 '전체 공개'여야 본문까지 가져와요. '부분 공개'면 요약만 와요.",
+      "velog · 브런치: RSS가 기본으로 열려 있어요.",
+    ]);
+    await expect(guide.locator("[data-emphasis]")).toHaveCount(0);
+    await expect(page.getByLabel("블로그 주소")).toHaveAttribute("aria-describedby", "import-url-help");
+
+    await preview(page, "notfound.tistory.com");
+    await expect(page.locator("main").getByRole("alert")).toHaveText(
+      "이 주소에서 글을 찾지 못했어요. 블로그 첫 화면 주소인지 확인해 주세요.",
+      { timeout: 30_000 },
+    );
+    await expect(page.getByTestId("import-rss-guide").locator("[data-emphasis]")).toHaveText(/^티스토리: /);
+  });
+
+  test("Naver blocked by its robots rules reads as that, not as a broken address", async ({ page }) => {
+    await preview(page, "blog.naver.com/robots");
+    await expect(page.locator("main").getByRole("alert")).toHaveText(
+      "네이버 블로그는 지금 가져올 수 없어요. 네이버가 RSS 자동 수집을 막고 있어요.",
+      { timeout: 30_000 },
+    );
+  });
+
+  test("a brunch writer is pointed at the one-line intro under the author name", async ({ page }) => {
+    await preview(page, "brunch.co.kr/@haneul");
+    await page.getByRole("button", { name: "가져오기", exact: true }).click({ timeout: 30_000 });
+    await expect(page.getByText("브런치: 프로필 편집 › 작가명 아래 짧은 소개(한 줄)")).toBeVisible();
+  });
+
+  test("a thin or summarised preview says what to open in the blog's RSS", async ({ page }) => {
+    const notes = page.getByTestId("import-rss-notes").locator("p");
+    await preview(page, "blog.naver.com/noposts");
+    await expect(page.getByText("네이버 블로그 · 글 0편")).toBeVisible({ timeout: 30_000 });
+    await expect(notes).toHaveText([
+      "블로그의 RSS가 공개돼 있어야 가져올 수 있어요.",
+      "네이버 블로그: 글마다 '외부 보내기 허용'이 켜진 글만 RSS에 나와요.",
+    ]);
+    await expect(page.getByTestId("import-preview-list")).toHaveCount(0);
+
+    await preview(page, "blog.naver.com/fewposts");
+    await expect(page.getByTestId("import-preview-list").getByRole("listitem")).toHaveCount(3, { timeout: 30_000 });
+    await expect(notes).toHaveText(["네이버 블로그: 글마다 '외부 보내기 허용'이 켜진 글만 RSS에 나와요."]);
+
+    await preview(page, "partial.tistory.com");
+    await expect(page.getByTestId("import-content-kind")).toContainText("RSS가 요약만 공개돼 있어 요약과 원문 링크로 가져와요.", {
+      timeout: 30_000,
+    });
+    await expect(notes).toHaveText(["블로그 관리의 RSS 설정을 '전체 공개'로 바꾸면 본문까지 가져와요."]);
+
+    await preview(page, "velog.io/@noposts");
+    await expect(notes).toHaveText(
+      ["블로그의 RSS가 공개돼 있어야 가져올 수 있어요.", "velog · 브런치: RSS가 기본으로 열려 있어요."],
+      { timeout: 30_000 },
+    );
+
+    await preview(page, "fewposts.tistory.com");
+    await expect(page.getByTestId("import-preview-list").getByRole("listitem")).toHaveCount(3, { timeout: 30_000 });
+    await expect(page.getByTestId("import-rss-notes")).toHaveCount(0);
   });
 
   for (const [address, message] of [

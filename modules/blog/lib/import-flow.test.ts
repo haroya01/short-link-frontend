@@ -4,7 +4,16 @@ import en from "@/messages/en.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import { IMPORT_PLATFORMS } from "@/modules/blog/api/imports";
-import { importErrorKey, importStep, progressPercent, syncErrorKey, withQuery } from "./import-flow";
+import {
+  importErrorKey,
+  importStep,
+  platformOfUrl,
+  previewRssNotes,
+  previewThumb,
+  progressPercent,
+  syncErrorKey,
+  withQuery,
+} from "./import-flow";
 
 const apiError = (status: number, code?: string) => new ApiError(status, { status, code });
 
@@ -23,6 +32,7 @@ describe("import flow", () => {
     expect(importErrorKey(apiError(502, "IMPORT_SOURCE_UNREACHABLE"))).toBe("errorUnreachable");
     expect(importErrorKey(apiError(409, "IMPORT_SOURCE_TAKEN"))).toBe("errorTaken");
     expect(importErrorKey(apiError(422, "IMPORT_VERIFICATION_CODE_MISSING"))).toBe("errorCodeMissing");
+    expect(importErrorKey(apiError(403, "IMPORT_ROBOTS_DISALLOWED"))).toBe("errorRobots");
     expect(importErrorKey(apiError(429))).toBe("errorRateLimited");
     expect(importErrorKey(apiError(404))).toBe("errorGeneric");
     expect(importErrorKey(new Error("boom"))).toBe("errorGeneric");
@@ -31,6 +41,7 @@ describe("import flow", () => {
   it("reads a sync error code and falls back for anything it doesn't know", () => {
     expect(syncErrorKey("IMPORT_SOURCE_UNREACHABLE")).toBe("syncUnreachable");
     expect(syncErrorKey("IMPORT_FEED_NOT_FOUND")).toBe("syncFeedNotFound");
+    expect(syncErrorKey("IMPORT_ROBOTS_DISALLOWED")).toBe("errorRobots");
     expect(syncErrorKey("IMPORT_SOURCE_TAKEN")).toBe("errorSync");
     expect(syncErrorKey("connect timed out")).toBe("errorSync");
     expect(syncErrorKey(null)).toBe("errorSync");
@@ -68,9 +79,45 @@ describe("import flow", () => {
       "errorRateLimited",
       "errorGeneric",
       "errorSync",
+      "errorRobots",
       "syncUnreachable",
       "syncFeedNotFound",
     ] as const;
     for (const catalog of [ko, en, ja]) for (const key of keys) expect(catalog.blogImport[key]).toBeTruthy();
+  });
+
+  it("shows no thumbnail where the host blocks hotlinking, and leaves the rest as given", () => {
+    expect(previewThumb("NAVER", "https://blogthumb.pstatic.net/a.jpg")).toBeNull();
+    expect(previewThumb("NAVER", "https://example.com/a.jpg")).toBeNull();
+    expect(previewThumb("TISTORY", "https://postfiles.pstatic.net/a.jpg")).toBeNull();
+    expect(previewThumb("TISTORY", "https://blog.kakaocdn.net/a.jpg")).toBe("https://blog.kakaocdn.net/a.jpg");
+    expect(previewThumb("VELOG", null)).toBeNull();
+    expect(previewThumb("VELOG", "not a url")).toBeNull();
+  });
+
+  it("tells what to open in RSS only when a preview comes back thin or summarised", () => {
+    expect(previewRssNotes("NAVER", 0, false)).toEqual(["rss.required", "rss.NAVER"]);
+    expect(previewRssNotes("NAVER", 9, false)).toEqual(["rss.NAVER"]);
+    expect(previewRssNotes("NAVER", 12, false)).toEqual([]);
+    expect(previewRssNotes("TISTORY", 9, false)).toEqual(["rss.tistoryFull"]);
+    expect(previewRssNotes("TISTORY", 0, true)).toEqual(["rss.required", "rss.TISTORY"]);
+    expect(previewRssNotes("TISTORY", 9, true)).toEqual([]);
+    expect(previewRssNotes("VELOG", 0, true)).toEqual(["rss.required", "rss.OPEN"]);
+    expect(previewRssNotes("BRUNCH", 8, false)).toEqual([]);
+    for (const catalog of [ko, en, ja]) {
+      for (const key of ["required", "NAVER", "TISTORY", "OPEN", "excerpt", "tistoryFull"] as const) {
+        expect(catalog.blogImport.rss[key]).toBeTruthy();
+      }
+    }
+  });
+
+  it("reads the platform off a pasted address, with or without a scheme", () => {
+    expect(platformOfUrl("blog.naver.com/haneul")).toBe("NAVER");
+    expect(platformOfUrl("https://m.blog.naver.com/haneul")).toBe("NAVER");
+    expect(platformOfUrl("seoyeon.tistory.com")).toBe("TISTORY");
+    expect(platformOfUrl("https://velog.io/@a")).toBe("VELOG");
+    expect(platformOfUrl("brunch.co.kr/@b")).toBe("BRUNCH");
+    expect(platformOfUrl("medium.com/@c")).toBeNull();
+    expect(platformOfUrl("")).toBeNull();
   });
 });
