@@ -72,5 +72,5 @@ test("the people tab fits a phone with an account elsewhere in it", async ({ pag
   await page.goto("/ko/blog?q=har&view=people");
   await expect(elsewhere(page).getByTestId("remote-account-haruto@misskey.io")).toBeVisible({ timeout: 30_000 });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  expect(overflow).toBe(0);
+  expect(overflow).toBeLessThanOrEqual(0);
 });
