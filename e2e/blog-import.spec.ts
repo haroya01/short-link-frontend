@@ -40,13 +40,12 @@ test.describe("blog import", () => {
   });
 
   test("an excerpt-only blog says so before anything comes over", async ({ page }) => {
-    await preview(page, "https://m.blog.naver.com/haneul");
-    await expect(page.getByRole("heading", { name: "haneul님의 블로그" })).toBeVisible({ timeout: 30_000 });
+    await preview(page, "https://brunch.co.kr/@haneul");
+    await expect(page.getByRole("heading", { name: "haneul의 브런치" })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("import-content-kind")).toContainText(
       "RSS가 요약만 공개돼 있어 요약과 원문 링크로 가져와요.",
     );
-    await expect(page.getByText("네이버 블로그 · 글 12편")).toBeVisible();
-    await expect(page.getByTestId("import-preview-thumb")).toHaveCount(0);
+    await expect(page.getByText("브런치 · 글 8편")).toBeVisible();
     await expect(page.getByTestId("import-rss-notes")).toHaveCount(0);
   });
 
@@ -55,12 +54,13 @@ test.describe("blog import", () => {
     const guide = page.getByTestId("import-rss-guide");
     await expect(guide).toContainText("블로그의 RSS가 공개돼 있어야 가져올 수 있어요.", { timeout: 30_000 });
     await expect(guide.getByRole("listitem")).toHaveText([
-      "네이버 블로그: 글마다 '외부 보내기 허용'이 켜진 글만 RSS에 나와요.",
       "티스토리: 블로그 관리의 RSS 설정이 '전체 공개'여야 본문까지 가져와요. '부분 공개'면 요약만 와요.",
       "velog · 브런치: RSS가 기본으로 열려 있어요.",
     ]);
+    await expect(guide).not.toContainText("네이버");
     await expect(guide.locator("[data-emphasis]")).toHaveCount(0);
     await expect(page.getByLabel("블로그 주소")).toHaveAttribute("aria-describedby", "import-url-help");
+    await expect(page.getByLabel("블로그 주소")).toHaveAttribute("placeholder", "아이디.tistory.com");
 
     await preview(page, "notfound.tistory.com");
     await expect(page.locator("main").getByRole("alert")).toHaveText(
@@ -70,12 +70,13 @@ test.describe("blog import", () => {
     await expect(page.getByTestId("import-rss-guide").locator("[data-emphasis]")).toHaveText(/^티스토리: /);
   });
 
-  test("Naver blocked by its robots rules reads as that, not as a broken address", async ({ page }) => {
-    await preview(page, "blog.naver.com/robots");
+  test("a Naver address stops with Naver's own refusal, not as a broken address", async ({ page }) => {
+    await preview(page, "https://m.blog.naver.com/haneul");
     await expect(page.locator("main").getByRole("alert")).toHaveText(
-      "네이버 블로그는 지금 가져올 수 없어요. 네이버가 RSS 자동 수집을 막고 있어요.",
+      "네이버 블로그는 RSS 자동 수집을 막고 있어 가져올 수 없어요.",
       { timeout: 30_000 },
     );
+    await expect(page.getByTestId("import-preview-list")).toHaveCount(0);
   });
 
   test("a brunch writer is pointed at the one-line intro under the author name", async ({ page }) => {
@@ -84,19 +85,15 @@ test.describe("blog import", () => {
     await expect(page.getByText("브런치: 프로필 편집 › 작가명 아래 짧은 소개(한 줄)")).toBeVisible();
   });
 
-  test("a thin or summarised preview says what to open in the blog's RSS", async ({ page }) => {
+  test("an empty or summarised preview says what to open in the blog's RSS", async ({ page }) => {
     const notes = page.getByTestId("import-rss-notes").locator("p");
-    await preview(page, "blog.naver.com/noposts");
-    await expect(page.getByText("네이버 블로그 · 글 0편")).toBeVisible({ timeout: 30_000 });
+    await preview(page, "noposts.tistory.com");
+    await expect(page.getByText("티스토리 · 글 0편")).toBeVisible({ timeout: 30_000 });
     await expect(notes).toHaveText([
       "블로그의 RSS가 공개돼 있어야 가져올 수 있어요.",
-      "네이버 블로그: 글마다 '외부 보내기 허용'이 켜진 글만 RSS에 나와요.",
+      "티스토리: 블로그 관리의 RSS 설정이 '전체 공개'여야 본문까지 가져와요. '부분 공개'면 요약만 와요.",
     ]);
     await expect(page.getByTestId("import-preview-list")).toHaveCount(0);
-
-    await preview(page, "blog.naver.com/fewposts");
-    await expect(page.getByTestId("import-preview-list").getByRole("listitem")).toHaveCount(3, { timeout: 30_000 });
-    await expect(notes).toHaveText(["네이버 블로그: 글마다 '외부 보내기 허용'이 켜진 글만 RSS에 나와요."]);
 
     await preview(page, "partial.tistory.com");
     await expect(page.getByTestId("import-content-kind")).toContainText("RSS가 요약만 공개돼 있어 요약과 원문 링크로 가져와요.", {
@@ -116,8 +113,8 @@ test.describe("blog import", () => {
   });
 
   for (const [address, message] of [
-    ["medium.com/@someone", "네이버 블로그 · 티스토리 · velog · 브런치 주소만 가져올 수 있어요."],
-    ["blog.naver.com/notfound", "이 주소에서 글을 찾지 못했어요. 블로그 첫 화면 주소인지 확인해 주세요."],
+    ["medium.com/@someone", "티스토리 · velog · 브런치 주소만 가져올 수 있어요."],
+    ["velog.io/@notfound", "이 주소에서 글을 찾지 못했어요. 블로그 첫 화면 주소인지 확인해 주세요."],
     ["velog.io/@offline", "블로그에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요."],
     ["brunch.co.kr/@busy", "요청이 많아요. 잠시 뒤 다시 시도해 주세요."],
   ] as const) {
@@ -133,7 +130,7 @@ test.describe("blog import", () => {
     await page.getByRole("button", { name: "가져오기", exact: true }).click({ timeout: 30_000 });
     await expect(page.locator("main").getByRole("alert")).toHaveText("이미 다른 계정에 연결된 블로그예요.");
 
-    await preview(page, "blog.naver.com/nocode");
+    await preview(page, "nocode.tistory.com");
     await page.getByRole("button", { name: "가져오기", exact: true }).click({ timeout: 30_000 });
     await page.getByRole("button", { name: "확인", exact: true }).click();
     await expect(page.locator("main").getByRole("alert")).toHaveText(
@@ -157,9 +154,9 @@ test.describe("blog import", () => {
     const velog = section.getByRole("group", { name: "dohyun.log" });
     await expect(velog).toContainText("연결됨", { timeout: 30_000 });
     await expect(velog).toContainText("가져온 글 18편");
-    const naver = section.getByRole("group", { name: "도현의 일상 기록" });
-    await expect(naver).toContainText("오류");
-    await expect(naver).toContainText("블로그에 연결하지 못했어요. 다음 동기화 때 다시 시도해요.");
+    const brunch = section.getByRole("group", { name: "도현의 일상 기록" });
+    await expect(brunch).toContainText("오류");
+    await expect(brunch).toContainText("블로그에 연결하지 못했어요. 다음 동기화 때 다시 시도해요.");
 
     const discover = velog.getByRole("switch", { name: "발견에 보이기" });
     await expect(discover).toHaveAttribute("aria-checked", "true");
@@ -209,7 +206,7 @@ test.describe("blog import on a phone", () => {
 
   test("no step pushes the page sideways", async ({ page }) => {
     const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    await preview(page, "blog.naver.com/a-very-long-blog-identifier-for-wrapping");
+    await preview(page, "a-very-long-blog-identifier-for-wrapping-checks.tistory.com");
     await expect(page.getByTestId("import-preview-list")).toBeVisible({ timeout: 30_000 });
     expect(await overflow()).toBeLessThanOrEqual(0);
     await page.getByRole("button", { name: "가져오기", exact: true }).click();

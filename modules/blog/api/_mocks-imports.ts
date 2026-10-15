@@ -10,12 +10,12 @@ import type {
 const STORE_KEY = "kurl:mock-imports";
 const HOUR = 3_600_000;
 
-type Parsed = { platform: ImportPlatform; id: string; blogUrl: string };
+type Supported = Exclude<ImportPlatform, "NAVER">;
+type Parsed = { platform: Supported; id: string; blogUrl: string };
 
-function parse(raw: string): Parsed | null {
+function parse(raw: string): Parsed | "NAVER" | null {
   const text = raw.trim().replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/^m\./i, "");
-  const naver = text.match(/^blog\.naver\.com\/([A-Za-z0-9_-]+)/i);
-  if (naver) return { platform: "NAVER", id: naver[1], blogUrl: `https://blog.naver.com/${naver[1]}` };
+  if (/^blog\.naver\.com\//i.test(text)) return "NAVER";
   const tistory = text.match(/^([a-z0-9-]+)\.tistory\.com/i);
   if (tistory) return { platform: "TISTORY", id: tistory[1], blogUrl: `https://${tistory[1]}.tistory.com` };
   const velog = text.match(/^velog\.io\/@([A-Za-z0-9_-]+)/i);
@@ -25,21 +25,7 @@ function parse(raw: string): Parsed | null {
   return null;
 }
 
-const TITLES: Record<ImportPlatform, string[]> = {
-  NAVER: [
-    "성수동 골목 카페 세 곳, 평일 오후에 다녀온 기록",
-    "첫 마라톤 10km 완주 후기",
-    "올해 읽은 책 중 다시 펼친 다섯 권",
-    "베란다 텃밭 두 달째, 방울토마토가 열렸어요",
-    "제주 동쪽 해안도로 하루 코스",
-    "이직 첫 주에 정리한 것들",
-    "주말 아침 루틴을 바꾼 뒤 달라진 점",
-    "필름 카메라로 찍은 가을 산책",
-    "회사 근처 점심 맛집 지도",
-    "부모님과 다녀온 경주 여행",
-    "작은 방 책상 배치 다시 하기",
-    "겨울 준비, 니트 세탁하는 법",
-  ],
+const TITLES: Record<Supported, string[]> = {
   TISTORY: [
     "Spring Batch 청크 크기를 바꾸며 잰 처리 시간",
     "MySQL 인덱스가 안 타는 다섯 가지 경우",
@@ -72,14 +58,13 @@ const TITLES: Record<ImportPlatform, string[]> = {
   ],
 };
 
-const BLOG_TITLE: Record<ImportPlatform, (id: string) => string> = {
-  NAVER: (id) => `${id}님의 블로그`,
+const BLOG_TITLE: Record<Supported, (id: string) => string> = {
   TISTORY: (id) => `${id}의 개발 노트`,
   VELOG: (id) => `${id}.log`,
   BRUNCH: (id) => `${id}의 브런치`,
 };
 
-const FULL_CONTENT: Record<ImportPlatform, boolean> = { NAVER: false, TISTORY: true, VELOG: true, BRUNCH: false };
+const FULL_CONTENT: Record<Supported, boolean> = { TISTORY: true, VELOG: true, BRUNCH: false };
 
 function items(parsed: Parsed): ImportPreviewItem[] {
   const titles = TITLES[parsed.platform];
@@ -91,12 +76,7 @@ function items(parsed: Parsed): ImportPreviewItem[] {
     excerpt: FULL_CONTENT[parsed.platform]
       ? `${title}. 본문 전체를 그대로 옮겨 오는 글이에요.`
       : `${title}에 대해 적은 글의 앞부분이에요. 요약만 오는 플랫폼이라 이 부분까지 보여요……`,
-    imageUrl:
-      i % 3 !== 0
-        ? null
-        : parsed.platform === "NAVER"
-          ? `https://blogthumb.pstatic.net/MjAyNjEw/${parsed.id}-${i}.jpg`
-          : `https://picsum.photos/seed/import-${parsed.platform}-${i}/320/240`,
+    imageUrl: i % 3 === 0 ? `https://picsum.photos/seed/import-${parsed.platform}-${i}/320/240` : null,
   }));
 }
 
@@ -126,8 +106,8 @@ const SEED: ImportSource[] = [
   },
   {
     id: 8,
-    platform: "NAVER",
-    blogUrl: "https://blog.naver.com/dohyun_daily",
+    platform: "BRUNCH",
+    blogUrl: "https://brunch.co.kr/@dohyun-daily",
     blogTitle: "도현의 일상 기록",
     status: "ERROR",
     verificationCode: null,
@@ -170,11 +150,11 @@ function put(next: ImportSource): ImportSource {
 
 export function mockPreview(url: string): Promise<ImportPreview> {
   const parsed = parse(url);
+  if (parsed === "NAVER") return fail(403, "IMPORT_ROBOTS_DISALLOWED");
   if (!parsed) return fail(400, "IMPORT_UNSUPPORTED_SOURCE");
   if (/notfound/i.test(url)) return fail(404, "IMPORT_FEED_NOT_FOUND");
   if (/offline/i.test(url)) return fail(502, "IMPORT_SOURCE_UNREACHABLE");
   if (/busy/i.test(url)) return fail(429);
-  if (/robots/i.test(url)) return fail(403, "IMPORT_ROBOTS_DISALLOWED");
   return later({
     platform: parsed.platform,
     blogUrl: parsed.blogUrl,
@@ -186,6 +166,7 @@ export function mockPreview(url: string): Promise<ImportPreview> {
 
 export function mockCreateSource(url: string): Promise<ImportSource> {
   const parsed = parse(url);
+  if (parsed === "NAVER") return fail(403, "IMPORT_ROBOTS_DISALLOWED");
   if (!parsed) return fail(400, "IMPORT_UNSUPPORTED_SOURCE");
   if (/taken/i.test(url)) return fail(409, "IMPORT_SOURCE_TAKEN");
   const list = load();
@@ -212,7 +193,7 @@ export function mockVerifySource(id: number): Promise<ImportSource> {
   const source = find(id);
   if (!source) return fail(404);
   if (/nocode/i.test(source.blogUrl)) return fail(422, "IMPORT_VERIFICATION_CODE_MISSING");
-  const total = TITLES[source.platform].length;
+  const total = source.platform === "NAVER" ? 0 : TITLES[source.platform].length;
   return later(put({ ...source, status: "IMPORTING", verificationCode: null, progress: { total, done: 0, failed: 0 } }));
 }
 
@@ -222,7 +203,7 @@ export function mockGetSource(id: number): Promise<ImportSource> {
   if (source.status !== "IMPORTING" || !source.progress) return Promise.resolve(source);
   const { total } = source.progress;
   const done = Math.min(total, source.progress.done + Math.ceil(total / 3));
-  const failed = done >= total && source.platform === "NAVER" ? 1 : 0;
+  const failed = done >= total && source.platform === "BRUNCH" ? 1 : 0;
   const finished = done >= total;
   return Promise.resolve(
     put({

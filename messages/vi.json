@@ -4614,7 +4614,6 @@
     "urlPlaceholder": "tenban.tistory.com",
     "rss": {
       "required": "RSS của blog phải được công khai mới nhập được.",
-      "NAVER": "Naver Blog: chỉ những bài đã bật “Cho phép gửi ra ngoài” mới có trong RSS.",
       "TISTORY": "Tistory: cài đặt RSS của blog phải là “Toàn bộ” mới nhập được cả nội dung. Nếu là “Một phần” thì chỉ có tóm tắt.",
       "OPEN": "velog · Brunch: RSS mở sẵn theo mặc định.",
       "excerpt": "RSS của blog chỉ công khai phần tóm tắt, nên bài được nhập dưới dạng tóm tắt kèm liên kết bài gốc.",
@@ -4637,7 +4636,6 @@
     "copied": "Đã sao chép mã",
     "copyFailed": "Không sao chép được",
     "where": {
-      "NAVER": "Naver Blog: Quản lý › Cài đặt cơ bản › Thông tin blog › Giới thiệu blog",
       "TISTORY": "Tistory: Quản lý › Blog › Mô tả blog",
       "VELOG": "velog: Cài đặt › Giới thiệu ngắn",
       "BRUNCH": "Brunch: Sửa hồ sơ › phần giới thiệu ngắn (một dòng) dưới tên tác giả"
@@ -4654,13 +4652,13 @@
     "toMyBlog": "Đến blog của tôi",
     "manage": "Cài đặt blog đã kết nối",
     "errorTitle": "Việc nhập đã dừng",
-    "errorUnsupported": "Chỉ nhập được địa chỉ Naver Blog, Tistory, velog và Brunch.",
+    "errorUnsupported": "Chỉ nhập được địa chỉ Tistory, velog và Brunch.",
     "errorFeedNotFound": "Không tìm thấy bài viết ở địa chỉ này. Hãy kiểm tra đó có phải trang chủ blog không.",
     "errorUnreachable": "Không kết nối được tới blog. Hãy thử lại sau ít phút.",
     "errorRateLimited": "Quá nhiều yêu cầu. Hãy thử lại sau ít phút.",
     "errorTaken": "Blog này đã được kết nối với tài khoản khác.",
     "errorCodeMissing": "Chưa thấy mã trong phần giới thiệu. Phần giới thiệu vừa lưu có thể mất vài phút để cập nhật.",
-    "errorRobots": "Hiện chưa nhập được Naver Blog. Naver đang chặn việc tự động thu thập RSS.",
+    "errorRobots": "Naver Blog chặn việc tự động thu thập RSS nên không nhập được.",
     "errorGeneric": "Không nhập được. Hãy thử lại sau ít phút.",
     "errorSync": "Lần đồng bộ gần nhất đã thất bại.",
     "syncUnreachable": "Không kết nối được tới blog. Sẽ thử lại ở lần đồng bộ tiếp theo.",

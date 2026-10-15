@@ -60,12 +60,11 @@ describe("import flow", () => {
     expect(withQuery(base, "url", null)).toBe("https://blog.kurl.me/import?ref=x");
   });
 
-  it("has a name and a bio location for every platform in ko, en and ja", () => {
+  it("names every platform, and gives a bio location only for the ones it imports", () => {
     for (const catalog of [ko, en, ja]) {
-      for (const platform of IMPORT_PLATFORMS) {
-        expect(catalog.blogImport.platform[platform]).toBeTruthy();
-        expect(catalog.blogImport.where[platform]).toBeTruthy();
-      }
+      for (const platform of IMPORT_PLATFORMS) expect(catalog.blogImport.platform[platform]).toBeTruthy();
+      expect(Object.keys(catalog.blogImport.where).sort()).toEqual(["BRUNCH", "TISTORY", "VELOG"]);
+      expect(Object.keys(catalog.blogImport.rss)).not.toContain("NAVER");
     }
   });
 
@@ -95,17 +94,16 @@ describe("import flow", () => {
     expect(previewThumb("VELOG", "not a url")).toBeNull();
   });
 
-  it("tells what to open in RSS only when a preview comes back thin or summarised", () => {
-    expect(previewRssNotes("NAVER", 0, false)).toEqual(["rss.required", "rss.NAVER"]);
-    expect(previewRssNotes("NAVER", 9, false)).toEqual(["rss.NAVER"]);
-    expect(previewRssNotes("NAVER", 12, false)).toEqual([]);
+  it("tells what to open in RSS only when a preview comes back empty or summarised", () => {
     expect(previewRssNotes("TISTORY", 9, false)).toEqual(["rss.tistoryFull"]);
     expect(previewRssNotes("TISTORY", 0, true)).toEqual(["rss.required", "rss.TISTORY"]);
+    expect(previewRssNotes("TISTORY", 0, false)).toEqual(["rss.tistoryFull", "rss.required", "rss.TISTORY"]);
     expect(previewRssNotes("TISTORY", 9, true)).toEqual([]);
     expect(previewRssNotes("VELOG", 0, true)).toEqual(["rss.required", "rss.OPEN"]);
-    expect(previewRssNotes("BRUNCH", 8, false)).toEqual([]);
+    expect(previewRssNotes("BRUNCH", 3, false)).toEqual([]);
+    expect(previewRssNotes("NAVER", 0, false)).toEqual(["rss.required"]);
     for (const catalog of [ko, en, ja]) {
-      for (const key of ["required", "NAVER", "TISTORY", "OPEN", "excerpt", "tistoryFull"] as const) {
+      for (const key of ["required", "TISTORY", "OPEN", "excerpt", "tistoryFull"] as const) {
         expect(catalog.blogImport.rss[key]).toBeTruthy();
       }
     }

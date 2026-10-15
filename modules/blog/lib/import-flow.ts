@@ -62,14 +62,13 @@ export function previewThumb(platform: ImportPlatform, imageUrl: string | null):
   }
 }
 
-export const NAVER_FEW_POSTS = 10;
+export type RssGuideKey = "TISTORY" | "OPEN";
 
-export type RssGuideKey = "NAVER" | "TISTORY" | "OPEN";
+export const RSS_GUIDE_KEYS: readonly RssGuideKey[] = ["TISTORY", "OPEN"];
 
-export const RSS_GUIDE_KEYS: readonly RssGuideKey[] = ["NAVER", "TISTORY", "OPEN"];
-
-export function rssGuideKey(platform: ImportPlatform): RssGuideKey {
-  return platform === "NAVER" || platform === "TISTORY" ? platform : "OPEN";
+export function rssGuideKey(platform: ImportPlatform): RssGuideKey | null {
+  if (platform === "NAVER") return null;
+  return platform === "TISTORY" ? "TISTORY" : "OPEN";
 }
 
 export function platformOfUrl(raw: string): ImportPlatform | null {
@@ -90,8 +89,10 @@ export function platformOfUrl(raw: string): ImportPlatform | null {
 export function previewRssNotes(platform: ImportPlatform, itemCount: number, fullContent: boolean): string[] {
   const notes: string[] = [];
   if (!fullContent && platform === "TISTORY") notes.push("rss.tistoryFull");
-  if (itemCount === 0) notes.push("rss.required", `rss.${rssGuideKey(platform)}`);
-  else if (platform === "NAVER" && itemCount < NAVER_FEW_POSTS) notes.push("rss.NAVER");
+  if (itemCount === 0) {
+    const guide = rssGuideKey(platform);
+    notes.push("rss.required", ...(guide ? [`rss.${guide}`] : []));
+  }
   return notes;
 }
 

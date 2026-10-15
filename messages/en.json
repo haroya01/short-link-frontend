@@ -4614,7 +4614,6 @@
     "urlPlaceholder": "yourname.tistory.com",
     "rss": {
       "required": "Your blog's RSS feed has to be public to import.",
-      "NAVER": "Naver Blog: only posts with “Allow external sharing” turned on appear in RSS.",
       "TISTORY": "Tistory: whole posts come over only when your blog's RSS setting is “Full”. With “Partial”, only summaries do.",
       "OPEN": "velog · Brunch: RSS is open by default.",
       "excerpt": "This blog's RSS shares summaries only, so posts come over as a summary with a link to the original.",
@@ -4637,7 +4636,6 @@
     "copied": "Code copied",
     "copyFailed": "Couldn't copy",
     "where": {
-      "NAVER": "Naver Blog: Manage › Basic settings › Blog info › Blog introduction",
       "TISTORY": "Tistory: Manage › Blog › Blog description",
       "VELOG": "velog: Settings › Short bio",
       "BRUNCH": "Brunch: Edit profile › the one-line intro under your author name"
@@ -4654,13 +4652,13 @@
     "toMyBlog": "Go to my blog",
     "manage": "Connected blog settings",
     "errorTitle": "The import stopped",
-    "errorUnsupported": "Only Naver Blog, Tistory, velog and Brunch addresses can be imported.",
+    "errorUnsupported": "Only Tistory, velog and Brunch addresses can be imported.",
     "errorFeedNotFound": "No posts found at this address. Check that it's your blog's home page.",
     "errorUnreachable": "Couldn't reach the blog. Try again in a moment.",
     "errorRateLimited": "Too many requests. Try again in a moment.",
     "errorTaken": "This blog is already connected to another account.",
     "errorCodeMissing": "The code isn't in your description yet. A saved description can take a few minutes to show up.",
-    "errorRobots": "Naver Blog can't be imported right now. Naver blocks automated RSS collection.",
+    "errorRobots": "Naver Blog blocks automated RSS collection, so it can't be imported.",
     "errorGeneric": "Couldn't import. Try again in a moment.",
     "errorSync": "The last sync failed.",
     "syncUnreachable": "Couldn't reach the blog. It'll try again at the next sync.",

@@ -263,9 +263,11 @@ export function BlogImportFlow() {
                 </button>
               )}
             </div>
-            <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">
-              {t(`where.${view.source.platform}`)}
-            </p>
+            {t.has(`where.${view.source.platform}`) && (
+              <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">
+                {t(`where.${view.source.platform}`)}
+              </p>
+            )}
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
               <button
                 type="button"

@@ -4614,7 +4614,6 @@
     "urlPlaceholder": "yourname.tistory.com",
     "rss": {
       "required": "इंपोर्ट के लिए ब्लॉग का RSS सार्वजनिक होना चाहिए।",
-      "NAVER": "Naver Blog: सिर्फ़ वही पोस्ट RSS में आती हैं जिनमें “बाहर भेजने की अनुमति” चालू है।",
       "TISTORY": "Tistory: ब्लॉग की RSS सेटिंग “पूरा” होने पर ही पूरी पोस्ट आती है। “आंशिक” होने पर सिर्फ़ सारांश आता है।",
       "OPEN": "velog · Brunch: RSS पहले से खुला रहता है।",
       "excerpt": "ब्लॉग का RSS सिर्फ़ सारांश देता है, इसलिए पोस्ट सारांश और मूल लिंक के साथ आएँगी।",
@@ -4637,7 +4636,6 @@
     "copied": "कोड कॉपी हो गया",
     "copyFailed": "कॉपी नहीं हो सका",
     "where": {
-      "NAVER": "Naver Blog: Manage › Basic settings › Blog info › Blog introduction",
       "TISTORY": "Tistory: Manage › Blog › Blog description",
       "VELOG": "velog: Settings › Short bio",
       "BRUNCH": "Brunch: प्रोफ़ाइल संपादित करें › लेखक नाम के नीचे छोटा परिचय (एक पंक्ति)"
@@ -4654,13 +4652,13 @@
     "toMyBlog": "मेरे ब्लॉग पर जाएँ",
     "manage": "जुड़े ब्लॉग की सेटिंग",
     "errorTitle": "इंपोर्ट रुक गया",
-    "errorUnsupported": "सिर्फ़ Naver Blog, Tistory, velog और Brunch के पते इंपोर्ट हो सकते हैं।",
+    "errorUnsupported": "सिर्फ़ Tistory, velog और Brunch के पते इंपोर्ट हो सकते हैं।",
     "errorFeedNotFound": "इस पते पर कोई पोस्ट नहीं मिली। देखें कि यह ब्लॉग के होम पेज का पता है।",
     "errorUnreachable": "ब्लॉग तक नहीं पहुँच सके। थोड़ी देर बाद फिर कोशिश करें।",
     "errorRateLimited": "बहुत ज़्यादा अनुरोध। थोड़ी देर बाद फिर कोशिश करें।",
     "errorTaken": "यह ब्लॉग पहले से किसी दूसरे खाते से जुड़ा है।",
     "errorCodeMissing": "परिचय में कोड नहीं मिला। सेव किया गया परिचय दिखने में कुछ मिनट लग सकते हैं।",
-    "errorRobots": "Naver Blog अभी इंपोर्ट नहीं हो सकता। Naver RSS के अपने-आप संग्रह को रोकता है।",
+    "errorRobots": "Naver Blog RSS के अपने-आप संग्रह को रोकता है, इसलिए इसे इंपोर्ट नहीं किया जा सकता।",
     "errorGeneric": "इंपोर्ट नहीं हो सका। थोड़ी देर बाद फिर कोशिश करें।",
     "errorSync": "पिछला सिंक नहीं हो सका।",
     "syncUnreachable": "ब्लॉग तक नहीं पहुँच सके। अगले सिंक में फिर कोशिश होगी।",
