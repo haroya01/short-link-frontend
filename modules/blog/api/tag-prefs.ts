@@ -1,4 +1,4 @@
-import { request } from "@/lib/api/client";
+import { mockEmpty, request } from "@/lib/api/client";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -15,7 +15,7 @@ const enc = (tag: string) => encodeURIComponent(tag);
 const mockPrefs: TagPrefs = { followed: ["개발", "일상"], hidden: [] };
 
 export function getTagPrefs(): Promise<TagPrefs> {
-  if (USE_MOCKS) return Promise.resolve(mockPrefs);
+  if (USE_MOCKS) return Promise.resolve(mockEmpty("tagPrefs") ? { followed: [], hidden: [] } : mockPrefs);
   return request<TagPrefs>(base, { method: "GET" });
 }
 

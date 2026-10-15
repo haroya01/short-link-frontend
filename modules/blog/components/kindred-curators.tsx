@@ -2,6 +2,7 @@ import type { KindredCurator } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
@@ -31,15 +32,18 @@ export function KindredCurators({
           <li key={curator.id}>
             <BlogLink
               href={authorHref(curator.username, locale)}
-              className="focus-ring group flex items-center gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="focus-ring group flex items-center gap-3 rounded-surface px-1 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
-              <Avatar src={curator.avatarUrl} name={curator.username} size="md" />
+              <Avatar src={curator.avatarUrl} name={curator.username} seed={curator.id} size="md" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                   @{curator.username}
                 </span>
                 {curator.bio && (
-                  <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
+                  <span
+                    lang={contentLang(curator.bio)}
+                    className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400"
+                  >
                     {curator.bio}
                   </span>
                 )}

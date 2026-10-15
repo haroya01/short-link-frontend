@@ -3,8 +3,9 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { ReportButton } from "@/modules/blog/components/report-button";
+import { FileText, Hash } from "lucide-react";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -152,9 +153,9 @@ export default async function PublicProfileHomepage({
         )}
 
         {posts.length === 0 ? (
-          <p className="text-slate-500">{t("emptyPosts")}</p>
+          <BlogEmpty icon={FileText} title={t("emptyPosts")} />
         ) : visiblePosts.length === 0 ? (
-          <p className="text-slate-500 dark:text-slate-400">{t("tagFilterEmpty", { tag: activeTag ?? "" })}</p>
+          <BlogEmpty icon={Hash} title={t("tagFilterEmpty", { tag: activeTag ?? "" })} />
         ) : (
           <div className="space-y-10">
             {pinnedPosts.length > 0 && (
@@ -170,10 +171,6 @@ export default async function PublicProfileHomepage({
             {recentPosts.length > 0 && <PostLedger posts={recentPosts} username={author.username} locale={locale} />}
           </div>
         )}
-
-        <footer className="mt-16 flex items-center justify-end border-t border-slate-100 pt-8 dark:border-slate-800">
-          <ReportButton subjectType="USER" subjectId={author.id} ownerUsername={author.username} />
-        </footer>
         </AuthorContentTransition>
       </ReadingShell>
     </>

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, FlaskConical } from "lucide-react";
+import { ArrowLeft, BarChart3, FlaskConical } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -15,7 +15,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { Section } from "@/components/common/section";
 import { ByBatchTable, GroupChart, KpiRow, RecommendationCard } from "@/components/links/campaigns/stats-cards";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
@@ -106,7 +106,7 @@ export default function CampaignStatsPage() {
   }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
-    return <LinksAuthGate title={t("loginRequired")} />;
+    return <SignInEmptyState page reason="stats" icon={BarChart3} />;
   }
 
   return (

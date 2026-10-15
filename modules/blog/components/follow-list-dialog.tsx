@@ -2,14 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Loader2, UserCheck, UserPlus, X } from "lucide-react";
+import { Clock, Loader2, UserCheck, UserPlus, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
+import { ApiError } from "@/lib/api/client";
+import { useToast } from "@/components/ui/toast";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import {
   followUser,
   listFollowers,
@@ -46,6 +51,7 @@ export function FollowListDialog({
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
+  const blocked = useBlockedNames();
   // Portal target (<body>) only exists on the client; gate so SSR/first paint render nothing —
   // matches the closed state and avoids a hydration mismatch.
   const [mounted, setMounted] = useState(false);
@@ -69,7 +75,11 @@ export function FollowListDialog({
       try {
         const fetcher = tab === "followers" ? listFollowers : listFollowing;
         const res = await fetcher(username, next);
-        setItems((prev) => (next === 0 ? res.items : [...prev, ...res.items]));
+        setItems((prev) => {
+          if (next === 0) return res.items;
+          const seen = new Set(prev.map((u) => u.id));
+          return [...prev, ...res.items.filter((u) => !seen.has(u.id))];
+        });
         setPage(res.page);
         setHasNext(res.hasNext);
       } catch {
@@ -91,7 +101,8 @@ export function FollowListDialog({
 
   if (!open || !mounted) return null;
 
-  const empty = !loading && items.length === 0;
+  const shown = items.filter((u) => !blocked.has(u.username));
+  const empty = !loading && shown.length === 0;
 
   // Portal to <body>: a transformed/animated ancestor (a will-change page wrapper, the post
   // article's enter animation, etc.) would otherwise make this `fixed inset-0` overlay resolve
@@ -109,7 +120,7 @@ export function FollowListDialog({
         aria-modal="true"
         aria-label={tab === "followers" ? t("followersTab") : t("followingTab")}
         tabIndex={-1}
-        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-850"
+        className="relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full max-w-md flex-col overflow-hidden rounded-surface border border-slate-200 bg-white shadow-modal animate-fade-in dark:border-slate-800 dark:bg-slate-850"
       >
         {/* Tab header — two segments + a close affordance. */}
         <div className="flex items-center border-b border-slate-100 dark:border-slate-800">
@@ -136,7 +147,7 @@ export function FollowListDialog({
             </p>
           )}
           <ul>
-            {items.map((u) => (
+            {shown.map((u) => (
               <FollowRow key={u.id} user={u} locale={locale} onNavigate={() => onOpenChange(false)} />
             ))}
           </ul>
@@ -203,19 +214,21 @@ function FollowRow({
   onNavigate: () => void;
 }) {
   return (
-    <li className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+    <li className="flex items-center gap-3 rounded-surface px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <BlogLink
         href={authorHref(user.username, locale)}
         onClick={onNavigate}
         className="focus-ring group flex min-w-0 flex-1 items-center gap-3"
       >
-        <Avatar src={user.avatarUrl} name={user.username} size="md" />
+        <Avatar src={user.avatarUrl} name={user.username} seed={user.id} size="md" />
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200">
             @{user.username}
           </span>
           {user.bio && (
-            <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{user.bio}</span>
+            <span lang={contentLang(user.bio)} className="truncate text-[12px] text-slate-500 dark:text-slate-400">
+              {user.bio}
+            </span>
           )}
         </span>
       </BlogLink>
@@ -236,45 +249,60 @@ function RowFollowButton({
   initialFollowing: boolean;
 }) {
   const t = useTranslations("publicPost");
-  const { authenticated, ready, me, signInWithGoogle } = useAuth();
+  const { authenticated, ready, me } = useAuth();
+  const { toast } = useToast();
   const [following, setFollowing] = useState(initialFollowing);
+  const [requested, setRequested] = useState(false);
   const [busy, setBusy] = useState(false);
 
   if (ready && me?.username === username) return null;
 
   async function toggle() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("follow");
       return;
     }
     if (busy) return;
     setBusy(true);
-    const next = !following;
+    const next = !(following || requested);
+    const before = { following, requested };
     setFollowing(next);
+    setRequested(false);
     try {
-      if (next) await followUser(username);
-      else await unfollowUser(username);
-    } catch {
-      setFollowing(!next);
+      const s = next ? await followUser(username) : await unfollowUser(username);
+      setFollowing(s.following);
+      setRequested(s.requested ?? false);
+      if (s.requested && !before.requested) toast(t("followRequestedToast"));
+    } catch (e) {
+      setFollowing(before.following);
+      setRequested(before.requested);
+      toast(t(e instanceof ApiError && e.detail.code === "BLOCKED_TARGET" ? "followBlocked" : "followError"), "error");
     } finally {
       setBusy(false);
     }
   }
 
+  const pressed = following || requested;
   return (
     <button
       type="button"
       onClick={() => void toggle()}
-      aria-pressed={following}
+      aria-pressed={pressed}
       className={cn(
         "touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors focus-ring",
-        following
+        pressed
           ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
           : "border-transparent bg-accent-700 text-white hover:bg-accent-800",
       )}
     >
-      {following ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
-      {following ? t("following") : t("follow")}
+      {following ? (
+        <UserCheck className="h-3.5 w-3.5" />
+      ) : requested ? (
+        <Clock className="h-3.5 w-3.5" />
+      ) : (
+        <UserPlus className="h-3.5 w-3.5" />
+      )}
+      {following ? t("following") : requested ? t("requested") : t("follow")}
     </button>
   );
 }

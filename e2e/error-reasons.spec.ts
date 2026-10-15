@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 /**
  * 사용자가 입력을 고쳐서 풀 수 있는 실패는 "다시 시도해 주세요" 대신 이유를 말한다.
@@ -41,6 +42,6 @@ test.describe("실패의 이유를 말한다", () => {
     await section.getByPlaceholder("https://variant-a.example.com").fill("https://b.example.com");
     await section.getByRole("button", { name: "추가" }).click();
 
-    await expect(page.getByText("목적지는 4개까지 넣을 수 있어요.")).toBeVisible();
+    await expectOnTop(toastBy(page, "목적지는 4개까지 넣을 수 있어요."));
   });
 });

@@ -1,9 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import { AuthorGate } from "@/modules/blog/components/author-gate";
 
-const TAB_SEGMENTS = ["series", "collections", "about", "liked", "bookmarks"];
+const TAB_SEGMENTS = ["notes", "replies", "media", "reposts", "series", "collections", "about", "liked", "bookmarks"];
 
 /** True on the author's tab pages (글 · 시리즈 · 컬렉션 · 소개 · 좋아요 · 북마크) — NOT a post (/p/user/{slug})
  *  or a series detail (/p/user/series/{slug}). Static tab segments win route resolution over [slug],
@@ -51,11 +52,14 @@ export function isTabRoute(pathname: string): boolean {
  */
 export function ProfileChrome({ header, children }: { header: ReactNode; children: ReactNode }) {
   const pathname = usePathname();
+  const { username } = useParams<{ username: string }>();
   if (!isTabRoute(pathname)) return <>{children}</>;
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-2xl">{header}</div>
-      {children}
+      <AuthorGate username={username} noticeClassName="mx-auto max-w-2xl">
+        {children}
+      </AuthorGate>
     </main>
   );
 }

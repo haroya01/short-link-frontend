@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, X } from "lucide-react";
+import { History, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -9,8 +9,9 @@ import { postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+import { LoadError } from "@/modules/blog/components/saved/load-error";
 import {
   clearReadingHistory,
   forgetRead,
@@ -86,25 +87,13 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
     );
   }
   if (error && items.length === 0) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-20 text-center">
-        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
-        <button
-          type="button"
-          onClick={() => void load(0)}
-          className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-        >
-          {t("retry")}
-        </button>
-      </div>
-    );
+    return <LoadError message={t("loadError")} onRetry={() => void load(0)} />;
   }
   if (items.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={History}
         title={t("emptyHistory")}
-        body={t("emptyHistoryBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}
@@ -153,7 +142,7 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
               href={postHref(item.username, item.slug, locale)}
               className="focus-ring group flex min-w-0 flex-1 items-start gap-3"
             >
-              <Avatar src={item.avatarUrl} name={item.username} size="sm" />
+              <Avatar src={item.avatarUrl} name={item.username} seed={item.userId} size="sm" />
               <span className="flex min-w-0 flex-col">
                 <span
                   lang={contentLang(item.title)}

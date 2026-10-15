@@ -8,20 +8,22 @@ import { Plugin } from "@tiptap/pm/state";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, List, Quote, type LucideIcon } from "lucide-react";
-import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
+import { CommentLink } from "@/modules/blog/components/comment-link";
+import { LinkActions } from "@/modules/blog/components/editor/link-actions";
+import { applyLinkResult, linkAt, linkRequest, type LinkAt, type OpenedLink } from "@/modules/blog/components/editor/link-commands";
+import { LinkDialog } from "@/modules/blog/components/editor/link-dialog";
+import { applyPastePlan, pasteSpot } from "@/modules/blog/components/editor/link-paste-choice";
+import { linkOnly, planPaste } from "@/modules/blog/lib/link-paste";
+import { mentionTokenAt } from "@/modules/mentions/mention-token";
+import { MentionSuggestions } from "@/modules/mentions/mention-suggestions";
+import { useMentionCandidates } from "@/modules/mentions/use-mention-candidates";
+import type { MentionCandidate } from "@/modules/mentions/api/mention-candidates";
 
 /** tiptap-markdown augments storage at runtime but ships no type for it. */
 function getMarkdown(editor: Editor): string {
   return (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown?.getMarkdown() ?? "";
 }
 
-/** A link target needs an http(s) scheme to round-trip through the comment renderer (CommentBody only
- *  linkifies `[text](https?://…)`). Bare domains get https:// so the link survives. */
-function withScheme(url: string): string {
-  const trimmed = url.trim();
-  if (!trimmed) return "";
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
 
 /** Hard cap on plain-text length (parity with the old textareas' maxLength) — reject any edit that
  *  would push it over. Deletions always shrink, so they pass. Limit is per-instance via configure(). */
@@ -37,11 +39,11 @@ const RichMaxLength = Extension.create<{ limit: number }>({
 });
 
 /**
- * WYSIWYG 마크다운 입력 — 댓글·답글·하이라이트 노트가 공유하는 한 입력기. 입력칸 자체가 결과를
+ * WYSIWYG 마크다운 입력 — 하이라이트 노트의 입력기. 입력칸 자체가 결과를
  * 보여준다(굵게는 굵게, 인용은 인용 모양) — 마크다운 기호도 별도 미리보기 칸도 없다. 본문 에디터와
  * 같은 엔진(Tiptap)이되 댓글/노트 문법 서브셋만 켠다(헤딩·표·이미지 ❌). 저장은 그대로 마크다운으로
  * 직렬화돼(tiptap-markdown) 렌더(CommentBody)와 1:1. value(markdown) in/out 만 책임지고, 제출 버튼·
- * 글자수 같은 행동은 호출측(CommentComposer / NoteSheet)이 자기 자리에 둔다.
+ * 글자수 같은 행동은 호출측(NoteSheet)이 자기 자리에 둔다.
  */
 export function RichCommentInput({
   value,
@@ -65,7 +67,7 @@ export function RichCommentInput({
   maxLength?: number;
   rows?: number;
   /** Collapsed rest state — hides the format toolbar and shrinks the field to a single line. The
-   *  host (CommentComposer) flips this to `true` on focus / while a draft exists. */
+   *  host flips this to `true` on focus / while a draft exists. */
   expanded?: boolean;
   /** Cap on the auto-grow height; content past it scrolls inside the field. */
   maxHeight?: string;
@@ -75,8 +77,10 @@ export function RichCommentInput({
    *  본질(한 줄 답글)만 필요한 경우. 입력기는 여전히 WYSIWYG(contenteditable)로 남는다. */
   hideToolbar?: boolean;
 }) {
-  const t = useTranslations("comments");
-  const [linkOpen, setLinkOpen] = useState(false);
+  const tm = useTranslations("mentions");
+  const [opened, setOpened] = useState<OpenedLink | null>(null);
+  const [linkActions, setLinkActions] = useState<LinkAt | null>(null);
+  const editorRef = useRef<Editor | null>(null);
   // Keep the latest callbacks reachable from the editor's (mount-time) closures without re-creating it.
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -85,6 +89,19 @@ export function RichCommentInput({
   // Mirror the value we last emitted so the controlled-reset effect can tell an external clear (after
   // submit) apart from our own keystroke echo, and skip re-seeding the doc on every render.
   const lastEmitted = useRef(value);
+  const [mention, setMention] = useState<{ query: string; from: number; to: number } | null>(null);
+  const [mentionActive, setMentionActive] = useState(0);
+  const mentionCandidates = useMentionCandidates(mention?.query ?? null, true);
+  const mentionOpen = mention != null && mentionCandidates.length > 0;
+  const mentionRef = useRef<{
+    open: boolean;
+    count: number;
+    active: number;
+    candidates: MentionCandidate[];
+    pick: (candidate: MentionCandidate) => void;
+    close: () => void;
+    move: (step: number) => void;
+  }>({ open: false, count: 0, active: 0, candidates: [], pick: () => {}, close: () => {}, move: () => {} });
 
   const editor = useEditor({
     // Next SSR: Tiptap must not render on the server (hydration mismatch otherwise).
@@ -97,8 +114,9 @@ export function RichCommentInput({
         orderedList: false,
         horizontalRule: false,
         strike: false,
-        link: { openOnClick: false },
+        link: false,
       }),
+      CommentLink.configure({ openOnClick: false }),
       RichMaxLength.configure({ limit: maxLength }),
       // html:false — 표준 마크다운만. breaks:true 로 single newline 을 줄바꿈으로(본문과 동일).
       Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
@@ -107,8 +125,36 @@ export function RichCommentInput({
     autofocus: autoFocus ? "end" : false,
     editorProps: {
       attributes: { class: "tiptap-comment focus:outline-none" },
+      handlePaste: (view, event) => {
+        const ed = editorRef.current;
+        if (!ed) return false;
+        const plan = linkOnly(planPaste(event.clipboardData?.getData("text/plain"), pasteSpot(view.state)));
+        if (plan.kind === "default") return false;
+        event.preventDefault();
+        applyPastePlan(ed, plan);
+        return true;
+      },
+      handleClick: (view, pos, event) => {
+        setLinkActions(linkAt(view, pos, event));
+        return false;
+      },
       // Cmd/Ctrl+Enter 제출(버튼은 그대로) — 길게 쓰다 손 떼지 않고 보낼 수 있게.
       handleKeyDown: (_view, event) => {
+        const m = mentionRef.current;
+        if (m.open && !event.isComposing) {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            m.move(event.key === "ArrowDown" ? 1 : -1);
+            return true;
+          }
+          if ((event.key === "Enter" && !event.metaKey && !event.ctrlKey) || event.key === "Tab") {
+            m.pick(m.candidates[m.active]);
+            return true;
+          }
+          if (event.key === "Escape") {
+            m.close();
+            return true;
+          }
+        }
         if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && onSubmitRef.current) {
           onSubmitRef.current();
           return true;
@@ -122,6 +168,46 @@ export function RichCommentInput({
       onChangeRef.current(md);
     },
   });
+  editorRef.current = editor;
+
+  useEffect(() => {
+    if (!editor) return;
+    const sync = () => {
+      const { $from, empty } = editor.state.selection;
+      if (!empty || !$from.parent.isTextblock) {
+        setMention(null);
+        return;
+      }
+      const before = $from.parent.textBetween(0, $from.parentOffset, undefined, "\ufffc");
+      const token = mentionTokenAt(before, before.length);
+      setMention(token ? { query: token.query, from: $from.pos - (before.length - token.start), to: $from.pos } : null);
+      setMentionActive(0);
+    };
+    const clear = () => setMention(null);
+    editor.on("selectionUpdate", sync);
+    editor.on("update", sync);
+    editor.on("blur", clear);
+    return () => {
+      editor.off("selectionUpdate", sync);
+      editor.off("update", sync);
+      editor.off("blur", clear);
+    };
+  }, [editor]);
+
+  const pickMention = (candidate: MentionCandidate) => {
+    if (!editor || !mention) return;
+    editor.chain().focus().insertContentAt({ from: mention.from, to: mention.to }, `@${candidate.username} `).run();
+    setMention(null);
+  };
+  mentionRef.current = {
+    open: mentionOpen,
+    count: mentionCandidates.length,
+    active: mentionActive,
+    candidates: mentionCandidates,
+    pick: pickMention,
+    close: () => setMention(null),
+    move: (step: number) => setMentionActive((i) => (i + step + mentionCandidates.length) % mentionCandidates.length),
+  };
 
   // Controlled-reset sync: when the host clears `value` (after a successful submit) or sets it from
   // outside, re-seed the doc. Compare against the LAST value we emitted so our own keystroke echo
@@ -133,22 +219,6 @@ export function RichCommentInput({
     editor.commands.setContent(value || "", { emitUpdate: false });
   }, [value, editor]);
 
-  function applyLink(rawUrl: string) {
-    if (!editor) return;
-    const href = withScheme(rawUrl);
-    if (!href) {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-    const { empty, from } = editor.state.selection;
-    if (empty) {
-      // No selection — drop the URL in as its own linked text.
-      editor.chain().focus().insertContent(href).setTextSelection({ from, to: from + href.length }).setLink({ href }).run();
-    } else {
-      editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
-    }
-  }
-
   // Expanded floor honours the caller's rows; collapsed is a single text line so the resting field
   // reads as a quiet one-line affordance (~48px with the vertical padding).
   const minHeight = expanded ? `${rows * 1.6 + 1}rem` : "1.5rem";
@@ -156,14 +226,15 @@ export function RichCommentInput({
   if (!editor) {
     return (
       <div
-        className="rounded-lg border border-slate-200 dark:border-slate-700"
+        className="rounded-surface border border-slate-200 dark:border-slate-700"
         style={{ minHeight }}
       />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
+    <div className="relative">
+    <div className="overflow-hidden rounded-surface border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
       {/* Format chrome shows only when expanded — the resting field is a bare one-line input. The
           grid-rows 0fr→1fr reveal animates the height with no mount jump; `invisible` keeps the
           clipped toolbar out of the tab order while collapsed. hideToolbar drops it entirely for short
@@ -175,21 +246,49 @@ export function RichCommentInput({
           }`}
         >
           <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
-            <RichToolbar editor={editor} compact={compact} onLink={() => setLinkOpen(true)} />
+            <RichToolbar
+              editor={editor}
+              compact={compact}
+              onLink={() => {
+                setLinkActions(null);
+                setOpened(linkRequest(editor, "link", null, { cards: false }));
+              }}
+            />
           </div>
         </div>
       )}
       <RichEditable editor={editor} placeholder={placeholder} minHeight={minHeight} maxHeight={maxHeight} />
-      <UrlDialog
-        open={linkOpen}
-        title={t("link")}
-        placeholder="https://example.com"
-        initialValue={(editor.getAttributes("link").href as string | undefined) ?? ""}
-        allowRemove={editor.isActive("link")}
-        onClose={() => setLinkOpen(false)}
-        onSubmit={(url) => applyLink(url)}
-        onRemove={() => editor.chain().focus().extendMarkRange("link").unsetLink().run()}
+    </div>
+    <LinkDialog
+      request={opened?.request ?? null}
+      onClose={() => {
+        setOpened(null);
+        editor.chain().focus().run();
+      }}
+      onSubmit={(result) => {
+        if (opened) applyLinkResult(editor, result, opened);
+      }}
+    />
+    {linkActions && (
+      <LinkActions
+        editor={editor}
+        actions={linkActions}
+        onEdit={() => {
+          setLinkActions(null);
+          setOpened(linkRequest(editor, "link", linkActions, { cards: false }));
+        }}
+        onClose={() => setLinkActions(null)}
       />
+    )}
+    {mentionOpen && (
+      <MentionSuggestions
+        className="absolute left-0 top-full mt-1"
+        candidates={mentionCandidates}
+        active={mentionActive}
+        onPick={pickMention}
+        label={tm("suggestions")}
+      />
+    )}
     </div>
   );
 }
@@ -236,7 +335,7 @@ function RichEditable({
           "[&_code]:rounded [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12.5px] [&_code]:text-slate-800 dark:[&_code]:bg-slate-800 dark:[&_code]:text-slate-200 " +
           "[&_blockquote]:my-1.5 [&_blockquote]:border-l-2 [&_blockquote]:border-accent-200 [&_blockquote]:pl-3 [&_blockquote]:text-slate-500 dark:[&_blockquote]:border-accent-500/40 dark:[&_blockquote]:text-slate-400 " +
           "[&_ul]:my-1.5 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:my-0.5 " +
-          "[&_pre]:my-1.5 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-slate-900 [&_pre]:px-3 [&_pre]:py-2.5 [&_pre]:font-mono [&_pre]:text-[12.5px] [&_pre]:leading-relaxed [&_pre]:text-slate-100 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-slate-100"
+          "[&_pre]:my-1.5 [&_pre]:overflow-x-auto [&_pre]:rounded-surface [&_pre]:bg-slate-900 [&_pre]:px-3 [&_pre]:py-2.5 [&_pre]:font-mono [&_pre]:text-[12.5px] [&_pre]:leading-relaxed [&_pre]:text-slate-100 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-slate-100"
         }
       />
     </div>
@@ -293,7 +392,7 @@ function RichToolbar({
             ev.preventDefault();
             it.run();
           }}
-          className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
+          className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-full transition-colors ${
             it.active
               ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
               : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"

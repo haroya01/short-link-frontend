@@ -1,5 +1,7 @@
 import type { MyLinksPage, MyLink } from "@/types";
 import { buildDemoLinkStats } from "@/lib/demo-data";
+import { mockApproveAllFollowRequests } from "@/modules/notifications/api/follow-requests";
+import { MOCK_VIEWER_AUTHOR } from "@/modules/blog/api/_mocks";
 /**
  * Links-product mock layer (NEXT_PUBLIC_USE_MOCKS=1). The blog product mocks at its own API functions
  * (modules/blog/api/_mocks.ts) and short-circuits before `request()`; the links product calls
@@ -17,9 +19,65 @@ type MockSplash = { enabled: boolean; message: string | null; seconds: number; c
 const MOCK_SPLASH_OFF: MockSplash = { enabled: false, message: null, seconds: 3, ctaId: null };
 const mockVisitOptions = new Map<string, { openInBrowser: boolean; splash: MockSplash; opensAt: string | null }>();
 
+const MOCK_UPLOADED_AVATAR = "https://i.pravatar.cc/120?img=32";
+
+let mockMyProfile = {
+  username: MOCK_VIEWER_AUTHOR.username,
+  bio: MOCK_VIEWER_AUTHOR.bio as string | null,
+  theme: null,
+  publicUrl: null,
+  avatarUrl: MOCK_VIEWER_AUTHOR.avatarUrl as string | null,
+  bannerUrl: null,
+  socials: [],
+  hideFollowerCount: false,
+  displayName: "Dohyun Kim" as string | null,
+  locked: true,
+};
+
 export function mockLinksResponse(path: string, method: string, body?: unknown): unknown | undefined {
   const verb = (method || "GET").toUpperCase();
   const p = path.split("?")[0].replace(/\/+$/, "");
+
+  if (p === "/api/v1/users/me/profile") {
+    if (verb === "PUT") {
+      const patch = (body ?? {}) as {
+        displayName?: string;
+        hideFollowerCount?: boolean;
+        bio?: string;
+        locked?: boolean;
+      };
+      if (patch.locked === false && mockMyProfile.locked) mockApproveAllFollowRequests();
+      mockMyProfile = {
+        ...mockMyProfile,
+        ...(patch.bio !== undefined ? { bio: patch.bio } : {}),
+        ...(patch.hideFollowerCount !== undefined ? { hideFollowerCount: patch.hideFollowerCount } : {}),
+        ...(patch.displayName !== undefined ? { displayName: patch.displayName.trim() || null } : {}),
+        ...(patch.locked !== undefined ? { locked: patch.locked } : {}),
+      };
+    }
+    return mockMyProfile;
+  }
+
+  if (verb === "POST" && p === "/api/v1/users/me/avatar/presigned-url") {
+    return {
+      uploadUrl: "",
+      publicUrl: MOCK_UPLOADED_AVATAR,
+      key: "mock-avatar",
+      contentType: "image/jpeg",
+      maxBytes: 5 * 1024 * 1024,
+      expiresIn: 300,
+    };
+  }
+  if (p === "/api/v1/users/me/avatar") {
+    if (verb === "PUT") {
+      mockMyProfile = { ...mockMyProfile, avatarUrl: MOCK_UPLOADED_AVATAR };
+      return { avatarUrl: MOCK_UPLOADED_AVATAR };
+    }
+    if (verb === "DELETE") {
+      mockMyProfile = { ...mockMyProfile, avatarUrl: null };
+      return null;
+    }
+  }
 
   // Shorten — the blog publish flow auto-shortens in-post links. Return a valid kurl short link so
   // the rewrite recognizes it (kurlShortCode) and the flow is exercisable without a backend.

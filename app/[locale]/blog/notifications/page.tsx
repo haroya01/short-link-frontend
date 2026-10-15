@@ -1,18 +1,27 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, ChevronRight, ListFilter, Lock } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
+  useFilteredSenders,
+  useFollowRequests,
   useMarkAllRead,
   useNotifications,
+  useReadHiddenNotices,
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
+import { NotificationTabs } from "@/modules/notifications/components/notification-tabs";
 import { ErrorState } from "@/components/common/error-state";
-import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
+import type { NotificationFilter, NotificationItem as Item } from "@/modules/notifications/api/notifications";
+import { noticeHidden, useNoteFilters } from "@/modules/notes/lib/note-filters";
 
 /**
  * Full notification feed — the mobile surface (the desktop header bell offers a dropdown peek) and a
@@ -40,29 +49,29 @@ const GROUP_ORDER: GroupKey[] = ["groupToday", "groupYesterday", "groupWeek", "g
 
 export default function NotificationsPage() {
   const t = useTranslations("notifications");
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const unread = useUnreadCount();
-  const markAll = useMarkAllRead();
+  const [filter, setFilter] = useState<NotificationFilter>("all");
+  const markAll = useMarkAllRead(filter);
   const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useNotifications();
+    useNotifications(filter);
+  const filters = useNoteFilters();
+  const all = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
+  useReadHiddenNotices(all, filters, me?.id);
+  const waiting = useFollowRequests().data?.length ?? 0;
+  const filtered = useFilteredSenders().data ?? [];
+  const filteredCount = filtered.reduce((sum, s) => sum + s.count, 0);
 
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
   if (ready && !authenticated) {
-    // 안내문만 두면 막다른 길 — 로그인으로 가는 문(돌아올 next= 포함)을 같이 내민다.
     return (
-      <main className="flex flex-col items-start gap-4 px-6 py-12">
-        <p className="text-slate-600 dark:text-slate-300">{t("loginRequired")}</p>
-        <a
-          href={`${blogHref("/login")}?next=${encodeURIComponent("/notifications")}`}
-          className={blogCta({ variant: "secondary" })}
-        >
-          {t("loginCta")}
-        </a>
-      </main>
+      <div>
+        <SignInEmptyState page reason="notifications" icon={Bell} />
+      </div>
     );
   }
 
-  const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const items = all.filter((item) => !noticeHidden(item, filters, me?.id));
   const now = new Date();
   const groups = new Map<GroupKey, Item[]>();
   for (const item of items) {
@@ -73,7 +82,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
@@ -82,14 +91,54 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={() => markAll.mutate()}
-            className="touch-target focus-ring rounded-md px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            className="touch-target focus-ring rounded-surface px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
             {t("markAllRead")}
           </button>
         )}
       </div>
 
-      <div className="mt-4">
+      <NotificationTabs value={filter} onChange={setFilter} className="mt-4" />
+
+      {filter === "all" && waiting > 0 && (
+        // 잠긴 계정에 기다리는 요청이 있으면 맨 위 한 줄 — 마스토돈 알림 위 "팔로우 요청".
+        <BlogLink
+          href={blogPath("/follow-requests")}
+          data-testid="follow-requests-entry"
+          className="focus-ring mt-4 flex items-center gap-3 rounded-surface border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <Lock aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+          </span>
+          <span className="flex-1 text-[14px] font-semibold text-slate-900 dark:text-slate-100">
+            {t("followRequestsTitle")}
+          </span>
+          <span className="text-[13px] tabular-nums text-slate-500 dark:text-slate-400">{waiting}</span>
+          <ChevronRight aria-hidden className="h-4 w-4 text-slate-400" />
+        </BlogLink>
+      )}
+
+      {filter === "all" && filtered.length > 0 && (
+        // 알림 거르기가 따로 둔 알림 — 마스토돈 "걸러진 알림" 한 줄.
+        <BlogLink
+          href={blogPath("/notifications/filtered")}
+          data-testid="filtered-entry"
+          className="focus-ring mt-1 flex items-center gap-3 rounded-surface border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <ListFilter aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("filteredTitle")}</span>
+            <span className="text-[12px] text-slate-500 dark:text-slate-400">
+              {t("filteredSummary", { people: filtered.length, count: filteredCount })}
+            </span>
+          </span>
+          <ChevronRight aria-hidden className="h-4 w-4 text-slate-400" />
+        </BlogLink>
+      )}
+
+      <div role="tabpanel" className="mt-4">
         {!ready || isLoading ? (
           // 실제 행 모양의 펄스 스켈레톤 — "…" 한 글자는 빈 화면과 구분이 안 됐다.
           <div role="status" aria-busy="true" className="space-y-1 py-2">
@@ -107,10 +156,16 @@ export default function NotificationsPage() {
           // 로드 실패를 '알림 없음' 빈 상태로 위장하지 않는다 — 명시적 에러 + 재시도.
           <ErrorState onRetry={() => refetch()} />
         ) : items.length === 0 ? (
-          <div className="flex flex-col items-center py-24 text-center">
-            <Bell aria-hidden className="h-6 w-6 text-slate-300 dark:text-slate-600" />
-            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{t("empty")}</p>
-          </div>
+          <BlogEmpty
+            icon={Bell}
+            title={t(filter === "mentions" ? "mentionsEmpty" : "empty")}
+            body={filter === "mentions" ? undefined : t("emptyBody")}
+            action={
+              <BlogLink href={blogPath("/")} className={blogCta({ variant: "secondary" })}>
+                {t("browseFeed")}
+              </BlogLink>
+            }
+          />
         ) : (
           GROUP_ORDER.filter((key) => groups.has(key)).map((key) => (
             <section key={key} className="mt-5 first:mt-1" aria-label={t(key)}>
@@ -144,6 +199,6 @@ export default function NotificationsPage() {
           </button>
         </div>
       )}
-    </main>
+    </div>
   );
 }

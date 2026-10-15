@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthProvider } from "@/lib/auth";
+import { LoginPromptHost } from "@/components/auth/login-prompt";
 import { PostHogProvider } from "@/components/common/posthog-provider";
 import { QueryProvider } from "@/components/common/query-provider";
 import { ToastProvider } from "@/components/ui/toast";
@@ -14,6 +15,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           <ToastProvider>
             <BehaviorTracker />
             {children}
+            <LoginPromptHost />
           </ToastProvider>
         </PostHogProvider>
       </AuthProvider>

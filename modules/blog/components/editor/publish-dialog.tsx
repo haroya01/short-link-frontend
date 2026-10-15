@@ -1,26 +1,32 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, X } from "lucide-react";
+import { CalendarClock, Check, ChevronDown, ImagePlus, Loader2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { DATE_LOCALE } from "@/lib/date";
 import type { PostStatus } from "@/modules/blog/api/posts";
-import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
+import { POST_IMAGE_TYPES, postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
+import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
+import { isSavableSlug } from "@/modules/blog/lib/slug";
+import { rowDate } from "@/modules/notes/lib/compact-time";
+import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
+import { useConfirm } from "@/components/ui/use-confirm";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
+
+const TAKEN_DOWN_NOTICE_ID = "publish-taken-down";
 
 /**
  * Publish panel — a confirmation, not a form. The centerpiece is a live card preview (cover · title ·
  * 요약 · tags) of how the post will appear in the feed and share cards, with the cover auto-filled from
  * the body's first image and the 요약 prefilled from the opening line — so for most posts the author
- * only adds a topic and hits 발행. Everything decided rarely (시리즈 · 주소 · 발행 시점 · 본문 링크)
+ * only adds a topic and hits 발행. Everything decided rarely (시리즈 · 주소)
  * folds into the collapsed 추가 설정 section; the publish address stays readable on its collapsed row.
  * Settings are saved first so a publish/schedule snapshot matches what's set here. Dark-aware.
  */
@@ -28,6 +34,7 @@ export function PublishDialog({
   open,
   onClose,
   status,
+  takenDown = false,
   scheduledAt,
   title,
   cover,
@@ -46,18 +53,20 @@ export function PublishDialog({
   tagSuggestions,
   seriesId,
   onSeriesChange,
-  bodyLinks,
   previewAction,
   error,
+  slugError = null,
   saving,
   busy,
   onSave,
   onChangeStatus,
   onSchedule,
+  onCancelSchedule,
 }: {
   open: boolean;
   onClose: () => void;
   status: PostStatus;
+  takenDown?: boolean;
   scheduledAt: string | null;
   /** Canvas title, mirrored read-only in the card preview (empty → the 제목 없음 placeholder). */
   title: string;
@@ -87,13 +96,13 @@ export function PublishDialog({
   tagSuggestions?: string[];
   seriesId: number | null;
   onSeriesChange: (v: number | null) => void;
-  /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
-  bodyLinks: string[];
   /** "미리보기 링크 복사" affordance, rendered in the footer for a not-yet-public post (null otherwise). */
   previewAction?: React.ReactNode;
   /** The editor's current error (failed save / publish), surfaced in the footer so a failed action
    *  keeps the dialog open with the reason rather than reading as a silent success. */
   error: string | null;
+  /** Why the server refused the typed slug — shown under the slug field; the footer only points there. */
+  slugError?: string | null;
   saving: boolean;
   busy: boolean;
   /** Persists pending edits. Resolves false when the save failed (or was a no-op that left content
@@ -101,19 +110,22 @@ export function PublishDialog({
    *  A permissive void return is treated as "not a failure" for back-compat. */
   onSave: () => Promise<boolean | void> | boolean | void;
   /** Resolves true once the status change succeeds — the dialog closes only then. */
-  onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  onChangeStatus: (a: StatusAction) => Promise<boolean>;
   /** Resolves true once the post is parked for a future publish — the dialog closes only then. */
-  onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  onSchedule: (iso: string) => Promise<boolean>;
+  onCancelSchedule: () => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
   const locale = useLocale();
   const { me } = useAuth();
+  const [confirm, confirmDialog] = useConfirm();
   // On mobile the on-screen keyboard shrinks the visual viewport; lift the sheet by that inset so the
   // sticky footer (Publish) and lower fields stay reachable while a field is focused (0 on desktop).
   const keyboardInset = useKeyboardInset();
   // 실제 발행 주소(blog.kurl.me/@user/…)를 보여준다 — 이전 표기 "kurl.me/{slug}" 는 단축링크
   // 도메인이라 발행되는 URL 과 달랐다. dev(path-based)에선 /blog-preview/@user/… 로 그대로 표시.
   const addressPrefix = blogHref(`/@${me?.username ?? ""}/`).replace(/^https?:\/\//, "");
+  const slugInvalid = status === "DRAFT" && !isSavableSlug(slug);
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const tagsFieldRef = useRef<HTMLDivElement>(null);
@@ -121,8 +133,8 @@ export function PublishDialog({
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
-  // 추가 설정(시리즈·주소·발행 시점·본문 링크)은 접어 둔다 — 매번 정하는 게 아닌 것들이라 필수(카드
-  // 미리보기·태그)만 한 열로 보인다. 발행 주소는 접힌 줄에서도 읽힌다.
+  // 추가 설정(시리즈·주소)은 접어 둔다 — 매번 정하는 게 아닌 것들이라 필수(카드
+  // 미리보기·태그·발행 시점)만 한 열로 보인다. 발행 주소는 접힌 줄에서도 읽힌다.
   const [showAdvanced, setShowAdvanced] = useState(false);
   // The current cover came from the auto-apply below (drives the "본문 첫 이미지" badge). Cleared the
   // moment the author uploads or picks one deliberately.
@@ -132,10 +144,7 @@ export function PublishDialog({
   // Teachable click: instead of a silently-disabled Publish, clicking with no topics scrolls the tag
   // field into view and flags it. Set on a failed publish attempt, cleared once a tag is added.
   const [tagNudge, setTagNudge] = useState(false);
-  // Which in-post links to auto-shorten through kurl on publish — all on by default; the author can
-  // opt any out (kept as the original URL). Seeded when the dialog opens (body isn't edited while it's
-  // open, so the detected set is stable for the session).
-  const [shortenSet, setShortenSet] = useState<Set<string>>(new Set());
+  const slugErrorRef = useRef<HTMLParagraphElement>(null);
 
   // A public post needs at least one topic (tag) — the reader's whole discovery surface is
   // tag-driven — so tags gate the button (disabled) and the tag field nudges. A missing title does
@@ -153,17 +162,17 @@ export function PublishDialog({
   useFocusTrap(panelRef, { active: open, onEscape: onClose });
 
   useEffect(() => {
-    if (open) setShortenSet(new Set(bodyLinks));
-  }, [open, bodyLinks]);
+    if (open && slugError) setShowAdvanced(true);
+  }, [open, slugError]);
 
-  const enabledLinks = bodyLinks.filter((l) => shortenSet.has(l));
-  const toggleLink = (url: string) =>
-    setShortenSet((prev) => {
-      const next = new Set(prev);
-      if (next.has(url)) next.delete(url);
-      else next.add(url);
-      return next;
-    });
+  useEffect(() => {
+    if (open && slugError && showAdvanced) slugErrorRef.current?.scrollIntoView({ block: "nearest" });
+  }, [open, slugError, showAdvanced]);
+
+  const scheduledInput = scheduledAt ? toLocalInput(scheduledAt) : "";
+  useEffect(() => {
+    if (open && status === "SCHEDULED") setScheduleAt(scheduledInput);
+  }, [open, status, scheduledInput]);
 
   // Prefill an empty 요약 with the body's opening line when the dialog opens, so the author edits a
   // draft excerpt instead of facing a blank box. Once per open (the ref resets on close); never
@@ -218,18 +227,11 @@ export function PublishDialog({
     onCoverChange(null);
   }
 
-  // 본문 링크 단축은 공개로 나가는 발행에서만 실제로 돈다 — 그때만 접힌 줄에 고지한다.
-  const goingPublic = status === "DRAFT" || status === "UNPUBLISHED";
-  const showLinkNote = goingPublic && enabledLinks.length > 0;
 
   // Card preview mirrors the real FeedCard: eyebrow = first DISPLAYABLE tag, date pinned to Seoul
   // (the hydration rule for date formatting) — the meta line is display-only realism.
   const eyebrowTag = tags.find(isDisplayableTag);
-  const todayLabel = new Date().toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-    month: "long",
-    day: "numeric",
-    timeZone: "Asia/Seoul",
-  });
+  const todayLabel = rowDate(new Date().toISOString(), locale);
 
   // local datetime min (now) for the schedule input.
   const now = new Date();
@@ -283,7 +285,7 @@ export function PublishDialog({
               <input
                 ref={fileRef}
                 type="file"
-                accept="image/*"
+                accept={POST_IMAGE_TYPES.join(",")}
                 className="hidden"
                 onChange={(e) => {
                   const f = e.target.files?.[0];
@@ -319,7 +321,7 @@ export function PublishDialog({
                       avatar-less author gets in the real feed; not worth a profile fetch here. */}
                   <p className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                     <span className="flex min-w-0 items-center gap-1.5">
-                      <Avatar src={null} name={me?.username ?? ""} size="xs" />
+                      <Avatar src={null} name={me?.username ?? ""} seed={me?.id ?? null} size="xs" />
                       <span className="truncate font-medium">{me?.username}</span>
                     </span>
                     <span aria-hidden>·</span>
@@ -411,7 +413,38 @@ export function PublishDialog({
             </Field>
           </div>
 
-          {/* ── 추가 설정: 매번 정하지 않는 것들(시리즈 · 주소 · 발행 시점 · 본문 링크)은 접어 둔다.
+          {(status === "DRAFT" || status === "SCHEDULED") && (
+            <div className="mt-5">
+              <Field label={t("publishTiming")}>
+                {status === "DRAFT" && (
+                  <div
+                    role="radiogroup"
+                    aria-label={t("publishTiming")}
+                    className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
+                  >
+                    <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
+                      {t("publishNow")}
+                    </button>
+                    <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
+                      {t("schedule")}
+                    </button>
+                  </div>
+                )}
+                {(status === "SCHEDULED" || showSchedule) && (
+                  <input
+                    type="datetime-local"
+                    min={localMin}
+                    value={scheduleAt}
+                    onChange={(e) => setScheduleAt(e.target.value)}
+                    aria-label={t("publishTiming")}
+                    className={`w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark] ${status === "DRAFT" ? "mt-2" : ""}`}
+                  />
+                )}
+              </Field>
+            </div>
+          )}
+
+          {/* ── 추가 설정: 매번 정하지 않는 것들(시리즈 · 주소)은 접어 둔다.
               발행 주소만은 접힌 줄에서도 읽히게 — 어디로 나가는지는 펼치지 않아도 보여야 한다. */}
           <div className="mt-5 border-t border-slate-100 pt-1.5 dark:border-slate-800">
             <button
@@ -431,12 +464,6 @@ export function PublishDialog({
                 {slug}
               </span>
             </button>
-            {/* 접혀 있어도 링크 재작성은 무언의 변경이면 안 된다 — 한 줄로 알리고, 펼치면 끌 수 있다. */}
-            {!showAdvanced && showLinkNote && (
-              <p className="px-1 pb-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                {t("linkShortenNote", { count: enabledLinks.length })}
-              </p>
-            )}
 
             {showAdvanced && (
               <div className="space-y-5 px-1 pb-1.5 pt-2">
@@ -456,19 +483,40 @@ export function PublishDialog({
                   hint={status === "DRAFT" ? t("slugFreezeWarn") : undefined}
                 >
                   {status === "DRAFT" ? (
-                    <div className="flex items-center gap-1.5">
-                      <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
-                      <input
-                        type="text"
-                        value={slug}
-                        onChange={(e) => onSlugChange(e.target.value)}
-                        maxLength={200}
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[13px] text-slate-700 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:border-accent-500"
-                      />
-                    </div>
+                    <>
+                      <div className="flex items-center gap-1.5">
+                        <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
+                        <input
+                          type="text"
+                          value={slug}
+                          onChange={(e) => onSlugChange(e.target.value)}
+                          maxLength={200}
+                          autoCapitalize="off"
+                          autoCorrect="off"
+                          spellCheck={false}
+                          aria-label={t("slugLabel")}
+                          aria-invalid={slugInvalid || Boolean(slugError)}
+                          aria-describedby={
+                            slugInvalid ? "publish-slug-invalid" : slugError ? "publish-slug-error" : undefined
+                          }
+                          className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[13px] text-slate-700 outline-none transition-colors focus:border-accent-400 aria-[invalid=true]:border-red-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:border-accent-500 dark:aria-[invalid=true]:border-red-500"
+                        />
+                      </div>
+                      {slugInvalid && (
+                        <p id="publish-slug-invalid" className="mt-1 text-[11px] text-red-600 dark:text-red-400">
+                          {t("slugInvalid")}
+                        </p>
+                      )}
+                      {!slugInvalid && slugError && (
+                        <p
+                          id="publish-slug-error"
+                          ref={slugErrorRef}
+                          className="mt-1 text-[11px] text-red-600 dark:text-red-400"
+                        >
+                          {slugError}
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <p className="truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
                       {addressPrefix}
@@ -477,76 +525,6 @@ export function PublishDialog({
                   )}
                 </Field>
 
-                {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. */}
-                {status === "DRAFT" && (
-                  <Field label={t("publishTiming")}>
-                    <div
-                      role="radiogroup"
-                      aria-label={t("publishTiming")}
-                      className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
-                    >
-                      <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
-                        {t("publishNow")}
-                      </button>
-                      <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
-                        {t("schedule")}
-                      </button>
-                    </div>
-                    {showSchedule && (
-                      <input
-                        type="datetime-local"
-                        min={localMin}
-                        value={scheduleAt}
-                        onChange={(e) => setScheduleAt(e.target.value)}
-                        className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
-                      />
-                    )}
-                  </Field>
-                )}
-
-                {/* 본문 링크 — 발행 시 kurl 단축링크로 변환해 클릭 추적. 링크별로 끌 수 있음. */}
-                {bodyLinks.length > 0 && (
-                  <Field label={t("bodyLinks")} hint={t("bodyLinksHint")}>
-                    <ul className="space-y-1 rounded-lg border border-slate-200 p-1.5 dark:border-slate-700">
-                      {bodyLinks.map((url) => {
-                        const on = shortenSet.has(url);
-                        let host = url;
-                        try {
-                          host = new URL(url).host.replace(/^www\./, "");
-                        } catch {
-                          /* keep raw */
-                        }
-                        return (
-                          <li key={url}>
-                            <button
-                              type="button"
-                              onClick={() => toggleLink(url)}
-                              aria-pressed={on}
-                              className="focus-ring flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                            >
-                              <span
-                                className={`grid h-4 w-4 shrink-0 place-items-center rounded border transition-colors ${
-                                  on
-                                    ? "border-accent-600 bg-accent-700 text-white dark:border-accent-500 dark:bg-accent-500"
-                                    : "border-slate-300 dark:border-slate-600"
-                                }`}
-                              >
-                                {on && <Check className="h-3 w-3" />}
-                              </span>
-                              <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                              <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
-                                {host}
-                                <span className="text-slate-500 dark:text-slate-400">
-                                  {url.slice(url.indexOf(host) + host.length)}
-                                </span>
-                              </span>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </Field>
-                )}
               </div>
             )}
           </div>
@@ -554,27 +532,28 @@ export function PublishDialog({
 
         {/* Footer — status-aware actions */}
         <footer className="border-t border-slate-100 px-5 py-3.5 dark:border-slate-800">
+          {takenDown && <TakenDownNotice id={TAKEN_DOWN_NOTICE_ID} className="mb-2.5" />}
           {/* Action error (failed publish/schedule/save) — keeps the dialog open with the reason so a
               failed action never reads as a silent success. */}
           {error && (
             <p className="mb-2.5 text-[13px] text-red-600 dark:text-red-400" role="alert">
-              {error}
+              {error === slugError ? t("slugCheck") : error}
             </p>
           )}
-          <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             {status === "SCHEDULED" && scheduledAt && (
               <span className="text-[12px] text-slate-500 dark:text-slate-400">
-                {t("scheduledFor", { when: new Date(scheduledAt).toLocaleString() })}
+                {t("scheduledFor", { when: scheduledLabel(scheduledAt, locale) })}
               </span>
             )}
             {previewAction}
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Standalone save only where there's no autosave + no save-on-action — i.e. NOT a draft.
-                A draft autosaves and Publish saves first, so a separate 임시저장 here was a double-save. */}
-            {status !== "DRAFT" && (
+          <div className="ml-auto flex items-center gap-2">
+            {/* Standalone save only where no action saves: a draft autosaves, 변경사항 저장 saves a live post,
+                and a scheduled post's actions save first. */}
+            {status === "UNPUBLISHED" && (
               <button
                 type="button"
                 onClick={async () => {
@@ -588,9 +567,11 @@ export function PublishDialog({
             )}
             <PrimaryAction
               status={status}
+              takenDown={takenDown}
               busy={busy}
               scheduleMode={showSchedule}
               scheduleReady={Boolean(scheduleAt)}
+              rescheduleReady={Boolean(scheduleAt) && scheduleAt !== scheduledInput}
               t={t}
               // Close ONLY when the lifecycle action actually succeeds — a failed publish/schedule
               // (no title, server 409, …) keeps the dialog open with the error in the footer, instead
@@ -609,8 +590,8 @@ export function PublishDialog({
                 if ((await onSave()) === false) return;
                 const ok =
                   showSchedule && scheduleAt
-                    ? await onSchedule(scheduleAt, { shortenLinks: enabledLinks })
-                    : await onChangeStatus("publish", { shortenLinks: enabledLinks });
+                    ? await onSchedule(scheduleAt)
+                    : await onChangeStatus("publish");
                 if (ok) onClose();
               }}
               onSaveChanges={async () => {
@@ -622,6 +603,13 @@ export function PublishDialog({
               // Cancel-schedule / Unpublish silently drops the new content (changeStatus only POSTs the
               // lifecycle endpoint, it doesn't save blocks/meta). Matches Publish / Save changes.
               onUnpublish={async () => {
+                const ok = await confirm({
+                  title: t("unpublishConfirmTitle"),
+                  description: t("unpublishConfirmDescription"),
+                  confirmLabel: t("unpublish"),
+                  destructive: true,
+                });
+                if (!ok) return;
                 if ((await onSave()) === false) return;
                 await onChangeStatus("unpublish");
               }}
@@ -632,17 +620,30 @@ export function PublishDialog({
                   return;
                 }
                 if ((await onSave()) === false) return;
-                await onChangeStatus("republish", { shortenLinks: enabledLinks });
+                await onChangeStatus("republish");
+              }}
+              onReschedule={async () => {
+                if (await onSchedule(scheduleAt)) onClose();
+              }}
+              onPublishNow={async () => {
+                if ((await onSave()) === false) return;
+                if (await onChangeStatus("publish")) onClose();
               }}
               onCancelSchedule={async () => {
-                if ((await onSave()) === false) return;
-                await onChangeStatus("backToDraft");
+                const ok = await confirm({
+                  title: t("cancelScheduleConfirmTitle"),
+                  description: t("cancelScheduleConfirmDescription"),
+                  confirmLabel: t("cancelSchedule"),
+                  destructive: true,
+                });
+                if (ok) await onCancelSchedule();
               }}
             />
           </div>
           </div>
         </footer>
       </div>
+      {confirmDialog}
     </div>
   );
 }
@@ -700,31 +701,51 @@ function Field({
 
 function PrimaryAction({
   status,
+  takenDown,
   busy,
   scheduleMode,
   scheduleReady,
+  rescheduleReady,
   t,
   onPublish,
   onSaveChanges,
   onUnpublish,
   onRepublish,
+  onReschedule,
+  onPublishNow,
   onCancelSchedule,
 }: {
   status: PostStatus;
+  takenDown: boolean;
   busy: boolean;
   /** The schedule panel is open — the primary action parks the post instead of publishing now. */
   scheduleMode: boolean;
   /** A publish time has been picked; gates the schedule action so an empty time can't fall through. */
   scheduleReady: boolean;
+  rescheduleReady: boolean;
   t: ReturnType<typeof useTranslations>;
   onPublish: () => void;
   onSaveChanges: () => void;
   onUnpublish: () => void;
   onRepublish: () => void;
+  onReschedule: () => void;
+  onPublishNow: () => void;
   onCancelSchedule: () => void;
 }) {
   const solid =
     "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
+  if (takenDown && (status === "DRAFT" || status === "UNPUBLISHED"))
+    return (
+      <button
+        type="button"
+        disabled
+        aria-describedby={TAKEN_DOWN_NOTICE_ID}
+        title={t("takenDownBlocked")}
+        className={solid}
+      >
+        {status === "DRAFT" ? t("publish") : t("republish")}
+      </button>
+    );
   if (status === "DRAFT") {
     // The tag requirement is a teachable click (onPublish nudges the tag field) rather than a
     // disabled button, so Publish/Schedule stay enabled. Schedule still gates on a picked time —
@@ -773,13 +794,34 @@ function PrimaryAction({
     );
   // SCHEDULED
   return (
-    <button
-      type="button"
-      onClick={onCancelSchedule}
-      disabled={busy}
-      className="focus-ring rounded-lg border border-amber-300 px-3 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-50 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/15"
-    >
-      {t("cancelSchedule")}
-    </button>
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <button
+        type="button"
+        onClick={onCancelSchedule}
+        disabled={busy}
+        className="focus-ring rounded-lg border border-amber-300 px-3 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-50 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/15"
+      >
+        {t("cancelSchedule")}
+      </button>
+      <button
+        type="button"
+        onClick={onReschedule}
+        disabled={busy || !rescheduleReady}
+        className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800/60"
+      >
+        <CalendarClock className="h-4 w-4" />
+        {t("reschedule")}
+      </button>
+      <button type="button" onClick={onPublishNow} disabled={busy} className={solid}>
+        <Check className="h-4 w-4" />
+        {t("publishNow")}
+      </button>
+    </div>
   );
+}
+
+/** A stored instant as the value a datetime-local field shows: the author's own wall-clock time. */
+function toLocalInput(iso: string): string {
+  const at = new Date(iso);
+  return new Date(at.getTime() - at.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 }

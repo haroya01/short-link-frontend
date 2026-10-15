@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import {
   listSubscribedSeriesIds,
@@ -19,7 +20,7 @@ import { createSharedSetStore, useSetStore } from "@/modules/blog/lib/shared-set
 const store = createSharedSetStore<number>(() => listSubscribedSeriesIds());
 
 export function useSeriesSubscriptions() {
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const set = useSetStore(store, { ready, authenticated });
   const { toast } = useToast();
   const t = useTranslations("publicFeed");
@@ -29,7 +30,7 @@ export function useSeriesSubscriptions() {
   const toggle = useCallback(
     async (seriesId: number) => {
       if (!authenticated) {
-        signInWithGoogle();
+        askToSignIn("subscribe");
         return;
       }
       await store.optimisticToggle(
@@ -38,7 +39,7 @@ export function useSeriesSubscriptions() {
         () => toast(t("seriesSubscribeFailed"), "error"),
       );
     },
-    [authenticated, signInWithGoogle, toast, t],
+    [authenticated, toast, t],
   );
 
   return { isSubscribed, toggle };

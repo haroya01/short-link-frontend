@@ -15,6 +15,7 @@ import { bootstrapSession } from "./api/client";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import { writeLoginNextCookie } from "./login-next-cookie";
 import { useMe } from "@/hooks/use-me";
+import { disableWebPush } from "@/modules/notifications/lib/web-push";
 import type { Me } from "@/types";
 
 type AuthContextValue = {
@@ -22,7 +23,7 @@ type AuthContextValue = {
   ready: boolean;
   me: Me | null;
   isAdmin: boolean;
-  signInWithGoogle: () => void;
+  signInWithGoogle: (next?: string) => void;
   signOut: () => Promise<void>;
 };
 
@@ -63,6 +64,14 @@ async function tryClaimPendingLinks(retriesLeft = 1) {
       claimInFlight = false;
     }
   }
+}
+
+// The server forgets this browser's push subscription only for its owner, so it must ask before the
+// session ends.
+export async function endSession() {
+  await disableWebPush().catch(() => undefined);
+  await apiLogout();
+  Sentry.setUser(null);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -106,22 +115,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     tryClaimPendingLinks();
   }, [meId, meRole]);
 
-  const signInWithGoogle = useCallback(() => {
+  const signInWithGoogle = useCallback((next?: string) => {
     // Return to where login started (blog, profile, …) instead of always landing on /dashboard.
     // Stash the current path unless we're on /login (which sets its own ?next=) or the callback.
     // A `.kurl.me` cookie (not sessionStorage) carries it through the OAuth round-trip: login often
     // starts on blog.kurl.me / {author}.kurl.me but the callback lands on the apex — a per-origin
     // sessionStorage stash is gone by then, so every blog login fell back to /dashboard.
-    if (!/\/(login|auth\/callback)(\/|$)/.test(window.location.pathname)) {
+    if (typeof next === "string") {
+      writeLoginNextCookie(next);
+    } else if (!/\/(login|auth\/callback)(\/|$)/.test(window.location.pathname)) {
       writeLoginNextCookie(window.location.href);
     }
     const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";
     window.location.href = apiBase + "/oauth2/authorization/google";
-  }, []);
-
-  const signOut = useCallback(async () => {
-    await apiLogout();
-    Sentry.setUser(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -131,9 +137,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       me,
       isAdmin: me?.role === "ADMIN",
       signInWithGoogle,
-      signOut,
+      signOut: endSession,
     }),
-    [authenticated, ready, me, signInWithGoogle, signOut],
+    [authenticated, ready, me, signInWithGoogle],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

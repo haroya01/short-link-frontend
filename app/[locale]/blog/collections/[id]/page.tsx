@@ -23,8 +23,8 @@ export default async function CollectionPage({
   const { locale, id } = await params;
   const numId = Number(id);
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+    <div className="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
       <CollectionDetailView collectionId={Number.isFinite(numId) ? numId : 0} locale={locale} />
-    </main>
+    </div>
   );
 }

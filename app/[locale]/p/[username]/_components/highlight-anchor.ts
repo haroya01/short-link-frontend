@@ -1,8 +1,9 @@
 /** DOM anchors shared by highlight painting and source navigation. */
 export const MARK_CLASS = "kurl-highlight";
 const THREAD_CLASS = "kurl-highlight--thread";
+const MINE_CLASS = "kurl-highlight--mine";
 
-export type HighlightMeta = { id: number; note: string | null; replyCount: number };
+export type HighlightMeta = { id: number; note: string | null; replyCount: number; mine?: boolean };
 export type HighlightSpan = {
   blockOrder: number;
   endBlockOrder: number;
@@ -16,8 +17,11 @@ type TextIndex = { full: string; pieces: TextPiece[]; blocks: { start: number; l
 type ResolvedRange = { index: TextIndex; start: number; end: number };
 
 function styleMark(mark: HTMLElement, metadata: HighlightMeta[]) {
-  mark.className = metadata.some((m) => !!m.note || m.replyCount > 0)
-    ? `${MARK_CLASS} ${THREAD_CLASS}` : MARK_CLASS;
+  mark.className = [
+    MARK_CLASS,
+    metadata.some((m) => !!m.note || m.replyCount > 0) ? THREAD_CLASS : null,
+    metadata.some((m) => m.mine) ? MINE_CLASS : null,
+  ].filter(Boolean).join(" ");
   mark.dataset.hlId = String(metadata[0].id);
   mark.dataset.hlIds = metadata.map((m) => m.id).join(",");
   mark.dataset.hlMeta = JSON.stringify(metadata);
@@ -188,6 +192,19 @@ export function findQuoteTarget(
   if (!range) return null;
   return range.index.pieces.find((p) => p.start + p.node.length > range.start && p.start < range.end)
     ?.node.parentElement ?? null;
+}
+
+/** `?highlightId=` alone (a notification) takes its quote from that highlight. Quote-only legacy links
+ *  focus a highlight only when the quote is unambiguous. */
+export function resolveDeepLink<H extends { id: number; quote: string }>(
+  params: URLSearchParams, highlights: H[],
+): { quote: string; focused: H | undefined; matches: H[] } | null {
+  const id = Number(params.get("highlightId"));
+  const exact = Number.isSafeInteger(id) && id > 0 ? highlights.find((h) => h.id === id) : undefined;
+  const quote = params.get("hl") ?? exact?.quote;
+  if (!quote) return null;
+  const matches = highlights.filter((h) => h.quote === quote);
+  return { quote, focused: exact ?? (matches.length === 1 ? matches[0] : undefined), matches };
 }
 
 /** DOM Range endpoints can be text nodes or element boundaries (keyboard/select-all). */

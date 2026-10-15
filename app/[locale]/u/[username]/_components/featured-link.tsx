@@ -3,7 +3,9 @@ import { useTranslations } from "next-intl";
 import { Favicon } from "@/components/common/favicon";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
+import { isProtectedLink, protectedTitle } from "../_lib/protected-link";
 import { hostOf, isImageUrl, youtubeId } from "../_lib/url-helpers";
+import { ProtectedMark } from "./protected-mark";
 
 type Props = {
   entry: PublicProfileEntry;
@@ -23,9 +25,10 @@ function coverOf(entry: PublicProfileEntry, url: string): string | null {
 /** 주인이 고른 대표 링크 하나 — 바이오 링크로 들어온 방문자가 가장 먼저 보는 자리. */
 export function FeaturedLink({ entry, username, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile");
-  const originalUrl = entry.originalUrl ?? "";
+  const locked = isProtectedLink(entry);
+  const originalUrl = locked ? "" : entry.originalUrl ?? "";
   const href = `${entry.shortUrl}?src=profile-${username}`;
-  const cover = coverOf(entry, originalUrl);
+  const cover = locked ? null : coverOf(entry, originalUrl);
   const host = hostOf(originalUrl);
 
   return (
@@ -44,13 +47,24 @@ export function FeaturedLink({ entry, username, colors, fadeStyle }: Props) {
         )}
         <div className="px-4 py-4">
           <p className={`text-[12px] font-medium ${colors.accentText}`}>{t("featured")}</p>
-          <p className={`mt-1 text-[17px] font-semibold leading-snug tracking-headline ${colors.primary}`}>
-            {entry.ogTitle ?? host}
-          </p>
-          <p className={`mt-1.5 flex items-center gap-1.5 text-[12px] ${colors.muted}`}>
-            <Favicon url={originalUrl} size={14} className="shrink-0" />
-            <span className="truncate">{host}</span>
-          </p>
+          {locked ? (
+            <p className={`mt-1 flex items-start gap-2 text-[17px] font-semibold leading-snug tracking-headline ${colors.primary}`}>
+              <span className="mt-[3px] flex">
+                <ProtectedMark size={18} />
+              </span>
+              <span className="min-w-0 break-words">{protectedTitle(entry)}</span>
+            </p>
+          ) : (
+            <>
+              <p className={`mt-1 text-[17px] font-semibold leading-snug tracking-headline ${colors.primary}`}>
+                {entry.ogTitle ?? host}
+              </p>
+              <p className={`mt-1.5 flex items-center gap-1.5 text-[12px] ${colors.muted}`}>
+                <Favicon url={originalUrl} size={14} className="shrink-0" />
+                <span className="truncate">{host}</span>
+              </p>
+            </>
+          )}
         </div>
       </a>
     </li>

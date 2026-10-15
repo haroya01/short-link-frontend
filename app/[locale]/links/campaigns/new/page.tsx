@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, QrCode } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -12,7 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignPostEndAction } from "@/types";
 
 type StartMode = "now" | "schedule";
@@ -59,10 +59,7 @@ export default function NewCampaignPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("loginRequired")}
-        next="/campaigns/new"
-      />
+      <SignInEmptyState page reason="campaigns" icon={QrCode} />
     );
   }
 

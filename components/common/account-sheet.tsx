@@ -7,16 +7,14 @@ import {
   Bookmark,
   Check,
   ChevronDown,
-  CornerDownRight,
+  ChevronRight,
   FileText,
-  Globe,
   Inbox,
+  Languages,
   Layers,
   LogIn,
   LogOut,
-  Newspaper,
   Settings,
-  User,
   Webhook,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -24,26 +22,28 @@ import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
-import { blogHref, linksHref } from "@/lib/host";
+import { blogHref } from "@/lib/host";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { AppsGrid } from "@/components/common/apps-grid";
+import { MeAvatar } from "@/components/common/header-avatar-slot";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const ITEM =
-  "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
+  "flex w-full items-center gap-3 rounded-surface px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
- * The blog's mobile account sheet: the viewer's two surfaces (블로그/프로필), workspace entries
- * (내 글/리드/…), the cross-product switch, theme, language, sign out. 알림 is its own bottom tab.
+ * The blog's mobile account sheet: the same groups as the desktop AccountMenu (author page row /
+ * studio · analytics · library · collections / settings · language · theme / sign out), plus leads,
+ * webhooks and the cross-product switch. 알림 is its own bottom tab.
  */
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
   const tBlog = useTranslations("sidebar.blog");
-  const tColl = useTranslations("collections");
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
   const router = useRouter();
@@ -79,6 +79,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
   if (!mounted || !portalReady) return null;
 
   const username = me?.username ?? "";
+  const displayName = me?.displayName ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();
 
   function switchLocale(next: string) {
@@ -111,7 +112,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         }`}
       />
       <div
-        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl border-t border-slate-200 bg-white p-2 pb-0 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
+        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-surface border-t border-slate-200 bg-white p-2 pb-0 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
           closing
             ? "animate-[sheet-down_240ms_var(--ease)_both]"
             : "animate-[sheet-up_280ms_var(--ease)_both]"
@@ -134,57 +135,53 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
 
         {authenticated && (
           <>
-            <div className="flex items-center gap-3 px-3 py-2">
-              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300">
-                {me?.avatarUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={me.avatarUrl} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  initial
-                )}
-              </span>
-              <span className="min-w-0">
-                {username && <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</span>}
-                {me?.email && <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</span>}
-              </span>
-            </div>
+            {username ? (
+              <a href={authorHref(username, locale)} onClick={onClose} className={cn(ITEM, "py-2")}>
+                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} className="h-10 w-10 text-sm" />
+                <span className="min-w-0 flex-1">
+                  {displayName && (
+                    <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{displayName}</span>
+                  )}
+                  <span
+                    className={cn(
+                      "block truncate",
+                      displayName
+                        ? "text-[12px] text-slate-500 dark:text-slate-400"
+                        : "text-sm font-semibold text-slate-900 dark:text-slate-100",
+                    )}
+                  >
+                    @{username}
+                  </span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
+              </a>
+            ) : (
+              <div className="flex items-center gap-3 px-3 py-2">
+                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} className="h-10 w-10 text-sm" />
+                {me?.email && <span className="min-w-0 truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</span>}
+              </div>
+            )}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-            {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
+            <a href={blogHref("/write")} className={ITEM}>
+              <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              {t("studio")}
+            </a>
             <a href={blogHref("/analytics")} className={ITEM}>
               <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("analytics")}
-            </a>
-            <a href={authorHref(username, locale)} className={ITEM}>
-              <Newspaper className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("blog")}
-            </a>
-            <a href={linksHref(`/${locale}/u/${username}`)} className={ITEM}>
-              <User className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("profile")}
             </a>
             {/* Reader's library — saved posts, highlights, notes, and collections. */}
             <a href={blogHref("/curation")} className={ITEM}>
               <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("library")}
             </a>
-            {/* 연결 발견 — the curator-connection flow (collections / reading paths). */}
-            <a href={blogHref("/connections")} className={ITEM}>
-              <CornerDownRight className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {tColl("discoverTitle")}
-            </a>
-            {/* 내 컬렉션 — the reader's own collections/paths (private included), paired with 연결 발견. */}
+            {/* 내 컬렉션 — the reader's own collections/paths (private included). */}
             <a href={blogHref("/collections")} className={ITEM}>
               <Layers className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("myCollections")}
             </a>
-            {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach
-                (the bottom nav only has 홈/검색/글쓰기/계정). 분석은 별도 항목이 아니라 글의 facet 이라
-                여기서도 빼고, 내 글(/write) 상단 요약 strip·글별 성과로 들어간다(#602). */}
+            {/* The desktop sidebar's remaining entries, which mobile otherwise can't reach. */}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-            <a href={blogHref("/write")} className={ITEM}>
-              <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {tBlog("myPosts")}
-            </a>
             <a href={blogHref("/leads")} className={ITEM}>
               <Inbox className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("leads")}
@@ -192,10 +189,6 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <a href={blogHref("/webhooks")} className={ITEM}>
               <Webhook className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("webhooks")}
-            </a>
-            <a href={blogHref("/settings")} className={ITEM}>
-              <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("settings")}
             </a>
           </>
         )}
@@ -207,7 +200,12 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-        <ThemeToggle className={cn(ITEM, "justify-between")} />
+        {authenticated && (
+          <a href={blogHref("/settings")} className={ITEM}>
+            <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+            {t("settings")}
+          </a>
+        )}
         <button
           type="button"
           aria-expanded={langOpen}
@@ -215,7 +213,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
           className={cn(ITEM, "justify-between")}
         >
           <span className="inline-flex items-center gap-3">
-            <Globe className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+            <Languages className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             {tLang("label")}
           </span>
           <span className="inline-flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
@@ -236,6 +234,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               {l === locale && <Check className="h-4 w-4 text-accent-600" />}
             </button>
           ))}
+        <ThemeToggle className={cn(ITEM, "justify-between")} />
 
         <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
         {authenticated ? (
@@ -256,8 +255,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             type="button"
             onClick={() => {
               onClose();
-              // Through kurl's branded login screen (then Google), not straight to OAuth.
-              window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
+              askToSignIn("general");
             }}
             className={ITEM}
           >

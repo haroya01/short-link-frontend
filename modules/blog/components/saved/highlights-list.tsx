@@ -1,15 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Highlighter, Loader2, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { quoteHref } from "@/modules/blog/components/connection-block";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyHighlights, type MyHighlightItem } from "@/modules/blog/api/highlights";
+import { LoadError } from "@/modules/blog/components/saved/load-error";
+import { markdownPlain } from "@/modules/blog/lib/markdown-lead";
 
 /**
  * 내 서재 — every passage the viewer has drawn a highlight on, newest first, each anchored to the post
@@ -63,25 +65,13 @@ export function HighlightsList({ username, locale }: { username: string; locale:
     );
   }
   if (error) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-20 text-center">
-        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
-        <button
-          type="button"
-          onClick={() => void load()}
-          className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-        >
-          {t("retry")}
-        </button>
-      </div>
-    );
+    return <LoadError message={t("highlightsLoadError")} onRetry={() => void load()} />;
   }
   if (items.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={Highlighter}
         title={t("emptyHighlights")}
-        body={t("emptyHighlightsBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}
@@ -116,7 +106,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
             <li key={h.id} className="group border-b border-slate-100 last:border-b-0 dark:border-slate-800">
               <BlogLink
                 href={quoteHref(h.postUsername, h.postSlug, h.quote, locale, h.id)}
-                className="focus-ring -mx-3 block rounded-lg px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40"
+                className="focus-ring -mx-3 block rounded-surface px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40"
               >
                 {/* The post this passage was drawn on — a quiet eyebrow that doubles as the link back. */}
                 <span className="line-clamp-1 text-[12px] font-medium text-slate-500 transition-colors group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
@@ -133,7 +123,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
                     </span>
                     {h.note && (
                       <span className="mt-1.5 block text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-                        {h.note}
+                        {markdownPlain(h.note)}
                       </span>
                     )}
                   </span>

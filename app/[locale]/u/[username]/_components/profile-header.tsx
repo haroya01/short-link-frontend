@@ -1,3 +1,4 @@
+import { contentLang } from "@/modules/blog/lib/content-lang";
 import type { ThemeColors } from "../_lib/theme";
 import { ProfileAvatar } from "./profile-avatar";
 
@@ -37,7 +38,11 @@ export function ProfileHeader({ username, bio, avatarUrl, bannerUrl, colors, hea
           <Heading className={`truncate text-[20px] font-semibold leading-tight tracking-headline ${colors.primary}`}>
             @{username}
           </Heading>
-          {bio && <p className={`mt-1 text-[14px] leading-relaxed ${colors.muted}`}>{bio}</p>}
+          {bio && (
+            <p lang={contentLang(bio)} className={`mt-1 text-[14px] leading-relaxed ${colors.muted}`}>
+              {bio}
+            </p>
+          )}
         </div>
       </div>
     </div>

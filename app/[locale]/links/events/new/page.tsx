@@ -1,9 +1,10 @@
 "use client";
 
+import { CalendarDays } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { createEvent } from "@/modules/events/api/events";
 import { EventForm } from "@/modules/events/components/event-form";
 
@@ -14,11 +15,7 @@ export default function NewEventPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("authTitle")}
-        description={t("authDesc")}
-        next="/events/new"
-      />
+      <SignInEmptyState page reason="events" icon={CalendarDays} />
     );
   }
 

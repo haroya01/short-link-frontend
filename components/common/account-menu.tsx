@@ -6,11 +6,12 @@ import {
   Bookmark,
   Check,
   ChevronDown,
-  Globe,
+  ChevronRight,
+  FileText,
+  Languages,
   Layers,
   LogOut,
-  Newspaper,
-  User,
+  Settings,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -19,8 +20,8 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
-import { cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
-import { blogHref, linksHref, type Product } from "@/lib/host";
+import { MeAvatar, cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
+import { blogHref, type Product } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -32,8 +33,8 @@ import { cn } from "@/lib/utils";
  * app switcher (AppsGrid) stays a separate control. Closes on outside-click or Escape.
  *
  * `product` slims the personal rows per surface:
- *  - "blog" (default): the viewer's two public surfaces (블로그 / 프로필 — separate products, shared
- *    identity) plus analytics + library.
+ *  - "blog" (default): the top row opens the viewer's author page, then studio, analytics, library,
+ *    collections and settings.
  *  - "links": no personal rows — 계정 is a top-nav entry and the blog↔kurl switch is the AppsGrid
  *    pill, so the menu keeps only theme, language and sign out.
  */
@@ -68,6 +69,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
   }
 
   const username = me?.username ?? "";
+  const displayName = me?.displayName ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();
   const avatarUrl = me?.avatarUrl ?? "";
 
@@ -108,31 +110,52 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
             closing ? "animate-dropdown-out" : "animate-dropdown-in",
           )}
         >
-          {(username || me?.email) && (
-            <div className="px-3 py-2">
-              {username && (
-                <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</p>
-              )}
-              {me?.email && <p className="truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</p>}
-            </div>
+          {!isLinks && username ? (
+            <a
+              href={authorHref(username, locale)}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className={cn(itemClass, "gap-3")}
+            >
+              <MeAvatar src={avatarUrl} initial={initial} className="h-8 w-8 text-[13px]" />
+              <span className="min-w-0 flex-1">
+                {displayName && (
+                  <span className="block truncate font-semibold text-slate-900 dark:text-slate-100">{displayName}</span>
+                )}
+                <span
+                  className={cn(
+                    "block truncate",
+                    displayName
+                      ? "text-[12px] text-slate-500 dark:text-slate-400"
+                      : "font-semibold text-slate-900 dark:text-slate-100",
+                  )}
+                >
+                  @{username}
+                </span>
+              </span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
+            </a>
+          ) : (
+            (username || me?.email) && (
+              <div className="px-3 py-2">
+                {username && (
+                  <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</p>
+                )}
+                {me?.email && <p className="truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</p>}
+              </div>
+            )
           )}
 
           {!isLinks && username && (
             <>
               <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-              {/* 분석 진입은 글 목록 strip 이 아니라 여기 — 프로필 바로 아래의 전용 버튼. */}
+              <a href={blogHref("/write")} role="menuitem" className={itemClass}>
+                <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                {t("studio")}
+              </a>
               <a href={blogHref("/analytics")} role="menuitem" className={itemClass}>
                 <BarChart3 className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("analytics")}
-              </a>
-              {/* The viewer's two public surfaces — separate products, one identity. */}
-              <a href={authorHref(username, locale)} role="menuitem" className={itemClass}>
-                <Newspaper className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                {t("blog")}
-              </a>
-              <a href={linksHref(`/${locale}/u/${username}`)} role="menuitem" className={itemClass}>
-                <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                {t("profile")}
               </a>
               {/* The viewer's private reading library — bookmarks + likes, both on the workspace
                   curation page (a private tool, not an owner-only tab on the public profile). */}
@@ -150,6 +173,12 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
           )}
 
           <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+          {!isLinks && (
+            <a href={blogHref("/settings")} role="menuitem" className={itemClass}>
+              <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+              {t("settings")}
+            </a>
+          )}
           {/* Collapsed by default — shows the current language; expands the picker on demand so the
               3 locales don't dominate the menu. */}
           <button
@@ -159,7 +188,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
             className={cn(itemClass, "justify-between")}
           >
             <span className="inline-flex items-center gap-2.5">
-              <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+              <Languages className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               {tLang("label")}
             </span>
             <span className="inline-flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
@@ -197,7 +226,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
             </div>
           </div>
 
-          <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+          {isLinks && <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />}
           <ThemeToggle className={itemClass} />
 
           <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />

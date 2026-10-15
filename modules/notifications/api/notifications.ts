@@ -1,27 +1,58 @@
-import { request } from "@/lib/api/client";
+import { mockEmpty, mockFailure, request } from "@/lib/api/client";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 알림은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
 const notificationMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
 
-export type NotificationType =
-  | "LIKE"
-  | "COMMENT"
-  | "FOLLOW"
-  | "SERIES_SUBSCRIBE"
-  | "REPLY"
-  | "NEW_POST"
-  | "MENTION"
-  | "CONNECTED"
-  | "PATH_GREW";
+export const NOTIFICATION_TYPES = [
+  "LIKE",
+  "COMMENT",
+  "FOLLOW",
+  "SERIES_SUBSCRIBE",
+  "REPLY",
+  "NEW_POST",
+  "MENTION",
+  "CONNECTED",
+  "PATH_GREW",
+  "NOTE_LIKE",
+  "NOTE_REPOST",
+  "NOTE_REPLY",
+  "NOTE_QUOTE",
+  "NOTE_MENTION",
+  "NOTE_POLL",
+  "NOTE_POST",
+  "NOTE_EDIT",
+  "REMOTE_FOLLOW",
+  "FOLLOW_REQUEST",
+  "POST_QUOTE",
+  "NOTE_EMBED",
+  "COMMENT_LIKE",
+  "HIGHLIGHT",
+  "POST_FIRST_READER",
+  "POST_READ_MILESTONE",
+] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
+export type NotificationFilter = "all" | "mentions";
+
+const KNOWN_TYPES: ReadonlySet<string> = new Set(NOTIFICATION_TYPES);
+
+/** One of a group's newest actors. A remote account has no id; its username is name@domain. */
+export interface NotificationActor {
+  id: number | null;
+  username: string | null;
+  avatarUrl: string | null;
+  profileUrl: string | null;
+}
 
 /**
- * Per-type opt-out map for blog (in-app + push) notifications. Every type is present; a missing row
- * on the backend defaults to enabled, so the map is always exhaustive. This is separate from the
+ * Per-type opt-out map for blog (in-app + push) notifications. Every type the backend knows is present;
+ * a type it predates is absent and cannot be set. This is separate from the
  * link-product notification preferences (`/api/v1/notifications/preferences`) — different surface.
  */
-export type BlogNotificationPreferences = Record<NotificationType, boolean>;
+export type BlogNotificationPreferences = Partial<Record<NotificationType, boolean>>;
 
 /**
  * One in-app notification, as returned by the backend. The actor's display fields are flat and null
@@ -42,6 +73,9 @@ export interface NotificationItem {
   postSlug: string | null;
   postTitle: string | null;
   postAuthorUsername: string | null;
+  /** The spot inside the post — absent on notifications recorded before the backend carried it. */
+  commentId?: number | null;
+  highlightId?: number | null;
   seriesId: number | null;
   seriesSlug: string | null;
   seriesTitle: string | null;
@@ -49,6 +83,19 @@ export interface NotificationItem {
   collectionName: string | null;
   read: boolean;
   createdAt: string;
+  /** Set when the actor is on another server — their profile there. */
+  actorProfileUrl?: string | null;
+  /** An account elsewhere: its id on this server (its page, and answering its follow request). */
+  actorRemoteId?: number | null;
+  /** Note notices: the recipient's note, and for a reply or quote the note that caused it. */
+  noteId?: number | null;
+  noteExcerpt?: string | null;
+  sourceNoteId?: number | null;
+  sourceExcerpt?: string | null;
+  /** Likes, reposts and highlights group by subject and day: the row is the newest, count the group's size. */
+  count?: number;
+  actors?: NotificationActor[];
+  milestone?: number | null;
 }
 
 /** A newest-first page; `nextCursor` feeds the next request's `before`, null when `hasMore` is false. */
@@ -58,12 +105,25 @@ export interface NotificationsPage {
   hasMore: boolean;
 }
 
-export function getNotifications(before?: number, limit = 20): Promise<NotificationsPage> {
-  if (notificationMocks) return Promise.resolve(notificationMocks.mockNotificationsPage());
+export function getNotifications(
+  before?: number,
+  limit = 20,
+  filter: NotificationFilter = "all",
+): Promise<NotificationsPage> {
+  if (notificationMocks) {
+    const page = mockEmpty("notifications")
+      ? { items: [], nextCursor: null, hasMore: false }
+      : notificationMocks.mockNotificationsPage(filter);
+    return mockFailure("notifications") ?? Promise.resolve(page);
+  }
   const q = new URLSearchParams();
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));
-  return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" });
+  if (filter !== "all") q.set("filter", filter);
+  return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" }).then((page) => ({
+    ...page,
+    items: page.items.filter((item) => KNOWN_TYPES.has(item.type)),
+  }));
 }
 
 /**
@@ -101,9 +161,10 @@ export function markNotificationRead(id: number): Promise<void> {
   return request<void>(`/api/v1/notifications/${id}/read`, { method: "POST", keepalive: true });
 }
 
-export function markAllNotificationsRead(): Promise<{ count: number }> {
+export function markAllNotificationsRead(filter: NotificationFilter = "all"): Promise<{ count: number }> {
   if (USE_MOCKS) return Promise.resolve({ count: 0 });
-  return request<{ count: number }>(`/api/v1/notifications/read-all`, { method: "POST" });
+  const query = filter === "all" ? "" : `?filter=${filter}`;
+  return request<{ count: number }>(`/api/v1/notifications/read-all${query}`, { method: "POST" });
 }
 
 /** Register a browser web-push subscription (idempotent upsert by endpoint). Backend mirrors the

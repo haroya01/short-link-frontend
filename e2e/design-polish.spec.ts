@@ -82,14 +82,14 @@ test.describe("design polish guards", () => {
     await expect(page.getByRole("link", { name: "로그인 없이 단축만 사용하기" })).toBeVisible();
   });
 
-  test("dashboard signed-out state has useful actions, not an empty wall", async ({ page }) => {
+  test("dashboard signed-out state is one line and a sign-in button, not a pitch", async ({ page }) => {
     await page.goto("/ko/dashboard");
 
-    await expect(page.getByRole("heading", { name: "로그인이 필요해요" })).toBeVisible();
-    await expect(page.getByText("내 링크 목록과 만료 예정 링크 관리")).toBeVisible();
-    await expect(page.getByText("클릭 추이·유입 채널·기기 통계")).toBeVisible();
-    await expect(page.getByRole("main").getByRole("link", { name: "로그인", exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "로그인 없이 둘러보기" })).toBeVisible();
+    const empty = page.getByTestId("sign-in-empty");
+    await expect(empty.getByRole("heading", { name: "내 링크를 보려면 로그인하세요" })).toBeVisible();
+    await expect(empty.getByRole("button", { name: "로그인", exact: true })).toBeVisible();
+    await expect(empty.locator("li, a, p")).toHaveCount(0);
+    await expect(page.getByText("내 링크 목록과 만료 예정 링크 관리")).toHaveCount(0);
   });
 
   test("demo stats masthead renders final numbers without a zero-count mismatch", async ({ page }) => {

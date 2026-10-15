@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 import { usePresence } from "@/hooks/use-presence";
 import {
   buildAuthorShareUrl,
@@ -71,17 +72,18 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
       <button
         type="button"
         onClick={onTrigger}
-        className="touch-target inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
+        className={actionIconButton()}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={t("label")}
+        title={t("label")}
       >
-        <Share2 className="h-3.5 w-3.5" />
-        {t("label")}
+        <Share2 className={ACTION_ICON} aria-hidden />
       </button>
       {mounted && (
         <div
           role="menu"
-          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850 ${
+          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850 ${
             closing ? "animate-dropdown-out" : "animate-dropdown-in"
           }`}
         >
@@ -94,7 +96,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
                 handlePlatform(p.id);
                 setOpen(false);
               }}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+              className="block w-full rounded-surface px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
             >
               {p.label}
             </button>
@@ -103,7 +105,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
             type="button"
             role="menuitem"
             onClick={() => handlePlatform("copy")}
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+            className="flex w-full items-center justify-between rounded-surface px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
           >
             {copied ? tc("copied") : tc("copy")}
             {copied && <Check className="h-3.5 w-3.5 text-accent-600" />}

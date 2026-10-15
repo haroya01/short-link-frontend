@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Home, Search, User } from "lucide-react";
+import { Bell, Home, MessageSquareText, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -12,13 +12,14 @@ import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { AccountSheet } from "@/components/common/account-sheet";
 import { BlogSearchSheet } from "@/components/common/blog-search-sheet";
+import { UnreadDot } from "@/components/common/unread-dot";
 
 const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 검색 · 알림 · 계정. 검색/계정 open
- * full-width sheets; 홈/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
+ * Mobile-only bottom tab bar (blog surfaces). Five tabs: 홈 · 노트 · 검색 · 알림 · 계정. 검색/계정 open
+ * full-width sheets; 홈/노트/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
  * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
 export function BlogBottomNav() {
@@ -39,13 +40,11 @@ export function BlogBottomNav() {
     };
   }, []);
 
-  // Locale-anchored so 홈 highlights on both topologies: production subdomain (pathname = `/ko`) and
-  // dev/preview path (`/ko/blog`, `/ko/blog-preview`).
-  const isHome = sheet === null && /^\/[a-z]{2}(\/(blog|blog-preview))?\/?$/.test(pathname);
+  // Locale optional: the blog host rewrites a no-locale entry in place (pathname `/`, `/notes`), and
+  // also serves `/ko`; dev/preview paths are `/ko/blog`, `/ko/blog-preview`.
+  const isHome = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/.test(pathname);
+  const isNotes = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/.test(pathname);
   const isNotif = sheet === null && /\/notifications(\/|$)/.test(pathname);
-  // Signed-out → kurl's branded login (then Google), carrying where they wanted to go.
-  const loginHref = (next: string) => `${blogHref("/login")}?next=${encodeURIComponent(next)}`;
-  const notifHref = authenticated ? blogHref("/notifications") : loginHref("/notifications");
 
   return (
     <>
@@ -63,6 +62,14 @@ export function BlogBottomNav() {
           <Home className="h-5 w-5" />
           {t("home")}
         </BlogChromeLink>
+        <BlogChromeLink
+          href={blogHref("/notes")}
+          aria-current={isNotes ? "page" : undefined}
+          className={cn(TAB, isNotes ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
+        >
+          <MessageSquareText className="h-5 w-5" />
+          {t("notes")}
+        </BlogChromeLink>
         <button
           type="button"
           onClick={() => setSheet("search")}
@@ -75,23 +82,14 @@ export function BlogBottomNav() {
         </button>
 
         <BlogChromeLink
-          href={notifHref}
+          href={blogHref("/notifications")}
           aria-current={isNotif ? "page" : undefined}
-          // Fold the unread count into the tab's name so a screen reader announces it — the numeric badge
-          // is otherwise decorative (aria-hidden) and silent.
           aria-label={authenticated && unread > 0 ? `${tNotif("title")}, ${tNotif("unreadCount", { count: unread })}` : undefined}
           className={cn(TAB, isNotif ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <span className="relative">
             <Bell className="h-5 w-5" />
-            {authenticated && unread > 0 && (
-              <span
-                aria-hidden
-                className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white"
-              >
-                {unread > 99 ? "99+" : unread}
-              </span>
-            )}
+            {authenticated && unread > 0 && <UnreadDot className="-right-0.5 -top-0.5" />}
           </span>
           {tNotif("title")}
         </BlogChromeLink>

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { PromoActions, PromoExample, PromoHero, PromoLines, PromoSection } from "@/components/landing/promo";
 import type { EventAnalytics } from "@/modules/events/api/events";
 import { AnalyticsPanel } from "./analytics-panel";
@@ -62,10 +63,10 @@ export function EventsIntro() {
         title={t("title")}
         lead={t("subtitle")}
         action={
-          <a href="/login?next=/events" className={buttonVariants({ variant: "accent", size: "xl" })}>
+          <SignInLink reason="events" next="/events" className={buttonVariants({ variant: "accent", size: "xl" })}>
             {t("ctaLogin")}
             <ArrowRight className="h-4 w-4" aria-hidden />
-          </a>
+          </SignInLink>
         }
         hint={t("ctaHint")}
       />
@@ -94,9 +95,9 @@ export function EventsIntro() {
         />
 
         <PromoActions>
-          <a href="/login?next=/events" className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <SignInLink reason="events" next="/events" className={buttonVariants({ variant: "outline", size: "lg" })}>
             {t("ctaLogin")}
-          </a>
+          </SignInLink>
         </PromoActions>
       </PromoSection>
     </div>

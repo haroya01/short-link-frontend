@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -25,18 +25,21 @@ export default function SavedPostsPage() {
 
 function Library() {
   const t = useTranslations("blogWorkspace");
-  const showingHighlights = useSearchParams().get("view") === "highlights";
+  const params = useSearchParams();
+  const showingHighlights = params.get("view") === "highlights";
+  const openTopics = params.get("open") === "topics";
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
 
+  useEffect(() => {
+    if (ready && authenticated && openTopics) document.getElementById("followed-topics")?.scrollIntoView({ block: "start" });
+  }, [ready, authenticated, openTopics]);
+
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   return (
     // max-w-3xl: 글·분석·리드와 같은 워크스페이스 공통 폭.
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("savedTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("savedSubtitle")}</p>
 
@@ -65,10 +68,7 @@ function Library() {
         <h2 id="library-section-title" className="sr-only">
           {t(showingHighlights ? "curationHighlights" : "curationReadingList")}
         </h2>
-        <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t(showingHighlights ? "curationHighlightsHint" : "curationReadingListHint")}
-        </p>
-        <div className="mt-4">
+        <div>
           {showingHighlights ? (
             <HighlightsList username={me?.username ?? ""} locale={locale} />
           ) : (
@@ -78,20 +78,20 @@ function Library() {
       </section>
 
       <div className="mt-10 divide-y divide-slate-100 border-y border-slate-100 dark:divide-slate-800 dark:border-slate-800">
-        <CollapsibleSection title={t("curationLiked")} hint={t("curationLikedHint")}>
+        <CollapsibleSection title={t("curationLiked")}>
           <LikedList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>
-        <CollapsibleSection title={t("curationComments")} hint={t("curationCommentsHint")}>
+        <CollapsibleSection title={t("curationComments")}>
           <MyCommentsList locale={locale} />
         </CollapsibleSection>
         <CollapsibleSection title={t("curationHistory")} hint={t("curationHistoryHint")}>
           <ReadingHistoryList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>
         {/* 구독한 태그 — 팔로우한 주제를 한눈에, 눌러서 그 주제 피드로. 관리(언팔로우)는 설정에 둔다. */}
-        <CollapsibleSection title={t("curationTags")} hint={t("curationTagsHint")}>
+        <CollapsibleSection id="followed-topics" title={t("curationTags")} defaultOpen={openTopics}>
           <FollowedTagsShelf />
         </CollapsibleSection>
       </div>
-    </main>
+    </div>
   );
 }

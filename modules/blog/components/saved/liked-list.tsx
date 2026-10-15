@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Heart, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { ErrorState } from "@/components/common/error-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listLikedFeed } from "@/modules/blog/api/saved";
@@ -54,10 +54,9 @@ export function LikedList({ username, locale }: { username: string; locale: stri
   }
   if (items.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={Heart}
         title={t("emptyLiked")}
-        body={t("emptyLikedBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}

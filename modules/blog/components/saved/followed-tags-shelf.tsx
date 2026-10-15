@@ -7,7 +7,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 
 /**
- * The reader's followed topics as a browse surface inside 저장한 글 — the *consumption* twin of the
+ * The reader's followed topics as a browse surface inside 서재 — the *consumption* twin of the
  * settings management block ({@link FollowedTagsSetting}). Here each tag is a chip that opens its feed
  * (tap to read that topic gathered together); removing a follow stays in settings, reached by the quiet
  * "태그 관리" link, so this shelf reads as "where to go next" rather than a settings panel. Followed

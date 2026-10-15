@@ -17,7 +17,7 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
         href={blogPath(`/write/${post.id}`)}
         className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-3"
       >
-        <PostStatusBadge status={post.status} />
+        <PostStatusBadge status={post.status} takenDown={post.takenDown} />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-medium text-slate-900 group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
             {post.title || post.slug}

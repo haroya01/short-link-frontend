@@ -2,38 +2,40 @@ import { DATE_LOCALE } from "@/lib/date";
 import { linksHref } from "@/lib/host";
 import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
-import { ReportButton } from "@/modules/blog/components/report-button";
-import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
-import { LegacyHeadingHash, PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
+import { LegacyHeadingHash, PostToc } from "@/modules/blog/components/post-toc";
+import { PostDock } from "@/modules/blog/components/post-dock";
+import { PostAuthorCard } from "@/modules/blog/components/post-author-card";
 import { PostComments } from "@/modules/blog/components/comments";
-import { LikeButton } from "@/modules/blog/components/like-button";
-import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
-import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
+import { AuthorGate, AuthorOnly } from "@/modules/blog/components/author-gate";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
-import { PostOwnerActions } from "../_components/post-owner-actions";
+import { PostActionRow } from "../_components/post-action-row";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
-import { PostEdges } from "@/modules/blog/components/post-edges";
+import { PostCollections } from "@/modules/blog/components/post-collections";
 import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { PublishCelebration } from "@/modules/blog/components/publish-celebration";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { AuthorName } from "@/modules/blog/components/author-name";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
+import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib/series-items";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
+import { contentLang } from "@/modules/blog/lib/content-lang";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -47,6 +49,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   "https://kurl.me";
+
+const BYLINE_NAME =
+  "text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400";
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
@@ -160,10 +165,11 @@ export default async function PublicPostPage({
   const eyebrow = result.data.series ? result.data.series.title : (post.tags[0] ?? null);
   // For a series post, pull the full ordered episode list so the banner can show the whole arc with
   // the current part highlighted (the post payload only carries position/total + prev/next).
-  const seriesEpisodes =
+  const seriesNav = result.data.series ? postSeriesNav(result.data.series) : null;
+  const episodes =
     result.data.series &&
     (await findPublicSeries(author.username, result.data.series.slug).then((r) =>
-      r.ok ? r.data.posts.map((p) => ({ slug: p.slug, title: p.title })) : [],
+      r.ok ? seriesEpisodes(seriesEntries(r.data), author.username, locale) : [],
     ));
 
   // Article schema — the og:article tags above only feed social unfurls; Google's article rich
@@ -217,7 +223,7 @@ export default async function PublicPostPage({
     // never shift it. xl:gap-6 (not gap-10) tightens the two gutters so the rail content sits closer to
     // the reading column — the wide gutter left the author block floating alone far to the left; a
     // snugger gap gives the three columns a shared rhythm without touching the 42rem band.
-    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
+    <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
       {articleJsonLd && (
         <script
           type="application/ld+json"
@@ -243,13 +249,14 @@ export default async function PublicPostPage({
             data-bhv="profile"
             data-bhv-id={author.username}
           >
-            <Avatar src={author.avatarUrl} name={author.username} size="lg" />
-            <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-              @{author.username}
-            </span>
+            <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
+            <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
           </a>
           {author.bio && (
-            <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+            <p
+              lang={contentLang(author.bio)}
+              className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400"
+            >
               {author.bio}
             </p>
           )}
@@ -262,21 +269,21 @@ export default async function PublicPostPage({
       {/* 시리즈 회차 스와이프 — 시리즈 소속 글에서만(프리뷰 제외) 본문 컬럼을 감싸 좌우 스와이프로
           이전/다음 회차 이동. 시리즈가 없으면 SeriesSwipe 는 렌더되지 않는다(아래 분기). */}
       <SeriesSwipe
-        series={result.data.series ?? undefined}
+        series={seriesNav ?? undefined}
         username={author.username}
         locale={locale}
       >
       {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
           났는지의 출처. */}
       <article
-        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 sm:py-20"
+        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 max-[1100px]:pb-[calc(var(--post-dock-h,0px)+3.5rem)] sm:pt-20 min-[1100px]:pb-20"
         lang={post.languageTag}
         data-bhv-post={post.id}
       >
         {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
             the owner knows this isn't the live page. */}
         {isPreview ? (
-          <div className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+          <div className="mb-8 rounded-surface border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
             {t("previewBanner")}
           </div>
         ) : (
@@ -311,11 +318,9 @@ export default async function PublicPostPage({
             data-bhv="profile"
             data-bhv-id={author.username}
           >
-            <Avatar src={author.avatarUrl} name={author.username} size="lg" />
+            <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
             <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-                @{author.username}
-              </span>
+              <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
               <span className="block text-[13px] text-slate-500 dark:text-slate-400">
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
@@ -328,135 +333,132 @@ export default async function PublicPostPage({
             {" · "}
             {t("readingTime", { minutes })}
           </p>
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <span className="xl:hidden">
-              <FollowButton
-                username={author.username}
-                initialFollowerCount={0}
-                showCount={false}
-                sourcePostId={post.id}
+          <AuthorOnly username={author.username}>
+            <div data-post-actions className="ml-auto flex shrink-0 items-center gap-2">
+              <span className="xl:hidden">
+                <FollowButton
+                  username={author.username}
+                  initialFollowerCount={0}
+                  showCount={false}
+                  sourcePostId={post.id}
+                />
+              </span>
+              <PostActionRow
+                postId={post.id}
+                postTitle={post.title}
+                postSlug={post.slug}
+                postUrl={postUrl}
+                likeCount={post.likeCount}
+                authorUsername={author.username}
+                locale={locale}
+                menuOnlyBelowWide
               />
-            </span>
-            {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
-                reader can react without scrolling to the end. */}
-            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-            <BookmarkButton postId={post.id} />
-            <ConnectButton postId={post.id} postTitle={post.title} />
-            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
-            <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
-          </div>
+            </div>
+          </AuthorOnly>
         </div>
       </header>
 
-      {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
-          "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-2xl + ring 은 그대로 두고, 2:1
-          리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
-      {post.ogImageUrl && (
-        <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
-          {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
-              모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
-              이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
-          {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
-              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. 허용 호스트는 읽기
-              컬럼 폭에 맞춘 변형(next/image, preload 포함), 그 밖의 호스트는 원본 <img>. */}
-          {canOptimizeCover(post.ogImageUrl) ? (
-            <Image
-              src={post.ogImageUrl}
-              alt=""
-              width={1344}
-              height={672}
-              sizes="(min-width: 672px) 672px, 100vw"
-              priority
-              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
-            />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={post.ogImageUrl}
-              alt=""
-              fetchPriority="high"
-              decoding="async"
-              className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
-            />
-          )}
-        </div>
-      )}
-
-      {result.data.series && (
-        <SeriesNav
-          series={result.data.series}
-          episodes={seriesEpisodes || []}
-          currentSlug={post.slug}
-          username={author.username}
-          locale={locale}
-        />
-      )}
-
-      <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
-      <PostHighlights postId={post.id} />
-
-      {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
-          nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
-          so the article is never a dead end (§10: one green thread, no node-graph). */}
-      <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
-
-      {result.data.series && (
-        <SeriesNext series={result.data.series} username={author.username} locale={locale} />
-      )}
-
-      {post.tags.length > 0 && (
-        <div className="mt-10">
-          <TagChips tags={post.tags} />
-        </div>
-      )}
-
-      {editedLabel && (
-        <p className="mt-10 text-[12px] text-slate-500 dark:text-slate-400">
-          {t("editedOn", { date: editedLabel })}
-        </p>
-      )}
-
-      <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
-          <a
-            href={authorHref(author.username, locale)}
-            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400 focus-ring"
-            data-bhv="profile"
-            data-bhv-id={author.username}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t("morePosts", { username: author.username })}
-          </a>
-          {/* All post actions live in one cluster — like / bookmark / share, then a hairline and the
-              quiet 신고 (a popover, so it never breaks the row) so it reads as a secondary action in the
-              group rather than a button orphaned on its own line below. */}
-          <div className="flex items-center gap-3">
-            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
-            <BookmarkButton postId={post.id} />
-            <ConnectButton postId={post.id} postTitle={post.title} />
-            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-            <ReportButton subjectType="POST" subjectId={post.id} ownerUsername={author.username} leadingRule />
+      <AuthorGate username={author.username} subject="post">
+        {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
+            "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-surface + ring 은 그대로 두고, 2:1
+            리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
+        {post.ogImageUrl && (
+          <div className="mb-10 overflow-hidden rounded-surface bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+            {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
+                모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
+                이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
+            {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
+                큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. 허용 호스트는 읽기
+                컬럼 폭에 맞춘 변형(next/image, preload 포함), 그 밖의 호스트는 원본 <img>. */}
+            {canOptimizeCover(post.ogImageUrl) ? (
+              <Image
+                src={post.ogImageUrl}
+                alt=""
+                width={1344}
+                height={672}
+                sizes="(min-width: 672px) 672px, 100vw"
+                priority
+                className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.ogImageUrl}
+                alt=""
+                fetchPriority="high"
+                decoding="async"
+                className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
+              />
+            )}
           </div>
-        </div>
-      </footer>
+        )}
 
-      <RelatedPosts
-        locale={locale}
-        author={author}
-        currentSlug={post.slug}
-        currentTitle={post.title}
-        tags={post.tags}
-        seriesSize={result.data.series?.total ?? 0}
-      />
+        {seriesNav && (
+          <SeriesNav
+            series={seriesNav}
+            episodes={episodes || []}
+            currentKey={post.slug}
+            username={author.username}
+            locale={locale}
+          />
+        )}
 
-      {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
-      {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
+        <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
+        <PostHighlights postId={post.id} />
 
-      {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
-      {!isPreview && <PublishCelebration slug={post.slug} />}
+        {post.tags.length > 0 && (
+          <div className="mt-8" data-testid="post-tags">
+            <TagChips tags={post.tags} />
+          </div>
+        )}
 
-      <PostComments postId={post.id} authorUsername={author.username} />
+        {editedLabel && (
+          <p className="mt-4 text-[12px] text-slate-500 dark:text-slate-400">
+            {t("editedOn", { date: editedLabel })}
+          </p>
+        )}
+
+        <footer className="-ml-2.5 mt-8" data-testid="post-actions">
+          <PostActionRow
+            postId={post.id}
+            postTitle={post.title}
+            postSlug={post.slug}
+            postUrl={postUrl}
+            likeCount={post.likeCount}
+            authorUsername={author.username}
+            locale={locale}
+          />
+        </footer>
+
+        {seriesNav && <SeriesNext series={seriesNav} username={author.username} locale={locale} />}
+
+        <div data-post-end aria-hidden />
+
+        <PostAuthorCard author={author} locale={locale} postId={post.id} />
+
+        <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
+
+        <Suspense fallback={null}>
+          <PostCollections postId={post.id} />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <RelatedPosts
+            locale={locale}
+            author={author}
+            currentSlug={post.slug}
+            currentTitle={post.title}
+            tags={post.tags}
+            seriesSize={result.data.series?.total ?? 0}
+          />
+        </Suspense>
+
+        {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
+        {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
+
+        {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
+        {!isPreview && <PublishCelebration slug={post.slug} />}
+      </AuthorGate>
 
       {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
       {!isPreview && (
@@ -477,19 +479,20 @@ export default async function PublicPostPage({
 
       {/* TOC pinned just right of the centered column. Fixed (not a grid gutter) so it shows from
           landscape-tablet width up (~1100px) without shrinking the 42rem reading column or breaking its
-          centering. Below that, the floating button → bottom sheet takes over. 불투명 종이 배경:
+          centering. Below that, the dock's 목차 → bottom sheet takes over. 불투명 종이 배경:
           full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
           겹침 자체를 제거. */}
-      {tocHeadings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
-          <PostToc headings={tocHeadings} />
-        </aside>
-      )}
+      <AuthorOnly username={author.username}>
+        {tocHeadings.length >= 1 && (
+          <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-surface bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
+            <PostToc headings={tocHeadings} />
+          </aside>
+        )}
 
-      {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
-      <PostTocMobile headings={tocHeadings} />
+        <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
+      </AuthorOnly>
       <LegacyHeadingHash headings={headings} />
-    </div>
+    </main>
   );
 }
 

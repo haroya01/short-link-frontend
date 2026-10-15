@@ -51,7 +51,7 @@ export function AuthorFilterChips({
           onClick={() => onSelect(active === a.username ? null : a.username)}
           className={cn(base, tone(active === a.username), "pl-2 pr-4")}
         >
-          <Avatar src={a.avatarUrl} name={a.username} size="xs" />@{a.username}
+          <Avatar src={a.avatarUrl} name={a.displayName || a.username} seed={a.id} size="xs" />@{a.username}
         </button>
       ))}
     </div>

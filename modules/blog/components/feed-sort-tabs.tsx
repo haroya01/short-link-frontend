@@ -10,13 +10,11 @@ export type FeedSortTab = {
   label: string;
   href: string;
   active: boolean;
-  /** Non-interactive (e.g. "팔로잉" while a search is active). */
-  disabled?: boolean;
   personal?: boolean;
 };
 
 // Tab horizontal padding (px-2.5 = 10px); the underline spans the label, inset past the padding.
-const PAD = 10;
+export const PAD = 10;
 // Constant glide speed (ms per px travelled), clamped — so distance ≈ time: a far jump (최신 → 팔로잉)
 // takes visibly longer and sweeps across the middle tab, while an adjacent hop stays quick.
 const MS_PER_PX = 3;
@@ -24,14 +22,28 @@ const MIN_MS = 180;
 // Capped at the move tier's ceiling (§10.7) — a two-tab jump still sweeps, just not slowly.
 const MAX_MS = 320;
 
+export const glideMs = (distance: number) => Math.min(MAX_MS, Math.max(MIN_MS, Math.round(distance * MS_PER_PX)));
+
 /**
- * Feed-home sort tabs (최신 · 인기 · 팔로잉) with a single underline that *slides* between tabs — it
+ * Feed switcher tabs (팔로잉 · 최신 · 인기) with a single underline that *slides* between tabs — it
  * translates + resizes from the old tab to the new one (matching the content's left/right slide),
  * instead of each tab growing its own underline in place. Travel time scales with distance, so
  * jumping two tabs sweeps across the one between. The active position is measured client-side (labels
  * are any width); soft-nav keeps this mounted, so the bar transitions rather than jumps.
  */
-export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
+export function FeedSortTabs({
+  tabs: allTabs,
+  onSelect,
+  underline = true,
+  idle = false,
+}: {
+  tabs: FeedSortTab[];
+  onSelect?: (key: string) => void;
+  /** Off when the parent draws one underline across the tabs and its own trailing slot. */
+  underline?: boolean;
+  /** The parent is opening something outside the tabs, so no tab is drawn active meanwhile. */
+  idle?: boolean;
+}) {
   const { ready, authenticated } = useAuth();
   const tabs = !(ready && authenticated) ? allTabs.filter((t) => !t.personal || t.active) : allTabs;
   const router = useRouter();
@@ -45,7 +57,7 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
 
   // The tab drawn as active — the optimistic pending tab while its route loads, else the
   // server-resolved one.
-  const activeKey = pendingKey ?? tabs.find((t) => t.active)?.key ?? null;
+  const activeKey = pendingKey ?? (idle ? null : (tabs.find((t) => t.active)?.key ?? null));
 
   // Re-measure whenever the active tab (or its label, on locale change) changes — including the
   // optimistic pending tab, so the underline glides on click, not only when the payload arrives.
@@ -70,9 +82,11 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
     if (next) {
       setBar((prev) => {
         const dist = prev ? Math.abs(next.left - prev.left) : 0;
-        setDurationMs(prev ? Math.min(MAX_MS, Math.max(MIN_MS, Math.round(dist * MS_PER_PX))) : 0);
+        setDurationMs(prev ? glideMs(dist) : 0);
         return next;
       });
+    } else {
+      setBar(null);
     }
 
     // Genuine layout changes (window resize / font load) → reposition instantly, no glide. Skip the
@@ -103,43 +117,33 @@ export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
       aria-busy={isPending}
       className="relative flex min-w-0 gap-1 overflow-x-auto pb-3.5 -mb-3.5 text-[15px] font-bold [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
-      {tabs.map((t) =>
-        t.disabled ? (
-          <span
-            key={t.key}
-            aria-disabled
-            aria-current={t.active ? "page" : undefined}
-            className="relative cursor-default whitespace-nowrap px-2.5 py-1.5 text-slate-300"
-          >
-            {t.label}
-          </span>
-        ) : (
-          <Link
-            key={t.key}
-            href={t.href}
-            data-active={t.key === activeKey ? "true" : undefined}
-            aria-current={t.key === activeKey ? "page" : undefined}
-            onClick={(e) => {
-              // Modifier / middle clicks keep native anchor behaviour (new tab / window).
-              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-              e.preventDefault();
-              // Resolve the relative ?sort= href against the current URL before pushing — mirrors
-              // BlogChromeLink. Wrapped in a transition so isPending flags the pending nav.
-              const url = new URL(t.href, window.location.href);
-              setPendingKey(t.key);
-              startTransition(() => router.push(url.pathname + url.search + url.hash));
-            }}
-            className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
-              t.key === activeKey
-                ? "text-slate-900 dark:text-slate-100"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-            }`}
-          >
-            {t.label}
-          </Link>
-        ),
-      )}
-      {bar && (
+      {tabs.map((t) => (
+        <Link
+          key={t.key}
+          href={t.href}
+          data-active={t.key === activeKey ? "true" : undefined}
+          aria-current={t.key === activeKey ? "page" : undefined}
+          onClick={(e) => {
+            // Modifier / middle clicks keep native anchor behaviour (new tab / window).
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            // Resolve the relative ?sort= href against the current URL before pushing — mirrors
+            // BlogChromeLink. Wrapped in a transition so isPending flags the pending nav.
+            const url = new URL(t.href, window.location.href);
+            onSelect?.(t.key);
+            setPendingKey(t.key);
+            startTransition(() => router.push(url.pathname + url.search + url.hash));
+          }}
+          className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
+            t.key === activeKey
+              ? "text-slate-900 dark:text-slate-100"
+              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+          }`}
+        >
+          {t.label}
+        </Link>
+      ))}
+      {underline && bar && (
         <span
           aria-hidden
           className="pointer-events-none absolute bottom-0.5 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"

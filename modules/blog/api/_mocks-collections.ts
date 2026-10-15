@@ -1,11 +1,11 @@
 /**
- * Mock data for the reading-path (collections / connection graph) feature — lets the path read,
- * discovery feed, and "이 문장이 속한 길" render and interact without a backend. Gated by
+ * Mock data for the collections (connection graph) feature — lets an ordered collection's read,
+ * discovery feed, and "이 문장이 담긴 컬렉션" render and interact without a backend. Gated by
  * `NEXT_PUBLIC_USE_MOCKS=1` (see {@link USE_MOCKS}); when off the real `request`/`fetch` calls run.
  *
- * Mirrors the kurl-ios MockBackend: a seeded PATH whose ordered connections quote sentences that
+ * Mirrors the kurl-ios MockBackend: a seeded ordered collection whose connections quote sentences that
  * actually appear in the mock posts' bodies (so the quote deep-link lands and the source highlight
- * paints), plus a few collections, a discovery flow with a PATH-kind entry, and the
+ * paints), plus a few collections, a discovery flow with ordered entries, and the
  * public-highlights-collections route.
  *
  * Lives under `modules/` so the Korean fixture copy is fine (the i18n guard only scans
@@ -18,22 +18,20 @@ import type {
   Connection,
   ConnectionEvent,
   DiscoverFeed,
-  FeedSource,
+  KindredCurator,
   NewCollection,
   PostCollectionsView,
+  RelatedBlock,
 } from "@/modules/blog/api/collections";
-import type {
-  HighlightFeedItem,
-  HighlightFeedPage,
-  MyHighlightItem,
-} from "@/modules/blog/api/highlights";
+import type { MyHighlightItem } from "@/modules/blog/api/highlights";
+import { MOCK_BLOCKS_VIEWER } from "@/modules/blog/api/_mocks";
 
 // Mock authors (mirror _mocks.ts AUTHORS) — only what the discovery card needs.
 const CURATORS = {
   minji: { id: 2, username: "minji", bio: "1인 메이커 · 그로스", avatarUrl: "https://i.pravatar.cc/120?img=45" },
   haruka: { id: 3, username: "haruka", bio: "플랫폼 엔지니어", avatarUrl: null },
-  jinhwa: { id: 4, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
-  doha: { id: 5, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
+  jinhwa: { id: 41, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
+  doha: { id: 42, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
   sol: { id: 6, username: "sol", bio: "작업실에서, 손으로", avatarUrl: null },
 };
 
@@ -53,8 +51,8 @@ function hl(id: number, refId: number, quote: string, postTitle: string, usernam
 function post(id: number, refId: number, title: string, excerpt: string, username: string, slug: string, why: string | null): MockConnection {
   return { id, refId, blockType: "POST", why, title, excerpt, slug, username, quote: null, body: null };
 }
-function note(id: number, body: string, why: string | null): MockConnection {
-  return { id, blockType: "NOTE", why, title: null, excerpt: null, slug: null, username: null, quote: null, body };
+function note(id: number, body: string, why: string | null, author = "yuna", noteId = 3): MockConnection {
+  return { id, blockType: "NOTE", why, title: null, excerpt: null, slug: null, username: author, quote: null, body, noteId };
 }
 
 // The seeded reading path (PATH) — an argument walked sentence by sentence. The `why` on each step is
@@ -76,7 +74,9 @@ const PATH: MockCollectionDetail = {
   description: "과정을 기록하고, 측정하고, 단순함으로 돌아오는 한 흐름.",
   visibility: "PUBLIC",
   kind: "PATH",
+  ordered: true,
   curatorUsername: "haruka",
+  curatorUserId: 3,
   connections: pathConnections,
 };
 
@@ -95,7 +95,9 @@ const COLLECTION: MockCollectionDetail = {
   description: "프로덕트를 만들며 다시 보는 글·구절·생각.",
   visibility: "PUBLIC",
   kind: "COLLECTION",
+  ordered: false,
   curatorUsername: "dohyun",
+  curatorUserId: 1,
   connections: collectionConnections,
 };
 
@@ -135,110 +137,6 @@ export function mockMyHighlights(): MyHighlightItem[] {
   return [...myHighlights];
 }
 
-// "남들 하이라이트" 피드 — 팔로우한 큐레이터가 최근 칠한 구절(최신순). 큐레이터(칠한 사람) ≠ 글 작가.
-// 인용문은 mock 본문에 실제로 있는 문장이라 탭하면 그 구절로 스크롤된다. 첫 세 개는 본문의 실제 문장을
-// 그대로 그어 딥링크가 그 자리로 스크롤되게 하고, 뒤는 팔로잉 피드처럼 페이지가 넘어가도록 채운다(2페이지 이상).
-const now = Date.now();
-const HEAD_FEED: HighlightFeedItem[] = [
-  {
-    id: 8101,
-    postId: 1,
-    curator: CURATORS.haruka,
-    postSlug: "hexagonal-too-much",
-    postTitle: "헥사고날 아키텍처, 작은 서비스에 과했을까",
-    postAuthorUsername: "haruka",
-    blockOrder: 2,
-    endBlockOrder: 2,
-    startOffset: 0,
-    endOffset: Q_SIMPLE.length,
-    quote: Q_SIMPLE,
-    note: "결국 남는 건 이 한 줄이었다.",
-    createdAt: new Date(now - 3 * 3_600_000).toISOString(),
-    replyCount: 2,
-  },
-  {
-    id: 8102,
-    postId: 4,
-    curator: CURATORS.minji,
-    postSlug: "side-project-pricing",
-    postTitle: "1인 개발자의 가격 정책 실험",
-    postAuthorUsername: "minji",
-    blockOrder: 1,
-    endBlockOrder: 1,
-    startOffset: 0,
-    endOffset: Q_PROCESS.length,
-    quote: Q_PROCESS,
-    note: null,
-    createdAt: new Date(now - 20 * 3_600_000).toISOString(),
-    replyCount: 0,
-  },
-  {
-    id: 8103,
-    postId: 2,
-    curator: CURATORS.jinhwa,
-    postSlug: "spring-boot-tx-propagation",
-    postTitle: "Spring Boot 트랜잭션 전파, 다시 정리",
-    postAuthorUsername: "dohyun",
-    blockOrder: 3,
-    endBlockOrder: 3,
-    startOffset: 0,
-    endOffset: Q_MEASURE.length,
-    quote: Q_MEASURE,
-    note: "측정 먼저 — 이 태도가 좋다.",
-    createdAt: new Date(now - 2 * 86_400_000).toISOString(),
-    replyCount: 5,
-  },
-];
-
-// 페이지네이션이 실제로 넘어가도록 뒤를 채운다 — 다양한 큐레이터가 여러 글에서 그은 구절(총 28개 =
-// size 20 기준 2페이지). 각 인용은 페이지 번호를 담아, 둘째 페이지가 로드됐는지 e2e 가 짚을 수 있다.
-const FILLER_QUOTES = [
-  "여기서 한 번 멈추고, 왜 이렇게 했는지 적어두기로 했다.",
-  "빠른 길과 옳은 길이 갈릴 때, 나는 옳은 길을 택했다.",
-  "숫자는 거짓말을 안 하지만, 질문이 틀리면 답도 틀린다.",
-  "작게 시작해서 오래 가는 편이, 크게 시작해서 멈추는 편보다 낫다.",
-];
-const FILLER_CURATORS = [CURATORS.doha, CURATORS.sol, CURATORS.minji, CURATORS.haruka, CURATORS.jinhwa];
-const FILLER_POSTS: Array<[number, string, string, string]> = [
-  [3, "naming-is-hard", "리팩터링: 이름 짓기에 하루를 쓰는 이유", "dohyun"],
-  [6, "docker-compose-prod", "작은 EC2에 docker compose로 배포하기", "haruka"],
-  [7, "rotating-refresh-tokens", "리프레시 토큰 회전, 로그아웃 폭탄을 피하는 법", "dohyun"],
-];
-const FILLER_FEED: HighlightFeedItem[] = Array.from({ length: 25 }, (_, i) => {
-  const q = `${FILLER_QUOTES[i % FILLER_QUOTES.length]} (${i + 1}번째 밑줄)`;
-  const [postId, postSlug, postTitle, postAuthorUsername] = FILLER_POSTS[i % FILLER_POSTS.length];
-  return {
-    id: 8200 + i,
-    postId,
-    curator: FILLER_CURATORS[i % FILLER_CURATORS.length],
-    postSlug,
-    postTitle,
-    postAuthorUsername,
-    blockOrder: 1,
-    endBlockOrder: 1,
-    startOffset: 0,
-    endOffset: q.length,
-    quote: q,
-    note: i % 3 === 0 ? "이 문장에 오래 머물렀다." : null,
-    createdAt: new Date(now - (3 + i) * 86_400_000).toISOString(),
-    replyCount: i % 4,
-  };
-});
-const highlightFeed: HighlightFeedItem[] = [...HEAD_FEED, ...FILLER_FEED];
-
-export function mockHighlightFeed(
-  page: number,
-  size: number,
-  scope?: FeedSource,
-): HighlightFeedPage {
-  const start = page * size;
-  const items = highlightFeed.slice(start, start + size);
-  // Mock viewer follows curators, so the feed is "following" unless the caller pins scope=global
-  // (exercising the cold-start fallback path + the pinned-scope caption without a backend).
-  const source: FeedSource = scope === "global" ? "global" : "following";
-  return { items, page, size, hasNext: start + size < highlightFeed.length, source };
-}
-
 // A stored collection whose connections carry the internal `refId` (so membership is resolvable).
 type MockCollectionDetail = Omit<CollectionDetail, "connections"> & { connections: MockConnection[] };
 
@@ -257,6 +155,7 @@ function toSummary(
     description: c.description,
     visibility: c.visibility,
     kind: c.kind,
+    ...(c.ordered === undefined ? {} : { ordered: c.ordered }),
     count: c.connections.length,
     preview: c.connections
       .slice(0, 3)
@@ -287,8 +186,10 @@ export function mockCreateCollection(payload: NewCollection): CollectionSummary 
     title: payload.title,
     description: payload.description?.trim() || null,
     visibility: payload.visibility,
-    kind: payload.kind,
+    kind: payload.ordered ? "PATH" : "COLLECTION",
+    ordered: payload.ordered,
     curatorUsername: "dohyun",
+    curatorUserId: 1,
     connections: [],
   };
   mockStore.unshift(created);
@@ -320,8 +221,9 @@ export function mockConnect(
     excerpt: null,
     slug: null,
     username: null,
-    quote: payload.blockType === "HIGHLIGHT" ? "이 문장을 길에 이었어요." : null,
+    quote: payload.blockType === "HIGHLIGHT" ? "이 문장을 컬렉션에 이었어요." : null,
     body: payload.blockType === "NOTE" ? "연결한 노트" : null,
+    noteId: payload.blockType === "NOTE" ? payload.refId : null,
   });
 }
 
@@ -341,6 +243,10 @@ export function mockUpdateCollection(id: number, payload: CollectionEdit): Colle
   target.title = payload.title;
   target.description = payload.description?.trim() || null;
   target.visibility = payload.visibility;
+  if (payload.ordered !== undefined) {
+    target.ordered = payload.ordered;
+    target.kind = payload.ordered ? "PATH" : "COLLECTION";
+  }
   return toSummary(target);
 }
 
@@ -355,46 +261,6 @@ export function mockDisconnect(collectionId: number, connectionId: number): void
   target.connections = target.connections.filter((x) => x.id !== connectionId);
 }
 
-export function mockDiscoverConnections(): DiscoverFeed {
-  const now = Date.now();
-  const items: ConnectionEvent[] = [
-    {
-      id: 301,
-      curator: CURATORS.haruka,
-      collectionId: 1,
-      collectionTitle: "결정을 남기는 법",
-      collectionKind: "PATH",
-      why: "측정이 내린 결론은 늘 같았다 — 단순함.",
-      connectedAt: new Date(now - 2 * 3_600_000).toISOString(),
-      blockType: "HIGHLIGHT",
-      title: "헥사고날 아키텍처, 작은 서비스에 과했을까",
-      excerpt: null,
-      slug: "hexagonal-too-much",
-      username: "haruka",
-      quote: Q_SIMPLE,
-      body: null,
-    },
-    {
-      id: 302,
-      curator: CURATORS.minji,
-      collectionId: 2,
-      collectionTitle: "프로덕트 노트",
-      collectionKind: "COLLECTION",
-      why: "가격은 한 번에 못 정한다는 걸 보여주는 글.",
-      connectedAt: new Date(now - 26 * 3_600_000).toISOString(),
-      blockType: "POST",
-      title: "1인 개발자의 가격 정책 실험: 무료에서 Pro까지",
-      excerpt: "전환율을 보며 무료 한도와 Pro 경계를 네 번 바꾼 기록.",
-      slug: "pricing-experiment-free-to-pro",
-      username: "minji",
-      quote: null,
-      body: null,
-    },
-  ];
-  // Mock viewer follows curators → the follow-graph feed (not the cold-start fallback).
-  return { items, hasNext: false, source: "following" satisfies FeedSource };
-}
-
 export function mockCollectionsContainingHighlight(_highlightId: number): CollectionSummary[] {
   // In mock mode every highlight resolves to the seeded PATH so the discovery loop is exercisable.
   return [toSummary(PATH)];
@@ -405,11 +271,29 @@ export function mockCollectionsContainingHighlight(_highlightId: number): Collec
 // 몇 칸마다 하나씩 끼워도 눈이 종류를 한 번에 읽는다. 산문은 현실적인 큐레이션 한 줄.
 const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
   {
+    id: 509,
+    curator: { id: 16, username: "rin", bio: "밤에만 쓰는 사람", avatarUrl: null },
+    collectionId: 19,
+    collectionTitle: "밤의 목록",
+    collectionKind: "COLLECTION",
+    collectionOrdered: false,
+    why: "새벽 두 시에 다시 꺼내 읽는 글.",
+    connectedAt: new Date(Date.now() - 9 * 3_600_000).toISOString(),
+    blockType: "POST",
+    title: "밤 열한 시의 작업 노트",
+    excerpt: "모두 잠든 뒤에야 손에 잡히는 일들에 대해.",
+    slug: "quiet-hours",
+    username: "rin",
+    quote: null,
+    body: null,
+  },
+  {
     id: 501,
     curator: CURATORS.jinhwa,
     collectionId: 11,
     collectionTitle: "느린 사고",
     collectionKind: "PATH",
+    collectionOrdered: true,
     why: "읽고 나서 일주일을 곱씹게 한 문단. 결정을 미루는 게 게으름이 아니라는 걸 처음 납득시킨 글.",
     connectedAt: new Date(Date.now() - 3 * 3_600_000).toISOString(),
     blockType: "HIGHLIGHT",
@@ -426,6 +310,7 @@ const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
     collectionId: 12,
     collectionTitle: "경계를 긋는다는 것",
     collectionKind: "COLLECTION",
+    collectionOrdered: false,
     why: "거절의 언어에 대한 세 편을 한자리에 모으는 중. 이건 그중 가장 다정한 쪽.",
     connectedAt: new Date(Date.now() - 20 * 3_600_000).toISOString(),
     blockType: "POST",
@@ -442,6 +327,7 @@ const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
     collectionId: 13,
     collectionTitle: "작업실 노트",
     collectionKind: "COLLECTION",
+    collectionOrdered: false,
     why: "이 문장 하나 붙여두려고 컬렉션을 새로 팠다.",
     connectedAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
     blockType: "NOTE",
@@ -458,6 +344,7 @@ const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
     collectionId: 2,
     collectionTitle: "프로덕트 노트",
     collectionKind: "COLLECTION",
+    collectionOrdered: false,
     why: "가격은 한 번에 못 정한다는 걸 보여주는 글 — 나중에 나도 이 순서로 실험했다.",
     connectedAt: new Date(Date.now() - 3 * 86_400_000).toISOString(),
     blockType: "POST",
@@ -474,6 +361,7 @@ const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
     collectionId: 1,
     collectionTitle: "결정을 남기는 법",
     collectionKind: "PATH",
+    collectionOrdered: true,
     why: "측정이 내린 결론은 늘 같았다 — 단순함.",
     connectedAt: new Date(Date.now() - 4 * 86_400_000).toISOString(),
     blockType: "HIGHLIGHT",
@@ -502,10 +390,15 @@ const PUBLIC_CONNECTIONS: ConnectionEvent[] = [
   },
 ];
 
-export function mockPublicConnectionFeed(page = 0, size = 12): DiscoverFeed {
+export function mockPublicConnectionFeed(page = 0, size = 12, viewer = false): DiscoverFeed {
   const start = page * size;
-  const items = PUBLIC_CONNECTIONS.slice(start, start + size);
-  return { items, hasNext: start + size < PUBLIC_CONNECTIONS.length, page, size };
+  const visible = viewer
+    ? PUBLIC_CONNECTIONS.filter(
+        (e) => !MOCK_BLOCKS_VIEWER.has(e.curator.username) && !MOCK_BLOCKS_VIEWER.has(e.username ?? ""),
+      )
+    : PUBLIC_CONNECTIONS;
+  const items = visible.slice(start, start + size);
+  return { items, hasNext: start + size < visible.length, page, size };
 }
 
 // "속함" 한 올 — 어떤 글이 어떤 공개 컬렉션에 담겼는지. 몇몇 글만 담겨 있고(없으면 줄 자체가 안 뜬다),
@@ -513,28 +406,46 @@ export function mockPublicConnectionFeed(page = 0, size = 12): DiscoverFeed {
 const POST_COLLECTIONS: Record<number, CollectionSummary[]> = {
   // _mocks.ts SEEDS 의 목 글 id(= index+1) 중 몇 개만 담김 — 나머지는 [](줄 자체가 안 뜬다).
   // id 3 = hexagonal-too-much, 6 = spring-tx-propagation, 7 = killed-side-project, 9 = naming-things.
-  // 백엔드 #607: 글 소속 응답의 각 컬렉션엔 curator/position/total 이 붙어 "@큐레이터의 '길' ·
-  // N편 중 M번째"로 읽힌다. 세 번째 줄(느린 사고)은 그 필드들을 일부러 비워, 리스트 표면 폴백
-  // (count 표시)이 같은 화면에 함께 보이게 한다.
+  // 백엔드 #607: 글 소속 응답의 각 컬렉션엔 curator/position/total 이 붙어, 순서 있는 컬렉션은
+  // "@큐레이터 · N편 중 M번째"로 읽힌다. 세 번째 줄(느린 사고)은 그 필드들과 ordered(#807)를 일부러
+  // 비워, 리스트 표면 폴백과 kind 만 보내는 이전 서버 폴백이 같은 화면에 함께 보이게 한다.
   3: [
-    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", count: 4, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 2, total: 4 },
-    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 8, preview: [], curatorUsername: "mina", curatorAvatarUrl: null, position: 5, total: 8 },
+    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", ordered: true, count: 4, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 2, total: 4 },
+    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", ordered: false, count: 8, preview: [], curatorUsername: "mina", curatorAvatarUrl: null, position: 5, total: 8 },
     { id: 11, title: "느린 사고", description: null, visibility: "PUBLIC", kind: "PATH", count: 5, preview: [] },
   ],
   6: [
-    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", count: 4, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 1, total: 4 },
+    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", ordered: true, count: 4, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 1, total: 4 },
   ],
   7: [
-    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 8, preview: [], curatorUsername: "mina", curatorAvatarUrl: null, position: 3, total: 8 },
-    { id: 12, title: "경계를 긋는다는 것", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 3, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 2, total: 3 },
+    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", ordered: false, count: 8, preview: [], curatorUsername: "mina", curatorAvatarUrl: null, position: 3, total: 8 },
+    { id: 12, title: "경계를 긋는다는 것", description: null, visibility: "PUBLIC", kind: "COLLECTION", ordered: false, count: 3, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 2, total: 3 },
   ],
   9: [
-    { id: 13, title: "작업실 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 6, preview: [], curatorUsername: "haruka", curatorAvatarUrl: null, position: 4, total: 6 },
+    { id: 13, title: "작업실 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", ordered: false, count: 6, preview: [], curatorUsername: "haruka", curatorAvatarUrl: null, position: 4, total: 6 },
   ],
 };
 
 export function mockPostCollections(postId: number): CollectionSummary[] {
   return POST_COLLECTIONS[postId] ?? [];
+}
+
+const POST_RELATED: Record<number, RelatedBlock[]> = {
+  3: [
+    { blockType: "POST", refId: 1, title: "Next.js 14 App Router로 블로그를 다시 만든 이유", excerpt: "RSC와 서버 액션으로 피드·검색·작성 흐름을 다시 짠 과정과 트레이드오프.", slug: "nextjs-14-app-router-blog", username: "dohyun", quote: null, body: null, sharedCount: 2 },
+  ],
+};
+
+const KINDRED: Record<string, KindredCurator[]> = {
+  haruka: [{ curator: CURATORS.jinhwa, sharedItems: 3 }],
+};
+
+export function mockRelatedBlocks(blockType: string, refId: number): RelatedBlock[] {
+  return blockType === "POST" ? (POST_RELATED[refId] ?? []) : [];
+}
+
+export function mockKindredCurators(username: string): KindredCurator[] {
+  return KINDRED[username] ?? [];
 }
 
 // 배치 목 — 요청한 id 순서 그대로, 담긴 게 없으면 collections:[](줄이 안 뜬다). 실서버 계약과 동일 shape.

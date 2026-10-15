@@ -4,17 +4,19 @@ import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 /**
- * A collapsible row for the reader's 저장한 글 보관함 인덱스 — the label (brand-green tick + title) and
+ * A collapsible row for the reader's 서재 인덱스 — the label (brand-green tick + title) and
  * its hint live on a disclosure button, and the body (a saved list) unfolds below. 서랍장(섹션마다
  * 보더 카드)이 아니라 부모가 헤어라인으로 나누는 조용한 색인 행 — 열린 본문(읽기 리스트)과 색인의
  * 위계가 서게 한다. The heading wraps the button (WAI-ARIA accordion) so the section keeps its landmark.
  */
 export function CollapsibleSection({
+  id,
   title,
   hint,
   defaultOpen = false,
   children,
 }: {
+  id?: string;
   title: string;
   hint?: string;
   defaultOpen?: boolean;
@@ -22,7 +24,7 @@ export function CollapsibleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section>
+    <section id={id} className="scroll-mt-20">
       <h2 className="m-0">
         <button
           type="button"

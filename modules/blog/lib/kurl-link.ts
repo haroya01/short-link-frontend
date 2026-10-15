@@ -14,3 +14,21 @@ export function kurlShortCode(url: string): string | null {
     return null;
   }
 }
+
+const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
+const NOTE_HOSTS = [BLOG_HOST, SHORT_HOST, ...(BLOG_HOST ? [] : ["localhost", "127.0.0.1"])]
+  .filter((h): h is string => !!h)
+  .map((h) => h.toLowerCase());
+
+/** A kurl note id from a note page URL (blog.kurl.me/@user/notes/12, a remote note's page, or the
+ *  same-origin dev routes) — null for anything else. Mirrors the backend's PostNoteQuotes. */
+export function kurlNoteId(url: string): number | null {
+  try {
+    const u = new URL(url.trim());
+    if (!NOTE_HOSTS.includes(u.hostname.replace(/^www\./, "").toLowerCase())) return null;
+    const m = u.pathname.match(/\/notes\/(\d{1,15})\/?$/);
+    return m ? Number(m[1]) : null;
+  } catch {
+    return null;
+  }
+}

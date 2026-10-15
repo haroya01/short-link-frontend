@@ -14,11 +14,15 @@ export function BottomSheet({
   open,
   onClose,
   label,
+  panelClassName,
+  layerClassName = "z-50",
   children,
 }: {
   open: boolean;
   onClose: () => void;
   label: string;
+  panelClassName?: string;
+  layerClassName?: string;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -35,7 +39,7 @@ export function BottomSheet({
       aria-modal="true"
       aria-label={label}
       aria-hidden={closing || undefined}
-      className={`fixed inset-0 z-50 ${closing ? "pointer-events-none" : ""}`}
+      className={`fixed inset-0 ${layerClassName} ${closing ? "pointer-events-none" : ""}`}
     >
       <button
         type="button"
@@ -49,7 +53,7 @@ export function BottomSheet({
       <div
         className={`absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-2xl border-t border-slate-200 bg-white px-4 pb-[max(env(safe-area-inset-bottom),1rem)] pt-2 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 ${
           closing ? "animate-[sheet-down_240ms_var(--ease)_both]" : "animate-[sheet-up_280ms_var(--ease)_both]"
-        }`}
+        } ${panelClassName ?? ""}`}
       >
         <div aria-hidden className="mx-auto mb-3 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" />
         {children}

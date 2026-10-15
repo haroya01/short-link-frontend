@@ -9,6 +9,8 @@ import { findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { noteHeadline, seriesEntries, seriesItemCount } from "@/modules/blog/lib/series-items";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -41,7 +43,10 @@ export async function generateMetadata({
   const title = `${series.title} · @${author.username}`;
   // The series has no description/cover of its own — borrow the first episode that carries one so the
   // unfurl isn't a bare title and crawlers get a representative image.
-  const description = posts.find((p) => p.excerpt)?.excerpt ?? undefined;
+  const firstNote = seriesEntries(result.data).find((e) => e.type === "NOTE");
+  const description =
+    posts.find((p) => p.excerpt)?.excerpt ??
+    (firstNote?.type === "NOTE" ? noteHeadline(firstNote.note) : undefined);
   const ogImage = posts.find((p) => p.ogImageUrl)?.ogImageUrl ?? undefined;
   return {
     title,
@@ -80,6 +85,7 @@ export default async function PublicSeriesPage({
   }
 
   const { author, series, posts } = result.data;
+  const entries = seriesEntries(result.data);
   const h = await headers();
   const origin = authorBaseUrl(h, username);
   const seriesUrl = `${origin}/series/${series.slug}`;
@@ -95,12 +101,13 @@ export default async function PublicSeriesPage({
     author: { "@type": "Person", name: author.username, alternateName: `@${author.username}`, url: `${origin}/` },
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: posts.length,
-      itemListElement: posts.map((p, i) => ({
+      numberOfItems: entries.length,
+      itemListElement: entries.map((entry, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        url: `${origin}/${p.slug}`,
-        name: p.title,
+        ...(entry.type === "POST"
+          ? { url: `${origin}/${entry.post.slug}`, name: entry.post.title }
+          : { url: `${origin}/notes/${entry.note.id}`, name: noteHeadline(entry.note) }),
       })),
     },
   };
@@ -120,10 +127,10 @@ export default async function PublicSeriesPage({
       timeZone: "Asia/Seoul",
     });
   // Series order ≠ publish order, so derive the latest publish for the header summary.
-  const lastPublished = posts.reduce<string | null>(
-    (max, p) => (max === null || p.publishedAt > max ? p.publishedAt : max),
-    null,
-  );
+  const lastPublished = entries.reduce<string | null>((max, entry) => {
+    const at = entry.type === "POST" ? entry.post.publishedAt : entry.note.createdAt;
+    return max === null || at > max ? at : max;
+  }, null);
   const profileHref = authorHref(author.username, locale);
 
   // Left gutter: who this series belongs to — avatar + handle (→ profile) + bio + follow, and a way
@@ -132,14 +139,18 @@ export default async function PublicSeriesPage({
   const authorRail = (
     <div className="flex flex-col gap-4">
       <RailHeading>{tf("seriesByAuthor")}</RailHeading>
-      <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-lg">
-        <Avatar src={author.avatarUrl} name={author.username} size="lg" />
-        <span className="min-w-0 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-          @{author.username}
-        </span>
+      <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-surface">
+        <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
+        <AuthorName
+          name={author.displayName}
+          handle={author.username}
+          className="text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400"
+        />
       </BlogLink>
       {author.bio && (
-        <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{author.bio}</p>
+        <p lang={contentLang(author.bio)} className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+          {author.bio}
+        </p>
       )}
       <FollowButton username={author.username} initialFollowerCount={0} compact quiet />
       <BlogLink
@@ -178,13 +189,16 @@ export default async function PublicSeriesPage({
               href={profileHref}
               className="focus-ring group flex items-center gap-2 rounded transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
-              <Avatar src={author.avatarUrl} name={author.username} size="xs" />
-              <span className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
-                {author.username}
-              </span>
+              <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="xs" />
+              <AuthorName
+                name={author.displayName}
+                handle={author.username}
+                className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400"
+                handleClassName={META_HANDLE}
+              />
             </BlogLink>
             <span aria-hidden>·</span>
-            <span>{tf("seriesEpisodeCount", { count: series.postCount })}</span>
+            <span>{tf("seriesItemCount", { count: seriesItemCount(series) })}</span>
             {lastPublished && (
               <>
                 <span aria-hidden>·</span>
@@ -224,7 +238,7 @@ export default async function PublicSeriesPage({
       <SeriesReadingShell
         leftRail={authorRail}
         header={header}
-        posts={posts}
+        entries={entries}
         username={author.username}
         locale={locale}
       />

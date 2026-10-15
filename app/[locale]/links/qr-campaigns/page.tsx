@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { buttonVariants } from "@/components/ui/button";
 import { GroupChart, KpiRow, RecommendationCard } from "@/components/links/campaigns/stats-cards";
 import { PromoActions, PromoExample, PromoHero, PromoLines, PromoSection } from "@/components/landing/promo";
@@ -17,7 +18,16 @@ export default function QrCampaignsLandingPage() {
   const { authenticated } = useAuth();
   // 로그인 안 했어도 클릭 의도는 "캠페인 만들기". 로그인 후 dashboard 가 아니라 /campaigns/new
   // 로 이어지게 ?next= 부착 (ALLOWED_NEXT_PATHS 화이트리스트에 추가됨).
-  const ctaHref = authenticated ? "/campaigns/new" : "/login?next=/campaigns/new";
+  const cta = (className: string, children: React.ReactNode) =>
+    authenticated ? (
+      <Link href="/campaigns/new" className={className}>
+        {children}
+      </Link>
+    ) : (
+      <SignInLink reason="campaigns" next="/campaigns/new" className={className}>
+        {children}
+      </SignInLink>
+    );
   const locale = useLocale();
   const t = useTranslations("qrCampaigns");
   const tStats = useTranslations("campaignApp.campaignStats");
@@ -42,10 +52,13 @@ export default function QrCampaignsLandingPage() {
           }
           lead={t("hero.sub")}
           action={
-            <Link href={ctaHref} className={buttonVariants({ variant: "accent", size: "xl" })}>
-              {t("hero.cta")}
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            cta(
+              buttonVariants({ variant: "accent", size: "xl" }),
+              <>
+                {t("hero.cta")}
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </>,
+            )
           }
         />
       </div>
@@ -74,9 +87,7 @@ export default function QrCampaignsLandingPage() {
           />
 
           <PromoActions>
-            <Link href={ctaHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
-              {t("hero.cta")}
-            </Link>
+            {cta(buttonVariants({ variant: "outline", size: "lg" }), t("hero.cta"))}
           </PromoActions>
         </div>
       </PromoSection>

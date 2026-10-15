@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Settings } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -9,6 +10,7 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select } from "@/components/ui/select";
@@ -69,16 +71,11 @@ export default function SettingsPage() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (!ready) return;
-    if (!authenticated) {
-      router.replace(`/${locale}/login`);
-      return;
-    }
     if (ctxMe) {
       setMe(ctxMe);
       setTz(ctxMe.timezone ?? "UTC");
     }
-  }, [authenticated, ready, locale, router, ctxMe]);
+  }, [ctxMe]);
 
   async function changeTimezone(next: string) {
     const previous = tz;
@@ -104,6 +101,8 @@ export default function SettingsPage() {
       setDeleting(false);
     }
   }
+
+  if (ready && !authenticated) return <SignInEmptyState page reason="settings" icon={Settings} />;
 
   if (!me) {
     return (

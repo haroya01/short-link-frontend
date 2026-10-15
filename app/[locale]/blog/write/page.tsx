@@ -7,57 +7,21 @@ import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "
 import { ExportMdButton } from "@/modules/blog/components/workspace/export-md-button";
 import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
-import { dateLocale } from "@/lib/date";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ErrorState } from "@/components/common/error-state";
-
-const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
-  ["year", 31_536_000_000],
-  ["month", 2_592_000_000],
-  ["week", 604_800_000],
-  ["day", 86_400_000],
-  ["hour", 3_600_000],
-  ["minute", 60_000],
-];
-
-/** "3 hours ago" style, locale-aware — so the draft list reads as "what was I working on". */
-function relativeTime(iso: string, locale: string): string {
-  const diff = new Date(iso).getTime() - Date.now();
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-  for (const [unit, ms] of RELATIVE_UNITS) {
-    if (Math.abs(diff) >= ms) return rtf.format(Math.round(diff / ms), unit);
-  }
-  // 1분 미만은 second/0 → "지금". minute/0 은 ko 에서 "현재 분"으로 깨진다.
-  return rtf.format(0, "second");
-}
-
-/** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3
- *  days". Pinned to Asia/Seoul (the app's canonical publish clock) so server and client agree and it
- *  doesn't drift with the reader's device timezone. */
-function scheduledLabel(iso: string, locale: string): string {
-  const when = new Date(iso);
-  // Show the year only when it isn't this year — a post scheduled for next January reading as just
-  // "Jan 3" would be ambiguous, but carrying the year on every near-term row is noise.
-  const showYear = when.getFullYear() !== new Date().getFullYear();
-  return when.toLocaleString(dateLocale(locale), {
-    ...(showYear ? { year: "numeric" } : {}),
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Asia/Seoul",
-  });
-}
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 export default function WriteIndexPage() {
   const t = useTranslations("postEditor");
   const locale = useLocale();
+  const ago = useCompactTime();
   const { ready, authenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -82,6 +46,8 @@ export default function WriteIndexPage() {
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
     if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
+    // /series forwards with a client replace, which renders this page before the URL changes.
+    if (new URLSearchParams(window.location.search).get("view") === "series") setView("series");
   }, []);
 
   function changeView(v: "all" | "series") {
@@ -123,9 +89,6 @@ export default function WriteIndexPage() {
   );
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="mx-auto max-w-2xl px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   // Per-post analytics lives at the sibling /analytics/{id} route — derive its base from writeBase.
   const analyticsBase = writeBase.replace(/\/write$/, "/analytics");
@@ -162,9 +125,9 @@ export default function WriteIndexPage() {
   };
 
   return (
-    // max-w-3xl: 분석·리드·저장한 글과 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
+    // max-w-3xl: 분석·리드·서재와 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
     // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <h1 className="whitespace-nowrap text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("myPosts")}</h1>
@@ -210,7 +173,7 @@ export default function WriteIndexPage() {
             </span>
           </span>
           <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-            {relativeTime(latestDraft.updatedAt, locale)}
+            {ago(latestDraft.updatedAt)}
           </span>
         </BlogLink>
       )}
@@ -357,7 +320,7 @@ export default function WriteIndexPage() {
                   <div className="flex gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-[12px]">
-                        <PostStatusBadge status={p.status} />
+                        <PostStatusBadge status={p.status} takenDown={p.takenDown} />
                         {p.tags[0] && (
                           <span className="truncate text-slate-500 dark:text-slate-400">{p.tags[0]}</span>
                         )}
@@ -375,7 +338,10 @@ export default function WriteIndexPage() {
                         </p>
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-slate-500 dark:text-slate-400">
-                        <span className="whitespace-nowrap">{relativeTime(p.updatedAt, locale)}</span>
+                        <span className="whitespace-nowrap">{ago(p.updatedAt)}</span>
+                        {p.takenDown && (
+                          <span className="text-red-700 dark:text-red-300">· {t("takenDownTitle")}</span>
+                        )}
                         {p.status === "SCHEDULED" && p.scheduledAt && (
                           // The row time above is 마지막 수정; a scheduled draft's whole point is *when*
                           // it goes live, so surface that instant explicitly (populated but hidden before).
@@ -440,7 +406,7 @@ export default function WriteIndexPage() {
       )}
         </>
       )}
-    </main>
+    </div>
   );
 }
 

@@ -2,9 +2,10 @@ import { expect, test } from "@playwright/test";
 import { ME, mockBackend, signIn } from "./helpers/mock-backend";
 
 test.describe("settings", () => {
-  test("redirects unauthenticated users to login", async ({ page }) => {
+  test("asks unauthenticated users to sign in without leaving the page", async ({ page }) => {
     await page.goto("/ko/settings");
-    await expect(page).toHaveURL(/\/login/, { timeout: 5000 });
+    await expect(page.getByRole("heading", { name: "설정을 바꾸려면 로그인하세요" })).toBeVisible();
+    await expect(page).toHaveURL(/\/ko\/settings$/);
   });
 
   test("shows profile email and joined date", async ({ page }) => {

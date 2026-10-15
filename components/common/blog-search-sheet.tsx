@@ -9,17 +9,19 @@ import { blogHref, blogPath } from "@/lib/host";
 import {
   listPopularTags,
   listSuggestedAuthors,
-  searchPublicFeed,
-  type PublicFeedItem,
   type SuggestedAuthor,
   type TagCount,
 } from "@/modules/blog/api/public-posts";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
+import { useLivePeople } from "@/modules/blog/lib/use-live-people";
+import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 /**
  * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
@@ -34,8 +36,8 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const locale = useLocale();
   const router = useRouter();
   const [value, setValue] = useState("");
-  const [results, setResults] = useState<PublicFeedItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
+  const { people, remote } = useLivePeople(value, open, 3);
   // Discovery (popular tags + suggested authors) fills the sheet's resting state — the mobile feed no
   // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
   // client-side (the sheet mounts in the layout, not the feed page) once per open session.
@@ -74,28 +76,6 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       live = false;
     };
   }, [open, discoveryLoaded]);
-
-  // Debounced live search — fires ~250ms after typing stops; stale responses ignored via `live`.
-  useEffect(() => {
-    const q = value.trim();
-    if (!open || !q) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    let live = true;
-    const id = window.setTimeout(async () => {
-      const res = await searchPublicFeed(q, "recent", 0, 6).catch(() => null);
-      if (!live) return;
-      setResults(res?.ok ? res.data.items.slice(0, 6) : []);
-      setLoading(false);
-    }, 250);
-    return () => {
-      live = false;
-      window.clearTimeout(id);
-    };
-  }, [value, open]);
 
   if (!open || !portalReady) return null;
 
@@ -192,11 +172,13 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                         onClick={() => onClose()}
                         className="focus-ring flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       >
-                        <Avatar src={author.avatarUrl} name={author.username} size="md" />
+                        <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
                         <span className="flex min-w-0 flex-col">
-                          <span className="truncate text-[14px] font-semibold text-slate-800 dark:text-slate-200">
-                            {author.username}
-                          </span>
+                          <AuthorName
+                            name={author.displayName}
+                            handle={author.username}
+                            className="text-[14px] font-semibold text-slate-800 dark:text-slate-200"
+                          />
                           <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">
                             {t("railPostCount", { count: postCount })}
                           </span>
@@ -209,6 +191,8 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             )}
           </div>
         )}
+        {q && <LivePeople people={people} onNavigate={onClose} />}
+        {q && <LiveRemotePeople accounts={remote} onNavigate={onClose} />}
         {q && loading && results.length === 0 && (
           <ul className="animate-pulse divide-y divide-slate-100 dark:divide-slate-800" aria-busy>
             {Array.from({ length: 5 }).map((_, i) => (
@@ -219,7 +203,19 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             ))}
           </ul>
         )}
-        {q && !loading && results.length === 0 && (
+        {q && !loading && results.length === 0 && failed && (
+          <div role="alert" className="flex flex-col items-center gap-2 px-3 py-10 text-center">
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t("searchFailed")}</p>
+            <button
+              type="button"
+              onClick={retry}
+              className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            >
+              {t("retry")}
+            </button>
+          </div>
+        )}
+        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && (
           <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
         {results.length > 0 && (
@@ -243,9 +239,12 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                     >
                       {item.title}
                     </span>
-                    <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
-                      @{item.author.username}
-                    </span>
+                    <AuthorName
+                      name={item.author.displayName}
+                      handle={item.author.username}
+                      className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400"
+                      handleClassName={META_HANDLE}
+                    />
                   </span>
                 </a>
               </li>

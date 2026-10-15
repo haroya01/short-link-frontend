@@ -8,6 +8,7 @@ import {
   findQuoteTarget,
   highlightIdsForMark,
   readHighlightSelection,
+  resolveDeepLink,
   type HighlightMeta,
 } from "./highlight-anchor";
 
@@ -260,5 +261,37 @@ describe("selection endpoints", () => {
     selection.addRange(range);
     expect(readHighlightSelection(long)).toBeNull();
     selection.removeAllRanges();
+  });
+});
+
+describe("resolveDeepLink", () => {
+  const highlights = [
+    { id: 1, quote: "same words" },
+    { id: 2, quote: "same words" },
+    { id: 3, quote: "only once" },
+  ];
+  const link = (query: string) => resolveDeepLink(new URLSearchParams(query), highlights);
+
+  it("takes the quote from the highlight when a notification sends the ID alone", () => {
+    expect(link("highlightId=3&thread=1")).toEqual({
+      quote: "only once",
+      focused: highlights[2],
+      matches: [highlights[2]],
+    });
+  });
+
+  it("prefers the ID over an ambiguous quote", () => {
+    expect(link("hl=same%20words&highlightId=2")?.focused).toBe(highlights[1]);
+  });
+
+  it("leaves an ambiguous quote-only link unfocused so the reader picks the conversation", () => {
+    const result = link("hl=same%20words");
+    expect(result?.focused).toBeUndefined();
+    expect(result?.matches).toEqual([highlights[0], highlights[1]]);
+  });
+
+  it("ignores a link to a highlight that is gone", () => {
+    expect(link("highlightId=99&thread=1")).toBeNull();
+    expect(link("")).toBeNull();
   });
 });

@@ -135,6 +135,7 @@ const config: Config = {
         "card-title-xl": "1.375rem",
         "card-title-2xl": "1.4375rem",
         "card-title-3xl": "1.6875rem",
+        meta: "0.75rem",
       },
       /*
        * Card corner radius — 두 값으로 통일. 카드 표면이 화면마다 rounded-lg(8)/rounded-xl(12)/
@@ -149,6 +150,13 @@ const config: Config = {
       borderRadius: {
         card: "0.75rem", // 12px — list/row cards
         "card-lg": "1rem", // 16px — grid/cover/deck & wide embed cards
+        /*
+         * 블로그·노트 화면은 iOS 와 같은 두 단계 곡률 — 한 줄 컨트롤은 rounded-full, 여러 줄 면은
+         * surface 하나. border-radius 는 짧은 변의 절반을 넘으면 줄어들어 40px 이하 면은 surface 로도
+         * 캡슐이 된다. inner 는 행·카드 안의 작은 썸네일 전용.
+         */
+        surface: "1.25rem",
+        inner: "0.5rem",
       },
       boxShadow: {
         // Blog surface shadows as named tokens so call sites stop hand-rolling arbitrary values.
@@ -200,12 +208,6 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
-        // 시리즈 덱 넘김 — 새 장이 오른쪽에서 살짝 밀려 들어오며 페이드 인(순환=항상 전진). 이동량은
-        // 절제(§10, 18px). reduce-motion 은 globals 의 가드에서 제자리 크로스페이드로 떨어진다.
-        "series-flip-in": {
-          from: { opacity: "0", transform: "translateX(18px)" },
-          to: { opacity: "1", transform: "translateX(0)" },
-        },
       },
       animation: {
         "fade-in": "fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -214,7 +216,6 @@ const config: Config = {
         "dropdown-out": "dropdown-out 160ms cubic-bezier(0.16, 1, 0.3, 1) both",
         "toast-in": "toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)",
         "toast-out": "toast-out 200ms cubic-bezier(0.16, 1, 0.3, 1) both",
-        "series-flip-in": "series-flip-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both",
         shimmer: "shimmer 1.5s infinite",
       },
     },

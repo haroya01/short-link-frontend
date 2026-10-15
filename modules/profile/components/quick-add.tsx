@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { setLinkOgOverride, shortenUrl, toggleLinkOnProfile } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
 /**
  * Free-form add: paste any URL + a label. The label gets persisted as the link's OG-title
@@ -190,16 +191,14 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   }
 
   return (
-    <div
-      className={
-        "space-y-3 rounded-lg border p-4 " +
-        (highlightEmpty
-          ? "border-accent-300 bg-accent-50/40 ring-1 ring-accent-200"
-          : "border-slate-200 bg-white")
-      }
-    >
+    <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
       <div>
-        <p className={highlightEmpty ? "text-base font-semibold text-slate-900" : "text-sm font-medium text-slate-900"}>
+        <p
+          className={cn(
+            "text-slate-900 dark:text-slate-100",
+            highlightEmpty ? "text-base font-semibold" : "text-sm font-medium",
+          )}
+        >
           {highlightEmpty ? t("firstTitle") : t("title")}
         </p>
         <p className="text-[11px] text-slate-500 dark:text-slate-400">

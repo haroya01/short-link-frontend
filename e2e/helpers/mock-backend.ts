@@ -30,7 +30,6 @@ const DEFAULTS: Record<string, () => unknown> = {
   "GET /api/v1/users/me/profile": () => MY_PROFILE,
   "GET /api/v1/users/me/profile/stats/summary": () => ({ today: 0, week: 0, month: 0, allTime: 0 }),
   "GET /api/v1/notifications/blog-preferences": () => mockBlogNotificationPreferences(),
-  "GET /api/v1/users/me/feed-prefs": () => ({ defaultTab: "recent" }),
   "GET /api/v1/users/me/tag-prefs": () => ({ followed: [], hidden: [] }),
 };
 

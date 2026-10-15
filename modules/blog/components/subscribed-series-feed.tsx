@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Library } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listSubscribedSeries } from "@/modules/blog/api/series-subscription";
 import type { PublicAuthor, PublicSeriesCard } from "@/modules/blog/api/public-posts";
-import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
+import { FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
+import { SeriesRow } from "@/modules/blog/components/series-row";
 import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
@@ -19,7 +22,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
  */
 export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   const t = useTranslations("publicFeed");
-  const { ready, authenticated, signInWithGoogle } = useAuth();
+  const { ready, authenticated } = useAuth();
   const [series, setSeries] = useState<PublicSeriesCard[] | null>(null);
   // 구독한 시리즈를 작가별로 거르는 필터 — 팔로잉 탭과 동일한 아바타 칩 패턴.
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
@@ -54,7 +57,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
         <button
           type="button"
           onClick={() => setReloadKey((k) => k + 1)}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+          className="inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
         >
           {t("retry")}
         </button>
@@ -64,10 +67,8 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
 
   if (!ready || series === null) {
     return (
-      <div role="status" aria-busy className="mx-auto mt-6 grid max-w-2xl animate-pulse gap-4 sm:grid-cols-2">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="aspect-[4/5] rounded-card-lg bg-slate-200/80 dark:bg-slate-800" />
-        ))}
+      <div className="mx-auto mt-4 max-w-2xl">
+        <FeedListSkeleton />
       </div>
     );
   }
@@ -75,20 +76,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   if (!authenticated) {
     return (
       <ReadingShell>
-        <FeedEmpty
-          mark
-          title={t("seriesTabSignedOut")}
-          action={
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
-                {t("seriesTabSignIn")}
-              </button>
-              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
-                {t("followingBrowseLatest")}
-              </Link>
-            </div>
-          }
-        />
+        <SignInEmptyState reason="seriesFeed" icon={Library} />
       </ReadingShell>
     );
   }
@@ -96,8 +84,8 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   if (series.length === 0) {
     return (
       <ReadingShell>
-        <FeedEmpty
-          mark
+        <BlogEmpty
+          icon={Library}
           title={t("seriesTabEmptyTitle")}
           body={t("seriesTabEmpty")}
           action={
@@ -122,16 +110,14 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   const activeAuthor = selectedAuthor && seen.has(selectedAuthor) ? selectedAuthor : null;
   const shown = activeAuthor ? series.filter((s) => s.author.username === activeAuthor) : series;
 
-  // 다른 탭과 같은 읽기 컬럼 폭 — 구독한 시리즈를 시리즈 덱 카드 2열로. 작가별 필터(아바타 칩) 상단.
-  // mt-6: 덱 카드는 크고 위쪽 그림자가 있어 탭에 붙으면 침범처럼 보임 → 다른 탭(mt-4)보다 살짝 더 띄움.
   return (
-    <div className="mx-auto mt-6 max-w-2xl">
+    <div className="mx-auto mt-4 max-w-2xl animate-fade-in">
       <AuthorFilterChips authors={seriesAuthors} active={activeAuthor} onSelect={setSelectedAuthor} />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <FeedList>
         {shown.map((s) => (
-          <DiscoverySeriesCard key={s.id} series={s} locale={locale} />
+          <SeriesRow key={s.id} series={s} locale={locale} />
         ))}
-      </div>
+      </FeedList>
     </div>
   );
 }

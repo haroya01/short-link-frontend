@@ -3,20 +3,19 @@
  * `CollectionController` (base `/api/v1`) and the kurl-ios `CollectionsAPI`.
  *
  * A collection groups connections (a post / highlight / note connected with an optional one-line
- * `why`). A PATH is an ordered collection read as a guided walk (sentence → why → sentence), not a
- * flat list. The discover feed surfaces curators' connections; the public-highlights endpoint backs
- * "이 문장이 속한 길" (which paths a sentence belongs to).
+ * `why`). An ordered collection ("순서대로 읽기") is read as a guided walk (sentence → why → sentence),
+ * not a flat list. The discover feed surfaces curators' connections; the public-highlights endpoint
+ * backs "이 문장이 담긴 컬렉션".
  */
-import { request } from "@/lib/api/client";
+import { ApiError, mockFailure, request } from "@/lib/api/client";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { collectionMocks } from "@/modules/blog/api/_mock-gates";
-
-const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+import { fetchPublic, hasViewer, type FetchResult } from "@/modules/blog/api/public-posts";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 export type CollectionVisibility = "PRIVATE" | "UNLISTED" | "PUBLIC";
-/** COLLECTION = themed bundle · PATH = ordered reading path (read as a guided walk). */
+/** Legacy split, still sent by the backend next to `ordered`: PATH = ordered. */
 export type CollectionKind = "COLLECTION" | "PATH";
 export type ConnectionBlockType = "POST" | "HIGHLIGHT" | "NOTE";
 
@@ -25,8 +24,8 @@ export type ConnectionBlockType = "POST" | "HIGHLIGHT" | "NOTE";
  *
  *  The last four fields are the "membership" enrichment the post-collections endpoint
  *  (`/public/posts/{id}/collections`, single + batch) adds per row (backend #607): who wove this post
- *  into the collection, and where the post sits in it. They read a collection as *someone's path a post
- *  is on* ("@curator's '길' · N편 중 M번째"), not a bare category. Absent on the plain list surfaces
+ *  into the collection, and where the post sits in it. An ordered collection reads as *someone's sequence a
+ *  post is in* ("@curator · N편 중 M번째"), not a bare category. Absent on the plain list surfaces
  *  (author-home collections, the highlight sheet) — those keep the `count` display. */
 export interface CollectionSummary {
   id: number;
@@ -34,6 +33,8 @@ export interface CollectionSummary {
   description: string | null;
   visibility: CollectionVisibility;
   kind: CollectionKind;
+  /** Read in order (numbered steps, progress). Absent on servers before #807 — see {@link isOrdered}. */
+  ordered?: boolean;
   count: number;
   /** Recent item labels — "what's inside", to help decide where to file a new connection. */
   preview: string[];
@@ -70,6 +71,8 @@ export interface Connection {
   quote: string | null;
   /** NOTE body. */
   body: string | null;
+  /** NOTE blocks: the note's id, so the block links to it (absent on servers that predate it). */
+  noteId?: number | null;
 }
 
 /** Collection detail — header + ordered connections. Backend `CollectionDetailView`. */
@@ -79,7 +82,9 @@ export interface CollectionDetail {
   description: string | null;
   visibility: CollectionVisibility;
   kind: CollectionKind;
+  ordered?: boolean;
   curatorUsername: string | null;
+  curatorUserId: number | null;
   connections: Connection[];
 }
 
@@ -91,6 +96,7 @@ export interface ConnectionEvent {
   collectionId: number;
   collectionTitle: string;
   collectionKind: CollectionKind;
+  collectionOrdered?: boolean;
   why: string | null;
   connectedAt: string | null;
   blockType: ConnectionBlockType;
@@ -100,6 +106,8 @@ export interface ConnectionEvent {
   username: string | null;
   quote: string | null;
   body: string | null;
+  /** NOTE blocks: the note's id, so the block links to it (absent on servers that predate it). */
+  noteId?: number | null;
 }
 
 /**
@@ -150,7 +158,12 @@ export interface NewCollection {
   title: string;
   description?: string | null;
   visibility: CollectionVisibility;
-  kind: CollectionKind;
+  ordered: boolean;
+}
+
+/** Whether a collection reads in order. Servers before #807 only send the legacy `kind`. */
+export function isOrdered(c: { ordered?: boolean | null; kind?: CollectionKind | null }): boolean {
+  return c.ordered ?? c.kind === "PATH";
 }
 
 /**
@@ -192,40 +205,25 @@ export async function listPublicCollectionsByUsername(
  *  private ones need ownership (the backend enforces it). 인증을 실어야 소유자가 자기 비공개
  *  컬렉션을 볼 수 있다 — 이전의 헤더 없는 raw fetch 는 로그인 상태에서도 401 → "찾을 수 없어요". */
 export async function getCollection(id: number): Promise<CollectionDetail | null> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockCollectionDetail(id));
+  if (collectionMocks) return mockFailure("collection") ?? collectionMocks.mockCollectionDetail(id);
   try {
     return await request<CollectionDetail>(`/api/v1/collections/${id}`, { method: "GET" });
-  } catch {
-    return null;
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null;
+    throw e;
   }
 }
 
-/** Discover — connection flow of curators the viewer follows (newest first). Empty when following 0. */
-export function listDiscoverConnections(): Promise<DiscoverFeed> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockDiscoverConnections());
-  return request<DiscoverFeed>("/api/v1/feed/connections", { method: "GET" });
+export function fetchPublicConnectionFeed(page = 0, size = 12): Promise<FetchResult<DiscoverFeed>> {
+  if (collectionMocks) {
+    return Promise.resolve({ ok: true, data: collectionMocks.mockPublicConnectionFeed(page, size, hasViewer()) });
+  }
+  return fetchPublic<DiscoverFeed>(`/api/v1/public/feed/connections?page=${page}&size=${size}`);
 }
 
-/**
- * Public — the GLOBAL, non-personalized connection stream (newest first): who connected what, to
- * which public collection/path, and why. Same {@link ConnectionEvent} shape as the authed follow-graph
- * feed, so the same cards render it. Readable signed-out (the `/api/v1/public/**` slice is permitAll),
- * so a raw fetch (no auth). A backend/empty response degrades to an empty page, never throws — the
- * feed just shows no connection rows. Non-personalized, so it's ISR-cached (revalidate 30s) to keep
- * `/blog` static — matching the sibling public-post feed reads, not per-request `no-store`.
- */
 export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockPublicConnectionFeed(page, size));
-  try {
-    const res = await fetchWithTimeout(
-      `${API_BASE}/api/v1/public/feed/connections?page=${page}&size=${size}`,
-      { next: { revalidate: 30 } },
-    );
-    if (!res.ok) return { items: [], hasNext: false, page, size };
-    return (await res.json()) as DiscoverFeed;
-  } catch {
-    return { items: [], hasNext: false, page, size };
-  }
+  const result = await fetchPublicConnectionFeed(page, size);
+  return result.ok ? result.data : { items: [], hasNext: false, page, size };
 }
 
 /** Public — which PUBLIC collections/paths a post is connected into (most recently touched first).
@@ -288,8 +286,8 @@ export async function listPublicPostCollectionsBatch(
   return results.flat();
 }
 
-/** "이 문장이 속한 길" — public collections/paths containing this highlight (newest first). Readable
- *  signed-out (the A-척추 discovery loop, sentence → the paths it's woven into). */
+/** "이 문장이 담긴 컬렉션" — public collections containing this highlight (newest first). Readable
+ *  signed-out (the A-척추 discovery loop, sentence → the collections it's woven into). */
 export async function listCollectionsContainingHighlight(
   highlightId: number,
 ): Promise<CollectionSummary[]> {
@@ -309,7 +307,7 @@ export async function listRelatedBlocks(
   blockType: ConnectionBlockType,
   refId: number,
 ): Promise<RelatedBlock[]> {
-  if (USE_MOCKS) return Promise.resolve([]);
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockRelatedBlocks(blockType, refId));
   const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/graph/blocks/${encodeURIComponent(blockType)}/${refId}/related`,
     { cache: "no-store" },
@@ -322,7 +320,7 @@ export async function listRelatedBlocks(
  *  collections (most overlap first). Discovery by shared taste, not follows. Readable signed-out; an
  *  unknown handle yields []. */
 export async function listKindredCurators(username: string): Promise<KindredCurator[]> {
-  if (USE_MOCKS) return Promise.resolve([]);
+  if (collectionMocks) return Promise.resolve(collectionMocks.mockKindredCurators(username));
   const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/kindred`,
     { cache: "no-store" },
@@ -331,19 +329,21 @@ export async function listKindredCurators(username: string): Promise<KindredCura
   return (await res.json()) as KindredCurator[];
 }
 
-/** Authenticated — create a collection / path. Returns the new summary (count 0). */
+/** Authenticated — create a collection. Returns the new summary (count 0). The legacy `kind` rides
+ *  along so a server before #807 (which requires it) still creates the right one. */
 export function createCollection(payload: NewCollection): Promise<CollectionSummary> {
   if (collectionMocks) return Promise.resolve(collectionMocks.mockCreateCollection(payload));
-  return request<CollectionSummary>("/api/v1/collections", { method: "POST", body: payload });
+  const body = { ...payload, kind: payload.ordered ? "PATH" : "COLLECTION" };
+  return request<CollectionSummary>("/api/v1/collections", { method: "POST", body });
 }
 
-/** The owner-editable fields of a collection — title / blurb / visibility. `kind` is fixed at create
- *  (the edit endpoint doesn't know it), matching the backend `EditCollectionRequest` and the kurl-ios
- *  `CollectionsAPI.edit` body. */
+/** The owner-editable fields of a collection — title / blurb / visibility, and since #807 whether it
+ *  reads in order. Matches the backend `EditCollectionRequest` and the kurl-ios `CollectionsAPI.edit`. */
 export interface CollectionEdit {
   title: string;
   description?: string | null;
   visibility: CollectionVisibility;
+  ordered?: boolean;
 }
 
 /** Authenticated — edit a collection's name / blurb / visibility (owner only, enforced by the backend).

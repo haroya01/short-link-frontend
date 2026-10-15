@@ -1,6 +1,6 @@
 "use client";
 
-import { type ComponentProps } from "react";
+import { type ComponentProps, type ComponentType, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, PenSquare, X, Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { Button } from "@/components/ui/button";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { AccountMenu } from "@/components/common/account-menu";
 import { HeaderAvatarSlot } from "@/components/common/header-avatar-slot";
 import { AppsGrid } from "@/components/common/apps-grid";
@@ -19,7 +20,20 @@ import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { cn } from "@/lib/utils";
 
+export type ComposeTriggerProps = {
+  variant: "desktop" | "mobile";
+  className: string;
+  label: string;
+  children: ReactNode;
+};
+
 const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
+const BLOG_HOME_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/;
+const NOTES_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/;
+const SECTION_LINK =
+  "focus-ring inline-flex h-8 items-center rounded-surface px-2.5 text-[14px] font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800";
+const SECTION_ACTIVE = "text-slate-900 dark:text-slate-100";
+const SECTION_IDLE = "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100";
 
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
@@ -43,21 +57,26 @@ function ChromeNavLink(props: ComponentProps<typeof BlogChromeLink>) {
 
 /**
  * `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar.
- * `searchOpen` rests the header search field open (used on the blog feed home, the discovery hub).
  * `slimMobile` hides the right-cluster controls on mobile — used on public surfaces where the bottom
  * tab bar carries search/account/switcher; the authoring workspace keeps the full header (no nav bar).
+ * `sections` adds the 글 · 노트 switch beside the logo — every public blog surface, author and post
+ * pages included.
  */
 export function AppHeader({
   showMenu = true,
   searchOpen = false,
   slimMobile = false,
+  sections = false,
   product,
+  compose: Compose,
 }: {
   showMenu?: boolean;
   searchOpen?: boolean;
   slimMobile?: boolean;
+  sections?: boolean;
   /** The product this header sits on — lets the switcher seed its destination without a load flash. */
   product?: Product;
+  compose?: ComponentType<ComposeTriggerProps>;
 }) {
   const t = useTranslations("nav");
   const { authenticated, ready } = useAuth();
@@ -69,31 +88,36 @@ export function AppHeader({
   const showAuthed: boolean | null = ready ? authenticated : null;
 
   const loginButton = (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => {
-        // Route through kurl's own branded login screen (then Google) instead of bouncing straight
-        // to the Google OAuth consent — carry the current page as the return ?next.
-        window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
-      }}
-    >
+    <Button variant="outline" size="sm" onClick={() => askToSignIn("general")}>
       {t("login")}
     </Button>
   );
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
   const inWriting = WRITE_PATH.test(pathname);
+  const onBlogHome = BLOG_HOME_PATH.test(pathname);
+  const onNotes = NOTES_PATH.test(pathname);
 
-  const mobileWriteCircle = (authed: boolean) => (
-    <ChromeNavLink
-      href={authed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
-      aria-label={t("write")}
-      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
-    >
-      <PenSquare className="h-4 w-4" />
-    </ChromeNavLink>
-  );
+  const writeButtonClass =
+    "focus-ring hidden h-8 items-center gap-1.5 rounded-surface px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex";
+  const writeCircleClass =
+    "focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden";
+  const mobileWriteCircle = (authed: boolean) =>
+    authed ? (
+      Compose ? (
+        <Compose variant="mobile" label={t("write")} className={writeCircleClass}>
+          <PenSquare className="h-4 w-4" />
+        </Compose>
+      ) : (
+        <ChromeNavLink href={blogHref("/write/new")} aria-label={t("write")} className={writeCircleClass}>
+          <PenSquare className="h-4 w-4" />
+        </ChromeNavLink>
+      )
+    ) : (
+      <button type="button" onClick={() => askToSignIn("write")} aria-label={t("write")} className={writeCircleClass}>
+        <PenSquare className="h-4 w-4" />
+      </button>
+    );
 
   // The auth-dependent right cluster, rendered for a known auth state. Pre-`ready` BOTH variants
   // mount in [data-auth-slot] wrappers (display:contents; the pre-paint hint picks one via CSS), so
@@ -109,20 +133,24 @@ export function AppHeader({
       {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row.
           Chrome, not content: quiet like the other bar controls, so each page's own primary stays
           the one green action on screen. Mobile uses the bottom tab bar. */}
-      {authed && !inWriting && (
-        <ChromeNavLink
-          href={blogHref("/write/new")}
-          className="focus-ring hidden h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex"
-        >
-          <PenSquare className="h-3.5 w-3.5" />
-          {t("write")}
-        </ChromeNavLink>
-      )}
+      {authed &&
+        !inWriting &&
+        (Compose ? (
+          <Compose variant="desktop" label={t("write")} className={writeButtonClass}>
+            <PenSquare className="h-3.5 w-3.5" />
+            {t("write")}
+          </Compose>
+        ) : (
+          <ChromeNavLink href={blogHref("/write/new")} className={writeButtonClass}>
+            <PenSquare className="h-3.5 w-3.5" />
+            {t("write")}
+          </ChromeNavLink>
+        ))}
       {authed &&
         (ready ? (
           <NotificationBell />
         ) : (
-          <span className="relative hidden h-8 w-8 items-center justify-center rounded-md text-slate-700 dark:text-slate-300 sm:inline-flex">
+          <span className="relative hidden h-8 w-8 items-center justify-center rounded-full text-slate-700 dark:text-slate-300 sm:inline-flex">
             <Bell className="h-5 w-5" />
           </span>
         ))}
@@ -152,11 +180,11 @@ export function AppHeader({
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          {showMenu && (
+          {showMenu && showAuthed !== false && (
             <button
               type="button"
               onClick={toggle}
-              className="touch-target -ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 sm:hidden"
+              className="touch-target -ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 sm:hidden"
               aria-label={open ? t("closeMenu") : t("openMenu")}
               aria-expanded={open}
             >
@@ -173,6 +201,24 @@ export function AppHeader({
             <Logo variant="blog" animated showText={slimMobile} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </ChromeNavLink>
+          {sections && (
+            <nav aria-label={t("blog")} className="hidden items-center gap-0.5 sm:flex">
+              <ChromeNavLink
+                href={blogHref("/")}
+                aria-current={onBlogHome ? "page" : undefined}
+                className={cn(SECTION_LINK, onBlogHome ? SECTION_ACTIVE : SECTION_IDLE)}
+              >
+                {t("posts")}
+              </ChromeNavLink>
+              <ChromeNavLink
+                href={blogHref("/notes")}
+                aria-current={onNotes ? "page" : undefined}
+                className={cn(SECTION_LINK, onNotes ? SECTION_ACTIVE : SECTION_IDLE)}
+              >
+                {t("notes")}
+              </ChromeNavLink>
+            </nav>
+          )}
         </div>
 
         {/* Right cluster split into two zones: utilities for *this* surface (search + language) on

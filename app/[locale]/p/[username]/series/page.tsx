@@ -3,11 +3,13 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Hash, Layers } from "lucide-react";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { seriesItemCount } from "@/modules/blog/lib/series-items";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
@@ -50,6 +52,7 @@ export default async function PublicSeriesIndexPage({
   const { tag: rawTag } = await searchParams;
   const result = await listPublicSeries(username);
   const t = await getTranslations({ locale, namespace: "publicPost" });
+  const tf = await getTranslations({ locale, namespace: "publicFeed" });
   // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
   if (!result.ok) {
     if (result.status !== 404) throw new Error(`public series fetch failed: ${username}`);
@@ -127,11 +130,9 @@ export default async function PublicSeriesIndexPage({
         )}
 
         {series.length === 0 ? (
-          <p className="text-slate-500 dark:text-slate-400">{t("seriesEmpty")}</p>
+          <BlogEmpty icon={Layers} title={t("seriesEmpty")} />
         ) : visibleSeries.length === 0 ? (
-          <p className="text-slate-500 dark:text-slate-400">
-            {t("seriesTagFilterEmpty", { tag: activeTag ?? "" })}
-          </p>
+          <BlogEmpty icon={Hash} title={t("seriesTagFilterEmpty", { tag: activeTag ?? "" })} />
         ) : (
           // Numbered editorial index — a quiet table of contents of the author's series. The mono index
           // and hairline dividers read as a weblog's spine rather than a boxed card grid; the arrow
@@ -144,7 +145,7 @@ export default async function PublicSeriesIndexPage({
               >
                 <BlogLink
                   href={authorHref(username, locale, `series/${s.slug}`)}
-                  className="focus-ring group flex items-center gap-5 rounded-lg py-5"
+                  className="focus-ring group flex items-center gap-5 rounded-surface py-5"
                 >
                   <SeriesIndex n={i + 1} className="text-[13px]" />
                   <span className="min-w-0 flex-1">
@@ -155,7 +156,7 @@ export default async function PublicSeriesIndexPage({
                       {s.title}
                     </span>
                     <span className="mt-0.5 block text-[13px] text-slate-500 dark:text-slate-400">
-                      {t("postCount", { count: s.postCount })}
+                      {tf("seriesItemCount", { count: seriesItemCount(s) })}
                     </span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-[color,transform] ease-[var(--ease)] group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />

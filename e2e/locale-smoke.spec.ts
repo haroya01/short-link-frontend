@@ -10,14 +10,14 @@ test.describe("locale smoke (non-ko catalogs)", () => {
   test("/en landing serves the English catalog", async ({ page }) => {
     await page.goto("/en");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
-    await expect(page.getByPlaceholder(/Paste your long URL here/)).toBeVisible();
-    await expect(page.getByText("긴 주소를 여기에 붙여넣으세요")).toHaveCount(0);
+    await expect(page.getByPlaceholder("Paste a long URL")).toBeVisible();
+    await expect(page.getByPlaceholder("긴 주소 붙여넣기")).toHaveCount(0);
   });
 
   test("/ja landing serves the Japanese catalog", async ({ page }) => {
     await page.goto("/ja");
     await expect(page.locator("html")).toHaveAttribute("lang", "ja");
-    await expect(page.getByPlaceholder(/長いURLをここに貼り付け/)).toBeVisible();
+    await expect(page.getByPlaceholder("長いURLを貼り付け")).toBeVisible();
   });
 
   test("/en demo stats renders English journal + masthead", async ({ page }) => {

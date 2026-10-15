@@ -1,0 +1,296 @@
+"use client";
+
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from "react";
+import { FileText, MessageSquareText } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
+import { useMenuKeys } from "@/hooks/use-menu-keys";
+import { blogHref } from "@/lib/host";
+import type { ComposeTriggerProps } from "@/components/common/app-header";
+import { BottomSheet } from "@/components/common/bottom-sheet";
+import { useToast } from "@/components/ui/toast";
+import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
+import { emitNotePosted } from "@/modules/blog/lib/consequence-events";
+import { NoteDraftsSheet } from "@/modules/notes/components/note-drafts-sheet";
+import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
+import { noteDraftLabel, useNoteDrafts, type NoteDraft } from "@/modules/notes/lib/note-drafts";
+import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
+import { openNote } from "@/modules/notes/lib/note-href";
+
+const RECENT_DRAFTS = 3;
+
+export function recentDrafts(posts: PostView[], limit = RECENT_DRAFTS): { items: PostView[]; more: boolean } {
+  const drafts = posts
+    .filter((post) => post.status === "DRAFT")
+    .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
+  return { items: drafts.slice(0, limit), more: drafts.length > limit };
+}
+
+function useRecentDrafts(open: boolean) {
+  const [drafts, setDrafts] = useState<PostView[] | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    let live = true;
+    listMyPosts()
+      .then((posts) => live && setDrafts(recentDrafts(posts, Number.POSITIVE_INFINITY).items))
+      .catch(() => live && setDrafts([]));
+    return () => {
+      live = false;
+    };
+  }, [open]);
+  return drafts;
+}
+
+type Choice = { key: string; label: string; hint?: string; href?: string; onSelect?: () => void; icon?: ReactNode };
+
+export function ComposeEntry({ variant, className, label, children }: ComposeTriggerProps) {
+  const t = useTranslations("compose");
+  const locale = useLocale();
+  const router = useRouter();
+  const ago = useCompactTime();
+  const { toast } = useToast();
+  const trigger = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState<{ draft?: NoteDraft } | null>(null);
+  const [draftsOpen, setDraftsOpen] = useState(false);
+  const drafts = useRecentDrafts(open);
+  const { me } = useAuth();
+  const noteDrafts = useNoteDrafts(me?.id);
+
+  const close = (refocus: boolean) => {
+    setOpen(false);
+    if (refocus) trigger.current?.focus();
+  };
+
+  const kinds: Choice[] = [
+    {
+      key: "note",
+      label: t("note"),
+      icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
+      onSelect: () => {
+        close(true);
+        setNoteOpen({});
+      },
+    },
+    {
+      key: "longform",
+      label: t("longform"),
+      icon: <FileText className="h-4 w-4" aria-hidden />,
+      href: blogHref("/write/new"),
+    },
+  ];
+  const everyDraft: { at: number; choice: Choice }[] = [
+    ...noteDrafts.map((draft) => ({
+      at: draft.updatedAt,
+      choice: {
+        key: `note-draft-${draft.id}`,
+        label: noteDraftLabel(draft),
+        hint: draft.parts.length > 0
+          ? `${ago(new Date(draft.updatedAt).toISOString())} · ${t("noteParts", { count: draft.parts.length + 1 })}`
+          : ago(new Date(draft.updatedAt).toISOString()),
+        icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
+        onSelect: () => {
+          close(true);
+          setNoteOpen({ draft });
+        },
+      },
+    })),
+    ...(drafts ?? []).map((draft) => ({
+      at: Date.parse(draft.updatedAt),
+      choice: {
+        key: `draft-${draft.id}`,
+        label: draft.title.trim() || t("untitled"),
+        hint: ago(draft.updatedAt),
+        icon: <FileText className="h-4 w-4" aria-hidden />,
+        href: blogHref(`/write/${draft.id}`),
+      },
+    })),
+  ].sort((a, b) => b.at - a.at);
+  const resume: Choice[] = everyDraft.slice(0, RECENT_DRAFTS).map((entry) => entry.choice);
+  if (everyDraft.length > RECENT_DRAFTS) {
+    resume.push({
+      key: "all-drafts",
+      label: t("seeAll"),
+      onSelect: () => {
+        close(false);
+        setDraftsOpen(true);
+      },
+    });
+  }
+
+  return (
+    <>
+      <button
+        ref={trigger}
+        type="button"
+        aria-haspopup={variant === "desktop" ? "menu" : "dialog"}
+        aria-expanded={open}
+        aria-label={variant === "mobile" ? label : undefined}
+        data-compose-trigger={variant}
+        onClick={() => setOpen((value) => !value)}
+        className={className}
+      >
+        {children}
+      </button>
+      {variant === "desktop" ? (
+        open && (
+          <ComposeMenu
+            anchor={trigger}
+            label={t("title")}
+            kinds={kinds}
+            resume={resume}
+            resumeLabel={t("resume")}
+            onClose={close}
+          />
+        )
+      ) : (
+        <BottomSheet open={open} onClose={() => close(false)} label={t("title")}>
+          <ComposeSheetBody kinds={kinds} resume={resume} resumeLabel={t("resume")} />
+        </BottomSheet>
+      )}
+      <NoteDraftsSheet open={draftsOpen} onClose={() => setDraftsOpen(false)} onPick={(draft) => setNoteOpen({ draft })} />
+      <NoteQuoteDialog
+        quoted={noteOpen ? { fresh: true, title: t("noteTitle"), ...(noteOpen.draft ? { draft: noteOpen.draft } : {}) } : null}
+        onClose={() => setNoteOpen(null)}
+        onPosted={(note) => {
+          setNoteOpen(null);
+          toast(t("notePosted"), "default", {
+            action: { label: t("viewNote"), onClick: () => openNote(note, locale, router.push) },
+          });
+          emitNotePosted(note);
+        }}
+      />
+    </>
+  );
+}
+
+function ChoiceText({ choice }: { choice: Choice }) {
+  return (
+    <span className="flex min-w-0 flex-1 flex-col">
+      <span className="truncate text-[14px] font-medium text-slate-900 dark:text-slate-100">{choice.label}</span>
+      {choice.hint && <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{choice.hint}</span>}
+    </span>
+  );
+}
+
+const rowClass =
+  "focus-ring flex w-full items-center gap-3 rounded-surface px-3 py-2.5 text-left transition-colors hover:bg-slate-100 dark:hover:bg-slate-800";
+
+function ChoiceRow({ choice, menu }: { choice: Choice; menu: boolean }) {
+  const role = menu ? "menuitem" : undefined;
+  const content = (
+    <>
+      {choice.icon && (
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          {choice.icon}
+        </span>
+      )}
+      <ChoiceText choice={choice} />
+    </>
+  );
+  return choice.href ? (
+    <a href={choice.href} role={role} data-compose-choice={choice.key} className={rowClass}>
+      {content}
+    </a>
+  ) : (
+    <button type="button" role={role} data-compose-choice={choice.key} onClick={choice.onSelect} className={rowClass}>
+      {content}
+    </button>
+  );
+}
+
+function ComposeMenu({
+  anchor,
+  label,
+  kinds,
+  resume,
+  resumeLabel,
+  onClose,
+}: {
+  anchor: RefObject<HTMLButtonElement | null>;
+  label: string;
+  kinds: Choice[];
+  resume: Choice[];
+  resumeLabel: string;
+  onClose: (refocus: boolean) => void;
+}) {
+  const menu = useRef<HTMLDivElement>(null);
+  const resumeId = useId();
+  const [position, setPosition] = useState<{ top: number; right: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const rect = anchor.current?.getBoundingClientRect();
+    if (rect) setPosition({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+  }, [anchor]);
+
+  const { onKeyDown, focusFirst } = useMenuKeys(menu, { onClose });
+
+  useEffect(() => {
+    if (position) focusFirst();
+  }, [position, focusFirst]);
+
+  useEffect(() => {
+    const onDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (menu.current?.contains(target) || anchor.current?.contains(target)) return;
+      onClose(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [anchor, onClose]);
+
+  return (
+    <div
+      ref={menu}
+      role="menu"
+      aria-label={label}
+      onKeyDown={onKeyDown}
+      style={position ?? { visibility: "hidden" }}
+      className="fixed z-40 w-72 rounded-surface border border-slate-200 bg-white p-1.5 shadow-float motion-safe:animate-dropdown-in dark:border-slate-800 dark:bg-slate-900"
+    >
+      {kinds.map((choice) => (
+        <ChoiceRow key={choice.key} choice={choice} menu />
+      ))}
+      {resume.length > 0 && (
+        <>
+          <div role="separator" className="my-1.5 h-px bg-slate-100 dark:bg-slate-800" />
+          <div role="group" aria-labelledby={resumeId}>
+            <p id={resumeId} className="px-3 pb-1 pt-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400">
+              {resumeLabel}
+            </p>
+            {resume.map((choice) => (
+              <ChoiceRow key={choice.key} choice={choice} menu />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ComposeSheetBody({ kinds, resume, resumeLabel }: { kinds: Choice[]; resume: Choice[]; resumeLabel: string }) {
+  return (
+    <div className="pb-2">
+      {kinds.map((choice) => (
+        <ChoiceRow key={choice.key} choice={choice} menu={false} />
+      ))}
+      {resume.length > 0 && (
+        <section aria-label={resumeLabel} className="mt-2 border-t border-slate-100 pt-2 dark:border-slate-800">
+          <h2 className="px-3 pb-1 pt-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400">{resumeLabel}</h2>
+          {resume.map((choice) => (
+            <ChoiceRow key={choice.key} choice={choice} menu={false} />
+          ))}
+        </section>
+      )}
+    </div>
+  );
+}

@@ -20,10 +20,16 @@ import type {
   PublicSeriesDetail,
   PublicSeriesList,
   PublicSeriesListItem,
+  PublicSeriesItem,
+  SeriesItemLink,
+  SeriesNoteSummary,
   SuggestedAuthor,
   TagCount,
   TrendingTagSection,
 } from "@/modules/blog/api/public-posts";
+import type { FollowingFeedView, FollowingSeriesNote } from "@/modules/blog/api/follows";
+import type { HighlightReplyView, HighlightView } from "@/modules/blog/api/highlights";
+import type { NoteSeriesNav } from "@/modules/notes/api/notes";
 
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -32,11 +38,18 @@ const avatar = (n: number) => `https://i.pravatar.cc/120?img=${n}`;
 
 const AUTHORS: Record<string, PublicAuthor> = {
   dohyun: { id: 1, username: "dohyun", bio: "백엔드 개발자 · 사이드 프로젝트 중독", avatarUrl: avatar(12) },
-  minji: { id: 2, username: "minji", bio: "1인 메이커 · 그로스", avatarUrl: avatar(45) },
+  minji: { id: 2, username: "minji", displayName: "민지", bio: "1인 메이커 · 그로스", avatarUrl: avatar(45) },
   haruka: { id: 3, username: "haruka", bio: "플랫폼 엔지니어", avatarUrl: null },
   kazuki: { id: 4, username: "kazuki", bio: "여행하며 코드 짜는 사람", avatarUrl: avatar(33) },
   sora: { id: 5, username: "sora", bio: "프로덕트 디자이너", avatarUrl: null },
+  yuna: { id: 15, username: "yuna", bio: "짧게 자주 쓰는 사람", avatarUrl: avatar(20) },
+  rin: { id: 16, username: "rin", bio: "밤에만 쓰는 사람", avatarUrl: null },
 };
+
+export const MOCK_VIEWER_AUTHOR = AUTHORS.dohyun;
+
+// rin blocked the mock reader: whatever rin wrote is left out of any request that carries the token.
+export const MOCK_BLOCKS_VIEWER: ReadonlySet<string> = new Set(["rin"]);
 
 type Seed = {
   slug: string;
@@ -45,6 +58,8 @@ type Seed = {
   author: keyof typeof AUTHORS;
   tags: string[];
   cover?: string;
+  /** A cover filled in from the body's first image — the share card's, never the feed thumbnail. */
+  autoCover?: string;
   views: number;
   likes: number;
   day: number; // 2026-05-DD
@@ -61,7 +76,7 @@ const SEEDS: Seed[] = [
   { slug: "design-tokens-to-tailwind", title: "디자인 시스템 토큰을 Tailwind로 옮기며", excerpt: "Figma 변수 → CSS 변수 → Tailwind theme. 손실 없이 잇는 법.", author: "sora", tags: ["디자인", "개발"], views: 760, likes: 33, day: 26 },
   { slug: "spring-tx-propagation", title: "Spring Boot 트랜잭션 전파, 다시 정리", excerpt: "REQUIRES_NEW가 만든 버그를 추적하며 전파 옵션을 처음부터 다시.", author: "dohyun", tags: ["개발", "spring"], views: 1320, likes: 39, day: 25 },
   { slug: "killed-side-project", title: "사이드 프로젝트를 6개월 만에 접은 이야기", excerpt: "지표·동기·기회비용. 접는 결정을 데이터로 내린 과정.", author: "minji", tags: ["회고", "상품"], cover: img("kurl-killed"), views: 3050, likes: 121, day: 24 },
-  { slug: "typescript-generics-hard", title: "타입스크립트 제네릭이 어려운 진짜 이유", excerpt: "추론이 무너지는 지점들을 예제로 짚어본다.", author: "haruka", tags: ["개발", "typescript"], views: 1410, likes: 47, day: 23 },
+  { slug: "typescript-generics-hard", title: "타입스크립트 제네릭이 어려운 진짜 이유", excerpt: "추론이 무너지는 지점들을 예제로 짚어본다.", author: "haruka", tags: ["개발", "typescript"], autoCover: img("kurl-generics"), views: 1410, likes: 47, day: 23 },
   { slug: "weekend-hiking-burnout", title: "주말 등산 기록, 그리고 번아웃", excerpt: "정상에서 깨달은 것: 쉬는 것도 일정이다.", author: "kazuki", tags: ["일상"], views: 540, likes: 29, day: 22 },
   { slug: "posthog-funnel", title: "PostHog로 퍼널 분석 붙이기", excerpt: "가입 → 첫 링크 → 공유. 이탈 지점을 숫자로 본 뒤 바뀐 것.", author: "sora", tags: ["상품", "분석"], cover: img("kurl-posthog"), views: 1180, likes: 36, day: 21 },
   { slug: "naming-things", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", excerpt: "좋은 이름은 주석을 지운다. 실제 PR로 본 before/after.", author: "dohyun", tags: ["개발", "리팩터링"], views: 870, likes: 44, day: 20, series: { slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 4 } },
@@ -75,7 +90,8 @@ function toItem(s: Seed, i: number): PublicFeedItem {
     slug: s.slug,
     title: s.title,
     excerpt: s.excerpt,
-    ogImageUrl: s.cover ?? null,
+    ogImageUrl: s.cover ?? s.autoCover ?? null,
+    thumbnailUrl: s.cover ?? null,
     languageTag: "ko",
     tags: s.tags,
     publishedAt: `2026-05-${String(s.day).padStart(2, "0")}T09:00:00Z`,
@@ -87,21 +103,118 @@ function toItem(s: Seed, i: number): PublicFeedItem {
 
 const ALL_ITEMS = SEEDS.map(toItem);
 
-/** Exposed for the saved/liked (보관함) mocks, which reuse these as the viewer's liked/bookmarked posts. */
+/** Exposed for the saved/liked (서재) mocks, which reuse these as the viewer's liked/bookmarked posts. */
 export const MOCK_ALL_ITEMS = ALL_ITEMS;
+
+/** Off the public feeds: reached through 구독함's last page and the 리팩터링 일지 series. */
+const FIRST_COMMIT: PublicFeedItem = {
+  ...toItem(
+    {
+      slug: "first-commit-retro",
+      title: "첫 커밋 회고: 아무도 안 쓸 줄 알았던 링크",
+      excerpt: "처음 만든 단축 링크가 아직 살아 있다는 걸 알고 쓴 짧은 회고.",
+      author: "dohyun",
+      tags: ["회고"],
+      views: 310,
+      likes: 12,
+      day: 12,
+    },
+    SEEDS.length,
+  ),
+  followReason: { kind: "AUTHOR", tag: null },
+};
+
+const RIN_POST: PublicFeedItem = toItem(
+  {
+    slug: "quiet-hours",
+    title: "밤 열한 시의 작업 노트",
+    excerpt: "모두 잠든 뒤에야 손에 잡히는 일들에 대해.",
+    author: "rin",
+    tags: ["일상"],
+    views: 120,
+    likes: 4,
+    day: 18,
+  },
+  SEEDS.length + 1,
+);
+
+const READABLE_ITEMS = [...ALL_ITEMS, FIRST_COMMIT, RIN_POST];
+
+export const MOCK_LONG_THREAD_POST_ID = READABLE_ITEMS.findIndex((i) => i.slug === "weekend-hiking-burnout") + 1;
+
+const HIGHLIGHTED_SLUG = "posthog-funnel";
+
+const SEEDED_HIGHLIGHTS: HighlightView[] = [
+  {
+    id: 4001,
+    author: AUTHORS.minji,
+    blockOrder: 9,
+    endBlockOrder: 9,
+    startOffset: 0,
+    endOffset: 19,
+    quote: "도입 전후를 같은 부하로 비교했다.",
+    note: "같은 부하로 비교한 게 핵심이에요.",
+    replyCount: 0,
+    createdAt: "2026-05-22T09:00:00Z",
+  },
+  {
+    id: 4002,
+    author: AUTHORS.rin,
+    blockOrder: 14,
+    endBlockOrder: 14,
+    startOffset: 0,
+    endOffset: 25,
+    quote: "요약하면, 작은 서비스일수록 단순함이 이긴다.",
+    note: "밤에 읽어도 맞는 말.",
+    replyCount: 0,
+    createdAt: "2026-05-22T10:00:00Z",
+  },
+];
+
+const SEEDED_REPLIES: Record<number, HighlightReplyView[]> = {
+  4001: [
+    { id: 6001, author: AUTHORS.haruka, body: "저도 이 기준으로 봐요.", createdAt: "2026-05-22T11:00:00Z", likeCount: 2, liked: false },
+    { id: 6002, author: AUTHORS.rin, body: "부하 조건을 더 적어 주면 좋겠어요.", createdAt: "2026-05-22T12:00:00Z", likeCount: 0, liked: false },
+  ],
+};
+
+const visibleTo = (viewer: boolean) => (author: PublicAuthor | null) =>
+  !viewer || !MOCK_BLOCKS_VIEWER.has(author?.username ?? "");
+
+export function mockSeededReply(id: number): HighlightReplyView | undefined {
+  return Object.values(SEEDED_REPLIES).flat().find((reply) => reply.id === id);
+}
+
+export function mockSeededReplies(highlightId: number, viewer: boolean): HighlightReplyView[] {
+  return (SEEDED_REPLIES[highlightId] ?? []).filter((reply) => visibleTo(viewer)(reply.author));
+}
+
+export function mockSeededHighlights(postId: number, viewer: boolean): HighlightView[] {
+  if (READABLE_ITEMS[postId - 1]?.slug !== HIGHLIGHTED_SLUG) return [];
+  return SEEDED_HIGHLIGHTS.filter((h) => visibleTo(viewer)(h.author)).map((h) => ({
+    ...h,
+    replyCount: mockSeededReplies(h.id, viewer).length,
+  }));
+}
 
 /** A single page of the feed. `hasNext` stays false so the one mock page renders cleanly (no
  *  load-more round-trip to a backend that isn't there). */
+// kazuki blocked the mock reader, so a signed-in reader's discovery lists leave kazuki out — something
+// only the server knows, unlike the reader's own blocks.
+const MOCK_HIDDEN_FROM_VIEWER = new Set(["kazuki"]);
+
 export function mockFeedView({
   sort = "recent",
   q,
   tag,
+  viewer = false,
 }: {
   sort?: "recent" | "trending";
   q?: string;
   tag?: string;
+  viewer?: boolean;
 } = {}): PublicFeedView {
-  let items = [...ALL_ITEMS];
+  let items = viewer ? ALL_ITEMS.filter((i) => !MOCK_HIDDEN_FROM_VIEWER.has(i.author.username)) : [...ALL_ITEMS];
   if (tag) items = items.filter((i) => i.tags.includes(tag));
   if (q) {
     const needle = q.toLowerCase();
@@ -140,6 +253,13 @@ export const MOCK_SUGGESTED_AUTHORS: SuggestedAuthor[] = [
   { author: AUTHORS.sora, postCount: 2 },
 ];
 
+export function mockSuggestedAuthors(limit: number, viewer: boolean): SuggestedAuthor[] {
+  const authors = viewer
+    ? MOCK_SUGGESTED_AUTHORS.filter(({ author }) => !MOCK_HIDDEN_FROM_VIEWER.has(author.username))
+    : MOCK_SUGGESTED_AUTHORS;
+  return authors.slice(0, limit);
+}
+
 /**
  * Following feed (the 팔로잉 tab, when signed in) — mirrors the backend union: posts from followed
  * authors (dohyun, minji) OR carrying a followed topic (here "일상", a demo). So the merged feed
@@ -160,6 +280,15 @@ export function mockFollowingView(): PublicFeedView {
       : { kind: "TOPIC" as const, tag: i.tags.find((t) => MOCK_FOLLOWED_TAGS.includes(t)) ?? null },
   }));
   return { items, page: 0, size: 24, hasNext: false };
+}
+
+/** 구독함 in three pages: posts with a series note between them, a page of series notes alone, then
+ *  one older post — the shape that must keep infinite loading going. */
+export function mockFollowingFeed(page: number): FollowingFeedView {
+  const notesOn = (ids: number[]) => ids.map((id) => followingSeriesNote(id));
+  if (page === 0) return { ...mockFollowingView(), hasNext: true, seriesNotes: notesOn([40]) };
+  if (page === 1) return { items: [], page, size: 24, hasNext: true, seriesNotes: notesOn([41, 42]) };
+  return { items: [FIRST_COMMIT], page, size: 24, hasNext: false, seriesNotes: [] };
 }
 
 /**
@@ -247,6 +376,12 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
     ["H2", "정리"],
     ["PARAGRAPH", "요약하면, 작은 서비스일수록 단순함이 이긴다. 다음 글에서 이어서 다룬다."],
     ...(item.slug === "spring-tx-propagation" ? importedRows() : []),
+    ...(item.slug === "kyoto-workation"
+      ? ([
+          ["PARAGRAPH", "밤 산책은 유나의 이 노트에서 시작됐다."],
+          ["EMBED", "http://localhost/ko/p/yuna/notes/5"],
+        ] as Array<[string, string | null]>)
+      : []),
   ];
   return rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null }));
 }
@@ -254,8 +389,8 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
 /** Post detail — author + post meta + a body of blocks. First 3 posts belong to a series so the
  * on-post series UI can be exercised (slugs line up with mockSeriesDetail("nextjs-deep-dive")). */
 export function mockPostDetail(_username: string, slug: string): PublicPostDetail {
-  const item = ALL_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
-  const idx = ALL_ITEMS.indexOf(item);
+  const item = READABLE_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
+  const idx = READABLE_ITEMS.indexOf(item);
   const inSeries = idx >= 0 && idx < 3;
   const ref = (i: number) => ({ slug: ALL_ITEMS[i].slug, title: ALL_ITEMS[i].title });
   return {
@@ -271,7 +406,120 @@ export function mockPostDetail(_username: string, slug: string): PublicPostDetai
           prev: idx > 0 ? ref(idx - 1) : null,
           next: idx < 2 ? ref(idx + 1) : null,
         }
-      : null,
+      : mixedSeriesNav(item.slug),
+  };
+}
+
+// ─── Series that hold notes too ─────────────────────────────────────────────────
+
+type MockMember = { type: "POST"; slug: string } | { type: "NOTE"; id: number };
+
+/** @dohyun's notes that sit in a series — the note mocks serve them as his notes too. */
+export const MOCK_SERIES_NOTES: SeriesNoteSummary[] = [
+  {
+    id: 40,
+    body: "이름 하나 바꾸는 데 하루를 썼다. 다음 사람이 덜 헤매면 그걸로 됐다.",
+    contentWarning: null,
+    excerpt: "이름 하나 바꾸는 데 하루를 썼다. 다음 사람이 덜 헤매면 그걸로 됐다.",
+    createdAt: "2026-05-25T15:00:00Z",
+  },
+  {
+    id: 41,
+    body: "회고를 쓰다 보니 팀 이야기가 길어졌다. 이름은 다 뺐다.",
+    contentWarning: "팀 회고 — 조금 무거운 이야기",
+    excerpt: "팀 회고 — 조금 무거운 이야기",
+    createdAt: "2026-05-18T10:00:00Z",
+  },
+  {
+    id: 42,
+    body: "짧게 자주 쓰기로 했다. 길게 쓰려고 하면 안 쓰게 되니까.",
+    contentWarning: null,
+    excerpt: "짧게 자주 쓰기로 했다. 길게 쓰려고 하면 안 쓰게 되니까.",
+    createdAt: "2026-05-17T10:00:00Z",
+  },
+];
+
+const MIXED_SERIES: { series: PublicSeriesListItem; members: MockMember[] }[] = [
+  {
+    series: { id: 904, slug: "refactoring-diary", title: "리팩터링 일지", postCount: 2, itemCount: 3, tags: ["개발", "리팩터링"] },
+    members: [
+      { type: "POST", slug: "spring-tx-propagation" },
+      { type: "NOTE", id: 40 },
+      { type: "POST", slug: "first-commit-retro" },
+    ],
+  },
+  {
+    series: { id: 905, slug: "short-thoughts", title: "짧은 생각들", postCount: 0, itemCount: 2, tags: [] },
+    members: [
+      { type: "NOTE", id: 42 },
+      { type: "NOTE", id: 41 },
+    ],
+  },
+];
+
+const seriesNote = (id: number) => MOCK_SERIES_NOTES.find((n) => n.id === id)!;
+
+function memberLink(member: MockMember): SeriesItemLink {
+  if (member.type === "NOTE") {
+    return { type: "NOTE", slug: null, noteId: member.id, title: seriesNote(member.id).excerpt ?? "" };
+  }
+  const post = READABLE_ITEMS.find((i) => i.slug === member.slug)!;
+  return { type: "POST", slug: post.slug, noteId: null, title: post.title };
+}
+
+function mixedItems(members: MockMember[]): PublicSeriesItem[] {
+  return members.map((member) => {
+    if (member.type === "NOTE") return { type: "NOTE", post: null, note: seriesNote(member.id) };
+    const idx = READABLE_ITEMS.findIndex((i) => i.slug === member.slug);
+    return { type: "POST", post: toListItem(READABLE_ITEMS[idx], idx), note: null };
+  });
+}
+
+function mixedSeriesNav(slug: string): PublicPostDetail["series"] {
+  const owner = MIXED_SERIES.find((m) => m.members.some((x) => x.type === "POST" && x.slug === slug));
+  if (!owner) return null;
+  const members = owner.members;
+  const posts = members.filter((x): x is Extract<MockMember, { type: "POST" }> => x.type === "POST");
+  const at = members.findIndex((x) => x.type === "POST" && x.slug === slug);
+  const postAt = posts.findIndex((x) => x.slug === slug);
+  const postRef = (i: number) => {
+    const link = memberLink(posts[i]);
+    return { slug: link.slug as string, title: link.title };
+  };
+  return {
+    slug: owner.series.slug,
+    title: owner.series.title,
+    position: postAt + 1,
+    total: posts.length,
+    prev: postAt > 0 ? postRef(postAt - 1) : null,
+    next: postAt < posts.length - 1 ? postRef(postAt + 1) : null,
+    itemPosition: at + 1,
+    itemTotal: members.length,
+    prevItem: at > 0 ? memberLink(members[at - 1]) : null,
+    nextItem: at < members.length - 1 ? memberLink(members[at + 1]) : null,
+  };
+}
+
+export function mockNoteSeries(noteId: number): NoteSeriesNav | null {
+  const owner = MIXED_SERIES.find((m) => m.members.some((x) => x.type === "NOTE" && x.id === noteId));
+  if (!owner) return null;
+  const at = owner.members.findIndex((x) => x.type === "NOTE" && x.id === noteId);
+  return {
+    slug: owner.series.slug,
+    title: owner.series.title,
+    position: at + 1,
+    total: owner.members.length,
+    prev: at > 0 ? memberLink(owner.members[at - 1]) : null,
+    next: at < owner.members.length - 1 ? memberLink(owner.members[at + 1]) : null,
+  };
+}
+
+function followingSeriesNote(id: number): FollowingSeriesNote {
+  const owner = MIXED_SERIES.find((m) => m.members.some((x) => x.type === "NOTE" && x.id === id))!;
+  return {
+    ...seriesNote(id),
+    author: AUTHORS.dohyun,
+    series: { id: owner.series.id, slug: owner.series.slug, title: owner.series.title },
   };
 }
 
@@ -300,10 +548,16 @@ const MOCK_SERIES: PublicSeriesListItem[] = [
 ];
 
 export function mockSeriesList(username: string): PublicSeriesList {
-  return { author: resolveAuthor(username), series: MOCK_SERIES };
+  return { author: resolveAuthor(username), series: [...MOCK_SERIES, ...MIXED_SERIES.map((m) => m.series)] };
 }
 
 export function mockSeriesDetail(username: string, slug: string): PublicSeriesDetail {
+  const mixed = MIXED_SERIES.find((m) => m.series.slug === slug);
+  if (mixed) {
+    const items = mixedItems(mixed.members);
+    const posts = items.flatMap((item) => (item.post ? [item.post] : []));
+    return { author: resolveAuthor(username), series: mixed.series, posts, items };
+  }
   const series = MOCK_SERIES.find((s) => s.slug === slug) ?? MOCK_SERIES[0];
   const posts = ALL_ITEMS.slice(0, series.postCount).map((it, i) => toListItem(it, i));
   return { author: resolveAuthor(username), series, posts };
@@ -353,13 +607,33 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
   },
 ];
 
-export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
-  return MOCK_DISCOVER_SERIES.slice(0, limit);
+function mixedCard(slug: string): PublicSeriesCard {
+  const { series, members } = MIXED_SERIES.find((m) => m.series.slug === slug)!;
+  const items = members.map((member) => {
+    const link = memberLink(member);
+    const cover = member.type === "POST" ? (READABLE_ITEMS.find((i) => i.slug === member.slug)?.ogImageUrl ?? null) : null;
+    return { ...link, ogImageUrl: cover };
+  });
+  return {
+    id: series.id,
+    author: AUTHORS.dohyun,
+    slug: series.slug,
+    title: series.title,
+    postCount: series.postCount,
+    itemCount: series.itemCount,
+    lastPublishedAt: "2026-05-25T15:00:00Z",
+    posts: items.flatMap((item) => (item.type === "POST" && item.slug ? [{ slug: item.slug, title: item.title }] : [])),
+    items,
+  };
 }
 
-/** Subscribed series for the home "시리즈" tab — a couple of the discover series as if subscribed. */
+export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
+  return [...MOCK_DISCOVER_SERIES, mixedCard("refactoring-diary")].slice(0, limit);
+}
+
+/** Subscribed series for the home "시리즈" tab — a few of the discover series as if subscribed. */
 export function mockSubscribedSeries(): PublicSeriesCard[] {
-  return MOCK_DISCOVER_SERIES.slice(0, 2);
+  return [...MOCK_DISCOVER_SERIES.slice(0, 2), mixedCard("refactoring-diary")];
 }
 
 export function mockTrendingByTag(tagLimit = 6, perTag = 8): TrendingTagSection[] {

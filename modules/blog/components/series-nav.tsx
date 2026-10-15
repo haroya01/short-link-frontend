@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { ChevronDown, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import { authorHref } from "@/modules/blog/lib/author-href";
+import type { SeriesEpisode, SeriesNavView } from "@/modules/blog/lib/series-items";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
+import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
 import { SeriesSwitchButtons } from "@/modules/blog/components/series-swipe";
-import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
-
-type Episode = { slug: string; title: string };
 
 /**
  * On-post series banner (top of a series article). Quiet left-rule in the reading column — series
@@ -19,17 +18,18 @@ type Episode = { slug: string; title: string };
 export function SeriesNav({
   series,
   episodes,
-  currentSlug,
+  currentKey,
   username,
   locale,
 }: {
-  series: PublicPostSeriesNav;
-  episodes: Episode[];
-  currentSlug: string;
+  series: SeriesNavView;
+  episodes: SeriesEpisode[];
+  currentKey: string;
   username: string;
   locale: string;
 }) {
   const t = useTranslations("publicPost");
+  const tf = useTranslations("publicFeed");
   const [open, setOpen] = useState(false);
   const seriesHref = authorHref(username, locale, `series/${series.slug}`);
 
@@ -89,29 +89,40 @@ export function SeriesNav({
           {open && (
             <ol className="mt-2 space-y-0.5">
               {episodes.map((ep, i) => {
-                const current = ep.slug === currentSlug;
+                const current = ep.key === currentKey;
                 const ep1 = (
                   <SeriesIndex n={i + 1} current={current} className="mt-px shrink-0 text-[11px]" />
                 );
+                const label =
+                  ep.type === "NOTE" ? (
+                    <span className="min-w-0">
+                      <span className="line-clamp-2">{ep.title}</span>
+                      <SeriesNoteMarker label={tf("seriesNoteMarker")} className="mt-0.5" />
+                    </span>
+                  ) : (
+                    <span>{ep.title}</span>
+                  );
                 return (
-                  <li key={ep.slug}>
+                  <li key={ep.key}>
                     {current ? (
                       <span
                         aria-current="true"
                         className="flex items-start gap-2 rounded px-1 py-0.5 text-[13px] font-semibold text-accent-700 dark:text-accent-400"
                       >
                         {ep1}
-                        <span>{ep.title}</span>
+                        {label}
                       </span>
                     ) : (
                       <BlogLink
-                        href={postHref(username, ep.slug, locale)}
-                        className="focus-ring flex items-start gap-2 rounded px-1 py-0.5 text-[13px] text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+                        href={ep.href}
+                        className={`focus-ring flex items-start gap-2 rounded px-1 py-0.5 text-[13px] transition-colors hover:text-accent-700 dark:hover:text-accent-400 ${
+                          ep.type === "NOTE" ? "text-slate-500 dark:text-slate-400" : "text-slate-600 dark:text-slate-300"
+                        }`}
                         data-bhv="series"
-                        data-bhv-id={`${username}/${ep.slug}`}
+                        data-bhv-id={`${username}/${ep.key}`}
                       >
                         {ep1}
-                        <span>{ep.title}</span>
+                        {label}
                       </BlogLink>
                     )}
                   </li>

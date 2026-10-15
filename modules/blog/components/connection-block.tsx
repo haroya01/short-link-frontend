@@ -2,13 +2,13 @@
 
 import type { Connection, ConnectionEvent } from "@/modules/blog/api/collections";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { postHref } from "@/modules/blog/lib/author-href";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 
 /** The flat block fields shared by a {@link Connection} and a {@link ConnectionEvent}. */
 type BlockFields = Pick<
   Connection,
-  "blockType" | "title" | "excerpt" | "slug" | "username" | "quote" | "body"
->;
+  "blockType" | "title" | "excerpt" | "slug" | "username" | "quote" | "body" | "noteId"
+> & { refId?: number };
 
 /** Deep-link a highlight to its source post AT that sentence — `?hl=<encoded quote>` is read by
  *  PostHighlights, which scrolls to the matching painted span and flashes it (mirrors the iOS
@@ -27,7 +27,7 @@ export function quoteHref(username: string, slug: string, quote: string, locale:
  * the collection list, related blocks, and the highlight thread panel.
  *
  * A post block links to the post; a highlight block deep-links to the source post at that sentence; a
- * note has no destination (it lives where it is).
+ * note block links to the note (its author over the body).
  */
 export function ConnectionBlock({ block, locale }: { block: BlockFields; locale: string }) {
   if (block.blockType === "POST" && block.slug && block.username) {
@@ -73,6 +73,25 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
     );
   }
 
+  const noteId = block.noteId ?? (block.blockType === "NOTE" ? block.refId : undefined);
+  if (block.blockType === "NOTE" && block.username && noteId) {
+    return (
+      <BlogLink
+        href={authorHref(block.username, locale, `notes/${noteId}`)}
+        className="focus-ring group block rounded"
+        data-bhv="connection"
+        data-bhv-id={`note/${noteId}`}
+      >
+        <span className="block text-[13px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+          {block.username}
+        </span>
+        <span className="mt-0.5 block whitespace-pre-line text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
+          {block.body}
+        </span>
+      </BlogLink>
+    );
+  }
+
   // NOTE — a held thought. Plain on the paper, the quietest of the three.
   return (
     <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
@@ -91,5 +110,6 @@ export function eventBlock(event: ConnectionEvent): BlockFields {
     username: event.username,
     quote: event.quote,
     body: event.body,
+    noteId: event.noteId ?? null,
   };
 }

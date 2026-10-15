@@ -7,12 +7,17 @@
  */
 import type {
   BlockInput,
+  EditGuard,
   PostBlockView,
   PostRevisionView,
   PostStatus,
   PostView,
+  VersionedBlocks,
 } from "@/modules/blog/api/posts";
-import type { SeriesDetailView, SeriesView } from "@/modules/blog/api/series";
+import type { SeriesDetailView, SeriesItemRef, SeriesOwnerItem, SeriesView } from "@/modules/blog/api/series";
+import { ApiError } from "@/lib/api/client";
+import type { ProblemDetail } from "@/types";
+import { mockSeriesNoteSummary } from "@/modules/notes/api/_mocks";
 
 const nowIso = () => new Date().toISOString();
 
@@ -35,6 +40,7 @@ function blankPost(over: Partial<PostView>): PostView {
     pinOrder: null,
     createdAt: nowIso(),
     updatedAt: nowIso(),
+    contentVersion: 0,
     ...over,
   };
 }
@@ -91,7 +97,36 @@ let seq = 7000;
   });
   posts.set(scheduled.id, scheduled);
   blocks.set(scheduled.id, toBlocks([["paragraph", "발행 예정 시각이 되면 자동으로 공개됩니다."]]));
+
+  const takenDown = blankPost({
+    id: ++seq,
+    slug: "mock-taken-down",
+    title: "신고로 내려진 글",
+    status: "UNPUBLISHED",
+    publishedAt: new Date(Date.now() - 5 * 86_400_000).toISOString(),
+    excerpt: "운영 정책 위반으로 관리자가 내린 예시 글.",
+    tags: ["회고"],
+    takenDown: true,
+  });
+  posts.set(takenDown.id, takenDown);
+  blocks.set(takenDown.id, toBlocks([["paragraph", "고쳐서 저장할 수는 있지만 다시 공개할 수는 없습니다."]]));
 })();
+
+let moderation: "ACCOUNT_SUSPENDED" | "ACCOUNT_BANNED" | null = null;
+
+function requireCanWritePublicly() {
+  if (moderation) throw new ApiError(403, { status: 403, code: moderation } as ProblemDetail);
+}
+
+function requireNotTakenDown(id: number) {
+  if (posts.get(id)?.takenDown) {
+    throw new ApiError(409, { status: 409, code: "POST_TAKEN_DOWN" } as ProblemDetail);
+  }
+}
+
+function guardLiveEdit(id: number) {
+  if (posts.get(id)?.status === "PUBLISHED") requireCanWritePublicly();
+}
 
 function touch(id: number, patch: Partial<PostView>): PostView {
   const cur = posts.get(id) ?? blankPost({ id });
@@ -100,9 +135,14 @@ function touch(id: number, patch: Partial<PostView>): PostView {
   return next;
 }
 
+const MOCK_NO_DRAFTS_KEY = "kurl:mock-no-drafts";
+
 export function mockListMyPosts(): PostView[] {
+  const noDrafts = typeof window !== "undefined" && window.localStorage.getItem(MOCK_NO_DRAFTS_KEY) === "1";
   // Newest first, matching the backend's default ordering.
-  return [...posts.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return [...posts.values()]
+    .filter((post) => !noDrafts || post.status !== "DRAFT")
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }
 
 export function mockGetPost(id: number): PostView {
@@ -114,6 +154,9 @@ export function mockCreatePost(payload: {
   title: string;
   languageTag?: string;
 }): PostView {
+  if ([...posts.values()].some((p) => p.slug === payload.slug)) {
+    throw new ApiError(409, { status: 409, code: "SLUG_CONFLICT" });
+  }
   const id = ++seq;
   const p = blankPost({
     id,
@@ -126,6 +169,22 @@ export function mockCreatePost(payload: {
   return p;
 }
 
+function checkEdit(id: number, guard: EditGuard) {
+  const current = posts.get(id)?.contentVersion ?? 0;
+  if (guard.baseVersion !== undefined && !guard.overwrite && guard.baseVersion !== current) {
+    throw new ApiError(409, { status: 409, code: "POST_EDIT_CONFLICT", contentVersion: current } as ProblemDetail);
+  }
+}
+
+function markEdited(id: number, patch: Partial<PostView> = {}): PostView {
+  return touch(id, { ...patch, contentVersion: (posts.get(id)?.contentVersion ?? 0) + 1 });
+}
+
+const PROFILE_PATH_SLUGS = new Set([
+  "about", "bookmarks", "collections", "feed", "liked", "media", "notes",
+  "opengraph-image", "replies", "reposts", "series",
+]);
+
 export function mockUpdatePostMetadata(
   id: number,
   payload: {
@@ -133,18 +192,36 @@ export function mockUpdatePostMetadata(
     slug?: string;
     excerpt?: string;
     ogImageUrl?: string;
+    coverChosen?: boolean;
     languageTag?: string;
     tags?: string[];
-  },
+  } & EditGuard,
 ): PostView {
+  guardLiveEdit(id);
+  checkEdit(id, payload);
+  if (payload.slug !== undefined) {
+    if (payload.slug.length < 2) throw new ApiError(400, { status: 400, detail: "slug length 2~200" });
+    if (payload.slug !== posts.get(id)?.slug && PROFILE_PATH_SLUGS.has(payload.slug)) {
+      throw new ApiError(400, { status: 400, code: "SLUG_RESERVED" });
+    }
+    if ([...posts.values()].some((p) => p.id !== id && p.slug === payload.slug)) {
+      throw new ApiError(409, { status: 409, code: "SLUG_CONFLICT" });
+    }
+  }
   const patch: Partial<PostView> = {};
   if (payload.title !== undefined) patch.title = payload.title;
   if (payload.slug !== undefined) patch.slug = payload.slug;
   if (payload.excerpt !== undefined) patch.excerpt = payload.excerpt;
-  if (payload.ogImageUrl !== undefined) patch.ogImageUrl = payload.ogImageUrl;
+  if (payload.ogImageUrl !== undefined) {
+    const current = posts.get(id);
+    patch.ogImageUrl = payload.ogImageUrl;
+    patch.coverChosen =
+      payload.ogImageUrl !== "" &&
+      (payload.coverChosen ?? (payload.ogImageUrl === current?.ogImageUrl && Boolean(current?.coverChosen)));
+  }
   if (payload.languageTag !== undefined) patch.languageTag = payload.languageTag;
   if (payload.tags !== undefined) patch.tags = payload.tags;
-  return touch(id, patch);
+  return markEdited(id, patch);
 }
 
 export function mockDeletePost(id: number): void {
@@ -153,6 +230,10 @@ export function mockDeletePost(id: number): void {
 }
 
 export function mockSetStatus(id: number, status: PostStatus, scheduledAt?: string): PostView {
+  if (status === "PUBLISHED" || status === "SCHEDULED") {
+    requireNotTakenDown(id);
+    requireCanWritePublicly();
+  }
   return touch(id, {
     status,
     publishedAt: status === "PUBLISHED" ? posts.get(id)?.publishedAt ?? nowIso() : posts.get(id)?.publishedAt ?? null,
@@ -174,37 +255,82 @@ export function mockListRevisions(_id: number): PostRevisionView[] {
   return [];
 }
 
-export function mockGetBlocks(id: number): PostBlockView[] {
-  return blocks.get(id) ?? [];
+export async function mockGetBlocks(id: number): Promise<VersionedBlocks> {
+  return { blocks: blocks.get(id) ?? [], contentVersion: posts.get(id)?.contentVersion ?? 0 };
 }
 
-export function mockReplaceBlocks(id: number, input: BlockInput[]): PostBlockView[] {
+export async function mockReplaceBlocks(
+  id: number,
+  input: BlockInput[],
+  guard: EditGuard = {},
+): Promise<VersionedBlocks> {
+  guardLiveEdit(id);
+  checkEdit(id, guard);
   const next = input.map((b, i) => ({ id: i + 1, type: b.type, content: b.content, blockOrder: i }));
   blocks.set(id, next);
-  return next;
+  return { blocks: next, contentVersion: markEdited(id).contentVersion ?? null };
+}
+
+export function mockEditElsewhere(id: number, edit: { title?: string; body?: string }) {
+  if (edit.body !== undefined) blocks.set(id, [{ id: 1, type: "PARAGRAPH", content: edit.body, blockOrder: 0 }]);
+  markEdited(id, edit.title !== undefined ? { title: edit.title } : {});
+}
+
+function mockModerate(next: typeof moderation) {
+  moderation = next;
+}
+
+if (typeof window !== "undefined") {
+  (window as unknown as { __kurlMockAuthoring: unknown }).__kurlMockAuthoring = {
+    editElsewhere: mockEditElsewhere,
+    moderate: mockModerate,
+  };
 }
 
 // ── Series (authoring) ──────────────────────────────────────────────────────
 const series = new Map<number, SeriesView>();
-const seriesPosts = new Map<number, number[]>(); // seriesId → ordered postIds
+const seriesItems = new Map<number, SeriesItemRef[]>(); // seriesId → ordered posts and notes
 let seriesSeq = 8000;
+const MOCK_AUTHOR_ID = 1;
 
 (function seedSeries() {
   const s: SeriesView = {
     id: ++seriesSeq,
     slug: "mock-series",
     title: "로컬 예시 시리즈",
-    postCount: 1,
+    postCount: 0,
+    itemCount: 0,
     createdAt: nowIso(),
     updatedAt: null,
   };
   series.set(s.id, s);
-  seriesPosts.set(s.id, []);
+  seriesItems.set(s.id, []);
+
+  const mixed: SeriesView = {
+    id: ++seriesSeq,
+    slug: "refactoring-diary",
+    title: "리팩터링 일지",
+    postCount: 1,
+    itemCount: 2,
+    createdAt: new Date(Date.now() - 60_000).toISOString(),
+    updatedAt: null,
+  };
+  series.set(mixed.id, mixed);
+  const published = [...posts.values()].find((p) => p.status === "PUBLISHED")!;
+  posts.set(published.id, { ...published, seriesId: mixed.id, seriesOrder: 0 });
+  seriesItems.set(mixed.id, [
+    { type: "POST", id: published.id },
+    { type: "NOTE", id: 40 },
+  ]);
 })();
+
+const postIdsOf = (id: number) =>
+  (seriesItems.get(id) ?? []).filter((ref) => ref.type === "POST").map((ref) => ref.id);
 
 const recount = (id: number): SeriesView => {
   const s = series.get(id)!;
-  const next = { ...s, postCount: (seriesPosts.get(id) ?? []).length, updatedAt: nowIso() };
+  const refs = seriesItems.get(id) ?? [];
+  const next = { ...s, postCount: postIdsOf(id).length, itemCount: refs.length, updatedAt: nowIso() };
   series.set(id, next);
   return next;
 };
@@ -215,16 +341,20 @@ export function mockListSeries(): SeriesView[] {
 
 export function mockGetSeries(id: number): SeriesDetailView {
   const s = series.get(id) ?? { id, slug: `series-${id}`, title: "", postCount: 0, createdAt: nowIso(), updatedAt: null };
-  const ids = seriesPosts.get(id) ?? [];
-  return { series: s, posts: ids.map((pid) => mockGetPost(pid)) };
+  const items = (seriesItems.get(id) ?? []).flatMap<SeriesOwnerItem>((ref) => {
+    if (ref.type === "POST") return [{ type: "POST", post: mockGetPost(ref.id), note: null }];
+    const found = mockSeriesNoteSummary(ref.id);
+    return found ? [{ type: "NOTE", post: null, note: found.summary }] : [];
+  });
+  return { series: s, posts: postIdsOf(id).map((pid) => mockGetPost(pid)), items };
 }
 
 export function mockCreateSeries(payload: { slug: string; title: string }): SeriesDetailView {
   const id = ++seriesSeq;
-  const s: SeriesView = { id, slug: payload.slug, title: payload.title, postCount: 0, createdAt: nowIso(), updatedAt: null };
+  const s: SeriesView = { id, slug: payload.slug, title: payload.title, postCount: 0, itemCount: 0, createdAt: nowIso(), updatedAt: null };
   series.set(id, s);
-  seriesPosts.set(id, []);
-  return { series: s, posts: [] };
+  seriesItems.set(id, []);
+  return { series: s, posts: [], items: [] };
 }
 
 export function mockUpdateSeries(id: number, payload: { title: string; slug: string }): SeriesDetailView {
@@ -233,25 +363,58 @@ export function mockUpdateSeries(id: number, payload: { title: string; slug: str
   return mockGetSeries(id);
 }
 
+function syncPostMembership(id: number) {
+  const ids = postIdsOf(id);
+  for (const p of posts.values()) {
+    const idx = ids.indexOf(p.id);
+    if (idx >= 0) posts.set(p.id, { ...p, seriesId: id, seriesOrder: idx });
+    else if (p.seriesId === id) posts.set(p.id, { ...p, seriesId: null, seriesOrder: null });
+  }
+}
+
+/** The old endpoint refills the post slots in order and leaves notes where they stand. */
 export function mockSetSeriesPosts(id: number, postIds: number[]): SeriesDetailView {
-  const prev = seriesPosts.get(id) ?? [];
-  seriesPosts.set(id, [...postIds]);
-  // Reflect membership on the posts themselves (the real backend owns post.seriesId / seriesOrder).
-  // Dropped members lose their series; current members get this series id + their new order — so a
-  // grouped "시리즈별" view that groups by post.seriesId stays correct after add/remove/reorder.
-  prev.forEach((pid) => {
-    const p = posts.get(pid);
-    if (p && !postIds.includes(pid)) posts.set(pid, { ...p, seriesId: null, seriesOrder: null });
-  });
-  postIds.forEach((pid, i) => {
-    const p = posts.get(pid);
-    if (p) posts.set(pid, { ...p, seriesId: id, seriesOrder: i });
-  });
+  const queue = [...postIds];
+  const next: SeriesItemRef[] = [];
+  for (const ref of seriesItems.get(id) ?? []) {
+    if (ref.type === "NOTE") next.push(ref);
+    else if (queue.length > 0) next.push({ type: "POST", id: queue.shift()! });
+  }
+  seriesItems.set(id, [...next, ...queue.map((pid) => ({ type: "POST" as const, id: pid }))]);
+  syncPostMembership(id);
   recount(id);
   return mockGetSeries(id);
 }
 
+export function mockSetSeriesItems(id: number, items: SeriesItemRef[]): Promise<SeriesDetailView> {
+  for (const ref of items) {
+    if (ref.type !== "NOTE") continue;
+    const found = mockSeriesNoteSummary(ref.id);
+    if (!found) return Promise.reject(new ApiError(404, { status: 404, code: "SERIES_NOTE_NOT_FOUND" }));
+    if (found.authorId !== MOCK_AUTHOR_ID) {
+      return Promise.reject(new ApiError(403, { status: 403, code: "PERMISSION_DENIED" }));
+    }
+    if (found.visibility === "private" || found.visibility === "direct") {
+      return Promise.reject(new ApiError(409, { status: 409, code: "SERIES_NOTE_NOT_SHARED" }));
+    }
+  }
+  const same = (a: SeriesItemRef) => (b: SeriesItemRef) => a.type === b.type && a.id === b.id;
+  for (const [other, refs] of seriesItems) {
+    if (other === id) continue;
+    const kept = refs.filter((ref) => !items.some(same(ref)));
+    if (kept.length !== refs.length) {
+      seriesItems.set(other, kept);
+      syncPostMembership(other);
+      recount(other);
+    }
+  }
+  seriesItems.set(id, items.map((ref) => ({ type: ref.type, id: ref.id })));
+  syncPostMembership(id);
+  recount(id);
+  return Promise.resolve(mockGetSeries(id));
+}
+
 export function mockDeleteSeries(id: number): void {
   series.delete(id);
-  seriesPosts.delete(id);
+  seriesItems.delete(id);
 }

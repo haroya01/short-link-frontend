@@ -11,7 +11,9 @@ import { PostCode } from "@/modules/blog/components/post-code";
 import { PostImage } from "@/modules/blog/components/post-image";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
 import type { ImageAlign, ImageWidth } from "@/modules/blog/lib/image-width";
-import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { kurlNoteId, kurlShortCode } from "@/modules/blog/lib/kurl-link";
+import { fetchNoteThread } from "@/modules/notes/api/notes";
+import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { headingAnchors, headingPlainText, slugify } from "@/modules/blog/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
@@ -307,6 +309,14 @@ function CodeBlock({ content }: { content: string | null }) {
 }
 
 async function EmbedBlock({ content, postId }: { content: string | null; postId?: number }) {
+  const noteId = content ? kurlNoteId(content) : null;
+  if (noteId && content)
+    return (
+      <Suspense fallback={<LinkPreviewSkeleton />}>
+        <NoteEmbed id={noteId} url={content.trim()} />
+      </Suspense>
+    );
+
   // A kurl short link → live link-stats card (the "post backed by measured links" signal). The
   // outbound url carries ?post= so the click attributes to this post ("이 글이 만든 클릭").
   const code = content ? kurlShortCode(content) : null;
@@ -318,7 +328,7 @@ async function EmbedBlock({ content, postId }: { content: string | null; postId?
   if (plan.kind === "video") {
     const t = await getTranslations("publicPost");
     return (
-      <div className="my-8 overflow-hidden rounded-2xl bg-slate-900">
+      <div className="my-8 overflow-hidden rounded-surface bg-slate-900">
         <div className="relative aspect-video">
           <iframe
             src={plan.src}
@@ -340,7 +350,7 @@ async function EmbedBlock({ content, postId }: { content: string | null; postId?
         href={plan.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="my-8 block overflow-hidden rounded-2xl border border-slate-200 no-underline transition-colors hover:border-accent-300 dark:border-slate-800"
+        className="my-8 block overflow-hidden rounded-surface border border-slate-200 no-underline transition-colors hover:border-accent-300 dark:border-slate-800"
       >
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -378,11 +388,23 @@ async function EmbedBlock({ content, postId }: { content: string | null; postId?
   );
 }
 
+/** A kurl note carried in the post. Fetched as an anonymous reader, so a note only its author's
+ *  followers may see — or one since deleted — falls back to a plain link card. */
+async function NoteEmbed({ id, url }: { id: number; url: string }) {
+  const res = await fetchNoteThread(id);
+  if (!res.ok) return <LinkPreviewCard url={url} />;
+  return (
+    <div className="my-8 [&_*]:!no-underline" data-note-embed={id}>
+      <QuotedNoteCard note={res.data.note} full />
+    </div>
+  );
+}
+
 /** Card-shaped placeholder while the link's Open Graph is fetched server-side (see LinkPreviewCard). */
 function LinkPreviewSkeleton() {
   return (
     <div
-      className="my-8 h-28 animate-pulse rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900"
+      className="my-8 h-28 animate-pulse rounded-surface border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900"
       aria-hidden
     />
   );
@@ -410,7 +432,7 @@ async function LinkPreviewCard({ url }: { url: string }) {
   const rich = data && (data.title || data.image);
 
   const shell =
-    "my-8 flex overflow-hidden rounded-2xl border border-slate-200 !no-underline transition-colors hover:border-accent-300 dark:border-slate-800 dark:hover:border-accent-500/50 [&_*]:!no-underline";
+    "my-8 flex overflow-hidden rounded-surface border border-slate-200 !no-underline transition-colors hover:border-accent-300 dark:border-slate-800 dark:hover:border-accent-500/50 [&_*]:!no-underline";
 
   if (!rich) {
     return (
@@ -461,14 +483,14 @@ async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: n
   if (!cta || cta.deleted) {
     const t = await getTranslations("publicPost");
     return (
-      <div className="my-8 rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+      <div className="my-8 rounded-surface border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
         {cta?.label ? t("ctaUnavailable", { label: cta.label }) : t("ctaDeleted")}
       </div>
     );
   }
   const primary = cta.style === "PRIMARY";
   const base =
-    "my-8 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
+    "my-8 inline-flex w-full items-center justify-center gap-2 rounded-surface px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
   const tone = primary
     ? "bg-accent-700 text-white hover:bg-accent-800"
     : "border border-slate-200 text-slate-900 hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-700 dark:text-slate-100 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10";

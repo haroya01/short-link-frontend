@@ -1,11 +1,12 @@
 "use client";
 
+import { CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { MyEvent } from "@/modules/events/api/events";
 import { getMyEvent, updateEvent } from "@/modules/events/api/events";
 import { EventForm } from "@/modules/events/components/event-form";
@@ -28,11 +29,7 @@ export default function EditEventPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("authTitle")}
-        description={t("authDesc")}
-        next={`/events/${idParam}/edit`}
-      />
+      <SignInEmptyState page reason="events" icon={CalendarDays} />
     );
   }
 

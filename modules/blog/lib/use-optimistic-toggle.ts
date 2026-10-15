@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn, type SignInReason } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -86,6 +87,8 @@ export function useOptimisticToggle({
   load,
   mutate,
   syncKey,
+  signInReason,
+  onError,
 }: {
   depKey: string | number;
   initialOn?: boolean;
@@ -94,8 +97,10 @@ export function useOptimisticToggle({
   load: () => Promise<ToggleState>;
   mutate: (next: boolean) => Promise<ToggleState>;
   syncKey?: string;
+  signInReason: SignInReason;
+  onError?: (error: unknown) => void;
 }) {
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const { toast } = useToast();
   const tErr = useTranslations("errors");
   const errorMessage = useApiErrorMessage();
@@ -139,7 +144,7 @@ export function useOptimisticToggle({
 
   async function toggle() {
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn(signInReason);
       return;
     }
     if (busy) return;
@@ -157,7 +162,8 @@ export function useOptimisticToggle({
       const c = entryFor(key, initRef.current).state;
       emit(key, { on: !next, count: tracksCount ? (c.count ?? 0) + (next ? -1 : 1) : c.count });
       // 조용한 롤백은 "눌렀는데 스스로 꺼졌다"로 읽힌다 — 실패였음을 한 줄로 알린다.
-      toast(errorMessage(e, tErr("toggleFailed")), "error");
+      if (onError) onError(e);
+      else toast(errorMessage(e, tErr("toggleFailed")), "error");
     } finally {
       setBusy(false);
     }

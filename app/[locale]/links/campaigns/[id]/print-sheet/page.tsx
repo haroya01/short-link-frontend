@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, QrCode } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { getCampaign, listCampaignBatches } from "@/lib/api";
@@ -10,7 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignBatch, CampaignDetail } from "@/types";
 
 type Layout = {
@@ -77,7 +77,7 @@ export default function PrintSheetPage() {
   );
 
   if (ready && !authenticated) {
-    return <LinksAuthGate title={t("loginRequired")} />;
+    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
   }
 
   return (

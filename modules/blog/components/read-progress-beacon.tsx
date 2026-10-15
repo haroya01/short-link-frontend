@@ -2,8 +2,10 @@
 
 import { useEffect } from "react";
 import { flushBehavior, trackBehavior } from "@/lib/analytics/behavior";
+import { markPostRead } from "@/modules/blog/lib/read-posts";
 
 const MILESTONES = [25, 50, 75, 100] as const;
+const SHORT_POST_DWELL_MS = 2_500;
 
 /**
  * Reading-depth + dwell beacon for the post page (mounted beside ViewBeacon). Depth: how far the
@@ -20,6 +22,8 @@ export function ReadProgressBeacon({ postId }: { postId: number }) {
 
     const fired = new Set<number>();
     let raf = 0;
+    let shortRead = 0;
+    let first = true;
     const measure = () => {
       raf = 0;
       const rect = article.getBoundingClientRect();
@@ -32,6 +36,11 @@ export function ReadProgressBeacon({ postId }: { postId: number }) {
           trackBehavior({ name: "read_progress", postId, depthPct: m });
         }
       }
+      if (pct >= 100) {
+        if (first) shortRead = window.setTimeout(() => markPostRead(postId), SHORT_POST_DWELL_MS);
+        else if (!shortRead) markPostRead(postId);
+      }
+      first = false;
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(measure);
@@ -61,6 +70,7 @@ export function ReadProgressBeacon({ postId }: { postId: number }) {
     window.addEventListener("pagehide", onPageHide);
     return () => {
       if (raf) cancelAnimationFrame(raf);
+      window.clearTimeout(shortRead);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);

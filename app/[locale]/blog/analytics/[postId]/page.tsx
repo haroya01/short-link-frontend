@@ -56,12 +56,9 @@ export default function PostAnalyticsPage() {
   const nextPost = siblings && idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
 
   if (!ready) return null;
-  if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
-  }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10">
       <Link
         href={blogPath("/analytics")}
         className="focus-ring inline-flex items-center gap-1.5 rounded text-[13px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
@@ -178,6 +175,6 @@ export default function PostAnalyticsPage() {
           )}
         </>
       )}
-    </main>
+    </div>
   );
 }

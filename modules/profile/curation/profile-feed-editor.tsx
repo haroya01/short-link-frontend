@@ -701,8 +701,8 @@ function FeedItemRow({
     const text = meta.render(item.content, t, locale) || t(meta.placeholderKey);
     const textClass =
       meta.textStyle === "primary"
-        ? "truncate text-sm font-medium text-slate-900"
-        : "truncate text-[11px] text-slate-500";
+        ? "truncate text-sm font-medium text-slate-900 dark:text-slate-100"
+        : "truncate text-[11px] text-slate-500 dark:text-slate-400";
     return (
       <li {...dndProps} className={baseRow}>
         {dragHandle}
@@ -730,7 +730,7 @@ function FeedItemRow({
     // label so the disclosure affordance is sibling to the title, and an item-count chip on the
     // right side near the edit/delete actions. The chevron + count are decorations on top of the
     // existing row — drag, edit, and delete affordances stay identical to other blocks.
-    const headerRow = baseRow + " bg-slate-50/60";
+    const headerRow = baseRow + " bg-slate-50/60 dark:bg-slate-800/40";
     const collapsed = sectionInfo?.collapsed ?? false;
     return (
       <li {...dndProps} className={headerRow}>
@@ -757,7 +757,7 @@ function FeedItemRow({
             {summarizeTextBody(item.content) || t("addTextPlaceholder")}
           </span>
           {sectionInfo && sectionInfo.count > 0 && (
-            <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+            <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
               {t("sectionItemCount", { count: sectionInfo.count })}
             </span>
           )}
@@ -797,7 +797,7 @@ function FeedItemRow({
           disabled={pendingShortCode === link.shortCode}
           className="text-[11px] text-slate-500 hover:text-red-600 dark:text-slate-400"
         >
-          {t("remove")}
+          {t("removeLink")}
         </button>
       </div>
     </li>
@@ -848,7 +848,7 @@ function LinkLabelField({
         }}
         maxLength={120}
         placeholder={t("labelPlaceholder")}
-        className="block w-full truncate border-b border-accent-300 bg-transparent text-sm font-medium text-slate-900 outline-none dark:text-slate-100"
+        className="block w-full truncate border-b border-accent-600 bg-transparent text-sm font-medium text-slate-900 outline-none dark:border-accent-400 dark:text-slate-100"
       />
     );
   }
@@ -864,14 +864,14 @@ function LinkLabelField({
       className={
         "group inline-flex max-w-full items-center gap-1.5 rounded text-left text-sm font-medium transition " +
         (currentLabel
-          ? "text-slate-900 hover:text-accent-700"
-          : "text-accent-700 hover:text-accent-800")
+          ? "text-slate-900 hover:text-slate-600 dark:text-slate-100 dark:hover:text-slate-300"
+          : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100")
       }
     >
-      <span className="truncate underline decoration-dotted decoration-slate-300 underline-offset-2 group-hover:decoration-accent-400">
+      <span className="truncate underline decoration-dotted decoration-slate-300 underline-offset-2 group-hover:decoration-slate-500 dark:decoration-slate-600">
         {currentLabel || t("labelEmpty")}
       </span>
-      <Pencil className="h-3 w-3 shrink-0 text-slate-300 transition group-hover:text-accent-500" />
+      <Pencil className="h-3 w-3 shrink-0 text-slate-400 transition group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300" />
     </button>
   );
 }

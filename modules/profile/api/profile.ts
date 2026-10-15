@@ -25,6 +25,10 @@ export async function updateMyProfile(payload: {
   socials?: string;
   /** Hide the author's follower/following counts everywhere (the follow action itself stays). */
   hideFollowerCount?: boolean;
+  /** Shown before the username on notes and the blog profile; empty clears it. At most 30. */
+  displayName?: string;
+  /** Approve each follower by hand (Mastodon's locked account). Unlocking approves everyone waiting. */
+  locked?: boolean;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }
@@ -242,6 +246,7 @@ export async function uploadAvatarToS3(
   file: File,
   contentType: string,
 ): Promise<void> {
+  if (process.env.NEXT_PUBLIC_USE_MOCKS === "1") return;
   const res = await fetch(uploadUrl, {
     method: "PUT",
     headers: { "Content-Type": contentType },

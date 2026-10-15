@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
+import { Bookmark, Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -18,8 +18,9 @@ import {
   removeSaved,
 } from "@/modules/blog/api/saved";
 import { SavedCard } from "@/modules/blog/components/saved/saved-card";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+import { LoadError } from "@/modules/blog/components/saved/load-error";
 
 /**
  * 스마트 셸프 — the owner's bookmarks, hybrid-organized: manual folders the user makes, plus the
@@ -35,6 +36,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   const isOwner = ready && me?.username === username;
 
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [saved, setSaved] = useState<SavedPost[]>([]);
   const [folders, setFolders] = useState<BookmarkFolder[]>([]);
   const [selected, setSelected] = useState<number | "all">("all");
@@ -47,17 +50,20 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   useEffect(() => {
     if (!isOwner) return;
     let alive = true;
+    setLoading(true);
+    setLoadFailed(false);
     Promise.all([listSavedFeed(), listFolders()])
       .then(([s, f]) => {
         if (!alive) return;
         setSaved(s);
         setFolders(f);
       })
+      .catch(() => alive && setLoadFailed(true))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, [isOwner]);
+  }, [isOwner, attempt]);
 
   const recount = (list: SavedPost[]): BookmarkFolder[] =>
     folders.map((f) => ({ ...f, count: list.filter((s) => s.folderId === f.id).length }));
@@ -168,12 +174,14 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
       </div>
     );
   }
+  if (loadFailed) {
+    return <LoadError message={t("bookmarksLoadError")} onRetry={() => setAttempt((n) => n + 1)} />;
+  }
   if (saved.length === 0) {
     return (
-      <FeedEmpty
-        mark
+      <BlogEmpty
+        icon={Bookmark}
         title={t("emptyBookmarks")}
-        body={t("emptyBookmarksBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}
@@ -328,7 +336,7 @@ function BulkBar({
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
         {menuOpen && (
-          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850">
+          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850">
             <button type="button" onClick={() => onMove(null)} className={bulkMenuItem}>
               {t("unfiled")}
             </button>
@@ -371,7 +379,7 @@ function BulkBar({
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="focus-ring inline-flex items-center gap-1 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
+          className="focus-ring inline-flex items-center gap-1 rounded-surface bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
         >
           <FolderPlus className="h-3.5 w-3.5" />
           {t("newFolderTo")}
@@ -382,7 +390,7 @@ function BulkBar({
 }
 
 const bulkMenuItem =
-  "flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";
+  "flex w-full items-center gap-2 rounded-surface px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";
 
 function FolderPill({
   active,

@@ -59,7 +59,7 @@ export function PostLedger({
                 <li key={post.id}>
                   <BlogLink
                     href={postHref(username, post.slug, locale)}
-                    className="focus-ring group -mx-3 flex items-baseline gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900"
+                    className="focus-ring group -mx-3 flex items-baseline gap-4 rounded-surface px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900"
                   >
                     <time
                       dateTime={post.publishedAt}

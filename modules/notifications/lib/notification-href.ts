@@ -1,0 +1,78 @@
+import { blogPath } from "@/lib/host";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
+
+/**
+ * Where a row navigates, by type. The recipient (`myUsername`) authors LIKE/COMMENT posts and owns
+ * the subscribed series; REPLY carries the post owner's handle (the post may be someone else's);
+ * NEW_POST's author is the actor. The graph events (CONNECTED / PATH_GREW) land on the collection
+ * that changed. Returns undefined when the needed handle/slug/id is missing.
+ */
+export function notificationHref(item: Item, myUsername: string | null, locale: string): string | undefined {
+  switch (item.type) {
+    case "CONNECTED":
+    case "PATH_GREW":
+      // 그래프 이벤트 — 엮인/이어진 그 컬렉션으로. 컬렉션은 블로그 같은 오리진이라 소프트 내비(blogPath).
+      return item.collectionId != null
+        ? blogPath(`/collections/${item.collectionId}`)
+        : undefined;
+    case "FOLLOW":
+      return item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
+    case "REMOTE_FOLLOW":
+      return item.actorRemoteId != null ? blogPath(`/remote/${item.actorRemoteId}`) : undefined;
+    case "FOLLOW_REQUEST":
+      return blogPath("/follow-requests");
+    case "NOTE_LIKE":
+    case "NOTE_REPOST":
+      return item.noteId != null && myUsername
+        ? authorHref(myUsername, locale, `notes/${item.noteId}`)
+        : undefined;
+    case "NOTE_MENTION":
+    case "NOTE_POLL":
+    case "NOTE_POST":
+    case "NOTE_EDIT":
+    case "POST_QUOTE":
+      return actorNoteHref(item, item.noteId, locale);
+    case "NOTE_REPLY":
+    case "NOTE_QUOTE":
+      // The reply or quote is the actor's note; it shows the recipient's note above it.
+      return actorNoteHref(item, item.sourceNoteId, locale);
+    case "SERIES_SUBSCRIBE":
+      return item.seriesSlug && myUsername
+        ? authorHref(myUsername, locale, `series/${item.seriesSlug}`)
+        : undefined;
+    case "NEW_POST":
+      return item.postSlug && item.actorUsername
+        ? postHref(item.actorUsername, item.postSlug, locale)
+        : undefined;
+    case "REPLY":
+    case "MENTION":
+    case "NOTE_EMBED":
+      // The post may be someone else's — the owner's handle rides in the payload.
+      return item.postSlug && item.postAuthorUsername
+        ? atSpot(postHref(item.postAuthorUsername, item.postSlug, locale), item)
+        : undefined;
+    case "COMMENT_LIKE": {
+      const owner = item.postAuthorUsername ?? myUsername;
+      return item.postSlug && owner ? atSpot(postHref(owner, item.postSlug, locale), item) : undefined;
+    }
+    default: // LIKE / COMMENT / HIGHLIGHT / POST_FIRST_READER / POST_READ_MILESTONE — the recipient is the post's author
+      return item.postSlug && myUsername
+        ? atSpot(postHref(myUsername, item.postSlug, locale), item)
+        : undefined;
+  }
+}
+
+function actorNoteHref(item: Item, noteId: number | null | undefined, locale: string): string | undefined {
+  if (noteId == null) return undefined;
+  if (item.actorRemoteId != null) return blogPath(`/remote/${item.actorRemoteId}/notes/${noteId}`);
+  return item.actorUsername && !item.actorProfileUrl
+    ? authorHref(item.actorUsername, locale, `notes/${noteId}`)
+    : undefined;
+}
+
+function atSpot(href: string, item: Item): string {
+  if (item.commentId != null) return `${href}#comment-${item.commentId}`;
+  if (item.highlightId != null) return `${href}?highlightId=${item.highlightId}&thread=1`;
+  return href;
+}

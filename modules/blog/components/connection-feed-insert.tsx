@@ -1,41 +1,90 @@
-import type { CSSProperties } from "react";
-import type { ConnectionEvent } from "@/modules/blog/api/collections";
-import { ConnectionEventCard } from "@/modules/blog/components/discover-connections";
-import { RailHeading } from "@/modules/blog/components/rail-heading";
+"use client";
 
-/**
- * A public connection event woven into the discovery feed — the "지금 이어지는 것들" thread. NOT a tile:
- * a quiet list row (bordered top+bottom by the surrounding {@link FeedInfinite} cell) so a connection
- * reads as something to *read*, not to scan — the same list rhythm as the authed 연결 발견 surface.
- *
- * The `lead` insert carries the section label (RailHeading, one green tick); later inserts are just the
- * row, so the thread names itself once rather than shouting on every card. Signed-out visitors see it
- * too — this is the graph's first-touch surface. `profile-fade` gives the row the same one-breath
- * stagger as the discovery feed (reduced-motion guarded in globals).
- */
-export function ConnectionFeedInsert({
-  event,
-  locale,
-  lead = false,
-  idx = 0,
-  label,
-}: {
-  event: ConnectionEvent;
-  locale: string;
-  /** First insert on the screen — shows the section label above the row. */
-  lead?: boolean;
-  /** Stagger index for the profile-fade entrance. */
-  idx?: number;
-  /** Localized "지금 이어지는 것들" — passed in (server-fetched i18n) so this stays a leaf. */
-  label: string;
-}) {
+import { useTranslations } from "next-intl";
+import { blogPath } from "@/lib/host";
+import type { ConnectionEvent } from "@/modules/blog/api/collections";
+import { authorHref, postHref } from "@/modules/blog/lib/author-href";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { quoteHref } from "@/modules/blog/components/connection-block";
+import { FeedRow, RowAuthor, RowDot } from "@/modules/blog/components/feed-row";
+import { RowTime } from "@/modules/blog/components/row-time";
+
+export function ConnectionFeedInsert({ event, locale }: { event: ConnectionEvent; locale: string }) {
+  const t = useTranslations("collections");
+
+  const isNote = event.blockType === "NOTE";
+  const author = event.username ?? (isNote ? event.curator.username : null);
+  const href = isNote
+    ? event.username && event.noteId
+      ? authorHref(event.username, locale, `notes/${event.noteId}`)
+      : blogPath(`/collections/${event.collectionId}`)
+    : event.slug && event.username
+      ? event.blockType === "HIGHLIGHT"
+        ? quoteHref(event.username, event.slug, event.quote ?? "", locale)
+        : postHref(event.username, event.slug, locale)
+      : null;
+  if (!href || !author) return null;
+
+  const title = isNote ? null : event.title;
+  const excerpt =
+    event.blockType === "HIGHLIGHT"
+      ? event.quote && `“${event.quote}”`
+      : isNote
+        ? event.body
+        : event.why || event.excerpt;
+  if (!title && !excerpt) return null;
+
   return (
-    <div
-      className="profile-fade rounded-card-lg border border-slate-200/80 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
-      style={{ "--idx": idx } as CSSProperties}
-    >
-      {lead && <RailHeading className="mb-2">{label}</RailHeading>}
-      <ConnectionEventCard event={event} locale={locale} />
-    </div>
+    <FeedRow
+      href={href}
+      title={title}
+      excerpt={excerpt}
+      excerptIsBody={isNote}
+      rowData={{ "data-connection-event": event.id }}
+      linkData={{
+        "data-bhv": "connection",
+        "data-bhv-id": isNote ? `note/${event.noteId ?? event.id}` : `${author}/${event.slug}`,
+      }}
+      top={
+        <>
+          <span className="min-w-0 truncate">
+            {t.rich("connectionMeta", {
+              curator: (chunks) => (
+                <BlogLink
+                  href={authorHref(event.curator.username, locale)}
+                  className="focus-ring rounded font-medium text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+                >
+                  {chunks}
+                </BlogLink>
+              ),
+              collection: (chunks) => (
+                <BlogLink
+                  href={blogPath(`/collections/${event.collectionId}`)}
+                  className="focus-ring rounded font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+                >
+                  {chunks}
+                </BlogLink>
+              ),
+              curatorName: event.curator.username,
+              collectionName: event.collectionTitle,
+            })}
+          </span>
+          {event.connectedAt && (
+            <>
+              <RowDot />
+              <RowTime iso={event.connectedAt} locale={locale} className="shrink-0" />
+            </>
+          )}
+        </>
+      }
+      byline={
+        <RowAuthor
+          username={author}
+          avatarUrl={author === event.curator.username ? event.curator.avatarUrl : null}
+          seed={author === event.curator.username ? event.curator.id : null}
+          locale={locale}
+        />
+      }
+    />
   );
 }

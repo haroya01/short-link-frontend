@@ -14,6 +14,7 @@ import { ImageEntryCard } from "./image-entry-card";
 import { LinkEntryCard } from "./link-entry-card";
 import { FeaturedLink } from "./featured-link";
 import { LinkRows } from "./link-rows";
+import { isProtectedLink } from "../_lib/protected-link";
 import { isImageUrl, youtubeId } from "../_lib/url-helpers";
 import { TextEntry } from "./text-entry";
 
@@ -32,6 +33,7 @@ function fadeStyle(idx: number): CSSProperties {
 type Item = { rows: PublicProfileEntry[] } | { entry: PublicProfileEntry };
 
 function isPlainLink(entry: PublicProfileEntry): boolean {
+  if (isProtectedLink(entry)) return true;
   const url = entry.originalUrl ?? "";
   return entry.kind === "LINK" && !isImageUrl(url) && !youtubeId(url);
 }

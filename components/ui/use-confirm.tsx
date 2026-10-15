@@ -24,7 +24,10 @@ export type ConfirmOptions = {
  * The dialog closes the instant the choice is made (decide → then act), the same shape as
  * window.confirm — so the caller's existing post-confirm logic is unchanged.
  */
-export function useConfirm(): [(opts: ConfirmOptions) => Promise<boolean>, ReactNode] {
+export function useConfirm({ layerClassName }: { layerClassName?: string } = {}): [
+  (opts: ConfirmOptions) => Promise<boolean>,
+  ReactNode,
+] {
   const [opts, setOpts] = useState<ConfirmOptions | null>(null);
   const resolver = useRef<((value: boolean) => void) | null>(null);
 
@@ -53,6 +56,7 @@ export function useConfirm(): [(opts: ConfirmOptions) => Promise<boolean>, React
       description={opts.description}
       confirmLabel={opts.confirmLabel}
       cancelLabel={opts.cancelLabel}
+      layerClassName={layerClassName}
       onOpenChange={(open) => {
         if (!open) settle(false);
       }}

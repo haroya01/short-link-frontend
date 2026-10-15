@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { mockFails } from "@/lib/api/mock-fail";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -14,11 +15,17 @@ export function getLikeStatus(postId: number): Promise<LikeStatus> {
 }
 
 export function likePost(postId: number): Promise<LikeStatus> {
-  if (USE_MOCKS) return Promise.resolve({ likeCount: 63, liked: true });
+  if (USE_MOCKS) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
+    return Promise.resolve({ likeCount: 63, liked: true });
+  }
   return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "PUT" });
 }
 
 export function unlikePost(postId: number): Promise<LikeStatus> {
-  if (USE_MOCKS) return Promise.resolve({ likeCount: 62, liked: false });
+  if (USE_MOCKS) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
+    return Promise.resolve({ likeCount: 62, liked: false });
+  }
   return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "DELETE" });
 }

@@ -23,8 +23,14 @@ function link(
     ogImage: null,
     clickCount: clicks,
     highlighted,
+    protected: false,
     content: null,
   };
+}
+
+// 비밀번호 링크 — 서버는 목적지와 미리보기 이미지를 빼고 준다(소유자가 단 제목이 없으면 ogTitle 도 null).
+function protectedLink(id: number, code: string, clicks: number): PublicProfileEntry {
+  return { ...link(id, code, "", "", clicks), originalUrl: null, ogTitle: null, protected: true };
 }
 
 // 표지가 있는 프로필을 백엔드 없이 그리기 위한 단색 표지(외부 이미지 없이 CI 에서도 뜬다).
@@ -85,6 +91,7 @@ function demoProfile(username: string): PublicProfile {
       link(2, "x", `https://x.com/${username}`, "X (Twitter)", 64),
       link(3, "yt", "https://youtube.com/", "YouTube 채널", 42),
       link(4, "ml", `mailto:${username}@kurl.me`, "이메일", 18),
+      protectedLink(5, "team-notes", 7),
     ],
   };
 }

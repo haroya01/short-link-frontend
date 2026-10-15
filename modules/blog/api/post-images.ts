@@ -5,12 +5,12 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** Why an image upload was rejected, as a code the caller localizes (keeps display copy out of this
  *  data module). `too-large` carries the sizes so the message can name the actual limit. */
-export type PostImageErrorCode = "not-image" | "too-large" | "upload-failed";
+export type PostImageErrorCode = "not-image" | "unsupported-format" | "too-large" | "upload-failed";
 
 export class PostImageUploadError extends Error {
   constructor(
     readonly code: PostImageErrorCode,
-    readonly detail?: { sizeMb: number; maxMb: number },
+    readonly detail?: Record<string, string | number>,
   ) {
     super(code);
     this.name = "PostImageUploadError";
@@ -20,14 +20,26 @@ export class PostImageUploadError extends Error {
 /** Map an upload rejection to a `postEditor` message key (+ interpolation values), so the two upload
  *  surfaces (editor body, cover picker) share one copy decision. Non-typed errors → the generic key. */
 export function postImageErrorMessageKey(e: unknown): {
-  key: "uploadNotImage" | "uploadTooLarge" | "imageError";
-  values?: Record<string, number>;
+  key: "uploadNotImage" | "uploadUnsupportedFormat" | "uploadTooLarge" | "imageError";
+  values?: Record<string, string | number>;
 } {
   if (e instanceof PostImageUploadError) {
     if (e.code === "not-image") return { key: "uploadNotImage" };
+    if (e.code === "unsupported-format" && e.detail) return { key: "uploadUnsupportedFormat", values: e.detail };
     if (e.code === "too-large" && e.detail) return { key: "uploadTooLarge", values: e.detail };
   }
   return { key: "imageError" };
+}
+
+/** The formats the server presigns for; anything else is refused there with a bare 403. */
+export const POST_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+export function postImageTypeError(file: File): PostImageUploadError | null {
+  if (!file.type.startsWith("image/")) return new PostImageUploadError("not-image");
+  if (POST_IMAGE_TYPES.includes(file.type)) return null;
+  return new PostImageUploadError("unsupported-format", {
+    format: file.type.slice("image/".length).split("+")[0].toUpperCase(),
+  });
 }
 
 export interface PresignResult {
@@ -80,9 +92,8 @@ export async function importPostImage(postId: number, url: string): Promise<stri
  * Two-step upload: presign → PUT → commit. 결과적으로 markdown 에 박을 수 있는 public URL 반환.
  */
 export async function uploadPostImage(postId: number, file: File): Promise<string> {
-  if (!file.type.startsWith("image/")) {
-    throw new PostImageUploadError("not-image");
-  }
+  const typeError = postImageTypeError(file);
+  if (typeError) throw typeError;
   // Mock: skip presign→PUT→commit (no backend / object store) and hand back a local object URL so the
   // image drops into the editor markdown immediately. Lives only for this session — fine for a demo.
   if (USE_MOCKS) return URL.createObjectURL(file);

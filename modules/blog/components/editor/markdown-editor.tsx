@@ -43,14 +43,18 @@ import {
 } from "lucide-react";
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
-import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
+import { LinkCardNode } from "@/modules/blog/components/editor/link-card-node";
+import { LinkPasteChoice, applyPastePlan, pasteSpot } from "@/modules/blog/components/editor/link-paste-choice";
+import { LinkDialog } from "@/modules/blog/components/editor/link-dialog";
+import { LinkActions } from "@/modules/blog/components/editor/link-actions";
+import { applyLinkResult, linkAt, linkRequest, type LinkAt, type OpenedLink } from "@/modules/blog/components/editor/link-commands";
+import { planPaste } from "@/modules/blog/lib/link-paste";
 import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
 import { convertCalloutContainers } from "@/modules/blog/lib/callout";
 import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "@/modules/blog/components/editor/markdown-serialization";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { TableHandles } from "@/modules/blog/components/editor/table-handles";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
-import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
 import {
   PlaceSearchDialog,
   mapsPlaceUrl,
@@ -66,7 +70,8 @@ import {
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { DropCursorLine } from "@/modules/blog/components/editor/drop-cursor";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
-import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
+import { POST_IMAGE_TYPES, postImageErrorMessageKey, postImageTypeError } from "@/modules/blog/api/post-images";
+import { useEdgeFade } from "@/hooks/use-edge-fade";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -222,8 +227,13 @@ export function MarkdownEditor({
     },
     [],
   );
-  // In-app URL prompt (link / embed) instead of window.prompt.
-  const [urlDialog, setUrlDialog] = useState<{ mode: "link" | "embed"; initial: string } | null>(null);
+  const [opened, setOpened] = useState<OpenedLink | null>(null);
+  const [linkActions, setLinkActions] = useState<LinkAt | null>(null);
+
+  function openLink(ed: Editor, mode: "link" | "card", edit: LinkAt | null = null) {
+    setLinkActions(null);
+    setOpened(linkRequest(ed, mode, edit, { cards: true }));
+  }
 
   // Open the file picker with a target width; "half" + multiple lets you pick 2 for a side-by-side row.
   function pickImage(opts: ImagePickOptions = {}) {
@@ -273,7 +283,12 @@ export function MarkdownEditor({
   // collapse the caret to just after it before the next insert — otherwise the second setImage replaces
   // the first and only one survives (drop / paste / multi-pick all hit this).
   async function uploadAndInsertMany(ed: Editor, files: File[], width?: ImageWidth) {
-    const placed = files.map((file) => {
+    const refused = files.map(postImageTypeError).find((e) => e != null);
+    if (refused) {
+      const { key, values } = postImageErrorMessageKey(refused);
+      onUploadError?.(t(key, values));
+    }
+    const placed = files.filter((file) => postImageTypeError(file) == null).map((file) => {
       const local = URL.createObjectURL(file);
       ed.chain().focus().setImage({ src: local, alt: altWithWidth(file.name, width) }).run();
       ed.commands.setTextSelection(ed.state.selection.to);
@@ -390,6 +405,14 @@ export function MarkdownEditor({
       MarkdownShortcuts,
       CodeMirrorBlock.configure({ languageLabel: t("codeLanguage") }),
       LinkCardNode,
+      LinkPasteChoice.configure({
+        labels: {
+          group: t("linkSheet.kind"),
+          link: t("linkSheet.asLink"),
+          card: t("linkSheet.asCard"),
+          video: t("linkSheet.asVideo"),
+        },
+      }),
       ImageWithCaption.configure({ inline: false, captionPlaceholder: t("imageCaptionPlaceholder") }),
       AlignableTable.configure({ resizable: false }),
       TableRow,
@@ -455,17 +478,14 @@ export function MarkdownEditor({
             return true;
           }
         }
-        // A bare URL pasted onto an empty line → a live link-preview card (velog/Notion). Pasting a
-        // URL over text or into a non-empty line stays a normal link (default behaviour).
-        if (text && LINK_CARD_URL_RE.test(text)) {
-          const { $from, empty } = editor.state.selection;
-          const para = $from.parent;
-          if (empty && para.type.name === "paragraph" && para.content.size === 0) {
-            event.preventDefault();
-            editor.chain().focus().insertContent({ type: "linkCard", attrs: { url: text } }).run();
-            return true;
-          }
-        }
+        const plan = planPaste(text, pasteSpot(editor.state));
+        if (plan.kind === "default") return false;
+        event.preventDefault();
+        applyPastePlan(editor, plan);
+        return true;
+      },
+      handleClick: (view, pos, event) => {
+        setLinkActions(linkAt(view, pos, event));
         return false;
       },
       handleDrop: (view, event) => {
@@ -540,14 +560,14 @@ export function MarkdownEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <BubbleBar editor={editor} onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })} />
+      <BubbleBar editor={editor} onEditLink={() => openLink(editor, "link")} />
       <ImageBubble editor={editor} />
       <TableHandles editor={editor} />
       <EditorBlockHandle editor={editor} />
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept={POST_IMAGE_TYPES.join(",")}
         className="hidden"
         onChange={async (e) => {
           const files = Array.from(e.target.files ?? []);
@@ -563,10 +583,8 @@ export function MarkdownEditor({
       <EditorToolbar
         editor={editor}
         onPickImage={pickImage}
-        onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
-        onPickLink={() =>
-          setUrlDialog({ mode: "link", initial: (editor.getAttributes("link").href as string | undefined) ?? "" })
-        }
+        onPickEmbed={() => openLink(editor, "card")}
+        onPickLink={() => openLink(editor, "link")}
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
           breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
@@ -577,7 +595,7 @@ export function MarkdownEditor({
         editor={editor}
         onPickImage={pickImage}
         onPickPlace={() => setPlaceOpen(true)}
-        onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
+        onPickEmbed={() => openLink(editor, "card")}
       />
       <PlaceSearchDialog
         open={placeOpen}
@@ -588,36 +606,24 @@ export function MarkdownEditor({
           editor.chain().focus().insertContent(`\n${mapsPlaceUrl(place)}\n`).run();
         }}
       />
-      <UrlDialog
-        open={!!urlDialog}
-        title={urlDialog?.mode === "embed" ? t("urlDialog.embedTitle") : t("urlDialog.linkTitle")}
-        placeholder={urlDialog?.mode === "embed" ? t("urlDialog.embedPlaceholder") : t("urlDialog.linkPlaceholder")}
-        initialValue={urlDialog?.initial ?? ""}
-        allowRemove={urlDialog?.mode === "link" && !!urlDialog.initial}
-        askLabel={urlDialog?.mode === "link" && !urlDialog.initial && editor.state.selection.empty}
-        // 닫힐 때 포커스를 에디터로 돌려놓는다 — 백드롭/Esc 로 닫으면 포커스가 body 로 떨어져
-        // 다음 타이핑이 허공에 사라졌다(제출 경로는 이미 focus 를 잡으므로 무해한 중복).
+      <LinkDialog
+        request={opened?.request ?? null}
         onClose={() => {
-          setUrlDialog(null);
+          setOpened(null);
           editor.chain().focus().run();
         }}
-        onSubmit={(url, label) => {
-          if (urlDialog?.mode === "embed") {
-            // Insert a live link-preview card node (serializes back to the bare URL → EMBED block).
-            editor.chain().focus().insertContent({ type: "linkCard", attrs: { url } }).run();
-          } else if (editor.state.selection.empty && !editor.isActive("link")) {
-            editor
-              .chain()
-              .focus()
-              .insertContent({ type: "text", text: label || url, marks: [{ type: "link", attrs: { href: url } }] })
-              .unsetMark("link")
-              .run();
-          } else {
-            editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-          }
+        onSubmit={(result) => {
+          if (opened) applyLinkResult(editor, result, opened);
         }}
-        onRemove={() => editor.chain().focus().extendMarkRange("link").unsetLink().run()}
       />
+      {linkActions && (
+        <LinkActions
+          editor={editor}
+          actions={linkActions}
+          onEdit={() => openLink(editor, "link", linkActions)}
+          onClose={() => setLinkActions(null)}
+        />
+      )}
     </div>
   );
 }
@@ -642,6 +648,10 @@ function EditorToolbar({
   onPickLink: () => void;
 }) {
   const t = useTranslations("postEditor");
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const edgeFade = useEdgeFade(scrollerRef);
+  const [touch, setTouch] = useState(false);
+  useEffect(() => setTouch(window.matchMedia?.("(pointer: coarse)").matches ?? false), []);
   const a = useEditorState({
     editor,
     selector: ({ editor }) => ({
@@ -659,10 +669,12 @@ function EditorToolbar({
   });
 
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
+  const image: Item = { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() };
   const groups: Item[][] = [
     [
       { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
       { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: onPickLink },
+      ...(touch ? [image] : []),
     ],
     [
       { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
@@ -675,7 +687,7 @@ function EditorToolbar({
       { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],
     [
-      { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
+      ...(touch ? [] : [image]),
       { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
       { icon: PanelTop, label: t("slash.embed"), run: onPickEmbed },
       { icon: Minus, label: t("slash.divider"), run: () => editor.chain().focus().setHorizontalRule().run() },
@@ -692,7 +704,10 @@ function EditorToolbar({
   return (
     <div className="relative border-b border-slate-100 dark:border-slate-800">
       <div
+        ref={scrollerRef}
         data-testid="editor-toolbar"
+        {...edgeFade.attrs}
+        style={edgeFade.style}
         className="flex items-center gap-0.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {groups.map((group, gi) => (
@@ -715,10 +730,6 @@ function EditorToolbar({
           </div>
         ))}
       </div>
-      {/* Right-edge fade — signals the toolbar scrolls horizontally where it can't fit (390px crops the
-          trailing groups). Same scroll-fade idiom as the discovery rail; sm+ the toolbar fits, so the
-          hint hides. */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:hidden" />
     </div>
   );
 }

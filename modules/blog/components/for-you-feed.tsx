@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Binoculars, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listForYouFeed } from "@/modules/blog/api/follows";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
-import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
@@ -20,7 +21,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
  */
 export function ForYouFeed({ locale }: { locale: string }) {
   const t = useTranslations("publicFeed");
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
@@ -88,21 +89,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
   if (ready && !authenticated) {
     return (
       <div className="mt-8">
-        <FeedEmpty
-          mark
-          title={t("forYouSignedOutTitle")}
-          body={t("forYouSignedOut")}
-          action={
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
-                {t("signIn")}
-              </button>
-              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
-                {t("followingBrowseLatest")}
-              </Link>
-            </div>
-          }
-        />
+        <SignInEmptyState reason="forYou" icon={Binoculars} />
       </div>
     );
   }
@@ -114,7 +101,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
         <button
           type="button"
           onClick={() => setReloadKey((k) => k + 1)}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+          className="inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
         >
           {t("retry")}
         </button>
@@ -133,8 +120,8 @@ export function ForYouFeed({ locale }: { locale: string }) {
   if (items.length === 0) {
     return (
       <div className="mt-4">
-        <FeedEmpty
-          mark
+        <BlogEmpty
+          icon={Binoculars}
           title={t("forYouEmptyTitle")}
           body={t("forYouEmpty")}
           action={
@@ -145,7 +132,7 @@ export function ForYouFeed({ locale }: { locale: string }) {
         >
           {/* Cold-start: For You can't personalize without follows — seed the graph with curators. */}
           <SuggestedCurators locale={locale} />
-        </FeedEmpty>
+        </BlogEmpty>
       </div>
     );
   }

@@ -10,6 +10,7 @@ import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
+import { freshToken, mockFailure, readToken } from "@/lib/api/client";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -22,6 +23,7 @@ export interface PublicAuthor {
   username: string;
   bio: string | null;
   avatarUrl: string | null;
+  displayName?: string | null;
   /** Whether this user also has a public link-in-bio profile (u/{username}). Optional — absent until
    *  the backend supplies it, so the cross-link to the profile stays hidden rather than 404-ing. */
   hasLinkInBio?: boolean;
@@ -49,13 +51,44 @@ export interface PublicSeriesNavLink {
   title: string;
 }
 
+export type SeriesItemType = "POST" | "NOTE";
+
+/** A series neighbour that may be a post (slug) or a note (noteId). A note's title is its excerpt —
+ *  or its content warning when it carries one. */
+export interface SeriesItemLink {
+  type: SeriesItemType;
+  slug: string | null;
+  noteId: number | null;
+  title: string;
+}
+
 export interface PublicPostSeriesNav {
   slug: string;
   title: string;
+  /** Published posts only. */
   position: number;
   total: number;
   prev: PublicSeriesNavLink | null;
   next: PublicSeriesNavLink | null;
+  /** Posts and readable notes in series order. Absent from servers that predate notes in series. */
+  itemPosition?: number;
+  itemTotal?: number;
+  prevItem?: SeriesItemLink | null;
+  nextItem?: SeriesItemLink | null;
+}
+
+export interface SeriesNoteSummary {
+  id: number;
+  body: string;
+  contentWarning: string | null;
+  excerpt: string | null;
+  createdAt: string;
+}
+
+export interface PublicSeriesItem {
+  type: SeriesItemType;
+  post: PublicPostListItem | null;
+  note: SeriesNoteSummary | null;
 }
 
 export interface PublicCtaInfo {
@@ -90,7 +123,9 @@ export interface PublicSeriesListItem {
   id: number;
   slug: string;
   title: string;
+  /** Published posts only; a series of notes alone lists with 0. */
   postCount: number;
+  itemCount?: number;
   /** Distinct tags across the series' member posts — backs the series index's tag filter. Optional:
    *  absent until the backend aggregates it, so the filter rail simply hides rather than mis-filtering
    *  (treated as "no tags" everywhere it's read). */
@@ -111,6 +146,15 @@ export interface SeriesPostRef {
   ogImageUrl?: string | null;
 }
 
+/** A card's preview member — a post (slug) or a note (noteId, its excerpt as the title). */
+export interface SeriesCardItem {
+  type: SeriesItemType;
+  slug: string | null;
+  noteId: number | null;
+  title: string;
+  ogImageUrl: string | null;
+}
+
 /** A series as it appears on the discovery feed (cross-author series card). */
 export interface PublicSeriesCard {
   /** Series id — the target for the subscribe toggle. */
@@ -119,15 +163,21 @@ export interface PublicSeriesCard {
   slug: string;
   title: string;
   postCount: number;
+  itemCount?: number;
   lastPublishedAt: string;
   /** First few published members (in series order) — the card's mini table of contents. */
   posts: SeriesPostRef[];
+  /** First few members, posts and notes mixed in series order. */
+  items?: SeriesCardItem[];
 }
 
 export interface PublicSeriesDetail {
   author: PublicAuthor;
   series: PublicSeriesListItem;
+  /** Published posts only. */
   posts: PublicPostListItem[];
+  /** Posts and readable notes in series order. */
+  items?: PublicSeriesItem[];
 }
 
 export interface PublicFeedItem {
@@ -138,6 +188,8 @@ export interface PublicFeedItem {
   title: string;
   excerpt: string | null;
   ogImageUrl: string | null;
+  /** Feed-row thumbnail: the cover only when the author chose it, else null. Absent on older servers. */
+  thumbnailUrl?: string | null;
   languageTag: string;
   tags: string[];
   publishedAt: string;
@@ -176,11 +228,28 @@ export type FetchResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 404 | 410 | "error" };
 
-async function fetchPublic<T>(
+// A signed-in reader's discovery lists are their own: given the token, the server leaves out authors
+// they blocked or muted and authors who blocked them. Only the browser holds the token, so server
+// renders stay anonymous ISR and a cached page never carries one reader's list.
+function viewerToken(): Promise<string | null> {
+  return typeof window === "undefined" ? Promise.resolve(null) : freshToken();
+}
+
+export function hasViewer(): boolean {
+  return typeof window !== "undefined" && !!readToken();
+}
+
+export async function viewerHeaders(): Promise<HeadersInit | undefined> {
+  const token = await viewerToken();
+  return token ? { Authorization: `Bearer ${token}` } : undefined;
+}
+
+export async function fetchPublic<T>(
   path: string,
   opts?: { noStore?: boolean },
 ): Promise<FetchResult<T>> {
   const url = `${API_BASE}${path}`;
+  const token = await viewerToken();
   // Detail lookups fetch with no-store: fetch can't cache only the 200 and skip the 404, so an ISR
   // window would serve a stale 404 on the publish→share path (a just-published post staying 404 for
   // up to the revalidate window). List/feed fetches stay on ISR — a momentarily missing card is far
@@ -192,7 +261,11 @@ async function fetchPublic<T>(
   try {
     const res = await fetchWithTimeout(
       url,
-      opts?.noStore ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } },
+      token
+        ? { cache: "no-store", headers: { Authorization: `Bearer ${token}` } }
+        : opts?.noStore
+          ? { cache: "no-store" }
+          : { next: { revalidate: REVALIDATE_SECONDS } },
     );
     if (res.status === 200) {
       const data = (await res.json()) as T;
@@ -212,7 +285,9 @@ export function listPublicFeed(
   size = 20,
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
-  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort }) });
+  if (blogMocks) {
+    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, viewer: hasViewer() }) });
+  }
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
   );
@@ -229,7 +304,9 @@ export function listFeedByTag(
   page = 0,
   size = 24,
 ): Promise<FetchResult<PublicFeedView>> {
-  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ tag, sort }) });
+  if (blogMocks) {
+    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ tag, sort, viewer: hasViewer() }) });
+  }
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&sort=${sort}&page=${page}&size=${size}`,
   );
@@ -244,7 +321,10 @@ export function searchPublicFeed(
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks)
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query }) });
+    return (
+      mockFailure("search") ??
+      Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query, viewer: hasViewer() }) })
+    );
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
   );
@@ -309,7 +389,7 @@ export interface SuggestedAuthor {
 /** Authors ranked by published-post count — the discovery rail's 추천 작가 list. */
 export function listSuggestedAuthors(limit = 5): Promise<FetchResult<SuggestedAuthor[]>> {
   if (blogMocks)
-    return Promise.resolve({ ok: true, data: blogMocks.MOCK_SUGGESTED_AUTHORS.slice(0, limit) });
+    return Promise.resolve({ ok: true, data: blogMocks.mockSuggestedAuthors(limit, hasViewer()) });
   return fetchPublic<SuggestedAuthor[]>(`/api/v1/public/authors?limit=${limit}`);
 }
 

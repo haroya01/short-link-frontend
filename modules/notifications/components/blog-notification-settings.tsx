@@ -4,12 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import {
   AtSign,
   Bell,
+  BellRing,
   BookMarked,
+  ChartBar,
   GitBranch,
   Heart,
+  Highlighter,
   Link2,
+  Lock,
   MessageCircle,
+  Pencil,
+  Quote,
+  Repeat2,
   Reply,
+  TextQuote,
+  User,
   UserPlus,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -34,23 +43,83 @@ import {
  * notifications get produced at all).
  */
 
-/** Render order + icon per type. Labels/hints come from the `notifications` catalog by type key. */
-const ROWS: { type: NotificationType; icon: LucideIcon; labelKey: string; hintKey: string }[] = [
-  { type: "LIKE", icon: Heart, labelKey: "prefLike", hintKey: "prefLikeHint" },
-  { type: "COMMENT", icon: MessageCircle, labelKey: "prefComment", hintKey: "prefCommentHint" },
-  { type: "REPLY", icon: Reply, labelKey: "prefReply", hintKey: "prefReplyHint" },
-  { type: "MENTION", icon: AtSign, labelKey: "prefMention", hintKey: "prefMentionHint" },
-  { type: "FOLLOW", icon: UserPlus, labelKey: "prefFollow", hintKey: "prefFollowHint" },
+type Row = { type: NotificationType; icon: LucideIcon; labelKey: string; hintKey: string };
+
+export const SECTIONS: { titleKey: string; rows: Row[] }[] = [
   {
-    type: "SERIES_SUBSCRIBE",
-    icon: BookMarked,
-    labelKey: "prefSeriesSubscribe",
-    hintKey: "prefSeriesSubscribeHint",
+    titleKey: "prefSectionPosts",
+    rows: [
+      { type: "LIKE", icon: Heart, labelKey: "prefLike", hintKey: "prefLikeHint" },
+      { type: "COMMENT", icon: MessageCircle, labelKey: "prefComment", hintKey: "prefCommentHint" },
+      { type: "HIGHLIGHT", icon: Highlighter, labelKey: "prefHighlight", hintKey: "prefHighlightHint" },
+      { type: "POST_QUOTE", icon: Quote, labelKey: "prefPostQuote", hintKey: "prefPostQuoteHint" },
+      { type: "CONNECTED", icon: Link2, labelKey: "prefConnected", hintKey: "prefConnectedHint" },
+      {
+        type: "POST_FIRST_READER",
+        icon: User,
+        labelKey: "prefPostFirstReader",
+        hintKey: "prefPostFirstReaderHint",
+      },
+      {
+        type: "POST_READ_MILESTONE",
+        icon: User,
+        labelKey: "prefPostReadMilestone",
+        hintKey: "prefPostReadMilestoneHint",
+      },
+    ],
   },
-  { type: "NEW_POST", icon: Bell, labelKey: "prefNewPost", hintKey: "prefNewPostHint" },
-  { type: "CONNECTED", icon: Link2, labelKey: "prefConnected", hintKey: "prefConnectedHint" },
-  { type: "PATH_GREW", icon: GitBranch, labelKey: "prefPathGrew", hintKey: "prefPathGrewHint" },
+  {
+    titleKey: "prefSectionNotes",
+    rows: [
+      { type: "NOTE_LIKE", icon: Heart, labelKey: "prefNoteLike", hintKey: "prefNoteLikeHint" },
+      { type: "NOTE_REPOST", icon: Repeat2, labelKey: "prefNoteRepost", hintKey: "prefNoteRepostHint" },
+      { type: "NOTE_REPLY", icon: Reply, labelKey: "prefNoteReply", hintKey: "prefNoteReplyHint" },
+      { type: "NOTE_QUOTE", icon: Quote, labelKey: "prefNoteQuote", hintKey: "prefNoteQuoteHint" },
+      { type: "NOTE_EMBED", icon: TextQuote, labelKey: "prefNoteEmbed", hintKey: "prefNoteEmbedHint" },
+    ],
+  },
+  {
+    titleKey: "prefSectionConversation",
+    rows: [
+      { type: "REPLY", icon: Reply, labelKey: "prefReply", hintKey: "prefReplyHint" },
+      { type: "COMMENT_LIKE", icon: Heart, labelKey: "prefCommentLike", hintKey: "prefCommentLikeHint" },
+      { type: "MENTION", icon: AtSign, labelKey: "prefMention", hintKey: "prefMentionHint" },
+      { type: "NOTE_MENTION", icon: AtSign, labelKey: "prefNoteMention", hintKey: "prefNoteMentionHint" },
+    ],
+  },
+  {
+    titleKey: "prefSectionPeople",
+    rows: [
+      { type: "FOLLOW", icon: UserPlus, labelKey: "prefFollow", hintKey: "prefFollowHint" },
+      { type: "FOLLOW_REQUEST", icon: Lock, labelKey: "prefFollowRequest", hintKey: "prefFollowRequestHint" },
+      { type: "REMOTE_FOLLOW", icon: UserPlus, labelKey: "prefRemoteFollow", hintKey: "prefRemoteFollowHint" },
+      {
+        type: "SERIES_SUBSCRIBE",
+        icon: BookMarked,
+        labelKey: "prefSeriesSubscribe",
+        hintKey: "prefSeriesSubscribeHint",
+      },
+    ],
+  },
+  {
+    titleKey: "prefSectionSubscriptions",
+    rows: [
+      { type: "NEW_POST", icon: Bell, labelKey: "prefNewPost", hintKey: "prefNewPostHint" },
+      { type: "NOTE_POST", icon: BellRing, labelKey: "prefNotePost", hintKey: "prefNotePostHint" },
+      { type: "NOTE_POLL", icon: ChartBar, labelKey: "prefNotePoll", hintKey: "prefNotePollHint" },
+      { type: "NOTE_EDIT", icon: Pencil, labelKey: "prefNoteEdit", hintKey: "prefNoteEditHint" },
+      { type: "PATH_GREW", icon: GitBranch, labelKey: "prefPathGrew", hintKey: "prefPathGrewHint" },
+    ],
+  },
 ];
+
+const ROWS = SECTIONS.flatMap((section) => section.rows);
+
+export function servedSections(prefs: BlogNotificationPreferences): typeof SECTIONS {
+  return SECTIONS.map((section) => ({ ...section, rows: section.rows.filter((row) => row.type in prefs) })).filter(
+    (section) => section.rows.length > 0,
+  );
+}
 
 export function BlogNotificationSettings() {
   const t = useTranslations("notifications");
@@ -78,7 +147,7 @@ export function BlogNotificationSettings() {
 
   async function toggle(type: NotificationType) {
     if (!prefs || pending[type]) return;
-    const next = !prefs[type];
+    const next = !(prefs[type] ?? true);
     setPrefs({ ...prefs, [type]: next }); // optimistic
     setPending((p) => ({ ...p, [type]: true }));
     try {
@@ -114,32 +183,33 @@ export function BlogNotificationSettings() {
           ))}
         </div>
       ) : (
-        <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200 p-2 dark:divide-slate-800 dark:border-slate-800">
-          {ROWS.map(({ type, icon: Icon, labelKey, hintKey }) => {
-            const on = prefs[type];
-            return (
-              <div
-                key={type}
-                className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm"
-              >
-                <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
-                  <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
-                  <span className="flex flex-col">
-                    {t(labelKey)}
-                    <span className="text-[12px] text-slate-500 dark:text-slate-400">
-                      {t(hintKey)}
+        <div className="space-y-5">
+          {servedSections(prefs).map((section) => (
+            <div key={section.titleKey}>
+              <h3 className="mb-1.5 px-1 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
+                {t(section.titleKey)}
+              </h3>
+              <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200 p-2 dark:divide-slate-800 dark:border-slate-800">
+                {section.rows.map(({ type, icon: Icon, labelKey, hintKey }) => (
+                  <div key={type} className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm">
+                    <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
+                      <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
+                      <span className="flex flex-col">
+                        {t(labelKey)}
+                        <span className="text-[12px] text-slate-500 dark:text-slate-400">{t(hintKey)}</span>
+                      </span>
                     </span>
-                  </span>
-                </span>
-                <Switch
-                  checked={on}
-                  aria-label={t(labelKey)}
-                  disabled={Boolean(pending[type])}
-                  onClick={() => toggle(type)}
-                />
+                    <Switch
+                      checked={prefs[type] ?? true}
+                      aria-label={t(labelKey)}
+                      disabled={Boolean(pending[type])}
+                      onClick={() => toggle(type)}
+                    />
+                  </div>
+                ))}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </section>

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { Link } from "@/i18n/navigation";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import type { LinkStats } from "@/types";
 
 export function SettingsTab({
@@ -57,7 +58,7 @@ export function SettingsTab({
 }
 
 /**
- * The /demo Settings surface. Combines a slim top banner (one CTA to /login) with the two
+ * The /demo Settings surface. Combines a slim top banner (one sign-in CTA) with the two
  * section mirrors below. The mirrors render the same chrome the dashboard does — A/B
  * destinations and webhooks — only with disabled controls and seeded rows so visitors can read
  * the actual feature shape without an account. Any click on a disabled control fires a toast
@@ -171,12 +172,13 @@ function DemoSettingsBanner() {
           <p className="mt-0.5 text-accent-700/90">{t("desc")}</p>
         </div>
       </div>
-      <Link
-        href="/login"
+      <SignInLink
+        reason="settings"
+        next="/dashboard"
         className="inline-flex items-center gap-1 rounded-md border border-accent-300 bg-white dark:bg-slate-900 px-3 py-1.5 font-medium text-accent-800 dark:text-accent-300 hover:bg-accent-50"
       >
         {t("cta")}
-      </Link>
+      </SignInLink>
     </div>
   );
 }

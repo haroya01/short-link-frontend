@@ -212,6 +212,7 @@ h1, h2, h3, p {
 :lang(ja) {
   word-break: normal;
   word-break: auto-phrase;
+  text-spacing-trim: trim-start;
 }
 
 /* ja 활자 = Pretendard JP 우선(레이아웃이 ja 로케일에서만 스타일시트를 싣는다). KR판 단독으로는
@@ -293,12 +294,18 @@ mark.kurl-highlight {
 mark.kurl-highlight--thread {
   box-shadow: inset 0 -2px 0 rgba(5, 150, 105, 0.7);
 }
+mark.kurl-highlight--mine {
+  background-color: rgba(5, 150, 105, 0.2);
+}
 .dark mark.kurl-highlight {
   background-color: rgba(16, 185, 129, 0.16);
   box-shadow: inset 0 -1px 0 rgba(52, 211, 153, 0.45);
 }
 .dark mark.kurl-highlight--thread {
   box-shadow: inset 0 -2px 0 rgba(52, 211, 153, 0.75);
+}
+.dark mark.kurl-highlight--mine {
+  background-color: rgba(16, 185, 129, 0.3);
 }
 
 @layer utilities {
@@ -485,6 +492,14 @@ mark.kurl-highlight--thread {
     height: 44px;
     transform: translate(-50%, -50%);
   }
+  .row-raise {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .row-raise :is(a, button, input, label, select, textarea, [role="button"]) {
+    pointer-events: auto;
+  }
   .profile-card:active {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
      * lift mid-press, so the cursor and the card track each other instead of fighting. */
@@ -607,7 +622,7 @@ html[data-first-load] .profile-fade {
     @apply rounded bg-slate-100 px-1 py-0.5 text-[12px] font-mono;
   }
   .prose-text-block pre {
-    @apply mb-1.5 overflow-x-auto rounded-md bg-slate-900 p-3 text-[12px] text-slate-100;
+    @apply mb-1.5 overflow-x-auto rounded-surface bg-slate-900 p-3 text-[12px] text-slate-100;
   }
   .prose-text-block pre code {
     @apply bg-transparent p-0 text-slate-100;
@@ -698,7 +713,7 @@ html[data-first-load] .profile-fade {
     @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800 dark:bg-slate-800 dark:text-accent-300;
   }
   .prose-post pre {
-    @apply my-6 overflow-x-auto rounded-xl bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
+    @apply my-6 overflow-x-auto rounded-surface bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
   }
   .prose-post pre code {
     @apply bg-transparent p-0 text-slate-100;
@@ -741,7 +756,7 @@ html[data-first-load] .profile-fade {
     @apply h-auto max-w-full;
   }
   .prose-post figure img {
-    @apply mx-auto rounded-2xl ring-1 ring-slate-200/70 dark:ring-slate-800;
+    @apply mx-auto rounded-surface ring-1 ring-slate-200/70 dark:ring-slate-800;
   }
   .prose-post figcaption {
     @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-500 dark:text-slate-400;
@@ -1652,20 +1667,6 @@ body[data-cookie-consent="visible"] {
     animation: none !important;
     opacity: 1 !important;
   }
-  /* 시리즈 덱 넘김: 움직임 최소화 요청 시 방향성 슬라이드를 버리고 제자리 크로스페이드만 남긴다
-     (translateX 없이 opacity 만). 나가는 장의 inline transform 도 컴포넌트에서 reduce-motion 을
-     읽어 슬라이드를 빼므로, 여기선 들어오는 장을 순수 페이드로 되돌린다. */
-  .animate-series-flip-in {
-    animation: series-crossfade 260ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
-  }
-}
-@keyframes series-crossfade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 /* 지연 로드 이미지 페이드인 — 픽셀이 도착하는 순간 "뚝" 나타나던 걸 지운다. ImageFade
@@ -1952,11 +1953,11 @@ html:not([data-theme-vt])::view-transition-new(root) {
    동안에도 사진은 또렷해야 하므로 old/new 의 기본 crossfade 만 남기고:
    - object-fit: cover + 100%: 비율이 다른 두 스냅샷이 그룹 박스에 늘어붙지 않게(1차 폐기 사유).
    - isolation 해제 + blend 정상화: 교차 중 반투명 겹침이 어둡게 번지는 것 방지.
-   - 그룹에 카드/히어로 공통의 rounded-2xl 을 줘 비행 중에도 모서리가 각지지 않게. */
+   - 그룹에 카드/히어로 공통의 rounded-surface 를 줘 비행 중에도 모서리가 각지지 않게. */
 ::view-transition-group(post-cover) {
   animation-duration: 360ms;
   animation-timing-function: var(--ease);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   overflow: clip;
 }
 ::view-transition-image-pair(post-cover) {

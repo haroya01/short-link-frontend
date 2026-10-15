@@ -7,7 +7,7 @@ import { CLIENT_MESSAGE_SCOPES, pickMessages } from "@/i18n/client-namespaces";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { FirstLoadMark } from "@/components/common/first-load-mark";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
@@ -29,9 +29,11 @@ import "../globals.css";
  * lean on weight (600/700) + tight tracking (`-0.025em` via `.tracking-headline`) for editorial
  * density instead of a display swap.
  */
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// next/font/google 은 빌드 때 받은 구글 CSS 로 변수 클래스 해시를 정해, 서버·클라이언트 웹팩 캐시가
+// 갈리면 HTML 클래스와 CSS 클래스가 어긋나 --font-mono 가 빈다. 저장소 파일이면 해시가 고정된다.
+const jetbrainsMono = localFont({
+  src: "../fonts/jetbrains-mono/JetBrainsMono-Latin.woff2",
+  weight: "400 600",
   variable: "--font-mono",
   display: "swap",
   // 보조 글꼴(URL·숫자·코드) — 모든 화면 머리의 preload 로 본문 글꼴·스크립트와 대역을 다투지 않게,
@@ -255,25 +257,21 @@ export default async function RootLayout({
           data-pretendard=""
           href="/pretendard/pretendardvariable-dynamic-subset.min.css"
         />
-        {/* ja 로케일만: Pretendard JP(동일 파운드리·메트릭 호환)를 겹쳐 일본 신자체 자형을
-            네이티브로. KR판 단독으로는 신자체 한자(読·気 등) 상당수가 글자 단위 시스템 폴백으로
-            떨어져 자형 혼합("중화폰트" 질감)이 났다 — 일본 독자 즉시 이탈 신호. 로딩 패턴은 위
-            KR판과 동일한 비차단 3종 세트, globals.css 의 :lang(ja) font-family 가 소비한다. */}
+        {/* Pretendard JP — globals.css 의 [lang|="ja"] 가 쓴다. 화면 로케일과 상관없이 lang="ja" 로
+            표시된 사용자 글에도 걸리므로 모든 로케일에 싣는다. */}
         {locale === "ja" && (
-          <>
-            <link
-              rel="preload"
-              as="style"
-              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
-            />
-            <link
-              rel="stylesheet"
-              media="print"
-              data-pretendard=""
-              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
-            />
-          </>
+          <link
+            rel="preload"
+            as="style"
+            href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+          />
         )}
+        <link
+          rel="stylesheet"
+          media="print"
+          data-pretendard=""
+          href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+        />
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
@@ -288,13 +286,11 @@ export default async function RootLayout({
             rel="stylesheet"
             href="/pretendard/pretendardvariable-dynamic-subset.min.css"
           />
-          {locale === "ja" && (
-            // eslint-disable-next-line @next/next/no-css-tags
-            <link
-              rel="stylesheet"
-              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
-            />
-          )}
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link
+            rel="stylesheet"
+            href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
+          />
         </noscript>
       </head>
       <body className="min-h-screen flex flex-col">

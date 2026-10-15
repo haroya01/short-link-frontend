@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { askToSignIn } from "@/components/auth/login-prompt";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
+import { dockButton } from "@/modules/blog/components/dock-button";
+import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 
 /**
  * "연결" — connect the whole post to a collection or PATH, at the same rank as 공감/저장. The verb
@@ -14,10 +17,18 @@ import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
  * connection is authored per user. The sheet itself (pick collection → the one-line 왜) is the shared
  * ConnectSheet already used on highlights; here it just targets the post block.
  */
-export function ConnectButton({ postId, postTitle }: { postId: number; postTitle: string }) {
+export function ConnectButton({
+  postId,
+  postTitle,
+  variant = "icon",
+}: {
+  postId: number;
+  postTitle: string;
+  variant?: "icon" | "dock";
+}) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
-  const { authenticated, signInWithGoogle } = useAuth();
+  const { authenticated } = useAuth();
   // Pop the icon only on a real click, matching the like/bookmark gate (never on mount).
   const [interacted, setInteracted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -25,7 +36,7 @@ export function ConnectButton({ postId, postTitle }: { postId: number; postTitle
   function onClick() {
     setInteracted(true);
     if (!authenticated) {
-      signInWithGoogle();
+      askToSignIn("collect");
       return;
     }
     setOpen(true);
@@ -38,14 +49,12 @@ export function ConnectButton({ postId, postTitle }: { postId: number; postTitle
         onClick={onClick}
         aria-haspopup="dialog"
         aria-label={t("connectPost", { title: postTitle })}
-        className="touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
+        title={variant === "icon" ? tc("connectLabel") : undefined}
+        className={variant === "dock" ? dockButton() : actionIconButton()}
       >
         <span className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
-          <Link2 className="h-4 w-4" />
+          <Link2 className={ACTION_ICON} />
         </span>
-        {/* Icon + word (동형 with the share button) — "연결" is the verb, so labelling it makes the
-            action legible instead of a bare glyph the reader has to guess. */}
-        <span>{tc("connectLabel")}</span>
       </button>
       {open && (
         <ConnectSheet

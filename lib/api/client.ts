@@ -16,6 +16,19 @@ export const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 /** Demo/mock mode (NEXT_PUBLIC_USE_MOCKS=1) — lets the app render + interact without a backend. */
 const MOCKS_ON = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+const MOCK_SIGNED_OUT_KEY = "kurl:mock-signed-out";
+const MOCK_FAIL_KEY = "kurl:mock-fail";
+
+const MOCK_EMPTY_KEY = "kurl:mock-empty";
+
+export function mockEmpty(name: string): boolean {
+  return MOCKS_ON && readStorageString(MOCK_EMPTY_KEY)?.split(",").includes(name) === true;
+}
+
+export function mockFailure(name: string): Promise<never> | null {
+  if (!MOCKS_ON || !readStorageString(MOCK_FAIL_KEY)?.split(",").includes(name)) return null;
+  return Promise.reject(new ApiError(500, { status: 500, title: "Mock failure", detail: name }));
+}
 // 링크 목 응답(데모 통계 포함)은 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 와 픽스처가
 // 번들에서 빠진다. 정적 import 로 되돌리면 모든 라우트에 목 데이터가 다시 실린다.
 const linksMocks: typeof import("@/lib/api/_links-mocks") | null =
@@ -75,6 +88,7 @@ export async function bootstrapSession(): Promise<boolean> {
   // mock viewer — making the signed-in UX (follow, comments, following feed, header logout)
   // exercisable without a backend.
   if (MOCKS_ON) {
+    if (readStorageString(MOCK_SIGNED_OUT_KEY) === "1") return false;
     if (!readToken()) setToken("mock-session-token");
     return true;
   }
@@ -100,6 +114,27 @@ export async function completeSignIn(): Promise<boolean> {
     return true;
   }
   return (await tryRefresh()) != null;
+}
+
+const EXPIRY_MARGIN_MS = 30_000;
+
+function expiresAt(token: string): number | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const claims = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as { exp?: unknown };
+    return typeof claims.exp === "number" ? claims.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function freshToken(): Promise<string | null> {
+  const token = readToken();
+  if (!token) return null;
+  const exp = expiresAt(token);
+  if (exp !== null && exp - Date.now() < EXPIRY_MARGIN_MS) return tryRefresh();
+  return token;
 }
 
 async function tryRefresh(): Promise<string | null> {
@@ -289,12 +324,13 @@ const MOCK_ME: Me = {
   email: "dohyun@kurl.me",
   role: "USER",
   username: "dohyun",
+  displayName: "Dohyun Kim",
   createdAt: "2026-01-01T00:00:00Z",
   avatarUrl: "https://i.pravatar.cc/120?img=12",
 };
 
 export async function fetchMe(): Promise<Me> {
-  if (MOCKS_ON) return Promise.resolve(MOCK_ME);
+  if (MOCKS_ON) return Promise.resolve(mockEmpty("displayName") ? { ...MOCK_ME, displayName: null } : MOCK_ME);
   return request<Me>("/api/v1/users/me", { method: "GET" });
 }
 

@@ -2,21 +2,27 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useEdgeFade } from "@/hooks/use-edge-fade";
 import { useAuth } from "@/lib/auth";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 
-export type AuthorTab = { key: string; href: string; label: string; private?: boolean };
+export type AuthorTab = { key: string; href: string; label: string; private?: boolean; empty?: boolean };
 
 /** Which tab the current path is on. The bar lives in the persistent layout (mounted once), so the
  *  active tab is derived from the live pathname — it updates on a client tab switch without a remount. */
-function activeKeyForPath(pathname: string): string {
+export function activeKeyForPath(pathname: string): string {
   const seg = pathname.replace(/\/+$/, "").split("/").pop() ?? "";
-  return ["series", "collections", "about"].includes(seg) ? seg : "posts";
+  return ["notes", "replies", "media", "reposts", "series", "collections", "about"].includes(seg) ? seg : "posts";
+}
+
+/** Tabs this viewer sees: private ones only for the owner, and an empty one only while it is open. */
+export function visibleAuthorTabs(tabs: AuthorTab[], activeKey: string, isOwner: boolean): AuthorTab[] {
+  return tabs.filter((t) => (!t.private || isOwner) && (!t.empty || t.key === activeKey));
 }
 
 // Tab horizontal padding (px-4 = 16px); the underline spans the label, inset past the padding.
 const PAD = 16;
-// Constant glide speed (ms per px travelled), clamped — so distance ≈ time: 글 → 소개 sweeps across
+// Constant glide speed (ms per px travelled), clamped — so distance ≈ time: 글 → 컬렉션 sweeps across
 // 시리즈 and takes visibly longer than an adjacent hop. Mirrors the feed's FeedSortTabs.
 const MS_PER_PX = 3;
 const MIN_MS = 180;
@@ -43,8 +49,8 @@ export function AuthorTabs({
   const isOwner = me?.username === username;
   // Private tabs (좋아요 / 북마크) only on your own profile. They're appended in order, so the visible
   // index doubles as the tab-direction index for both owner and visitor.
-  const visible = tabs.filter((t) => !t.private || isOwner);
-  const activeIndex = Math.max(0, visible.findIndex((t) => t.key === activeKey));
+  const visible = visibleAuthorTabs(tabs, activeKey, isOwner);
+  const activeIndex = visible.findIndex((t) => t.key === activeKey);
   const navRef = useRef<HTMLElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
   const [durationMs, setDurationMs] = useState(0);
@@ -61,7 +67,11 @@ export function AuthorTabs({
     };
 
     const target = measure(activeIndex);
-    if (!target) return;
+    if (!target) {
+      prevLeft.current = null;
+      setBar(null);
+      return;
+    }
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Glide from where the bar currently sits to the new active tab. First placement (no prior slot)
@@ -106,38 +116,44 @@ export function AuthorTabs({
     // isOwner flips the visible tab set (private tabs appear) → re-measure when it resolves.
   }, [activeIndex, isOwner]);
 
+  const edgeFade = useEdgeFade(navRef, [isOwner]);
+
   return (
-    <nav
-      ref={navRef}
-      className="relative mt-6 flex gap-1 overflow-x-auto border-b sm:mt-7 border-slate-200 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
-    >
-      {visible.map((tab, i) => (
-        <BlogLink
-          key={tab.key}
-          href={tab.href}
-          data-tab
-          data-active={i === activeIndex ? "true" : undefined}
-          aria-current={i === activeIndex ? "page" : undefined}
-          className={`focus-ring touch-target relative shrink-0 whitespace-nowrap rounded-t px-4 py-2.5 transition-colors ${
-            i === activeIndex
-              ? "text-slate-900 dark:text-slate-100"
-              : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-          }`}
-        >
-          {tab.label}
-        </BlogLink>
-      ))}
-      {bar && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"
-          style={{
-            transform: `translateX(${bar.left}px)`,
-            width: `${bar.width}px`,
-            transitionDuration: `${durationMs}ms`,
-          }}
-        />
-      )}
-    </nav>
+    <div className="mt-6 border-b border-slate-200 sm:mt-7 dark:border-slate-800">
+      <nav
+        ref={navRef}
+        {...edgeFade.attrs}
+        style={edgeFade.style}
+        className="relative flex gap-1 overflow-x-auto text-[15px] font-medium [scrollbar-width:none] sm:gap-0 [&::-webkit-scrollbar]:hidden"
+      >
+        {visible.map((tab, i) => (
+          <BlogLink
+            key={tab.key}
+            href={tab.href}
+            data-tab
+            data-active={i === activeIndex ? "true" : undefined}
+            aria-current={i === activeIndex ? "page" : undefined}
+            className={`focus-ring touch-target relative min-w-fit flex-1 whitespace-nowrap rounded-t px-4 py-2.5 text-center transition-colors ${
+              i === activeIndex
+                ? "font-semibold text-slate-900 dark:text-slate-100"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            {tab.label}
+          </BlogLink>
+        ))}
+        {bar && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-slate-900 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none dark:bg-slate-100"
+            style={{
+              transform: `translateX(${bar.left}px)`,
+              width: `${bar.width}px`,
+              transitionDuration: `${durationMs}ms`,
+            }}
+          />
+        )}
+      </nav>
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { BarChart3 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -10,7 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
-import { LinksAuthGate } from "@/components/links/auth-gate";
+import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { StatsBackLink } from "./_components/back-button";
 import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
@@ -77,10 +78,7 @@ export default function StatsPage() {
 
   if (ready && !authenticated) {
     return (
-      <LinksAuthGate
-        title={t("loginRequired")}
-        description={t("loginRequiredDesc")}
-      />
+      <SignInEmptyState page reason="stats" icon={BarChart3} />
     );
   }
 

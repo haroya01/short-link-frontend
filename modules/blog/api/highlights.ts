@@ -1,7 +1,7 @@
-import { request } from "@/lib/api/client";
-import type { FeedSource } from "./collections";
-import type { PublicAuthor } from "./public-posts";
-import { collectionMocks } from "@/modules/blog/api/_mock-gates";
+import { mockFailure, request } from "@/lib/api/client";
+import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
+import { blogMocks, collectionMocks } from "@/modules/blog/api/_mock-gates";
+import { mockFails } from "@/lib/api/mock-fail";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -49,48 +49,22 @@ export interface MyHighlightItem {
   createdAt: string;
 }
 
-/** One entry in the "남들 하이라이트" feed — a passage a followed curator drew, carried with the post it
- *  lives in so the reader can jump to that sentence (`?hl=`). `curator` highlighted it; `postAuthorUsername`
- *  wrote the post (they can differ). Mirrors the backend `HighlightFeedItem` / the iOS `HighlightFeedItemView`. */
-export interface HighlightFeedItem {
-  id: number;
-  postId: number;
-  /** Who drew the highlight (the curator) — null only for an optimistic local add. */
-  curator: PublicAuthor | null;
-  postSlug: string;
-  postTitle: string;
-  /** Who wrote the post (attribution + the deep-link's author segment). */
-  postAuthorUsername: string | null;
-  blockOrder: number;
-  endBlockOrder: number;
-  startOffset: number;
-  endOffset: number;
-  quote: string;
-  /** The curator's public margin note, if any. */
-  note: string | null;
-  createdAt: string;
-  /** Replies in the highlight's thread — drives the "conversation here" marker. */
-  replyCount: number;
-}
-
-/** One page of the highlight feed (newest first). Mirrors the backend `HighlightFeedView`. */
-export interface HighlightFeedPage {
-  items: HighlightFeedItem[];
-  page: number;
-  size: number;
-  hasNext: boolean;
-  /** "global" when the backend served the cold-start fallback (following nobody / empty page 0)
-   *  instead of the follow graph. Absent on a server that predates the field → treated as
-   *  "following". See {@link FeedSource}. */
-  source?: FeedSource;
-}
-
 /** One reply in a highlight's thread (the author's note is the thread opener; these sit under it). */
 export interface HighlightReplyView {
   id: number;
   author: PublicAuthor | null;
   body: string;
   createdAt: string;
+  /** The @handles in the body that belong to members; absent on responses that predate it. */
+  mentions?: string[];
+  likeCount: number;
+  /** Whether the viewer liked it; always false for a signed-out reader. */
+  liked: boolean;
+}
+
+export interface HighlightReplyLikeStatus {
+  likeCount: number;
+  liked: boolean;
 }
 
 // The demo viewer — same identity as the mock `me` (lib/api/client MOCK_ME), so a highlight the viewer
@@ -102,12 +76,29 @@ let mockSeq = 5000;
 // highlightId → its replies (demo mode).
 const mockReplies = new Map<number, HighlightReplyView[]>();
 let mockReplySeq = 7000;
+const mockLikedReplies = new Set<number>();
+
+function mockReplyLike(id: number, liked: boolean): HighlightReplyLikeStatus {
+  const reply = [...mockReplies.values()].flat().find((r) => r.id === id) ?? blogMocks?.mockSeededReply(id);
+  if (reply && mockLikedReplies.has(id) !== liked) {
+    reply.likeCount = Math.max(0, reply.likeCount + (liked ? 1 : -1));
+    if (liked) mockLikedReplies.add(id);
+    else mockLikedReplies.delete(id);
+  }
+  return { likeCount: reply?.likeCount ?? 0, liked };
+}
 
 /** Public — every attributed highlight on a post (Medium-style social highlights). */
 export async function listHighlights(postId: number): Promise<HighlightView[]> {
-  if (USE_MOCKS) return mockHighlights.map((h) => ({ ...h, replyCount: mockReplies.get(h.id)?.length ?? 0 }));
+  if (USE_MOCKS) {
+    return [
+      ...(blogMocks?.mockSeededHighlights(postId, hasViewer()) ?? []),
+      ...mockHighlights.map((h) => ({ ...h, replyCount: mockReplies.get(h.id)?.length ?? 0 })),
+    ];
+  }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/highlights`, {
     cache: "no-store",
+    headers: await viewerHeaders(),
   });
   if (!res.ok) throw new Error(`Could not load highlights (${res.status})`);
   return (await res.json()) as HighlightView[];
@@ -116,27 +107,8 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
 /** Authenticated — every highlight the viewer has drawn, newest first, each with its source post
  *  (their private "내 서재"). */
 export async function listMyHighlights(): Promise<MyHighlightItem[]> {
-  if (collectionMocks) return collectionMocks.mockMyHighlights();
+  if (collectionMocks) return mockFailure("highlights") ?? collectionMocks.mockMyHighlights();
   return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
-}
-
-/**
- * Authenticated — "남들 하이라이트" 피드: 팔로우한 큐레이터가 최근 칠한 공개 구절(최신순, 페이지).
- * 팔로우가 0이거나 개인화 첫 페이지가 비면 백엔드가 전역 스트림으로 폴백하고 `source: "global"` 로
- * 알린다. 그때 이후 페이지는 `scope: "global"` 로 고정해 받아야 팔로잉↔전역 페이지가 섞이지 않는다
- * (page>0 빈 결과는 폴백 안 함 — 정상 끝). scope 미지정 시 백엔드가 폴백 규칙을 스스로 판단.
- */
-export function getHighlightFeed(
-  page = 0,
-  size = 20,
-  scope?: FeedSource,
-): Promise<HighlightFeedPage> {
-  if (collectionMocks) return Promise.resolve(collectionMocks.mockHighlightFeed(page, size, scope));
-  const scopeParam = scope === "global" ? "&scope=global" : "";
-  return request<HighlightFeedPage>(
-    `/api/v1/highlights/feed?page=${page}&size=${size}${scopeParam}`,
-    { method: "GET" },
-  );
 }
 
 /** Authenticated — create a highlight on a published post. */
@@ -171,11 +143,18 @@ export function deleteHighlight(id: number): Promise<void> {
 
 /** Public — the reply thread under a highlight (oldest first). */
 export async function listHighlightReplies(highlightId: number): Promise<HighlightReplyView[]> {
-  if (USE_MOCKS) return [...(mockReplies.get(highlightId) ?? [])];
+  if (USE_MOCKS) {
+    if (mockFails("highlight-replies")) throw new Error("highlight replies 500");
+    const viewer = hasViewer();
+    return [...(blogMocks?.mockSeededReplies(highlightId, viewer) ?? []), ...(mockReplies.get(highlightId) ?? [])].map(
+      (reply) => ({ ...reply, liked: viewer && mockLikedReplies.has(reply.id) }),
+    );
+  }
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/replies`, {
     cache: "no-store",
+    headers: await viewerHeaders(),
   });
-  if (!res.ok) return [];
+  if (!res.ok) throw new Error(`highlight replies ${res.status}`);
   return (await res.json()) as HighlightReplyView[];
 }
 
@@ -187,6 +166,8 @@ export function createHighlightReply(highlightId: number, body: string): Promise
       author: MOCK_VIEWER,
       body,
       createdAt: new Date().toISOString(),
+      likeCount: 0,
+      liked: false,
     };
     mockReplies.set(highlightId, [...(mockReplies.get(highlightId) ?? []), reply]);
     return Promise.resolve(reply);
@@ -207,4 +188,22 @@ export function deleteHighlightReply(id: number): Promise<void> {
     return Promise.resolve();
   }
   return request(`/api/v1/highlight-replies/${id}`, { method: "DELETE" });
+}
+
+/** Authenticated — like a reply; liking twice counts once. */
+export function likeHighlightReply(id: number): Promise<HighlightReplyLikeStatus> {
+  if (USE_MOCKS) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
+    return Promise.resolve(mockReplyLike(id, true));
+  }
+  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "POST" });
+}
+
+/** Authenticated — take the viewer's like off a reply. */
+export function unlikeHighlightReply(id: number): Promise<HighlightReplyLikeStatus> {
+  if (USE_MOCKS) {
+    if (mockFails("like")) return Promise.reject(new Error("like 500"));
+    return Promise.resolve(mockReplyLike(id, false));
+  }
+  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "DELETE" });
 }

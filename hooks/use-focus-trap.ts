@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type RefObject } from "react";
 
+const openTraps: symbol[] = [];
+
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -45,6 +47,8 @@ export function useFocusTrap(
 
   useEffect(() => {
     if (!active) return;
+    const token = Symbol();
+    openTraps.push(token);
     const restoreTo = document.activeElement as HTMLElement | null;
     if (autoFocus) {
       // After a paint — the container mounts in the same commit that flips `active`.
@@ -54,6 +58,7 @@ export function useFocusTrap(
       });
     }
     const onKey = (e: KeyboardEvent) => {
+      if (openTraps[openTraps.length - 1] !== token) return;
       if (e.key === "Escape") {
         onEscapeRef.current?.();
         return;
@@ -81,6 +86,7 @@ export function useFocusTrap(
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
+      openTraps.splice(openTraps.indexOf(token), 1);
       restoreTo?.focus?.();
     };
   }, [active, autoFocus, ref]);

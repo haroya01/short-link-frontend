@@ -74,3 +74,14 @@ describe("reader markdown checklists", () => {
     expect(root.textContent).not.toContain("[ ]");
   });
 });
+
+describe("reader markdown links alone on a line", () => {
+  it("shows <url> and [text](url) kept as links as links, not players or cards", () => {
+    const auto = render("<https://youtu.be/dQw4w9WgXcQ>");
+    expect(auto.querySelector("a")?.getAttribute("href")).toBe("https://youtu.be/dQw4w9WgXcQ");
+    expect(auto.querySelector("iframe")).toBeNull();
+    const labeled = render("[읽어 볼 글](https://example.com/a)");
+    expect(labeled.querySelector("a")?.getAttribute("href")).toBe("https://example.com/a");
+    expect(labeled.querySelector("a")?.textContent).toBe("읽어 볼 글");
+  });
+});

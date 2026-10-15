@@ -5,8 +5,8 @@ import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import vi from "@/messages/vi.json";
-import { REASON_CODES } from "./abuse-report-reasons";
-import type { AbuseAction } from "./abuse-reports";
+import { REASON_CODES, actionRequiresExpiry } from "./abuse-report-reasons";
+import type { AbuseAction, AbuseSubjectType } from "./abuse-reports";
 
 /**
  * The moderation surfaces (report form + admin queue) look up copy by the backend's structured codes:
@@ -17,12 +17,22 @@ import type { AbuseAction } from "./abuse-reports";
  */
 const LOCALES = { en, ko, ja, vi, hi } as const;
 
-const ENFORCEMENT_ACTIONS: AbuseAction[] = [
-  "UNPUBLISH_POST",
-  "DELETE_COMMENT",
-  "SUSPEND_USER",
-  "BAN_USER",
-];
+const ENFORCEMENT_ACTIONS = Object.keys({
+  UNPUBLISH_POST: true,
+  DELETE_COMMENT: true,
+  SUSPEND_USER: true,
+  BAN_USER: true,
+  DELETE_NOTE: true,
+  DELETE_HIGHLIGHT_REPLY: true,
+} satisfies Record<AbuseAction, true>) as AbuseAction[];
+
+const SUBJECT_TYPES = Object.keys({
+  POST: true,
+  USER: true,
+  COMMENT: true,
+  NOTE: true,
+  HIGHLIGHT_REPLY: true,
+} satisfies Record<AbuseSubjectType, true>) as AbuseSubjectType[];
 
 const RESOLVE_ERROR_CODES = [
   "DUPLICATE_REPORT",
@@ -43,6 +53,7 @@ describe("abuse-report i18n coverage", () => {
           reasons: Record<string, string>;
           action: Record<string, string>;
           actionConfirm: Record<string, string>;
+          subjectType: Record<string, string>;
           suspendDaysPrompt: string;
           suspendDaysInvalid: string;
         };
@@ -63,9 +74,15 @@ describe("abuse-report i18n coverage", () => {
         });
       }
 
-      it("keeps a confirm prompt for every destructive action (suspend uses a day prompt)", () => {
-        for (const action of ["UNPUBLISH_POST", "DELETE_COMMENT", "BAN_USER"]) {
-          expect(nonEmptyString(abuse.actionConfirm[action])).toBe(true);
+      for (const type of SUBJECT_TYPES) {
+        it(`labels subject type ${type}`, () => {
+          expect(nonEmptyString(abuse.subjectType[type])).toBe(true);
+        });
+      }
+
+      it("keeps a confirm prompt for every action but suspend, which asks for days instead", () => {
+        for (const action of ENFORCEMENT_ACTIONS.filter((a) => !actionRequiresExpiry(a))) {
+          expect(nonEmptyString(abuse.actionConfirm[action]), action).toBe(true);
         }
         expect(nonEmptyString(abuse.suspendDaysPrompt)).toBe(true);
         expect(nonEmptyString(abuse.suspendDaysInvalid)).toBe(true);
