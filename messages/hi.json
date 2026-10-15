@@ -1047,7 +1047,14 @@
     "prefSectionNotes": "आपके नोट",
     "prefSectionConversation": "बातचीत",
     "prefSectionPeople": "लोग",
-    "prefSectionSubscriptions": "सदस्यताएँ"
+    "prefSectionSubscriptions": "सदस्यताएँ",
+    "post_first_reader": "आपकी पोस्ट को पहला पाठक मिला",
+    "post_read_milestone": "{milestone, number} लोगों ने आपकी पोस्ट पढ़ी",
+    "post_read_grew": "आपकी पोस्ट के पाठक बढ़ गए",
+    "prefPostFirstReader": "पहला पाठक",
+    "prefPostFirstReaderHint": "जब आपकी पोस्ट को पहला पाठक मिले",
+    "prefPostReadMilestone": "पाठकों के पड़ाव",
+    "prefPostReadMilestoneHint": "जब आपकी पोस्ट 10, 100 या 1,000 लोग पढ़ लें। आपके अपने व्यू और बॉट नहीं गिने जाते"
   },
   "nav": {
     "events": "इवेंट",

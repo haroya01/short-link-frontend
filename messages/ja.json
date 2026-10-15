@@ -1047,7 +1047,14 @@
     "prefSectionNotes": "自分のノート",
     "prefSectionConversation": "会話",
     "prefSectionPeople": "人",
-    "prefSectionSubscriptions": "購読中のお知らせ"
+    "prefSectionSubscriptions": "購読中のお知らせ",
+    "post_first_reader": "記事に最初の読者がつきました",
+    "post_read_milestone": "{milestone, number}人が記事を読みました",
+    "post_read_grew": "記事を読んだ人が増えました",
+    "prefPostFirstReader": "最初の読者",
+    "prefPostFirstReaderHint": "記事に最初の読者がついたとき",
+    "prefPostReadMilestone": "読者数の節目",
+    "prefPostReadMilestoneHint": "記事を読んだ人が10人、100人、1,000人になったとき。自分の閲覧とボットは数えません"
   },
   "nav": {
     "events": "イベント",

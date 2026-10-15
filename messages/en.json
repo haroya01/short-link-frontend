@@ -1047,7 +1047,14 @@
     "prefSectionNotes": "Your notes",
     "prefSectionConversation": "Conversations",
     "prefSectionPeople": "People",
-    "prefSectionSubscriptions": "Subscriptions"
+    "prefSectionSubscriptions": "Subscriptions",
+    "post_first_reader": "Your post has its first reader",
+    "post_read_milestone": "{milestone, plural, one {# person has} other {# people have}} read your post",
+    "post_read_grew": "More people have read your post",
+    "prefPostFirstReader": "First reader",
+    "prefPostFirstReaderHint": "When your post gets its first reader",
+    "prefPostReadMilestone": "Reader milestones",
+    "prefPostReadMilestoneHint": "When 10, 100 or 1,000 people have read your post. Your own views and bots don't count"
   },
   "nav": {
     "events": "Events",

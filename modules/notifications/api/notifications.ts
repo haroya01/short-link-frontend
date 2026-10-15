@@ -29,6 +29,8 @@ export const NOTIFICATION_TYPES = [
   "NOTE_EMBED",
   "COMMENT_LIKE",
   "HIGHLIGHT",
+  "POST_FIRST_READER",
+  "POST_READ_MILESTONE",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -46,11 +48,11 @@ export interface NotificationActor {
 }
 
 /**
- * Per-type opt-out map for blog (in-app + push) notifications. Every type is present; a missing row
- * on the backend defaults to enabled, so the map is always exhaustive. This is separate from the
+ * Per-type opt-out map for blog (in-app + push) notifications. Every type the backend knows is present;
+ * a type it predates is absent and cannot be set. This is separate from the
  * link-product notification preferences (`/api/v1/notifications/preferences`) — different surface.
  */
-export type BlogNotificationPreferences = Record<NotificationType, boolean>;
+export type BlogNotificationPreferences = Partial<Record<NotificationType, boolean>>;
 
 /**
  * One in-app notification, as returned by the backend. The actor's display fields are flat and null
@@ -93,6 +95,7 @@ export interface NotificationItem {
   /** Likes, reposts and highlights group by subject and day: the row is the newest, count the group's size. */
   count?: number;
   actors?: NotificationActor[];
+  milestone?: number | null;
 }
 
 /** A newest-first page; `nextCursor` feeds the next request's `before`, null when `hasMore` is false. */

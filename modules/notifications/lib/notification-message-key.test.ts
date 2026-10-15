@@ -49,3 +49,21 @@ describe("a poll notice", () => {
     expect(notificationMessageKey(item({ type: "NOTE_POLL", actorUsername: null }), null)).toBe("note_poll");
   });
 });
+
+describe("a reader notice", () => {
+  const reader = { actorId: null, actorUsername: null, actorAvatarUrl: null };
+
+  it("names the first reader and the milestone it reached", () => {
+    expect(notificationMessageKey(item({ ...reader, type: "POST_FIRST_READER" }), "dohyun")).toBe("post_first_reader");
+    expect(notificationMessageKey(item({ ...reader, type: "POST_READ_MILESTONE", milestone: 100 }), "dohyun")).toBe(
+      "post_read_milestone",
+    );
+  });
+
+  it("says only that readers grew when the milestone number is missing", () => {
+    expect(notificationMessageKey(item({ ...reader, type: "POST_READ_MILESTONE" }), "dohyun")).toBe("post_read_grew");
+    expect(notificationMessageKey(item({ ...reader, type: "POST_READ_MILESTONE", milestone: null }), "dohyun")).toBe(
+      "post_read_grew",
+    );
+  });
+});

@@ -1047,7 +1047,14 @@
     "prefSectionNotes": "내 노트",
     "prefSectionConversation": "대화",
     "prefSectionPeople": "사람",
-    "prefSectionSubscriptions": "구독한 소식"
+    "prefSectionSubscriptions": "구독한 소식",
+    "post_first_reader": "첫 독자가 생겼어요",
+    "post_read_milestone": "{milestone, number}명이 읽었어요",
+    "post_read_grew": "읽은 사람이 늘었어요",
+    "prefPostFirstReader": "첫 독자",
+    "prefPostFirstReaderHint": "내 글을 처음 읽은 사람이 생길 때",
+    "prefPostReadMilestone": "읽은 사람 수",
+    "prefPostReadMilestoneHint": "내 글을 읽은 사람이 10명, 100명, 1,000명이 될 때. 내 조회와 봇은 세지 않아요"
   },
   "nav": {
     "events": "모집",
