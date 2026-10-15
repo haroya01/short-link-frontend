@@ -110,14 +110,26 @@ export interface Note {
   canReply?: boolean | null;
   /** The thread's first author hid this reply. */
   hidden?: boolean;
+  /** What it was on its server; null for notes written here, absent from servers that predate it. */
+  remote?: RemoteNoteShape | null;
+}
+
+/** ARTICLE, PAGE and VIDEO keep only a summary in `body` and one picture in `media`; the rest
+ *  stays at `url`, the original on the same server. */
+export interface RemoteNoteShape {
+  kind: "NOTE" | "QUESTION" | "ARTICLE" | "PAGE" | "VIDEO";
+  title: string | null;
+  url: string | null;
+  community: string | null;
 }
 
 export type NoteReplyPolicy = "everyone" | "following" | "mentioned";
 
 /** Mastodon's poll. Counts are public; the author gets `voted: true` and only sees results.
- *  `voted` and `ownVotes` are null for anonymous readers. */
+ *  `voted` and `ownVotes` are null for anonymous readers. A poll from another server is counted
+ *  there: everyone signed in gets `voted: true` and may have no closing time. */
 export interface NotePoll {
-  expiresAt: string;
+  expiresAt: string | null;
   expired: boolean;
   multiple: boolean;
   votesCount: number;

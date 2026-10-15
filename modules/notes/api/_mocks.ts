@@ -39,6 +39,38 @@ const MINA = {
   remoteId: 9800,
   url: "https://mastodon.social/@mina",
 };
+const HARUTO = {
+  id: -9801,
+  username: "haruto@misskey.io",
+  avatarUrl: null,
+  displayName: "Haruto",
+  remoteId: 9801,
+  url: "https://misskey.io/@haruto",
+};
+const NORA = {
+  id: -9806,
+  username: "nora@blog.example",
+  avatarUrl: null,
+  displayName: "Nora",
+  remoteId: 9806,
+  url: "https://blog.example/author/nora",
+};
+const TOMAS = {
+  id: -9807,
+  username: "tomas@lemmy.example",
+  avatarUrl: null,
+  displayName: "Tomas",
+  remoteId: 9807,
+  url: "https://lemmy.example/u/tomas",
+};
+const TRAILCAM = {
+  id: -9808,
+  username: "trailcam@pt.example",
+  avatarUrl: null,
+  displayName: "Trail Camera",
+  remoteId: 9808,
+  url: "https://pt.example/a/trailcam",
+};
 
 function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): Note {
   return {
@@ -166,6 +198,87 @@ let notes: Note[] = [
     body: "포트와 어댑터, 오늘은 어댑터만 세 개 늘었다.",
     author: HARUKA,
     createdAt: "2026-10-03T09:00:00Z",
+  }),
+  note({
+    id: 14,
+    body: "Which day works for the next meetup?",
+    author: MINA,
+    createdAt: "2026-10-03T09:30:00Z",
+    language: "en",
+    poll: {
+      expiresAt: new Date(Date.now() + 2 * 86_400 * 1000).toISOString(),
+      expired: false,
+      multiple: false,
+      votesCount: 27,
+      votersCount: 27,
+      options: [
+        { title: "Friday", votesCount: 8 },
+        { title: "Saturday", votesCount: 14 },
+        { title: "Sunday", votesCount: 5 },
+      ],
+      voted: true,
+      ownVotes: [],
+    },
+    remote: { kind: "QUESTION", title: null, url: "https://mastodon.social/@mina/113300000000000014", community: null },
+  }),
+  note({
+    id: 15,
+    body: "週末のランチ、どこにする？",
+    author: HARUTO,
+    createdAt: "2026-10-03T09:20:00Z",
+    language: "ja",
+    poll: {
+      expiresAt: null,
+      expired: false,
+      multiple: false,
+      votesCount: 11,
+      votersCount: 11,
+      options: [
+        { title: "そば", votesCount: 4 },
+        { title: "カレー", votesCount: 7 },
+      ],
+      voted: true,
+      ownVotes: [],
+    },
+    remote: { kind: "QUESTION", title: null, url: "https://misskey.io/notes/9xk2a1b3c4", community: null },
+  }),
+  note({
+    id: 16,
+    body: "올해는 모종 여섯 개로 시작했다. 장마가 길어서 절반은 잎곰팡이에 졌고, 남은 셋이 8월 내내 열매를 냈다. 내년엔 간격을 넓히고 지지대를 먼저 세울 생각이다.",
+    author: NORA,
+    createdAt: "2026-10-03T09:10:00Z",
+    language: "ko",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-remote-tomato/1200/628", altText: null, contentType: "image/jpeg", width: 1200, height: 628 },
+    ],
+    remote: { kind: "ARTICLE", title: "토마토 한 철, 인내의 기록", url: "https://blog.example/2026/10/tomato-season/", community: null },
+  }),
+  note({
+    id: 17,
+    body: "Built two 1.2 m beds this spring from untreated cedar. The soil warmed up two weeks earlier than the ground plot, and weeding took a third of the time. Cost was the catch. Curious what others used.",
+    author: TOMAS,
+    createdAt: "2026-10-03T09:05:00Z",
+    language: "en",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-remote-beds/1200/628", altText: "Two cedar raised beds", contentType: "image/jpeg", width: 1200, height: 628 },
+    ],
+    remote: {
+      kind: "PAGE",
+      title: "Raised beds: worth the lumber?",
+      url: "https://lemmy.example/post/12345",
+      community: "gardening@lemmy.example",
+    },
+  }),
+  note({
+    id: 18,
+    body: "Recorded at dawn near the upper falls. No music, just water.",
+    author: TRAILCAM,
+    createdAt: "2026-10-03T08:30:00Z",
+    language: "en",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-remote-stream/1280/720", altText: null, contentType: "image/jpeg", width: 1280, height: 720 },
+    ],
+    remote: { kind: "VIDEO", title: "Ten minutes of a forest stream", url: "https://pt.example/w/9c1f2e", community: null },
   }),
   note({
     id: 12,
@@ -514,6 +627,39 @@ let remoteAccounts: RemoteAccount[] = [
     avatarUrl: null,
     url: "https://mastodon.online/@ren",
     following: false,
+    requested: false,
+  },
+  {
+    id: 9806,
+    acct: "nora@blog.example",
+    username: "nora",
+    domain: "blog.example",
+    displayName: "Nora",
+    avatarUrl: null,
+    url: "https://blog.example/author/nora",
+    following: true,
+    requested: false,
+  },
+  {
+    id: 9807,
+    acct: "tomas@lemmy.example",
+    username: "tomas",
+    domain: "lemmy.example",
+    displayName: "Tomas",
+    avatarUrl: null,
+    url: "https://lemmy.example/u/tomas",
+    following: true,
+    requested: false,
+  },
+  {
+    id: 9808,
+    acct: "trailcam@pt.example",
+    username: "trailcam",
+    domain: "pt.example",
+    displayName: "Trail Camera",
+    avatarUrl: null,
+    url: "https://pt.example/a/trailcam",
+    following: true,
     requested: false,
   },
 ];
@@ -1080,6 +1226,7 @@ export function mockCreate(draft: NoteDraft): Note {
 export function mockVote(id: number, choices: number[]): NotePoll {
   const target = notes.find((n) => n.id === id);
   if (!target?.poll) throw new Error("no poll");
+  if (target.author.remoteId) throw new ApiError(400, { status: 400, code: "NOTE_POLL_ELSEWHERE" });
   if (target.poll.voted) return target.poll;
   const poll: NotePoll = {
     ...target.poll,
