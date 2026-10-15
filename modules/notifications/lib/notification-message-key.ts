@@ -24,7 +24,11 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   NOTE_EMBED: "note_embed",
   COMMENT_LIKE: "comment_like",
   HIGHLIGHT: "highlight",
+  POST_FIRST_READER: "post_first_reader",
+  POST_READ_MILESTONE: "post_read_milestone",
 };
+
+const NEVER_GROUPED: ReadonlySet<Item["type"]> = new Set(["POST_FIRST_READER", "POST_READ_MILESTONE"]);
 
 /**
  * The message for a row. A like on a highlight reply arrives as COMMENT_LIKE with `highlightId` and no
@@ -36,5 +40,5 @@ export function notificationMessageKey(item: Item, myUsername: string | null): s
     item.type === "COMMENT_LIKE" && item.commentId == null && item.highlightId != null
       ? "highlight_reply_like"
       : MESSAGE_KEY[item.type];
-  return (item.count ?? 1) > 1 ? `${key}_group` : key;
+  return (item.count ?? 1) > 1 && !NEVER_GROUPED.has(item.type) ? `${key}_group` : key;
 }

@@ -105,6 +105,12 @@
     "rowRead": "、既読",
     "seriesEyebrow": "シリーズ",
     "seriesEpisodeCount": "{count}本",
+    "sourcePlatform": {
+      "NAVER": "NAVERブログ",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "brunch"
+    },
     "seriesItemCount": "全{count}話",
     "seriesNoteMarker": "ノート",
     "seriesLastPublished": "最新 {date}",
@@ -821,7 +827,9 @@
     "highlightLinkCopied": "リンクをコピーしました",
     "highlightPublicFirst": "ハイライトしました · 名前とともに公開されます",
     "reportTitleHighlightReply": "この返信を報告",
-    "publishedStatus": "公開しました"
+    "publishedStatus": "公開しました",
+    "sourceOriginal": "元記事: <a>{platform}</a>",
+    "sourceReadOriginal": "元記事で読む →"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -1047,7 +1055,13 @@
     "prefSectionNotes": "自分のノート",
     "prefSectionConversation": "会話",
     "prefSectionPeople": "人",
-    "prefSectionSubscriptions": "購読中のお知らせ"
+    "prefSectionSubscriptions": "購読中のお知らせ",
+    "post_first_reader": "あなたの記事に最初の読者がつきました",
+    "post_read_milestone": "あなたの記事を{milestone, number}人が読みました",
+    "prefFirstReader": "最初の読者",
+    "prefFirstReaderHint": "記事に最初の読者がついたとき",
+    "prefReadMilestone": "読者数の節目",
+    "prefReadMilestoneHint": "記事を読んだ人が10人・100人・1000人になったとき。ボットは数えません"
   },
   "nav": {
     "events": "イベント",

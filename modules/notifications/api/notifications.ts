@@ -29,6 +29,8 @@ export const NOTIFICATION_TYPES = [
   "NOTE_EMBED",
   "COMMENT_LIKE",
   "HIGHLIGHT",
+  "POST_FIRST_READER",
+  "POST_READ_MILESTONE",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -93,6 +95,8 @@ export interface NotificationItem {
   /** Likes, reposts and highlights group by subject and day: the row is the newest, count the group's size. */
   count?: number;
   actors?: NotificationActor[];
+  /** POST_READ_MILESTONE: how many people have read the post (10, 100, 1000). */
+  milestone?: number | null;
 }
 
 /** A newest-first page; `nextCursor` feeds the next request's `before`, null when `hasMore` is false. */

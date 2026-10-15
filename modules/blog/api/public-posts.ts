@@ -29,6 +29,15 @@ export interface PublicAuthor {
   hasLinkInBio?: boolean;
 }
 
+export type PostSourcePlatform = "NAVER" | "TISTORY" | "VELOG" | "BRUNCH";
+
+export interface PostSource {
+  platform: PostSourcePlatform;
+  originalUrl: string;
+  shortUrl: string;
+  excerptOnly: boolean;
+}
+
 export interface PublicPostListItem {
   id: number;
   slug: string;
@@ -44,6 +53,7 @@ export interface PublicPostListItem {
   lastEditedAt: string | null;
   /** Author-pinned 대표글 — surfaces in the blog's 대표글 section, ordered before 최근 글. */
   pinned: boolean;
+  source?: PostSource | null;
 }
 
 export interface PublicSeriesNavLink {
@@ -202,6 +212,7 @@ export interface PublicFeedItem {
    */
   followReason?: FollowReason | null;
   series?: FeedSeriesRef | null;
+  source?: PostSource | null;
 }
 
 export interface FeedSeriesRef {

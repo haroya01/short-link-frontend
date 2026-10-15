@@ -14,6 +14,7 @@ import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { sourcePlatformName } from "@/modules/blog/lib/post-source";
 
 export function FeedList({ children }: { children: ReactNode }) {
   return (
@@ -46,6 +47,18 @@ function SeriesLine({
       <span aria-hidden>·</span>
       <span className="shrink-0 tabular-nums">{t("seriesEpisodeCount", { count: series.postCount })}</span>
     </BlogLink>
+  );
+}
+
+function SourceLabel({ source }: { source: NonNullable<PublicFeedItem["source"]> }) {
+  const t = useTranslations("publicFeed");
+  return (
+    <>
+      <RowDot />
+      <span data-testid="feed-card-source" className="shrink-0">
+        {sourcePlatformName(source, t)}
+      </span>
+    </>
   );
 }
 
@@ -155,6 +168,7 @@ function FeedCardRow({
             </>
           )}
           <RowTime iso={item.publishedAt} locale={locale} className="shrink-0" />
+          {item.source && <SourceLabel source={item.source} />}
           {bookmarkable && (
             <span className="-my-1.5 -mr-1.5 ml-auto">
               <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />

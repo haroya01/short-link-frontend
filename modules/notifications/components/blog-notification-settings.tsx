@@ -7,6 +7,7 @@ import {
   BellRing,
   BookMarked,
   ChartBar,
+  Eye,
   GitBranch,
   Heart,
   Highlighter,
@@ -53,6 +54,8 @@ export const SECTIONS: { titleKey: string; rows: Row[] }[] = [
       { type: "HIGHLIGHT", icon: Highlighter, labelKey: "prefHighlight", hintKey: "prefHighlightHint" },
       { type: "POST_QUOTE", icon: Quote, labelKey: "prefPostQuote", hintKey: "prefPostQuoteHint" },
       { type: "CONNECTED", icon: Link2, labelKey: "prefConnected", hintKey: "prefConnectedHint" },
+      { type: "POST_FIRST_READER", icon: Eye, labelKey: "prefFirstReader", hintKey: "prefFirstReaderHint" },
+      { type: "POST_READ_MILESTONE", icon: Eye, labelKey: "prefReadMilestone", hintKey: "prefReadMilestoneHint" },
     ],
   },
   {

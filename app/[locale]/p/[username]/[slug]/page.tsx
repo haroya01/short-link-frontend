@@ -36,6 +36,7 @@ import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { bareUrl, canonicalFor, httpUrl, sourcePlatformName } from "@/modules/blog/lib/post-source";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -96,7 +97,7 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
-    alternates: { canonical: url },
+    alternates: { canonical: canonicalFor(url, post.source) },
     openGraph: {
       title: post.title,
       description: post.excerpt ?? undefined,
@@ -148,6 +149,13 @@ export default async function PublicPostPage({
   const h = await headers();
   const origin = authorBaseUrl(h, username);
   const postUrl = `${origin}/${post.slug}`;
+  const canonicalUrl = canonicalFor(postUrl, post.source);
+  const source = post.source ?? null;
+  const sourceName = source
+    ? sourcePlatformName(source, await getTranslations({ locale, namespace: "publicFeed" }))
+    : null;
+  const originalUrl = httpUrl(source?.originalUrl);
+  const readOriginalUrl = httpUrl(source?.shortUrl) ?? originalUrl;
   const minutes = readingMinutes(blocks);
   // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
   // (incl. the save-at-publish stamp) read as part of publishing and stay quiet (조용한 웹로그).
@@ -184,8 +192,8 @@ export default async function PublicPostPage({
         headline: post.title,
         ...(post.excerpt ? { description: post.excerpt } : {}),
         image: [post.ogImageUrl ?? `${postUrl}/opengraph-image`],
-        url: postUrl,
-        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        url: canonicalUrl,
+        mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
         datePublished: post.publishedAt,
         ...(post.lastEditedAt ? { dateModified: post.lastEditedAt } : {}),
         inLanguage: post.languageTag,
@@ -356,6 +364,22 @@ export default async function PublicPostPage({
             </div>
           </AuthorOnly>
         </div>
+        {source && !source.excerptOnly && originalUrl && (
+          <p data-testid="post-source-line" className="mt-4 text-[13px] text-slate-500 dark:text-slate-400">
+            {t.rich("sourceOriginal", {
+              platform: sourceName ?? "",
+              a: (chunks) => (
+                <a
+                  href={originalUrl}
+                  rel="noopener"
+                  className="focus-ring rounded font-medium text-slate-700 underline decoration-1 underline-offset-[0.2em] transition-colors hover:text-accent-700 dark:text-slate-200 dark:hover:text-accent-400"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
+        )}
       </header>
 
       <AuthorGate username={author.username} subject="post">
@@ -404,6 +428,22 @@ export default async function PublicPostPage({
         )}
 
         <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
+        {source?.excerptOnly && readOriginalUrl && (
+          <a
+            href={readOriginalUrl}
+            rel="noopener"
+            data-testid="post-source-card"
+            className="focus-ring group mt-10 block rounded-surface border border-slate-200 px-5 py-4 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-900"
+          >
+            <span className="block text-[12px] text-slate-500 dark:text-slate-400">{sourceName}</span>
+            <span className="mt-1 block text-[17px] font-semibold text-accent-700 dark:text-accent-400">
+              {t("sourceReadOriginal")}
+            </span>
+            {originalUrl && (
+              <span className="mt-1 block truncate text-[13px] text-slate-500 dark:text-slate-400">{bareUrl(originalUrl)}</span>
+            )}
+          </a>
+        )}
         <PostHighlights postId={post.id} />
 
         {post.tags.length > 0 && (

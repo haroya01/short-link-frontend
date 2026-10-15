@@ -105,6 +105,12 @@
     "rowRead": ", 읽음",
     "seriesEyebrow": "시리즈",
     "seriesEpisodeCount": "{count}편",
+    "sourcePlatform": {
+      "NAVER": "네이버 블로그",
+      "TISTORY": "티스토리",
+      "VELOG": "velog",
+      "BRUNCH": "브런치"
+    },
     "seriesItemCount": "{count}편",
     "seriesNoteMarker": "노트",
     "seriesLastPublished": "마지막 편 {date}",
@@ -821,7 +827,9 @@
     "highlightLinkCopied": "링크를 복사했어요",
     "highlightPublicFirst": "하이라이트했어요 · 이름과 함께 공개돼요",
     "reportTitleHighlightReply": "이 답글 신고",
-    "publishedStatus": "발행했어요"
+    "publishedStatus": "발행했어요",
+    "sourceOriginal": "원문: <a>{platform}</a>",
+    "sourceReadOriginal": "원문에서 읽기 →"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -1047,7 +1055,13 @@
     "prefSectionNotes": "내 노트",
     "prefSectionConversation": "대화",
     "prefSectionPeople": "사람",
-    "prefSectionSubscriptions": "구독한 소식"
+    "prefSectionSubscriptions": "구독한 소식",
+    "post_first_reader": "내 글을 처음 읽은 사람이 생겼어요",
+    "post_read_milestone": "내 글을 {milestone, number}명이 읽었어요",
+    "prefFirstReader": "첫 독자",
+    "prefFirstReaderHint": "내 글을 처음 읽은 사람이 생겼을 때",
+    "prefReadMilestone": "읽은 사람 수",
+    "prefReadMilestoneHint": "내 글을 읽은 사람이 10명·100명·1000명이 됐을 때. 봇은 세지 않아요"
   },
   "nav": {
     "events": "모집",

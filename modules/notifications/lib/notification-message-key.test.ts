@@ -49,3 +49,12 @@ describe("a poll notice", () => {
     expect(notificationMessageKey(item({ type: "NOTE_POLL", actorUsername: null }), null)).toBe("note_poll");
   });
 });
+
+describe("a notice about readers", () => {
+  it("is never worded as a group, whatever the count", () => {
+    expect(notificationMessageKey(item({ type: "POST_FIRST_READER", actorUsername: null }), "dohyun")).toBe("post_first_reader");
+    expect(
+      notificationMessageKey(item({ type: "POST_READ_MILESTONE", actorUsername: null, milestone: 100, count: 3 }), "dohyun"),
+    ).toBe("post_read_milestone");
+  });
+});

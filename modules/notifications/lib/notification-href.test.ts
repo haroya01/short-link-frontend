@@ -183,4 +183,14 @@ describe("notificationHref", () => {
       "/ko/p/me/my-post?highlightId=42&thread=1",
     );
   });
+
+  it("sends a reader notice to that post's analytics, where who read it lives", () => {
+    expect(notificationHref(item({ type: "POST_FIRST_READER", actorUsername: null, postId: 5 }), "me", "ko")).toBe(
+      "/blog-preview/analytics/5",
+    );
+    expect(notificationHref(item({ type: "POST_READ_MILESTONE", actorUsername: null, postId: 6, milestone: 100 }), "me", "ko")).toBe(
+      "/blog-preview/analytics/6",
+    );
+    expect(notificationHref(item({ type: "POST_READ_MILESTONE", postId: null }), "me", "ko")).toBeUndefined();
+  });
 });

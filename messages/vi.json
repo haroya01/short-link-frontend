@@ -105,6 +105,12 @@
     "rowRead": ", đã đọc",
     "seriesEyebrow": "Loạt bài",
     "seriesEpisodeCount": "{count} bài",
+    "sourcePlatform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    },
     "seriesItemCount": "{count} phần",
     "seriesNoteMarker": "Ghi chú",
     "seriesLastPublished": "Mới nhất {date}",
@@ -835,7 +841,9 @@
     "highlightLinkCopied": "Đã sao chép liên kết",
     "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn",
     "reportTitleHighlightReply": "Báo cáo trả lời này",
-    "publishedStatus": "Đã xuất bản"
+    "publishedStatus": "Đã xuất bản",
+    "sourceOriginal": "Bài gốc: <a>{platform}</a>",
+    "sourceReadOriginal": "Đọc bài gốc →"
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -1047,7 +1055,13 @@
     "prefSectionNotes": "Ghi chú của bạn",
     "prefSectionConversation": "Cuộc trò chuyện",
     "prefSectionPeople": "Mọi người",
-    "prefSectionSubscriptions": "Tin đã đăng ký"
+    "prefSectionSubscriptions": "Tin đã đăng ký",
+    "post_first_reader": "Bài viết của bạn có người đọc đầu tiên",
+    "post_read_milestone": "{milestone, number} người đã đọc bài viết của bạn",
+    "prefFirstReader": "Người đọc đầu tiên",
+    "prefFirstReaderHint": "Khi bài viết của bạn có người đọc đầu tiên",
+    "prefReadMilestone": "Mốc người đọc",
+    "prefReadMilestoneHint": "Khi bài viết đạt 10, 100 hoặc 1.000 người đọc. Không tính bot"
   },
   "nav": {
     "events": "Sự kiện",
