@@ -10,8 +10,8 @@ vi.mock("@/lib/host", () => ({ blogHref: (path: string) => `/ko/blog${path}` }))
 vi.mock("@/modules/blog/lib/use-live-search", () => ({
   useLiveSearch: () => ({ results: [], loading: false, failed: false, retry: vi.fn() }),
 }));
-vi.mock("@/modules/blog/lib/use-live-people", () => ({ useLivePeople: () => [] }));
-vi.mock("@/modules/blog/components/live-people", () => ({ LivePeople: () => null }));
+vi.mock("@/modules/blog/lib/use-live-people", () => ({ useLivePeople: () => ({ people: [], remote: [] }) }));
+vi.mock("@/modules/blog/components/live-people", () => ({ LivePeople: () => null, LiveRemotePeople: () => null }));
 
 import { BlogHeaderSearch } from "./blog-header-search";
 

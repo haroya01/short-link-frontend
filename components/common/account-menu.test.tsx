@@ -16,7 +16,7 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { username: "dohyun", email: "d@kurl.me" }, signOut: vi.fn() }) }));
 vi.mock("@/components/common/theme-toggle", () => ({ ThemeToggle: () => null }));
-vi.mock("@/components/common/header-avatar-slot", () => ({ cacheMeAvatar: vi.fn(), cacheMeInitial: vi.fn() }));
+vi.mock("@/components/common/header-avatar-slot", () => ({ cacheMeAvatar: vi.fn(), cacheMeInitial: vi.fn(), MeAvatar: () => null }));
 
 import { AccountMenu } from "./account-menu";
 
