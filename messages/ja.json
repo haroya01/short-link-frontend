@@ -105,6 +105,12 @@
     "rowRead": "、既読",
     "seriesEyebrow": "シリーズ",
     "seriesEpisodeCount": "{count}本",
+    "sourcePlatform": {
+      "NAVER": "NAVERブログ",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "brunch"
+    },
     "seriesItemCount": "全{count}話",
     "seriesNoteMarker": "ノート",
     "seriesLastPublished": "最新 {date}",
@@ -124,13 +130,7 @@
     "searchNotesTab": "ノート",
     "searchPeopleTab": "ユーザー",
     "searchNoPeople": "一致するユーザーはいません",
-    "searchPeopleHint": "2文字以上入力するとユーザーを探せます",
-    "sourcePlatform": {
-      "NAVER": "NAVERブログ",
-      "TISTORY": "Tistory",
-      "VELOG": "velog",
-      "BRUNCH": "brunch"
-    }
+    "searchPeopleHint": "2文字以上入力するとユーザーを探せます"
   },
   "blogWebhooks": {
     "title": "Webhook",

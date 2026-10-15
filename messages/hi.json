@@ -105,6 +105,12 @@
     "rowRead": ", पढ़ा गया",
     "seriesEyebrow": "सीरीज़",
     "seriesEpisodeCount": "{count} पोस्ट",
+    "sourcePlatform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    },
     "seriesItemCount": "{count, plural, one {# भाग} other {# भाग}}",
     "seriesNoteMarker": "नोट",
     "seriesLastPublished": "नवीनतम {date}",
@@ -124,13 +130,7 @@
     "searchNotesTab": "नोट",
     "searchPeopleTab": "लोग",
     "searchNoPeople": "कोई मेल खाता व्यक्ति नहीं",
-    "searchPeopleHint": "लोगों को खोजने के लिए कम से कम दो अक्षर लिखें",
-    "sourcePlatform": {
-      "NAVER": "Naver Blog",
-      "TISTORY": "Tistory",
-      "VELOG": "velog",
-      "BRUNCH": "Brunch"
-    }
+    "searchPeopleHint": "लोगों को खोजने के लिए कम से कम दो अक्षर लिखें"
   },
   "blogWebhooks": {
     "title": "वेबहुक",

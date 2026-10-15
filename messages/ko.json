@@ -105,6 +105,12 @@
     "rowRead": ", 읽음",
     "seriesEyebrow": "시리즈",
     "seriesEpisodeCount": "{count}편",
+    "sourcePlatform": {
+      "NAVER": "네이버 블로그",
+      "TISTORY": "티스토리",
+      "VELOG": "velog",
+      "BRUNCH": "브런치"
+    },
     "seriesItemCount": "{count}편",
     "seriesNoteMarker": "노트",
     "seriesLastPublished": "마지막 편 {date}",
@@ -124,13 +130,7 @@
     "searchNotesTab": "노트",
     "searchPeopleTab": "사람",
     "searchNoPeople": "맞는 사람이 없어요",
-    "searchPeopleHint": "두 글자 이상 입력하면 사람을 찾아요",
-    "sourcePlatform": {
-      "NAVER": "네이버 블로그",
-      "TISTORY": "티스토리",
-      "VELOG": "velog",
-      "BRUNCH": "브런치"
-    }
+    "searchPeopleHint": "두 글자 이상 입력하면 사람을 찾아요"
   },
   "blogWebhooks": {
     "title": "웹훅",

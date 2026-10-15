@@ -105,6 +105,12 @@
     "rowRead": ", đã đọc",
     "seriesEyebrow": "Loạt bài",
     "seriesEpisodeCount": "{count} bài",
+    "sourcePlatform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    },
     "seriesItemCount": "{count} phần",
     "seriesNoteMarker": "Ghi chú",
     "seriesLastPublished": "Mới nhất {date}",
@@ -124,13 +130,7 @@
     "searchNotesTab": "Ghi chú",
     "searchPeopleTab": "Mọi người",
     "searchNoPeople": "Không có người phù hợp",
-    "searchPeopleHint": "Nhập ít nhất hai ký tự để tìm người",
-    "sourcePlatform": {
-      "NAVER": "Naver Blog",
-      "TISTORY": "Tistory",
-      "VELOG": "velog",
-      "BRUNCH": "Brunch"
-    }
+    "searchPeopleHint": "Nhập ít nhất hai ký tự để tìm người"
   },
   "blogWebhooks": {
     "title": "Webhook",

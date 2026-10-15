@@ -105,6 +105,12 @@
     "rowRead": ", read",
     "seriesEyebrow": "Series",
     "seriesEpisodeCount": "{count, plural, one {# post} other {# posts}}",
+    "sourcePlatform": {
+      "NAVER": "Naver Blog",
+      "TISTORY": "Tistory",
+      "VELOG": "velog",
+      "BRUNCH": "Brunch"
+    },
     "seriesItemCount": "{count, plural, one {# part} other {# parts}}",
     "seriesNoteMarker": "Note",
     "seriesLastPublished": "Latest {date}",
@@ -124,13 +130,7 @@
     "searchNotesTab": "Notes",
     "searchPeopleTab": "People",
     "searchNoPeople": "No matching people",
-    "searchPeopleHint": "Type at least two characters to find people",
-    "sourcePlatform": {
-      "NAVER": "Naver Blog",
-      "TISTORY": "Tistory",
-      "VELOG": "velog",
-      "BRUNCH": "Brunch"
-    }
+    "searchPeopleHint": "Type at least two characters to find people"
   },
   "blogWebhooks": {
     "title": "Webhooks",
