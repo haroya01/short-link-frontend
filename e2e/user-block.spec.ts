@@ -30,7 +30,7 @@ test("blocking from a profile hides their posts, notes and follow button, and un
   await expect(notes).toHaveCount(0);
   await expect(follow).toHaveCount(0);
 
-  await page.getByRole("link", { name: "글", exact: true }).click();
+  await page.getByRole("main").getByRole("link", { name: "글", exact: true }).click();
   await expect(page).toHaveURL(/\/p\/yuna$/);
   await expect(notice).toBeVisible();
   await expect(page.locator('main a[href^="/ko/p/yuna/"][href$="kyoto-workation"]')).toHaveCount(0);
@@ -76,5 +76,6 @@ test("settings list blocked accounts and unblock them", async ({ page }) => {
   await expect(section.getByRole("link", { name: "@mallory" })).toBeVisible({ timeout: 30_000 });
   await section.getByRole("button", { name: "mallory님 차단 해제" }).click();
   await expectOnTop(toastBy(page, "mallory님의 차단을 해제했어요"));
-  await expect(section).toContainText("차단한 사용자가 없어요.");
+  await expect(section.getByRole("link", { name: "@mallory" })).toHaveCount(0);
+  await expect(section.getByTestId("remote-blocks")).toContainText("@deals@spam.example");
 });

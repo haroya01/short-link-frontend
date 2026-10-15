@@ -42,7 +42,7 @@ test.describe("desktop", () => {
     await failing(page, "notifications");
     await page.goto("/ko/blog");
     await page.getByRole("button", { name: /^알림/ }).click({ timeout: 30_000 });
-    const menu = page.getByRole("menu");
+    const menu = page.getByRole("dialog", { name: "알림" });
     await expect(menu.getByRole("alert")).toContainText("알림을 불러오지 못했어요");
     await expect(menu.getByText("아직 알림이 없어요")).toHaveCount(0);
 
@@ -79,7 +79,7 @@ test.describe("desktop", () => {
     await expect(page.getByText("북마크를 불러오지 못했어요.")).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("북마크한 글이 없어요")).toHaveCount(0);
 
-    await page.getByRole("navigation", { name: "서재", exact: true }).getByRole("link", { name: "하이라이트·공개 메모" }).click();
+    await page.getByRole("navigation", { name: "서재", exact: true }).getByRole("link", { name: "하이라이트·메모" }).click();
     await expect(page.getByText("하이라이트를 불러오지 못했어요.")).toBeVisible();
     await expect(page.getByText("읽기 기록을 불러오지 못했어요.")).toHaveCount(0);
 

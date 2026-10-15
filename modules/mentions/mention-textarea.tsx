@@ -11,10 +11,11 @@ type Props = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChan
   value: string;
   onValueChange: (value: string) => void;
   wrapperClassName?: string;
+  remote?: boolean;
 };
 
 export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function MentionTextarea(
-  { value, onValueChange, onKeyDown, onBlur, wrapperClassName, ...rest },
+  { value, onValueChange, onKeyDown, onBlur, wrapperClassName, remote = false, ...rest },
   forwarded,
 ) {
   const t = useTranslations("mentions");
@@ -24,7 +25,7 @@ export const MentionTextarea = forwardRef<HTMLTextAreaElement, Props>(function M
   const [token, setToken] = useState<MentionToken | null>(null);
   const [caret, setCaret] = useState(0);
   const [active, setActive] = useState(0);
-  const candidates = useMentionCandidates(token?.query ?? null, true);
+  const candidates = useMentionCandidates(token?.query ?? null, true, remote);
   const open = token != null && candidates.length > 0;
 
   const read = (el: HTMLTextAreaElement) => {

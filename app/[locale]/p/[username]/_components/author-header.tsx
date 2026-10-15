@@ -9,6 +9,7 @@ import { FollowButton } from "@/modules/blog/components/follow-button";
 import { LockedMark } from "@/modules/blog/components/locked-mark";
 import { AuthorMoreMenu } from "@/modules/notes/components/author-more-menu";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
+import { ProfileEditButton } from "@/modules/blog/components/profile-edit-dialog";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { DATE_LOCALE } from "@/lib/date";
@@ -16,6 +17,7 @@ import { AboutLink } from "./about-link";
 import { AuthorTabs } from "./author-tabs";
 import { AvatarZoom } from "./avatar-zoom";
 import { HeaderBio } from "./header-bio";
+import { HeaderName } from "./header-name";
 
 type Tab = "posts" | "notes" | "replies" | "media" | "reposts" | "series" | "collections";
 
@@ -142,24 +144,30 @@ export async function AuthorHeader({
   return (
     <header>
       <div className="flex items-center justify-between gap-4">
-        <AvatarZoom src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} />
+        <AvatarZoom
+          src={author.avatarUrl}
+          name={author.displayName || author.username}
+          seed={author.id}
+          username={author.username}
+        />
         <div className="flex shrink-0 items-center gap-2">
           <FollowButton username={author.username} initialFollowerCount={0} showCount={false} showBell />
           <AuthorMoreMenu username={author.username} userId={author.id} />
+          <ProfileEditButton username={author.username} />
         </div>
       </div>
 
       <div className="mt-3 min-w-0">
         <div className="flex min-w-0 items-center gap-2">
           <h1 className="truncate text-[20px] font-bold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[24px]">
-            {author.displayName || author.username}
+            <HeaderName name={author.displayName || author.username} username={author.username} />
           </h1>
           <LockedMark username={author.username} />
         </div>
         <p className="mt-0.5 truncate text-[14px] text-slate-500 dark:text-slate-400">@{author.username}</p>
       </div>
 
-      {author.bio && <HeaderBio bio={author.bio} />}
+      <HeaderBio bio={author.bio} username={author.username} />
 
       <FollowCounts
         username={author.username}

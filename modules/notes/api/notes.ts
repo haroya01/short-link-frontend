@@ -110,14 +110,26 @@ export interface Note {
   canReply?: boolean | null;
   /** The thread's first author hid this reply. */
   hidden?: boolean;
+  /** What it was on its server; null for notes written here, absent from servers that predate it. */
+  remote?: RemoteNoteShape | null;
+}
+
+/** ARTICLE, PAGE and VIDEO keep only a summary in `body` and one picture in `media`; the rest
+ *  stays at `url`, the original on the same server. */
+export interface RemoteNoteShape {
+  kind: "NOTE" | "QUESTION" | "ARTICLE" | "PAGE" | "VIDEO";
+  title: string | null;
+  url: string | null;
+  community: string | null;
 }
 
 export type NoteReplyPolicy = "everyone" | "following" | "mentioned";
 
 /** Mastodon's poll. Counts are public; the author gets `voted: true` and only sees results.
- *  `voted` and `ownVotes` are null for anonymous readers. */
+ *  `voted` and `ownVotes` are null for anonymous readers. A poll from another server is counted
+ *  there: everyone signed in gets `voted: true` and may have no closing time. */
 export interface NotePoll {
-  expiresAt: string;
+  expiresAt: string | null;
   expired: boolean;
   multiple: boolean;
   votesCount: number;
@@ -303,6 +315,9 @@ export interface RemoteAccount {
   requested: boolean;
   /** The viewer blocked this account's whole server. */
   domainBlocked?: boolean;
+  /** Absent on a backend without account blocks and mutes for other servers. */
+  blocking?: boolean;
+  muting?: boolean;
 }
 
 export interface DomainBlock {
@@ -570,6 +585,19 @@ export function muteUser(
 export function unmuteUser(username: string): Promise<void> {
   if (noteMocks) return Promise.resolve(noteMocks.mockUnmute(username));
   return request(`/api/v1/users/${encodeURIComponent(username)}/mute`, { method: "DELETE" });
+}
+
+export interface MutedUser {
+  id: number;
+  username: string;
+  avatarUrl: string | null;
+  notifications: boolean;
+  expiresAt: string | null;
+}
+
+export function listMutedUsers(): Promise<MutedUser[]> {
+  if (noteMocks) return Promise.resolve(noteMocks.mockMutedUsers());
+  return request<MutedUser[]>("/api/v1/users/me/mutes", { method: "GET" });
 }
 
 /** Client-side author page (carries the viewer's token, so likedByMe and the author's own counts

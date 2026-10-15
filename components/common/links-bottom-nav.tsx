@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { BarChart3, CalendarDays, Contact, Ellipsis, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+import { useLinksPathname } from "@/hooks/use-links-pathname";
 import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 
@@ -21,7 +22,7 @@ const TAB =
  */
 export function LinksBottomNav() {
   const t = useTranslations("nav");
-  const pathname = usePathname(); // locale-stripped (e.g. "/", "/dashboard", "/campaigns", "/u/..")
+  const pathname = useLinksPathname();
   const { authenticated, me } = useAuth();
   const hidden = useHideOnScroll();
 

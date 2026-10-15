@@ -492,6 +492,14 @@ mark.kurl-highlight--mine {
     height: 44px;
     transform: translate(-50%, -50%);
   }
+  .row-raise {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .row-raise :is(a, button, input, label, select, textarea, [role="button"]) {
+    pointer-events: auto;
+  }
   .profile-card:active {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
      * lift mid-press, so the cursor and the card track each other instead of fighting. */

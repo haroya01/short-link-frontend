@@ -17,6 +17,14 @@ vi.mock("@/modules/notes/api/notes", () => ({
   listHiddenReplies: mocks.listHiddenReplies,
   setNoteReplyHidden: mocks.setNoteReplyHidden,
   deleteNote: mocks.deleteNote,
+  NOTE_MAX_THREAD_NOTES: 10,
+}));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/components/auth/login-prompt", () => ({ askToSignIn: vi.fn() }));
+vi.mock("@/modules/blog/components/avatar", () => ({ Avatar: () => null }));
+vi.mock("./note-reply-dialog", () => ({
+  NoteReplyDialog: ({ target }: { target: Note | null }) =>
+    target ? createElement("div", { "data-reply-dialog": target.id }) : null,
 }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/modules/notes/lib/note-filters", () => ({ useNoteFilters: () => [], noteVerdict: () => "show" }));
@@ -28,14 +36,33 @@ vi.mock("./note-card", () => ({
   NoteCard: ({
     note,
     replyModeration,
+    onReplied,
   }: {
     note: Note;
     replyModeration?: { hidden: boolean; onToggleHidden: () => void; onRemove: () => void };
+    onReplied?: (reply: Note) => void;
   }) =>
     createElement(
       "article",
       { "data-note": note.id },
       note.body,
+      onReplied &&
+        createElement(
+          "button",
+          {
+            type: "button",
+            "data-reply": note.id,
+            onClick: () =>
+              onReplied({
+                id: 500 + note.id,
+                body: `answer to ${note.id}`,
+                author: { id: 2, username: "minji", avatarUrl: null },
+                inReplyToId: note.id,
+                replyCount: 0,
+              } as unknown as Note),
+          },
+          "reply",
+        ),
       replyModeration &&
         createElement(
           "button",
@@ -46,7 +73,6 @@ vi.mock("./note-card", () => ({
         createElement("button", { type: "button", "data-remove": note.id, onClick: replyModeration.onRemove }, "remove"),
     ),
 }));
-vi.mock("./note-composer", () => ({ NoteComposer: () => createElement("textarea", { "aria-label": "composer" }) }));
 
 import { ApiError } from "@/lib/api/client";
 import { NoteThreadView } from "./note-thread";
@@ -103,7 +129,7 @@ const reply = (id: number, by: ReturnType<typeof author>, extra: Partial<Note> =
   ({ id, body: `reply ${id}`, author: by, inReplyToId: 72, createdAt: `2026-09-19T1${id % 10}:00:00Z`, ...extra }) as unknown as Note;
 
 describe("who can reply", () => {
-  it("shows why the reader can't reply instead of the composer", async () => {
+  it("shows why the reader can't reply instead of the reply row", async () => {
     const restricted = {
       ...thread,
       note: { ...thread.note, id: 70, author: author(15, "yuna"), replyPolicy: "mentioned", canReply: false },
@@ -111,14 +137,57 @@ describe("who can reply", () => {
     mocks.getNoteThread.mockResolvedValue(restricted);
     await render(restricted);
     expect(host.querySelector('[data-testid="reply-restricted"]')!.textContent).toBe("replyRestrictedMentioned");
-    expect(host.querySelector('[aria-label="composer"]')).toBeNull();
+    expect(host.querySelector('[data-testid="note-reply-prompt"]')).toBeNull();
   });
 
-  it("keeps the composer when the server doesn't say yet", async () => {
+  it("keeps the reply row when the server doesn't say yet, and the row opens the sheet for the open note", async () => {
     mocks.getNoteThread.mockResolvedValue(thread);
     await render();
-    expect(host.querySelector('[aria-label="composer"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="reply-restricted"]')).toBeNull();
+    expect(host.querySelector("[data-reply-dialog]")).toBeNull();
+    await act(async () => host.querySelector<HTMLButtonElement>('[data-testid="note-reply-prompt"]')!.click());
+    expect(host.querySelector("[data-reply-dialog]")!.getAttribute("data-reply-dialog")).toBe("90");
+  });
+});
+
+describe("where a new reply lands", () => {
+  const withReplies = {
+    ...thread,
+    note: { ...thread.note, replyCount: 1 },
+    replies: [{ id: 91, body: "먼저 단 답글", author: { id: 3, username: "yuna", avatarUrl: null }, inReplyToId: 90, replyCount: 0, createdAt: "2026-09-19T10:00:00Z" }],
+  } as unknown as NoteThread;
+
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = vi.fn();
+    vi.stubGlobal("matchMedia", () => ({ matches: false }));
+  });
+
+  it("puts a reply to the open note above the others and brings it into view", async () => {
+    mocks.getNoteThread.mockResolvedValue(withReplies);
+    await render(withReplies);
+    expect(host.querySelector("#note-replies")!.textContent).toBe("repliesTitle 1");
+    await act(async () => host.querySelector<HTMLButtonElement>('[data-reply="90"]')!.click());
+    expect(Array.from(host.querySelectorAll("section article")).map((a) => a.getAttribute("data-note"))).toEqual([
+      "590",
+      "91",
+    ]);
+    expect(host.querySelector("#note-replies")!.textContent).toBe("repliesTitle 2");
+    expect(mocks.toast).not.toHaveBeenCalled();
+  });
+
+  it("only says so when the reply went to a note further down", async () => {
+    mocks.getNoteThread.mockResolvedValue(withReplies);
+    await render(withReplies);
+    await act(async () => host.querySelector<HTMLButtonElement>('[data-reply="91"]')!.click());
+    expect(host.querySelectorAll("section article")).toHaveLength(1);
+    expect(mocks.toast).toHaveBeenCalledWith("replyPosted", "default", expect.objectContaining({ action: expect.anything() }));
+  });
+
+  it("names no replies heading until there is a reply", async () => {
+    mocks.getNoteThread.mockResolvedValue(thread);
+    await render();
+    expect(host.querySelector("#note-replies")).toBeNull();
+    expect(host.textContent).not.toContain("noReplies");
   });
 });
 

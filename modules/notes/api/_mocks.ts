@@ -9,6 +9,7 @@ import type {
   NoteEdit,
   NoteFeed,
   NoteHistory,
+  MutedUser,
   MuteStatus,
   NoteFilter,
   NoteFilterDraft,
@@ -24,6 +25,8 @@ import type {
   TrendingNoteLink,
   TrendingNoteTag,
 } from "./notes";
+import type { RemoteAccountSearchBody, RemoteResolveBody } from "./federation-search";
+import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -35,6 +38,38 @@ const MINA = {
   displayName: "Mina",
   remoteId: 9800,
   url: "https://mastodon.social/@mina",
+};
+const HARUTO = {
+  id: -9801,
+  username: "haruto@misskey.io",
+  avatarUrl: null,
+  displayName: "Haruto",
+  remoteId: 9801,
+  url: "https://misskey.io/@haruto",
+};
+const NORA = {
+  id: -9806,
+  username: "nora@blog.example",
+  avatarUrl: null,
+  displayName: "Nora",
+  remoteId: 9806,
+  url: "https://blog.example/author/nora",
+};
+const TOMAS = {
+  id: -9807,
+  username: "tomas@lemmy.example",
+  avatarUrl: null,
+  displayName: "Tomas",
+  remoteId: 9807,
+  url: "https://lemmy.example/u/tomas",
+};
+const TRAILCAM = {
+  id: -9808,
+  username: "trailcam@pt.example",
+  avatarUrl: null,
+  displayName: "Trail Camera",
+  remoteId: 9808,
+  url: "https://pt.example/a/trailcam",
 };
 
 function note(partial: Partial<Note> & Pick<Note, "id" | "body" | "author">): Note {
@@ -165,6 +200,87 @@ let notes: Note[] = [
     createdAt: "2026-10-03T09:00:00Z",
   }),
   note({
+    id: 14,
+    body: "Which day works for the next meetup?",
+    author: MINA,
+    createdAt: "2026-10-03T09:30:00Z",
+    language: "en",
+    poll: {
+      expiresAt: new Date(Date.now() + 2 * 86_400 * 1000).toISOString(),
+      expired: false,
+      multiple: false,
+      votesCount: 27,
+      votersCount: 27,
+      options: [
+        { title: "Friday", votesCount: 8 },
+        { title: "Saturday", votesCount: 14 },
+        { title: "Sunday", votesCount: 5 },
+      ],
+      voted: true,
+      ownVotes: [],
+    },
+    remote: { kind: "QUESTION", title: null, url: "https://mastodon.social/@mina/113300000000000014", community: null },
+  }),
+  note({
+    id: 15,
+    body: "週末のランチ、どこにする？",
+    author: HARUTO,
+    createdAt: "2026-10-03T09:20:00Z",
+    language: "ja",
+    poll: {
+      expiresAt: null,
+      expired: false,
+      multiple: false,
+      votesCount: 11,
+      votersCount: 11,
+      options: [
+        { title: "そば", votesCount: 4 },
+        { title: "カレー", votesCount: 7 },
+      ],
+      voted: true,
+      ownVotes: [],
+    },
+    remote: { kind: "QUESTION", title: null, url: "https://misskey.io/notes/9xk2a1b3c4", community: null },
+  }),
+  note({
+    id: 16,
+    body: "올해는 모종 여섯 개로 시작했다. 장마가 길어서 절반은 잎곰팡이에 졌고, 남은 셋이 8월 내내 열매를 냈다. 내년엔 간격을 넓히고 지지대를 먼저 세울 생각이다.",
+    author: NORA,
+    createdAt: "2026-10-03T09:10:00Z",
+    language: "ko",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-remote-tomato/1200/628", altText: null, contentType: "image/jpeg", width: 1200, height: 628 },
+    ],
+    remote: { kind: "ARTICLE", title: "토마토 한 철, 인내의 기록", url: "https://blog.example/2026/10/tomato-season/", community: null },
+  }),
+  note({
+    id: 17,
+    body: "Built two 1.2 m beds this spring from untreated cedar. The soil warmed up two weeks earlier than the ground plot, and weeding took a third of the time. Cost was the catch. Curious what others used.",
+    author: TOMAS,
+    createdAt: "2026-10-03T09:05:00Z",
+    language: "en",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-remote-beds/1200/628", altText: "Two cedar raised beds", contentType: "image/jpeg", width: 1200, height: 628 },
+    ],
+    remote: {
+      kind: "PAGE",
+      title: "Raised beds: worth the lumber?",
+      url: "https://lemmy.example/post/12345",
+      community: "gardening@lemmy.example",
+    },
+  }),
+  note({
+    id: 18,
+    body: "Recorded at dawn near the upper falls. No music, just water.",
+    author: TRAILCAM,
+    createdAt: "2026-10-03T08:30:00Z",
+    language: "en",
+    media: [
+      { url: "https://picsum.photos/seed/kurl-remote-stream/1280/720", altText: null, contentType: "image/jpeg", width: 1280, height: 720 },
+    ],
+    remote: { kind: "VIDEO", title: "Ten minutes of a forest stream", url: "https://pt.example/w/9c1f2e", community: null },
+  }),
+  note({
     id: 12,
     body: "Hello from the fediverse 👋 #kurl",
     author: MINA,
@@ -208,11 +324,22 @@ let nextId = 100;
 const reposts = new Map<string, number[]>([[ME.username, [3]], [YUNA.username, [6]]]);
 let settings: FederationSettings = { enabled: true, noticeSeen: false, handle: "@dohyun@kurl.me" };
 
-const muted = new Map<string, MuteStatus>();
+const muted = new Map<string, MuteStatus>([["haruki", { muted: true, notifications: true, expiresAt: null }]]);
+const MUTABLE: Record<string, { id: number; avatarUrl: string | null }> = {
+  haruki: { id: 13, avatarUrl: "https://i.pravatar.cc/120?img=8" },
+  yuna: YUNA,
+  haruka: HARUKA,
+};
+const remoteBlocks = new Set<number>([9804]);
+const remoteMutes = new Map<number, { notifications: boolean; expiresAt: string | null }>([
+  [9805, { notifications: true, expiresAt: null }],
+]);
 const topLevel = () =>
   notes.filter((n) => n.inReplyToId === null && !n.author.remoteId && !muted.has(n.author.username));
 const remoteTopLevel = (remoteId: number) =>
-  notes.filter((n) => n.inReplyToId === null && n.author.remoteId === remoteId);
+  remoteBlocks.has(remoteId) ? [] : notes.filter((n) => n.inReplyToId === null && n.author.remoteId === remoteId);
+const listedRemote = (n: Note) =>
+  !n.author.remoteId || (!remoteBlocks.has(n.author.remoteId) && !remoteMutes.has(n.author.remoteId));
 
 const FILTERS_KEY = "kurl-mock-note-filters";
 
@@ -273,6 +400,16 @@ export function mockMute(username: string, notifications: boolean, duration: num
 export function mockUnmute(username: string): void {
   muted.delete(username);
 }
+
+export function mockMutedUsers(): MutedUser[] {
+  return [...muted.entries()].map(([username, status]) => ({
+    id: MUTABLE[username]?.id ?? 0,
+    username,
+    avatarUrl: MUTABLE[username]?.avatarUrl ?? null,
+    notifications: status.notifications,
+    expiresAt: status.expiresAt,
+  }));
+}
 let bookmarks: number[] = [];
 let showReposts = true;
 let pins: number[] = [];
@@ -328,7 +465,7 @@ export function mockQuotingPosts(id: number, page: number): PublicFeedView {
 
 export function mockFederatedNotes(page: number): NoteFeed {
   const received = notes.filter(
-    (n) => n.inReplyToId === null && n.author.remoteId && (n.visibility ?? "public") === "public",
+    (n) => n.inReplyToId === null && n.author.remoteId && (n.visibility ?? "public") === "public" && listedRemote(n),
   );
   return { items: page === 0 ? received.map(withQuotes) : [], page, hasNext: false };
 }
@@ -417,6 +554,7 @@ export function mockFollowingNotes(page: number): NoteFeed {
   const followedElsewhere = remoteAccounts
     .filter((a) => a.following)
     .flatMap((a) => remoteTopLevel(a.id))
+    .filter(listedRemote)
     .map(withQuotes);
   const items = [...reposted, ...yunas, ...mine, ...followedElsewhere].filter(
     (n) => !seen.has(n.id) && seen.add(n.id),
@@ -436,14 +574,155 @@ let remoteAccounts: RemoteAccount[] = [
     following: true,
     requested: false,
   },
+  {
+    id: 9801,
+    acct: "haruto@misskey.io",
+    username: "haruto",
+    domain: "misskey.io",
+    displayName: "Haruto",
+    avatarUrl: null,
+    url: "https://misskey.io/@haruto",
+    following: false,
+    requested: false,
+  },
+  {
+    id: 9802,
+    acct: "sora@fosstodon.org",
+    username: "sora",
+    domain: "fosstodon.org",
+    displayName: "Sora",
+    avatarUrl: "https://i.pravatar.cc/120?img=47",
+    url: "https://fosstodon.org/@sora",
+    following: false,
+    requested: false,
+  },
+  {
+    id: 9803,
+    acct: "aoi@mstdn.jp",
+    username: "aoi",
+    domain: "mstdn.jp",
+    displayName: "あおい",
+    avatarUrl: null,
+    url: "https://mstdn.jp/@aoi",
+    following: false,
+    requested: false,
+  },
+  {
+    id: 9804,
+    acct: "deals@spam.example",
+    username: "deals",
+    domain: "spam.example",
+    displayName: "Deals",
+    avatarUrl: null,
+    url: "https://spam.example/@deals",
+    following: false,
+    requested: false,
+  },
+  {
+    id: 9805,
+    acct: "ren@mastodon.online",
+    username: "ren",
+    domain: "mastodon.online",
+    displayName: "Ren",
+    avatarUrl: null,
+    url: "https://mastodon.online/@ren",
+    following: false,
+    requested: false,
+  },
+  {
+    id: 9806,
+    acct: "nora@blog.example",
+    username: "nora",
+    domain: "blog.example",
+    displayName: "Nora",
+    avatarUrl: null,
+    url: "https://blog.example/author/nora",
+    following: true,
+    requested: false,
+  },
+  {
+    id: 9807,
+    acct: "tomas@lemmy.example",
+    username: "tomas",
+    domain: "lemmy.example",
+    displayName: "Tomas",
+    avatarUrl: null,
+    url: "https://lemmy.example/u/tomas",
+    following: true,
+    requested: false,
+  },
+  {
+    id: 9808,
+    acct: "trailcam@pt.example",
+    username: "trailcam",
+    domain: "pt.example",
+    displayName: "Trail Camera",
+    avatarUrl: null,
+    url: "https://pt.example/a/trailcam",
+    following: true,
+    requested: false,
+  },
 ];
+const SUGGESTED_ELSEWHERE = [9802, 9803, 9801];
 let nextRemoteId = 9900;
 let domainBlocks: { domain: string; createdAt: string }[] = [];
 
 const shown = (a: RemoteAccount): RemoteAccount => ({
   ...a,
   domainBlocked: domainBlocks.some((b) => b.domain === a.domain),
+  blocking: remoteBlocks.has(a.id),
+  muting: remoteMutes.has(a.id),
 });
+
+const remoteById = (id: number): Promise<RemoteAccount> => {
+  const account = remoteAccounts.find((a) => a.id === id);
+  return account
+    ? Promise.resolve(shown(account))
+    : Promise.reject(new ApiError(404, { status: 404, code: "REMOTE_ACCOUNT_NOT_FOUND" }));
+};
+
+export function mockSetRemoteBlocked(id: number, on: boolean): Promise<RemoteAccount> {
+  if (on) {
+    remoteBlocks.add(id);
+    remoteAccounts = remoteAccounts.map((a) => (a.id === id ? { ...a, following: false, requested: false } : a));
+  } else {
+    remoteBlocks.delete(id);
+  }
+  return remoteById(id);
+}
+
+export function mockMuteRemote(id: number, notifications: boolean, duration: number | null): Promise<RemoteAccount> {
+  remoteMutes.set(id, {
+    notifications,
+    expiresAt: duration === null ? null : new Date(Date.now() + duration * 1000).toISOString(),
+  });
+  return remoteById(id);
+}
+
+export function mockUnmuteRemote(id: number): Promise<RemoteAccount> {
+  remoteMutes.delete(id);
+  return remoteById(id);
+}
+
+export function mockRemoteBlocks(): Promise<RemoteAccountsBody> {
+  return Promise.resolve({ items: remoteAccounts.filter((a) => remoteBlocks.has(a.id)).map(shown) });
+}
+
+export function mockRemoteMutes(): Promise<RemoteMutesBody> {
+  return Promise.resolve({
+    items: remoteAccounts
+      .filter((a) => remoteMutes.has(a.id))
+      .map((a) => ({ account: shown(a), ...remoteMutes.get(a.id)! })),
+  });
+}
+
+export function mockRemoteSuggestions(limit: number): Promise<RemoteAccountsBody> {
+  const items = SUGGESTED_ELSEWHERE.map((id) => remoteAccounts.find((a) => a.id === id))
+    .filter((a): a is RemoteAccount => a !== undefined && !a.following && !a.requested && !remoteBlocks.has(a.id))
+    .slice(0, limit)
+    .map(shown);
+  return Promise.resolve({ items });
+}
 
 export function mockDomainBlocks() {
   return domainBlocks;
@@ -514,6 +793,39 @@ export function mockRemoteAccountNotes(id: number, page: number): NoteFeed {
   return { items: page > 0 ? [] : remoteTopLevel(id).map(withQuotes), page, hasNext: false };
 }
 
+export function mockSearchRemote(q: string, limit: number): Promise<RemoteAccountSearchBody> {
+  const needle = q.toLowerCase();
+  const items = remoteAccounts
+    .filter(
+      (a) =>
+        a.username.toLowerCase().startsWith(needle) ||
+        (a.displayName ?? "").toLowerCase().startsWith(needle) ||
+        a.acct.startsWith(needle),
+    )
+    .slice(0, limit)
+    .map(shown);
+  return Promise.resolve({ items });
+}
+
+export function mockResolveRemote(q: string): Promise<RemoteResolveBody> {
+  const address = /^https:\/\//i.test(q) ? new URL(q) : null;
+  const domain = (address ? address.hostname : q.slice(q.lastIndexOf("@") + 1)).toLowerCase();
+  if (domain.startsWith("down.")) {
+    return Promise.reject(new ApiError(502, { status: 502, code: "REMOTE_SERVER_UNREACHABLE" }));
+  }
+  const missing = () => Promise.reject(new ApiError(404, { status: 404, code: "REMOTE_ACCOUNT_NOT_FOUND" }));
+  if (!address) {
+    if (q.replace(/^@/, "").startsWith("nobody@")) return missing();
+    return mockLookupRemote(q).then((account) => ({ account, note: null }));
+  }
+  const [user, noteId] = address.pathname.split("/").filter(Boolean);
+  const account = remoteAccounts.find((a) => a.domain === domain && `@${a.username}` === user);
+  if (!account) return missing();
+  if (!noteId) return Promise.resolve({ account: shown(account), note: null });
+  const found = notes.find((n) => n.author.remoteId === account.id && String(n.id) === noteId);
+  return found ? Promise.resolve({ account: null, note: withQuotes(found) }) : missing();
+}
+
 let lists: { id: number; title: string; members: string[] }[] = [];
 let nextListId = 700;
 const PEOPLE: Record<string, NoteAuthor> = { dohyun: ME, yuna: YUNA, haruka: HARUKA };
@@ -576,7 +888,9 @@ export function mockSearchNotes(query: string, page: number): NoteFeed {
   const needle = query.trim().toLowerCase();
   const items =
     page === 0 && needle
-      ? notes.filter((n) => (n.visibility ?? "public") === "public" && n.body.toLowerCase().includes(needle))
+      ? notes.filter(
+          (n) => (n.visibility ?? "public") === "public" && listedRemote(n) && n.body.toLowerCase().includes(needle),
+        )
       : [];
   return { items: items.map(withQuotes), page, hasNext: false };
 }
@@ -780,7 +1094,7 @@ export function mockThread(id: number): NoteThread | null {
   return {
     note: withQuotes(main),
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
-    replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id) && n.hidden !== true),
+    replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id) && n.hidden !== true && listedRemote(n)),
     continuation,
     series: mockNoteSeries(id),
     hiddenReplyCount: notes.filter((n) => n.inReplyToId === id && n.hidden === true).length,
@@ -912,6 +1226,7 @@ export function mockCreate(draft: NoteDraft): Note {
 export function mockVote(id: number, choices: number[]): NotePoll {
   const target = notes.find((n) => n.id === id);
   if (!target?.poll) throw new Error("no poll");
+  if (target.author.remoteId) throw new ApiError(400, { status: 400, code: "NOTE_POLL_ELSEWHERE" });
   if (target.poll.voted) return target.poll;
   const poll: NotePoll = {
     ...target.poll,

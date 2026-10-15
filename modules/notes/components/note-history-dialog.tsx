@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -94,8 +93,7 @@ export function NoteHistoryDialog({ noteId, open, onClose }: { noteId: number; o
                   {version.at && <span> · {when.format(new Date(version.at))}</span>}
                 </p>
                 {version.contentWarning && (
-                  <p className="mt-1 flex items-center gap-1.5 text-[14px] font-medium text-slate-900 dark:text-slate-100">
-                    <TriangleAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <p className="mt-1 whitespace-pre-wrap break-words text-[15px] leading-[1.45] text-slate-900 dark:text-slate-100">
                     {version.contentWarning}
                   </p>
                 )}

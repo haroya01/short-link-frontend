@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { EyeOff, ImageIcon, Images } from "lucide-react";
+import { ImageIcon, Images } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
@@ -41,11 +41,6 @@ export function MediaCell({ item, username }: { item: ProfileMediaItem; username
       ) : (
         <span className="grid h-full w-full place-items-center text-slate-400">
           <ImageIcon aria-hidden className="h-6 w-6" />
-        </span>
-      )}
-      {item.sensitive && (
-        <span aria-hidden className="absolute inset-0 grid place-items-center bg-slate-950/20 text-white">
-          <EyeOff className="h-5 w-5 drop-shadow" />
         </span>
       )}
       {item.mediaCount > 1 && (

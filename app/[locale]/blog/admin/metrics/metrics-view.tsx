@@ -42,7 +42,7 @@ export function BlogAdminMetricsView() {
   if (!authenticated || !isAdmin) notFound();
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t("title")}</h1>
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
@@ -106,7 +106,7 @@ export function BlogAdminMetricsView() {
           </section>
         </>
       )}
-    </main>
+    </div>
   );
 }
 

@@ -61,7 +61,7 @@ export function ProfilePreview({
 
   return (
     <div className="space-y-2">
-      <p className="text-center text-[11px] font-medium text-slate-500">
+      <p className="text-center text-[11px] font-medium text-slate-500 dark:text-slate-400">
         {tEditor("previewTitle")}
       </p>
 
@@ -156,7 +156,7 @@ export function ProfilePreview({
         </div>
       </div>
 
-      <p className="text-center text-[10px] text-slate-500">kurl.me/u/{username || "..."}</p>
+      <p className="text-center text-[10px] text-slate-500 dark:text-slate-400">kurl.me/u/{username || "..."}</p>
     </div>
   );
 }

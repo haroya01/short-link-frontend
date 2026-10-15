@@ -8,10 +8,24 @@ import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { useOwnProfile } from "@/modules/blog/lib/own-profile";
 
-export function AvatarZoom({ src, name, seed }: { src: string | null; name: string; seed: number | null }) {
+export function AvatarZoom({
+  src: serverSrc,
+  name: serverName,
+  seed,
+  username,
+}: {
+  src: string | null;
+  name: string;
+  seed: number | null;
+  username: string;
+}) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
+  const own = useOwnProfile(username);
+  const src = own ? own.avatarUrl : serverSrc;
+  const name = own ? own.displayName || username : serverName;
   if (!src) return <Avatar src={null} name={name} seed={seed} size="xl" eager />;
   return (
     <>

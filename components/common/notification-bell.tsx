@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { usePresence } from "@/hooks/use-presence";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -30,6 +31,7 @@ export function NotificationBell() {
   const t = useTranslations("notifications");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   // Hold the dropdown mounted through its dropdown-out exit (mirror of the entrance).
   const { mounted, closing } = usePresence(open, 160);
   useDismiss(open, ref, () => setOpen(false));
@@ -37,11 +39,18 @@ export function NotificationBell() {
   const unread = useUnreadCount();
 
   return (
-    <div className="relative hidden sm:block" ref={ref}>
+    <div
+      className="relative hidden sm:block"
+      ref={ref}
+      onBlur={(e) => {
+        if (open && !ref.current?.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
       <button
+        ref={trigger}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
+        aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={unread > 0 ? `${t("title")}, ${t("unreadCount", { count: unread })}` : t("title")}
         className="focus-ring relative inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -54,7 +63,14 @@ export function NotificationBell() {
           where the bell is CSS-hidden and so can never mount this. */}
       {mounted && (
         <EditorLeaveGuard>
-          <NotificationDropdown unread={unread} closing={closing} onClose={() => setOpen(false)} />
+          <NotificationDropdown
+            unread={unread}
+            closing={closing}
+            onClose={(refocus = false) => {
+              setOpen(false);
+              if (refocus) trigger.current?.focus();
+            }}
+          />
         </EditorLeaveGuard>
       )}
     </div>
@@ -68,7 +84,7 @@ function NotificationDropdown({
 }: {
   unread: number;
   closing: boolean;
-  onClose: () => void;
+  onClose: (refocus?: boolean) => void;
 }) {
   const t = useTranslations("notifications");
   const tc = useTranslations("common");
@@ -80,11 +96,25 @@ function NotificationDropdown({
   const first = useMemo(() => data?.pages[0]?.items ?? [], [data]);
   useReadHiddenNotices(first, filters, me?.id);
   const items = first.filter((item) => !noticeHidden(item, filters, me?.id));
+  const panel = useRef<HTMLDivElement>(null);
+  const { onKeyDown } = useMenuKeys(panel, {
+    onClose,
+    items: "[data-notification-row], [data-notification-view-all]",
+    tabCloses: false,
+  });
+
+  useEffect(() => {
+    panel.current?.focus();
+  }, []);
 
   return (
     <div
-      role="menu"
-      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850 ${
+      ref={panel}
+      role="dialog"
+      aria-label={t("title")}
+      tabIndex={-1}
+      onKeyDown={onKeyDown}
+      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float outline-none dark:border-slate-700 dark:bg-slate-850 ${
         closing ? "animate-dropdown-out" : "animate-dropdown-in"
       }`}
     >
@@ -133,7 +163,7 @@ function NotificationDropdown({
           </p>
         ) : (
           items.map((item) => (
-            <NotificationItem key={item.id} item={item} onNavigate={onClose} />
+            <NotificationItem key={item.id} item={item} onNavigate={() => onClose()} />
           ))
         )}
       </div>
@@ -141,7 +171,8 @@ function NotificationDropdown({
       <div className="h-px bg-slate-100 dark:bg-slate-800" />
       <BlogChromeLink
         href={blogHref("/notifications")}
-        onClick={onClose}
+        data-notification-view-all=""
+        onClick={() => onClose()}
         className="focus-ring block px-3 py-2.5 text-center text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/60"
       >
         {t("viewAll")}

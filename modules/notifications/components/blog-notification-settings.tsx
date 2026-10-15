@@ -18,6 +18,7 @@ import {
   Repeat2,
   Reply,
   TextQuote,
+  User,
   UserPlus,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -53,6 +54,18 @@ export const SECTIONS: { titleKey: string; rows: Row[] }[] = [
       { type: "HIGHLIGHT", icon: Highlighter, labelKey: "prefHighlight", hintKey: "prefHighlightHint" },
       { type: "POST_QUOTE", icon: Quote, labelKey: "prefPostQuote", hintKey: "prefPostQuoteHint" },
       { type: "CONNECTED", icon: Link2, labelKey: "prefConnected", hintKey: "prefConnectedHint" },
+      {
+        type: "POST_FIRST_READER",
+        icon: User,
+        labelKey: "prefPostFirstReader",
+        hintKey: "prefPostFirstReaderHint",
+      },
+      {
+        type: "POST_READ_MILESTONE",
+        icon: User,
+        labelKey: "prefPostReadMilestone",
+        hintKey: "prefPostReadMilestoneHint",
+      },
     ],
   },
   {
@@ -101,6 +114,12 @@ export const SECTIONS: { titleKey: string; rows: Row[] }[] = [
 ];
 
 const ROWS = SECTIONS.flatMap((section) => section.rows);
+
+export function servedSections(prefs: BlogNotificationPreferences): typeof SECTIONS {
+  return SECTIONS.map((section) => ({ ...section, rows: section.rows.filter((row) => row.type in prefs) })).filter(
+    (section) => section.rows.length > 0,
+  );
+}
 
 export function BlogNotificationSettings() {
   const t = useTranslations("notifications");
@@ -165,7 +184,7 @@ export function BlogNotificationSettings() {
         </div>
       ) : (
         <div className="space-y-5">
-          {SECTIONS.map((section) => (
+          {servedSections(prefs).map((section) => (
             <div key={section.titleKey}>
               <h3 className="mb-1.5 px-1 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
                 {t(section.titleKey)}

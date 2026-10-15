@@ -10,6 +10,7 @@ import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
+import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 
 /**
@@ -106,10 +107,10 @@ export function SavedCard({
       )}
       <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
         {selectMode ? (
-          <span className="font-medium">{item.author.username}</span>
+          <AuthorName name={item.author.displayName} handle={item.author.username} className="font-medium" handleClassName={META_HANDLE} />
         ) : (
-          <BlogLink href={authorHref(item.author.username, locale)} className="focus-ring rounded font-medium hover:text-accent-700 dark:hover:text-accent-400">
-            {item.author.username}
+          <BlogLink href={authorHref(item.author.username, locale)} className="focus-ring flex min-w-0 rounded font-medium hover:text-accent-700 dark:hover:text-accent-400">
+            <AuthorName name={item.author.displayName} handle={item.author.username} handleClassName={META_HANDLE} />
           </BlogLink>
         )}
         <span aria-hidden>·</span>

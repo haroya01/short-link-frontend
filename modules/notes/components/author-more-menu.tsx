@@ -12,6 +12,7 @@ import { ReportButton } from "@/modules/blog/components/report-button";
 import {
   getMuteStatus,
   getRepostVisibility,
+  muteUser,
   setRepostsHidden,
   unmuteUser,
   type MuteStatus,
@@ -170,7 +171,13 @@ export function AuthorMoreMenu({ username, userId }: { username: string; userId:
       )}
       <ReportButton subjectType="USER" subjectId={userId} open={reporting} onOpenChange={setReporting} />
       <NoteListMembershipDialog username={username} open={addingToList} onClose={() => setAddingToList(false)} />
-      <MuteDialog username={username} open={muting} onClose={() => setMuting(false)} onMuted={setMute} />
+      <MuteDialog
+        subject={username}
+        hint={t("muteHint", { username })}
+        open={muting}
+        onClose={() => setMuting(false)}
+        mute={async (notifications, duration) => setMute(await muteUser(username, notifications, duration))}
+      />
       {confirmDialog}
     </div>
   );
