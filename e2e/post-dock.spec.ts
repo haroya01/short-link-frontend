@@ -30,23 +30,53 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await expect(header.getByRole("button", { name: "북마크에 저장" })).toBeVisible();
 });
 
-test("독은 하단 탭 위에 떠 있고, 탭이 내려가면 따라 내려간다", async ({ page }) => {
+test("독은 하단 탭 위에 떠 있다가, 읽어 내려가면 숨고 멈춰도 숨은 채이며, 위로 올리면 탭 위로 돌아온다", async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   const nav = page.locator(".vt-bottom-nav");
-  await expect(async () => {
+  const aboveNav = async () => {
     const d = (await dock(page).boundingBox())!;
     const n = (await nav.boundingBox())!;
     expect(d.y + d.height).toBeLessThanOrEqual(n.y - 8);
-  }).toPass();
+  };
+  await expect(aboveNav).toPass();
+  await expect(dock(page)).not.toHaveAttribute("data-reading", "true");
 
   await page.mouse.wheel(0, 600);
-  await expect(nav).toHaveClass(/translate-y-full/);
-  await expect(async () => {
-    const d = (await dock(page).boundingBox())!;
-    expect(PHONE.height - (d.y + d.height)).toBeLessThan(24);
-  }).toPass();
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
+  await expect(dock(page)).not.toHaveAttribute("aria-hidden", "true");
+  await page.waitForTimeout(800);
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
+
+  await page.mouse.wheel(0, -200);
+  await expect(dock(page)).not.toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "1");
+  await expect(nav).not.toHaveClass(/translate-y-full/);
+  await expect(aboveNav).toPass();
+});
+
+test("움직임 줄이기에서도 읽는 동안 독은 숨되, 미끄러지지 않고 바로 숨는다", async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(POST);
+  await expect(dock(page)).toBeVisible({ timeout: 30_000 });
+  await expect(dock(page)).toHaveCSS("transition-property", "none");
+  await page.mouse.wheel(0, 600);
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
+});
+
+test("읽는 동안 숨은 독도 키보드로 들어가면 다시 보인다", async ({ page }) => {
+  await page.setViewportSize(PHONE);
+  await page.goto(POST);
+  await expect(dock(page)).toBeVisible({ timeout: 30_000 });
+  await page.mouse.wheel(0, 600);
+  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await dock(page).getByRole("button", { name: /글 좋아요$/ }).focus();
+  await expect(dock(page)).toHaveCSS("opacity", "1");
 });
 
 test("목차 버튼은 제목 시트를 열고, 제목을 고르면 시트가 닫히며 그 자리로 간다", async ({ page }) => {

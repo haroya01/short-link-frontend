@@ -60,6 +60,7 @@ beforeEach(() => {
 });
 afterEach(async () => {
   await act(async () => root.unmount());
+  Object.defineProperty(window, "scrollY", { value: 0, configurable: true });
   container.remove();
   sentinel.remove();
   vi.unstubAllGlobals();
@@ -116,6 +117,34 @@ describe("PostDock", () => {
     expect(away()).toBe(false);
     report(-50);
     expect(away()).toBe(true);
+  });
+
+  it("tucks away while reading down, stays tucked when the reader stops, and returns on the way up", async () => {
+    await render();
+    report(1200);
+    const scrollTo = async (y: number) =>
+      act(async () => {
+        Object.defineProperty(window, "scrollY", { value: y, configurable: true });
+        window.dispatchEvent(new Event("scroll"));
+      });
+    const reading = () => dock().hasAttribute("data-reading");
+    await scrollTo(20);
+    await scrollTo(40);
+    expect(reading()).toBe(false);
+    for (let y = 60; y <= 200; y += 5) await scrollTo(y);
+    expect(reading()).toBe(true);
+    expect(away()).toBe(false);
+    expect(dock().getAttribute("aria-hidden")).toBeNull();
+    await scrollTo(200);
+    expect(reading()).toBe(true);
+    await scrollTo(180);
+    expect(reading()).toBe(true);
+    for (let y = 175; y >= 130; y -= 5) await scrollTo(y);
+    expect(reading()).toBe(false);
+    for (let y = 135; y <= 400; y += 20) await scrollTo(y);
+    expect(reading()).toBe(true);
+    await scrollTo(4);
+    expect(reading()).toBe(false);
   });
 
   it("steps away while the docked comment composer is open", async () => {
