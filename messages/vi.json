@@ -1053,7 +1053,7 @@
     "post_read_grew": "Thêm nhiều người đã đọc bài của bạn",
     "prefPostFirstReader": "Người đọc đầu tiên",
     "prefPostFirstReaderHint": "Khi bài của bạn có người đọc đầu tiên",
-    "prefPostReadMilestone": "Số người đọc",
+    "prefPostReadMilestone": "Các mốc người đọc",
     "prefPostReadMilestoneHint": "Khi bài của bạn đạt 10, 100, 1.000 người đọc. Không tính lượt xem của chính bạn và bot"
   },
   "nav": {

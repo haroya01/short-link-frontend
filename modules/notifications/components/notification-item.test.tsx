@@ -4,6 +4,7 @@ import { NextIntlClientProvider, type AbstractIntlMessages } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ko from "@/messages/ko.json";
 import en from "@/messages/en.json";
+import ja from "@/messages/ja.json";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
 
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { username: "dohyun" } }) }));
@@ -19,7 +20,7 @@ vi.mock("@/modules/blog/components/blog-link", () => ({
 
 import { NotificationItem } from "./notification-item";
 
-const MESSAGES = { ko, en } as unknown as Record<string, AbstractIntlMessages>;
+const MESSAGES = { ko, en, ja } as unknown as Record<string, AbstractIntlMessages>;
 
 function notice(overrides: Partial<Item>): Item {
   return {
@@ -46,7 +47,7 @@ function notice(overrides: Partial<Item>): Item {
 let root: Root | null = null;
 let host: HTMLElement;
 
-async function render(item: Item, locale: "ko" | "en" = "ko") {
+async function render(item: Item, locale: "ko" | "en" | "ja" = "ko") {
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -83,10 +84,16 @@ describe("reader notices", () => {
     expect(host.textContent).toContain("1,000명이 읽었어요");
   });
 
-  it("read in English with the count grouped", async () => {
+  it("read in English and Japanese with the count grouped", async () => {
     const row = await render(notice({ milestone: 1000 }), "en");
     expect(row?.getAttribute("aria-label")).toBe(
       "1,000 people have read your post, Next.js 14 App Router로 블로그를 다시 만든 이유",
+    );
+    await act(async () => root!.unmount());
+    document.body.innerHTML = "";
+    const jaRow = await render(notice({ milestone: 1000 }), "ja");
+    expect(jaRow?.getAttribute("aria-label")).toBe(
+      "1,000人が記事を読みました, Next.js 14 App Router로 블로그를 다시 만든 이유",
     );
   });
 
