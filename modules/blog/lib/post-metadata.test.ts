@@ -43,7 +43,7 @@ describe("share cards and search signals for a post", () => {
     expect(m.openGraph).toMatchObject({ title: post.title, description: expected, siteName: "@hana" });
     expect(m.twitter).toMatchObject({ description: expected, images: [`${url}/opengraph-image`] });
     expect(m.robots).toEqual({ index: false, follow: false });
-    expect(m.alternates).toBeUndefined();
+    expect(m.alternates).toEqual({ canonical: null });
   });
 
   it("gives a keyed link-only post its normal card on the keyed address, kept out of search", () => {
@@ -51,7 +51,7 @@ describe("share cards and search signals for a post", () => {
     expect(m.description).toBe(post.excerpt);
     expect(m.openGraph).toMatchObject({ url: `${url}?k=k%201` });
     expect(m.robots).toEqual({ index: false, follow: false });
-    expect(m.alternates).toBeUndefined();
+    expect(m.alternates).toEqual({ canonical: null });
   });
 
   it("keeps the public card and canonical for an everyone post", () => {

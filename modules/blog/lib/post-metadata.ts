@@ -22,6 +22,7 @@ export function postMetadata({
       title: post.title,
       description: label,
       robots: { index: false, follow: false },
+      alternates: { canonical: null },
       openGraph: {
         title: post.title,
         description: label,
@@ -44,7 +45,9 @@ export function postMetadata({
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
-    ...(isIndexable(post) ? { alternates: { canonical: url } } : { robots: { index: false, follow: false } }),
+    ...(isIndexable(post)
+      ? { alternates: { canonical: url } }
+      : { alternates: { canonical: null }, robots: { index: false, follow: false } }),
     openGraph: {
       title: post.title,
       description: post.excerpt ?? undefined,

@@ -172,6 +172,7 @@ export function AudienceSection({
             value=""
             onChange={addCountry}
             disabled={blockedCountries.length >= MAX_BLOCKED_COUNTRIES}
+            portal={false}
           />
         </div>
         {blockedCountries.length > 0 && (

@@ -31,12 +31,14 @@ export function CountryCombobox({
   size = "md",
   /** Show a leading "any country" option (destination targeting). Omit for the block-list adder. */
   allowAny = false,
+  portal = true,
 }: {
   value: string;
   onChange: (code: string) => void;
   disabled?: boolean;
   size?: "sm" | "md";
   allowAny?: boolean;
+  portal?: boolean;
 }) {
   const t = useTranslations("stats.destinations");
   const locale = useLocale();
@@ -155,7 +157,7 @@ export function CountryCombobox({
       {open &&
         rect &&
         typeof document !== "undefined" &&
-        createPortal(
+        inLayer(
           <div
             ref={popoverRef}
             role="dialog"
@@ -226,8 +228,11 @@ export function CountryCombobox({
               )}
             </ul>
           </div>,
-          document.body,
         )}
     </>
   );
+
+  function inLayer(node: React.ReactElement) {
+    return portal ? createPortal(node, document.body) : node;
+  }
 }
