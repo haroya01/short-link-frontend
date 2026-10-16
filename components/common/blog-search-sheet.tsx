@@ -17,6 +17,7 @@ import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
 import { useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
+import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
@@ -40,6 +41,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [value, setValue] = useState("");
   const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
   const { people, remote } = useLivePeople(value, open, 3);
+  const lookup = useLiveRemoteLookup(value, open);
   // Discovery (trending posts + who to follow) fills the sheet's resting state — the mobile feed no
   // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
   // client-side (the sheet mounts in the layout, not the feed page) once per open session.
@@ -188,7 +190,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
           </div>
         )}
         {q && <LivePeople people={people} onNavigate={onClose} />}
-        {q && <LiveRemotePeople accounts={remote} onNavigate={onClose} />}
+        {q && <LiveRemotePeople accounts={remote} lookup={lookup} onNavigate={onClose} />}
         {q && loading && results.length === 0 && (
           <ul className="animate-pulse divide-y divide-slate-100 dark:divide-slate-800" aria-busy>
             {Array.from({ length: 5 }).map((_, i) => (
@@ -211,7 +213,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             </button>
           </div>
         )}
-        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && (
+        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && !lookup && (
           <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
         {results.length > 0 && (

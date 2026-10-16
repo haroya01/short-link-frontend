@@ -118,8 +118,9 @@ describe("people elsewhere while typing", () => {
     expect(remote.map((a) => a.acct)).toEqual(["min@fosstodon.org"]);
   });
 
-  it("never resolves a handle or an address while typing", async () => {
+  it("leaves a handle or an address to the resolver instead of the known-account search", async () => {
     await type("@mina@mastodon.social");
+    await type("＠mina＠mastodon.social");
     await type("https://mastodon.social/@mina");
     expect(mocks.searchRemoteAccounts).not.toHaveBeenCalled();
     expect(remote).toEqual([]);

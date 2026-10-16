@@ -4,16 +4,11 @@ import { useId, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { askToSignIn } from "@/components/auth/login-prompt";
-import { useAuth } from "@/lib/auth";
-import {
-  remoteSearchQuery,
-  resolveRemote,
-  searchRemoteAccounts,
-  type RemoteResolution,
-} from "@/modules/notes/api/federation-search";
+import { remoteSearchQuery, searchRemoteAccounts } from "@/modules/notes/api/federation-search";
 import type { Note, RemoteAccount } from "@/modules/notes/api/notes";
 import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
 import { remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
+import { useRemoteResolution } from "@/modules/notes/lib/use-remote-resolution";
 import { NoteCard } from "./note-card";
 import { RemoteAccountRow } from "./remote-account";
 
@@ -29,17 +24,6 @@ function ResolvedNote({ initial }: { initial: Note }) {
       <NoteCard note={note} onChange={setNote} />
     </div>
   );
-}
-
-function useRemoteResolution(query: string): RemoteResolution | null {
-  const { authenticated, ready } = useAuth();
-  const { data } = useQuery({
-    queryKey: ["remote", "resolve", query.trim()],
-    queryFn: () => resolveRemote(query),
-    enabled: ready && authenticated,
-    staleTime: 60_000,
-  });
-  return ready && !authenticated ? { state: "signin" } : (data ?? null);
 }
 
 export function RemoteSearchFallback({ query, children }: { query: string; children: ReactNode }) {

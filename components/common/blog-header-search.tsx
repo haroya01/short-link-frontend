@@ -4,17 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
 import { useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
+import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
  * Global blog search — the single search entry point, in the header so it's reachable from every
@@ -47,6 +49,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   const focusOnOpen = useRef(false);
   const { results, loading, failed, retry } = useLiveSearch(value, open, 5);
   const { people, remote } = useLivePeople(value, open, 3);
+  const lookup = useLiveRemoteLookup(value, open);
 
   useDismiss(panelOpen, formRef, () => setPanelOpen(false));
   const panelKeys = useMenuKeys(panelRef, {
@@ -185,7 +188,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850"
         >
           <LivePeople people={people} onNavigate={() => setPanelOpen(false)} dense />
-          <LiveRemotePeople accounts={remote} onNavigate={() => setPanelOpen(false)} dense />
+          <LiveRemotePeople accounts={remote} lookup={lookup} onNavigate={() => setPanelOpen(false)} dense />
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -200,7 +203,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                     className="block px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
                     {item.tags[0] && (
-                      <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
+                      <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                         {item.tags[0]}
                       </span>
                     )}
@@ -231,16 +234,14 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                 {t("retry")}
               </button>
             </div>
-          ) : people.length === 0 && remote.length === 0 ? (
+          ) : people.length === 0 && remote.length === 0 && !lookup ? (
             <p className="px-3 py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
           ) : null}
-          <button
-            type="submit"
-            className="flex w-full items-center justify-center gap-1.5 border-t border-slate-100 px-3 py-2.5 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:border-slate-800 dark:text-accent-400 dark:hover:bg-accent-500/10"
-          >
-            {t("searchResultsFor", { q: value.trim() })}
-            <ArrowRight className="h-3.5 w-3.5" />
-          </button>
+          <div className="-mt-px border-t border-slate-100 px-3 py-2.5 dark:border-slate-800">
+            <button type="submit" className={cn(blogCta({ variant: "text" }), "touch-target text-[13px]")}>
+              {t("searchResultsFor", { q: value.trim() })}
+            </button>
+          </div>
         </div>
       )}
     </form>
