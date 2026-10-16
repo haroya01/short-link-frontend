@@ -112,6 +112,7 @@ export function CountryCombobox({
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Escape") {
       e.preventDefault();
+      e.stopPropagation();
       close();
     } else if (e.key === "ArrowDown") {
       e.preventDefault();

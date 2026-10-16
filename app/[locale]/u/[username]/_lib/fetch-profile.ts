@@ -1,5 +1,6 @@
 import type { PublicProfile } from "@/types";
 import { mockPublicProfile } from "@/modules/profile/mock-profile";
+import { renderContextHeaders } from "@/lib/api/render-context";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -11,9 +12,8 @@ export async function fetchProfile(username: string): Promise<PublicProfile | nu
   // Short revalidate so owner edits show up within ~30s without smashing the backend per visit.
   // The backend layers a 5min Redis cache that auto-evicts on profile/toggle/reorder writes.
   try {
-    const res = await fetch(`${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}`, {
-      next: { revalidate: 30 },
-    });
+    const url = `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}`;
+    const res = await fetch(url, { next: { revalidate: 30 }, headers: renderContextHeaders(url) });
     if (res.status === 404) return null;
     if (!res.ok) throw new Error("profile fetch failed");
     return (await res.json()) as PublicProfile;

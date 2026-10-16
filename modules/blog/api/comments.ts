@@ -2,7 +2,7 @@ import { request } from "@/lib/api/client";
 import { blogMocks } from "./_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
-import { announcePostLocked, postAccessHeaders } from "@/modules/blog/lib/post-access";
+import { announcePostLocked, postAccessHeaders, withPostAccess } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -71,7 +71,7 @@ export async function listComments(postId: number): Promise<CommentView[]> {
   }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments?tombstones=1`, {
     cache: "no-store",
-    headers: { ...(await viewerHeaders()), ...postAccessHeaders(postId) },
+    headers: withPostAccess(await viewerHeaders(), postId),
   });
   if (res.status === 403) announcePostLocked();
   if (!res.ok) throw new Error(`comments ${res.status}`);

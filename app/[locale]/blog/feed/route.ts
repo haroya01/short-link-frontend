@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { publicOrigin, publicSelfUrl } from "@/lib/host";
 import { listPublicFeed } from "@/modules/blog/api/public-posts";
 import { buildRss, feedItemForRss } from "@/modules/blog/lib/rss";
+import { isIndexable } from "@/modules/blog/lib/post-audience";
 
 export const revalidate = 300;
 
@@ -12,7 +13,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ locale: 
   const origin = publicOrigin(req);
 
   const result = await listPublicFeed("recent", 0, 30);
-  const items = result.ok ? result.data.items.map(feedItemForRss) : [];
+  const items = result.ok ? result.data.items.filter(isIndexable).map(feedItemForRss) : [];
 
   const xml = buildRss({
     title: "kurl log",

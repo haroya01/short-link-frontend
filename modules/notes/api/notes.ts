@@ -8,6 +8,7 @@ import {
   type SeriesItemLink,
 } from "@/modules/blog/api/public-posts";
 import { postAccessHeaders } from "@/modules/blog/lib/post-access";
+import type { AudienceFields } from "@/modules/blog/lib/post-audience";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 노트는 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
@@ -41,7 +42,7 @@ export interface NoteMedia {
   height?: number | null;
 }
 
-export interface QuotedPost {
+export interface QuotedPost extends AudienceFields {
   id: number;
   title: string;
   slug: string;

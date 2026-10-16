@@ -2,7 +2,7 @@ import { mockFailure, request } from "@/lib/api/client";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 import { blogMocks, collectionMocks } from "@/modules/blog/api/_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
-import { announcePostLocked, postAccessHeaders } from "@/modules/blog/lib/post-access";
+import { announcePostLocked, postAccessHeaders, withPostAccess } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -99,7 +99,7 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
   }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/highlights`, {
     cache: "no-store",
-    headers: { ...(await viewerHeaders()), ...postAccessHeaders(postId) },
+    headers: withPostAccess(await viewerHeaders(), postId),
   });
   if (res.status === 403) announcePostLocked();
   if (!res.ok) throw new Error(`Could not load highlights (${res.status})`);
@@ -155,7 +155,7 @@ export async function listHighlightReplies(highlightId: number): Promise<Highlig
   }
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/replies`, {
     cache: "no-store",
-    headers: { ...(await viewerHeaders()), ...postAccessHeaders() },
+    headers: withPostAccess(await viewerHeaders()),
   });
   if (res.status === 403) announcePostLocked();
   if (!res.ok) throw new Error(`highlight replies ${res.status}`);

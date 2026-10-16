@@ -187,6 +187,18 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         status={status}
         takenDown={takenDown}
         scheduledAt={post?.scheduledAt ?? null}
+        access={{
+          audience: ed.audience,
+          onAudienceChange: ed.setAudience,
+          password: ed.password,
+          onPasswordChange: ed.setPassword,
+          hasPassword: post?.hasPassword === true,
+          savedAudience: post?.audience ?? "PUBLIC",
+          unlistedUrl: post?.unlistedUrl ?? null,
+          onRotate: ed.rotateLink,
+          blockedCountries: ed.blockedCountries,
+          onBlockedCountriesChange: ed.setBlockedCountries,
+        }}
         title={ed.title}
         cover={ed.coverUrl}
         onCoverChange={ed.setCover}

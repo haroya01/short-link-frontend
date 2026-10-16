@@ -42,16 +42,22 @@ export function dropPostGrant(postId: number): void {
   removeStorageItem(grantKey(postId), { session: true });
 }
 
-export function postAccessHeaders(postId?: number | null): Record<string, string> {
-  if (typeof window === "undefined") return {};
+export function postAccessHeaders(postId?: number | null): Record<string, string> | undefined {
+  if (typeof window === "undefined") return undefined;
   const id = postId ?? activePostId;
-  if (id == null) return {};
+  if (id == null) return undefined;
   const headers: Record<string, string> = {};
   const key = keys.get(id);
   if (key) headers["X-Post-Key"] = key;
   const grant = readPostGrant(id);
   if (grant) headers["X-Post-Grant"] = grant;
-  return headers;
+  return Object.keys(headers).length > 0 ? headers : undefined;
+}
+
+export function withPostAccess(base: HeadersInit | undefined, postId?: number | null): HeadersInit | undefined {
+  const access = postAccessHeaders(postId);
+  if (!access) return base;
+  return { ...Object.fromEntries(new Headers(base).entries()), ...access };
 }
 
 export function announcePostLocked(): void {

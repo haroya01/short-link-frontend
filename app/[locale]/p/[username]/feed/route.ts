@@ -1,6 +1,7 @@
 import { publicOrigin, publicSelfUrl } from "@/lib/host";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { authorPostForRss, buildRss } from "@/modules/blog/lib/rss";
+import { isIndexable } from "@/modules/blog/lib/post-audience";
 
 export const revalidate = 300;
 
@@ -26,7 +27,7 @@ export async function GET(
     description: author.bio ?? `@${author.username}`,
     selfUrl: publicSelfUrl(req),
     locale,
-    items: posts.map((p) => authorPostForRss(p, author)),
+    items: posts.filter(isIndexable).map((p) => authorPostForRss(p, author)),
     origin,
   });
 

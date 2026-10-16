@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { blogPath } from "@/lib/host";
 import type { PostView } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
+import { OwnerAudienceMarks } from "@/modules/blog/components/audience-mark";
 
 export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: PostView) => void }) {
   const t = useTranslations("blogWorkspace");
@@ -18,6 +19,7 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
         className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-3"
       >
         <PostStatusBadge status={post.status} takenDown={post.takenDown} />
+        <OwnerAudienceMarks audience={post.audience} blockedCountries={post.blockedCountries} />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-medium text-slate-900 group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
             {post.title || post.slug}

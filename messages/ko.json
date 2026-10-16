@@ -599,7 +599,27 @@
     },
     "saveFailedRetry": "저장 못 함 · 다시 시도",
     "reschedule": "시각 바꾸기",
-    "previewOpenError": "미리보기를 열지 못했어요"
+    "previewOpenError": "미리보기를 열지 못했어요",
+    "audience": {
+      "label": "공개 범위",
+      "titlePublic": "제목은 모두에게 보여요",
+      "unlistedHint": "목록과 검색에 안 떠요. 링크를 받은 사람은 다시 퍼뜨릴 수 있어요",
+      "passwordPlaceholder": "비밀번호",
+      "newPasswordPlaceholder": "새 비밀번호",
+      "passwordRequired": "비밀번호를 정하면 발행할 수 있어요.",
+      "passwordRequiredSave": "비밀번호를 정하면 저장할 수 있어요.",
+      "passwordLength": "비밀번호는 4자 이상 200자 이하로 정해 주세요",
+      "linkLabel": "공유 링크",
+      "copy": "복사",
+      "copied": "복사됨",
+      "copyFailed": "복사하지 못했어요",
+      "rotate": "링크 바꾸기",
+      "rotateTitle": "링크를 바꿀까요?",
+      "rotateBody": "지금 링크로는 더 이상 열리지 않아요.",
+      "rotateFailed": "링크를 바꾸지 못했어요",
+      "countryHint": "이 나라에서는 제목만 보여요. VPN을 쓰면 막지 못해요.",
+      "countryRemove": "{country} 빼기"
+    }
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -821,7 +841,31 @@
     "highlightLinkCopied": "링크를 복사했어요",
     "highlightPublicFirst": "하이라이트했어요 · 이름과 함께 공개돼요",
     "reportTitleHighlightReply": "이 답글 신고",
-    "publishedStatus": "발행했어요"
+    "publishedStatus": "발행했어요",
+    "gate": {
+      "followers": "팔로우하면 읽을 수 있어요",
+      "password": "비밀번호가 걸린 글이에요",
+      "region": "이 나라에서는 볼 수 없는 글이에요",
+      "passwordLabel": "비밀번호",
+      "open": "열기",
+      "wrongPassword": "비밀번호가 맞지 않아요",
+      "tooManyAttempts": "너무 많이 시도했어요. 잠시 뒤에 다시 해 주세요",
+      "unlockFailed": "열지 못했어요. 다시 해 주세요",
+      "loading": "본문을 불러오는 중"
+    },
+    "audience": {
+      "PUBLIC": "전체",
+      "UNLISTED": "링크만",
+      "FOLLOWERS": "팔로워만",
+      "PASSWORD": "비밀번호",
+      "REGION": "국가 제한"
+    },
+    "shareCard": {
+      "FOLLOWERS": "팔로워만 볼 수 있는 글이에요",
+      "PASSWORD": "비밀번호가 걸린 글이에요",
+      "REGION": "나라에 따라 볼 수 없는 글이에요",
+      "UNLISTED": "링크로만 여는 글이에요"
+    }
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -895,7 +939,11 @@
     "SUSPEND_REQUIRES_EXPIRY": "정지하려면 만료일이 필요해요.",
     "toggleFailed": "반영하지 못했어요. 잠시 후 다시 시도해 주세요.",
     "likeFailed": "좋아요를 반영하지 못했어요",
-    "POST_TAKEN_DOWN": "운영 정책으로 내려진 글이라 다시 공개할 수 없어요."
+    "POST_TAKEN_DOWN": "운영 정책으로 내려진 글이라 다시 공개할 수 없어요.",
+    "POST_PASSWORD_LENGTH": "비밀번호는 4자 이상 200자 이하로 정해 주세요",
+    "POST_PASSWORD_REQUIRED": "비밀번호를 정해 주세요",
+    "POST_AUDIENCE_INVALID": "공개 범위를 다시 골라 주세요",
+    "POST_BLOCKED_COUNTRIES_INVALID": "국가 제한에 알 수 없는 나라가 있어요"
   },
   "cookieConsent": {
     "ariaLabel": "쿠키 안내",

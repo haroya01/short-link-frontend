@@ -599,7 +599,27 @@
     },
     "saveFailedRetry": "Chưa lưu · Thử lại",
     "reschedule": "Đổi thời gian",
-    "previewOpenError": "Không mở được bản xem trước"
+    "previewOpenError": "Không mở được bản xem trước",
+    "audience": {
+      "label": "Ai có thể đọc",
+      "titlePublic": "Tiêu đề vẫn hiển thị với mọi người",
+      "unlistedHint": "Không hiện trong danh sách hay tìm kiếm. Người nhận được liên kết có thể chia sẻ tiếp",
+      "passwordPlaceholder": "Mật khẩu",
+      "newPasswordPlaceholder": "Mật khẩu mới",
+      "passwordRequired": "Đặt mật khẩu để đăng bài.",
+      "passwordRequiredSave": "Đặt mật khẩu để lưu.",
+      "passwordLength": "Mật khẩu cần từ 4 đến 200 ký tự",
+      "linkLabel": "Liên kết chia sẻ",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "copyFailed": "Không sao chép được",
+      "rotate": "Đổi liên kết",
+      "rotateTitle": "Đổi liên kết?",
+      "rotateBody": "Liên kết hiện tại sẽ không mở được nữa.",
+      "rotateFailed": "Không đổi được liên kết",
+      "countryHint": "Người đọc ở các quốc gia này chỉ thấy tiêu đề. Dùng VPN thì không chặn được.",
+      "countryRemove": "Bỏ {country}"
+    }
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -835,7 +855,31 @@
     "highlightLinkCopied": "Đã sao chép liên kết",
     "highlightPublicFirst": "Đã đánh dấu · công khai kèm tên bạn",
     "reportTitleHighlightReply": "Báo cáo trả lời này",
-    "publishedStatus": "Đã xuất bản"
+    "publishedStatus": "Đã xuất bản",
+    "gate": {
+      "followers": "Theo dõi để đọc bài này",
+      "password": "Bài viết này được bảo vệ bằng mật khẩu",
+      "region": "Bài viết này không xem được ở quốc gia của bạn",
+      "passwordLabel": "Mật khẩu",
+      "open": "Mở",
+      "wrongPassword": "Mật khẩu không đúng",
+      "tooManyAttempts": "Bạn đã thử quá nhiều lần. Hãy thử lại sau ít phút",
+      "unlockFailed": "Không mở được. Hãy thử lại",
+      "loading": "Đang tải bài viết"
+    },
+    "audience": {
+      "PUBLIC": "Mọi người",
+      "UNLISTED": "Chỉ qua liên kết",
+      "FOLLOWERS": "Người theo dõi",
+      "PASSWORD": "Mật khẩu",
+      "REGION": "Giới hạn quốc gia"
+    },
+    "shareCard": {
+      "FOLLOWERS": "Chỉ người theo dõi mới đọc được bài này",
+      "PASSWORD": "Bài viết này được bảo vệ bằng mật khẩu",
+      "REGION": "Bài viết này không xem được ở một số quốc gia",
+      "UNLISTED": "Chỉ mở được qua liên kết"
+    }
   },
   "errors": {
     "BOOKMARK_FOLDER_NAME_CONFLICT": "Đã có thư mục cùng tên.",
@@ -889,7 +933,11 @@
     "SUSPEND_REQUIRES_EXPIRY": "Việc tạm ngưng cần có ngày hết hạn.",
     "toggleFailed": "Không thể lưu thay đổi. Vui lòng thử lại sau.",
     "likeFailed": "Không thể lưu lượt thích",
-    "POST_TAKEN_DOWN": "Bài viết đã bị gỡ theo chính sách nội dung nên không thể công khai lại."
+    "POST_TAKEN_DOWN": "Bài viết đã bị gỡ theo chính sách nội dung nên không thể công khai lại.",
+    "POST_PASSWORD_LENGTH": "Mật khẩu cần từ 4 đến 200 ký tự",
+    "POST_PASSWORD_REQUIRED": "Hãy đặt mật khẩu",
+    "POST_AUDIENCE_INVALID": "Hãy chọn lại ai có thể đọc",
+    "POST_BLOCKED_COUNTRIES_INVALID": "Giới hạn quốc gia có một quốc gia không xác định"
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",

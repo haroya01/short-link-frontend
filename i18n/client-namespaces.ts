@@ -59,7 +59,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "blog/login": ["blogLogin"],
   "blog/settings": ["avatar", "blogWorkspace", "imageCropper", "profileEdit"],
   "blog/webhooks": ["blogWebhooks"],
-  "blog/write": ["blogWorkspace", "postEditor", "tags"],
+  "blog/write": ["blogWorkspace", "postEditor", "stats.destinations", "tags"],
   "p/[username]": [
     "auth", "avatar", "collections", "comments", "compose", "errors", "imageCropper", "languageSwitcher", "loginPrompt",
     "mentions", "nav", "notifications", "notes", "postEditor.blockMenu", "postEditor.linkSheet", "postEditor.urlDialog",

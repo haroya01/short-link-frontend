@@ -81,3 +81,22 @@ export function sameCountries(a: readonly string[], b: readonly string[]): boole
 }
 
 export const MAX_BLOCKED_COUNTRIES = 85;
+
+export type AudienceDraft = { audience: PostAudience; password: string; blockedCountries: string[] };
+
+export type SavedAudience = { audience?: PostAudience; hasPassword?: boolean; blockedCountries?: string[] };
+
+export type AudiencePatch = { audience?: PostAudience; password?: string; blockedCountries?: string[] };
+
+export function audiencePatch(saved: SavedAudience, draft: AudienceDraft): AudiencePatch {
+  const patch: AudiencePatch = {};
+  const problem = passwordProblem(draft.audience, draft.password, saved.hasPassword === true);
+  if (problem == null && draft.audience !== (saved.audience ?? "PUBLIC")) patch.audience = draft.audience;
+  if (problem == null && draft.audience === "PASSWORD" && draft.password !== "") patch.password = draft.password;
+  if (!sameCountries(draft.blockedCountries, saved.blockedCountries ?? [])) patch.blockedCountries = [...draft.blockedCountries];
+  return patch;
+}
+
+export function changesVisibility(patch: AudiencePatch): boolean {
+  return patch.audience !== undefined || patch.blockedCountries !== undefined;
+}
