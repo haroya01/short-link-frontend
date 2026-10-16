@@ -32,6 +32,7 @@ const PUBLIC_PATHS = [
   "/about",
   "/terms",
   "/privacy",
+  "/report",
 ] as const;
 
 // Sitemap priority is a weak signal but consistent differentiation helps Google decide which

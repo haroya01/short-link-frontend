@@ -19,17 +19,28 @@ import type { AdminLinkRow, AdminLinkSort, AdminLinkStatus } from "@/types";
 const PAGE_SIZE = 20;
 const SORT_OPTIONS: AdminLinkSort[] = ["recent", "clicks"];
 
+// A switched-off link reads as off whatever its lifecycle status — that's what its visitors get.
+export type AdminLinkDisplayStatus = AdminLinkStatus | "DISABLED";
+
+export function displayStatus(
+  row: Pick<AdminLinkRow, "status" | "disabledReason">,
+): AdminLinkDisplayStatus {
+  return row.disabledReason ? "DISABLED" : row.status;
+}
+
 // Exported so the admin link-detail page renders the same status badge from one source of truth.
-export const STATUS_STYLES: Record<AdminLinkStatus, string> = {
+export const STATUS_STYLES: Record<AdminLinkDisplayStatus, string> = {
   ACTIVE: "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300",
   EXPIRED: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
   LIMIT_REACHED: "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
+  DISABLED: "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-300",
 };
 
-export const STATUS_KEY: Record<AdminLinkStatus, string> = {
+export const STATUS_KEY: Record<AdminLinkDisplayStatus, string> = {
   ACTIVE: "active",
   EXPIRED: "expired",
   LIMIT_REACHED: "limitReached",
+  DISABLED: "disabled",
 };
 
 export function LinkBrowser() {
@@ -249,10 +260,10 @@ export function LinkBrowser() {
                         <span
                           className={cn(
                             "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
-                            STATUS_STYLES[l.status],
+                            STATUS_STYLES[displayStatus(l)],
                           )}
                         >
-                          {t(`browse.links.status.${STATUS_KEY[l.status]}`)}
+                          {t(`browse.links.status.${STATUS_KEY[displayStatus(l)]}`)}
                         </span>
                       </TD>
                       <TD className="whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">

@@ -14,7 +14,7 @@ const mocks = vi.hoisted(() => {
     },
   };
 });
-vi.mock("next-intl", () => ({ useTranslations: mocks.translator }));
+vi.mock("next-intl", () => ({ useTranslations: mocks.translator, useLocale: () => "ko" }));
 vi.mock("@/lib/api/abuse-reports", () => ({
   listAbuseReports: mocks.listAbuseReports,
   resolveAbuseReport: mocks.resolveAbuseReport,
