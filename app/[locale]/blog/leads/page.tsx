@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { Ban, Download, Mail, SlidersHorizontal, Trash2, Undo2 } from "lucide-react";
+import { Download, Mail, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -137,7 +137,7 @@ export default function ProfileLeadsPage() {
             </SwitchLink>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* 0건이면 내보낼 것도 보낼 대상도 없다 — 죽은 액션은 비활성으로 정직하게. */}
           {hasLeads ? (
             <a href={emailLeadsExportUrl()} download>
@@ -195,7 +195,7 @@ export default function ProfileLeadsPage() {
                 <th className="px-4 py-2 font-medium">{t("colEmail")}</th>
                 <th className="px-4 py-2 font-medium">{t("colBlock")}</th>
                 <th className="px-4 py-2 font-medium">{t("colSubmittedAt")}</th>
-                <th className="w-20 px-4 py-2"></th>
+                <th className="px-4 py-2"></th>
                 <th className="w-12 px-4 py-2"></th>
               </tr>
             </thead>
@@ -221,29 +221,19 @@ export default function ProfileLeadsPage() {
                       onClick={() => handleToggleOptOut(lead)}
                       className={
                         lead.optedOut
-                          ? "inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 hover:bg-amber-100"
-                          : "inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60"
+                          ? "touch-target focus-ring whitespace-nowrap rounded text-[12px] font-medium text-amber-700 hover:underline dark:text-amber-300"
+                          : "touch-target focus-ring whitespace-nowrap rounded text-[12px] font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
                       }
                       aria-label={lead.optedOut ? t("undoOptOut") : t("optOut")}
                     >
-                      {lead.optedOut ? (
-                        <>
-                          <Undo2 className="h-3 w-3" />
-                          {t("optedOut")}
-                        </>
-                      ) : (
-                        <>
-                          <Ban className="h-3 w-3" />
-                          {t("optOut")}
-                        </>
-                      )}
+                      {lead.optedOut ? t("optedOut") : t("optOut")}
                     </button>
                   </td>
                   <td className="px-4 py-2 text-right">
                     <button
                       type="button"
                       onClick={() => handleDelete(lead.id)}
-                      className="text-slate-400 hover:text-red-600 dark:text-slate-400"
+                      className="touch-target focus-ring rounded text-slate-400 hover:text-red-600 dark:text-slate-400"
                       aria-label={t("delete")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />

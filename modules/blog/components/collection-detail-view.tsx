@@ -9,7 +9,6 @@ import {
   Check,
   Globe,
   Link as LinkIcon,
-  ListOrdered,
   Loader2,
   Lock,
   Pencil,
@@ -526,8 +525,7 @@ function CollectionHeader({ detail, locale }: { detail: CollectionDetail; locale
   return (
     <header className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800">
       {ordered && (
-        <span className="mb-2 inline-flex items-center gap-1.5 text-[12px] font-bold text-accent-700 dark:text-accent-400">
-          <ListOrdered className="h-3.5 w-3.5" />
+        <span className="mb-2 block text-[12px] font-bold text-slate-500 dark:text-slate-400">
           {t("ordered")}
         </span>
       )}

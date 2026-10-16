@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronRight, Layers } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { seriesItemHref, seriesItemKey, type SeriesNavView } from "@/modules/blog/lib/series-items";
@@ -38,8 +38,7 @@ export async function SeriesNext({
           data-bhv-id={`${username}/${seriesItemKey(next)}`}
           data-series-next=""
         >
-          <span className="flex items-center gap-1.5 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
-            <Layers aria-hidden className="h-3 w-3" />
+          <span className="block text-[12px] font-semibold text-slate-500 dark:text-slate-400">
             {t("seriesNextUp")}
           </span>
           <span className="mt-2 flex items-center justify-between gap-3">
@@ -79,7 +78,6 @@ export async function SeriesNext({
           data-bhv-id={series.slug}
           data-series-all=""
         >
-          <Layers aria-hidden className="h-4 w-4 shrink-0 text-slate-400 transition-colors group-hover:text-accent-600 dark:text-slate-500" />
           <span className="min-w-0 flex-1 truncate">{t("seriesViewAll", { total: series.total })}</span>
           <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-accent-600 dark:text-slate-600" />
         </BlogLink>

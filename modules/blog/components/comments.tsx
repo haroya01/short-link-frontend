@@ -627,6 +627,8 @@ function CommentRow({
   children?: React.ReactNode;
 }) {
   const locale = useLocale();
+  const { me } = useAuth();
+  const own = me != null && (comment.author?.id === me.id || comment.author?.username === me.username);
   return (
     <ConversationRow
       id={anchorId}
@@ -636,8 +638,16 @@ function CommentRow({
       nested={comment.parentId != null}
       flash={flash}
       isNew={isNew}
-      menu={<CommentMenu subjectId={comment.id} authorUsername={comment.author?.username ?? null} canReport={canReport} />}
-      onDelete={canDelete ? onDelete : undefined}
+      menu={
+        <CommentMenu
+          subjectId={comment.id}
+          authorUsername={comment.author?.username ?? null}
+          canReport={canReport}
+          onDelete={canDelete && !own ? onDelete : undefined}
+          deleteLabel={deleteLabel}
+        />
+      }
+      onDelete={canDelete && own ? onDelete : undefined}
       deleteLabel={deleteLabel}
       actions={
         <>

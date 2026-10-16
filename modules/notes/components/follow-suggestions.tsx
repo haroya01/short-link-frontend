@@ -23,17 +23,17 @@ function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
   const name = account.displayName || account.username;
   return (
     <li data-testid={`remote-suggestion-${account.acct}`} className="-mx-2 rounded-surface px-2 py-2">
-      <BlogLink
-        href={blogPath(`/remote/${account.id}`)}
-        className="focus-ring flex min-w-0 items-center gap-2.5 rounded-surface"
-      >
-        <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size="sm" />
-        <span className="min-w-0">
-          <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
-          <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
-        </span>
-      </BlogLink>
-      <div className="mt-2 pl-[42px]">
+      <div className="flex items-center gap-2.5">
+        <BlogLink
+          href={blogPath(`/remote/${account.id}`)}
+          className="focus-ring flex min-w-0 flex-1 items-center gap-2.5 rounded-surface"
+        >
+          <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size="sm" />
+          <span className="min-w-0">
+            <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
+            <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
+          </span>
+        </BlogLink>
         <RemoteFollowButton account={account} onChange={setAccount} quiet />
       </div>
     </li>
@@ -88,23 +88,21 @@ export function FollowSuggestions() {
                     <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">
                       {pick.displayName || pick.username}
                     </span>
-                    <span className="line-clamp-2 text-[12px] text-slate-500 dark:text-slate-400">
+                    <span className="block text-[12px] text-slate-500 dark:text-slate-400">
                       {pick.reason === "FRIENDS" ? t("suggestionsFriends", { count: pick.mutuals }) : t("suggestionsPopular")}
                     </span>
                   </span>
                 </BlogLink>
+                <FollowButton username={pick.username} initialFollowerCount={0} compact quiet />
                 <button
                   type="button"
                   onClick={() => void dismiss(pick)}
                   aria-label={t("suggestionsDismiss", { name: pick.displayName || pick.username })}
                   data-testid={`suggestion-dismiss-${pick.username}`}
-                  className="focus-ring grid h-7 w-7 shrink-0 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring -mr-1 grid h-7 w-7 shrink-0 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 >
                   <X aria-hidden className="h-3.5 w-3.5" />
                 </button>
-              </div>
-              <div className="mt-2 pl-[42px]">
-                <FollowButton username={pick.username} initialFollowerCount={0} compact quiet />
               </div>
             </li>
           ))}

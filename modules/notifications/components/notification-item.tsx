@@ -244,7 +244,7 @@ export function NotificationItem({
               className={cn(
                 "h-2.5 w-2.5",
                 (item.type === "LIKE" || item.type === "NOTE_LIKE" || item.type === "COMMENT_LIKE") && "fill-current",
-                item.read ? "text-slate-400 dark:text-slate-400" : "text-accent-600 dark:text-accent-400",
+                "text-slate-500 dark:text-slate-400",
               )}
             />
           </span>

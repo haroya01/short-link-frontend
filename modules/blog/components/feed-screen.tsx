@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
-import { PenSquare, X } from "lucide-react";
+import { X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { blogCta } from "./blog-cta";
@@ -195,8 +195,7 @@ export async function FeedScreen({
   const sparseSearch = searching && items.length > 0 && items.length <= 2;
 
   const writeCta = (
-    <a href={blogHref("/write/new")} className={cn(blogCta(), "shrink-0")}>
-      <PenSquare className="h-4 w-4" />
+    <a href={blogHref("/write/new")} className={blogCta({ variant: "text" })}>
       {t("write")}
     </a>
   );
@@ -327,7 +326,7 @@ export async function FeedScreen({
               ) : searching ? (
                 <SearchEmpty query={query} tags={emptySearchTopics?.ok ? emptySearchTopics.data : []} locale={locale} />
               ) : (
-                <BlogEmpty icon={PenSquare} title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                <BlogEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}
             </FeedContentTransition>
           </ReadingShell>

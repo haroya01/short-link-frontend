@@ -16,12 +16,16 @@ export function CommentMenu({
   authorUsername,
   canReport,
   layerClassName,
+  onDelete,
+  deleteLabel,
 }: {
   subjectType?: "COMMENT" | "HIGHLIGHT_REPLY";
   subjectId?: number;
   authorUsername: string | null;
   canReport: boolean;
   layerClassName?: string;
+  onDelete?: () => void;
+  deleteLabel?: string;
 }) {
   const t = useTranslations("notes");
   const tp = useTranslations("publicPost");
@@ -76,6 +80,19 @@ export function CommentMenu({
               className={item}
             >
               {tp("report")}
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                onDelete();
+              }}
+              className={cn(item, "text-red-600 dark:text-red-400")}
+            >
+              {deleteLabel}
             </button>
           )}
         </div>

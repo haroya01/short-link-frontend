@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bookmark, Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
+import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -180,10 +180,9 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   if (saved.length === 0) {
     return (
       <BlogEmpty
-        icon={Bookmark}
         title={t("emptyBookmarks")}
         action={
-          <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
+          <a href={blogHref("/")} className={blogCta({ variant: "text" })}>
             {t("browseFeed")}
           </a>
         }
@@ -206,20 +205,19 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   return (
     <div>
       {/* Folder filter bar */}
-      <div className="mb-7 flex flex-wrap items-center gap-2">
-        <FolderPill active={selected === "all"} onClick={() => setSelected("all")} label={t("all")} count={saved.length} />
+      <div className="mb-7 flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-slate-100 dark:border-slate-800">
+        <FolderTab active={selected === "all"} onClick={() => setSelected("all")} label={t("all")} count={saved.length} />
         {folders.map((f) => (
-          <FolderPill
+          <FolderTab
             key={f.id}
             active={selected === f.id}
             onClick={() => setSelected(f.id)}
             label={f.name}
             count={f.count}
-            icon
           />
         ))}
         {adding ? (
-          <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-1 py-0.5 dark:border-slate-700">
+          <span className="mb-1.5 inline-flex items-center gap-1 rounded-full border border-slate-200 px-1 py-0.5 dark:border-slate-700">
             <input
               autoFocus
               value={newName}
@@ -242,9 +240,8 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
           <button
             type="button"
             onClick={() => setAdding(true)}
-            className="focus-ring inline-flex items-center gap-1 rounded-full border border-dashed border-slate-300 px-3 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-400 hover:text-accent-700 dark:border-slate-600 dark:text-slate-400 dark:hover:border-accent-500 dark:hover:text-accent-400"
+            className="focus-ring -mb-px rounded pb-2.5 pt-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
           >
-            <FolderPlus className="h-3.5 w-3.5" />
             {t("newFolder")}
           </button>
         )}
@@ -253,7 +250,7 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
           type="button"
           onClick={() => (selectMode ? exitSelect() : setSelectMode(true))}
           aria-pressed={selectMode}
-          className={`focus-ring ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+          className={`focus-ring mb-1.5 ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
             selectMode
               ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
               : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
@@ -392,33 +389,30 @@ function BulkBar({
 const bulkMenuItem =
   "flex w-full items-center gap-2 rounded-surface px-3 py-1.5 text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800";
 
-function FolderPill({
+function FolderTab({
   active,
   onClick,
   label,
   count,
-  icon,
 }: {
   active: boolean;
   onClick: () => void;
   label: string;
   count: number;
-  icon?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+      className={`focus-ring -mb-px inline-flex items-center gap-1.5 border-b-2 pb-2.5 pt-1 text-[14px] font-medium transition-colors ${
         active
-          ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+          ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
+          : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
       }`}
     >
-      {icon && <Folder className="h-3.5 w-3.5" />}
       {label}
-      <span className={active ? "text-white/70 dark:text-slate-900/60" : "text-slate-500 dark:text-slate-400"}>{count}</span>
+      <span className="tabular-nums text-slate-500 dark:text-slate-400">{count}</span>
     </button>
   );
 }
@@ -437,7 +431,7 @@ function Section({
   return (
     <section>
       <h2 className="mb-4 flex items-center gap-1.5 text-[13px] font-bold text-slate-800 dark:text-slate-200">
-        <span className="text-accent-600 dark:text-accent-400">{icon}</span>
+        <span className="text-slate-400 dark:text-slate-500">{icon}</span>
         {title}
         {hint && <span className="font-medium text-slate-500 dark:text-slate-400">· {hint}</span>}
       </h2>

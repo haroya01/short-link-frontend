@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Lock, UserPlus } from "lucide-react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
@@ -58,10 +58,9 @@ export default function FollowRequestsPage() {
           <ErrorState onRetry={() => refetch()} />
         ) : !data || data.length === 0 ? (
           <BlogEmpty
-            icon={Lock}
             title={t("followRequestsEmpty")}
             action={
-              <BlogLink href={blogPath("/settings")} className={blogCta({ variant: "secondary" })}>
+              <BlogLink href={blogPath("/settings")} className={blogCta({ variant: "text" })}>
                 {t("followRequestsSettings")}
               </BlogLink>
             }

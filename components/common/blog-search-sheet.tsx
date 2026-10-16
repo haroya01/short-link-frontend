@@ -5,12 +5,12 @@ import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Search, X } from "lucide-react";
-import { blogHref, blogPath } from "@/lib/host";
+import { blogHref } from "@/lib/host";
 import {
-  listPopularTags,
+  listPublicFeed,
   listSuggestedAuthors,
+  type PublicFeedItem,
   type SuggestedAuthor,
-  type TagCount,
 } from "@/modules/blog/api/public-posts";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
@@ -18,14 +18,15 @@ import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
 import { useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { TagChip } from "@/modules/blog/components/tag-chip";
+import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 /**
  * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
- * (popular tags + suggested authors), which used to sit as a strip above the mobile feed and crowd the
+ * (trending posts + who to follow), which used to sit as a strip above the mobile feed and crowd the
  * first paint; folding it here keeps the feed content-first while search and discovery share one
  * intent ("뭐 읽지?"). Typing switches to live search (debounced); Enter / "see all" goes to the full
  * ?q= results page. Desktop keeps its own header search + sidebar rail.
@@ -38,10 +39,10 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [value, setValue] = useState("");
   const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
   const { people, remote } = useLivePeople(value, open, 3);
-  // Discovery (popular tags + suggested authors) fills the sheet's resting state — the mobile feed no
+  // Discovery (trending posts + who to follow) fills the sheet's resting state — the mobile feed no
   // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
   // client-side (the sheet mounts in the layout, not the feed page) once per open session.
-  const [tags, setTags] = useState<TagCount[]>([]);
+  const [trending, setTrending] = useState<PublicFeedItem[]>([]);
   const [authors, setAuthors] = useState<SuggestedAuthor[]>([]);
   const [discoveryLoaded, setDiscoveryLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,9 +67,9 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   useEffect(() => {
     if (!open || discoveryLoaded) return;
     let live = true;
-    Promise.all([listPopularTags(12), listSuggestedAuthors(5)]).then(([tg, au]) => {
+    Promise.all([listPublicFeed("trending", 0, 5), listSuggestedAuthors(5)]).then(([feed, au]) => {
       if (!live) return;
-      if (tg.ok) setTags(tg.data);
+      if (feed.ok) setTrending(feed.data.items.slice(0, 5));
       if (au.ok) setAuthors(au.data);
       setDiscoveryLoaded(true);
     });
@@ -129,48 +130,41 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       </form>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6" aria-live="polite">
-        {!q && (tags.length > 0 || authors.length > 0) && (
+        {!q && (trending.length > 0 || authors.length > 0) && (
           <div className="pt-2">
-            {tags.length > 0 && (
-              <section className="mb-6">
-                <div className="mb-2.5 flex items-baseline justify-between px-2">
-                  <RailHeading>{t("railPopularTags")}</RailHeading>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      navigate(blogPath("/tags"));
-                    }}
-                    className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring dark:text-accent-400 dark:hover:text-accent-300"
-                  >
-                    {t("railSeeAll")}
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2 px-2">
-                  {tags.map((tag) => (
-                    <TagChip
-                      key={tag.tag}
-                      soft
-                      href={blogPath(`/tags/${encodeURIComponent(tag.tag)}`)}
-                      label={tag.tag}
-                      count={tag.count}
-                      onClick={onClose}
+            {trending.length > 0 && (
+              <section
+                className="mb-6 px-2"
+                data-testid="search-idle-trending"
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest("a")) onClose();
+                }}
+              >
+                <RailHeading>{t("searchIdleTrending")}</RailHeading>
+                <FeedList>
+                  {trending.map((item, i) => (
+                    <FeedCard
+                      key={`${item.author.username}/${item.slug}`}
+                      item={item}
+                      locale={locale}
+                      showBookmark={false}
+                      flushTop={i === 0}
                     />
                   ))}
-                </div>
+                </FeedList>
               </section>
             )}
 
             {authors.length > 0 && (
-              <section>
-                <RailHeading className="mb-1 px-2">{t("railSuggestedAuthors")}</RailHeading>
+              <section data-testid="search-idle-follow">
+                <RailHeading className="mb-1 px-2">{t("searchIdleFollow")}</RailHeading>
                 <ul>
                   {authors.map(({ author, postCount }) => (
-                    <li key={author.username}>
+                    <li key={author.username} className="flex items-center gap-3 px-2 py-2">
                       <a
                         href={authorHref(author.username, locale)}
                         onClick={() => onClose()}
-                        className="focus-ring flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface"
                       >
                         <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
                         <span className="flex min-w-0 flex-col">
@@ -184,6 +178,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                           </span>
                         </span>
                       </a>
+                      <FollowButton username={author.username} initialFollowerCount={0} compact quiet />
                     </li>
                   ))}
                 </ul>

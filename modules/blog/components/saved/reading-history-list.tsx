@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { History, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -92,10 +92,9 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
   if (items.length === 0) {
     return (
       <BlogEmpty
-        icon={History}
         title={t("emptyHistory")}
         action={
-          <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
+          <a href={blogHref("/")} className={blogCta({ variant: "text" })}>
             {t("browseFeed")}
           </a>
         }

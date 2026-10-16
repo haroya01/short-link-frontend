@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, ExternalLink, Globe, Hand, MessageSquareText, MoreHorizontal, UserX } from "lucide-react";
+import { Check, ExternalLink, Globe, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
@@ -307,7 +307,6 @@ function RemoteBlockedNotice({ account, onChange }: { account: RemoteAccount; on
   return (
     <>
       <BlogEmpty
-        icon={Hand}
         title={t("remoteBlockedTitle")}
         action={
           <button
@@ -346,7 +345,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
     return <SignInEmptyState page reason="remoteAccount" icon={Globe} />;
   }
   if (failed) {
-    return <BlogEmpty icon={UserX} title={t("remoteNotFound")} />;
+    return <BlogEmpty title={t("remoteNotFound")} />;
   }
   if (!account) {
     return <div className="mt-10 h-24 animate-pulse rounded-surface bg-slate-100 dark:bg-slate-900" aria-hidden />;
@@ -389,7 +388,6 @@ export function RemoteAccountScreen({ id }: { id: number }) {
       <div className="mt-6 border-t border-slate-200 dark:border-slate-800">
         {account.domainBlocked ? (
           <BlogEmpty
-            icon={Hand}
             title={t("domainBlockedTitle")}
             action={
               <button
@@ -416,7 +414,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
             key={`${id}-${version}`}
             load={load}
             filterContext="account"
-            empty={<BlogEmpty icon={MessageSquareText} title={t("remoteNoNotes")} />}
+            empty={<BlogEmpty title={t("remoteNoNotes")} />}
           />
         )}
       </div>

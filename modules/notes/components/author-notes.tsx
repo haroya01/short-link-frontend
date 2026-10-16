@@ -4,8 +4,8 @@ import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
-import { MessageSquareText } from "lucide-react";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listAuthorNotes, type NoteFeed } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
 
@@ -22,13 +22,12 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
       filterContext="account"
       empty={
         <BlogEmpty
-          icon={MessageSquareText}
           title={t("emptyAuthor")}
           action={
             own ? (
               <a
                 href={blogHref("/notes")}
-                className="focus-ring rounded-surface bg-accent-700 px-4 py-2 text-[14px] font-medium text-white hover:bg-accent-800"
+                className={blogCta({ variant: "text" })}
               >
                 {t("writeFirst")}
               </a>

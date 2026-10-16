@@ -3,7 +3,6 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { FileText, Hash } from "lucide-react";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { authorHref } from "@/modules/blog/lib/author-href";
@@ -153,9 +152,9 @@ export default async function PublicProfileHomepage({
         )}
 
         {posts.length === 0 ? (
-          <BlogEmpty icon={FileText} title={t("emptyPosts")} />
+          <BlogEmpty title={t("emptyPosts")} />
         ) : visiblePosts.length === 0 ? (
-          <BlogEmpty icon={Hash} title={t("tagFilterEmpty", { tag: activeTag ?? "" })} />
+          <BlogEmpty title={t("tagFilterEmpty", { tag: activeTag ?? "" })} />
         ) : (
           <div className="space-y-10">
             {pinnedPosts.length > 0 && (

@@ -688,7 +688,7 @@ function Field({
       <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
         {label}
         {required && (
-          <span className="text-accent-600 dark:text-accent-400" aria-hidden>
+          <span className="text-slate-500 dark:text-slate-400" aria-hidden>
             *
           </span>
         )}
