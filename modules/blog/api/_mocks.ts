@@ -342,10 +342,15 @@ const PROTECTED_SEEDS: ProtectedSeed[] = [
   { slug: "link-only-draft", title: "링크로만 나누는 초안", excerpt: "링크를 받은 사람만 여는 글.", author: "hana", tags: ["초안"], views: 4, likes: 0, day: 11, audience: "UNLISTED", key: MOCK_UNLISTED_KEY },
 ];
 
-const PROTECTED_ITEMS = PROTECTED_SEEDS.map((seed, i) => ({
-  seed,
-  item: { ...toItem(seed, 900 + i), audience: seed.audience, ...(seed.blockedCountries ? { regionRestricted: true } : {}) },
-}));
+const PROTECTED_ITEMS = PROTECTED_SEEDS.map((seed, i) => ({ seed, item: toItem(seed, 900 + i) }));
+
+function protectedListItem(seed: ProtectedSeed, item: PublicFeedItem, idx: number): PublicPostListItem {
+  return {
+    ...toListItem(item, idx),
+    audience: seed.audience,
+    ...(seed.blockedCountries?.length ? { regionRestricted: true } : {}),
+  };
+}
 
 const mockFollowed = new Set<string>();
 
@@ -407,7 +412,7 @@ function protectedDetail(slug: string, access: MockAccess): PublicPostDetail | n
   const index = PROTECTED_ITEMS.findIndex((p) => p.seed.slug === slug);
   if (index < 0) return undefined;
   const { seed, item } = PROTECTED_ITEMS[index];
-  const post = toListItem(item, 900 + index);
+  const post = protectedListItem(seed, item, 900 + index);
   const lock = lockFor(seed, post.id, access);
   if (lock === "hidden") return null;
   if (lock) {
@@ -445,7 +450,7 @@ export function mockUnlockPost(_username: string, slug: string, password: string
 function protectedPostList(author: PublicAuthor): PublicPostList {
   const posts = PROTECTED_ITEMS.flatMap(({ seed, item }, i) => {
     if (seed.audience === "UNLISTED") return [];
-    const post = toListItem(item, 900 + i);
+    const post = protectedListItem(seed, item, 900 + i);
     if (seed.audience === "FOLLOWERS" || seed.audience === "PASSWORD") return [lockedListItem(post, seed.audience)];
     return [post];
   });
