@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { CheckCircle2, Link2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,10 +76,7 @@ export function ReportLinkForm({ initialLink, initialReason }: Props) {
         role="status"
         className="animate-fade-in space-y-4 rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
       >
-        <p className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-          <CheckCircle2 aria-hidden className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-          {t("doneTitle")}
-        </p>
+        <p className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("doneTitle")}</p>
         <p className="text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{t("doneBody")}</p>
         <Button type="button" variant="outline" size="sm" onClick={reset}>
           {t("another")}
@@ -113,8 +110,7 @@ export function ReportLinkForm({ initialLink, initialReason }: Props) {
         />
         <p id={linkNoteId} className="min-h-5 text-[13px] leading-5">
           {code ? (
-            <span key={code} className="inline-flex animate-fade-in items-center gap-1.5 text-slate-600 dark:text-slate-300">
-              <Link2 aria-hidden className="h-3.5 w-3.5 shrink-0" />
+            <span key={code} className="animate-fade-in text-slate-600 dark:text-slate-300">
               {t.rich("linkParsed", {
                 code,
                 mono: (chunks) => (

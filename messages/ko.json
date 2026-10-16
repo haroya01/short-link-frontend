@@ -4234,7 +4234,7 @@
     },
     "appealNote": "잘못 꺼진 링크라면 '기타'를 고르고 사정을 적어 주세요.",
     "detailLabel": "자세한 상황 (선택)",
-    "detailPlaceholder": "어디서 받았는지, 열면 무엇을 요구하는지 적어 주시면 판단에 도움이 돼요.",
+    "detailPlaceholder": "어디서 받았는지, 열면 무엇을 요구하는지",
     "submit": "신고 보내기",
     "doneTitle": "신고를 받았어요",
     "doneBody": "확인한 뒤 운영 정책을 어긴 링크라면 꺼요.",

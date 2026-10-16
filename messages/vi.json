@@ -4234,7 +4234,7 @@
     },
     "appealNote": "Nếu liên kết bị tắt nhầm, hãy chọn \"Khác\" và cho chúng tôi biết lý do.",
     "detailLabel": "Chuyện gì đã xảy ra? (không bắt buộc)",
-    "detailPlaceholder": "Bạn nhận được liên kết ở đâu và khi mở ra nó yêu cầu gì — những điều này giúp chúng tôi đánh giá.",
+    "detailPlaceholder": "Nhận ở đâu, khi mở thì yêu cầu gì",
     "submit": "Gửi báo cáo",
     "doneTitle": "Đã nhận báo cáo",
     "doneBody": "Chúng tôi sẽ xem xét và tắt liên kết nếu nó vi phạm chính sách.",

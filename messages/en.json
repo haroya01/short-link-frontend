@@ -4234,7 +4234,7 @@
     },
     "appealNote": "If a link was switched off by mistake, choose \"Other\" and tell us why.",
     "detailLabel": "What happened? (optional)",
-    "detailPlaceholder": "Where you got it and what it asks for once opened both help us judge it.",
+    "detailPlaceholder": "Where you got it, what it asks for",
     "submit": "Send report",
     "doneTitle": "Report received",
     "doneBody": "We'll review it and switch the link off if it breaks our policy.",
