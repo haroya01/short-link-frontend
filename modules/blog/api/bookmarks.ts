@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { postAccessHeaders } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -17,17 +18,17 @@ export interface BookmarkStatus {
 /** Whether the signed-in user has this post bookmarked. */
 export function getBookmarkStatus(postId: number): Promise<BookmarkStatus> {
   if (USE_MOCKS) return Promise.resolve({ bookmarked: false });
-  return request<BookmarkStatus>(`/api/v1/posts/${postId}/bookmark`, { method: "GET" });
+  return request<BookmarkStatus>(`/api/v1/posts/${postId}/bookmark`, { method: "GET", headers: postAccessHeaders(postId) });
 }
 
 export function addBookmark(postId: number): Promise<BookmarkStatus> {
   if (USE_MOCKS) return Promise.resolve({ bookmarked: true });
-  return request<BookmarkStatus>(`/api/v1/posts/${postId}/bookmark`, { method: "PUT" });
+  return request<BookmarkStatus>(`/api/v1/posts/${postId}/bookmark`, { method: "PUT", headers: postAccessHeaders(postId) });
 }
 
 export function removeBookmark(postId: number): Promise<BookmarkStatus> {
   if (USE_MOCKS) return Promise.resolve({ bookmarked: false });
-  return request<BookmarkStatus>(`/api/v1/posts/${postId}/bookmark`, { method: "DELETE" });
+  return request<BookmarkStatus>(`/api/v1/posts/${postId}/bookmark`, { method: "DELETE", headers: postAccessHeaders(postId) });
 }
 
 /** The signed-in user's reading list, newest-bookmarked first. */

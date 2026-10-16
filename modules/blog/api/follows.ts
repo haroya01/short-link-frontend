@@ -94,6 +94,7 @@ export function followUser(username: string, sourcePostId?: number): Promise<Fol
       mockRequested.add(username);
       return Promise.resolve(mockStatus(username, false));
     }
+    blogMocks?.mockSetFollowing(username, true);
     return Promise.resolve(mockStatus(username, true));
   }
   const q = sourcePostId != null ? `?sourcePostId=${sourcePostId}` : "";
@@ -105,6 +106,7 @@ export function followUser(username: string, sourcePostId?: number): Promise<Fol
 export function unfollowUser(username: string): Promise<FollowStatus> {
   if (USE_MOCKS) {
     mockRequested.delete(username);
+    blogMocks?.mockSetFollowing(username, false);
     return Promise.resolve(mockStatus(username, false));
   }
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {

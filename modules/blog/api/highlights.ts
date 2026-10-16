@@ -2,6 +2,7 @@ import { mockFailure, request } from "@/lib/api/client";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 import { blogMocks, collectionMocks } from "@/modules/blog/api/_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
+import { announcePostLocked, postAccessHeaders } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -98,8 +99,9 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
   }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/highlights`, {
     cache: "no-store",
-    headers: await viewerHeaders(),
+    headers: { ...(await viewerHeaders()), ...postAccessHeaders(postId) },
   });
+  if (res.status === 403) announcePostLocked();
   if (!res.ok) throw new Error(`Could not load highlights (${res.status})`);
   return (await res.json()) as HighlightView[];
 }
@@ -127,6 +129,7 @@ export function createHighlight(postId: number, payload: NewHighlight): Promise<
   }
   return request<HighlightView>(`/api/v1/posts/${postId}/highlights`, {
     method: "POST",
+    headers: postAccessHeaders(postId),
     body: payload,
   });
 }
@@ -152,8 +155,9 @@ export async function listHighlightReplies(highlightId: number): Promise<Highlig
   }
   const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/replies`, {
     cache: "no-store",
-    headers: await viewerHeaders(),
+    headers: { ...(await viewerHeaders()), ...postAccessHeaders() },
   });
+  if (res.status === 403) announcePostLocked();
   if (!res.ok) throw new Error(`highlight replies ${res.status}`);
   return (await res.json()) as HighlightReplyView[];
 }
@@ -174,6 +178,7 @@ export function createHighlightReply(highlightId: number, body: string): Promise
   }
   return request<HighlightReplyView>(`/api/v1/highlights/${highlightId}/replies`, {
     method: "POST",
+    headers: postAccessHeaders(),
     body: { body },
   });
 }
@@ -196,7 +201,7 @@ export function likeHighlightReply(id: number): Promise<HighlightReplyLikeStatus
     if (mockFails("like")) return Promise.reject(new Error("like 500"));
     return Promise.resolve(mockReplyLike(id, true));
   }
-  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "POST" });
+  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "POST", headers: postAccessHeaders() });
 }
 
 /** Authenticated — take the viewer's like off a reply. */
@@ -205,5 +210,5 @@ export function unlikeHighlightReply(id: number): Promise<HighlightReplyLikeStat
     if (mockFails("like")) return Promise.reject(new Error("like 500"));
     return Promise.resolve(mockReplyLike(id, false));
   }
-  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "DELETE" });
+  return request<HighlightReplyLikeStatus>(`/api/v1/highlight-replies/${id}/like`, { method: "DELETE", headers: postAccessHeaders() });
 }

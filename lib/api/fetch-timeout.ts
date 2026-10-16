@@ -9,6 +9,8 @@
  * A caller-supplied `signal` (e.g. abort-on-unmount) is honored alongside the timeout: whichever
  * fires first wins.
  */
+import { withRenderContext } from "@/lib/api/render-context";
+
 export const DEFAULT_FETCH_TIMEOUT_MS = 8000;
 
 export function isTimeoutError(err: unknown): boolean {
@@ -19,9 +21,10 @@ export function isTimeoutError(err: unknown): boolean {
 
 export function fetchWithTimeout(
   input: string | URL | Request,
-  init: RequestInit = {},
+  requestInit: RequestInit = {},
   timeoutMs: number = DEFAULT_FETCH_TIMEOUT_MS,
 ): Promise<Response> {
+  const init = withRenderContext(input, requestInit);
   // timeoutMs <= 0 opts out (long-running exports that legitimately exceed the ceiling).
   if (timeoutMs <= 0) return fetch(input, init);
 

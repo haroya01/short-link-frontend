@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
 import { mockFails } from "@/lib/api/mock-fail";
+import { postAccessHeaders } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -11,7 +12,7 @@ export interface LikeStatus {
 /** Authenticated — current user's like state for a post. */
 export function getLikeStatus(postId: number): Promise<LikeStatus> {
   if (USE_MOCKS) return Promise.resolve({ likeCount: 62, liked: false });
-  return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "GET" });
+  return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "GET", headers: postAccessHeaders(postId) });
 }
 
 export function likePost(postId: number): Promise<LikeStatus> {
@@ -19,7 +20,7 @@ export function likePost(postId: number): Promise<LikeStatus> {
     if (mockFails("like")) return Promise.reject(new Error("like 500"));
     return Promise.resolve({ likeCount: 63, liked: true });
   }
-  return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "PUT" });
+  return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "PUT", headers: postAccessHeaders(postId) });
 }
 
 export function unlikePost(postId: number): Promise<LikeStatus> {
@@ -27,5 +28,5 @@ export function unlikePost(postId: number): Promise<LikeStatus> {
     if (mockFails("like")) return Promise.reject(new Error("like 500"));
     return Promise.resolve({ likeCount: 62, liked: false });
   }
-  return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "DELETE" });
+  return request<LikeStatus>(`/api/v1/posts/${postId}/like`, { method: "DELETE", headers: postAccessHeaders(postId) });
 }

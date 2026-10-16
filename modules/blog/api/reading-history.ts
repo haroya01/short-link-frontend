@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { postAccessHeaders } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -42,7 +43,7 @@ let mockHistory: ReadingHistoryEntry[] = [
  */
 export function recordRead(postId: number): void {
   if (USE_MOCKS) return;
-  void request(`/api/v1/posts/${postId}/read`, { method: "POST" }).catch(() => {});
+  void request(`/api/v1/posts/${postId}/read`, { method: "POST", headers: postAccessHeaders(postId) }).catch(() => {});
 }
 
 /** Authenticated — the reader's history, most recently read first (paged). */

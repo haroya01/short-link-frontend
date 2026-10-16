@@ -30,6 +30,8 @@ import type {
 import type { FollowingFeedView, FollowingSeriesNote } from "@/modules/blog/api/follows";
 import type { HighlightReplyView, HighlightView } from "@/modules/blog/api/highlights";
 import type { NoteSeriesNav } from "@/modules/notes/api/notes";
+import type { UnlockResult } from "@/modules/blog/api/public-posts";
+import type { LockReason, PostAudience } from "@/modules/blog/lib/post-audience";
 
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -44,6 +46,7 @@ const AUTHORS: Record<string, PublicAuthor> = {
   sora: { id: 5, username: "sora", bio: "프로덕트 디자이너", avatarUrl: null },
   yuna: { id: 15, username: "yuna", bio: "짧게 자주 쓰는 사람", avatarUrl: avatar(20) },
   rin: { id: 16, username: "rin", bio: "밤에만 쓰는 사람", avatarUrl: null },
+  hana: { id: 17, username: "hana", bio: "가까운 사람들에게 쓰는 글", avatarUrl: null },
 };
 
 export const MOCK_VIEWER_AUTHOR = AUTHORS.dohyun;
@@ -325,10 +328,135 @@ function toListItem(item: PublicFeedItem, idx: number, pinned = false): PublicPo
   };
 }
 
+type ProtectedSeed = Seed & { audience: PostAudience; blockedCountries?: string[]; key?: string };
+
+export const MOCK_POST_PASSWORD = "kurl-open";
+export const MOCK_UNLISTED_KEY = "mock-unlisted-key";
+const MOCK_COUNTRY_KEY = "kurl:mock-country";
+
+const PROTECTED_SEEDS: ProtectedSeed[] = [
+  { slug: "open-letter", title: "모두에게 쓰는 편지", excerpt: "누구나 읽을 수 있는 글이에요.", author: "hana", tags: ["일상"], views: 40, likes: 3, day: 15, audience: "PUBLIC" },
+  { slug: "letters-to-followers", title: "팔로워에게만 쓰는 근황", excerpt: "가까운 사람들에게만 털어놓는 이야기.", author: "hana", tags: ["일상"], cover: img("kurl-hana"), views: 30, likes: 5, day: 14, audience: "FOLLOWERS" },
+  { slug: "locked-diary", title: "잠가 둔 일기", excerpt: "비밀번호를 아는 사람만 읽는 일기.", author: "hana", tags: ["일기"], views: 12, likes: 1, day: 13, audience: "PASSWORD" },
+  { slug: "region-notes", title: "어떤 나라에서는 열리지 않는 글", excerpt: "나라에 따라 본문을 막은 글.", author: "hana", tags: ["여행"], views: 25, likes: 2, day: 12, audience: "PUBLIC", blockedCountries: ["KR"] },
+  { slug: "link-only-draft", title: "링크로만 나누는 초안", excerpt: "링크를 받은 사람만 여는 글.", author: "hana", tags: ["초안"], views: 4, likes: 0, day: 11, audience: "UNLISTED", key: MOCK_UNLISTED_KEY },
+];
+
+const PROTECTED_ITEMS = PROTECTED_SEEDS.map((seed, i) => ({
+  seed,
+  item: { ...toItem(seed, 900 + i), audience: seed.audience, ...(seed.blockedCountries ? { regionRestricted: true } : {}) },
+}));
+
+const mockFollowed = new Set<string>();
+
+export function mockSetFollowing(username: string, following: boolean): void {
+  if (following) mockFollowed.add(username);
+  else mockFollowed.delete(username);
+}
+
+function mockReaderCountry(): string {
+  if (typeof window === "undefined") return "US";
+  try {
+    return window.localStorage.getItem(MOCK_COUNTRY_KEY) ?? "US";
+  } catch {
+    return "US";
+  }
+}
+
+const mockGrant = (postId: number) => `mock-grant-${postId}`;
+const unlockAttempts = new Map<number, number>();
+
+export type MockAccess = {
+  viewer: boolean;
+  key?: string | null;
+  grant?: string | null;
+  render: "server" | "browser";
+};
+
+function lockFor(seed: ProtectedSeed, postId: number, access: MockAccess): LockReason | "hidden" | null {
+  if (seed.audience === "UNLISTED" && access.key !== seed.key) return "hidden";
+  if (seed.blockedCountries?.length) {
+    if (access.render === "server") return "REGION_CHECK";
+    if (seed.blockedCountries.includes(mockReaderCountry())) return "REGION";
+  }
+  if (seed.audience === "FOLLOWERS" && !(access.viewer && mockFollowed.has(seed.author))) return "FOLLOWERS";
+  if (seed.audience === "PASSWORD" && access.grant !== mockGrant(postId)) return "PASSWORD";
+  return null;
+}
+
+const LOCK_NOTICE: Record<LockReason, string> = {
+  FOLLOWERS: "팔로워만 볼 수 있는 글이에요",
+  PASSWORD: "비밀번호가 걸린 글이에요",
+  REGION: "이 나라에서는 볼 수 없는 글이에요",
+  REGION_CHECK: "이 나라에서는 볼 수 없는 글이에요",
+};
+
+function lockedListItem(item: PublicPostListItem, reason: LockReason): PublicPostListItem {
+  return {
+    ...item,
+    excerpt: null,
+    ogImageUrl: null,
+    tags: [],
+    likeCount: 0,
+    lastEditedAt: null,
+    locked: { reason },
+  };
+}
+
+function protectedDetail(slug: string, access: MockAccess): PublicPostDetail | null | undefined {
+  const index = PROTECTED_ITEMS.findIndex((p) => p.seed.slug === slug);
+  if (index < 0) return undefined;
+  const { seed, item } = PROTECTED_ITEMS[index];
+  const post = toListItem(item, 900 + index);
+  const lock = lockFor(seed, post.id, access);
+  if (lock === "hidden") return null;
+  if (lock) {
+    return {
+      author: item.author,
+      post: lockedListItem(post, lock),
+      blocks: [{ type: "PARAGRAPH", content: LOCK_NOTICE[lock], blockOrder: 0, cta: null }],
+      series: null,
+    };
+  }
+  return { author: item.author, post, blocks: sampleBlocks(item), series: null };
+}
+
+export function mockUnlockPost(_username: string, slug: string, password: string): Promise<UnlockResult> {
+  const index = PROTECTED_ITEMS.findIndex((p) => p.seed.slug === slug && p.seed.audience === "PASSWORD");
+  if (index < 0) return Promise.resolve({ ok: false, reason: "error" });
+  const postId = 900 + index + 1;
+  if (PROTECTED_ITEMS[index].seed.blockedCountries?.includes(mockReaderCountry())) {
+    return Promise.resolve({ ok: false, reason: "region" });
+  }
+  const attempts = unlockAttempts.get(postId) ?? 0;
+  if (attempts >= 3) return Promise.resolve({ ok: false, reason: "attempts", retryAfter: 900 });
+  if (password !== MOCK_POST_PASSWORD) {
+    unlockAttempts.set(postId, attempts + 1);
+    return Promise.resolve({ ok: false, reason: "invalid" });
+  }
+  unlockAttempts.delete(postId);
+  return Promise.resolve({
+    ok: true,
+    grant: mockGrant(postId),
+    expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
+  });
+}
+
+function protectedPostList(author: PublicAuthor): PublicPostList {
+  const posts = PROTECTED_ITEMS.flatMap(({ seed, item }, i) => {
+    if (seed.audience === "UNLISTED") return [];
+    const post = toListItem(item, 900 + i);
+    if (seed.audience === "FOLLOWERS" || seed.audience === "PASSWORD") return [lockedListItem(post, seed.audience)];
+    return [post];
+  });
+  return { author, posts };
+}
+
 /** Author home — the author's published posts. Pinned 대표글 lead (mirrors the backend's PINNED_FIRST),
  *  then the rest newest-first. Demo: the two most recent are pinned so the 대표글 section renders. */
 export function mockPostList(username: string): PublicPostList {
   const author = resolveAuthor(username);
+  if (author.username === "hana") return protectedPostList(author);
   const mine = ALL_ITEMS.filter((i) => i.author.username === author.username);
   const base = mine.length ? mine : ALL_ITEMS.slice(0, 4);
   const posts = base.map((it, i) => toListItem(it, i, i < 2));
@@ -388,7 +516,13 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
 
 /** Post detail — author + post meta + a body of blocks. First 3 posts belong to a series so the
  * on-post series UI can be exercised (slugs line up with mockSeriesDetail("nextjs-deep-dive")). */
-export function mockPostDetail(_username: string, slug: string): PublicPostDetail {
+export function mockPostDetail(
+  _username: string,
+  slug: string,
+  access: MockAccess = { viewer: false, render: "server" },
+): PublicPostDetail | null {
+  const guarded = protectedDetail(slug, access);
+  if (guarded !== undefined) return guarded;
   const item = READABLE_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
   const idx = READABLE_ITEMS.indexOf(item);
   const inSeries = idx >= 0 && idx < 3;

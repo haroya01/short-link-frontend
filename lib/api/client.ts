@@ -4,6 +4,7 @@ import type { ProblemDetail } from "@/types";
 import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
 import { clearSessionHint, hasSessionHint, writeSessionHint } from "@/lib/session-hint";
 import { fetchWithTimeout, isTimeoutError } from "@/lib/api/fetch-timeout";
+import { announcePostLocked } from "@/modules/blog/lib/post-access";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
 
@@ -289,6 +290,7 @@ function apiErrorFromResponse(
     body && typeof body === "object"
       ? { status: res.status, ...(body as object) }
       : { status: res.status, detail: text || res.statusText };
+  if (detail.code === "POST_LOCKED") announcePostLocked();
   const requestId = res.headers?.get?.("X-Request-Id") ?? null;
   Sentry.addBreadcrumb({
     category: "api",

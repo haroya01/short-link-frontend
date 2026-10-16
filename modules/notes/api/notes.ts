@@ -7,6 +7,7 @@ import {
   type PublicFeedView,
   type SeriesItemLink,
 } from "@/modules/blog/api/public-posts";
+import { postAccessHeaders } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 노트는 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
@@ -452,7 +453,10 @@ export interface PostQuotes extends NoteFeed {
 
 export function listPostQuotes(postId: number, page = 0): Promise<PostQuotes> {
   if (noteMocks) return Promise.resolve(noteMocks.mockPostQuotes(postId, page));
-  return request<PostQuotes>(`/api/v1/public/posts/${postId}/quotes?page=${page}&size=20`, { method: "GET" });
+  return request<PostQuotes>(`/api/v1/public/posts/${postId}/quotes?page=${page}&size=20`, {
+    method: "GET",
+    headers: postAccessHeaders(postId),
+  });
 }
 
 /** Published blog posts that carry this note as a card, newest first. */
