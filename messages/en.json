@@ -869,9 +869,9 @@
       "FOLLOWERS": "Followers only",
       "UNLISTED": "Link only",
       "PASSWORD": "Password-protected",
-      "REGION": "Limited in some countries",
-      "COUNTRIES": "Limited in {countries}",
-      "separator": ", "
+      "REGION": "Restricted in some countries",
+      "COUNTRIES": "Restricted in {countries}",
+      "separator": "·"
     }
   },
   "imageCropper": {

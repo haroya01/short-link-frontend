@@ -33,8 +33,8 @@ export function BylineMeta({
 
   function label(part: ConditionPart): string {
     if (part.kind !== "COUNTRIES") return t(`condition.${part.kind}`);
-    const separator = t("condition.separator");
-    return t("condition.COUNTRIES", { countries: part.codes.map((code) => countryName(code, locale)).join(separator) });
+    const names = part.codes.map((code) => countryName(code, locale)).sort((a, b) => a.localeCompare(b, locale));
+    return t("condition.COUNTRIES", { countries: names.join(t("condition.separator")) });
   }
 
   return (

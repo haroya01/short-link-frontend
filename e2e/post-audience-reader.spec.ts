@@ -84,7 +84,7 @@ test("the author always reads their own followers-only post, though the server r
   await expect(gate(page)).toHaveCount(0);
   const names = await page.evaluate(() => {
     const display = new Intl.DisplayNames(["ko"], { type: "region" });
-    return `${display.of("JP")}·${display.of("CN")}`;
+    return [display.of("JP") ?? "", display.of("CN") ?? ""].sort((a, b) => a.localeCompare(b, "ko")).join("·");
   });
   await expect(condition(page)).toHaveText(["팔로워 공개", `${names} 제한`]);
 });

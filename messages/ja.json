@@ -867,11 +867,11 @@
     },
     "condition": {
       "FOLLOWERS": "フォロワー限定",
-      "UNLISTED": "リンクからのみ公開",
+      "UNLISTED": "リンクのみ公開",
       "PASSWORD": "パスワード付き",
-      "REGION": "一部の国で制限",
+      "REGION": "一部の国・地域で制限",
       "COUNTRIES": "{countries}で制限",
-      "separator": "・"
+      "separator": "·"
     }
   },
   "imageCropper": {

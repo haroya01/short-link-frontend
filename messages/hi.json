@@ -871,7 +871,7 @@
       "PASSWORD": "पासवर्ड वाली पोस्ट",
       "REGION": "कुछ देशों में सीमित",
       "COUNTRIES": "{countries} में सीमित",
-      "separator": ", "
+      "separator": "·"
     }
   },
   "imageCropper": {

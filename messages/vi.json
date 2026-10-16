@@ -885,7 +885,7 @@
       "PASSWORD": "Có mật khẩu",
       "REGION": "Giới hạn ở một số quốc gia",
       "COUNTRIES": "Giới hạn ở {countries}",
-      "separator": ", "
+      "separator": "·"
     }
   },
   "errors": {

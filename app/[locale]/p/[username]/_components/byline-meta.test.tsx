@@ -115,3 +115,12 @@ describe("the byline of a post", () => {
     expect(host.textContent).toBe("2026년 5월 14일");
   });
 });
+
+describe("the owner's country list", () => {
+  it("is ordered by the localized name, whatever order the codes came in", async () => {
+    mocks.me = { username: "hana" };
+    await render({ audience: "PUBLIC", locked: { reason: "REGION_CHECK" } }, null);
+    await act(async () => setUnlockedPost(5, opened({ audience: "PUBLIC", regionRestricted: true, blockedCountries: ["CN", "US", "JP"] })));
+    expect(host.textContent).toBe("2026년 5월 14일 · 3분 · 미국·일본·중국 제한");
+  });
+});
