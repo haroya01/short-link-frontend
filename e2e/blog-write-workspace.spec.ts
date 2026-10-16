@@ -41,7 +41,7 @@ test.describe("desktop", () => {
     ]);
     await expectOnTop(toastBy(page, "2편을 가져왔어요"));
 
-    const address = page.getByRole("dialog", { name: /발행 설정/ }).locator("button[aria-expanded]");
+    const address = page.getByRole("dialog", { name: /발행 설정/ }).getByRole("button", { name: /^추가 설정/ });
     await page.getByRole("link", { name: /^임시저장 벨로그에서 옮긴 글/ }).click();
     await expect(page.locator(".tiptap")).toContainText("옮겨 온 본문", { timeout: 30_000 });
     await page.getByRole("button", { name: "발행", exact: true }).click();
