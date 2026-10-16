@@ -1,9 +1,13 @@
-import type { KindredCurator } from "@/modules/blog/api/collections";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { listKindredCurators, type KindredCurator } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { useViewerList } from "@/modules/blog/lib/use-viewer-list";
 
 /**
  * 취향이 겹치는 큐레이터 — this curator and the people who wove some of the SAME blocks into their own
@@ -12,21 +16,20 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
  * Renders nothing when there's no overlap (no empty-state noise on the page).
  */
 export function KindredCurators({
-  curators,
+  username,
+  initial,
   locale,
-  title,
-  sharedLabel,
 }: {
-  curators: KindredCurator[];
+  username: string;
+  initial: KindredCurator[];
   locale: string;
-  title: string;
-  /** Per-curator overlap label, e.g. "{count}개 함께 엮음" — built by the page with its translations. */
-  sharedLabel: (count: number) => string;
 }) {
+  const t = useTranslations("collections");
+  const curators = useViewerList(initial, () => listKindredCurators(username), username);
   if (curators.length === 0) return null;
   return (
     <section className="mt-12 border-t border-slate-100 pt-6 dark:border-slate-800/80">
-      <RailHeading>{title}</RailHeading>
+      <RailHeading>{t("kindredCuratorsTitle")}</RailHeading>
       <ul className="mt-3">
         {curators.map(({ curator, sharedItems }) => (
           <li key={curator.id}>
@@ -49,7 +52,7 @@ export function KindredCurators({
                 )}
               </span>
               <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
-                {sharedLabel(sharedItems)}
+                {t("sharedItems", { count: sharedItems })}
               </span>
             </BlogLink>
           </li>

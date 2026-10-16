@@ -33,6 +33,7 @@ const CURATORS = {
   jinhwa: { id: 41, username: "jinhwa", bio: "느리게 읽고 오래 쓰는 사람", avatarUrl: "https://i.pravatar.cc/120?img=32" },
   doha: { id: 42, username: "doha", bio: "에세이 · 거리 두기", avatarUrl: "https://i.pravatar.cc/120?img=15" },
   sol: { id: 6, username: "sol", bio: "작업실에서, 손으로", avatarUrl: null },
+  dohyun: { id: 1, username: "dohyun", bio: "백엔드 개발자 · 사이드 프로젝트 중독", avatarUrl: null },
 };
 
 // Quotes lifted from _mocks.ts sampleBlocks — present in EVERY mock post body, so the deep-link
@@ -437,7 +438,10 @@ const POST_RELATED: Record<number, RelatedBlock[]> = {
 };
 
 const KINDRED: Record<string, KindredCurator[]> = {
-  haruka: [{ curator: CURATORS.jinhwa, sharedItems: 3 }],
+  haruka: [
+    { curator: CURATORS.jinhwa, sharedItems: 3 },
+    { curator: CURATORS.dohyun, sharedItems: 2 },
+  ],
 };
 
 export function mockRelatedBlocks(blockType: string, refId: number): RelatedBlock[] {
@@ -445,7 +449,8 @@ export function mockRelatedBlocks(blockType: string, refId: number): RelatedBloc
 }
 
 export function mockKindredCurators(username: string): KindredCurator[] {
-  return KINDRED[username] ?? [];
+  const list = KINDRED[username] ?? [];
+  return typeof window === "undefined" ? list : list.filter(({ curator }) => curator.id !== CURATORS.dohyun.id);
 }
 
 // 배치 목 — 요청한 id 순서 그대로, 담긴 게 없으면 collections:[](줄이 안 뜬다). 실서버 계약과 동일 shape.

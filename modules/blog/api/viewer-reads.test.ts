@@ -85,3 +85,36 @@ describe("a failed conversation read is an error, not an empty conversation", ()
     });
   }
 });
+
+describe("curators who wove the same things", () => {
+  const kindred = async () => (await import("./collections")).listKindredCurators("haruka");
+  const PATH = "/api/v1/public/profiles/haruka/kindred";
+
+  it("carry the signed-in reader's token, so the server can leave the reader out", async () => {
+    mocks.token = "access-token";
+    mocks.fetchWithTimeout.mockImplementationOnce(async () => json([]));
+    await kindred();
+    expect(mocks.fetchWithTimeout).toHaveBeenLastCalledWith(expect.stringContaining(PATH), {
+      cache: "no-store",
+      headers: { Authorization: "Bearer access-token" },
+    });
+  });
+
+  it("go out without a token for a visitor", async () => {
+    mocks.fetchWithTimeout.mockImplementationOnce(async () => json([]));
+    await kindred();
+    expect(mocks.fetchWithTimeout).toHaveBeenLastCalledWith(expect.stringContaining(PATH), {
+      cache: "no-store",
+      headers: undefined,
+    });
+  });
+
+  it("read as null when the server fails or cannot be reached, so the list already shown stays", async () => {
+    mocks.fetchWithTimeout.mockImplementationOnce(async () => new Response("", { status: 503 }));
+    await expect(kindred()).resolves.toBeNull();
+    mocks.fetchWithTimeout.mockImplementationOnce(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+    await expect(kindred()).resolves.toBeNull();
+  });
+});
