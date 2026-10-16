@@ -4600,7 +4600,7 @@
     "remoteSearchSignIn": "ほかのサーバーの人はログインすると探せます",
     "remoteSearchNotFound": "{domain} で見つかりませんでした",
     "remoteSearchUnreachable": "{domain} が応答していません",
-    "remoteSearchHint": "ほかのサーバーの人は @ID@サーバー で探せます",
+    "remoteSearchHint": "ほかのサーバーの人は @ID@サーバー名 で探せます",
     "remoteLookingUp": "そのサーバーに問い合わせ中…",
     "remoteNotFound": "そのサーバーでアカウントが見つかりませんでした",
     "remoteCaption": "{domain}にあるアカウントです。フォローすると{domain}にリクエストを送ります。",

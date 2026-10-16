@@ -13,14 +13,16 @@ export function useLivePeople(
   query: string,
   enabled: boolean,
   size: number,
-): { people: PersonMatch[]; remote: RemoteAccount[] } {
+): { people: PersonMatch[]; remote: RemoteAccount[]; remoteAnswered: boolean } {
   const [people, setPeople] = useState<PersonMatch[]>([]);
   const [remote, setRemote] = useState<RemoteAccount[]>([]);
+  const [remoteAnswered, setRemoteAnswered] = useState(false);
 
   useEffect(() => {
     if (!enabled || !searchablePeopleQuery(query)) {
       setPeople([]);
       setRemote([]);
+      setRemoteAnswered(false);
       return;
     }
     let live = true;
@@ -31,11 +33,14 @@ export function useLivePeople(
       );
       if (remoteQueryDomain(query) !== null) {
         setRemote([]);
+        setRemoteAnswered(false);
         return;
       }
-      void searchRemoteAccounts(query, LIVE_REMOTE_PEOPLE).then(
-        (found) => live && setRemote((found ?? []).filter((account) => !hiddenFromViewer(account))),
-      );
+      void searchRemoteAccounts(query, LIVE_REMOTE_PEOPLE).then((found) => {
+        if (!live) return;
+        setRemote((found ?? []).filter((account) => !hiddenFromViewer(account)));
+        setRemoteAnswered(found !== null);
+      });
     }, 250);
     return () => {
       live = false;
@@ -43,5 +48,25 @@ export function useLivePeople(
     };
   }, [query, enabled, size]);
 
-  return { people, remote };
+  return { people, remote, remoteAnswered };
+}
+
+export function remoteSearchHintVisible({
+  query,
+  answered,
+  accounts,
+  lookupActive,
+}: {
+  query: string;
+  answered: boolean;
+  accounts: readonly RemoteAccount[];
+  lookupActive: boolean;
+}): boolean {
+  return (
+    answered &&
+    accounts.length === 0 &&
+    !lookupActive &&
+    searchablePeopleQuery(query) &&
+    remoteQueryDomain(query) === null
+  );
 }

@@ -9,15 +9,16 @@ vi.mock("@/modules/blog/api/people", async (original) => ({
 }));
 vi.mock("@/modules/notes/api/federation-search", () => ({ searchRemoteAccounts: mocks.searchRemoteAccounts }));
 
-import { useLivePeople } from "./use-live-people";
+import { remoteSearchHintVisible, useLivePeople } from "./use-live-people";
 
 let root: Root;
 let host: HTMLDivElement;
 let people: ReturnType<typeof useLivePeople>["people"];
 let remote: ReturnType<typeof useLivePeople>["remote"];
+let remoteAnswered: boolean;
 
 function Probe({ query }: { query: string }) {
-  ({ people, remote } = useLivePeople(query, true, 3));
+  ({ people, remote, remoteAnswered } = useLivePeople(query, true, 3));
   return null;
 }
 
@@ -130,5 +131,48 @@ describe("people elsewhere while typing", () => {
     mocks.searchRemoteAccounts.mockResolvedValue(null);
     await type("min");
     expect(remote).toEqual([]);
+  });
+});
+
+describe("whether the other servers answered", () => {
+  it("is not answered before typing settles, and answered once the search came back empty", async () => {
+    await act(async () => root.render(<Probe query="zz" />));
+    expect(remoteAnswered).toBe(false);
+    await act(async () => vi.advanceTimersByTimeAsync(250));
+    expect(remoteAnswered).toBe(true);
+    expect(remote).toEqual([]);
+  });
+
+  it("is not answered when the search failed or the backend lacks it", async () => {
+    mocks.searchRemoteAccounts.mockResolvedValue(null);
+    await type("zz");
+    expect(remoteAnswered).toBe(false);
+  });
+
+  it("is not answered for a handle, which the resolver takes instead", async () => {
+    await type("zz");
+    await type("@mina@mastodon.social");
+    expect(remoteAnswered).toBe(false);
+  });
+});
+
+describe("the hint for finding someone elsewhere", () => {
+  const mina = elsewhere("mina@mastodon.social");
+  const visible = (over: Partial<Parameters<typeof remoteSearchHintVisible>[0]>) =>
+    remoteSearchHintVisible({ query: "zz", answered: true, accounts: [], lookupActive: false, ...over });
+
+  it("shows for a name the other servers answered with nobody", () => {
+    expect(visible({})).toBe(true);
+  });
+
+  it.each([
+    ["the other servers have not answered or failed", { answered: false }],
+    ["accounts elsewhere matched", { accounts: [mina] }],
+    ["a handle is being looked up", { lookupActive: true }],
+    ["the query is a handle", { query: "@mina@mastodon.social" }],
+    ["the query is an address", { query: "https://mastodon.social/@mina" }],
+    ["the query is too short to search", { query: "z" }],
+  ])("stays hidden when %s", (_, over) => {
+    expect(visible(over)).toBe(false);
   });
 });
