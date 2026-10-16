@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   audiencePatch,
+  bylineCondition,
   cardMark,
   changesVisibility,
   isIndexable,
@@ -123,5 +124,49 @@ describe("the access part of a save", () => {
     expect(audiencePatch(saved, { audience: "FOLLOWERS", password: "left over", blockedCountries: [] })).toEqual({
       audience: "FOLLOWERS",
     });
+  });
+});
+
+describe("the condition on the byline", () => {
+  const kinds = (parts: ReturnType<typeof bylineCondition>) => parts.map((p) => (p.kind === "COUNTRIES" ? `COUNTRIES:${p.codes.join(",")}` : p.kind));
+
+  it.each([
+    ["FOLLOWERS", "FOLLOWERS"],
+    ["UNLISTED", "UNLISTED"],
+    ["PASSWORD", "PASSWORD"],
+  ] as const)("names a readable %s post for reader and owner alike", (audience, kind) => {
+    expect(kinds(bylineCondition({ audience }, { owner: false }))).toEqual([kind]);
+    expect(kinds(bylineCondition({ audience, blockedCountries: [] }, { owner: true }))).toEqual([kind]);
+  });
+
+  it("says nothing for an everyone post without a country limit", () => {
+    expect(bylineCondition({ audience: "PUBLIC" }, { owner: false })).toEqual([]);
+    expect(bylineCondition({}, { owner: true })).toEqual([]);
+  });
+
+  it("tells a reader only that some countries are limited, and the owner which ones", () => {
+    expect(kinds(bylineCondition({ audience: "PUBLIC", regionRestricted: true }, { owner: false }))).toEqual(["REGION"]);
+    expect(
+      kinds(bylineCondition({ audience: "PUBLIC", regionRestricted: true, blockedCountries: ["JP", "CN"] }, { owner: true })),
+    ).toEqual(["COUNTRIES:JP,CN"]);
+  });
+
+  it("never names countries to someone who isn't the owner, even if the codes were in hand", () => {
+    expect(
+      kinds(bylineCondition({ audience: "FOLLOWERS", regionRestricted: true, blockedCountries: ["JP"] }, { owner: false })),
+    ).toEqual(["FOLLOWERS", "REGION"]);
+  });
+
+  it("puts both conditions on one line when combined", () => {
+    expect(kinds(bylineCondition({ audience: "FOLLOWERS", regionRestricted: true }, { owner: false }))).toEqual(["FOLLOWERS", "REGION"]);
+    expect(
+      kinds(bylineCondition({ audience: "FOLLOWERS", regionRestricted: true, blockedCountries: ["JP", "CN"] }, { owner: true })),
+    ).toEqual(["FOLLOWERS", "COUNTRIES:JP,CN"]);
+  });
+
+  it("stays off a locked view, whose gate already says it", () => {
+    for (const reason of ["FOLLOWERS", "PASSWORD", "REGION", "REGION_CHECK"] as const) {
+      expect(bylineCondition({ audience: "FOLLOWERS", regionRestricted: true, locked: { reason } }, { owner: false })).toEqual([]);
+    }
   });
 });

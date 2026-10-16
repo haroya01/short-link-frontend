@@ -115,7 +115,7 @@ function FeedCardRow({
   entranceDelay?: number;
 }) {
   if (!isRenderablePost(item)) return null;
-  const bookmarkable = showBookmark && typeof item.id === "number" && item.locked == null;
+  const bookmarkable = showBookmark && typeof item.id === "number";
   const mark = cardMark(item);
   // Representative tag = first DISPLAYABLE tag (skip junk — incomplete jamo, single-char, mash), so a
   // reading-surface row never surfaces "#ㄴ" / "#dddd" as its eyebrow.
@@ -162,7 +162,12 @@ function FeedCardRow({
           <RowTime iso={item.publishedAt} locale={locale} className="shrink-0" />
           {bookmarkable && (
             <span className="-my-1.5 -mr-1.5 ml-auto">
-              <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+              <FeedCardBookmark
+                postId={item.id}
+                username={item.author.username}
+                slug={item.slug}
+                removeOnly={item.locked != null}
+              />
             </span>
           )}
         </>

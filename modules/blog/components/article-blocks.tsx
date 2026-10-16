@@ -16,6 +16,8 @@ import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { headingAnchors, headingPlainText, slugify } from "@/modules/blog/lib/slugify";
 import type { LinkPreview, PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
 
+export { readingMinutes } from "@/modules/blog/lib/reading-minutes";
+
 export type ArticleEmbeds = {
   LinkPreview: ComponentType<{ url: string }>;
   Note: ComponentType<{ id: number; url: string }>;
@@ -113,20 +115,6 @@ function withPostParam(url: string, postId?: number): string {
   return `${url}${url.includes("?") ? "&" : "?"}post=${postId}`;
 }
 
-/** Rough read-time estimate from the textual blocks. CJK-leaning: ~500 chars/min. */
-export function readingMinutes(blocks: PublicPostBlock[]): number {
-  let chars = 0;
-  for (const b of blocks) {
-    if (!b.content) continue;
-    if (b.type === "LIST_BULLET" || b.type === "LIST_NUMBERED") {
-      chars += parseList(b.content).join(" ").length;
-    } else if (["PARAGRAPH", "H1", "H2", "H3", "QUOTE"].includes(b.type)) {
-      chars += b.content.length;
-    }
-  }
-  return Math.max(1, Math.round(chars / 500));
-}
-
 type BlockContext = {
   ranks: Map<number, number>;
   anchors: Map<PublicPostBlock, string>;
@@ -205,16 +193,6 @@ function HeadingBlock({
       </a>
     </Tag>
   );
-}
-
-function parseList(content: string): string[] {
-  try {
-    const parsed = JSON.parse(content);
-    if (Array.isArray(parsed)) return parsed.filter((x): x is string => typeof x === "string");
-  } catch {
-    return content.split("\n").filter(Boolean);
-  }
-  return [];
 }
 
 function ListBlock({ content, ordered }: { content: string | null; ordered: boolean }) {

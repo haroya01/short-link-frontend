@@ -35,6 +35,16 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
     {
+      name: "webkit-iphone",
+      testMatch: /post-audience-(reader|webkit)\.spec\.ts$/,
+      use: { ...devices["iPhone 15"] },
+    },
+    {
+      name: "webkit-desktop",
+      testMatch: /post-audience-(reader|webkit)\.spec\.ts$/,
+      use: { ...devices["Desktop Safari"] },
+    },
+    {
       // No-backend fixture project — runs both visual snapshots ({@code visual.spec.ts}) and
       // component-level a11y ({@code a11y-fixtures.spec.ts}) against the static fixture pages
       // under {@code /visual-fixtures/}. Pinned to Desktop Chrome 1280×800 +

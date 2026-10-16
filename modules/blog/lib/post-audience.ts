@@ -100,3 +100,21 @@ export function audiencePatch(saved: SavedAudience, draft: AudienceDraft): Audie
 export function changesVisibility(patch: AudiencePatch): boolean {
   return patch.audience !== undefined || patch.blockedCountries !== undefined;
 }
+
+export type ConditionPart =
+  | { kind: "FOLLOWERS" | "UNLISTED" | "PASSWORD" | "REGION" }
+  | { kind: "COUNTRIES"; codes: string[] };
+
+export function bylineCondition(
+  post: AudienceFields & { blockedCountries?: string[] },
+  { owner }: { owner: boolean },
+): ConditionPart[] {
+  if (post.locked != null) return [];
+  const parts: ConditionPart[] = [];
+  const audience = audienceOf(post);
+  if (audience !== "PUBLIC") parts.push({ kind: audience });
+  const codes = owner ? (post.blockedCountries ?? []) : [];
+  if (codes.length > 0) parts.push({ kind: "COUNTRIES", codes: [...codes] });
+  else if (post.regionRestricted === true) parts.push({ kind: "REGION" });
+  return parts;
+}

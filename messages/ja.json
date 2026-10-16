@@ -849,7 +849,8 @@
       "wrongPassword": "パスワードが違います",
       "tooManyAttempts": "試した回数が多すぎます。しばらくしてからもう一度お試しください",
       "unlockFailed": "開けませんでした。もう一度お試しください",
-      "loading": "本文を読み込み中"
+      "loading": "本文を読み込み中",
+      "openInBrowser": "標準のブラウザで開く"
     },
     "audience": {
       "PUBLIC": "全体",
@@ -863,6 +864,14 @@
       "PASSWORD": "パスワードがかかった記事です",
       "REGION": "国によって読めない記事です",
       "UNLISTED": "リンクからだけ開ける記事です"
+    },
+    "condition": {
+      "FOLLOWERS": "フォロワー限定",
+      "UNLISTED": "リンクのみ公開",
+      "PASSWORD": "パスワード付き",
+      "REGION": "一部の国・地域で制限",
+      "COUNTRIES": "{countries}で制限",
+      "separator": "·"
     }
   },
   "imageCropper": {
