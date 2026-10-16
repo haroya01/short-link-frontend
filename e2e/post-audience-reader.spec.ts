@@ -82,7 +82,11 @@ test("the author always reads their own followers-only post, though the server r
   await page.goto("/ko/p/dohyun/notes-for-friends");
   await expect(body(page)).toContainText("팔로워에게만 여는 작가 본인의 글", { timeout: 30_000 });
   await expect(gate(page)).toHaveCount(0);
-  await expect(condition(page)).toHaveText(["팔로워 공개", "일본·중국 제한"]);
+  const names = await page.evaluate(() => {
+    const display = new Intl.DisplayNames(["ko"], { type: "region" });
+    return `${display.of("JP")}·${display.of("CN")}`;
+  });
+  await expect(condition(page)).toHaveText(["팔로워 공개", `${names} 제한`]);
 });
 
 test.describe("a password post", () => {
