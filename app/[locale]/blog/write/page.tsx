@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
+import { OwnerAudienceMarks } from "@/modules/blog/components/audience-mark";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
@@ -314,6 +315,7 @@ export default function WriteIndexPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-[12px]">
                         <PostStatusBadge status={p.status} takenDown={p.takenDown} />
+                        <OwnerAudienceMarks audience={p.audience} blockedCountries={p.blockedCountries} />
                         {p.tags[0] && (
                           <span className="truncate text-slate-500 dark:text-slate-400">{p.tags[0]}</span>
                         )}

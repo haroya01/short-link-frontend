@@ -57,7 +57,7 @@ test("발행 창에서 새 시리즈 이름 칸의 Esc 는 그 칸만 닫고, �
   await openEditor(page, DRAFT);
   await page.getByRole("button", { name: "발행", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: /발행 설정/ });
-  await dialog.locator("button[aria-expanded]").click();
+  await dialog.getByRole("button", { name: /^추가 설정/ }).click();
   await dialog.getByRole("button", { name: "새 시리즈", exact: true }).click();
   const name = dialog.getByRole("textbox", { name: "새 시리즈" });
   await expect(name).toBeFocused();

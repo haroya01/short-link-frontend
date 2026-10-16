@@ -597,7 +597,27 @@
     },
     "saveFailedRetry": "सहेजा नहीं गया · फिर कोशिश करें",
     "reschedule": "समय बदलें",
-    "previewOpenError": "पूर्वावलोकन नहीं खुल सका"
+    "previewOpenError": "पूर्वावलोकन नहीं खुल सका",
+    "audience": {
+      "label": "कौन पढ़ सकता है",
+      "titlePublic": "शीर्षक सभी को दिखता है",
+      "unlistedHint": "यह सूचियों और खोज में नहीं दिखेगी। लिंक पाने वाले इसे आगे भेज सकते हैं",
+      "passwordPlaceholder": "पासवर्ड",
+      "newPasswordPlaceholder": "नया पासवर्ड",
+      "passwordRequired": "प्रकाशित करने के लिए पासवर्ड रखें।",
+      "passwordRequiredSave": "सहेजने के लिए पासवर्ड रखें।",
+      "passwordLength": "पासवर्ड 4 से 200 अक्षरों का रखें",
+      "linkLabel": "साझा लिंक",
+      "copy": "कॉपी",
+      "copied": "कॉपी हुआ",
+      "copyFailed": "कॉपी नहीं हो सका",
+      "rotate": "लिंक बदलें",
+      "rotateTitle": "लिंक बदलें?",
+      "rotateBody": "मौजूदा लिंक से यह पोस्ट अब नहीं खुलेगी।",
+      "rotateFailed": "लिंक नहीं बदल सका",
+      "countryHint": "इन देशों के पाठकों को केवल शीर्षक दिखेगा। VPN से इसे रोका नहीं जा सकता।",
+      "countryRemove": "{country} हटाएँ"
+    }
   },
   "savedLibrary": {
     "private": "इसे केवल आप देख सकते हैं।",
@@ -819,7 +839,31 @@
     "highlightLinkCopied": "लिंक कॉपी हो गया",
     "highlightPublicFirst": "हाइलाइट किया · आपके नाम के साथ सार्वजनिक",
     "reportTitleHighlightReply": "इस जवाब की रिपोर्ट करें",
-    "publishedStatus": "प्रकाशित हो गई"
+    "publishedStatus": "प्रकाशित हो गई",
+    "gate": {
+      "followers": "इसे पढ़ने के लिए फ़ॉलो करें",
+      "password": "यह पोस्ट पासवर्ड से सुरक्षित है",
+      "region": "यह पोस्ट आपके देश में उपलब्ध नहीं है",
+      "passwordLabel": "पासवर्ड",
+      "open": "खोलें",
+      "wrongPassword": "पासवर्ड सही नहीं है",
+      "tooManyAttempts": "बहुत बार कोशिश हो गई। थोड़ी देर बाद फिर कोशिश करें",
+      "unlockFailed": "खुल नहीं सका। फिर कोशिश करें",
+      "loading": "पोस्ट लोड हो रही है"
+    },
+    "audience": {
+      "PUBLIC": "सभी",
+      "UNLISTED": "केवल लिंक",
+      "FOLLOWERS": "फ़ॉलोअर",
+      "PASSWORD": "पासवर्ड",
+      "REGION": "देश सीमा"
+    },
+    "shareCard": {
+      "FOLLOWERS": "इसे केवल फ़ॉलोअर पढ़ सकते हैं",
+      "PASSWORD": "यह पोस्ट पासवर्ड से सुरक्षित है",
+      "REGION": "यह पोस्ट कुछ देशों में उपलब्ध नहीं है",
+      "UNLISTED": "यह केवल लिंक से खुलती है"
+    }
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -887,7 +931,11 @@
     "SUSPEND_REQUIRES_EXPIRY": "निलंबन के लिए समाप्ति तिथि आवश्यक है.",
     "toggleFailed": "बदलाव सेव नहीं हो सका। कृपया थोड़ी देर बाद फिर कोशिश करें।",
     "likeFailed": "आपकी पसंद सेव नहीं हो सकी",
-    "POST_TAKEN_DOWN": "यह पोस्ट सामग्री नीति के तहत हटाई गई है, इसलिए फिर से सार्वजनिक नहीं की जा सकती।"
+    "POST_TAKEN_DOWN": "यह पोस्ट सामग्री नीति के तहत हटाई गई है, इसलिए फिर से सार्वजनिक नहीं की जा सकती।",
+    "POST_PASSWORD_LENGTH": "पासवर्ड 4 से 200 अक्षरों का रखें",
+    "POST_PASSWORD_REQUIRED": "पासवर्ड रखें",
+    "POST_AUDIENCE_INVALID": "कौन पढ़ सकता है, फिर से चुनें",
+    "POST_BLOCKED_COUNTRIES_INVALID": "देश सीमा में एक अज्ञात देश है"
   },
   "cookieConsent": {
     "ariaLabel": "कुकी सूचना",

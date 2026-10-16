@@ -14,6 +14,8 @@ import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { cardMark } from "@/modules/blog/lib/post-audience";
+import { AudienceMark } from "@/modules/blog/components/audience-mark";
 
 export function FeedList({ children }: { children: ReactNode }) {
   return (
@@ -113,7 +115,8 @@ function FeedCardRow({
   entranceDelay?: number;
 }) {
   if (!isRenderablePost(item)) return null;
-  const bookmarkable = showBookmark && typeof item.id === "number";
+  const bookmarkable = showBookmark && typeof item.id === "number" && item.locked == null;
+  const mark = cardMark(item);
   // Representative tag = first DISPLAYABLE tag (skip junk — incomplete jamo, single-char, mash), so a
   // reading-surface row never surfaces "#ㄴ" / "#dddd" as its eyebrow.
   const eyebrowTag = item.tags.find(isDisplayableTag);
@@ -138,8 +141,10 @@ function FeedCardRow({
       }
       linkData={{ "data-bhv": "post", "data-bhv-id": `${item.author.username}/${item.slug}` }}
       top={
-        (eyebrowTag || reason) && (
+        (mark || eyebrowTag || reason) && (
           <>
+            {mark && <AudienceMark item={item} />}
+            {mark && (eyebrowTag || reason) && <RowDot />}
             {eyebrowTag && <span className="truncate font-medium">{eyebrowTag}</span>}
             {eyebrowTag && reason && <RowDot />}
             {reason && <ReasonLabel reason={reason} />}
