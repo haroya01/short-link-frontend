@@ -12,6 +12,8 @@ import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
 import { remoteSearchHintVisible, useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
 import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
+import { useDomainCompletions } from "@/modules/notes/lib/use-domain-completions";
+import { DomainCompletions } from "@/modules/notes/components/domain-completions";
 import { cn } from "@/lib/utils";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { useMenuKeys } from "@/hooks/use-menu-keys";
@@ -49,13 +51,16 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   const focusOnOpen = useRef(false);
   const { results, loading, failed, retry } = useLiveSearch(value, open, 5);
   const { people, remote, remoteAnswered } = useLivePeople(value, open, 3);
-  const lookup = useLiveRemoteLookup(value, open);
-  const remoteHint = remoteSearchHintVisible({
-    query: value,
-    answered: remoteAnswered,
-    accounts: remote,
-    lookupActive: lookup !== null,
-  });
+  const completions = useDomainCompletions(value, open);
+  const lookup = useLiveRemoteLookup(value, open && !completions.hold);
+  const remoteHint =
+    !completions.active &&
+    remoteSearchHintVisible({
+      query: value,
+      answered: remoteAnswered,
+      accounts: remote,
+      lookupActive: lookup !== null,
+    });
 
   useDismiss(panelOpen, formRef, () => setPanelOpen(false));
   const panelKeys = useMenuKeys(panelRef, {
@@ -193,6 +198,15 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           onKeyDown={panelKeys.onKeyDown}
           className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850"
         >
+          <DomainCompletions
+            handles={completions.handles}
+            typed={value}
+            dense
+            onPick={(handle) => {
+              setValue(handle);
+              inputRef.current?.focus();
+            }}
+          />
           <LivePeople people={people} onNavigate={() => setPanelOpen(false)} dense />
           <LiveRemotePeople accounts={remote} lookup={lookup} hint={remoteHint} onNavigate={() => setPanelOpen(false)} dense />
           {loading && results.length === 0 ? (
@@ -240,7 +254,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                 {t("retry")}
               </button>
             </div>
-          ) : people.length === 0 && remote.length === 0 && !lookup ? (
+          ) : people.length === 0 && remote.length === 0 && !lookup && !completions.active ? (
             <p className="px-3 py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
           ) : null}
           <div className="-mt-px border-t border-slate-100 px-3 py-2.5 dark:border-slate-800">

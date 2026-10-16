@@ -50,6 +50,7 @@ async function api() {
 const SEARCH = "/api/v1/federation/accounts/search";
 const RESOLVE = "/api/v1/federation/resolve";
 const LOOKUP = "/api/v1/federation/accounts/lookup";
+const DOMAINS = "/api/v1/federation/domains";
 
 beforeEach(() => window.localStorage.clear());
 afterEach(() => vi.unstubAllGlobals());
@@ -221,5 +222,30 @@ describe("resolving a handle or an address", () => {
     await resolveRemote("@mina@mastodon.social", { signal: new AbortController().signal });
     expect(timer.mock.calls.some(([, ms]) => ms === 20_000)).toBe(true);
     timer.mockRestore();
+  });
+});
+
+describe("completing the server of a handle", () => {
+  it("asks for five servers starting with what was typed, lower-cased", async () => {
+    serve({ [DOMAINS]: { status: 200, body: { items: [{ domain: "mastodon.social" }, { domain: "Mastodon.Online" }] } } });
+    const { suggestRemoteDomains } = await api();
+    await expect(suggestRemoteDomains("mast")).resolves.toEqual(["mastodon.social", "mastodon.online"]);
+    const url = new URL(calls[0], "http://x");
+    expect(url.searchParams.get("prefix")).toBe("mast");
+    expect(url.searchParams.get("limit")).toBe("5");
+  });
+
+  it("is null when the backend fails or lacks the route, so the resolve is not held", async () => {
+    serve({ [DOMAINS]: { status: 404, body: { code: "NOT_FOUND" } } });
+    const { suggestRemoteDomains } = await api();
+    await expect(suggestRemoteDomains("mast")).resolves.toBeNull();
+  });
+
+  it("lets a cancelled request fail", async () => {
+    serve({ [DOMAINS]: new DOMException("aborted", "AbortError") });
+    const { suggestRemoteDomains } = await api();
+    const controller = new AbortController();
+    controller.abort();
+    await expect(suggestRemoteDomains("mast", { signal: controller.signal })).rejects.toBeTruthy();
   });
 });

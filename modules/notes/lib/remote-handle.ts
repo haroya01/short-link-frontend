@@ -1,4 +1,5 @@
 const REMOTE_HANDLE = /^@?[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+(:[0-9]{1,5})?$/;
+const HANDLE_IN_PROGRESS = /^@?([A-Za-z0-9_][A-Za-z0-9_.-]{0,63})@([A-Za-z0-9.-]*)$/;
 const COMPLETE_HOST = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?::[0-9]{1,5})?$/;
 
 export function normalizeRemoteQuery(text: string): string {
@@ -33,4 +34,9 @@ export function looksLikeCompleteDomain(domain: string): boolean {
 export function liveRemoteQueryDomain(text: string): string | null {
   const domain = remoteQueryDomain(text);
   return domain && looksLikeCompleteDomain(domain) ? domain : null;
+}
+
+export function handleBeingTyped(text: string): { user: string; domain: string } | null {
+  const match = HANDLE_IN_PROGRESS.exec(normalizeRemoteQuery(text));
+  return match ? { user: match[1], domain: match[2].toLowerCase() } : null;
 }
