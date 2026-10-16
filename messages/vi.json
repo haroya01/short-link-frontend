@@ -863,7 +863,8 @@
       "wrongPassword": "Mật khẩu không đúng",
       "tooManyAttempts": "Bạn đã thử quá nhiều lần. Hãy thử lại sau ít phút",
       "unlockFailed": "Không mở được. Hãy thử lại",
-      "loading": "Đang tải bài viết"
+      "loading": "Đang tải bài viết",
+      "openInBrowser": "Mở bằng trình duyệt mặc định"
     },
     "audience": {
       "PUBLIC": "Mọi người",
@@ -877,6 +878,14 @@
       "PASSWORD": "Bài viết này được bảo vệ bằng mật khẩu",
       "REGION": "Bài viết này không xem được ở một số quốc gia",
       "UNLISTED": "Chỉ mở được qua liên kết"
+    },
+    "condition": {
+      "FOLLOWERS": "Chỉ người theo dõi",
+      "UNLISTED": "Chỉ qua liên kết",
+      "PASSWORD": "Có mật khẩu",
+      "REGION": "Giới hạn ở một số quốc gia",
+      "COUNTRIES": "Giới hạn ở {countries}",
+      "separator": ", "
     }
   },
   "errors": {

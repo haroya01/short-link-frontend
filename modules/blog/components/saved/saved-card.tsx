@@ -11,6 +11,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
+import { AudienceMark } from "@/modules/blog/components/audience-mark";
 
 
 /**
@@ -72,6 +73,7 @@ export function SavedCard({
       )}
       <h3 lang={contentLang(item.title)} className={`mt-0.5 line-clamp-2 pr-8 text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors dark:text-slate-100 ${selectMode ? "" : "group-hover/saved:text-accent-700 dark:group-hover/saved:text-accent-400"}`}>
         {item.title}
+        <AudienceMark item={item} className="ml-1.5 align-[-1px]" />
       </h3>
       {item.excerpt && (
         <p lang={contentLang(item.excerpt)} className="mt-1 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400">{item.excerpt}</p>

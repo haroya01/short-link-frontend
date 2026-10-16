@@ -849,7 +849,8 @@
       "wrongPassword": "That password isn't right",
       "tooManyAttempts": "Too many tries. Please try again in a little while",
       "unlockFailed": "Couldn't open it. Please try again",
-      "loading": "Loading the post"
+      "loading": "Loading the post",
+      "openInBrowser": "Open in your browser"
     },
     "audience": {
       "PUBLIC": "Everyone",
@@ -863,6 +864,14 @@
       "PASSWORD": "This post is password-protected",
       "REGION": "This post isn't available in some countries",
       "UNLISTED": "Opens only with its link"
+    },
+    "condition": {
+      "FOLLOWERS": "Followers only",
+      "UNLISTED": "Link only",
+      "PASSWORD": "Password-protected",
+      "REGION": "Limited in some countries",
+      "COUNTRIES": "Limited in {countries}",
+      "separator": ", "
     }
   },
   "imageCropper": {

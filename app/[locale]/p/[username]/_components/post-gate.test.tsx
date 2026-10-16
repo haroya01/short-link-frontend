@@ -235,3 +235,39 @@ describe("a password post", () => {
     expect(gate()?.dataset.reason).toBe("REGION");
   });
 });
+
+describe("leaving KakaoTalk or LINE for the default browser", () => {
+  const kakao =
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 KAKAOTALK 10.8.5";
+  const safari =
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1";
+  const agent = (ua: string) => vi.spyOn(window.navigator, "userAgent", "get").mockReturnValue(ua);
+  const handoff = () => host.querySelector<HTMLAnchorElement>('[data-testid="open-in-browser"]');
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it("offers it under the follow button, since sign-in can be blocked in there", async () => {
+    agent(kakao);
+    await render("FOLLOWERS");
+    expect(handoff()?.textContent).toBe("publicPost.gate.openInBrowser");
+    expect(handoff()?.getAttribute("href")).toBe(`kakaotalk://web/openExternal?url=${encodeURIComponent(window.location.href)}`);
+    expect(gate()?.lastElementChild).toBe(handoff());
+  });
+
+  it("never offers it where no sign-in is needed", async () => {
+    agent(kakao);
+    await render("PASSWORD");
+    expect(handoff()).toBeNull();
+    await act(async () => root.unmount());
+    mocks.readPostDetail.mockResolvedValue(detail("REGION"));
+    await render("REGION_CHECK");
+    expect(gate()?.dataset.reason).toBe("REGION");
+    expect(handoff()).toBeNull();
+  });
+
+  it("never offers it in a regular browser", async () => {
+    agent(safari);
+    await render("FOLLOWERS");
+    expect(handoff()).toBeNull();
+  });
+});

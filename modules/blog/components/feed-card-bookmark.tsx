@@ -13,18 +13,21 @@ export function FeedCardBookmark({
   slug,
   corner = false,
   overImage = false,
+  removeOnly = false,
 }: {
   postId: number;
   username: string;
   slug: string;
   corner?: boolean;
   overImage?: boolean;
+  removeOnly?: boolean;
 }) {
   const t = useTranslations("publicFeed");
   const { isSaved, toggle } = useBookmarks();
   const saved = isSaved(username, slug);
   // Pop only on click (not when the store hydrates the saved state) — same gate as the follow/구독 button.
   const [interacted, setInteracted] = useState(false);
+  if (removeOnly && !saved) return null;
 
   return (
     <button

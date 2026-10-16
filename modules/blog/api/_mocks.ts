@@ -206,6 +206,17 @@ export function mockSeededHighlights(postId: number, viewer: boolean): Highlight
 // only the server knows, unlike the reader's own blocks.
 const MOCK_HIDDEN_FROM_VIEWER = new Set(["kazuki"]);
 
+function regionFeedItem(): PublicFeedItem {
+  const region = PROTECTED_ITEMS.find((p) => p.seed.slug === "region-notes")!.item;
+  return { ...region, regionRestricted: true, excerpt: null, ogImageUrl: null, thumbnailUrl: null, tags: [], viewCount: 0, likeCount: 0 };
+}
+
+function matching(items: PublicFeedItem[], q?: string): PublicFeedItem[] {
+  if (!q) return items;
+  const needle = q.toLowerCase();
+  return items.filter((i) => i.title.toLowerCase().includes(needle) || i.author.username.toLowerCase().includes(needle));
+}
+
 export function mockFeedView({
   sort = "recent",
   q,
@@ -229,6 +240,7 @@ export function mockFeedView({
         i.author.username.toLowerCase().includes(needle),
     );
   }
+  if (!tag) items = [...items, ...matching([regionFeedItem()], q)];
   if (sort === "trending") items = [...items].sort((a, b) => b.viewCount - a.viewCount);
   return { items, page: 0, size: 24, hasNext: false };
 }
@@ -340,7 +352,7 @@ const PROTECTED_SEEDS: ProtectedSeed[] = [
   { slug: "locked-diary", title: "잠가 둔 일기", excerpt: "비밀번호를 아는 사람만 읽는 일기.", author: "hana", tags: ["일기"], views: 12, likes: 1, day: 13, audience: "PASSWORD" },
   { slug: "region-notes", title: "어떤 나라에서는 열리지 않는 글", excerpt: "나라에 따라 본문을 막은 글.", author: "hana", tags: ["여행"], views: 25, likes: 2, day: 12, audience: "PUBLIC", blockedCountries: ["KR"] },
   { slug: "link-only-draft", title: "링크로만 나누는 초안", excerpt: "링크를 받은 사람만 여는 글.", author: "hana", tags: ["초안"], views: 4, likes: 0, day: 11, audience: "UNLISTED", key: MOCK_UNLISTED_KEY },
-  { slug: "notes-for-friends", title: "친구들에게 쓰는 메모", excerpt: "팔로워에게만 여는 작가 본인의 글.", author: "dohyun", tags: ["일상"], views: 9, likes: 0, day: 10, audience: "FOLLOWERS" },
+  { slug: "notes-for-friends", title: "친구들에게 쓰는 메모", excerpt: "팔로워에게만 여는 작가 본인의 글.", author: "dohyun", tags: ["일상"], views: 9, likes: 0, day: 10, audience: "FOLLOWERS", blockedCountries: ["JP", "CN"] },
 ];
 
 const PROTECTED_ITEMS = PROTECTED_SEEDS.map((seed, i) => ({ seed, item: toItem(seed, 900 + i) }));
@@ -417,6 +429,16 @@ function protectedDetail(slug: string, access: MockAccess): PublicPostDetail | n
   const post = protectedListItem(seed, item, 900 + index);
   const lock = lockFor(seed, post.id, access);
   if (lock === "hidden") return null;
+  const owner = access.viewer && seed.author === MOCK_VIEWER_AUTHOR.username;
+  if (owner) {
+    const ownerPost = {
+      ...post,
+      hasPassword: seed.audience === "PASSWORD",
+      blockedCountries: seed.blockedCountries ?? [],
+      ...(seed.audience === "UNLISTED" ? { unlistedUrl: `/ko/p/${seed.author}/${seed.slug}?k=${seed.key}` } : {}),
+    };
+    return { author: item.author, post: ownerPost, blocks: sampleBlocks(item), series: null };
+  }
   if (lock) {
     return {
       author: item.author,

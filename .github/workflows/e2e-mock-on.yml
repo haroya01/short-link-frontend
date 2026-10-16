@@ -59,3 +59,46 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  e2e-webkit-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_USE_MOCKS: "1"
+      NEXT_PUBLIC_API_BASE: http://127.0.0.1:4010
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright WebKit
+        run: npx playwright install --with-deps webkit
+      - name: Build Next.js (mock-on, cross-origin API base)
+        run: npm run build
+      - name: Start Next.js
+        run: |
+          PORT=3001 npm start &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3001/ko >/dev/null; then
+              echo "next is up"
+              break
+            fi
+            sleep 1
+          done
+      - name: Run post access e2e on WebKit
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3001
+          E2E_API_PORT: "4010"
+          CI: "true"
+        run: npx playwright test e2e/post-audience-reader.spec.ts e2e/post-audience-webkit.spec.ts --project=webkit-iphone --project=webkit-desktop
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-webkit-access-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

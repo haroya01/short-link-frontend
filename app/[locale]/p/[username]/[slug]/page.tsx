@@ -41,6 +41,7 @@ import { audienceOf, isIndexable } from "@/modules/blog/lib/post-audience";
 import { postMetadata } from "@/modules/blog/lib/post-metadata";
 import { PostGate } from "../_components/post-gate";
 import { PostKeyScope } from "../_components/post-key-scope";
+import { BylineMeta } from "../_components/byline-meta";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -132,6 +133,14 @@ export default async function PublicPostPage({
   const keyed = postKey != null && audienceOf(post) === "UNLISTED";
   const postUrl = keyed ? `${origin}/${post.slug}?k=${encodeURIComponent(postKey)}` : `${origin}/${post.slug}`;
   const minutes = readingMinutes(blocks);
+  const byline = {
+    postId: post.id,
+    authorUsername: author.username,
+    publishedAt: post.publishedAt,
+    dateLabel: formatDate(post.publishedAt, locale),
+    minutes: lock ? null : minutes,
+    access: { audience: post.audience, regionRestricted: post.regionRestricted, locked: post.locked },
+  };
   // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
   // (incl. the save-at-publish stamp) read as part of publishing and stay quiet (조용한 웹로그).
   // 렌더는 글 끝(푸터 직전)에서만 — 첫 화면 메타는 날짜·읽기시간 두 개로 절제(적대 검증 r1,
@@ -316,24 +325,12 @@ export default async function PublicPostPage({
             <span className="min-w-0">
               <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
               <span className="block text-[13px] text-slate-500 dark:text-slate-400">
-                <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
-                {!lock && (
-                  <>
-                    {" · "}
-                    {t("readingTime", { minutes })}
-                  </>
-                )}
+                <BylineMeta {...byline} />
               </span>
             </span>
           </a>
           <p className="hidden text-[13px] text-slate-500 dark:text-slate-400 xl:block">
-            <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
-            {!lock && (
-              <>
-                {" · "}
-                {t("readingTime", { minutes })}
-              </>
-            )}
+            <BylineMeta {...byline} />
           </p>
           {!lock && (
           <AuthorOnly username={author.username}>
