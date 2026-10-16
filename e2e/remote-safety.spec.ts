@@ -106,7 +106,7 @@ test.describe("desktop", () => {
     await expect(page.getByRole("region", { name: "차단한 사용자" })).toContainText("@mallory");
   });
 
-  test("the header search lists a few people elsewhere under the people here, and none for a handle", async ({
+  test("the header search lists a few people elsewhere under the people here, and the account a handle names", async ({
     page,
   }) => {
     await page.goto("/ko/blog");
@@ -123,7 +123,8 @@ test.describe("desktop", () => {
     expect((await elsewhere.boundingBox())!.y).toBeGreaterThan(top);
 
     await field.fill("@mina@mastodon.social");
-    await expect(elsewhere).toHaveCount(0);
+    await expect(elsewhere.getByRole("link")).toHaveCount(1, { timeout: 10_000 });
+    await expect(elsewhere.getByRole("link", { name: /@mina@mastodon\.social/ })).toHaveAttribute("href", /\/remote\/9800$/);
 
     await field.fill("har");
     await elsewhere.getByRole("link", { name: /@haruto@misskey\.io/ }).click({ timeout: 10_000 });
