@@ -149,6 +149,11 @@ test.describe("desktop", () => {
     const name = (await suggestion.getByRole("link").first().boundingBox())!;
     const button = (await follow.boundingBox())!;
     expect(Math.abs(button.y + button.height / 2 - (name.y + name.height / 2))).toBeLessThan(12);
+    const remote = page.getByTestId("remote-suggestion-sora@fosstodon.org");
+    await expect(remote).toBeVisible();
+    const remoteName = (await remote.getByRole("link").boundingBox())!;
+    const remoteFollow = (await remote.getByRole("button", { name: "팔로우" }).boundingBox())!;
+    expect(Math.abs(remoteFollow.y + remoteFollow.height / 2 - (remoteName.y + remoteName.height / 2))).toBeLessThan(12);
   });
 });
 
