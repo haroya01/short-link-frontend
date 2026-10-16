@@ -12,7 +12,7 @@ export function LinkModerationBanner({ detail }: { detail: LinkDetail }) {
   const moderation = detail.moderation;
   if (!moderation) return null;
 
-  const date = format.dateTime(new Date(moderation.disabledAt), { dateStyle: "medium" });
+  const date = format.dateTime(new Date(moderation.disabledAt), { dateStyle: "long" });
 
   return (
     <div

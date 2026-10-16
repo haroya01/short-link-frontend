@@ -2002,9 +2002,9 @@
     "moderation": {
       "title": "꺼진 링크예요.",
       "reason": {
-        "ABUSE_REPORT": "신고를 확인한 뒤 운영 정책 위반으로 껐어요({date}).",
-        "ADMIN": "운영 정책 위반으로 운영자가 껐어요({date}).",
-        "SAFE_BROWSING": "Google Safe Browsing이 목적지를 위험한 사이트로 분류해 자동으로 꺼졌어요({date})."
+        "ABUSE_REPORT": "{date}에 신고를 확인하고 운영 정책 위반으로 껐어요.",
+        "ADMIN": "{date}에 운영자가 운영 정책 위반으로 껐어요.",
+        "SAFE_BROWSING": "{date}에 Google Safe Browsing이 목적지를 위험한 사이트로 분류해 자동으로 꺼졌어요."
       },
       "visitorEffect": "지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요.",
       "appeal": "이의 제기"

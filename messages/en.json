@@ -2002,9 +2002,9 @@
     "moderation": {
       "title": "This link is switched off.",
       "reason": {
-        "ABUSE_REPORT": "We switched it off after confirming a report that it breaks our usage policy ({date}).",
-        "ADMIN": "An operator switched it off for breaking our usage policy ({date}).",
-        "SAFE_BROWSING": "Google Safe Browsing flagged the destination as dangerous, so it was switched off automatically ({date})."
+        "ABUSE_REPORT": "On {date}, we switched it off after confirming a report that it breaks our usage policy.",
+        "ADMIN": "On {date}, an operator switched it off for breaking our usage policy.",
+        "SAFE_BROWSING": "On {date}, Google Safe Browsing flagged the destination as dangerous, so it was switched off automatically."
       },
       "visitorEffect": "Anyone who opens it now sees a switched-off notice instead of the destination.",
       "appeal": "Appeal"

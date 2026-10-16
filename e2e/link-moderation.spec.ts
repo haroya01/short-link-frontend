@@ -69,6 +69,13 @@ test.describe("link report form", () => {
     await expect(page.getByText(`kurl.me/${CODE}`, { exact: true })).toBeVisible();
     const submit = page.getByRole("button", { name: "신고 보내기" });
     await expect(submit).toBeDisabled();
+    const disabledLook = await submit.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { background: style.backgroundColor, opacity: style.opacity };
+    });
+    const [r, g, b] = disabledLook.background.match(/\d+/g)!.map(Number);
+    expect(Math.max(r, g, b) - Math.min(r, g, b), disabledLook.background).toBeLessThan(16);
+    expect(disabledLook.opacity).toBe("1");
     await page.getByLabel("피싱·사기").check();
     await page.getByLabel("자세한 상황 (선택)").fill("택배 문자");
     await submit.click();
@@ -208,7 +215,8 @@ test.describe("switching a link off", () => {
     await page.goto(`/ko/stats/${CODE}`);
 
     const banner = page.getByRole("alert").filter({ hasText: "꺼진 링크예요." });
-    await expect(banner).toContainText("Google Safe Browsing");
+    await expect(banner).toContainText("2026년 9월 30일에 Google Safe Browsing");
+    await expect(banner).not.toContainText("(2026");
     await banner.getByRole("link", { name: "이의 제기" }).click();
 
     await expect(page).toHaveURL(/\/ko\/report\?/);

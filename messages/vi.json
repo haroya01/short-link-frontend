@@ -2002,9 +2002,9 @@
     "moderation": {
       "title": "Liên kết này đã bị tắt.",
       "reason": {
-        "ABUSE_REPORT": "Chúng tôi đã tắt liên kết sau khi xác nhận báo cáo rằng nó vi phạm chính sách sử dụng ({date}).",
-        "ADMIN": "Quản trị viên đã tắt liên kết vì vi phạm chính sách sử dụng ({date}).",
-        "SAFE_BROWSING": "Google Safe Browsing đánh dấu trang đích là nguy hiểm nên liên kết đã được tắt tự động ({date})."
+        "ABUSE_REPORT": "Ngày {date}, chúng tôi đã tắt liên kết sau khi xác nhận báo cáo rằng nó vi phạm chính sách sử dụng.",
+        "ADMIN": "Ngày {date}, quản trị viên đã tắt liên kết vì vi phạm chính sách sử dụng.",
+        "SAFE_BROWSING": "Ngày {date}, Google Safe Browsing đánh dấu trang đích là nguy hiểm nên liên kết đã được tắt tự động."
       },
       "visitorEffect": "Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
       "appeal": "Khiếu nại"
