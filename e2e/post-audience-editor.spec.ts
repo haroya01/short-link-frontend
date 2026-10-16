@@ -129,9 +129,11 @@ test("국가 제한 sends the chosen countries, and an emptied list clears them"
   await backend(page, wire);
   const dialog = await openSettings(page);
   await dialog.getByRole("button", { name: "대상 국가" }).click();
-  await page.getByRole("dialog", { name: "대상 국가" }).getByPlaceholder("국가 검색").fill("CN");
-  await page.keyboard.press("Enter");
-  await expect(dialog.getByText("중국", { exact: true })).toBeVisible();
+  const countries = page.getByRole("dialog", { name: "대상 국가" });
+  await countries.getByPlaceholder("국가 검색").fill("CN");
+  await countries.getByRole("option", { name: /중국/ }).click();
+  await expect(countries).toBeHidden();
+  await expect(dialog.getByRole("button", { name: "중국 빼기" })).toBeVisible();
   await expect(dialog.getByText("이 나라에서는 제목만 보여요. VPN을 쓰면 막지 못해요.")).toBeVisible();
   await dialog.getByRole("button", { name: "변경사항 저장" }).click();
   await expect(dialog).toBeHidden();
