@@ -14,7 +14,7 @@ import { THEME_TABLE } from "./_lib/theme";
 import { fetchProfile, type ProfileResult } from "./_lib/fetch-profile";
 import { oldHandleRedirect, type SearchParams } from "./_lib/old-handle-redirect";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -138,7 +138,6 @@ export default async function PublicProfilePage({
             href={authorHref(profile.username, locale)}
             className={`profile-card mt-2.5 flex items-center gap-3 px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
           >
-            <BookOpen className={`h-5 w-5 shrink-0 ${colors.muted}`} aria-hidden />
             <span className={`min-w-0 flex-1 truncate text-sm font-medium ${colors.primary}`}>
               {t("viewBlog", { count: profile.publishedPostCount })}
             </span>

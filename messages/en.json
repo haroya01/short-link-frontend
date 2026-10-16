@@ -1656,7 +1656,7 @@
       "title": "A/B split / geo-targeting",
       "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the default destination. Up to 4 per link.",
       "countryLabel": "Target country",
-      "countryAny": "🌐 Any country",
+      "countryAny": "Any country",
       "countryPlaceholder": "Select country",
       "countrySearch": "Search countries",
       "countryNoResults": "No matching country",
@@ -2781,16 +2781,12 @@
     "toolsTitle": "Tools",
     "tools": {
       "profile": "Public profile",
-      "profileDesc": "All your links on one page",
-      "ctas": "CTA library",
-      "ctasDesc": "Manage banners shown on your links"
+      "ctas": "CTA library"
     },
     "appsTitle": "Apps",
     "apps": {
       "links": "kurl.me app",
-      "linksDesc": "Shorten links and see clicks on iPhone",
-      "blog": "kurl log app",
-      "blogDesc": "Read and write on iPhone"
+      "blog": "kurl log app"
     },
     "appsScanHint": "Scan the QR with your phone camera to open the App Store",
     "accountTitle": "Account",
@@ -2888,7 +2884,6 @@
       "sectionCollapse": "Collapse section",
       "sectionItemCount": "{count, plural, one {# item} other {# items}}",
       "featuredEmpty": "No links are shown yet.",
-      "featuredEmptyTitle": "Your profile feed is empty",
       "featuredEmptyHasOthers": "No links are shown yet. You have {count, plural, one {# other link} other {# other links}} to pick from.",
       "addBlockMenu": "Add",
       "addMoreBlocks": "More blocks",
@@ -3449,9 +3444,7 @@
         "title": "Distribution batches",
         "description": "One unit of printed distribution using the same QR. Split by distributor or area for meaningful analysis.",
         "add": "Add batch",
-        "emptyTitle": "No distribution batches yet",
-        "emptyDescription": "Add the first batch to issue a QR code. Scan it before ordering print.",
-        "addFirst": "Add first batch"
+        "emptyTitle": "No distribution batches yet"
       },
       "csvFailed": "CSV download failed"
     },

@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Download } from "lucide-react";
 import type { Attendee, EventQuestion } from "@/modules/events/api/events";
 import { downloadAttendeesCsv } from "@/modules/events/api/events";
 
@@ -29,7 +28,7 @@ export function AttendeeTable({
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
       <div className="flex items-center justify-between">
-        <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
+        <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
           {t("title", { count: attendees.filter((a) => a.status === "CONFIRMED").length })}
         </h2>
         {attendees.length > 0 ? (
@@ -38,7 +37,6 @@ export function AttendeeTable({
             onClick={exportCsv}
             className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 underline underline-offset-2 transition-colors hover:text-slate-700 dark:text-slate-400"
           >
-            <Download className="h-3.5 w-3.5" />
             {t("exportCsv")}
           </button>
         ) : null}

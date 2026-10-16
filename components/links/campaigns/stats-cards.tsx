@@ -98,7 +98,6 @@ export function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount
       <Kpi
         label={t("kpi.perHundred")}
         value={ratePerHundred.toFixed(1)}
-        accent
         hint={t("kpi.perHundredHint")}
       />
     </ul>
@@ -108,28 +107,16 @@ export function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount
 function Kpi({
   label,
   value,
-  accent,
   hint,
 }: {
   label: string;
   value: string;
-  accent?: boolean;
   hint?: string;
 }) {
   return (
-    <li
-      className={
-        "rounded-2xl border bg-white dark:bg-slate-900 px-4 py-4 " +
-        (accent ? "border-accent-200 bg-accent-50/40 dark:bg-accent-600/10" : "border-slate-200 dark:border-slate-800")
-      }
-    >
+    <li className="rounded-2xl border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
       <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{label}</p>
-      <p
-        className={
-          "mt-2 text-[24px] font-semibold leading-tight tracking-headline " +
-          (accent ? "text-accent-700 dark:text-accent-400" : "text-slate-900 dark:text-slate-100")
-        }
-      >
+      <p className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100">
         {value}
       </p>
       {hint && <p className="mt-1.5 text-[11px] leading-snug text-slate-500 dark:text-slate-400">{hint}</p>}
@@ -184,7 +171,7 @@ export function ByBatchTable({ stats }: { stats: CampaignStats }) {
               </div>
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
-                  className="h-full rounded-full bg-accent-600 transition-[width] duration-500 ease-[var(--ease)]"
+                  className="h-full rounded-full bg-slate-400 transition-[width] duration-500 ease-[var(--ease)] dark:bg-slate-500"
                   style={{ width: `${widthPct}%` }}
                 />
               </div>
@@ -250,7 +237,7 @@ export function GroupChart({
               </div>
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
-                  className="h-full rounded-full bg-accent-600"
+                  className="h-full rounded-full bg-slate-400 dark:bg-slate-500"
                   style={{ width: `${widthPct}%` }}
                 />
               </div>

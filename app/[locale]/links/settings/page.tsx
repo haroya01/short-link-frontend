@@ -102,7 +102,7 @@ export default function SettingsPage() {
     }
   }
 
-  if (ready && !authenticated) return <SignInEmptyState page reason="settings" icon={Settings} />;
+  if (ready && !authenticated) return <SignInEmptyState page reason="settings" />;
 
   if (!me) {
     return (

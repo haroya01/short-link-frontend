@@ -1656,7 +1656,7 @@
       "title": "A/B 振り分け / 国別ターゲティング",
       "description": "同じ短縮リンクのクリックを重みで分散したり、訪問者の国に合わせてリンク先を切り替えられます。国を指定したリンク先は該当国の訪問者にのみ使われ、合致しない場合は国指定なしのリンク先、それも無ければデフォルトのリンク先に移動します。リンクごとに最大 4 件。",
       "countryLabel": "対象国",
-      "countryAny": "🌐 全体",
+      "countryAny": "すべての国",
       "countryPlaceholder": "国を選択",
       "countrySearch": "国を検索",
       "countryNoResults": "該当する国がありません",
@@ -2781,16 +2781,12 @@
     "toolsTitle": "ツール",
     "tools": {
       "profile": "公開プロフィール",
-      "profileDesc": "リンクを1ページにまとめて表示",
-      "ctas": "CTAライブラリ",
-      "ctasDesc": "リンクに表示する案内バナーを管理"
+      "ctas": "CTAライブラリ"
     },
     "appsTitle": "アプリ",
     "apps": {
       "links": "kurl.me アプリ",
-      "linksDesc": "iPhoneでリンクを短縮してクリックを見る",
-      "blog": "kurl ログ アプリ",
-      "blogDesc": "iPhoneで読んで書く"
+      "blog": "kurl ログ アプリ"
     },
     "appsScanHint": "スマホのカメラでQRを読み取るとApp Storeが開きます",
     "accountTitle": "アカウント",
@@ -2888,7 +2884,6 @@
       "sectionCollapse": "セクションを閉じる",
       "sectionItemCount": "{count} 件",
       "featuredEmpty": "表示するリンクがありません。",
-      "featuredEmptyTitle": "公開フィードが空です",
       "featuredEmptyHasOthers": "表示するリンクがありません。選べる自分のリンクが{count}件あります。",
       "addBlockMenu": "追加",
       "addMoreBlocks": "その他のブロック",
@@ -3449,9 +3444,7 @@
         "title": "配布バッチ",
         "description": "同じ QR を複数枚印刷して配布する単位です。配布担当・エリア別に分けると分析が意味を持ちます。",
         "add": "配布バッチを追加",
-        "emptyTitle": "配布バッチはまだありません",
-        "emptyDescription": "最初のバッチを追加すると QR コードが発行されます。印刷・発注前にスキャンして動作確認できます。",
-        "addFirst": "最初の配布バッチを追加"
+        "emptyTitle": "配布バッチはまだありません"
       },
       "csvFailed": "CSVのダウンロードに失敗しました"
     },

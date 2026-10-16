@@ -1,3 +1,5 @@
+import { RequiredMark } from "@/components/ui/required-mark";
+
 /**
  * Shared label wrapper for BlockDialog form fields. Centralizes the label typography + required-
  * marker styling so every block editor renders fields identically — earlier each dialog kept its
@@ -22,7 +24,7 @@ export function FormField({
     <label className={`block space-y-1 ${className ?? ""}`}>
       <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
         {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
+        {required && <RequiredMark />}
       </span>
       {children}
     </label>

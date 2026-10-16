@@ -15,7 +15,6 @@ import { CountryTable } from "@/components/links/stats/country-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
-import { buttonVariants } from "@/components/ui/button";
 
 export default function PublicStatsPage() {
   const params = useParams<{ code: string }>();
@@ -51,7 +50,7 @@ export default function PublicStatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/" className={buttonVariants({ variant: "outline" })}>
+            <Link href="/" className="focus-ring rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
               {t("backToDashboard")}
             </Link>
           }

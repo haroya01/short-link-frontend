@@ -146,7 +146,6 @@ export function LinksTable({
               variant="destructive"
               onClick={() => setBulkConfirmOpen(true)}
             >
-              <Trash2 className="mr-1 h-3.5 w-3.5" />
               {t("bulkDeleteAction")}
             </Button>
           </div>
@@ -237,7 +236,7 @@ export function LinksTable({
                         <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                           {linkDisplayName(item)}
                         </span>
-                        {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-accent-600 dark:text-accent-400" />}
+                        {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-slate-900 dark:text-slate-100" />}
                         {expiry?.kind === "expired" && (
                           <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
                         )}
@@ -246,7 +245,7 @@ export function LinksTable({
                         <span className="font-mono">/{item.shortCode}</span> · {hostOf(item.originalUrl)}
                       </span>
                     </span>
-                    <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-accent-600 dark:text-accent-400" />
+                    <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-slate-400 dark:text-slate-500" />
                     <span className="w-[4.5rem] shrink-0 text-right">
                       <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                         {formatNumber((item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0))}
@@ -284,7 +283,7 @@ export function LinksTable({
                     <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                       {linkDisplayName(item)}
                     </span>
-                    {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-accent-600 dark:text-accent-400" />}
+                    {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-slate-900 dark:text-slate-100" />}
                     {expiry?.kind === "expired" && (
                       <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
                     )}
@@ -318,7 +317,7 @@ export function LinksTable({
                   values={item.clicksLast7d}
                   width={56}
                   height={20}
-                  className="hidden shrink-0 text-accent-600 dark:text-accent-400 md:block"
+                  className="hidden shrink-0 text-slate-400 dark:text-slate-500 md:block"
                 />
                 <div className="flex shrink-0 items-center gap-1.5 text-right">
                   {bump && <LiveDot />}

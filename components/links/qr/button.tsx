@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
+import { Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -314,15 +314,7 @@ function QrModal({
             disabled={!dataUrl}
             className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-850 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
           >
-            {copied ? (
-              <>
-                <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" /> {t("copied")}
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" /> {t("copyUrl")}
-              </>
-            )}
+            {copied ? t("copied") : t("copyUrl")}
           </button>
           <button
             type="button"
@@ -330,7 +322,7 @@ function QrModal({
             disabled={!dataUrl}
             className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-850 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
           >
-            <Download className="h-4 w-4" /> {t("downloadPng")}
+            {t("downloadPng")}
           </button>
         </div>
       </div>

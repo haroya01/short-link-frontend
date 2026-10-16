@@ -161,6 +161,7 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <FormField label={t("contactFieldName")} required>
           <Input
+            aria-required
             value={config.name}
             maxLength={60}
             onChange={(e) => setConfig((c) => ({ ...c, name: e.target.value }))}

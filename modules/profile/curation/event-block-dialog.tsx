@@ -92,6 +92,7 @@ export function EventBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
       <div className="space-y-3">
         <FormField label={t("eventFieldTitle")} required>
           <Input
+            aria-required
             value={config.title}
             maxLength={80}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
@@ -105,6 +106,7 @@ export function EventBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
          * less visually noisy for a 2-field pair. */}
         <FormField label={t("eventFieldStartsAt")} required>
           <Input
+            aria-required
             type="datetime-local"
             value={config.startsAt}
             onChange={(e) => setConfig((c) => ({ ...c, startsAt: e.target.value }))}

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { CalendarPlus, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
@@ -67,7 +67,6 @@ function EventsList({
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
-          <CalendarPlus className="h-4 w-4" />
           {t("new")}
         </Link>
       </div>

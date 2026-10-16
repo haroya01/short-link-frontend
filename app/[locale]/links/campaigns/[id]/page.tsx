@@ -2,21 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import {
-  ArrowLeft,
-  Archive,
-  BarChart3,
-  Download,
-  FileText,
-  PackageOpen,
-  Layers,
-  PlayCircle,
-  Printer,
-  QrCode,
-  Repeat,
-  StopCircle,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -86,7 +72,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
+    return <SignInEmptyState page reason="campaigns" />;
   }
 
   return (
@@ -197,21 +183,21 @@ function Header({
         </h1>
         <div className="flex flex-wrap items-center gap-2">
           <Link href={`/campaigns/${campaign.id}/stats`} className={buttonVariants({ variant: "outline" })}>
-            <BarChart3 className="h-4 w-4" aria-hidden /> {t("actions.stats")}
+            {t("actions.stats")}
           </Link>
           {campaign.status === "ACTIVE" && (
             <Button variant="outline" onClick={onEndNow} disabled={pending}>
-              <StopCircle className="h-4 w-4" aria-hidden /> {t("actions.endNow")}
+              {t("actions.endNow")}
             </Button>
           )}
           {campaign.status === "ENDED" && (
             <Button variant="outline" onClick={onReapply} disabled={pending}>
-              <Repeat className="h-4 w-4" aria-hidden /> {t("actions.reapply")}
+              {t("actions.reapply")}
             </Button>
           )}
           {campaign.status !== "ARCHIVED" && (
             <Button variant="outline" onClick={onArchive} disabled={pending}>
-              <Archive className="h-4 w-4" aria-hidden /> {t("actions.archive")}
+              {t("actions.archive")}
             </Button>
           )}
         </div>
@@ -272,16 +258,16 @@ function PrepareSection({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
-            <Download className="h-4 w-4" aria-hidden /> QR ZIP
+            QR ZIP
           </Button>
           <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
-            <FileText className="h-4 w-4" aria-hidden /> Batch CSV
+            Batch CSV
           </Button>
           <Link href={`/campaigns/${campaignId}/print-sheet`} className={buttonVariants({ variant: "outline" })}>
-            <Printer className="h-4 w-4" aria-hidden /> {t("prepare.printSheet")}
+            {t("prepare.printSheet")}
           </Link>
           <Link href={`/campaigns/${campaignId}/poster-builder`} className={buttonVariants({ variant: "outline" })}>
-            <Layers className="h-4 w-4" aria-hidden /> {t("prepare.posterBuilder")}
+            {t("prepare.posterBuilder")}
           </Link>
         </div>
       </div>
@@ -455,30 +441,16 @@ function BatchSection({
         <div className="flex flex-wrap items-center gap-2">
           {!terminal && (
             <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ variant: "accent" })}>
-              <PlayCircle className="h-4 w-4" aria-hidden /> {t("batches.add")}
+              {t("batches.add")}
             </Link>
           )}
         </div>
       </div>
 
       {batches.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center">
-          <PackageOpen className="mx-auto h-6 w-6 text-slate-400 dark:text-slate-400" aria-hidden />
-          <p className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">
-            {t("batches.emptyTitle")}
-          </p>
-          <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-            {t("batches.emptyDescription")}
-          </p>
-          {!terminal && (
-            <Link
-              href={`/campaigns/${campaignId}/batches/new`}
-              className={buttonVariants({ variant: "accent", className: "mt-4" })}
-            >
-              {t("batches.addFirst")}
-            </Link>
-          )}
-        </div>
+        <p className="border-t border-slate-200 py-4 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+          {t("batches.emptyTitle")}
+        </p>
       ) : (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {batches.map((b) => (

@@ -11,7 +11,7 @@ export function AnalyticsPanel({ analytics, className }: { analytics: EventAnaly
 
   return (
     <section className={cn("border-t border-slate-200 pt-6 dark:border-slate-800", className)}>
-      <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
+      <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
         {t("title")}
       </h2>
 
@@ -38,7 +38,6 @@ export function AnalyticsPanel({ analytics, className }: { analytics: EventAnaly
         title={t("registrationsByChannel")}
         buckets={analytics.registrationsByChannel}
         emptyLabel={t("noRegistrations")}
-        accent
       />
       <BucketBars
         title={t("clicksByLink")}
@@ -69,12 +68,10 @@ function BucketBars({
   title,
   buckets,
   emptyLabel,
-  accent = false,
 }: {
   title: string;
   buckets: { key: string; count: number }[];
   emptyLabel: string;
-  accent?: boolean;
 }) {
   const max = Math.max(1, ...buckets.map((b) => b.count));
   return (
@@ -91,11 +88,7 @@ function BucketBars({
               </span>
               <span className="h-3.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <span
-                  className={
-                    accent
-                      ? "block h-full rounded-full bg-accent-600"
-                      : "block h-full rounded-full bg-slate-300 dark:bg-slate-600"
-                  }
+                  className="block h-full rounded-full bg-slate-300 dark:bg-slate-600"
                   style={{ width: `${Math.round((bucket.count / max) * 100)}%` }}
                 />
               </span>

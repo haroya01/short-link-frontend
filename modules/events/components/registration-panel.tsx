@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle, CalendarPlus, CheckCircle2, Copy, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
 import { prewarmPowToken } from "@/lib/pow";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { linksHref } from "@/lib/host";
 import type { PublicEvent, RegistrationResult } from "@/modules/events/api/events";
 import { registerForEvent } from "@/modules/events/api/events";
 import { googleCalendarUrl } from "@/modules/events/lib/format";
+import { RequiredMark } from "@/components/ui/required-mark";
 
 type Phase = "idle" | "submitting" | "done";
 
@@ -196,7 +197,7 @@ export function RegistrationPanel({
         <button
           type="submit"
           disabled={phase === "submitting" || !name.trim() || !contact.trim()}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent-700 text-base font-semibold text-white transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-accent-700 text-base font-semibold text-white transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-400"
         >
           {phase === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {phase === "submitting" ? t("submitting") : t("submit")}
@@ -224,15 +225,14 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
       tabIndex={-1}
       aria-live="polite"
       aria-atomic="true"
-      className="mt-6 rounded-2xl border border-accent-200 bg-accent-50 p-5 outline-none dark:border-accent-900 dark:bg-accent-950/40"
+      className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 outline-none dark:border-slate-800 dark:bg-slate-900"
     >
       <div className="flex items-center gap-2.5">
-        <CheckCircle2 className="h-5 w-5 text-accent-600 dark:text-accent-400" />
-        <h2 className="text-lg font-semibold text-accent-900 dark:text-accent-200">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           {t("successTitle")}
         </h2>
       </div>
-      <p className="mt-2 text-[15px] leading-relaxed text-accent-800 dark:text-accent-300">
+      <p className="mt-2 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
         {event.contactField === "EMAIL" ? t("successBodyEmail") : t("successBody")}
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -242,7 +242,6 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
           rel="noreferrer"
           className="flex min-h-11 items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800"
         >
-          <CalendarPlus className="h-3.5 w-3.5" />
           {t("addToCalendar")}
         </a>
         <button
@@ -252,18 +251,17 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
           }}
-          className="flex min-h-11 items-center gap-1.5 rounded-full border border-accent-300 bg-white px-4 py-2 text-[14px] font-medium text-accent-800 transition-colors hover:bg-accent-100 dark:border-accent-800 dark:bg-accent-950 dark:text-accent-300"
+          className="flex min-h-11 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-[14px] font-medium text-slate-900 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         >
-          <Copy className="h-3.5 w-3.5" />
           {copied ? t("cancelLinkCopied") : t("copyCancelLink")}
         </button>
       </div>
 
-      <div className="mt-5 border-t border-accent-200 pt-4 dark:border-accent-900">
-        <p className="text-[14px] text-accent-700 dark:text-accent-400">{t("viralHook")}</p>
+      <div className="mt-5 border-t border-slate-200 pt-4 dark:border-slate-800">
+        <p className="text-[14px] text-slate-600 dark:text-slate-300">{t("viralHook")}</p>
         <a
           href={linksHref("/events/new?ref=event-success")}
-          className="mt-2 inline-flex min-h-11 items-center rounded-full border border-accent-300 bg-white px-4 py-2 text-[14px] font-semibold text-accent-800 transition-colors hover:bg-accent-100 dark:border-accent-800 dark:bg-accent-950 dark:text-accent-200"
+          className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-[14px] font-medium text-slate-900 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         >
           {t("viralCta")}
         </a>
@@ -298,7 +296,7 @@ function Field({
         className="text-[15px] font-medium text-slate-700 dark:text-slate-300"
       >
         {label}
-        {required ? <span className="ml-0.5 text-red-500">*</span> : null}
+        {required ? <RequiredMark /> : null}
       </label>
       {children}
     </div>
