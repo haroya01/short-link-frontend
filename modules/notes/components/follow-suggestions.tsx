@@ -35,6 +35,7 @@ function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
           </span>
         </BlogLink>
         <RemoteFollowButton account={account} onChange={setAccount} quiet />
+        <span aria-hidden className="-mr-1 w-7 shrink-0" />
       </div>
     </li>
   );

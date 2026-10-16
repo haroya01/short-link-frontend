@@ -53,6 +53,21 @@ test.describe("phone", () => {
     await expect(sheet.getByRole("heading", { name: "인기 태그" })).toHaveCount(0);
   });
 
+  test("a search sheet query labels posts in grey and ends in a plain text link to every result", async ({ page }) => {
+    await page.goto("/ko/blog");
+    await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
+    const sheet = page.getByRole("dialog", { name: "검색" });
+    await sheet.getByRole("searchbox", { name: "검색" }).fill("har");
+    const topic = sheet.getByText("개발", { exact: true }).first();
+    await expect(topic).toBeVisible({ timeout: 10_000 });
+    expect(isGreen(await css(topic, "color"))).toBe(false);
+    const all = sheet.getByRole("button", { name: "‘har’ 검색 결과" });
+    await expect(all).toBeVisible();
+    expect(isGreen(await css(all, "color"))).toBe(false);
+    expect(isGreen(await css(all, "background-color"))).toBe(false);
+    await expect(all.locator("svg")).toHaveCount(0);
+  });
+
   test("the compose chooser is names only", async ({ page }) => {
     await page.goto("/ko/blog");
     await page.locator('header.vt-app-header [data-compose-trigger="mobile"]').click({ timeout: 30_000 });
@@ -154,6 +169,7 @@ test.describe("desktop", () => {
     const remoteName = (await remote.getByRole("link").boundingBox())!;
     const remoteFollow = (await remote.getByRole("button", { name: "팔로우" }).boundingBox())!;
     expect(Math.abs(remoteFollow.y + remoteFollow.height / 2 - (remoteName.y + remoteName.height / 2))).toBeLessThan(12);
+    expect(Math.abs(remoteFollow.x + remoteFollow.width - (button.x + button.width))).toBeLessThan(1);
   });
 });
 

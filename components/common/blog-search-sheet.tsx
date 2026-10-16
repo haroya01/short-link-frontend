@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import {
   listPublicFeed,
@@ -21,6 +21,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
@@ -224,7 +225,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                 >
                   <span className="min-w-0 flex-1">
                     {item.tags[0] && (
-                      <span className="text-[11px] font-semibold text-accent-700 dark:text-accent-400">
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                         {item.tags[0]}
                       </span>
                     )}
@@ -247,14 +248,15 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
           </ul>
         )}
         {q && (
-          <button
-            type="button"
-            onClick={() => goToAll()}
-            className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-3 text-sm font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-          >
-            {t("searchResultsFor", { q })}
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          <div className="mt-2 px-3 py-3">
+            <button
+              type="button"
+              onClick={() => goToAll()}
+              className={blogCta({ variant: "text", className: "touch-target" })}
+            >
+              {t("searchResultsFor", { q })}
+            </button>
+          </div>
         )}
       </div>
     </div>,
