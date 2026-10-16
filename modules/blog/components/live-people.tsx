@@ -75,11 +75,13 @@ export function LivePeople({
 export function LiveRemotePeople({
   accounts,
   lookup = null,
+  hint = false,
   onNavigate,
   dense = false,
 }: {
   accounts: RemoteAccount[];
   lookup?: LiveRemoteLookup | null;
+  hint?: boolean;
   onNavigate: () => void;
   dense?: boolean;
 }) {
@@ -97,7 +99,19 @@ export function LiveRemotePeople({
         : lookup?.state === "unreachable"
           ? t("remoteSearchUnreachable", { domain: lookup.domain })
           : null;
-  if (found.length === 0 && !status) return null;
+  if (found.length === 0 && !status) {
+    return hint ? (
+      <p
+        data-testid="live-remote-hint"
+        className={cn(
+          "border-b border-slate-100 px-3 text-slate-500 dark:border-slate-800 dark:text-slate-400",
+          dense ? "py-2 text-[12px]" : "py-2.5 text-[13px]",
+        )}
+      >
+        {t("remoteSearchHint")}
+      </p>
+    ) : null;
+  }
   return (
     <section
       aria-labelledby={headingId}

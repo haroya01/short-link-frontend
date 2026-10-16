@@ -22,7 +22,7 @@ test("a name search lists people on other servers under the people here", async 
 test("a name with no match elsewhere says how to find someone there", async ({ page }) => {
   await page.goto("/ko/blog?q=zz&view=people");
   await expect(page.getByRole("heading", { level: 2, name: "맞는 사람이 없어요" })).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByText("다른 서버 사람은 @아이디@서버로 찾아요")).toBeVisible();
+  await expect(page.getByText("다른 서버 사람은 @아이디@서버 주소로 찾을 수 있어요")).toBeVisible();
   await expect(elsewhere(page)).toHaveCount(0);
 });
 
@@ -31,7 +31,7 @@ test("the people tab stays as it was when the other-server search fails", async 
   await page.goto("/ko/blog?q=har&view=people");
   await expect(page.getByTestId("person-haruka")).toBeVisible({ timeout: 30_000 });
   await expect(elsewhere(page)).toHaveCount(0);
-  await expect(page.getByText("다른 서버 사람은 @아이디@서버로 찾아요")).toHaveCount(0);
+  await expect(page.getByText("다른 서버 사람은 @아이디@서버 주소로 찾을 수 있어요")).toHaveCount(0);
 });
 
 test("an address of a note elsewhere shows that note on top, and opens it", async ({ page }) => {

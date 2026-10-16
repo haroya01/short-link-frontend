@@ -9,7 +9,7 @@ import { blogHref } from "@/lib/host";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
-import { useLivePeople } from "@/modules/blog/lib/use-live-people";
+import { remoteSearchHintVisible, useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
 import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
 import { cn } from "@/lib/utils";
@@ -48,8 +48,14 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   // Only steal focus when the user opens the field by tapping the glyph — not on the resting/URL open.
   const focusOnOpen = useRef(false);
   const { results, loading, failed, retry } = useLiveSearch(value, open, 5);
-  const { people, remote } = useLivePeople(value, open, 3);
+  const { people, remote, remoteAnswered } = useLivePeople(value, open, 3);
   const lookup = useLiveRemoteLookup(value, open);
+  const remoteHint = remoteSearchHintVisible({
+    query: value,
+    answered: remoteAnswered,
+    accounts: remote,
+    lookupActive: lookup !== null,
+  });
 
   useDismiss(panelOpen, formRef, () => setPanelOpen(false));
   const panelKeys = useMenuKeys(panelRef, {
@@ -188,7 +194,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-surface border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850"
         >
           <LivePeople people={people} onNavigate={() => setPanelOpen(false)} dense />
-          <LiveRemotePeople accounts={remote} lookup={lookup} onNavigate={() => setPanelOpen(false)} dense />
+          <LiveRemotePeople accounts={remote} lookup={lookup} hint={remoteHint} onNavigate={() => setPanelOpen(false)} dense />
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
