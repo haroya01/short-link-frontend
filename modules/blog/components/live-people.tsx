@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { PersonMatch } from "@/modules/blog/api/people";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import type { RemoteAccount } from "@/modules/notes/api/notes";
+import type { LiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
 import { blogPath } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { Avatar } from "./avatar";
@@ -73,16 +74,30 @@ export function LivePeople({
 
 export function LiveRemotePeople({
   accounts,
+  lookup = null,
   onNavigate,
   dense = false,
 }: {
   accounts: RemoteAccount[];
+  lookup?: LiveRemoteLookup | null;
   onNavigate: () => void;
   dense?: boolean;
 }) {
   const t = useTranslations("notes");
   const headingId = useId();
-  if (accounts.length === 0) return null;
+  const found =
+    lookup?.state === "account" && !accounts.some((account) => account.id === lookup.account.id)
+      ? [lookup.account, ...accounts]
+      : accounts;
+  const status =
+    lookup?.state === "pending"
+      ? t("remoteLookingUp")
+      : lookup?.state === "missing"
+        ? t("remoteSearchNotFound", { domain: lookup.domain })
+        : lookup?.state === "unreachable"
+          ? t("remoteSearchUnreachable", { domain: lookup.domain })
+          : null;
+  if (found.length === 0 && !status) return null;
   return (
     <section
       aria-labelledby={headingId}
@@ -92,40 +107,46 @@ export function LiveRemotePeople({
       <h3 id={headingId} className="px-3 pb-0.5 pt-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
         {t("remoteSection")}
       </h3>
-      <ul>
-        {accounts.map((account) => (
-          <li key={account.id}>
-            <BlogLink
-              href={blogPath(`/remote/${account.id}`)}
-              onClick={onNavigate}
-              className={cn(
-                "focus-ring flex items-center gap-3 rounded-surface transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50",
-                dense ? "px-3 py-2" : "px-3 py-2.5",
-              )}
-            >
-              <Avatar
-                src={account.avatarUrl}
-                name={account.username || account.acct}
-                seed={null}
-                size={dense ? "sm" : "md"}
-              />
-              <span className="flex min-w-0 flex-col">
-                <span
-                  className={cn(
-                    "truncate font-semibold text-slate-900 dark:text-slate-100",
-                    dense ? "text-[13px]" : "text-[14px]",
-                  )}
-                >
-                  {account.displayName?.trim() || account.username}
+      {found.length === 0 ? (
+        <p role="status" className={cn("px-3 text-slate-500 dark:text-slate-400", dense ? "py-2 text-[12px]" : "py-2.5 text-[13px]")}>
+          {status}
+        </p>
+      ) : (
+        <ul>
+          {found.map((account) => (
+            <li key={account.id}>
+              <BlogLink
+                href={blogPath(`/remote/${account.id}`)}
+                onClick={onNavigate}
+                className={cn(
+                  "focus-ring flex items-center gap-3 rounded-surface transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50",
+                  dense ? "px-3 py-2" : "px-3 py-2.5",
+                )}
+              >
+                <Avatar
+                  src={account.avatarUrl}
+                  name={account.username || account.acct}
+                  seed={null}
+                  size={dense ? "sm" : "md"}
+                />
+                <span className="flex min-w-0 flex-col">
+                  <span
+                    className={cn(
+                      "truncate font-semibold text-slate-900 dark:text-slate-100",
+                      dense ? "text-[13px]" : "text-[14px]",
+                    )}
+                  >
+                    {account.displayName?.trim() || account.username}
+                  </span>
+                  <span className={cn("truncate text-slate-500 dark:text-slate-400", dense ? "text-[11px]" : "text-[12px]")}>
+                    @{account.acct}
+                  </span>
                 </span>
-                <span className={cn("truncate text-slate-500 dark:text-slate-400", dense ? "text-[11px]" : "text-[12px]")}>
-                  @{account.acct}
-                </span>
-              </span>
-            </BlogLink>
-          </li>
-        ))}
-      </ul>
+              </BlogLink>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

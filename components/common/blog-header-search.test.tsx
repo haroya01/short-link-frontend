@@ -12,6 +12,7 @@ vi.mock("@/modules/blog/lib/use-live-search", () => ({
 }));
 vi.mock("@/modules/blog/lib/use-live-people", () => ({ useLivePeople: () => ({ people: [], remote: [] }) }));
 vi.mock("@/modules/blog/components/live-people", () => ({ LivePeople: () => null, LiveRemotePeople: () => null }));
+vi.mock("@/modules/notes/lib/use-remote-resolution", () => ({ useLiveRemoteLookup: () => null }));
 
 import { BlogHeaderSearch } from "./blog-header-search";
 

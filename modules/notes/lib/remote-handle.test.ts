@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { remoteQueryDomain } from "./remote-handle";
+import {
+  liveRemoteQueryDomain,
+  looksLikeCompleteDomain,
+  looksLikeRemoteHandle,
+  normalizeRemoteQuery,
+  remoteQueryDomain,
+} from "./remote-handle";
 
 describe("the server a search names", () => {
   it.each([
@@ -18,4 +24,55 @@ describe("the server a search names", () => {
       expect(remoteQueryDomain(query)).toBeNull();
     },
   );
+});
+
+describe("cleaning a pasted handle", () => {
+  it.each([
+    ["  @mina@mastodon.social  ", "@mina@mastodon.social"],
+    ["＠mina＠mastodon.social", "@mina@mastodon.social"],
+    ["acct:mina@mastodon.social", "mina@mastodon.social"],
+    ["ACCT:@mina@mastodon.social", "@mina@mastodon.social"],
+    [" acct: ＠mina＠mastodon.social ", "@mina@mastodon.social"],
+    ["https://mastodon.social/@mina", "https://mastodon.social/@mina"],
+    ["mina", "mina"],
+  ])("reads %j as %j", (raw, clean) => {
+    expect(normalizeRemoteQuery(raw)).toBe(clean);
+  });
+
+  it("only strips acct: at the start", () => {
+    expect(normalizeRemoteQuery("mina acct:x")).toBe("mina acct:x");
+  });
+
+  it.each(["＠mina＠mastodon.social", "acct:mina@mastodon.social", " acct:@mina@Mastodon.Social "])(
+    "finds the handle and its server in %j",
+    (raw) => {
+      expect(looksLikeRemoteHandle(raw)).toBe(true);
+      expect(remoteQueryDomain(raw)).toBe("mastodon.social");
+    },
+  );
+});
+
+describe("a server name that is finished being typed", () => {
+  it.each(["mastodon.social", "misskey.io", "mstdn.jp", "social.example.co.uk", "my-server.social", "mastodon.social:8443"])(
+    "%s is complete",
+    (domain) => {
+      expect(looksLikeCompleteDomain(domain)).toBe(true);
+    },
+  );
+
+  it.each(["mastodon", "mastodon.", "mastodon.s", "mastodon.social-", "mastodon.so-", "-mastodon.social", "mastodon..social", "mastodon.123", ""])(
+    "%j is not",
+    (domain) => {
+      expect(looksLikeCompleteDomain(domain)).toBe(false);
+    },
+  );
+
+  it("asks while typing only once the handle's server is complete", () => {
+    expect(liveRemoteQueryDomain("@a@mastodon.s")).toBeNull();
+    expect(liveRemoteQueryDomain("@a@mastodon.so")).toBe("mastodon.so");
+    expect(liveRemoteQueryDomain("＠a＠mastodon.social")).toBe("mastodon.social");
+    expect(liveRemoteQueryDomain("https://mastodon.s/@a")).toBeNull();
+    expect(liveRemoteQueryDomain("https://mastodon.social/@a/12")).toBe("mastodon.social");
+    expect(liveRemoteQueryDomain("mina")).toBeNull();
+  });
 });

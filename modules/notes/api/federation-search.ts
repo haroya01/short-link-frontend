@@ -1,5 +1,5 @@
 import { ApiError, mockFailure, request } from "@/lib/api/client";
-import { looksLikeRemoteHandle, remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
+import { looksLikeRemoteHandle, normalizeRemoteQuery, remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
 import { lookupRemoteAccount, type Note, type RemoteAccount } from "./notes";
 
 const noteMocks: typeof import("./_mocks") | null =
@@ -30,7 +30,7 @@ export type RemoteResolution =
   | { state: "hidden" };
 
 export function remoteSearchQuery(raw: string): string {
-  const q = raw.trim();
+  const q = normalizeRemoteQuery(raw);
   return q.startsWith("@") ? q.slice(1).trim() : q;
 }
 
@@ -53,8 +53,8 @@ export async function searchRemoteAccounts(
   }
 }
 
-export async function resolveRemote(raw: string): Promise<RemoteResolution> {
-  const q = raw.trim();
+export async function resolveRemote(raw: string, init: { signal?: AbortSignal } = {}): Promise<RemoteResolution> {
+  const q = normalizeRemoteQuery(raw);
   const domain = remoteQueryDomain(q);
   if (!domain) return { state: "hidden" };
   try {
@@ -63,11 +63,13 @@ export async function resolveRemote(raw: string): Promise<RemoteResolution> {
       : await request<RemoteResolveBody>(`/api/v1/federation/resolve?${new URLSearchParams({ q }).toString()}`, {
           method: "GET",
           timeoutMs: REMOTE_RESOLVE_TIMEOUT_MS,
+          signal: init.signal,
         });
     if (body?.note) return { state: "note", note: body.note };
     if (body?.account) return { state: "account", account: body.account };
     return { state: "missing", domain };
   } catch (error) {
+    if (init.signal?.aborted) throw error;
     if (!routeMissing(error)) return failure(error, domain);
     if (!looksLikeRemoteHandle(q)) return { state: "hidden" };
     return lookupRemoteAccount(q).then(

@@ -198,4 +198,28 @@ describe("resolving a handle or an address", () => {
     await expect(resolveRemote("mina")).resolves.toEqual({ state: "hidden" });
     expect(calls).toEqual([]);
   });
+
+  it("asks with the handle cleaned of a full-width ＠ and an acct: prefix", async () => {
+    serve({ [RESOLVE]: { status: 200, body: { account: mina, note: null } } });
+    const { resolveRemote } = await api();
+    await expect(resolveRemote(" acct:＠mina＠mastodon.social ")).resolves.toEqual({ state: "account", account: mina });
+    expect(new URL(calls[0], "http://x").searchParams.get("q")).toBe("@mina@mastodon.social");
+  });
+
+  it("lets a cancelled question fail instead of calling the server unresponsive", async () => {
+    serve({ [RESOLVE]: new DOMException("aborted", "AbortError") });
+    const { resolveRemote } = await api();
+    const controller = new AbortController();
+    controller.abort();
+    await expect(resolveRemote("@mina@mastodon.social", { signal: controller.signal })).rejects.toBeTruthy();
+  });
+
+  it("keeps the 20-second ceiling alongside the caller's signal", async () => {
+    const timer = vi.spyOn(globalThis, "setTimeout");
+    serve({ [RESOLVE]: { status: 200, body: { account: mina, note: null } } });
+    const { resolveRemote } = await api();
+    await resolveRemote("@mina@mastodon.social", { signal: new AbortController().signal });
+    expect(timer.mock.calls.some(([, ms]) => ms === 20_000)).toBe(true);
+    timer.mockRestore();
+  });
 });
