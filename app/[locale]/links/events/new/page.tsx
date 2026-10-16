@@ -1,6 +1,5 @@
 "use client";
 
-import { CalendarDays } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -15,7 +14,7 @@ export default function NewEventPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="events" icon={CalendarDays} />
+      <SignInEmptyState page reason="events" />
     );
   }
 

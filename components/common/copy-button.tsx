@@ -50,7 +50,7 @@ export function CopyButton({ value, label, size = "md", variant = "default", cla
         aria-label={iconOnly ? t("copy") : undefined}
         className={cn(iconOnly && "px-2", className)}
       >
-        <Icon aria-hidden className="h-4 w-4" />
+        {iconOnly && <Icon aria-hidden className="h-4 w-4" />}
         {!iconOnly && (
           <span className="grid">
             <span className={cn("col-start-1 row-start-1", copied && "invisible")}>{text}</span>

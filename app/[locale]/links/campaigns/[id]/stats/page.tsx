@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, BarChart3, FlaskConical } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -106,7 +106,7 @@ export default function CampaignStatsPage() {
   }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="stats" icon={BarChart3} />;
+    return <SignInEmptyState page reason="stats" />;
   }
 
   return (
@@ -232,7 +232,7 @@ function CompareSection({
                 className={
                   "rounded-lg border p-3 " +
                   (isCurrent
-                    ? "border-accent-200 bg-accent-50/40 dark:bg-accent-600/10"
+                    ? "border-slate-900 bg-white dark:border-slate-100 dark:bg-slate-900"
                     : "border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40")
                 }
               >
@@ -330,7 +330,6 @@ function TestScansCard({ count, lastAt }: { count: number; lastAt: string | null
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-4">
       <div className="flex items-start gap-2">
-        <FlaskConical className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500 dark:text-slate-400" aria-hidden />
         <div className="flex-1">
           <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
             {t("testScans.title")}

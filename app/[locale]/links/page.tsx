@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { HomeStatsExample } from "@/components/landing/home-stats-example";
@@ -88,7 +87,7 @@ export default function HomePage() {
                   href="/demo"
                   className="focus-ring inline-flex items-center gap-1 whitespace-nowrap rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
                 >
-                  {t("demoLink")} <ArrowRight aria-hidden className="h-3 w-3" />
+                  {t("demoLink")}
                 </Link>
               </p>
             ) : null}

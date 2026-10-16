@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CornerDownRight, Heart, Loader2, MessageCircle } from "lucide-react";
+import { CornerDownRight, Heart, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blogHref } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -55,10 +55,9 @@ export function MyCommentsList({ locale }: { locale: string }) {
   if (items.length === 0) {
     return (
       <BlogEmpty
-        icon={MessageCircle}
         title={t("emptyComments")}
         action={
-          <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
+          <a href={blogHref("/")} className={blogCta({ variant: "text" })}>
             {t("browseFeed")}
           </a>
         }
@@ -92,7 +91,7 @@ export function MyCommentsList({ locale }: { locale: string }) {
                   <>
                     <span aria-hidden>·</span>
                     <span className="flex items-center gap-1">
-                      <Heart className="h-3 w-3 text-accent-600" />
+                      <Heart className="h-3 w-3" />
                       {c.likeCount}
                     </span>
                   </>

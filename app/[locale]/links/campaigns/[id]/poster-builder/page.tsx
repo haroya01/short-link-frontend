@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, FileUp, QrCode, Trash2 } from "lucide-react";
+import { ArrowLeft, FileUp } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -195,7 +195,7 @@ export default function PosterBuilderPage() {
   const canCompose = !!pdfBytes && batchCount > 0 && !composing;
 
   if (ready && !authenticated) {
-    return <SignInEmptyState page reason="campaigns" icon={QrCode} />;
+    return <SignInEmptyState page reason="campaigns" />;
   }
 
   return (
@@ -272,7 +272,6 @@ export default function PosterBuilderPage() {
             disabled={!canCompose}
             className="w-full"
           >
-            <Download className="h-4 w-4" aria-hidden />
             {composing ? t("composing") : t("download", { count: batchCount })}
           </Button>
 
@@ -363,7 +362,7 @@ function PreviewWithBox({
           onClick={onRemove}
           aria-label={t("removePdf")}
         >
-          <Trash2 className="h-3.5 w-3.5" aria-hidden /> {t("otherPdf")}
+          {t("otherPdf")}
         </Button>
       </div>
       <PdfPreview file={file} box={box} onBoxChange={onBoxChange} qrDataUrl={qrDataUrl} />

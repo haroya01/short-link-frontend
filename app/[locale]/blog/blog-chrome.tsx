@@ -17,7 +17,7 @@ import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { buildBlogSections } from "@/lib/sidebar-entries";
 import { ComposeEntry } from "@/modules/blog/components/compose-entry";
 import { WorkspaceSkeleton } from "@/modules/blog/components/skeleton";
-import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
+import { EditorLeaveGuard } from "@/modules/blog/components/editor-leave-guard";
 
 // Author workspace paths get the sidebar. Everything else on blog.kurl.me — the public feed at
 // "/" and any other public page — gets the chrome-light header with no sidebar, so anyone can
@@ -185,32 +185,6 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
         <MobileSidebar sections={sections} basePath={base} />
       </EditorLeaveGuard>
       <main className="min-w-0 flex-1">{children}</main>
-    </div>
-  );
-}
-
-// The mobile drawer's entries are next-intl <Link>s that soft-navigate, which never trips the post
-// editor's beforeunload guard — so a drawer tap mid-edit would drop the unsaved work silently. When
-// the editor has unsaved edits, intercept a plain left-click on any in-app drawer link and force a
-// hard navigation instead, which does fire the "leave site?" prompt. Inert whenever the editor is
-// clean (useEditorDirty() is false), so ordinary drawer navigation keeps its soft-nav behaviour.
-// Modified/middle clicks fall through to the native anchor (new tab), same as elsewhere in the chrome.
-function EditorLeaveGuard({ children }: { children: React.ReactNode }) {
-  const dirty = useEditorDirty();
-  return (
-    <div
-      className="contents"
-      onClickCapture={(e) => {
-        if (!dirty) return;
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-        const anchor = (e.target as HTMLElement).closest("a[href]") as HTMLAnchorElement | null;
-        if (!anchor || anchor.target === "_blank") return;
-        e.preventDefault();
-        e.stopPropagation();
-        window.location.assign(anchor.href);
-      }}
-    >
-      {children}
     </div>
   );
 }

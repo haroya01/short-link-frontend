@@ -15,7 +15,8 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
+import { getPathname, usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
+import { isEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
@@ -65,7 +66,8 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
     if (next === locale) return;
     // Mirror LanguageSwitcher: persist NEXT_LOCALE so middleware honors it on unprefixed entries.
     document.cookie = `NEXT_LOCALE=${next}; Max-Age=31536000; Path=/; SameSite=Lax`;
-    intlRouter.replace(pathname, { locale: next as never });
+    if (isEditorDirty()) window.location.assign(getPathname({ href: pathname, locale: next as never }));
+    else intlRouter.replace(pathname, { locale: next as never });
   }
 
   const username = me?.username ?? "";

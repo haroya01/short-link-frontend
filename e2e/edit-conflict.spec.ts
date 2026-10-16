@@ -65,7 +65,7 @@ test("the kept version can be thrown away instead", async ({ page }) => {
 test("keeping mine saves over the other device's version, which revisions can bring back", async ({ page }) => {
   const ask = await meetConflict(page);
   await ask.getByRole("button", { name: "내 내용으로 덮기" }).click();
-  await expectOnTop(toastBy(page, "내 내용으로 덮었어요. 덮인 내용은 리비전에서 되돌릴 수 있어요."));
+  await expectOnTop(toastBy(page, "내 내용으로 덮었어요. 덮인 내용은 버전 기록에서 되돌릴 수 있어요."));
   await expect(ask).toHaveCount(0);
 
   await page.getByRole("link", { name: "글 목록" }).click();

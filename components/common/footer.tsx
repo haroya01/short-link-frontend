@@ -10,8 +10,8 @@ export function Footer({ app }: { app?: IosApp } = {}) {
   const locale = useLocale();
   const pathname = usePathname();
 
-  // about/terms/privacy are canonical pages on the links product
-  // (app/[locale]/links/{about,terms,privacy}). This footer is shared chrome rendered on the
+  // about/terms/privacy/report are canonical pages on the links product
+  // (app/[locale]/links/{about,terms,privacy,report}). This footer is shared chrome rendered on the
   // blog too, where the blog host rewrites every path to /blog/* — so a bare /about would 404.
   // linksHref pins them to the links host (absolute in prod, same-origin path in dev) so they resolve
   // from any surface.
@@ -49,6 +49,10 @@ export function Footer({ app }: { app?: IosApp } = {}) {
           <span aria-hidden className="hidden sm:inline">·</span>
           <a href={marketingHref("/privacy")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("privacy")}
+          </a>
+          <span aria-hidden className="hidden sm:inline">·</span>
+          <a href={marketingHref("/report")} className="hover:text-slate-900 dark:hover:text-slate-100">
+            {t("report")}
           </a>
           <span aria-hidden className="hidden sm:inline">·</span>
           <a

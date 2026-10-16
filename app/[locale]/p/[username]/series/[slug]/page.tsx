@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { ArrowRight, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/lib/author-href";
@@ -165,8 +165,7 @@ export default async function PublicSeriesPage({
 
   const header = (
     <header>
-          <div className="flex items-center gap-1.5 text-[12px] font-semibold tracking-wide text-accent-700 dark:text-accent-400">
-            <Layers aria-hidden className="h-3 w-3 shrink-0" />
+          <div className="text-[12px] font-semibold tracking-wide text-slate-500 dark:text-slate-400">
             {tf("seriesEyebrow")}
           </div>
           {/* Title + subscribe on one row — 구독 is the series equivalent of following the author

@@ -22,7 +22,7 @@ test.describe("desktop", () => {
     const popup = page.waitForEvent("popup");
     await page.getByRole("button", { name: "미리보기", exact: true }).click();
     const tab = await popup;
-    await expect.poll(() => tab.url()).toMatch(/\/mock-draft\?preview=mock-preview-7002$/);
+    await expect.poll(() => tab.url(), { timeout: 30_000 }).toMatch(/\/mock-draft\?preview=mock-preview-7002$/);
   });
 
   test("발행 창은 지금·예약을 바로 고르게 하고, 미리보기가 앞, 링크 복사는 그 뒤다", async ({ page }) => {

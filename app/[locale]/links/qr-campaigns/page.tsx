@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
@@ -54,10 +53,7 @@ export default function QrCampaignsLandingPage() {
           action={
             cta(
               buttonVariants({ variant: "accent", size: "xl" }),
-              <>
-                {t("hero.cta")}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </>,
+              t("hero.cta"),
             )
           }
         />

@@ -1,7 +1,6 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Search, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { searchPeople, searchablePeopleQuery, type PeoplePage, type PersonMatch } from "@/modules/blog/api/people";
@@ -27,7 +26,7 @@ export function SearchedPeople({ query }: { query: string }) {
   const remote = useRemotePeople(query, searchable);
 
   if (!searchable) {
-    return <BlogEmpty icon={UserRound} title={t("searchPeopleHint")} />;
+    return <BlogEmpty title={t("searchPeopleHint")} />;
   }
   const people = (data?.pages.flatMap((page) => page.items) ?? []).filter((p) => !blocked.has(p.username));
   if (isLoading || (!isError && people.length === 0 && remote.loading)) {
@@ -59,7 +58,7 @@ export function SearchedPeople({ query }: { query: string }) {
           ))}
         </ul>
       ) : remote.accounts?.length ? null : (
-        <BlogEmpty icon={Search} title={t("searchNoPeople")} />
+        <BlogEmpty title={t("searchNoPeople")} />
       )}
       {!isError && hasNextPage && (
         <div className="mt-6 flex justify-center">

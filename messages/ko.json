@@ -62,7 +62,6 @@
     "mastheadTagline": "kurl 사람들이 쓴 글",
     "mastheadSub": "최신 글부터 차례로 모았어요.",
     "tagFeedSubtitle": "이 주제로 발행된 글을 모았어요.",
-    "tagFeedSubtitleNotes": "이 주제로 쓴 노트를 모았어요.",
     "tagViewPosts": "글",
     "tagViewNotes": "노트",
     "tagFollow": "팔로우",
@@ -94,6 +93,8 @@
     "browseTopics": "주제 둘러보기",
     "railPopularTags": "인기 태그",
     "railSuggestedAuthors": "추천 작가",
+    "searchIdleTrending": "지금 뜨는 글",
+    "searchIdleFollow": "팔로우 추천",
     "railFollowingAuthors": "팔로우한 작가",
     "railFollowingAll": "전체 보기",
     "railWriters": "작가",
@@ -254,7 +255,6 @@
     "linksFullDashboard": "전체 링크 대시보드",
     "libraryCollections": "컬렉션",
     "savedTitle": "서재",
-    "savedSubtitle": "북마크한 글과 기억하고 싶은 구절을 다시 만나요.",
     "curationMockNote": "미리보기예요. 아직 저장은 이 브라우저에만 남아요.",
     "curationPinned": "대표글",
     "curationPinnedHint": "작가 페이지 글 목록 맨 위에 이 순서로 보여요.",
@@ -269,7 +269,6 @@
     "curationReadingListEmpty": "북마크한 글이 없어요",
     "curationRemoveBookmark": "리스트에서 빼기",
     "settingsTitle": "설정",
-    "settingsSubtitle": "계정과 화면 설정.",
     "settingsAccount": "계정",
     "settingsEditProfile": "프로필 편집",
     "settingsEditCard": "명함 편집",
@@ -392,7 +391,7 @@
     "unpublishConfirmDescription": "글은 남지만 공개 주소가 닫혀 아무도 볼 수 없게 돼요. 언제든 다시 발행할 수 있어요.",
     "republish": "재발행",
     "delete": "삭제",
-    "deleteConfirm": "정말 삭제할까요? 본문과 모든 리비전이 함께 삭제돼요.",
+    "deleteConfirm": "정말 삭제할까요? 본문과 버전 기록이 함께 삭제돼요.",
     "uploading": "업로드 중…",
     "imageError": "이미지 업로드에 실패했어요.",
     "uploadNotImage": "이미지 파일만 올릴 수 있어요.",
@@ -426,11 +425,11 @@
     "slugHint": "발행 전까지 수정 가능 · 영문 소문자/숫자/하이픈",
     "titleRequired": "발행하려면 제목을 입력해주세요",
     "scheduledTitleRequired": "예약한 글은 제목을 비울 수 없어요. 제목이 없으면 예약한 시각에 발행되지 않아요.",
-    "revisions": "리비전",
+    "revisions": "버전 기록",
     "revisionsEmpty": "아직 저장된 버전이 없어요. 발행하면 버전이 쌓여요.",
     "revisionVersion": "버전 {n}",
     "revisionRestore": "복원",
-    "revisionRestoreConfirm": "이 버전으로 되돌릴까요? 현재 내용은 새 리비전으로 보관돼요.",
+    "revisionRestoreConfirm": "이 버전으로 되돌릴까요? 현재 내용은 새 버전으로 보관돼요.",
     "schedule": "예약",
     "scheduleAt": "발행 시각",
     "scheduleConfirm": "예약하기",
@@ -541,17 +540,16 @@
     "exportAllFailed": "내보내기에 실패했어요. 잠시 후 다시 시도해주세요.",
     "savedAt": "{time} 저장됨",
     "continueWriting": "이어서 쓰기",
-    "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요.",
     "seriesCreateConflict": "같은 이름의 시리즈가 이미 있어요. 다른 이름을 써주세요.",
     "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요.",
     "seriesLoadFailed": "시리즈 목록을 불러오지 못했어요.",
     "revisionsLoadFailed": "저장된 버전을 불러오지 못했어요.",
     "saveFailed": "저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
     "editConflictTitle": "다른 기기에서 이 글을 고쳤어요",
-    "editConflictBody": "이 화면의 마지막 편집은 아직 저장되지 않았어요. 최신으로 불러오면 지금 내 내용은 이 기기에 보관해 두고, 내 내용으로 덮으면 덮인 내용은 리비전에서 되돌릴 수 있어요.",
+    "editConflictBody": "이 화면의 마지막 편집은 아직 저장되지 않았어요. 최신으로 불러오면 지금 내 내용은 이 기기에 보관해 두고, 내 내용으로 덮으면 덮인 내용은 버전 기록에서 되돌릴 수 있어요.",
     "editConflictLoadLatest": "최신으로 불러오기",
     "editConflictOverwrite": "내 내용으로 덮기",
-    "editConflictOverwritten": "내 내용으로 덮었어요. 덮인 내용은 리비전에서 되돌릴 수 있어요.",
+    "editConflictOverwritten": "내 내용으로 덮었어요. 덮인 내용은 버전 기록에서 되돌릴 수 있어요.",
     "editConflictReloaded": "다른 기기에서 고친 최신 내용을 불러왔어요.",
     "keptNotice": "최신 내용을 불러오기 전의 내 내용을 이 기기에 보관해 두었어요.",
     "keptRestore": "내 내용 되살리기",
@@ -1656,7 +1654,7 @@
       "title": "A/B 분배·국가별 목적지",
       "description": "같은 단축 링크의 클릭을 가중치로 나누거나, 방문자 국가에 맞춰 다른 페이지로 보낼 수 있어요. 국가를 지정한 목적지는 그 나라 방문자에게만 쓰이고, 맞는 게 없으면 국가를 지정하지 않은 목적지로, 그것도 없으면 기본 목적지로 보내요. 링크당 최대 4개.",
       "countryLabel": "대상 국가",
-      "countryAny": "🌐 전체",
+      "countryAny": "모든 국가",
       "countryPlaceholder": "국가 선택",
       "countrySearch": "국가 검색",
       "countryNoResults": "해당하는 국가가 없어요",
@@ -2000,6 +1998,16 @@
       "expiryDesc": "정한 시각이 지나면 링크가 닫혀요.",
       "expiryAt": "닫는 시각",
       "expiryBeforeOpen": "만료는 공개 시각보다 뒤여야 해요."
+    },
+    "moderation": {
+      "title": "꺼진 링크예요.",
+      "reason": {
+        "ABUSE_REPORT": "{date}에 신고를 확인하고 운영 정책 위반으로 껐어요.",
+        "ADMIN": "{date}에 운영자가 운영 정책 위반으로 껐어요.",
+        "SAFE_BROWSING": "{date}에 Google Safe Browsing이 목적지를 위험한 사이트로 분류해 자동으로 꺼졌어요."
+      },
+      "visitorEffect": "지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요.",
+      "appeal": "이의 제기"
     }
   },
   "admin": {
@@ -2263,7 +2271,8 @@
         "status": {
           "active": "활성",
           "expired": "만료",
-          "limitReached": "한도 도달"
+          "limitReached": "한도 도달",
+          "disabled": "꺼짐"
         },
         "ownerFilter": "소유자 #{id}",
         "clearFilter": "필터 지우기",
@@ -2358,7 +2367,18 @@
       "warnAnonymous": "익명으로 만든 링크라 경고를 보낼 계정이 없어요. 도메인 차단으로 대응하세요.",
       "failed": "요청에 실패했어요",
       "blockShort": "차단",
-      "blockedShort": "차단됨"
+      "blockedShort": "차단됨",
+      "linkHint": "도메인 전체가 아니라 이 링크 하나만 꺼요. 방문자는 목적지 대신 꺼진 링크 안내(410)를 봐요.",
+      "linkDisable": "이 링크 끄기",
+      "linkEnable": "다시 켜기",
+      "linkDisableConfirm": "/{code} 링크를 끌까요? 방문자는 목적지 대신 꺼진 링크 안내를 봐요.",
+      "linkEnableConfirm": "/{code} 링크를 다시 켤까요? 방문자가 다시 목적지로 이동해요.",
+      "linkDisabled": "꺼짐 · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "신고 처리",
+        "ADMIN": "관리자",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     },
     "servers": {
       "title": "차단한 서버",
@@ -2579,7 +2599,8 @@
     "iosApp": "iPhone 앱",
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "링크 신고"
   },
   "about": {
     "title": "kurl · 단축 링크와 클릭 분석",
@@ -2758,16 +2779,12 @@
     "toolsTitle": "도구",
     "tools": {
       "profile": "공개 프로필",
-      "profileDesc": "링크를 한 페이지에 모아 보여줘요",
-      "ctas": "CTA 라이브러리",
-      "ctasDesc": "링크에 붙일 안내 배너를 관리해요"
+      "ctas": "CTA 라이브러리"
     },
     "appsTitle": "앱",
     "apps": {
       "links": "kurl.me 앱",
-      "linksDesc": "iPhone에서 링크를 줄이고 클릭을 봐요",
-      "blog": "컬로그 앱",
-      "blogDesc": "iPhone에서 글을 읽고 써요"
+      "blog": "컬로그 앱"
     },
     "appsScanHint": "폰 카메라로 QR을 찍으면 App Store가 열려요",
     "accountTitle": "계정",
@@ -2865,7 +2882,6 @@
       "sectionCollapse": "섹션 접기",
       "sectionItemCount": "{count}개",
       "featuredEmpty": "노출할 링크가 없어요.",
-      "featuredEmptyTitle": "공개할 링크가 비어있어요",
       "featuredEmptyHasOthers": "노출할 링크가 없어요. 고를 수 있는 내 링크가 {count}개 있어요.",
       "addBlockMenu": "추가",
       "addMoreBlocks": "그 외 블록",
@@ -3426,9 +3442,7 @@
         "title": "배포 묶음",
         "description": "QR 한 개를 여러 장 인쇄해서 배포한 한 단위. 배포자·지역별로 나눠야 분석이 의미 있어요.",
         "add": "배포 묶음 추가",
-        "emptyTitle": "아직 배포 묶음이 없어요",
-        "emptyDescription": "첫 묶음을 추가하면 QR 코드가 바로 발급돼요. 인쇄·발주 전에 스캔해서 작동을 확인해 보세요.",
-        "addFirst": "첫 배포 묶음 추가"
+        "emptyTitle": "아직 배포 묶음이 없어요"
       },
       "csvFailed": "CSV를 내려받지 못했어요. 다시 시도해 주세요."
     },
@@ -3779,6 +3793,7 @@
       "DELETE_COMMENT": "댓글 삭제",
       "SUSPEND_USER": "계정 정지",
       "BAN_USER": "영구 차단",
+      "DISABLE_LINK": "링크 끄기",
       "DELETE_NOTE": "노트 삭제",
       "DELETE_HIGHLIGHT_REPLY": "답글 삭제"
     },
@@ -3786,6 +3801,7 @@
       "POST": "글",
       "USER": "작가",
       "COMMENT": "댓글",
+      "LINK": "단축 링크",
       "NOTE": "노트",
       "HIGHLIGHT_REPLY": "하이라이트 답글"
     },
@@ -3796,17 +3812,22 @@
       "VIOLENCE": "폭력·위험",
       "SEXUAL": "성적인 콘텐츠",
       "COPYRIGHT": "저작권 침해",
-      "OTHER": "기타"
+      "OTHER": "기타",
+      "PHISHING": "피싱·사기",
+      "MALWARE": "악성 코드"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "이 글을 비공개로 돌릴까요? 공개 피드에서 내려가요(작성자에게는 글이 남아요).",
       "DELETE_COMMENT": "이 댓글을 삭제할까요? 되돌릴 수 없어요.",
       "BAN_USER": "이 계정을 영구 차단할까요? 되돌리기 어려워요.",
+      "DISABLE_LINK": "이 링크를 끌까요? 방문자는 목적지 대신 꺼진 링크 안내를 봐요. 관리자 링크 화면에서 다시 켤 수 있어요.",
       "DELETE_HIGHLIGHT_REPLY": "이 하이라이트 답글을 삭제할까요? 되돌릴 수 없어요.",
       "DELETE_NOTE": "이 노트를 삭제할까요? 되돌릴 수 없어요."
     },
     "suspendDaysPrompt": "며칠 동안 정지할까요? (일)",
-    "suspendDaysInvalid": "1 이상의 숫자를 입력하세요."
+    "suspendDaysInvalid": "1 이상의 숫자를 입력하세요.",
+    "removedLink": "꺼짐",
+    "destination": "목적지"
   },
   "blogAdminMetrics": {
     "title": "블로그 지표",
@@ -4194,6 +4215,40 @@
     "delete": "삭제",
     "favorite": "즐겨찾기에 추가",
     "unfavorite": "즐겨찾기 해제"
+  },
+  "linkReport": {
+    "title": "링크 신고",
+    "lead": "kurl 단축 링크가 피싱이나 악성 코드, 스팸으로 이어진다면 알려 주세요. 계정이 없어도 신고할 수 있어요.",
+    "linkLabel": "신고할 링크",
+    "linkHint": "받은 주소를 그대로 붙여 넣으세요.",
+    "linkParsed": "<mono>kurl.me/{code}</mono> 링크를 신고해요",
+    "linkInvalid": "kurl 단축 링크를 찾지 못했어요. kurl.me/ 뒤의 코드까지 들어 있는지 확인해 주세요.",
+    "reasonLegend": "무엇이 문제인가요?",
+    "reasons": {
+      "PHISHING": "피싱·사기",
+      "MALWARE": "악성 코드",
+      "SPAM": "스팸·광고",
+      "SEXUAL": "성적인 콘텐츠",
+      "COPYRIGHT": "저작권 침해",
+      "OTHER": "기타"
+    },
+    "appealNote": "잘못 꺼진 링크라면 '기타'를 고르고 사정을 적어 주세요.",
+    "detailLabel": "자세한 상황 (선택)",
+    "detailPlaceholder": "어디서 받았는지, 열면 무엇을 요구하는지",
+    "submit": "신고 보내기",
+    "doneTitle": "신고를 받았어요",
+    "doneBody": "확인한 뒤 운영 정책을 어긴 링크라면 꺼요.",
+    "another": "다른 링크 신고하기",
+    "errors": {
+      "notFound": "kurl에 없는 링크예요. 주소를 다시 확인해 주세요.",
+      "duplicate": "이미 신고한 링크예요. 확인을 기다리는 중이에요.",
+      "rateLimited": "짧은 시간에 너무 많이 보냈어요. 1분 뒤 다시 시도해 주세요.",
+      "failed": "보내지 못했어요. 잠시 뒤 다시 시도해 주세요."
+    },
+    "afterTitle": "신고한 뒤에는",
+    "afterReview": "운영자가 신고를 확인하고, 정책을 어긴 링크는 꺼요. 꺼진 링크를 여는 사람은 목적지 대신 경고 안내를 봐요.",
+    "afterPrivacy": "누가 신고했는지는 링크 주인에게 알리지 않아요.",
+    "afterReply": "신고마다 따로 답장을 드리지는 못해요."
   },
   "notes": {
     "title": "노트",

@@ -6,10 +6,8 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type ReactNode,
   type RefObject,
 } from "react";
-import { FileText, MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -50,7 +48,7 @@ function useRecentDrafts(open: boolean) {
   return drafts;
 }
 
-type Choice = { key: string; label: string; hint?: string; href?: string; onSelect?: () => void; icon?: ReactNode };
+type Choice = { key: string; label: string; hint?: string; href?: string; onSelect?: () => void };
 
 export function ComposeEntry({ variant, className, label, children }: ComposeTriggerProps) {
   const t = useTranslations("compose");
@@ -75,7 +73,6 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
     {
       key: "note",
       label: t("note"),
-      icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
       onSelect: () => {
         close(true);
         setNoteOpen({});
@@ -84,7 +81,6 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
     {
       key: "longform",
       label: t("longform"),
-      icon: <FileText className="h-4 w-4" aria-hidden />,
       href: blogHref("/write/new"),
     },
   ];
@@ -97,7 +93,6 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
         hint: draft.parts.length > 0
           ? `${ago(new Date(draft.updatedAt).toISOString())} · ${t("noteParts", { count: draft.parts.length + 1 })}`
           : ago(new Date(draft.updatedAt).toISOString()),
-        icon: <MessageSquareText className="h-4 w-4" aria-hidden />,
         onSelect: () => {
           close(true);
           setNoteOpen({ draft });
@@ -110,7 +105,6 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
         key: `draft-${draft.id}`,
         label: draft.title.trim() || t("untitled"),
         hint: ago(draft.updatedAt),
-        icon: <FileText className="h-4 w-4" aria-hidden />,
         href: blogHref(`/write/${draft.id}`),
       },
     })),
@@ -187,16 +181,7 @@ const rowClass =
 
 function ChoiceRow({ choice, menu }: { choice: Choice; menu: boolean }) {
   const role = menu ? "menuitem" : undefined;
-  const content = (
-    <>
-      {choice.icon && (
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-          {choice.icon}
-        </span>
-      )}
-      <ChoiceText choice={choice} />
-    </>
-  );
+  const content = <ChoiceText choice={choice} />;
   return choice.href ? (
     <a href={choice.href} role={role} data-compose-choice={choice.key} className={rowClass}>
       {content}

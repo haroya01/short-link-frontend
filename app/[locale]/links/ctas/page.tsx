@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { MousePointerClick } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "@/components/ui/button";
@@ -74,7 +73,7 @@ export default function CtaLibraryPage() {
   }
 
   if (!ready) return null;
-  if (!authenticated) return <SignInEmptyState page reason="ctas" icon={MousePointerClick} />;
+  if (!authenticated) return <SignInEmptyState page reason="ctas" />;
 
   return (
     <div className="container max-w-3xl space-y-6 py-10">
@@ -118,7 +117,7 @@ export default function CtaLibraryPage() {
       ) : error ? (
         <ErrorState message={errorMessage(error, tc("errorDesc"))} onRetry={() => void load()} />
       ) : ctas.length === 0 ? (
-        <EmptyState icon={MousePointerClick} title={t("empty")} />
+        <EmptyState title={t("empty")} />
       ) : (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {ctas.map((cta) => (

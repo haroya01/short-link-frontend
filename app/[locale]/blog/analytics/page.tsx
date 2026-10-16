@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, ExternalLink, Eye, FileText, Heart, Layers, Link2, MousePointerClick, TrendingUp, UserPlus, Users } from "lucide-react";
+import { ChevronDown, ExternalLink, Eye, FileText, Heart, Layers, Link2, MousePointerClick, UserPlus, Users } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
@@ -131,11 +131,8 @@ export default function BlogAnalyticsPage() {
           <section className="mt-7">
             <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
               <div>
-                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="text-[12px] font-medium">
-                    {days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })}
-                  </span>
+                <div className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
+                  {days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })}
                 </div>
                 <div className="mt-1 text-[40px] font-bold leading-none tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
                   {data.windowViews.toLocaleString()}
@@ -152,20 +149,14 @@ export default function BlogAnalyticsPage() {
             </div>
           </section>
 
-          {/* 누적 보조 지표 — lifetime 숫자들은 히어로(기간)와 결이 달라 한 단 아래 행으로.
-              링크 클릭은 kurl 연동 차별점이라 숫자만 brand-green 으로 조용히 구분. */}
+          {/* 누적 보조 지표 — lifetime 숫자들은 히어로(기간)와 결이 달라 한 단 아래 행으로. */}
           <p className="mt-8 text-[12px] font-medium text-slate-500 dark:text-slate-400">{t("analyticsLifetimeCaption")}</p>
           <div className="mt-2 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-slate-100 py-5 sm:grid-cols-3 lg:grid-cols-5 dark:border-slate-800">
-            <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
-            <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
-            <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollows")} value={data.lifetimeFollows} />
-            <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
-            <StatCard
-              icon={<MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
-              label={t("analyticsLinkClicksAll")}
-              value={data.lifetimeLinkClicks}
-              tone="accent"
-            />
+            <StatCard label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
+            <StatCard label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
+            <StatCard label={t("analyticsFollows")} value={data.lifetimeFollows} />
+            <StatCard label={t("analyticsPublished")} value={data.publishedPosts} />
+            <StatCard label={t("analyticsLinkClicksAll")} value={data.lifetimeLinkClicks} />
           </div>
 
           {/* 히어로 아래를 유입 경로/시리즈/링크/글 탭으로 나눠 한 화면에 몰리지 않게 뎁스를 준다. */}
@@ -199,7 +190,7 @@ export default function BlogAnalyticsPage() {
                         </span>
                         <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <span
-                            className="block h-full rounded-full bg-accent-600"
+                            className="block h-full rounded-full bg-slate-400 dark:bg-slate-500"
                             style={{ width: `${pct}%` }}
                           />
                         </span>
@@ -400,8 +391,7 @@ function PostPerformanceList() {
                   <Heart className="h-3.5 w-3.5" />
                   {p.likeCount.toLocaleString()}
                 </span>
-                {/* 이 글로 늘어난 팔로우 — 브랜드 그린으로, 단순 트래픽이 아니라 '구독으로 이어진' 신호임을 강조. */}
-                <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
+                <span className="inline-flex items-center gap-1">
                   <UserPlus className="h-3.5 w-3.5" />
                   {p.followsGained.toLocaleString()}
                 </span>
@@ -465,8 +455,7 @@ function SeriesAnalyticsSection() {
                 {s.title}
               </span>
               <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-500 dark:text-slate-400">
-                {/* 구독자 — 시리즈의 헤드라인 지표, 브랜드 그린 강조. */}
-                <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
+                <span className="inline-flex items-center gap-1">
                   <Users className="h-3.5 w-3.5" />
                   {s.subscriberCount.toLocaleString()}
                 </span>
@@ -569,8 +558,8 @@ function LinksBreakdownSection() {
                   /{r.slug}
                 </span>
               </span>
-              <span className="flex shrink-0 items-center gap-1 text-[13px] font-semibold text-accent-700 dark:text-accent-300">
-                <MousePointerClick className="h-3.5 w-3.5" />
+              <span className="flex shrink-0 items-center gap-1 text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+                <MousePointerClick className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                 {r.clicks.toLocaleString()}
               </span>
             </Link>

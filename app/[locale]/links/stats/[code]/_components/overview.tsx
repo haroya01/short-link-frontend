@@ -198,6 +198,6 @@ function Tile({
 
 function countryLabel(code: string, locale: string, unknown: string) {
   const upper = code?.toUpperCase() ?? "";
-  if (upper.length !== 2 || upper === "UN") return `🌐 ${unknown}`;
+  if (upper.length !== 2 || upper === "UN") return unknown;
   return `${countryFlag(upper)} ${countryName(upper, locale)}`;
 }

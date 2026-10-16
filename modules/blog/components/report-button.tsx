@@ -15,7 +15,9 @@ import { REASON_CODES, reasonLabelKey } from "@/lib/api/abuse-report-reasons";
 
 const HEADER_HEIGHT = 56;
 
-const REPORT_TITLE: Record<AbuseSubjectType, string> = {
+export type InAppReportSubject = Exclude<AbuseSubjectType, "LINK">;
+
+const REPORT_TITLE: Record<InAppReportSubject, string> = {
   POST: "reportTitle",
   NOTE: "reportTitleNote",
   USER: "reportTitleUser",
@@ -24,7 +26,7 @@ const REPORT_TITLE: Record<AbuseSubjectType, string> = {
 };
 
 type Props = {
-  subjectType: AbuseSubjectType;
+  subjectType: InAppReportSubject;
   subjectId: number;
   /** Whose content this is — the owner gets no report control. */
   ownerUsername?: string;

@@ -511,7 +511,6 @@ function HighlightVisibilityToggle({
 }) {
   return (
     <div className="mt-8 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-      <Highlighter className="h-3.5 w-3.5 text-accent-600/70 dark:text-accent-500/70" aria-hidden />
       <span>{show ? shownLabel : hiddenLabel}</span>
       <span aria-hidden>·</span>
       <button

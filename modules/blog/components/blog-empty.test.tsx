@@ -2,7 +2,6 @@ import React, { act } from "react";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { createRoot, type Root } from "react-dom/client";
-import { Bell } from "lucide-react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BlogEmpty } from "./blog-empty";
 
@@ -24,19 +23,20 @@ afterEach(async () => {
 });
 
 describe("BlogEmpty", () => {
-  it("is an icon, one line and one action", async () => {
+  it("is one left-aligned line and one text action, with no symbol", async () => {
     await act(async () =>
-      root.render(<BlogEmpty icon={Bell} title="아직 알림이 없어요" action={<a href="/">피드 둘러보기</a>} />),
+      root.render(<BlogEmpty title="아직 알림이 없어요" action={<a href="/">피드 둘러보기</a>} />),
     );
     const empty = host.querySelector('[data-testid="blog-empty"]')!;
-    expect(empty.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    expect(empty.querySelector("svg")).toBeNull();
+    expect(empty.className).not.toMatch(/text-center|items-center/);
     expect(empty.querySelector("h2")!.textContent).toBe("아직 알림이 없어요");
     expect(empty.querySelectorAll("p")).toHaveLength(0);
     expect(empty.querySelectorAll("a")).toHaveLength(1);
   });
 
   it("adds the second line only when given one", async () => {
-    await act(async () => root.render(<BlogEmpty icon={Bell} title="아직 알림이 없어요" body="소식이 여기 모여요." />));
+    await act(async () => root.render(<BlogEmpty title="아직 알림이 없어요" body="소식이 여기 모여요." />));
     expect(host.querySelector('[data-testid="blog-empty"] p')!.textContent).toBe("소식이 여기 모여요.");
   });
 });
@@ -72,9 +72,18 @@ describe("one empty-state grammar across blog and notes", () => {
 
   it("gives a second line only on first-run surfaces", () => {
     const withBody = files
-      .filter((f) => /<BlogEmpty\b[^>]*?\sbody=/s.test(f.text) || /icon: \w+, title: [^}]*body:/.test(f.text))
+      .filter((f) => /<BlogEmpty\b[^>]*?\sbody=/s.test(f.text) || /\{ title: t\("[^"]+"\), body: t\(/.test(f.text))
       .map((f) => f.path);
     expect(withBody.length).toBeGreaterThan(0);
     expect(withBody.filter((path) => !FIRST_RUN.has(path))).toEqual([]);
+  });
+});
+
+describe("the empty-state action", () => {
+  it("is text, never a filled or outlined button", () => {
+    const files = ROOTS.flatMap((dir) => sources(join(process.cwd(), dir))).map((path) => readFileSync(path, "utf8"));
+    const actions = files.flatMap((text) => [...text.matchAll(/<BlogEmpty\b[\s\S]*?\/>|<BlogEmpty\b[\s\S]*?<\/BlogEmpty>/g)].map((m) => m[0]));
+    expect(actions.length).toBeGreaterThan(10);
+    expect(actions.filter((jsx) => /bg-accent|variant: "(primary|secondary)"|blogCta\(\)/.test(jsx))).toEqual([]);
   });
 });

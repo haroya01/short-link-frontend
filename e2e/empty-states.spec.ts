@@ -1,24 +1,30 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
 
 /**
- * One empty-state grammar in MOCK-ON: an icon, one line, at most one action, and a second line only on
- * first-run surfaces (feed tabs, notifications). `kurl:mock-empty=notifications` empties the
- * notification list.
+ * One empty-state grammar in MOCK-ON: one left-aligned fact line with no symbol, at most one text action,
+ * and a second line only on first-run surfaces (feed tabs, notifications). `kurl:mock-empty=notifications`
+ * empties the notification list.
  */
 
 const empty = (page: Page) => page.getByTestId("blog-empty");
 
 async function grammar(box: Locator, { title, body }: { title: string; body: boolean }) {
-  await expect(box.locator("svg").first()).toBeVisible({ timeout: 30_000 });
-  await expect(box.getByRole("heading", { level: 2 })).toHaveText(title);
+  await expect(box.getByRole("heading", { level: 2 })).toHaveText(title, { timeout: 30_000 });
+  await expect(box.locator(":scope > svg, :scope > [data-empty-action] svg")).toHaveCount(0);
+  await expect(box).toHaveCSS("text-align", "start");
   await expect(box.locator(":scope > p")).toHaveCount(body ? 1 : 0);
-  expect(await box.locator(":scope > [data-empty-action] > *").count()).toBeLessThanOrEqual(1);
+  const actions = box.locator(":scope > [data-empty-action] > *");
+  expect(await actions.count()).toBeLessThanOrEqual(1);
+  for (const action of await actions.all()) {
+    await expect(action).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(action).toHaveCSS("border-top-width", "0px");
+  }
 }
 
 test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  test("notifications: an icon, one line, why it fills up, and somewhere to go", async ({ page }) => {
+  test("notifications: one line, why it fills up, and a text way to go", async ({ page }) => {
     await page.addInitScript(() => window.localStorage.setItem("kurl:mock-empty", "notifications"));
     await page.goto("/ko/blog/notifications");
     const box = empty(page);

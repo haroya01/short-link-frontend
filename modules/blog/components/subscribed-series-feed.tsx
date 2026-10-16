@@ -85,11 +85,10 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
     return (
       <ReadingShell>
         <BlogEmpty
-          icon={Library}
           title={t("seriesTabEmptyTitle")}
           body={t("seriesTabEmpty")}
           action={
-            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+            <Link href="?sort=recent" className={blogCta({ variant: "text" })}>
               {t("followingBrowseLatest")}
             </Link>
           }

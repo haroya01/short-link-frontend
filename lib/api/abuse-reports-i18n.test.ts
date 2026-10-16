@@ -5,7 +5,7 @@ import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import vi from "@/messages/vi.json";
-import { REASON_CODES, actionRequiresExpiry } from "./abuse-report-reasons";
+import { LINK_REASON_CODES, REASON_CODES, actionRequiresExpiry } from "./abuse-report-reasons";
 import type { AbuseAction, AbuseSubjectType } from "./abuse-reports";
 
 /**
@@ -22,6 +22,7 @@ const ENFORCEMENT_ACTIONS = Object.keys({
   DELETE_COMMENT: true,
   SUSPEND_USER: true,
   BAN_USER: true,
+  DISABLE_LINK: true,
   DELETE_NOTE: true,
   DELETE_HIGHLIGHT_REPLY: true,
 } satisfies Record<AbuseAction, true>) as AbuseAction[];
@@ -30,6 +31,7 @@ const SUBJECT_TYPES = Object.keys({
   POST: true,
   USER: true,
   COMMENT: true,
+  LINK: true,
   NOTE: true,
   HIGHLIGHT_REPLY: true,
 } satisfies Record<AbuseSubjectType, true>) as AbuseSubjectType[];
@@ -48,6 +50,7 @@ describe("abuse-report i18n coverage", () => {
   for (const [name, dict] of Object.entries(LOCALES)) {
     describe(name, () => {
       const publicPost = (dict as { publicPost: { reasons: Record<string, string> } }).publicPost;
+      const linkReport = (dict as { linkReport: { reasons: Record<string, string> } }).linkReport;
       const abuse = (dict as {
         abuseReports: {
           reasons: Record<string, string>;
@@ -56,6 +59,8 @@ describe("abuse-report i18n coverage", () => {
           subjectType: Record<string, string>;
           suspendDaysPrompt: string;
           suspendDaysInvalid: string;
+          removedLink: string;
+          destination: string;
         };
       }).abuseReports;
       const errors = (dict as { errors: Record<string, string> }).errors;
@@ -67,6 +72,19 @@ describe("abuse-report i18n coverage", () => {
           expect(abuse.reasons[code]).toBe(publicPost.reasons[code]);
         });
       }
+
+      for (const code of LINK_REASON_CODES) {
+        it(`labels link reason ${code} in the link report form and the queue, identically`, () => {
+          expect(nonEmptyString(linkReport.reasons[code])).toBe(true);
+          expect(linkReport.reasons[code]).toBe(abuse.reasons[code]);
+        });
+      }
+
+      it("names a LINK subject, its switched-off badge and its destination in the queue", () => {
+        expect(nonEmptyString(abuse.subjectType.LINK)).toBe(true);
+        expect(nonEmptyString(abuse.removedLink)).toBe(true);
+        expect(nonEmptyString(abuse.destination)).toBe(true);
+      });
 
       for (const action of ENFORCEMENT_ACTIONS) {
         it(`labels enforcement action ${action}`, () => {

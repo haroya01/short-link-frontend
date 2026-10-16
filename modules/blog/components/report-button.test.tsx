@@ -1,14 +1,13 @@
 import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { AbuseSubjectType } from "@/lib/api/abuse-reports";
 
 vi.mock("next-intl", () => ({ useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}` }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { id: 1, username: "dohyun" } }) }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/lib/api/abuse-reports", () => ({ submitAbuseReport: vi.fn() }));
 
-import { ReportButton } from "./report-button";
+import { ReportButton, type InAppReportSubject } from "./report-button";
 
 let root: Root;
 let host: HTMLDivElement;
@@ -29,7 +28,7 @@ afterEach(async () => {
 });
 
 describe("report dialog title", () => {
-  it.each<[AbuseSubjectType, string]>([
+  it.each<[InAppReportSubject, string]>([
     ["POST", "publicPost.reportTitle"],
     ["NOTE", "publicPost.reportTitleNote"],
     ["USER", "publicPost.reportTitleUser"],

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, QrCode } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignPostEndAction } from "@/types";
+import { RequiredMark } from "@/components/ui/required-mark";
 
 type StartMode = "now" | "schedule";
 
@@ -59,7 +60,7 @@ export default function NewCampaignPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="campaigns" icon={QrCode} />
+      <SignInEmptyState page reason="campaigns" />
     );
   }
 
@@ -280,7 +281,7 @@ function Field({
   const text = (
     <>
       {label}
-      {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
+      {required && <RequiredMark />}
     </>
   );
   const labelClass = "block text-[13px] font-medium text-slate-900 dark:text-slate-100";

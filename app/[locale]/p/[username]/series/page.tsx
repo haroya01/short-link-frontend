@@ -3,7 +3,7 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { ArrowRight, Hash, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
@@ -130,9 +130,9 @@ export default async function PublicSeriesIndexPage({
         )}
 
         {series.length === 0 ? (
-          <BlogEmpty icon={Layers} title={t("seriesEmpty")} />
+          <BlogEmpty title={t("seriesEmpty")} />
         ) : visibleSeries.length === 0 ? (
-          <BlogEmpty icon={Hash} title={t("seriesTagFilterEmpty", { tag: activeTag ?? "" })} />
+          <BlogEmpty title={t("seriesTagFilterEmpty", { tag: activeTag ?? "" })} />
         ) : (
           // Numbered editorial index — a quiet table of contents of the author's series. The mono index
           // and hairline dividers read as a weblog's spine rather than a boxed card grid; the arrow

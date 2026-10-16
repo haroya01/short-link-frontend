@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bot, Download, FileText } from "lucide-react";
+import { Bot } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   downloadLinkEventsCsv,
@@ -80,11 +80,9 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
 
       <div className="flex flex-wrap gap-2">
         <Button type="button" size="sm" variant="ghost" disabled={busy !== null} onClick={() => exportCsv("events")}>
-          <Download className="mr-1.5 h-3.5 w-3.5" />
           {busy === "events" ? t("exporting") : t("exportEvents")}
         </Button>
         <Button type="button" size="sm" variant="ghost" disabled={busy !== null} onClick={() => exportCsv("stats")}>
-          <FileText className="mr-1.5 h-3.5 w-3.5" />
           {busy === "stats" ? t("exporting") : t("exportStats")}
         </Button>
         <Button type="button" size="sm" variant="ghost" className="ml-auto" onClick={toggleLog}>

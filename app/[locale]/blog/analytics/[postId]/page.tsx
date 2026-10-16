@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Heart, Link2, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
@@ -118,18 +118,16 @@ export default function PostAnalyticsPage() {
           </div>
 
           <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })} value={data.windowViews} />
-            <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
-            <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
-            <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollowsGained")} value={data.lifetimeFollows} />
+            <StatCard label={days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })} value={data.windowViews} />
+            <StatCard label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
+            <StatCard label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
+            <StatCard label={t("analyticsFollowsGained")} value={data.lifetimeFollows} />
           </div>
 
           <div className="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800">
             <StatCard
-              icon={<MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
               label={t("analyticsLinkClicks")}
               value={data.lifetimeLinkClicks}
-              tone="accent"
               sub={days === 0 ? undefined : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
             />
           </div>
@@ -150,7 +148,7 @@ export default function PostAnalyticsPage() {
                         kurl.me/{lc.shortCode}
                       </span>
                     </span>
-                    <span className="shrink-0 text-[14px] font-semibold tabular-nums text-accent-700 dark:text-accent-300">
+                    <span className="shrink-0 text-[14px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                       {lc.clicks.toLocaleString()}
                     </span>
                   </li>

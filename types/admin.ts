@@ -1,3 +1,4 @@
+import type { LinkDisableReason } from "./links";
 import type { LinkStats } from "./stats";
 
 export type AdminActiveUsers = {
@@ -206,6 +207,15 @@ export type AdminLinkRow = {
   createdAt: string;
   expiresAt: string | null;
   status: AdminLinkStatus;
+  /** Set while the link is switched off; absent from backends older than link moderation. */
+  disabledReason?: LinkDisableReason | null;
+  disabledAt?: string | null;
+};
+
+export type AdminLinkModerationResult = {
+  shortCode: string;
+  disabled: boolean;
+  changed: boolean;
 };
 
 export type AdminUsersPage = { items: AdminUserRow[]; total: number };

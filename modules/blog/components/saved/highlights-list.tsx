@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Highlighter, Loader2, Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -70,10 +70,9 @@ export function HighlightsList({ username, locale }: { username: string; locale:
   if (items.length === 0) {
     return (
       <BlogEmpty
-        icon={Highlighter}
         title={t("emptyHighlights")}
         action={
-          <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
+          <a href={blogHref("/")} className={blogCta({ variant: "text" })}>
             {t("browseFeed")}
           </a>
         }

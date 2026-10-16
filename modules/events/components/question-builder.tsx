@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { QuestionSpec } from "@/modules/events/api/events";
 
@@ -88,7 +88,6 @@ export function QuestionBuilder({
           onClick={add}
           className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-300 text-[13px] font-medium text-slate-500 transition-colors hover:border-slate-500 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400"
         >
-          <Plus className="h-4 w-4" />
           {t("addQuestion")}
         </button>
       ) : null}

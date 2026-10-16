@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, Link2, Loader2, Lock, LockOpen } from "lucide-react";
+import { ChevronDown, Loader2, Lock, LockOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,10 +163,6 @@ export function ShortenForm({
               : "border-slate-300 hover:border-slate-400 focus-within:border-accent-600 focus-within:ring-4 focus-within:ring-accent-600/10 dark:border-slate-700 dark:hover:border-slate-600 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
-          <Link2
-            aria-hidden
-            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-400"
-          />
           <Input
             ref={heroInputRef}
             type="url"
@@ -195,10 +191,7 @@ export function ShortenForm({
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <>
-                <span>{t("heroSubmit")}</span>
-                <ArrowRight aria-hidden className="h-4 w-4" />
-              </>
+              <span>{t("heroSubmit")}</span>
             )}
           </button>
         </div>

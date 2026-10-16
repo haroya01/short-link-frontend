@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Download, MoreHorizontal, Settings2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
 import { DestinationHealthBanner } from "@/components/links/stats/destination-health-banner";
+import { LinkModerationBanner } from "@/components/links/stats/link-moderation-banner";
 import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
 import { QrButton } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
@@ -107,7 +108,6 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
                   onSettings();
                 }}
               >
-                <Settings2 className="h-4 w-4" />
                 {t("linkSettings")}
               </Button>
             )}
@@ -118,7 +118,6 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
               />
             )}
             <Button variant="outline" size="lg" className="w-full" onClick={exportCsv}>
-              <Download className="h-4 w-4" />
               {t("exportCsv")}
             </Button>
           </div>
@@ -128,17 +127,16 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           <QrButton value={display} filename={`${data.shortCode}.png`} />
           {onSettings && (
             <Button variant={settingsActive ? "subtle" : "ghost"} size="sm" className="min-h-9" onClick={onSettings} aria-pressed={settingsActive}>
-              <Settings2 className="h-4 w-4" />
               {t("linkSettings")}
             </Button>
           )}
           {!demo && <PublicStatsToggle shortCode={data.shortCode} className="px-2" />}
           <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">CSV</span>
+            CSV
           </Button>
         </div>
       </div>
+      {!demo && detail && <LinkModerationBanner detail={detail} />}
       {!demo && detail && <DestinationHealthBanner detail={detail} shortUrl={display} />}
     </div>
   );

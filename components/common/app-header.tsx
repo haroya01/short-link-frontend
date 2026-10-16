@@ -101,21 +101,21 @@ export function AppHeader({
   const writeButtonClass =
     "focus-ring hidden h-8 items-center gap-1.5 rounded-surface px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex";
   const writeCircleClass =
-    "focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden";
+    "touch-target focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800 sm:hidden";
   const mobileWriteCircle = (authed: boolean) =>
     authed ? (
       Compose ? (
         <Compose variant="mobile" label={t("write")} className={writeCircleClass}>
-          <PenSquare className="h-4 w-4" />
+          <PenSquare className="h-5 w-5" strokeWidth={1.75} />
         </Compose>
       ) : (
         <ChromeNavLink href={blogHref("/write/new")} aria-label={t("write")} className={writeCircleClass}>
-          <PenSquare className="h-4 w-4" />
+          <PenSquare className="h-5 w-5" strokeWidth={1.75} />
         </ChromeNavLink>
       )
     ) : (
       <button type="button" onClick={() => askToSignIn("write")} aria-label={t("write")} className={writeCircleClass}>
-        <PenSquare className="h-4 w-4" />
+        <PenSquare className="h-5 w-5" strokeWidth={1.75} />
       </button>
     );
 

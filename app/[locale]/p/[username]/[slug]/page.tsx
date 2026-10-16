@@ -28,6 +28,7 @@ import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { PublishCelebration } from "@/modules/blog/components/publish-celebration";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/lib/author-href";
+import { splitHyphenWords } from "@/modules/blog/lib/hyphen-words";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { AuthorName } from "@/modules/blog/components/author-name";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
@@ -307,14 +308,22 @@ export default async function PublicPostPage({
             본문 h2(24px)보다는 항상 확실히 크게(30 > 24) 유지해 위계는 그대로. leading 은 큰 디스플레이의
             tight 감(1.15/1.1)을 이어간다. */}
         <h1 className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg">
-          {post.title}
+          {splitHyphenWords(post.title).map((part, i) =>
+            part.keep ? (
+              <span key={i} className="whitespace-nowrap">
+                {part.text}
+              </span>
+            ) : (
+              part.text
+            ),
+          )}
         </h1>
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 sm:mt-6">
+        <div className="mt-5 flex items-center justify-between gap-3 sm:mt-6">
           {/* <xl: full author identity + follow inline. xl: those move to the left rail, so the header
               keeps only date·reading time + share — no duplicated author/follow at the top. */}
           <a
             href={authorHref(author.username, locale)}
-            className="group flex min-w-0 items-center gap-3 rounded focus-ring xl:hidden"
+            className="group flex min-w-0 flex-1 items-center gap-3 rounded focus-ring xl:hidden"
             data-bhv="profile"
             data-bhv-id={author.username}
           >
