@@ -271,3 +271,52 @@ describe("leaving KakaoTalk or LINE for the default browser", () => {
     expect(handoff()).toBeNull();
   });
 });
+
+describe("what the byline learns from the gate", () => {
+  async function renderWithProbe(reason: LockReason) {
+    vi.resetModules();
+    const { PostGate } = await import("./post-gate");
+    const { useUnlockedPost } = await import("@/modules/blog/lib/unlocked-post-store");
+    function Probe() {
+      const opened = useUnlockedPost(POST_ID);
+      return createElement("output", { "data-testid": "probe" }, opened ? opened.post.title : "none");
+    }
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () => {
+      root.render(
+        createElement("div", null, [
+          createElement(Probe, { key: "probe" }),
+          createElement(PostGate, {
+            key: "gate",
+            username: "hana",
+            slug: "locked-diary",
+            postId: POST_ID,
+            reason,
+            postKey: null,
+            locale: "ko",
+            postUrl: "https://blog.kurl.me/@hana/locked-diary",
+          }),
+        ]),
+      );
+    });
+  }
+  const probe = () => host.querySelector('[data-testid="probe"]')?.textContent;
+
+  it("hands over the opened post, and takes it back when the post locks again", async () => {
+    grantFor(3600);
+    mocks.readPostDetail.mockResolvedValue(detail());
+    await renderWithProbe("PASSWORD");
+    expect(probe()).toBe("잠가 둔 일기");
+    await act(async () => {
+      window.dispatchEvent(new CustomEvent("kurl:post-locked"));
+    });
+    expect(probe()).toBe("none");
+  });
+
+  it("hands over nothing while the post stays locked", async () => {
+    await renderWithProbe("FOLLOWERS");
+    expect(probe()).toBe("none");
+  });
+});
