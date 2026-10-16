@@ -81,12 +81,7 @@ export default async function PublicCollectionsIndexPage({
             ))}
           </ol>
         )}
-        <KindredCurators
-          curators={kindred}
-          locale={locale}
-          title={tc("kindredCuratorsTitle")}
-          sharedLabel={(count) => tc("sharedItems", { count })}
-        />
+        <KindredCurators username={username} initial={kindred ?? []} locale={locale} />
       </AuthorContentTransition>
     </ReadingShell>
   );

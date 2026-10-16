@@ -10,7 +10,7 @@
 import { ApiError, mockFailure, request } from "@/lib/api/client";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { collectionMocks } from "@/modules/blog/api/_mock-gates";
-import { fetchPublic, hasViewer, type FetchResult } from "@/modules/blog/api/public-posts";
+import { fetchPublic, hasViewer, viewerHeaders, type FetchResult } from "@/modules/blog/api/public-posts";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -319,14 +319,18 @@ export async function listRelatedBlocks(
 /** "취향이 겹치는 큐레이터" — curators who wove some of the same blocks into their own public
  *  collections (most overlap first). Discovery by shared taste, not follows. Readable signed-out; an
  *  unknown handle yields []. */
-export async function listKindredCurators(username: string): Promise<KindredCurator[]> {
+export async function listKindredCurators(username: string): Promise<KindredCurator[] | null> {
   if (collectionMocks) return Promise.resolve(collectionMocks.mockKindredCurators(username));
-  const res = await fetchWithTimeout(
-    `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/kindred`,
-    { cache: "no-store" },
-  );
-  if (!res.ok) return [];
-  return (await res.json()) as KindredCurator[];
+  try {
+    const res = await fetchWithTimeout(`${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/kindred`, {
+      cache: "no-store",
+      headers: await viewerHeaders(),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as KindredCurator[];
+  } catch {
+    return null;
+  }
 }
 
 /** Authenticated — create a collection. Returns the new summary (count 0). The legacy `kind` rides
