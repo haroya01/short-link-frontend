@@ -103,3 +103,22 @@ test("a query changed mid-question drops the old question and leaves no stale er
   await expect(sheet.getByText("mastodon.social 서버에서 찾지 못했어요")).toHaveCount(0);
   expect(asked).toEqual(["@nobody@mastodon.social", "@Gargron@mastodon.social"]);
 });
+
+test.describe("desktop header search", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("shows the account a handle names, with one hairline between it and the link to every result", async ({ page }) => {
+    const asked = await serveResolve(page, (_q, route) => route.fulfill({ json: { account: GARGRON, note: null } }));
+    await page.goto("/ko/blog");
+    await page.locator("header").getByRole("searchbox", { name: "검색" }).fill("acct:@Gargron@mastodon.social", { timeout: 30_000 });
+    const search = page.getByRole("search");
+    const group = search.getByTestId("live-remote-people");
+    await expect(group.getByRole("link", { name: /@Gargron@mastodon\.social/ })).toHaveAttribute("href", /\/remote\/9900$/);
+    expect(asked).toEqual(["@Gargron@mastodon.social"]);
+
+    const footer = search.getByRole("button", { name: "‘acct:@Gargron@mastodon.social’ 검색 결과" }).locator("..");
+    const groupBox = (await group.boundingBox())!;
+    const footerBox = (await footer.boundingBox())!;
+    expect(footerBox.y).toBeCloseTo(groupBox.y + groupBox.height - 1, 0);
+  });
+});

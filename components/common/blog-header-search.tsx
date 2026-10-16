@@ -237,7 +237,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           ) : people.length === 0 && remote.length === 0 && !lookup ? (
             <p className="px-3 py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
           ) : null}
-          <div className="border-t border-slate-100 px-3 py-2.5 dark:border-slate-800">
+          <div className="-mt-px border-t border-slate-100 px-3 py-2.5 dark:border-slate-800">
             <button type="submit" className={cn(blogCta({ variant: "text" }), "touch-target text-[13px]")}>
               {t("searchResultsFor", { q: value.trim() })}
             </button>
