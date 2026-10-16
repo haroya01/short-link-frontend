@@ -10,14 +10,17 @@ export const buttonVariants = cva(
       variant: {
         // 다크에서도 같은 깊은 초록 — 흰 글자가 accent-700 위 5.5:1 이라 뒤집을 필요가 없다.
         // (accent-400/500 위 흰 글자는 2.5:1 로 미달이라 밝은 초록 바탕은 쓰지 않는다.)
-        default: "bg-accent-700 text-white hover:bg-accent-800",
-        accent: "bg-accent-700 text-white hover:bg-accent-800",
+        default:
+          "bg-accent-700 text-white hover:bg-accent-800 disabled:bg-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400",
+        accent:
+          "bg-accent-700 text-white hover:bg-accent-800 disabled:bg-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400",
         outline:
           "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800",
         ghost: "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",
         subtle:
           "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
-        destructive: "bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500",
+        destructive:
+          "bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 disabled:bg-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-400",
         link: "text-slate-900 hover:underline underline-offset-4 dark:text-slate-100",
       },
       size: {

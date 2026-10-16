@@ -103,9 +103,9 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         lastSavedAt={ed.lastSavedAt}
         busy={ed.busy}
         preview={
-          previewable ? <PreviewOpenButton postId={post.id} username={me?.username} onSave={ed.save} iconOnly /> : null
+          previewable ? <PreviewOpenButton postId={post.id} username={me?.username} onSave={ed.flush} iconOnly /> : null
         }
-        onSave={ed.save}
+        onSave={ed.flush}
         onRetrySave={() => void ed.retrySave()}
         onBack={ed.leave}
         onOpenPublish={() => setPublishOpen(true)}
@@ -175,6 +175,8 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           // Pasted-from-Notion images carry an external <img src> (expiring/CORS-locked) — re-host it.
           onImportImageUrl={async (url) => importPostImage((await ed.ensurePost()).id, url)}
           onUploadError={(msg) => toast(msg, "error")}
+          onUploadingChange={ed.setUploading}
+          uploadsSettledRef={ed.uploadsSettled}
         />
       </div>
 
@@ -219,8 +221,8 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         previewAction={
           previewable ? (
             <>
-              <PreviewOpenButton postId={post.id} username={me?.username} onSave={ed.save} />
-              <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
+              <PreviewOpenButton postId={post.id} username={me?.username} onSave={ed.flush} />
+              <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.flush} />
             </>
           ) : null
         }
@@ -228,7 +230,7 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         slugError={ed.slugError}
         saving={ed.saving}
         busy={ed.busy}
-        onSave={ed.save}
+        onSave={ed.flush}
         onChangeStatus={ed.changeStatus}
         onCancelSchedule={ed.cancelSchedule}
         onSchedule={async (iso) => {

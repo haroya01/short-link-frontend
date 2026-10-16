@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import {
@@ -136,7 +135,6 @@ export function QrDownloadDialog({
           </label>
         </OptionGroup>
         <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
-          <Download className="mr-1 inline-block h-3 w-3" aria-hidden />
           {t("notSaved")}
         </div>
       </div>

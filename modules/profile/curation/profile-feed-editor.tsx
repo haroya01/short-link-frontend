@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowUp,
   CalendarClock,
   CalendarDays,
   ChevronDown,
@@ -17,7 +16,6 @@ import {
   Minus,
   Pencil,
   Play,
-  Plus,
   ShoppingBag,
   Star,
   Type,
@@ -236,7 +234,7 @@ export function ProfileFeedEditor({
                       type="button"
                       onClick={() => onToggle(link.shortCode, true)}
                       disabled={pendingShortCode === link.shortCode}
-                      className="text-[11px] text-accent-700 hover:text-accent-800 dark:text-accent-400"
+                      className="text-[11px] font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
                     >
                       {t("add")}
                     </button>
@@ -316,7 +314,6 @@ function AddMenu({
         aria-expanded={open}
         className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-800 dark:text-slate-300 dark:hover:border-slate-700"
       >
-        <Plus className="h-3.5 w-3.5" />
         {t("addBlockMenu")}
       </button>
       {open && (
@@ -413,11 +410,6 @@ function MenuItem({
   );
 }
 
-/**
- * Empty-feed state with an arrow pointing toward the existing "Add link" form above. When the
- * user has unfeatured links, surfaces the count + a hint that the disclosure below is the way
- * to add them — clearer than the previous one-line dashed box.
- */
 function FeedEmptyState({
   hasOtherLinks,
   otherCount,
@@ -428,22 +420,16 @@ function FeedEmptyState({
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center dark:border-slate-700 dark:bg-slate-800/40">
-      <ArrowUp className="mx-auto h-4 w-4 text-slate-400" />
-      <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-300">{t("featuredEmptyTitle")}</p>
-      <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-        {hasOtherLinks
-          ? t("featuredEmptyHasOthers", { count: otherCount })
-          : t("featuredEmpty")}
-      </p>
-    </div>
+    <p className="border-t border-slate-200 py-3 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+      {hasOtherLinks ? t("featuredEmptyHasOthers", { count: otherCount }) : t("featuredEmpty")}
+    </p>
   );
 }
 
 /**
  * Section-aware wrapper around the flat item list. Computes which TEXT header anchors each row,
  * hides rows inside a collapsed section (everything except the header itself), and renders a
- * thin accent-color left rail on indented rows so the visual grouping is obvious without an
+ * thin left rail on indented rows so the visual grouping is obvious without an
  * extra wrapper element that would have broken the existing drag-and-drop flat-index contract.
  */
 function FeedItemList({
@@ -630,11 +616,11 @@ function FeedItemRow({
   const draggingState = isDragging
     ? "scale-[0.98] opacity-30 ring-2 ring-accent-400 rounded-md "
     : "";
-  // Indented rows (items that follow a TEXT header) get a thin accent-color rail on the left and
+  // Indented rows (items that follow a TEXT header) get a thin rail on the left and
   // extra padding so the user can see "this belongs to the section above" without breaking the
   // flat-index drag layout — the rail is a left border, not a wrapping element, so drop indices
   // stay 1:1 with the flat items array.
-  const indentRail = indented ? "border-l-2 border-accent-200 pl-4 " : "";
+  const indentRail = indented ? "border-l-2 border-slate-200 pl-4 dark:border-slate-700 " : "";
   // `relative` is permanent (not gated on isOver) so toggling the indicator doesn't reflow the row.
   // Transitions only animate properties that don't affect layout — opacity / transform / box-shadow —
   // so the dragged row fades smoothly without dragging siblings into a transition loop.

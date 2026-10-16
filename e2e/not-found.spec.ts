@@ -6,6 +6,12 @@ test.describe("404", () => {
     await expect(page.getByRole("heading", { name: "이 페이지를 찾을 수 없어요" })).toBeVisible();
   });
 
+  test("the 404 document loads Pretendard like every other page", async ({ page }) => {
+    await page.goto("/ko/this-path-does-not-exist-xyzzy");
+    await expect(page.locator('link[rel="stylesheet"][href*="/pretendard/pretendardvariable-dynamic-subset"]')).toHaveCount(1);
+    await expect(page.locator('link[rel="stylesheet"][href*="/pretendard/pretendardvariable-jp-dynamic-subset"]')).toHaveCount(1);
+  });
+
   // The 404 document is static and carries every locale's copy; one must be on screen for each.
   for (const [locale, heading] of [
     ["en", "Page not found"],

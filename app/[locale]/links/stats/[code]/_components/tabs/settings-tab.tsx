@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   LinkBlockedCountriesSection,
@@ -164,18 +164,17 @@ function DemoLinkExportPreview() {
 function DemoSettingsBanner() {
   const t = useTranslations("demo.settingsNotice");
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-3 text-[12px]">
-      <div className="flex items-center gap-2.5 text-accent-800 dark:text-accent-300">
-        <Info className="h-3.5 w-3.5 shrink-0" />
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-[12px] dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
         <div>
           <p className="font-medium">{t("title")}</p>
-          <p className="mt-0.5 text-accent-700/90">{t("desc")}</p>
+          <p className="mt-0.5 text-slate-600 dark:text-slate-300">{t("desc")}</p>
         </div>
       </div>
       <SignInLink
         reason="settings"
         next="/dashboard"
-        className="inline-flex items-center gap-1 rounded-md border border-accent-300 bg-white dark:bg-slate-900 px-3 py-1.5 font-medium text-accent-800 dark:text-accent-300 hover:bg-accent-50"
+        className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
       >
         {t("cta")}
       </SignInLink>

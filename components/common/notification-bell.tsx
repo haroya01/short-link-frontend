@@ -9,6 +9,7 @@ import { usePresence } from "@/hooks/use-presence";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
+import { EditorLeaveGuard } from "@/modules/blog/components/editor-leave-guard";
 import {
   useMarkAllRead,
   useNotifications,
@@ -61,14 +62,16 @@ export function NotificationBell() {
       {/* The list query lives inside the dropdown so it only fires once opened — never on mobile,
           where the bell is CSS-hidden and so can never mount this. */}
       {mounted && (
-        <NotificationDropdown
-          unread={unread}
-          closing={closing}
-          onClose={(refocus = false) => {
-            setOpen(false);
-            if (refocus) trigger.current?.focus();
-          }}
-        />
+        <EditorLeaveGuard>
+          <NotificationDropdown
+            unread={unread}
+            closing={closing}
+            onClose={(refocus = false) => {
+              setOpen(false);
+              if (refocus) trigger.current?.focus();
+            }}
+          />
+        </EditorLeaveGuard>
       )}
     </div>
   );

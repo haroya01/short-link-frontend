@@ -9,6 +9,7 @@ import { updateCampaignBatch } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import type { CampaignBatch } from "@/types";
+import { RequiredMark } from "@/components/ui/required-mark";
 
 export function BatchEditDialog({
   open,
@@ -72,7 +73,7 @@ export function BatchEditDialog({
     >
       <div className="space-y-3">
         <Field label={t("name")} required>
-          <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
+          <Input aria-required value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
         </Field>
         <div className="grid grid-cols-2 gap-2">
           <Field label={t("distributor")}>
@@ -88,6 +89,7 @@ export function BatchEditDialog({
         </div>
         <Field label={t("quantity")} required>
           <Input
+            aria-required
             type="number"
             min="1"
             inputMode="numeric"
@@ -121,7 +123,7 @@ function Field({
     <div className="space-y-1.5">
       <label className="block text-[12px] font-medium text-slate-700 dark:text-slate-300">
         {label}
-        {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
+        {required && <RequiredMark />}
       </label>
       {children}
     </div>

@@ -121,11 +121,10 @@ export function ForYouFeed({ locale }: { locale: string }) {
     return (
       <div className="mt-4">
         <BlogEmpty
-          icon={Binoculars}
           title={t("forYouEmptyTitle")}
           body={t("forYouEmpty")}
           action={
-            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+            <Link href="?sort=recent" className={blogCta({ variant: "text" })}>
               {t("followingBrowseLatest")}
             </Link>
           }

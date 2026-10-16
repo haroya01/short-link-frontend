@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { ArrowRight, Loader2, SlidersHorizontal } from "lucide-react";
+import { Loader2, SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -163,7 +163,7 @@ export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string;
             disabled={busy || empty}
             className={buttonVariants({ variant: "accent", size: "lg" })}
           >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("submit")}
           </button>
         </div>

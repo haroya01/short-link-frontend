@@ -292,11 +292,10 @@ export function SeriesReadingShell({
               >
                 <BlogLink
                   href={postHref(username, p.slug, locale)}
-                  className="-mx-3 flex items-start gap-3 rounded-surface px-3 py-4 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
+                  className="-mx-3 flex items-start gap-3 rounded-surface py-4 pl-3 pr-12 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
                 >
                   <SeriesIndex n={n} className="mt-1 shrink-0 text-[14px]" />
-                  {/* No-image rows reserve a right gutter so the title never runs under the save toggle. */}
-                  <span className={`min-w-0 flex-1 ${hasImage ? "" : "pr-9"}`}>
+                  <span className="min-w-0 flex-1">
                     <span
                       lang={contentLang(p.title, p.languageTag)}
                       className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400"
@@ -327,7 +326,7 @@ export function SeriesReadingShell({
                 </BlogLink>
                 {/* Save toggle — sibling of the post link (never nested), pinned to the row's top-right. */}
                 <div className="absolute right-3 top-4 z-10">
-                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} corner overImage={hasImage} />
+                  <FeedCardBookmark postId={p.id} username={username} slug={p.slug} corner />
                 </div>
               </li>
             );

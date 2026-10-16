@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Hash } from "lucide-react";
 import { routing } from "@/i18n/routing";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -109,7 +108,6 @@ export default async function TagFeedPage({
           instead of a full-width masthead band that floated left of the centered content. */}
       <div className="mx-auto max-w-2xl">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{decoded}</h1>
-        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{notesView ? t("tagFeedSubtitleNotes") : t("tagFeedSubtitle")}</p>
         <TagFollowControls tag={decoded} />
       </div>
 
@@ -133,11 +131,9 @@ export default async function TagFeedPage({
         </div>
       ) : items.length === 0 ? (
           <BlogEmpty
-            icon={Hash}
             title={t("emptyTagTitle")}
             action={
-              <BlogLink href={blogPath("/tags")} className={blogCta({ variant: "secondary" })}>
-                <Hash className="h-4 w-4 text-accent-600" />
+              <BlogLink href={blogPath("/tags")} className={blogCta({ variant: "text" })}>
                 {t("browseTopics")}
               </BlogLink>
             }

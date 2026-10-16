@@ -1,6 +1,5 @@
 "use client";
 
-import { Pencil } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
@@ -28,7 +27,6 @@ export function ProfileOwnerFab({ username }: { username: string }) {
       href={linksHref(`/${locale}/settings/profile`)}
       className="focus-ring fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[60] inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-50"
     >
-      <Pencil aria-hidden className="h-4 w-4 text-slate-500" />
       {t("editFab")}
     </a>
   );

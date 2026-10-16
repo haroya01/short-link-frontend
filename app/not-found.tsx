@@ -67,6 +67,11 @@ const themeInitScript =
   "if(t==='dark'){document.documentElement.classList.add('dark');}" +
   "}catch(e){}})()";
 
+const PRETENDARD = "/pretendard/pretendardvariable-dynamic-subset.min.css";
+const PRETENDARD_JP = "/pretendard/pretendardvariable-jp-dynamic-subset.min.css";
+const pretendardSwapScript =
+  "(function(){var ls=document.querySelectorAll('link[data-pretendard]');for(var i=0;i<ls.length;i++){(function(l){var a=function(){l.media='all'};if(l.sheet)a();else l.addEventListener('load',a,{once:true});})(ls[i]);}})();";
+
 export default function RootNotFound() {
   return (
     <html lang={FALLBACK}>
@@ -74,10 +79,17 @@ export default function RootNotFound() {
         <title>{TITLES[FALLBACK]}</title>
         {/* eslint-disable-next-line react/no-danger */}
         <style dangerouslySetInnerHTML={{ __html: localeStyle }} />
+        <link rel="preload" as="style" href={PRETENDARD} />
+        <link rel="stylesheet" media="print" data-pretendard="" href={PRETENDARD} />
+        <link rel="stylesheet" media="print" data-pretendard="" href={PRETENDARD_JP} />
         <script
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: localeInitScript + ";" + themeInitScript }}
+          dangerouslySetInnerHTML={{ __html: localeInitScript + ";" + themeInitScript + ";" + pretendardSwapScript }}
         />
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link rel="stylesheet" href={PRETENDARD} />
+        </noscript>
       </head>
       <body className="bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
         <NotFoundLocaleSync locales={LOCALES} fallback={FALLBACK} titles={TITLES} />

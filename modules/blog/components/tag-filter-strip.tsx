@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { blogPath } from "@/lib/host";
 import type { TagCount } from "@/modules/blog/api/public-posts";
-import { TagChip } from "@/modules/blog/components/tag-chip";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 /**
@@ -37,22 +37,28 @@ export async function TagFilterStrip({
         aria-label={tt("railPopularTags")}
         className="overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden"
       >
-        <ul className="flex gap-2">
-        {list.map((tag) => {
-          const active = tag.tag === activeTag;
-          return (
-            <li key={tag.tag} className="shrink-0">
-              <TagChip
-                href={blogPath(`/tags/${encodeURIComponent(tag.tag)}${qs}`)}
-                label={tag.tag}
-                count={tag.count}
-                active={active}
-                ariaCurrent={active ? "page" : undefined}
-                soft
-              />
-            </li>
-          );
-        })}
+        <ul className="flex gap-x-4 whitespace-nowrap text-[14px]">
+          {list.map((tag) => {
+            const active = tag.tag === activeTag;
+            return (
+              <li key={tag.tag} className="shrink-0">
+                <BlogLink
+                  href={blogPath(`/tags/${encodeURIComponent(tag.tag)}${qs}`)}
+                  aria-current={active ? "page" : undefined}
+                  className={
+                    active
+                      ? "focus-ring rounded font-semibold text-slate-900 underline decoration-slate-900 decoration-2 underline-offset-[6px] dark:text-slate-100 dark:decoration-slate-100"
+                      : "focus-ring rounded text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                  }
+                >
+                  #{tag.tag}
+                  {tag.count > 0 && (
+                    <span className="ml-1 tabular-nums text-slate-500 dark:text-slate-400">{tag.count}</span>
+                  )}
+                </BlogLink>
+              </li>
+            );
+          })}
         </ul>
       </nav>
       <div

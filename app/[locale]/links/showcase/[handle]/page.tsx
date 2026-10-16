@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
 import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
@@ -73,7 +72,6 @@ export default async function ShowcaseHandlePage({
             className="focus-ring inline-flex min-h-8 shrink-0 items-center gap-1 rounded font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
           >
             {t("sampleCta")}
-            <ArrowRight className="h-3 w-3" aria-hidden />
           </SignInLink>
         </div>
       </div>

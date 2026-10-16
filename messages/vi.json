@@ -62,7 +62,6 @@
     "mastheadTagline": "Bài viết của những người trên kurl",
     "mastheadSub": "Bài mới nhất ở trên cùng.",
     "tagFeedSubtitle": "Bài viết được xuất bản trong chủ đề này.",
-    "tagFeedSubtitleNotes": "Ghi chú về chủ đề này.",
     "tagViewPosts": "Bài viết",
     "tagViewNotes": "Ghi chú",
     "tagFollow": "Theo dõi",
@@ -94,6 +93,8 @@
     "browseTopics": "Duyệt chủ đề",
     "railPopularTags": "Thẻ phổ biến",
     "railSuggestedAuthors": "Tác giả gợi ý",
+    "searchIdleTrending": "Đang được đọc nhiều",
+    "searchIdleFollow": "Gợi ý theo dõi",
     "railFollowingAuthors": "Tác giả bạn theo dõi",
     "railFollowingAll": "Xem tất cả",
     "railWriters": "Người viết",
@@ -254,7 +255,6 @@
     "linksFullDashboard": "Bảng điều khiển liên kết đầy đủ",
     "libraryCollections": "Bộ sưu tập",
     "savedTitle": "Thư viện",
-    "savedSubtitle": "Đọc lại bài đã đánh dấu và những đoạn muốn ghi nhớ.",
     "curationMockNote": "Đây là bản xem trước. Hiện chỉ được lưu trên trình duyệt này.",
     "curationPinned": "Bài ghim",
     "curationPinnedHint": "Hiển thị theo thứ tự này ở đầu trang tác giả của bạn.",
@@ -269,7 +269,6 @@
     "curationReadingListEmpty": "Chưa có bài viết nào được đánh dấu",
     "curationRemoveBookmark": "Xóa khỏi danh sách",
     "settingsTitle": "Cài đặt",
-    "settingsSubtitle": "Cài đặt tài khoản và hiển thị.",
     "settingsAccount": "Tài khoản",
     "settingsEditProfile": "Chỉnh sửa hồ sơ",
     "settingsEditCard": "Chỉnh sửa danh thiếp",
@@ -392,7 +391,7 @@
     "unpublishConfirmDescription": "Bài viết vẫn còn, nhưng địa chỉ công khai sẽ đóng lại và không ai xem được. Bạn có thể xuất bản lại bất cứ lúc nào.",
     "republish": "Xuất bản lại",
     "delete": "Xóa",
-    "deleteConfirm": "Xóa bài này? Nội dung và mọi phiên bản cũng bị xóa.",
+    "deleteConfirm": "Xóa bài này? Nội dung và lịch sử phiên bản cũng bị xóa.",
     "uploading": "Đang tải lên…",
     "imageError": "Tải ảnh lên thất bại.",
     "uploadNotImage": "Chỉ có thể tải lên tệp ảnh.",
@@ -426,7 +425,7 @@
     "slugHint": "Chỉnh được đến khi xuất bản · chữ thường, chữ số, dấu gạch ngang",
     "titleRequired": "Thêm tiêu đề trước khi xuất bản",
     "scheduledTitleRequired": "Bài đã hẹn giờ không thể để trống tiêu đề. Không có tiêu đề, bài sẽ không được xuất bản đúng giờ đã hẹn.",
-    "revisions": "Phiên bản",
+    "revisions": "Lịch sử phiên bản",
     "revisionsEmpty": "Chưa có phiên bản nào được lưu. Xuất bản sẽ lưu lại chúng.",
     "revisionVersion": "Phiên bản {n}",
     "revisionRestore": "Khôi phục",
@@ -541,17 +540,16 @@
     "exportAllFailed": "Xuất không thành công. Vui lòng thử lại sau.",
     "savedAt": "Đã lưu lúc {time}",
     "continueWriting": "Viết tiếp",
-    "noPostsHint": "Bài viết của bạn sẽ tích lại ở đây. Bản nháp luôn riêng tư cho đến khi bạn xuất bản.",
     "seriesCreateConflict": "Đã có series trùng tên. Hãy thử tên khác.",
     "seriesCreateError": "Không thể tạo series. Vui lòng thử lại.",
     "seriesLoadFailed": "Không tải được danh sách series.",
     "revisionsLoadFailed": "Không tải được các phiên bản đã lưu.",
     "saveFailed": "Không lưu được. Vui lòng thử lại sau.",
     "editConflictTitle": "Bài này vừa được sửa trên thiết bị khác",
-    "editConflictBody": "Những chỉnh sửa cuối ở đây chưa được lưu. Nếu tải bản mới nhất, bản của bạn sẽ được giữ trên thiết bị này; nếu giữ bản của bạn, bản bị ghi đè có thể khôi phục từ các phiên bản.",
+    "editConflictBody": "Những chỉnh sửa cuối ở đây chưa được lưu. Nếu tải bản mới nhất, bản của bạn sẽ được giữ trên thiết bị này; nếu giữ bản của bạn, bản bị ghi đè có thể khôi phục từ lịch sử phiên bản.",
     "editConflictLoadLatest": "Tải bản mới nhất",
     "editConflictOverwrite": "Giữ bản của tôi",
-    "editConflictOverwritten": "Đã lưu bản của bạn. Bản bị ghi đè có thể khôi phục từ các phiên bản.",
+    "editConflictOverwritten": "Đã lưu bản của bạn. Bản bị ghi đè có thể khôi phục từ lịch sử phiên bản.",
     "editConflictReloaded": "Đã tải bản mới nhất được sửa trên thiết bị khác.",
     "keptNotice": "Bản của bạn trước khi tải bản mới nhất đang được giữ trên thiết bị này.",
     "keptRestore": "Khôi phục bản của tôi",
@@ -1704,7 +1702,7 @@
       "title": "Chia tách A/B / nhắm theo vị trí",
       "description": "Phân phối lượt nhấp tới các điểm đến theo trọng số, hoặc gửi khách từ một số quốc gia tới trang phù hợp. Biến thể gắn quốc gia chỉ kích hoạt với khách khớp; nếu không, lưu lượng quay về các biến thể không gắn quốc gia, rồi đến điểm đến mặc định. Tối đa 4 mỗi liên kết.",
       "countryLabel": "Quốc gia mục tiêu",
-      "countryAny": "🌐 Mọi quốc gia",
+      "countryAny": "Mọi quốc gia",
       "countryPlaceholder": "Chọn quốc gia",
       "countrySearch": "Tìm quốc gia",
       "countryNoResults": "Không có quốc gia phù hợp",
@@ -2048,6 +2046,16 @@
       "expiryDesc": "Liên kết sẽ đóng sau thời điểm này.",
       "expiryAt": "Đóng lúc",
       "expiryBeforeOpen": "Thời điểm hết hạn phải sau thời điểm mở."
+    },
+    "moderation": {
+      "title": "Liên kết này đã bị tắt.",
+      "reason": {
+        "ABUSE_REPORT": "Ngày {date}, chúng tôi đã tắt liên kết sau khi xác nhận báo cáo rằng nó vi phạm chính sách sử dụng.",
+        "ADMIN": "Ngày {date}, quản trị viên đã tắt liên kết vì vi phạm chính sách sử dụng.",
+        "SAFE_BROWSING": "Ngày {date}, Google Safe Browsing đánh dấu trang đích là nguy hiểm nên liên kết đã được tắt tự động."
+      },
+      "visitorEffect": "Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
+      "appeal": "Khiếu nại"
     }
   },
   "admin": {
@@ -2311,7 +2319,8 @@
         "status": {
           "active": "Hoạt động",
           "expired": "Hết hạn",
-          "limitReached": "Đạt giới hạn"
+          "limitReached": "Đạt giới hạn",
+          "disabled": "Đã tắt"
         },
         "ownerFilter": "Chủ sở hữu #{id}",
         "clearFilter": "Xóa bộ lọc",
@@ -2406,7 +2415,18 @@
       "warnAnonymous": "Liên kết được tạo ẩn danh nên không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
       "failed": "Yêu cầu thất bại",
       "blockShort": "Chặn",
-      "blockedShort": "Đã chặn"
+      "blockedShort": "Đã chặn",
+      "linkHint": "Chỉ tắt liên kết này, không phải cả tên miền. Khách truy cập sẽ thấy thông báo liên kết đã tắt (410) thay vì trang đích.",
+      "linkDisable": "Tắt liên kết này",
+      "linkEnable": "Bật lại",
+      "linkDisableConfirm": "Tắt /{code}? Khách truy cập sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
+      "linkEnableConfirm": "Bật lại /{code}? Khách truy cập sẽ lại được chuyển tới trang đích.",
+      "linkDisabled": "Đã tắt · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "Báo cáo",
+        "ADMIN": "Quản trị",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     },
     "servers": {
       "title": "Máy chủ đã chặn",
@@ -2627,7 +2647,8 @@
     "iosApp": "Ứng dụng iPhone",
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "Báo cáo liên kết"
   },
   "about": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
@@ -2806,16 +2827,12 @@
     "toolsTitle": "Công cụ",
     "tools": {
       "profile": "Hồ sơ công khai",
-      "profileDesc": "Gom liên kết vào một trang",
-      "ctas": "Thư viện CTA",
-      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
+      "ctas": "Thư viện CTA"
     },
     "appsTitle": "Ứng dụng",
     "apps": {
       "links": "Ứng dụng kurl.me",
-      "linksDesc": "Rút gọn liên kết và xem lượt nhấp trên iPhone",
-      "blog": "Ứng dụng kurl log",
-      "blogDesc": "Đọc và viết trên iPhone"
+      "blog": "Ứng dụng kurl log"
     },
     "appsScanHint": "Quét mã QR bằng camera điện thoại để mở App Store",
     "accountTitle": "Tài khoản",
@@ -2913,7 +2930,6 @@
       "sectionCollapse": "Thu gọn phần",
       "sectionItemCount": "{count} mục",
       "featuredEmpty": "Chưa có liên kết nào để hiển thị.",
-      "featuredEmptyTitle": "Dòng tin hồ sơ của bạn đang trống",
       "featuredEmptyHasOthers": "Chưa có liên kết nào để hiển thị. Bạn có {count} liên kết khác để chọn.",
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
@@ -3474,9 +3490,7 @@
         "title": "Các đợt phát",
         "description": "Một đơn vị phát in dùng cùng một QR. Chia theo người phát hoặc khu vực để phân tích có ý nghĩa.",
         "add": "Thêm đợt",
-        "emptyTitle": "Chưa có đợt phát nào",
-        "emptyDescription": "Thêm đợt đầu tiên để cấp một mã QR. Quét thử trước khi đặt in.",
-        "addFirst": "Thêm đợt đầu tiên"
+        "emptyTitle": "Chưa có đợt phát nào"
       },
       "csvFailed": "Tải CSV thất bại"
     },
@@ -3827,6 +3841,7 @@
       "DELETE_COMMENT": "Xóa bình luận",
       "SUSPEND_USER": "Tạm ngưng tài khoản",
       "BAN_USER": "Cấm vĩnh viễn",
+      "DISABLE_LINK": "Tắt liên kết",
       "DELETE_NOTE": "Xóa ghi chú",
       "DELETE_HIGHLIGHT_REPLY": "Xóa trả lời"
     },
@@ -3834,6 +3849,7 @@
       "POST": "Bài viết",
       "USER": "Tác giả",
       "COMMENT": "Bình luận",
+      "LINK": "Liên kết rút gọn",
       "NOTE": "Ghi chú",
       "HIGHLIGHT_REPLY": "Trả lời đánh dấu"
     },
@@ -3844,17 +3860,22 @@
       "VIOLENCE": "Bạo lực hoặc nguy hiểm",
       "SEXUAL": "Nội dung tình dục",
       "COPYRIGHT": "Vi phạm bản quyền",
-      "OTHER": "Khác"
+      "OTHER": "Khác",
+      "PHISHING": "Lừa đảo (phishing)",
+      "MALWARE": "Phần mềm độc hại"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "Hủy xuất bản bài này? Nó rời khỏi dòng tin công khai (tác giả vẫn giữ bản nháp).",
       "DELETE_COMMENT": "Xóa bình luận này? Không thể hoàn tác.",
       "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược.",
+      "DISABLE_LINK": "Tắt liên kết này? Khách truy cập sẽ thấy thông báo liên kết đã tắt thay vì trang đích. Bạn có thể bật lại trong trang liên kết của quản trị.",
       "DELETE_HIGHLIGHT_REPLY": "Xóa trả lời đánh dấu này? Không thể hoàn tác.",
       "DELETE_NOTE": "Xóa ghi chú này? Không thể hoàn tác."
     },
     "suspendDaysPrompt": "Tạm ngưng trong bao nhiêu ngày?",
-    "suspendDaysInvalid": "Nhập số từ 1 trở lên."
+    "suspendDaysInvalid": "Nhập số từ 1 trở lên.",
+    "removedLink": "Đã tắt",
+    "destination": "Đích đến"
   },
   "blogAdminMetrics": {
     "title": "Chỉ số blog",
@@ -4242,6 +4263,40 @@
     "delete": "Xóa",
     "favorite": "Thêm vào mục yêu thích",
     "unfavorite": "Bỏ khỏi mục yêu thích"
+  },
+  "linkReport": {
+    "title": "Báo cáo liên kết",
+    "lead": "Nếu một liên kết rút gọn kurl dẫn tới lừa đảo, phần mềm độc hại hoặc spam, hãy cho chúng tôi biết. Không cần tài khoản.",
+    "linkLabel": "Liên kết cần báo cáo",
+    "linkHint": "Dán đúng địa chỉ bạn đã nhận được.",
+    "linkParsed": "Báo cáo <mono>kurl.me/{code}</mono>",
+    "linkInvalid": "Không tìm thấy liên kết rút gọn kurl. Hãy kiểm tra xem có mã sau kurl.me/ không.",
+    "reasonLegend": "Liên kết có vấn đề gì?",
+    "reasons": {
+      "PHISHING": "Lừa đảo (phishing)",
+      "MALWARE": "Phần mềm độc hại",
+      "SPAM": "Spam hoặc quảng cáo",
+      "SEXUAL": "Nội dung tình dục",
+      "COPYRIGHT": "Vi phạm bản quyền",
+      "OTHER": "Khác"
+    },
+    "appealNote": "Nếu liên kết bị tắt nhầm, hãy chọn \"Khác\" và cho chúng tôi biết lý do.",
+    "detailLabel": "Chuyện gì đã xảy ra? (không bắt buộc)",
+    "detailPlaceholder": "Nhận ở đâu, khi mở thì yêu cầu gì",
+    "submit": "Gửi báo cáo",
+    "doneTitle": "Đã nhận báo cáo",
+    "doneBody": "Chúng tôi sẽ xem xét và tắt liên kết nếu nó vi phạm chính sách.",
+    "another": "Báo cáo liên kết khác",
+    "errors": {
+      "notFound": "Liên kết này không có trên kurl. Hãy kiểm tra lại địa chỉ.",
+      "duplicate": "Bạn đã báo cáo liên kết này. Báo cáo đang chờ xem xét.",
+      "rateLimited": "Bạn đã gửi quá nhiều báo cáo trong thời gian ngắn. Hãy thử lại sau một phút.",
+      "failed": "Không gửi được báo cáo. Hãy thử lại sau ít phút."
+    },
+    "afterTitle": "Sau khi bạn báo cáo",
+    "afterReview": "Quản trị viên xem xét từng báo cáo và tắt các liên kết vi phạm chính sách. Ai mở liên kết đã tắt sẽ thấy cảnh báo thay vì trang đích.",
+    "afterPrivacy": "Chúng tôi không cho chủ liên kết biết ai đã báo cáo.",
+    "afterReply": "Chúng tôi không thể trả lời từng báo cáo."
   },
   "notes": {
     "title": "Ghi chú",

@@ -77,6 +77,7 @@ export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
       <div className="space-y-3">
         <FormField label={t("bookingFieldUrl")} required>
           <Input
+            aria-required
             type="url"
             value={config.url}
             maxLength={512}

@@ -1,6 +1,5 @@
 "use client";
 
-import { CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
@@ -29,7 +28,7 @@ export default function EditEventPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="events" icon={CalendarDays} />
+      <SignInEmptyState page reason="events" />
     );
   }
 

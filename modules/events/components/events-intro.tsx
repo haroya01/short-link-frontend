@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { PromoActions, PromoExample, PromoHero, PromoLines, PromoSection } from "@/components/landing/promo";
@@ -65,7 +64,6 @@ export function EventsIntro() {
         action={
           <SignInLink reason="events" next="/events" className={buttonVariants({ variant: "accent", size: "xl" })}>
             {t("ctaLogin")}
-            <ArrowRight className="h-4 w-4" aria-hidden />
           </SignInLink>
         }
         hint={t("ctaHint")}

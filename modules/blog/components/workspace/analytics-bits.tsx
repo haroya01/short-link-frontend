@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { ChevronRight, Eye, Heart, UserPlus, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesMemberStat } from "@/modules/blog/api/analytics";
@@ -8,33 +7,11 @@ import type { SeriesMemberStat } from "@/modules/blog/api/analytics";
 /** Editorial stat for the analytics dashboards — 라벨 위 큰 숫자, 박스 없음. 예전의 보더 타일은
  *  워크스페이스의 타이포 문법(내 글·시리즈 = 행과 헤어라인) 사이에서 혼자 SaaS 대시보드처럼
  *  읽혔다 — 숫자가 면이 아니라 활자로 서게 한다. */
-export function StatCard({
-  icon,
-  label,
-  value,
-  tone,
-  sub,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: number;
-  /** "accent" = 숫자를 brand-green 으로 — kurl 연동 지표(링크 클릭)의 조용한 구분. */
-  tone?: "accent";
-  sub?: string;
-}) {
+export function StatCard({ label, value, sub }: { label: string; value: number; sub?: string }) {
   return (
     <div>
-      <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-        {icon}
-        <span className="text-[12px] font-medium">{label}</span>
-      </div>
-      <div
-        className={`mt-1 text-[26px] font-bold tabular-nums tracking-tight ${
-          tone === "accent"
-            ? "text-accent-700 dark:text-accent-300"
-            : "text-slate-900 dark:text-slate-100"
-        }`}
-      >
+      <div className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="mt-1 text-[26px] font-bold tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
         {value.toLocaleString()}
       </div>
       {sub && <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">{sub}</p>}
@@ -98,7 +75,7 @@ export function SeriesReadThrough({
               className="focus-ring group block rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/60"
             >
               <div className="flex items-baseline gap-2">
-                <span className="shrink-0 text-[12px] font-semibold tabular-nums text-accent-700 dark:text-accent-300">
+                <span className="shrink-0 text-[12px] font-semibold tabular-nums text-slate-500 dark:text-slate-400">
                   {t("analyticsEpisode", { n: m.episode })}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-[14px] text-slate-700 group-hover:text-accent-700 dark:text-slate-200 dark:group-hover:text-accent-300">
@@ -116,7 +93,7 @@ export function SeriesReadThrough({
               </div>
               {/* Reader bar, sized against the strongest episode. */}
               <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                <div className="h-full rounded-full bg-accent-600" style={{ width: `${pct}%` }} />
+                <div className="h-full rounded-full bg-slate-400 dark:bg-slate-500" style={{ width: `${pct}%` }} />
               </div>
               {/* Per-episode performance — secondary to the funnel. */}
               <div className="mt-1.5 flex items-center gap-3 text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
@@ -137,8 +114,8 @@ export function SeriesReadThrough({
             {/* Continue-rate connector to the next episode. */}
             {!isLast && (
               <div className="flex items-center gap-1.5 px-3 py-1 text-[12px] text-slate-500 dark:text-slate-400">
-                <ChevronRight className="h-3.5 w-3.5 rotate-90 text-accent-600 dark:text-accent-400" />
-                <span className="font-medium text-accent-700 dark:text-accent-300">{rate}%</span>
+                <ChevronRight className="h-3.5 w-3.5 rotate-90" />
+                <span className="font-medium text-slate-900 dark:text-slate-100">{rate}%</span>
                 <span>{t("analyticsContinued", { count: m.continuedToNext })}</span>
               </div>
             )}

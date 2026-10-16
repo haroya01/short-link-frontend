@@ -50,7 +50,7 @@ export function PostBelongingLine({
       : t("belongsToJust", { title: first.title });
   const tone = over
     ? "text-white/80 hover:text-white"
-    : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300";
+    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100";
 
   return (
     <div ref={ref}>
@@ -58,7 +58,7 @@ export function PostBelongingLine({
         href={blogPath(`/collections/${first.id}`)}
         className={`focus-ring pointer-events-auto -mx-1 -my-1 inline-flex max-w-full items-center gap-1 rounded px-1 py-1 text-meta transition-colors ${tone}`}
       >
-        <CornerDownRight className={`h-3 w-3 shrink-0 ${over ? "" : "text-accent-600"}`} />
+        <CornerDownRight className="h-3 w-3 shrink-0" />
         <span className="truncate">{label}</span>
       </BlogLink>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 type Props = {
@@ -41,7 +41,6 @@ export function MobilePreviewSheet({ children }: Props) {
         aria-label={t("previewTitle")}
         className="focus-ring fixed bottom-[var(--fab-bottom,1.25rem)] right-5 z-30 inline-flex h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 lg:hidden dark:hover:bg-slate-800"
       >
-        <Eye aria-hidden className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         {t("previewTitle")}
       </button>
 

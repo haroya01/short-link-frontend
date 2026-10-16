@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Camera, Loader2, X } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   commitAvatarUpload,
@@ -173,7 +173,7 @@ export function AvatarPicker({
             disabled={busy}
             className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 hover:text-red-600"
           >
-            <X className="h-3 w-3" /> {t("remove")}
+            {t("remove")}
           </button>
         )}
       </div>

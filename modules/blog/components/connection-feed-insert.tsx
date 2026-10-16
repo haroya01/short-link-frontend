@@ -60,7 +60,7 @@ export function ConnectionFeedInsert({ event, locale }: { event: ConnectionEvent
               collection: (chunks) => (
                 <BlogLink
                   href={blogPath(`/collections/${event.collectionId}`)}
-                  className="focus-ring rounded font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+                  className="focus-ring rounded font-medium text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
                 >
                   {chunks}
                 </BlogLink>

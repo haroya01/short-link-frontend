@@ -62,7 +62,6 @@
     "mastheadTagline": "kurlの人たちが書いた記事",
     "mastheadSub": "新しい順に並べています。",
     "tagFeedSubtitle": "このトピックで公開された記事です。",
-    "tagFeedSubtitleNotes": "このトピックのノートを集めました。",
     "tagViewPosts": "記事",
     "tagViewNotes": "ノート",
     "tagFollow": "フォロー",
@@ -94,6 +93,8 @@
     "browseTopics": "トピックを見る",
     "railPopularTags": "人気のタグ",
     "railSuggestedAuthors": "おすすめの作家",
+    "searchIdleTrending": "いま読まれている記事",
+    "searchIdleFollow": "おすすめのアカウント",
     "railFollowingAuthors": "フォロー中の作家",
     "railFollowingAll": "すべて表示",
     "railWriters": "作家",
@@ -254,7 +255,6 @@
     "linksFullDashboard": "リンクダッシュボード全体",
     "libraryCollections": "コレクション",
     "savedTitle": "ライブラリ",
-    "savedSubtitle": "ブックマークした記事や、覚えておきたい一節をもう一度。",
     "curationMockNote": "プレビューです。今のところ、保存はこのブラウザにだけ残ります。",
     "curationPinned": "代表記事",
     "curationPinnedHint": "作家ページの記事一覧の先頭にこの順で表示されます。",
@@ -269,7 +269,6 @@
     "curationReadingListEmpty": "ブックマークした記事はありません",
     "curationRemoveBookmark": "リストから外す",
     "settingsTitle": "設定",
-    "settingsSubtitle": "アカウントと表示の設定。",
     "settingsAccount": "アカウント",
     "settingsEditProfile": "プロフィールを編集",
     "settingsEditCard": "名刺を編集",
@@ -392,7 +391,7 @@
     "unpublishConfirmDescription": "記事は残りますが、公開アドレスが閉じて誰も見られなくなります。いつでも再公開できます。",
     "republish": "再公開",
     "delete": "削除",
-    "deleteConfirm": "本当に削除しますか？本文とすべてのリビジョンも削除されます。",
+    "deleteConfirm": "本当に削除しますか？本文と変更履歴も削除されます。",
     "uploading": "アップロード中…",
     "imageError": "画像のアップロードに失敗しました。",
     "uploadNotImage": "画像ファイルのみアップロードできます。",
@@ -426,11 +425,11 @@
     "slugHint": "公開前は変更可能 · 英小文字・数字・ハイフン",
     "titleRequired": "公開するにはタイトルを入力してください",
     "scheduledTitleRequired": "予約した記事のタイトルは空にできません。タイトルがないと予約時刻に公開されません。",
-    "revisions": "リビジョン",
+    "revisions": "変更履歴",
     "revisionsEmpty": "保存されたバージョンはまだありません。公開すると蓄積されます。",
     "revisionVersion": "バージョン {n}",
     "revisionRestore": "復元",
-    "revisionRestoreConfirm": "このバージョンに戻しますか？現在の内容は新しいリビジョンとして保存されます。",
+    "revisionRestoreConfirm": "このバージョンに戻しますか？現在の内容は新しいバージョンとして保存されます。",
     "schedule": "予約",
     "scheduleAt": "公開日時",
     "scheduleConfirm": "予約する",
@@ -541,17 +540,16 @@
     "exportAllFailed": "エクスポートに失敗しました。しばらくしてからもう一度お試しください。",
     "savedAt": "{time} 保存済み",
     "continueWriting": "続きを書く",
-    "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。",
     "seriesCreateConflict": "同じ名前のシリーズがすでにあります。別の名前をお試しください。",
     "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。",
     "seriesLoadFailed": "シリーズ一覧を読み込めませんでした。",
     "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。",
     "saveFailed": "保存できませんでした。しばらくしてからもう一度お試しください。",
     "editConflictTitle": "別の端末でこの記事が編集されました",
-    "editConflictBody": "この画面での最後の編集はまだ保存されていません。最新を読み込むと、いまの内容はこの端末に保管します。自分の内容で上書きすると、上書きされた内容はリビジョンから戻せます。",
+    "editConflictBody": "この画面での最後の編集はまだ保存されていません。最新を読み込むと、いまの内容はこの端末に保管します。自分の内容で上書きすると、上書きされた内容は変更履歴から戻せます。",
     "editConflictLoadLatest": "最新を読み込む",
     "editConflictOverwrite": "自分の内容で上書き",
-    "editConflictOverwritten": "自分の内容で上書きしました。上書きされた内容はリビジョンから戻せます。",
+    "editConflictOverwritten": "自分の内容で上書きしました。上書きされた内容は変更履歴から戻せます。",
     "editConflictReloaded": "別の端末で編集された最新の内容を読み込みました。",
     "keptNotice": "最新を読み込む前の自分の内容を、この端末に保管しています。",
     "keptRestore": "自分の内容に戻す",
@@ -1704,7 +1702,7 @@
       "title": "A/B 振り分け / 国別ターゲティング",
       "description": "同じ短縮リンクのクリックを重みで分散したり、訪問者の国に合わせてリンク先を切り替えられます。国を指定したリンク先は該当国の訪問者にのみ使われ、合致しない場合は国指定なしのリンク先、それも無ければデフォルトのリンク先に移動します。リンクごとに最大 4 件。",
       "countryLabel": "対象国",
-      "countryAny": "🌐 全体",
+      "countryAny": "すべての国",
       "countryPlaceholder": "国を選択",
       "countrySearch": "国を検索",
       "countryNoResults": "該当する国がありません",
@@ -2048,6 +2046,16 @@
       "expiryDesc": "指定した時刻を過ぎるとリンクが閉じます。",
       "expiryAt": "閉じる時刻",
       "expiryBeforeOpen": "期限は公開時刻より後にしてください。"
+    },
+    "moderation": {
+      "title": "このリンクは停止中です。",
+      "reason": {
+        "ABUSE_REPORT": "{date}に報告を確認し、利用ポリシー違反として停止しました。",
+        "ADMIN": "{date}に運営者が利用ポリシー違反のため停止しました。",
+        "SAFE_BROWSING": "{date}にGoogle セーフ ブラウジングが遷移先を危険なサイトと判定したため、自動で停止しました。"
+      },
+      "visitorEffect": "現在このリンクを開くと、遷移先の代わりに停止中の案内が表示されます。",
+      "appeal": "異議を申し立てる"
     }
   },
   "admin": {
@@ -2311,7 +2319,8 @@
         "status": {
           "active": "有効",
           "expired": "期限切れ",
-          "limitReached": "上限到達"
+          "limitReached": "上限到達",
+          "disabled": "停止中"
         },
         "ownerFilter": "所有者 #{id}",
         "clearFilter": "フィルターをクリア",
@@ -2406,7 +2415,18 @@
       "warnAnonymous": "匿名で作成されたリンクのため、警告を送るアカウントがありません。ドメインブロックで対応してください。",
       "failed": "リクエストに失敗しました",
       "blockShort": "ブロック",
-      "blockedShort": "ブロック済み"
+      "blockedShort": "ブロック済み",
+      "linkHint": "ドメイン全体ではなく、このリンクだけを停止します。訪問者には遷移先の代わりに停止中の案内（410）が表示されます。",
+      "linkDisable": "このリンクを停止",
+      "linkEnable": "再開する",
+      "linkDisableConfirm": "/{code} を停止しますか？訪問者には遷移先の代わりに停止中の案内が表示されます。",
+      "linkEnableConfirm": "/{code} を再開しますか？訪問者は再び遷移先へ移動します。",
+      "linkDisabled": "停止中 · {reason} · {date}",
+      "disabledReason": {
+        "ABUSE_REPORT": "報告対応",
+        "ADMIN": "管理者",
+        "SAFE_BROWSING": "Safe Browsing"
+      }
     },
     "servers": {
       "title": "ブロックしたサーバー",
@@ -2627,7 +2647,8 @@
     "iosApp": "iPhoneアプリ",
     "terms": "利用規約",
     "privacy": "プライバシー",
-    "github": "GitHub"
+    "github": "GitHub",
+    "report": "リンクを報告"
   },
   "about": {
     "title": "kurl · URL短縮とクリック分析",
@@ -2806,16 +2827,12 @@
     "toolsTitle": "ツール",
     "tools": {
       "profile": "公開プロフィール",
-      "profileDesc": "リンクを1ページにまとめて表示",
-      "ctas": "CTAライブラリ",
-      "ctasDesc": "リンクに表示する案内バナーを管理"
+      "ctas": "CTAライブラリ"
     },
     "appsTitle": "アプリ",
     "apps": {
       "links": "kurl.me アプリ",
-      "linksDesc": "iPhoneでリンクを短縮してクリックを見る",
-      "blog": "kurl ログ アプリ",
-      "blogDesc": "iPhoneで読んで書く"
+      "blog": "kurl ログ アプリ"
     },
     "appsScanHint": "スマホのカメラでQRを読み取るとApp Storeが開きます",
     "accountTitle": "アカウント",
@@ -2913,7 +2930,6 @@
       "sectionCollapse": "セクションを閉じる",
       "sectionItemCount": "{count} 件",
       "featuredEmpty": "表示するリンクがありません。",
-      "featuredEmptyTitle": "公開フィードが空です",
       "featuredEmptyHasOthers": "表示するリンクがありません。選べる自分のリンクが{count}件あります。",
       "addBlockMenu": "追加",
       "addMoreBlocks": "その他のブロック",
@@ -3474,9 +3490,7 @@
         "title": "配布バッチ",
         "description": "同じ QR を複数枚印刷して配布する単位です。配布担当・エリア別に分けると分析が意味を持ちます。",
         "add": "配布バッチを追加",
-        "emptyTitle": "配布バッチはまだありません",
-        "emptyDescription": "最初のバッチを追加すると QR コードが発行されます。印刷・発注前にスキャンして動作確認できます。",
-        "addFirst": "最初の配布バッチを追加"
+        "emptyTitle": "配布バッチはまだありません"
       },
       "csvFailed": "CSVのダウンロードに失敗しました"
     },
@@ -3827,6 +3841,7 @@
       "DELETE_COMMENT": "コメント削除",
       "SUSPEND_USER": "アカウント停止",
       "BAN_USER": "永久停止",
+      "DISABLE_LINK": "リンクを停止",
       "DELETE_NOTE": "ノートを削除",
       "DELETE_HIGHLIGHT_REPLY": "返信を削除"
     },
@@ -3834,6 +3849,7 @@
       "POST": "投稿",
       "USER": "作者",
       "COMMENT": "コメント",
+      "LINK": "短縮リンク",
       "NOTE": "ノート",
       "HIGHLIGHT_REPLY": "ハイライトへの返信"
     },
@@ -3844,17 +3860,22 @@
       "VIOLENCE": "暴力・危険",
       "SEXUAL": "性的なコンテンツ",
       "COPYRIGHT": "著作権侵害",
-      "OTHER": "その他"
+      "OTHER": "その他",
+      "PHISHING": "フィッシング・詐欺",
+      "MALWARE": "マルウェア"
     },
     "actionConfirm": {
       "UNPUBLISH_POST": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
       "DELETE_COMMENT": "このコメントを削除しますか？元に戻せません。",
       "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。",
+      "DISABLE_LINK": "このリンクを停止しますか？訪問者には遷移先の代わりに停止中の案内が表示されます。管理画面のリンク詳細から再開できます。",
       "DELETE_HIGHLIGHT_REPLY": "このハイライトへの返信を削除しますか？元に戻せません。",
       "DELETE_NOTE": "このノートを削除しますか？元に戻せません。"
     },
     "suspendDaysPrompt": "何日間停止しますか？（日）",
-    "suspendDaysInvalid": "1 以上の数値を入力してください。"
+    "suspendDaysInvalid": "1 以上の数値を入力してください。",
+    "removedLink": "停止中",
+    "destination": "遷移先"
   },
   "blogAdminMetrics": {
     "title": "ブログ指標",
@@ -4242,6 +4263,40 @@
     "delete": "削除",
     "favorite": "お気に入りに追加",
     "unfavorite": "お気に入りを解除"
+  },
+  "linkReport": {
+    "title": "リンクを報告",
+    "lead": "kurl の短縮リンクがフィッシングやマルウェア、スパムにつながっていたら教えてください。アカウントは不要です。",
+    "linkLabel": "報告するリンク",
+    "linkHint": "受け取ったアドレスをそのまま貼り付けてください。",
+    "linkParsed": "<mono>kurl.me/{code}</mono> を報告します",
+    "linkInvalid": "kurl の短縮リンクが見つかりません。kurl.me/ の後ろのコードまで含まれているか確認してください。",
+    "reasonLegend": "何が問題ですか？",
+    "reasons": {
+      "PHISHING": "フィッシング・詐欺",
+      "MALWARE": "マルウェア",
+      "SPAM": "スパム・宣伝",
+      "SEXUAL": "性的なコンテンツ",
+      "COPYRIGHT": "著作権侵害",
+      "OTHER": "その他"
+    },
+    "appealNote": "誤って停止されたリンクの場合は「その他」を選んで事情をお書きください。",
+    "detailLabel": "詳しい状況（任意）",
+    "detailPlaceholder": "どこで受け取ったか、開くと何を求められるか",
+    "submit": "報告を送信",
+    "doneTitle": "報告を受け付けました",
+    "doneBody": "確認のうえ、ポリシーに違反するリンクであれば停止します。",
+    "another": "別のリンクを報告",
+    "errors": {
+      "notFound": "kurl に存在しないリンクです。アドレスを確認してください。",
+      "duplicate": "このリンクはすでに報告済みです。確認をお待ちください。",
+      "rateLimited": "短時間に送信が多すぎます。1 分後にもう一度お試しください。",
+      "failed": "送信できませんでした。しばらくしてからもう一度お試しください。"
+    },
+    "afterTitle": "報告のあと",
+    "afterReview": "運営者が報告を確認し、ポリシーに違反するリンクを停止します。停止したリンクを開くと、遷移先の代わりに警告が表示されます。",
+    "afterPrivacy": "誰が報告したかをリンクの所有者に伝えることはありません。",
+    "afterReply": "個別の報告への返信はできません。"
   },
   "notes": {
     "title": "ノート",

@@ -38,8 +38,8 @@ export function CountryTable({ data }: Props) {
             <TR key={code}>
               <TD>
                 <span className="flex items-center gap-2">
-                  <span className="text-base leading-none">
-                    {known ? countryFlag(code) : "🌐"}
+                  <span aria-hidden className="w-5 shrink-0 text-base leading-none">
+                    {known ? countryFlag(code) : ""}
                   </span>
                   <span className="min-w-0 truncate font-medium text-slate-900 dark:text-slate-100">
                     {known ? countryName(code, locale) : t("countryTable.unknown")}

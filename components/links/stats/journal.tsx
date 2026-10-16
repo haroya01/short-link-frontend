@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table";
@@ -236,7 +236,6 @@ export function StatsJournal({
                       className="focus-ring mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-[13px] font-medium text-slate-500 transition-colors duration-150 ease-out hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
                     >
                       {t("detail")}
-                      <ArrowUpRight aria-hidden className="h-3 w-3" />
                     </button>
                   </div>
                 </div>

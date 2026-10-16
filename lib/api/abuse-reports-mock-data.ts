@@ -3,8 +3,9 @@ import type { AbuseReportView } from "./abuse-reports";
 /**
  * Demo/mock moderation queue — a spread of subjects, reasons, and statuses so the screen is usable
  * without a backend: an open POST report (unpublish-able), a COMMENT report shown with its excerpt, a
- * USER report (bare-id fallback + bio excerpt) that can be suspended/banned, and an already-removed
- * post showing the "removed" badge. Each carries a structured `reasonCode` + optional `detail` per the
+ * USER report (bare-id fallback + bio excerpt) that can be suspended/banned, a LINK report from
+ * outside the app (short code + destination as plain text) that can be switched off, and an
+ * already-removed post showing the "removed" badge. Each carries a structured `reasonCode` + optional `detail` per the
  * #611 contract. Lives in a mock-data file so its Korean demo copy is exempt from the i18n literal
  * guard (i18n-literals.test).
  */
@@ -54,6 +55,22 @@ export const MOCK_REPORTS: AbuseReportView[] = [
     resolvedAt: null,
     subjectAuthorHandle: "sora_official",
     subjectExcerpt: "공식 계정입니다. 협업 문의는 DM 주세요.",
+    subjectRemoved: false,
+  },
+  {
+    id: 5005,
+    reporterUserId: null,
+    subjectType: "LINK",
+    subjectId: 9301,
+    reasonCode: "PHISHING",
+    detail: "택배 주소 확인 문자에 들어 있던 링크예요. 카드 번호를 입력하라고 해요.",
+    status: "OPEN",
+    adminNote: null,
+    createdAt: "2026-07-03T05:51:00.000Z",
+    resolvedAt: null,
+    subjectTitle: "dlv2408",
+    subjectAuthorHandle: null,
+    subjectExcerpt: "https://parcel-redelivery.example/kr/verify?id=88213",
     subjectRemoved: false,
   },
   {

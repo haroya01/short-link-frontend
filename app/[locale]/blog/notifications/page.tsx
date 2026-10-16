@@ -91,7 +91,7 @@ export default function NotificationsPage() {
           <button
             type="button"
             onClick={() => markAll.mutate()}
-            className="touch-target focus-ring rounded-surface px-2 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            className="touch-target focus-ring rounded-surface px-2 py-1 text-[13px] font-medium text-slate-900 transition-colors hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             {t("markAllRead")}
           </button>
@@ -157,11 +157,10 @@ export default function NotificationsPage() {
           <ErrorState onRetry={() => refetch()} />
         ) : items.length === 0 ? (
           <BlogEmpty
-            icon={Bell}
             title={t(filter === "mentions" ? "mentionsEmpty" : "empty")}
             body={filter === "mentions" ? undefined : t("emptyBody")}
             action={
-              <BlogLink href={blogPath("/")} className={blogCta({ variant: "secondary" })}>
+              <BlogLink href={blogPath("/")} className={blogCta({ variant: "text" })}>
                 {t("browseFeed")}
               </BlogLink>
             }

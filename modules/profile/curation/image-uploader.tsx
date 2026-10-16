@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { ImagePlus, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   commitProfileImageUpload,
@@ -139,7 +139,6 @@ export function ImageUploader({
             disabled={busy}
             className="inline-flex items-center gap-1 text-[10px] text-slate-500 transition hover:text-red-600 dark:text-slate-400"
           >
-            <X className="h-2.5 w-2.5" />
             {t("remove")}
           </button>
         )}

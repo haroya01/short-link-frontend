@@ -39,7 +39,7 @@ export function FollowRequestAnswer({
         onClick={() => reply(false)}
         disabled={answer.isPending}
         data-testid="follow-request-reject"
-        className="focus-ring inline-flex h-8 items-center rounded-full border border-slate-300 px-3.5 text-[13px] font-semibold text-slate-700 transition-colors hover:border-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-600"
+        className="focus-ring inline-flex h-8 items-center rounded-full border border-slate-300 px-3.5 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
       >
         {t("followRequestReject")}
       </button>
@@ -48,7 +48,7 @@ export function FollowRequestAnswer({
         onClick={() => reply(true)}
         disabled={answer.isPending}
         data-testid="follow-request-approve"
-        className="focus-ring inline-flex h-8 items-center rounded-full bg-accent-700 px-3.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50 dark:bg-accent-600 dark:hover:bg-accent-500"
+        className="focus-ring inline-flex h-8 items-center rounded-full border border-slate-300 px-3.5 text-[13px] font-semibold text-slate-900 transition-colors hover:border-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:border-slate-600"
       >
         {t("followRequestApprove")}
       </button>

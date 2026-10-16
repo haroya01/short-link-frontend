@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { Check, Globe, Link as LinkIcon, ListOrdered, Loader2, Lock, Plus } from "lucide-react";
+import { Check, Globe, Link as LinkIcon, Loader2, Lock, Plus } from "lucide-react";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { useToast } from "@/components/ui/toast";
@@ -509,8 +509,7 @@ function CollectionRowText({
       <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
         {isOrdered(c) && (
           <>
-            <ListOrdered className="h-3 w-3 text-accent-600 dark:text-accent-500" />
-            <span className="text-accent-700 dark:text-accent-400">{t("ordered")}</span>
+            <span>{t("ordered")}</span>
             <span aria-hidden>·</span>
           </>
         )}

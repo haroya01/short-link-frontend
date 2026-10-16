@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { bulkImportLinks } from "@/lib/api";
@@ -112,7 +112,6 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
                 {t("cancel")}
               </Button>
               <Button type="submit" variant="accent" disabled={busy || !file}>
-                <Upload className="mr-1 h-3.5 w-3.5" />
                 {busy ? t("uploading") : t("upload")}
               </Button>
             </div>

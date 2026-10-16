@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
-import { CalendarDays, Check, CheckCircle2, Copy, ExternalLink, Pencil, Users } from "lucide-react";
+import { ExternalLink, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { ConfirmDialog } from "@/components/ui/dialog";
@@ -63,7 +63,7 @@ export default function EventDetailPage() {
 
   if (ready && !authenticated) {
     return (
-      <SignInEmptyState page reason="events" icon={CalendarDays} />
+      <SignInEmptyState page reason="events" />
     );
   }
 
@@ -92,9 +92,8 @@ export default function EventDetailPage() {
           이하 카드는 "공유 → 신청 현황 → 유입 분석 → 관리" 순서의 운영 도구. */}
       <header>
         {justCreated && event.links[0]?.shortCode ? (
-          <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50 py-2.5 pl-3.5 pr-2 dark:border-accent-900 dark:bg-accent-950/40">
-            <p className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-accent-900 dark:text-accent-200">
-              <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-3.5 pr-2 dark:border-slate-800 dark:bg-slate-900">
+            <p className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-slate-900 dark:text-slate-100">
               <span className="truncate">
                 {t("createdBanner")}{" "}
                 <span className="font-mono font-semibold">
@@ -111,7 +110,6 @@ export default function EventDetailPage() {
               }}
               className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent-700 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800"
             >
-              {heroCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {heroCopied ? t("heroCopied") : t("heroCopy")}
             </button>
           </div>
@@ -139,7 +137,6 @@ export default function EventDetailPage() {
             href={`/events/${event.id}/edit`}
             className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-500 dark:border-slate-700 dark:text-slate-300"
           >
-            <Pencil className="h-3.5 w-3.5" />
             {t("edit")}
           </Link>
         </div>
@@ -161,7 +158,7 @@ export default function EventDetailPage() {
       {analytics ? <AnalyticsPanel analytics={analytics} /> : null}
 
       <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-        <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
+        <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
           {t("manageTitle")}
         </h2>
         <div className="mt-3 flex flex-wrap gap-2">
