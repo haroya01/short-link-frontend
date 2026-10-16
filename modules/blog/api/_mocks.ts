@@ -340,6 +340,7 @@ const PROTECTED_SEEDS: ProtectedSeed[] = [
   { slug: "locked-diary", title: "잠가 둔 일기", excerpt: "비밀번호를 아는 사람만 읽는 일기.", author: "hana", tags: ["일기"], views: 12, likes: 1, day: 13, audience: "PASSWORD" },
   { slug: "region-notes", title: "어떤 나라에서는 열리지 않는 글", excerpt: "나라에 따라 본문을 막은 글.", author: "hana", tags: ["여행"], views: 25, likes: 2, day: 12, audience: "PUBLIC", blockedCountries: ["KR"] },
   { slug: "link-only-draft", title: "링크로만 나누는 초안", excerpt: "링크를 받은 사람만 여는 글.", author: "hana", tags: ["초안"], views: 4, likes: 0, day: 11, audience: "UNLISTED", key: MOCK_UNLISTED_KEY },
+  { slug: "notes-for-friends", title: "친구들에게 쓰는 메모", excerpt: "팔로워에게만 여는 작가 본인의 글.", author: "dohyun", tags: ["일상"], views: 9, likes: 0, day: 10, audience: "FOLLOWERS" },
 ];
 
 const PROTECTED_ITEMS = PROTECTED_SEEDS.map((seed, i) => ({ seed, item: toItem(seed, 900 + i) }));
@@ -379,6 +380,7 @@ export type MockAccess = {
 };
 
 function lockFor(seed: ProtectedSeed, postId: number, access: MockAccess): LockReason | "hidden" | null {
+  if (access.viewer && seed.author === MOCK_VIEWER_AUTHOR.username) return null;
   if (seed.audience === "UNLISTED" && access.key !== seed.key) return "hidden";
   if (seed.blockedCountries?.length) {
     if (access.render === "server") return "REGION_CHECK";
@@ -449,7 +451,7 @@ export function mockUnlockPost(_username: string, slug: string, password: string
 
 function protectedPostList(author: PublicAuthor): PublicPostList {
   const posts = PROTECTED_ITEMS.flatMap(({ seed, item }, i) => {
-    if (seed.audience === "UNLISTED") return [];
+    if (seed.author !== author.username || seed.audience === "UNLISTED") return [];
     const post = protectedListItem(seed, item, 900 + i);
     if (seed.audience === "FOLLOWERS" || seed.audience === "PASSWORD") return [lockedListItem(post, seed.audience)];
     return [post];

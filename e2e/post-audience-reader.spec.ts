@@ -54,6 +54,15 @@ test.describe("a followers-only post", () => {
   });
 });
 
+test("the author always reads their own followers-only post, though the server render is anonymous", async ({ page }) => {
+  await reader(page, { signedOut: false });
+  const html = await (await page.request.get("/ko/p/dohyun/notes-for-friends")).text();
+  expect(html).not.toContain("팔로워에게만 여는 작가 본인의 글");
+  await page.goto("/ko/p/dohyun/notes-for-friends");
+  await expect(body(page)).toContainText("팔로워에게만 여는 작가 본인의 글", { timeout: 30_000 });
+  await expect(gate(page)).toHaveCount(0);
+});
+
 test.describe("a password post", () => {
   test("a wrong password keeps the gate, the right one opens the post for the tab", async ({ page }) => {
     await reader(page);
