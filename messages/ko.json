@@ -2000,13 +2000,11 @@
       "expiryBeforeOpen": "만료는 공개 시각보다 뒤여야 해요."
     },
     "moderation": {
-      "title": "꺼진 링크예요.",
-      "reason": {
-        "ABUSE_REPORT": "{date}에 신고를 확인하고 운영 정책 위반으로 껐어요.",
-        "ADMIN": "{date}에 운영자가 운영 정책 위반으로 껐어요.",
-        "SAFE_BROWSING": "{date}에 Google Safe Browsing이 목적지를 위험한 사이트로 분류해 자동으로 꺼졌어요."
+      "notice": {
+        "ABUSE_REPORT": "<title>꺼진 링크예요.</title> {date}에 신고를 확인하고 운영 정책 위반으로 껐어요. 지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요.",
+        "ADMIN": "<title>꺼진 링크예요.</title> {date}에 운영자가 운영 정책 위반으로 껐어요. 지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요.",
+        "SAFE_BROWSING": "<title>꺼진 링크예요.</title> {date}에 Google Safe Browsing이 목적지를 위험한 사이트로 분류해 자동으로 꺼졌어요. 지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요."
       },
-      "visitorEffect": "지금 이 링크를 여는 사람은 목적지 대신 꺼진 링크 안내를 봐요.",
       "appeal": "이의 제기"
     }
   },
@@ -3518,8 +3516,8 @@
       "removePdf": "PDF 삭제",
       "otherPdf": "다른 PDF",
       "dragHint": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요.",
-      "previewFirstBatch": "미리보기는 첫 번째 묶음이에요({count}개 중 1번째). 묶음마다 다른 QR이 들어가요.",
-      "previewPlaceholder": "배포 묶음이 없어서 placeholder QR로 미리보고 있어요. 실제 합성은 묶음 추가 후 가능.",
+      "dragHintWithBatches": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요. 미리보기는 첫 번째 묶음이에요({count}개 중 1번째). 묶음마다 다른 QR이 들어가요.",
+      "dragHintWithoutBatches": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요. 배포 묶음이 없어서 placeholder QR로 미리보고 있어요. 실제 합성은 묶음 추가 후 가능.",
       "boxAria": "QR 박스 위치/크기",
       "qrPreviewAlt": "QR 미리보기"
     },
@@ -3861,8 +3859,7 @@
     "ordered": "순서대로 읽기",
     "orderedDesc": "번호를 붙여 차례로 읽게 하고, 어디까지 읽었는지 이어 줘요.",
     "footerCollectionEnd": "이 컬렉션은 여기까지예요.",
-    "footerGuestPrompt": "직접 컬렉션을 엮고 이어 읽으려면",
-    "footerGuestSignIn": "로그인하세요.",
+    "footerGuestPrompt": "직접 컬렉션을 엮고 이어 읽으려면 <signIn>로그인하세요.</signIn>",
     "footerCuratorMore": "@{curator}님이 엮은 다른 것 보기",
     "visibilityPrivate": "비공개",
     "visibilityUnlisted": "링크 공유",

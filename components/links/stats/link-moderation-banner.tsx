@@ -22,8 +22,10 @@ export function LinkModerationBanner({ detail }: { detail: LinkDetail }) {
       <p className="flex min-w-0 flex-1 items-start gap-2 text-[13px] leading-relaxed text-red-800 dark:text-red-200">
         <PowerOff aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
         <span>
-          <span className="font-semibold">{t("title")}</span> {t(`reason.${moderation.reason}`, { date })}{" "}
-          {t("visitorEffect")}
+          {t.rich(`notice.${moderation.reason}`, {
+            date,
+            title: (chunks) => <span className="font-semibold">{chunks}</span>,
+          })}
         </span>
       </p>
       <Link

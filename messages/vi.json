@@ -2000,13 +2000,11 @@
       "expiryBeforeOpen": "Thời điểm hết hạn phải sau thời điểm mở."
     },
     "moderation": {
-      "title": "Liên kết này đã bị tắt.",
-      "reason": {
-        "ABUSE_REPORT": "Ngày {date}, chúng tôi đã tắt liên kết sau khi xác nhận báo cáo rằng nó vi phạm chính sách sử dụng.",
-        "ADMIN": "Ngày {date}, quản trị viên đã tắt liên kết vì vi phạm chính sách sử dụng.",
-        "SAFE_BROWSING": "Ngày {date}, Google Safe Browsing đánh dấu trang đích là nguy hiểm nên liên kết đã được tắt tự động."
+      "notice": {
+        "ABUSE_REPORT": "<title>Liên kết này đã bị tắt.</title> Ngày {date}, chúng tôi đã tắt liên kết sau khi xác nhận báo cáo rằng nó vi phạm chính sách sử dụng. Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
+        "ADMIN": "<title>Liên kết này đã bị tắt.</title> Ngày {date}, quản trị viên đã tắt liên kết vì vi phạm chính sách sử dụng. Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
+        "SAFE_BROWSING": "<title>Liên kết này đã bị tắt.</title> Ngày {date}, Google Safe Browsing đánh dấu trang đích là nguy hiểm nên liên kết đã được tắt tự động. Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích."
       },
-      "visitorEffect": "Ai mở liên kết lúc này sẽ thấy thông báo liên kết đã tắt thay vì trang đích.",
       "appeal": "Khiếu nại"
     }
   },
@@ -3518,8 +3516,8 @@
       "removePdf": "Xóa PDF",
       "otherPdf": "PDF khác",
       "dragHint": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải.",
-      "previewFirstBatch": "Bản xem trước dùng đợt đầu (1 trên {count}). Mỗi đợt có QR khác nhau.",
-      "previewPlaceholder": "Chưa có đợt nào, nên bản xem trước dùng QR giữ chỗ. Ghép thật khả dụng sau khi thêm đợt.",
+      "dragHintWithBatches": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải. Bản xem trước dùng đợt đầu (1 trên {count}). Mỗi đợt có QR khác nhau.",
+      "dragHintWithoutBatches": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải. Chưa có đợt nào, nên bản xem trước dùng QR giữ chỗ. Ghép thật khả dụng sau khi thêm đợt.",
       "boxAria": "Vị trí và kích thước khung QR",
       "qrPreviewAlt": "Xem trước QR"
     },
@@ -3861,8 +3859,7 @@
     "ordered": "Đọc theo thứ tự",
     "orderedDesc": "Đánh số từng mục và nhớ bạn đã đọc đến đâu.",
     "footerCollectionEnd": "Bộ sưu tập kết thúc ở đây.",
-    "footerGuestPrompt": "Để tự kết nối bài vào bộ sưu tập và đọc tiếp,",
-    "footerGuestSignIn": "hãy đăng nhập.",
+    "footerGuestPrompt": "Để tự kết nối bài vào bộ sưu tập và đọc tiếp, <signIn>hãy đăng nhập.</signIn>",
     "footerCuratorMore": "Xem thêm từ @{curator}",
     "visibilityPrivate": "Riêng tư",
     "visibilityUnlisted": "Chỉ qua liên kết",

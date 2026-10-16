@@ -309,14 +309,17 @@ function CollectionFooter({
       <p>{t("footerCollectionEnd")}</p>
       {!authenticated ? (
         <p className="mt-1.5">
-          {t("footerGuestPrompt")}{" "}
-          <button
-            type="button"
-            onClick={onSignIn}
-            className="focus-ring rounded font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
-          >
-            {t("footerGuestSignIn")}
-          </button>
+          {t.rich("footerGuestPrompt", {
+            signIn: (chunks) => (
+              <button
+                type="button"
+                onClick={onSignIn}
+                className="focus-ring rounded font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+              >
+                {chunks}
+              </button>
+            ),
+          })}
         </p>
       ) : (
         curatorUsername && (

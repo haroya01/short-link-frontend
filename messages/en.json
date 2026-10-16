@@ -2000,13 +2000,11 @@
       "expiryBeforeOpen": "Expiry has to come after the opening time."
     },
     "moderation": {
-      "title": "This link is switched off.",
-      "reason": {
-        "ABUSE_REPORT": "On {date}, we switched it off after confirming a report that it breaks our usage policy.",
-        "ADMIN": "On {date}, an operator switched it off for breaking our usage policy.",
-        "SAFE_BROWSING": "On {date}, Google Safe Browsing flagged the destination as dangerous, so it was switched off automatically."
+      "notice": {
+        "ABUSE_REPORT": "<title>This link is switched off.</title> On {date}, we switched it off after confirming a report that it breaks our usage policy. Anyone who opens it now sees a switched-off notice instead of the destination.",
+        "ADMIN": "<title>This link is switched off.</title> On {date}, an operator switched it off for breaking our usage policy. Anyone who opens it now sees a switched-off notice instead of the destination.",
+        "SAFE_BROWSING": "<title>This link is switched off.</title> On {date}, Google Safe Browsing flagged the destination as dangerous, so it was switched off automatically. Anyone who opens it now sees a switched-off notice instead of the destination."
       },
-      "visitorEffect": "Anyone who opens it now sees a switched-off notice instead of the destination.",
       "appeal": "Appeal"
     }
   },
@@ -3518,8 +3516,8 @@
       "removePdf": "Delete PDF",
       "otherPdf": "Another PDF",
       "dragHint": "Drag the QR box to move it, or resize it from the bottom-right handle.",
-      "previewFirstBatch": "Preview uses the first batch (1 of {count}). Each batch gets a different QR.",
-      "previewPlaceholder": "No batches yet, so the preview uses a placeholder QR. Real composition is available after adding batches.",
+      "dragHintWithBatches": "Drag the QR box to move it, or resize it from the bottom-right handle. Preview uses the first batch (1 of {count}). Each batch gets a different QR.",
+      "dragHintWithoutBatches": "Drag the QR box to move it, or resize it from the bottom-right handle. No batches yet, so the preview uses a placeholder QR. Real composition is available after adding batches.",
       "boxAria": "QR box position and size",
       "qrPreviewAlt": "QR preview"
     },
@@ -3861,8 +3859,7 @@
     "ordered": "Read in order",
     "orderedDesc": "Numbers each item and remembers how far you've read.",
     "footerCollectionEnd": "That's the end of this collection.",
-    "footerGuestPrompt": "To connect posts into your own collections and keep reading,",
-    "footerGuestSignIn": "sign in.",
+    "footerGuestPrompt": "To connect posts into your own collections and keep reading, <signIn>sign in.</signIn>",
     "footerCuratorMore": "See more from @{curator}",
     "visibilityPrivate": "Private",
     "visibilityUnlisted": "Link only",
