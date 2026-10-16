@@ -104,4 +104,23 @@ describe("message catalog style", () => {
     const hanging = /\{[a-zA-Z]+\}(?:<\/[a-zA-Z]+>)?(?:이|가|을|를|은|는|과|와|으로|로)(?=[\s,.!?)…·]|$)/;
     expect(entries(ko).filter(([, value]) => hanging.test(value))).toEqual([]);
   });
+
+  it("ja: sentences that read as one run are one message, so nothing puts a space after 。 or 、", () => {
+    const t = createTranslator({ locale: "ja", messages: ja as unknown as AbstractIntlMessages }) as unknown as {
+      (key: string, values?: Record<string, string | number>): string;
+      markup: (key: string, values: Record<string, string | ((chunks: string) => string)>) => string;
+    };
+    const plain = (chunks: string) => chunks;
+    const runs = [
+      t("campaignApp.posterBuilder.dragHintWithBatches", { count: 3 }),
+      t("campaignApp.posterBuilder.dragHintWithoutBatches"),
+      t.markup("collections.footerGuestPrompt", { signIn: plain }),
+      t.markup("stats.moderation.notice.ADMIN", { date: "2026年9月30日", title: plain }),
+    ];
+    expect(runs[0]).toContain("調整します。プレビュー");
+    expect(runs[1]).toContain("調整します。配布バッチ");
+    expect(runs[2]).toContain("読み進めるには、ログイン");
+    expect(runs[3]).toContain("停止中です。2026年9月30日に");
+    expect(runs.filter((run) => /[。、] /.test(run))).toEqual([]);
+  });
 });

@@ -2000,13 +2000,11 @@
       "expiryBeforeOpen": "期限は公開時刻より後にしてください。"
     },
     "moderation": {
-      "title": "このリンクは停止中です。",
-      "reason": {
-        "ABUSE_REPORT": "{date}に報告を確認し、利用ポリシー違反として停止しました。",
-        "ADMIN": "{date}に運営者が利用ポリシー違反のため停止しました。",
-        "SAFE_BROWSING": "{date}にGoogle セーフ ブラウジングが遷移先を危険なサイトと判定したため、自動で停止しました。"
+      "notice": {
+        "ABUSE_REPORT": "<title>このリンクは停止中です。</title>{date}に報告を確認し、利用ポリシー違反として停止しました。現在このリンクを開くと、遷移先の代わりに停止中の案内が表示されます。",
+        "ADMIN": "<title>このリンクは停止中です。</title>{date}に運営者が利用ポリシー違反のため停止しました。現在このリンクを開くと、遷移先の代わりに停止中の案内が表示されます。",
+        "SAFE_BROWSING": "<title>このリンクは停止中です。</title>{date}にGoogle セーフ ブラウジングが遷移先を危険なサイトと判定したため、自動で停止しました。現在このリンクを開くと、遷移先の代わりに停止中の案内が表示されます。"
       },
-      "visitorEffect": "現在このリンクを開くと、遷移先の代わりに停止中の案内が表示されます。",
       "appeal": "異議を申し立てる"
     }
   },
@@ -3518,8 +3516,8 @@
       "removePdf": "PDF を削除",
       "otherPdf": "別の PDF",
       "dragHint": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。",
-      "previewFirstBatch": "プレビューは最初のバッチ (全 {count} 個中 1番目) です。各バッチには別の QR が入ります。",
-      "previewPlaceholder": "配布バッチがないため placeholder QR でプレビューしています。実際の合成はバッチ追加後に可能です。",
+      "dragHintWithBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。プレビューは最初のバッチ (全 {count} 個中 1番目) です。各バッチには別の QR が入ります。",
+      "dragHintWithoutBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。配布バッチがないため placeholder QR でプレビューしています。実際の合成はバッチ追加後に可能です。",
       "boxAria": "QR ボックスの位置とサイズ",
       "qrPreviewAlt": "QR プレビュー"
     },
@@ -3861,8 +3859,7 @@
     "ordered": "順番に読む",
     "orderedDesc": "番号を付けて順に読み、どこまで読んだかを引き継ぎます。",
     "footerCollectionEnd": "このコレクションはここまでです。",
-    "footerGuestPrompt": "自分でコレクションにつないで読み進めるには、",
-    "footerGuestSignIn": "ログインしてください。",
+    "footerGuestPrompt": "自分でコレクションにつないで読み進めるには、<signIn>ログインしてください。</signIn>",
     "footerCuratorMore": "@{curator}さんがつないだ他のものを見る",
     "visibilityPrivate": "非公開",
     "visibilityUnlisted": "リンクのみ",

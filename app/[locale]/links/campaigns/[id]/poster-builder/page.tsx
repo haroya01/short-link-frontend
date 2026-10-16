@@ -367,19 +367,11 @@ function PreviewWithBox({
       </div>
       <PdfPreview file={file} box={box} onBoxChange={onBoxChange} qrDataUrl={qrDataUrl} />
       <p className="text-[11px] text-slate-500 dark:text-slate-400">
-        {t("dragHint")}
-        {batchCount > 1 && (
-          <>
-            {" "}
-            {t("previewFirstBatch", { count: batchCount })}
-          </>
-        )}
-        {batchCount === 0 && (
-          <>
-            {" "}
-            {t("previewPlaceholder")}
-          </>
-        )}
+        {batchCount > 1
+          ? t("dragHintWithBatches", { count: batchCount })
+          : batchCount === 0
+            ? t("dragHintWithoutBatches")
+            : t("dragHint")}
       </p>
     </div>
   );

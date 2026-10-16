@@ -223,4 +223,23 @@ test.describe("switching a link off", () => {
     await expect(page.getByText(`kurl.me/${CODE}`, { exact: true })).toBeVisible();
     await expect(page.getByLabel("기타")).toBeChecked();
   });
+
+  test("in Japanese the banner runs its sentences together, with no space after 。", async ({ page }) => {
+    await signIn(page);
+    await mockBackend(page, {
+      [`GET /api/v1/links/${CODE}/detail`]: (route) =>
+        route.fulfill({
+          json: {
+            ...(mockLinksResponse(`/api/v1/links/${CODE}/detail`, "GET") as Record<string, unknown>),
+            moderation: { reason: "SAFE_BROWSING", disabledAt: "2026-09-30T03:00:00Z" },
+          },
+        }),
+    });
+    await page.goto(`/ja/stats/${CODE}`);
+
+    const notice = page.getByRole("alert").filter({ hasText: "このリンクは停止中です。" }).locator("p");
+    await expect(notice).toContainText("このリンクは停止中です。2026年9月30日にGoogle セーフ ブラウジング");
+    await expect(notice).toContainText("停止しました。現在このリンクを開くと");
+    expect(await notice.textContent()).not.toMatch(/[。、] /);
+  });
 });
