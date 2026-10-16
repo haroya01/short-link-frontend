@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
 import { SEO_PAGES } from "@/modules/marketing/seo-landing";
+import { renderContextHeaders } from "@/lib/api/render-context";
+import { isIndexable, type AudienceFields } from "@/modules/blog/lib/post-audience";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -68,7 +70,7 @@ type ProfileListResponse = {
 const POST_SITEMAP_CAP = 20000;
 const POST_PAGE_SIZE = 100;
 
-type FeedPostItem = { author: { username: string }; slug: string; publishedAt: string | null };
+type FeedPostItem = AudienceFields & { author: { username: string }; slug: string; publishedAt: string | null };
 type FeedPageResponse = { items: FeedPostItem[]; hasNext: boolean };
 
 async function fetchPublicPosts(): Promise<FeedPostItem[]> {
@@ -77,14 +79,14 @@ async function fetchPublicPosts(): Promise<FeedPostItem[]> {
     const url = `${API_BASE}/api/v1/public/posts?sort=recent&page=${page}&size=${POST_PAGE_SIZE}`;
     let data: FeedPageResponse;
     try {
-      const res = await fetch(url, { next: { revalidate: 3600 } });
+      const res = await fetch(url, { next: { revalidate: 3600 }, headers: renderContextHeaders(url) });
       if (!res.ok) break;
       data = (await res.json()) as FeedPageResponse;
     } catch {
       break;
     }
     if (!data.items?.length) break;
-    posts.push(...data.items);
+    posts.push(...data.items.filter(isIndexable));
     if (!data.hasNext) break;
   }
   return posts;
@@ -96,7 +98,7 @@ async function fetchPublicProfiles(): Promise<string[]> {
     const url = `${API_BASE}/api/v1/public/profiles?page=${page}&size=${PROFILE_PAGE_SIZE}`;
     let data: ProfileListResponse;
     try {
-      const res = await fetch(url, { next: { revalidate: 3600 } });
+      const res = await fetch(url, { next: { revalidate: 3600 }, headers: renderContextHeaders(url) });
       if (!res.ok) break;
       data = (await res.json()) as ProfileListResponse;
     } catch {
@@ -118,9 +120,8 @@ type TagCountResponse = { tag: string; count: number };
 
 async function fetchPopularTags(): Promise<string[]> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/public/tags?limit=${TAG_SITEMAP_CAP}`, {
-      next: { revalidate: 3600 },
-    });
+    const url = `${API_BASE}/api/v1/public/tags?limit=${TAG_SITEMAP_CAP}`;
+    const res = await fetch(url, { next: { revalidate: 3600 }, headers: renderContextHeaders(url) });
     if (!res.ok) return [];
     const data = (await res.json()) as TagCountResponse[];
     return data.map((t) => t.tag).filter(Boolean);

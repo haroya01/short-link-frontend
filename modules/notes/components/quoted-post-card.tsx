@@ -5,6 +5,7 @@ import type { QuotedPost } from "@/modules/notes/api/notes";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { AudienceMark } from "@/modules/blog/components/audience-mark";
 
 export function QuotedPostCard({ post, linked = true }: { post: QuotedPost; linked?: boolean }) {
   const locale = useLocale();
@@ -14,6 +15,7 @@ export function QuotedPostCard({ post, linked = true }: { post: QuotedPost; link
       <span className="flex min-w-0 items-center gap-1.5 text-[14px] leading-5">
         <span className="truncate font-semibold text-slate-900 dark:text-slate-100">{post.authorUsername}</span>
         <span className="shrink-0 text-slate-500 dark:text-slate-400">· {t("quotedPostKind")}</span>
+        <AudienceMark item={post} />
       </span>
       <span
         lang={contentLang(post.title)}

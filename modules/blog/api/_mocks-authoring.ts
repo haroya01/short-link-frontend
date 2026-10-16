@@ -6,6 +6,7 @@
  * demo. Mirrors the real posts.ts / post-images.ts contracts.
  */
 import type {
+  AudienceInput,
   BlockInput,
   EditGuard,
   PostBlockView,
@@ -18,6 +19,8 @@ import type { SeriesDetailView, SeriesItemRef, SeriesOwnerItem, SeriesView } fro
 import { ApiError } from "@/lib/api/client";
 import type { ProblemDetail } from "@/types";
 import { mockSeriesNoteSummary } from "@/modules/notes/api/_mocks";
+import { postHref } from "@/modules/blog/lib/author-href";
+import { PASSWORD_MAX, PASSWORD_MIN } from "@/modules/blog/lib/post-audience";
 
 const nowIso = () => new Date().toISOString();
 
@@ -185,6 +188,52 @@ const PROFILE_PATH_SLUGS = new Set([
   "opengraph-image", "replies", "reposts", "series",
 ]);
 
+const unlistedKeys = new Map<number, string>();
+
+function badRequest(code: string): ApiError {
+  return new ApiError(400, { status: 400, code } as ProblemDetail);
+}
+
+function unlistedUrlFor(id: number, slug: string): string {
+  let key = unlistedKeys.get(id);
+  if (!key) {
+    key = `mock${Math.random().toString(36).slice(2, 12)}`;
+    unlistedKeys.set(id, key);
+  }
+  return `${postHref("dohyun", slug, "ko")}?k=${key}`;
+}
+
+function audiencePatch(id: number, payload: AudienceInput): Partial<PostView> {
+  const current = posts.get(id);
+  const patch: Partial<PostView> = {};
+  if (payload.password !== undefined) {
+    const length = [...payload.password].length;
+    if (length < PASSWORD_MIN || length > PASSWORD_MAX) throw badRequest("POST_PASSWORD_LENGTH");
+    patch.hasPassword = true;
+  }
+  if (payload.audience !== undefined) {
+    if (!["PUBLIC", "UNLISTED", "FOLLOWERS", "PASSWORD"].includes(payload.audience)) throw badRequest("POST_AUDIENCE_INVALID");
+    if (payload.audience === "PASSWORD" && !current?.hasPassword && payload.password === undefined) {
+      throw badRequest("POST_PASSWORD_REQUIRED");
+    }
+    patch.audience = payload.audience;
+  }
+  if (payload.blockedCountries !== undefined) {
+    if (payload.blockedCountries.some((code) => !/^[A-Z]{2}$/.test(code))) throw badRequest("POST_BLOCKED_COUNTRIES_INVALID");
+    patch.blockedCountries = [...new Set(payload.blockedCountries)];
+  }
+  const audience = patch.audience ?? current?.audience ?? "PUBLIC";
+  patch.unlistedUrl = audience === "UNLISTED" ? unlistedUrlFor(id, current?.slug ?? `post-${id}`) : null;
+  return patch;
+}
+
+export function mockRotateUnlistedKey(id: number): { unlistedUrl: string } {
+  unlistedKeys.delete(id);
+  const unlistedUrl = unlistedUrlFor(id, posts.get(id)?.slug ?? `post-${id}`);
+  touch(id, { unlistedUrl });
+  return { unlistedUrl };
+}
+
 export function mockUpdatePostMetadata(
   id: number,
   payload: {
@@ -195,10 +244,12 @@ export function mockUpdatePostMetadata(
     coverChosen?: boolean;
     languageTag?: string;
     tags?: string[];
-  } & EditGuard,
+  } & AudienceInput &
+    EditGuard,
 ): PostView {
   guardLiveEdit(id);
   checkEdit(id, payload);
+  const access = audiencePatch(id, payload);
   if (payload.slug !== undefined) {
     if (payload.slug.length < 2) throw new ApiError(400, { status: 400, detail: "slug length 2~200" });
     if (payload.slug !== posts.get(id)?.slug && PROFILE_PATH_SLUGS.has(payload.slug)) {
@@ -221,7 +272,8 @@ export function mockUpdatePostMetadata(
   }
   if (payload.languageTag !== undefined) patch.languageTag = payload.languageTag;
   if (payload.tags !== undefined) patch.tags = payload.tags;
-  return markEdited(id, patch);
+  const content = Object.keys(patch).length > 0;
+  return content ? markEdited(id, { ...patch, ...access }) : touch(id, access);
 }
 
 export function mockDeletePost(id: number): void {

@@ -44,7 +44,7 @@ describe("public discovery fetches", () => {
     expect(mocks.readToken).not.toHaveBeenCalled();
     expect(mocks.fetchWithTimeout).toHaveBeenCalledWith(
       expect.stringContaining("/api/v1/public/posts?tag=%EC%9D%BC%EC%83%81&sort=trending"),
-      { next: { revalidate: 30 } },
+      { next: { revalidate: 30, tags: ["public-posts"] } },
     );
   });
 });

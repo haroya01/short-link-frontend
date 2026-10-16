@@ -10,6 +10,8 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
+import { AudienceSection } from "@/modules/blog/components/editor/audience-section";
+import { passwordProblem, type PostAudience } from "@/modules/blog/lib/post-audience";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { isSavableSlug } from "@/modules/blog/lib/slug";
 import { rowDate } from "@/modules/notes/lib/compact-time";
@@ -30,12 +32,39 @@ const TAKEN_DOWN_NOTICE_ID = "publish-taken-down";
  * folds into the collapsed 추가 설정 section; the publish address stays readable on its collapsed row.
  * Settings are saved first so a publish/schedule snapshot matches what's set here. Dark-aware.
  */
+export type PublishAccess = {
+  audience: PostAudience;
+  onAudienceChange: (v: PostAudience) => void;
+  password: string;
+  onPasswordChange: (v: string) => void;
+  hasPassword: boolean;
+  savedAudience: PostAudience;
+  unlistedUrl: string | null;
+  onRotate: () => Promise<boolean>;
+  blockedCountries: string[];
+  onBlockedCountriesChange: (v: string[]) => void;
+};
+
+const DEFAULT_ACCESS: PublishAccess = {
+  audience: "PUBLIC",
+  onAudienceChange: () => {},
+  password: "",
+  onPasswordChange: () => {},
+  hasPassword: false,
+  savedAudience: "PUBLIC",
+  unlistedUrl: null,
+  onRotate: async () => false,
+  blockedCountries: [],
+  onBlockedCountriesChange: () => {},
+};
+
 export function PublishDialog({
   open,
   onClose,
   status,
   takenDown = false,
   scheduledAt,
+  access = DEFAULT_ACCESS,
   title,
   cover,
   onCoverChange,
@@ -68,6 +97,7 @@ export function PublishDialog({
   status: PostStatus;
   takenDown?: boolean;
   scheduledAt: string | null;
+  access?: PublishAccess;
   /** Canvas title, mirrored read-only in the card preview (empty → the 제목 없음 placeholder). */
   title: string;
   cover: string | null;
@@ -144,7 +174,10 @@ export function PublishDialog({
   // Teachable click: instead of a silently-disabled Publish, clicking with no topics scrolls the tag
   // field into view and flags it. Set on a failed publish attempt, cleared once a tag is added.
   const [tagNudge, setTagNudge] = useState(false);
+  const [passwordNudge, setPasswordNudge] = useState(false);
+  const audienceRef = useRef<HTMLDivElement>(null);
   const slugErrorRef = useRef<HTMLParagraphElement>(null);
+  const passwordIssue = passwordProblem(access.audience, access.password, access.hasPassword);
 
   // A public post needs at least one topic (tag) — the reader's whole discovery surface is
   // tag-driven — so tags gate the button (disabled) and the tag field nudges. A missing title does
@@ -164,6 +197,10 @@ export function PublishDialog({
   useEffect(() => {
     if (open && slugError) setShowAdvanced(true);
   }, [open, slugError]);
+
+  useEffect(() => {
+    if (!open) setPasswordNudge(false);
+  }, [open]);
 
   useEffect(() => {
     if (open && slugError && showAdvanced) slugErrorRef.current?.scrollIntoView({ block: "nearest" });
@@ -202,6 +239,13 @@ export function PublishDialog({
   }, [open, status, cover, coverSuggestion, onCoverChange, onCoverPrefill]);
 
   if (!open) return null;
+
+  function holdForPassword(): boolean {
+    if (passwordIssue == null) return false;
+    setPasswordNudge(true);
+    audienceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return true;
+  }
 
   async function pickCover(file: File) {
     setUploading(true);
@@ -413,6 +457,23 @@ export function PublishDialog({
             </Field>
           </div>
 
+          <div ref={audienceRef} className="mt-5 scroll-mt-4">
+            <AudienceSection
+              status={status}
+              audience={access.audience}
+              onAudienceChange={access.onAudienceChange}
+              password={access.password}
+              onPasswordChange={access.onPasswordChange}
+              hasPassword={access.hasPassword}
+              passwordIssue={passwordIssue}
+              showPasswordIssue={passwordNudge}
+              unlistedUrl={access.unlistedUrl}
+              onRotate={access.onRotate}
+              blockedCountries={access.blockedCountries}
+              onBlockedCountriesChange={access.onBlockedCountriesChange}
+            />
+          </div>
+
           {(status === "DRAFT" || status === "SCHEDULED") && (
             <div className="mt-5">
               <Field label={t("publishTiming")}>
@@ -584,6 +645,7 @@ export function PublishDialog({
                   tagsFieldRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   return;
                 }
+                if (holdForPassword()) return;
                 // Save first, and abort the publish if it didn't land — otherwise we'd publish a stale
                 // server snapshot (missing the last edits) and the save error would be wiped by the
                 // lifecycle call. The error stays in the footer with the dialog open.
@@ -595,9 +657,11 @@ export function PublishDialog({
                 if (ok) onClose();
               }}
               onSaveChanges={async () => {
+                if (holdForPassword()) return;
+                const becameUnlisted = access.audience === "UNLISTED" && access.savedAudience !== "UNLISTED";
                 // Don't close on a failed save — that would read as a phantom success and drop the edits.
                 if ((await onSave()) === false) return;
-                onClose();
+                if (!becameUnlisted) onClose();
               }}
               // Persist pending edits BEFORE the status flip — otherwise editing then Republish /
               // Cancel-schedule / Unpublish silently drops the new content (changeStatus only POSTs the
@@ -619,13 +683,16 @@ export function PublishDialog({
                   tagsFieldRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   return;
                 }
+                if (holdForPassword()) return;
                 if ((await onSave()) === false) return;
                 await onChangeStatus("republish");
               }}
               onReschedule={async () => {
+                if (holdForPassword()) return;
                 if (await onSchedule(scheduleAt)) onClose();
               }}
               onPublishNow={async () => {
+                if (holdForPassword()) return;
                 if ((await onSave()) === false) return;
                 if (await onChangeStatus("publish")) onClose();
               }}

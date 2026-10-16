@@ -1,6 +1,7 @@
 import { request, requestText } from "@/lib/api/client";
 import { authoringMocks } from "@/modules/blog/api/_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
+import type { PostAudience } from "@/modules/blog/lib/post-audience";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -31,6 +32,16 @@ export interface PostView {
   updatedAt: string;
   contentVersion?: number;
   takenDown?: boolean;
+  audience?: PostAudience;
+  hasPassword?: boolean;
+  unlistedUrl?: string | null;
+  blockedCountries?: string[];
+}
+
+export interface AudienceInput {
+  audience?: PostAudience;
+  password?: string;
+  blockedCountries?: string[];
 }
 
 export interface EditGuard {
@@ -91,13 +102,19 @@ export function updatePostMetadata(
     coverChosen?: boolean;
     languageTag?: string;
     tags?: string[];
-  } & EditGuard,
+  } & AudienceInput &
+    EditGuard,
 ): Promise<PostView> {
   if (authoringMocks) {
     if (mockFails("post-save")) return Promise.reject(new Error("post save 500"));
     return Promise.resolve(authoringMocks.mockUpdatePostMetadata(id, payload));
   }
   return request<PostView>(`/api/v1/posts/${id}`, { method: "PATCH", body: payload });
+}
+
+export function rotateUnlistedKey(id: number): Promise<{ unlistedUrl: string }> {
+  if (authoringMocks) return Promise.resolve(authoringMocks.mockRotateUnlistedKey(id));
+  return request<{ unlistedUrl: string }>(`/api/v1/posts/${id}/unlisted-key/rotate`, { method: "POST" });
 }
 
 export function deletePost(id: number): Promise<void> {

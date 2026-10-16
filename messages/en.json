@@ -597,7 +597,27 @@
     },
     "saveFailedRetry": "Not saved · Retry",
     "reschedule": "Change time",
-    "previewOpenError": "Couldn't open the preview"
+    "previewOpenError": "Couldn't open the preview",
+    "audience": {
+      "label": "Who can read",
+      "titlePublic": "The title stays visible to everyone",
+      "unlistedHint": "It won't show up in lists or search. Anyone who gets the link can pass it on",
+      "passwordPlaceholder": "Password",
+      "newPasswordPlaceholder": "New password",
+      "passwordRequired": "Set a password to publish.",
+      "passwordRequiredSave": "Set a password to save.",
+      "passwordLength": "Use 4 to 200 characters for the password",
+      "linkLabel": "Share link",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyFailed": "Couldn't copy",
+      "rotate": "Change link",
+      "rotateTitle": "Change the link?",
+      "rotateBody": "The current link will stop working.",
+      "rotateFailed": "Couldn't change the link",
+      "countryHint": "Readers in these countries see only the title. A VPN can get around this.",
+      "countryRemove": "Remove {country}"
+    }
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -819,7 +839,31 @@
     "highlightLinkCopied": "Link copied",
     "highlightPublicFirst": "Highlighted · public with your name",
     "reportTitleHighlightReply": "Report this reply",
-    "publishedStatus": "Published"
+    "publishedStatus": "Published",
+    "gate": {
+      "followers": "Follow to read this post",
+      "password": "This post is password-protected",
+      "region": "This post isn't available in your country",
+      "passwordLabel": "Password",
+      "open": "Open",
+      "wrongPassword": "That password isn't right",
+      "tooManyAttempts": "Too many tries. Please try again in a little while",
+      "unlockFailed": "Couldn't open it. Please try again",
+      "loading": "Loading the post"
+    },
+    "audience": {
+      "PUBLIC": "Everyone",
+      "UNLISTED": "Link only",
+      "FOLLOWERS": "Followers",
+      "PASSWORD": "Password",
+      "REGION": "Country limits"
+    },
+    "shareCard": {
+      "FOLLOWERS": "Only followers can read this post",
+      "PASSWORD": "This post is password-protected",
+      "REGION": "This post isn't available in some countries",
+      "UNLISTED": "Opens only with its link"
+    }
   },
   "imageCropper": {
     "title": "Crop image",
@@ -887,7 +931,11 @@
     "SUSPEND_REQUIRES_EXPIRY": "A suspension needs an expiry date.",
     "toggleFailed": "Couldn't save that. Please try again in a moment.",
     "likeFailed": "Couldn't save your like",
-    "POST_TAKEN_DOWN": "This post was taken down under our content policy, so it can't be made public again."
+    "POST_TAKEN_DOWN": "This post was taken down under our content policy, so it can't be made public again.",
+    "POST_PASSWORD_LENGTH": "Use 4 to 200 characters for the password",
+    "POST_PASSWORD_REQUIRED": "Set a password",
+    "POST_AUDIENCE_INVALID": "Choose who can read again",
+    "POST_BLOCKED_COUNTRIES_INVALID": "The country limits include an unknown country"
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",

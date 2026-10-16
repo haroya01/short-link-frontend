@@ -37,6 +37,10 @@ import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import { audienceOf, isIndexable } from "@/modules/blog/lib/post-audience";
+import { postMetadata } from "@/modules/blog/lib/post-metadata";
+import { PostGate } from "../_components/post-gate";
+import { PostKeyScope } from "../_components/post-key-scope";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -63,16 +67,21 @@ function formatDate(iso: string, locale: string): string {
   });
 }
 
+function keyFrom(k: string | string[] | undefined): string | null {
+  return typeof k === "string" && k.length > 0 ? k : null;
+}
+
 export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: Promise<{ username: string; slug: string }>;
-  searchParams: Promise<{ preview?: string }>;
+  params: Promise<{ locale: string; username: string; slug: string }>;
+  searchParams: Promise<{ preview?: string; k?: string | string[] }>;
 }): Promise<Metadata> {
-  const { username, slug } = await params;
-  const { preview } = await searchParams;
-  const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
+  const { locale, username, slug } = await params;
+  const { preview, k } = await searchParams;
+  const postKey = preview ? null : keyFrom(k);
+  const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug, postKey);
   // 404/삭제(410)는 여기서 notFound() 로 확정한다. 페이지 컴포넌트에서만 notFound() 를 던지면,
   // 부모 레이아웃이 스트리밍을 먼저 커밋해 HTTP 200 으로 나가고 not-found UI 만 뒤늦게 실린다
   // (soft-404). generateMetadata 는 응답 커밋 전에 완료되므로 여기서 던져야 상태코드가 404 로 나간다.
@@ -88,38 +97,8 @@ export async function generateMetadata({
   }
   const h = await headers();
   const origin = authorBaseUrl(h, username);
-  const url = `${origin}/${post.slug}`;
-  // Always hand crawlers a card image: the post's own cover if set, else the per-post generated card
-  // (app/[locale]/p/[username]/[slug]/opengraph-image — the subdomain rewrite maps this back to the
-  // route). Without the fallback an image-less post unfurled blank. The URL is already absolute, so
-  // metadataBase doesn't rewrite it.
-  const ogImage = post.ogImageUrl ?? `${url}/opengraph-image`;
-  return {
-    title: post.title,
-    description: post.excerpt ?? undefined,
-    alternates: { canonical: url },
-    openGraph: {
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      url,
-      type: "article",
-      siteName: `@${author.username}`,
-      images: [{ url: ogImage, width: 2400, height: 1260, alt: post.title }],
-      locale: post.languageTag,
-      publishedTime: post.publishedAt,
-      modifiedTime: post.lastEditedAt ?? undefined,
-      authors: [`@${author.username}`],
-      tags: post.tags,
-    },
-    // Set twitter:* explicitly — otherwise the post inherits the root kurl.me site card (generic
-    // title/description/image) on X / Slack / any consumer that prefers twitter tags over OpenGraph.
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      images: [ogImage],
-    },
-  };
+  const shareCard = await getTranslations({ locale, namespace: "publicPost.shareCard" });
+  return postMetadata({ author, post, url: `${origin}/${post.slug}`, postKey, shareLabel: (mark) => shareCard(mark) });
 }
 
 export default async function PublicPostPage({
@@ -127,12 +106,13 @@ export default async function PublicPostPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; username: string; slug: string }>;
-  searchParams: Promise<{ preview?: string }>;
+  searchParams: Promise<{ preview?: string; k?: string | string[] }>;
 }) {
   const { locale, username, slug } = await params;
-  const { preview } = await searchParams;
+  const { preview, k } = await searchParams;
   const isPreview = Boolean(preview);
-  const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
+  const postKey = preview ? null : keyFrom(k);
+  const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug, postKey);
   const t = await getTranslations({ locale, namespace: "publicPost" });
   const tFooter = await getTranslations({ locale, namespace: "footer" });
 
@@ -148,7 +128,9 @@ export default async function PublicPostPage({
   const { author, post, blocks } = result.data;
   const h = await headers();
   const origin = authorBaseUrl(h, username);
-  const postUrl = `${origin}/${post.slug}`;
+  const lock = post.locked?.reason ?? null;
+  const keyed = postKey != null && audienceOf(post) === "UNLISTED";
+  const postUrl = keyed ? `${origin}/${post.slug}?k=${encodeURIComponent(postKey)}` : `${origin}/${post.slug}`;
   const minutes = readingMinutes(blocks);
   // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
   // (incl. the save-at-publish stamp) read as part of publishing and stay quiet (조용한 웹로그).
@@ -176,7 +158,7 @@ export default async function PublicPostPage({
   // Article schema — the og:article tags above only feed social unfurls; Google's article rich
   // results (headline + byline + image in SERP) need this JSON-LD. Mirrors the ProfilePage>Person
   // pattern on the profile pages. Previews are noindex'd drafts, so they don't emit one.
-  const articleJsonLd = isPreview
+  const articleJsonLd = isPreview || !isIndexable(post)
     ? null
     : {
         "@context": "https://schema.org",
@@ -207,7 +189,7 @@ export default async function PublicPostPage({
       };
 
   // 빵부스러기 — 작가 홈 → 이 글. SERP 의 breadcrumb 표시 + 사이트 구조 신호.
-  const breadcrumbJsonLd = isPreview
+  const breadcrumbJsonLd = isPreview || !isIndexable(post)
     ? null
     : {
         "@context": "https://schema.org",
@@ -225,6 +207,7 @@ export default async function PublicPostPage({
     // the reading column — the wide gutter left the author block floating alone far to the left; a
     // snugger gap gives the three columns a shared rhythm without touching the 42rem band.
     <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
+      {keyed && !lock && <PostKeyScope postId={post.id} postKey={postKey} />}
       {articleJsonLd && (
         <script
           type="application/ld+json"
@@ -261,9 +244,11 @@ export default async function PublicPostPage({
               {author.bio}
             </p>
           )}
-          <div className="mt-4">
-            <FollowButton username={author.username} initialFollowerCount={0} sourcePostId={post.id} />
-          </div>
+          {!lock && (
+            <div className="mt-4">
+              <FollowButton username={author.username} initialFollowerCount={0} sourcePostId={post.id} />
+            </div>
+          )}
         </div>
       </aside>
 
@@ -287,9 +272,9 @@ export default async function PublicPostPage({
           <div className="mb-8 rounded-surface border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
             {t("previewBanner")}
           </div>
-        ) : (
+        ) : lock ? null : (
           <>
-            <ViewBeacon username={username} slug={slug} />
+            <ViewBeacon username={username} slug={slug} postId={post.id} />
             {/* Account-synced reading history for signed-in readers (no-op for anonymous). */}
             <ReadBeacon postId={post.id} />
             {/* First-party 완독·체류 계측 — behavior_event 로 간다(조회 비콘과 같은 세션). */}
@@ -332,16 +317,25 @@ export default async function PublicPostPage({
               <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
               <span className="block text-[13px] text-slate-500 dark:text-slate-400">
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
-                {" · "}
-                {t("readingTime", { minutes })}
+                {!lock && (
+                  <>
+                    {" · "}
+                    {t("readingTime", { minutes })}
+                  </>
+                )}
               </span>
             </span>
           </a>
           <p className="hidden text-[13px] text-slate-500 dark:text-slate-400 xl:block">
             <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
-            {" · "}
-            {t("readingTime", { minutes })}
+            {!lock && (
+              <>
+                {" · "}
+                {t("readingTime", { minutes })}
+              </>
+            )}
           </p>
+          {!lock && (
           <AuthorOnly username={author.username}>
             <div data-post-actions className="ml-auto flex shrink-0 items-center gap-2">
               <span className="xl:hidden">
@@ -364,9 +358,23 @@ export default async function PublicPostPage({
               />
             </div>
           </AuthorOnly>
+          )}
         </div>
       </header>
 
+      {lock ? (
+        <AuthorGate username={author.username} subject="post">
+          <PostGate
+            username={author.username}
+            slug={post.slug}
+            postId={post.id}
+            reason={lock}
+            postKey={postKey}
+            locale={locale}
+            postUrl={postUrl}
+          />
+        </AuthorGate>
+      ) : (
       <AuthorGate username={author.username} subject="post">
         {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
             "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-surface + ring 은 그대로 두고, 2:1
@@ -468,6 +476,7 @@ export default async function PublicPostPage({
         {/* 발행 직후 에디터에서 넘어온 1회성 축하 — 세션 플래그를 소비해서만 재생, 일반 열람엔 없음. */}
         {!isPreview && <PublishCelebration slug={post.slug} />}
       </AuthorGate>
+      )}
 
       {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
       {!isPreview && (
@@ -491,6 +500,7 @@ export default async function PublicPostPage({
           centering. Below that, the dock's 목차 → bottom sheet takes over. 불투명 종이 배경:
           full-bleed 이미지가 TOC 뒤를 지나가도 글자가 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이
           겹침 자체를 제거. */}
+      {!lock && (
       <AuthorOnly username={author.username}>
         {tocHeadings.length >= 1 && (
           <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-surface bg-white p-3 min-[1100px]:block xl:w-52 dark:bg-slate-950">
@@ -500,7 +510,8 @@ export default async function PublicPostPage({
 
         <PostDock postId={post.id} postTitle={post.title} likeCount={post.likeCount} headings={tocHeadings} />
       </AuthorOnly>
-      <LegacyHeadingHash headings={headings} />
+      )}
+      {!lock && <LegacyHeadingHash headings={headings} />}
     </main>
   );
 }

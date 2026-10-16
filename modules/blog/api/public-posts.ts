@@ -11,6 +11,7 @@ import { blogMocks } from "@/modules/blog/api/_mock-gates";
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { freshToken, mockFailure, readToken } from "@/lib/api/client";
+import { redactCard, type AudienceFields } from "@/modules/blog/lib/post-audience";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -29,7 +30,13 @@ export interface PublicAuthor {
   hasLinkInBio?: boolean;
 }
 
-export interface PublicPostListItem {
+export interface PostOwnerFields {
+  hasPassword?: boolean;
+  unlistedUrl?: string | null;
+  blockedCountries?: string[];
+}
+
+export interface PublicPostListItem extends AudienceFields, PostOwnerFields {
   id: number;
   slug: string;
   title: string;
@@ -180,7 +187,7 @@ export interface PublicSeriesDetail {
   items?: PublicSeriesItem[];
 }
 
-export interface PublicFeedItem {
+export interface PublicFeedItem extends AudienceFields {
   /** Post id — lets feed cards call post-scoped actions (bookmark/like) without opening the post. */
   id: number;
   author: PublicAuthor;
@@ -244,12 +251,16 @@ export async function viewerHeaders(): Promise<HeadersInit | undefined> {
   return token ? { Authorization: `Bearer ${token}` } : undefined;
 }
 
+export const AUTHOR_POSTS_TAG = (username: string) => `author-posts:${username.toLowerCase()}`;
+export const PUBLIC_POSTS_TAG = "public-posts";
+
 export async function fetchPublic<T>(
   path: string,
-  opts?: { noStore?: boolean },
+  opts?: { noStore?: boolean; tags?: string[]; headers?: Record<string, string> },
 ): Promise<FetchResult<T>> {
   const url = `${API_BASE}${path}`;
   const token = await viewerToken();
+  const extra = opts?.headers ?? {};
   // Detail lookups fetch with no-store: fetch can't cache only the 200 and skip the 404, so an ISR
   // window would serve a stale 404 on the publish→share path (a just-published post staying 404 for
   // up to the revalidate window). List/feed fetches stay on ISR — a momentarily missing card is far
@@ -259,13 +270,14 @@ export async function fetchPublic<T>(
   // prerenders at build) must degrade to the page's empty state — not 500 the render or fail the
   // build. ISR refills within REVALIDATE_SECONDS once the API answers again.
   try {
+    const own = Object.keys(extra).length > 0 ? { headers: extra } : {};
     const res = await fetchWithTimeout(
       url,
       token
-        ? { cache: "no-store", headers: { Authorization: `Bearer ${token}` } }
+        ? { cache: "no-store", headers: { ...extra, Authorization: `Bearer ${token}` } }
         : opts?.noStore
-          ? { cache: "no-store" }
-          : { next: { revalidate: REVALIDATE_SECONDS } },
+          ? { cache: "no-store", ...own }
+          : { next: { revalidate: REVALIDATE_SECONDS, ...(opts?.tags ? { tags: opts.tags } : {}) }, ...own },
     );
     if (res.status === 200) {
       const data = (await res.json()) as T;
@@ -286,11 +298,20 @@ export function listPublicFeed(
   lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks) {
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, viewer: hasViewer() }) });
+    return Promise.resolve({ ok: true, data: redactFeedView(blogMocks.mockFeedView({ sort, viewer: hasViewer() })) });
   }
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
-  );
+    { tags: [PUBLIC_POSTS_TAG] },
+  ).then(redactFeedResult);
+}
+
+function redactFeedView(view: PublicFeedView): PublicFeedView {
+  return { ...view, items: view.items.map(redactCard) };
+}
+
+function redactFeedResult(result: FetchResult<PublicFeedView>): FetchResult<PublicFeedView> {
+  return result.ok ? { ok: true, data: redactFeedView(result.data) } : result;
 }
 
 /** `&lang=ko` when a language is selected; empty (all languages) otherwise. */
@@ -305,11 +326,12 @@ export function listFeedByTag(
   size = 24,
 ): Promise<FetchResult<PublicFeedView>> {
   if (blogMocks) {
-    return Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ tag, sort, viewer: hasViewer() }) });
+    return Promise.resolve({ ok: true, data: redactFeedView(blogMocks.mockFeedView({ tag, sort, viewer: hasViewer() })) });
   }
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&sort=${sort}&page=${page}&size=${size}`,
-  );
+    { tags: [PUBLIC_POSTS_TAG] },
+  ).then(redactFeedResult);
 }
 
 /** Free-text search across title / excerpt / tags / author handle. `sort` re-ranks the matches. */
@@ -323,37 +345,102 @@ export function searchPublicFeed(
   if (blogMocks)
     return (
       mockFailure("search") ??
-      Promise.resolve({ ok: true, data: blogMocks.mockFeedView({ sort, q: query, viewer: hasViewer() }) })
+      Promise.resolve({ ok: true, data: redactFeedView(blogMocks.mockFeedView({ sort, q: query, viewer: hasViewer() })) })
     );
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
-  );
+    { tags: [PUBLIC_POSTS_TAG] },
+  ).then(redactFeedResult);
 }
 
 // cache() so the persistent author layout + the tab page share ONE request per render (the layout
 // reads it for the header, the page for its posts).
 export const listPublicPosts = cache(
   (username: string): Promise<FetchResult<PublicPostList>> => {
-    if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockPostList(username) });
+    if (blogMocks) return Promise.resolve({ ok: true, data: redactPostList(blogMocks.mockPostList(username)) });
     return fetchPublic<PublicPostList>(
       `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
-    );
+      { tags: [AUTHOR_POSTS_TAG(username), PUBLIC_POSTS_TAG] },
+    ).then((result) => (result.ok ? { ok: true, data: redactPostList(result.data) } : result));
   },
 );
+
+function redactPostList(list: PublicPostList): PublicPostList {
+  return { ...list, posts: list.posts.map(redactCard) };
+}
 
 // cache() so generateMetadata + the page component (+ opengraph-image) share ONE fetch per render.
 // no-store opts out of Next's fetch memoization, so without this the reader page hits the backend
 // twice per view; cache() dedupes within the render pass regardless of the fetch cache policy.
 export const findPublicPost = cache(
-  (username: string, slug: string): Promise<FetchResult<PublicPostDetail>> => {
-    if (blogMocks)
-      return Promise.resolve({ ok: true, data: blogMocks.mockPostDetail(username, slug) });
-    return fetchPublic<PublicPostDetail>(
-      `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
-      { noStore: true },
-    );
+  (username: string, slug: string, key?: string | null): Promise<FetchResult<PublicPostDetail>> => {
+    if (blogMocks) {
+      const data = blogMocks.mockPostDetail(username, slug, { viewer: false, key, render: "server" });
+      return Promise.resolve(data ? { ok: true, data } : { ok: false, status: 404 });
+    }
+    return fetchPublic<PublicPostDetail>(postDetailPath(username, slug), {
+      noStore: true,
+      headers: key ? { "X-Post-Key": key } : undefined,
+    });
   },
 );
+
+function postDetailPath(username: string, slug: string): string {
+  return `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`;
+}
+
+export type PostDetailRead =
+  | { ok: true; data: PublicPostDetail }
+  | { ok: false; status: 404 | 410 | "error" };
+
+export async function readPostDetail(
+  username: string,
+  slug: string,
+  access: { key?: string | null; grant?: string | null },
+): Promise<PostDetailRead> {
+  if (blogMocks) {
+    const data = blogMocks.mockPostDetail(username, slug, {
+      viewer: hasViewer(),
+      key: access.key,
+      grant: access.grant,
+      render: "browser",
+    });
+    return data ? { ok: true, data } : { ok: false, status: 404 };
+  }
+  const headers: Record<string, string> = {};
+  if (access.key) headers["X-Post-Key"] = access.key;
+  if (access.grant) headers["X-Post-Grant"] = access.grant;
+  return fetchPublic<PublicPostDetail>(postDetailPath(username, slug), { noStore: true, headers });
+}
+
+export type UnlockResult =
+  | { ok: true; grant: string; expiresAt: string }
+  | { ok: false; reason: "invalid" | "attempts" | "region" | "error"; retryAfter?: number };
+
+export async function unlockPost(username: string, slug: string, password: string): Promise<UnlockResult> {
+  if (blogMocks) return blogMocks.mockUnlockPost(username, slug, password);
+  try {
+    const res = await fetchWithTimeout(`${API_BASE}${postDetailPath(username, slug)}/unlock`, {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    if (res.status === 200) {
+      const body = (await res.json()) as { grant: string; expiresAt: string };
+      return { ok: true, grant: body.grant, expiresAt: body.expiresAt };
+    }
+    if (res.status === 401) return { ok: false, reason: "invalid" };
+    if (res.status === 429) {
+      const retryAfter = Number(res.headers.get("Retry-After"));
+      return { ok: false, reason: "attempts", ...(Number.isFinite(retryAfter) && retryAfter > 0 ? { retryAfter } : {}) };
+    }
+    if (res.status === 403) return { ok: false, reason: "region" };
+    return { ok: false, reason: "error" };
+  } catch {
+    return { ok: false, reason: "error" };
+  }
+}
 
 /**
  * Reads a not-yet-public post by its share token (the owner's preview link). Bypasses the status
@@ -361,8 +448,10 @@ export const findPublicPost = cache(
  */
 export const findPreviewPost = cache(
   (token: string): Promise<FetchResult<PublicPostDetail>> => {
-    if (blogMocks)
-      return Promise.resolve({ ok: true, data: blogMocks.mockPostDetail("me", "preview") });
+    if (blogMocks) {
+      const data = blogMocks.mockPostDetail("me", "preview", { viewer: false, render: "server" });
+      return Promise.resolve(data ? { ok: true, data } : { ok: false, status: 404 });
+    }
     return fetchPublic<PublicPostDetail>(`/api/v1/public/preview/${encodeURIComponent(token)}`, {
       noStore: true,
     });
@@ -408,10 +497,15 @@ export function listTrendingByTag(
   perTag = 8,
 ): Promise<FetchResult<TrendingTagSection[]>> {
   if (blogMocks)
-    return Promise.resolve({ ok: true, data: blogMocks.mockTrendingByTag(tagLimit, perTag) });
+    return Promise.resolve({ ok: true, data: redactSections(blogMocks.mockTrendingByTag(tagLimit, perTag)) });
   return fetchPublic<TrendingTagSection[]>(
     `/api/v1/public/feed/trending-by-tag?tagLimit=${tagLimit}&perTag=${perTag}`,
-  );
+    { tags: [PUBLIC_POSTS_TAG] },
+  ).then((result) => (result.ok ? { ok: true, data: redactSections(result.data) } : result));
+}
+
+function redactSections(sections: TrendingTagSection[]): TrendingTagSection[] {
+  return sections.map((section) => ({ ...section, posts: section.posts.map(redactCard) }));
 }
 
 /** Cross-author active series for the feed's series cards — most recently active first. */

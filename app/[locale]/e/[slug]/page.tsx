@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Markdown } from "@/modules/blog/components/markdown";
 import type { PublicEvent } from "@/modules/events/api/events";
 import { PublicEventPage } from "@/modules/events/components/public-event-page";
+import { renderContextHeaders } from "@/lib/api/render-context";
 
 // 서버 컴포넌트 fetch 는 상대 URL 불가 — dev(빈 API_BASE)에선 rewrites 와 같은 BACKEND_URL 로 직접 간다.
 const API_BASE =
@@ -13,9 +14,11 @@ const SITE_URL =
 
 async function fetchEvent(slug: string): Promise<PublicEvent | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/public/events/${encodeURIComponent(slug)}`, {
+    const url = `${API_BASE}/api/v1/public/events/${encodeURIComponent(slug)}`;
+    const res = await fetch(url, {
       // 신청 마감/잔여석은 실시간성이 중요 — 짧게만 캐시.
       next: { revalidate: 10 },
+      headers: renderContextHeaders(url),
     });
     if (res.status === 404) return null;
     if (!res.ok) throw new Error("event fetch failed");

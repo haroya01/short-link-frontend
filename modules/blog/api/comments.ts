@@ -2,6 +2,7 @@ import { request } from "@/lib/api/client";
 import { blogMocks } from "./_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
+import { announcePostLocked, postAccessHeaders, withPostAccess } from "@/modules/blog/lib/post-access";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -70,8 +71,9 @@ export async function listComments(postId: number): Promise<CommentView[]> {
   }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments?tombstones=1`, {
     cache: "no-store",
-    headers: await viewerHeaders(),
+    headers: withPostAccess(await viewerHeaders(), postId),
   });
+  if (res.status === 403) announcePostLocked();
   if (!res.ok) throw new Error(`comments ${res.status}`);
   return (await res.json()) as CommentView[];
 }
@@ -96,6 +98,7 @@ export function createComment(
   }
   return request<CommentView>(`/api/v1/posts/${postId}/comments`, {
     method: "POST",
+    headers: postAccessHeaders(postId),
     body: { body, parentId: parentId ?? null },
   });
 }
@@ -128,7 +131,7 @@ export function likeComment(id: number): Promise<CommentLikeStatus> {
     }
     return Promise.resolve({ likeCount: c?.likeCount ?? 0, liked: true });
   }
-  return request<CommentLikeStatus>(`/api/v1/comments/${id}/like`, { method: "POST" });
+  return request<CommentLikeStatus>(`/api/v1/comments/${id}/like`, { method: "POST", headers: postAccessHeaders() });
 }
 
 /** Authenticated — remove the viewer's like on a comment. */
@@ -142,13 +145,13 @@ export function unlikeComment(id: number): Promise<CommentLikeStatus> {
     }
     return Promise.resolve({ likeCount: c?.likeCount ?? 0, liked: false });
   }
-  return request<CommentLikeStatus>(`/api/v1/comments/${id}/like`, { method: "DELETE" });
+  return request<CommentLikeStatus>(`/api/v1/comments/${id}/like`, { method: "DELETE", headers: postAccessHeaders() });
 }
 
 /** Authenticated — of this post's comments, the ids the viewer liked (drives likedByMe). */
 export function listLikedCommentIds(postId: number): Promise<number[]> {
   if (USE_MOCKS) return Promise.resolve([...mockLiked]);
-  return request<number[]>(`/api/v1/posts/${postId}/comments/liked`, { method: "GET" });
+  return request<number[]>(`/api/v1/posts/${postId}/comments/liked`, { method: "GET", headers: postAccessHeaders(postId) });
 }
 
 // "내 댓글 모아보기" — the viewer's own comments across all posts, newest first, with post context.

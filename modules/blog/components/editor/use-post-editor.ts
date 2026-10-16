@@ -16,12 +16,15 @@ import {
   schedulePost,
   unpublishPost,
   updatePostMetadata,
+  rotateUnlistedKey,
   type BlockInput,
   type EditGuard,
   type PostBlockView,
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
+import { refreshPublicLists } from "@/modules/blog/api/audience-revalidate";
+import { audiencePatch, changesVisibility, type PostAudience } from "@/modules/blog/lib/post-audience";
 import { ApiError } from "@/lib/api/client";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { postHref } from "@/modules/blog/lib/author-href";
@@ -138,10 +141,17 @@ export function usePostEditor(
   // them stays the share-card image only.
   const [coverChosen, setCoverChosen] = useState(false);
   const [excerpt, setExcerptRaw] = useState("");
+  const [audience, setAudienceRaw] = useState<PostAudience>("PUBLIC");
+  const [password, setPasswordRaw] = useState("");
+  const [blockedCountries, setBlockedCountriesRaw] = useState<string[]>([]);
   // A save can outlive the render that started it. Keep every editable field current so its next
   // snapshot includes edits made while the preceding request was pending (including metadata).
-  const currentDraft = useRef({ post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt });
-  currentDraft.current = { post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt };
+  const currentDraft = useRef({
+    post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries,
+  });
+  currentDraft.current = {
+    post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries,
+  };
   const [loading, setLoading] = useState(postId != null);
   const [loadFailed, setLoadFailed] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -255,6 +265,21 @@ export function usePostEditor(
     setExcerptRaw(v);
     touchDirty();
   };
+  const setAudience = (v: PostAudience) => {
+    currentDraft.current.audience = v;
+    setAudienceRaw(v);
+    touchDirty();
+  };
+  const setPassword = (v: string) => {
+    currentDraft.current.password = v;
+    setPasswordRaw(v);
+    touchDirty();
+  };
+  const setBlockedCountries = (v: string[]) => {
+    currentDraft.current.blockedCountries = v;
+    setBlockedCountriesRaw(v);
+    touchDirty();
+  };
 
   const load = useCallback(async () => {
     const id = postId ?? currentDraft.current.post?.id ?? null;
@@ -278,6 +303,9 @@ export function usePostEditor(
       setCoverRaw(p.ogImageUrl ?? null);
       setCoverChosen(p.coverChosen ?? false);
       setExcerptRaw(p.excerpt ?? "");
+      setAudienceRaw(p.audience ?? "PUBLIC");
+      setPasswordRaw("");
+      setBlockedCountriesRaw(p.blockedCountries ?? []);
       setDirty(false); // freshly loaded content isn't a pending edit
       lastSaved.current = ""; // new content baseline — let the first real edit save
       setReloadKey((k) => k + 1); // remount the editor so it seeds from the (re)loaded content
@@ -308,7 +336,7 @@ export function usePostEditor(
     return () => window.clearTimeout(id);
     // save is intentionally omitted — content deps re-arm the timer with the latest closure.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, post, saving, busy, conflict]);
+  }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, audience, password, blockedCountries, post, saving, busy, conflict]);
 
   // Single flight: an autosave and an image upload arriving together still create one draft.
   function ensurePost(): Promise<PostView> {
@@ -380,7 +408,8 @@ export function usePostEditor(
       setError(null);
       try {
         for (;;) {
-          const { title, markdown, tags, seriesId, coverUrl, coverChosen, excerpt } = currentDraft.current;
+          const { title, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries } =
+            currentDraft.current;
           const md = liveMarkdown.current?.() ?? markdown;
           const seqAtSnapshot = editSeq.current;
           if (currentDraft.current.post == null) {
@@ -401,7 +430,10 @@ export function usePostEditor(
           const { slug } = currentDraft.current;
           const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
           const chosen = coverUrl != null && coverChosen;
-          const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, md]);
+          const access = audiencePatch(post, { audience, password, blockedCountries });
+          const sig = JSON.stringify([
+            title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, md, audience, blockedCountries, password,
+          ]);
           if (sig === lastSaved.current) {
             setDirty(false);
             setSaveFailed(false);
@@ -428,12 +460,13 @@ export function usePostEditor(
             try {
               patched = await updatePostMetadata(post.id, {
                 ...(sendsSlug ? { ...meta, slug: slugPart } : meta),
+                ...access,
                 ...guardFrom(baseVersion.current, overwrite),
               });
             } catch (e) {
               if (!sendsSlug || !isSlugRefused(e)) throw e;
               slugRejection = e;
-              patched = await updatePostMetadata(post.id, { ...meta, ...guardFrom(baseVersion.current, overwrite) });
+              patched = await updatePostMetadata(post.id, { ...meta, ...access, ...guardFrom(baseVersion.current, overwrite) });
             }
             baseVersion.current = patched.contentVersion ?? baseVersion.current;
             const put = await replaceBlocks(post.id, blocks, guardFrom(baseVersion.current));
@@ -454,6 +487,11 @@ export function usePostEditor(
           const savedPost = { ...updated, seriesId };
           currentDraft.current.post = savedPost;
           setPost(savedPost);
+          if (access.password !== undefined && currentDraft.current.password === access.password) {
+            currentDraft.current.password = "";
+            setPasswordRaw("");
+          }
+          if (savedPost.status === "PUBLISHED" && changesVisibility(access)) refreshPublicLists(post.id);
           if (slugRejection) throw slugRejection;
           setSlugError(null);
           lastSaved.current = sig;
@@ -646,7 +684,8 @@ export function usePostEditor(
       if (updated.status === "PUBLISHED" && username) {
         // 첫 발행만 도착지에서 축하 연출 1회 — 재발행은 이미 나갔던 글이라 조용히 지나간다.
         if (action === "publish") stampPublishCelebration(updated.slug);
-        window.location.assign(postHref(username, updated.slug, locale));
+        const keyed = updated.audience === "UNLISTED" ? updated.unlistedUrl : null;
+        window.location.assign(keyed ?? postHref(username, updated.slug, locale));
       }
       return true;
     } catch (e) {
@@ -714,6 +753,20 @@ export function usePostEditor(
       leavingSchedule.current = false;
     });
     return saved && changeStatus("backToDraft");
+  }
+
+  async function rotateLink(): Promise<boolean> {
+    const current = currentDraft.current.post;
+    if (current == null) return false;
+    try {
+      const { unlistedUrl } = await rotateUnlistedKey(current.id);
+      const next = { ...current, unlistedUrl };
+      currentDraft.current.post = next;
+      setPost(next);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   function retrySave(): Promise<boolean> {
@@ -852,6 +905,13 @@ export function usePostEditor(
     prefillCover,
     excerpt,
     setExcerpt,
+    audience,
+    setAudience,
+    password,
+    setPassword,
+    blockedCountries,
+    setBlockedCountries,
+    rotateLink,
     // Raw excerpt setter — bypasses touchDirty so a machine prefill (publish dialog open) doesn't mark
     // the post dirty. Used for onExcerptPrefill.
     setExcerptRaw,
