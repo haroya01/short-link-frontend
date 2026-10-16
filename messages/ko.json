@@ -849,7 +849,8 @@
       "wrongPassword": "비밀번호가 맞지 않아요",
       "tooManyAttempts": "너무 많이 시도했어요. 잠시 뒤에 다시 해 주세요",
       "unlockFailed": "열지 못했어요. 다시 해 주세요",
-      "loading": "본문을 불러오는 중"
+      "loading": "본문을 불러오는 중",
+      "openInBrowser": "기본 브라우저에서 열기"
     },
     "audience": {
       "PUBLIC": "전체",
@@ -863,6 +864,14 @@
       "PASSWORD": "비밀번호가 걸린 글이에요",
       "REGION": "나라에 따라 볼 수 없는 글이에요",
       "UNLISTED": "링크로만 여는 글이에요"
+    },
+    "condition": {
+      "FOLLOWERS": "팔로워 공개",
+      "UNLISTED": "링크로만 공개",
+      "PASSWORD": "비밀번호 글",
+      "REGION": "일부 나라 제한",
+      "COUNTRIES": "{countries} 제한",
+      "separator": "·"
     }
   },
   "meta": {

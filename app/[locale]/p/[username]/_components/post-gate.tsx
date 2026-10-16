@@ -26,6 +26,8 @@ import {
   type GateView,
 } from "@/modules/blog/lib/post-gate-view";
 import { readPostDetail, unlockPost } from "@/modules/blog/api/public-posts";
+import { setUnlockedPost } from "@/modules/blog/lib/unlocked-post-store";
+import { externalBrowserUrl } from "@/modules/blog/lib/in-app-handoff";
 
 const UnlockedArticle = dynamic(() => import("./unlocked-article").then((m) => m.UnlockedArticle), {
   ssr: false,
@@ -54,6 +56,12 @@ export function PostGate({
   const { ready, authenticated } = useAuth();
   const [view, setView] = useState<GateView>(() => initialGateView(reason));
   const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    setUnlockedPost(postId, view.kind === "open" ? view.detail : null);
+  }, [postId, view]);
+
+  useEffect(() => () => setUnlockedPost(postId, null), [postId]);
 
   useEffect(() => {
     if (!ready) return;
@@ -155,6 +163,7 @@ function Gate({
         <div className="mt-4">
           <FollowButton username={username} initialFollowerCount={0} sourcePostId={postId} />
         </div>
+        <OpenInBrowser />
       </section>
     );
   }
@@ -166,6 +175,24 @@ function Gate({
       onUnlocked={onUnlocked}
       onRegion={onRegion}
     />
+  );
+}
+
+function OpenInBrowser() {
+  const t = useTranslations("publicPost.gate");
+  const [href, setHref] = useState<string | null>(null);
+  useEffect(() => {
+    setHref(externalBrowserUrl(window.navigator.userAgent, window.location.href));
+  }, []);
+  if (!href) return null;
+  return (
+    <a
+      href={href}
+      data-testid="open-in-browser"
+      className="focus-ring mt-3 inline-block rounded text-[13px] text-slate-500 underline-offset-2 transition-colors hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
+    >
+      {t("openInBrowser")}
+    </a>
   );
 }
 

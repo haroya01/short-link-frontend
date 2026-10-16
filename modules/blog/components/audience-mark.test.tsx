@@ -13,7 +13,8 @@ vi.mock("@/modules/blog/components/blog-link", () => ({
   BlogLink: ({ href, children, ...rest }: any) => createElement("a", { href, ...rest }, children),
 }));
 vi.mock("@/modules/blog/components/feed-card-bookmark", () => ({
-  FeedCardBookmark: () => createElement("button", { type: "button", "data-testid": "bookmark" }),
+  FeedCardBookmark: ({ removeOnly }: { removeOnly?: boolean }) =>
+    createElement("button", { type: "button", "data-testid": "bookmark", "data-remove-only": String(Boolean(removeOnly)) }),
 }));
 vi.mock("@/modules/blog/components/post-belonging-line", () => ({ PostBelongingLine: () => null }));
 vi.mock("@/modules/blog/components/post-belonging-context", () => ({ BelongingProvider: ({ children }: any) => children }));
@@ -80,7 +81,7 @@ const marks = () =>
   }));
 
 describe("a locked post in a list", () => {
-  it("shows its title with one mark that replaces the words, and no save button", async () => {
+  it("shows its title with one mark that replaces the words, and lets a saved one only be removed", async () => {
     await render(
       createElement(
         FeedList,
@@ -96,7 +97,7 @@ describe("a locked post in a list", () => {
     expect(marks()).toEqual([
       { mark: "FOLLOWERS", label: "publicPost.audience.FOLLOWERS", title: "publicPost.audience.FOLLOWERS", role: "img", text: "" },
     ]);
-    expect(host.querySelector('[data-testid="bookmark"]')).toBeNull();
+    expect(host.querySelector('[data-testid="bookmark"]')?.getAttribute("data-remove-only")).toBe("true");
     expect(host.querySelector("img")).toBeNull();
   });
 
@@ -105,7 +106,7 @@ describe("a locked post in a list", () => {
       createElement(FeedList, null, createElement(FeedCard, { item: { ...feedItem, regionRestricted: true }, locale: "ko", showBookmark: true })),
     );
     expect(marks().map((m) => m.mark)).toEqual(["REGION"]);
-    expect(host.querySelector('[data-testid="bookmark"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="bookmark"]')?.getAttribute("data-remove-only")).toBe("false");
   });
 
   it("leaves a public card unmarked", async () => {
