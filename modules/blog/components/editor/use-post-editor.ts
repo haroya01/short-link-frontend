@@ -154,6 +154,10 @@ export function usePostEditor(
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   // Unsaved-edits flag, distinct from `saved` (which is also false right after load) — drives autosave.
   const [dirty, setDirty] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [awaitingUploads, setAwaitingUploads] = useState(false);
+  const uploadsSettled = useRef<(() => Promise<void>) | null>(null);
+  const unsaved = dirty || uploading;
   // The /write list path with the current prefix preserved (locale + /blog-preview on the apex).
   const [writeBase, setWriteBase] = useState("/write");
   // The editor registers a synchronous markdown getter here. save() reads it instead of the debounced
@@ -186,8 +190,8 @@ export function usePostEditor(
   const [conflict, setConflict] = useState(false);
   const conflictRef = useRef(false);
   conflictRef.current = conflict;
-  const dirtyRef = useRef(dirty);
-  dirtyRef.current = dirty;
+  const unsavedRef = useRef(unsaved);
+  unsavedRef.current = unsaved;
   const [kept, setKept] = useState<KeptDraft | null>(null);
   const [remoteReloads, setRemoteReloads] = useState(0);
 
@@ -499,11 +503,23 @@ export function usePostEditor(
     return run;
   }
 
+  // An image still uploading is a blob: the serializer skips, so a save that has to carry everything on
+  // screen (leave, publish, schedule, preview, restore) waits for the uploads first.
+  async function flush(): Promise<boolean> {
+    if (uploading) setAwaitingUploads(true);
+    try {
+      await uploadsSettled.current?.();
+    } finally {
+      setAwaitingUploads(false);
+    }
+    return save();
+  }
+
   // Tab close / refresh / hard navigation with unsaved edits → native "leave site?" prompt. Drafts
   // are mostly covered by autosave, but the 1.8s debounce window and every non-DRAFT edit (which only
   // persists on an explicit action) would otherwise discard silently.
   useEffect(() => {
-    if (!dirty) return;
+    if (!unsaved) return;
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       if (leavingAnyway.current) return;
       e.preventDefault();
@@ -511,23 +527,23 @@ export function usePostEditor(
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [dirty]);
+  }, [unsaved]);
 
   // Publish the dirty flag so the surrounding chrome (header logo / Write CTA, mobile sidebar) — which
   // soft-navigates and so never triggers the beforeunload above — can fall back to a hard navigation
   // that does. Cleared on unmount so a leftover flag doesn't guard navigation on other pages.
   useEffect(() => {
-    setEditorDirty(dirty);
+    setEditorDirty(unsaved);
     return () => setEditorDirty(false);
-  }, [dirty]);
+  }, [unsaved]);
 
   // Save a dirty DRAFT first so the last keystrokes (still inside the 1.8s autosave debounce) aren't
   // lost. Published posts persist only via explicit actions, so a dirty one asks before discarding
   // instead of navigating the edits away without a word.
   async function readyToLeave(): Promise<boolean> {
-    if (!dirty) return true;
+    if (!unsaved) return true;
     // 저장 실패 시 확인 없이 떠나면 편집이 사라진다 — 에디터에 머물러 에러(error)를 보여준다.
-    if (post ? post.status === "DRAFT" : postId == null) return save();
+    if (post ? post.status === "DRAFT" : postId == null) return flush();
     if (post == null) return true;
     return confirm({
       title: t("unsavedLeaveTitle"),
@@ -547,10 +563,10 @@ export function usePostEditor(
   // beforeunload. The first edit pushes a same-URL guard entry, so Back lands on the editor's own entry
   // instead; the leave check then runs and Back continues, or the guard is restored to stay.
   useEffect(() => {
-    if (!dirty || historyGuarded.current) return;
+    if (!unsaved || historyGuarded.current) return;
     pushHistoryGuard();
     historyGuarded.current = true;
-  }, [dirty]);
+  }, [unsaved]);
 
   useEffect(() => {
     historyGuarded.current = window.history.state?.[HISTORY_GUARD] === true;
@@ -674,7 +690,7 @@ export function usePostEditor(
     setError(null);
     try {
       // Persist edits first so the scheduled snapshot matches what's on screen, then park it.
-      if (!(await save())) return false;
+      if (!(await flush())) return false;
       const post = currentDraft.current.post;
       if (post == null) return false;
       setPost(await schedulePost(post.id, scheduledAtIso));
@@ -694,7 +710,7 @@ export function usePostEditor(
   // scheduled-title rule doesn't hold this save back.
   async function cancelSchedule(): Promise<boolean> {
     leavingSchedule.current = true;
-    const saved = await save().finally(() => {
+    const saved = await flush().finally(() => {
       leavingSchedule.current = false;
     });
     return saved && changeStatus("backToDraft");
@@ -703,8 +719,17 @@ export function usePostEditor(
   function retrySave(): Promise<boolean> {
     failStreak.current = 0;
     autoRetryBlocked.current = false;
-    return save();
+    return flush();
   }
+  const retrySaveRef = useRef(retrySave);
+  retrySaveRef.current = retrySave;
+
+  useEffect(() => {
+    if (!saveFailed) return;
+    const onOnline = () => void retrySaveRef.current();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [saveFailed]);
 
   async function loadLatest() {
     const current = currentDraft.current.post;
@@ -752,11 +777,11 @@ export function usePostEditor(
       if (document.visibilityState !== "visible") return;
       const current = currentDraft.current.post;
       if (current == null || baseVersion.current == null) return;
-      if (dirtyRef.current || conflictRef.current || inFlightSave.current) return;
+      if (unsavedRef.current || conflictRef.current || inFlightSave.current) return;
       getPost(current.id)
         .then(async (latest) => {
           if (latest.contentVersion == null || latest.contentVersion === baseVersion.current) return;
-          if (dirtyRef.current || conflictRef.current) return;
+          if (unsavedRef.current || conflictRef.current) return;
           await load();
           setRemoteReloads((n) => n + 1);
         })
@@ -775,6 +800,9 @@ export function usePostEditor(
       // An autosave already sent to the server cannot be cancelled by setting busy. Let it finish
       // before restoring, otherwise its delayed blocks PUT can overwrite the restored revision.
       await inFlightSave.current;
+      // The server keeps the content it holds as a version before restoring, so it must hold what
+      // is on screen. A failed save stops here with its error rather than losing those edits.
+      if (unsaved && !(await flush())) return;
       await restoreRevisionApi(post.id, versionNumber);
       // Restore replaces server content with the revision's snapshot — reload so the editor reflects it.
       await load();
@@ -831,7 +859,7 @@ export function usePostEditor(
     loadFailed,
     reload: load,
     saving,
-    busy,
+    busy: busy || awaitingUploads,
     error,
     slugError,
     saved,
@@ -839,7 +867,10 @@ export function usePostEditor(
     lastSavedAt,
     writeBase,
     save,
+    flush,
     retrySave,
+    setUploading,
+    uploadsSettled,
     ensurePost,
     changeStatus,
     schedule,
