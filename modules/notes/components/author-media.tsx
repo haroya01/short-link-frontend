@@ -8,6 +8,7 @@ import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { listAuthorMedia, type ProfileMediaFeed, type ProfileMediaItem } from "@/modules/notes/api/notes";
+import { VariantImage } from "@/components/common/variant-image";
 
 export function MediaCell({ item, username }: { item: ProfileMediaItem; username: string }) {
   const t = useTranslations("notes");
@@ -28,10 +29,10 @@ export function MediaCell({ item, username }: { item: ProfileMediaItem; username
       className="focus-ring group relative block aspect-square overflow-hidden bg-slate-100 dark:bg-slate-800"
     >
       {item.media.contentType.startsWith("image/") ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <VariantImage
           src={item.media.url}
           alt=""
+          sizes="(min-width: 672px) 224px, 34vw"
           loading="lazy"
           decoding="async"
           className={`h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transition-none ${

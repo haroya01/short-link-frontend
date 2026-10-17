@@ -6,7 +6,8 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
-import type { ImageAlign, ImageWidth } from "@/modules/blog/lib/image-width";
+import { VariantImage } from "@/components/common/variant-image";
+import { postImageSizes, type ImageAlign, type ImageWidth } from "@/modules/blog/lib/image-width";
 
 // Wider-than-column layouts. Reader uses these; the editor mirrors them via img[alt^="«wide»"] CSS.
 const WIDTH_CLASS: Record<ImageWidth, string> = {
@@ -72,6 +73,14 @@ export function PostImage({
   // default- and «half»-width images. Center adds no class (it's the default).
   const alignClass = width === "wide" || width === "full" ? "" : align ? ALIGN_CLASS[align] : "";
   const figureClass = [width ? WIDTH_CLASS[width] : "", alignClass].filter(Boolean).join(" ") || undefined;
+  const sized = Boolean(naturalWidth && naturalHeight);
+  const picture = {
+    src,
+    loading: "lazy" as const,
+    className: "img-fade dark:brightness-90",
+    width: sized ? naturalWidth : undefined,
+    height: sized ? naturalHeight : undefined,
+  };
   return (
     <figure className={figureClass}>
       <button
@@ -82,15 +91,12 @@ export function PostImage({
       >
         {/* width+height give the browser the intrinsic ratio; with `.prose-post img { height:auto;
             max-width:100% }` it reserves the scaled box up front, so the article never shifts (CLS). */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={label}
-          loading="lazy"
-          className="img-fade dark:brightness-90"
-          width={naturalWidth && naturalHeight ? naturalWidth : undefined}
-          height={naturalWidth && naturalHeight ? naturalHeight : undefined}
-        />
+        {width === "full" ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img {...picture} alt={label} />
+        ) : (
+          <VariantImage {...picture} alt={label} sizes={sized ? postImageSizes(width, align) : undefined} />
+        )}
       </button>
       {caption && <figcaption>{caption}</figcaption>}
 

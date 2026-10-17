@@ -6,7 +6,8 @@ import remarkCjkFriendly from "remark-cjk-friendly";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
-import { parseImageAlt } from "@/modules/blog/lib/image-width";
+import { POST_COLUMN_SIZES, parseImageAlt } from "@/modules/blog/lib/image-width";
+import { VariantImage } from "@/components/common/variant-image";
 
 /**
  * Shared markdown renderer for the public reader. Post text blocks store raw markdown (the editor
@@ -96,10 +97,15 @@ export function Markdown({ children, inline = false }: { children: string; inlin
           const parsed = parseImageAlt(alt);
           const dims = parsed.dims && Number.isFinite(parsed.dims.w) && Number.isFinite(parsed.dims.h)
             && parsed.dims.w > 0 && parsed.dims.h > 0 ? parsed.dims : undefined;
-          return (
+          const w = dims?.w ?? width;
+          const h = dims?.h ?? height;
+          if (typeof src !== "string") {
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={src} alt={parsed.alt} title={title} loading="lazy" decoding="async" className="dark:brightness-90"
-              width={dims?.w ?? width} height={dims?.h ?? height} />
+            return <img src={src} alt={parsed.alt} title={title} loading="lazy" decoding="async" className="dark:brightness-90" width={w} height={h} />;
+          }
+          return (
+            <VariantImage src={src} alt={parsed.alt} title={title} sizes={w && h ? POST_COLUMN_SIZES : undefined}
+              loading="lazy" decoding="async" className="dark:brightness-90" width={w} height={h} />
           );
         },
         ...(inline

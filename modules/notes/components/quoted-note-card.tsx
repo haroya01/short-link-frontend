@@ -8,6 +8,7 @@ import { blogPath } from "@/lib/host";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
+import { VariantImage } from "@/components/common/variant-image";
 
 export function QuotedNoteCard({
   note,
@@ -67,10 +68,10 @@ export function QuotedNoteCard({
                 key={image.url}
                 className="block h-16 w-16 shrink-0 overflow-hidden rounded-inner border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <VariantImage
                   src={image.url}
                   alt={concealed ? tNotes("concealedPhoto") : image.altText ?? ""}
+                  sizes="64px"
                   loading="lazy"
                   className={`h-full w-full object-cover${concealed ? " scale-110 blur-md" : ""}`}
                 />

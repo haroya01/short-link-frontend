@@ -317,6 +317,21 @@ let notes: Note[] = [
   note({ id: 73, body: "강변 쪽이 좋아요.", author: YUNA, inReplyToId: 72, createdAt: "2026-09-19T10:00:00Z" }),
   note({ id: 74, body: "여기 광고 링크 남겨요 https://example.com/deal", author: MINA, inReplyToId: 72, hidden: true, createdAt: "2026-09-19T10:30:00Z" }),
   note({ id: 75, body: "언덕길 끝 카페까지 추천.", author: HARUKA, inReplyToId: 72, createdAt: "2026-09-19T11:00:00Z" }),
+  note({
+    id: 20,
+    body: "항구에서 본 저녁.",
+    author: ME,
+    createdAt: "2026-09-18T09:00:00Z",
+    media: [
+      {
+        url: "https://d82putaebkgm4.cloudfront.net/note-images/1/e2e-harbor.jpg",
+        altText: "항구의 저녁",
+        contentType: "image/jpeg",
+        width: 2400,
+        height: 1800,
+      },
+    ],
+  }),
   ...MOCK_SERIES_NOTES.map(({ id, body, contentWarning, createdAt }) =>
     note({ id, body, contentWarning, sensitive: Boolean(contentWarning), createdAt, author: ME }),
   ),
