@@ -170,11 +170,11 @@ export function NoteList({
   );
 }
 
-function NoteListSkeleton() {
+export function NoteListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
     <div aria-busy="true" data-testid="note-list-skeleton" className="divide-y divide-slate-100 dark:divide-slate-800">
       <SrLoading />
-      {Array.from({ length: 4 }, (_, i) => (
+      {Array.from({ length: rows }, (_, i) => (
         <div key={i} className="flex gap-3 py-4">
           <div className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
           <div className="min-w-0 flex-1 space-y-2 pt-1">

@@ -36,7 +36,7 @@ import {
 import { MuteDialog } from "./mute-dialog";
 import { NoteList } from "./note-list";
 
-function failure(error: unknown): "disabled" | "missing" | "invalid" | "blocked" | "other" {
+export function followFailure(error: unknown): "disabled" | "missing" | "invalid" | "blocked" | "other" {
   const code = error instanceof ApiError ? error.detail.code : undefined;
   if (code === "FEDERATION_DISABLED") return "disabled";
   if (code === "REMOTE_DOMAIN_BLOCKED") return "blocked";
@@ -85,7 +85,7 @@ export function RemoteFollowButton({
       onChange(await setRemoteFollow(account.id, !on));
     } catch (error) {
       onChange(previous);
-      toast(t(`remoteError.${failure(error)}`), "error");
+      toast(t(`remoteError.${followFailure(error)}`), "error");
     } finally {
       setBusy(false);
     }

@@ -35,6 +35,7 @@ import { NoteDraftsButton } from "./note-drafts-sheet";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { NoteList } from "./note-list";
 import { NoteListTimeline, NoteListUnpicked } from "./note-lists";
+import { RemoteTrendingGroup } from "./remote-trending";
 
 const TABS = ["following", "everyone", "trending"] as const;
 const MORE = ["federated", "bookmarks", "direct", "lists"] as const;
@@ -184,6 +185,7 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
           <SignInRow reason="note" placeholder={t("composerPlaceholder")} />
         )}
       </div>
+      {feed === "federated" && <RemoteTrendingGroup />}
       {PERSONAL.has(feed) && signedOut ? (
         <SignInEmptyState {...SIGN_IN[feed]!} />
       ) : feed === "lists" ? (

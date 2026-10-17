@@ -1,0 +1,261 @@
+import { expect, test, type Page, type Route } from "@playwright/test";
+import { mockBackend, signIn } from "./helpers/mock-backend";
+import { expectOnTop, toastBy } from "./helpers/on-top";
+
+test.use({ viewport: { width: 390, height: 844 } });
+
+const HOSTS = ["qdon.space", "mstdn.jp", "planet.moe", "fedibird.com", "mastodon.social", "social.silicon.moe", "misskey.io"];
+
+function trending(index: number) {
+  const host = HOSTS[index];
+  const user = `user${index}`;
+  return {
+    id: null,
+    body: `인기 글 ${index + 1}번`,
+    createdAt: "2026-10-16T13:48:01.441Z",
+    editedAt: null,
+    likeCount: 128,
+    likedByMe: null,
+    author: {
+      id: index === 0 ? -412 : null,
+      username: `${user}@${host}`,
+      avatarUrl: null,
+      displayName: `작성자 ${index + 1}`,
+      remoteId: index === 0 ? 412 : null,
+      url: `https://${host}/@${user}`,
+    },
+    media: [],
+    quotedPost: null,
+    inReplyToId: null,
+    replyCount: 4,
+    repostCount: 37,
+    repostedByMe: null,
+    quotedNote: null,
+    linkPreview: null,
+    repostedBy: null,
+    quoteCount: 0,
+    bookmarkedByMe: null,
+    mentions: [],
+    contentWarning: null,
+    sensitive: false,
+    pinned: false,
+    visibility: "public",
+    poll: null,
+    conversationMuted: null,
+    language: "ko",
+    thread: null,
+    replyPolicy: "everyone",
+    canReply: null,
+    hidden: false,
+    remote: { kind: "NOTE", title: null, url: `https://${host}/@${user}/${1000 + index}`, community: null },
+    uri: `https://${host}/users/${user}/statuses/${1000 + index}`,
+    url: `https://${host}/@${user}/${1000 + index}`,
+    sourceHost: host,
+    servers: index === 0 ? [host, "planet.moe"] : [host],
+  };
+}
+
+const ITEMS = Array.from({ length: 7 }, (_, i) => trending(i));
+const FIRST = ITEMS[0];
+
+const LOCAL = {
+  ...FIRST,
+  id: 4321,
+  likeCount: null,
+  likedByMe: false,
+  repostCount: null,
+  author: { ...FIRST.author, id: -412, remoteId: 412 },
+  uri: undefined,
+  url: undefined,
+  sourceHost: undefined,
+  servers: undefined,
+};
+
+const RECEIVED = {
+  ...LOCAL,
+  id: 12,
+  body: "받은 노트 하나",
+  author: { id: -9800, username: "mina@mastodon.social", avatarUrl: null, displayName: "Mina", remoteId: 9800 },
+};
+
+function gate() {
+  let open!: () => void;
+  const opened = new Promise<void>((resolve) => (open = resolve));
+  return { opened, open };
+}
+
+type Serve = {
+  trending?: (route: Route, call: number) => Promise<void>;
+  resolve?: (route: Route) => Promise<void>;
+};
+
+async function serve(page: Page, { trending: list, resolve }: Serve = {}) {
+  const seen = { trending: [] as string[], resolved: [] as string[], liked: [] as string[] };
+  await mockBackend(page, {
+    "GET /api/v1/federation/trending": async (route) => {
+      seen.trending.push(new URL(route.request().url()).search);
+      if (list) await list(route, seen.trending.length);
+      else await route.fulfill({ json: { items: ITEMS } });
+    },
+    "GET /api/v1/notes/federated": (route) => route.fulfill({ json: { items: [RECEIVED], page: 0, hasNext: false } }),
+    "GET /api/v1/federation/resolve": async (route) => {
+      seen.resolved.push(new URL(route.request().url()).searchParams.get("q") ?? "");
+      if (resolve) await resolve(route);
+      else await route.fulfill({ json: { account: null, note: LOCAL } });
+    },
+    "PUT /api/v1/notes/4321/like": (route) => {
+      seen.liked.push(route.request().method());
+      return route.fulfill({ json: { liked: true, likeCount: 1 } });
+    },
+    "DELETE /api/v1/notes/4321/like": (route) => {
+      seen.liked.push(route.request().method());
+      return route.fulfill({ json: { liked: false, likeCount: 0 } });
+    },
+  });
+  return seen;
+}
+
+async function open(page: Page) {
+  await page.goto("/ko/blog/notes?feed=federated");
+  const group = page.getByTestId("remote-trending");
+  return { group, card: (index: number) => group.locator(`[data-trending-uri="${ITEMS[index].uri}"]`) };
+}
+
+test("다른 서버 opens with five trending posts above the received notes, and 더 보기 shows the rest in place", async ({
+  page,
+}) => {
+  const answer = gate();
+  await signIn(page);
+  const seen = await serve(page, {
+    trending: async (route) => {
+      await answer.opened;
+      await route.fulfill({ json: { items: ITEMS } });
+    },
+  });
+  const { group, card } = await open(page);
+
+  await expect(group.getByRole("heading", { name: "인기" })).toBeVisible({ timeout: 30_000 });
+  await expect(group.locator('[data-testid="note-list-skeleton"] > div')).toHaveCount(2);
+  answer.open();
+
+  await expect(group.locator("[data-trending-uri]")).toHaveCount(5);
+  await expect(card(0)).toContainText("qdon.space 외 1곳에서 인기");
+  await expect(card(1)).toContainText("mstdn.jp에서 인기");
+  await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("");
+  await expect(card(0).getByRole("button", { name: /답글 쓰기/ })).toHaveText(/4/);
+  await expect(group.getByRole("button", { name: "리포스트" })).toHaveCount(0);
+  await expect(card(0).locator("a[href$='/remote/412']").first()).toBeVisible();
+
+  const received = page.getByRole("heading", { name: "받은 노트" });
+  await expect(received).toBeVisible();
+  const headingBox = (await received.boundingBox())!;
+  const receivedBox = (await page.locator('article[data-note-id="12"]').boundingBox())!;
+  const groupBox = (await group.boundingBox())!;
+  expect(headingBox.y).toBeGreaterThan(groupBox.y + groupBox.height - 1);
+  expect(receivedBox.y).toBeGreaterThan(headingBox.y);
+
+  await group.getByRole("button", { name: "더 보기" }).click();
+  await expect(group.locator("[data-trending-uri]")).toHaveCount(7);
+  await expect(card(5)).toBeFocused();
+  await expect(group.getByRole("button", { name: "더 보기" })).toHaveCount(0);
+  expect(seen.trending).toEqual(["?limit=20"]);
+  expect(seen.resolved).toEqual([]);
+});
+
+test("liking brings the post over by its AP id, then likes the local note, and the post is brought over once", async ({
+  page,
+}) => {
+  await signIn(page);
+  const seen = await serve(page);
+  const { card } = await open(page);
+  const like = card(0).getByRole("button", { name: "좋아요", exact: true });
+  await like.click({ timeout: 30_000 });
+
+  await expect(card(0).getByRole("button", { name: "좋아요 취소" })).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => seen.liked).toEqual(["PUT"]);
+  expect(seen.resolved).toEqual([FIRST.uri]);
+  expect(seen.resolved).not.toContain(FIRST.url);
+
+  await card(0).getByRole("button", { name: /답글 쓰기/ }).click();
+  await expect(page.getByRole("dialog")).toContainText("인기 글 1번");
+  expect(seen.resolved).toHaveLength(1);
+});
+
+test("a first like on a post the reader already liked there keeps the like", async ({ page }) => {
+  await signIn(page);
+  const seen = await serve(page, {
+    resolve: (route) => route.fulfill({ json: { account: null, note: { ...LOCAL, likedByMe: true } } }),
+  });
+  const { card } = await open(page);
+  await card(0).getByRole("button", { name: "좋아요", exact: true }).click({ timeout: 30_000 });
+
+  await expect(card(0).getByRole("button", { name: "좋아요 취소" })).toHaveAttribute("aria-pressed", "true");
+  await page.waitForTimeout(500);
+  expect(seen.liked).toEqual([]);
+});
+
+test("opening a trending post goes to the note brought over to this server", async ({ page }) => {
+  await signIn(page);
+  const seen = await serve(page);
+  const { card } = await open(page);
+  await card(0).getByText("인기 글 1번").click({ timeout: 30_000 });
+  await expect(page).toHaveURL(/\/remote\/412\/notes\/4321$/);
+  expect(seen.resolved).toEqual([FIRST.uri]);
+});
+
+test("a post its server no longer has names that server in a toast", async ({ page }) => {
+  await signIn(page);
+  await serve(page, {
+    resolve: (route) => route.fulfill({ status: 404, json: { status: 404, code: "REMOTE_ACCOUNT_NOT_FOUND" } }),
+  });
+  const { card } = await open(page);
+  await card(1).getByRole("button", { name: "좋아요", exact: true }).click({ timeout: 30_000 });
+  await expectOnTop(toastBy(page, "mstdn.jp 서버에서 찾지 못했어요"));
+  await expect(card(1).getByRole("button", { name: "좋아요", exact: true })).toHaveAttribute("aria-pressed", "false");
+});
+
+test("signed-out readers see trending, then the sign-in line for received notes, and a like opens the login door", async ({
+  page,
+}) => {
+  const seen = await serve(page);
+  const { group, card } = await open(page);
+  await expect(card(0)).toBeVisible({ timeout: 30_000 });
+  await expect(group.getByRole("heading", { name: "인기" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "받은 노트" })).toBeVisible();
+  await expect(page.getByTestId("sign-in-empty")).toContainText("다른 서버의 노트를 보려면 로그인하세요");
+
+  await card(0).getByRole("button", { name: "좋아요", exact: true }).click();
+  await expect(page.getByRole("dialog")).toContainText("좋아요를 누르려면 로그인하세요");
+  expect(seen.resolved).toEqual([]);
+});
+
+test("an empty list hides the whole group, its heading and the received heading", async ({ page }) => {
+  await signIn(page);
+  const seen = await serve(page, { trending: (route) => route.fulfill({ json: { items: [] } }) });
+  await open(page);
+  await expect(page.locator('article[data-note-id="12"]')).toBeVisible({ timeout: 30_000 });
+  await expect.poll(() => seen.trending.length).toBe(1);
+  await expect(page.getByTestId("remote-trending")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "인기" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "받은 노트" })).toHaveCount(0);
+});
+
+test("a list that failed says so in one grey line, and 다시 시도 loads it", async ({ page }) => {
+  await signIn(page);
+  const seen = await serve(page, {
+    trending: (route, call) =>
+      call === 1
+        ? route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } })
+        : route.fulfill({ json: { items: ITEMS } }),
+  });
+  const { group } = await open(page);
+  const line = group.getByText("인기 글을 불러오지 못했어요").locator("..");
+  await expect(line).toBeVisible({ timeout: 30_000 });
+  await expect(line.locator("svg")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "받은 노트" })).toBeVisible();
+
+  await line.getByRole("button", { name: "다시 시도" }).click();
+  await expect(group.locator("[data-trending-uri]")).toHaveCount(5);
+  await expect(group.getByText("인기 글을 불러오지 못했어요")).toHaveCount(0);
+  expect(seen.trending).toHaveLength(2);
+});

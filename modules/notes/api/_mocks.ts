@@ -27,6 +27,7 @@ import type {
 } from "./notes";
 import type { RemoteAccountSearchBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
+import type { RemoteTrendingBody, TrendingNote } from "./remote-trending";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -818,12 +819,188 @@ export function mockResolveRemote(q: string): Promise<RemoteResolveBody> {
     if (q.replace(/^@/, "").startsWith("nobody@")) return missing();
     return mockLookupRemote(q).then((account) => ({ account, note: null }));
   }
+  const trending = TRENDING.find((item) => item.uri === q);
+  if (trending) return bringOver(trending).then((local) => ({ account: null, note: withQuotes(local) }));
   const [user, noteId] = address.pathname.split("/").filter(Boolean);
   const account = remoteAccounts.find((a) => a.domain === domain && `@${a.username}` === user);
   if (!account) return missing();
   if (!noteId) return Promise.resolve({ account: shown(account), note: null });
   const found = notes.find((n) => n.author.remoteId === account.id && String(n.id) === noteId);
   return found ? Promise.resolve({ account: null, note: withQuotes(found) }) : missing();
+}
+
+function trendingItem(
+  uri: string,
+  body: string,
+  acct: string,
+  displayName: string,
+  minutesAgo: number,
+  servers: string[],
+  extra: Partial<TrendingNote> = {},
+): TrendingNote {
+  const [user, host] = acct.split("@");
+  const known = remoteAccounts.find((a) => a.acct === acct);
+  return {
+    ...note({ id: 0, body, author: MINA }),
+    id: null,
+    createdAt: new Date(Date.UTC(2026, 9, 16, 12) - minutesAgo * 60_000).toISOString(),
+    author: {
+      id: known ? -known.id : null,
+      username: acct,
+      avatarUrl: null,
+      displayName,
+      remoteId: known?.id ?? null,
+      url: `https://${host}/@${user}`,
+    },
+    likeCount: 120,
+    likedByMe: null,
+    repostCount: 40,
+    repostedByMe: null,
+    quoteCount: 0,
+    mentions: [],
+    contentWarning: null,
+    sensitive: false,
+    visibility: "public",
+    poll: null,
+    language: "ko",
+    remote: { kind: "NOTE", title: null, url: `https://${host}/@${user}/${uri.split("/").pop()}`, community: null },
+    uri,
+    url: `https://${host}/@${user}/${uri.split("/").pop()}`,
+    sourceHost: servers[0],
+    servers,
+    ...extra,
+  };
+}
+
+const TRENDING: TrendingNote[] = [
+  trendingItem(
+    "https://mastodon.social/users/mina/statuses/9600",
+    "Hello from the fediverse 👋 #kurl",
+    "mina@mastodon.social",
+    "Mina",
+    30,
+    ["mastodon.social", "mstdn.jp"],
+    { replyCount: 3, language: "en" },
+  ),
+  trendingItem(
+    "https://mstdn.jp/users/hana/statuses/1131",
+    "今日は朝から雨。駅前の紫陽花がいちばんきれいな季節になった。",
+    "hana@mstdn.jp",
+    "はな",
+    90,
+    ["mstdn.jp"],
+    {
+      replyCount: 12,
+      language: "ja",
+      media: [
+        {
+          url: "https://picsum.photos/seed/kurl-hydrangea/1200/800",
+          altText: "雨に濡れた紫陽花",
+          contentType: "image/jpeg",
+          width: 1200,
+          height: 800,
+        },
+      ],
+    },
+  ),
+  trendingItem(
+    "https://qdon.space/users/dal/statuses/2201",
+    "어제 본 영화 결말 이야기. 아직 안 본 분은 접어 두세요.",
+    "dal@qdon.space",
+    "달",
+    150,
+    ["qdon.space", "planet.moe", "mastodon.social"],
+    { replyCount: 5, contentWarning: "영화 결말 있음", sensitive: true },
+  ),
+  trendingItem("https://planet.moe/users/jun/statuses/3301", "주말에 가장 오래 하는 일은?", "jun@planet.moe", "준", 200, ["planet.moe"], {
+    replyCount: 8,
+    poll: {
+      expiresAt: "2026-10-30T00:00:00Z",
+      expired: false,
+      multiple: false,
+      votesCount: 214,
+      votersCount: 214,
+      options: [
+        { title: "책 읽기", votesCount: 88 },
+        { title: "걷기", votesCount: 71 },
+        { title: "잠", votesCount: 55 },
+      ],
+      voted: true,
+      ownVotes: [],
+    },
+    remote: { kind: "QUESTION", title: null, url: "https://planet.moe/@jun/3301", community: null },
+  }),
+  trendingItem(
+    "https://fedibird.com/users/sora/statuses/4401",
+    "長く使える道具の選び方について書きました。",
+    "sora@fedibird.com",
+    "そら",
+    250,
+    ["fedibird.com"],
+    {
+      replyCount: 2,
+      language: "ja",
+      linkPreview: { url: "https://sora.example/tools", title: "長く使える道具", description: "十年使った鞄とペンの話", image: null },
+    },
+  ),
+  trendingItem(
+    "https://social.silicon.moe/users/lee/statuses/5501",
+    "작은 서버를 오래 운영하며 배운 것 세 가지.",
+    "lee@social.silicon.moe",
+    "이",
+    330,
+    ["social.silicon.moe"],
+    { replyCount: 1 },
+  ),
+  trendingItem(
+    "https://mastodon.social/users/alice/statuses/6601",
+    "Morning light over the harbour.",
+    "alice@mastodon.social",
+    "Alice",
+    430,
+    ["mastodon.social"],
+    { language: "en" },
+  ),
+];
+
+export function mockRemoteTrending(limit: number): Promise<RemoteTrendingBody> {
+  return Promise.resolve({ items: TRENDING.slice(0, limit) });
+}
+
+const broughtOver = new Map<string, number>();
+
+function bringOver(item: TrendingNote): Promise<Note> {
+  const known = notes.find((n) => n.id === broughtOver.get(item.uri));
+  if (known) return Promise.resolve(known);
+  return mockLookupRemote(item.author.username).then((account) => {
+    const local = note({
+      id: nextId++,
+      body: item.body,
+      createdAt: item.createdAt,
+      author: {
+        id: -account.id,
+        username: account.acct,
+        avatarUrl: item.author.avatarUrl,
+        displayName: item.author.displayName,
+        remoteId: account.id,
+        url: item.author.url,
+      },
+      media: item.media,
+      replyCount: item.replyCount,
+      likeCount: null,
+      repostCount: null,
+      linkPreview: item.linkPreview,
+      contentWarning: item.contentWarning,
+      sensitive: item.sensitive,
+      visibility: "public",
+      poll: item.poll,
+      language: item.language,
+      remote: item.remote,
+    });
+    notes = [local, ...notes];
+    broughtOver.set(item.uri, local.id);
+    return local;
+  });
 }
 
 let lists: { id: number; title: string; members: string[] }[] = [];

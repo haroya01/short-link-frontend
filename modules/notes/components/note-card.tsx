@@ -61,6 +61,17 @@ export function noteAuthorHref(author: Note["author"], locale: string): string {
 
 const FEDERATION_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
 
+export const NOTE_ACTION =
+  "touch-target inline-flex h-8 items-center gap-1.5 rounded-full px-2 text-slate-700 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800";
+
+export interface DetachedNote {
+  authorHref: string | null;
+  onAuthor: () => void;
+  onOpen: () => void;
+  menu: React.ReactNode;
+  footer: React.ReactNode;
+}
+
 export function NoteCard({
   note,
   onChange,
@@ -75,6 +86,7 @@ export function NoteCard({
   replyModeration,
   context,
   onReplied,
+  detached,
 }: {
   note: Note;
   onChange?: (note: Note) => void;
@@ -94,6 +106,7 @@ export function NoteCard({
   context?: React.ReactNode;
   /** The page shows the new reply itself; without it the card counts it and offers a way to it. */
   onReplied?: (reply: Note) => void;
+  detached?: DetachedNote;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -275,6 +288,10 @@ export function NoteCard({
     if (emphasis || editing) return;
     if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
     if (window.getSelection()?.toString()) return;
+    if (detached) {
+      if (e.button === 0) detached.onOpen();
+      return;
+    }
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
       window.open(noteHref(note, locale), "_blank", "noopener");
       return;
@@ -284,12 +301,11 @@ export function NoteCard({
   }
 
   const overLimit = noteLength(draft) > NOTE_MAX_LENGTH;
-  const action =
-    "touch-target inline-flex h-8 items-center gap-1.5 rounded-full px-2 text-slate-700 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800";
+  const action = NOTE_ACTION;
 
   if (filteredBy?.length && !filterOpened) {
     return (
-      <article data-note-id={note.id} data-note-filtered>
+      <article data-note-id={detached ? undefined : note.id} data-note-filtered>
         <button
           type="button"
           onClick={() => setFilterOpened(true)}
@@ -308,9 +324,31 @@ export function NoteCard({
   const mediaConcealed =
     note.media.length > 0 && (note.contentWarning ? !revealed && !editing : note.sensitive === true && !mediaShown);
   const remoteCard = remoteCardOf(note);
+  const authorHref = detached ? detached.authorHref : noteAuthorHref(note.author, locale);
+  const avatar = (
+    <Avatar
+      src={note.author.avatarUrl}
+      name={note.author.displayName || note.author.username}
+      seed={note.author.remoteId || detached ? null : note.author.id}
+      size={emphasis ? "lg" : "md"}
+    />
+  );
+  const stampClass =
+    "shrink-0 rounded text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200";
+  const stamp = (
+    <>
+      <time dateTime={note.createdAt} suppressHydrationWarning>
+        {ago(note.createdAt)}
+      </time>
+      {note.editedAt && <span> · {t("edited")}</span>}
+    </>
+  );
 
   return (
-    <article className={cn("py-4", emphasis && "py-5", isNew && "comment-in")} data-note-id={note.id}>
+    <article
+      className={cn("py-4", emphasis && "py-5", isNew && "comment-in")}
+      data-note-id={detached ? undefined : note.id}
+    >
       {repostedBy && (
         <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
           <span className="flex w-9 shrink-0 justify-end">
@@ -329,14 +367,21 @@ export function NoteCard({
         </p>
       )}
       <div className={emphasis ? "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3" : "flex gap-3"}>
-        <BlogLink
-          href={noteAuthorHref(note.author, locale)}
-          tabIndex={-1}
-          aria-hidden
-          className="shrink-0 self-start rounded-full"
-        >
-          <Avatar src={note.author.avatarUrl} name={note.author.displayName || note.author.username} seed={note.author.remoteId ? null : note.author.id} size={emphasis ? "lg" : "md"} />
-        </BlogLink>
+        {authorHref ? (
+          <BlogLink href={authorHref} tabIndex={-1} aria-hidden className="shrink-0 self-start rounded-full">
+            {avatar}
+          </BlogLink>
+        ) : (
+          <button
+            type="button"
+            onClick={detached?.onAuthor}
+            tabIndex={-1}
+            aria-hidden
+            className="shrink-0 self-start rounded-full"
+          >
+            {avatar}
+          </button>
+        )}
         <div className={emphasis ? "contents" : "min-w-0 flex-1"}>
           <header className="flex min-h-5 items-center gap-1.5 text-[15px] leading-5">
             {emphasis ? (
@@ -351,30 +396,34 @@ export function NoteCard({
                   {note.author.remoteId ? `@${note.author.username}` : `@${note.author.username}@${FEDERATION_HOST}`}
                 </span>
               </div>
-            ) : (
-              <BlogLink
-                href={noteAuthorHref(note.author, locale)}
-                className="flex min-w-0 rounded focus-ring hover:underline"
-              >
+            ) : authorHref ? (
+              <BlogLink href={authorHref} className="flex min-w-0 rounded focus-ring hover:underline">
                 <AuthorName name={note.author.displayName} handle={note.author.username} className={STRONG_NAME} />
               </BlogLink>
+            ) : (
+              <button
+                type="button"
+                onClick={detached?.onAuthor}
+                className="flex min-w-0 rounded text-left focus-ring hover:underline"
+              >
+                <AuthorName name={note.author.displayName} handle={note.author.username} className={STRONG_NAME} />
+              </button>
             )}
             {!emphasis && (
               <span aria-hidden className="shrink-0 text-slate-400 dark:text-slate-500">
                 ·
               </span>
             )}
-            {!emphasis && (
-              <BlogLink
-                href={noteHref(note, locale)}
-                className="shrink-0 rounded text-slate-500 transition-colors hover:text-slate-800 focus-ring dark:text-slate-400 dark:hover:text-slate-200"
-              >
-                <time dateTime={note.createdAt} suppressHydrationWarning>
-                  {ago(note.createdAt)}
-                </time>
-                {note.editedAt && <span> · {t("edited")}</span>}
-              </BlogLink>
-            )}
+            {!emphasis &&
+              (detached ? (
+                <button type="button" onClick={detached.onOpen} className={stampClass}>
+                  {stamp}
+                </button>
+              ) : (
+                <BlogLink href={noteHref(note, locale)} className={stampClass}>
+                  {stamp}
+                </BlogLink>
+              ))}
             {note.visibility && note.visibility !== "public" && (
               <VisibilityIcon
                 visibility={note.visibility}
@@ -395,7 +444,8 @@ export function NoteCard({
               {emphasis && !note.author.remoteId && (
                 <FollowButton username={note.author.username} initialFollowerCount={0} compact quiet />
               )}
-              {authenticated && !editing && (
+              {detached?.menu}
+              {!detached && authenticated && !editing && (
                 <NoteMenu
                   bookmarked={bookmarked}
                   onBookmark={toggleBookmark}
@@ -538,7 +588,9 @@ export function NoteCard({
                 noteId={note.id}
                 poll={note.poll}
                 onVoted={(poll) => onChange?.({ ...note, poll })}
-                elsewhere={note.author.remoteId ? { url: webAddress(note.remote?.url)?.href ?? null } : undefined}
+                elsewhere={
+                  note.author.remoteId || detached ? { url: webAddress(note.remote?.url)?.href ?? null } : undefined
+                }
               />
             )}
             <NoteMedia
@@ -587,69 +639,73 @@ export function NoteCard({
               </p>
             )}
 
-            <footer
-              className={cn(
-                "-mb-1 flex items-center text-[13px]",
-                emphasis
-                  ? "mt-3 justify-between border-t border-slate-100 pt-2 dark:border-slate-800"
-                  : "-ml-2 mt-1 gap-1.5",
-              )}
-            >
-              <button
-                type="button"
-                onClick={toggleLike}
-                aria-pressed={liked}
-                aria-label={liked ? t("unlike") : t("like")}
-                className={cn(action, liked && "text-accent-700 dark:text-accent-400")}
-              >
-                <span key={liked ? "on" : "off"} className={cn("inline-flex", likeTouched && "subscribe-pop")}>
-                  <NoteGlyph
-                    name="heart"
-                    active={liked}
-                    className={cn("h-[18px] w-[18px]", liked && "text-accent-600")}
-                  />
-                </span>
-                {likeCount !== null && likeCount > 0 && (
-                  <span className="tabular-nums" title={t("likeCount", { count: likeCount })}>
-                    {likeCount}
-                  </span>
+            {detached ? (
+              <footer className="-mb-1 -ml-2 mt-1 flex items-center gap-1.5 text-[13px]">{detached.footer}</footer>
+            ) : (
+              <footer
+                className={cn(
+                  "-mb-1 flex items-center text-[13px]",
+                  emphasis
+                    ? "mt-3 justify-between border-t border-slate-100 pt-2 dark:border-slate-800"
+                    : "-ml-2 mt-1 gap-1.5",
                 )}
-              </button>
-              <button
-                type="button"
-                onClick={startReply}
-                disabled={replyClosed}
-                title={replyClosed ? t(replyRestrictedKey(note.replyPolicy)) : undefined}
-                data-note-reply={note.id}
-                className={cn(action, "disabled:cursor-not-allowed disabled:opacity-40")}
               >
-                <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
-                <span className="sr-only">{t("replyLabel")} </span>
-                {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
-              </button>
-              <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />
-              {emphasis && (
                 <button
                   type="button"
-                  onClick={toggleBookmark}
-                  aria-pressed={bookmarked}
-                  aria-label={bookmarked ? t("unbookmark") : t("bookmark")}
-                  className={cn(action, bookmarked && "text-accent-700 dark:text-accent-400")}
+                  onClick={toggleLike}
+                  aria-pressed={liked}
+                  aria-label={liked ? t("unlike") : t("like")}
+                  className={cn(action, liked && "text-accent-700 dark:text-accent-400")}
                 >
-                  <NoteGlyph name="bookmark" active={bookmarked} className="h-[18px] w-[18px]" />
+                  <span key={liked ? "on" : "off"} className={cn("inline-flex", likeTouched && "subscribe-pop")}>
+                    <NoteGlyph
+                      name="heart"
+                      active={liked}
+                      className={cn("h-[18px] w-[18px]", liked && "text-accent-600")}
+                    />
+                  </span>
+                  {likeCount !== null && likeCount > 0 && (
+                    <span className="tabular-nums" title={t("likeCount", { count: likeCount })}>
+                      {likeCount}
+                    </span>
+                  )}
                 </button>
-              )}
-              <ShareControl note={note} buttonClass={action} />
-              {emphasis && !mine && (
-                <span className="ml-auto">
-                  <ReportButton
-                    subjectType="NOTE"
-                    subjectId={note.id}
-                    forwardDomain={note.author.remoteId ? note.author.username.split("@").pop() : undefined}
-                  />
-                </span>
-              )}
-            </footer>
+                <button
+                  type="button"
+                  onClick={startReply}
+                  disabled={replyClosed}
+                  title={replyClosed ? t(replyRestrictedKey(note.replyPolicy)) : undefined}
+                  data-note-reply={note.id}
+                  className={cn(action, "disabled:cursor-not-allowed disabled:opacity-40")}
+                >
+                  <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
+                  <span className="sr-only">{t("replyLabel")} </span>
+                  {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
+                </button>
+                <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />
+                {emphasis && (
+                  <button
+                    type="button"
+                    onClick={toggleBookmark}
+                    aria-pressed={bookmarked}
+                    aria-label={bookmarked ? t("unbookmark") : t("bookmark")}
+                    className={cn(action, bookmarked && "text-accent-700 dark:text-accent-400")}
+                  >
+                    <NoteGlyph name="bookmark" active={bookmarked} className="h-[18px] w-[18px]" />
+                  </button>
+                )}
+                <ShareControl note={note} buttonClass={action} />
+                {emphasis && !mine && (
+                  <span className="ml-auto">
+                    <ReportButton
+                      subjectType="NOTE"
+                      subjectId={note.id}
+                      forwardDomain={note.author.remoteId ? note.author.username.split("@").pop() : undefined}
+                    />
+                  </span>
+                )}
+              </footer>
+            )}
             {emphasis && (note.quoteCount ?? 0) > 0 && (
               <BlogLink
                 href={`${noteHref(note, locale)}/quotes`}
