@@ -47,6 +47,7 @@ export function useTrendingNote(item: TrendingNote) {
   const liking = useRef(false);
   const likedNow = useRef(false);
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(Math.max(item.likeCount ?? 0, 0));
   const [busy, setBusy] = useState(false);
   const [replyTarget, setReplyTarget] = useState<Note | null>(null);
 
@@ -116,11 +117,14 @@ export function useTrendingNote(item: TrendingNote) {
       const note = await localNote("like");
       if (!note || (first && note.likedByMe === true)) return;
       const next = !likedNow.current;
+      const step = next ? 1 : -1;
       markLiked(next);
+      setLikeCount((count) => Math.max(count + step, 0));
       try {
         await setNoteLike(note.id, next);
       } catch (error) {
         markLiked(!next);
+        setLikeCount((count) => Math.max(count - step, 0));
         likeFailed(error);
       }
     } finally {
@@ -143,5 +147,5 @@ export function useTrendingNote(item: TrendingNote) {
     }
   }
 
-  return { liked, busy, replyTarget, closeReply: () => setReplyTarget(null), open, openAuthor, reply, like, follow };
+  return { liked, likeCount, busy, replyTarget, closeReply: () => setReplyTarget(null), open, openAuthor, reply, like, follow };
 }

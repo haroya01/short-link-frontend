@@ -51,6 +51,7 @@ const item = {
   id: null,
   body: "서울 불꽃축제 사진 몇 장 올려요.",
   author: { id: null, username: "minji@qdon.space", avatarUrl: null, remoteId: null },
+  likeCount: 128,
   replyCount: 4,
   uri: URI,
   url: URL_,
@@ -237,16 +238,19 @@ describe("reacting to a trending post", () => {
     expect(actions.replyTarget?.id).toBe(4321);
   });
 
-  it("likes the local note by its own id, and a second tap takes it back", async () => {
+  it("likes the local note by its own id, counting from the trending number, and a second tap takes it back", async () => {
     mocks.resolveRemote.mockResolvedValue({ state: "note", note: localNote() });
     mocks.setNoteLike.mockResolvedValue({ liked: true, likeCount: 1 });
     await mount();
+    expect(actions.likeCount).toBe(128);
     await act(async () => actions.like());
     expect(mocks.setNoteLike).toHaveBeenLastCalledWith(4321, true);
     expect(actions.liked).toBe(true);
+    expect(actions.likeCount).toBe(129);
     await act(async () => actions.like());
     expect(mocks.setNoteLike).toHaveBeenLastCalledWith(4321, false);
     expect(actions.liked).toBe(false);
+    expect(actions.likeCount).toBe(128);
   });
 
   it("a first like on a post the reader already liked keeps the like", async () => {
@@ -255,6 +259,7 @@ describe("reacting to a trending post", () => {
     await act(async () => actions.like());
     expect(mocks.setNoteLike).not.toHaveBeenCalled();
     expect(actions.liked).toBe(true);
+    expect(actions.likeCount).toBe(128);
   });
 
   it("a like that fails goes back and says so", async () => {
@@ -264,6 +269,7 @@ describe("reacting to a trending post", () => {
     await mount();
     await act(async () => actions.like());
     expect(actions.liked).toBe(false);
+    expect(actions.likeCount).toBe(128);
     expect(mocks.likeFailed).toHaveBeenCalledWith(error);
   });
 

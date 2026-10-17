@@ -141,7 +141,8 @@ test("다른 서버 opens with five trending posts above the received notes, and
   await expect(group.locator("[data-trending-uri]")).toHaveCount(5);
   await expect(card(0)).toContainText("qdon.space 외 1곳에서 인기");
   await expect(card(1)).toContainText("mstdn.jp에서 인기");
-  await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("");
+  await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("128");
+  await expect(card(0).getByRole("button", { name: "노트 메뉴" })).toBeVisible();
   await expect(card(0).getByRole("button", { name: /답글 쓰기/ })).toHaveText(/4/);
   await expect(group.getByRole("button", { name: "리포스트" })).toHaveCount(0);
   await expect(card(0).locator("a[href$='/remote/412']").first()).toBeVisible();
@@ -172,6 +173,7 @@ test("liking brings the post over by its AP id, then likes the local note, and t
   await like.click({ timeout: 30_000 });
 
   await expect(card(0).getByRole("button", { name: "좋아요 취소" })).toHaveAttribute("aria-pressed", "true");
+  await expect(card(0).getByRole("button", { name: "좋아요 취소" })).toHaveText("129");
   await expect.poll(() => seen.liked).toEqual(["PUT"]);
   expect(seen.resolved).toEqual([FIRST.uri]);
   expect(seen.resolved).not.toContain(FIRST.url);
@@ -190,6 +192,7 @@ test("a first like on a post the reader already liked there keeps the like", asy
   await card(0).getByRole("button", { name: "좋아요", exact: true }).click({ timeout: 30_000 });
 
   await expect(card(0).getByRole("button", { name: "좋아요 취소" })).toHaveAttribute("aria-pressed", "true");
+  await expect(card(0).getByRole("button", { name: "좋아요 취소" })).toHaveText("128");
   await page.waitForTimeout(500);
   expect(seen.liked).toEqual([]);
 });

@@ -162,6 +162,11 @@ function TrendingNoteCard({ item, filteredBy }: { item: TrendingNote; filteredBy
                     className={cn("h-[18px] w-[18px]", actions.liked && "text-accent-600")}
                   />
                 </span>
+                {actions.likeCount > 0 && (
+                  <span className="tabular-nums" title={t("likeCount", { count: actions.likeCount })}>
+                    {actions.likeCount}
+                  </span>
+                )}
               </button>
               <button type="button" onClick={() => void actions.reply()} className={NOTE_ACTION}>
                 <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
