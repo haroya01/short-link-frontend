@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { NoteMedia as NoteImage } from "@/modules/notes/api/notes";
 import { cn } from "@/lib/utils";
+import { VariantImage } from "@/components/common/variant-image";
 import { PhotoLightbox } from "@/app/[locale]/u/[username]/_components/photo-lightbox";
 
 // Video and audio come only from other servers (members attach pictures). They play from where they
@@ -68,10 +69,10 @@ function ConcealedMedia({
               single ? "w-fit max-w-full" : "h-60",
             )}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <VariantImage
               src={image.url}
               alt=""
+              sizes={single ? singleSizes(image) : stripSizes(image)}
               width={image.width ?? undefined}
               height={image.height ?? undefined}
               loading="lazy"
@@ -146,7 +147,12 @@ function NotePictures({ media }: { media: NoteImage[] }) {
   if (media.length === 1) {
     return (
       <div className="mt-2.5">
-        <NoteImageFrame image={media[0]} className="max-h-[430px] max-w-full" onOpen={() => setViewing(0)} />
+        <NoteImageFrame
+          image={media[0]}
+          sizes={singleSizes(media[0])}
+          className="max-h-[430px] max-w-full"
+          onOpen={() => setViewing(0)}
+        />
         {viewer}
       </div>
     );
@@ -197,6 +203,7 @@ function NoteImageStrip({ media, onOpen }: { media: NoteImage[]; onOpen: (index:
           <NoteImageFrame
             key={image.url}
             image={image}
+            sizes={stripSizes(image)}
             className="h-60 min-w-28 max-w-none"
             onOpen={() => onOpen(index)}
             onLoad={measure}
@@ -217,13 +224,26 @@ function NoteImageStrip({ media, onOpen }: { media: NoteImage[]; onOpen: (index:
   );
 }
 
+function singleSizes(image: NoteImage): string | undefined {
+  if (!image.width || !image.height) return undefined;
+  const width = Math.round((Math.min(image.height, 430) * image.width) / image.height);
+  return `(max-width: ${width}px) 100vw, ${width}px`;
+}
+
+function stripSizes(image: NoteImage): string | undefined {
+  if (!image.width || !image.height) return undefined;
+  return `${Math.round(Math.max(112, (240 * image.width) / image.height))}px`;
+}
+
 function NoteImageFrame({
   image,
+  sizes,
   className,
   onOpen,
   onLoad,
 }: {
   image: NoteImage;
+  sizes: string | undefined;
   className: string;
   onOpen: () => void;
   onLoad?: () => void;
@@ -233,10 +253,10 @@ function NoteImageFrame({
   return (
     <figure className="relative w-fit shrink-0 snap-start">
       <button type="button" onClick={onOpen} className="focus-ring block cursor-zoom-in rounded-surface">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <VariantImage
           src={image.url}
           alt={image.altText ?? ""}
+          sizes={sizes}
           width={image.width ?? undefined}
           height={image.height ?? undefined}
           loading="lazy"

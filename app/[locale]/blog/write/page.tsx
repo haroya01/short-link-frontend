@@ -17,6 +17,7 @@ import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-gr
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ErrorState } from "@/components/common/error-state";
+import { VariantImage } from "@/components/common/variant-image";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 
 export default function WriteIndexPage() {
@@ -353,10 +354,10 @@ export default function WriteIndexPage() {
                       </div>
                     </div>
                     {p.ogImageUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <VariantImage
                         src={p.ogImageUrl}
                         alt=""
+                        sizes="128px"
                         className="h-[4.5rem] w-28 shrink-0 self-start rounded-lg object-cover sm:w-32"
                       />
                     )}

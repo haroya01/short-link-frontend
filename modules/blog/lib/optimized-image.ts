@@ -1,3 +1,5 @@
+import { IMAGE_CDN_HOST } from "@/lib/image-variant";
+
 /**
  * next/image 로 최적화 가능한 커버 호스트 판별 — next.config.js images.remotePatterns 와
  * 반드시 같은 목록(그쪽은 빌드 설정이라 import 로 공유가 안 돼 복제; 바꾸면 같이).
@@ -5,7 +7,7 @@
  * 원본 <img> 로 폴백한다(next/image 는 미허용 호스트에서 런타임 에러).
  */
 const OPTIMIZABLE_HOSTS = new Set([
-  "d82putaebkgm4.cloudfront.net",
+  IMAGE_CDN_HOST,
   "qiita-image-store.s3.ap-northeast-1.amazonaws.com",
   "images.unsplash.com",
 ]);

@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
+import { VariantImage } from "@/components/common/variant-image";
+import { POST_COLUMN_SIZES } from "@/modules/blog/lib/image-width";
 import type { PublicPostDetail } from "@/modules/blog/api/public-posts";
 import { extractHeadings } from "@/modules/blog/components/article-blocks";
 import { ClientArticleBody } from "@/modules/blog/components/client-article-body";
@@ -58,10 +60,10 @@ export function UnlockedArticle({
 
       {post.ogImageUrl && (
         <div className="mb-10 overflow-hidden rounded-surface bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <VariantImage
             src={post.ogImageUrl}
             alt=""
+            sizes={POST_COLUMN_SIZES}
             decoding="async"
             className="aspect-[2/1] max-h-[380px] w-full object-cover dark:brightness-90"
           />

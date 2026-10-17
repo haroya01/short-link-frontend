@@ -19,6 +19,15 @@ export type ImageAlign = "left" | "center" | "right";
 /** Intrinsic pixel size of the source image, used to reserve layout space (aspect-ratio) up front. */
 export type ImageDims = { w: number; h: number };
 
+export const POST_COLUMN_SIZES = "(min-width: 704px) 672px, 100vw";
+
+export function postImageSizes(width: ImageWidth | undefined, align: ImageAlign | undefined): string {
+  if (width === "wide") return "(min-width: 928px) 896px, 100vw";
+  if (width === "half") return "(max-width: 640px) 100vw, 336px";
+  if (align === "left" || align === "right") return "(max-width: 640px) 100vw, 416px";
+  return POST_COLUMN_SIZES;
+}
+
 const MARK: Record<ImageWidth, string> = { wide: "«wide» ", full: "«full» ", half: "«half» " };
 const WIDTHS: ImageWidth[] = ["wide", "full", "half"];
 const ALIGN_MARK: Record<ImageAlign, string> = { left: "«left» ", center: "«center» ", right: "«right» " };
