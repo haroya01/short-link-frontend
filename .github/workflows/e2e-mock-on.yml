@@ -92,7 +92,7 @@ jobs:
           PLAYWRIGHT_BASE_URL: http://localhost:3001
           E2E_API_PORT: "4010"
           CI: "true"
-        run: npx playwright test e2e/post-audience-reader.spec.ts e2e/post-audience-webkit.spec.ts --project=webkit-iphone --project=webkit-desktop
+        run: npx playwright test e2e/post-audience-reader.spec.ts e2e/post-audience-webkit.spec.ts e2e/domain-autocomplete-webkit.spec.ts --project=webkit-iphone --project=webkit-desktop
       - name: Upload report on failure
         if: failure()
         uses: actions/upload-artifact@v4

@@ -53,6 +53,32 @@ export async function searchRemoteAccounts(
   }
 }
 
+export const DOMAIN_SUGGESTIONS = 5;
+
+/** Backend contract: GET /api/v1/federation/domains?prefix=&limit= (anonymous allowed). */
+export interface RemoteDomainListBody {
+  items: { domain: string }[];
+}
+
+export async function suggestRemoteDomains(
+  prefix: string,
+  init: { signal?: AbortSignal } = {},
+): Promise<string[] | null> {
+  try {
+    const params = new URLSearchParams({ prefix, limit: String(DOMAIN_SUGGESTIONS) });
+    const body = noteMocks
+      ? await (mockFailure("remote-domains") ?? noteMocks.mockRemoteDomains(prefix, DOMAIN_SUGGESTIONS))
+      : await request<RemoteDomainListBody>(`/api/v1/federation/domains?${params.toString()}`, {
+          method: "GET",
+          signal: init.signal,
+        });
+    return Array.isArray(body?.items) ? body.items.map((item) => item.domain.toLowerCase()) : null;
+  } catch (error) {
+    if (init.signal?.aborted) throw error;
+    return null;
+  }
+}
+
 export async function resolveRemote(raw: string, init: { signal?: AbortSignal } = {}): Promise<RemoteResolution> {
   const q = normalizeRemoteQuery(raw);
   const domain = remoteQueryDomain(q);

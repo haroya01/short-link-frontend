@@ -36,7 +36,7 @@ export default defineConfig({
     },
     {
       name: "webkit-iphone",
-      testMatch: /post-audience-(reader|webkit)\.spec\.ts$/,
+      testMatch: /(post-audience-(reader|webkit)|domain-autocomplete-webkit)\.spec\.ts$/,
       use: { ...devices["iPhone 15"] },
     },
     {
