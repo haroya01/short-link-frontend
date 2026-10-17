@@ -88,6 +88,25 @@ it("falls back to the original once the variant fails, and every copy of that ph
   expect(again.hasAttribute("srcset")).toBe(false);
 });
 
+it("asks for the variant again once the failure is a minute old", async () => {
+  vi.useFakeTimers();
+  try {
+    const src = `${CDN}/note-images/6/fresh.jpg`;
+    const [img] = await render({ src, sizes: "240px" });
+    await act(async () => {
+      img.dispatchEvent(new Event("error"));
+    });
+    await act(async () => root.render(null));
+    vi.advanceTimersByTime(59_000);
+    expect((await render({ src, sizes: "240px" }))[0].getAttribute("src")).toBe(src);
+    await act(async () => root.render(null));
+    vi.advanceTimersByTime(1_000);
+    expect((await render({ src, sizes: "240px" }))[0].getAttribute("src")).toBe(`${CDN}/note-images/6/fresh.w1080.jpg`);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
 it("doesn't loop when the original fails too", async () => {
   const src = `${CDN}/note-images/3/gone.jpg`;
   const onError = vi.fn();

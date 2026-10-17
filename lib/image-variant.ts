@@ -35,6 +35,8 @@ export function imageVariantUrl(url: string, slotWidthPx: number): string {
   return parsed.toString();
 }
 
+export const VARIANT_FAILURE_TTL_MS = 60_000;
+
 const failures = new Set<string>();
 const listeners = new Set<() => void>();
 
@@ -45,6 +47,7 @@ export function variantFailed(url: string): boolean {
 export function rememberVariantFailure(url: string): void {
   if (failures.has(url)) return;
   failures.add(url);
+  setTimeout(() => failures.delete(url), VARIANT_FAILURE_TTL_MS);
   listeners.forEach((listener) => listener());
 }
 

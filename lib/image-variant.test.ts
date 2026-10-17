@@ -4,6 +4,7 @@ import {
   imageVariantUrl,
   rememberVariantFailure,
   subscribeVariantFailures,
+  VARIANT_FAILURE_TTL_MS,
   variantFailed,
   variantWidthFor,
 } from "./image-variant";
@@ -85,6 +86,26 @@ describe("variant failures", () => {
     expect(variantFailed(`${CDN}/note-images/9/other.jpg`)).toBe(false);
     expect(listener).toHaveBeenCalledTimes(1);
     stop();
+  });
+
+  it("expire after a minute, so a photo posted a moment ago gets its variant on the next draw", () => {
+    vi.useFakeTimers();
+    try {
+      const url = `${CDN}/note-images/9/fresh.jpg`;
+      const listener = vi.fn();
+      const stop = subscribeVariantFailures(listener);
+      rememberVariantFailure(url);
+      vi.advanceTimersByTime(VARIANT_FAILURE_TTL_MS - 1);
+      expect(variantFailed(url)).toBe(true);
+      vi.advanceTimersByTime(1);
+      expect(variantFailed(url)).toBe(false);
+      rememberVariantFailure(url);
+      expect(variantFailed(url)).toBe(true);
+      expect(listener).toHaveBeenCalledTimes(2);
+      stop();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("live only in memory, so a reload asks for the variant again", async () => {
