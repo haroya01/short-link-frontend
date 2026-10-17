@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  handleBeingTyped,
   liveRemoteQueryDomain,
   looksLikeCompleteDomain,
   looksLikeRemoteHandle,
@@ -75,4 +76,23 @@ describe("a server name that is finished being typed", () => {
     expect(liveRemoteQueryDomain("https://mastodon.social/@a/12")).toBe("mastodon.social");
     expect(liveRemoteQueryDomain("mina")).toBeNull();
   });
+});
+
+describe("a handle whose server is still being typed", () => {
+  it.each([
+    ["@gargron@", { user: "gargron", domain: "" }],
+    ["@gargron@m", { user: "gargron", domain: "m" }],
+    ["gargron@Mastodon.So", { user: "gargron", domain: "mastodon.so" }],
+    [" ＠gargron＠mast ", { user: "gargron", domain: "mast" }],
+    ["acct:@gargron@mastodon.social", { user: "gargron", domain: "mastodon.social" }],
+  ])("reads %j", (query, typed) => {
+    expect(handleBeingTyped(query)).toEqual(typed);
+  });
+
+  it.each(["gargron", "@gargron", "@gargron@mastodon social", "@a@b@c", "https://mastodon.social/@a", "@gar ron@m"])(
+    "finds no handle in %j",
+    (query) => {
+      expect(handleBeingTyped(query)).toBeNull();
+    },
+  );
 });

@@ -25,7 +25,7 @@ import type {
   TrendingNoteLink,
   TrendingNoteTag,
 } from "./notes";
-import type { RemoteAccountSearchBody, RemoteResolveBody } from "./federation-search";
+import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
 import type { RemoteTrendingBody, TrendingNote } from "./remote-trending";
 
@@ -792,6 +792,26 @@ export function mockRemoteFollowing(): RemoteAccount[] {
 
 export function mockRemoteAccountNotes(id: number, page: number): NoteFeed {
   return { items: page > 0 ? [] : remoteTopLevel(id).map(withQuotes), page, hasNext: false };
+}
+
+const NAMED_DOMAINS = [
+  "mastodon.social",
+  "misskey.io",
+  "mstdn.jp",
+  "fedibird.com",
+  "qdon.space",
+  "planet.moe",
+  "social.silicon.moe",
+  "mastodon.online",
+  "mas.to",
+  "fosstodon.org",
+];
+
+export function mockRemoteDomains(prefix: string, limit: number): Promise<RemoteDomainListBody> {
+  const start = prefix.slice(prefix.lastIndexOf("@") + 1).trim().toLowerCase();
+  const known = remoteAccounts.map((a) => a.domain).filter((d) => !d.endsWith(".example"));
+  const domains = [...new Set([...known, ...NAMED_DOMAINS])].filter((d) => d.startsWith(start));
+  return Promise.resolve({ items: domains.slice(0, limit).map((domain) => ({ domain })) });
 }
 
 export function mockSearchRemote(q: string, limit: number): Promise<RemoteAccountSearchBody> {

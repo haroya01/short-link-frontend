@@ -18,6 +18,8 @@ import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
 import { remoteSearchHintVisible, useLivePeople } from "@/modules/blog/lib/use-live-people";
 import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
 import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
+import { useDomainCompletions } from "@/modules/notes/lib/use-domain-completions";
+import { DomainCompletions } from "@/modules/notes/components/domain-completions";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
@@ -41,13 +43,16 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [value, setValue] = useState("");
   const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
   const { people, remote, remoteAnswered } = useLivePeople(value, open, 3);
-  const lookup = useLiveRemoteLookup(value, open);
-  const remoteHint = remoteSearchHintVisible({
-    query: value,
-    answered: remoteAnswered,
-    accounts: remote,
-    lookupActive: lookup !== null,
-  });
+  const completions = useDomainCompletions(value, open);
+  const lookup = useLiveRemoteLookup(value, open && !completions.hold);
+  const remoteHint =
+    !completions.hold &&
+    remoteSearchHintVisible({
+      query: value,
+      answered: remoteAnswered,
+      accounts: remote,
+      lookupActive: lookup !== null,
+    });
   // Discovery (trending posts + who to follow) fills the sheet's resting state — the mobile feed no
   // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
   // client-side (the sheet mounts in the layout, not the feed page) once per open session.
@@ -131,6 +136,13 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             type="search"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key !== "ArrowDown") return;
+              const first = sheetRef.current?.querySelector<HTMLButtonElement>("[data-domain-completion]");
+              if (!first) return;
+              e.preventDefault();
+              first.focus();
+            }}
             placeholder={t("searchPlaceholder")}
             aria-label={t("searchLabel")}
             className="h-10 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-[16px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-accent-600 focus:ring-2 focus:ring-accent-600/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 [&::-webkit-search-cancel-button]:appearance-none"
@@ -195,6 +207,17 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             )}
           </div>
         )}
+        {q && (
+          <DomainCompletions
+            handles={completions.handles}
+            typed={value}
+            inputRef={inputRef}
+            onPick={(handle) => {
+              setValue(handle);
+              inputRef.current?.focus();
+            }}
+          />
+        )}
         {q && <LivePeople people={people} onNavigate={onClose} />}
         {q && <LiveRemotePeople accounts={remote} lookup={lookup} hint={remoteHint} onNavigate={onClose} />}
         {q && loading && results.length === 0 && (
@@ -219,7 +242,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             </button>
           </div>
         )}
-        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && !lookup && (
+        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && !lookup && !completions.hold && (
           <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
         {results.length > 0 && (
