@@ -4611,7 +4611,7 @@
     "trendingFailed": "人気の投稿を読み込めませんでした",
     "trendingMore": "もっと見る",
     "trendingOn": "{server}で人気",
-    "trendingOnMore": "{server} ほか{count}件で人気",
+    "trendingOnMore": "{server} ほか{count}サーバーで人気",
     "remoteFetchFailed": "ほかのサーバーのノートを取得できませんでした",
     "remoteFollowed": "フォローしました",
     "remoteFollowRequested": "フォローをリクエストしました",
