@@ -52,18 +52,18 @@ describe("completing a handle's server", () => {
   it("does nothing for a plain name, and never holds the resolve", async () => {
     await type("gargron", 500);
     expect(mocks.suggestRemoteDomains).not.toHaveBeenCalled();
-    expect(seen).toEqual({ handles: [], active: false, hold: false });
+    expect(seen).toEqual({ handles: [], hold: false });
   });
 
   it("asks once typing pauses for 150ms and offers whole handles", async () => {
     mocks.suggestRemoteDomains.mockResolvedValue(["mastodon.social", "mastodon.online"]);
     await type("@gargron@mast", 149);
     expect(mocks.suggestRemoteDomains).not.toHaveBeenCalled();
-    expect(seen).toEqual({ handles: [], active: true, hold: true });
+    expect(seen).toEqual({ handles: [], hold: true });
     await type("@gargron@mast", 1);
     expect(mocks.suggestRemoteDomains).toHaveBeenCalledTimes(1);
     expect(mocks.suggestRemoteDomains.mock.calls[0][0]).toBe("mast");
-    expect(seen).toEqual({ handles: ["@gargron@mastodon.social", "@gargron@mastodon.online"], active: true, hold: true });
+    expect(seen).toEqual({ handles: ["@gargron@mastodon.social", "@gargron@mastodon.online"], hold: true });
   });
 
   it("offers the servers it knows best right after the second @", async () => {
@@ -76,22 +76,22 @@ describe("completing a handle's server", () => {
   it("holds a server that only looks finished while it is not one of those offered", async () => {
     mocks.suggestRemoteDomains.mockResolvedValue(["mastodon.social"]);
     await type("@alice@mastodon.so", 150);
-    expect(seen).toEqual({ handles: ["@alice@mastodon.social"], active: true, hold: true });
+    expect(seen).toEqual({ handles: ["@alice@mastodon.social"], hold: true });
   });
 
   it("lets go once the server typed out is one of those offered", async () => {
     mocks.suggestRemoteDomains.mockResolvedValue(["mastodon.social", "mastodon.online"]);
     await type("@alice@Mastodon.Social", 150);
-    expect(seen).toEqual({ handles: [], active: true, hold: false });
+    expect(seen).toEqual({ handles: [], hold: false });
   });
 
   it("lets go when nothing matched or the request failed", async () => {
     mocks.suggestRemoteDomains.mockResolvedValueOnce([]);
     await type("@alice@zz.example", 150);
-    expect(seen).toEqual({ handles: [], active: true, hold: false });
+    expect(seen).toEqual({ handles: [], hold: false });
     mocks.suggestRemoteDomains.mockResolvedValueOnce(null);
     await type("@alice@yy.example", 150);
-    expect(seen).toEqual({ handles: [], active: true, hold: false });
+    expect(seen).toEqual({ handles: [], hold: false });
   });
 
   it("cancels the request for a prefix that changed", async () => {

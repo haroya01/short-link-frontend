@@ -54,7 +54,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   const completions = useDomainCompletions(value, open);
   const lookup = useLiveRemoteLookup(value, open && !completions.hold);
   const remoteHint =
-    !completions.active &&
+    !completions.hold &&
     remoteSearchHintVisible({
       query: value,
       answered: remoteAnswered,
@@ -254,7 +254,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                 {t("retry")}
               </button>
             </div>
-          ) : people.length === 0 && remote.length === 0 && !lookup && !completions.active ? (
+          ) : people.length === 0 && remote.length === 0 && !lookup && !completions.hold ? (
             <p className="px-3 py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
           ) : null}
           <div className="-mt-px border-t border-slate-100 px-3 py-2.5 dark:border-slate-800">

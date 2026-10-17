@@ -78,6 +78,15 @@ test.describe("phone search sheet", () => {
     expect(resolved).toEqual(["@alice@mstdn.jp"]);
   });
 
+  test("a server part no known server starts with still says nothing was found", async ({ page }) => {
+    const resolved = await serve(page);
+    const { sheet, box } = await openSheet(page);
+    await box.fill("@alice@zzz");
+    await expect(sheet.getByText("검색 결과가 없어요")).toBeVisible({ timeout: 10_000 });
+    await expect(sheet.getByTestId("domain-completions")).toHaveCount(0);
+    expect(resolved).toEqual([]);
+  });
+
   test("the arrow keys reach the rows from the field and Enter picks", async ({ page }) => {
     await serve(page);
     const { sheet, box } = await openSheet(page);

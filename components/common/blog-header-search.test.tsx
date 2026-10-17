@@ -17,7 +17,7 @@ vi.mock("@/modules/blog/lib/use-live-people", () => ({
 vi.mock("@/modules/blog/components/live-people", () => ({ LivePeople: () => null, LiveRemotePeople: () => null }));
 vi.mock("@/modules/notes/lib/use-remote-resolution", () => ({ useLiveRemoteLookup: () => null }));
 vi.mock("@/modules/notes/lib/use-domain-completions", () => ({
-  useDomainCompletions: () => ({ handles: [], active: false, hold: false }),
+  useDomainCompletions: () => ({ handles: [], hold: false }),
 }));
 
 import { BlogHeaderSearch } from "./blog-header-search";

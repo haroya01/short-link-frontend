@@ -46,7 +46,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const completions = useDomainCompletions(value, open);
   const lookup = useLiveRemoteLookup(value, open && !completions.hold);
   const remoteHint =
-    !completions.active &&
+    !completions.hold &&
     remoteSearchHintVisible({
       query: value,
       answered: remoteAnswered,
@@ -242,7 +242,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             </button>
           </div>
         )}
-        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && !lookup && !completions.active && (
+        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && !lookup && !completions.hold && (
           <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
         {results.length > 0 && (

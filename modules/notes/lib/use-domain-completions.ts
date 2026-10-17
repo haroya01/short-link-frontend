@@ -9,7 +9,6 @@ const COMPLETION_DELAY_MS = 150;
 
 export interface DomainCompletions {
   handles: string[];
-  active: boolean;
   hold: boolean;
 }
 
@@ -30,10 +29,10 @@ export function useDomainCompletions(query: string, enabled: boolean): DomainCom
     staleTime: 60_000,
   });
 
-  if (!typing) return { handles: [], active: false, hold: false };
-  if (!current || data === undefined) return { handles: [], active: true, hold: true };
+  if (!typing) return { handles: [], hold: false };
+  if (!current || data === undefined) return { handles: [], hold: true };
   if (data === null || data.length === 0 || data.includes(typing.domain)) {
-    return { handles: [], active: true, hold: false };
+    return { handles: [], hold: false };
   }
-  return { handles: data.map((found) => `@${typing.user}@${found}`), active: true, hold: true };
+  return { handles: data.map((found) => `@${typing.user}@${found}`), hold: true };
 }
