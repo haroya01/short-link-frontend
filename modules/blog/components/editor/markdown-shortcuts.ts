@@ -52,7 +52,6 @@ export const MarkdownShortcuts = Extension.create({
   priority: 1000,
   addKeyboardShortcuts() {
     return {
-      // An empty heading made from "# " goes back to a paragraph on that line instead of joining the line above.
       Backspace: () => {
         const { empty, $from } = this.editor.state.selection;
         if (!empty || $from.parentOffset !== 0 || $from.depth !== 1) return false;
