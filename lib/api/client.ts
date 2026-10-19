@@ -146,7 +146,10 @@ async function tryRefresh(): Promise<string | null> {
         method: "POST",
         credentials: "include",
       });
-      if (!res.ok) return null;
+      if (!res.ok) {
+        if (res.status === 401) clearSessionHint();
+        return null;
+      }
       const data = (await res.json()) as { accessToken: string };
       setToken(data.accessToken);
       return data.accessToken;
