@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronRight, ListFilter, Lock } from "lucide-react";
+import { AtSign, Bell, ChevronRight, ListFilter, Lock } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -49,6 +49,7 @@ const GROUP_ORDER: GroupKey[] = ["groupToday", "groupYesterday", "groupWeek", "g
 
 export default function NotificationsPage() {
   const t = useTranslations("notifications");
+  const tNotes = useTranslations("notes");
   const { ready, authenticated, me } = useAuth();
   const unread = useUnreadCount();
   const [filter, setFilter] = useState<NotificationFilter>("all");
@@ -99,6 +100,20 @@ export default function NotificationsPage() {
       </div>
 
       <NotificationTabs value={filter} onChange={setFilter} className="mt-4" />
+
+      {filter === "mentions" && (
+        <BlogLink
+          href={blogPath("/notes?feed=direct")}
+          data-testid="direct-mentions-entry"
+          className="focus-ring mt-4 flex items-center gap-3 rounded-surface border-b border-slate-100 px-2 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800/80 dark:hover:bg-slate-800/60"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <AtSign aria-hidden className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+          </span>
+          <span className="flex-1 text-[14px] font-semibold text-slate-900 dark:text-slate-100">{tNotes("feedDirect")}</span>
+          <ChevronRight aria-hidden className="h-4 w-4 text-slate-400" />
+        </BlogLink>
+      )}
 
       {filter === "all" && waiting > 0 && (
         // 잠긴 계정에 기다리는 요청이 있으면 맨 위 한 줄 — 마스토돈 알림 위 "팔로우 요청".

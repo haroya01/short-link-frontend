@@ -12,24 +12,15 @@ import {
   type PublicFeedItem,
   type SuggestedAuthor,
 } from "@/modules/blog/api/public-posts";
-import { authorHref, postHref } from "@/modules/blog/lib/author-href";
-import { contentLang } from "@/modules/blog/lib/content-lang";
-import { useLiveSearch } from "@/modules/blog/lib/use-live-search";
-import { remoteSearchHintVisible, useLivePeople } from "@/modules/blog/lib/use-live-people";
-import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-people";
-import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
-import { useDomainCompletions } from "@/modules/notes/lib/use-domain-completions";
-import { DomainCompletions } from "@/modules/notes/components/domain-completions";
+import { rememberSearch } from "@/modules/blog/lib/recent-searches";
 import { FollowSuggestions } from "@/modules/notes/components/follow-suggestions";
 import { TrendingNoteTags } from "@/modules/notes/components/trending-note-tags";
 import { TrendingNoteLinks } from "@/modules/notes/components/trending-note-links";
-import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
-import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { blogCta } from "@/modules/blog/components/blog-cta";
+import { SearchLiveResults } from "@/modules/blog/components/search-live-results";
+import { SuggestedAuthorsList } from "@/modules/blog/components/suggested-authors-list";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
-import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 
 /**
  * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
@@ -44,18 +35,6 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const locale = useLocale();
   const router = useRouter();
   const [value, setValue] = useState("");
-  const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
-  const { people, remote, remoteAnswered } = useLivePeople(value, open, 3);
-  const completions = useDomainCompletions(value, open);
-  const lookup = useLiveRemoteLookup(value, open && !completions.hold);
-  const remoteHint =
-    !completions.hold &&
-    remoteSearchHintVisible({
-      query: value,
-      answered: remoteAnswered,
-      accounts: remote,
-      lookupActive: lookup !== null,
-    });
   // Discovery (trending posts + who to follow) fills the sheet's resting state — the mobile feed no
   // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
   // client-side (the sheet mounts in the layout, not the feed page) once per open session.
@@ -107,7 +86,9 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
     e?.preventDefault();
     const q = value.trim();
     onClose();
-    if (q) navigate(blogHref(`/?q=${encodeURIComponent(q)}`));
+    if (!q) return;
+    rememberSearch(q);
+    navigate(blogHref(`/?q=${encodeURIComponent(q)}`));
   }
 
   const q = value.trim();
@@ -189,119 +170,20 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             <TrendingNoteTags className="mb-6 px-2" />
             <TrendingNoteLinks className="mb-6 px-2" />
 
-            {noteSuggestions === false && authors.length > 0 && (
-              <section data-testid="search-idle-follow">
-                <RailHeading className="mb-1 px-2">{t("searchIdleFollow")}</RailHeading>
-                <ul>
-                  {authors.map(({ author, postCount }) => (
-                    <li key={author.username} className="flex items-center gap-3 px-2 py-2">
-                      <a
-                        href={authorHref(author.username, locale)}
-                        onClick={() => onClose()}
-                        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface"
-                      >
-                        <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
-                        <span className="flex min-w-0 flex-col">
-                          <AuthorName
-                            name={author.displayName}
-                            handle={author.username}
-                            className="text-[14px] font-semibold text-slate-800 dark:text-slate-200"
-                          />
-                          <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">
-                            {t("railPostCount", { count: postCount })}
-                          </span>
-                        </span>
-                      </a>
-                      <FollowButton username={author.username} initialFollowerCount={0} compact quiet />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+            {noteSuggestions === false && <SuggestedAuthorsList authors={authors} onNavigate={onClose} />}
           </div>
         )}
-        {q && (
-          <DomainCompletions
-            handles={completions.handles}
-            typed={value}
-            inputRef={inputRef}
-            onPick={(handle) => {
-              setValue(handle);
-              inputRef.current?.focus();
-            }}
-          />
-        )}
-        {q && <LivePeople people={people} onNavigate={onClose} />}
-        {q && <LiveRemotePeople accounts={remote} lookup={lookup} hint={remoteHint} onNavigate={onClose} />}
-        {q && loading && results.length === 0 && (
-          <ul className="animate-pulse divide-y divide-slate-100 dark:divide-slate-800" aria-busy>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <li key={i} className="px-3 py-3">
-                <div className="h-2.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
-                <div className="mt-2 h-4 w-3/4 rounded bg-slate-200/80 dark:bg-slate-800/80" />
-              </li>
-            ))}
-          </ul>
-        )}
-        {q && !loading && results.length === 0 && failed && (
-          <div role="alert" className="flex flex-col items-center gap-2 px-3 py-10 text-center">
-            <p className="text-sm text-slate-500 dark:text-slate-400">{t("searchFailed")}</p>
-            <button
-              type="button"
-              onClick={retry}
-              className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-            >
-              {t("retry")}
-            </button>
-          </div>
-        )}
-        {q && !loading && results.length === 0 && !failed && people.length === 0 && remote.length === 0 && !lookup && !completions.hold && (
-          <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
-        )}
-        {results.length > 0 && (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-            {results.map((item) => (
-              <li key={`${item.author.username}/${item.slug}`}>
-                <a
-                  href={postHref(item.author.username, item.slug, locale)}
-                  onClick={() => onClose()}
-                  className="focus-ring flex items-center gap-3 rounded-lg px-3 py-3"
-                >
-                  <span className="min-w-0 flex-1">
-                    {item.tags[0] && (
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                        {item.tags[0]}
-                      </span>
-                    )}
-                    <span
-                      lang={contentLang(item.title, item.languageTag)}
-                      className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100"
-                    >
-                      {item.title}
-                    </span>
-                    <AuthorName
-                      name={item.author.displayName}
-                      handle={item.author.username}
-                      className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400"
-                      handleClassName={META_HANDLE}
-                    />
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-        {q && (
-          <div className="mt-2 px-3 py-3">
-            <button
-              type="button"
-              onClick={() => goToAll()}
-              className={blogCta({ variant: "text", className: "touch-target" })}
-            >
-              {t("searchResultsFor", { q })}
-            </button>
-          </div>
-        )}
+        <SearchLiveResults
+          value={value}
+          active={open}
+          inputRef={inputRef}
+          onPickHandle={(handle) => {
+            setValue(handle);
+            inputRef.current?.focus();
+          }}
+          onNavigate={onClose}
+          onSeeAll={() => goToAll()}
+        />
       </div>
     </div>,
     document.body,

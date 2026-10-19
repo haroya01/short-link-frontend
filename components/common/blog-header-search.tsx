@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { isEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2, Search, X } from "lucide-react";
+import { rememberSearch } from "@/modules/blog/lib/recent-searches";
 import { blogHref } from "@/lib/host";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
@@ -121,6 +122,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       setOpen(false);
       return;
     }
+    rememberSearch(q);
     navigate(blogHref(`/?q=${encodeURIComponent(q)}`));
   }
 
