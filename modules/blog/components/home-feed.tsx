@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -10,7 +10,10 @@ import { SignInRow } from "@/components/auth/sign-in-row";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { listHome, type HomePage, type HomePost, type HomeTab } from "@/modules/blog/api/home-feed";
+import { fetchPublicConnectionFeed, type ConnectionEvent } from "@/modules/blog/api/collections";
 import type { SuggestedAuthor } from "@/modules/blog/api/public-posts";
+import { ConnectionFeedInsert } from "@/modules/blog/components/connection-feed-insert";
+import { useViewerList } from "@/modules/blog/lib/use-viewer-list";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -49,12 +52,14 @@ export function HomeFeed({
   sort,
   initial = null,
   suggestedAuthors = [],
+  connectionEvents,
   aboveList,
 }: {
   locale: string;
   sort: HomeSort;
   initial?: HomePage | null;
   suggestedAuthors?: SuggestedAuthor[];
+  connectionEvents?: ConnectionEvent[];
   aboveList?: ReactNode;
 }) {
   const t = useTranslations("publicFeed");
@@ -131,6 +136,8 @@ export function HomeFeed({
           ) : (
             <HomeList
               key={`${sort}:${reposts.version}`}
+              locale={locale}
+              connectionEvents={sort === "following" ? undefined : connectionEvents}
               sort={sort}
               initial={sort === "recent" ? initial : null}
               posted={sort === "trending" ? [] : posted}
@@ -144,7 +151,22 @@ export function HomeFeed({
 
 type Row = { kind: "note"; note: Note; filteredBy?: string[] } | { kind: "post"; post: HomePost };
 
-function HomeList({ sort, initial, posted }: { sort: HomeSort; initial: HomePage | null; posted: Note[] }) {
+const CONNECTION_FIRST = 5;
+const CONNECTION_EVERY = 5;
+
+function HomeList({
+  locale,
+  sort,
+  initial,
+  posted,
+  connectionEvents: serverConnectionEvents,
+}: {
+  locale: string;
+  sort: HomeSort;
+  initial: HomePage | null;
+  posted: Note[];
+  connectionEvents?: ConnectionEvent[];
+}) {
   const t = useTranslations("publicFeed");
   const tNav = useTranslations("nav");
   const { ready, authenticated, me } = useAuth();
@@ -154,6 +176,14 @@ function HomeList({ sort, initial, posted }: { sort: HomeSort; initial: HomePage
   const [changed, setChanged] = useState<Map<number, Note>>(new Map());
   const [removed, setRemoved] = useState<Set<number>>(new Set());
   const sentinel = useRef<HTMLDivElement>(null);
+  const connectionEvents = useViewerList(
+    serverConnectionEvents ?? [],
+    () =>
+      serverConnectionEvents
+        ? fetchPublicConnectionFeed(0, serverConnectionEvents.length || 6).then((r) => (r.ok ? r.data.items : null))
+        : Promise.resolve(null),
+    "connections",
+  );
   const { data, isError, refetch, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["home", sort, anonymous ? "anonymous" : "member"],
@@ -225,24 +255,36 @@ function HomeList({ sort, initial, posted }: { sort: HomeSort; initial: HomePage
     );
   }
 
+  const connectAfter = new Map<number, ConnectionEvent>();
+  connectionEvents.forEach((event, k) => {
+    const at = CONNECTION_FIRST + k * CONNECTION_EVERY;
+    if (at < rows.length) connectAfter.set(at, event);
+  });
+
   return (
     <div data-testid="home-feed">
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
-        {rows.map((row) =>
-          row.kind === "note" ? (
-            <NoteFeedRow
-              key={`note-${row.note.id}`}
-              note={row.note}
-              isNew={fresh.has(row.note.id)}
-              repostedBy={row.note.repostedBy?.username}
-              filteredBy={row.filteredBy}
-              onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
-              onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
-            />
-          ) : (
-            <HomePostRow key={`post-${row.post.id}`} post={row.post} />
-          ),
-        )}
+        {rows.map((row, i) => (
+          <Fragment key={row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`}>
+            {row.kind === "note" ? (
+              <NoteFeedRow
+                note={row.note}
+                isNew={fresh.has(row.note.id)}
+                repostedBy={row.note.repostedBy?.username}
+                filteredBy={row.filteredBy}
+                onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
+                onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
+              />
+            ) : (
+              <HomePostRow post={row.post} />
+            )}
+            {connectAfter.has(i) && (
+              <ul data-testid="home-connection">
+                <ConnectionFeedInsert event={connectAfter.get(i)!} locale={locale} />
+              </ul>
+            )}
+          </Fragment>
+        ))}
       </div>
       {hasNextPage && (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">

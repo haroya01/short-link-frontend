@@ -144,7 +144,7 @@ export async function FeedScreen({
   const remoteQuery = searching && remoteQueryDomain(query) !== null;
   // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
   // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
-  const wantConnections = showsServerFeed && !searching && !activeTag;
+  const wantConnections = (showsServerFeed || (home && tab !== "following")) && !searching && !activeTag;
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
   // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
   // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
@@ -248,6 +248,7 @@ export async function FeedScreen({
             sort={tab as "following" | "recent" | "trending"}
             initial={homeResult && homeResult.ok ? homeResult.data : null}
             suggestedAuthors={authors}
+            connectionEvents={connectionEvents}
             aboveList={wantTopics ? <TrendingTopics topics={topics} locale={locale} activeTag="" /> : undefined}
           />
         </div>
