@@ -144,6 +144,21 @@ let notes: Note[] = [
     },
   }),
   note({
+    id: 22,
+    body: "움직이는 그림도 올라가요.",
+    author: YUNA,
+    createdAt: "2026-09-09T09:00:00Z",
+    media: [
+      {
+        url: "https://d82putaebkgm4.cloudfront.net/note-images/blink.gif",
+        altText: "번갈아 깜박이는 네모",
+        contentType: "image/gif",
+        width: 480,
+        height: 480,
+      },
+    ],
+  }),
+  note({
     id: 21,
     body: "다음 스터디 주제, 여러 개 골라도 돼요.",
     author: YUNA,
