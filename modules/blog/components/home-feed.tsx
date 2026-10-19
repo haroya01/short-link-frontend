@@ -1,0 +1,273 @@
+"use client";
+
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { ErrorState } from "@/components/common/error-state";
+import { SignInRow } from "@/components/auth/sign-in-row";
+import { useAuth } from "@/lib/auth";
+import { blogHref } from "@/lib/host";
+import { listHome, type HomePage, type HomePost, type HomeTab } from "@/modules/blog/api/home-feed";
+import type { SuggestedAuthor } from "@/modules/blog/api/public-posts";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { blogCta } from "@/modules/blog/components/blog-cta";
+import type { FeedMoreItem } from "@/modules/blog/components/feed-more-menu";
+import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
+import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
+import { FollowingFeed } from "@/modules/blog/components/following-feed";
+import { HomePostRow } from "@/modules/blog/components/home-post-row";
+import { onNotePosted } from "@/modules/blog/lib/consequence-events";
+import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
+import type { Note, QuotedPost } from "@/modules/notes/api/notes";
+import { NoteComposer } from "@/modules/notes/components/note-composer";
+import { NoteDraftsButton } from "@/modules/notes/components/note-drafts-sheet";
+import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
+import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
+import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
+import { useShowReposts } from "@/modules/notes/lib/use-show-reposts";
+
+export type HomeSort = "following" | "recent" | "trending";
+
+const SORTS: readonly HomeSort[] = ["following", "recent", "trending"];
+
+const API_TAB: Record<HomeSort, HomeTab> = { following: "following", recent: "latest", trending: "trending" };
+
+function quoteFromParams(params: URLSearchParams): QuotedPost | null {
+  const id = Number(params.get("quote"));
+  const title = params.get("quoteTitle");
+  const slug = params.get("quoteSlug");
+  const authorUsername = params.get("quoteAuthor");
+  if (!Number.isInteger(id) || id <= 0 || !title || !slug || !authorUsername) return null;
+  return { id, title, slug, authorUsername };
+}
+
+export function HomeFeed({
+  locale,
+  sort,
+  initial = null,
+  suggestedAuthors = [],
+  aboveList,
+}: {
+  locale: string;
+  sort: HomeSort;
+  initial?: HomePage | null;
+  suggestedAuthors?: SuggestedAuthor[];
+  aboveList?: ReactNode;
+}) {
+  const t = useTranslations("publicFeed");
+  const tNotes = useTranslations("notes");
+  const params = useSearchParams();
+  const { ready, authenticated } = useAuth();
+  const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
+  const [posted, setPosted] = useState<Note[]>([]);
+  const [draft, setDraft] = useState<NoteDraft | null>(null);
+  const reposts = useShowReposts(sort === "following" && ready && authenticated);
+  const signedOut = ready && !authenticated;
+
+  useEffect(() => onNotePosted((note) => setPosted((current) => [note, ...current])), []);
+
+  const pickDraft = (next: NoteDraft) => {
+    setQuote(next.quote && "post" in next.quote ? next.quote.post : null);
+    setDraft(next);
+  };
+
+  const tabs = [
+    { key: "following", label: t("feed"), href: "?sort=following", active: sort === "following" },
+    { key: "recent", label: t("recent"), href: "?sort=recent", active: sort === "recent" },
+    { key: "trending", label: t("trending"), href: "?sort=trending", active: sort === "trending" },
+  ];
+  const more: FeedMoreItem[] = [
+    { key: "for-you", label: t("forYou"), icon: "binoculars", href: "?sort=for-you", active: false },
+    { key: "series", label: t("seriesTab"), icon: "series", href: "?sort=series", active: false },
+  ];
+
+  return (
+    <div>
+      <div className="mx-auto max-w-2xl">
+        <FeedSwitcher
+          surface="blog"
+          tabs={tabs}
+          more={more}
+          toggles={
+            reposts.shown === null
+              ? undefined
+              : [{ key: "reposts", label: tNotes("showReposts"), checked: reposts.shown, onChange: reposts.set }]
+          }
+        />
+        <div className="border-b border-slate-100 dark:border-slate-800">
+          {!ready ? (
+            <div aria-hidden className="h-[60px]" />
+          ) : authenticated ? (
+            <NoteComposer
+              key={draft?.id ?? "home"}
+              draft={draft}
+              quote={quote}
+              quotedNote={draft?.quote && "note" in draft.quote ? draft.quote.note : null}
+              onClearQuote={() => setQuote(null)}
+              onCreated={(note) => {
+                setPosted((current) => [note, ...current]);
+                setDraft(null);
+              }}
+              draftsButton={(currentId, hidden) => (
+                <NoteDraftsButton
+                  onPick={pickDraft}
+                  currentId={currentId}
+                  hidden={hidden}
+                  className="shrink-0 self-center whitespace-nowrap"
+                />
+              )}
+            />
+          ) : (
+            <SignInRow reason="note" placeholder={tNotes("composerPlaceholder")} />
+          )}
+        </div>
+        <FeedContentTransition index={SORTS.indexOf(sort)} contentKey={sort}>
+          {aboveList && <div className="mt-4">{aboveList}</div>}
+          {sort === "following" && signedOut ? (
+            <FollowingFeed locale={locale} suggestedAuthors={suggestedAuthors} />
+          ) : (
+            <HomeList
+              key={`${sort}:${reposts.version}`}
+              sort={sort}
+              initial={sort === "recent" ? initial : null}
+              posted={sort === "trending" ? [] : posted}
+            />
+          )}
+        </FeedContentTransition>
+      </div>
+    </div>
+  );
+}
+
+type Row = { kind: "note"; note: Note; filteredBy?: string[] } | { kind: "post"; post: HomePost };
+
+function HomeList({ sort, initial, posted }: { sort: HomeSort; initial: HomePage | null; posted: Note[] }) {
+  const t = useTranslations("publicFeed");
+  const tNav = useTranslations("nav");
+  const { ready, authenticated, me } = useAuth();
+  const filters = useNoteFilters();
+  const blocked = useBlockedNames();
+  const anonymous = !ready || !authenticated;
+  const [changed, setChanged] = useState<Map<number, Note>>(new Map());
+  const [removed, setRemoved] = useState<Set<number>>(new Set());
+  const sentinel = useRef<HTMLDivElement>(null);
+  const { data, isError, refetch, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["home", sort, anonymous ? "anonymous" : "member"],
+      queryFn: async ({ pageParam }) => {
+        const result = await listHome(API_TAB[sort], pageParam);
+        if (!result.ok) throw new Error(String(result.status));
+        return result.data;
+      },
+      initialPageParam: null as string | null,
+      getNextPageParam: (last) => last.next,
+      initialData: anonymous && initial ? { pages: [initial], pageParams: [null] } : undefined,
+      placeholderData: keepPreviousData,
+      enabled: ready,
+      staleTime: 30_000,
+    });
+  const autoLoad = Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError;
+
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el || !autoLoad) return;
+    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && void fetchNextPage(), {
+      rootMargin: "600px 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [autoLoad, fetchNextPage]);
+
+  if (!data) {
+    return isError ? <ErrorState onRetry={() => void refetch()} /> : <NoteListSkeleton />;
+  }
+
+  const fresh = new Set(posted.map((n) => n.id));
+  const seenNotes = new Set<number>();
+  const seenPosts = new Set<number>();
+  const rows: Row[] = [];
+  const context = sort === "following" ? "home" : "public";
+  const addNote = (raw: Note) => {
+    if (seenNotes.has(raw.id) || removed.has(raw.id)) return;
+    seenNotes.add(raw.id);
+    const note = changed.get(raw.id) ?? raw;
+    if (blocked.has(note.author.username)) return;
+    const verdict = noteVerdict(note, filters, context, me?.id);
+    if (verdict?.action === "hide") return;
+    rows.push({ kind: "note", note, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
+  };
+  posted.forEach(addNote);
+  for (const page of data.pages) {
+    for (const item of page.items) {
+      if (item.kind === "note") addNote(item.note);
+      else if (!seenPosts.has(item.post.id) && !blocked.has(item.post.author.username)) {
+        seenPosts.add(item.post.id);
+        rows.push(item);
+      }
+    }
+  }
+
+  if (rows.length === 0 && !hasNextPage) {
+    return sort === "following" ? (
+      <BlogEmpty
+        title={t("homeEmptyFollowing")}
+        action={
+          <BlogLink href={blogHref("/explore")} className={blogCta({ variant: "text" })}>
+            {tNav("explore")}
+          </BlogLink>
+        }
+      />
+    ) : (
+      <BlogEmpty title={t("emptyTitle")} />
+    );
+  }
+
+  return (
+    <div data-testid="home-feed">
+      <div className="divide-y divide-slate-100 dark:divide-slate-800">
+        {rows.map((row) =>
+          row.kind === "note" ? (
+            <NoteFeedRow
+              key={`note-${row.note.id}`}
+              note={row.note}
+              isNew={fresh.has(row.note.id)}
+              repostedBy={row.note.repostedBy?.username}
+              filteredBy={row.filteredBy}
+              onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
+              onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
+            />
+          ) : (
+            <HomePostRow key={`post-${row.post.id}`} post={row.post} />
+          ),
+        )}
+      </div>
+      {hasNextPage && (
+        <div ref={sentinel} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={() => void fetchNextPage()}
+            disabled={isFetchingNextPage}
+            className="focus-ring inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />
+                {t("loadingMore")}
+              </>
+            ) : isFetchNextPageError ? (
+              t("retry")
+            ) : (
+              t("loadMore")
+            )}
+          </button>
+          {isFetchNextPageError && !isFetchingNextPage && (
+            <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

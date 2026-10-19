@@ -1,7 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
-import { BLOG_FEED_COOKIE, rememberedBlogTab } from "./modules/blog/lib/feed-memory";
+import { BLOG_FEED_COOKIE, NOTES_FEED_COOKIE, rememberedBlogTab, rememberedHomeTab } from "./modules/blog/lib/feed-memory";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -15,7 +15,9 @@ function routeFeedVariant(req: NextRequest, url: URL): void {
   if (!/^\/[a-z]{2}\/blog\/?$/.test(url.pathname)) return;
   const hasParams = ["sort", "q", "tag", "lang"].some((k) => url.searchParams.has(k));
   if (!hasParams) {
-    const saved = rememberedBlogTab(req.cookies.get(BLOG_FEED_COOKIE)?.value);
+    const saved =
+      rememberedBlogTab(req.cookies.get(BLOG_FEED_COOKIE)?.value) ??
+      rememberedHomeTab(req.cookies.get(NOTES_FEED_COOKIE)?.value);
     if (!saved || saved === "recent") return;
     url.searchParams.set("sort", saved);
   }

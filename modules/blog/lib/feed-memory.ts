@@ -32,6 +32,11 @@ export function rememberedNotesFeed(value: string | null | undefined): NotesSwit
   return (NOTES_SWITCHER as readonly string[]).includes(value ?? "") ? (value as NotesSwitcherFeed) : null;
 }
 
+export function rememberedHomeTab(notesFeed: string | null | undefined): BlogSwitcherTab | null {
+  const feed = rememberedNotesFeed(notesFeed);
+  return feed === "everyone" ? "recent" : feed;
+}
+
 export function readFeedMemory(memory: FeedMemory): string | null {
   if (typeof document === "undefined") return null;
   const value = document.cookie.match(new RegExp(`(?:^|; )${memory.cookie}=([^;]*)`))?.[1] ?? null;

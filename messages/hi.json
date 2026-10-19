@@ -82,6 +82,7 @@
     "searchPlaceholder": "पोस्ट, नोट, टैग, लेखक खोजें",
     "searchLabel": "खोजें",
     "exploreTitle": "ब्राउज़ करें",
+    "homeEmptyFollowing": "आप जिन्हें फ़ॉलो करते हैं उनकी कोई पोस्ट अभी नहीं है",
     "recentSearches": "हाल की खोजें",
     "recentSearchesClear": "हाल की खोजें साफ़ करें",
     "searchClear": "खोज साफ़ करें",
@@ -1143,7 +1144,7 @@
     "posts": "पोस्ट",
     "notes": "नोट्स",
     "search": "खोजें",
-    "explore": "खोज-बीन करें",
+    "explore": "ब्राउज़ करें",
     "openMenu": "मेनू खोलें",
     "closeMenu": "मेनू बंद करें",
     "menu": "मेनू",
@@ -4421,6 +4422,7 @@
     "emptyReposts": "अभी कोई रीपोस्ट नहीं",
     "repostsTitle": "रीपोस्ट · @{username}",
     "quotedPostKind": "ब्लॉग पोस्ट",
+    "postComments": "{count, number} टिप्पणियाँ",
     "feedMore": "और",
     "feedBookmarks": "बुकमार्क",
     "feedLists": "सूचियाँ",
@@ -4723,7 +4725,7 @@
     "feedDirectShort": "उल्लेख",
     "listManage": "सूचियाँ प्रबंधित करें",
     "listSettingsHint": "सूचियाँ केवल आप देखते हैं। किसी सूची के लोगों के नोट पढ़ने के लिए नोट्स पेज पर \"और\" में उसे चुनें।",
-    "feedMoreBlog": "और ब्लॉग फ़ीड",
+    "feedMoreBlog": "और होम फ़ीड",
     "feedMoreNotes": "और नोट फ़ीड"
   },
   "mentions": {

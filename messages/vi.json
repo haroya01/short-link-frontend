@@ -82,6 +82,7 @@
     "searchPlaceholder": "Bài, ghi chú, thẻ, tác giả",
     "searchLabel": "Tìm kiếm",
     "exploreTitle": "Duyệt xem",
+    "homeEmptyFollowing": "Chưa có bài nào từ người bạn theo dõi",
     "recentSearches": "Tìm kiếm gần đây",
     "recentSearchesClear": "Xóa tìm kiếm gần đây",
     "searchClear": "Xóa tìm kiếm",
@@ -1143,7 +1144,7 @@
     "posts": "Bài viết",
     "notes": "Ghi chú",
     "search": "Tìm kiếm",
-    "explore": "Khám phá",
+    "explore": "Duyệt xem",
     "openMenu": "Mở menu",
     "closeMenu": "Đóng menu",
     "menu": "Menu",
@@ -4421,6 +4422,7 @@
     "emptyReposts": "Chưa có lượt đăng lại",
     "repostsTitle": "Đăng lại · @{username}",
     "quotedPostKind": "Bài blog",
+    "postComments": "{count, number} bình luận",
     "feedMore": "Thêm",
     "feedBookmarks": "Đã đánh dấu",
     "feedLists": "Danh sách",
@@ -4723,7 +4725,7 @@
     "feedDirectShort": "Nhắc đến",
     "listManage": "Quản lý danh sách",
     "listSettingsHint": "Chỉ bạn thấy danh sách. Để đọc ghi chú của những người trong một danh sách, hãy chọn nó trong mục Thêm ở trang ghi chú.",
-    "feedMoreBlog": "Thêm bảng tin blog",
+    "feedMoreBlog": "Thêm bảng tin trang chủ",
     "feedMoreNotes": "Thêm bảng tin ghi chú"
   },
   "mentions": {

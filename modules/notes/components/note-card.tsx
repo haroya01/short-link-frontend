@@ -70,6 +70,9 @@ export interface DetachedNote {
   onOpen: () => void;
   menu: React.ReactNode;
   footer: React.ReactNode;
+  openHref?: string;
+  seed?: number | null;
+  content?: React.ReactNode;
 }
 
 export function NoteCard({
@@ -339,7 +342,7 @@ export function NoteCard({
     <Avatar
       src={note.author.avatarUrl}
       name={note.author.displayName || note.author.username}
-      seed={note.author.remoteId || detached ? null : note.author.id}
+      seed={detached ? (detached.seed ?? null) : note.author.remoteId ? null : note.author.id}
       size={emphasis ? "lg" : "md"}
     />
   );
@@ -425,10 +428,14 @@ export function NoteCard({
               </span>
             )}
             {!emphasis &&
-              (detached ? (
+              (detached && !detached.openHref ? (
                 <button type="button" onClick={detached.onOpen} className={stampClass}>
                   {stamp}
                 </button>
+              ) : detached?.openHref ? (
+                <BlogLink href={detached.openHref} className={stampClass}>
+                  {stamp}
+                </BlogLink>
               ) : (
                 <BlogLink href={noteHref(note, locale)} className={stampClass}>
                   {stamp}
@@ -581,7 +588,9 @@ export function NoteCard({
                 </div>
               ) : (
                 <div className={revealed ? "animate-fade-in motion-reduce:animate-none" : undefined}>
-                  {remoteCard ? (
+                  {detached?.content ? (
+                    detached.content
+                  ) : remoteCard ? (
                     <NoteRemoteCard
                       shape={remoteCard}
                       summary={note.body}
@@ -917,8 +926,12 @@ function usePopoverMenu() {
 /** Quoting in a blog post is offered only for notes anyone may see: readers of the post fetch the card
  *  anonymously, so a private note's card would come up empty. */
 function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }) {
-  const t = useTranslations("notes");
   const locale = useLocale();
+  return <ShareMenu href={noteHref(note, locale)} buttonClass={buttonClass} quotable={isShareable(note.visibility)} />;
+}
+
+export function ShareMenu({ href, buttonClass, quotable = false }: { href: string; buttonClass: string; quotable?: boolean }) {
+  const t = useTranslations("notes");
   const { toast } = useToast();
   const { authenticated } = useAuth();
   const { open, setOpen, root } = usePopoverMenu();
@@ -928,7 +941,7 @@ function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }
     setCanShare(typeof navigator.share === "function");
   }, []);
 
-  const url = () => new URL(noteHref(note, locale), window.location.href).toString();
+  const url = () => new URL(href, window.location.href).toString();
 
   async function copy() {
     setOpen(false);
@@ -987,7 +1000,7 @@ function ShareControl({ note, buttonClass }: { note: Note; buttonClass: string }
               <Share className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
             </button>
           )}
-          {isShareable(note.visibility) && (
+          {quotable && (
             <button type="button" role="menuitem" onClick={quoteInPost} className={item}>
               {t("quoteInPost")}
               <NotebookPen className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />

@@ -1,6 +1,14 @@
 import { ApiError } from "@/lib/api/client";
 import type { PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
-import { MOCK_ALL_ITEMS, MOCK_BLOCKS_VIEWER, MOCK_SERIES_NOTES, mockNoteSeries } from "@/modules/blog/api/_mocks";
+import {
+  MOCK_ALL_ITEMS,
+  MOCK_BLOCKS_VIEWER,
+  MOCK_SERIES_NOTES,
+  mockFeedView,
+  mockFollowingView,
+  mockNoteSeries,
+} from "@/modules/blog/api/_mocks";
+import type { HomeItem, HomePage, HomePost, HomeTab } from "@/modules/blog/api/home-feed";
 import type {
   FederationSettings,
   Note,
@@ -1571,4 +1579,35 @@ export function mockUpdateFederationSettings(patch: {
     noticeSeen: settings.noticeSeen || patch.noticeSeen === true,
   };
   return settings;
+}
+
+function homePost(item: PublicFeedItem, viewer: boolean): HomePost {
+  return { ...item, readMinutes: 1 + (item.id % 5), commentCount: item.id % 4, likedByMe: viewer ? false : null };
+}
+
+export function mockHome(tab: HomeTab, cursor: string | null, limit: number, viewer: boolean): HomePage {
+  if (tab === "following" && !viewer) return { items: [], next: null };
+  const noteList =
+    tab === "following" ? mockFollowingNotes(0).items : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;
+  const postList =
+    tab === "following" ? mockFollowingView().items : mockFeedView({ sort: tab === "trending" ? "trending" : "recent", viewer }).items;
+  const [n0, p0] = (cursor ?? "0.0").split(".").map((v) => Number(v) || 0);
+  let n = n0;
+  let p = p0;
+  let noteTurn = true;
+  const items: HomeItem[] = [];
+  while (items.length < limit && (n < noteList.length || p < postList.length)) {
+    const takeNote: boolean =
+      n >= noteList.length
+        ? false
+        : p >= postList.length
+          ? true
+          : tab === "trending"
+            ? noteTurn
+            : noteList[n].createdAt >= postList[p].publishedAt;
+    if (takeNote) items.push({ kind: "note", note: noteList[n++] });
+    else items.push({ kind: "post", post: homePost(postList[p++], viewer) });
+    noteTurn = !takeNote;
+  }
+  return { items, next: n < noteList.length || p < postList.length ? `${n}.${p}` : null };
 }

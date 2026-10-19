@@ -82,6 +82,7 @@
     "searchPlaceholder": "記事・ノート・タグ・作者",
     "searchLabel": "検索",
     "exploreTitle": "見て回る",
+    "homeEmptyFollowing": "フォロー中の人の投稿はまだありません",
     "recentSearches": "最近の検索",
     "recentSearchesClear": "最近の検索をクリア",
     "searchClear": "検索をクリア",
@@ -1143,7 +1144,7 @@
     "posts": "記事",
     "notes": "ノート",
     "search": "検索",
-    "explore": "探す",
+    "explore": "見て回る",
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
     "menu": "メニュー",
@@ -4421,6 +4422,7 @@
     "emptyReposts": "まだリポストはありません",
     "repostsTitle": "リポスト · @{username}",
     "quotedPostKind": "ブログ記事",
+    "postComments": "コメント{count, number}件",
     "feedMore": "その他",
     "feedBookmarks": "ブックマーク",
     "feedLists": "リスト",
@@ -4723,7 +4725,7 @@
     "feedDirectShort": "メンション",
     "listManage": "リストを管理",
     "listSettingsHint": "リストは自分だけが見られます。追加した人のノートは、ノート画面の「その他」から選んで読めます。",
-    "feedMoreBlog": "ほかのブログフィード",
+    "feedMoreBlog": "ほかのホームフィード",
     "feedMoreNotes": "ほかのノートフィード"
   },
   "mentions": {
