@@ -144,6 +144,26 @@ let notes: Note[] = [
     },
   }),
   note({
+    id: 21,
+    body: "다음 스터디 주제, 여러 개 골라도 돼요.",
+    author: YUNA,
+    createdAt: "2026-09-10T09:00:00Z",
+    poll: {
+      expiresAt: new Date(Date.now() + 86_400 * 1000).toISOString(),
+      expired: false,
+      multiple: true,
+      votesCount: 7,
+      votersCount: 4,
+      options: [
+        { title: "헥사고날 아키텍처에서 포트와 어댑터 이름을 정하는 기준", votesCount: 3 },
+        { title: "테스트 더블", votesCount: 2 },
+        { title: "배포", votesCount: 2 },
+      ],
+      voted: false,
+      ownVotes: [],
+    },
+  }),
+  note({
     id: 5,
     body: "산책하다 찍은 것들. 길이 다 다르게 생겼다. #산책",
     author: YUNA,

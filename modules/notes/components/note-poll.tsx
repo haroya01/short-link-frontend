@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CircleCheck, Clock, Minus, Plus } from "lucide-react";
+import { Check, CircleCheck, Clock, Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
@@ -100,7 +100,11 @@ export function NotePollCard({
         </span>
       )}
       <ul
-        className="divide-y divide-slate-200 overflow-hidden rounded-surface border border-slate-200 dark:divide-slate-700 dark:border-slate-700"
+        className={
+          showsResults
+            ? "divide-y divide-slate-200 overflow-hidden rounded-surface border border-slate-200 dark:divide-slate-700 dark:border-slate-700"
+            : "space-y-2"
+        }
         aria-label={t("pollLabel")}
       >
         {poll.options.map((option, index) => {
@@ -157,19 +161,19 @@ export function NotePollCard({
                 role={poll.multiple ? "checkbox" : undefined}
                 aria-checked={poll.multiple ? on : undefined}
                 aria-describedby={poll.multiple ? undefined : `note-poll-hint-${noteId}`}
-                className="focus-ring flex min-h-11 w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:opacity-60 dark:text-slate-100 dark:hover:bg-slate-800/60 dark:active:bg-slate-800"
+                className="focus-ring flex min-h-11 w-full items-center gap-2.5 rounded-surface border border-slate-200 px-3.5 py-2.5 text-left text-[15px] font-medium text-slate-900 transition-colors hover:bg-slate-50 active:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800 dark:active:bg-slate-800"
               >
                 {poll.multiple && (
                   <span
                     aria-hidden
                     className={cn(
-                      "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[11px] leading-none",
+                      "flex h-4 w-4 shrink-0 items-center justify-center rounded border",
                       on
                         ? "border-accent-700 bg-accent-700 text-white dark:border-accent-400 dark:bg-accent-400 dark:text-slate-950"
-                        : "border-slate-400 dark:border-slate-500",
+                        : "border-slate-500 dark:border-slate-400",
                     )}
                   >
-                    {on && "✓"}
+                    {on && <Check data-poll-mark className="h-3 w-3" strokeWidth={3} />}
                   </span>
                 )}
                 <span className="min-w-0 break-words">{option.title}</span>
