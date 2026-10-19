@@ -10,11 +10,18 @@ declare module "@tiptap/core" {
   }
 }
 
+type QuoteNode = {
+  attrs: { alert: CalloutKind | null };
+  firstChild: { textContent: string } | null;
+  forEach: (f: (child: unknown, offset: number, index: number) => void) => void;
+};
+
 type SerializerState = {
   wrapBlock: (delim: string, firstDelim: string | null, node: unknown, f: () => void) => void;
   write: (s?: string) => void;
   ensureNewLine: () => void;
   renderContent: (node: unknown) => void;
+  render: (node: unknown, parent: unknown, index: number) => void;
 };
 
 const MARKER = /^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*$/i;
@@ -82,13 +89,16 @@ export const CalloutQuote = Blockquote.extend<BlockquoteOptions & { labels: Reco
   addStorage() {
     return {
       markdown: {
-        serialize(state: SerializerState, node: { attrs: { alert: CalloutKind | null } }) {
+        serialize(state: SerializerState, node: QuoteNode) {
+          const typed = node.attrs.alert ? null : node.firstChild?.textContent.match(MARKER);
+          const kind = node.attrs.alert ?? (typed ? (typed[1].toLowerCase() as CalloutKind) : null);
           state.wrapBlock("> ", null, node, () => {
-            if (node.attrs.alert) {
-              state.write(calloutMarker(node.attrs.alert));
+            if (kind) {
+              state.write(calloutMarker(kind));
               state.ensureNewLine();
             }
-            state.renderContent(node);
+            if (typed) node.forEach((child, _offset, index) => index > 0 && state.render(child, node, index));
+            else state.renderContent(node);
           });
         },
         parse: {

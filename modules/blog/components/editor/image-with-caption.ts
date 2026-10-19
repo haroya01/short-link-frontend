@@ -1,4 +1,6 @@
-import Image, { type ImageOptions } from "@tiptap/extension-image";
+import { InputRule } from "@tiptap/core";
+import { TextSelection } from "@tiptap/pm/state";
+import Image, { inputRegex, type ImageOptions } from "@tiptap/extension-image";
 
 // tiptap-markdown 직렬화 state(최소 표면만 사용) — AlignableTable 과 같은 이유의 로컬 타입.
 type MdState = {
@@ -14,6 +16,28 @@ type MdState = {
 export const ImageWithCaption = Image.extend<ImageOptions & { captionPlaceholder: string }>({
   addOptions() {
     return { ...this.parent!(), captionPlaceholder: "" };
+  },
+
+  addInputRules() {
+    return [
+      new InputRule({
+        find: inputRegex,
+        handler: ({ state, range, match }) => {
+          const [whole, syntax, alt, src, title] = match;
+          const from = range.from + (whole.length - syntax.length);
+          const image = this.type.create({ src, alt, title });
+          state.tr.replaceWith(from, range.to, image);
+          const after = state.tr.mapping.map(range.to);
+          const next = TextSelection.findFrom(state.tr.doc.resolve(after), 1, true);
+          if (next) {
+            state.tr.setSelection(next);
+          } else {
+            state.tr.insert(after, state.schema.nodes.paragraph.create());
+            state.tr.setSelection(TextSelection.create(state.tr.doc, after + 1));
+          }
+        },
+      }),
+    ];
   },
 
   addStorage() {

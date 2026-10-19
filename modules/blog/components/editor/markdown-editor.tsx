@@ -70,6 +70,7 @@ import {
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { DropCursorLine } from "@/modules/blog/components/editor/drop-cursor";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
+import { literalFootnotes } from "@/modules/blog/lib/literal-footnotes";
 import { POST_IMAGE_TYPES, postImageErrorMessageKey, postImageTypeError } from "@/modules/blog/api/post-images";
 import { useEdgeFade } from "@/hooks/use-edge-fade";
 
@@ -155,6 +156,22 @@ const EnterSoftBreak = Extension.create({
         if (!empty) return false;
         // Only plain top-level paragraphs — lists/quotes/headings keep their own Enter.
         if ($from.depth !== 1 || $from.parent.type.name !== "paragraph") return false;
+        const typed = $from.parent.textBetween(0, $from.parentOffset, "\n", "\n");
+        const lineStart = typed.lastIndexOf("\n") + 1;
+        const fence = typed.slice(lineStart).match(/^```([\w+#.-]*)$/);
+        if (fence && $from.parentOffset === $from.parent.content.size) {
+          const attrs = fence[1] ? { language: fence[1] } : {};
+          const start = $from.start();
+          if (lineStart === 0) {
+            return this.editor.chain().deleteRange({ from: start, to: $from.pos }).setNode("codeBlock", attrs).run();
+          }
+          return this.editor
+            .chain()
+            .deleteRange({ from: start + lineStart - 1, to: $from.pos })
+            .splitBlock()
+            .setNode("codeBlock", attrs)
+            .run();
+        }
         const before = $from.nodeBefore;
         // Second Enter (caret right after a soft break) → drop the break, split into a new paragraph.
         if (before?.type.name === "hardBreak") {
@@ -450,7 +467,7 @@ export function MarkdownEditor({
     content: initialValue || "",
     editorProps: {
       attributes: { class: "tiptap focus:outline-none" },
-      transformPastedText: (text) => convertCalloutContainers(text),
+      transformPastedText: (text) => literalFootnotes(convertCalloutContainers(text)),
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
         if (!items || !editor) return false;
