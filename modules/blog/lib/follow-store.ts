@@ -13,7 +13,7 @@ import { useCallback, useSyncExternalStore } from "react";
  * This holds only the shared per-author facts (following / count / countHidden). Each button keeps its
  * own presentational state (seedVisible, loaded, interacted-pop) — those are per-instance, not shared.
  */
-export type FollowShared = { following: boolean; count: number; countHidden: boolean };
+export type FollowShared = { following: boolean; count: number; countHidden: boolean; known: boolean };
 
 type Entry = { state: FollowShared; listeners: Set<() => void> };
 const stores = new Map<string, Entry>();

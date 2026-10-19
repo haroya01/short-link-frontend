@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { readStorageString } from "@/lib/storage-json";
 import type { PublicAuthor, PublicFeedView } from "@/modules/blog/api/public-posts";
 import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
@@ -59,10 +60,16 @@ export interface FollowStatus {
   blocksViewer?: boolean;
 }
 
-// Mock lane: haruka approves followers by hand, so following her leaves a request; sora hides follower counts.
+// Mock lane: haruka approves followers by hand, so following her leaves a request; sora hides follower counts;
+// kurl:mock-following lists the authors a spec has the viewer already follow.
 const MOCK_LOCKED = new Set(["haruka"]);
 const MOCK_HIDES_COUNTS = new Set(["sora"]);
 const mockRequested = new Set<string>();
+const MOCK_FOLLOWING_KEY = "kurl:mock-following";
+
+function mockFollowing(username: string): boolean {
+  return readStorageString(MOCK_FOLLOWING_KEY)?.split(",").includes(username) === true;
+}
 
 function mockStatus(username: string, following: boolean): FollowStatus {
   const hidden = MOCK_HIDES_COUNTS.has(username);
@@ -78,7 +85,7 @@ function mockStatus(username: string, following: boolean): FollowStatus {
 
 /** Public — follower count for everyone; `following` is false for anonymous viewers. */
 export function getFollowStatus(username: string): Promise<FollowStatus> {
-  if (USE_MOCKS) return Promise.resolve(mockStatus(username, false));
+  if (USE_MOCKS) return Promise.resolve(mockStatus(username, mockFollowing(username)));
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "GET",
   });

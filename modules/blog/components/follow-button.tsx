@@ -64,7 +64,7 @@ export function FollowButton({
   quiet = false,
   showBell = false,
   sourcePostId,
-  initialFollowing = false,
+  initialFollowing,
   initialRequested = false,
 }: {
   username: string;
@@ -89,11 +89,13 @@ export function FollowButton({
   // the same author (rail + header on a post) move in lockstep this session. Seeded from the initial
   // follower count; the cache seed + status load below write through it, so all instances share one truth.
   const [shared, setShared] = useFollowShared(username, {
-    following: initialFollowing,
+    following: initialFollowing ?? false,
     count: initialFollowerCount,
     countHidden: false,
+    known: initialFollowing !== undefined,
   });
   const { following, count, countHidden } = shared;
+  const known = shared.known || (ready && !authenticated);
   const [busy, setBusy] = useState(false);
   // Pop only on click (not on mount) — so navigating between tabs doesn't replay it.
   const [interacted, setInteracted] = useState(false);
@@ -123,7 +125,7 @@ export function FollowButton({
   useEffect(() => {
     if (!blocked) return;
     const nextCount = following ? Math.max(count - 1, 0) : count;
-    setShared({ following: false, count: nextCount, countHidden });
+    setShared({ following: false, count: nextCount, countHidden, known: true });
     setRequested(false);
     setNotifyNotes(false);
     writeFollowCache(username, { following: false, count: nextCount, self: false, hidden: countHidden });
@@ -139,9 +141,9 @@ export function FollowButton({
       // A hidden-count author cached a placeholder count; seed `countHidden` (not the count) so the count
       // text stays dropped on remount rather than flashing "팔로워 0명" until the status refetch.
       if (cached.hidden) {
-        setShared({ following: cached.following, count: initialFollowerCount, countHidden: true });
+        setShared({ following: cached.following, count: initialFollowerCount, countHidden: true, known: true });
       } else {
-        setShared({ following: cached.following, count: cached.count, countHidden: false });
+        setShared({ following: cached.following, count: cached.count, countHidden: false, known: true });
         setLoaded(true);
       }
       if (typeof cached.self === "boolean") setSeedVisible(!cached.self);
@@ -159,11 +161,11 @@ export function FollowButton({
         setBlocksViewer(s.blocksViewer === true);
         // Hidden author: no count key in the response. Keep the button, drop the count text.
         if (s.hideFollowerCount || s.followerCount == null) {
-          setShared({ following: s.following, count: initialFollowerCount, countHidden: true });
+          setShared({ following: s.following, count: initialFollowerCount, countHidden: true, known: true });
           writeFollowCache(username, { following: s.following, count: 0, self, hidden: true });
           return;
         }
-        setShared({ following: s.following, count: s.followerCount, countHidden: false });
+        setShared({ following: s.following, count: s.followerCount, countHidden: false, known: true });
         writeFollowCache(username, { following: s.following, count: s.followerCount, self });
       })
       .catch(() => {})
@@ -189,7 +191,7 @@ export function FollowButton({
     // locked author only gets a request, so neither the follow nor the count moves yet.
     if (next && locked) setRequested(true);
     else {
-      setShared({ following: next, count: count + (next ? 1 : following ? -1 : 0), countHidden });
+      setShared({ following: next, count: count + (next ? 1 : following ? -1 : 0), countHidden, known: true });
       setRequested(false);
     }
     if (!next) setNotifyNotes(false);
@@ -197,7 +199,7 @@ export function FollowButton({
       const s = next ? await followUser(username, sourcePostId) : await unfollowUser(username);
       const nextCount = s.followerCount;
       const hide = s.hideFollowerCount || nextCount == null;
-      setShared({ following: s.following, count: nextCount ?? count, countHidden: hide });
+      setShared({ following: s.following, count: nextCount ?? count, countHidden: hide, known: true });
       setNotifyNotes(s.notifyNotes ?? false);
       setRequested(s.requested ?? false);
       setLocked(s.locked ?? locked);
@@ -211,7 +213,7 @@ export function FollowButton({
       // The following feed's contents changed — mark it stale so it re-fetches on the next visit.
       emitFollowChanged();
     } catch (e) {
-      setShared({ following, count, countHidden });
+      setShared({ following, count, countHidden, known });
       setRequested(requestedBefore);
       setNotifyNotes(bellBefore);
       toast(t(e instanceof ApiError && e.detail.code === "BLOCKED_TARGET" ? "followBlocked" : "followError"), "error");
@@ -252,17 +254,20 @@ export function FollowButton({
     <div className="flex items-center gap-3">
       {showButton && (
         <button
+          key={known ? "known" : "unknown"}
           type="button"
           onClick={() => {
             setInteracted(true);
             void toggle();
           }}
+          disabled={!known}
+          aria-hidden={!known || undefined}
           aria-pressed={pressed}
           data-testid="follow-button"
           // Curation framing, not broadcast: following a curator is following the path they weave, not
           // subscribing to a feed. Kept as the quiet hint so the pill itself stays a single word.
           title={pressed ? undefined : locked ? t("followLockedHint") : t("followCuratorHint")}
-          className={followToggleClass(pressed, compact, quiet)}
+          className={cn(followToggleClass(pressed, compact, quiet), !known && "invisible")}
         >
           {/* Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle. */}
           <span
