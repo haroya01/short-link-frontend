@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// Mock-on lane: the session is @dohyun. A phone with a camera gets a 사진 찍기 button right after 사진 추가
-// that opens the camera (capture=environment); the shot goes through the same attach path and limits.
+// Mock-on lane: the session is @dohyun. A touch screen gets a 사진 찍기 button right after 사진 추가 that
+// opens the camera (capture=environment); the shot goes through the same attach path and limits.
 const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGP4z8DwHwQZGBgAJmQF+2Sp1QYAAAAASUVORK5CYII=";
 
 async function cameras(page: Page, kinds: string[]) {
@@ -50,11 +50,10 @@ test.describe("on a phone", () => {
     await expect(page.getByRole("button", { name: "사진 추가" })).toBeDisabled();
   });
 
-  test("a phone without a camera shows no 사진 찍기", async ({ page }) => {
-    await cameras(page, ["audioinput"]);
+  test("a touch screen shows 사진 찍기 even before it reveals any camera", async ({ page }) => {
+    await cameras(page, []);
     await openComposer(page);
-    await expect(page.getByRole("button", { name: "사진 추가" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "사진 찍기" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "사진 찍기" })).toBeVisible();
   });
 });
 

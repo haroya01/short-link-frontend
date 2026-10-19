@@ -220,39 +220,25 @@ describe("device drafts", () => {
 });
 
 describe("the camera button", () => {
-  function device({ coarse, kinds }: { coarse: boolean; kinds: string[] }) {
+  function pointer(coarse: boolean) {
     vi.stubGlobal("matchMedia", (query: string) => ({ matches: coarse && query === "(pointer: coarse)" }));
-    Object.defineProperty(navigator, "mediaDevices", {
-      configurable: true,
-      value: { enumerateDevices: () => Promise.resolve(kinds.map((kind) => ({ kind }))) },
-    });
   }
   const shoot = () => host.querySelector('button[aria-label="takePhoto"]');
 
-  it("shows on a touch screen with a camera, opening the rear camera through the same photo path", async () => {
-    device({ coarse: true, kinds: ["videoinput"] });
+  it("shows on a touch screen, opening the rear camera through the same photo path", async () => {
+    pointer(true);
     await render();
     await type("오늘의 하늘");
-    await act(async () => {});
     expect(shoot()).not.toBeNull();
     const input = host.querySelector<HTMLInputElement>('[data-testid="note-camera-input"]')!;
     expect(input.getAttribute("capture")).toBe("environment");
     expect(input.accept).toBe("image/*");
   });
 
-  it("stays away on a touch screen without a camera, and on a mouse even with a webcam", async () => {
-    device({ coarse: true, kinds: ["audioinput"] });
-    await render();
-    await type("하나");
-    await act(async () => {});
-    expect(shoot()).toBeNull();
-
-    await act(async () => root.unmount());
-    root = createRoot(host);
-    device({ coarse: false, kinds: ["videoinput"] });
+  it("stays away on a mouse screen", async () => {
+    pointer(false);
     await render();
     await type("둘");
-    await act(async () => {});
     expect(shoot()).toBeNull();
   });
 });

@@ -144,7 +144,7 @@ export function NoteComposer({
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
-  const camera = useTouchCamera();
+  const camera = useCoarsePointer();
   const draftId = useRef<string | null>(draft?.id ?? null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(draft?.id ?? null);
   const keepsDrafts = !inReplyToId && me != null;
@@ -852,19 +852,8 @@ export function TextToggle({
   );
 }
 
-function useTouchCamera(): boolean {
-  const [available, setAvailable] = useState(false);
-  useEffect(() => {
-    if (!window.matchMedia?.("(pointer: coarse)").matches) return;
-    let live = true;
-    const devices = navigator.mediaDevices?.enumerateDevices?.();
-    if (!devices) return;
-    devices
-      .then((list) => live && setAvailable(list.some((device) => device.kind === "videoinput")))
-      .catch(() => undefined);
-    return () => {
-      live = false;
-    };
-  }, []);
-  return available;
+function useCoarsePointer(): boolean {
+  const [touch, setTouch] = useState(false);
+  useEffect(() => setTouch(window.matchMedia?.("(pointer: coarse)").matches === true), []);
+  return touch;
 }
