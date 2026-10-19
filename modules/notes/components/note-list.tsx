@@ -112,7 +112,7 @@ export function NoteList({
                 )}
                 <NoteCard
                   note={note}
-                  isNew={fresh.has(note.id)}
+                  arrive={fresh.has(note.id)}
                   repostedBy={repostedBy ?? note.repostedBy?.username}
                   onQuoted={onQuoted}
                   showsPin={showsPin}

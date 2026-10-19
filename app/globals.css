@@ -919,9 +919,52 @@ html[data-first-load] .profile-fade {
 .comment-in {
   animation: comment-in 360ms var(--ease, ease-out) both;
 }
+
+/* A note just posted settles into the top of the feed that shows it, then a row-highlight wash fades out.
+   Same curve and numbers as the app (offset -16, 450ms, wash 1.2s); reduced motion keeps the wash only. */
+@keyframes note-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes note-wash {
+  from {
+    background-color: rgb(var(--slate-50));
+  }
+  to {
+    background-color: transparent;
+  }
+}
+.note-arrive {
+  animation:
+    note-arrive 450ms var(--ease) both,
+    note-wash 1200ms var(--ease) both;
+}
+.dark .note-arrive {
+  animation-name: note-arrive, note-wash-dark;
+}
+@keyframes note-wash-dark {
+  from {
+    background-color: rgb(var(--slate-800));
+  }
+  to {
+    background-color: transparent;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .comment-in {
     animation: none;
+  }
+  .note-arrive {
+    animation: note-wash 1200ms var(--ease) both;
+  }
+  .dark .note-arrive {
+    animation-name: note-wash-dark;
   }
   /* animate-pulse 글로벌 가드(§10.7) — 스켈레톤·라이브 점 36곳이 개별 motion-reduce 없이 쓰여
      reduce 에서도 맥박이 돌았다(적대 검증 r7 실측: 랜딩 라이브 점). 유틸리티를 한 곳에서 정지 —

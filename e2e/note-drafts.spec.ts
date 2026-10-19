@@ -73,7 +73,7 @@ test("올리면 그 임시저장이 이어 쓰기에서 사라진다", async ({ 
   await dialog(page).getByRole("button", { name: "올리기" }).click();
   const notice = page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" });
   await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
-  await expect(page.getByText("노트를 올렸어요")).toBeVisible();
+  await expect(page.locator("article[data-note-id]").first()).toContainText("어제 쓰던 노트");
   await trigger(page).click();
   await expect(page.getByRole("menuitem", { name: /어제 쓰던 노트/ })).toHaveCount(0);
 });
