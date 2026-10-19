@@ -1,5 +1,6 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
 import { expectOnTop, toastBy } from "./helpers/on-top";
+import { scrollUntilPresent } from "./helpers/scroll-until";
 
 /**
  * Notes in MOCK-ON: the in-memory note mock serves @dohyun's and @yuna's notes, and the mock session
@@ -346,6 +347,7 @@ test("the other servers tab shows notes this server received, and only those", a
   await openMoreFeed(page, "다른 서버");
   await expect(page).toHaveURL(/feed=federated/);
   await expect(page.getByRole("button", { name: "다른 서버" })).toBeVisible();
+  await scrollUntilPresent(page.locator('article[data-note-id="13"]'));
   await expect(page.locator('article[data-note-id="12"]')).toContainText("Hello from the fediverse");
   await expect(page.locator('article[data-note-id="13"]')).toBeVisible();
   await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
@@ -922,6 +924,7 @@ test("on a phone, a tap on a video or a sound stays in the feed so its controls 
   await page.setViewportSize({ width: 375, height: 740 });
   await page.goto("/ko/blog/notes?feed=federated");
   const waves = page.locator('article[data-note-id="13"]');
+  await scrollUntilPresent(waves);
   await expect(waves.locator("video")).toBeVisible({ timeout: 30_000 });
   const feed = page.url();
   for (const media of ["video", "audio"]) {

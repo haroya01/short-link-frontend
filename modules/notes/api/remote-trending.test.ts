@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("@/modules/blog/api/public-posts", () => ({ fetchPublic: vi.fn() }));
 
 const TRENDING = "/api/v1/federation/trending";
+const LATEST = "/api/v1/federation/latest";
 
 const item = {
   id: null,
@@ -40,30 +41,47 @@ async function api() {
 beforeEach(() => window.localStorage.clear());
 afterEach(() => vi.unstubAllGlobals());
 
-describe("trending posts from other servers", () => {
-  it("asks for twenty by default and returns the items as they came", async () => {
-    serve(200, { items: [item] });
-    const { listRemoteTrending } = await api();
-    await expect(listRemoteTrending()).resolves.toEqual([item]);
+describe("posts from other servers", () => {
+  it("asks for twenty trending by default and returns the page as it came", async () => {
+    serve(200, { items: [item], next: "t20" });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("trending")).resolves.toEqual({ kind: "pool", items: [item], next: "t20" });
     expect(calls).toEqual([`${TRENDING}?limit=20`]);
   });
 
-  it("passes another limit through", async () => {
-    serve(200, { items: [] });
-    const { listRemoteTrending } = await api();
-    await expect(listRemoteTrending(40)).resolves.toEqual([]);
-    expect(calls).toEqual([`${TRENDING}?limit=40`]);
+  it("follows the cursor it was given", async () => {
+    serve(200, { items: [], next: null });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("trending", "t20")).resolves.toEqual({ kind: "pool", items: [], next: null });
+    expect(calls).toEqual([`${TRENDING}?limit=20&cursor=t20`]);
   });
 
-  it("reads a body without a list as nothing trending", async () => {
+  it("reads a page past the trending pool as notes this server keeps", async () => {
+    const kept = { id: 12, body: "받은 노트" };
+    serve(200, { items: [kept], next: "r12" });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("trending", "r")).resolves.toEqual({ kind: "kept", items: [kept], next: "r12" });
+    expect(calls).toEqual([`${TRENDING}?limit=20&cursor=r`]);
+  });
+
+  it("asks the latest list with its own cursor", async () => {
+    serve(200, { items: [item], next: "t40" });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("latest", "t20")).resolves.toEqual({ kind: "pool", items: [item], next: "t40" });
+    expect(calls).toEqual([`${LATEST}?limit=20&cursor=t20`]);
+  });
+
+  it("reads a body without next as the end, and one without a list as nothing", async () => {
+    serve(200, { items: [item] });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("trending")).resolves.toEqual({ kind: "pool", items: [item], next: null });
     serve(200, {});
-    const { listRemoteTrending } = await api();
-    await expect(listRemoteTrending()).resolves.toEqual([]);
+    await expect(listRemoteNotes("latest")).resolves.toEqual({ kind: "pool", items: [], next: null });
   });
 
-  it("throws when the server fails, so the group can say so", async () => {
+  it("throws when the server fails, so the list can say so", async () => {
     serve(500, { status: 500, title: "Internal Server Error" });
-    const { listRemoteTrending } = await api();
-    await expect(listRemoteTrending()).rejects.toMatchObject({ status: 500 });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("trending")).rejects.toMatchObject({ status: 500 });
   });
 });

@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { test, expect, type Locator, type Page } from "@playwright/test";
+import { scrollUntilPresent } from "./helpers/scroll-until";
 
 // Mock-on lane. @mina's note 13 carries a video from another server; it is served here as a 2-second
 // VP8/Opus clip with a 440Hz tone, so unmuting has real sound to decode. @yuna's note 22 carries a kurl
@@ -61,6 +62,7 @@ for (const viewport of [{ width: 375, height: 740 }, { width: 1280, height: 900 
       );
       await page.goto("/ko/blog/notes?feed=federated");
       const card = page.locator('article[data-note-id="13"]');
+      await scrollUntilPresent(card);
       const video = card.locator("video");
       await expect(video).toBeVisible({ timeout: 30_000 });
       await video.scrollIntoViewIfNeeded();

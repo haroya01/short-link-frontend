@@ -27,7 +27,7 @@ import type {
 } from "./notes";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
-import type { RemoteTrendingBody, TrendingNote } from "./remote-trending";
+import type { RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -1033,8 +1033,17 @@ const TRENDING: TrendingNote[] = [
   ),
 ];
 
-export function mockRemoteTrending(limit: number): Promise<RemoteTrendingBody> {
-  return Promise.resolve({ items: TRENDING.slice(0, limit) });
+export function mockRemoteNotes(view: RemoteView, cursor: string | null, limit: number): Promise<RemoteNotesBody> {
+  if (cursor?.startsWith("r")) return Promise.resolve({ items: mockFederatedNotes(0).items, next: null });
+  const offset = Number(cursor?.slice(1)) || 0;
+  const pool =
+    view === "latest" ? [...TRENDING].sort((a, b) => b.createdAt.localeCompare(a.createdAt)) : TRENDING;
+  const end = offset + limit;
+  const more = end < pool.length;
+  return Promise.resolve({
+    items: pool.slice(offset, end),
+    next: more ? `t${end}` : view === "trending" ? "r" : null,
+  });
 }
 
 const broughtOver = new Map<string, number>();

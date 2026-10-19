@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AtSign, Bookmark, Globe, List, Users, type LucideIcon } from "lucide-react";
+import { AtSign, Bookmark, List, Users, type LucideIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -20,7 +20,6 @@ import {
   listBookmarkedNotes,
   listDirectNotes,
   listEveryoneNotes,
-  listFederatedNotes,
   listFollowingNotes,
   listNoteLists,
   listTrendingNotes,
@@ -35,26 +34,24 @@ import { NoteDraftsButton } from "./note-drafts-sheet";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { NoteList } from "./note-list";
 import { NoteListTimeline, NoteListUnpicked } from "./note-lists";
-import { RemoteTrendingGroup } from "./remote-trending";
+import { RemoteFeed } from "./remote-feed";
 
 const TABS = ["following", "everyone", "trending"] as const;
 const MORE = ["federated", "bookmarks", "direct", "lists"] as const;
 const FEEDS = [...TABS, ...MORE] as const;
 type Feed = (typeof FEEDS)[number];
 
-const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed>> = {
+const LOADERS: Record<Exclude<Feed, "lists" | "federated">, (page: number) => Promise<NoteFeed>> = {
   everyone: listEveryoneNotes,
-  federated: listFederatedNotes,
   following: listFollowingNotes,
   trending: listTrendingNotes,
   bookmarks: listBookmarkedNotes,
   direct: listDirectNotes,
 };
 
-const PERSONAL: ReadonlySet<Feed> = new Set(["federated", "following", "bookmarks", "direct", "lists"]);
+const PERSONAL: ReadonlySet<Feed> = new Set(["following", "bookmarks", "direct", "lists"]);
 const SIGN_IN: Partial<Record<Feed, { reason: SignInReason; icon: LucideIcon }>> = {
   following: { reason: "followingNotes", icon: Users },
-  federated: { reason: "federatedNotes", icon: Globe },
   direct: { reason: "direct", icon: AtSign },
   lists: { reason: "lists", icon: List },
   bookmarks: { reason: "noteBookmarks", icon: Bookmark },
@@ -90,7 +87,10 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
   useEffect(() => onNotePosted((note) => setPosted((current) => [note, ...current])), []);
   const feed = feedOf(params.get("feed"), savedFeed);
   const load = useCallback(
-    (page: number) => (feed === "lists" ? Promise.resolve({ items: [], page, hasNext: false }) : LOADERS[feed](page)),
+    (page: number) =>
+      feed === "lists" || feed === "federated"
+        ? Promise.resolve({ items: [], page, hasNext: false })
+        : LOADERS[feed](page),
     [feed],
   );
   const listId = Number(params.get("list")) || null;
@@ -110,9 +110,8 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
     href: hrefFor(key),
     active: key === feed,
   }));
-  const empty: Record<Feed, { title: string; body?: string }> = {
+  const empty: Record<Exclude<Feed, "federated">, { title: string; body?: string }> = {
     everyone: { title: t("emptyAuthor") },
-    federated: { title: t("emptyFederated"), body: t("emptyFederatedBody") },
     following: { title: t("emptyFollowingTitle"), body: t("emptyFollowing") },
     trending: { title: t("emptyTrending") },
     bookmarks: { title: t("emptyBookmarks") },
@@ -185,8 +184,9 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
           <SignInRow reason="note" placeholder={t("composerPlaceholder")} />
         )}
       </div>
-      {feed === "federated" && <RemoteTrendingGroup />}
-      {PERSONAL.has(feed) && signedOut ? (
+      {feed === "federated" ? (
+        <RemoteFeed />
+      ) : PERSONAL.has(feed) && signedOut ? (
         <SignInEmptyState {...SIGN_IN[feed]!} />
       ) : feed === "lists" ? (
         openList ? (
@@ -204,7 +204,7 @@ export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed 
           filterContext={
             feed === "following"
               ? "home"
-              : feed === "everyone" || feed === "federated" || feed === "trending"
+              : feed === "everyone" || feed === "trending"
                 ? "public"
                 : undefined
           }

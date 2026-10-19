@@ -3,11 +3,11 @@ import { createRoot, type Root } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Note } from "@/modules/notes/api/notes";
-import type { TrendingNote } from "@/modules/notes/api/remote-trending";
+import type { RemoteNotesPage, TrendingNote } from "@/modules/notes/api/remote-trending";
 
 const mocks = vi.hoisted(() => ({
   auth: { authenticated: true, ready: true },
-  listRemoteTrending: vi.fn(),
+  listRemoteNotes: vi.fn(),
   resolveRemote: vi.fn(),
   setNoteLike: vi.fn(),
   setRemoteFollow: vi.fn(),
@@ -29,7 +29,7 @@ vi.mock("@/modules/blog/lib/author-href", () => ({ authorHref: (u: string, _l: s
 vi.mock("@/components/auth/login-prompt", () => ({ askToSignIn: mocks.askToSignIn }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/hooks/use-like-failed", () => ({ useLikeFailed: () => mocks.likeFailed }));
-vi.mock("@/modules/notes/api/remote-trending", () => ({ listRemoteTrending: mocks.listRemoteTrending }));
+vi.mock("@/modules/notes/api/remote-trending", () => ({ listRemoteNotes: mocks.listRemoteNotes }));
 vi.mock("@/modules/notes/api/federation-search", () => ({ resolveRemote: mocks.resolveRemote }));
 vi.mock("@/modules/notes/api/notes", () => ({
   setNoteLike: mocks.setNoteLike,
@@ -39,9 +39,9 @@ vi.mock("@/modules/notes/components/remote-account", () => ({ followFailure: () 
 
 import {
   REMOTE_TRENDING_STALE_MS,
-  useRemoteTrending,
+  useRemoteNotes,
   useTrendingNote,
-  type RemoteTrending,
+  type RemoteNotes,
 } from "./use-remote-trending";
 
 const URI = "https://qdon.space/users/minji/statuses/113000000000000001";
@@ -101,83 +101,134 @@ async function flush() {
   for (let i = 0; i < 4; i += 1) await act(async () => vi.advanceTimersByTimeAsync(0));
 }
 
-describe("the trending list", () => {
-  let seen: RemoteTrending;
+function pool(items: TrendingNote[], next: string | null = null): RemoteNotesPage {
+  return { kind: "pool", items, next };
+}
 
-  function Probe() {
-    seen = useRemoteTrending();
+describe("the list of posts from other servers", () => {
+  let seen: RemoteNotes;
+
+  function Probe({ view = "trending" }: { view?: "trending" | "latest" }) {
+    seen = useRemoteNotes(view);
     return null;
   }
 
-  async function mount() {
+  async function mount(view: "trending" | "latest" = "trending") {
     await act(async () =>
       root.render(
         <QueryClientProvider client={client}>
-          <Probe key={Math.random()} />
+          <Probe key={Math.random()} view={view} />
         </QueryClientProvider>,
       ),
     );
     await flush();
   }
 
+  function loaded() {
+    expect(seen.state).toBe("ready");
+    return seen as Extract<RemoteNotes, { state: "ready" }>;
+  }
+
   beforeEach(() => vi.useFakeTimers());
 
   it("waits for the session before asking, then shows what came back", async () => {
     mocks.auth = { authenticated: false, ready: false };
-    mocks.listRemoteTrending.mockResolvedValue([item]);
+    mocks.listRemoteNotes.mockResolvedValue(pool([item]));
     await mount();
     expect(seen).toEqual({ state: "loading" });
-    expect(mocks.listRemoteTrending).not.toHaveBeenCalled();
+    expect(mocks.listRemoteNotes).not.toHaveBeenCalled();
 
     mocks.auth = { authenticated: false, ready: true };
     await mount();
-    expect(mocks.listRemoteTrending).toHaveBeenCalledTimes(1);
-    expect(seen).toEqual({ state: "ready", items: [item] });
+    expect(mocks.listRemoteNotes).toHaveBeenCalledWith("trending", null);
+    expect(loaded().pages).toEqual([pool([item])]);
+    expect(loaded().hasMore).toBe(false);
+  });
+
+  it("follows next page by page until it runs out", async () => {
+    const kept = { kind: "kept", items: [{ id: 12 } as Note], next: null } as RemoteNotesPage;
+    mocks.listRemoteNotes
+      .mockResolvedValueOnce(pool([item], "t20"))
+      .mockResolvedValueOnce(pool([], "r"))
+      .mockResolvedValueOnce(kept);
+    await mount();
+    expect(loaded().hasMore).toBe(true);
+
+    await act(async () => loaded().more());
+    await flush();
+    await act(async () => loaded().more());
+    await flush();
+    expect(mocks.listRemoteNotes.mock.calls).toEqual([
+      ["trending", null],
+      ["trending", "t20"],
+      ["trending", "r"],
+    ]);
+    expect(loaded().pages).toEqual([pool([item], "t20"), pool([], "r"), kept]);
+    expect(loaded().hasMore).toBe(false);
+  });
+
+  it("keeps trending and latest apart", async () => {
+    mocks.listRemoteNotes.mockResolvedValue(pool([item]));
+    await mount("trending");
+    await mount("latest");
+    expect(mocks.listRemoteNotes.mock.calls).toEqual([
+      ["trending", null],
+      ["latest", null],
+    ]);
+  });
+
+  it("a later page that fails says so and keeps what is shown, and asking again loads it", async () => {
+    mocks.listRemoteNotes.mockResolvedValueOnce(pool([item], "t20")).mockRejectedValueOnce(new Error("503"));
+    await mount();
+    await act(async () => loaded().more());
+    await flush();
+    expect(loaded().moreFailed).toBe(true);
+    expect(loaded().pages).toEqual([pool([item], "t20")]);
+
+    mocks.listRemoteNotes.mockResolvedValueOnce(pool([], null));
+    await act(async () => loaded().more());
+    await flush();
+    expect(loaded().moreFailed).toBe(false);
+    expect(loaded().hasMore).toBe(false);
   });
 
   it("keeps the list for five minutes and asks again only when the view opens after that", async () => {
-    mocks.listRemoteTrending.mockResolvedValue([item]);
+    mocks.listRemoteNotes.mockResolvedValue(pool([item]));
     await mount();
     await act(async () => vi.advanceTimersByTimeAsync(REMOTE_TRENDING_STALE_MS - 1000));
     await mount();
-    expect(mocks.listRemoteTrending).toHaveBeenCalledTimes(1);
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(1);
 
     await act(async () => vi.advanceTimersByTimeAsync(10 * REMOTE_TRENDING_STALE_MS));
-    expect(mocks.listRemoteTrending).toHaveBeenCalledTimes(1);
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(1);
 
     await mount();
-    expect(mocks.listRemoteTrending).toHaveBeenCalledTimes(2);
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(2);
   });
 
   it("asks again when the reader signs in, since their list is filtered for them", async () => {
     mocks.auth = { authenticated: false, ready: true };
-    mocks.listRemoteTrending.mockResolvedValue([item]);
+    mocks.listRemoteNotes.mockResolvedValue(pool([item]));
     await mount();
     mocks.auth = { authenticated: true, ready: true };
     await mount();
-    expect(mocks.listRemoteTrending).toHaveBeenCalledTimes(2);
-  });
-
-  it("an empty list is ready and empty, so the group can hide", async () => {
-    mocks.listRemoteTrending.mockResolvedValue([]);
-    await mount();
-    expect(seen).toEqual({ state: "ready", items: [] });
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(2);
   });
 
   it("a failure says so, and retry loads again", async () => {
-    mocks.listRemoteTrending.mockRejectedValueOnce(new Error("503"));
+    mocks.listRemoteNotes.mockRejectedValueOnce(new Error("503"));
     await mount();
     expect(seen.state).toBe("failed");
 
-    const later = deferred<TrendingNote[]>();
-    mocks.listRemoteTrending.mockReturnValueOnce(later.promise);
-    await act(async () => (seen as Extract<RemoteTrending, { state: "failed" }>).retry());
+    const later = deferred<RemoteNotesPage>();
+    mocks.listRemoteNotes.mockReturnValueOnce(later.promise);
+    await act(async () => (seen as Extract<RemoteNotes, { state: "failed" }>).retry());
     await flush();
     expect(seen).toEqual({ state: "loading" });
 
-    later.settle([item]);
+    later.settle(pool([item]));
     await flush();
-    expect(seen).toEqual({ state: "ready", items: [item] });
+    expect(loaded().pages).toEqual([pool([item])]);
   });
 });
 

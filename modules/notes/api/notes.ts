@@ -248,12 +248,6 @@ export function listTrendingNotes(page = 0): Promise<NoteFeed> {
   });
 }
 
-/** Mastodon's live feed of other servers: public notes this server received, for members. */
-export function listFederatedNotes(page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockFederatedNotes(page));
-  return request<NoteFeed>(`/api/v1/notes/federated?page=${page}&size=20`, { method: "GET" });
-}
-
 /** Mastodon's trending hashtags: tags several accounts used this week, notes per day oldest first. */
 export interface TrendingNoteTag {
   tag: string;

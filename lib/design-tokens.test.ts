@@ -49,7 +49,7 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
   {
     name: "열린 네트워크 밖의 지구본 Globe",
     pattern: /\bGlobe\b/,
-    allowFile: /(feed-more-menu|notes-feed|note-visibility|remote-account|federation-setting|my-collections-list|collection-detail-view|connect-sheet)\.tsx$/,
+    allowFile: /(feed-more-menu|remote-feed|note-visibility|remote-account|federation-setting|my-collections-list|collection-detail-view|connect-sheet)\.tsx$/,
   },
   {
     name: "cubic-bezier 하드코딩",
