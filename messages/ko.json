@@ -4323,6 +4323,7 @@
     "visibilityPublic": "누구나 볼 수 있어요",
     "tooLong": "{max}자까지 쓸 수 있어요",
     "addImage": "사진 추가",
+    "takePhoto": "사진 찍기",
     "removeImage": "사진 빼기",
     "imageLimit": "사진은 {max}장까지 올릴 수 있어요",
     "altLabel": "대체 텍스트",
