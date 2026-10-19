@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { blogPath } from "@/lib/host";
@@ -41,27 +42,40 @@ function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
   );
 }
 
-/** 노트 피드 옆(넓은 화면) 팔로우 추천 — 마스토돈 "팔로우할 만한 계정". 로그인했을 때만, 있을 때만 선다. */
-export function FollowSuggestions() {
+/** 노트 피드 옆(넓은 화면)과 폰 검색 시트의 팔로우 추천 — 마스토돈 "팔로우할 만한 계정". 로그인했을 때만, 있을 때만 선다. */
+export function FollowSuggestions({
+  className = "mt-8",
+  onSettled,
+}: {
+  className?: string;
+  onSettled?: (shown: boolean) => void;
+}) {
   const t = useTranslations("notes");
   const locale = useLocale();
-  const { authenticated } = useAuth();
+  const { authenticated, ready } = useAuth();
   const [picks, setPicks] = useState<FollowSuggestion[]>([]);
   const [elsewhere, setElsewhere] = useState<RemoteAccount[]>([]);
+
+  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
     if (!authenticated) return;
     let alive = true;
-    listFollowSuggestions()
-      .then((found) => alive && setPicks(found.slice(0, 5)))
-      .catch(() => undefined);
-    void listRemoteSuggestions(3).then((found) => alive && setElsewhere(found));
+    void Promise.allSettled([
+      listFollowSuggestions().then((found) => alive && setPicks(found.slice(0, 5))),
+      listRemoteSuggestions(3).then((found) => alive && setElsewhere(found)),
+    ]).then(() => alive && setSettled(true));
     return () => {
       alive = false;
     };
   }, [authenticated]);
 
-  if (!authenticated || (picks.length === 0 && elsewhere.length === 0)) return null;
+  const shown = authenticated && (picks.length > 0 || elsewhere.length > 0);
+  useEffect(() => {
+    if (ready && (!authenticated || settled)) onSettled?.(shown);
+  }, [ready, authenticated, settled, shown, onSettled]);
+
+  if (!shown) return null;
 
   async function dismiss(pick: FollowSuggestion) {
     const before = picks;
@@ -74,10 +88,8 @@ export function FollowSuggestions() {
   }
 
   return (
-    <section aria-labelledby="follow-suggestions" data-testid="follow-suggestions" className="mt-8">
-      <h2 id="follow-suggestions" className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-        {t("suggestionsTitle")}
-      </h2>
+    <section aria-labelledby="follow-suggestions" data-testid="follow-suggestions" className={className}>
+      <RailHeading id="follow-suggestions">{t("suggestionsTitle")}</RailHeading>
       {picks.length > 0 && (
         <ul className="mt-2 space-y-1">
           {picks.map((pick) => (

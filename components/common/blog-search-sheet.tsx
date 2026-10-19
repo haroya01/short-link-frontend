@@ -20,6 +20,9 @@ import { LivePeople, LiveRemotePeople } from "@/modules/blog/components/live-peo
 import { useLiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
 import { useDomainCompletions } from "@/modules/notes/lib/use-domain-completions";
 import { DomainCompletions } from "@/modules/notes/components/domain-completions";
+import { FollowSuggestions } from "@/modules/notes/components/follow-suggestions";
+import { TrendingNoteTags } from "@/modules/notes/components/trending-note-tags";
+import { TrendingNoteLinks } from "@/modules/notes/components/trending-note-links";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
@@ -59,6 +62,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [trending, setTrending] = useState<PublicFeedItem[]>([]);
   const [authors, setAuthors] = useState<SuggestedAuthor[]>([]);
   const [discoveryLoaded, setDiscoveryLoaded] = useState(false);
+  const [noteSuggestions, setNoteSuggestions] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   // Portal target (<body>) only exists on the client; gate so the first render matches SSR (nothing).
@@ -151,8 +155,13 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       </form>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6" aria-live="polite">
-        {!q && (trending.length > 0 || authors.length > 0) && (
-          <div className="pt-2">
+        {!q && (
+          <div
+            className="pt-2"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("[data-testid^='trending-note'] a, [data-testid='follow-suggestions'] a")) onClose();
+            }}
+          >
             {trending.length > 0 && (
               <section
                 className="mb-6 px-2"
@@ -176,7 +185,11 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
               </section>
             )}
 
-            {authors.length > 0 && (
+            <FollowSuggestions className="mb-6 px-2" onSettled={setNoteSuggestions} />
+            <TrendingNoteTags className="mb-6 px-2" />
+            <TrendingNoteLinks className="mb-6 px-2" />
+
+            {noteSuggestions === false && authors.length > 0 && (
               <section data-testid="search-idle-follow">
                 <RailHeading className="mb-1 px-2">{t("searchIdleFollow")}</RailHeading>
                 <ul>

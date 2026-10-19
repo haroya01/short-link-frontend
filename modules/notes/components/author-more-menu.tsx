@@ -21,7 +21,7 @@ import { MuteDialog } from "./mute-dialog";
 import { NoteListMembershipDialog } from "./note-list-membership-dialog";
 import { useBlockAuthor } from "./use-block-author";
 
-const UNKNOWN = { following: false, count: 0, countHidden: false };
+const UNKNOWN = { following: false, count: 0, countHidden: false, known: false };
 
 export function AuthorMoreMenu({ username, userId }: { username: string; userId: number }) {
   const t = useTranslations("notes");

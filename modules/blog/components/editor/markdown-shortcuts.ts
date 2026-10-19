@@ -49,6 +49,17 @@ const KEY = new PluginKey("markdownShortcuts");
 
 export const MarkdownShortcuts = Extension.create({
   name: "markdownShortcuts",
+  priority: 1000,
+  addKeyboardShortcuts() {
+    return {
+      Backspace: () => {
+        const { empty, $from } = this.editor.state.selection;
+        if (!empty || $from.parentOffset !== 0 || $from.depth !== 1) return false;
+        if ($from.parent.type.name !== "heading" || $from.parent.content.size > 0) return false;
+        return this.editor.commands.setParagraph();
+      },
+    };
+  },
   addProseMirrorPlugins() {
     return [
       new Plugin({

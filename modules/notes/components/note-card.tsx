@@ -131,6 +131,7 @@ export function NoteCard({
   const [likeCount, setLikeCount] = useState(note.likeCount);
   const [likeTouched, setLikeTouched] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [reporting, setReporting] = useState(false);
   const [quoting, setQuoting] = useState(false);
   const [addingToSeries, setAddingToSeries] = useState(false);
   const [bookmarked, setBookmarked] = useState(note.bookmarkedByMe === true);
@@ -154,6 +155,15 @@ export function NoteCard({
   useEffect(() => {
     setConversationMutedState(note.conversationMuted === true);
   }, [note.conversationMuted]);
+
+  async function copyText() {
+    try {
+      await navigator.clipboard.writeText(note.body);
+      toast(t("textCopied"));
+    } catch {
+      toast(t("textCopyFailed"), "error");
+    }
+  }
 
   async function toggleConversationMute() {
     const next = !conversationMuted;
@@ -286,7 +296,7 @@ export function NoteCard({
 
   function openFromBody(e: React.MouseEvent<HTMLDivElement>) {
     if (emphasis || editing) return;
-    if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
+    if ((e.target as HTMLElement).closest("a, button, textarea, video, audio, [role='menu']")) return;
     if (window.getSelection()?.toString()) return;
     if (detached) {
       if (e.button === 0) detached.onOpen();
@@ -447,11 +457,13 @@ export function NoteCard({
               {detached?.menu}
               {!detached && authenticated && !editing && (
                 <NoteMenu
+                  onCopy={note.body ? copyText : undefined}
                   bookmarked={bookmarked}
                   onBookmark={toggleBookmark}
                   conversationMuted={conversationMuted}
                   onConversationMute={toggleConversationMute}
                   onConnect={() => setConnecting(true)}
+                  onReport={!mine && !emphasis ? () => setReporting(true) : undefined}
                   onEdit={mine ? startEditing : undefined}
                   onDelete={mine ? remove : undefined}
                   pinned={note.pinned === true}
@@ -719,6 +731,16 @@ export function NoteCard({
         </div>
       </div>
       {confirmDialog}
+      {!mine && !emphasis && (
+        <ReportButton
+          subjectType="NOTE"
+          subjectId={note.id}
+          forwardDomain={note.author.remoteId ? note.author.username.split("@").pop() : undefined}
+          open={reporting}
+          onOpenChange={setReporting}
+          layerClassName="z-[70]"
+        />
+      )}
       {connecting && (
         <ConnectSheet
           blockType="NOTE"
@@ -1017,9 +1039,11 @@ export function NoteLengthRing({ length, className }: { length: number; classNam
 function NoteMenu({
   bookmarked,
   onBookmark,
+  onCopy,
   conversationMuted,
   onConversationMute,
   onConnect,
+  onReport,
   onEdit,
   onDelete,
   pinned,
@@ -1036,6 +1060,8 @@ function NoteMenu({
   conversationMuted: boolean;
   onConversationMute: () => void;
   onConnect: () => void;
+  onCopy?: () => void;
+  onReport?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   pinned: boolean;
@@ -1048,6 +1074,7 @@ function NoteMenu({
   disabled: boolean;
 }) {
   const t = useTranslations("notes");
+  const tp = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
 
@@ -1086,6 +1113,19 @@ function NoteMenu({
           role="menu"
           className="absolute right-0 top-8 z-20 w-40 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
         >
+          {onCopy && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onCopy();
+              }}
+            >
+              {t("copyText")}
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"
@@ -1119,6 +1159,19 @@ function NoteMenu({
           >
             {conversationMuted ? t("unmuteConversation") : t("muteConversation")}
           </button>
+          {onReport && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-red-600 dark:text-red-400")}
+              onClick={() => {
+                setOpen(false);
+                onReport();
+              }}
+            >
+              {tp("report")}
+            </button>
+          )}
           {onPin && (
             <button
               type="button"
