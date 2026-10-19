@@ -90,6 +90,7 @@
     "searchFailed": "Couldn't search",
     "searchNoPosts": "No matching posts",
     "searchEmptyTopics": "Try one of these topics instead",
+    "relatedTags": "Related tags",
     "browseTopics": "Browse topics",
     "railPopularTags": "Popular tags",
     "railSuggestedAuthors": "Suggested authors",

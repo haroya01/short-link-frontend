@@ -10,7 +10,7 @@ import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
-import { freshToken, mockFailure, readToken } from "@/lib/api/client";
+import { freshToken, mockEmpty, mockFailure, readToken } from "@/lib/api/client";
 import { redactCard, type AudienceFields } from "@/modules/blog/lib/post-audience";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -461,6 +461,24 @@ export const findPreviewPost = cache(
 export interface TagCount {
   tag: string;
   count: number;
+}
+
+/** A tag that sits next to a search's words on posts and notes; `posts` + `notes` say how often. */
+export interface RelatedTag {
+  tag: string;
+  posts: number;
+  notes: number;
+}
+
+/** Public — tags used around a query; empty (or a server without the endpoint) means show nothing. */
+export async function listRelatedTags(query: string, limit = 8): Promise<RelatedTag[]> {
+  const q = query.trim();
+  if (q.length < 2) return [];
+  if (blogMocks) return mockEmpty("related") ? [] : blogMocks.mockRelatedTags(q, limit);
+  const result = await fetchPublic<{ tags?: RelatedTag[] }>(
+    `/api/v1/public/search/related?q=${encodeURIComponent(q)}&limit=${limit}`,
+  );
+  return result.ok ? (result.data.tags ?? []) : [];
 }
 
 /** Most-used tags across published posts, most popular first — the 주제 index. */
