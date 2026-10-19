@@ -243,3 +243,38 @@ describe("MarkdownShortcuts GitHub-style task items", () => {
   });
 });
 
+
+describe("Backspace on a heading just made from '# '", () => {
+  function onSecondLine() {
+    editor = new Editor({
+      element: document.createElement("div"),
+      extensions: [StarterKit, MarkdownShortcuts],
+      content: "<p>첫 줄</p><p></p>",
+    });
+    editor.commands.setTextSelection(editor.state.doc.child(0).nodeSize + 1);
+  }
+
+  it("keeps the caret on that line as an empty paragraph instead of joining the line above", () => {
+    onSecondLine();
+    type("# ");
+    expect((editor.getJSON() as any).content?.[1]?.type).toBe("heading");
+    const line = editor.state.selection.from;
+
+    editor.commands.keyboardShortcut("Backspace");
+    const blocks = (editor.getJSON() as any).content;
+    expect(blocks.slice(0, 2).map((b: { type: string }) => b.type)).toEqual(["paragraph", "paragraph"]);
+    expect(editor.state.selection.from).toBe(line);
+
+    type("x");
+    expect(editor.state.doc.child(0).textContent).toBe("첫 줄");
+    expect(editor.state.doc.child(1).textContent).toBe("x");
+  });
+
+  it("leaves a heading that has text to the usual Backspace", () => {
+    onSecondLine();
+    type("# 제목");
+    editor.commands.setTextSelection(editor.state.doc.child(0).nodeSize + 1);
+    editor.commands.keyboardShortcut("Backspace");
+    expect(editor.state.doc.child(0).textContent).toBe("첫 줄제목");
+  });
+});
