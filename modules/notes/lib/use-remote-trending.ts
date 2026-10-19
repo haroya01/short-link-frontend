@@ -63,7 +63,7 @@ export function useTrendingNote(item: TrendingNote) {
       switch (result.state) {
         case "note":
           local.current = result.note;
-          markLiked(result.note.likedByMe === true);
+          if (!liking.current) markLiked(result.note.likedByMe === true);
           return result.note;
         case "signin":
           askToSignIn(reason);
@@ -111,20 +111,34 @@ export function useTrendingNote(item: TrendingNote) {
 
   async function like() {
     if (liking.current) return;
+    if (!authenticated) {
+      askToSignIn("like");
+      return;
+    }
     liking.current = true;
+    const next = !likedNow.current;
+    const step = next ? 1 : -1;
+    const undo = () => {
+      markLiked(!next);
+      setLikeCount((count) => Math.max(count - step, 0));
+    };
+    markLiked(next);
+    setLikeCount((count) => Math.max(count + step, 0));
     try {
       const first = local.current === null;
       const note = await localNote("like");
-      if (!note || (first && note.likedByMe === true)) return;
-      const next = !likedNow.current;
-      const step = next ? 1 : -1;
-      markLiked(next);
-      setLikeCount((count) => Math.max(count + step, 0));
+      if (!note) {
+        undo();
+        return;
+      }
+      if (first && next && note.likedByMe === true) {
+        setLikeCount((count) => Math.max(count - step, 0));
+        return;
+      }
       try {
         await setNoteLike(note.id, next);
       } catch (error) {
-        markLiked(!next);
-        setLikeCount((count) => Math.max(count - step, 0));
+        undo();
         likeFailed(error);
       }
     } finally {
@@ -147,5 +161,27 @@ export function useTrendingNote(item: TrendingNote) {
     }
   }
 
-  return { liked, likeCount, busy, replyTarget, closeReply: () => setReplyTarget(null), open, openAuthor, reply, like, follow };
+  const [quoteTarget, setQuoteTarget] = useState<Note | null>(null);
+
+  async function quote() {
+    const note = await localNote("quote");
+    if (note) setQuoteTarget(note);
+  }
+
+  return {
+    liked,
+    likeCount,
+    busy,
+    replyTarget,
+    closeReply: () => setReplyTarget(null),
+    quoteTarget,
+    closeQuote: () => setQuoteTarget(null),
+    resolve: () => localNote("repost"),
+    open,
+    openAuthor,
+    reply,
+    like,
+    quote,
+    follow,
+  };
 }

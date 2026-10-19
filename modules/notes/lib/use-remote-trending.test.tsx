@@ -199,6 +199,7 @@ describe("reacting to a trending post", () => {
     ["like", "like"],
     ["follow", "follow"],
     ["openAuthor", "remoteAccount"],
+    ["quote", "quote"],
   ] as const)("signed out, %s opens the login door and brings nothing over", async (action, reason) => {
     mocks.auth = { authenticated: false, ready: true };
     await mount();
@@ -260,6 +261,39 @@ describe("reacting to a trending post", () => {
     expect(mocks.setNoteLike).not.toHaveBeenCalled();
     expect(actions.liked).toBe(true);
     expect(actions.likeCount).toBe(128);
+  });
+
+  it("fills the heart before the post is brought over, and takes it back when that fails", async () => {
+    const answer = deferred<unknown>();
+    mocks.resolveRemote.mockReturnValue(answer.promise);
+    await mount();
+    let liking!: Promise<void>;
+    await act(async () => {
+      liking = actions.like();
+    });
+    expect(actions.liked).toBe(true);
+    expect(actions.likeCount).toBe(129);
+    expect(mocks.setNoteLike).not.toHaveBeenCalled();
+    await act(async () => {
+      answer.settle({ state: "missing", domain: "qdon.space" });
+      await liking;
+    });
+    expect(actions.liked).toBe(false);
+    expect(actions.likeCount).toBe(128);
+    expect(mocks.setNoteLike).not.toHaveBeenCalled();
+  });
+
+  it("quoting and reposting bring the post over once and hand back the local note", async () => {
+    mocks.resolveRemote.mockResolvedValue({ state: "note", note: localNote() });
+    await mount();
+    await act(async () => actions.quote());
+    expect(actions.quoteTarget?.id).toBe(4321);
+    let resolved: Note | null = null;
+    await act(async () => {
+      resolved = await actions.resolve();
+    });
+    expect(resolved).toMatchObject({ id: 4321 });
+    expect(mocks.resolveRemote).toHaveBeenCalledTimes(1);
   });
 
   it("a like that fails goes back and says so", async () => {

@@ -777,14 +777,16 @@ export function NoteCard({
   );
 }
 
-function RepostControl({
+export function RepostControl({
   note,
   buttonClass,
   onQuote,
+  resolve,
 }: {
   note: Note;
   buttonClass: string;
   onQuote: () => void;
+  resolve?: () => Promise<Note | null>;
 }) {
   const t = useTranslations("notes");
   const { authenticated } = useAuth();
@@ -793,6 +795,7 @@ function RepostControl({
   const [reposted, setReposted] = useState(note.repostedByMe === true);
   const [count, setCount] = useState(note.repostCount ?? null);
   const [touched, setTouched] = useState(false);
+  const resolved = useRef(false);
   const { open, setOpen, root } = usePopoverMenu();
 
   useEffect(() => {
@@ -808,7 +811,19 @@ function RepostControl({
     setReposted(next);
     setCount(Math.max((count ?? 0) + (next ? 1 : -1), 0));
     try {
-      const status = await setNoteRepost(note.id, next);
+      const first = resolve !== undefined && !resolved.current;
+      const target = resolve ? await resolve() : note;
+      if (!target) {
+        setReposted(!next);
+        setCount(previous);
+        return;
+      }
+      resolved.current = true;
+      if (first && next && target.repostedByMe === true) {
+        setCount(previous);
+        return;
+      }
+      const status = await setNoteRepost(target.id, next);
       setCount(status.repostCount);
     } catch {
       setReposted(!next);

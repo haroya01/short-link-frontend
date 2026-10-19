@@ -90,7 +90,13 @@ type Serve = {
 };
 
 async function serve(page: Page, { trending: list, resolve }: Serve = {}) {
-  const seen = { trending: [] as string[], resolved: [] as string[], liked: [] as string[] };
+  const seen = {
+    trending: [] as string[],
+    resolved: [] as string[],
+    liked: [] as string[],
+    reposted: [] as string[],
+    created: [] as unknown[],
+  };
   await mockBackend(page, {
     "GET /api/v1/federation/trending": async (route) => {
       seen.trending.push(new URL(route.request().url()).search);
@@ -111,6 +117,15 @@ async function serve(page: Page, { trending: list, resolve }: Serve = {}) {
       seen.liked.push(route.request().method());
       return route.fulfill({ json: { liked: false, likeCount: 0 } });
     },
+    "PUT /api/v1/notes/4321/repost": (route) => {
+      seen.reposted.push("PUT");
+      return route.fulfill({ json: { reposted: true, repostCount: 38 } });
+    },
+    "POST /api/v1/notes": (route) => {
+      seen.created.push(route.request().postDataJSON());
+      return route.fulfill({ status: 201, json: { ...LOCAL, id: 9001, body: "덧붙인 생각", quotedNote: { ...LOCAL } } });
+    },
+    "GET /api/v1/federation/settings": (route) => route.fulfill({ json: { enabled: true, noticeSeen: true, handle: null } }),
   });
   return seen;
 }
@@ -144,7 +159,7 @@ test("다른 서버 opens with five trending posts above the received notes, and
   await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("128");
   await expect(card(0).getByRole("button", { name: "노트 메뉴" })).toBeVisible();
   await expect(card(0).getByRole("button", { name: /답글 쓰기/ })).toHaveText(/4/);
-  await expect(group.getByRole("button", { name: "리포스트" })).toHaveCount(0);
+  await expect(card(0).getByRole("button", { name: "리포스트", exact: true })).toHaveText("37");
   await expect(card(0).locator("a[href$='/remote/412']").first()).toBeVisible();
 
   const received = page.getByRole("heading", { name: "받은 노트" });
@@ -181,6 +196,59 @@ test("liking brings the post over by its AP id, then likes the local note, and t
   await card(0).getByRole("button", { name: /답글 쓰기/ }).click();
   await expect(page.getByRole("dialog")).toContainText("인기 글 1번");
   expect(seen.resolved).toHaveLength(1);
+});
+
+test("the heart fills at once and the post is brought over behind it, and it falls back when that fails", async ({ page }) => {
+  const answer = gate();
+  await signIn(page);
+  const seen = await serve(page, {
+    resolve: async (route) => {
+      await answer.opened;
+      await route.fulfill({ status: 404, json: { status: 404, code: "REMOTE_ACCOUNT_NOT_FOUND" } });
+    },
+  });
+  const { card } = await open(page);
+  await card(0).getByRole("button", { name: "좋아요", exact: true }).click({ timeout: 30_000 });
+
+  const liked = card(0).getByRole("button", { name: "좋아요 취소" });
+  await expect(liked).toHaveAttribute("aria-pressed", "true");
+  await expect(liked).toHaveText("129");
+  expect(seen.liked).toEqual([]);
+
+  answer.open();
+  await expectOnTop(toastBy(page, "qdon.space 서버에서 찾지 못했어요"));
+  await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("128");
+  expect(seen.liked).toEqual([]);
+});
+
+test("reposting brings the post over by its AP id and reposts the local note", async ({ page }) => {
+  await signIn(page);
+  const seen = await serve(page);
+  const { card } = await open(page);
+  await card(0).getByRole("button", { name: "리포스트", exact: true }).click({ timeout: 30_000 });
+  await card(0).getByRole("menuitem", { name: "리포스트" }).click();
+
+  const reposted = card(0).getByRole("button", { name: "리포스트 취소" });
+  await expect(reposted).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => seen.reposted).toEqual(["PUT"]);
+  await expect(reposted).toHaveText("38");
+  expect(seen.resolved).toEqual([FIRST.uri]);
+});
+
+test("quoting brings the post over and opens the quote composer on the local note", async ({ page }) => {
+  await signIn(page);
+  const seen = await serve(page);
+  const { card } = await open(page);
+  await card(0).getByRole("button", { name: "리포스트", exact: true }).click({ timeout: 30_000 });
+  await card(0).getByRole("menuitem", { name: "인용" }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("인기 글 1번");
+  await dialog.getByRole("textbox", { name: "생각 덧붙이기" }).fill("덧붙인 생각");
+  await dialog.getByRole("button", { name: "올리기" }).click();
+  await expectOnTop(toastBy(page, "인용 노트를 올렸어요"));
+  expect(seen.created).toEqual([expect.objectContaining({ body: "덧붙인 생각", quotedNoteId: 4321 })]);
+  expect(seen.resolved).toEqual([FIRST.uri]);
 });
 
 test("a first like on a post the reader already liked there keeps the like", async ({ page }) => {

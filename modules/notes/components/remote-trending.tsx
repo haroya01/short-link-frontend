@@ -14,9 +14,10 @@ import { REMOTE_TRENDING_COLLAPSED, type TrendingNote } from "@/modules/notes/ap
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { openNote } from "@/modules/notes/lib/note-href";
 import { useRemoteTrending, useTrendingNote } from "@/modules/notes/lib/use-remote-trending";
-import { NOTE_ACTION, NoteCard } from "./note-card";
+import { NOTE_ACTION, NoteCard, RepostControl } from "./note-card";
 import { NoteGlyph } from "./note-glyph";
 import { NoteListSkeleton } from "./note-list";
+import { NoteQuoteDialog } from "./note-quote-dialog";
 import { NoteReplyDialog } from "./note-reply-dialog";
 import { webAddress } from "./note-remote-card";
 
@@ -173,6 +174,12 @@ function TrendingNoteCard({ item, filteredBy }: { item: TrendingNote; filteredBy
                 <span className="sr-only">{t("replyLabel")} </span>
                 {replies > 0 && <span className="tabular-nums">{replies}</span>}
               </button>
+              <RepostControl
+                note={{ ...note, repostCount: item.repostCount ?? null }}
+                buttonClass={NOTE_ACTION}
+                resolve={actions.resolve}
+                onQuote={() => void actions.quote()}
+              />
               {actions.busy && (
                 <Loader2
                   data-testid="trending-resolving"
@@ -182,6 +189,14 @@ function TrendingNoteCard({ item, filteredBy }: { item: TrendingNote; filteredBy
               )}
             </>
           ),
+        }}
+      />
+      <NoteQuoteDialog
+        quoted={actions.quoteTarget ? { note: actions.quoteTarget } : null}
+        onClose={actions.closeQuote}
+        onPosted={() => {
+          actions.closeQuote();
+          toast(t("quotePosted"));
         }}
       />
       <NoteReplyDialog
