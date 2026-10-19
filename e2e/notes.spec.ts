@@ -918,6 +918,21 @@ test("a video plays silently while mostly on screen and stops when it leaves", a
   expect((await calls()).some((call) => call.startsWith("play:AUDIO"))).toBe(false);
 });
 
+test("on a phone, a tap on a video or a sound stays in the feed so its controls can unmute it", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 740 });
+  await page.goto("/ko/blog/notes?feed=federated");
+  const waves = page.locator('article[data-note-id="13"]');
+  await expect(waves.locator("video")).toBeVisible({ timeout: 30_000 });
+  const feed = page.url();
+  for (const media of ["video", "audio"]) {
+    await waves.locator(media).dispatchEvent("click");
+    await page.waitForTimeout(1500);
+    expect(page.url(), media).toBe(feed);
+  }
+  await waves.getByText("오늘 찍은 파도 소리와 영상").click();
+  await expect(page).toHaveURL(/\/notes\/13$/);
+});
+
 test("with reduced motion a video waits for the reader to press play", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {

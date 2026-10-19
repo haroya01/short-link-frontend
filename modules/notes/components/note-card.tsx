@@ -286,7 +286,7 @@ export function NoteCard({
 
   function openFromBody(e: React.MouseEvent<HTMLDivElement>) {
     if (emphasis || editing) return;
-    if ((e.target as HTMLElement).closest("a, button, textarea, [role='menu']")) return;
+    if ((e.target as HTMLElement).closest("a, button, textarea, video, audio, [role='menu']")) return;
     if (window.getSelection()?.toString()) return;
     if (detached) {
       if (e.button === 0) detached.onOpen();
