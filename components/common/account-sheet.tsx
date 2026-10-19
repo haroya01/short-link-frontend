@@ -170,16 +170,29 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("analytics")}
             </a>
-            {/* Reader's library — saved posts, highlights, notes, and collections. */}
-            <a href={blogHref("/curation")} className={ITEM}>
-              <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("library")}
-            </a>
             {/* 내 컬렉션 — the reader's own collections/paths (private included). */}
             <a href={blogHref("/collections")} className={ITEM}>
               <Layers className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("myCollections")}
             </a>
+            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+            <div role="group" aria-labelledby="account-sheet-collected" data-testid="account-collected">
+              <p id="account-sheet-collected" className="px-3 pb-1 pt-2 text-[12px] font-medium text-slate-500 dark:text-slate-400">
+                {t("collected")}
+              </p>
+              <a href={blogHref("/curation")} className={ITEM}>
+                <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                {t("library")}
+              </a>
+              <a href={blogHref("/notes?feed=bookmarks")} className={ITEM}>
+                <span aria-hidden className="h-5 w-5" />
+                {t("noteBookmarks")}
+              </a>
+              <a href={blogHref("/notes?feed=lists")} className={ITEM}>
+                <span aria-hidden className="h-5 w-5" />
+                {t("noteLists")}
+              </a>
+            </div>
             {/* The desktop sidebar's remaining entries, which mobile otherwise can't reach. */}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
             <a href={blogHref("/leads")} className={ITEM}>
