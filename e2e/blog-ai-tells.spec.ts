@@ -44,7 +44,7 @@ test.describe("phone", () => {
     const posts = new Set(await rows.evaluateAll((els) => els.map((el) => el.getAttribute("href"))));
     expect(posts.size).toBeGreaterThan(0);
     expect(posts.size).toBeLessThanOrEqual(5);
-    const follow = sheet.getByTestId("search-idle-follow");
+    const follow = sheet.getByTestId("follow-suggestions");
     await expect(follow.getByRole("heading", { name: "팔로우 추천" })).toBeVisible();
     const button = follow.getByTestId("follow-button").first();
     await expect(button).toHaveText("팔로우");

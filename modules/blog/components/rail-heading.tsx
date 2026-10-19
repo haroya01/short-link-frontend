@@ -5,9 +5,10 @@ import type { ReactNode } from "react";
  * Archive / …). Deliberately not uppercase/tracked: that reads as Latin chrome and spaces Hangul/Kana
  * awkwardly (this is a ja/ko-first product).
  */
-export function RailHeading({ children, className }: { children: ReactNode; className?: string }) {
+export function RailHeading({ children, className, id }: { children: ReactNode; className?: string; id?: string }) {
   return (
     <h2
+      id={id}
       className={
         "text-[13px] font-bold text-slate-800 dark:text-slate-200" +
         (className ? ` ${className}` : "")

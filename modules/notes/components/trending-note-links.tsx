@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { listTrendingNoteLinks, type TrendingNoteLink } from "@/modules/notes/api/notes";
 import { SparkBars } from "./trending-note-tags";
 
@@ -19,7 +20,7 @@ export function linkedNotesHref(url: string): string {
   return blogPath(`/notes/link?url=${encodeURIComponent(url)}`);
 }
 
-export function TrendingNoteLinks() {
+export function TrendingNoteLinks({ className = "mt-8" }: { className?: string }) {
   const t = useTranslations("notes");
   const [links, setLinks] = useState<TrendingNoteLink[]>([]);
 
@@ -35,10 +36,8 @@ export function TrendingNoteLinks() {
 
   if (links.length === 0) return null;
   return (
-    <section aria-labelledby="trending-note-links" data-testid="trending-note-links" className="mt-8">
-      <h2 id="trending-note-links" className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-        {t("trendingLinksTitle")}
-      </h2>
+    <section aria-labelledby="trending-note-links" data-testid="trending-note-links" className={className}>
+      <RailHeading id="trending-note-links">{t("trendingLinksTitle")}</RailHeading>
       <ul className="mt-2 divide-y divide-slate-100 dark:divide-slate-800">
         {links.map((trend) => {
           const host = linkHost(trend.url);

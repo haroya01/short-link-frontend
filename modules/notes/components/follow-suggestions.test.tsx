@@ -133,3 +133,42 @@ describe("follow suggestions from other servers", () => {
     expect(mocks.listRemoteSuggestions).not.toHaveBeenCalled();
   });
 });
+
+describe("whether the suggestions stood, for the search sheet", () => {
+  async function settle(onSettled: (shown: boolean) => void) {
+    await act(async () => root.render(<FollowSuggestions onSettled={onSettled} />));
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 0)));
+  }
+
+  it("says shown once both lists answer and someone is there", async () => {
+    let answer: (found: unknown[]) => void = () => {};
+    mocks.listFollowSuggestions.mockReturnValue(new Promise((resolve) => (answer = resolve)));
+    const onSettled = vi.fn();
+    await settle(onSettled);
+    expect(onSettled).not.toHaveBeenCalled();
+    await act(async () => answer([haruka]));
+    expect(onSettled).toHaveBeenLastCalledWith(true);
+  });
+
+  it("says not shown when nobody is suggested, when a list fails, or when signed out", async () => {
+    mocks.listFollowSuggestions.mockResolvedValue([]);
+    mocks.listRemoteSuggestions.mockResolvedValue([]);
+    const empty = vi.fn();
+    await settle(empty);
+    expect(empty).toHaveBeenLastCalledWith(false);
+
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    mocks.listFollowSuggestions.mockRejectedValue(new Error("down"));
+    const failed = vi.fn();
+    await settle(failed);
+    expect(failed).toHaveBeenLastCalledWith(false);
+
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    mocks.auth = { authenticated: false, ready: true };
+    const signedOut = vi.fn();
+    await settle(signedOut);
+    expect(signedOut).toHaveBeenLastCalledWith(false);
+  });
+});

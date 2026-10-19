@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { listTrendingNoteTags, type TrendingNoteTag } from "@/modules/notes/api/notes";
 import { noteTagHref } from "./note-body";
 
-/** Beside the notes feed on wide screens, as on Mastodon's web: hashtags several accounts used this
- *  week, each with a bar per day. Nothing shows until there is something trending. */
-export function TrendingNoteTags() {
+/** Beside the notes feed on wide screens and in the phone's search sheet, as on Mastodon's web: hashtags
+ *  several accounts used this week, each with a bar per day. Nothing shows until there is something trending. */
+export function TrendingNoteTags({ className }: { className?: string }) {
   const t = useTranslations("notes");
   const [tags, setTags] = useState<TrendingNoteTag[]>([]);
 
@@ -24,10 +25,8 @@ export function TrendingNoteTags() {
 
   if (tags.length === 0) return null;
   return (
-    <section aria-labelledby="trending-note-tags" data-testid="trending-note-tags">
-      <h2 id="trending-note-tags" className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-        {t("trendingTagsTitle")}
-      </h2>
+    <section aria-labelledby="trending-note-tags" data-testid="trending-note-tags" className={className}>
+      <RailHeading id="trending-note-tags">{t("trendingTagsTitle")}</RailHeading>
       <ul className="mt-2 divide-y divide-slate-100 dark:divide-slate-800">
         {tags.map((trend) => (
           <li key={trend.tag}>
