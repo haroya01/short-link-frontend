@@ -2,6 +2,8 @@ import { describe, it, expect, afterEach } from "vitest";
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
+import CodeBlock from "@tiptap/extension-code-block";
+import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 
 /**
@@ -276,5 +278,68 @@ describe("Backspace on a heading just made from '# '", () => {
     editor.commands.setTextSelection(editor.state.doc.child(0).nodeSize + 1);
     editor.commands.keyboardShortcut("Backspace");
     expect(editor.state.doc.child(0).textContent).toBe("첫 줄제목");
+  });
+});
+
+describe("the app's markdown, typed on a phone keyboard", () => {
+  function makeFull(content = "<p></p>") {
+    editor = new Editor({
+      element: document.createElement("div"),
+      extensions: [StarterKit.configure({ codeBlock: false, blockquote: false }), CodeBlock, CalloutQuote, MarkdownShortcuts],
+      content,
+    });
+    return editor;
+  }
+
+  it("turns '```js ' into a js code block", () => {
+    makeFull();
+    type("```js ");
+    const top = (editor.getJSON() as any).content?.[0];
+    expect(top?.type).toBe("codeBlock");
+    expect(top?.attrs?.language).toBe("js");
+  });
+
+  it("turns '[text](url)' and '<url>' into links", () => {
+    makeFull();
+    type("[소개](https://kurl.me/about) <https://kurl.me>");
+    const marks = (editor.getJSON() as any).content[0].content.filter((n: any) => n.marks?.[0]?.type === "link");
+    expect(marks.map((n: any) => [n.text, n.marks[0].attrs.href])).toEqual([
+      ["소개", "https://kurl.me/about"],
+      ["https://kurl.me", "https://kurl.me"],
+    ]);
+  });
+
+  it("leaves '![alt](url)' to the image rule", () => {
+    makeFull();
+    type("![바다](https://kurl.me/sea.png)");
+    expect(JSON.stringify(editor.getJSON())).not.toContain('"link"');
+  });
+
+  it("turns a quote's '[!NOTE]' line into a note callout once the next line starts", () => {
+    makeFull("<blockquote><p>[!NOTE]</p></blockquote>");
+    editor.commands.setTextSelection(editor.state.doc.content.size - 2);
+    editor.view.dispatch(editor.state.tr.split(editor.state.selection.from));
+    const quote = (editor.getJSON() as any).content[0];
+    expect(quote.type).toBe("blockquote");
+    expect(quote.attrs.alert).toBe("note");
+    expect(quote.content).toHaveLength(1);
+  });
+
+  it("turns ':::note warn' … ':::' across lines into a warning callout of the lines between", () => {
+    makeFull("<p>앞 문단</p><p>:::note warn</p><p>조심할 것</p><p></p>");
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1);
+    type(":::");
+    const blocks = (editor.getJSON() as any).content;
+    expect(blocks[0].content[0].text).toBe("앞 문단");
+    expect(blocks[1].type).toBe("blockquote");
+    expect(blocks[1].attrs.alert).toBe("warning");
+    expect(blocks[1].content.map((p: any) => p.content?.[0]?.text)).toEqual(["조심할 것"]);
+  });
+
+  it("leaves other ::: forms as written", () => {
+    makeFull("<p>:::details 열기</p><p>안</p><p></p>");
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1);
+    type(":::");
+    expect(JSON.stringify(editor.getJSON())).not.toContain("blockquote");
   });
 });
