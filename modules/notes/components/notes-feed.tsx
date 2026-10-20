@@ -14,7 +14,7 @@ import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
 import type { FeedMoreItem } from "@/modules/blog/components/feed-more-menu";
 import { onNotePosted } from "@/modules/blog/lib/consequence-events";
 import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
-import type { NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
+import { NOTES_MEMORY, readFeedMemory, rememberedNotesFeed, type NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
 import {
   getNoteFeedPreferences,
   listBookmarkedNotes,
@@ -74,11 +74,12 @@ function quoteFromParams(params: URLSearchParams): QuotedPost | null {
   return { id, title, slug, authorUsername };
 }
 
-export function NotesFeed({ savedFeed = null }: { savedFeed?: NotesSwitcherFeed | null }) {
+export function NotesFeed() {
   const t = useTranslations("notes");
   const tFeed = useTranslations("publicFeed");
   const params = useSearchParams();
   const pathname = usePathname();
+  const [savedFeed] = useState(() => rememberedNotesFeed(readFeedMemory(NOTES_MEMORY)));
   const { ready, authenticated } = useAuth();
   const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
   const [posted, setPosted] = useState<Note[]>([]);
