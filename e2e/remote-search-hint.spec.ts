@@ -3,13 +3,14 @@ import { expect, test, type Page } from "@playwright/test";
 const HINT = "다른 서버 사람은 @아이디@서버 주소로 찾을 수 있어요";
 
 async function openSheet(page: Page) {
-  await page.goto("/ko/blog");
-  await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-  const sheet = page.getByRole("dialog", { name: "검색" });
-  return { sheet, box: sheet.getByRole("searchbox", { name: "검색" }) };
+  await page.goto("/ko/blog/explore");
+  const sheet = page.locator("main");
+  const box = sheet.getByRole("searchbox", { name: "검색" });
+  await expect(box).toBeVisible({ timeout: 30_000 });
+  return { sheet, box };
 }
 
-test.describe("phone search sheet", () => {
+test.describe("phone 둘러보기", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test("a name nobody elsewhere matches says how to find someone there, in the other servers' place", async ({

@@ -23,6 +23,7 @@ import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { askToSignIn } from "@/components/auth/login-prompt";
@@ -170,16 +171,29 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("analytics")}
             </a>
-            {/* Reader's library — saved posts, highlights, notes, and collections. */}
-            <a href={blogHref("/curation")} className={ITEM}>
-              <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {t("library")}
-            </a>
             {/* 내 컬렉션 — the reader's own collections/paths (private included). */}
             <a href={blogHref("/collections")} className={ITEM}>
               <Layers className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("myCollections")}
             </a>
+            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+            <div role="group" aria-labelledby="account-sheet-collected" data-testid="account-collected">
+              <p id="account-sheet-collected" className="px-3 pb-1 pt-2 text-[12px] font-medium text-slate-500 dark:text-slate-400">
+                {t("collected")}
+              </p>
+              <a href={blogHref("/curation")} className={ITEM}>
+                <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                {t("library")}
+              </a>
+              <BlogChromeLink href={blogHref("/notes?feed=bookmarks")} onClick={onClose} className={ITEM}>
+                <span aria-hidden className="h-5 w-5" />
+                {t("noteBookmarks")}
+              </BlogChromeLink>
+              <BlogChromeLink href={blogHref("/notes?feed=lists")} onClick={onClose} className={ITEM}>
+                <span aria-hidden className="h-5 w-5" />
+                {t("noteLists")}
+              </BlogChromeLink>
+            </div>
             {/* The desktop sidebar's remaining entries, which mobile otherwise can't reach. */}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
             <a href={blogHref("/leads")} className={ITEM}>

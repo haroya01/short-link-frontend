@@ -296,7 +296,7 @@ describe("a new post exists only once there is something to keep", () => {
     await mount(null);
     await act(async () => { editor.setTitle("A first line"); });
     expect(api.createPost).not.toHaveBeenCalled();
-    await act(async () => { await vi.advanceTimersByTimeAsync(2000); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(4000); });
     expect(api.createPost).toHaveBeenCalledOnce();
     expect(api.createPost).toHaveBeenCalledWith(expect.objectContaining({
       title: "A first line", slug: expect.stringMatching(/^draft-/),
@@ -772,3 +772,52 @@ describe("a save that fails", () => {
   });
 });
 
+
+describe("autosave cadence", () => {
+  it("waits for a four-second pause, and keeps saving at least every twenty seconds while the writer never pauses", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+
+    await act(async () => { editor.setMarkdown("한 줄"); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(3900); });
+    expect(api.replaceBlocks).not.toHaveBeenCalled();
+    await act(async () => { await vi.advanceTimersByTimeAsync(200); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+
+    vi.clearAllMocks();
+    for (let second = 1; second <= 25; second++) {
+      await act(async () => { editor.setMarkdown(`쉬지 않고 ${second}`); });
+      await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    }
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: expect.stringMatching(/^쉬지 않고 (19|20|21)$/) }], {});
+  });
+
+  it("sends only the part that changed: the body alone, or the title alone", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+
+    await act(async () => { editor.setMarkdown("본문만 바뀜"); });
+    await act(async () => { await editor.save(); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+    expect(api.updatePostMetadata).not.toHaveBeenCalled();
+
+    await act(async () => { editor.setTitle("제목만 바뀜"); });
+    await act(async () => { await editor.save(); });
+    expect(api.updatePostMetadata).toHaveBeenCalledTimes(1);
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+  });
+
+  it("saves at once when the tab goes to the background", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+    await act(async () => { editor.setMarkdown("탭을 떠나기 직전"); });
+    const visibility = vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    await act(async () => { document.dispatchEvent(new Event("visibilitychange")); await vi.advanceTimersByTimeAsync(0); });
+    visibility.mockRestore();
+    expect(api.replaceBlocks).toHaveBeenCalledWith(16, [{ type: "PARAGRAPH", content: "탭을 떠나기 직전" }], {});
+  });
+});

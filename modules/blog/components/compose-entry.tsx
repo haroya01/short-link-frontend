@@ -9,20 +9,19 @@ import {
   type RefObject,
 } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { blogHref } from "@/lib/host";
 import type { ComposeTriggerProps } from "@/components/common/app-header";
 import { BottomSheet } from "@/components/common/bottom-sheet";
-import { useToast } from "@/components/ui/toast";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
-import { emitNotePosted } from "@/modules/blog/lib/consequence-events";
+import { emitNotePosted, holdArrivingNote } from "@/modules/blog/lib/consequence-events";
+import { BLOG_MEMORY, readFeedMemory } from "@/modules/blog/lib/feed-memory";
 import { NoteDraftsSheet } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
 import { noteDraftLabel, useNoteDrafts, type NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
-import { openNote } from "@/modules/notes/lib/note-href";
 
 const RECENT_DRAFTS = 3;
 
@@ -52,10 +51,8 @@ type Choice = { key: string; label: string; hint?: string; href?: string; onSele
 
 export function ComposeEntry({ variant, className, label, children }: ComposeTriggerProps) {
   const t = useTranslations("compose");
-  const locale = useLocale();
   const router = useRouter();
   const ago = useCompactTime();
-  const { toast } = useToast();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState<{ draft?: NoteDraft } | null>(null);
@@ -157,10 +154,12 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
         onClose={() => setNoteOpen(null)}
         onPosted={(note) => {
           setNoteOpen(null);
-          toast(t("notePosted"), "default", {
-            action: { label: t("viewNote"), onClick: () => openNote(note, locale, router.push) },
-          });
-          emitNotePosted(note);
+          if (emitNotePosted(note)) return;
+          holdArrivingNote(note);
+          const sort = readFeedMemory(BLOG_MEMORY) === "following" ? "following" : "recent";
+          const url = new URL(blogHref(`/?sort=${sort}`), window.location.href);
+          if (url.origin === window.location.origin) router.push(url.pathname + url.search);
+          else window.location.assign(url.href);
         }}
       />
     </>

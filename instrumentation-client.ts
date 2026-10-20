@@ -3,10 +3,10 @@ import { validSentryDsn } from "@/lib/sentry-dsn";
 
 const dsn = validSentryDsn(process.env.NEXT_PUBLIC_SENTRY_DSN);
 
-// Schedule Replay setup off the boot critical path so its recording buffers
-// don't add init cost / CPU while the app is still hydrating. Replay stays
-// self-hosted and in buffer mode (replaysOnErrorSampleRate: 1.0) - it only
-// misses the rare crash within the first idle window after load.
+// Load Replay from the Sentry CDN off the boot critical path so neither its code nor its recording
+// buffers cost anything while the app is still hydrating. Replay stays in buffer mode
+// (replaysOnErrorSampleRate: 1.0) - it only misses the rare crash within the first idle window
+// after load, or when the CDN script is blocked.
 function whenIdle(callback: () => void): void {
   if (typeof window === "undefined") return;
   const ric = window.requestIdleCallback;
@@ -28,9 +28,9 @@ if (dsn) {
   });
 
   whenIdle(() => {
-    Sentry.getClient()?.addIntegration(
-      Sentry.replayIntegration({ maskAllText: false, blockAllMedia: true }),
-    );
+    Sentry.lazyLoadIntegration("replayIntegration")
+      .then((replay) => Sentry.getClient()?.addIntegration(replay({ maskAllText: false, blockAllMedia: true })))
+      .catch(() => undefined);
   });
 }
 

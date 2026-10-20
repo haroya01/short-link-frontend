@@ -66,14 +66,14 @@ test("빈 작성창을 닫으면 아무 알림도 없고 임시저장도 생기�
 
 test("올리면 그 임시저장이 이어 쓰기에서 사라진다", async ({ page }) => {
   await seed(page, "kurl:note-drafts:1", [draft()]);
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await trigger(page).click({ timeout: 30_000 });
   await page.getByRole("menuitem", { name: /어제 쓰던 노트/ }).click();
   await expect(body(page)).toHaveValue("어제 쓰던 노트");
   await dialog(page).getByRole("button", { name: "올리기" }).click();
   const notice = page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" });
   await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
-  await expect(page.getByText("노트를 올렸어요")).toBeVisible();
+  await expect(page.locator("article[data-note-id]").first()).toContainText("어제 쓰던 노트");
   await trigger(page).click();
   await expect(page.getByRole("menuitem", { name: /어제 쓰던 노트/ })).toHaveCount(0);
 });
@@ -116,7 +116,7 @@ test("사진이 있던 임시저장은 사진이 남지 않았다고 말한다",
 
 test("노트 피드의 작성창은 펼쳤을 때만 '임시저장 N'을 보여 주고, 고른 임시저장을 그 자리에서 잇는다", async ({ page }) => {
   await seed(page, "kurl:note-drafts:1", [draft()]);
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId("note-drafts-button")).toHaveCount(0);

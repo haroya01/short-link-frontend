@@ -19,12 +19,12 @@ async function post(page: Page, text: string) {
 }
 
 test("the reply icon in the feed opens a sheet for that note, and the posted reply counts and can be opened", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const seed = page.locator('article[data-note-id="3"]').first();
   await expect(seed).toBeVisible({ timeout: 30_000 });
   await expect(replyButton(page, 3)).toHaveAccessibleName("답글 쓰기 1");
   await replyButton(page, 3).click();
-  await expect(page).toHaveURL(/\/blog\/notes$/);
+  await expect(page).toHaveURL(/\/blog$/);
 
   await expect(sheet(page).getByRole("heading", { name: "답글" })).toBeVisible();
   await expect(sheet(page).getByTestId("note-reply-target")).toContainText("오늘 쓴 글의 씨앗");

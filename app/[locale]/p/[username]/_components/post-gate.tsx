@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -115,15 +115,17 @@ export function PostGate({
       onRegion={() => setView({ kind: "locked", reason: "REGION" })}
     />
   );
-  if (ready || view.reason === "REGION") return gate;
+  if (view.reason === "REGION") return gate;
   return (
     <>
-      <div data-auth-slot="anon" className="contents">
+      <div data-auth-slot={ready ? undefined : "anon"} className="contents">
         {gate}
       </div>
-      <div data-auth-slot="authed" className="contents">
-        <BodySkeleton />
-      </div>
+      {!ready && (
+        <div data-auth-slot="authed" className="contents">
+          <BodySkeleton />
+        </div>
+      )}
     </>
   );
 }
@@ -211,9 +213,15 @@ function PasswordGate({
 }) {
   const t = useTranslations("publicPost.gate");
   const errorId = useId();
+  const field = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
   const [problem, setProblem] = useState<UnlockProblem | null>(null);
+
+  useEffect(() => {
+    const typed = field.current?.value;
+    if (typed) setPassword(typed);
+  }, []);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -240,6 +248,7 @@ function PasswordGate({
       </p>
       <div className="mt-4 flex max-w-sm gap-2">
         <input
+          ref={field}
           type="password"
           value={password}
           onChange={(e) => {

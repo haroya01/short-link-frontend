@@ -96,63 +96,24 @@ export function NoteList({
   return (
     <div>
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
-        {shown.map((note) => {
-          const thread = note.thread;
-          const next = thread?.preview[0];
-          const replace = (changed: Note) =>
-            setItems((current) => current.map((c) => (c.id === changed.id ? changed : c)));
-          return (
-            <div key={note.id}>
-              <div className={next ? "relative" : undefined}>
-                {next && (
-                  <span
-                    aria-hidden
-                    className="absolute -bottom-4 left-[17px] top-14 w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
-                  />
-                )}
-                <NoteCard
-                  note={note}
-                  isNew={fresh.has(note.id)}
-                  repostedBy={repostedBy ?? note.repostedBy?.username}
-                  onQuoted={onQuoted}
-                  showsPin={showsPin}
-                  context={contextFor?.(note)}
-                  position={next && thread ? `1/${thread.total}` : undefined}
-                  filteredBy={(() => {
-                    const verdict = verdicts.get(note.id);
-                    return verdict?.action === "warn" ? verdict.phrases : undefined;
-                  })()}
-                  onChange={(changed) => {
-                    if (changed.pinned !== note.pinned) {
-                      reload();
-                      return;
-                    }
-                    replace({ ...changed, thread: changed.thread ?? note.thread });
-                  }}
-                  onDelete={(id) => setItems((current) => current.filter((c) => c.id !== id))}
-                />
-              </div>
-              {next && thread && (
-                <NoteCard
-                  note={next}
-                  onQuoted={onQuoted}
-                  position={`2/${thread.total}`}
-                  onChange={(changed) => replace({ ...note, thread: { ...thread, preview: [changed] } })}
-                  onDelete={() => replace({ ...note, thread: null })}
-                />
-              )}
-              {next && thread && thread.total > 2 && (
-                <BlogLink
-                  href={noteHref(note, locale)}
-                  data-testid={`note-thread-more-${note.id}`}
-                  className="focus-ring mb-3 ml-12 inline-block rounded text-[13px] font-medium text-slate-700 hover:underline dark:text-slate-300"
-                >
-                  {t("threadMore", { count: thread.total - 2 })}
-                </BlogLink>
-              )}
-            </div>
-          );
-        })}
+        {shown.map((note) => (
+          <NoteFeedRow
+            key={note.id}
+            note={note}
+            isNew={fresh.has(note.id)}
+            repostedBy={repostedBy ?? note.repostedBy?.username}
+            onQuoted={onQuoted}
+            showsPin={showsPin}
+            context={contextFor?.(note)}
+            filteredBy={(() => {
+              const verdict = verdicts.get(note.id);
+              return verdict?.action === "warn" ? verdict.phrases : undefined;
+            })()}
+            onReplace={(changed) => setItems((current) => current.map((c) => (c.id === changed.id ? changed : c)))}
+            onPinChanged={reload}
+            onRemove={(id) => setItems((current) => current.filter((c) => c.id !== id))}
+          />
+        ))}
       </div>
       {hasNext && (
         <div className="mt-6 flex justify-center">
@@ -165,6 +126,83 @@ export function NoteList({
             {t("loadMore")}
           </button>
         </div>
+      )}
+    </div>
+  );
+}
+
+export function NoteFeedRow({
+  note,
+  isNew = false,
+  repostedBy,
+  onQuoted,
+  showsPin = false,
+  context,
+  filteredBy,
+  onReplace,
+  onPinChanged,
+  onRemove,
+}: {
+  note: Note;
+  isNew?: boolean;
+  repostedBy?: string;
+  onQuoted?: (note: Note) => void;
+  showsPin?: boolean;
+  context?: React.ReactNode;
+  filteredBy?: string[];
+  onReplace: (note: Note) => void;
+  onPinChanged?: () => void;
+  onRemove: (id: number) => void;
+}) {
+  const t = useTranslations("notes");
+  const locale = useLocale();
+  const thread = note.thread;
+  const next = thread?.preview[0];
+  return (
+    <div>
+      <div className={next ? "relative" : undefined}>
+        {next && (
+          <span
+            aria-hidden
+            className="absolute -bottom-4 left-[17px] top-14 w-0.5 rounded-full bg-slate-200 dark:bg-slate-800"
+          />
+        )}
+        <NoteCard
+          note={note}
+          arrive={isNew}
+          repostedBy={repostedBy}
+          onQuoted={onQuoted}
+          showsPin={showsPin}
+          context={context}
+          position={next && thread ? `1/${thread.total}` : undefined}
+          filteredBy={filteredBy}
+          onChange={(changed) => {
+            if (changed.pinned !== note.pinned && onPinChanged) {
+              onPinChanged();
+              return;
+            }
+            onReplace({ ...changed, thread: changed.thread ?? note.thread });
+          }}
+          onDelete={onRemove}
+        />
+      </div>
+      {next && thread && (
+        <NoteCard
+          note={next}
+          onQuoted={onQuoted}
+          position={`2/${thread.total}`}
+          onChange={(changed) => onReplace({ ...note, thread: { ...thread, preview: [changed] } })}
+          onDelete={() => onReplace({ ...note, thread: null })}
+        />
+      )}
+      {next && thread && thread.total > 2 && (
+        <BlogLink
+          href={noteHref(note, locale)}
+          data-testid={`note-thread-more-${note.id}`}
+          className="focus-ring mb-3 ml-12 inline-block rounded text-[13px] font-medium text-slate-700 hover:underline dark:text-slate-300"
+        >
+          {t("threadMore", { count: thread.total - 2 })}
+        </BlogLink>
       )}
     </div>
   );

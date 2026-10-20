@@ -23,7 +23,13 @@ const DELETE = [
   "settings.profile.imageUploader.remove",
   "postEditor.keptDiscard",
 ];
-const CLEAR = ["publicFeed.searchClear", "publicFeed.tagFilterClear", "savedLibrary.clearHistory", "dashboard.filters.clearAll"];
+const CLEAR = [
+  "publicFeed.searchClear",
+  "publicFeed.recentSearchesClear",
+  "publicFeed.tagFilterClear",
+  "savedLibrary.clearHistory",
+  "dashboard.filters.clearAll",
+];
 const REMOVE = [
   "savedLibrary.remove",
   "settings.profile.removeLink",
@@ -70,6 +76,7 @@ describe("delete, clear and remove verbs", () => {
   it("ko keeps 지우- only for clearing, and no longer says 제거 outside the legal pages", () => {
     const clearing = new Set([
       "publicFeed.searchClear",
+      "publicFeed.recentSearchesClear",
       "publicFeed.tagFilterClear",
       "savedLibrary.clearHistory",
       "savedLibrary.clearHistoryConfirm",

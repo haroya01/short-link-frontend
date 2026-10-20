@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectOnTop, toastBy } from "./helpers/on-top";
+import { toastBy } from "./helpers/on-top";
 
 const header = (page: Page) => page.locator("header.vt-app-header");
 const desktopTrigger = (page: Page) => header(page).locator('[data-compose-trigger="desktop"]');
@@ -26,8 +26,8 @@ test.describe("desktop", () => {
     await expect(desktopTrigger(page)).toBeFocused();
   });
 
-  test("노트 opens the note composer over the page and the new note lands on the notes feed", async ({ page }) => {
-    await page.goto("/ko/blog/notes");
+  test("노트 opens the note composer over the page and the new note lands on 홈", async ({ page }) => {
+    await page.goto("/ko/blog");
     await desktopTrigger(page).click({ timeout: 30_000 });
     await page.getByRole("menuitem", { name: /노트/ }).click();
     const dialog = page.getByRole("dialog", { name: "새 노트" });
@@ -37,10 +37,10 @@ test.describe("desktop", () => {
     await dialog.getByRole("button", { name: "올리기" }).click();
     const notice = page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" });
     await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
-    await expectOnTop(toastBy(page, "노트를 올렸어요"));
     await expect(dialog).toHaveCount(0);
     await expect(page.locator("article", { hasText: "헤더에서 바로 쓴 노트" }).first()).toBeVisible();
-    await expect(page).toHaveURL(/\/ko\/blog\/notes$/);
+    await expect(page).toHaveURL(/\/ko\/blog$/);
+    await expect(toastBy(page, "노트를 올렸어요")).toHaveCount(0);
   });
 
   test("긴 글 opens the blog editor on a new post", async ({ page }) => {

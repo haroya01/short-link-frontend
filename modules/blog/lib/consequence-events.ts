@@ -37,16 +37,33 @@ export function onFollowChanged(handler: () => void): () => void {
   return () => window.removeEventListener("kurl:follow-changed", listener);
 }
 
-export function emitNotePosted(note: Note) {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent<{ note: Note }>("kurl:note-posted", { detail: { note } }));
+/** Returns whether a feed on this page took the note in (and shows it arriving). */
+export function emitNotePosted(note: Note): boolean {
+  if (typeof window === "undefined") return false;
+  return !window.dispatchEvent(new CustomEvent<{ note: Note }>("kurl:note-posted", { detail: { note }, cancelable: true }));
 }
 
-export function onNotePosted(handler: (note: Note) => void): () => void {
+/** The handler returns true when it shows the note. */
+export function onNotePosted(handler: (note: Note) => boolean): () => void {
   if (typeof window === "undefined") return () => {};
-  const listener = (e: Event) => handler((e as CustomEvent<{ note: Note }>).detail.note);
+  const listener = (e: Event) => {
+    if (handler((e as CustomEvent<{ note: Note }>).detail.note)) e.preventDefault();
+  };
   window.addEventListener("kurl:note-posted", listener);
   return () => window.removeEventListener("kurl:note-posted", listener);
+}
+
+let arriving: Note | null = null;
+
+/** A note posted away from any feed, waiting for the feed it is sent to. */
+export function holdArrivingNote(note: Note) {
+  arriving = note;
+}
+
+export function takeArrivingNote(): Note | null {
+  const note = arriving;
+  arriving = null;
+  return note;
 }
 
 /** A note quoting a post was just posted — the post's "notes" tab can show it without a refetch. */

@@ -14,9 +14,10 @@ test("ja: the compose entry says 書く, my posts say 記事, and 投稿 is left
   await expect(page.getByRole("heading", { level: 1, name: "記事一覧" })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole("link", { name: "記事", exact: true }).first()).toHaveAttribute("href", /\/write$/);
 
-  await page.goto("/ja/blog/notes");
+  await page.goto("/ja/blog");
   await expect(page.getByRole("button", { name: "投稿", exact: true })).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByText(/^今週 \d+人が使いました$/).first()).toBeVisible();
+  await page.goto("/ja/blog/explore");
+  await expect(page.getByText(/^今週 \d+人が使いました$/).first()).toBeVisible({ timeout: 30_000 });
 });
 
 test("ja: a confirm question ends in a full-width mark", async ({ page }) => {
@@ -28,7 +29,13 @@ test("ja: a confirm question ends in a full-width mark", async ({ page }) => {
 
 test("en: a counted line goes through the plural, and a connection reads as who added it where", async ({ page }) => {
   await page.goto("/en/blog");
-  await expect(page.locator("main").getByText(/^In “.+” and 2 more collections$/).first()).toBeVisible({ timeout: 30_000 });
+  const belonging = page.locator("main").getByText(/^In “.+” and 2 more collections$/).first();
+  await expect(page.getByTestId("home-feed")).toBeVisible({ timeout: 30_000 });
+  for (let i = 0; i < 20 && !(await belonging.isVisible()); i++) {
+    await page.mouse.wheel(0, 900);
+    await page.waitForTimeout(250);
+  }
+  await expect(belonging).toBeVisible();
   await expect(page.locator("main li[data-connection-event]").first().locator("> div").first()).toContainText(
     "added this to",
   );

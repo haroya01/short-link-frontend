@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChartBar, Check, ChevronDown, Clock, ImagePlus, Loader2, MessageCircle, X } from "lucide-react";
+import { Camera, ChartBar, Check, ChevronDown, Clock, ImagePlus, Loader2, MessageCircle, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
@@ -143,6 +143,8 @@ export function NoteComposer({
   const when = useWhen();
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
+  const camera = useCoarsePointer();
   const draftId = useRef<string | null>(draft?.id ?? null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(draft?.id ?? null);
   const keepsDrafts = !inReplyToId && me != null;
@@ -714,6 +716,32 @@ export function NoteComposer({
             >
               <ImagePlus className="h-5 w-5" strokeWidth={1.75} aria-hidden />
             </button>
+            {camera && (
+              <>
+                <input
+                  ref={cameraInput}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  hidden
+                  data-testid="note-camera-input"
+                  onChange={(e) => {
+                    addFiles(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => cameraInput.current?.click()}
+                  disabled={images.length >= NOTE_MAX_IMAGES || poll !== null}
+                  aria-label={t("takePhoto")}
+                  title={t("takePhoto")}
+                  className="focus-ring rounded-full p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                >
+                  <Camera className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                </button>
+              </>
+            )}
             <button
               type="button"
               onClick={() => setPoll((current) => (current ? null : emptyPoll()))}
@@ -822,4 +850,10 @@ export function TextToggle({
       {children}
     </button>
   );
+}
+
+function useCoarsePointer(): boolean {
+  const [touch, setTouch] = useState(false);
+  useEffect(() => setTouch(window.matchMedia?.("(pointer: coarse)").matches === true), []);
+  return touch;
 }

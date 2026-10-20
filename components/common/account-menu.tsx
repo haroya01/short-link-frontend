@@ -23,6 +23,7 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { MeAvatar, cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
 import { blogHref, type Product } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -159,18 +160,40 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
                 <BarChart3 className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("analytics")}
               </a>
-              {/* The viewer's private reading library — bookmarks + likes, both on the workspace
-                  curation page (a private tool, not an owner-only tab on the public profile). */}
-              <a href={blogHref("/curation")} role="menuitem" className={itemClass}>
-                <Bookmark className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                {t("library")}
-              </a>
               {/* 내 컬렉션 — the reader's own collections/paths (private included), the make-side twin of
                   the discover feed. */}
               <a href={blogHref("/collections")} role="menuitem" className={itemClass}>
                 <Layers className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("myCollections")}
               </a>
+              <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+              <div role="group" aria-labelledby="account-menu-collected" data-testid="account-collected">
+                <p id="account-menu-collected" className="px-3 pb-1 pt-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400">
+                  {t("collected")}
+                </p>
+                <a href={blogHref("/curation")} role="menuitem" className={itemClass}>
+                  <Bookmark className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                  {t("library")}
+                </a>
+                <BlogChromeLink
+                  href={blogHref("/notes?feed=bookmarks")}
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className={itemClass}
+                >
+                  <span aria-hidden className="h-4 w-4" />
+                  {t("noteBookmarks")}
+                </BlogChromeLink>
+                <BlogChromeLink
+                  href={blogHref("/notes?feed=lists")}
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className={itemClass}
+                >
+                  <span aria-hidden className="h-4 w-4" />
+                  {t("noteLists")}
+                </BlogChromeLink>
+              </div>
             </>
           )}
 

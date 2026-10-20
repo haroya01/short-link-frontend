@@ -245,6 +245,24 @@ export function mockFeedView({
   return { items, page: 0, size: 24, hasNext: false };
 }
 
+/** Tags on the mock posts a query matches, ranked by how many of those posts carry them, the query's own
+ *  words left out — the shape of GET /public/search/related. */
+export function mockRelatedTags(q: string, limit = 8): { tag: string; posts: number; notes: number }[] {
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  if (q.trim().length < 2) return [];
+  const counts = new Map<string, number>();
+  for (const item of mockFeedView({ q }).items) {
+    for (const tag of item.tags) {
+      if (words.includes(tag.toLowerCase())) continue;
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([tag, posts]) => ({ tag, posts, notes: 0 }));
+}
+
 export const MOCK_POPULAR_TAGS: TagCount[] = [
   { tag: "개발", count: 8 },
   { tag: "상품", count: 3 },

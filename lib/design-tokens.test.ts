@@ -26,7 +26,7 @@ const ROOTS = ["app", "components", "modules", "hooks"];
 const EXCLUDED = /(\.test\.|fixtures|mock-data|demo-data|\.design-sync[\\/]|_lib[\\/]theme\.ts)/;
 
 const BLOG_SURFACES =
-  /^(?!.*-setting\.tsx$)(?!.*publish-celebration\.tsx$)(modules[\\/]notes[\\/]|modules[\\/]blog[\\/]components[\\/](?!editor[\\/]|workspace[\\/])|modules[\\/]blog[\\/]lib[\\/]follow-toggle\.ts$|app[\\/]\[locale\][\\/]p[\\/]|app[\\/]\[locale\][\\/]blog[\\/](browse|collections|curation|feed|follow-requests|notes|notifications|remote|series|tags)[\\/]|app[\\/]\[locale\][\\/]blog[\\/](page|blog-chrome|layout|template)\.tsx$|components[\\/]common[\\/](app-header|notification-bell|blog-header-search|blog-bottom-nav|account-sheet)\.tsx$)/;
+  /^(?!.*-setting\.tsx$)(?!.*publish-celebration\.tsx$)(modules[\\/]notes[\\/]|modules[\\/]blog[\\/]components[\\/](?!editor[\\/]|workspace[\\/])|modules[\\/]blog[\\/]lib[\\/]follow-toggle\.ts$|app[\\/]\[locale\][\\/]p[\\/]|app[\\/]\[locale\][\\/]blog[\\/](browse|collections|curation|explore|feed|follow-requests|notes|notifications|remote|series|tags)[\\/]|app[\\/]\[locale\][\\/]blog[\\/](page|blog-chrome|layout|template)\.tsx$|components[\\/]common[\\/](app-header|notification-bell|blog-header-search|blog-bottom-nav|account-sheet)\.tsx$)/;
 
 const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegExp; onlyFile?: RegExp }[] = [
   {
@@ -49,7 +49,7 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
   {
     name: "열린 네트워크 밖의 지구본 Globe",
     pattern: /\bGlobe\b/,
-    allowFile: /(feed-more-menu|notes-feed|note-visibility|remote-account|federation-setting|my-collections-list|collection-detail-view|connect-sheet)\.tsx$/,
+    allowFile: /(feed-more-menu|remote-feed|note-visibility|remote-account|federation-setting|my-collections-list|collection-detail-view|connect-sheet)\.tsx$/,
   },
   {
     name: "cubic-bezier 하드코딩",

@@ -9,6 +9,7 @@ vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}`,
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("next-view-transitions", () => ({ Link: () => null, useTransitionRouter: () => ({ push: vi.fn() }) }));
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => "/blog/write/7001",
   useRouter: () => intlRouter,

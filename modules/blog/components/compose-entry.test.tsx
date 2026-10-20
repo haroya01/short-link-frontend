@@ -193,16 +193,32 @@ describe("the 글쓰기 chooser", () => {
     expect(document.activeElement).toBe(trigger());
   });
 
-  it("a posted note toasts with 보기, which opens the new note", async () => {
+  it("a posted note goes to the feed that shows it, held for that feed to settle in, with no toast", async () => {
+    const { takeArrivingNote } = await import("@/modules/blog/lib/consequence-events");
     await render("desktop");
     await open();
     await act(async () => choices()[0].click());
     await act(async () => mocks.onPosted!({ id: 77, author: { username: "dohyun" } }));
-    expect(mocks.toast).toHaveBeenCalledWith("notePosted", "default", {
-      action: { label: "viewNote", onClick: expect.any(Function) },
+    expect(mocks.toast).not.toHaveBeenCalled();
+    expect(mocks.push).toHaveBeenCalledWith(expect.stringMatching(/\/\?sort=recent$/));
+    expect(takeArrivingNote()).toMatchObject({ id: 77 });
+  });
+
+  it("a posted note stays on the page when a feed here takes it in", async () => {
+    const { onNotePosted, takeArrivingNote } = await import("@/modules/blog/lib/consequence-events");
+    const taken: number[] = [];
+    const off = onNotePosted((note) => {
+      taken.push(note.id);
+      return true;
     });
-    mocks.toast.mock.calls[0][2].action.onClick();
-    expect(mocks.push).toHaveBeenCalledWith(expect.stringMatching(/dohyun.*\/notes\/77$/));
+    await render("desktop");
+    await open();
+    await act(async () => choices()[0].click());
+    await act(async () => mocks.onPosted!({ id: 78, author: { username: "dohyun" } }));
+    off();
+    expect(taken).toEqual([78]);
+    expect(mocks.push).not.toHaveBeenCalled();
+    expect(takeArrivingNote()).toBeNull();
   });
 
   it("opens a bottom sheet dialog on mobile with the same choices", async () => {

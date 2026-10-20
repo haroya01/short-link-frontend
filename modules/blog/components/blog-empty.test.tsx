@@ -49,6 +49,7 @@ const FIRST_RUN = new Set([
   "modules/blog/components/subscribed-series-feed.tsx",
   "modules/notes/components/notes-feed.tsx",
   "modules/notes/components/note-lists.tsx",
+  "modules/notes/components/remote-feed.tsx",
   "app/[locale]/blog/notifications/page.tsx",
 ]);
 

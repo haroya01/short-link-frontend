@@ -91,6 +91,8 @@ function editorAddress(post: PostView | null): string {
 }
 
 const HISTORY_GUARD = "kurlEditorGuard";
+const AUTOSAVE_IDLE_MS = 4000;
+const AUTOSAVE_MAX_WAIT_MS = 20000;
 
 // Spreading the current state keeps Next's app-router keys (__NA, tree); an entry without them makes
 // the router reload the page when Back lands on it.
@@ -184,6 +186,9 @@ export function usePostEditor(
   // Signature of the last successfully-saved payload — skip an autosave that would re-send identical
   // content (the idle effect re-fires on unrelated dep changes; a failing endpoint shouldn't thrash).
   const lastSaved = useRef<string>("");
+  const lastSavedMeta = useRef<string | null>(null);
+  const lastSavedBody = useRef<string | null>(null);
+  const unsavedSince = useRef<number | null>(null);
   // 편집 시퀀스 — 저장이 도는 사이 들어온 타이핑을 감지한다. save() 시작 시점의 값과 완료 시점의
   // 값이 다르면 그 사이 새 편집이 있었다는 뜻이라 dirty 를 지우지 않는다(무경고 손실 방지).
   const editSeq = useRef(0);
@@ -308,6 +313,8 @@ export function usePostEditor(
       setBlockedCountriesRaw(p.blockedCountries ?? []);
       setDirty(false); // freshly loaded content isn't a pending edit
       lastSaved.current = ""; // new content baseline — let the first real edit save
+      lastSavedMeta.current = null;
+      lastSavedBody.current = null;
       setReloadKey((k) => k + 1); // remount the editor so it seeds from the (re)loaded content
       setKept(readStorageJson(keptKey(id), isKept, null));
     } catch (e) {
@@ -331,12 +338,36 @@ export function usePostEditor(
     // 결정적(4xx)·과다 실패로 정지된 상태면 재무장하지 않는다 — 다음 편집(touchDirty)이 해제한다.
     if (autoRetryBlocked.current) return;
     // 연속 실패 시 지수 백오프 — 실패하는 페이로드를 ~2초마다 무한 재전송하지 않도록 간격을 늘린다.
-    const delay = failStreak.current === 0 ? 1800 : Math.min(1800 * 2 ** failStreak.current, 30000);
+    unsavedSince.current ??= Date.now();
+    const idle = Math.min(AUTOSAVE_IDLE_MS, Math.max(0, AUTOSAVE_MAX_WAIT_MS - (Date.now() - unsavedSince.current)));
+    const delay = failStreak.current === 0 ? idle : Math.min(AUTOSAVE_IDLE_MS * 2 ** failStreak.current, 30000);
     const id = window.setTimeout(() => void save(), delay);
     return () => window.clearTimeout(id);
     // save is intentionally omitted — content deps re-arm the timer with the latest closure.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, audience, password, blockedCountries, post, saving, busy, conflict]);
+
+  useEffect(() => {
+    if (!dirty) unsavedSince.current = null;
+  }, [dirty]);
+
+  const saveWhenHidden = useRef<() => void>(() => {});
+  saveWhenHidden.current = () => {
+    const draft = post ? post.status === "DRAFT" : postId == null;
+    if (draft && dirty && !busy && !conflict && !autoRetryBlocked.current) void save();
+  };
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") saveWhenHidden.current();
+    };
+    const onPageHide = () => saveWhenHidden.current();
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onPageHide);
+    };
+  }, []);
 
   // Single flight: an autosave and an image upload arriving together still create one draft.
   function ensurePost(): Promise<PostView> {
@@ -431,9 +462,10 @@ export function usePostEditor(
           const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
           const chosen = coverUrl != null && coverChosen;
           const access = audiencePatch(post, { audience, password, blockedCountries });
-          const sig = JSON.stringify([
-            title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, md, audience, blockedCountries, password,
+          const metaSig = JSON.stringify([
+            title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, audience, blockedCountries, password,
           ]);
+          const sig = JSON.stringify([metaSig, md]);
           if (sig === lastSaved.current) {
             setDirty(false);
             setSaveFailed(false);
@@ -455,7 +487,14 @@ export function usePostEditor(
           const overwrite = overwriteNext.current;
           overwriteNext.current = false;
           let slugRejection: unknown = null;
+          const sendsMeta = metaSig !== lastSavedMeta.current;
+          const sendsBody = md !== lastSavedBody.current;
           const writeContent = async (): Promise<PostView> => {
+            if (!sendsMeta) {
+              const put = await replaceBlocks(post.id, blocks, guardFrom(baseVersion.current, overwrite));
+              baseVersion.current = put.contentVersion ?? baseVersion.current;
+              return post;
+            }
             let patched: PostView;
             try {
               patched = await updatePostMetadata(post.id, {
@@ -469,8 +508,10 @@ export function usePostEditor(
               patched = await updatePostMetadata(post.id, { ...meta, ...access, ...guardFrom(baseVersion.current, overwrite) });
             }
             baseVersion.current = patched.contentVersion ?? baseVersion.current;
-            const put = await replaceBlocks(post.id, blocks, guardFrom(baseVersion.current));
-            baseVersion.current = put.contentVersion ?? baseVersion.current;
+            if (sendsBody) {
+              const put = await replaceBlocks(post.id, blocks, guardFrom(baseVersion.current));
+              baseVersion.current = put.contentVersion ?? baseVersion.current;
+            }
             return patched;
           };
           let updated: PostView;
@@ -495,6 +536,8 @@ export function usePostEditor(
           if (slugRejection) throw slugRejection;
           setSlugError(null);
           lastSaved.current = sig;
+          lastSavedMeta.current = metaSig;
+          lastSavedBody.current = md;
           setLastSavedAt(new Date());
           failStreak.current = 0;
           autoRetryBlocked.current = false;
@@ -554,7 +597,7 @@ export function usePostEditor(
   }
 
   // Tab close / refresh / hard navigation with unsaved edits → native "leave site?" prompt. Drafts
-  // are mostly covered by autosave, but the 1.8s debounce window and every non-DRAFT edit (which only
+  // are mostly covered by autosave, but the autosave wait and every non-DRAFT edit (which only
   // persists on an explicit action) would otherwise discard silently.
   useEffect(() => {
     if (!unsaved) return;
@@ -575,7 +618,7 @@ export function usePostEditor(
     return () => setEditorDirty(false);
   }, [unsaved]);
 
-  // Save a dirty DRAFT first so the last keystrokes (still inside the 1.8s autosave debounce) aren't
+  // Save a dirty DRAFT first so the last keystrokes (still inside the autosave wait) aren't
   // lost. Published posts persist only via explicit actions, so a dirty one asks before discarding
   // instead of navigating the edits away without a word.
   async function readyToLeave(): Promise<boolean> {

@@ -11,7 +11,7 @@ async function boxes(rows: Locator): Promise<Box[]> {
   );
 }
 
-async function openFeed(page: Page, path = "/ko/blog") {
+async function openFeed(page: Page, path = "/ko/blog?lang=ko") {
   await page.goto(path);
   await expect(page.locator("main li[data-connection-event]").first()).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('main a[href="/ko/p/kazuki/kyoto-workation"]')).toHaveCount(0, { timeout: 30_000 });

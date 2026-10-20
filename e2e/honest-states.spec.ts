@@ -149,23 +149,6 @@ test.describe("desktop", () => {
     await subscribe.click({ timeout: 30_000 });
     await expect(page.getByRole("button", { name: "구독 중", exact: true })).toBeVisible();
   });
-
-  test("a note posted from the header toasts with 보기, which opens it", async ({ page }) => {
-    await page.goto("/ko/blog");
-    await page.locator('header.vt-app-header [data-compose-trigger="desktop"]').click({ timeout: 30_000 });
-    await page.getByRole("menuitem", { name: /노트/ }).click();
-    const dialog = page.getByRole("dialog", { name: "새 노트" });
-    await dialog.getByRole("textbox").first().fill("피드에서 쓰고 바로 보러 가는 노트");
-    await dialog.getByRole("button", { name: "올리기" }).click();
-    await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" }).getByRole("button", { name: "알겠어요, 올릴게요" }).click();
-
-    const toast = toastBy(page, "노트를 올렸어요");
-    await toast.hover();
-    await page.waitForTimeout(5_000);
-    await expectOnTop(toast);
-    await toast.getByRole("button", { name: "보기" }).click();
-    await page.waitForURL(/\/dohyun\/notes\/\d+$/, { timeout: 30_000 });
-  });
 });
 
 test.describe("phone", () => {
@@ -179,12 +162,11 @@ test.describe("phone", () => {
     await expect(tab).toHaveText("알림");
   });
 
-  test("the search sheet says it couldn't search, and retries", async ({ page }) => {
+  test("둘러보기 says it couldn't search, and retries", async ({ page }) => {
     await failing(page, "search");
-    await page.goto("/ko/blog");
-    await page.locator("nav").getByText("검색", { exact: true }).last().click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    await sheet.getByRole("searchbox").fill("next");
+    await page.goto("/ko/blog/explore");
+    const sheet = page.locator("main");
+    await sheet.getByRole("searchbox", { name: "검색" }).fill("next", { timeout: 30_000 });
     await expect(sheet.getByRole("alert")).toContainText("검색하지 못했어요");
 
     await recover(page);

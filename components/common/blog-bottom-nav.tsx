@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Home, MessageSquareText, Search, User } from "lucide-react";
+import { Bell, Home, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -11,15 +11,14 @@ import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { AccountSheet } from "@/components/common/account-sheet";
-import { BlogSearchSheet } from "@/components/common/blog-search-sheet";
 import { UnreadDot } from "@/components/common/unread-dot";
 
 const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Five tabs: 홈 · 노트 · 검색 · 알림 · 계정. 검색/계정 open
- * full-width sheets; 홈/노트/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
+ * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 둘러보기 · 알림 · 계정. 계정 opens a
+ * full-width sheet; the rest navigate. 알림 carries the unread badge (mirrors the desktop bell).
  * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
 export function BlogBottomNav() {
@@ -28,7 +27,7 @@ export function BlogBottomNav() {
   const pathname = usePathname();
   const { authenticated } = useAuth();
   const unread = useUnreadCount();
-  const [sheet, setSheet] = useState<null | "search" | "account">(null);
+  const [sheet, setSheet] = useState<null | "account">(null);
   const hidden = useHideOnScroll();
 
   // Tell the cookie banner a bottom tab bar is present so it lifts above it (else it overlays the
@@ -43,7 +42,7 @@ export function BlogBottomNav() {
   // Locale optional: the blog host rewrites a no-locale entry in place (pathname `/`, `/notes`), and
   // also serves `/ko`; dev/preview paths are `/ko/blog`, `/ko/blog-preview`.
   const isHome = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/.test(pathname);
-  const isNotes = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/.test(pathname);
+  const isExplore = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/explore\/?$/.test(pathname);
   const isNotif = sheet === null && /\/notifications(\/|$)/.test(pathname);
 
   return (
@@ -63,23 +62,13 @@ export function BlogBottomNav() {
           {t("home")}
         </BlogChromeLink>
         <BlogChromeLink
-          href={blogHref("/notes")}
-          aria-current={isNotes ? "page" : undefined}
-          className={cn(TAB, isNotes ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
-        >
-          <MessageSquareText className="h-5 w-5" />
-          {t("notes")}
-        </BlogChromeLink>
-        <button
-          type="button"
-          onClick={() => setSheet("search")}
-          aria-expanded={sheet === "search"}
-          aria-haspopup="dialog"
-          className={cn(TAB, sheet === "search" ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
+          href={blogHref("/explore")}
+          aria-current={isExplore ? "page" : undefined}
+          className={cn(TAB, isExplore ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Search className="h-5 w-5" />
-          {t("search")}
-        </button>
+          {t("explore")}
+        </BlogChromeLink>
 
         <BlogChromeLink
           href={blogHref("/notifications")}
@@ -105,7 +94,6 @@ export function BlogBottomNav() {
         </button>
       </nav>
 
-      <BlogSearchSheet open={sheet === "search"} onClose={() => setSheet(null)} />
       <AccountSheet open={sheet === "account"} onClose={() => setSheet(null)} />
     </>
   );

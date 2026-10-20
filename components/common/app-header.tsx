@@ -29,7 +29,7 @@ export type ComposeTriggerProps = {
 
 const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
 const BLOG_HOME_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/;
-const NOTES_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/;
+const EXPLORE_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/explore\/?$/;
 const SECTION_LINK =
   "focus-ring inline-flex h-8 items-center rounded-surface px-2.5 text-[14px] font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800";
 const SECTION_ACTIVE = "text-slate-900 dark:text-slate-100";
@@ -96,7 +96,7 @@ export function AppHeader({
   const pathname = usePathname();
   const inWriting = WRITE_PATH.test(pathname);
   const onBlogHome = BLOG_HOME_PATH.test(pathname);
-  const onNotes = NOTES_PATH.test(pathname);
+  const onExplore = EXPLORE_PATH.test(pathname);
 
   const writeButtonClass =
     "focus-ring hidden h-8 items-center gap-1.5 rounded-surface px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex";
@@ -171,6 +171,21 @@ export function AppHeader({
     </>
   );
 
+  const authSlots = (render: (authed: boolean) => ReactNode) => (
+    <>
+      {showAuthed !== false && (
+        <span data-auth-slot={showAuthed === null ? "authed" : undefined} className="contents">
+          {render(true)}
+        </span>
+      )}
+      {showAuthed !== true && (
+        <span data-auth-slot={showAuthed === null ? "anon" : undefined} className="contents">
+          {render(false)}
+        </span>
+      )}
+    </>
+  );
+
   return (
     <header className="vt-app-header sticky top-0 z-30">
       <div className="relative">
@@ -208,14 +223,14 @@ export function AppHeader({
                 aria-current={onBlogHome ? "page" : undefined}
                 className={cn(SECTION_LINK, onBlogHome ? SECTION_ACTIVE : SECTION_IDLE)}
               >
-                {t("posts")}
+                {t("home")}
               </ChromeNavLink>
               <ChromeNavLink
-                href={blogHref("/notes")}
-                aria-current={onNotes ? "page" : undefined}
-                className={cn(SECTION_LINK, onNotes ? SECTION_ACTIVE : SECTION_IDLE)}
+                href={blogHref("/explore")}
+                aria-current={onExplore ? "page" : undefined}
+                className={cn(SECTION_LINK, onExplore ? SECTION_ACTIVE : SECTION_IDLE)}
               >
-                {t("notes")}
+                {t("explore")}
               </ChromeNavLink>
             </nav>
           )}
@@ -230,28 +245,12 @@ export function AppHeader({
             거슬린다는 피드백. 콘텐츠 앱의 주 행동을 우상단 고정(헤더는 sticky)으로. slim 공개
             표면 전용 — 워크스페이스는 이미 글쓰기 안이고, 우측 클러스터가 모바일에도 살아 있어
             원형까지 끼면 헤더가 넘친다(워드마크 위 겹침 버그의 절반). */}
-        {product === "blog" &&
-          slimMobile &&
-          (showAuthed === null ? (
-            <>
-              <span data-auth-slot="authed">{mobileWriteCircle(true)}</span>
-              <span data-auth-slot="anon">{mobileWriteCircle(false)}</span>
-            </>
-          ) : (
-            mobileWriteCircle(showAuthed)
-          ))}
+        {product === "blog" && slimMobile && authSlots(mobileWriteCircle)}
         <div
           className={`shrink-0 items-center gap-2 ${slimMobile ? "hidden sm:flex" : "flex"}`}
         >
           <BlogHeaderSearch defaultOpen={searchOpen} />
-          {showAuthed === null ? (
-            <>
-              <span data-auth-slot="authed">{authCluster(true)}</span>
-              <span data-auth-slot="anon">{authCluster(false)}</span>
-            </>
-          ) : (
-            authCluster(showAuthed)
-          )}
+          {authSlots(authCluster)}
         </div>
       </div>
       </div>

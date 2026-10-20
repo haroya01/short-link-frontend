@@ -23,10 +23,10 @@ test("collection renders its title and a connected highlight quote", async ({ pa
   await expect(page.locator("body")).toContainText("좋은 이름은 주석을 지운다.");
 });
 
-test("the old discovery address lands on notes, carrying a quote along", async ({ page }) => {
+test("the old discovery address lands on 홈's composer, carrying a quote along", async ({ page }) => {
   await page.goto("/en/blog/connections?tab=notes&quote=5&quoteTitle=Generics&quoteSlug=typescript-generics&quoteAuthor=dohyun");
-  await expect(page).toHaveURL(/\/en\/blog(-preview)?\/notes\?quote=5&/);
-  await expect(page.getByRole("heading", { level: 1, name: "Notes" })).toBeVisible({ timeout: 30_000 });
+  await expect(page).toHaveURL(/\/en\/blog(-preview)?\/?\?quote=5&/);
+  await expect(page.locator("[data-quoted-post-id='5']").first()).toContainText("Generics", { timeout: 30_000 });
 });
 
 test("unknown collection id is a graceful 404, not a 500 crash", async ({ page }) => {

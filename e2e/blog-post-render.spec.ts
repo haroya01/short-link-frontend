@@ -236,9 +236,9 @@ test("feed → post is a client-side navigation (so loading skeletons show, no f
   ).toBe("alive");
 });
 
-test("feed home is one reading column and a series row opens its series", async ({ page }) => {
+test("a post list is one reading column and a series row opens its series", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog?lang=ko");
   await page.waitForLoadState("networkidle");
 
   const rows = page.locator("main ul > li h2");
@@ -320,7 +320,7 @@ test("imported markdown renders cleanly and heading links stay short", async ({ 
 test("a feed title is set in its own language, not the page's", async ({ page }) => {
   // The mock feed is Korean. On the Japanese page its titles must still break between words
   // (keep-all) instead of inheriting the page's per-character Japanese breaking.
-  await page.goto("/ja/blog");
+  await page.goto("/ja/blog?lang=ko");
   const title = page.locator("main ul > li h2").first();
   await expect(title).toBeVisible({ timeout: 15_000 });
   await expect(title).toHaveAttribute("lang", "ko");

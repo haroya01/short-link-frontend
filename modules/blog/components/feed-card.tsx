@@ -25,7 +25,7 @@ export function FeedList({ children }: { children: ReactNode }) {
   );
 }
 
-function SeriesLine({
+export function SeriesLine({
   item,
   series,
   locale,

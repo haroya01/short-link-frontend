@@ -5,6 +5,7 @@ import {
   forgetFeedMemory,
   readFeedMemory,
   rememberedBlogTab,
+  rememberedHomeTab,
   rememberedNotesFeed,
   writeFeedMemory,
 } from "./feed-memory";
@@ -34,6 +35,14 @@ describe("remembered switcher tab", () => {
     expect(rememberedNotesFeed("trending")).toBe("trending");
     expect(rememberedNotesFeed("bookmarks")).toBeNull();
     expect(rememberedNotesFeed("lists")).toBeNull();
+  });
+
+  it("carries a remembered notes tab over to the merged home, 모두 as 최신", () => {
+    expect(rememberedHomeTab("following")).toBe("following");
+    expect(rememberedHomeTab("everyone")).toBe("recent");
+    expect(rememberedHomeTab("trending")).toBe("trending");
+    expect(rememberedHomeTab("bookmarks")).toBeNull();
+    expect(rememberedHomeTab(undefined)).toBeNull();
   });
 
   it("writes a switcher tab to its own surface's cookie and nothing else", () => {

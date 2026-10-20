@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { askToSignIn, type SignInReason } from "@/components/auth/login-prompt";
@@ -11,26 +11,50 @@ import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
 import { resolveRemote } from "@/modules/notes/api/federation-search";
 import { setNoteLike, setRemoteFollow, type Note } from "@/modules/notes/api/notes";
-import { listRemoteTrending, type TrendingNote } from "@/modules/notes/api/remote-trending";
+import {
+  listRemoteNotes,
+  type RemoteNotesPage,
+  type RemoteView,
+  type TrendingNote,
+} from "@/modules/notes/api/remote-trending";
 import { followFailure } from "@/modules/notes/components/remote-account";
 import { openNote } from "./note-href";
 
 export const REMOTE_TRENDING_STALE_MS = 5 * 60_000;
 
-export type RemoteTrending =
+export type RemoteNotes =
   | { state: "loading" }
   | { state: "failed"; retry: () => void }
-  | { state: "ready"; items: TrendingNote[] };
+  | {
+      state: "ready";
+      pages: RemoteNotesPage[];
+      hasMore: boolean;
+      loadingMore: boolean;
+      moreFailed: boolean;
+      more: () => void;
+    };
 
-export function useRemoteTrending(): RemoteTrending {
+export function useRemoteNotes(view: RemoteView): RemoteNotes {
   const { ready, authenticated } = useAuth();
-  const { data, isError, refetch } = useQuery({
-    queryKey: ["notes", "remote-trending", authenticated ? "member" : "anonymous"],
-    queryFn: () => listRemoteTrending(),
-    enabled: ready,
-    staleTime: REMOTE_TRENDING_STALE_MS,
-  });
-  if (data) return { state: "ready", items: data };
+  const { data, isError, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["notes", "remote", view, authenticated ? "member" : "anonymous"],
+      queryFn: ({ pageParam }) => listRemoteNotes(view, pageParam),
+      initialPageParam: null as string | null,
+      getNextPageParam: (last) => last.next,
+      enabled: ready,
+      staleTime: REMOTE_TRENDING_STALE_MS,
+    });
+  if (data) {
+    return {
+      state: "ready",
+      pages: data.pages,
+      hasMore: hasNextPage,
+      loadingMore: isFetchingNextPage,
+      moreFailed: isFetchNextPageError,
+      more: () => void fetchNextPage(),
+    };
+  }
   if (isError) return { state: "failed", retry: () => void refetch() };
   return { state: "loading" };
 }
@@ -63,7 +87,7 @@ export function useTrendingNote(item: TrendingNote) {
       switch (result.state) {
         case "note":
           local.current = result.note;
-          markLiked(result.note.likedByMe === true);
+          if (!liking.current) markLiked(result.note.likedByMe === true);
           return result.note;
         case "signin":
           askToSignIn(reason);
@@ -111,20 +135,34 @@ export function useTrendingNote(item: TrendingNote) {
 
   async function like() {
     if (liking.current) return;
+    if (!authenticated) {
+      askToSignIn("like");
+      return;
+    }
     liking.current = true;
+    const next = !likedNow.current;
+    const step = next ? 1 : -1;
+    const undo = () => {
+      markLiked(!next);
+      setLikeCount((count) => Math.max(count - step, 0));
+    };
+    markLiked(next);
+    setLikeCount((count) => Math.max(count + step, 0));
     try {
       const first = local.current === null;
       const note = await localNote("like");
-      if (!note || (first && note.likedByMe === true)) return;
-      const next = !likedNow.current;
-      const step = next ? 1 : -1;
-      markLiked(next);
-      setLikeCount((count) => Math.max(count + step, 0));
+      if (!note) {
+        undo();
+        return;
+      }
+      if (first && next && note.likedByMe === true) {
+        setLikeCount((count) => Math.max(count - step, 0));
+        return;
+      }
       try {
         await setNoteLike(note.id, next);
       } catch (error) {
-        markLiked(!next);
-        setLikeCount((count) => Math.max(count - step, 0));
+        undo();
         likeFailed(error);
       }
     } finally {
@@ -147,5 +185,27 @@ export function useTrendingNote(item: TrendingNote) {
     }
   }
 
-  return { liked, likeCount, busy, replyTarget, closeReply: () => setReplyTarget(null), open, openAuthor, reply, like, follow };
+  const [quoteTarget, setQuoteTarget] = useState<Note | null>(null);
+
+  async function quote() {
+    const note = await localNote("quote");
+    if (note) setQuoteTarget(note);
+  }
+
+  return {
+    liked,
+    likeCount,
+    busy,
+    replyTarget,
+    closeReply: () => setReplyTarget(null),
+    quoteTarget,
+    closeQuote: () => setQuoteTarget(null),
+    resolve: () => localNote("repost"),
+    open,
+    openAuthor,
+    reply,
+    like,
+    quote,
+    follow,
+  };
 }
