@@ -218,3 +218,27 @@ describe("device drafts", () => {
     expect(stored()).toEqual([]);
   });
 });
+
+describe("the camera button", () => {
+  function pointer(coarse: boolean) {
+    vi.stubGlobal("matchMedia", (query: string) => ({ matches: coarse && query === "(pointer: coarse)" }));
+  }
+  const shoot = () => host.querySelector('button[aria-label="takePhoto"]');
+
+  it("shows on a touch screen, opening the rear camera through the same photo path", async () => {
+    pointer(true);
+    await render();
+    await type("오늘의 하늘");
+    expect(shoot()).not.toBeNull();
+    const input = host.querySelector<HTMLInputElement>('[data-testid="note-camera-input"]')!;
+    expect(input.getAttribute("capture")).toBe("environment");
+    expect(input.accept).toBe("image/*");
+  });
+
+  it("stays away on a mouse screen", async () => {
+    pointer(false);
+    await render();
+    await type("둘");
+    expect(shoot()).toBeNull();
+  });
+});

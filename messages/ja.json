@@ -4323,6 +4323,7 @@
     "visibilityPublic": "誰でも見られます",
     "tooLong": "{max}文字まで書けます",
     "addImage": "写真を追加",
+    "takePhoto": "写真を撮る",
     "removeImage": "写真を外す",
     "imageLimit": "写真は{max}枚まで追加できます",
     "altLabel": "代替テキスト",

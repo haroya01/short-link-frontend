@@ -4323,6 +4323,7 @@
     "visibilityPublic": "Anyone can see this",
     "tooLong": "Notes can be up to {max} characters",
     "addImage": "Add photo",
+    "takePhoto": "Take photo",
     "removeImage": "Remove photo",
     "imageLimit": "You can add up to {max} photos",
     "altLabel": "Alt text",
