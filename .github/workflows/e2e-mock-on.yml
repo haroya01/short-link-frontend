@@ -19,7 +19,7 @@ concurrency:
 jobs:
   e2e-mock-on:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       NEXT_PUBLIC_USE_MOCKS: "1"
       # No network is hit in mock mode, but the build still wants a base defined.
