@@ -14,6 +14,8 @@ import type { Note } from "@/modules/notes/api/notes";
 import { NOTE_ACTION, NoteCard, ShareMenu } from "@/modules/notes/components/note-card";
 import { NoteGlyph } from "@/modules/notes/components/note-glyph";
 import { QuotedPostCard } from "@/modules/notes/components/quoted-post-card";
+import { SeriesLine } from "@/modules/blog/components/feed-card";
+import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 
 function postAsNote(post: HomePost): Note {
   return {
@@ -75,15 +77,21 @@ export function HomePostRow({ post }: { post: HomePost }) {
           seed: post.author.id,
           menu: null,
           content: (
-            <QuotedPostCard
-              post={{ ...post, authorUsername: post.author.username }}
-              detail={{
-                excerpt: post.excerpt,
-                readMinutes: post.readMinutes,
-                cover: post.thumbnailUrl ?? null,
-                languageTag: post.languageTag,
-              }}
-            />
+            <>
+              <QuotedPostCard
+                post={{ ...post, authorUsername: post.author.username }}
+                detail={{
+                  excerpt: post.excerpt,
+                  readMinutes: post.readMinutes,
+                  cover: post.thumbnailUrl ?? null,
+                  languageTag: post.languageTag,
+                }}
+              />
+              {post.series && post.series.postCount > 1 && (
+                <SeriesLine item={post} series={post.series} locale={locale} />
+              )}
+              <PostBelongingLine postId={post.id} />
+            </>
           ),
           footer: (
             <>

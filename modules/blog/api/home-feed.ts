@@ -38,7 +38,7 @@ export async function listHome(
   cursor: string | null = null,
   limit = HOME_PAGE_SIZE,
 ): Promise<FetchResult<HomePage>> {
-  if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHome(tab, cursor, limit, hasViewer())) };
+  if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHome(tab, cursor, hasViewer())) };
   const query = `tab=${tab}&limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
   const result = await fetchPublic<HomePage>(`/api/v1/public/home?${query}`, { tags: [PUBLIC_POSTS_TAG] });
   return result.ok ? { ok: true, data: tidy(result.data) } : result;

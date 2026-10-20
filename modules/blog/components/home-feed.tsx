@@ -3,7 +3,6 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { SignInRow } from "@/components/auth/sign-in-row";
@@ -22,6 +21,7 @@ import { FeedContentTransition } from "@/modules/blog/components/feed-content-tr
 import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { HomePostRow } from "@/modules/blog/components/home-post-row";
+import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 import { onNotePosted } from "@/modules/blog/lib/consequence-events";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import type { Note, QuotedPost } from "@/modules/notes/api/notes";
@@ -64,15 +64,15 @@ export function HomeFeed({
 }) {
   const t = useTranslations("publicFeed");
   const tNotes = useTranslations("notes");
-  const params = useSearchParams();
   const { ready, authenticated } = useAuth();
-  const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
+  const [quote, setQuote] = useState<QuotedPost | null>(null);
   const [posted, setPosted] = useState<Note[]>([]);
   const [draft, setDraft] = useState<NoteDraft | null>(null);
   const reposts = useShowReposts(sort === "following" && ready && authenticated);
   const signedOut = ready && !authenticated;
 
   useEffect(() => onNotePosted((note) => setPosted((current) => [note, ...current])), []);
+  useEffect(() => setQuote(quoteFromParams(new URLSearchParams(window.location.search))), []);
 
   const pickDraft = (next: NoteDraft) => {
     setQuote(next.quote && "post" in next.quote ? next.quote.post : null);
@@ -135,7 +135,9 @@ export function HomeFeed({
             <FollowingFeed locale={locale} suggestedAuthors={suggestedAuthors} />
           ) : (
             <HomeList
-              key={`${sort}:${reposts.version}`}
+              key={sort}
+              refresh={reposts.version}
+              onQuoted={(note) => setPosted((current) => [note, ...current])}
               locale={locale}
               connectionEvents={sort === "following" ? undefined : connectionEvents}
               sort={sort}
@@ -157,11 +159,15 @@ const CONNECTION_EVERY = 5;
 function HomeList({
   locale,
   sort,
+  refresh,
   initial,
   posted,
+  onQuoted,
   connectionEvents: serverConnectionEvents,
 }: {
   locale: string;
+  refresh: number;
+  onQuoted: (note: Note) => void;
   sort: HomeSort;
   initial: HomePage | null;
   posted: Note[];
@@ -186,7 +192,7 @@ function HomeList({
   );
   const { data, isError, refetch, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["home", sort, anonymous ? "anonymous" : "member"],
+      queryKey: ["home", sort, anonymous ? "anonymous" : "member", refresh],
       queryFn: async ({ pageParam }) => {
         const result = await listHome(API_TAB[sort], pageParam);
         if (!result.ok) throw new Error(String(result.status));
@@ -194,7 +200,7 @@ function HomeList({
       },
       initialPageParam: null as string | null,
       getNextPageParam: (last) => last.next,
-      initialData: anonymous && initial ? { pages: [initial], pageParams: [null] } : undefined,
+      initialData: anonymous && initial && refresh === 0 ? { pages: [initial], pageParams: [null] } : undefined,
       placeholderData: keepPreviousData,
       enabled: ready,
       staleTime: 30_000,
@@ -263,6 +269,7 @@ function HomeList({
 
   return (
     <div data-testid="home-feed">
+      <BelongingProvider>
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
         {rows.map((row, i) => (
           <Fragment key={row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`}>
@@ -271,6 +278,7 @@ function HomeList({
                 note={row.note}
                 isNew={fresh.has(row.note.id)}
                 repostedBy={row.note.repostedBy?.username}
+                onQuoted={onQuoted}
                 filteredBy={row.filteredBy}
                 onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
                 onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
@@ -286,6 +294,7 @@ function HomeList({
           </Fragment>
         ))}
       </div>
+      </BelongingProvider>
       {hasNextPage && (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">
           <button

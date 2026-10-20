@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { blogPath } from "@/lib/host";
-import { NOTE_SHELVES, NotesFeed, type NoteShelf } from "@/modules/notes/components/notes-feed";
+import { NotesFeed } from "@/modules/notes/components/notes-feed";
+import { NOTE_SHELVES, type NoteShelf } from "@/modules/notes/lib/note-shelves";
 
 const HOME_SORT: Record<string, string | null> = {
   following: "following",

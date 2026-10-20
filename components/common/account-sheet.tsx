@@ -23,6 +23,7 @@ import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { askToSignIn } from "@/components/auth/login-prompt";
@@ -184,14 +185,14 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
                 <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                 {t("library")}
               </a>
-              <a href={blogHref("/notes?feed=bookmarks")} className={ITEM}>
+              <BlogChromeLink href={blogHref("/notes?feed=bookmarks")} onClick={onClose} className={ITEM}>
                 <span aria-hidden className="h-5 w-5" />
                 {t("noteBookmarks")}
-              </a>
-              <a href={blogHref("/notes?feed=lists")} className={ITEM}>
+              </BlogChromeLink>
+              <BlogChromeLink href={blogHref("/notes?feed=lists")} onClick={onClose} className={ITEM}>
                 <span aria-hidden className="h-5 w-5" />
                 {t("noteLists")}
-              </a>
+              </BlogChromeLink>
             </div>
             {/* The desktop sidebar's remaining entries, which mobile otherwise can't reach. */}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />

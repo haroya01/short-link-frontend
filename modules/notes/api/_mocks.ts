@@ -1585,7 +1585,7 @@ function homePost(item: PublicFeedItem, viewer: boolean): HomePost {
   return { ...item, readMinutes: 1 + (item.id % 5), commentCount: item.id % 4, likedByMe: viewer ? false : null };
 }
 
-export function mockHome(tab: HomeTab, cursor: string | null, limit: number, viewer: boolean): HomePage {
+export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean): HomePage {
   if (tab === "following" && !viewer) return { items: [], next: null };
   const noteList =
     tab === "following" ? mockFollowingNotes(0).items : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;
@@ -1596,7 +1596,7 @@ export function mockHome(tab: HomeTab, cursor: string | null, limit: number, vie
   let p = p0;
   let noteTurn = true;
   const items: HomeItem[] = [];
-  while (items.length < limit && (n < noteList.length || p < postList.length)) {
+  while (n < noteList.length || p < postList.length) {
     const takeNote: boolean =
       n >= noteList.length
         ? false

@@ -23,6 +23,7 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { MeAvatar, cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
 import { blogHref, type Product } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -174,14 +175,24 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
                   <Bookmark className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   {t("library")}
                 </a>
-                <a href={blogHref("/notes?feed=bookmarks")} role="menuitem" className={itemClass}>
+                <BlogChromeLink
+                  href={blogHref("/notes?feed=bookmarks")}
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className={itemClass}
+                >
                   <span aria-hidden className="h-4 w-4" />
                   {t("noteBookmarks")}
-                </a>
-                <a href={blogHref("/notes?feed=lists")} role="menuitem" className={itemClass}>
+                </BlogChromeLink>
+                <BlogChromeLink
+                  href={blogHref("/notes?feed=lists")}
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className={itemClass}
+                >
                   <span aria-hidden className="h-4 w-4" />
                   {t("noteLists")}
-                </a>
+                </BlogChromeLink>
               </div>
             </>
           )}

@@ -16,11 +16,10 @@ import {
   type NoteFeed,
   type NoteListSummary,
 } from "@/modules/notes/api/notes";
+import type { NoteShelf } from "@/modules/notes/lib/note-shelves";
 import { NoteList } from "./note-list";
 import { NoteListTimeline, NoteListUnpicked } from "./note-lists";
 
-export const NOTE_SHELVES = ["bookmarks", "direct", "lists"] as const;
-export type NoteShelf = (typeof NOTE_SHELVES)[number];
 
 const LOADERS: Record<Exclude<NoteShelf, "lists">, (page: number) => Promise<NoteFeed>> = {
   bookmarks: listBookmarkedNotes,
