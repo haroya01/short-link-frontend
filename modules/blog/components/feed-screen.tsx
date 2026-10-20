@@ -10,6 +10,7 @@ import {
   listFeedByTag,
   listPopularTags,
   listPublicFeed,
+  listRelatedTags,
   listSuggestedAuthors,
   searchPublicFeed,
   type FeedSort,
@@ -22,6 +23,7 @@ import { FeedContentTransition } from "./feed-content-transition";
 import { FeedSwitcher } from "./feed-switcher";
 import { BlogEmpty } from "./blog-empty";
 import { SearchEmpty } from "./search-empty";
+import { RelatedTags } from "./related-tags";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { SearchedNotes } from "@/modules/notes/components/searched-notes";
@@ -147,7 +149,7 @@ export async function FeedScreen({
   // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
   const wantTopics = tab === "trending" && !searching;
 
-  const [feedResult, authorsResult, topicsResult, connectionsResult] =
+  const [feedResult, authorsResult, topicsResult, connectionsResult, relatedTags] =
     await Promise.all([
       needFlat
         ? searching
@@ -162,6 +164,7 @@ export async function FeedScreen({
       // 공개 연결 이벤트(비개인화) — 발견 그리드에 몇 칸마다 하나씩. 자체 degrade(빈 배열)라 실패해도
       // 피드는 그대로 뜬다.
       wantConnections ? listPublicConnectionFeed(0, 6) : Promise.resolve(null),
+      searching && !remoteQuery ? listRelatedTags(query) : Promise.resolve([]),
     ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
@@ -175,7 +178,7 @@ export async function FeedScreen({
   // 검색이 비었을 때만 인기 주제를 한 번 더 가져온다 — SearchEmpty 의 "다른 주제 둘러보기" 칩이
   // 빈 배열로 죽어 있던 dead end 수정. 흔치 않은 경로라 순차 fetch 비용은 무시 가능.
   const emptySearchTopics =
-    searching && feedResult && feedResult.ok && feedResult.data.items.length === 0
+    searching && relatedTags.length === 0 && feedResult && feedResult.ok && feedResult.data.items.length === 0
       ? await listPopularTags(8)
       : null;
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
@@ -242,6 +245,7 @@ export async function FeedScreen({
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
         <div className="mx-auto max-w-2xl">
+          {searching && <RelatedTags tags={relatedTags} label={t("relatedTags")} className="mb-5" />}
           <FeedSwitcher
             surface="blog"
             tabs={[
@@ -324,7 +328,17 @@ export async function FeedScreen({
                 // (that would tell a reader on a broken backend the site is empty).
                 <FeedErrorState />
               ) : searching ? (
-                <SearchEmpty query={query} tags={emptySearchTopics?.ok ? emptySearchTopics.data : []} locale={locale} />
+                <SearchEmpty
+                  query={query}
+                  tags={
+                    relatedTags.length > 0
+                      ? relatedTags.map((related) => ({ tag: related.tag, count: related.posts + related.notes }))
+                      : emptySearchTopics?.ok
+                        ? emptySearchTopics.data
+                        : []
+                  }
+                  locale={locale}
+                />
               ) : (
                 <BlogEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}

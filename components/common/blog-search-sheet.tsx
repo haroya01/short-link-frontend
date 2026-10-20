@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import {
   listPublicFeed,
+  listRelatedTags,
   listSuggestedAuthors,
   type PublicFeedItem,
   type SuggestedAuthor,
@@ -27,6 +29,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { RelatedTags } from "@/modules/blog/components/related-tags";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
@@ -47,6 +50,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const { results, loading, failed, retry } = useLiveSearch(value, open, 6);
   const { people, remote, remoteAnswered } = useLivePeople(value, open, 3);
   const completions = useDomainCompletions(value, open);
+  const related = useRelatedTags(value, open);
   const lookup = useLiveRemoteLookup(value, open && !completions.hold);
   const remoteHint =
     !completions.hold &&
@@ -155,6 +159,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       </form>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6" aria-live="polite">
+        {q && related && <RelatedTags tags={related} label={t("relatedTags")} className="px-3 pb-3 pt-1" onPick={onClose} />}
         {!q && (
           <div
             className="pt-2"
@@ -306,4 +311,19 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
     </div>,
     document.body,
   );
+}
+
+function useRelatedTags(value: string, open: boolean) {
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    const id = window.setTimeout(() => setQuery(value.trim()), 300);
+    return () => window.clearTimeout(id);
+  }, [value]);
+  const { data } = useQuery({
+    queryKey: ["search", "related", query],
+    queryFn: () => listRelatedTags(query),
+    enabled: open && query.length >= 2,
+    staleTime: 5 * 60_000,
+  });
+  return query === value.trim() ? data : undefined;
 }
