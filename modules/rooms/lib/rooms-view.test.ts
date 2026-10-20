@@ -5,7 +5,7 @@ import { noteSeen, readTargets, roomLineBreaks } from "./rooms-view";
 const note = (id: number, roomId: number | null) =>
   ({ id, body: "", createdAt: "", room: roomId === null ? null : { id: roomId, name: `r${roomId}` } }) as Note;
 
-describe("the room line in 모두", () => {
+describe("the room line in 전체", () => {
   it("shows only where the room changes from the note above", () => {
     const notes = [note(9, 1), note(8, 1), note(7, 2), note(6, 1), note(5, 1), note(4, 3)];
     expect(roomLineBreaks(notes)).toEqual([true, false, true, true, false, true]);
@@ -16,7 +16,7 @@ describe("the room line in 모두", () => {
   });
 });
 
-describe("what 모두 marks read", () => {
+describe("what 전체 marks read", () => {
   it("keeps the largest note id seen per room", () => {
     let seen = new Map<number, number>();
     for (const n of [note(9, 1), note(7, 2), note(5, 1), note(12, 1), note(3, null)]) seen = noteSeen(seen, n);
