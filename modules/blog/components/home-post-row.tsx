@@ -13,7 +13,9 @@ import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
 import type { Note } from "@/modules/notes/api/notes";
 import { NOTE_ACTION, NoteCard, ShareMenu } from "@/modules/notes/components/note-card";
 import { NoteGlyph } from "@/modules/notes/components/note-glyph";
-import { QuotedPostCard } from "@/modules/notes/components/quoted-post-card";
+import { contentLang } from "@/modules/blog/lib/content-lang";
+import { AudienceMark } from "@/modules/blog/components/audience-mark";
+import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesLine } from "@/modules/blog/components/feed-card";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 
@@ -45,6 +47,7 @@ function postAsNote(post: HomePost): Note {
 
 export function HomePostRow({ post }: { post: HomePost }) {
   const t = useTranslations("notes");
+  const tPost = useTranslations("publicPost");
   const locale = useLocale();
   const router = useRouter();
   const href = postHref(post.author.username, post.slug, locale);
@@ -78,15 +81,35 @@ export function HomePostRow({ post }: { post: HomePost }) {
           menu: null,
           content: (
             <>
-              <QuotedPostCard
-                post={{ ...post, authorUsername: post.author.username }}
-                detail={{
-                  excerpt: post.excerpt,
-                  readMinutes: post.readMinutes,
-                  cover: post.thumbnailUrl ?? null,
-                  languageTag: post.languageTag,
-                }}
-              />
+              <a href={href} data-home-post-body className="focus-ring mt-0.5 flex gap-3 rounded-inner">
+                <span className="min-w-0 flex-1">
+                  <span
+                    lang={contentLang(post.title, post.languageTag)}
+                    className="line-clamp-3 block text-card-title-sm font-bold leading-[1.3] tracking-tight text-slate-900 dark:text-slate-100"
+                  >
+                    {post.title}
+                  </span>
+                  {post.excerpt && (
+                    <span
+                      lang={contentLang(post.excerpt, post.languageTag)}
+                      className="mt-1 line-clamp-2 block text-[14px] leading-snug text-slate-600 dark:text-slate-400"
+                    >
+                      {post.excerpt}
+                    </span>
+                  )}
+                  <span className="mt-1.5 flex min-w-0 items-center gap-1.5 text-[13px] leading-5 text-slate-500 dark:text-slate-400">
+                    <span className="shrink-0">{t("quotedPostKind")}</span>
+                    <span aria-hidden className="text-slate-300 dark:text-slate-600">·</span>
+                    <span className="shrink-0">{tPost("ogReadingTime", { minutes: post.readMinutes })}</span>
+                    <AudienceMark item={post} />
+                  </span>
+                </span>
+                {post.thumbnailUrl && (
+                  <span className="block h-[72px] w-[72px] shrink-0 self-start overflow-hidden rounded-inner bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+                    <CoverThumb src={post.thumbnailUrl} sizes="72px" className="h-full w-full object-cover" />
+                  </span>
+                )}
+              </a>
               {post.series && post.series.postCount > 1 && (
                 <SeriesLine item={post} series={post.series} locale={locale} />
               )}

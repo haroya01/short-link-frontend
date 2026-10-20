@@ -20,9 +20,11 @@ test("홈 lists notes and blog posts in one feed, a post as a row with the post 
   await scrollUntilPresent(feed.locator("[data-post-id]"));
 
   const post = feed.locator("[data-post-id]").first();
-  const card = post.locator("[data-quoted-post-id]");
+  const card = post.locator("[data-home-post-body]");
   await expect(card).toContainText("블로그 글");
   await expect(card).toContainText(/\d+분 읽기/);
+  expect(await card.evaluate((el) => getComputedStyle(el).borderTopWidth)).toBe("0px");
+  await expect(post.locator("[data-quoted-post-id]")).toHaveCount(0);
   await expect(post.getByRole("button", { name: "좋아요", exact: true })).toBeVisible();
   await expect(post.getByRole("link", { name: /^댓글 \d+개$/ })).toHaveAttribute("href", /#comments$/);
   await expect(post.getByRole("button", { name: "북마크", exact: true })).toBeVisible();
