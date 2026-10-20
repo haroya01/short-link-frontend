@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
 import type { FeedMoreItem } from "@/modules/blog/components/feed-more-menu";
-import { onNotePosted } from "@/modules/blog/lib/consequence-events";
+import { onNotePosted, takeArrivingNote } from "@/modules/blog/lib/consequence-events";
 import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
 import { NOTES_MEMORY, readFeedMemory, rememberedNotesFeed, type NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
 import {
@@ -88,8 +88,22 @@ export function NotesFeed() {
     setQuote(next.quote && "post" in next.quote ? next.quote.post : null);
     setDraft(next);
   };
-  useEffect(() => onNotePosted((note) => setPosted((current) => [note, ...current])), []);
   const feed = feedOf(params.get("feed"), savedFeed);
+  const showsPosted = feed === "everyone" || feed === "following";
+  const arrive = useCallback((note: Note) => {
+    setPosted((current) => [note, ...current.filter((n) => n.id !== note.id)]);
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }, []);
+  useEffect(() => {
+    if (!showsPosted) return;
+    const held = takeArrivingNote();
+    if (held) arrive(held);
+    return onNotePosted((note) => {
+      arrive(note);
+      return true;
+    });
+  }, [showsPosted, arrive]);
   const load = useCallback(
     (page: number) => (feed === "lists" ? Promise.resolve({ items: [], page, hasNext: false }) : LOADERS[feed](page)),
     [feed],
@@ -121,7 +135,6 @@ export function NotesFeed() {
     lists: { title: t("listEmpty") },
   };
   const signedOut = ready && !authenticated;
-  const showsPosted = feed === "everyone" || feed === "following";
   const reposts = useShowReposts(feed === "following" && ready && authenticated);
   const lists = useNoteLists(ready && authenticated);
   const openList = feed === "lists" ? (lists?.find((list) => list.id === listId) ?? null) : null;
@@ -170,7 +183,7 @@ export function NotesFeed() {
             quotedNote={draft?.quote && "note" in draft.quote ? draft.quote.note : null}
             onClearQuote={() => setQuote(null)}
             onCreated={(note) => {
-              setPosted((current) => [note, ...current]);
+              arrive(note);
               setDraft(null);
             }}
             draftsButton={(currentId, hidden) => (

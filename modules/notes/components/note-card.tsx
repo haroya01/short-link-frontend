@@ -79,6 +79,7 @@ export function NoteCard({
   onQuoted,
   emphasis = false,
   isNew = false,
+  arrive = false,
   repostedBy,
   showsPin = false,
   filteredBy,
@@ -94,6 +95,7 @@ export function NoteCard({
   onQuoted?: (note: Note) => void;
   emphasis?: boolean;
   isNew?: boolean;
+  arrive?: boolean;
   repostedBy?: string;
   /** Only the author's profile marks pins; on Mastodon a pin means nothing anywhere else. */
   showsPin?: boolean;
@@ -356,7 +358,7 @@ export function NoteCard({
 
   return (
     <article
-      className={cn("py-4", emphasis && "py-5", isNew && "comment-in")}
+      className={cn("py-4", emphasis && "py-5", isNew && "comment-in", arrive && "note-arrive")}
       data-note-id={detached ? undefined : note.id}
     >
       {repostedBy && (
