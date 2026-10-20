@@ -720,6 +720,15 @@ export function NoteComposer({
         </button>
       )}
       <div className="pl-12">
+        {open && destination && (
+          <p
+            data-note-room-audience
+            className="mt-1 flex min-w-0 items-center gap-1 text-[13px] font-medium text-slate-700 dark:text-slate-200"
+          >
+            <VisibilityIcon visibility="room" className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{t("roomAudience", { room: destination.name })}</span>
+          </p>
+        )}
         {open && (
           <div className="-ml-1.5 mt-1 flex flex-wrap items-center gap-x-3 gap-y-2">
             <input
@@ -834,15 +843,7 @@ export function NoteComposer({
                   <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 </label>
               )}
-              {destination ? (
-                <span
-                  data-note-room-audience
-                  className="inline-flex min-w-0 items-center gap-1 text-[13px] font-medium text-slate-700 dark:text-slate-200"
-                >
-                  <VisibilityIcon visibility="room" className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{t("roomAudience", { room: destination.name })}</span>
-                </span>
-              ) : (
+              {destination ? null : (
               <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
                 <VisibilityIcon visibility={visibility ?? "public"} className="h-3.5 w-3.5 shrink-0" />
                 <select
