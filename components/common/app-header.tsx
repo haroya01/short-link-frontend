@@ -171,6 +171,21 @@ export function AppHeader({
     </>
   );
 
+  const authSlots = (render: (authed: boolean) => ReactNode) => (
+    <>
+      {showAuthed !== false && (
+        <span data-auth-slot={showAuthed === null ? "authed" : undefined} className="contents">
+          {render(true)}
+        </span>
+      )}
+      {showAuthed !== true && (
+        <span data-auth-slot={showAuthed === null ? "anon" : undefined} className="contents">
+          {render(false)}
+        </span>
+      )}
+    </>
+  );
+
   return (
     <header className="vt-app-header sticky top-0 z-30">
       <div className="relative">
@@ -230,28 +245,12 @@ export function AppHeader({
             거슬린다는 피드백. 콘텐츠 앱의 주 행동을 우상단 고정(헤더는 sticky)으로. slim 공개
             표면 전용 — 워크스페이스는 이미 글쓰기 안이고, 우측 클러스터가 모바일에도 살아 있어
             원형까지 끼면 헤더가 넘친다(워드마크 위 겹침 버그의 절반). */}
-        {product === "blog" &&
-          slimMobile &&
-          (showAuthed === null ? (
-            <>
-              <span data-auth-slot="authed">{mobileWriteCircle(true)}</span>
-              <span data-auth-slot="anon">{mobileWriteCircle(false)}</span>
-            </>
-          ) : (
-            mobileWriteCircle(showAuthed)
-          ))}
+        {product === "blog" && slimMobile && authSlots(mobileWriteCircle)}
         <div
           className={`shrink-0 items-center gap-2 ${slimMobile ? "hidden sm:flex" : "flex"}`}
         >
           <BlogHeaderSearch defaultOpen={searchOpen} />
-          {showAuthed === null ? (
-            <>
-              <span data-auth-slot="authed">{authCluster(true)}</span>
-              <span data-auth-slot="anon">{authCluster(false)}</span>
-            </>
-          ) : (
-            authCluster(showAuthed)
-          )}
+          {authSlots(authCluster)}
         </div>
       </div>
       </div>

@@ -145,7 +145,7 @@ export default async function RootLayout({
   const authHintScript =
     process.env.NEXT_PUBLIC_USE_MOCKS === "1"
       ? // Mock fixture is the signed-in demo user; no real token exists on first load.
-        "document.documentElement.dataset.authHint='1';"
+        "if(localStorage.getItem('kurl:mock-signed-out')!=='1'){document.documentElement.dataset.authHint='1';}"
       : "if(localStorage.getItem('short-link:access-token')){document.documentElement.dataset.authHint='1';}";
 
   const jsonLd = {
