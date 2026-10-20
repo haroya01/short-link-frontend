@@ -951,7 +951,7 @@ test("with reduced motion a video waits for the reader to press play", async ({ 
 
 test("in 둘러보기, follow suggestions offer a follow and can be set aside", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ko/blog/explore");
+  await page.goto("/ko/blog/explore", { waitUntil: "domcontentloaded" });
   const rail = page.getByTestId("follow-suggestions");
   await expect(rail.getByRole("heading", { name: "팔로우 추천" })).toBeVisible({ timeout: 30_000 });
   await expect(rail.getByTestId("suggestion-haruka")).toContainText("내가 팔로우하는 3명이 팔로우");
