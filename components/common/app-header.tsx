@@ -29,7 +29,7 @@ export type ComposeTriggerProps = {
 
 const WRITE_PATH = /^(\/[a-z]{2})?(\/blog(-preview)?)?\/write(\/|$)/;
 const BLOG_HOME_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/;
-const NOTES_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/notes\/?$/;
+const EXPLORE_PATH = /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/explore\/?$/;
 const SECTION_LINK =
   "focus-ring inline-flex h-8 items-center rounded-surface px-2.5 text-[14px] font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800";
 const SECTION_ACTIVE = "text-slate-900 dark:text-slate-100";
@@ -96,7 +96,7 @@ export function AppHeader({
   const pathname = usePathname();
   const inWriting = WRITE_PATH.test(pathname);
   const onBlogHome = BLOG_HOME_PATH.test(pathname);
-  const onNotes = NOTES_PATH.test(pathname);
+  const onExplore = EXPLORE_PATH.test(pathname);
 
   const writeButtonClass =
     "focus-ring hidden h-8 items-center gap-1.5 rounded-surface px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 sm:inline-flex";
@@ -208,14 +208,14 @@ export function AppHeader({
                 aria-current={onBlogHome ? "page" : undefined}
                 className={cn(SECTION_LINK, onBlogHome ? SECTION_ACTIVE : SECTION_IDLE)}
               >
-                {t("posts")}
+                {t("home")}
               </ChromeNavLink>
               <ChromeNavLink
-                href={blogHref("/notes")}
-                aria-current={onNotes ? "page" : undefined}
-                className={cn(SECTION_LINK, onNotes ? SECTION_ACTIVE : SECTION_IDLE)}
+                href={blogHref("/explore")}
+                aria-current={onExplore ? "page" : undefined}
+                className={cn(SECTION_LINK, onExplore ? SECTION_ACTIVE : SECTION_IDLE)}
               >
-                {t("notes")}
+                {t("explore")}
               </ChromeNavLink>
             </nav>
           )}

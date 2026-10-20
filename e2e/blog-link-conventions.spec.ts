@@ -10,11 +10,11 @@ async function titleColor(row: Locator) {
 }
 
 for (const path of ["/ko/p/minji/pricing-experiment-free-to-pro", "/ko/p/minji"]) {
-  test(`${path} carries the feed header: 글 · 노트 and the 글쓰기 menu`, async ({ page }) => {
+  test(`${path} carries the feed header: 홈 · 둘러보기 and the 글쓰기 menu`, async ({ page }) => {
     await page.goto(path);
     const nav = header(page).getByRole("navigation", { name: "블로그" });
-    await expect(nav.getByRole("link", { name: "글", exact: true })).toBeVisible({ timeout: 30_000 });
-    await expect(nav.getByRole("link", { name: "노트", exact: true })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "홈", exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(nav.getByRole("link", { name: "둘러보기", exact: true })).toBeVisible();
     await expect(nav.locator('[aria-current="page"]')).toHaveCount(0);
     await header(page).locator('[data-compose-trigger="desktop"]').click();
     await expect(page.getByRole("menu", { name: "글쓰기" }).getByRole("menuitem").first()).toHaveText("노트");
@@ -22,7 +22,7 @@ for (const path of ["/ko/p/minji/pricing-experiment-free-to-pro", "/ko/p/minji"]
 }
 
 test("a feed row opens its post from anywhere, and its author link stays the author's", async ({ page }) => {
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog?tag=상품");
   const row = page.locator("main li[data-feed-row]").filter({ has: page.locator('a[href="/ko/p/minji"]') }).first();
   await expect(row).toBeVisible({ timeout: 30_000 });
   const postHref = await row.locator("a:has(h2)").getAttribute("href");
@@ -49,7 +49,7 @@ test("a feed row opens its post from anywhere, and its author link stays the aut
 });
 
 test("⌘/Ctrl-click and middle-click on a note body open the note in a new tab", async ({ page, context }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const body = page.locator("article [data-note-body]").first();
   await expect(body).toBeVisible({ timeout: 30_000 });
   const permalink = await page.locator("article").first().locator("header a:has(time)").getAttribute("href");
@@ -62,7 +62,7 @@ test("⌘/Ctrl-click and middle-click on a note body open the note in a new tab"
   await viaMiddle.waitForURL((url) => url.pathname === permalink, { timeout: 30_000 });
   await viaMiddle.close();
 
-  await expect(page).toHaveURL(/\/ko\/blog\/notes$/);
+  await expect(page).toHaveURL(/\/ko\/blog$/);
 });
 
 test("the series ←/→ are links: a modified click opens a tab, a plain click moves on", async ({ page, context }) => {

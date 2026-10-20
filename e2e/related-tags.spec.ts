@@ -33,15 +33,12 @@ test.describe("desktop", () => {
 test.describe("phone", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("the search sheet shows the same row as you type, and a tag closes the sheet on its page", async ({ page }) => {
-    await page.goto("/ko/blog");
-    await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    await sheet.getByRole("searchbox", { name: "검색" }).fill("spring");
-    const row = sheet.getByRole("list", { name: "관련 태그" });
+  test("둘러보기 shows the same row as you type, and a tag leads to its page", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
+    await page.getByRole("searchbox", { name: "검색" }).fill("spring", { timeout: 30_000 });
+    const row = page.getByRole("list", { name: "관련 태그" });
     await expect(row.getByRole("link")).toHaveText(["#개발"]);
     await row.getByRole("link", { name: "#개발" }).click();
-    await expect(page.getByRole("dialog", { name: "검색" })).toHaveCount(0);
     await expect(page).toHaveURL(/\/tags\/%EA%B0%9C%EB%B0%9C/);
   });
 });

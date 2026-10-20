@@ -36,6 +36,8 @@ import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { TrendingTopics } from "./trending-topics";
 import { FeedErrorState } from "./feed-error-state";
 import { listPublicConnectionFeed, type ConnectionEvent } from "../api/collections";
+import { listHome } from "../api/home-feed";
+import { HomeFeed } from "./home-feed";
 
 // blog.kurl.me is its own surface — the root layout's canonical/OG point at kurl.me (the URL
 // shortener), so the feed must override them or share links preview as the shortener. og:image is
@@ -137,19 +139,20 @@ export async function FeedScreen({
   // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
   // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
   // 인증이 필요한 자체 클라이언트 면(아래에서 각자 그리드로 렌더).
+  const home = !searching && !activeTag && !activeLang && (tab === "following" || tab === "recent" || tab === "trending");
   const showsServerFeed =
-    searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
+    !home && (searching || (tab !== "following" && tab !== "series" && tab !== "for-you"));
   const needFlat = showsServerFeed && !notesView && !peopleView;
   const remoteQuery = searching && remoteQueryDomain(query) !== null;
   // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
   // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
-  const wantConnections = showsServerFeed && !searching && !activeTag;
+  const wantConnections = (showsServerFeed || (home && tab !== "following")) && !searching && !activeTag;
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
   // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
   // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
   const wantTopics = tab === "trending" && !searching;
 
-  const [feedResult, authorsResult, topicsResult, connectionsResult, relatedTags] =
+  const [feedResult, authorsResult, topicsResult, connectionsResult, relatedTags, homeResult] =
     await Promise.all([
       needFlat
         ? searching
@@ -165,6 +168,7 @@ export async function FeedScreen({
       // 피드는 그대로 뜬다.
       wantConnections ? listPublicConnectionFeed(0, 6) : Promise.resolve(null),
       searching && !remoteQuery ? listRelatedTags(query) : Promise.resolve([]),
+      home && tab === "recent" ? listHome("latest") : Promise.resolve(null),
     ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
@@ -240,6 +244,19 @@ export async function FeedScreen({
         <GuestMasthead />
       )}
 
+      {home ? (
+        <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+          <HomeFeed
+            locale={locale}
+            sort={tab as "following" | "recent" | "trending"}
+            initial={homeResult && homeResult.ok ? homeResult.data : null}
+            suggestedAuthors={authors}
+            connectionEvents={connectionEvents}
+            aboveList={wantTopics ? <TrendingTopics topics={topics} locale={locale} activeTag="" /> : undefined}
+          />
+        </div>
+      ) : (
+      <>
       {/* pb-24 gives the last feed card tail room; the layout's pb-20 already clears the bottom tab
           bar, and the body gets extra room while the cookie banner is up (see globals.css).
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
@@ -394,6 +411,8 @@ export async function FeedScreen({
           </div>
         )}
       </div>
+      </>
+      )}
     </>
   );
 }

@@ -15,7 +15,7 @@ test("추천 in the feed's 더 보기 wears binoculars, and nothing on the feed 
 });
 
 test("the composers ask in two words: 노트 쓰기 and 댓글 쓰기", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await expect(page.getByRole("textbox", { name: "노트 쓰기", exact: true })).toBeVisible({ timeout: 30_000 });
 
   await page.goto(POST);

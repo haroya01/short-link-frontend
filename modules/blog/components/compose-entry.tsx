@@ -17,7 +17,7 @@ import type { ComposeTriggerProps } from "@/components/common/app-header";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { emitNotePosted, holdArrivingNote } from "@/modules/blog/lib/consequence-events";
-import { NOTES_MEMORY, readFeedMemory } from "@/modules/blog/lib/feed-memory";
+import { BLOG_MEMORY, readFeedMemory } from "@/modules/blog/lib/feed-memory";
 import { NoteDraftsSheet } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
 import { noteDraftLabel, useNoteDrafts, type NoteDraft } from "@/modules/notes/lib/note-drafts";
@@ -156,8 +156,8 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
           setNoteOpen(null);
           if (emitNotePosted(note)) return;
           holdArrivingNote(note);
-          const feed = readFeedMemory(NOTES_MEMORY) === "following" ? "following" : "everyone";
-          const url = new URL(blogHref(`/notes?feed=${feed}`), window.location.href);
+          const sort = readFeedMemory(BLOG_MEMORY) === "following" ? "following" : "recent";
+          const url = new URL(blogHref(`/?sort=${sort}`), window.location.href);
           if (url.origin === window.location.origin) router.push(url.pathname + url.search);
           else window.location.assign(url.href);
         }}

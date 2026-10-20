@@ -78,11 +78,10 @@ test.describe("desktop", () => {
 test.describe("mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("the search sheet suggests people as you type", async ({ page }) => {
-    await page.goto("/ko/blog");
-    await page.locator("nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    await sheet.getByRole("searchbox", { name: "검색" }).fill("하루");
+  test("둘러보기 suggests people as you type", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
+    const sheet = page.locator("main");
+    await sheet.getByRole("searchbox", { name: "검색" }).fill("하루", { timeout: 30_000 });
     const people = sheet.getByRole("region", { name: "사람" });
     await expect(people.getByRole("link", { name: /하루카/ })).toHaveAttribute("href", /\/p\/haruka$/, {
       timeout: 10_000,

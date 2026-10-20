@@ -26,8 +26,8 @@ test.describe("desktop", () => {
     await expect(desktopTrigger(page)).toBeFocused();
   });
 
-  test("노트 opens the note composer over the page and the new note lands on the notes feed", async ({ page }) => {
-    await page.goto("/ko/blog/notes");
+  test("노트 opens the note composer over the page and the new note lands on 홈", async ({ page }) => {
+    await page.goto("/ko/blog");
     await desktopTrigger(page).click({ timeout: 30_000 });
     await page.getByRole("menuitem", { name: /노트/ }).click();
     const dialog = page.getByRole("dialog", { name: "새 노트" });
@@ -39,7 +39,7 @@ test.describe("desktop", () => {
     await notice.getByRole("button", { name: "알겠어요, 올릴게요" }).click();
     await expect(dialog).toHaveCount(0);
     await expect(page.locator("article", { hasText: "헤더에서 바로 쓴 노트" }).first()).toBeVisible();
-    await expect(page).toHaveURL(/\/ko\/blog\/notes$/);
+    await expect(page).toHaveURL(/\/ko\/blog$/);
     await expect(toastBy(page, "노트를 올렸어요")).toHaveCount(0);
   });
 

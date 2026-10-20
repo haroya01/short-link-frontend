@@ -1,230 +1,89 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { AtSign, Bookmark, Globe, List, Users, type LucideIcon } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AtSign, Bookmark, List, type LucideIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { SignInReason } from "@/components/auth/login-prompt";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
-import { SignInRow } from "@/components/auth/sign-in-row";
-import { useToast } from "@/components/ui/toast";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
-import type { FeedSortTab } from "@/modules/blog/components/feed-sort-tabs";
-import type { FeedMoreItem } from "@/modules/blog/components/feed-more-menu";
-import { onNotePosted, takeArrivingNote } from "@/modules/blog/lib/consequence-events";
-import { FeedSwitcher } from "@/modules/blog/components/feed-switcher";
-import { NOTES_MEMORY, readFeedMemory, rememberedNotesFeed, type NotesSwitcherFeed } from "@/modules/blog/lib/feed-memory";
+import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
 import {
-  getNoteFeedPreferences,
   listBookmarkedNotes,
   listDirectNotes,
-  listEveryoneNotes,
-  listFederatedNotes,
-  listFollowingNotes,
   listNoteLists,
-  listTrendingNotes,
-  setShowReposts,
-  type Note,
   type NoteFeed,
   type NoteListSummary,
-  type QuotedPost,
 } from "@/modules/notes/api/notes";
-import { NoteComposer } from "./note-composer";
-import { NoteDraftsButton } from "./note-drafts-sheet";
-import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
+import type { NoteShelf } from "@/modules/notes/lib/note-shelves";
 import { NoteList } from "./note-list";
 import { NoteListTimeline, NoteListUnpicked } from "./note-lists";
-import { RemoteTrendingGroup } from "./remote-trending";
 
-const TABS = ["following", "everyone", "trending"] as const;
-const MORE = ["federated", "bookmarks", "direct", "lists"] as const;
-const FEEDS = [...TABS, ...MORE] as const;
-type Feed = (typeof FEEDS)[number];
 
-const LOADERS: Record<Exclude<Feed, "lists">, (page: number) => Promise<NoteFeed>> = {
-  everyone: listEveryoneNotes,
-  federated: listFederatedNotes,
-  following: listFollowingNotes,
-  trending: listTrendingNotes,
+const LOADERS: Record<Exclude<NoteShelf, "lists">, (page: number) => Promise<NoteFeed>> = {
   bookmarks: listBookmarkedNotes,
   direct: listDirectNotes,
 };
 
-const PERSONAL: ReadonlySet<Feed> = new Set(["federated", "following", "bookmarks", "direct", "lists"]);
-const SIGN_IN: Partial<Record<Feed, { reason: SignInReason; icon: LucideIcon }>> = {
-  following: { reason: "followingNotes", icon: Users },
-  federated: { reason: "federatedNotes", icon: Globe },
+const SIGN_IN: Record<NoteShelf, { reason: SignInReason; icon: LucideIcon }> = {
   direct: { reason: "direct", icon: AtSign },
   lists: { reason: "lists", icon: List },
   bookmarks: { reason: "noteBookmarks", icon: Bookmark },
 };
 
-function feedOf(value: string | null, saved: NotesSwitcherFeed | null): Feed {
-  if (value === null) return saved ?? "everyone";
-  return FEEDS.find((feed) => feed === value) ?? "everyone";
-}
-
-function quoteFromParams(params: URLSearchParams): QuotedPost | null {
-  const id = Number(params.get("quote"));
-  const title = params.get("quoteTitle");
-  const slug = params.get("quoteSlug");
-  const authorUsername = params.get("quoteAuthor");
-  if (!Number.isInteger(id) || id <= 0 || !title || !slug || !authorUsername) return null;
-  return { id, title, slug, authorUsername };
-}
-
-export function NotesFeed() {
+export function NotesFeed({ shelf, listId = null }: { shelf: NoteShelf; listId?: number | null }) {
   const t = useTranslations("notes");
-  const tFeed = useTranslations("publicFeed");
-  const params = useSearchParams();
-  const pathname = usePathname();
-  const [savedFeed] = useState(() => rememberedNotesFeed(readFeedMemory(NOTES_MEMORY)));
+  const tNav = useTranslations("nav");
   const { ready, authenticated } = useAuth();
-  const [quote, setQuote] = useState<QuotedPost | null>(() => quoteFromParams(params));
-  const [posted, setPosted] = useState<Note[]>([]);
-  const [draft, setDraft] = useState<NoteDraft | null>(null);
-  const pickDraft = (next: NoteDraft) => {
-    setQuote(next.quote && "post" in next.quote ? next.quote.post : null);
-    setDraft(next);
-  };
-  const feed = feedOf(params.get("feed"), savedFeed);
-  const showsPosted = feed === "everyone" || feed === "following";
-  const arrive = useCallback((note: Note) => {
-    setPosted((current) => [note, ...current.filter((n) => n.id !== note.id)]);
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-  }, []);
-  useEffect(() => {
-    if (!showsPosted) return;
-    const held = takeArrivingNote();
-    if (held) arrive(held);
-    return onNotePosted((note) => {
-      arrive(note);
-      return true;
-    });
-  }, [showsPosted, arrive]);
-  const load = useCallback(
-    (page: number) => (feed === "lists" ? Promise.resolve({ items: [], page, hasNext: false }) : LOADERS[feed](page)),
-    [feed],
-  );
-  const listId = Number(params.get("list")) || null;
-  const label: Record<Feed, string> = {
-    everyone: tFeed("recent"),
-    federated: t("feedFederated"),
-    following: tFeed("feed"),
-    trending: tFeed("trending"),
-    bookmarks: t("feedBookmarks"),
+  const lists = useNoteLists(ready && authenticated && shelf === "lists");
+  const title: Record<NoteShelf, string> = {
+    bookmarks: tNav("noteBookmarks"),
     direct: t("feedDirect"),
-    lists: t("feedLists"),
+    lists: tNav("noteLists"),
   };
-  const hrefFor = (key: Feed) => `${pathname}?feed=${key}`;
-  const tabs: FeedSortTab[] = TABS.map((key) => ({
-    key,
-    label: label[key],
-    href: hrefFor(key),
-    active: key === feed,
-  }));
-  const empty: Record<Feed, { title: string; body?: string }> = {
-    everyone: { title: t("emptyAuthor") },
-    federated: { title: t("emptyFederated"), body: t("emptyFederatedBody") },
-    following: { title: t("emptyFollowingTitle"), body: t("emptyFollowing") },
-    trending: { title: t("emptyTrending") },
+  const empty: Record<Exclude<NoteShelf, "lists">, { title: string; body?: string }> = {
     bookmarks: { title: t("emptyBookmarks") },
     direct: { title: t("emptyDirect"), body: t("emptyDirectBody") },
-    lists: { title: t("listEmpty") },
   };
-  const signedOut = ready && !authenticated;
-  const reposts = useShowReposts(feed === "following" && ready && authenticated);
-  const lists = useNoteLists(ready && authenticated);
-  const openList = feed === "lists" ? (lists?.find((list) => list.id === listId) ?? null) : null;
-  const more: FeedMoreItem[] = [
-    { key: "federated", label: label.federated, icon: "globe", href: hrefFor("federated"), active: feed === "federated" },
-    { key: "bookmarks", label: label.bookmarks, icon: "bookmark", href: hrefFor("bookmarks"), active: feed === "bookmarks" },
-    {
-      key: "direct",
-      label: label.direct,
-      shortLabel: t("feedDirectShort"),
-      icon: "mention",
-      href: hrefFor("direct"),
-      active: feed === "direct",
-    },
-    ...(lists ?? []).map((list) => ({
-      key: `list-${list.id}`,
-      label: list.title,
-      icon: "list" as const,
-      href: `${pathname}?feed=lists&list=${list.id}`,
-      active: openList?.id === list.id,
-    })),
-  ];
 
   return (
     <div>
-      <div className="mb-2">
-        <FeedSwitcher
-          surface="notes"
-          tabs={tabs}
-          more={more}
-          toggles={
-            reposts.shown === null
-              ? undefined
-              : [{ key: "reposts", label: t("showReposts"), checked: reposts.shown, onChange: reposts.set }]
-          }
-        />
-      </div>
-      <div className="border-b border-slate-100 dark:border-slate-800">
-        {!ready ? (
-          <div aria-hidden className="h-[60px]" />
-        ) : authenticated ? (
-          <NoteComposer
-            key={draft?.id ?? "feed"}
-            draft={draft}
-            quote={quote}
-            quotedNote={draft?.quote && "note" in draft.quote ? draft.quote.note : null}
-            onClearQuote={() => setQuote(null)}
-            onCreated={(note) => {
-              arrive(note);
-              setDraft(null);
-            }}
-            draftsButton={(currentId, hidden) => (
-              <NoteDraftsButton
-                onPick={pickDraft}
-                currentId={currentId}
-                hidden={hidden}
-                className="shrink-0 self-center whitespace-nowrap"
-              />
-            )}
-          />
-        ) : (
-          <SignInRow reason="note" placeholder={t("composerPlaceholder")} />
-        )}
-      </div>
-      {feed === "federated" && <RemoteTrendingGroup />}
-      {PERSONAL.has(feed) && signedOut ? (
-        <SignInEmptyState {...SIGN_IN[feed]!} />
-      ) : feed === "lists" ? (
-        openList ? (
-          <NoteListTimeline list={openList} />
-        ) : (
-          lists && <NoteListUnpicked hasLists={lists.length > 0} />
-        )
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+        {title[shelf]}
+      </h1>
+      {ready && !authenticated ? (
+        <SignInEmptyState {...SIGN_IN[shelf]} />
+      ) : shelf === "lists" ? (
+        <ListsShelf lists={lists} listId={listId} />
       ) : (
-        <NoteList
-          key={`${feed}:${reposts.version}`}
-          load={load}
-          prepend={showsPosted ? posted : []}
-          onQuoted={(note) => setPosted((current) => [note, ...current])}
-          empty={<BlogEmpty {...empty[feed]} />}
-          filterContext={
-            feed === "following"
-              ? "home"
-              : feed === "everyone" || feed === "federated" || feed === "trending"
-                ? "public"
-                : undefined
-          }
-        />
+        <div className="mt-2">
+          <NoteList key={shelf} load={LOADERS[shelf]} empty={<BlogEmpty {...empty[shelf]} />} />
+        </div>
       )}
     </div>
+  );
+}
+
+function ListsShelf({ lists, listId }: { lists: NoteListSummary[] | null; listId: number | null }) {
+  const pathname = usePathname();
+  if (lists === null) return null;
+  if (lists.length === 0) return <NoteListUnpicked hasLists={false} />;
+  const open = lists.find((list) => list.id === listId) ?? lists[0];
+  return (
+    <>
+      <div className="mt-4 border-b border-slate-100 pb-3.5 dark:border-slate-800">
+        <FeedSortTabs
+          tabs={lists.map((list) => ({
+            key: String(list.id),
+            label: list.title,
+            href: `${pathname}?feed=lists&list=${list.id}`,
+            active: list.id === open.id,
+          }))}
+        />
+      </div>
+      <NoteListTimeline key={open.id} list={open} />
+    </>
   );
 }
 
@@ -241,36 +100,4 @@ function useNoteLists(active: boolean) {
     };
   }, [active]);
   return lists;
-}
-
-function useShowReposts(active: boolean) {
-  const t = useTranslations("notes");
-  const { toast } = useToast();
-  const [shown, setShown] = useState<boolean | null>(null);
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
-    if (!active || shown !== null) return;
-    let live = true;
-    getNoteFeedPreferences()
-      .then((preferences) => live && setShown(preferences.showReposts))
-      .catch(() => live && setShown(true));
-    return () => {
-      live = false;
-    };
-  }, [active, shown]);
-
-  async function set(next: boolean) {
-    const before = shown;
-    setShown(next);
-    try {
-      setShown((await setShowReposts(next)).showReposts);
-      setVersion((v) => v + 1);
-    } catch {
-      setShown(before);
-      toast(t("settingFailed"), "error");
-    }
-  }
-
-  return { shown: active ? shown : null, version, set };
 }

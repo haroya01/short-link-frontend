@@ -2,42 +2,42 @@ import { test, expect, type Page } from "@playwright/test";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock-on lane at phone width: the session is @dohyun. The notes rails that sit beside the feed only on
-// wide screens come to the search sheet here, in the app's order, and the feed's ⋯ menu carries 복사
-// and 신고 as the app's does.
+// wide screens come to 둘러보기 here, in the app's order, and the feed's ⋯ menu carries 복사 and 신고 as
+// the app's does.
 test.use({ viewport: { width: 390, height: 844 } });
 
-async function openSearch(page: Page) {
-  await page.goto("/ko/blog/notes");
-  await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-  return page.getByRole("dialog", { name: "검색" });
+async function openExplore(page: Page) {
+  await page.goto("/ko/blog/explore");
+  const main = page.locator("main");
+  await expect(main.getByRole("searchbox", { name: "검색" })).toBeVisible({ timeout: 30_000 });
+  return main;
 }
 
-test("the resting search sheet carries trending posts, follow suggestions, hashtags and links in the app's order", async ({ page }) => {
-  const sheet = await openSearch(page);
-  await expect(sheet.getByTestId("trending-note-links")).toBeVisible({ timeout: 30_000 });
-  await expect(sheet.getByTestId("follow-suggestions").getByTestId("suggestion-haruka")).toBeVisible();
-  const rails = sheet.locator(
-    "[data-testid='search-idle-trending'], [data-testid='follow-suggestions'], [data-testid='trending-note-tags'], [data-testid='trending-note-links']",
+test("둘러보기 at rest carries hashtags, links and follow suggestions in the app's order", async ({ page }) => {
+  const explore = await openExplore(page);
+  await expect(explore.getByTestId("trending-note-links")).toBeVisible({ timeout: 30_000 });
+  await expect(explore.getByTestId("follow-suggestions").getByTestId("suggestion-haruka")).toBeVisible();
+  const rails = explore.locator(
+    "[data-testid='trending-note-tags'], [data-testid='trending-note-links'], [data-testid='follow-suggestions']",
   );
-  await expect(rails.locator(":scope > h2")).toHaveText(["지금 뜨는 글", "팔로우 추천", "뜨는 해시태그", "뜨는 링크"]);
-  await expect(sheet.getByTestId("search-idle-follow")).toHaveCount(0);
+  await expect(rails.locator(":scope > h2")).toHaveText(["뜨는 해시태그", "뜨는 링크", "팔로우 추천"]);
+  await expect(explore.getByTestId("search-idle-follow")).toHaveCount(0);
 
-  await sheet.getByTestId("trending-note-tags").getByRole("link", { name: /#산책/ }).click();
-  await expect(page.getByRole("dialog", { name: "검색" })).toHaveCount(0);
+  await explore.getByTestId("trending-note-tags").getByRole("link", { name: /#산책/ }).click();
   await expect(page).toHaveURL(/\/tags\/%EC%82%B0%EC%B1%85/);
 });
 
-test("signed out, the sheet keeps the blog's writers to follow in place of the note suggestions", async ({ page }) => {
+test("signed out, 둘러보기 keeps the blog's writers to follow in place of the note suggestions", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.setItem("kurl:mock-signed-out", "1"));
-  const sheet = await openSearch(page);
-  await expect(sheet.getByTestId("search-idle-follow")).toBeVisible({ timeout: 30_000 });
-  await expect(sheet.getByTestId("trending-note-tags")).toBeVisible();
-  await expect(sheet.getByTestId("follow-suggestions")).toHaveCount(0);
+  const explore = await openExplore(page);
+  await expect(explore.getByTestId("search-idle-follow")).toBeVisible({ timeout: 30_000 });
+  await expect(explore.getByTestId("trending-note-tags")).toBeVisible();
+  await expect(explore.getByTestId("follow-suggestions")).toHaveCount(0);
 });
 
 test("a note's ⋯ menu copies its text and reports it", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const lunch = page.locator('article[data-note-id="10"]');
   await expect(lunch).toBeVisible({ timeout: 30_000 });
   await lunch.getByRole("button", { name: "노트 메뉴" }).click();
@@ -58,7 +58,7 @@ test("a note's ⋯ menu copies its text and reports it", async ({ page, context 
 });
 
 test("my own note's ⋯ menu copies but offers no report", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const mine = page.locator('article[data-note-id="6"]');
   await expect(mine).toBeVisible({ timeout: 30_000 });
   await mine.getByRole("button", { name: "노트 메뉴" }).click();

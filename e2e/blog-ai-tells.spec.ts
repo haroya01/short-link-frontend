@@ -33,35 +33,26 @@ test.describe("phone", () => {
     await expect.poll(() => greenFills(page)).toHaveLength(1);
   });
 
-  test("a resting search sheet lists trending posts as rows and who to follow with quiet outlines, no tag pills", async ({ page }) => {
-    await page.goto("/ko/blog");
-    await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    const trending = sheet.getByTestId("search-idle-trending");
-    await expect(trending.getByRole("heading", { name: "지금 뜨는 글" })).toBeVisible();
-    const rows = trending.locator("a[data-bhv='post']");
-    await expect(rows.first()).toBeVisible();
-    const posts = new Set(await rows.evaluateAll((els) => els.map((el) => el.getAttribute("href"))));
-    expect(posts.size).toBeGreaterThan(0);
-    expect(posts.size).toBeLessThanOrEqual(5);
-    const follow = sheet.getByTestId("follow-suggestions");
-    await expect(follow.getByRole("heading", { name: "팔로우 추천" })).toBeVisible();
+  test("둘러보기 at rest offers who to follow with quiet outlines, no tag pills", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
+    const explore = page.locator("main");
+    const follow = explore.getByTestId("follow-suggestions");
+    await expect(follow.getByRole("heading", { name: "팔로우 추천" })).toBeVisible({ timeout: 30_000 });
     const button = follow.getByTestId("follow-button").first();
     await expect(button).toHaveText("팔로우");
     expect(isGreen(await css(button, "background-color"))).toBe(false);
     expect(isGreen(await css(button, "border-top-color"))).toBe(false);
-    await expect(sheet.getByRole("heading", { name: "인기 태그" })).toHaveCount(0);
+    await expect(explore.getByRole("heading", { name: "인기 태그" })).toHaveCount(0);
   });
 
-  test("a search sheet query labels posts in grey and ends in a plain text link to every result", async ({ page }) => {
-    await page.goto("/ko/blog");
-    await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    await sheet.getByRole("searchbox", { name: "검색" }).fill("har");
-    const topic = sheet.getByText("개발", { exact: true }).first();
+  test("a 둘러보기 query labels posts in grey and ends in a plain text link to every result", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
+    const explore = page.locator("main");
+    await explore.getByRole("searchbox", { name: "검색" }).fill("har", { timeout: 30_000 });
+    const topic = explore.getByText("개발", { exact: true }).first();
     await expect(topic).toBeVisible({ timeout: 10_000 });
     expect(isGreen(await css(topic, "color"))).toBe(false);
-    const all = sheet.getByRole("button", { name: "‘har’ 검색 결과" });
+    const all = explore.getByRole("button", { name: "‘har’ 검색 결과" });
     await expect(all).toBeVisible();
     expect(isGreen(await css(all, "color"))).toBe(false);
     expect(isGreen(await css(all, "background-color"))).toBe(false);
@@ -151,8 +142,8 @@ test.describe("desktop", () => {
     await expect.poll(() => greenFills(page)).toEqual([]);
   });
 
-  test("the notes rail draws its trend bars grey and offers follows as quiet outlines on one line", async ({ page }) => {
-    await page.goto("/ko/blog/notes");
+  test("the 둘러보기 rails draw trend bars grey and offer follows as quiet outlines on one line", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
     const tags = page.getByTestId("trending-note-tags");
     await expect(tags).toBeVisible({ timeout: 30_000 });
     const bars = await tags.locator("span[style*='height']").evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));

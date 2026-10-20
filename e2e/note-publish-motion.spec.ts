@@ -24,7 +24,7 @@ async function postFromHeader(page: Page, text: string) {
 test.use({ viewport: { width: 1280, height: 900 } });
 
 test("a note posted from the feed's composer settles in at the top", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await composer.fill("피드에서 쓴 노트", { timeout: 30_000 });
   await page.getByRole("button", { name: "올리기" }).click();
@@ -43,9 +43,9 @@ test("a note posted from the feed's composer settles in at the top", async ({ pa
 });
 
 test("a note posted away from the feed goes to the feed that shows it and settles in there", async ({ page }) => {
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog/explore");
   await postFromHeader(page, "블로그에서 쓴 노트");
-  await expect(page).toHaveURL(/\/notes\?feed=everyone$/, { timeout: 30_000 });
+  await expect(page).toHaveURL(/\?sort=recent$/, { timeout: 30_000 });
   const row = page.locator("article[data-note-id]").first();
   await expect(row).toContainText("블로그에서 쓴 노트");
   expect((await motion(row)).names).toBe("note-arrive, note-wash");
@@ -55,7 +55,7 @@ test("a note posted away from the feed goes to the feed that shows it and settle
 
 test("with reduced motion the note does not move, and only the wash fades", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await postFromHeader(page, "움직이지 않는 노트");
   const row = page.locator("article", { hasText: "움직이지 않는 노트" }).first();
   await expect(row).toBeVisible({ timeout: 30_000 });

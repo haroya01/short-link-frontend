@@ -26,7 +26,7 @@ export function AuthorNotes({ username, initial }: { username: string; initial: 
           action={
             own ? (
               <a
-                href={blogHref("/notes")}
+                href={blogHref("/")}
                 className={blogCta({ variant: "text" })}
               >
                 {t("writeFirst")}

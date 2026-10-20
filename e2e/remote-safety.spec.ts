@@ -156,8 +156,8 @@ test.describe("desktop", () => {
     await expect(list).toHaveCount(0);
   });
 
-  test("follow suggestions beside the feed add accounts elsewhere with their server and a follow", async ({ page }) => {
-    await page.goto("/ko/blog/notes");
+  test("follow suggestions in 둘러보기 add accounts elsewhere with their server and a follow", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
     const rail = page.getByTestId("follow-suggestions");
     await expect(rail.getByTestId("suggestion-haruka")).toBeVisible({ timeout: 30_000 });
     const elsewhere = rail.getByTestId("remote-suggestions");
@@ -185,11 +185,10 @@ test.describe("desktop", () => {
 test.describe("phone", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("the search sheet lists people elsewhere under the people here", async ({ page }) => {
-    await page.goto("/ko/blog");
-    await page.locator("nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    await sheet.getByRole("searchbox", { name: "검색" }).fill("har");
+  test("둘러보기 lists people elsewhere under the people here", async ({ page }) => {
+    await page.goto("/ko/blog/explore");
+    const sheet = page.locator("main");
+    await sheet.getByRole("searchbox", { name: "검색" }).fill("har", { timeout: 30_000 });
     const elsewhere = sheet.getByRole("region", { name: "다른 서버" });
     await expect(elsewhere.getByRole("link", { name: /@haruto@misskey\.io/ })).toHaveAttribute("href", /\/remote\/9801$/, {
       timeout: 10_000,

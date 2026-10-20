@@ -43,8 +43,10 @@ test.describe("desktop account menu", () => {
       /Dohyun Kim\s*@dohyun/,
       "스튜디오",
       "분석",
-      "서재",
       "내 컬렉션",
+      "서재",
+      "노트 북마크",
+      "리스트",
       "설정",
       "로그아웃",
     ]);
@@ -95,4 +97,31 @@ test("the mobile account sheet names my posts 스튜디오 and links 설정", as
   await sheet.getByRole("link", { name: "스튜디오", exact: true }).click();
   await expect(page).toHaveURL(/\/write$/);
   await expect(page.getByRole("heading", { level: 1, name: "내 글", exact: true })).toBeVisible();
+});
+
+test("모아 둔 것 groups 서재, 노트 북마크 and 리스트, and only 서재 carries the bookmark icon", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/ko/blog");
+  await page.getByRole("button", { name: "계정", exact: true }).click();
+  const group = page.getByRole("dialog").getByRole("group", { name: "모아 둔 것" });
+  await expect(group.getByRole("link")).toHaveText(["서재", "노트 북마크", "리스트"]);
+  await expect(group.getByRole("link", { name: "서재" })).toHaveAttribute("href", /\/curation$/);
+  await expect(group.getByRole("link", { name: "노트 북마크" })).toHaveAttribute("href", /\/notes\?feed=bookmarks$/);
+  await expect(group.getByRole("link", { name: "리스트" })).toHaveAttribute("href", /\/notes\?feed=lists$/);
+  await expect(group.locator("svg")).toHaveCount(1);
+
+  await group.getByRole("link", { name: "노트 북마크" }).click();
+  await expect(page).toHaveURL(/\/notes\?feed=bookmarks$/);
+});
+
+test.describe("desktop 모아 둔 것", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("the account menu carries the same 모아 둔 것 group", async ({ page }) => {
+    const menu = await openMenu(page);
+    const group = menu.getByRole("group", { name: "모아 둔 것" });
+    await expect(group.getByRole("menuitem")).toHaveText(["서재", "노트 북마크", "리스트"]);
+    await expect(group.getByRole("menuitem", { name: "리스트" })).toHaveAttribute("href", /\/notes\?feed=lists$/);
+    await expect(group.locator("svg")).toHaveCount(1);
+  });
 });
