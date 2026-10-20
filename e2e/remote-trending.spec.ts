@@ -143,7 +143,7 @@ async function serve(page: Page, { trending: list, latest, resolve }: Serve = {}
 }
 
 async function open(page: Page, query = "") {
-  await page.goto(`/ko/blog/notes?feed=federated${query}`);
+  await page.goto(`/ko/blog/explore${query ? `?${query.replace(/^&/, "")}` : ""}`);
   const group = page.getByTestId("remote-feed");
   return { group, card: (index: number) => group.locator(`[data-remote-uri="${ITEMS[index].uri}"]`) };
 }
@@ -228,7 +228,7 @@ test("최신 lists the latest posts from other servers without the trending line
   await expect(card(0)).toBeVisible({ timeout: 30_000 });
 
   await group.getByRole("navigation").getByRole("link", { name: "최신" }).click();
-  await expect(page).toHaveURL(/feed=federated&remote=latest/);
+  await expect(page).toHaveURL(/\/explore\?remote=latest$/);
   await expect(group.getByRole("navigation").getByRole("link", { name: "최신" })).toHaveAttribute(
     "aria-current",
     "page",

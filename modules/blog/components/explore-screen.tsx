@@ -65,6 +65,13 @@ export function ExploreScreen() {
           type="search"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key !== "ArrowDown") return;
+            const first = document.querySelector<HTMLButtonElement>("[data-domain-completion]");
+            if (!first) return;
+            e.preventDefault();
+            first.focus();
+          }}
           placeholder={t("searchPlaceholder")}
           aria-label={t("searchLabel")}
           className="h-10 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-[16px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-accent-600 focus:ring-2 focus:ring-accent-600/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 [&::-webkit-search-cancel-button]:appearance-none sm:text-[15px]"

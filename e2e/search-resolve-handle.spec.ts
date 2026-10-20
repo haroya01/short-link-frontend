@@ -36,10 +36,11 @@ async function serveResolve(page: Page, answer: (q: string, route: Route) => Pro
 }
 
 async function openSheet(page: Page) {
-  await page.goto("/ko/blog");
-  await page.locator("nav.vt-bottom-nav").getByRole("button", { name: "검색" }).click({ timeout: 30_000 });
-  const sheet = page.getByRole("dialog", { name: "검색" });
-  return { sheet, box: sheet.getByRole("searchbox", { name: "검색" }) };
+  await page.goto("/ko/blog/explore");
+  const sheet = page.locator("main");
+  const box = sheet.getByRole("searchbox", { name: "검색" });
+  await expect(box).toBeVisible({ timeout: 30_000 });
+  return { sheet, box };
 }
 
 test("a handle typed into the sheet is asked of its server once, and the account appears under 다른 서버", async ({
