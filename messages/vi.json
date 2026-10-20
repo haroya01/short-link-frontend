@@ -4883,6 +4883,9 @@
     "inviteMissing": "Liên kết mời không tồn tại",
     "joinFailed": "Không vào được",
     "goHome": "Về trang chủ",
-    "joinInvalid": "Không nhận ra liên kết mời"
+    "joinInvalid": "Không nhận ra liên kết mời",
+    "viewByRoom": "Theo phòng",
+    "viewAll": "Tất cả",
+    "allEmpty": "Các phòng chưa có bài."
   }
 }

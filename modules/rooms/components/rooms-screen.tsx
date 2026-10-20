@@ -37,6 +37,8 @@ import { QuietRoomLine, RoomBlock, RoomsSection } from "./room-block";
 import { CreateRoomDialog, JoinByLinkDialog } from "./room-dialogs";
 import { RoomFaces } from "./room-faces";
 import { RoomsHead } from "./rooms-head";
+import { RoomsAll, type RoomsAllHandle } from "./rooms-all";
+import { readRoomsView, writeRoomsView, type RoomsView } from "@/modules/rooms/lib/rooms-view";
 
 type Phase = { kind: "loading" } | { kind: "failed" } | { kind: "loaded"; rooms: RoomListItem[] };
 
@@ -75,6 +77,8 @@ export function RoomsScreen() {
   const [suggested, setSuggested] = useState<RoomPerson[]>([]);
   const [creating, setCreating] = useState<RoomPerson[] | null>(null);
   const [joining, setJoining] = useState(false);
+  const [view, setView] = useState<RoomsView>("rooms");
+  const all = useRef<RoomsAllHandle>(null);
 
   const load = useCallback(async () => {
     setPhase((current) => (current.kind === "loaded" ? current : { kind: "loading" }));
@@ -97,6 +101,16 @@ export function RoomsScreen() {
   useEffect(() => {
     if (ready && authenticated) void load();
   }, [ready, authenticated, load]);
+
+  useEffect(() => setView(readRoomsView()), []);
+
+  async function switchView(next: RoomsView) {
+    if (next === view) return;
+    if (view === "all") await all.current?.flush();
+    setView(next);
+    writeRoomsView(next);
+    if (next === "rooms") void load();
+  }
 
   const rooms = phase.kind === "loaded" ? phase.rooms : [];
   const { blocks, quiet } = arrangeRooms(rooms);
@@ -162,7 +176,12 @@ export function RoomsScreen() {
 
   return (
     <div data-testid="rooms-screen">
-      <RoomsHead onCreate={() => setCreating(suggested)} onJoin={() => setJoining(true)} />
+      <RoomsHead
+        view={view}
+        onView={(next) => void switchView(next)}
+        onCreate={() => setCreating(suggested)}
+        onJoin={() => setJoining(true)}
+      />
       {phase.kind === "loading" ? (
         <NoteListSkeleton />
       ) : phase.kind === "failed" ? (
@@ -180,6 +199,7 @@ export function RoomsScreen() {
               </ul>
             </RoomsSection>
           )}
+          {view === "all" && <RoomsAll ref={all} empty={rooms.length === 0} />}
           {rooms.length === 0 && (
             <BlogEmpty
               title={t("empty")}
@@ -195,7 +215,7 @@ export function RoomsScreen() {
               }
             />
           )}
-          {blocks.map((room, index) => (
+          {view === "rooms" && blocks.map((room, index) => (
             <RoomBlock
               key={room.id}
               room={room}
@@ -206,7 +226,7 @@ export function RoomsScreen() {
               onRemove={remove}
             />
           ))}
-          {quiet.length > 0 && (
+          {view === "rooms" && quiet.length > 0 && (
             <RoomsSection title={t("quietHeading")} testId="rooms-quiet">
               <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {quiet.map((room) => (
@@ -215,7 +235,7 @@ export function RoomsScreen() {
               </ul>
             </RoomsSection>
           )}
-          {suggested.length > 0 && (
+          {view === "rooms" && suggested.length > 0 && (
             <div data-testid="room-suggestion" className="mt-7 flex items-center gap-2.5">
               <button
                 type="button"
@@ -237,7 +257,7 @@ export function RoomsScreen() {
               </button>
             </div>
           )}
-          {rooms.length > 0 && (
+          {view === "rooms" && rooms.length > 0 && (
             <button
               type="button"
               onClick={() => setJoining(true)}
