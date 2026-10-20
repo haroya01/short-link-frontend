@@ -35,6 +35,7 @@ import {
   type NoteReplyPolicy,
   type NoteVisibility,
   type NoteLinkPreview,
+  type NoteRoom,
   type QuotedNote,
   type QuotedPost,
 } from "@/modules/notes/api/notes";
@@ -51,6 +52,7 @@ import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 import { defaultLocal, earliestLocal, scheduleError, ScheduledNotesPanel, useWhen } from "./scheduled-notes";
 import { MentionTextarea } from "@/modules/mentions/mention-textarea";
+import { listMyRooms } from "@/modules/rooms/api/rooms";
 
 type PendingImage = {
   id: string;
@@ -88,8 +90,10 @@ export function NoteComposer({
   draft = null,
   onDraftChange,
   draftsButton,
+  room = null,
 }: {
   onCreated: (note: Note) => void;
+  room?: NoteRoom | null;
   inReplyToId?: number | null;
   threadReplyPolicy?: NoteReplyPolicy;
   quote?: QuotedPost | null;
@@ -128,7 +132,9 @@ export function NoteComposer({
   const [altEditing, setAltEditing] = useState<string | null>(null);
   const [poll, setPoll] = useState<NotePollDraft | null>(draft?.poll ?? null);
   const [scheduledAt, setScheduledAt] = useState(() => restoredSchedule(draft?.scheduledAt ?? ""));
-  const choosesReplyPolicy = !inReplyToId && !scheduledAt;
+  const [destination, setDestination] = useState<NoteRoom | null>(room);
+  const [rooms, setRooms] = useState<NoteRoom[]>([]);
+  const choosesReplyPolicy = !inReplyToId && !scheduledAt && !destination;
   const [parts, setParts] = useState<{ id: string; body: string }[]>(() =>
     (draft?.parts ?? []).map((part, index) => ({ id: `draft-${index}`, body: part })),
   );
@@ -147,7 +153,8 @@ export function NoteComposer({
   const camera = useCoarsePointer();
   const draftId = useRef<string | null>(draft?.id ?? null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(draft?.id ?? null);
-  const keepsDrafts = !inReplyToId && me != null;
+  const keepsDrafts = !inReplyToId && me != null && !room;
+  const picksDestination = !room && !inReplyToId && me != null;
   const snapshot: Omit<NoteDraft, "id" | "updatedAt"> = {
     body,
     parts: parts.map((part) => part.body),
@@ -166,7 +173,7 @@ export function NoteComposer({
   const persist = useRef<() => void>(() => undefined);
   persist.current = () => {
     if (!keepsDrafts || !me) return;
-    if (hasContent) {
+    if (hasContent && !destination) {
       draftId.current ??= newNoteDraftId();
       saveNoteDraft(me.id, { ...snapshot, id: draftId.current, updatedAt: Date.now() });
     } else if (draftId.current) {
@@ -177,7 +184,7 @@ export function NoteComposer({
     report.current();
   };
   const edited = useRef(false);
-  const snapshotKey = JSON.stringify(snapshot);
+  const snapshotKey = `${JSON.stringify(snapshot)}:${destination?.id ?? ""}`;
   useEffect(() => {
     report.current();
     if (!edited.current) {
@@ -223,7 +230,7 @@ export function NoteComposer({
     (poll === null || (pollReady(poll) && length > 0)) &&
     parts.every((part) => noteLength(part.body) <= NOTE_MAX_LENGTH);
   // A thread cannot be scheduled: the server posts it at once.
-  const canAddPart = !inReplyToId && !scheduledAt && parts.length < NOTE_MAX_THREAD_NOTES - 1;
+  const canAddPart = !inReplyToId && !scheduledAt && !destination && parts.length < NOTE_MAX_THREAD_NOTES - 1;
   const open =
     focused ||
     length > 0 ||
@@ -233,7 +240,9 @@ export function NoteComposer({
     quotedNote !== null ||
     error !== null;
   const textarea = useRef<HTMLTextAreaElement>(null);
-  const placeholder = inReplyToId
+  const placeholder = room
+    ? t("roomPlaceholder", { room: room.name })
+    : inReplyToId
     ? t("replyPlaceholder")
     : quotedNote || quote
       ? t("quotePlaceholder")
@@ -282,8 +291,19 @@ export function NoteComposer({
     }
   }
 
+  useEffect(() => {
+    if (!picksDestination || !open) return;
+    let live = true;
+    listMyRooms()
+      .then((mine) => live && setRooms(mine.map((r) => ({ id: r.id, name: r.name }))))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [picksDestination, open]);
+
   async function acknowledgeFederation(): Promise<boolean> {
-    if (noticeChecked.current) return true;
+    if (noticeChecked.current || destination) return true;
     let needsNotice = true;
     try {
       const settings = await getFederationSettings();
@@ -323,10 +343,11 @@ export function NoteComposer({
         quotedNoteId: quotedNote?.id ?? null,
         contentWarning: warns && warning.trim() ? warning.trim() : null,
         sensitive: images.length > 0 && sensitive,
-        visibility,
+        visibility: destination ? null : visibility,
         poll: poll ? { ...poll, options: poll.options.map((option) => option.trim()) } : null,
         language,
         ...(choosesReplyPolicy && replyPolicy !== "everyone" ? { replyPolicy } : {}),
+        ...(destination ? { roomId: destination.id } : {}),
       };
       rememberLanguage(language);
       if (scheduledAt) {
@@ -399,7 +420,13 @@ export function NoteComposer({
           : "border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500",
       )}
     >
-      {posting ? t("posting") : scheduledAt ? t("scheduleSubmit") : t("submit")}
+      {posting
+        ? t("posting")
+        : scheduledAt
+          ? t("scheduleSubmit")
+          : destination && open
+            ? t("postToRoom", { room: destination.name })
+            : t("submit")}
     </button>
   );
 
@@ -766,7 +793,7 @@ export function NoteComposer({
                 {t("sensitiveToggle")}
               </TextToggle>
             )}
-            {parts.length === 0 && !inReplyToId && (
+            {parts.length === 0 && !inReplyToId && !destination && (
               <button
                 type="button"
                 onClick={() => setScheduledAt((current) => (current ? "" : defaultLocal()))}
@@ -784,6 +811,38 @@ export function NoteComposer({
               </button>
             )}
             <div className="flex min-w-0 flex-auto items-center gap-3">
+              {picksDestination && rooms.length > 0 && parts.length === 0 && (
+                <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
+                  <select
+                    value={destination?.id ?? ""}
+                    onChange={(e) => {
+                      const picked = rooms.find((r) => String(r.id) === e.target.value) ?? null;
+                      setDestination(picked);
+                      if (picked) setScheduledAt("");
+                    }}
+                    aria-label={t("destinationLabel")}
+                    data-note-destination
+                    className="focus-ring min-w-0 max-w-[10rem] cursor-pointer appearance-none truncate rounded bg-transparent hover:text-slate-900 dark:hover:text-white"
+                  >
+                    <option value="">{t("destinationMine")}</option>
+                    {rooms.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                </label>
+              )}
+              {destination ? (
+                <span
+                  data-note-room-audience
+                  className="inline-flex min-w-0 items-center gap-1 text-[13px] font-medium text-slate-700 dark:text-slate-200"
+                >
+                  <VisibilityIcon visibility="room" className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">{t("roomAudience", { room: destination.name })}</span>
+                </span>
+              ) : (
               <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
                 <VisibilityIcon visibility={visibility ?? "public"} className="h-3.5 w-3.5 shrink-0" />
                 <select
@@ -799,6 +858,7 @@ export function NoteComposer({
                   <option value="direct">{t("visibilityDirect")}</option>
                 </select>
               </label>
+              )}
               <div className="ml-auto flex shrink-0 items-center gap-3">
                 <select
                   value={language}
@@ -819,7 +879,7 @@ export function NoteComposer({
             </div>
           </div>
         )}
-        {!inReplyToId && <ScheduledNotesPanel version={scheduledVersion} />}
+        {!inReplyToId && !room && <ScheduledNotesPanel version={scheduledVersion} />}
       </div>
       {confirmDialog}
     </div>

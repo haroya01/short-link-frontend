@@ -1,0 +1,97 @@
+import { describe, expect, it } from "vitest";
+import type { Note } from "@/modules/notes/api/notes";
+import type { RoomListItem } from "@/modules/rooms/api/rooms";
+import { arrangeRooms, dayBreak, isLively, notesOfRoom, pinnedCount } from "./room-bands";
+
+const NOW = Date.parse("2026-10-20T12:00:00+09:00");
+const ago = (hours: number) => new Date(NOW - hours * 3_600_000).toISOString();
+
+function room(id: number, hoursAgo: number | null, extra: Partial<RoomListItem> = {}): RoomListItem {
+  return {
+    id,
+    name: `room ${id}`,
+    memberCount: 3,
+    role: "MEMBER",
+    hiddenFromFeed: false,
+    pinned: false,
+    unreadCount: 0,
+    faces: [],
+    lastActivityAt: hoursAgo === null ? null : ago(hoursAgo),
+    lastNote:
+      hoursAgo === null
+        ? null
+        : { id: id * 10, excerpt: "hi", author: { id: 9, username: "u", displayName: null, avatarUrl: null }, createdAt: ago(hoursAgo) },
+    ...extra,
+  };
+}
+
+const note = (id: number, roomId: number | null, createdAt: string) =>
+  ({ id, body: "", createdAt, room: roomId === null ? null : { id: roomId, name: "r" } }) as Note;
+
+describe("lively or quiet", () => {
+  it("a room is lively while its last note is under a week old", () => {
+    expect(isLively(room(1, 24 * 7 - 1), NOW)).toBe(true);
+    expect(isLively(room(1, 24 * 7), NOW)).toBe(false);
+  });
+
+  it("a room without any note is quiet even when it was just made", () => {
+    expect(isLively(room(1, null, { lastActivityAt: ago(1) }), NOW)).toBe(false);
+  });
+});
+
+describe("arranging the rooms tab", () => {
+  it("puts pinned rooms first, each group newest first as the server orders them, and the rest in the quiet list", () => {
+    const rooms = [
+      room(1, 30),
+      room(2, 1),
+      room(3, 24 * 40),
+      room(4, 24 * 12, { pinned: true }),
+      room(5, null),
+      room(6, 24 * 2, { pinned: true }),
+    ];
+    const { blocks, quiet } = arrangeRooms(rooms, NOW);
+    expect(blocks.map((r) => r.id)).toEqual([6, 4, 2, 1]);
+    expect(quiet.map((r) => r.id)).toEqual([3, 5]);
+  });
+
+  it("a quiet room pinned by the reader comes back up as a block", () => {
+    const before = arrangeRooms([room(1, 2), room(2, 24 * 30)], NOW);
+    expect(before.quiet.map((r) => r.id)).toEqual([2]);
+    const after = arrangeRooms([room(1, 2), room(2, 24 * 30, { pinned: true })], NOW);
+    expect(after.blocks.map((r) => r.id)).toEqual([2, 1]);
+    expect(after.quiet).toEqual([]);
+  });
+
+  it("counts pins", () => {
+    expect(pinnedCount([room(1, 1, { pinned: true }), room(2, 1), room(3, 1, { pinned: true })])).toBe(2);
+  });
+});
+
+describe("splitting the rooms feed", () => {
+  it("gives each room its own two newest notes and never another room's", () => {
+    const feed = [
+      note(1, 1, ago(1)),
+      note(2, 2, ago(2)),
+      note(3, 1, ago(3)),
+      note(4, 1, ago(4)),
+      note(5, null, ago(5)),
+    ];
+    expect(notesOfRoom(feed, 1).map((n) => n.id)).toEqual([1, 3]);
+    expect(notesOfRoom(feed, 2).map((n) => n.id)).toEqual([2]);
+    expect(notesOfRoom(feed, 3)).toEqual([]);
+  });
+});
+
+describe("day breaks in a room", () => {
+  const now = new Date("2026-10-20T12:00:00");
+  const at = (day: number, hour: number) => new Date(2026, 9, day, hour).toISOString();
+
+  it("labels today, yesterday and older days once each", () => {
+    const notes = [note(1, 1, at(20, 11)), note(2, 1, at(20, 9)), note(3, 1, at(19, 23)), note(4, 1, at(15, 8))];
+    const breaks = notes.map((_, i) => dayBreak(notes, i, now));
+    expect(breaks[0]).toEqual({ kind: "today" });
+    expect(breaks[1]).toBeNull();
+    expect(breaks[2]).toEqual({ kind: "yesterday" });
+    expect(breaks[3]).toMatchObject({ kind: "date" });
+  });
+});
