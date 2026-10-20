@@ -25,6 +25,12 @@ test("홈 lists notes and blog posts in one feed, a post as a row with the post 
   await expect(card).toContainText(/\d+분 읽기/);
   expect(await card.evaluate((el) => getComputedStyle(el).borderTopWidth)).toBe("0px");
   await expect(post.locator("[data-quoted-post-id]")).toHaveCount(0);
+  const cover = post.locator("[data-home-post-cover]");
+  if (await cover.count()) {
+    const [coverBox, bodyBox] = [await cover.boundingBox(), await card.boundingBox()];
+    expect(Math.round(coverBox!.width)).toBe(Math.round(bodyBox!.width));
+    expect(coverBox!.width / coverBox!.height).toBeCloseTo(16 / 9, 1);
+  }
   await expect(post.getByRole("button", { name: "좋아요", exact: true })).toBeVisible();
   await expect(post.getByRole("link", { name: /^댓글 \d+개$/ })).toHaveAttribute("href", /#comments$/);
   await expect(post.getByRole("button", { name: "북마크", exact: true })).toBeVisible();

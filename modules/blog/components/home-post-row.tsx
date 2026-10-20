@@ -81,8 +81,8 @@ export function HomePostRow({ post }: { post: HomePost }) {
           menu: null,
           content: (
             <>
-              <a href={href} data-home-post-body className="focus-ring mt-0.5 flex gap-3 rounded-inner">
-                <span className="min-w-0 flex-1">
+              <a href={href} data-home-post-body className="focus-ring mt-0.5 block rounded-inner">
+                <span className="block min-w-0">
                   <span
                     lang={contentLang(post.title, post.languageTag)}
                     className="line-clamp-3 block text-card-title-sm font-bold leading-[1.3] tracking-tight text-slate-900 dark:text-slate-100"
@@ -105,8 +105,11 @@ export function HomePostRow({ post }: { post: HomePost }) {
                   </span>
                 </span>
                 {post.thumbnailUrl && (
-                  <span className="block h-[72px] w-[72px] shrink-0 self-start overflow-hidden rounded-inner bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
-                    <CoverThumb src={post.thumbnailUrl} sizes="72px" className="h-full w-full object-cover" />
+                  <span
+                    data-home-post-cover
+                    className="mt-2.5 block aspect-[16/9] w-full overflow-hidden rounded-surface bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800"
+                  >
+                    <CoverThumb src={post.thumbnailUrl} sizes="(max-width: 640px) 100vw, 600px" className="h-full w-full object-cover" />
                   </span>
                 )}
               </a>
