@@ -79,16 +79,16 @@ function seedRooms(): Room[] {
 }
 
 const POSTS: Post[] = [
-  { id: 9901, roomId: 1, author: MINJI, body: "내일 몇 시에 봐? 저녁 먹고 가도 될 듯", minutesAgo: 3 },
-  { id: 9902, roomId: 1, author: JUNHO, body: "7시 어때. 역 앞 카페에서 모이자", minutesAgo: 9 },
-  { id: 9903, roomId: 1, author: YUKI, body: "지난주 사진 정리해서 올릴게요", minutesAgo: 52 },
-  { id: 9904, roomId: 2, author: KIM, body: "졸업 앨범 사진 받았어? 단체 사진 하나 더 있대", minutesAgo: 60 * 20 },
-  { id: 9906, roomId: 2, author: MINJI, body: "다음 달에 동기 모임 한번 하자. 날짜 몇 개 올려볼게", minutesAgo: 60 * 3 },
-  { id: 9907, roomId: 1, author: ME, body: "다들 7시 괜찮으면 거기서 봐요", minutesAgo: 60 * 6 },
-  { id: 9908, roomId: 1, author: JUNHO, body: "어제 찍은 사진 다들 받았지? 단체 사진은 내가 보정해서 다시 올릴게", minutesAgo: 60 * 27 },
-  { id: 9909, roomId: 5, author: MOM, body: "주말에 김치 보낼게. 받으면 꼭 연락하고 밥 잘 챙겨 먹어", minutesAgo: 60 * 24 * 12 },
-  { id: 9910, roomId: 6, author: HANEUL, body: "사진 앨범 링크 다시 올려요. 다들 받아 가세요", minutesAgo: 60 * 24 * 40 },
-  { id: 9905, roomId: 3, author: YUKI, body: "다음 주는 포트·어댑터 이름 짓기 정리해 올게요", minutesAgo: 60 * 24 * 5 },
+  { id: 9910, roomId: 1, author: MINJI, body: "내일 몇 시에 봐? 저녁 먹고 가도 될 듯", minutesAgo: 3 },
+  { id: 9909, roomId: 1, author: JUNHO, body: "7시 어때. 역 앞 카페에서 모이자", minutesAgo: 9 },
+  { id: 9908, roomId: 1, author: YUKI, body: "지난주 사진 정리해서 올릴게요", minutesAgo: 52 },
+  { id: 9905, roomId: 2, author: KIM, body: "졸업 앨범 사진 받았어? 단체 사진 하나 더 있대", minutesAgo: 60 * 20 },
+  { id: 9907, roomId: 2, author: MINJI, body: "다음 달에 동기 모임 한번 하자. 날짜 몇 개 올려볼게", minutesAgo: 60 * 3 },
+  { id: 9906, roomId: 1, author: ME, body: "다들 7시 괜찮으면 거기서 봐요", minutesAgo: 60 * 6 },
+  { id: 9904, roomId: 1, author: JUNHO, body: "어제 찍은 사진 다들 받았지? 단체 사진은 내가 보정해서 다시 올릴게", minutesAgo: 60 * 27 },
+  { id: 9902, roomId: 5, author: MOM, body: "주말에 김치 보낼게. 받으면 꼭 연락하고 밥 잘 챙겨 먹어", minutesAgo: 60 * 24 * 12 },
+  { id: 9901, roomId: 6, author: HANEUL, body: "사진 앨범 링크 다시 올려요. 다들 받아 가세요", minutesAgo: 60 * 24 * 40 },
+  { id: 9903, roomId: 3, author: YUKI, body: "다음 주는 포트·어댑터 이름 짓기 정리해 올게요", minutesAgo: 60 * 24 * 5 },
 ];
 
 const LONG_ROOM_ID = 1;
@@ -275,7 +275,7 @@ export function mockRoomNotes(id: number, page: number): Promise<NoteFeed> {
 
 export function mockRoomsFeed(page: number, size: number): Promise<NoteFeed> {
   const mine = new Set(state().map((r) => r.id));
-  const all = [...posts].filter((p) => mine.has(p.roomId)).sort(newestFirst);
+  const all = [...posts, ...longRoomPosts()].filter((p) => mine.has(p.roomId)).sort(newestFirst);
   return done({ items: all.slice(page * size, page * size + size).map(noteOf), page, hasNext: all.length > (page + 1) * size });
 }
 
@@ -285,9 +285,13 @@ export function mockFollowingRoomNotes(): Note[] {
   return [...posts].filter((p) => shown.has(p.roomId)).sort(newestFirst).slice(0, 2).map(noteOf);
 }
 
-export function mockRead(id: number): Promise<unknown> {
-  find(id).unread = 0;
-  return done({ unreadCount: 0 });
+export function mockRead(id: number, noteId: number): Promise<unknown> {
+  const r = find(id);
+  const all = roomPosts(id);
+  const upTo = all.find((p) => p.id === noteId);
+  const newer = upTo ? all.filter((p) => postedAt(p) > postedAt(upTo)).length : r.unread;
+  r.unread = Math.min(r.unread, newer);
+  return done({ unreadCount: r.unread });
 }
 
 export function mockFeedHidden(id: number, hidden: boolean): Promise<boolean> {

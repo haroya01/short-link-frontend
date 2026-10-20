@@ -149,7 +149,7 @@ export function listRoomsFeed(page = 0, size = 50): Promise<NoteFeed> {
 }
 
 export function markRoomRead(id: number, noteId: number): Promise<unknown> {
-  if (roomMocks) return roomMocks.mockRead(id);
+  if (roomMocks) return roomMocks.mockRead(id, noteId);
   return request(`${base}/${id}/read`, { method: "POST", body: { noteId } });
 }
 

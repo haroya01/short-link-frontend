@@ -204,3 +204,61 @@ test.describe("desktop", () => {
     await expect(sections.getByRole("link", { name: "방" })).toHaveAttribute("aria-current", "page");
   });
 });
+
+test.describe("모두", () => {
+  test("strings every room's notes together, with the room line only where the room changes", async ({ page }) => {
+    await openRooms(page);
+    await page.getByRole("tab", { name: "모두" }).click();
+    const all = page.getByTestId("rooms-all");
+    const rows = all.locator("article[data-note-id]");
+    await expect(rows).toHaveCount(10);
+    await expect(page.getByTestId("room-invitations")).toBeVisible();
+    await expect(page.getByTestId("room-suggestion")).toHaveCount(0);
+    await expect(page.locator("[data-room-block]")).toHaveCount(0);
+
+    await expect(all.locator('article[data-note-id="9910"] [data-note-room]')).toHaveText("동아리 사람들 방에서");
+    await expect(all.locator('article[data-note-id="9909"] [data-note-room]')).toHaveCount(0);
+    await expect(all.locator('article[data-note-id="9908"] [data-note-room]')).toHaveCount(0);
+    await expect(all.locator('article[data-note-id="9907"] [data-note-room]')).toHaveText("대학 동기 방에서");
+    await expect(all.locator('article[data-note-id="9906"] [data-note-room]')).toHaveText("동아리 사람들 방에서");
+    await expect(all.locator("[data-note-room]")).toHaveCount(8);
+    await expect(all.getByRole("button", { name: /리포스트/ })).toHaveCount(0);
+    await expect(all.getByRole("button", { name: "공유" })).toHaveCount(0);
+    await expect(all.getByRole("img", { name: /멤버만/ })).toHaveCount(0);
+
+    await all.locator('article[data-note-id="9907"] [data-note-room]').click();
+    await expect(page).toHaveURL(/\/rooms\/2$/);
+  });
+
+  test("is remembered on the next visit", async ({ page }) => {
+    await openRooms(page);
+    await page.getByRole("tab", { name: "모두" }).click();
+    await expect(page.getByTestId("rooms-all")).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole("tab", { name: "모두" })).toHaveAttribute("aria-selected", "true", { timeout: 30_000 });
+    await expect(page.getByTestId("rooms-all")).toBeVisible();
+    await page.getByRole("tab", { name: "방별" }).click();
+    await page.reload();
+    await expect(page.locator("[data-room-block]").first()).toBeVisible({ timeout: 30_000 });
+  });
+
+  test("reading there brings 새 글 down when going back to 방별", async ({ page }) => {
+    await openRooms(page);
+    await expect(page.locator('[data-room-block="1"]')).toContainText("새 글 3");
+    await page.getByRole("tab", { name: "모두" }).click();
+    await expect(page.getByTestId("rooms-all").locator("article[data-note-id]").first()).toBeVisible();
+    await page.getByRole("tab", { name: "방별" }).click();
+    await expect(page.locator('[data-room-block="1"]')).toBeVisible();
+    await expect(page.locator('[data-room-block="1"]')).not.toContainText("새 글");
+  });
+
+  test("keeps reading past the first page", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-room-long", "1"));
+    await openRooms(page);
+    await page.getByRole("tab", { name: "모두" }).click();
+    const rows = page.getByTestId("rooms-all").locator("article[data-note-id]");
+    await expect(rows).toHaveCount(20);
+    await page.locator("[data-rooms-all-more]").scrollIntoViewIfNeeded();
+    await expect(rows).toHaveCount(40);
+  });
+});

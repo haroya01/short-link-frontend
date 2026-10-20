@@ -4884,6 +4884,9 @@
     "joinFailed": "入れませんでした",
     "goHome": "ホームへ",
     "joinInvalid": "招待リンクを読み取れませんでした",
-    "linkFailed": "新しいリンクを作れませんでした"
+    "linkFailed": "新しいリンクを作れませんでした",
+    "viewByRoom": "ルームごと",
+    "viewAll": "すべて",
+    "allEmpty": "ルームにまだ投稿がありません。"
   }
 }

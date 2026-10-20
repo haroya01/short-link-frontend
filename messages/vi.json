@@ -4884,6 +4884,9 @@
     "joinFailed": "Không vào được",
     "goHome": "Về trang chủ",
     "joinInvalid": "Không nhận ra liên kết mời",
-    "linkFailed": "Không tạo được liên kết mới"
+    "linkFailed": "Không tạo được liên kết mới",
+    "viewByRoom": "Theo phòng",
+    "viewAll": "Tất cả",
+    "allEmpty": "Các phòng chưa có bài."
   }
 }

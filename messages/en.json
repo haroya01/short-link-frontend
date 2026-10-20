@@ -4884,6 +4884,9 @@
     "joinFailed": "Couldn't join",
     "goHome": "Go home",
     "joinInvalid": "That isn't an invite link",
-    "linkFailed": "Couldn't make a new link"
+    "linkFailed": "Couldn't make a new link",
+    "viewByRoom": "By room",
+    "viewAll": "All",
+    "allEmpty": "No notes in your rooms yet."
   }
 }
