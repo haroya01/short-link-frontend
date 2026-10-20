@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import type { EditorState } from "@tiptap/pm/state";
 
 // mock-on 레인: 글의 문장을 골라 "공개 메모"를 열면 댓글 입력기(RichCommentInput)가 뜬다. 링크 넣기는
 // 긴 글 편집기와 같은 모델이되 카드는 없다(댓글은 [글자](주소) 링크만 그린다).
@@ -33,7 +34,14 @@ async function openNote(page: Page) {
 
 async function selectBack(page: Page, chars: number, expected: string) {
   for (let i = 0; i < chars; i++) await page.keyboard.press("Shift+ArrowLeft");
-  await expect.poll(() => page.evaluate(() => window.getSelection()?.toString())).toBe(expected);
+  await expect
+    .poll(() =>
+      field(page).evaluate((node) => {
+        const { state } = (node as HTMLElement & { editor: { state: EditorState } }).editor;
+        return state.doc.textBetween(state.selection.from, state.selection.to);
+      }),
+    )
+    .toBe(expected);
 }
 
 async function paste(page: Page, text: string) {

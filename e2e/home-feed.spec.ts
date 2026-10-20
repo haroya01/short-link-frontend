@@ -46,6 +46,7 @@ test("a post row's heart likes the post and shows the server's count", async ({ 
   const feed = await openHome(page);
   await scrollUntilPresent(feed.locator("[data-post-id]"));
   const post = feed.locator("[data-post-id]").first();
+  await expect(page.locator("header.vt-app-header [data-auth-slot]")).toHaveCount(0);
   await post.getByRole("button", { name: "좋아요", exact: true }).click();
   const liked = post.getByRole("button", { name: "좋아요 취소" });
   await expect(liked).toHaveAttribute("aria-pressed", "true");

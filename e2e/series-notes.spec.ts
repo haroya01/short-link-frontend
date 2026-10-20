@@ -73,7 +73,7 @@ test("the series navigation walks post → note → post", async ({ page }) => {
 });
 
 test("구독함 places a series note before an older post and loads past a page of notes", async ({ page }) => {
-  await page.goto("/ko/blog?sort=following");
+  await page.goto("/ko/blog?sort=following&lang=ko");
   const note = page.locator('li[data-series-note="40"]');
   await expect(note).toBeVisible({ timeout: 30_000 });
   await expect(note).toContainText("리팩터링 일지");
