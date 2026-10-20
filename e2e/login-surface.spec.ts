@@ -57,8 +57,8 @@ test("로그인 전용 탭과 화면은 같은 빈 상태 하나로 말한다", 
   await page.goto("/ko/blog/notifications");
   await expect(page.getByRole("heading", { name: "알림을 보려면 로그인하세요" })).toBeVisible();
 
-  await page.goto("/ko/blog/notes?feed=following");
-  await expect(page.getByRole("heading", { name: "팔로우한 사람의 노트를 보려면 로그인하세요" })).toBeVisible();
+  await page.goto("/ko/blog?sort=following");
+  await expect(page.getByRole("heading", { name: "팔로우한 작가의 글을 보려면 로그인하세요" })).toBeVisible();
 
   await page.goto("/ko/dashboard");
   const empty = page.getByTestId("sign-in-empty");

@@ -44,7 +44,7 @@ test("blocking from a profile hides their posts, notes and follow button, and un
 
 test("a blocked author's posts leave the feed the reader came from", async ({ page }) => {
   await page.goto("/ko/blog");
-  const byMinji = page.locator('main li a[href="/ko/p/minji"]');
+  const byMinji = page.locator('main [data-post-id] header a[href="/ko/p/minji"]');
   await expect(byMinji.first()).toBeVisible({ timeout: 30_000 });
   await byMinji.first().click();
   await expect(page).toHaveURL(/\/p\/minji$/, { timeout: 30_000 });
@@ -52,7 +52,7 @@ test("a blocked author's posts leave the feed the reader came from", async ({ pa
   await blockFromProfile(page, "minji");
   await page.goBack();
   await expect(page).toHaveURL(/\/blog$/, { timeout: 30_000 });
-  await expect(page.locator('main li a[href="/ko/p/sora"]').first()).toBeVisible();
+  await expect(page.locator('main [data-post-id] header a[href="/ko/p/sora"]').first()).toBeVisible();
   await expect(byMinji).toHaveCount(0);
 });
 

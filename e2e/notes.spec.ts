@@ -11,11 +11,6 @@ test.use({ viewport: { width: 1280, height: 900 } });
 
 const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGP4z8DwHwQZGBgAJmQF+2Sp1QYAAAAASUVORK5CYII=";
 
-async function openMoreFeed(page: Page, name: string) {
-  await page.getByRole("button", { name: "더 보기" }).click({ timeout: 30_000 });
-  await page.getByRole("menuitem", { name }).click();
-}
-
 async function handPhoto(field: Locator, how: "paste" | "drop") {
   await field.evaluate(
     async (node, { how, png }) => {
@@ -33,17 +28,17 @@ async function handPhoto(field: Locator, how: "paste" | "drop") {
   );
 }
 
-test("the header leads from posts to notes", async ({ page }) => {
+test("the header leads from 홈 to 둘러보기", async ({ page }) => {
   await page.goto("/ko/blog");
   const sections = page.getByRole("navigation", { name: "블로그" });
-  await expect(sections.getByRole("link", { name: "글" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
-  await sections.getByRole("link", { name: "노트" }).click();
-  await expect(page.getByRole("heading", { level: 1, name: "노트" })).toBeVisible({ timeout: 30_000 });
-  await expect(sections.getByRole("link", { name: "노트" })).toHaveAttribute("aria-current", "page");
+  await expect(sections.getByRole("link", { name: "홈" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
+  await sections.getByRole("link", { name: "둘러보기" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "둘러보기" })).toBeAttached({ timeout: 30_000 });
+  await expect(sections.getByRole("link", { name: "둘러보기" })).toHaveAttribute("aria-current", "page");
 });
 
 test("the first note asks about federation once, then posts to the top of the feed", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("오늘 쓴 글의 씨앗")).toBeVisible();
@@ -135,7 +130,7 @@ test("photos sit in a sideways strip with ALT, open large, and share copies the 
   await page.addInitScript(() => {
     Object.defineProperty(Navigator.prototype, "share", { value: undefined, configurable: true });
   });
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const walk = page.locator('article[data-note-id="5"]');
   await expect(walk.locator("figure")).toHaveCount(3, { timeout: 30_000 });
 
@@ -158,7 +153,7 @@ test("photos sit in a sideways strip with ALT, open large, and share copies the 
 });
 
 test("share starts a blog post that carries the note as a card", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const walk = page.locator('article[data-note-id="5"]');
   await walk.getByRole("button", { name: "공유" }).click({ timeout: 30_000 });
   await walk.getByRole("menuitem", { name: "블로그 글로 인용" }).click();
@@ -186,7 +181,7 @@ test("a note's quotes list the blog posts that carry it above the notes that quo
 });
 
 test("a picked photo sits in the composer strip and takes alt text from its +ALT badge", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await composer.click({ timeout: 30_000 });
   const png = Buffer.from(PNG, "base64");
@@ -201,7 +196,7 @@ test("a picked photo sits in the composer strip and takes alt text from its +ALT
 });
 
 test("any signed-in reader can file someone's note into a collection, and the note block links back", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const yunaNote = page.locator("article", { hasText: "오늘 쓴 글의 씨앗" });
   await yunaNote.getByRole("button", { name: "노트 메뉴" }).click({ timeout: 30_000 });
   await expect(yunaNote.getByRole("menuitem", { name: "고치기" })).toHaveCount(0);
@@ -216,7 +211,7 @@ test("any signed-in reader can file someone's note into a collection, and the no
 });
 
 test("the repost button reposts from its menu and the same menu takes it back", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const walk = page.locator('article[data-note-id="5"]');
   const repost = walk.getByRole("button", { name: "리포스트" });
   await expect(repost).toHaveAttribute("aria-pressed", "false", { timeout: 30_000 });
@@ -233,7 +228,7 @@ test("the repost button reposts from its menu and the same menu takes it back", 
 });
 
 test("quoting a note opens a composer over the feed with that note under it", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const walk = page.locator('article[data-note-id="5"]');
   await walk.getByRole("button", { name: "리포스트" }).click({ timeout: 30_000 });
   await walk.getByRole("menuitem", { name: "인용" }).click();
@@ -267,12 +262,12 @@ test("the reposts tab lists what the author reposted under a reposted-by line", 
 });
 
 test("clicking a note's text opens it, while its links and buttons keep their own job", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const seed = page.locator('article[data-note-id="3"]');
   await expect(seed.getByRole("link", { name: "https://kurl.me/about" })).toBeVisible({ timeout: 30_000 });
   await seed.getByRole("button", { name: "공유" }).click();
   await expect(seed.getByRole("menuitem", { name: "링크 복사" })).toBeVisible();
-  await expect(page).toHaveURL(/\/blog\/notes$/);
+  await expect(page).toHaveURL(/\/blog$/);
 
   await seed.locator("p").first().click({ position: { x: 8, y: 8 } });
   await expect(page).toHaveURL(/\/notes\/3$/);
@@ -280,7 +275,7 @@ test("clicking a note's text opens it, while its links and buttons keep their ow
 });
 
 test("a note scheduled from the composer waits under it until it is canceled", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("내일 아침에 올릴 노트");
@@ -303,7 +298,7 @@ test("a note scheduled from the composer waits under it until it is canceled", a
 });
 
 test("a note with a link shows its card, and the composer previews one while typing", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const seed = page.locator('article[data-note-id="3"]');
   const card = seed.locator("a[data-note-link-card]");
   await expect(card).toHaveAttribute("href", "https://kurl.me/about", { timeout: 30_000 });
@@ -342,20 +337,17 @@ test("note notices group likes from any server, open the note, and send a remote
   await expect(edited).toHaveAttribute("href", /\/p\/yuna\/notes\/5$/);
 });
 
-test("the other servers tab shows notes this server received, and only those", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
-  await openMoreFeed(page, "다른 서버");
-  await expect(page).toHaveURL(/feed=federated/);
-  await expect(page.getByRole("button", { name: "다른 서버" })).toBeVisible();
+test("둘러보기's 다른 서버 shows notes this server received, and only those", async ({ page }) => {
+  await page.goto("/ko/blog/explore");
   await scrollUntilPresent(page.locator('article[data-note-id="13"]'));
   await expect(page.locator('article[data-note-id="12"]')).toContainText("Hello from the fediverse");
   await expect(page.locator('article[data-note-id="13"]')).toBeVisible();
   await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
 });
 
-test("beside the feed, trending hashtags show who used them this week and open their notes", async ({ page }) => {
+test("in 둘러보기, trending hashtags show who used them this week and open their notes", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog/explore");
   const rail = page.getByTestId("trending-note-tags");
   await expect(rail.getByRole("heading", { name: "뜨는 해시태그" })).toBeVisible({ timeout: 30_000 });
   const walk = rail.getByRole("link", { name: /#산책/ });
@@ -364,9 +356,9 @@ test("beside the feed, trending hashtags show who used them this week and open t
   await expect(page).toHaveURL(/\/tags\/.+view=notes/);
 });
 
-test("beside the feed, trending links show who shared them this week and open the notes carrying them", async ({ page }) => {
+test("in 둘러보기, trending links show who shared them this week and open the notes carrying them", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog/explore");
   const rail = page.getByTestId("trending-note-links");
   await expect(rail.getByRole("heading", { name: "뜨는 링크" })).toBeVisible({ timeout: 30_000 });
   const about = rail.getByRole("link", { name: /짧은 링크와 글이 오래 사는 곳/ });
@@ -389,21 +381,21 @@ test("a link page refuses to link out to anything but the web", async ({ page })
   await expect(page.getByText("아직 이 링크를 실은 노트가 없어요")).toBeVisible();
 });
 
-test("the notes feed has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+test("홈 has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
+  await page.goto("/ko/blog");
   const tabs = page.getByRole("navigation").filter({ hasText: "최신" });
   await expect(tabs.getByRole("link", { name: "최신" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
   await expect(tabs.getByRole("link")).toHaveText(["팔로잉", "최신", "인기"]);
   await tabs.getByRole("link", { name: "인기" }).click();
-  await expect(page).toHaveURL(/feed=trending/);
+  await expect(page).toHaveURL(/sort=trending/);
   await expect(tabs.getByRole("link", { name: "인기" })).toHaveAttribute("aria-current", "page");
   await tabs.getByRole("link", { name: "팔로잉" }).click();
-  await expect(page).toHaveURL(/feed=following/);
+  await expect(page).toHaveURL(/sort=following/);
   await expect(page.getByText("yuna님이 리포스트함")).toBeVisible({ timeout: 15_000 });
 });
 
 test("the following tab turns every repost off and back on", async ({ page }) => {
-  await page.goto("/ko/blog/notes?feed=following");
+  await page.goto("/ko/blog?sort=following");
   const reposted = page.getByText("yuna님이 리포스트함");
   await expect(reposted).toBeVisible({ timeout: 30_000 });
   await page.getByRole("button", { name: "더 보기" }).click();
@@ -478,7 +470,7 @@ test("blog settings choose the note languages shown in all notes", async ({ page
 });
 
 test("the composer writes in a chosen language", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await page.getByRole("textbox", { name: "노트 쓰기" }).click({ timeout: 30_000 });
   const language = page.getByRole("combobox", { name: "노트 언어" });
   await expect(language).toHaveValue("ko", { timeout: 30_000 });
@@ -516,7 +508,7 @@ test("a reply's @mention of a member links to their notes, and an unknown handle
 });
 
 test("a content warning reads as the writer's own line over the blurred note, and a sensitive photo is the photo blurred", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const warned = page.locator('article[data-note-id="7"]');
   const warning = warned.locator("[data-note-warning]");
   await expect(warning).toHaveText("영화 결말 이야기", { timeout: 30_000 });
@@ -541,7 +533,7 @@ test("a content warning reads as the writer's own line over the blurred note, an
 });
 
 test("the composer sends a content warning, and the new note arrives folded", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("범인은 집사였다");
@@ -616,11 +608,10 @@ test("editing my note with a photo marks the photo sensitive", async ({ page }) 
 });
 
 test("private mentions have their own tab, stay out of all notes, and can't be reposted", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await expect(page.locator("article[data-note-id]").first()).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="9"]')).toHaveCount(0);
-  await openMoreFeed(page, "개인 멘션");
-  await expect(page).toHaveURL(/feed=direct/);
+  await page.goto("/ko/blog/notes?feed=direct");
   const dm = page.locator('article[data-note-id="9"]');
   await expect(dm).toBeVisible({ timeout: 15_000 });
   await expect(dm.getByRole("img", { name: "멘션한 사람만" })).toBeVisible();
@@ -628,7 +619,7 @@ test("private mentions have their own tab, stay out of all notes, and can't be r
 });
 
 test("the composer posts with the chosen visibility", async ({ page }) => {
-  await page.goto("/ko/blog/notes?feed=following");
+  await page.goto("/ko/blog?sort=following");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("팔로워에게만 하는 말");
@@ -641,7 +632,7 @@ test("the composer posts with the chosen visibility", async ({ page }) => {
 });
 
 test("a person added to a list from their profile fills that list's tab", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const byYuna = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "@yuna", exact: true }) });
   await byYuna.first().getByRole("link", { name: "@yuna", exact: true }).first().click({ timeout: 30_000 });
   await expect(page.getByRole("heading", { level: 1, name: "yuna", exact: true })).toBeVisible({ timeout: 30_000 });
@@ -655,9 +646,12 @@ test("a person added to a list from their profile fills that list's tab", async 
   await dialog.getByRole("button", { name: "닫기" }).click();
 
   await page.goBack();
-  await openMoreFeed(page, "동료");
-  await expect(page).toHaveURL(/feed=lists&list=\d+/);
-  await expect(page.getByRole("button", { name: "노트 피드 더 보기: 동료" })).toBeVisible();
+  await page.getByRole("button", { name: "계정", exact: true }).click({ timeout: 30_000 });
+  await page.getByRole("menu").getByRole("menuitem", { name: "리스트" }).click();
+  await expect(page).toHaveURL(/feed=lists/);
+  await expect(page.getByRole("navigation").getByRole("link", { name: "동료" })).toHaveAttribute("aria-current", "page", {
+    timeout: 30_000,
+  });
   const list = page.getByRole("region", { name: "동료" });
   await expect(list.locator("article[data-note-id]").first()).toContainText("yuna", { timeout: 15_000 });
   await expect(list.locator("article[data-note-id]").filter({ hasText: "dohyun" })).toHaveCount(0);
@@ -676,14 +670,15 @@ test("an old list link with no list picked points to where lists are managed", a
 });
 
 test("a bookmark from a note's menu shows under the bookmarks tab", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const first = page.locator("article[data-note-id]").first();
   await expect(first).toBeVisible({ timeout: 30_000 });
   const id = await first.getAttribute("data-note-id");
   await first.getByRole("button", { name: "메뉴" }).click();
   await page.getByRole("menuitem", { name: "북마크" }).click();
   await expectOnTop(toastBy(page, "북마크에 넣었어요"));
-  await openMoreFeed(page, "북마크");
+  await page.getByRole("button", { name: "계정", exact: true }).click();
+  await page.getByRole("menu").getByRole("menuitem", { name: "노트 북마크" }).click();
   await expect(page).toHaveURL(/feed=bookmarks/);
   await expect(page.locator(`article[data-note-id="${id}"]`)).toBeVisible({ timeout: 15_000 });
 });
@@ -706,7 +701,7 @@ test("a note page counts its quotes, a blog post that carries it among them, and
 });
 
 test("voting in a poll reveals the results with the reader's choice", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const poll = page.locator('[data-note-poll="10"]');
   await expect(poll.getByRole("button", { name: "국밥" })).toBeVisible({ timeout: 30_000 });
   await expect(poll.locator("[data-poll-result]")).toHaveCount(0);
@@ -721,7 +716,7 @@ test("voting in a poll reveals the results with the reader's choice", async ({ p
 });
 
 test("the composer posts a poll, and photos and a poll exclude each other", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("점심 투표");
@@ -748,7 +743,7 @@ test("the composer posts a poll, and photos and a poll exclude each other", asyn
 });
 
 test("muting someone from their profile menu takes their notes out of the feed", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const yunaNotes = page.locator("article[data-note-id]").filter({ has: page.getByRole("link", { name: "@yuna", exact: true }) });
   await expect(yunaNotes.first()).toBeVisible({ timeout: 30_000 });
   await yunaNotes.first().getByRole("link", { name: "@yuna", exact: true }).first().click();
@@ -777,7 +772,7 @@ test("a keyword filter from settings folds matching notes until shown, and hidin
   await section.getByRole("button", { name: "필터 추가" }).click();
   await expect(section.getByRole("button", { name: "씨앗 필터 고치기" })).toBeVisible();
 
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const folded = page.locator('article[data-note-id="3"]');
   await expect(folded).toContainText("필터됨: 씨앗", { timeout: 30_000 });
   await folded.getByRole("button", { name: "보기" }).click();
@@ -787,7 +782,7 @@ test("a keyword filter from settings folds matching notes until shown, and hidin
   await section.getByRole("button", { name: "씨앗 필터 고치기" }).click({ timeout: 30_000 });
   await section.getByRole("combobox", { name: "걸리면" }).selectOption("hide");
   await section.getByRole("button", { name: "저장" }).click();
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await expect(page.locator('article[data-note-id="6"]')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="3"]')).toHaveCount(0);
 });
@@ -802,7 +797,7 @@ test("a search has a notes tab that finds public notes by their words", async ({
 
 
 test("a display name leads the note header with the handle beside it, and settings saves one", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const haruka = page.locator('article[data-note-id="11"]');
   await expect(haruka.getByRole("link", { name: "하루카 @haruka" })).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="6"]').getByRole("link", { name: "@dohyun", exact: true })).toBeVisible();
@@ -836,7 +831,7 @@ test("a handle in search finds an account on another server, and following it se
 });
 
 test("a note from a followed account elsewhere reaches the following tab and opens its account", async ({ page }) => {
-  await page.goto("/ko/blog/notes?feed=following");
+  await page.goto("/ko/blog?sort=following");
   const remote = page.locator('article[data-note-id="12"]');
   await expect(remote).toContainText("Hello from the fediverse", { timeout: 30_000 });
   await expect(page.locator('article[data-note-id="12"]')).toHaveCount(1);
@@ -844,13 +839,13 @@ test("a note from a followed account elsewhere reaches the following tab and ope
   await expect(page.getByRole("heading", { level: 1, name: "Mina" })).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="12"]')).toBeVisible();
 
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   await expect(page.locator('article[data-note-id="6"]')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('article[data-note-id="12"]')).toHaveCount(0);
 });
 
 test("a note's menu mutes and unmutes its conversation", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const seed = page.locator('article[data-note-id="3"]');
   await expect(seed).toBeVisible({ timeout: 30_000 });
   await seed.getByRole("button", { name: "노트 메뉴" }).click();
@@ -922,7 +917,7 @@ test("a video plays silently while mostly on screen and stops when it leaves", a
 
 test("on a phone, a tap on a video or a sound stays in the feed so its controls can unmute it", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 740 });
-  await page.goto("/ko/blog/notes?feed=federated");
+  await page.goto("/ko/blog/explore");
   const waves = page.locator('article[data-note-id="13"]');
   await scrollUntilPresent(waves);
   await expect(waves.locator("video")).toBeVisible({ timeout: 30_000 });
@@ -954,9 +949,9 @@ test("with reduced motion a video waits for the reader to press play", async ({ 
   expect(await page.evaluate(() => (window as unknown as { mediaCalls: string[] }).mediaCalls)).toEqual([]);
 });
 
-test("beside the feed, follow suggestions offer a follow and can be set aside", async ({ page }) => {
+test("in 둘러보기, follow suggestions offer a follow and can be set aside", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog/explore");
   const rail = page.getByTestId("follow-suggestions");
   await expect(rail.getByRole("heading", { name: "팔로우 추천" })).toBeVisible({ timeout: 30_000 });
   await expect(rail.getByTestId("suggestion-haruka")).toContainText("내가 팔로우하는 3명이 팔로우");
@@ -968,7 +963,7 @@ test("beside the feed, follow suggestions offer a follow and can be set aside", 
 
 test("a picture whose size the server knows holds its shape before it loads", async ({ page }) => {
   await page.route(/picsum\.photos/, (route) => route.abort());
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   // The quoted-note card shows the same picture as a fixed 64px square; the strip is the one that keeps its shape.
   const tall = page.locator('img[alt="골목 끝에 선 가로등"][width]').first();
   await expect(tall).toBeVisible({ timeout: 30_000 });
@@ -982,7 +977,7 @@ test("a picture whose size the server knows holds its shape before it loads", as
 // The chain itself (each note answering the one before) is the server's job and is covered there; a note
 // made in the mock lives only in this tab, so its own page cannot be opened here.
 test("a thread is written in one go and its first note leads the feed", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const composer = page.getByRole("textbox", { name: "노트 쓰기" });
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await composer.fill("이어 쓰기 첫 노트");

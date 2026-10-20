@@ -16,8 +16,8 @@ test("a writer without a photo wears the tint their user id picks, with their in
 });
 
 test("an account on another server has no local id, so it stays on the neutral disc", async ({ page }) => {
-  await page.goto("/ko/blog/notes?feed=federated");
-  const disc = page.locator("[data-avatar-tint]", { hasText: "M" }).first();
+  await page.goto("/ko/blog/explore");
+  const disc = page.getByTestId("remote-feed").locator("[data-avatar-tint]", { hasText: "M" }).first();
   await expect(disc).toBeVisible({ timeout: 30_000 });
   await expect(disc).toHaveAttribute("data-avatar-tint", "neutral");
 });

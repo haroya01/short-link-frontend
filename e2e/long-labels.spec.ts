@@ -11,7 +11,7 @@ for (const width of [360, 390]) {
 
     for (const [lang, { compose, notes }] of Object.entries(CATALOGS)) {
       test(`${lang}: the note composer keeps every control inside the sheet`, async ({ page }) => {
-        await page.goto(`/${lang}/blog/notes`);
+        await page.goto(`/${lang}/blog`);
         await page.locator('header.vt-app-header [data-compose-trigger="mobile"]').click({ timeout: 30_000 });
         await page.getByRole("dialog").getByText(compose.note, { exact: true }).first().click();
         const sheet = page.getByRole("dialog", { name: compose.noteTitle });
@@ -57,7 +57,7 @@ test.describe("desktop", () => {
   });
 
   test("en: a who-to-follow reason reads in full", async ({ page }) => {
-    await page.goto("/en/blog/notes");
+    await page.goto("/en/blog/explore");
     const reason = page.getByText(/^Followed by \d+ (person|people) you follow$/).first();
     await expect(reason).toBeVisible({ timeout: 30_000 });
     expect(await reason.evaluate((el) => el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1)).toBe(true);

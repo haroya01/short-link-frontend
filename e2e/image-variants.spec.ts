@@ -27,7 +27,7 @@ async function serveImages(page: Page, variant: (url: string) => number = () => 
 }
 
 async function harbor(page: Page): Promise<Locator> {
-  await page.goto("/ko/blog/notes");
+  await page.goto("/ko/blog");
   const photo = page.locator('article[data-note-id="20"]').getByRole("img", { name: "항구의 저녁" });
   await photo.scrollIntoViewIfNeeded({ timeout: 30_000 });
   return photo;

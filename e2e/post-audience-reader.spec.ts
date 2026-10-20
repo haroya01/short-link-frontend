@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { scrollUntilPresent } from "./helpers/scroll-until";
 import { expectOnTop } from "./helpers/on-top";
 
 const PASSWORD = "kurl-open";
@@ -159,11 +160,12 @@ test.describe("a country-limited post", () => {
   test("stays in discovery as a card with its title and mark only", async ({ page }) => {
     await reader(page);
     await page.goto("/ko/blog");
-    const card = page.locator("li[data-feed-row]").filter({ hasText: "어떤 나라에서는 열리지 않는 글" });
+    const card = page.locator("[data-post-id]").filter({ hasText: "어떤 나라에서는 열리지 않는 글" });
+    await scrollUntilPresent(card);
     await expect(card).toHaveCount(1, { timeout: 30_000 });
     await expect(card.getByRole("img", { name: "국가 제한" })).toBeVisible();
     await expect(card).not.toContainText("나라에 따라 본문을 막은 글");
-    await expect(card.locator("[data-row-thumb]")).toHaveCount(0);
+    await expect(card.locator("img")).toHaveCount(0);
   });
 });
 

@@ -30,10 +30,10 @@ test("a link to a comment past the fifth opens the thread expanded and lands on 
 
 test("authors read as name then @handle wherever the name is known", async ({ page }) => {
   await page.goto("/ko/blog");
-  const minjiRow = page.locator("main li[data-feed-row]").filter({ has: page.locator('a[href="/ko/p/minji"]') }).first();
-  await expect(minjiRow.locator('a[href="/ko/p/minji"]')).toHaveText("민지@minji", { timeout: 30_000 });
-  const harukaRow = page.locator("main li[data-feed-row]").filter({ has: page.locator('a[href="/ko/p/haruka"]') }).first();
-  await expect(harukaRow.locator('a[href="/ko/p/haruka"]')).toHaveText(/^H?@haruka$/);
+  await expect(page.locator('main [data-post-id] header a[href="/ko/p/minji"]').first()).toHaveText("민지@minji", {
+    timeout: 30_000,
+  });
+  await expect(page.locator('main [data-post-id] header a[href="/ko/p/haruka"]').first()).toHaveText(/^H?@haruka$/);
 
   await page.goto("/ko/p/minji/pricing-experiment-free-to-pro");
   const rail = page.locator("aside").first().locator('a[href="/ko/p/minji"]');

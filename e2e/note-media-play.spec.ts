@@ -60,7 +60,7 @@ for (const viewport of [{ width: 375, height: 740 }, { width: 1280, height: 900 
       await page.route("https://files.mastodon.social/waves.mp4", (route) =>
         route.fulfill({ status: 200, contentType: "video/webm", body: TONE }),
       );
-      await page.goto("/ko/blog/notes?feed=federated");
+      await page.goto("/ko/blog/explore");
       const card = page.locator('article[data-note-id="13"]');
       await scrollUntilPresent(card);
       const video = card.locator("video");
@@ -89,7 +89,7 @@ for (const viewport of [{ width: 375, height: 740 }, { width: 1280, height: 900 
 
     test("an uploaded GIF animates in the feed, on its note and in the viewer, from the original file", async ({ page }) => {
       const asked = await serveCdn(page);
-      await page.goto("/ko/blog/notes");
+      await page.goto("/ko/blog");
       const card = page.locator('article[data-note-id="22"]');
       await expect(card).toBeVisible({ timeout: 30_000 });
       await card.scrollIntoViewIfNeeded();

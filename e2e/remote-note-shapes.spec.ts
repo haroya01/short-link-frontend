@@ -11,7 +11,7 @@ test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
   test("followed posts that are more than notes arrive as cards that go to the original", async ({ page }) => {
-    await page.goto("/ko/blog/notes?feed=following");
+    await page.goto("/ko/blog?sort=following");
 
     const article = page.locator('article[data-note-id="16"]').locator('a[data-remote-card="ARTICLE"]');
     await expect(article).toBeVisible({ timeout: 30_000 });
@@ -36,18 +36,18 @@ test.describe("desktop", () => {
     await context.route("https://blog.example/**", (route) =>
       route.fulfill({ status: 200, contentType: "text/html", body: "<title>original</title>" }),
     );
-    await page.goto("/ko/blog/notes?feed=following");
+    await page.goto("/ko/blog?sort=following");
     const card = page.locator('article[data-note-id="16"]').locator("a[data-remote-card]");
     await expect(card).toBeVisible({ timeout: 30_000 });
     const opened = context.waitForEvent("page");
     await card.getByText("토마토 한 철, 인내의 기록").click();
     const tab = await opened;
     await expect(tab).toHaveURL("https://blog.example/2026/10/tomato-season/");
-    await expect(page).toHaveURL(/\/blog\/notes\?feed=following$/);
+    await expect(page).toHaveURL(/\/blog\?sort=following$/);
   });
 
   test("a poll from another server shows its results and sends the vote to the original", async ({ page }) => {
-    await page.goto("/ko/blog/notes?feed=following");
+    await page.goto("/ko/blog?sort=following");
     const poll = page.locator('[data-note-poll="14"]');
     await expect(poll.locator("[data-poll-result]")).toHaveCount(3, { timeout: 30_000 });
     await expect(poll.getByRole("button")).toHaveCount(0);
@@ -75,7 +75,7 @@ test.describe("desktop", () => {
   });
 
   test("a plain note from another server is drawn as before", async ({ page }) => {
-    await page.goto("/ko/blog/notes?feed=following");
+    await page.goto("/ko/blog?sort=following");
     const plain = page.locator('article[data-note-id="12"]');
     await expect(plain).toContainText("Hello from the fediverse", { timeout: 30_000 });
     await expect(plain.locator("[data-remote-card]")).toHaveCount(0);
@@ -87,7 +87,7 @@ test.describe("phone", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test("the cards and the poll fit a phone", async ({ page }) => {
-    await page.goto("/ko/blog/notes?feed=following");
+    await page.goto("/ko/blog?sort=following");
     await expect(page.locator('a[data-remote-card="VIDEO"]')).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('[data-note-poll="14"]').getByRole("link", { name: "원문에서 투표" })).toBeVisible();
     expect(await overflow(page)).toBeLessThanOrEqual(0);

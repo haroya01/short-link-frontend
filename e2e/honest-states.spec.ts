@@ -179,12 +179,11 @@ test.describe("phone", () => {
     await expect(tab).toHaveText("알림");
   });
 
-  test("the search sheet says it couldn't search, and retries", async ({ page }) => {
+  test("둘러보기 says it couldn't search, and retries", async ({ page }) => {
     await failing(page, "search");
-    await page.goto("/ko/blog");
-    await page.locator("nav").getByText("검색", { exact: true }).last().click({ timeout: 30_000 });
-    const sheet = page.getByRole("dialog", { name: "검색" });
-    await sheet.getByRole("searchbox").fill("next");
+    await page.goto("/ko/blog/explore");
+    const sheet = page.locator("main");
+    await sheet.getByRole("searchbox", { name: "검색" }).fill("next", { timeout: 30_000 });
     await expect(sheet.getByRole("alert")).toContainText("검색하지 못했어요");
 
     await recover(page);
