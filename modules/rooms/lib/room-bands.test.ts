@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Note } from "@/modules/notes/api/notes";
 import type { RoomListItem } from "@/modules/rooms/api/rooms";
-import { arrangeRooms, dayBreak, isLively, notesOfRoom, pinnedCount } from "./room-bands";
+import { arrangeRooms, dayBreak, inviteUsable, isLively, notesOfRoom, pinnedCount } from "./room-bands";
 
 const NOW = Date.parse("2026-10-20T12:00:00+09:00");
 const ago = (hours: number) => new Date(NOW - hours * 3_600_000).toISOString();
@@ -93,5 +93,17 @@ describe("day breaks in a room", () => {
     expect(breaks[1]).toBeNull();
     expect(breaks[2]).toEqual({ kind: "yesterday" });
     expect(breaks[3]).toMatchObject({ kind: "date" });
+  });
+});
+
+describe("which invite link the invite sheet hands out", () => {
+  const base = { disabled: false, maxUses: null, uses: 0, expiresAt: null };
+  it("skips a link that is off, used up or expired, and keeps one with room left", () => {
+    expect(inviteUsable(base, NOW)).toBe(true);
+    expect(inviteUsable({ ...base, disabled: true }, NOW)).toBe(false);
+    expect(inviteUsable({ ...base, maxUses: 5, uses: 5 }, NOW)).toBe(false);
+    expect(inviteUsable({ ...base, maxUses: 5, uses: 4 }, NOW)).toBe(true);
+    expect(inviteUsable({ ...base, expiresAt: ago(1) }, NOW)).toBe(false);
+    expect(inviteUsable({ ...base, expiresAt: ago(-1) }, NOW)).toBe(true);
   });
 });

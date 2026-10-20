@@ -112,7 +112,7 @@ interface Landing {
 
 const LANDINGS: Record<string, Landing> = {
   hike: { roomId: 4, inviter: YUKI, approval: false, reason: null },
-  study: { roomId: 3, inviter: YUKI, approval: true, reason: null },
+  study: { roomId: 4, inviter: YUKI, approval: true, reason: null },
   old: { roomId: 4, inviter: YUKI, approval: false, reason: "expired" },
   off: { roomId: 4, inviter: YUKI, approval: false, reason: "disabled" },
   spent: { roomId: 4, inviter: YUKI, approval: false, reason: "used_up" },

@@ -4883,6 +4883,7 @@
     "inviteMissing": "This invite link doesn't exist",
     "joinFailed": "Couldn't join",
     "goHome": "Go home",
-    "joinInvalid": "That isn't an invite link"
+    "joinInvalid": "That isn't an invite link",
+    "linkFailed": "Couldn't make a new link"
   }
 }

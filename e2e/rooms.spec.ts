@@ -90,6 +90,7 @@ test("a sixth pin is refused with the limit", async ({ page }) => {
   await dialog.getByPlaceholder("방 이름").fill("새로 만든 방");
   await expect(dialog).toContainText("민지");
   await dialog.getByRole("button", { name: "만들기" }).click();
+  await page.getByTestId("room-invite-sheet").getByRole("button", { name: "닫기" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("새로 만든 방");
 
   await page.locator("nav.vt-bottom-nav").getByRole("link", { name: "방" }).click();

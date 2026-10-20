@@ -1,6 +1,7 @@
 import { ApiError, request } from "@/lib/api/client";
 import { listFollowers, listFollowing } from "@/modules/blog/api/follows";
 import { searchPeople } from "@/modules/blog/api/people";
+import { fetchPublic } from "@/modules/blog/api/public-posts";
 import type { NoteFeed } from "@/modules/notes/api/notes";
 
 const roomMocks: typeof import("./_mocks") | null =
@@ -258,6 +259,14 @@ export async function getRoomInviteLanding(code: string): Promise<RoomInviteLand
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
   }
+}
+
+export async function fetchRoomInviteLanding(code: string): Promise<RoomInviteLanding | null> {
+  if (roomMocks) return roomMocks.mockLanding(code);
+  const result = await fetchPublic<RoomInviteLanding>(`/api/v1/public/room-invites/${encodeURIComponent(code)}`, {
+    noStore: true,
+  });
+  return result.ok ? result.data : null;
 }
 
 /** Errors: 410 ROOM_INVITE_UNUSABLE, 409 ROOM_FULL, 403 ROOM_REMOVED. */

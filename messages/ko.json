@@ -4883,6 +4883,7 @@
     "inviteMissing": "없는 초대 링크예요",
     "joinFailed": "들어가지 못했어요",
     "goHome": "홈으로",
-    "joinInvalid": "초대 링크를 알아보지 못했어요"
+    "joinInvalid": "초대 링크를 알아보지 못했어요",
+    "linkFailed": "새 링크를 만들지 못했어요"
   }
 }

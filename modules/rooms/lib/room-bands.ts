@@ -48,3 +48,12 @@ export function dayBreak(notes: Note[], index: number, now: Date = new Date()): 
   if (sameDay(at, yesterday)) return { kind: "yesterday" };
   return { kind: "date", date: at };
 }
+
+export function inviteUsable(
+  invite: { disabled: boolean; maxUses: number | null; uses: number; expiresAt: string | null },
+  now: number = Date.now(),
+): boolean {
+  if (invite.disabled) return false;
+  if (invite.maxUses !== null && invite.uses >= invite.maxUses) return false;
+  return invite.expiresAt === null || Date.parse(invite.expiresAt) > now;
+}

@@ -119,6 +119,15 @@ function legacyRedirect(req: NextRequest, host: string): NextResponse | null {
     }
   }
 
+  // Room invite links are built on the apex (short-link.frontend-base-url + /rooms/join/{code}); the
+  // rooms live on the blog host.
+  if (process.env.VERCEL_ENV === "production") {
+    const roomsMatch = path.match(/^\/([a-z]{2})(\/rooms(?:\/.*)?)$/);
+    if (roomsMatch) {
+      return NextResponse.redirect(`https://${BLOG_HOST_DEFAULT}/${roomsMatch[1]}${roomsMatch[2]}${search}`, 308);
+    }
+  }
+
   // /{locale}/content/* → blog.kurl.me/{locale}/*
   const contentMatch = path.match(/^\/([a-z]{2})\/content(\/.*)?$/);
   if (contentMatch) {
@@ -232,6 +241,11 @@ export default function middleware(req: NextRequest) {
   const localePathMatch = req.nextUrl.pathname.match(/^\/([a-z]{2})(\/.+)?$/);
   if (localePathMatch && localePathMatch[2]) {
     const sub = localePathMatch[2];
+    if (sub.match(/^\/rooms(\/|$)/)) {
+      const url = req.nextUrl.clone();
+      url.pathname = `/${localePathMatch[1]}/blog${sub}`;
+      return NextResponse.rewrite(url);
+    }
     if (!sub.match(/^\/(links|blog|p|u|e|opengraph-image|twitter-image)(\/|$)/)) {
       const url = req.nextUrl.clone();
       url.pathname = `/${localePathMatch[1]}/links${sub}`;

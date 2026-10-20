@@ -4883,6 +4883,7 @@
     "inviteMissing": "この招待リンクは見つかりません",
     "joinFailed": "入れませんでした",
     "goHome": "ホームへ",
-    "joinInvalid": "招待リンクを読み取れませんでした"
+    "joinInvalid": "招待リンクを読み取れませんでした",
+    "linkFailed": "新しいリンクを作れませんでした"
   }
 }

@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { QuietRoomLine, RoomBlock, RoomsSection } from "./room-block";
 import { CreateRoomDialog, JoinByLinkDialog } from "./room-dialogs";
 import { RoomFaces } from "./room-faces";
+import { RoomInviteSheet } from "./room-invite-sheet";
 import { RoomsHead } from "./rooms-head";
 
 type Phase = { kind: "loading" } | { kind: "failed" } | { kind: "loaded"; rooms: RoomListItem[] };
@@ -75,6 +76,7 @@ export function RoomsScreen() {
   const [suggested, setSuggested] = useState<RoomPerson[]>([]);
   const [creating, setCreating] = useState<RoomPerson[] | null>(null);
   const [joining, setJoining] = useState(false);
+  const [inviting, setInviting] = useState<{ room: RoomDetail; friends: RoomPerson[] } | null>(null);
 
   const load = useCallback(async () => {
     setPhase((current) => (current.kind === "loaded" ? current : { kind: "loading" }));
@@ -139,9 +141,9 @@ export function RoomsScreen() {
     void dismissRoomSuggestions(ids).catch(() => undefined);
   }
 
-  function created(room: RoomDetail) {
+  function created(room: RoomDetail, friends: RoomPerson[]) {
     setCreating(null);
-    router.push(roomPath(room.id));
+    setInviting({ room, friends });
   }
 
   const replace = (note: Note) => setRecent((current) => current.map((n) => (n.id === note.id ? note : n)));
@@ -259,6 +261,20 @@ export function RoomsScreen() {
         onCreated={created}
       />
       <JoinByLinkDialog open={joining} onClose={() => setJoining(false)} />
+      {inviting && (
+        <RoomInviteSheet
+          open
+          roomId={inviting.room.id}
+          roomName={inviting.room.name}
+          memberIds={inviting.room.members.map((m) => m.id)}
+          preselected={inviting.friends}
+          onClose={() => {
+            const id = inviting.room.id;
+            setInviting(null);
+            router.push(roomPath(id));
+          }}
+        />
+      )}
     </div>
   );
 }
