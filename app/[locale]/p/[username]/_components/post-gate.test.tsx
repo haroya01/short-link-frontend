@@ -1,5 +1,5 @@
 import React, { act, createElement } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot, hydrateRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PostDetailRead, PublicPostDetail, UnlockResult } from "@/modules/blog/api/public-posts";
 import type { LockReason } from "@/modules/blog/lib/post-audience";
@@ -183,6 +183,58 @@ describe("a password post", () => {
     expect(host.querySelector('[role="alert"]')?.textContent).toBe("publicPost.gate.wrongPassword");
     expect(host.querySelector('input[type="password"]')?.getAttribute("aria-invalid")).toBe("true");
     expect(storedGrant()).toBeNull();
+  });
+
+  it("keeps a password typed before the session check answers", async () => {
+    mocks.auth = { ready: false, authenticated: false };
+    await render("PASSWORD");
+    const input = host.querySelector<HTMLInputElement>('input[type="password"]')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "early");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    mocks.auth = { ready: true, authenticated: false };
+    const { PostGate } = await import("./post-gate");
+    await act(async () => {
+      root.render(
+        createElement(PostGate, {
+          username: "hana",
+          slug: "locked-diary",
+          postId: POST_ID,
+          reason: "PASSWORD",
+          postKey: null,
+          locale: "ko",
+          postUrl: "https://blog.kurl.me/@hana/locked-diary",
+        }),
+      );
+    });
+    expect(host.querySelector('input[type="password"]')).toBe(input);
+    expect(input.value).toBe("early");
+    expect(host.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
+  });
+
+  it("opens with a password typed into the server page before it came alive", async () => {
+    mocks.auth = { ready: false, authenticated: false };
+    vi.resetModules();
+    const { PostGate } = await import("./post-gate");
+    const { renderToString } = await import("react-dom/server");
+    const element = createElement(PostGate, {
+      username: "hana",
+      slug: "locked-diary",
+      postId: POST_ID,
+      reason: "PASSWORD",
+      postKey: null,
+      locale: "ko",
+      postUrl: "https://blog.kurl.me/@hana/locked-diary",
+    });
+    host = document.createElement("div");
+    host.innerHTML = renderToString(element);
+    document.body.append(host);
+    host.querySelector<HTMLInputElement>('input[type="password"]')!.value = "before-js";
+    await act(async () => {
+      root = hydrateRoot(host, element);
+    });
+    expect(host.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
   });
 
   it("says to try later when the server is limiting attempts", async () => {
