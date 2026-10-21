@@ -22,7 +22,7 @@ import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { MeAvatar, cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
-import { avatarTint, avatarTintStyle } from "@/modules/blog/lib/avatar-tint";
+import { avatarTint, avatarTintStyle } from "@/lib/avatar-tint";
 import { blogHref, type Product } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";

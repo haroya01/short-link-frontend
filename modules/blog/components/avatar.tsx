@@ -1,4 +1,4 @@
-import { avatarInitial, avatarTint, avatarTintStyle } from "@/modules/blog/lib/avatar-tint";
+import { avatarInitial, avatarTint, avatarTintStyle } from "@/lib/avatar-tint";
 
 /**
  * Author avatar — the "image if present, else the initial on a tinted disc" pattern that every surface

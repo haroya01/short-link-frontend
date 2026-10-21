@@ -57,7 +57,6 @@
   "eslint:ratchet/no-history-comment|app/[locale]/layout.tsx|": 3,
   "eslint:ratchet/no-history-comment|app/[locale]/links/campaigns/[id]/poster-builder/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/links/layout.tsx|": 1,
-  "eslint:ratchet/no-history-comment|app/[locale]/links/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/links/settings/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/links/settings/profile/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/links/showcase/[handle]/page.tsx|": 1,
