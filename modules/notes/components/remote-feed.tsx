@@ -8,8 +8,10 @@ import { useAuth } from "@/lib/auth";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import type { Note } from "@/modules/notes/api/notes";
-import type { RemoteView, TrendingNote } from "@/modules/notes/api/remote-trending";
+import type { RemoteView } from "@/modules/notes/api/remote-trending";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
+import { remoteRows } from "@/modules/notes/lib/remote-rows";
+import { seenQueue, watchSeen } from "@/modules/notes/lib/remote-seen";
 import { useRemoteNotes } from "@/modules/notes/lib/use-remote-trending";
 import { NoteCard } from "./note-card";
 import { NoteListSkeleton } from "./note-list";
@@ -25,10 +27,7 @@ export function RemoteFeed({ view }: { view: RemoteView }) {
 
 const receivedHeading =
   "border-t border-slate-100 pt-5 text-[13px] font-semibold text-slate-500 dark:border-slate-800 dark:text-slate-400";
-
-type Row =
-  | { kind: "pool"; item: TrendingNote; filteredBy?: string[] }
-  | { kind: "kept"; note: Note; filteredBy?: string[] };
+const rowHeading = "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400";
 
 export function RemoteNotesList({
   view,
@@ -49,17 +48,31 @@ export function RemoteNotesList({
   const sentinel = useRef<HTMLDivElement>(null);
   const loaded = notes.state === "ready" ? notes : null;
   const autoLoad = loaded !== null && loaded.hasMore && !loaded.moreFailed && !loaded.loadingMore;
+  const stalled = loaded?.stalled === true;
   const more = loaded?.more;
+  const latest = view === "latest";
 
   useEffect(() => {
     const el = sentinel.current;
-    if (!el || !autoLoad || !more) return;
+    if (!el || !autoLoad || stalled || !more) return;
     const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && more(), {
       rootMargin: "600px 0px",
     });
     io.observe(el);
     return () => io.disconnect();
-  }, [autoLoad, more]);
+  }, [autoLoad, stalled, more]);
+
+  useEffect(() => {
+    if (!autoLoad || !stalled || !more) return;
+    const onScroll = () => more();
+    window.addEventListener("scroll", onScroll, { once: true, passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [autoLoad, stalled, more]);
+
+  useEffect(() => {
+    if (!latest) return;
+    return () => seenQueue().flush();
+  }, [latest]);
 
   if (notes.state === "loading") return <NoteListSkeleton rows={3} />;
   if (notes.state === "failed") {
@@ -78,31 +91,16 @@ export function RemoteNotesList({
     );
   }
 
-  const seenUris = new Set<string>();
-  const seenIds = new Set<number>();
-  const rows: Row[] = [];
-  for (const page of notes.pages) {
-    for (const entry of page.items) {
-      if (entry.kind === "pool") {
-        const { item } = entry;
-        if (seenUris.has(item.uri)) continue;
-        seenUris.add(item.uri);
-        const verdict = noteVerdict(trendingDisplayNote(item), filters, "public", me?.id);
-        if (verdict?.action === "hide") continue;
-        rows.push({ kind: "pool", item, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
-      } else {
-        const { note } = entry;
-        if (seenIds.has(note.id) || blocked.has(note.author.username)) continue;
-        seenIds.add(note.id);
-        const verdict = noteVerdict(note, filters, "public", me?.id);
-        if (verdict?.action === "hide") continue;
-        rows.push({ kind: "kept", note, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
-      }
-    }
-  }
+  const rows = remoteRows(
+    notes.pages,
+    (entry) =>
+      noteVerdict(entry.kind === "pool" ? trendingDisplayNote(entry.item) : entry.note, filters, "public", me?.id),
+    blocked,
+  );
   const firstKept = view === "trending" && rows[0]?.kind === "pool" ? rows.findIndex((row) => row.kind === "kept") : -1;
   const signedOut = ready && !authenticated;
   const ended = !notes.hasMore;
+  const SeenHeading = heading ? "h3" : "h2";
 
   if (rows.length === 0 && ended) {
     if (quiet) return fallback;
@@ -118,20 +116,21 @@ export function RemoteNotesList({
     <div>
       {rows.length > 0 && heading}
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
-        {rows.map((row, i) =>
-          row.kind === "pool" ? (
-            <div key={`pool-${row.item.uri}`} data-remote-uri={row.item.uri}>
+        {rows.map((row, i) => {
+          const divider = row.seenStart && <SeenHeading className={rowHeading}>{t("remoteSeenDivider")}</SeenHeading>;
+          return row.kind === "pool" ? (
+            <SeenWatch key={`pool-${row.uri}`} uri={latest ? row.uri : null} data-remote-uri={row.uri}>
+              {divider}
               <TrendingNoteCard item={row.item} filteredBy={row.filteredBy} trending={view === "trending"} />
-            </div>
+            </SeenWatch>
           ) : (
-            <div key={`kept-${row.note.id}`} data-remote-kept={row.note.id}>
-              {i === firstKept && (
-                <h2 className="pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400">{t("receivedNotes")}</h2>
-              )}
+            <SeenWatch key={`kept-${row.note.id}`} uri={latest ? row.uri : null} data-remote-kept={row.note.id}>
+              {divider}
+              {i === firstKept && <h2 className={rowHeading}>{t("receivedNotes")}</h2>}
               <KeptNote note={row.note} filteredBy={row.filteredBy} />
-            </div>
-          ),
-        )}
+            </SeenWatch>
+          );
+        })}
       </div>
       {notes.hasMore ? (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-6 flex flex-col items-center gap-2 pb-6">
@@ -166,6 +165,29 @@ export function RemoteNotesList({
           </>
         )
       )}
+    </div>
+  );
+}
+
+function SeenWatch({
+  uri,
+  children,
+  ...data
+}: {
+  uri: string | null;
+  children: ReactNode;
+  "data-remote-uri"?: string;
+  "data-remote-kept"?: number;
+}) {
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el || !uri) return;
+    return watchSeen(el, uri);
+  }, [uri]);
+  return (
+    <div ref={box} {...data}>
+      {children}
     </div>
   );
 }

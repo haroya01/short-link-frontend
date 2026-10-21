@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,7 @@ import { followFailure } from "@/modules/notes/components/remote-account";
 import { openNote } from "./note-href";
 
 export const REMOTE_TRENDING_STALE_MS = 5 * 60_000;
+const EMPTY_PAGE_CHAIN = 3;
 
 export type RemoteNotes =
   | { state: "loading" }
@@ -31,8 +32,15 @@ export type RemoteNotes =
       hasMore: boolean;
       loadingMore: boolean;
       moreFailed: boolean;
+      stalled: boolean;
       more: () => void;
     };
+
+function trailingEmptyPages(pages: RemoteNotesPage[]): number {
+  let count = 0;
+  for (let i = pages.length - 1; i >= 0 && pages[i].items.length === 0 && pages[i].next !== null; i -= 1) count += 1;
+  return count;
+}
 
 export function useRemoteNotes(view: RemoteView): RemoteNotes {
   const { ready, authenticated } = useAuth();
@@ -45,14 +53,20 @@ export function useRemoteNotes(view: RemoteView): RemoteNotes {
       enabled: ready,
       staleTime: REMOTE_TRENDING_STALE_MS,
     });
+  const empties = data ? trailingEmptyPages(data.pages) : 0;
+  const chain = empties > 0 && empties <= EMPTY_PAGE_CHAIN && !isFetchingNextPage && !isFetchNextPageError;
+  useEffect(() => {
+    if (chain) void fetchNextPage({ cancelRefetch: false });
+  }, [chain, empties, fetchNextPage]);
   if (data) {
     return {
       state: "ready",
       pages: data.pages,
       hasMore: hasNextPage,
-      loadingMore: isFetchingNextPage,
+      loadingMore: isFetchingNextPage || chain,
       moreFailed: isFetchNextPageError,
-      more: () => void fetchNextPage(),
+      stalled: empties > EMPTY_PAGE_CHAIN,
+      more: () => void fetchNextPage({ cancelRefetch: false }),
     };
   }
   if (isError) return { state: "failed", retry: () => void refetch() };
