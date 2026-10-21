@@ -10,22 +10,14 @@ import { useRecentLinks } from "@/lib/recent-links";
 
 const LIMIT = 5;
 
-/**
- * The home page's "what did I make last time" list, right under the shortener: this browser's
- * 24-hour record (the guest links it can still claim). Signed-in people have the dashboard as their
- * home, so this is the signed-out half only — before /me settles it renders in the `anon` slot so
- * the pre-paint auth hint keeps it off a signed-in first paint.
- */
 export function HomeRecent({ exclude = [] }: { exclude?: string[] }) {
   const { ready, authenticated } = useAuth();
-  if (!ready) {
-    return (
-      <div data-auth-slot="anon">
-        <BrowserRecent exclude={exclude} />
-      </div>
-    );
-  }
-  return authenticated ? null : <BrowserRecent exclude={exclude} />;
+  if (ready && authenticated) return null;
+  return (
+    <div data-auth-slot={ready ? undefined : "anon"} className="contents">
+      <BrowserRecent exclude={exclude} />
+    </div>
+  );
 }
 
 function BrowserRecent({ exclude }: { exclude: string[] }) {

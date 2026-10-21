@@ -40,4 +40,36 @@ test.describe("recent links (localStorage)", () => {
     await expect(page.getByText("https://example.com/recent-b")).toBeVisible();
     await expect(page.getByText("https://example.com/recent-c")).toBeVisible();
   });
+
+  test("a recent link keeps its node when the session check settles", async ({ page, context, baseURL }) => {
+    await context.addCookies([{ name: "kurl_has_session", value: "1", url: baseURL! }]);
+    let settle!: () => void;
+    const settled = new Promise<void>((resolve) => (settle = resolve));
+    await page.route("**/api/v1/auth/refresh", async (route) => {
+      await settled;
+      await route.fulfill({ status: 401, json: {} });
+    });
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "kurl:recent-links:v1",
+        JSON.stringify([
+          {
+            shortCode: "e2eKeep",
+            shortUrl: "http://localhost:3001/e2eKeep",
+            originalUrl: "https://example.com/keep",
+            createdAt: Date.now(),
+          },
+        ]),
+      );
+    });
+
+    await page.goto("/ko");
+    const link = page.getByRole("link", { name: "/e2eKeep" });
+    await expect(link).toBeVisible();
+    const before = await link.elementHandle();
+
+    settle();
+    await expect(page.locator("[data-auth-slot]")).toHaveCount(0);
+    expect(await before!.evaluate((node) => node.isConnected)).toBe(true);
+  });
 });
