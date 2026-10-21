@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Globe, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
@@ -26,7 +26,20 @@ export function RemoteFeed({ view }: { view: RemoteView }) {
 const receivedHeading =
   "border-t border-slate-100 pt-5 text-[13px] font-semibold text-slate-500 dark:border-slate-800 dark:text-slate-400";
 
-function RemoteNotesList({ view }: { view: RemoteView }) {
+type Row =
+  | { kind: "pool"; item: TrendingNote; filteredBy?: string[] }
+  | { kind: "kept"; note: Note; filteredBy?: string[] };
+
+export function RemoteNotesList({
+  view,
+  heading,
+  fallback,
+}: {
+  view: RemoteView;
+  heading?: ReactNode;
+  fallback?: ReactNode;
+}) {
+  const quiet = fallback !== undefined;
   const t = useTranslations("notes");
   const tFeed = useTranslations("publicFeed");
   const notes = useRemoteNotes(view);
@@ -50,6 +63,7 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
 
   if (notes.state === "loading") return <NoteListSkeleton rows={3} />;
   if (notes.state === "failed") {
+    if (quiet) return fallback;
     return (
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 py-4 text-[14px] text-slate-500 dark:text-slate-400">
         <span>{view === "latest" ? t("latestFailed") : t("trendingFailed")}</span>
@@ -65,32 +79,33 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
   }
 
   const seenUris = new Set<string>();
-  const pool: { item: TrendingNote; filteredBy?: string[] }[] = [];
   const seenIds = new Set<number>();
-  const kept: { note: Note; filteredBy?: string[] }[] = [];
+  const rows: Row[] = [];
   for (const page of notes.pages) {
-    if (page.kind === "pool") {
-      for (const item of page.items) {
+    for (const entry of page.items) {
+      if (entry.kind === "pool") {
+        const { item } = entry;
         if (seenUris.has(item.uri)) continue;
         seenUris.add(item.uri);
         const verdict = noteVerdict(trendingDisplayNote(item), filters, "public", me?.id);
         if (verdict?.action === "hide") continue;
-        pool.push({ item, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
-      }
-    } else {
-      for (const note of page.items) {
+        rows.push({ kind: "pool", item, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
+      } else {
+        const { note } = entry;
         if (seenIds.has(note.id) || blocked.has(note.author.username)) continue;
         seenIds.add(note.id);
         const verdict = noteVerdict(note, filters, "public", me?.id);
         if (verdict?.action === "hide") continue;
-        kept.push({ note, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
+        rows.push({ kind: "kept", note, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
       }
     }
   }
+  const firstKept = view === "trending" && rows[0]?.kind === "pool" ? rows.findIndex((row) => row.kind === "kept") : -1;
   const signedOut = ready && !authenticated;
   const ended = !notes.hasMore;
 
-  if (pool.length === 0 && kept.length === 0 && ended) {
+  if (rows.length === 0 && ended) {
+    if (quiet) return fallback;
     if (view === "trending" && signedOut) return <SignInEmptyState reason="federatedNotes" icon={Globe} />;
     return view === "latest" ? (
       <BlogEmpty title={t("latestEmpty")} />
@@ -101,23 +116,23 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
 
   return (
     <div>
+      {rows.length > 0 && heading}
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
-        {pool.map(({ item, filteredBy }) => (
-          <div key={item.uri} data-remote-uri={item.uri}>
-            <TrendingNoteCard item={item} filteredBy={filteredBy} trending={view === "trending"} />
-          </div>
-        ))}
+        {rows.map((row, i) =>
+          row.kind === "pool" ? (
+            <div key={`pool-${row.item.uri}`} data-remote-uri={row.item.uri}>
+              <TrendingNoteCard item={row.item} filteredBy={row.filteredBy} trending={view === "trending"} />
+            </div>
+          ) : (
+            <div key={`kept-${row.note.id}`} data-remote-kept={row.note.id}>
+              {i === firstKept && (
+                <h2 className="pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400">{t("receivedNotes")}</h2>
+              )}
+              <KeptNote note={row.note} filteredBy={row.filteredBy} />
+            </div>
+          ),
+        )}
       </div>
-      {kept.length > 0 && (
-        <>
-          {pool.length > 0 && <h2 className={receivedHeading}>{t("receivedNotes")}</h2>}
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {kept.map(({ note, filteredBy }) => (
-              <KeptNote key={note.id} note={note} filteredBy={filteredBy} />
-            ))}
-          </div>
-        </>
-      )}
       {notes.hasMore ? (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-6 flex flex-col items-center gap-2 pb-6">
           <button
@@ -143,7 +158,8 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
         </div>
       ) : (
         view === "trending" &&
-        signedOut && (
+        signedOut &&
+        !quiet && (
           <>
             <h2 className={receivedHeading}>{t("receivedNotes")}</h2>
             <SignInEmptyState reason="federatedNotes" icon={Globe} />

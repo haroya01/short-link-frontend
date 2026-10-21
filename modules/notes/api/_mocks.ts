@@ -1019,17 +1019,22 @@ const TRENDING: TrendingNote[] = [
   ),
 ];
 
+const MOCK_LATEST_PAGE = 5;
+
+function mockLatest(cursor: string | null): RemoteNotesBody {
+  const kept: (TrendingNote | Note)[] = mockFederatedNotes(0).items;
+  const all = [...kept, ...TRENDING].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const offset = Number(cursor?.slice(1)) || 0;
+  const end = offset + MOCK_LATEST_PAGE;
+  return { items: all.slice(offset, end), next: end < all.length ? `r${end}` : null };
+}
+
 export function mockRemoteNotes(view: RemoteView, cursor: string | null, limit: number): Promise<RemoteNotesBody> {
+  if (view === "latest") return Promise.resolve(mockLatest(cursor));
   if (cursor?.startsWith("r")) return Promise.resolve({ items: mockFederatedNotes(0).items, next: null });
   const offset = Number(cursor?.slice(1)) || 0;
-  const pool =
-    view === "latest" ? [...TRENDING].sort((a, b) => b.createdAt.localeCompare(a.createdAt)) : TRENDING;
   const end = offset + limit;
-  const more = end < pool.length;
-  return Promise.resolve({
-    items: pool.slice(offset, end),
-    next: more ? `t${end}` : view === "trending" ? "r" : null,
-  });
+  return Promise.resolve({ items: TRENDING.slice(offset, end), next: end < TRENDING.length ? `t${end}` : "r" });
 }
 
 const broughtOver = new Map<string, number>();

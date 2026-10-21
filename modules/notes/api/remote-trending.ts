@@ -16,17 +16,30 @@ export interface TrendingNote extends Omit<Note, "id" | "author"> {
 }
 
 /** Backend contract: GET /api/v1/federation/trending and /federation/latest ?limit=&cursor= (anonymous allowed).
- *  A trending cursor starting with "r" pages the notes from elsewhere this server keeps (members only). */
+ *  An item with an id is a note this server keeps; one without is still in the pool. `next` is opaque. */
 export interface RemoteNotesBody {
-  items: TrendingNote[] | Note[];
+  items: (TrendingNote | Note)[];
   next?: string | null;
 }
 
-export type RemoteNotesPage =
-  | { kind: "pool"; items: TrendingNote[]; next: string | null }
-  | { kind: "kept"; items: Note[]; next: string | null };
+export type RemoteItem = { kind: "pool"; item: TrendingNote } | { kind: "kept"; note: Note };
+
+export interface RemoteNotesPage {
+  items: RemoteItem[];
+  next: string | null;
+}
 
 export type RemoteView = "trending" | "latest";
+
+export function decodeRemoteItems(raw: unknown): RemoteItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((entry): RemoteItem[] => {
+    if (!entry || typeof entry !== "object") return [];
+    const item = entry as TrendingNote | Note;
+    if (item.id != null) return [{ kind: "kept", note: item as Note }];
+    return typeof (item as TrendingNote).uri === "string" ? [{ kind: "pool", item: item as TrendingNote }] : [];
+  });
+}
 
 function query(cursor: string | null, limit: number) {
   return cursor ? `limit=${limit}&cursor=${encodeURIComponent(cursor)}` : `limit=${limit}`;
@@ -40,9 +53,6 @@ export async function listRemoteNotes(
   const body = noteMocks
     ? await (mockFailure(`remote-${view}`) ?? noteMocks.mockRemoteNotes(view, cursor, limit))
     : await request<RemoteNotesBody>(`/api/v1/federation/${view}?${query(cursor, limit)}`, { method: "GET" });
-  const items = Array.isArray(body?.items) ? body.items : [];
   const next = typeof body?.next === "string" && body.next !== "" ? body.next : null;
-  return view === "trending" && cursor?.startsWith("r")
-    ? { kind: "kept", items: items as Note[], next }
-    : { kind: "pool", items: items as TrendingNote[], next };
+  return { items: decodeRemoteItems(body?.items), next };
 }
