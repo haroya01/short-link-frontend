@@ -9,7 +9,8 @@ import type { StatusAction } from "@/modules/blog/components/editor/use-post-edi
 import { Avatar } from "@/modules/blog/components/avatar";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TakenDownNotice } from "@/modules/blog/components/editor/taken-down-notice";
-import { TagInput } from "@/modules/blog/components/editor/tag-input";
+import { TagInput } from "@/components/common/tag-input";
+import { POST_TAG_LIMITS } from "@/modules/blog/lib/tag-normalize";
 import { AudienceSection } from "@/modules/blog/components/editor/audience-section";
 import { passwordProblem, type PostAudience } from "@/modules/blog/lib/post-audience";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
@@ -450,6 +451,7 @@ export function PublishDialog({
               <TagInput
                 tags={tags}
                 onChange={onTagsChange}
+                limits={POST_TAG_LIMITS}
                 suggestions={tagSuggestions}
                 placeholder={t("tagsPlaceholder")}
               />

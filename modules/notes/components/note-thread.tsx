@@ -25,6 +25,7 @@ import { askToSignIn } from "@/components/auth/login-prompt";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { openNote } from "@/modules/notes/lib/note-href";
 import { placeReply } from "@/modules/notes/lib/thread-reply";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function NoteThreadView({
   initial,
@@ -54,7 +55,7 @@ export function NoteThreadView({
   useEffect(() => {
     if (landed === null) return;
     const row = document.querySelector(`[data-note-id="${landed}"]`);
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     row?.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
     setLanded(null);
   }, [landed]);

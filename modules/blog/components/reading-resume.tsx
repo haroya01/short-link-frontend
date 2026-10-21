@@ -5,6 +5,7 @@ import { BookOpen, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { usePresence } from "@/hooks/use-presence";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 const KEY_PREFIX = "kurl:read-pos:";
 const MIN_SAVE_Y = 600; // 이만큼도 안 내렸으면 "읽다 만" 게 아니다
@@ -35,21 +36,14 @@ function pruneOld() {
   }
 }
 
-/**
- * 읽기 이어가기 — 긴 글을 읽다 떠난 독자가 돌아왔을 때 "이어서 읽기" 칩으로 마지막 위치로 점프.
- * 전부 localStorage(기기 로컬): 서버도 계정도 필요 없고, 92% 이상 읽었으면 완독으로 보고 지운다.
- * 칩은 한 번 닫으면 그 방문에선 다시 안 뜬다(강요하지 않는 제안).
- */
 export function ReadingResume({ postKey }: { postKey: string }) {
   const t = useTranslations("publicPost");
   const [resumeY, setResumeY] = useState<number | null>(null);
   // Portal gate: only mount the fixed chip on the client (avoids SSR document access + hydration skew).
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  // Hold the chip mounted for a brief fade-out when dismissed, instead of popping to nothing.
   const { mounted: present, closing } = usePresence(resumeY != null, 160);
 
-  // 복원 제안: 마운트 시 저장된 위치가 있고, 지금 막 위에서 시작했다면 칩을 띄운다.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey(postKey));
@@ -63,9 +57,7 @@ export function ReadingResume({ postKey }: { postKey: string }) {
     }
   }, [postKey]);
 
-  // 위치 기록: 스크롤은 rAF 로 관찰하되, 실제 localStorage 쓰기는 트레일링 스로틀로 묶는다.
-  // 매 프레임 동기 쓰기(≈60Hz JSON 직렬화+setItem)를 피하려 마지막 상태만 ref 에 담아 두고,
-  // 최대 SAVE_THROTTLE_MS 마다 그리고 탭이 숨거나/떠날 때 한 번씩만 반영한다. 끝까지 가면 완독 처리(삭제).
+  // localStorage 쓰기는 트레일링 스로틀: 매 프레임 동기 setItem 을 피하고, 탭이 숨거나 떠날 때 한 번 더 남긴다.
   useEffect(() => {
     let raf = 0;
     let timer = 0;
@@ -139,7 +131,7 @@ export function ReadingResume({ postKey }: { postKey: string }) {
         <button
           type="button"
           onClick={() => {
-            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const reduce = prefersReducedMotion();
             if (resumeY != null) window.scrollTo({ top: resumeY, behavior: reduce ? "auto" : "smooth" });
             setResumeY(null);
           }}

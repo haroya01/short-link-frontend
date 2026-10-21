@@ -13,8 +13,8 @@ import { StatsEmptyState } from "./stats-empty-state";
 import { TabBar } from "./tab-bar";
 import { SettingsTab } from "./tabs/settings-tab";
 import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
-// Evidence links select a persistent analysis tab before scrolling to its section.
 const SECTION_CHAPTER: Record<string, TabKey> = {
   "section-device": "who",
   "section-bots": "who",
@@ -32,16 +32,7 @@ const SECTION_CHAPTER: Record<string, TabKey> = {
   "chapter-where": "where",
 };
 
-/**
- * Body of the stats page, lifted out of {@code page.tsx} so the public {@code /demo} route can
- * render the exact same surface against synthetic data without copy-pasting the layout.
- *
- * <p>The {@code demo} flag is the single switch the demo route flips on. The dashboard's stats
- * page passes {@code false} and gets the live behaviour — public-stats toggle, SSE live click
- * feed, A/B destinations + webhooks settings. The demo route passes {@code true} and gets the
- * same components rendered as static stand-ins instead of mounted-with-API-calls, so visitors
- * see the chrome of every section without the page trying to authenticate or open an EventSource.
- */
+/** `demo` renders every section as a static stand-in: no auth, no API calls, no EventSource. */
 export function StatsBody({
   data: sourceData,
   shortUrl,
@@ -82,7 +73,7 @@ export function StatsBody({
     // 챕터 뷰가 렌더된 다음 페인트에 목적지 섹션이 생긴다 — rAF 로 한 박자 늦춰 스크롤.
     const id = pendingScroll;
     const raf = requestAnimationFrame(() => {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reduce = prefersReducedMotion();
       document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
       setPendingScroll(null);
     });

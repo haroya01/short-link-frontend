@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { readStorageString, writeStorageString } from "@/lib/storage-json";
 import { cn } from "@/lib/utils";
-import { avatarTint, avatarTintStyle } from "@/modules/blog/lib/avatar-tint";
+import { avatarTint, avatarTintStyle } from "@/lib/avatar-tint";
 
 const KEY = "kurl:me-initial";
 const HANDLE_KEY = "kurl:me-handle";

@@ -60,6 +60,16 @@ test.describe("event organizer flow", () => {
     expect(events[0]).toMatchObject({ title: "E2E 테스트 스터디", capacity: 5 });
   });
 
+  test("the description preview renders with the public page's renderer, code highlighting included", async ({ page }) => {
+    await organizerBackend(page);
+    await page.goto("/ko/events/new");
+    await page.locator("#ef-desc").fill("## 준비물\n\n```js\nconst seat = 1;\n```");
+
+    const preview = page.locator(".prose-text-block");
+    await expect(preview.getByRole("heading", { name: "준비물", level: 2 })).toBeVisible();
+    await expect(preview.locator("pre code .hljs-keyword", { hasText: "const" })).toBeVisible();
+  });
+
   test("closing registration flips the event status", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");

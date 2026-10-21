@@ -64,12 +64,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* 제목·입력칸은 등장 모션 없이 첫 페인트에 그대로 — 여러 번 오는 화면이라 매번 다시
-              떠오르는 연출은 붙여 넣기까지의 지연일 뿐이다. */}
           <div>
-            {/* 단축이 끝나면 입력 칸이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
-                "다른 주소도 줄이기"를 누르면 빈 칸이 맨 위로 돌아오고 답들은
-                영수증처럼 아래로 밀린다. */}
             <ShortenPanel
               authenticated={authenticated}
               ready={ready}
@@ -99,9 +94,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 글리프 워밍업 — 예시 섹션 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
-          늦게 오는 font-face 이벤트가 뷰포트 안 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
-          모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
+      {/* 예시 섹션 제목의 한글 서브셋을 첫 페인트 전에 당겨, 늦은 font-face 가 뷰포트 안 h2 를
+          LCP 로 다시 기록하지 않게 한다. display:none 이 아니라 invisible 이어야 폰트를 받는다. */}
       <div aria-hidden className="invisible absolute h-0 overflow-hidden">
         <span className="text-headline-sm font-bold">{t("stage.title")}</span>
         <span>{t("stage.desc")}</span>
@@ -109,15 +103,9 @@ export default function HomePage() {
         <span className="font-semibold">{t("stage.trendTitle")}</span>
       </div>
 
-      {/* 도구 먼저: 폼·최근 링크가 주인공이고, 설명은 로그아웃 방문자에게만 한 섹션.
-          ready 전에는 pre-paint 인증 힌트(data-auth-slot)로 로그인 사용자에게 숨겨 둔다. */}
-      {!ready ? (
-        <div data-auth-slot="anon">
-          <HomeStatsExample />
-        </div>
-      ) : !authenticated ? (
+      <div data-auth-slot={ready ? undefined : "anon"} className="contents">
         <HomeStatsExample />
-      ) : null}
+      </div>
     </div>
   );
 }

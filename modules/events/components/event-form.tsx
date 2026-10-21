@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Markdown as MarkdownType } from "@/modules/blog/components/markdown";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Markdown } from "@/modules/blog/components/markdown";
 import type { ContactField, EventDraft, MyEvent, QuestionSpec } from "@/modules/events/api/events";
 import { commitCover, presignCover } from "@/modules/events/api/events";
 import { isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
@@ -76,8 +76,7 @@ export function EventForm({
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  // 새 이벤트의 시작 기본값 = 다음 주 19:00 (iOS 생성 폼과 동일) — 제목만 적으면 발행되는
-  // 폼이 되도록. 마운트 후에 채우는 건 하이드레이션 불일치(서버/클라이언트 now 차이) 회피.
+  // 기본 시작은 다음 주 19:00(iOS 생성 폼과 같음). 서버와 클라이언트의 now 가 달라 마운트 뒤에 채운다.
   useEffect(() => {
     if (event != null) return;
     setForm((prev) => {
@@ -162,7 +161,6 @@ export function EventForm({
             />
           </Field>
         </div>
-        {/* 타임존은 기기값이 거의 항상 정답 — 풀폭 필드 대신 한 줄 조용한 행으로 강등. */}
         <div className="flex items-center gap-2">
           <label
             htmlFor="ef-tz"
@@ -285,8 +283,6 @@ export function EventForm({
   );
 }
 
-/** 설명 = 마크다운. 탭 전환 없이 **치는 즉시** 아래에 렌더된다 — 블로그와 같은 렌더러라
- *  공개 페이지와 결과가 1:1 로 같다. 내용이 없으면 미리보기 영역 자체를 안 그린다(조용함). */
 function DescriptionField({
   value,
   onChange,
@@ -300,8 +296,6 @@ function DescriptionField({
       <label htmlFor="ef-desc" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
         {t("description")}
       </label>
-      {/* 빈 8줄 상자가 첫 폴드를 다 먹던 것 — 4줄로 시작하고, 내용이 붙으면 미리보기가
-          아래로 자란다. */}
       <Textarea
         id="ef-desc"
         value={value}
@@ -316,13 +310,28 @@ function DescriptionField({
             {t("descPreview")}
           </p>
           <div className="prose-text-block text-slate-800 dark:text-slate-200">
-            <Markdown>{value}</Markdown>
+            <DescriptionPreview value={value} />
           </div>
         </div>
       ) : null}
       <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("descriptionHint")}</p>
     </div>
   );
+}
+
+/** 공개 페이지(/e/[slug])와 같은 렌더러여야 미리보기가 결과와 같다. 구문 강조까지 실려 무거워서 첫 입력 때 불러온다. */
+function DescriptionPreview({ value }: { value: string }) {
+  const [Markdown, setMarkdown] = useState<typeof MarkdownType | null>(null);
+  useEffect(() => {
+    let live = true;
+    void import("@/modules/blog/components/markdown").then((m) => {
+      if (live) setMarkdown(() => m.Markdown);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  return Markdown ? <Markdown>{value}</Markdown> : <p className="whitespace-pre-line">{value}</p>;
 }
 
 function Section({ title, children }: { title?: string; children: React.ReactNode }) {
@@ -338,7 +347,6 @@ function Section({ title, children }: { title?: string; children: React.ReactNod
   );
 }
 
-/** 선택 설정은 접어서 첫 발행 마찰을 줄인다 — 제목+일시만으로도 발행 가능해야 한다. */
 function CollapsibleSection({
   title,
   defaultOpen,

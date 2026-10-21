@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { SignInRow } from "@/components/auth/sign-in-row";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import { blogHref } from "@/lib/host";
 import { listHome, listHomeSince, type HomeItem, type HomePage, type HomePost, type HomeTab } from "@/modules/blog/api/home-feed";
 import { onHomeRefresh } from "@/modules/blog/lib/home-refresh";
@@ -29,9 +30,11 @@ import type { Note, QuotedPost } from "@/modules/notes/api/notes";
 import { NoteComposer } from "@/modules/notes/components/note-composer";
 import { NoteDraftsButton } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
+import { RemoteNotesList } from "@/modules/notes/components/remote-feed";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useShowReposts } from "@/modules/notes/lib/use-show-reposts";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 export type HomeSort = "following" | "recent" | "trending";
 
@@ -75,7 +78,7 @@ export function HomeFeed({
   const showsPosted = sort !== "trending";
   const arrive = useCallback((note: Note) => {
     setPosted((current) => [note, ...current.filter((n) => n.id !== note.id)]);
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   }, []);
   useEffect(() => {
@@ -235,7 +238,8 @@ function HomeList({
 
   const refreshNow = useCallback(async () => {
     if (refreshing.current) return;
-    window.scrollTo({ top: 0, behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    if (sort === "recent") void queryClient.resetQueries({ queryKey: REMOTE_LATEST_KEY });
     if (sort === "trending" || newest.current === null) {
       setArrived([]);
       newest.current = null;
@@ -312,6 +316,13 @@ function HomeList({
   }
 
   if (rows.length === 0 && !hasNextPage) {
+    if (sort === "recent") {
+      return (
+        <div data-testid="home-feed">
+          <RemoteTail divided={false} fallback={<BlogEmpty title={t("emptyTitle")} />} />
+        </div>
+      );
+    }
     return sort === "following" ? (
       <BlogEmpty
         title={t("homeEmptyFollowing")}
@@ -364,6 +375,7 @@ function HomeList({
         ))}
       </div>
       </BelongingProvider>
+      {sort === "recent" && !hasNextPage && <RemoteTail divided fallback={null} />}
       {hasNextPage && (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">
           <button
@@ -389,5 +401,30 @@ function HomeList({
         </div>
       )}
     </div>
+  );
+}
+
+const REMOTE_LATEST_KEY = ["notes", "remote", "latest"];
+
+function RemoteTail({ divided, fallback }: { divided: boolean; fallback: ReactNode }) {
+  const t = useTranslations("publicFeed");
+  return (
+    <section aria-labelledby="home-remote-tail" data-testid="home-remote-tail">
+      <RemoteNotesList
+        view="latest"
+        fallback={fallback}
+        heading={
+          <h2
+            id="home-remote-tail"
+            className={cn(
+              "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400",
+              divided && "border-t border-slate-100 dark:border-slate-800",
+            )}
+          >
+            {t("homeRemoteTail")}
+          </h2>
+        }
+      />
+    </section>
   );
 }
