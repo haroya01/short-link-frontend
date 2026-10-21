@@ -19,6 +19,7 @@ import type { SeriesDetailView, SeriesItemRef, SeriesOwnerItem, SeriesView } fro
 import { ApiError } from "@/lib/api/client";
 import type { ProblemDetail } from "@/types";
 import { mockSeriesNoteSummary } from "@/modules/notes/api/_mocks";
+import { mockRoomNames as roomNames } from "@/modules/rooms/api/_mocks";
 import { postHref } from "@/modules/blog/lib/author-href";
 import { PASSWORD_MAX, PASSWORD_MIN } from "@/modules/blog/lib/post-audience";
 
@@ -152,10 +153,16 @@ export function mockGetPost(id: number): PostView {
   return posts.get(id) ?? blankPost({ id, slug: `post-${id}` });
 }
 
+function mockRoomName(id: number): string {
+  return roomNames()[id] ?? "";
+}
+
 export function mockCreatePost(payload: {
   slug: string;
   title: string;
   languageTag?: string;
+  audience?: PostView["audience"];
+  roomId?: number;
 }): PostView {
   if ([...posts.values()].some((p) => p.slug === payload.slug)) {
     throw new ApiError(409, { status: 409, code: "SLUG_CONFLICT" });
@@ -167,6 +174,11 @@ export function mockCreatePost(payload: {
     title: payload.title,
     languageTag: payload.languageTag ?? "ko",
   });
+  if (payload.audience === "ROOM") {
+    if (payload.roomId == null) throw badRequest("POST_ROOM_REQUIRED");
+    p.audience = "ROOM";
+    p.room = { id: payload.roomId, name: mockRoomName(payload.roomId) };
+  }
   posts.set(id, p);
   blocks.set(id, []);
   return p;
@@ -212,7 +224,16 @@ function audiencePatch(id: number, payload: AudienceInput): Partial<PostView> {
     patch.hasPassword = true;
   }
   if (payload.audience !== undefined) {
-    if (!["PUBLIC", "UNLISTED", "FOLLOWERS", "PASSWORD"].includes(payload.audience)) throw badRequest("POST_AUDIENCE_INVALID");
+    if (!["PUBLIC", "UNLISTED", "FOLLOWERS", "PASSWORD", "ROOM"].includes(payload.audience)) throw badRequest("POST_AUDIENCE_INVALID");
+    if (payload.audience === "ROOM") {
+      if (payload.roomId == null) throw badRequest("POST_ROOM_REQUIRED");
+      if (current?.audience === "ROOM" && current.room && current.room.id !== payload.roomId) {
+        throw new ApiError(409, { status: 409, code: "POST_ROOM_MOVE" });
+      }
+      patch.room = { id: payload.roomId, name: mockRoomName(payload.roomId) };
+    } else {
+      patch.room = null;
+    }
     if (payload.audience === "PASSWORD" && !current?.hasPassword && payload.password === undefined) {
       throw badRequest("POST_PASSWORD_REQUIRED");
     }

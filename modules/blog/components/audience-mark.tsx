@@ -1,9 +1,9 @@
-import { GlobeLock, Key, Link, Lock, type LucideIcon } from "lucide-react";
+import { GlobeLock, Key, Link, Lock, UsersRound, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { cardMark, type AudienceFields, type CardMark, type PostAudience } from "@/modules/blog/lib/post-audience";
 
-const ICONS: Record<CardMark, LucideIcon> = { UNLISTED: Link, FOLLOWERS: Lock, PASSWORD: Key, REGION: GlobeLock };
+const ICONS: Record<CardMark, LucideIcon> = { UNLISTED: Link, FOLLOWERS: Lock, PASSWORD: Key, REGION: GlobeLock, ROOM: UsersRound };
 
 function Mark({ mark, className }: { mark: CardMark; className?: string }) {
   const t = useTranslations("publicPost.audience");

@@ -25,6 +25,9 @@ import {
 import { assignPostToSeries } from "@/modules/blog/api/series";
 import { refreshPublicLists } from "@/modules/blog/api/audience-revalidate";
 import { audiencePatch, changesVisibility, type PostAudience } from "@/modules/blog/lib/post-audience";
+import { getRoom } from "@/modules/rooms/api/rooms";
+
+export type PostRoom = { id: number; name: string };
 import { ApiError } from "@/lib/api/client";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { postHref } from "@/modules/blog/lib/author-href";
@@ -116,7 +119,14 @@ export function usePostEditor(
     authenticated,
     username,
     initialMarkdown = "",
-  }: { ready: boolean; authenticated: boolean; username?: string | null; initialMarkdown?: string },
+    initialRoomId = null,
+  }: {
+    ready: boolean;
+    authenticated: boolean;
+    username?: string | null;
+    initialMarkdown?: string;
+    initialRoomId?: number | null;
+  },
 ) {
   const t = useTranslations("postEditor");
   const apiErrorMessage = useApiErrorMessage();
@@ -143,16 +153,17 @@ export function usePostEditor(
   // them stays the share-card image only.
   const [coverChosen, setCoverChosen] = useState(false);
   const [excerpt, setExcerptRaw] = useState("");
-  const [audience, setAudienceRaw] = useState<PostAudience>("PUBLIC");
+  const [audience, setAudienceRaw] = useState<PostAudience>(initialRoomId != null ? "ROOM" : "PUBLIC");
+  const [room, setRoomRaw] = useState<PostRoom | null>(initialRoomId != null ? { id: initialRoomId, name: "" } : null);
   const [password, setPasswordRaw] = useState("");
   const [blockedCountries, setBlockedCountriesRaw] = useState<string[]>([]);
   // A save can outlive the render that started it. Keep every editable field current so its next
   // snapshot includes edits made while the preceding request was pending (including metadata).
   const currentDraft = useRef({
-    post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries,
+    post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries, room,
   });
   currentDraft.current = {
-    post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries,
+    post, title, slug, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries, room,
   };
   const [loading, setLoading] = useState(postId != null);
   const [loadFailed, setLoadFailed] = useState(false);
@@ -275,6 +286,13 @@ export function usePostEditor(
     setAudienceRaw(v);
     touchDirty();
   };
+  const setRoom = (next: PostRoom) => {
+    currentDraft.current.room = next;
+    currentDraft.current.audience = "ROOM";
+    setRoomRaw(next);
+    setAudienceRaw("ROOM");
+    touchDirty();
+  };
   const setPassword = (v: string) => {
     currentDraft.current.password = v;
     setPasswordRaw(v);
@@ -309,6 +327,7 @@ export function usePostEditor(
       setCoverChosen(p.coverChosen ?? false);
       setExcerptRaw(p.excerpt ?? "");
       setAudienceRaw(p.audience ?? "PUBLIC");
+      setRoomRaw(p.room ?? null);
       setPasswordRaw("");
       setBlockedCountriesRaw(p.blockedCountries ?? []);
       setDirty(false); // freshly loaded content isn't a pending edit
@@ -328,6 +347,23 @@ export function usePostEditor(
     if (!ready || !authenticated) return;
     void load();
   }, [ready, authenticated, load]);
+
+  const roomToName = room && !room.name ? room.id : null;
+  useEffect(() => {
+    if (roomToName == null || !ready || !authenticated) return;
+    let live = true;
+    getRoom(roomToName)
+      .then((found) => {
+        if (!live || currentDraft.current.room?.id !== found.id) return;
+        const named = { id: found.id, name: found.name };
+        currentDraft.current.room = named;
+        setRoomRaw(named);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [roomToName, ready, authenticated]);
 
   // Draft autosave — persist edits after a short idle so nothing is lost. Drafts only: a published post
   // saves only on an explicit action, so the live post never changes out from under readers mid-edit.
@@ -378,7 +414,12 @@ export function usePostEditor(
       for (let attempt = 0; ; attempt++) {
         try {
           const slugToTry = attempt === 0 && chosen ? chosen : randomSlug();
-          const created = await createPost({ slug: slugToTry, title: currentDraft.current.title.trim() });
+          const { audience: startAudience, room: startRoom } = currentDraft.current;
+          const created = await createPost({
+            slug: slugToTry,
+            title: currentDraft.current.title.trim(),
+            ...(startAudience === "ROOM" && startRoom ? { audience: "ROOM" as const, roomId: startRoom.id } : {}),
+          });
           currentDraft.current.post = created;
           baseVersion.current = created.contentVersion ?? null;
           setPost(created);
@@ -439,7 +480,7 @@ export function usePostEditor(
       setError(null);
       try {
         for (;;) {
-          const { title, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries } =
+          const { title, markdown, tags, seriesId, coverUrl, coverChosen, excerpt, audience, password, blockedCountries, room } =
             currentDraft.current;
           const md = liveMarkdown.current?.() ?? markdown;
           const seqAtSnapshot = editSeq.current;
@@ -461,9 +502,9 @@ export function usePostEditor(
           const { slug } = currentDraft.current;
           const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
           const chosen = coverUrl != null && coverChosen;
-          const access = audiencePatch(post, { audience, password, blockedCountries });
+          const access = audiencePatch(post, { audience, password, blockedCountries, roomId: room?.id ?? null });
           const metaSig = JSON.stringify([
-            title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, audience, blockedCountries, password,
+            title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", chosen, seriesId, audience, blockedCountries, password, room?.id,
           ]);
           const sig = JSON.stringify([metaSig, md]);
           if (sig === lastSaved.current) {
@@ -705,7 +746,7 @@ export function usePostEditor(
     }
     // Going public needs at least one topic (tag). The reader's discovery — topic feeds, the author
     // rail, related posts — is tag-driven, so an untagged public post is effectively undiscoverable.
-    if (goingPublic && tags.length === 0) {
+    if (goingPublic && tags.length === 0 && currentDraft.current.audience !== "ROOM") {
       setError(t("tagsRequired"));
       return false;
     }
@@ -754,7 +795,7 @@ export function usePostEditor(
       return false;
     }
     // Scheduling is a deferred publish → same topic requirement as publishing now.
-    if (tags.length === 0) {
+    if (tags.length === 0 && currentDraft.current.audience !== "ROOM") {
       setError(t("tagsRequired"));
       return false;
     }
@@ -950,6 +991,8 @@ export function usePostEditor(
     setExcerpt,
     audience,
     setAudience,
+    room,
+    setRoom,
     password,
     setPassword,
     blockedCountries,

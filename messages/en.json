@@ -621,8 +621,11 @@
       "rotateBody": "The current link will stop working.",
       "rotateFailed": "Couldn't change the link",
       "countryHint": "Readers in these countries see only the title. A VPN can get around this.",
-      "countryRemove": "Remove {country}"
-    }
+      "countryRemove": "Remove {country}",
+      "roomGroup": "Rooms",
+      "roomHint": "Only this room's members can read it. It never shows up in search, trending or on other servers."
+    },
+    "roomPost": "Only {room} members can read this"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -862,7 +865,8 @@
       "UNLISTED": "Link only",
       "FOLLOWERS": "Followers",
       "PASSWORD": "Password",
-      "REGION": "Country limits"
+      "REGION": "Country limits",
+      "ROOM": "Room members only"
     },
     "shareCard": {
       "FOLLOWERS": "Only followers can read this post",
@@ -4753,7 +4757,11 @@
     "noteTitle": "New note",
     "notePosted": "Note posted",
     "viewNote": "View",
-    "noteParts": "{count, plural, one {# note} other {# notes}}"
+    "noteParts": "{count, plural, one {# note} other {# notes}}",
+    "where": "Where",
+    "what": "What",
+    "everyone": "Everyone",
+    "roomPostAudience": "A blog post only room members read"
   },
   "rooms": {
     "title": "Rooms",
@@ -4887,6 +4895,10 @@
     "linkFailed": "Couldn't make a new link",
     "viewByRoom": "By room",
     "viewAll": "All",
-    "allEmpty": "No notes in your rooms yet."
+    "allEmpty": "No notes in your rooms yet.",
+    "allReplies": "{count, plural, one {View # comment} other {View all # comments}}",
+    "post": "Post",
+    "writePost": "Write a post in {room}",
+    "leaveDeleteHint": "Deleting removes all your notes, blog posts and comments in this room."
   }
 }

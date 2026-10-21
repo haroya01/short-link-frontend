@@ -36,12 +36,14 @@ export interface PostView {
   hasPassword?: boolean;
   unlistedUrl?: string | null;
   blockedCountries?: string[];
+  room?: { id: number; name: string } | null;
 }
 
 export interface AudienceInput {
   audience?: PostAudience;
   password?: string;
   blockedCountries?: string[];
+  roomId?: number;
 }
 
 export interface EditGuard {
@@ -86,6 +88,8 @@ export function createPost(payload: {
   slug: string;
   title: string;
   languageTag?: string;
+  audience?: PostAudience;
+  roomId?: number;
 }): Promise<PostView> {
   if (authoringMocks) return Promise.resolve(authoringMocks.mockCreatePost(payload));
   return request<PostView>("/api/v1/posts", { method: "POST", body: payload });

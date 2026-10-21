@@ -1,14 +1,15 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
 import { SignInRow } from "@/components/auth/sign-in-row";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
-import { listHome, type HomePage, type HomePost, type HomeTab } from "@/modules/blog/api/home-feed";
+import { listHome, listHomeSince, type HomeItem, type HomePage, type HomePost, type HomeTab } from "@/modules/blog/api/home-feed";
+import { onHomeRefresh } from "@/modules/blog/lib/home-refresh";
 import { fetchPublicConnectionFeed, type ConnectionEvent } from "@/modules/blog/api/collections";
 import type { SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { ConnectionFeedInsert } from "@/modules/blog/components/connection-feed-insert";
@@ -196,6 +197,10 @@ function HomeList({
   const [changed, setChanged] = useState<Map<number, Note>>(new Map());
   const [removed, setRemoved] = useState<Set<number>>(new Set());
   const sentinel = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const [arrived, setArrived] = useState<HomeItem[]>([]);
+  const newest = useRef<string | null>(null);
+  const refreshing = useRef(false);
   const connectionEvents = useViewerList(
     serverConnectionEvents ?? [],
     () =>
@@ -220,6 +225,44 @@ function HomeList({
       staleTime: 30_000,
     });
   const autoLoad = Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError;
+  const queryKey = useRef<unknown[]>([]);
+  queryKey.current = ["home", sort, anonymous ? "anonymous" : "member", refresh];
+
+  const firstNewest = data?.pages[0]?.newest ?? null;
+  useEffect(() => {
+    if (firstNewest && newest.current === null) newest.current = firstNewest;
+  }, [firstNewest]);
+
+  const refreshNow = useCallback(async () => {
+    if (refreshing.current) return;
+    window.scrollTo({ top: 0, behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    if (sort === "trending" || newest.current === null) {
+      setArrived([]);
+      newest.current = null;
+      await refetch();
+      return;
+    }
+    refreshing.current = true;
+    try {
+      const result = await listHomeSince(API_TAB[sort], newest.current);
+      if (!result.ok) return;
+      const page = result.data;
+      if (page.newest) newest.current = page.newest;
+      if (page.gap) {
+        setArrived([]);
+        queryClient.setQueryData<InfiniteData<HomePage, string | null>>(queryKey.current, {
+          pages: [page],
+          pageParams: [null],
+        });
+      } else if (page.items.length > 0) {
+        setArrived((current) => [...page.items, ...current]);
+      }
+    } finally {
+      refreshing.current = false;
+    }
+  }, [sort, refetch, queryClient]);
+
+  useEffect(() => onHomeRefresh(() => void refreshNow()), [refreshNow]);
 
   useEffect(() => {
     const el = sentinel.current;
@@ -235,7 +278,8 @@ function HomeList({
     return isError ? <ErrorState onRetry={() => void refetch()} /> : <NoteListSkeleton />;
   }
 
-  const fresh = new Set(posted.map((n) => n.id));
+  const fresh = new Set([...posted.map((n) => n.id), ...arrived.flatMap((item) => (item.kind === "note" ? [item.note.id] : []))]);
+  const freshPosts = new Set(arrived.flatMap((item) => (item.kind === "post" ? [item.post.id] : [])));
   const seenNotes = new Set<number>();
   const seenPosts = new Set<number>();
   const rows: Row[] = [];
@@ -250,6 +294,13 @@ function HomeList({
     rows.push({ kind: "note", note, filteredBy: verdict?.action === "warn" ? verdict.phrases : undefined });
   };
   posted.forEach(addNote);
+  for (const item of arrived) {
+    if (item.kind === "note") addNote(item.note);
+    else if (!seenPosts.has(item.post.id) && !blocked.has(item.post.author.username)) {
+      seenPosts.add(item.post.id);
+      rows.push(item);
+    }
+  }
   for (const page of data.pages) {
     for (const item of page.items) {
       if (item.kind === "note") addNote(item.note);
@@ -297,6 +348,10 @@ function HomeList({
                 onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
                 onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
               />
+            ) : freshPosts.has(row.post.id) ? (
+              <div className="note-arrive">
+                <HomePostRow post={row.post} />
+              </div>
             ) : (
               <HomePostRow post={row.post} />
             )}

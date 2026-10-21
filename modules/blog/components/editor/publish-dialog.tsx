@@ -43,6 +43,9 @@ export type PublishAccess = {
   onRotate: () => Promise<boolean>;
   blockedCountries: string[];
   onBlockedCountriesChange: (v: string[]) => void;
+  room?: { id: number; name: string } | null;
+  onRoomChange?: (room: { id: number; name: string }) => void;
+  savedRoomId?: number | null;
 };
 
 const DEFAULT_ACCESS: PublishAccess = {
@@ -184,9 +187,10 @@ export function PublishDialog({
   // NOT disable Publish: clicking it surfaces the inline "add a title" hint and fires no /publish
   // (changeStatus guards + returns false, so the dialog stays open) — a teachable click beats a
   // silently dead button.
-  const canPublish = tags.length > 0;
+  const inRoom = access.audience === "ROOM";
+  const canPublish = tags.length > 0 || inRoom;
   // The nudge shows only after a publish attempt with no tags, and clears the moment a tag lands.
-  const showTagNudge = tagNudge && tags.length === 0;
+  const showTagNudge = tagNudge && tags.length === 0 && !inRoom;
   // Draft → "발행 설정" (about to go live); already-public → "글 설정" (managing the live post).
   const dialogTitle = status === "DRAFT" ? t("publishSettings") : t("postSettings");
 
@@ -442,7 +446,7 @@ export function PublishDialog({
           {/* 태그 — the one required field. A standing hint isn't needed: the placeholder carries the
               how-to, and the * + a failed-publish nudge carry the "required" signal. */}
           <div ref={tagsFieldRef} className="mt-5 scroll-mt-4">
-            <Field label={t("tags")} required>
+            <Field label={t("tags")} required={!inRoom}>
               <TagInput
                 tags={tags}
                 onChange={onTagsChange}
@@ -471,6 +475,9 @@ export function PublishDialog({
               onRotate={access.onRotate}
               blockedCountries={access.blockedCountries}
               onBlockedCountriesChange={access.onBlockedCountriesChange}
+              room={access.room ?? null}
+              onRoomChange={access.onRoomChange}
+              savedRoomId={access.savedRoomId ?? null}
             />
           </div>
 

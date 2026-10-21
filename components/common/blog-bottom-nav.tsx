@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
+import { requestHomeRefresh } from "@/modules/blog/lib/home-refresh";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
@@ -57,6 +58,11 @@ export function BlogBottomNav() {
         <BlogChromeLink
           href={blogHref("/")}
           aria-current={isHome ? "page" : undefined}
+          onClick={(e) => {
+            if (!isHome || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
+            requestHomeRefresh();
+          }}
           className={cn(TAB, isHome ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
         >
           <Home className="h-5 w-5" />

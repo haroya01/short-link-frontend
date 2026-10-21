@@ -170,3 +170,28 @@ describe("the condition on the byline", () => {
     }
   });
 });
+
+describe("audiencePatch for a room post", () => {
+  const draft = { audience: "ROOM" as const, password: "", blockedCountries: [] as string[] };
+
+  it("sends ROOM with its room, and never a country limit", () => {
+    expect(audiencePatch({ audience: "PUBLIC" }, { ...draft, roomId: 7, blockedCountries: ["KR"] })).toEqual({
+      audience: "ROOM",
+      roomId: 7,
+    });
+  });
+
+  it("sends nothing while the room stays the same", () => {
+    expect(audiencePatch({ audience: "ROOM", room: { id: 7 } }, { ...draft, roomId: 7 })).toEqual({});
+  });
+
+  it("does not send ROOM without a room, which the server would refuse", () => {
+    expect(audiencePatch({ audience: "PUBLIC" }, { ...draft, roomId: null })).toEqual({});
+  });
+
+  it("taking a room post public sends only the new audience", () => {
+    expect(
+      audiencePatch({ audience: "ROOM", room: { id: 7 } }, { audience: "PUBLIC", password: "", blockedCountries: [], roomId: 7 }),
+    ).toEqual({ audience: "PUBLIC" });
+  });
+});

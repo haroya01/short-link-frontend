@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -42,10 +42,11 @@ function postAsNote(post: HomePost): Note {
     repostedByMe: null,
     quotedNote: null,
     linkPreview: null,
+    room: post.room ?? null,
   } as Note;
 }
 
-export function HomePostRow({ post }: { post: HomePost }) {
+export function HomePostRow({ post, context }: { post: HomePost; context?: ReactNode }) {
   const t = useTranslations("notes");
   const tPost = useTranslations("publicPost");
   const locale = useLocale();
@@ -72,6 +73,7 @@ export function HomePostRow({ post }: { post: HomePost }) {
     <div data-post-id={post.id}>
       <NoteCard
         note={note}
+        context={context}
         detached={{
           authorHref: authorHref(post.author.username, locale),
           onAuthor: () => router.push(authorHref(post.author.username, locale)),
@@ -157,7 +159,7 @@ export function HomePostRow({ post }: { post: HomePost }) {
               >
                 <NoteGlyph name="bookmark" active={saved} className="h-[18px] w-[18px]" />
               </button>
-              <ShareMenu href={href} buttonClass={NOTE_ACTION} />
+              {!post.room && <ShareMenu href={href} buttonClass={NOTE_ACTION} />}
             </>
           ),
         }}

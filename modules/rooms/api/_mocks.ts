@@ -1,5 +1,6 @@
 import { ApiError, mockEmpty } from "@/lib/api/client";
 import { readStorageString } from "@/lib/storage-json";
+import type { HomePost } from "@/modules/blog/api/home-feed";
 import type { Note, NoteDraft, NoteFeed } from "@/modules/notes/api/notes";
 import type {
   InviteSource,
@@ -9,7 +10,10 @@ import type {
   RoomInviteLanding,
   RoomInviteOptions,
   RoomInvitee,
+  RoomItem,
+  RoomItemsPage,
   RoomJoinRequest,
+  RoomReply,
   RoomJoined,
   RoomListItem,
   RoomPerson,
@@ -93,6 +97,76 @@ const POSTS: Post[] = [
 
 const LONG_ROOM_ID = 1;
 
+interface BlogPost {
+  id: number;
+  roomId: number;
+  author: Person;
+  slug: string;
+  title: string;
+  excerpt: string;
+  minutesAgo: number;
+  cover: string | null;
+  readMinutes: number;
+}
+
+const BLOG_POSTS: BlogPost[] = [
+  {
+    id: 8801,
+    roomId: 1,
+    author: YUKI,
+    slug: "rainy-mt-night",
+    title: "비 오던 엠티의 밤",
+    excerpt: "펜션 지붕을 두드리던 빗소리, 새벽 세 시까지 이어진 보드게임, 그리고 아무도 제대로 못 찍은 단체 사진 이야기.",
+    minutesAgo: 30,
+    cover: "https://picsum.photos/seed/kurlmt/1200/675",
+    readMinutes: 4,
+  },
+  {
+    id: 8802,
+    roomId: 2,
+    author: KIM,
+    slug: "graduation-album",
+    title: "졸업 앨범을 받은 날",
+    excerpt: "4년 동안 찍힌 내 얼굴은 생각보다 적었다. 대신 뒷모습이 자주 나왔다.",
+    minutesAgo: 60 * 5,
+    cover: "https://picsum.photos/seed/kurlgrad/1200/675",
+    readMinutes: 3,
+  },
+  {
+    id: 8803,
+    roomId: 5,
+    author: SISTER,
+    slug: "moms-kimchi",
+    title: "엄마 김치 레시피 받아 적기",
+    excerpt: "\"적당히\"를 숫자로 바꾸는 데 전화 세 통이 걸렸다.",
+    minutesAgo: 60 * 24 * 2,
+    cover: null,
+    readMinutes: 6,
+  },
+];
+
+const REPLIES: Record<string, [number, Person, string][]> = {
+  "note-9910": [
+    [9951, JUNHO, "7시 괜찮아. 저녁은 거기서 같이 먹자"],
+    [9952, YUKI, "나 조금 늦을 수도"],
+  ],
+  "note-9909": [[9953, MINJI, "역 앞 카페 좋아, 자리 맡아 둘게"]],
+  "post-8801": [
+    [9954, MINJI, "단체 사진 진짜 한 장도 없는 거 실화냐"],
+    [9955, JUNHO, "보드게임 진 사람 누구였지"],
+    [9956, ME, "나야… 다음엔 이긴다"],
+  ],
+  "post-8803": [[9957, MOM, "적당히가 제일 정확한 건데"]],
+};
+
+function replyViews(key: string): RoomReply[] {
+  return (REPLIES[key] ?? []).slice(0, 2).map(([id, who, body]) => ({
+    id,
+    author: { id: who.id, username: who.username, displayName: who.displayName, avatarUrl: who.avatarUrl },
+    body,
+  }));
+}
+
 function seedReceived(): { room: Room; inviter: Person }[] {
   if (emptyScene()) return [];
   return [
@@ -171,7 +245,7 @@ function noteOf(post: Post): Note {
     media: [],
     quotedPost: null,
     inReplyToId: null,
-    replyCount: 0,
+    replyCount: REPLIES[`note-${post.id}`]?.length ?? 0,
     repostCount: null,
     repostedByMe: false,
     quotedNote: null,
@@ -467,4 +541,64 @@ export function mockPostInRoom(draft: NoteDraft): Promise<Note> {
   const post: Post = { id: nextNoteId++, roomId, author: ME, body: draft.body.trim(), minutesAgo: 0, createdAt: new Date().toISOString() };
   posts = [post, ...posts];
   return done(noteOf(post));
+}
+
+function blogPostView(post: BlogPost): HomePost {
+  return {
+    id: post.id,
+    author: { id: post.author.id, username: post.author.username, displayName: post.author.displayName, avatarUrl: post.author.avatarUrl, bio: null },
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    ogImageUrl: post.cover,
+    thumbnailUrl: post.cover,
+    languageTag: "ko",
+    tags: [],
+    publishedAt: iso(post.minutesAgo),
+    viewCount: 4,
+    likeCount: 2,
+    readMinutes: post.readMinutes,
+    commentCount: REPLIES[`post-${post.id}`]?.length ?? 0,
+    likedByMe: false,
+    audience: "ROOM",
+    room: { id: post.roomId, name: knownRoom(post.roomId)?.name ?? "" },
+  } as HomePost;
+}
+
+function mixed(roomIds: Set<number>, withLong: boolean): RoomItem[] {
+  const notes = [...posts, ...(withLong ? longRoomPosts() : [])]
+    .filter((p) => roomIds.has(p.roomId))
+    .map((p): [string, RoomItem] => [postedAt(p), { kind: "note", note: noteOf(p), replies: replyViews(`note-${p.id}`) }]);
+  const blog = BLOG_POSTS.filter((b) => roomIds.has(b.roomId)).map((b): [string, RoomItem] => [
+    iso(b.minutesAgo),
+    { kind: "post", post: blogPostView(b), replies: replyViews(`post-${b.id}`) },
+  ]);
+  return [...notes, ...blog].sort((a, b) => b[0].localeCompare(a[0])).map(([, item]) => item);
+}
+
+function paged(all: RoomItem[], cursor: string | null, limit: number): RoomItemsPage {
+  const start = cursor ? Number(cursor.split(".")[0]) || 0 : 0;
+  const end = start + limit;
+  return { items: all.slice(start, end), next: end < all.length ? `${end}.0` : null };
+}
+
+export function mockRoomItems(id: number, cursor: string | null, limit: number): Promise<RoomItemsPage> {
+  if (!state().some((r) => r.id === id)) {
+    return Promise.reject(new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" }));
+  }
+  return done(paged(mixed(new Set([id]), id === LONG_ROOM_ID), cursor, limit));
+}
+
+export function mockAllRoomItems(cursor: string | null, limit: number): Promise<RoomItemsPage> {
+  return done(paged(mixed(new Set(state().map((r) => r.id)), true), cursor, limit));
+}
+
+export function mockFollowingRoomPosts(): HomePost[] {
+  if (readStorageString("kurl:mock-home-rooms") !== "1") return [];
+  const shown = new Set(state().filter((r) => !r.hiddenFromFeed).map((r) => r.id));
+  return BLOG_POSTS.filter((b) => shown.has(b.roomId)).slice(0, 1).map(blogPostView);
+}
+
+export function mockRoomNames(): Record<number, string> {
+  return Object.fromEntries(state().map((r) => [r.id, r.name]));
 }

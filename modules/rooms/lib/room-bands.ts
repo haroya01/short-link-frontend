@@ -1,5 +1,5 @@
-import type { Note } from "@/modules/notes/api/notes";
-import type { RoomListItem } from "@/modules/rooms/api/rooms";
+import type { RoomItem, RoomListItem } from "@/modules/rooms/api/rooms";
+import { itemRoomId } from "@/modules/rooms/lib/room-items";
 
 export const QUIET_AFTER_MS = 7 * 86_400_000;
 export const ROOM_BLOCK_NOTES = 2;
@@ -24,8 +24,17 @@ export function arrangeRooms(rooms: RoomListItem[], now: number = Date.now()): R
   };
 }
 
-export function notesOfRoom(notes: Note[], roomId: number, limit = ROOM_BLOCK_NOTES): Note[] {
-  return notes.filter((note) => note.room?.id === roomId).slice(0, limit);
+export function itemsOfRoom(items: RoomItem[], roomId: number, limit = ROOM_BLOCK_NOTES): RoomItem[] {
+  return items.filter((item) => itemRoomId(item) === roomId).slice(0, limit);
+}
+
+export function itemTime(item: RoomItem): string {
+  return item.kind === "note" ? item.note.createdAt : item.post.publishedAt;
+}
+
+export function newestNoteId(items: RoomItem[]): number | null {
+  const ids = items.flatMap((item) => (item.kind === "note" ? [item.note.id] : []));
+  return ids.length > 0 ? Math.max(...ids) : null;
 }
 
 export function pinnedCount(rooms: RoomListItem[]): number {
@@ -38,10 +47,10 @@ function sameDay(a: Date, b: Date): boolean {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-export function dayBreak(notes: Note[], index: number, now: Date = new Date()): DayBreak | null {
-  const at = new Date(notes[index].createdAt);
+export function dayBreak(times: string[], index: number, now: Date = new Date()): DayBreak | null {
+  const at = new Date(times[index]);
   if (Number.isNaN(at.getTime())) return null;
-  if (index > 0 && sameDay(new Date(notes[index - 1].createdAt), at)) return null;
+  if (index > 0 && sameDay(new Date(times[index - 1]), at)) return null;
   if (sameDay(at, now)) return { kind: "today" };
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);

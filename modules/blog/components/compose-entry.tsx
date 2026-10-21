@@ -22,6 +22,10 @@ import { NoteDraftsSheet } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
 import { noteDraftLabel, useNoteDrafts, type NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
+import type { NoteRoom } from "@/modules/notes/api/notes";
+import { listMyRooms } from "@/modules/rooms/api/rooms";
+import { roomPath } from "@/modules/rooms/lib/room-href";
+import { cn } from "@/lib/utils";
 
 const RECENT_DRAFTS = 3;
 
@@ -49,15 +53,37 @@ function useRecentDrafts(open: boolean) {
 
 type Choice = { key: string; label: string; hint?: string; href?: string; onSelect?: () => void };
 
+let knownRooms: NoteRoom[] = [];
+
+function useComposeRooms(open: boolean): NoteRoom[] {
+  const [rooms, setRooms] = useState<NoteRoom[]>(knownRooms);
+  useEffect(() => {
+    if (!open) return;
+    let live = true;
+    listMyRooms()
+      .then((mine) => {
+        knownRooms = mine.map((r) => ({ id: r.id, name: r.name }));
+        if (live) setRooms(knownRooms);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [open]);
+  return rooms;
+}
+
 export function ComposeEntry({ variant, className, label, children }: ComposeTriggerProps) {
   const t = useTranslations("compose");
   const router = useRouter();
   const ago = useCompactTime();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
-  const [noteOpen, setNoteOpen] = useState<{ draft?: NoteDraft } | null>(null);
+  const [noteOpen, setNoteOpen] = useState<{ draft?: NoteDraft; room?: NoteRoom } | null>(null);
+  const [room, setRoom] = useState<NoteRoom | null>(null);
   const [draftsOpen, setDraftsOpen] = useState(false);
   const drafts = useRecentDrafts(open);
+  const rooms = useComposeRooms(open);
   const { me } = useAuth();
   const noteDrafts = useNoteDrafts(me?.id);
 
@@ -72,15 +98,20 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
       label: t("note"),
       onSelect: () => {
         close(true);
-        setNoteOpen({});
+        setNoteOpen(room ? { room } : {});
       },
     },
     {
       key: "longform",
       label: t("longform"),
-      href: blogHref("/write/new"),
+      hint: room ? t("roomPostAudience") : undefined,
+      href: blogHref(room ? `/write/new?room=${room.id}` : "/write/new"),
     },
   ];
+  const where =
+    rooms.length > 0 ? (
+      <Destinations rooms={rooms} picked={room} onPick={setRoom} menu={variant === "desktop"} label={t("where")} />
+    ) : null;
   const everyDraft: { at: number; choice: Choice }[] = [
     ...noteDrafts.map((draft) => ({
       at: draft.updatedAt,
@@ -127,7 +158,10 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
         aria-expanded={open}
         aria-label={variant === "mobile" ? label : undefined}
         data-compose-trigger={variant}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (!open) setRoom(null);
+          setOpen((value) => !value);
+        }}
         className={className}
       >
         {children}
@@ -138,6 +172,8 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
             anchor={trigger}
             label={t("title")}
             kinds={kinds}
+            where={where}
+            whatLabel={rooms.length > 0 ? t("what") : null}
             resume={resume}
             resumeLabel={t("resume")}
             onClose={close}
@@ -145,15 +181,34 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
         )
       ) : (
         <BottomSheet open={open} onClose={() => close(false)} label={t("title")}>
-          <ComposeSheetBody kinds={kinds} resume={resume} resumeLabel={t("resume")} />
+          <ComposeSheetBody
+            kinds={kinds}
+            where={where}
+            whatLabel={rooms.length > 0 ? t("what") : null}
+            resume={resume}
+            resumeLabel={t("resume")}
+          />
         </BottomSheet>
       )}
       <NoteDraftsSheet open={draftsOpen} onClose={() => setDraftsOpen(false)} onPick={(draft) => setNoteOpen({ draft })} />
       <NoteQuoteDialog
-        quoted={noteOpen ? { fresh: true, title: t("noteTitle"), ...(noteOpen.draft ? { draft: noteOpen.draft } : {}) } : null}
+        quoted={
+          noteOpen
+            ? {
+                fresh: true,
+                title: t("noteTitle"),
+                ...(noteOpen.draft ? { draft: noteOpen.draft } : {}),
+                ...(noteOpen.room ? { room: noteOpen.room } : {}),
+              }
+            : null
+        }
         onClose={() => setNoteOpen(null)}
         onPosted={(note) => {
           setNoteOpen(null);
+          if (note.room) {
+            router.push(roomPath(note.room.id));
+            return;
+          }
           if (emitNotePosted(note)) return;
           holdArrivingNote(note);
           const sort = readFeedMemory(BLOG_MEMORY) === "following" ? "following" : "recent";
@@ -177,6 +232,95 @@ function ChoiceText({ choice }: { choice: Choice }) {
 
 const rowClass =
   "focus-ring flex w-full items-center gap-3 rounded-surface px-3 py-2.5 text-left transition-colors hover:bg-slate-100 dark:hover:bg-slate-800";
+const cardClass =
+  "focus-ring flex min-h-[4.5rem] min-w-0 flex-col justify-center rounded-surface border border-slate-200 px-3 py-2.5 text-left transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/60";
+const headingClass = "px-3 pb-1 pt-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400";
+
+function KindCards({ kinds, menu }: { kinds: Choice[]; menu: boolean }) {
+  const role = menu ? "menuitem" : undefined;
+  return (
+    <div className="grid grid-cols-2 gap-2 px-1.5 py-1">
+      {kinds.map((choice) => {
+        const content = (
+          <>
+            <span className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{choice.label}</span>
+            {choice.hint && (
+              <span className="mt-0.5 line-clamp-2 text-[12px] leading-4 text-slate-500 dark:text-slate-400">{choice.hint}</span>
+            )}
+          </>
+        );
+        return choice.href ? (
+          <a key={choice.key} href={choice.href} role={role} data-compose-choice={choice.key} className={cardClass}>
+            {content}
+          </a>
+        ) : (
+          <button
+            key={choice.key}
+            type="button"
+            role={role}
+            data-compose-choice={choice.key}
+            onClick={choice.onSelect}
+            className={cardClass}
+          >
+            {content}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function Destinations({
+  rooms,
+  picked,
+  onPick,
+  menu,
+  label,
+}: {
+  rooms: NoteRoom[];
+  picked: NoteRoom | null;
+  onPick: (room: NoteRoom | null) => void;
+  menu: boolean;
+  label: string;
+}) {
+  const t = useTranslations("compose");
+  const labelId = useId();
+  const options: (NoteRoom | null)[] = [null, ...rooms];
+  return (
+    <div>
+      <p id={labelId} className={headingClass}>
+        {label}
+      </p>
+      <div
+        role={menu ? "group" : "radiogroup"}
+        aria-labelledby={labelId}
+        className="-mx-1.5 flex gap-1.5 overflow-x-auto px-3 pb-1.5 pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {options.map((option) => {
+          const selected = (picked?.id ?? null) === (option?.id ?? null);
+          return (
+            <button
+              key={option?.id ?? "everyone"}
+              type="button"
+              role={menu ? "menuitemradio" : "radio"}
+              aria-checked={selected}
+              data-compose-where={option?.id ?? "everyone"}
+              onClick={() => onPick(option)}
+              className={cn(
+                "focus-ring shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] transition-colors duration-200 ease-[var(--ease)]",
+                selected
+                  ? "border-slate-900 bg-slate-900 font-semibold text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                  : "border-slate-200 text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-600",
+              )}
+            >
+              {option ? option.name : t("everyone")}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function ChoiceRow({ choice, menu }: { choice: Choice; menu: boolean }) {
   const role = menu ? "menuitem" : undefined;
@@ -196,6 +340,8 @@ function ComposeMenu({
   anchor,
   label,
   kinds,
+  where,
+  whatLabel,
   resume,
   resumeLabel,
   onClose,
@@ -203,6 +349,8 @@ function ComposeMenu({
   anchor: RefObject<HTMLButtonElement | null>;
   label: string;
   kinds: Choice[];
+  where: React.ReactNode;
+  whatLabel: string | null;
   resume: Choice[];
   resumeLabel: string;
   onClose: (refocus: boolean) => void;
@@ -216,11 +364,14 @@ function ComposeMenu({
     if (rect) setPosition({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
   }, [anchor]);
 
-  const { onKeyDown, focusFirst } = useMenuKeys(menu, { onClose });
+  const { onKeyDown } = useMenuKeys(menu, {
+    onClose,
+    items: '[role="menuitem"], [role="menuitemradio"]',
+  });
 
   useEffect(() => {
-    if (position) focusFirst();
-  }, [position, focusFirst]);
+    if (position) menu.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+  }, [position]);
 
   useEffect(() => {
     const onDown = (event: MouseEvent) => {
@@ -239,11 +390,11 @@ function ComposeMenu({
       aria-label={label}
       onKeyDown={onKeyDown}
       style={position ?? { visibility: "hidden" }}
-      className="fixed z-40 w-72 rounded-surface border border-slate-200 bg-white p-1.5 shadow-float motion-safe:animate-dropdown-in dark:border-slate-800 dark:bg-slate-900"
+      className="fixed z-40 w-80 rounded-surface border border-slate-200 bg-white p-1.5 shadow-float motion-safe:animate-dropdown-in dark:border-slate-800 dark:bg-slate-900"
     >
-      {kinds.map((choice) => (
-        <ChoiceRow key={choice.key} choice={choice} menu />
-      ))}
+      {where}
+      {whatLabel && <p className={headingClass}>{whatLabel}</p>}
+      <KindCards kinds={kinds} menu />
       {resume.length > 0 && (
         <>
           <div role="separator" className="my-1.5 h-px bg-slate-100 dark:bg-slate-800" />
@@ -261,12 +412,24 @@ function ComposeMenu({
   );
 }
 
-function ComposeSheetBody({ kinds, resume, resumeLabel }: { kinds: Choice[]; resume: Choice[]; resumeLabel: string }) {
+function ComposeSheetBody({
+  kinds,
+  where,
+  whatLabel,
+  resume,
+  resumeLabel,
+}: {
+  kinds: Choice[];
+  where: React.ReactNode;
+  whatLabel: string | null;
+  resume: Choice[];
+  resumeLabel: string;
+}) {
   return (
     <div className="pb-2">
-      {kinds.map((choice) => (
-        <ChoiceRow key={choice.key} choice={choice} menu={false} />
-      ))}
+      {where}
+      {whatLabel && <p className={headingClass}>{whatLabel}</p>}
+      <KindCards kinds={kinds} menu={false} />
       {resume.length > 0 && (
         <section aria-label={resumeLabel} className="mt-2 border-t border-slate-100 pt-2 dark:border-slate-800">
           <h2 className="px-3 pb-1 pt-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400">{resumeLabel}</h2>

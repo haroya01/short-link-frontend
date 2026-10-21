@@ -621,8 +621,11 @@
       "rotateBody": "Liên kết hiện tại sẽ không mở được nữa.",
       "rotateFailed": "Không đổi được liên kết",
       "countryHint": "Người đọc ở các quốc gia này chỉ thấy tiêu đề. Dùng VPN thì không chặn được.",
-      "countryRemove": "Bỏ {country}"
-    }
+      "countryRemove": "Bỏ {country}",
+      "roomGroup": "Phòng",
+      "roomHint": "Chỉ thành viên phòng này đọc được. Không hiện trong tìm kiếm, thịnh hành hay máy chủ khác."
+    },
+    "roomPost": "Chỉ thành viên {room} đọc được"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -876,7 +879,8 @@
       "UNLISTED": "Chỉ qua liên kết",
       "FOLLOWERS": "Người theo dõi",
       "PASSWORD": "Mật khẩu",
-      "REGION": "Giới hạn quốc gia"
+      "REGION": "Giới hạn quốc gia",
+      "ROOM": "Chỉ thành viên phòng"
     },
     "shareCard": {
       "FOLLOWERS": "Chỉ người theo dõi mới đọc được bài này",
@@ -4753,7 +4757,11 @@
     "noteTitle": "Ghi chú mới",
     "notePosted": "Đã đăng ghi chú",
     "viewNote": "Xem",
-    "noteParts": "{count} ghi chú"
+    "noteParts": "{count} ghi chú",
+    "where": "Ở đâu",
+    "what": "Viết gì",
+    "everyone": "Mọi người",
+    "roomPostAudience": "Bài blog chỉ thành viên phòng đọc"
   },
   "rooms": {
     "title": "Phòng",
@@ -4887,6 +4895,10 @@
     "linkFailed": "Không tạo được liên kết mới",
     "viewByRoom": "Theo phòng",
     "viewAll": "Tất cả",
-    "allEmpty": "Các phòng chưa có bài."
+    "allEmpty": "Các phòng chưa có bài.",
+    "allReplies": "Xem tất cả {count, number} bình luận",
+    "post": "Bài viết",
+    "writePost": "Viết bài trong {room}",
+    "leaveDeleteHint": "Xoá sẽ gỡ toàn bộ ghi chú, bài blog và bình luận của bạn trong phòng này."
   }
 }

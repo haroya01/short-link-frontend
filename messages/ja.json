@@ -621,8 +621,11 @@
       "rotateBody": "今のリンクでは開けなくなります。",
       "rotateFailed": "リンクを変えられませんでした",
       "countryHint": "これらの国ではタイトルだけが表示されます。VPNを使われると防げません。",
-      "countryRemove": "{country}を外す"
-    }
+      "countryRemove": "{country}を外す",
+      "roomGroup": "ルーム",
+      "roomHint": "このルームのメンバーだけが読めます。検索・人気・ほかのサーバーには出ません。"
+    },
+    "roomPost": "{room}のメンバーだけが読む記事"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -862,7 +865,8 @@
       "UNLISTED": "リンクのみ",
       "FOLLOWERS": "フォロワーのみ",
       "PASSWORD": "パスワード",
-      "REGION": "国の制限"
+      "REGION": "国の制限",
+      "ROOM": "ルームのメンバーだけ"
     },
     "shareCard": {
       "FOLLOWERS": "フォロワーだけが読める記事です",
@@ -4753,7 +4757,11 @@
     "noteTitle": "新しいノート",
     "notePosted": "ノートを投稿しました",
     "viewNote": "見る",
-    "noteParts": "{count}件"
+    "noteParts": "{count}件",
+    "where": "どこに",
+    "what": "なにを",
+    "everyone": "みんなに",
+    "roomPostAudience": "ルームのメンバーだけが読むブログ記事"
   },
   "rooms": {
     "title": "ルーム",
@@ -4887,6 +4895,10 @@
     "linkFailed": "新しいリンクを作れませんでした",
     "viewByRoom": "ルームごと",
     "viewAll": "すべて",
-    "allEmpty": "ルームにまだ投稿がありません。"
+    "allEmpty": "ルームにまだ投稿がありません。",
+    "allReplies": "コメント{count, number}件をすべて見る",
+    "post": "記事",
+    "writePost": "{room}に記事を書く",
+    "leaveDeleteHint": "削除すると、このルームに投稿したノート・ブログ記事・コメントがすべて消えます。"
   }
 }

@@ -33,7 +33,8 @@ import type {
   TrendingNoteLink,
   TrendingNoteTag,
 } from "./notes";
-import { mockFollowingRoomNotes } from "@/modules/rooms/api/_mocks";
+import { mockFollowingRoomNotes, mockFollowingRoomPosts } from "@/modules/rooms/api/_mocks";
+import { readStorageString } from "@/lib/storage-json";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
 import type { RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
@@ -1590,8 +1591,10 @@ export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean): 
   if (tab === "following" && !viewer) return { items: [], next: null };
   const noteList =
     tab === "following" ? [...mockFollowingRoomNotes(), ...mockFollowingNotes(0).items] : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;
-  const postList =
-    tab === "following" ? mockFollowingView().items : mockFeedView({ sort: tab === "trending" ? "trending" : "recent", viewer }).items;
+  const postList: PublicFeedItem[] =
+    tab === "following"
+      ? [...mockFollowingRoomPosts(), ...mockFollowingView().items]
+      : mockFeedView({ sort: tab === "trending" ? "trending" : "recent", viewer }).items;
   const [n0, p0] = (cursor ?? "0.0").split(".").map((v) => Number(v) || 0);
   let n = n0;
   let p = p0;
@@ -1607,8 +1610,29 @@ export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean): 
             ? noteTurn
             : noteList[n].createdAt >= postList[p].publishedAt;
     if (takeNote) items.push({ kind: "note", note: noteList[n++] });
-    else items.push({ kind: "post", post: homePost(postList[p++], viewer) });
+    else {
+      const next = postList[p++];
+      items.push({ kind: "post", post: "readMinutes" in next ? (next as HomePost) : homePost(next, viewer) });
+    }
     noteTurn = !takeNote;
   }
-  return { items, next: n < noteList.length || p < postList.length ? `${n}.${p}` : null };
+  return {
+    items,
+    next: n < noteList.length || p < postList.length ? `${n}.${p}` : null,
+    ...(cursor === null ? { newest: "mock.1" } : {}),
+  };
+}
+
+let sinceNoteId = 70_000;
+
+export function mockHomeSince(tab: HomeTab, since: string, viewer: boolean): HomePage {
+  const asked = (globalThis as { __kurlHomeSince?: string[] }).__kurlHomeSince ?? [];
+  (globalThis as { __kurlHomeSince?: string[] }).__kurlHomeSince = [...asked, `${tab}:${since}`];
+  if (tab === "trending" || readStorageString("kurl:mock-home-since") === "gap") {
+    const fresh = mockHome(tab, null, viewer);
+    const top = note({ id: sinceNoteId++, body: "새로 받은 첫 쪽", author: YUNA, createdAt: new Date().toISOString() });
+    return { ...fresh, items: [{ kind: "note", note: top }, ...fresh.items], gap: true, newest: "mock.gap" };
+  }
+  const arrived = note({ id: sinceNoteId++, body: "방금 올라온 노트", author: YUNA, createdAt: new Date().toISOString() });
+  return { items: [{ kind: "note", note: arrived }], next: null, newest: `mock.${sinceNoteId}`, gap: false };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { listMyRooms } from "@/modules/rooms/api/rooms";
 import { X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
@@ -34,6 +35,9 @@ export function AudienceSection({
   onRotate,
   blockedCountries,
   onBlockedCountriesChange,
+  room = null,
+  onRoomChange,
+  savedRoomId = null,
 }: {
   status: PostStatus;
   audience: PostAudience;
@@ -47,6 +51,9 @@ export function AudienceSection({
   onRotate: () => Promise<boolean>;
   blockedCountries: string[];
   onBlockedCountriesChange: (v: string[]) => void;
+  room?: { id: number; name: string } | null;
+  onRoomChange?: (room: { id: number; name: string }) => void;
+  savedRoomId?: number | null;
 }) {
   const t = useTranslations("postEditor.audience");
   const tAudience = useTranslations("publicPost.audience");
@@ -54,6 +61,22 @@ export function AudienceSection({
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [touched, setTouched] = useState(false);
   const issueVisible = passwordIssue != null && (showPasswordIssue || (touched && passwordIssue === "length"));
+  const [rooms, setRooms] = useState<{ id: number; name: string }[]>([]);
+  const picksRoom = onRoomChange != null;
+  const inRoom = audience === "ROOM";
+
+  useEffect(() => {
+    if (!picksRoom) return;
+    let live = true;
+    listMyRooms()
+      .then((mine) => live && setRooms(mine.map((r) => ({ id: r.id, name: r.name }))))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [picksRoom]);
+
+  const shownRooms = room && !rooms.some((r) => r.id === room.id) && room.name ? [room, ...rooms] : rooms;
 
   function move(e: KeyboardEvent, index: number) {
     const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
@@ -92,7 +115,7 @@ export function AudienceSection({
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                tabIndex={selected ? 0 : -1}
+                tabIndex={selected || (inRoom && i === 0) ? 0 : -1}
                 onClick={() => onAudienceChange(option)}
                 onKeyDown={(e) => move(e, i)}
                 className={`focus-ring relative min-h-11 border-slate-200 px-2 py-2 text-center text-[13px] leading-tight transition-colors dark:border-slate-700 ${OPTION_EDGES[i]} ${
@@ -106,6 +129,39 @@ export function AudienceSection({
             );
           })}
         </div>
+
+        {picksRoom && shownRooms.length > 0 && (
+          <div className="mt-3" data-audience-rooms>
+            <p id="audience-room-label" className="mb-1.5 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
+              {t("roomGroup")}
+            </p>
+            <div role="radiogroup" aria-labelledby="audience-room-label" className="flex flex-wrap gap-1.5">
+              {shownRooms.map((option) => {
+                const selected = inRoom && room?.id === option.id;
+                const locked = savedRoomId != null && savedRoomId !== option.id;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    disabled={locked}
+                    onClick={() => onRoomChange?.(option)}
+                    className={`focus-ring inline-flex max-w-full items-center rounded-full border px-3 py-1.5 text-[13px] transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                      selected
+                        ? "border-slate-900 font-semibold text-slate-900 dark:border-slate-100 dark:text-slate-100"
+                        : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:text-slate-100"
+                    }`}
+                  >
+                    <span className="truncate">{option.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {inRoom && <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">{t("roomHint")}</p>}
 
         {(audience === "FOLLOWERS" || audience === "PASSWORD") && (
           <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">{t("titlePublic")}</p>
@@ -146,6 +202,7 @@ export function AudienceSection({
         )}
       </div>
 
+      {!inRoom && (
       <div>
         <p id="country-limit-label" className="mb-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
           {tAudience("REGION")}
@@ -179,6 +236,7 @@ export function AudienceSection({
           <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">{t("countryHint")}</p>
         )}
       </div>
+      )}
     </div>
   );
 }
