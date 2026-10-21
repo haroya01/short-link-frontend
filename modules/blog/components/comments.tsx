@@ -32,6 +32,7 @@ import { NoteList } from "@/modules/notes/components/note-list";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
@@ -190,7 +191,7 @@ export function PostComments({
     const id = Number(match[1]);
     if (!shownIds.current.has(id)) toast(t("jumpMissing"));
     const reduceMotion =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+      prefersReducedMotion();
     const aim = () => {
       const target = document.getElementById(`comment-${id}`);
       (target ?? document.getElementById("comments"))?.scrollIntoView({

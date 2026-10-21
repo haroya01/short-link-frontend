@@ -5,20 +5,13 @@ import { createPortal } from "react-dom";
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
-/**
- * Cross-product switcher. The header pill shows the *destination* brand (the mark + its wordmark),
- * so a single click warps you to the other product — there's only ever one other surface, so the
- * old grid-icon + popover was a needless second step. Clicking plays the warp overlay, then does
- * the (cross-origin) navigation.
- * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
- */
 const PRODUCTS: { key: Product; href: () => string; hintKey: string }[] = [
   { key: "links", href: () => linksHref("/"), hintKey: "linksHint" },
   { key: "blog", href: () => blogHref("/"), hintKey: "blogHint" },
 ];
 
-/** Destination wordmark — blog gets the "blog." prefix in a muted tone over the given base color. */
 function Wordmark({ product, muted }: { product: Product; muted: string }) {
   if (product === "blog") {
     return (
@@ -47,15 +40,13 @@ export function AppsGrid({ current }: { current?: Product }) {
     setDest(PRODUCTS.find((p) => p.key !== cur) ?? PRODUCTS[1]);
   }, [current]);
 
-  // Play the warp overlay, then navigate. New-tab / modified clicks and reduced-motion fall through
-  // to the plain anchor (native cross-origin navigation, no overlay).
   const switchTo = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!dest) {
       e.preventDefault();
       return;
     }
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     e.preventDefault();
     const href = dest.href();
     setWarp({ href, product: dest.key });
@@ -98,8 +89,6 @@ export function AppsGrid({ current }: { current?: Product }) {
             role="status"
             aria-live="polite"
           >
-            {/* A clean white cover for the cross-origin reload: the mark draws on, line by line,
-                then the destination wordmark fades in beneath it as a logo lockup. */}
             <div className="flex flex-col items-center gap-4">
               <svg
                 aria-hidden

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import { ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
@@ -9,42 +8,18 @@ import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table"
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Sparkline } from "@/components/links/stats/sparkline";
+import { LazyDailyChart, LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
 import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 
-// recharts 차트는 문장이 처음 펼쳐질 때만 청크를 받는다 — 개요 초기 로드에 90KB 를 얹지 않는다.
-const DailyChart = dynamic(
-  () => import("@/components/links/stats/charts/daily-chart").then((m) => m.DailyChart),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-52 w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40" aria-hidden />
-    ),
-  },
-);
-const HourChart = dynamic(
-  () => import("@/components/links/stats/charts/hour-chart").then((m) => m.HourChart),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-52 w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40" aria-hidden />
-    ),
-  },
-);
-
-/**
- * 근거 앵커 → 인라인 근거 매핑. 문장을 쓴 룰(lib/stats-journal)이 가리키는 앵커의 차트/수치를
- * 문장 바로 아래에 그대로 그린다 — 상세 섹션과 같은 컴포넌트라 "문장 따로 근거 따로"가 없다.
- * 챕터 전체가 근거인 문장(재방문·국가)은 그 문장이 말하는 분해만 추려 보여준다.
- */
 function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats }) {
   const t = useTranslations("stats");
   switch (evidence) {
     case "section-daily":
-      return <DailyChart data={data.dailyClicks ?? []} compact />;
+      return <LazyDailyChart data={data.dailyClicks ?? []} compact />;
     case "section-hourly":
-      return <HourChart data={data.hourClicks ?? []} compact />;
+      return <LazyHourChart data={data.hourClicks ?? []} compact />;
     case "section-sources":
       return (
         <BreakdownList
@@ -99,11 +74,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
   }
 }
 
-/**
- * 룰이 넘긴 파라미터 중 값 자체가 메시지 키인 것(예: 인앱 앱 이름)을 카탈로그로 한 번 옮기고,
- * "MM-DD" 날짜는 로케일 날짜("9월 24일")로 바꾼다. 룰 엔진은 i18n 을 모르는 순수 함수로 두고,
- * 번역은 렌더 직전 여기서만 일어난다.
- */
+/** 룰 엔진은 i18n 을 모르는 순수 함수다. 메시지 키·날짜 번역은 렌더 직전 여기서만 한다. */
 function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTranslations>, locale: string) {
   const resolved = { ...entry.params };
   for (const name of entry.translatedParams ?? []) {
@@ -119,12 +90,6 @@ function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTransla
   return resolved;
 }
 
-/**
- * 링크 일지 — "읽는 통계"의 1면. 문장이 1급 시민이고 차트는 증거다: 각 문장은 실데이터
- * 룰(lib/stats-journal)이 썼고, 누르면 그 자리에서 근거가 펼쳐진다(shorten 폼 고급 옵션과
- * 같은 grid-rows 접이). 여러 문장을 동시에 펼쳐 나란히 읽을 수 있고, 펼침 안의 "상세 보기"가
- * 그 데이터가 사는 챕터(2층)로 내려간다. 카드 상자 없이 헤어라인 행 — 종이 문법(§10).
- */
 export function StatsJournal({
   data,
   onNavigate,
@@ -156,7 +121,7 @@ export function StatsJournal({
 
   return (
     <section>
-      {/* 한글 라벨엔 mono+tracking 이 자간을 벌려 "링 크 일 지"처럼 읽힌다(§10.3 계보) — 자간 없이. */}
+      {/* 한글 라벨에 mono+tracking 을 주면 "링 크 일 지"처럼 벌어진다. */}
       <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
         {t("title")}
       </h2>
@@ -192,8 +157,7 @@ export function StatsJournal({
                     />
                   </span>
                 </span>
-                {/* 미니 드로잉은 문장 아래 자기 줄 — 접힌 상태에서도 리스트가 살아 있게. */}
-                {entry.spark && entry.spark.length > 1 && (
+                          {entry.spark && entry.spark.length > 1 && (
                   <span className="mt-1.5 block pl-[18px]">
                     <Sparkline
                       values={entry.spark}
@@ -214,7 +178,6 @@ export function StatsJournal({
                   </span>
                 )}
               </button>
-              {/* 그 자리 근거 — grid-rows 0fr↔1fr 접이(shorten 폼 고급 옵션 문법). */}
               <div
                 id={panelId}
                 aria-hidden={!open}
@@ -224,7 +187,6 @@ export function StatsJournal({
                 )}
               >
                 <div className="min-h-0 overflow-hidden">
-                  {/* 근거는 본문 컬럼 폭(2xl)으로 — 행은 전폭이어도 차트가 화면만큼 늘어지지 않게. */}
                   <div className="mb-4 ml-[2px] max-w-2xl border-l-2 border-slate-100 py-1 pl-4 dark:border-slate-800">
                     {everOpened.has(entry.key) && (
                       <EvidenceBody evidence={entry.evidence} data={data} />

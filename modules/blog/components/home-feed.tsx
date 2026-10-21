@@ -32,6 +32,7 @@ import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-l
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useShowReposts } from "@/modules/notes/lib/use-show-reposts";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 export type HomeSort = "following" | "recent" | "trending";
 
@@ -75,7 +76,7 @@ export function HomeFeed({
   const showsPosted = sort !== "trending";
   const arrive = useCallback((note: Note) => {
     setPosted((current) => [note, ...current.filter((n) => n.id !== note.id)]);
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   }, []);
   useEffect(() => {
@@ -235,7 +236,7 @@ function HomeList({
 
   const refreshNow = useCallback(async () => {
     if (refreshing.current) return;
-    window.scrollTo({ top: 0, behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
     if (sort === "trending" || newest.current === null) {
       setArrived([]);
       newest.current = null;

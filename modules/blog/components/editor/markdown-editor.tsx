@@ -73,6 +73,7 @@ import { isImageUrl } from "@/modules/blog/lib/post-embed";
 import { literalFootnotes } from "@/modules/blog/lib/literal-footnotes";
 import { POST_IMAGE_TYPES, postImageErrorMessageKey, postImageTypeError } from "@/modules/blog/api/post-images";
 import { useEdgeFade } from "@/hooks/use-edge-fade";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -87,9 +88,8 @@ export type ImagePickOptions = { width?: ImageWidth; multiple?: boolean };
  */
 function keepCaretInView(editor: Editor, scroller: HTMLElement | null) {
   if (!scroller) return;
-  // Reduced-motion: skip the typewriter re-positioning and let the browser's native caret scrolling
-  // keep it visible — the constant auto-scroll-as-you-type is exactly the motion these users opt out of.
-  if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+  // Reduced motion: no typewriter re-positioning; the browser's own caret scrolling keeps it visible.
+  if (prefersReducedMotion()) {
     return;
   }
   let coords: { bottom: number };

@@ -41,6 +41,7 @@ import { RoomInviteSheet } from "./room-invite-sheet";
 import { RoomsHead } from "./rooms-head";
 import { RoomsAll, type RoomsAllHandle } from "./rooms-all";
 import { readRoomsView, writeRoomsView, type RoomsView } from "@/modules/rooms/lib/rooms-view";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 type Phase = { kind: "loading" } | { kind: "failed" } | { kind: "loaded"; rooms: RoomListItem[] };
 
@@ -50,7 +51,7 @@ function useReorderMotion(order: string) {
   useLayoutEffect(() => {
     const el = root.current;
     if (!el) return;
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     const next = new Map<string, number>();
     el.querySelectorAll<HTMLElement>("[data-room-block]").forEach((node) => {
       const key = node.dataset.roomBlock!;
