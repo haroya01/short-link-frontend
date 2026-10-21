@@ -267,7 +267,7 @@ export function NoteThreadView({
             className="focus-ring flex w-full items-center gap-3 rounded-surface py-3 text-left"
           >
             {me ? (
-              <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} seed={me.id} size="md" />
+              <Avatar src={me.avatarUrl ?? null} name={me.username ?? "?"} handle={me.username} size="md" />
             ) : (
               <span aria-hidden className="h-9 w-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
             )}

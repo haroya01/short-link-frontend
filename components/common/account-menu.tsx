@@ -22,6 +22,7 @@ import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { MeAvatar, cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
+import { avatarTint, avatarTintStyle } from "@/modules/blog/lib/avatar-tint";
 import { blogHref, type Product } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/lib/author-href";
@@ -79,8 +80,8 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
   // Cache the initial + avatar so the header's seeded avatar slot can paint them before auth resolves
   // on the next navigation — no grey→green flash (and no initial→photo flash) between pages.
   useEffect(() => {
-    if (initial && initial !== "?") cacheMeInitial(initial);
-  }, [initial]);
+    if (initial && initial !== "?") cacheMeInitial(initial, username);
+  }, [initial, username]);
   useEffect(() => {
     cacheMeAvatar(avatarUrl);
   }, [avatarUrl]);
@@ -96,7 +97,8 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("account")}
-        className="focus-ring grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 transition-colors hover:bg-accent-200 dark:bg-accent-500/20 dark:text-accent-300 dark:hover:bg-accent-500/30"
+        style={avatarTintStyle(avatarTint(username))}
+        className="focus-ring grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-[var(--avatar-bg)] text-[13px] font-semibold text-[var(--avatar-fg)] transition-[filter] hover:brightness-95 dark:hover:brightness-125"
       >
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -120,7 +122,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
               onClick={() => setOpen(false)}
               className={cn(itemClass, "gap-3")}
             >
-              <MeAvatar src={avatarUrl} initial={initial} className="h-8 w-8 text-[13px]" />
+              <MeAvatar src={avatarUrl} initial={initial} handle={username} className="h-8 w-8 text-[13px]" />
               <span className="min-w-0 flex-1">
                 {displayName && (
                   <span className="block truncate font-semibold text-slate-900 dark:text-slate-100">{displayName}</span>

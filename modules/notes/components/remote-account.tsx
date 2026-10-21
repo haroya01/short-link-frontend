@@ -127,7 +127,7 @@ export function RemoteAccountRow({
         href={blogPath(`/remote/${account.id}`)}
         className={cn("focus-ring flex min-w-0 flex-1 gap-3 rounded-surface", roomy ? "items-start" : "items-center")}
       >
-        <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size={roomy ? "lg" : "md"} />
+        <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size={roomy ? "lg" : "md"} />
         <span className="min-w-0">
           <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
           <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
@@ -359,7 +359,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
   return (
     <div>
       <header className="flex items-start gap-4">
-        <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size="xl" />
+        <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size="xl" />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-[24px] font-bold tracking-tight text-slate-900 dark:text-slate-50">
             {account.displayName || account.username || account.acct}

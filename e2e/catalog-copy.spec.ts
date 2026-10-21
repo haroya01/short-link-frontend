@@ -17,7 +17,7 @@ test("ja: the compose entry says 書く, my posts say 記事, and 投稿 is left
   await page.goto("/ja/blog");
   await expect(page.getByRole("button", { name: "投稿", exact: true })).toBeVisible({ timeout: 30_000 });
   await page.goto("/ja/blog/explore");
-  await expect(page.getByText(/^今週 \d+人が使いました$/).first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("tab")).toHaveText(["おすすめ", "ほかのサーバー", "ユーザー"], { timeout: 30_000 });
 });
 
 test("ja: a confirm question ends in a full-width mark", async ({ page }) => {

@@ -314,7 +314,7 @@ function InvitationLine({
       <Avatar
         src={invitation.inviter.avatarUrl}
         name={personName(invitation.inviter)}
-        seed={invitation.inviter.id}
+        handle={invitation.inviter.username}
         size="md"
       />
       <div className="min-w-0 flex-1">

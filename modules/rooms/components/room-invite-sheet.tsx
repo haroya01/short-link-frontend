@@ -234,7 +234,7 @@ export function RoomInviteSheet({
                   className="focus-ring flex w-14 flex-col items-center gap-1 rounded"
                 >
                   <span className="relative">
-                    <Avatar src={person.avatarUrl} name={personName(person)} seed={person.id} size="lg" />
+                    <Avatar src={person.avatarUrl} name={personName(person)} handle={person.username} size="lg" />
                     <span className="absolute -right-1 -top-0.5 grid h-4 w-4 place-items-center rounded-full bg-slate-500 text-white ring-2 ring-white dark:bg-slate-400 dark:text-slate-900 dark:ring-slate-900">
                       <X aria-hidden className="h-2.5 w-2.5" strokeWidth={3} />
                     </span>
@@ -298,7 +298,7 @@ export function RoomInviteSheet({
                     data-room-candidate={person.username}
                     className="focus-ring flex w-full items-center gap-3 rounded py-2.5 text-left disabled:cursor-default"
                   >
-                    <Avatar src={person.avatarUrl} name={personName(person)} seed={person.id} size="lg" />
+                    <Avatar src={person.avatarUrl} name={personName(person)} handle={person.username} size="lg" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                         {personName(person)}

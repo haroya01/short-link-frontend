@@ -271,21 +271,6 @@ export function listTrendingNoteTags(): Promise<TrendingNoteTag[]> {
   return request<TrendingNoteTag[]>("/api/v1/public/notes/trending-tags", { method: "GET" });
 }
 
-export interface TrendingNoteLink {
-  url: string;
-  title: string | null;
-  description: string | null;
-  imageUrl: string | null;
-  accounts: number;
-  uses: number;
-  history: number[];
-}
-
-export function listTrendingNoteLinks(): Promise<TrendingNoteLink[]> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockTrendingNoteLinks());
-  return request<TrendingNoteLink[]>("/api/v1/public/notes/trending-links", { method: "GET" });
-}
-
 export function listLinkedNotes(url: string, page = 0): Promise<NoteFeed> {
   if (noteMocks) return Promise.resolve(noteMocks.mockLinkedNotes(url, page));
   return request<NoteFeed>(

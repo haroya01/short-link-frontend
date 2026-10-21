@@ -156,8 +156,8 @@ test.describe("desktop", () => {
     await expect(list).toHaveCount(0);
   });
 
-  test("follow suggestions in 둘러보기 add accounts elsewhere with their server and a follow", async ({ page }) => {
-    await page.goto("/ko/blog/explore");
+  test("follow suggestions in 둘러보기 사람 add accounts elsewhere with their server and a follow", async ({ page }) => {
+    await page.goto("/ko/blog/explore?lane=people");
     const rail = page.getByTestId("follow-suggestions");
     await expect(rail.getByTestId("suggestion-haruka")).toBeVisible({ timeout: 30_000 });
     const elsewhere = rail.getByTestId("remote-suggestions");

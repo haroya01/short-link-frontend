@@ -73,7 +73,6 @@ export interface DetachedNote {
   menu: React.ReactNode;
   footer: React.ReactNode;
   openHref?: string;
-  seed?: number | null;
   content?: React.ReactNode;
 }
 
@@ -349,7 +348,7 @@ export function NoteCard({
     <Avatar
       src={note.author.avatarUrl}
       name={note.author.displayName || note.author.username}
-      seed={detached ? (detached.seed ?? null) : note.author.remoteId ? null : note.author.id}
+      handle={note.author.username}
       size={emphasis ? "lg" : "md"}
     />
   );

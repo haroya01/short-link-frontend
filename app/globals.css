@@ -65,6 +65,20 @@
      기본 검정 그림자는 초록 저채도 종이 위에서 회색 얼룩으로 뜬다. */
   --shadow-float: 0 1px 2px rgba(19, 26, 22, 0.06), 0 12px 28px -10px rgba(19, 26, 22, 0.2);
   --shadow-modal: 0 1px 2px rgba(19, 26, 22, 0.06), 0 24px 56px -16px rgba(19, 26, 22, 0.3);
+  --avatar-rose-bg: #fce7ec;
+  --avatar-rose-fg: #b4405e;
+  --avatar-amber-bg: #fdefd9;
+  --avatar-amber-fg: #a2621a;
+  --avatar-sky-bg: #e3eefb;
+  --avatar-sky-fg: #2f6aa8;
+  --avatar-violet-bg: #ede7fb;
+  --avatar-violet-fg: #6649b0;
+  --avatar-peach-bg: #fbe8df;
+  --avatar-peach-fg: #b0532f;
+  --avatar-teal-bg: #e2f2f2;
+  --avatar-teal-fg: #2c7a7d;
+  --avatar-neutral-bg: rgb(var(--slate-100));
+  --avatar-neutral-fg: rgb(var(--slate-600));
 }
 
 .dark {
@@ -87,6 +101,20 @@
   --chart-tooltip-text: rgb(var(--slate-100));
   --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 28px -10px rgba(0, 0, 0, 0.7);
   --shadow-modal: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 56px -16px rgba(0, 0, 0, 0.8);
+  --avatar-rose-bg: #3a2128;
+  --avatar-rose-fg: #f3a8bb;
+  --avatar-amber-bg: #3a2c17;
+  --avatar-amber-fg: #f2c27f;
+  --avatar-sky-bg: #1d2b3b;
+  --avatar-sky-fg: #9cc3ee;
+  --avatar-violet-bg: #2a2340;
+  --avatar-violet-fg: #c3b2f0;
+  --avatar-peach-bg: #3b251c;
+  --avatar-peach-fg: #f1b196;
+  --avatar-teal-bg: #1c3132;
+  --avatar-teal-fg: #96d3d4;
+  --avatar-neutral-bg: rgb(var(--slate-800));
+  --avatar-neutral-fg: rgb(var(--slate-300));
 }
 
 /* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.

@@ -147,7 +147,6 @@ export async function AuthorHeader({
         <AvatarZoom
           src={author.avatarUrl}
           name={author.displayName || author.username}
-          seed={author.id}
           username={author.username}
         />
         <div className="flex shrink-0 items-center gap-2">

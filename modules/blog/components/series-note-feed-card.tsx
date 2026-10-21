@@ -36,7 +36,7 @@ export function SeriesNoteFeedCard({ note, locale }: { note: FollowingSeriesNote
       }
       byline={
         <>
-          <RowAuthor username={username} displayName={note.author.displayName} avatarUrl={note.author.avatarUrl} seed={note.author.id} locale={locale} />
+          <RowAuthor username={username} displayName={note.author.displayName} avatarUrl={note.author.avatarUrl} locale={locale} />
           <RowDot />
           <RowTime iso={note.createdAt} locale={locale} className="shrink-0" />
         </>

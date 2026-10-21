@@ -1,9 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
-// Mock-on lane at phone width: the session is @dohyun. The notes rails that sit beside the feed only on
-// wide screens come to 둘러보기 here, in the app's order, and the feed's ⋯ menu carries 복사 and 신고 as
-// the app's does.
+// Mock-on lane at phone width: the session is @dohyun. 둘러보기 is three lanes under the search box,
+// with the people to follow in 사람 and the hashtags behind the search box, and the feed's ⋯ menu
+// carries 복사 and 신고 as the app's does.
 test.use({ viewport: { width: 390, height: 844 } });
 
 async function openExplore(page: Page) {
@@ -13,25 +13,29 @@ async function openExplore(page: Page) {
   return main;
 }
 
-test("둘러보기 at rest carries hashtags, links and follow suggestions in the app's order", async ({ page }) => {
+test("둘러보기 keeps follow suggestions in 사람 and hashtags behind the search box, in the app's order", async ({ page }) => {
   const explore = await openExplore(page);
-  await expect(explore.getByTestId("trending-note-links")).toBeVisible({ timeout: 30_000 });
-  await expect(explore.getByTestId("follow-suggestions").getByTestId("suggestion-haruka")).toBeVisible();
-  const rails = explore.locator(
-    "[data-testid='trending-note-tags'], [data-testid='trending-note-links'], [data-testid='follow-suggestions']",
-  );
-  await expect(rails.locator(":scope > h2")).toHaveText(["뜨는 해시태그", "뜨는 링크", "팔로우 추천"]);
-  await expect(explore.getByTestId("search-idle-follow")).toHaveCount(0);
+  await expect(explore.getByRole("tab")).toHaveText(["추천", "다른 서버", "사람"]);
+  await explore.getByRole("tab", { name: "사람" }).click();
+  await expect(explore.getByTestId("follow-suggestions").getByTestId("suggestion-haruka")).toBeVisible({ timeout: 30_000 });
+  await expect(explore.getByTestId("explore-writers").getByRole("heading")).toHaveText("작가");
+  await expect(explore.getByTestId("explore-tag-chips")).toBeHidden();
 
-  await explore.getByTestId("trending-note-tags").getByRole("link", { name: /#산책/ }).click();
-  await expect(page).toHaveURL(/\/tags\/%EC%82%B0%EC%B1%85/);
+  await explore.getByRole("searchbox", { name: "검색" }).focus();
+  const chips = explore.getByTestId("explore-tag-chips");
+  await expect(chips).toBeVisible();
+  await chips.getByRole("link", { name: "#산책" }).click();
+  await expect(page).toHaveURL(/\/tags\/%EC%82%B0%EC%B1%85\?view=notes/);
 });
 
-test("signed out, 둘러보기 keeps the blog's writers to follow in place of the note suggestions", async ({ page }) => {
+test("signed out, 둘러보기 offers the blog's writers in place of the note suggestions", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.setItem("kurl:mock-signed-out", "1"));
   const explore = await openExplore(page);
-  await expect(explore.getByTestId("search-idle-follow")).toBeVisible({ timeout: 30_000 });
-  await expect(explore.getByTestId("trending-note-tags")).toBeVisible();
+  await expect(explore.getByTestId("explore-people-strip").getByRole("listitem").first()).toContainText("글", {
+    timeout: 30_000,
+  });
+  await explore.getByRole("tab", { name: "사람" }).click();
+  await expect(explore.getByTestId("explore-writers")).toBeVisible();
   await expect(explore.getByTestId("follow-suggestions")).toHaveCount(0);
 });
 

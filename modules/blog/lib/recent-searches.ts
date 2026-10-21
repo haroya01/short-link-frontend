@@ -21,6 +21,12 @@ export function rememberSearch(query: string) {
   writeStorageJson(KEY, [q, ...readRecentSearches().filter((seen) => seen !== q)].slice(0, RECENT_SEARCHES_MAX));
 }
 
+export function forgetSearch(query: string): string[] {
+  const next = readRecentSearches().filter((seen) => seen !== query);
+  writeStorageJson(KEY, next);
+  return next;
+}
+
 export function useRecentSearches() {
   const [list, setList] = useState<string[]>([]);
   useEffect(() => setList(readRecentSearches()), []);
@@ -30,5 +36,6 @@ export function useRecentSearches() {
       removeStorageItem(KEY);
       setList([]);
     },
+    forget: (query: string) => setList(forgetSearch(query)),
   };
 }

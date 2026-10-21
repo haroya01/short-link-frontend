@@ -345,28 +345,22 @@ test("둘러보기's 다른 서버 shows notes this server received, and only th
   await expect(page.locator('article[data-note-id="5"]')).toHaveCount(0);
 });
 
-test("in 둘러보기, trending hashtags show who used them this week and open their notes", async ({ page }) => {
+test("in 둘러보기, the search box offers trending hashtags that open their notes", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/ko/blog/explore");
-  const rail = page.getByTestId("trending-note-tags");
-  await expect(rail.getByRole("heading", { name: "뜨는 해시태그" })).toBeVisible({ timeout: 30_000 });
-  const walk = rail.getByRole("link", { name: /#산책/ });
-  await expect(walk).toContainText("3명이 이번 주에 썼어요");
+  const field = page.getByRole("searchbox", { name: "검색" });
+  await expect(field).toBeVisible({ timeout: 30_000 });
+  const chips = page.getByTestId("explore-tag-chips");
+  await expect(chips).toBeHidden();
+  await field.focus();
+  const walk = chips.getByRole("link", { name: "#산책" });
+  await expect(walk).toBeVisible();
   await walk.click();
   await expect(page).toHaveURL(/\/tags\/.+view=notes/);
 });
 
-test("in 둘러보기, trending links show who shared them this week and open the notes carrying them", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ko/blog/explore");
-  const rail = page.getByTestId("trending-note-links");
-  await expect(rail.getByRole("heading", { name: "뜨는 링크" })).toBeVisible({ timeout: 30_000 });
-  const about = rail.getByRole("link", { name: /짧은 링크와 글이 오래 사는 곳/ });
-  await expect(about).toContainText("kurl.me");
-  await expect(about).toContainText("3명이 이번 주에 공유했어요");
-  await expect(rail.getByRole("link", { name: /example\.org/ })).toBeVisible();
-  await about.click();
-  await expect(page).toHaveURL(/\/notes\/link\?url=https%3A%2F%2Fkurl\.me%2Fabout/);
+test("a link page lists the notes carrying the link", async ({ page }) => {
+  await page.goto("/ko/blog/notes/link?url=https%3A%2F%2Fkurl.me%2Fabout");
   const link = page.getByTestId("linked-notes-link");
   await expect(link).toHaveAttribute("href", "https://kurl.me/about");
   await expect(link).toContainText("짧은 링크와 글이 오래 사는 곳");
@@ -949,9 +943,9 @@ test("with reduced motion a video waits for the reader to press play", async ({ 
   expect(await page.evaluate(() => (window as unknown as { mediaCalls: string[] }).mediaCalls)).toEqual([]);
 });
 
-test("in 둘러보기, follow suggestions offer a follow and can be set aside", async ({ page }) => {
+test("in 둘러보기 사람, follow suggestions offer a follow and can be set aside", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ko/blog/explore", { waitUntil: "domcontentloaded" });
+  await page.goto("/ko/blog/explore?lane=people", { waitUntil: "domcontentloaded" });
   const rail = page.getByTestId("follow-suggestions");
   await expect(rail.getByRole("heading", { name: "팔로우 추천" })).toBeVisible({ timeout: 30_000 });
   await expect(rail.getByTestId("suggestion-haruka")).toContainText("내가 팔로우하는 3명이 팔로우");
