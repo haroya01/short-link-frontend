@@ -151,12 +151,16 @@ test("a row scrolled past in under a second is not sent", async ({ page }) => {
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
 
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.evaluate(async (passed) => {
+    document.querySelector(`[data-remote-uri="${passed}"]`)!.scrollIntoView({ block: "center" });
+    await new Promise((done) => setTimeout(done, 300));
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  }, uri(10));
   await page.waitForTimeout(1_500);
   await hideTab(page);
   await expect.poll(() => asked.seen.length).toBe(1);
   expect(asked.seen[0].uris).toContain(uri(20));
-  expect(asked.seen[0].uris).not.toContain(uri(1));
+  expect(asked.seen[0].uris).not.toContain(uri(10));
 });
 
 test("empty pages with a next are followed at once, three in a row, then the list waits", async ({ page }) => {
