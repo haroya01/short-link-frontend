@@ -125,9 +125,9 @@ test("a room shows 오늘 and 어제 and keeps reading past the first page", asy
   const days = page.locator("[data-room-day]");
   await expect(days.first()).toHaveText("오늘", { timeout: 30_000 });
   await expect(days.nth(1)).toHaveText("어제");
-  await expect(page.locator("article[data-note-id]")).toHaveCount(20);
+  await expect(page.locator("[data-room-item]")).toHaveCount(20);
   await page.locator("[data-room-more-notes]").scrollIntoViewIfNeeded();
-  await expect(page.locator("article[data-note-id]")).toHaveCount(40);
+  await expect(page.locator("[data-room-item]")).toHaveCount(40);
 });
 
 test("a note written in a room goes to that room, said so on the button and below it", async ({ page }) => {
@@ -210,8 +210,8 @@ test.describe("전체", () => {
     await openRooms(page);
     await page.getByRole("tab", { name: "전체" }).click();
     const all = page.getByTestId("rooms-all");
-    const rows = all.locator("article[data-note-id]");
-    await expect(rows).toHaveCount(10);
+    const rows = all.locator("[data-rooms-all-item]");
+    await expect(rows).toHaveCount(13);
     await expect(page.getByTestId("room-invitations")).toBeVisible();
     await expect(page.getByTestId("room-suggestion")).toHaveCount(0);
     await expect(page.locator("[data-room-block]")).toHaveCount(0);
@@ -221,7 +221,8 @@ test.describe("전체", () => {
     await expect(all.locator('article[data-note-id="9908"] [data-note-room]')).toHaveCount(0);
     await expect(all.locator('article[data-note-id="9907"] [data-note-room]')).toHaveText("대학 동기 방에서");
     await expect(all.locator('article[data-note-id="9906"] [data-note-room]')).toHaveText("동아리 사람들 방에서");
-    await expect(all.locator("[data-note-room]")).toHaveCount(8);
+    await expect(all.locator('[data-rooms-all-item="post-8802"] [data-note-room]')).toHaveCount(0);
+    await expect(all.locator("[data-note-room]")).toHaveCount(9);
     await expect(all.getByRole("button", { name: /리포스트/ })).toHaveCount(0);
     await expect(all.getByRole("button", { name: "공유" })).toHaveCount(0);
     await expect(all.getByRole("img", { name: /멤버만/ })).toHaveCount(0);
@@ -256,7 +257,7 @@ test.describe("전체", () => {
     await page.addInitScript(() => window.localStorage.setItem("kurl:mock-room-long", "1"));
     await openRooms(page);
     await page.getByRole("tab", { name: "전체" }).click();
-    const rows = page.getByTestId("rooms-all").locator("article[data-note-id]");
+    const rows = page.getByTestId("rooms-all").locator("[data-rooms-all-item]");
     await expect(rows).toHaveCount(20);
     await page.locator("[data-rooms-all-more]").scrollIntoViewIfNeeded();
     await expect(rows).toHaveCount(40);

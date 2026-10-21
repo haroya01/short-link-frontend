@@ -8,7 +8,7 @@ const mobileTrigger = (page: Page) => header(page).locator('[data-compose-trigge
 test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  test("글쓰기 opens a menu of 노트 · 긴 글 · 이어 쓰기, walked with the keyboard", async ({ page }) => {
+  test("글쓰기 opens a menu of 어디에 · 노트 · 긴 글 · 이어 쓰기, walked with the keyboard", async ({ page }) => {
     await page.goto("/ko/blog");
     await desktopTrigger(page).click({ timeout: 30_000 });
     const menu = page.getByRole("menu", { name: "글쓰기" });
@@ -18,9 +18,14 @@ test.describe("desktop", () => {
       /작성 중인 초안/,
     ]);
     await expect(menu.getByRole("group", { name: "이어 쓰기" })).toBeVisible();
+    const where = menu.getByRole("group", { name: "어디에" }).getByRole("menuitemradio");
+    await expect(where.first()).toHaveText("모두에게");
     await expect(menu.getByRole("menuitem").first()).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await expect(menu.getByRole("menuitem").nth(1)).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowUp");
+    await expect(where.last()).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(menu).toHaveCount(0);
     await expect(desktopTrigger(page)).toBeFocused();

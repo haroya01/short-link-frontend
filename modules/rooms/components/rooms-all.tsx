@@ -7,30 +7,37 @@ import { ErrorState } from "@/components/common/error-state";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import type { Note } from "@/modules/notes/api/notes";
-import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
-import { listRoomsFeed, markRoomRead } from "@/modules/rooms/api/rooms";
+import { NoteListSkeleton } from "@/modules/notes/components/note-list";
+import { listAllRoomItems, markRoomRead, type RoomItem } from "@/modules/rooms/api/rooms";
+import { itemKey, itemRoomId } from "@/modules/rooms/lib/room-items";
 import { roomPath } from "@/modules/rooms/lib/room-href";
 import { InsideRoomProvider } from "@/modules/rooms/lib/room-scope";
 import { noteSeen, readTargets, roomLineBreaks } from "@/modules/rooms/lib/rooms-view";
+import { RoomItemRow } from "./room-item-row";
 
 const READ_AFTER_MS = 800;
+
+function seenNote(item: RoomItem | undefined): Note | null {
+  return item?.kind === "note" ? item.note : null;
+}
 
 export interface RoomsAllHandle {
   flush: () => Promise<void>;
 }
 
-function RoomLine({ note }: { note: Note }) {
+function RoomLine({ item }: { item: RoomItem }) {
   const t = useTranslations("notes");
-  if (!note.room) return null;
+  const room = item.kind === "note" ? item.note.room : item.post.room;
+  if (!room) return null;
   return (
     <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
       <span aria-hidden className="w-9 shrink-0" />
       <BlogLink
-        href={roomPath(note.room.id)}
-        data-note-room={note.id}
+        href={roomPath(room.id)}
+        data-note-room={itemKey(item)}
         className="focus-ring min-w-0 truncate rounded hover:text-slate-800 hover:underline dark:hover:text-slate-200"
       >
-        {t("fromRoom", { room: note.room.name })}
+        {t("fromRoom", { room: room.name })}
       </BlogLink>
     </p>
   );
@@ -38,9 +45,8 @@ function RoomLine({ note }: { note: Note }) {
 
 export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function RoomsAll({ empty }, ref) {
   const t = useTranslations("rooms");
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [page, setPage] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
+  const [items, setItems] = useState<RoomItem[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinel = useRef<HTMLDivElement>(null);
@@ -48,14 +54,14 @@ export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function 
   const seen = useRef(new Map<number, number>());
   const sent = useRef(new Map<number, number>());
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const byId = useRef(new Map<number, Note>());
+  const byKey = useRef(new Map<string, RoomItem>());
 
   const flush = useCallback(async () => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
-    list.current?.querySelectorAll<HTMLElement>("[data-rooms-all-note]").forEach((el) => {
+    list.current?.querySelectorAll<HTMLElement>("[data-rooms-all-item]").forEach((el) => {
       const box = el.getBoundingClientRect();
-      const note = byId.current.get(Number(el.dataset.roomsAllNote));
+      const note = seenNote(byKey.current.get(el.dataset.roomsAllItem ?? ""));
       if (note && box.bottom > 0 && box.top < window.innerHeight) seen.current = noteSeen(seen.current, note);
     });
     const targets = readTargets(seen.current, sent.current);
@@ -67,11 +73,10 @@ export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function 
 
   const load = useCallback(() => {
     setState("loading");
-    listRoomsFeed(0, 20)
-      .then((feed) => {
-        setNotes(feed.items);
-        setPage(0);
-        setHasNext(feed.hasNext);
+    listAllRoomItems()
+      .then((page) => {
+        setItems(page.items);
+        setCursor(page.next);
         setState("ready");
       })
       .catch(() => setState("error"));
@@ -81,18 +86,18 @@ export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function 
   useEffect(() => () => void flush(), [flush]);
 
   useEffect(() => {
-    byId.current = new Map(notes.map((n) => [n.id, n]));
-  }, [notes]);
+    byKey.current = new Map(items.map((item) => [itemKey(item), item]));
+  }, [items]);
 
   useEffect(() => {
     const root = list.current;
-    if (!root || notes.length === 0) return;
+    if (!root || items.length === 0) return;
     const io = new IntersectionObserver(
       (entries) => {
         let next = seen.current;
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          const note = byId.current.get(Number((entry.target as HTMLElement).dataset.roomsAllNote));
+          const note = seenNote(byKey.current.get((entry.target as HTMLElement).dataset.roomsAllItem ?? ""));
           if (note) next = noteSeen(next, note);
         }
         if (next === seen.current) return;
@@ -102,22 +107,25 @@ export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function 
       },
       { threshold: 0.6 },
     );
-    root.querySelectorAll("[data-rooms-all-note]").forEach((el) => io.observe(el));
+    root.querySelectorAll("[data-rooms-all-item]").forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, [notes, flush]);
+  }, [items, flush]);
 
+  const hasNext = cursor !== null;
   const more = useCallback(async () => {
-    if (loadingMore || !hasNext) return;
+    if (loadingMore || cursor === null) return;
     setLoadingMore(true);
     try {
-      const feed = await listRoomsFeed(page + 1, 20);
-      setNotes((current) => [...current, ...feed.items.filter((n) => !current.some((c) => c.id === n.id))]);
-      setPage(feed.page);
-      setHasNext(feed.hasNext);
+      const page = await listAllRoomItems(cursor);
+      setItems((current) => {
+        const known = new Set(current.map(itemKey));
+        return [...current, ...page.items.filter((item) => !known.has(itemKey(item)))];
+      });
+      setCursor(page.next);
     } finally {
       setLoadingMore(false);
     }
-  }, [hasNext, loadingMore, page]);
+  }, [cursor, loadingMore]);
 
   useEffect(() => {
     const el = sentinel.current;
@@ -127,28 +135,33 @@ export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function 
     return () => io.disconnect();
   }, [hasNext, loadingMore, more]);
 
-  if (state === "loading" && notes.length === 0) return <NoteListSkeleton />;
-  if (state === "error" && notes.length === 0) {
+  if (state === "loading" && items.length === 0) return <NoteListSkeleton />;
+  if (state === "error" && items.length === 0) {
     return (
       <div className="mt-6">
         <ErrorState title={t("loadFailed")} onRetry={load} />
       </div>
     );
   }
-  if (notes.length === 0) return empty ? null : <BlogEmpty title={t("allEmpty")} />;
+  if (items.length === 0) return empty ? null : <BlogEmpty title={t("allEmpty")} />;
 
-  const breaks = roomLineBreaks(notes);
+  const breaks = roomLineBreaks(items);
   return (
     <div data-testid="rooms-all">
       <div ref={list} className="divide-y divide-slate-100 dark:divide-slate-800">
-        {notes.map((note, i) => (
-          <div key={note.id} data-rooms-all-note={note.id}>
-            <InsideRoomProvider roomId={note.room?.id ?? -1}>
-              <NoteFeedRow
-                note={note}
-                context={breaks[i] ? <RoomLine note={note} /> : undefined}
-                onReplace={(next) => setNotes((current) => current.map((n) => (n.id === next.id ? next : n)))}
-                onRemove={(id) => setNotes((current) => current.filter((n) => n.id !== id))}
+        {items.map((item, i) => (
+          <div key={itemKey(item)} data-rooms-all-item={itemKey(item)}>
+            <InsideRoomProvider roomId={itemRoomId(item) ?? -1}>
+              <RoomItemRow
+                item={item}
+                maxReplies={0}
+                context={breaks[i] ? <RoomLine item={item} /> : undefined}
+                onReplace={(next) =>
+                  setItems((current) =>
+                    current.map((c) => (c.kind === "note" && c.note.id === next.id ? { ...c, note: next } : c)),
+                  )
+                }
+                onRemove={(id) => setItems((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)))}
               />
             </InsideRoomProvider>
           </div>

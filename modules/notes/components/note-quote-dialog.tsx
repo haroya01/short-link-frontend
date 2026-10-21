@@ -7,12 +7,15 @@ import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { useToast } from "@/components/ui/toast";
-import type { Note, QuotedNote, QuotedPost } from "@/modules/notes/api/notes";
+import type { Note, NoteRoom, QuotedNote, QuotedPost } from "@/modules/notes/api/notes";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { NoteComposer } from "./note-composer";
 import { NoteDraftsButton } from "./note-drafts-sheet";
 
-type Quoted = { note: QuotedNote } | { post: QuotedPost } | { fresh: true; title: string; draft?: NoteDraft };
+type Quoted =
+  | { note: QuotedNote }
+  | { post: QuotedPost }
+  | { fresh: true; title: string; draft?: NoteDraft; room?: NoteRoom };
 
 export function NoteQuoteDialog({
   quoted,
@@ -103,11 +106,11 @@ export function NoteQuoteDialog({
           <h2 id={titleId} className="text-[16px] font-semibold text-slate-900 dark:text-slate-100">
             {"fresh" in shown ? shown.title : "note" in shown ? t("quoteTitle") : t("quoteAction")}
           </h2>
-          <NoteDraftsButton
-            onPick={(next) => setDraft(next)}
-            currentId={kept.id}
-            className="justify-self-end"
-          />
+          {"fresh" in shown && shown.room ? (
+            <span />
+          ) : (
+            <NoteDraftsButton onPick={(next) => setDraft(next)} currentId={kept.id} className="justify-self-end" />
+          )}
         </div>
         <div className="px-4 pb-1">
           {draft ? (
@@ -121,7 +124,13 @@ export function NoteQuoteDialog({
               onDraftChange={onDraftChange}
             />
           ) : "fresh" in shown ? (
-            <NoteComposer key="fresh" autoFocus onCreated={onPosted} onDraftChange={onDraftChange} />
+            <NoteComposer
+              key={`fresh-${shown.room?.id ?? "mine"}`}
+              autoFocus
+              room={shown.room ?? null}
+              onCreated={onPosted}
+              onDraftChange={onDraftChange}
+            />
           ) : "note" in shown ? (
             <NoteComposer
               key={`note-${shown.note.id}`}

@@ -7,12 +7,13 @@ import { useDismiss } from "@/hooks/use-dismiss";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import type { Note } from "@/modules/notes/api/notes";
-import { NoteFeedRow } from "@/modules/notes/components/note-list";
-import type { RoomListItem } from "@/modules/rooms/api/rooms";
+import type { RoomItem, RoomListItem } from "@/modules/rooms/api/rooms";
+import { itemKey } from "@/modules/rooms/lib/room-items";
 import { roomPath } from "@/modules/rooms/lib/room-href";
 import { InsideRoomProvider } from "@/modules/rooms/lib/room-scope";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { RoomFaces } from "./room-faces";
+import { RoomItemRow } from "./room-item-row";
 
 const LONG_PRESS_MS = 500;
 
@@ -105,14 +106,14 @@ function PinMenu({
 
 export function RoomBlock({
   room,
-  notes,
+  items,
   index,
   onPin,
   onReplace,
   onRemove,
 }: {
   room: RoomListItem;
-  notes: Note[];
+  items: RoomItem[];
   index: number;
   onPin: (room: RoomListItem, pinned: boolean) => void;
   onReplace: (note: Note) => void;
@@ -155,11 +156,11 @@ export function RoomBlock({
         <RoomFaces people={room.faces} limit={4} />
         <PinMenu room={room} menu={menu} onPin={onPin} />
       </div>
-      {notes.length > 0 ? (
+      {items.length > 0 ? (
         <InsideRoomProvider roomId={room.id}>
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {notes.map((note) => (
-              <NoteFeedRow key={note.id} note={note} onReplace={onReplace} onRemove={onRemove} />
+            {items.map((item) => (
+              <RoomItemRow key={itemKey(item)} item={item} maxReplies={1} onReplace={onReplace} onRemove={onRemove} />
             ))}
           </div>
         </InsideRoomProvider>

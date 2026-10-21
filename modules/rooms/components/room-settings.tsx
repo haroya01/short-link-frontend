@@ -374,6 +374,11 @@ export function RoomSettings({ roomId }: { roomId: number }) {
             </label>
           ))}
         </fieldset>
+        {deleteMine && (
+          <p data-leave-delete-hint className="mt-3 text-[13px] leading-relaxed text-slate-600 dark:text-slate-400">
+            {t("leaveDeleteHint")}
+          </p>
+        )}
       </ConfirmDialog>
       {confirmDialog}
     </div>

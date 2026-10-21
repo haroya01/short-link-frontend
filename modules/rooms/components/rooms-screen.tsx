@@ -20,17 +20,18 @@ import {
   isPinsFull,
   listMyRooms,
   listRoomInvitations,
-  listRoomsFeed,
+  listAllRoomItems,
   listRoomSuggestions,
   personName,
   ROOM_MAX_PINNED,
   setRoomPinned,
   type RoomDetail,
   type RoomInvitation,
+  type RoomItem,
   type RoomListItem,
   type RoomPerson,
 } from "@/modules/rooms/api/rooms";
-import { arrangeRooms, notesOfRoom, pinnedCount } from "@/modules/rooms/lib/room-bands";
+import { arrangeRooms, itemsOfRoom, pinnedCount } from "@/modules/rooms/lib/room-bands";
 import { roomPath } from "@/modules/rooms/lib/room-href";
 import { cn } from "@/lib/utils";
 import { QuietRoomLine, RoomBlock, RoomsSection } from "./room-block";
@@ -73,7 +74,7 @@ export function RoomsScreen() {
   const { toast } = useToast();
   const { ready, authenticated } = useAuth();
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
-  const [recent, setRecent] = useState<Note[]>([]);
+  const [recent, setRecent] = useState<RoomItem[]>([]);
   const [invitations, setInvitations] = useState<RoomInvitation[]>([]);
   const [suggested, setSuggested] = useState<RoomPerson[]>([]);
   const [creating, setCreating] = useState<RoomPerson[] | null>(null);
@@ -87,7 +88,7 @@ export function RoomsScreen() {
     try {
       const [rooms, feed, received, friends] = await Promise.all([
         listMyRooms(),
-        listRoomsFeed(0, 50).catch(() => null),
+        listAllRoomItems(null, 50).catch(() => null),
         listRoomInvitations().catch(() => []),
         listRoomSuggestions().catch(() => []),
       ]);
@@ -160,8 +161,9 @@ export function RoomsScreen() {
     setInviting({ room, friends });
   }
 
-  const replace = (note: Note) => setRecent((current) => current.map((n) => (n.id === note.id ? note : n)));
-  const remove = (id: number) => setRecent((current) => current.filter((n) => n.id !== id));
+  const replace = (note: Note) =>
+    setRecent((current) => current.map((c) => (c.kind === "note" && c.note.id === note.id ? { ...c, note } : c)));
+  const remove = (id: number) => setRecent((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)));
 
   if (ready && !authenticated) {
     return (
@@ -222,7 +224,7 @@ export function RoomsScreen() {
               key={room.id}
               room={room}
               index={index}
-              notes={notesOfRoom(recent, room.id)}
+              items={itemsOfRoom(recent, room.id)}
               onPin={pin}
               onReplace={replace}
               onRemove={remove}

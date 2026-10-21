@@ -1,18 +1,26 @@
 import { describe, expect, it } from "vitest";
+import type { HomePost } from "@/modules/blog/api/home-feed";
 import type { Note } from "@/modules/notes/api/notes";
+import type { RoomItem } from "@/modules/rooms/api/rooms";
 import { noteSeen, readTargets, roomLineBreaks } from "./rooms-view";
 
 const note = (id: number, roomId: number | null) =>
   ({ id, body: "", createdAt: "", room: roomId === null ? null : { id: roomId, name: `r${roomId}` } }) as Note;
+const item = (id: number, roomId: number | null): RoomItem => ({ kind: "note", note: note(id, roomId), replies: [] });
+const post = (id: number, roomId: number): RoomItem => ({
+  kind: "post",
+  post: { id, room: { id: roomId, name: `r${roomId}` } } as HomePost,
+  replies: [],
+});
 
 describe("the room line in 전체", () => {
   it("shows only where the room changes from the note above", () => {
-    const notes = [note(9, 1), note(8, 1), note(7, 2), note(6, 1), note(5, 1), note(4, 3)];
-    expect(roomLineBreaks(notes)).toEqual([true, false, true, true, false, true]);
+    const items = [item(9, 1), post(80, 1), item(7, 2), item(6, 1), item(5, 1), post(81, 3)];
+    expect(roomLineBreaks(items)).toEqual([true, false, true, true, false, true]);
   });
 
   it("never marks a note without a room", () => {
-    expect(roomLineBreaks([note(2, null), note(1, 1)])).toEqual([false, true]);
+    expect(roomLineBreaks([item(2, null), item(1, 1)])).toEqual([false, true]);
   });
 });
 

@@ -621,8 +621,11 @@
       "rotateBody": "지금 링크로는 더 이상 열리지 않아요.",
       "rotateFailed": "링크를 바꾸지 못했어요",
       "countryHint": "이 나라에서는 제목만 보여요. VPN을 쓰면 막지 못해요.",
-      "countryRemove": "{country} 빼기"
-    }
+      "countryRemove": "{country} 빼기",
+      "roomGroup": "방",
+      "roomHint": "이 방 멤버만 읽어요. 검색·인기·다른 서버에는 안 떠요."
+    },
+    "roomPost": "{room} 멤버만 읽는 글"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -862,7 +865,8 @@
       "UNLISTED": "링크만",
       "FOLLOWERS": "팔로워만",
       "PASSWORD": "비밀번호",
-      "REGION": "국가 제한"
+      "REGION": "국가 제한",
+      "ROOM": "방 멤버만"
     },
     "shareCard": {
       "FOLLOWERS": "팔로워만 볼 수 있는 글이에요",
@@ -4753,7 +4757,11 @@
     "noteTitle": "새 노트",
     "notePosted": "노트를 올렸어요",
     "viewNote": "보기",
-    "noteParts": "{count}개"
+    "noteParts": "{count}개",
+    "where": "어디에",
+    "what": "무엇을",
+    "everyone": "모두에게",
+    "roomPostAudience": "방 멤버만 읽는 블로그 글"
   },
   "rooms": {
     "title": "방",
@@ -4887,6 +4895,10 @@
     "linkFailed": "새 링크를 만들지 못했어요",
     "viewByRoom": "방별",
     "viewAll": "전체",
-    "allEmpty": "방에 아직 글이 없어요."
+    "allEmpty": "방에 아직 글이 없어요.",
+    "allReplies": "댓글 {count, number}개 모두 보기",
+    "post": "글",
+    "writePost": "{room}에 글 쓰기",
+    "leaveDeleteHint": "삭제하면 이 방에 올린 내 노트·블로그 글·댓글이 모두 사라져요."
   }
 }

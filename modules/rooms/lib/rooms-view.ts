@@ -1,4 +1,6 @@
 import type { Note } from "@/modules/notes/api/notes";
+import type { RoomItem } from "@/modules/rooms/api/rooms";
+import { itemRoomId } from "@/modules/rooms/lib/room-items";
 
 export type RoomsView = "rooms" | "all";
 
@@ -20,8 +22,9 @@ export function writeRoomsView(view: RoomsView): void {
   }
 }
 
-export function roomLineBreaks(notes: Note[]): boolean[] {
-  return notes.map((note, i) => note.room != null && (i === 0 || notes[i - 1].room?.id !== note.room.id));
+export function roomLineBreaks(items: RoomItem[]): boolean[] {
+  const rooms = items.map(itemRoomId);
+  return rooms.map((room, i) => room != null && (i === 0 || rooms[i - 1] !== room));
 }
 
 export function noteSeen(seen: Map<number, number>, note: Pick<Note, "id" | "room">): Map<number, number> {

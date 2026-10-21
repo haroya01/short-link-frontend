@@ -18,6 +18,7 @@ import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
+import { requestHomeRefresh } from "@/modules/blog/lib/home-refresh";
 import { cn } from "@/lib/utils";
 
 export type ComposeTriggerProps = {
@@ -223,6 +224,11 @@ export function AppHeader({
               <ChromeNavLink
                 href={blogHref("/")}
                 aria-current={onBlogHome ? "page" : undefined}
+                onClick={(e) => {
+                  if (!onBlogHome || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  requestHomeRefresh();
+                }}
                 className={cn(SECTION_LINK, onBlogHome ? SECTION_ACTIVE : SECTION_IDLE)}
               >
                 {t("home")}

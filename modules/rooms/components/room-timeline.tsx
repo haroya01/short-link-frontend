@@ -11,11 +11,20 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { askToSignIn } from "@/components/auth/login-prompt";
-import type { Note } from "@/modules/notes/api/notes";
 import { NoteComposer } from "@/modules/notes/components/note-composer";
-import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
-import { getRoom, listRoomNotes, markRoomRead, personName, type RoomDetail } from "@/modules/rooms/api/rooms";
-import { dayBreak, type DayBreak } from "@/modules/rooms/lib/room-bands";
+import { NoteListSkeleton } from "@/modules/notes/components/note-list";
+import {
+  getRoom,
+  listRoomItems,
+  markRoomRead,
+  personName,
+  type RoomDetail,
+  type RoomItem,
+} from "@/modules/rooms/api/rooms";
+import { dayBreak, itemTime, newestNoteId, type DayBreak } from "@/modules/rooms/lib/room-bands";
+import { itemKey } from "@/modules/rooms/lib/room-items";
+import { blogPath } from "@/lib/host";
+import { RoomItemRow } from "./room-item-row";
 import { roomSettingsPath, roomsPath } from "@/modules/rooms/lib/room-href";
 import { InsideRoomProvider } from "@/modules/rooms/lib/room-scope";
 import { RoomFaces } from "./room-faces";
@@ -34,9 +43,8 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
   const locale = useLocale();
   const { ready, authenticated } = useAuth();
   const [detail, setDetail] = useState<Detail>({ kind: "loading" });
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [page, setPage] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
+  const [items, setItems] = useState<RoomItem[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
   const [notesState, setNotesState] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
   const [posted, setPosted] = useState<Set<number>>(new Set());
@@ -54,11 +62,10 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
 
   const loadFirst = useCallback(() => {
     setNotesState((current) => (current === "ready" ? current : "loading"));
-    listRoomNotes(roomId, 0)
-      .then((feed) => {
-        setNotes(feed.items);
-        setPage(0);
-        setHasNext(feed.hasNext);
+    listRoomItems(roomId)
+      .then((page) => {
+        setItems(page.items);
+        setCursor(page.next);
         setNotesState("ready");
       })
       .catch(() => setNotesState("error"));
@@ -71,24 +78,27 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
   }, [ready, authenticated, loadDetail, loadFirst]);
 
   useEffect(() => {
-    const newest = notes[0]?.id;
-    if (notesState !== "ready" || newest === undefined || read.current === newest) return;
+    const newest = newestNoteId(items);
+    if (notesState !== "ready" || newest === null || read.current === newest) return;
     read.current = newest;
     void markRoomRead(roomId, newest).catch(() => undefined);
-  }, [notes, notesState, roomId]);
+  }, [items, notesState, roomId]);
 
+  const hasNext = cursor !== null;
   const more = useCallback(async () => {
-    if (loadingMore || !hasNext) return;
+    if (loadingMore || cursor === null) return;
     setLoadingMore(true);
     try {
-      const feed = await listRoomNotes(roomId, page + 1);
-      setNotes((current) => [...current, ...feed.items.filter((n) => !current.some((c) => c.id === n.id))]);
-      setPage(feed.page);
-      setHasNext(feed.hasNext);
+      const page = await listRoomItems(roomId, cursor);
+      setItems((current) => {
+        const known = new Set(current.map(itemKey));
+        return [...current, ...page.items.filter((item) => !known.has(itemKey(item)))];
+      });
+      setCursor(page.next);
     } finally {
       setLoadingMore(false);
     }
-  }, [hasNext, loadingMore, page, roomId]);
+  }, [cursor, loadingMore, roomId]);
 
   useEffect(() => {
     const el = sentinel.current;
@@ -128,6 +138,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
   if (detail.kind === "loading") return <NoteListSkeleton />;
 
   const room = detail.room;
+  const times = items.map(itemTime);
   const label = (day: DayBreak) =>
     day.kind === "today"
       ? t("today")
@@ -172,22 +183,32 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
             {t("invite")}
           </button>
         </div>
-        <div className="mt-3 border-b border-slate-100 dark:border-slate-800">
-          <NoteComposer
-            room={{ id: room.id, name: room.name }}
-            onCreated={(note) => {
-              setNotes((current) => [note, ...current]);
-              setPosted((current) => new Set(current).add(note.id));
-            }}
-          />
+        <div className="mt-3 flex items-start gap-2 border-b border-slate-100 dark:border-slate-800">
+          <div className="min-w-0 flex-1">
+            <NoteComposer
+              room={{ id: room.id, name: room.name }}
+              onCreated={(note) => {
+                setItems((current) => [{ kind: "note", note, replies: [] }, ...current]);
+                setPosted((current) => new Set(current).add(note.id));
+              }}
+            />
+          </div>
+          <BlogLink
+            href={blogPath(`/write/new?room=${room.id}`)}
+            data-room-write
+            aria-label={t("writePost", { room: room.name })}
+            className="focus-ring mt-[18px] shrink-0 rounded-full border border-slate-200 px-3.5 py-1.5 text-[14px] font-semibold text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800"
+          >
+            {t("post")}
+          </BlogLink>
         </div>
-        {notesState === "loading" && notes.length === 0 ? (
+        {notesState === "loading" && items.length === 0 ? (
           <NoteListSkeleton />
-        ) : notesState === "error" && notes.length === 0 ? (
+        ) : notesState === "error" && items.length === 0 ? (
           <div className="mt-6">
             <ErrorState title={t("loadFailed")} onRetry={loadFirst} />
           </div>
-        ) : notes.length === 0 ? (
+        ) : items.length === 0 ? (
           <BlogEmpty
             title={t("emptyRoom")}
             action={
@@ -198,21 +219,26 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
           />
         ) : (
           <div data-room-notes>
-            {notes.map((note, index) => {
-              const day = dayBreak(notes, index);
+            {items.map((item, index) => {
+              const day = dayBreak(times, index);
               return (
-                <Fragment key={note.id}>
+                <Fragment key={itemKey(item)}>
                   {day && (
                     <RailHeading className={index === 0 ? "pt-5" : "border-t border-slate-100 pt-6 dark:border-slate-800"}>
                       <span data-room-day>{label(day)}</span>
                     </RailHeading>
                   )}
                   <div className={day ? undefined : "border-t border-slate-100 dark:border-slate-800"}>
-                    <NoteFeedRow
-                      note={note}
-                      isNew={posted.has(note.id)}
-                      onReplace={(next) => setNotes((current) => current.map((n) => (n.id === next.id ? next : n)))}
-                      onRemove={(id) => setNotes((current) => current.filter((n) => n.id !== id))}
+                    <RoomItemRow
+                      item={item}
+                      maxReplies={2}
+                      isNew={item.kind === "note" && posted.has(item.note.id)}
+                      onReplace={(next) =>
+                        setItems((current) =>
+                          current.map((c) => (c.kind === "note" && c.note.id === next.id ? { ...c, note: next } : c)),
+                        )
+                      }
+                      onRemove={(id) => setItems((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)))}
                     />
                   </div>
                 </Fragment>

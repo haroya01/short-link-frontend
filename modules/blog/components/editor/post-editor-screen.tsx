@@ -22,12 +22,20 @@ import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { ErrorState } from "@/components/common/error-state";
 
 /** The writing surface for an existing post (`postId`) or a new one that is created on its first save (`null`). */
-export function PostEditorScreen({ postId, initialMarkdown }: { postId: number | null; initialMarkdown?: string }) {
+export function PostEditorScreen({
+  postId,
+  initialMarkdown,
+  initialRoomId = null,
+}: {
+  postId: number | null;
+  initialMarkdown?: string;
+  initialRoomId?: number | null;
+}) {
   const t = useTranslations("postEditor");
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
   const { toast } = useToast();
-  const ed = usePostEditor(postId, { ready, authenticated, username: me?.username, initialMarkdown });
+  const ed = usePostEditor(postId, { ready, authenticated, username: me?.username, initialMarkdown, initialRoomId });
   const [publishOpen, setPublishOpen] = useState(false);
   const focusBody = useRef<(() => void) | null>(null);
   // First body image — offered as a one-tap cover suggestion in the publish dialog.
@@ -141,6 +149,11 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
         </div>
       )}
 
+      {ed.audience === "ROOM" && ed.room && (
+        <p data-editor-room className="mb-1 truncate text-[13px] font-semibold text-accent-700 dark:text-accent-400">
+          {ed.room.name ? t("roomPost", { room: ed.room.name }) : "\u00a0"}
+        </p>
+      )}
       <EditorTitle
         value={ed.title}
         onChange={ed.setTitle}
@@ -200,6 +213,9 @@ export function PostEditorScreen({ postId, initialMarkdown }: { postId: number |
           onRotate: ed.rotateLink,
           blockedCountries: ed.blockedCountries,
           onBlockedCountriesChange: ed.setBlockedCountries,
+          room: ed.room,
+          onRoomChange: ed.setRoom,
+          savedRoomId: post?.audience === "ROOM" ? (post.room?.id ?? null) : null,
         }}
         title={ed.title}
         cover={ed.coverUrl}

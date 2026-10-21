@@ -1,4 +1,4 @@
-export type PostAudience = "PUBLIC" | "UNLISTED" | "FOLLOWERS" | "PASSWORD";
+export type PostAudience = "PUBLIC" | "UNLISTED" | "FOLLOWERS" | "PASSWORD" | "ROOM";
 
 export const POST_AUDIENCES: readonly PostAudience[] = ["PUBLIC", "UNLISTED", "FOLLOWERS", "PASSWORD"];
 
@@ -48,7 +48,7 @@ export function redactCard<T extends CardShape>(item: T): T {
   };
 }
 
-export type CardMark = "UNLISTED" | "FOLLOWERS" | "PASSWORD" | "REGION";
+export type CardMark = "UNLISTED" | "FOLLOWERS" | "PASSWORD" | "REGION" | "ROOM";
 
 export function cardMark(item: AudienceFields): CardMark | null {
   const audience = audienceOf(item);
@@ -82,17 +82,34 @@ export function sameCountries(a: readonly string[], b: readonly string[]): boole
 
 export const MAX_BLOCKED_COUNTRIES = 85;
 
-export type AudienceDraft = { audience: PostAudience; password: string; blockedCountries: string[] };
+export type AudienceDraft = {
+  audience: PostAudience;
+  password: string;
+  blockedCountries: string[];
+  roomId?: number | null;
+};
 
-export type SavedAudience = { audience?: PostAudience; hasPassword?: boolean; blockedCountries?: string[] };
+export type SavedAudience = {
+  audience?: PostAudience;
+  hasPassword?: boolean;
+  blockedCountries?: string[];
+  room?: { id: number } | null;
+};
 
-export type AudiencePatch = { audience?: PostAudience; password?: string; blockedCountries?: string[] };
+export type AudiencePatch = { audience?: PostAudience; password?: string; blockedCountries?: string[]; roomId?: number };
 
 export function audiencePatch(saved: SavedAudience, draft: AudienceDraft): AudiencePatch {
   const patch: AudiencePatch = {};
   const problem = passwordProblem(draft.audience, draft.password, saved.hasPassword === true);
-  if (problem == null && draft.audience !== (saved.audience ?? "PUBLIC")) patch.audience = draft.audience;
+  if (problem == null && draft.audience !== "ROOM" && draft.audience !== (saved.audience ?? "PUBLIC")) {
+    patch.audience = draft.audience;
+  }
   if (problem == null && draft.audience === "PASSWORD" && draft.password !== "") patch.password = draft.password;
+  if (draft.audience === "ROOM" && draft.roomId != null && draft.roomId !== (saved.room?.id ?? null)) {
+    patch.audience = "ROOM";
+    patch.roomId = draft.roomId;
+  }
+  if (draft.audience === "ROOM") return patch;
   if (!sameCountries(draft.blockedCountries, saved.blockedCountries ?? [])) patch.blockedCountries = [...draft.blockedCountries];
   return patch;
 }
@@ -102,7 +119,7 @@ export function changesVisibility(patch: AudiencePatch): boolean {
 }
 
 export type ConditionPart =
-  | { kind: "FOLLOWERS" | "UNLISTED" | "PASSWORD" | "REGION" }
+  | { kind: "FOLLOWERS" | "UNLISTED" | "PASSWORD" | "REGION" | "ROOM" }
   | { kind: "COUNTRIES"; codes: string[] };
 
 export function bylineCondition(

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { fetchRoomInviteLanding, personName } from "@/modules/rooms/api/rooms";
+import { personName } from "@/modules/rooms/api/rooms";
+import { fetchRoomInviteLanding } from "@/modules/rooms/api/room-landing";
 import { RoomJoin } from "@/modules/rooms/components/room-join";
 
 export async function generateMetadata({

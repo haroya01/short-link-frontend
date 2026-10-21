@@ -1,8 +1,8 @@
 import { ApiError, request } from "@/lib/api/client";
 import { listFollowers, listFollowing } from "@/modules/blog/api/follows";
 import { searchPeople } from "@/modules/blog/api/people";
-import { fetchPublic } from "@/modules/blog/api/public-posts";
-import type { NoteFeed } from "@/modules/notes/api/notes";
+import type { HomePost } from "@/modules/blog/api/home-feed";
+import type { Note, NoteAuthor, NoteFeed } from "@/modules/notes/api/notes";
 
 const roomMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
@@ -108,6 +108,22 @@ export interface RoomInviteOptions {
 
 export type InviteSource = "following" | "followers";
 
+export interface RoomReply {
+  id: number;
+  author: NoteAuthor;
+  body: string;
+}
+
+export type RoomItem =
+  | { kind: "note"; note: Note; replies: RoomReply[] }
+  | { kind: "post"; post: HomePost; replies: RoomReply[] };
+
+/** Backend contract: GET /rooms/{id}/items and /rooms/items, newest first; `next` is an opaque "<note>.<post>" cursor. */
+export interface RoomItemsPage {
+  items: RoomItem[];
+  next: string | null;
+}
+
 export function roomShareUrl(invite: RoomInvite): string {
   return invite.url ?? invite.pageUrl;
 }
@@ -141,6 +157,28 @@ export function renameRoom(id: number, name: string): Promise<RoomDetail> {
 export function listRoomNotes(id: number, page = 0): Promise<NoteFeed> {
   if (roomMocks) return roomMocks.mockRoomNotes(id, page);
   return request<NoteFeed>(`${base}/${id}/notes?page=${page}&size=20`, { method: "GET" });
+}
+
+function tidyItems(page: RoomItemsPage): RoomItemsPage {
+  const items = (Array.isArray(page?.items) ? page.items : []).flatMap((item): RoomItem[] => {
+    const replies = Array.isArray(item?.replies) ? item.replies : [];
+    if (item?.kind === "note" && item.note) return [{ kind: "note", note: item.note, replies }];
+    if (item?.kind === "post" && item.post) return [{ kind: "post", post: item.post, replies }];
+    return [];
+  });
+  return { items, next: typeof page?.next === "string" && page.next !== "" ? page.next : null };
+}
+
+export async function listRoomItems(id: number, cursor: string | null = null, limit = 20): Promise<RoomItemsPage> {
+  if (roomMocks) return roomMocks.mockRoomItems(id, cursor, limit);
+  const query = `limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
+  return tidyItems(await request<RoomItemsPage>(`${base}/${id}/items?${query}`, { method: "GET" }));
+}
+
+export async function listAllRoomItems(cursor: string | null = null, limit = 20): Promise<RoomItemsPage> {
+  if (roomMocks) return roomMocks.mockAllRoomItems(cursor, limit);
+  const query = `limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
+  return tidyItems(await request<RoomItemsPage>(`${base}/items?${query}`, { method: "GET" }));
 }
 
 export function listRoomsFeed(page = 0, size = 50): Promise<NoteFeed> {
@@ -259,14 +297,6 @@ export async function getRoomInviteLanding(code: string): Promise<RoomInviteLand
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
   }
-}
-
-export async function fetchRoomInviteLanding(code: string): Promise<RoomInviteLanding | null> {
-  if (roomMocks) return roomMocks.mockLanding(code);
-  const result = await fetchPublic<RoomInviteLanding>(`/api/v1/public/room-invites/${encodeURIComponent(code)}`, {
-    noStore: true,
-  });
-  return result.ok ? result.data : null;
 }
 
 /** Errors: 410 ROOM_INVITE_UNUSABLE, 409 ROOM_FULL, 403 ROOM_REMOVED. */

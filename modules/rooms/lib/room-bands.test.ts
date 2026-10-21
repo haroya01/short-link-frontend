@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
+import type { HomePost } from "@/modules/blog/api/home-feed";
 import type { Note } from "@/modules/notes/api/notes";
-import type { RoomListItem } from "@/modules/rooms/api/rooms";
-import { arrangeRooms, dayBreak, inviteUsable, isLively, notesOfRoom, pinnedCount } from "./room-bands";
+import type { RoomItem, RoomListItem } from "@/modules/rooms/api/rooms";
+import { arrangeRooms, dayBreak, inviteUsable, isLively, itemsOfRoom, newestNoteId, pinnedCount } from "./room-bands";
 
 const NOW = Date.parse("2026-10-20T12:00:00+09:00");
 const ago = (hours: number) => new Date(NOW - hours * 3_600_000).toISOString();
@@ -25,8 +26,17 @@ function room(id: number, hoursAgo: number | null, extra: Partial<RoomListItem> 
   };
 }
 
-const note = (id: number, roomId: number | null, createdAt: string) =>
-  ({ id, body: "", createdAt, room: roomId === null ? null : { id: roomId, name: "r" } }) as Note;
+const note = (id: number, roomId: number | null, createdAt: string): RoomItem => ({
+  kind: "note",
+  note: { id, body: "", createdAt, room: roomId === null ? null : { id: roomId, name: "r" } } as Note,
+  replies: [],
+});
+const post = (id: number, roomId: number, publishedAt: string): RoomItem => ({
+  kind: "post",
+  post: { id, publishedAt, room: { id: roomId, name: "r" } } as HomePost,
+  replies: [],
+});
+const keys = (items: RoomItem[]) => items.map((i) => (i.kind === "note" ? `n${i.note.id}` : `p${i.post.id}`));
 
 describe("lively or quiet", () => {
   it("a room is lively while its last note is under a week old", () => {
@@ -68,17 +78,16 @@ describe("arranging the rooms tab", () => {
 });
 
 describe("splitting the rooms feed", () => {
-  it("gives each room its own two newest notes and never another room's", () => {
-    const feed = [
-      note(1, 1, ago(1)),
-      note(2, 2, ago(2)),
-      note(3, 1, ago(3)),
-      note(4, 1, ago(4)),
-      note(5, null, ago(5)),
-    ];
-    expect(notesOfRoom(feed, 1).map((n) => n.id)).toEqual([1, 3]);
-    expect(notesOfRoom(feed, 2).map((n) => n.id)).toEqual([2]);
-    expect(notesOfRoom(feed, 3)).toEqual([]);
+  it("gives each room its own two newest items, notes and posts alike, and never another room's", () => {
+    const feed = [note(1, 1, ago(1)), post(80, 1, ago(1.5)), note(2, 2, ago(2)), note(3, 1, ago(3)), note(5, null, ago(5))];
+    expect(keys(itemsOfRoom(feed, 1))).toEqual(["n1", "p80"]);
+    expect(keys(itemsOfRoom(feed, 2))).toEqual(["n2"]);
+    expect(itemsOfRoom(feed, 3)).toEqual([]);
+  });
+
+  it("reads up to the newest note only, since 새 글 counts notes", () => {
+    expect(newestNoteId([post(9000, 1, ago(0)), note(12, 1, ago(1)), note(30, 1, ago(2))])).toBe(30);
+    expect(newestNoteId([post(9000, 1, ago(0))])).toBeNull();
   });
 });
 
@@ -87,8 +96,8 @@ describe("day breaks in a room", () => {
   const at = (day: number, hour: number) => new Date(2026, 9, day, hour).toISOString();
 
   it("labels today, yesterday and older days once each", () => {
-    const notes = [note(1, 1, at(20, 11)), note(2, 1, at(20, 9)), note(3, 1, at(19, 23)), note(4, 1, at(15, 8))];
-    const breaks = notes.map((_, i) => dayBreak(notes, i, now));
+    const times = [at(20, 11), at(20, 9), at(19, 23), at(15, 8)];
+    const breaks = times.map((_, i) => dayBreak(times, i, now));
     expect(breaks[0]).toEqual({ kind: "today" });
     expect(breaks[1]).toBeNull();
     expect(breaks[2]).toEqual({ kind: "yesterday" });

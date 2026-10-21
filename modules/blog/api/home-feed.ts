@@ -13,6 +13,7 @@ export interface HomePost extends PublicFeedItem {
   readMinutes: number;
   commentCount: number;
   likedByMe: boolean | null;
+  room?: { id: number; name: string } | null;
 }
 
 export type HomeItem = { kind: "note"; note: Note } | { kind: "post"; post: HomePost };
@@ -22,6 +23,10 @@ export type HomeItem = { kind: "note"; note: Note } | { kind: "post"; post: Home
 export interface HomePage {
   items: HomeItem[];
   next: string | null;
+  /** First page and since answers: the marker to send as `since` on the next refresh. */
+  newest?: string | null;
+  /** A since answer that could not reach the marker: `items` is a fresh first page to replace the list. */
+  gap?: boolean;
 }
 
 function tidy(page: HomePage): HomePage {
@@ -30,7 +35,12 @@ function tidy(page: HomePage): HomePage {
     if (item?.kind === "post" && item.post) return [{ kind: "post", post: redactCard(item.post) }];
     return [];
   });
-  return { items, next: typeof page?.next === "string" && page.next !== "" ? page.next : null };
+  return {
+    items,
+    next: typeof page?.next === "string" && page.next !== "" ? page.next : null,
+    ...(typeof page?.newest === "string" ? { newest: page.newest } : {}),
+    ...(typeof page?.gap === "boolean" ? { gap: page.gap } : {}),
+  };
 }
 
 export async function listHome(
@@ -41,5 +51,12 @@ export async function listHome(
   if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHome(tab, cursor, hasViewer())) };
   const query = `tab=${tab}&limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
   const result = await fetchPublic<HomePage>(`/api/v1/public/home?${query}`, { tags: [PUBLIC_POSTS_TAG] });
+  return result.ok ? { ok: true, data: tidy(result.data) } : result;
+}
+
+export async function listHomeSince(tab: HomeTab, since: string, limit = HOME_PAGE_SIZE): Promise<FetchResult<HomePage>> {
+  if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHomeSince(tab, since, hasViewer())) };
+  const query = `tab=${tab}&limit=${limit}&since=${encodeURIComponent(since)}`;
+  const result = await fetchPublic<HomePage>(`/api/v1/public/home?${query}`, { noStore: true });
   return result.ok ? { ok: true, data: tidy(result.data) } : result;
 }
