@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "quality": "node scripts/quality-ratchet.mjs check",
+    "quality:update": "node scripts/quality-ratchet.mjs update",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed"
   },
@@ -85,6 +87,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.35",
     "jsdom": "^25.0.1",
+    "knip": "^6.42.1",
     "postcss": "^8.4.45",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
