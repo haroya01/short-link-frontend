@@ -1,33 +1,24 @@
-export type AvatarTint = { name: string; light: { bg: string; fg: string }; dark: { bg: string; fg: string } };
+import type { CSSProperties } from "react";
 
-/**
- * Shared with iOS: same order, same hex, same pick. Changing any of it changes every person's colour on
- * both platforms. Dark backgrounds are the Tailwind 500 of each hue at 20% over slate-950 (#020617).
- */
-export const AVATAR_TINTS: readonly AvatarTint[] = [
-  { name: "rose", light: { bg: "#ffe4e6", fg: "#9f1239" }, dark: { bg: "#321125", fg: "#fda4af" } },
-  { name: "orange", light: { bg: "#ffedd5", fg: "#9a3412" }, dark: { bg: "#331c17", fg: "#fdba74" } },
-  { name: "amber", light: { bg: "#fef3c7", fg: "#92400e" }, dark: { bg: "#332415", fg: "#fcd34d" } },
-  { name: "emerald", light: { bg: "#d1fae5", fg: "#065f46" }, dark: { bg: "#052a2c", fg: "#6ee7b7" } },
-  { name: "teal", light: { bg: "#ccfbf1", fg: "#115e59" }, dark: { bg: "#062a34", fg: "#5eead4" } },
-  { name: "sky", light: { bg: "#e0f2fe", fg: "#075985" }, dark: { bg: "#042641", fg: "#7dd3fc" } },
-  { name: "indigo", light: { bg: "#e0e7ff", fg: "#3730a3" }, dark: { bg: "#151943", fg: "#a5b4fc" } },
-  { name: "violet", light: { bg: "#ede9fe", fg: "#5b21b6" }, dark: { bg: "#1d1744", fg: "#c4b5fd" } },
-];
+export const AVATAR_TINTS = ["rose", "amber", "sky", "violet", "peach", "teal"] as const;
 
-export const NEUTRAL_TINT: AvatarTint = {
-  name: "neutral",
-  light: { bg: "#f1f5f9", fg: "#334155" },
-  dark: { bg: "#1e293b", fg: "#cbd5e1" },
-};
+export type AvatarTint = (typeof AVATAR_TINTS)[number] | "neutral";
 
-export function tintIndex(seed: number): number {
-  return Math.imul(seed | 0, 2654435761 | 0) >>> 29;
+const encoder = new TextEncoder();
+
+/** Shared with iOS (Palette.avatarTint): FNV-1a 32 over the lowercased handle's UTF-8 bytes, modulo the six tints. */
+export function tintIndex(handle: string): number {
+  let hash = 2166136261;
+  for (const byte of encoder.encode(handle.toLowerCase())) hash = Math.imul(hash ^ byte, 16777619) >>> 0;
+  return hash % AVATAR_TINTS.length;
 }
 
-export function avatarTint(seed: number | null | undefined): AvatarTint {
-  if (seed == null || !Number.isFinite(seed) || seed <= 0) return NEUTRAL_TINT;
-  return AVATAR_TINTS[tintIndex(seed)];
+export function avatarTint(handle: string | null | undefined): AvatarTint {
+  return handle ? AVATAR_TINTS[tintIndex(handle)] : "neutral";
+}
+
+export function avatarTintStyle(tint: AvatarTint): CSSProperties {
+  return { "--avatar-bg": `var(--avatar-${tint}-bg)`, "--avatar-fg": `var(--avatar-${tint}-fg)` } as CSSProperties;
 }
 
 const graphemes =

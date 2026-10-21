@@ -26,7 +26,7 @@ type SerializerState = {
 
 const MARKER = /^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*$/i;
 
-export function markCalloutQuotes(element: HTMLElement) {
+function markCalloutQuotes(element: HTMLElement) {
   element.querySelectorAll("blockquote").forEach((quote) => {
     const para = quote.firstElementChild;
     if (!para || para.tagName !== "P") return;

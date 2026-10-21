@@ -7,7 +7,7 @@ const noteMocks: typeof import("@/modules/notes/api/_mocks") | null =
 
 export const HOME_TABS = ["following", "latest", "trending"] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
-export const HOME_PAGE_SIZE = 20;
+const HOME_PAGE_SIZE = 20;
 
 export interface HomePost extends PublicFeedItem {
   readMinutes: number;

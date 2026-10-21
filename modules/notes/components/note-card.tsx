@@ -57,7 +57,7 @@ import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
 const NOTE_RING_NUMBER_FROM = 20;
 
 /** A member's notes on their blog, or an account on another server on its remote page. */
-export function noteAuthorHref(author: Note["author"], locale: string): string {
+function noteAuthorHref(author: Note["author"], locale: string): string {
   return author.remoteId ? blogPath(`/remote/${author.remoteId}`) : authorHref(author.username, locale);
 }
 
@@ -73,7 +73,6 @@ export interface DetachedNote {
   menu: React.ReactNode;
   footer: React.ReactNode;
   openHref?: string;
-  seed?: number | null;
   content?: React.ReactNode;
 }
 
@@ -349,7 +348,7 @@ export function NoteCard({
     <Avatar
       src={note.author.avatarUrl}
       name={note.author.displayName || note.author.username}
-      seed={detached ? (detached.seed ?? null) : note.author.remoteId ? null : note.author.id}
+      handle={note.author.username}
       size={emphasis ? "lg" : "md"}
     />
   );

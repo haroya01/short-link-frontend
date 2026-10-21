@@ -170,10 +170,6 @@ export function commitCover(id: number, key: string): Promise<{ coverImageUrl: s
   return request(`/api/v1/events/${id}/cover/commit`, { method: "POST", body: { key } });
 }
 
-export function getPublicEvent(slug: string): Promise<PublicEvent> {
-  return request<PublicEvent>(`/api/v1/public/events/${encodeURIComponent(slug)}`);
-}
-
 export async function registerForEvent(
   slug: string,
   body: { name: string; contact: string; answers: Record<number, string> },

@@ -47,7 +47,7 @@ export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit
               href={authorHref(author.username, locale)}
               className="focus-ring group flex min-w-0 flex-1 items-center gap-3 rounded-surface"
             >
-              <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
+              <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="md" />
               <span className="flex min-w-0 flex-col">
                 <AuthorName
                   name={author.displayName}

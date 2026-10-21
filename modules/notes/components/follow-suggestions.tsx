@@ -29,7 +29,7 @@ function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
           href={blogPath(`/remote/${account.id}`)}
           className="focus-ring flex min-w-0 flex-1 items-center gap-2.5 rounded-surface"
         >
-          <Avatar src={account.avatarUrl} name={account.username || account.acct} seed={null} size="sm" />
+          <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size="sm" />
           <span className="min-w-0">
             <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
             <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
@@ -42,7 +42,7 @@ function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
   );
 }
 
-/** 노트 피드 옆(넓은 화면)과 폰 검색 시트의 팔로우 추천 — 마스토돈 "팔로우할 만한 계정". 로그인했을 때만, 있을 때만 선다. */
+/** 둘러보기 사람 칩의 팔로우 추천 — 마스토돈 "팔로우할 만한 계정". 로그인했을 때만, 있을 때만 선다. */
 export function FollowSuggestions({
   className = "mt-8",
   onSettled,
@@ -62,7 +62,7 @@ export function FollowSuggestions({
     if (!authenticated) return;
     let alive = true;
     void Promise.allSettled([
-      listFollowSuggestions().then((found) => alive && setPicks(found.slice(0, 5))),
+      listFollowSuggestions().then((found) => alive && setPicks(found)),
       listRemoteSuggestions(3).then((found) => alive && setElsewhere(found)),
     ]).then(() => alive && setSettled(true));
     return () => {
@@ -96,7 +96,7 @@ export function FollowSuggestions({
             <li key={pick.username} data-testid={`suggestion-${pick.username}`} className="group relative -mx-2 rounded-surface px-2 py-2">
               <div className="flex items-center gap-2.5">
                 <BlogLink href={authorHref(pick.username, locale)} className="focus-ring flex min-w-0 flex-1 items-center gap-2.5 rounded-surface">
-                  <Avatar src={pick.avatarUrl} name={pick.displayName || pick.username} seed={pick.userId} size="sm" />
+                  <Avatar src={pick.avatarUrl} name={pick.displayName || pick.username} handle={pick.username} size="sm" />
                   <span className="min-w-0">
                     <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">
                       {pick.displayName || pick.username}

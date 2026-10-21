@@ -25,7 +25,6 @@ import type {
   SeriesNoteSummary,
   SuggestedAuthor,
   TagCount,
-  TrendingTagSection,
 } from "@/modules/blog/api/public-posts";
 import type { FollowingFeedView, FollowingSeriesNote } from "@/modules/blog/api/follows";
 import type { HighlightReplyView, HighlightView } from "@/modules/blog/api/highlights";
@@ -808,31 +807,7 @@ function mixedCard(slug: string): PublicSeriesCard {
   };
 }
 
-export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
-  return [...MOCK_DISCOVER_SERIES, mixedCard("refactoring-diary")].slice(0, limit);
-}
-
 /** Subscribed series for the home "시리즈" tab — a few of the discover series as if subscribed. */
 export function mockSubscribedSeries(): PublicSeriesCard[] {
   return [...MOCK_DISCOVER_SERIES.slice(0, 2), mixedCard("refactoring-diary")];
-}
-
-export function mockTrendingByTag(tagLimit = 6, perTag = 8): TrendingTagSection[] {
-  const byTag = new Map<string, PublicFeedItem[]>();
-  for (const item of ALL_ITEMS) {
-    for (const tag of item.tags) {
-      const list = byTag.get(tag) ?? [];
-      list.push(item);
-      byTag.set(tag, list);
-    }
-  }
-  return [...byTag.entries()]
-    .filter(([, posts]) => posts.length >= 2)
-    .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, tagLimit)
-    .map(([tag, posts]) => ({
-      tag,
-      postCount: posts.length,
-      posts: [...posts].sort((a, b) => b.viewCount - a.viewCount).slice(0, perTag),
-    }));
 }

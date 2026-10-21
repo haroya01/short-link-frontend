@@ -1,5 +1,4 @@
-import type { CSSProperties } from "react";
-import { avatarInitial, avatarTint } from "@/modules/blog/lib/avatar-tint";
+import { avatarInitial, avatarTint, avatarTintStyle } from "@/modules/blog/lib/avatar-tint";
 
 /**
  * Author avatar — the "image if present, else the initial on a tinted disc" pattern that every surface
@@ -8,13 +7,14 @@ import { avatarInitial, avatarTint } from "@/modules/blog/lib/avatar-tint";
  * them — the identity element of the weblog.
  *
  * Sizes: xs 20 (inline meta) · sm 28 (comment header) · md 36 (rail / cards) · lg 44 (post rail) ·
- * xl 64 → 80 from sm (author header).
+ * card 56 (person card) · xl 64 → 80 from sm (author header).
  */
 const SIZES = {
   xs: { box: "h-5 w-5", text: "text-[10px]" },
   sm: { box: "h-7 w-7", text: "text-[11px]" },
   md: { box: "h-9 w-9", text: "text-[13px]" },
   lg: { box: "h-11 w-11", text: "text-base" },
+  card: { box: "h-14 w-14", text: "text-[22px]" },
   xl: { box: "h-16 w-16 sm:h-20 sm:w-20", text: "text-xl sm:text-2xl" },
 } as const;
 
@@ -23,7 +23,7 @@ export type AvatarSize = keyof typeof SIZES;
 export function Avatar({
   src,
   name,
-  seed,
+  handle,
   size = "md",
   shrink = true,
   eager = false,
@@ -31,8 +31,8 @@ export function Avatar({
   src: string | null | undefined;
   /** Display name or username — its first letter is the fallback initial. */
   name: string;
-  /** The person's local user id, which picks the disc tint. null for remote accounts and unknown people. */
-  seed: number | null;
+  /** The username (or a remote account's acct) that picks the disc tint, the same one iOS picks. null for unknown people. */
+  handle: string | null | undefined;
   size?: AvatarSize;
   /** `shrink-0` so the avatar keeps its size in a flex row. Off only where the original markup omitted it. */
   shrink?: boolean;
@@ -56,18 +56,12 @@ export function Avatar({
       />
     );
   }
-  const tint = avatarTint(seed);
-  const colors = {
-    "--avatar-bg": tint.light.bg,
-    "--avatar-fg": tint.light.fg,
-    "--avatar-bg-dark": tint.dark.bg,
-    "--avatar-fg-dark": tint.dark.fg,
-  } as CSSProperties;
+  const tint = avatarTint(handle);
   return (
     <span
-      data-avatar-tint={tint.name}
-      style={colors}
-      className={`${box} ${shrinkCls}grid place-items-center rounded-full bg-[var(--avatar-bg)] ${text} font-semibold text-[var(--avatar-fg)] dark:bg-[var(--avatar-bg-dark)] dark:text-[var(--avatar-fg-dark)]`}
+      data-avatar-tint={tint}
+      style={avatarTintStyle(tint)}
+      className={`${box} ${shrinkCls}grid place-items-center rounded-full bg-[var(--avatar-bg)] ${text} font-semibold text-[var(--avatar-fg)]`}
     >
       {avatarInitial(name)}
     </span>

@@ -1,4 +1,4 @@
-import { blogHref, blogPath } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 
 export function roomsPath(): string {
   return blogPath("/rooms");
@@ -14,8 +14,4 @@ export function roomSettingsPath(id: number): string {
 
 export function roomJoinPath(code: string): string {
   return blogPath(`/rooms/join/${encodeURIComponent(code)}`);
-}
-
-export function roomsHref(): string {
-  return blogHref("/rooms");
 }

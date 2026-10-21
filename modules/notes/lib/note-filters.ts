@@ -10,7 +10,7 @@ import {
   type NoteFilterDraft,
 } from "@/modules/notes/api/notes";
 
-export { noteVerdict, noticeHidden, textVerdict, type FilterVerdict } from "./note-filter-match";
+export { noteVerdict, noticeHidden, type FilterVerdict } from "./note-filter-match";
 
 let current: NoteFilter[] = [];
 let loadedFor: number | null = null;

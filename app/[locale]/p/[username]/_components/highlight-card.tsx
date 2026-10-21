@@ -101,7 +101,7 @@ export function HighlightCard({
             <span className="flex -space-x-1.5" aria-hidden>
               {readers.slice(0, 3).map((a) => (
                 <span key={a.id} className="rounded-full ring-2 ring-white dark:ring-slate-850">
-                  <Avatar src={a.avatarUrl} name={a.displayName || a.username} seed={a.id} size="xs" />
+                  <Avatar src={a.avatarUrl} name={a.displayName || a.username} handle={a.username} size="xs" />
                 </span>
               ))}
             </span>

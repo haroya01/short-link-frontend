@@ -19,7 +19,7 @@ type SerializerState = {
 type PMNode = { type: unknown; text?: string };
 type PMParent = { childCount: number; child: (i: number) => PMNode };
 
-export function escapeTagLike(text: string): string {
+function escapeTagLike(text: string): string {
   return text.replace(/<(?=[A-Za-z/!?])/g, "&lt;");
 }
 

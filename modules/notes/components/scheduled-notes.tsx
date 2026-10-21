@@ -15,8 +15,7 @@ import {
 
 const LEAD_MS = 5 * 60 * 1000 + 30 * 1000;
 
-/** A datetime-local value (local wall time, minutes) for a moment. */
-export function toLocalInput(at: Date): string {
+function toLocalInput(at: Date): string {
   const shifted = new Date(at.getTime() - at.getTimezoneOffset() * 60_000);
   return shifted.toISOString().slice(0, 16);
 }
@@ -58,7 +57,6 @@ export function useWhen() {
     }).format(new Date(iso));
 }
 
-/** Under the composer: notes waiting for their time, and ones that could not be posted. */
 export function ScheduledNotesPanel({ version }: { version: number }) {
   const t = useTranslations("notes");
   const { toast } = useToast();

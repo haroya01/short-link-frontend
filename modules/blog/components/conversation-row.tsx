@@ -86,11 +86,11 @@ export function ConversationRow({
     >
       {href ? (
         <BlogLink href={href} tabIndex={-1} aria-hidden className="shrink-0 self-start rounded-full">
-          <Avatar src={author?.avatarUrl ?? null} name={author?.displayName || handle} seed={author?.id ?? null} size={nested ? "sm" : "md"} shrink={false} />
+          <Avatar src={author?.avatarUrl ?? null} name={author?.displayName || handle} handle={author?.username} size={nested ? "sm" : "md"} shrink={false} />
         </BlogLink>
       ) : (
         <span aria-hidden className="shrink-0 self-start">
-          <Avatar src={null} name={handle} seed={null} size={nested ? "sm" : "md"} shrink={false} />
+          <Avatar src={null} name={handle} handle={null} size={nested ? "sm" : "md"} shrink={false} />
         </span>
       )}
       <div className="min-w-0 flex-1">

@@ -42,7 +42,7 @@ export function LivePeople({
                   dense ? "px-3 py-2" : "px-3 py-2.5",
                 )}
               >
-                <Avatar src={person.avatarUrl} name={name} seed={person.userId} size={dense ? "sm" : "md"} />
+                <Avatar src={person.avatarUrl} name={name} handle={person.username} size={dense ? "sm" : "md"} />
                 <span className="flex min-w-0 flex-col">
                   <span
                     className={cn(
@@ -140,7 +140,7 @@ export function LiveRemotePeople({
                 <Avatar
                   src={account.avatarUrl}
                   name={account.username || account.acct}
-                  seed={null}
+                  handle={account.acct}
                   size={dense ? "sm" : "md"}
                 />
                 <span className="flex min-w-0 flex-col">

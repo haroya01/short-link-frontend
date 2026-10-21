@@ -242,7 +242,7 @@ export default async function PublicPostPage({
             data-bhv="profile"
             data-bhv-id={author.username}
           >
-            <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
+            <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="lg" />
             <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
           </a>
           {author.bio && (
@@ -321,7 +321,7 @@ export default async function PublicPostPage({
             data-bhv="profile"
             data-bhv-id={author.username}
           >
-            <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
+            <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="lg" />
             <span className="min-w-0">
               <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
               <span className="block text-[13px] text-slate-500 dark:text-slate-400">

@@ -30,7 +30,6 @@ export function SafetyRow({
   href,
   handle,
   avatarUrl,
-  seed,
   detail,
   action,
   actionLabel,
@@ -39,7 +38,6 @@ export function SafetyRow({
   href: string;
   handle: string;
   avatarUrl: string | null;
-  seed: number | null;
   detail?: string;
   action: string;
   actionLabel: string;
@@ -48,7 +46,7 @@ export function SafetyRow({
   return (
     <li className="flex items-center gap-3 py-3">
       <BlogLink href={href} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded">
-        <Avatar src={avatarUrl} name={handle} seed={seed} size="sm" />
+        <Avatar src={avatarUrl} name={handle} handle={handle} size="sm" />
         <span className="min-w-0">
           <span className="block truncate text-[14px] text-slate-800 dark:text-slate-100">@{handle}</span>
           {detail && <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">{detail}</span>}

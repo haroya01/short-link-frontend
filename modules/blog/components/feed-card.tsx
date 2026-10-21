@@ -155,7 +155,7 @@ function FeedCardRow({
         <>
           {!hideAuthor && (
             <>
-              <RowAuthor username={item.author.username} displayName={item.author.displayName} avatarUrl={item.author.avatarUrl} seed={item.author.id} locale={locale} />
+              <RowAuthor username={item.author.username} displayName={item.author.displayName} avatarUrl={item.author.avatarUrl} locale={locale} />
               <RowDot />
             </>
           )}

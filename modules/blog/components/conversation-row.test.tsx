@@ -37,7 +37,7 @@ describe("the conversation row", () => {
     );
     expect(nameLine()).toBe("민지@minji");
     const disc = container.querySelector("[data-avatar-tint]");
-    expect(disc?.getAttribute("data-avatar-tint")).toBe("orange");
+    expect(disc?.getAttribute("data-avatar-tint")).toBe("sky");
     expect(disc?.textContent).toBe("민");
     expect(container.querySelector("time")?.textContent).toBe("3일");
     expect(container.textContent).toContain("·");

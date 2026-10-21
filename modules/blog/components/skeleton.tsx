@@ -1,9 +1,3 @@
-/**
- * Shared loading skeletons for the blog workspace. The whole point is that a loading surface is
- * never blank and never a bare "loading…" line — it mirrors the real layout so content swaps in
- * without a flash or a jump. Pure presentation, dark-aware, `aria-hidden` (a parent region carries
- * the aria-busy/live state). Uses the existing `animate-pulse` rhythm.
- */
 
 export function Skeleton({ className = "" }: { className?: string }) {
   return (
@@ -14,8 +8,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
   );
 }
 
-/** A page header block — title + optional subtitle, matching the workspace `text-2xl` heading rhythm. */
-export function SkeletonHeader({ subtitle = false }: { subtitle?: boolean }) {
+function SkeletonHeader({ subtitle = false }: { subtitle?: boolean }) {
   return (
     <div className="space-y-2">
       <Skeleton className="h-7 w-40" />
@@ -24,8 +17,7 @@ export function SkeletonHeader({ subtitle = false }: { subtitle?: boolean }) {
   );
 }
 
-/** Stat row (analytics overview / per-post / series) — 실제 StatCard 와 같은 비박스 활자 스탯
- *  모양. 보더 타일 스켈레톤이 뜨면 로딩 끝에 레이아웃이 "박스 → 활자"로 점프한다. */
+/** StatCard 와 같은 비박스 모양이어야 로딩 끝에 레이아웃이 점프하지 않는다. */
 export function SkeletonStatCards({ count = 4 }: { count?: number }) {
   return (
     <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
@@ -39,7 +31,6 @@ export function SkeletonStatCards({ count = 4 }: { count?: number }) {
   );
 }
 
-/** Vertical list of rows (post lists, ranked lists, leads, members). `thumb` adds a leading square. */
 export function SkeletonRows({ count = 5, thumb = false }: { count?: number; thumb?: boolean }) {
   return (
     <div className="space-y-1">
@@ -57,11 +48,6 @@ export function SkeletonRows({ count = 5, thumb = false }: { count?: number; thu
   );
 }
 
-/**
- * Generic workspace content skeleton — header + stat cards + rows. Used as the auth-resolving
- * placeholder in the layout (so a workspace navigation never flashes an empty pane before the real
- * page mounts) and as a sensible default for dashboard-shaped pages.
- */
 export function WorkspaceSkeleton() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-10" aria-hidden>

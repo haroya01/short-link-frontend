@@ -171,7 +171,7 @@ test.describe("phone", () => {
 
     await recover(page);
     await sheet.getByRole("button", { name: "다시 시도" }).click();
-    await expect(sheet.getByText("Next.js 14 App Router로 블로그를 다시 만든 이유")).toBeVisible();
+    await expect(sheet.getByRole("link", { name: /Next\.js 14 App Router로 블로그를 다시 만든 이유/ })).toBeVisible();
   });
 });
 

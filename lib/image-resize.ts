@@ -1,23 +1,8 @@
-/**
- * Client-side image downscaling. Each call site decides its own ceiling: avatars want a tight
- * 512px square, profile backgrounds want up to 2048px preserving aspect, etc. Always re-encodes
- * (default JPEG @0.9) so the upload size is bounded regardless of input — frontend's main job
- * here is "don't ship a 50MP camera shot to S3".
- *
- * Bypassed clients (someone calling the API directly) are caught by the backend's HEAD-and-reject
- * size guard; this util is the UX-side half.
- */
-
 export type ResizeOptions = {
-  /** Hard ceiling on the longer edge (or both edges if {@link square}). */
   maxDim: number;
-  /** Center-crop to a square of {@code maxDim × maxDim}. Default false → preserve aspect. */
   square?: boolean;
-  /** Output MIME. Default `image/jpeg`. JPEG / WebP recommended; PNG keeps alpha but balloons size. */
   type?: "image/jpeg" | "image/webp" | "image/png";
-  /** 0..1 quality for lossy formats. Default 0.9. Ignored for PNG. */
   quality?: number;
-  /** File name on the resulting File. Default {@code resized.<ext>}. */
   filename?: string;
 };
 
@@ -27,12 +12,7 @@ const EXT_BY_TYPE: Record<NonNullable<ResizeOptions["type"]>, string> = {
   "image/png": "png",
 };
 
-/**
- * Resizes {@link file} according to {@link options}. Smaller-than-target images pass through
- * untouched in dimensions (we never upscale) but are still re-encoded so the output type is
- * predictable. The returned File can go straight into a presigned S3 PUT.
- */
-export async function resizeImage(file: File, options: ResizeOptions): Promise<File> {
+async function resizeImage(file: File, options: ResizeOptions): Promise<File> {
   const type = options.type ?? "image/jpeg";
   const quality = options.quality ?? 0.9;
   const ext = EXT_BY_TYPE[type];
@@ -65,13 +45,7 @@ export async function resizeImage(file: File, options: ResizeOptions): Promise<F
   return new File([blob], filename, { type });
 }
 
-/**
- * Geometry for the canvas {@code drawImage} call inside {@link resizeImage}. Exported only for
- * the unit test — production code calls {@link resizeImage} and never touches this directly.
- * The four source rect outputs ({@code sx} / {@code sy} / {@code sw} / {@code sh}) describe what
- * part of the source image to draw; the two dest dims ({@code dw} / {@code dh}) describe the
- * destination canvas size. Together they let the caller crop + downscale in one drawImage call.
- */
+/** Exported only for the unit test. */
 export function computeBox(
   iw: number,
   ih: number,
@@ -90,7 +64,6 @@ export function computeBox(
       sh: side,
     };
   }
-  // Preserve aspect, only downscale (never upscale).
   const longest = Math.max(iw, ih);
   const scale = longest > maxDim ? maxDim / longest : 1;
   return {
@@ -103,15 +76,9 @@ export function computeBox(
   };
 }
 
-const REENCODABLE = new Set(["image/jpeg", "image/png", "image/webp"]);
-
 /**
- * Drops embedded metadata (EXIF — including capture GPS) by re-encoding through a canvas, which
- * keeps pixels only. Avatar/banner/profile images already pass through the cropper (same canvas
- * trick); this is for the direct upload paths (e.g. blog body images) that ship the raw File.
- * Preserves the input type so PNG screenshots stay lossless; downscales only if huge. Non-raster
- * or undecodable inputs (svg/gif/heic) pass through untouched — they don't carry GPS EXIF, and we
- * never want metadata-stripping to block an upload.
+ * Re-encoding through a canvas drops EXIF, including capture GPS. Inputs it can't re-encode pass
+ * through untouched: they carry no GPS EXIF, and stripping must never block an upload.
  */
 export async function stripImageMetadata(file: File, maxDim = 2400): Promise<File> {
   const type = file.type;

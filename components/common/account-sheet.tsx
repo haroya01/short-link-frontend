@@ -138,7 +138,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
           <>
             {username ? (
               <a href={authorHref(username, locale)} onClick={onClose} className={cn(ITEM, "py-2")}>
-                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} className="h-10 w-10 text-sm" />
+                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} handle={username} className="h-10 w-10 text-sm" />
                 <span className="min-w-0 flex-1">
                   {displayName && (
                     <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{displayName}</span>
@@ -158,7 +158,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               </a>
             ) : (
               <div className="flex items-center gap-3 px-3 py-2">
-                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} className="h-10 w-10 text-sm" />
+                <MeAvatar src={me?.avatarUrl ?? ""} initial={initial} handle={username} className="h-10 w-10 text-sm" />
                 {me?.email && <span className="min-w-0 truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</span>}
               </div>
             )}

@@ -25,7 +25,7 @@ export function RoomFaces({
             i > 0 && (size === "xs" ? "-ml-1.5" : "-ml-2.5"),
           )}
         >
-          <Avatar src={person.avatarUrl} name={personName(person)} seed={person.id} size={size} />
+          <Avatar src={person.avatarUrl} name={personName(person)} handle={person.username} size={size} />
         </span>
       ))}
     </span>

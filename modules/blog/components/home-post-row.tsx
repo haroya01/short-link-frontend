@@ -5,8 +5,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useLikeFailed } from "@/hooks/use-like-failed";
-import { likePost, unlikePost } from "@/modules/blog/api/likes";
+import { getLikeStatus, likePost, unlikePost } from "@/modules/blog/api/likes";
 import type { HomePost } from "@/modules/blog/api/home-feed";
+import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 import { useBookmarks } from "@/modules/blog/lib/use-bookmarks";
 import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
@@ -19,7 +20,9 @@ import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesLine } from "@/modules/blog/components/feed-card";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 
-function postAsNote(post: HomePost): Note {
+export type PostRowItem = PublicFeedItem & Partial<Pick<HomePost, "readMinutes" | "commentCount" | "likedByMe" | "room">>;
+
+function postAsNote(post: PostRowItem): Note {
   return {
     id: 0,
     body: "",
@@ -46,7 +49,7 @@ function postAsNote(post: HomePost): Note {
   } as Note;
 }
 
-export function HomePostRow({ post, context }: { post: HomePost; context?: ReactNode }) {
+export function HomePostRow({ post, context }: { post: PostRowItem; context?: ReactNode }) {
   const t = useTranslations("notes");
   const tPost = useTranslations("publicPost");
   const locale = useLocale();
@@ -61,13 +64,17 @@ export function HomePostRow({ post, context }: { post: HomePost; context?: React
     signInReason: "like",
     onError: likeFailed,
     initialCount: post.likeCount,
-    load: () => Promise.resolve({ on: post.likedByMe === true, count: post.likeCount }),
+    load: () =>
+      post.likedByMe != null
+        ? Promise.resolve({ on: post.likedByMe, count: post.likeCount })
+        : getLikeStatus(post.id).then((s) => ({ on: s.liked })),
     mutate: (next) =>
       (next ? likePost(post.id) : unlikePost(post.id)).then((s) => ({ on: s.liked, count: s.likeCount })),
   });
   const { isSaved, toggle } = useBookmarks();
   const saved = isSaved(post.author.username, post.slug);
   const count = like.count ?? 0;
+  const comments = post.commentCount ?? 0;
 
   return (
     <div data-post-id={post.id}>
@@ -79,7 +86,6 @@ export function HomePostRow({ post, context }: { post: HomePost; context?: React
           onAuthor: () => router.push(authorHref(post.author.username, locale)),
           onOpen: () => router.push(href),
           openHref: href,
-          seed: post.author.id,
           menu: null,
           content: (
             <>
@@ -101,8 +107,12 @@ export function HomePostRow({ post, context }: { post: HomePost; context?: React
                   )}
                   <span className="mt-1.5 flex min-w-0 items-center gap-1.5 text-[13px] leading-5 text-slate-500 dark:text-slate-400">
                     <span className="shrink-0">{t("quotedPostKind")}</span>
-                    <span aria-hidden className="text-slate-300 dark:text-slate-600">·</span>
-                    <span className="shrink-0">{tPost("ogReadingTime", { minutes: post.readMinutes })}</span>
+                    {post.readMinutes != null && (
+                      <>
+                        <span aria-hidden className="text-slate-300 dark:text-slate-600">·</span>
+                        <span className="shrink-0">{tPost("ogReadingTime", { minutes: post.readMinutes })}</span>
+                      </>
+                    )}
                     <AudienceMark item={post} />
                   </span>
                 </span>
@@ -144,11 +154,11 @@ export function HomePostRow({ post, context }: { post: HomePost; context?: React
               </button>
               <a
                 href={`${href}#comments`}
-                aria-label={t("postComments", { count: post.commentCount })}
+                aria-label={t("postComments", { count: comments })}
                 className={NOTE_ACTION}
               >
                 <NoteGlyph name="reply" className="h-[18px] w-[18px]" />
-                {post.commentCount > 0 && <span className="tabular-nums">{post.commentCount}</span>}
+                {comments > 0 && <span className="tabular-nums">{comments}</span>}
               </a>
               <button
                 type="button"

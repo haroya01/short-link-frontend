@@ -94,7 +94,7 @@ export function NoteReplyDialog({
               <Avatar
                 src={shown.author.avatarUrl}
                 name={shown.author.displayName || shown.author.username}
-                seed={shown.author.remoteId ? null : shown.author.id}
+                handle={shown.author.username}
                 size="md"
               />
               <span className="mt-1 w-0.5 flex-1 rounded-full bg-slate-200 dark:bg-slate-700" />

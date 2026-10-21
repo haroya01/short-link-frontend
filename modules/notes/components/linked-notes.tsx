@@ -6,7 +6,14 @@ import { useTranslations } from "next-intl";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { listLinkedNotes, type NoteLinkPreview } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
-import { linkHost } from "./trending-note-links";
+
+function linkHost(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
 
 function isWebUrl(url: string): boolean {
   try {

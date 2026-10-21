@@ -17,7 +17,7 @@ const GAP = 12;
 const READING_TRAVEL = 44;
 const TOP_ZONE = 8;
 
-export function useReadingDown(): boolean {
+function useReadingDown(): boolean {
   const [down, setDown] = useState(false);
   useEffect(() => {
     let last = window.scrollY;
