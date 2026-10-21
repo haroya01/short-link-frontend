@@ -1,28 +1,16 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { StatsJournal } from "@/components/links/stats/journal";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
+import { LazyDailyChart } from "@/components/links/stats/charts/lazy-charts";
 import { cn, countryFlag, countryName, formatNumber, formatShare } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 import type { RangeDays } from "./chapters/when-chapter";
 
-// recharts 는 이 타일만 쓴다 — 뷰포트 도달 시 청크 로드(챕터 상세와 같은 문법).
-const DailyChart = dynamic(
-  () => import("@/components/links/stats/charts/daily-chart").then((m) => m.DailyChart),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-52 w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40" aria-hidden />
-    ),
-  },
-);
-
-/** Human clicks lead; the selected daily trend precedes two expandable observations and detail links. */
 export function StatsOverview({
   data,
   slicedDaily,
@@ -47,7 +35,6 @@ export function StatsOverview({
 
   return (
     <div>
-      {/* 마스트헤드 — 신문 1면의 제호 줄. 수치는 여기 한 번만 나온다. */}
       <section className="border-b border-slate-200 pb-6 dark:border-slate-800">
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
           <dl className="grid grid-cols-3 items-end gap-x-4 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-8">
@@ -69,7 +56,6 @@ export function StatsOverview({
         </div>
       </section>
 
-      {/* 상세 — 시각화 타일 전부를 한 제목 아래로. */}
       <section className="mt-5">
         <h2 className="sr-only text-base font-semibold sm:not-sr-only sm:block text-slate-900 dark:text-slate-100">
           {t("trendTitle")}
@@ -99,7 +85,7 @@ export function StatsOverview({
               </div>
             }
           >
-            <DailyChart data={slicedDaily} compact />
+            <LazyDailyChart data={slicedDaily} compact />
           </Tile>
 
           <Tile className="lg:col-span-5">

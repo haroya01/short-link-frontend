@@ -4,19 +4,11 @@ import { useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import type { DailyPoint } from "@/modules/blog/api/analytics";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
-/**
- * View-over-time line for the author analytics dashboard: a straight ink polyline with no fill, keyed
- * to the analytics `views` series. Grid/axis/tooltip use the dark-aware chart CSS variables
- * (globals.css) so it reads correctly in both themes.
- *
- * Loaded via next/dynamic (ssr:false) from {@link ./analytics-area-chart} so the ~heavy recharts
- * bundle stays out of the analytics pages' first load; the wrapper renders a fixed-height skeleton
- * (same h-64) meanwhile, so there is no layout shift when the chart hydrates in.
- */
 export function AnalyticsAreaChartImpl({ data }: { data: DailyPoint[] }) {
   const t = useTranslations("blogWorkspace");
-  const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [reduced] = useState(prefersReducedMotion);
   if (data.length === 0 || data.every((d) => d.views === 0)) {
     return <p className="py-16 text-center text-sm text-slate-500 dark:text-slate-400">{t("analyticsNoViews")}</p>;
   }

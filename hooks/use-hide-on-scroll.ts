@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function useHideOnScroll(): boolean {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     function onScroll() {
       const y = window.scrollY;
       if (y > lastY.current + 8 && y > 80) setHidden(true);

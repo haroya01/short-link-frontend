@@ -7,13 +7,14 @@ import { useTranslations } from "next-intl";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 export type TocHeading = { id: string; legacyId?: string; text: string; level: number };
 
 function scrollToHeading(id: string) {
   const el = document.getElementById(id);
   if (!el) return false;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = prefersReducedMotion();
   el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   history.replaceState(null, "", `#${id}`);
   return true;
@@ -38,11 +39,6 @@ export function LegacyHeadingHash({ headings }: { headings: TocHeading[] }) {
   return null;
 }
 
-/**
- * velog-style floating table of contents. Shown from landscape-tablet width up (~1100px, positioned
- * in the right margin by the page) whenever the post has at least one heading. Scrollspy via
- * IntersectionObserver highlights the section currently near the top of the viewport.
- */
 export function PostToc({ headings }: { headings: TocHeading[] }) {
   const t = useTranslations("publicPost");
   const [active, setActive] = useState<string>(headings[0]?.id ?? "");
@@ -59,9 +55,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
       const el = document.getElementById(h.id);
       if (el) observer.observe(el);
     }
-    // 바닥 클램프 — 상단 25% 밴드 스파이는 문서 끝에서 마지막 헤딩이 밴드에 못 들어와 활성이
-    // 본문 중간 항목에 고착됐다(적대 검증 r4: 추천·댓글 영역인데 TOC 는 중간을 가리킴). 끝에
-    // 도달하면 마지막 항목으로 스냅.
+    // 문서 끝에선 마지막 헤딩이 상단 25% 밴드에 못 들어오므로 마지막 항목으로 스냅한다.
     const last = headings[headings.length - 1];
     const clampToEnd = () => {
       if (!last) return;
@@ -109,13 +103,11 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
 export function TocSheet({ headings, open, onClose }: { headings: TocHeading[]; open: boolean; onClose: () => void }) {
   const t = useTranslations("publicPost");
   const dialogRef = useRef<HTMLDivElement>(null);
-  // Hold the sheet mounted through its exit (sheet-down / scrim fade) instead of popping on close.
   const { mounted, closing } = usePresence(open, 240);
   // Portal target (<body>) only exists on the client; gate so the first render matches SSR (nothing).
   const [portalReady, setPortalReady] = useState(false);
   useEffect(() => setPortalReady(true), []);
 
-  // Escape + Tab cycling within the sheet + focus restore to the 목차 button on close.
   useFocusTrap(dialogRef, { active: open, onEscape: onClose });
 
   if (!mounted || !portalReady) return null;

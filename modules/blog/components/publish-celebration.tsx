@@ -4,13 +4,9 @@ import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { consumePublishCelebration } from "@/modules/blog/lib/celebrate-publish";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
-/**
- * 발행 직후 도착한 글 페이지에서 딱 한 번 재생되는 축하 연출 — 브랜드 그린 계열 색지 낙하 + "발행됐어요"
- * 필(그린 실이 아래에 그어진다). 에디터가 sessionStorage 에 찍은 슬러그(celebrate-publish 계약)를
- * 소비해서만 뜨므로 일반 열람·새로고침·재발행에는 절대 나타나지 않는다. pointer-events 없음 — 독자
- * (본인)의 첫 읽기를 어떤 식으로도 막지 않는 위에 얹힌 2.5초. Reduced motion 은 색지 없이 필만.
- */
+/** celebrate-publish 가 sessionStorage 에 남긴 슬러그를 소비할 때만 한 번 뜬다. pointer-events 없음. */
 
 /** 색지 파라미터 — 결정적 상수(런타임 랜덤 없음): 위치·타이밍이 매 재생 동일해도 2.5초 1회라 티 안 남. */
 const STRIPS: Array<{
@@ -42,13 +38,11 @@ const STRIPS: Array<{
 export function PublishCelebration({ slug }: { slug: string }) {
   const t = useTranslations("publicPost");
   const [phase, setPhase] = useState<"off" | "in" | "out">("off");
-  const [reduced, setReduced] = useState(false);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     if (!consumePublishCelebration(slug)) return;
-    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     setPhase("in");
-    // 필이 2초쯤 머문 뒤 페이드아웃하고 DOM 에서 사라진다 — 연출은 흔적을 남기지 않는다.
     const out = window.setTimeout(() => setPhase("out"), 2100);
     const off = window.setTimeout(() => setPhase("off"), 2500);
     return () => {
@@ -64,7 +58,6 @@ export function PublishCelebration({ slug }: { slug: string }) {
       </p>
       {phase !== "off" && (
         <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
-          {/* 색지 — 브랜드 그린 계열 + 종이 슬레이트, 위에서 흩날리며 떨어진다(모션 축소 시 생략). */}
           {!reduced &&
             phase === "in" &&
             STRIPS.map((s, i) => (
@@ -75,8 +68,7 @@ export function PublishCelebration({ slug }: { slug: string }) {
                   left: `${s.left}%`,
                   width: s.w,
                   height: s.h,
-                  // 낙하는 가속이 자연스러워 단일 이동 곡선(var(--ease)=감속) 대신 linear — 색지들의
-                  // 지속시간 편차가 흩날림을 만든다.
+                  // 낙하는 하우스 곡선(감속)이 아니라 linear 여야 자연스럽다.
                   animation: `celebrate-fall ${s.dur}ms linear ${s.delay}ms both`,
                   "--drift": `${s.drift}px`,
                   "--spin": `${s.spin}deg`,
@@ -84,8 +76,6 @@ export function PublishCelebration({ slug }: { slug: string }) {
               />
             ))}
 
-          {/* "발행됐어요" 필 — 체크 디스크 + 문구, 아래로 그린 실이 그어진다(웹로그 시그니처).
-              헤더(h-14) 바로 아래 띠에 떠서 제목을 가리지 않는다. */}
           <div className="absolute left-1/2 top-[4.5rem] -translate-x-1/2">
             <div className={phase === "in" ? "celebrate-pill-in" : "animate-fade-out"}>
               <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-2.5 pl-3 pr-5 shadow-card-hover dark:border-slate-700 dark:bg-slate-900">
