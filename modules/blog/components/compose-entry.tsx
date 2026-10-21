@@ -18,8 +18,7 @@ import { BottomSheet } from "@/components/common/bottom-sheet";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { emitNotePosted, holdArrivingNote } from "@/modules/blog/lib/consequence-events";
 import { BLOG_MEMORY, readFeedMemory } from "@/modules/blog/lib/feed-memory";
-import { NoteDraftsSheet } from "@/modules/notes/components/note-drafts-sheet";
-import { NoteQuoteDialog } from "@/modules/notes/components/note-quote-dialog";
+import { LazyNoteDraftsSheet, LazyNoteQuoteDialog } from "@/modules/notes/components/lazy-note-dialogs";
 import { noteDraftLabel, useNoteDrafts, type NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import type { NoteRoom } from "@/modules/notes/api/notes";
@@ -190,8 +189,8 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
           />
         </BottomSheet>
       )}
-      <NoteDraftsSheet open={draftsOpen} onClose={() => setDraftsOpen(false)} onPick={(draft) => setNoteOpen({ draft })} />
-      <NoteQuoteDialog
+      <LazyNoteDraftsSheet open={draftsOpen} onClose={() => setDraftsOpen(false)} onPick={(draft) => setNoteOpen({ draft })} />
+      <LazyNoteQuoteDialog
         quoted={
           noteOpen
             ? {
