@@ -16,6 +16,7 @@ import { SeriesNoteMarker } from "@/modules/blog/components/series-note-marker";
 import { seriesItemHref, seriesItemKey, type SeriesNavView } from "@/modules/blog/lib/series-items";
 import { trackBehavior } from "@/lib/analytics/behavior";
 import type { SeriesItemLink } from "@/modules/blog/api/public-posts";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 /** 수평 의도 판별: 첫 이동에서 이 각도(≈30°)보다 평평하고 아래 거리 이상이면 스와이프로 본다. */
 const ANGLE_RATIO = 1.7; // |dx| > |dy| * 1.7  → 수평(≈30° 이내)
@@ -30,7 +31,7 @@ type Dir = "prev" | "next";
 function reduceMotion(): boolean {
   return (
     typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    prefersReducedMotion()
   );
 }
 

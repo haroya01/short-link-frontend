@@ -4,48 +4,32 @@ import { useTranslations } from "next-intl";
 import { useCountUp } from "@/lib/animations";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { cn, formatNumber } from "@/lib/utils";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 type Props = {
   total: number;
   human: number;
   bot: number;
   unique?: number | null;
-  /**
-   * Clicks attributed to the owner's public profile page (sourceChannel LIKE 'profile-%').
-   * Renders an extra KPI card only when {@code > 0} — most short links aren't on a profile
-   * and don't need the slot.
-   */
+  /** sourceChannel LIKE 'profile-%' on the server; the card shows only when > 0. */
   profileClicks?: number | null;
   timeToFirstClickMinutes?: number | null;
   velocityRatio?: number | null;
-  /** 일별 클릭 시계열(카운트만) — 있으면 히어로 카드에 자가-드로잉 스파크라인. */
   dailySeries?: number[] | null;
   animate?: boolean;
-  /**
-   * Called when a card is clicked. Hosts on a tabbed surface use this to switch tab + scroll;
-   * single-page hosts can omit it and the card falls back to in-page {@code scrollIntoView}.
-   */
+  /** Omit to fall back to in-page scrollIntoView. */
   onNavigate?: (section: string) => void;
   /** Hosts with fewer breakdowns omit navigation affordances for unavailable sections. */
   navigationTargets?: readonly string[];
-  /** 수치를 세는 단위 — 블로그 글·시리즈 분석은 방문으로 센다. */
   unit?: "click" | "visit";
 };
 
-// 위성 카드 수별 트랙. 히어로는 lg 에서 1.5배, 그보다 좁으면 한 줄을 다 쓴다.
 const GRID_TRACKS: Record<number, string> = {
   2: "sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]",
   3: "sm:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr]",
   4: "sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
 };
 
-/**
- * KPI grid that anchors the stats page. Hero (human clicks) is sized 1.5× the others so the eye
- * lands there first; a satellite card renders only when it has data. Each card is clickable — jump-scrolls
- * to the matching detail section, turning the KPI grid into a navigation control rather than
- * dead chrome. Hover state lifts each card {@code -translate-y-0.5} + soft shadow; active state
- * snaps it back with a {@code scale(0.99)} press tactile.
- */
 export function StatsCards({
   total,
   human,
@@ -67,9 +51,7 @@ export function StatsCards({
     typeof timeToFirstClickMinutes === "number" && Number.isFinite(timeToFirstClickMinutes);
   const showProfile =
     typeof profileClicks === "number" && Number.isFinite(profileClicks) && profileClicks > 0;
-  // Zero-data state has no chart to scroll to and the page already shows a "share your link"
-  // empty-state CTA above. Strip the interactive affordances on the KPI cards so the cursor /
-  // hover / focus signal doesn't promise navigation we can't deliver.
+  // With zero data there is no section to jump to, so the cards drop their interactive affordances.
   const interactive = total > 0;
   const canNavigate = (section: string) => interactive && (!navigationTargets || navigationTargets.includes(section));
 
@@ -79,7 +61,7 @@ export function StatsCards({
       onNavigate(section);
       return;
     }
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     document.getElementById(section)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
@@ -87,8 +69,7 @@ export function StatsCards({
   const uniqueRatio = hasUnique && human > 0 ? ((unique as number) / human) * 100 : 0;
   const profileRatio = showProfile && human > 0 ? ((profileClicks as number) / human) * 100 : 0;
 
-  // 저표본 게이트 — lib/stats-journal 의 MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
-  // 총 2클릭에 "클릭 가속 24.0x"가 뜨면 KPI 헤더가 과장으로 읽힌다.
+  // lib/stats-journal 의 MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱이어야 한다.
   const showVelocity = hasVelocity && (velocityRatio as number) >= 1.5 && human >= 30;
   const showLatency = !showVelocity && hasLatency;
   const showActivity = showVelocity || showLatency;
@@ -105,8 +86,7 @@ export function StatsCards({
         GRID_TRACKS[satellites],
       )}
     >
-      {/* 히어로(StatsHeroCore) — 홈의 통계 예시와 같은 컴포넌트. 랜딩이 약속하는 카드가 실제
-          화면의 이 카드다(과장광고 방지 계약). */}
+      {/* 홈의 통계 예시와 같은 StatsHeroCore 여야 한다: 랜딩이 보여 주는 카드가 이 카드다. */}
       <button
         type="button"
         onClick={() => jump("section-daily")}
@@ -183,7 +163,6 @@ function Stat({
   label: string;
   value: string;
   sub?: string;
-  /** 0~1 — 카드 하단 미니 비율바(아이콘 제거 후의 데이터 드로잉). */
   ratio?: number;
   muted?: boolean;
   onJump?: () => void;
@@ -202,7 +181,6 @@ function Stat({
           : "cursor-default",
       )}
     >
-      {/* 라벨·보조 글씨 크기는 히어로 카드(StatsHeroCore)와 같다. muted 는 라벨 색으로 표현. */}
       <span
         className={cn(
           "truncate text-[13px] font-semibold transition-colors",

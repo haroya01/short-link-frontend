@@ -7,10 +7,9 @@ import type { NoteMedia as NoteImage } from "@/modules/notes/api/notes";
 import { cn } from "@/lib/utils";
 import { VariantImage } from "@/components/common/variant-image";
 import { PhotoLightbox } from "@/app/[locale]/u/[username]/_components/photo-lightbox";
+import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 
-// Video and audio come only from other servers (members attach pictures). They play from where they
-// live, with the browser's own controls. A video plays silently on a loop while it is mostly on screen,
-// as on Threads and X; sound and full screen stay one tap away in its controls.
+// Video and audio come only from other servers; they play from where they live.
 export function NoteMedia({
   media,
   concealed = false,
@@ -107,7 +106,7 @@ function NoteVideo({ video }: { video: NoteImage }) {
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     const saving = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
     if (reduced || saving) return;
     const observer = new IntersectionObserver(

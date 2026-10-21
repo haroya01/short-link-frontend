@@ -10,7 +10,7 @@ vi.mock("next-intl", () => ({
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { id: 1, username: "dohyun" } }) }));
 vi.mock("@/hooks/use-keyboard-inset", () => ({ useKeyboardInset: () => 0 }));
 vi.mock("@/modules/blog/components/editor/series-select", () => ({ SeriesSelect: () => null }));
-vi.mock("@/modules/blog/components/editor/tag-input", () => ({ TagInput: () => null }));
+vi.mock("@/components/common/tag-input", () => ({ TagInput: () => null }));
 vi.mock("@/modules/blog/components/editor/audience-section", () => ({ AudienceSection: () => null }));
 
 import { PublishDialog } from "./publish-dialog";

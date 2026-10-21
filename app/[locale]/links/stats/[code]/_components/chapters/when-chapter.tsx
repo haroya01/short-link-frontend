@@ -1,10 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
+import { LazyDailyChart, LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
 import { Reveal } from "@/components/common/reveal";
 import { Section } from "@/components/common/section";
 import { cn } from "@/lib/utils";
@@ -12,27 +12,6 @@ import type { LinkStats } from "@/types";
 
 export type RangeDays = 7 | 30;
 
-// recharts(~90KB gz)는 이 두 차트만 쓴다 — 뷰포트에 실제로 들어올 때만 청크를 받도록 동적 로드,
-// 자리표시자로 하이드레이션 레이아웃 점프 방지(구 트래픽 탭 문법 그대로).
-function ChartSkeleton({ className = "h-64" }: { className?: string }) {
-  return (
-    <div
-      className={`w-full animate-pulse rounded-lg bg-slate-100/70 dark:bg-slate-800/40 ${className}`}
-      aria-hidden
-    />
-  );
-}
-
-const DailyChart = dynamic(
-  () => import("@/components/links/stats/charts/daily-chart").then((m) => m.DailyChart),
-  { ssr: false, loading: () => <ChartSkeleton /> },
-);
-const HourChart = dynamic(
-  () => import("@/components/links/stats/charts/hour-chart").then((m) => m.HourChart),
-  { ssr: false, loading: () => <ChartSkeleton className="h-72" /> },
-);
-
-/** 2장 언제 — 라이브 피드, 히트맵, 일별 추이(기간 프리셋 적용), 시간대. (구 개요 라이브/히트맵 + 트래픽) */
 export function WhenChapter({
   data,
   dailyClicks,
@@ -42,7 +21,6 @@ export function WhenChapter({
   demo = false,
 }: {
   data: LinkStats;
-  /** 기간 프리셋이 자른 일별 시계열 */
   dailyClicks?: LinkStats["dailyClicks"];
   range: RangeDays;
   onRange: (r: RangeDays) => void;
@@ -68,8 +46,7 @@ export function WhenChapter({
           <Heatmap data={data.heatmap} />
         </Section>
       </Reveal>
-      {/* 기간 프리셋 — 일별 추이(아래)와 개요의 히어로 스파크라인을 함께 절환한다.
-          7D/30D 만: 90D+는 API 기간 파라미터가 생기면 백엔드 후속(비활성 버튼으로 거짓 약속 ❌). */}
+      {/* 7D/30D 만: API 에 기간 파라미터가 없다. */}
       <div className="flex justify-end">
         <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
           {([7, 30] as const).map((d) => (
@@ -98,14 +75,14 @@ export function WhenChapter({
             description={t("scope.daily", { days: range, tz: data.timezone })}
             className="lg:col-span-2"
           >
-            <DailyChart data={dailyClicks ?? data.dailyClicks} />
+            <LazyDailyChart data={dailyClicks ?? data.dailyClicks} />
           </Section>
           <Section
             id="section-hourly"
             title={t("section.hourly.title")}
             description={t("section.hourly.desc")}
           >
-            <HourChart data={data.hourClicks} />
+            <LazyHourChart data={data.hourClicks} />
           </Section>
         </div>
       </Reveal>

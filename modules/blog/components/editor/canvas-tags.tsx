@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { TagInput } from "@/modules/blog/components/editor/tag-input";
+import { TagInput } from "@/components/common/tag-input";
+import { POST_TAG_LIMITS } from "@/modules/blog/lib/tag-normalize";
 
 /**
  * A whisper-quiet tags line under the title on the writing canvas — so topics are visible while writing
@@ -31,6 +32,7 @@ export function CanvasTags({
         <TagInput
           tags={tags}
           onChange={onChange}
+          limits={POST_TAG_LIMITS}
           suggestions={suggestions}
           placeholder={t("tagsPlaceholder")}
           autoFocus

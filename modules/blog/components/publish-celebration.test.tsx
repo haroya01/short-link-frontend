@@ -12,7 +12,7 @@ let host: HTMLDivElement;
 beforeEach(() => {
   vi.useFakeTimers();
   vi.stubGlobal("React", React);
-  vi.stubGlobal("matchMedia", () => ({ matches: false }));
+  vi.stubGlobal("matchMedia", () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   sessionStorage.clear();
   host = document.createElement("div");
