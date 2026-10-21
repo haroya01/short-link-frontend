@@ -34,7 +34,7 @@ test.describe("phone", () => {
   });
 
   test("둘러보기 at rest offers who to follow with quiet outlines, no tag pills", async ({ page }) => {
-    await page.goto("/ko/blog/explore");
+    await page.goto("/ko/blog/explore?lane=people");
     const explore = page.locator("main");
     const follow = explore.getByTestId("follow-suggestions");
     await expect(follow.getByRole("heading", { name: "팔로우 추천" })).toBeVisible({ timeout: 30_000 });
@@ -43,6 +43,7 @@ test.describe("phone", () => {
     expect(isGreen(await css(button, "background-color"))).toBe(false);
     expect(isGreen(await css(button, "border-top-color"))).toBe(false);
     await expect(explore.getByRole("heading", { name: "인기 태그" })).toHaveCount(0);
+    await expect(explore.getByTestId("explore-tag-chips")).toBeHidden();
   });
 
   test("a 둘러보기 query labels posts in grey and ends in a plain text link to every result", async ({ page }) => {
@@ -142,14 +143,10 @@ test.describe("desktop", () => {
     await expect.poll(() => greenFills(page)).toEqual([]);
   });
 
-  test("the 둘러보기 rails draw trend bars grey and offer follows as quiet outlines on one line", async ({ page }) => {
-    await page.goto("/ko/blog/explore");
-    const tags = page.getByTestId("trending-note-tags");
-    await expect(tags).toBeVisible({ timeout: 30_000 });
-    const bars = await tags.locator("span[style*='height']").evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
-    expect(bars.length).toBeGreaterThan(0);
-    expect(bars.filter(isGreen)).toEqual([]);
+  test("둘러보기 사람 offers follows as quiet outlines on one line", async ({ page }) => {
+    await page.goto("/ko/blog/explore?lane=people");
     const suggestion = page.getByTestId("suggestion-haruka");
+    await expect(suggestion).toBeVisible({ timeout: 30_000 });
     const follow = suggestion.getByTestId("follow-button");
     expect(isGreen(await css(follow, "border-top-color"))).toBe(false);
     const name = (await suggestion.getByRole("link").first().boundingBox())!;

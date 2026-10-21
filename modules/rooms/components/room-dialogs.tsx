@@ -82,7 +82,7 @@ export function CreateRoomDialog({
           <ul className="mt-2 space-y-2">
             {friends.map((friend) => (
               <li key={friend.id} className="flex items-center gap-2.5 text-[14px] text-slate-800 dark:text-slate-200">
-                <Avatar src={friend.avatarUrl} name={personName(friend)} seed={friend.id} size="sm" />
+                <Avatar src={friend.avatarUrl} name={personName(friend)} handle={friend.username} size="sm" />
                 {personName(friend)}
               </li>
             ))}

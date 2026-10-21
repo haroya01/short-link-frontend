@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Globe, Loader2 } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { useAuth } from "@/lib/auth";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
-import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import type { Note } from "@/modules/notes/api/notes";
 import type { RemoteView, TrendingNote } from "@/modules/notes/api/remote-trending";
@@ -17,29 +15,10 @@ import { NoteCard } from "./note-card";
 import { NoteListSkeleton } from "./note-list";
 import { TrendingNoteCard, trendingDisplayNote } from "./remote-trending";
 
-const VIEWS: readonly RemoteView[] = ["trending", "latest"];
-
-export function RemoteFeed() {
-  const tFeed = useTranslations("publicFeed");
-  const params = useSearchParams();
-  const pathname = usePathname();
-  const view: RemoteView = params.get("remote") === "latest" ? "latest" : "trending";
-  const hrefFor = (next: RemoteView) => {
-    const query = new URLSearchParams(params.toString());
-    if (next === "latest") query.set("remote", "latest");
-    else query.delete("remote");
-    return `${pathname}?${query.toString()}`;
-  };
-  const label: Record<RemoteView, string> = { trending: tFeed("trending"), latest: tFeed("recent") };
-
+export function RemoteFeed({ view }: { view: RemoteView }) {
   return (
-    <section data-testid="remote-feed">
-      <div className="border-b border-slate-100 pb-3.5 pt-3 dark:border-slate-800">
-        <FeedSortTabs
-          tabs={VIEWS.map((key) => ({ key, label: label[key], href: hrefFor(key), active: key === view }))}
-        />
-      </div>
-      <RemoteNotesList key={view} view={view} />
+    <section data-testid="remote-feed" data-remote-view={view}>
+      <RemoteNotesList view={view} />
     </section>
   );
 }

@@ -21,8 +21,8 @@ export function SuggestedAuthorsList({
   const locale = useLocale();
   if (authors.length === 0) return null;
   return (
-    <section data-testid="search-idle-follow" className={className}>
-      <RailHeading className="mb-1 px-2">{t("searchIdleFollow")}</RailHeading>
+    <section data-testid="explore-writers" className={className}>
+      <RailHeading className="mb-1 px-2">{t("railWriters")}</RailHeading>
       <ul>
         {authors.map(({ author, postCount }) => (
           <li key={author.username} className="flex items-center gap-3 px-2 py-2">
@@ -31,7 +31,7 @@ export function SuggestedAuthorsList({
               onClick={onNavigate}
               className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-surface"
             >
-              <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="md" />
+              <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="md" />
               <span className="flex min-w-0 flex-col">
                 <AuthorName
                   name={author.displayName}

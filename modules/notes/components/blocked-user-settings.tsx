@@ -71,7 +71,6 @@ export function BlockedUserSettings() {
                   href={authorHref(user.username, locale)}
                   handle={user.username}
                   avatarUrl={user.avatarUrl}
-                  seed={user.id}
                   action={t("unblock")}
                   actionLabel={t("unblockUser", { username: user.username })}
                   onAction={() => void unblock(user.username)}
@@ -88,7 +87,6 @@ export function BlockedUserSettings() {
                     href={blogPath(`/remote/${account.id}`)}
                     handle={account.acct}
                     avatarUrl={account.avatarUrl}
-                    seed={null}
                     action={t("unblock")}
                     actionLabel={t("unblockUser", { username: account.acct })}
                     onAction={() => void unblockElsewhere(account)}

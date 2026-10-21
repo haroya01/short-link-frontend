@@ -30,7 +30,6 @@ import type {
   ProfileRepliesFeed,
   RemoteAccount,
   ScheduledNote,
-  TrendingNoteLink,
   TrendingNoteTag,
 } from "./notes";
 import { mockFollowingRoomNotes, mockFollowingRoomPosts } from "@/modules/rooms/api/_mocks";
@@ -535,29 +534,6 @@ export function mockTrendingNoteTags(): TrendingNoteTag[] {
   return [
     { tag: "산책", accounts: 3, uses: 5, history: [1, 0, 0, 1, 0, 1, 2] },
     { tag: "kurl", accounts: 2, uses: 2, history: [0, 0, 0, 0, 0, 1, 1] },
-  ];
-}
-
-export function mockTrendingNoteLinks(): TrendingNoteLink[] {
-  return [
-    {
-      url: "https://kurl.me/about",
-      title: "kurl — 짧은 링크와 글이 오래 사는 곳",
-      description: "링크를 줄이고, 글을 쓰고, 그 사이를 엮는다.",
-      imageUrl: "https://picsum.photos/seed/kurl-about/960/502",
-      accounts: 3,
-      uses: 4,
-      history: [0, 0, 1, 0, 1, 1, 1],
-    },
-    {
-      url: "https://example.org/slow-web",
-      title: null,
-      description: null,
-      imageUrl: null,
-      accounts: 2,
-      uses: 2,
-      history: [0, 0, 0, 0, 1, 0, 1],
-    },
   ];
 }
 

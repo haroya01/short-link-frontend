@@ -181,7 +181,7 @@ export function ProfileEditDialog({ open, onClose }: { open: boolean; onClose: (
         <Avatar
           src={shownPhoto}
           name={name.trim() || me?.username || "?"}
-          seed={me?.id ?? null}
+          handle={me?.username}
           size="xl"
           eager
         />

@@ -140,7 +140,7 @@ export default async function PublicSeriesPage({
     <div className="flex flex-col gap-4">
       <RailHeading>{tf("seriesByAuthor")}</RailHeading>
       <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-surface">
-        <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="lg" />
+        <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="lg" />
         <AuthorName
           name={author.displayName}
           handle={author.username}
@@ -188,7 +188,7 @@ export default async function PublicSeriesPage({
               href={profileHref}
               className="focus-ring group flex items-center gap-2 rounded transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
-              <Avatar src={author.avatarUrl} name={author.displayName || author.username} seed={author.id} size="xs" />
+              <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="xs" />
               <AuthorName
                 name={author.displayName}
                 handle={author.username}

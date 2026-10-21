@@ -26,6 +26,8 @@ const DELETE = [
 const CLEAR = [
   "publicFeed.searchClear",
   "publicFeed.recentSearchesClear",
+  "publicFeed.recentSearchRemove",
+  "publicFeed.recentSearchesClearShort",
   "publicFeed.tagFilterClear",
   "savedLibrary.clearHistory",
   "dashboard.filters.clearAll",
@@ -77,6 +79,8 @@ describe("delete, clear and remove verbs", () => {
     const clearing = new Set([
       "publicFeed.searchClear",
       "publicFeed.recentSearchesClear",
+      "publicFeed.recentSearchRemove",
+      "publicFeed.recentSearchesClearShort",
       "publicFeed.tagFilterClear",
       "savedLibrary.clearHistory",
       "savedLibrary.clearHistoryConfirm",

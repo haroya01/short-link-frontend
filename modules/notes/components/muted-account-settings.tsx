@@ -84,7 +84,6 @@ export function MutedAccountSettings() {
                   href={authorHref(user.username, locale)}
                   handle={user.username}
                   avatarUrl={user.avatarUrl}
-                  seed={user.id}
                   detail={until(user.expiresAt)}
                   action={t("unmute")}
                   actionLabel={t("unmuteUser", { username: user.username })}
@@ -102,7 +101,6 @@ export function MutedAccountSettings() {
                     href={blogPath(`/remote/${mute.account.id}`)}
                     handle={mute.account.acct}
                     avatarUrl={mute.account.avatarUrl}
-                    seed={null}
                     detail={until(mute.expiresAt)}
                     action={t("unmute")}
                     actionLabel={t("unmuteUser", { username: mute.account.acct })}

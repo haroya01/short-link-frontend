@@ -142,17 +142,21 @@ async function serve(page: Page, { trending: list, latest, resolve }: Serve = {}
   return seen;
 }
 
-async function open(page: Page, query = "") {
-  await page.goto(`/ko/blog/explore${query ? `?${query.replace(/^&/, "")}` : ""}`);
-  const group = page.getByTestId("remote-feed");
+function lane(page: Page, key: "picks" | "remote") {
+  const group = page.locator(`[data-explore-lane="${key}"] [data-testid="remote-feed"]`);
   return { group, card: (index: number) => group.locator(`[data-remote-uri="${ITEMS[index].uri}"]`) };
+}
+
+async function open(page: Page) {
+  await page.goto("/ko/blog/explore");
+  return lane(page, "picks");
 }
 
 async function scrollToEnd(page: Page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
 }
 
-test("다른 서버 opens on 인기 and keeps going as the reader scrolls: the trending pool, then received notes under their heading", async ({
+test("추천 ends in what is trending elsewhere and keeps going as the reader scrolls: the trending pool, then received notes under their heading", async ({
   page,
 }) => {
   const answer = gate();
@@ -175,9 +179,8 @@ test("다른 서버 opens on 인기 and keeps going as the reader scrolls: the t
   });
   const { group, card } = await open(page);
 
-  const tabs = group.getByRole("navigation");
-  await expect(tabs.getByRole("link", { name: "인기" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
-  await expect(tabs.getByRole("link", { name: "최신" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "추천" })).toHaveAttribute("aria-selected", "true", { timeout: 30_000 });
+  await expect(group).toHaveAttribute("data-remote-view", "trending");
   await expect(group.locator('[data-testid="note-list-skeleton"] > div')).toHaveCount(3);
   answer.open();
 
@@ -214,7 +217,7 @@ test("다른 서버 opens on 인기 and keeps going as the reader scrolls: the t
   expect(seen.resolved).toEqual([]);
 });
 
-test("최신 lists the latest posts from other servers without the trending line, and pages on its own cursor", async ({
+test("다른 서버 lists the latest posts from other servers without the trending line, and pages on its own cursor", async ({
   page,
 }) => {
   await signIn(page);
@@ -224,15 +227,14 @@ test("최신 lists the latest posts from other servers without the trending line
         ? route.fulfill({ json: { items: ITEMS.slice(0, 4), next: "t4" } })
         : route.fulfill({ json: { items: ITEMS.slice(4), next: null } }),
   });
-  const { group, card } = await open(page);
-  await expect(card(0)).toBeVisible({ timeout: 30_000 });
+  const picks = await open(page);
+  await expect(picks.card(0)).toBeVisible({ timeout: 30_000 });
 
-  await group.getByRole("navigation").getByRole("link", { name: "최신" }).click();
-  await expect(page).toHaveURL(/\/explore\?remote=latest$/);
-  await expect(group.getByRole("navigation").getByRole("link", { name: "최신" })).toHaveAttribute(
-    "aria-current",
-    "page",
-  );
+  await page.getByRole("tab", { name: "다른 서버" }).click();
+  await expect(page).toHaveURL(/\/explore\?lane=remote$/);
+  await expect(page.getByRole("tab", { name: "다른 서버" })).toHaveAttribute("aria-selected", "true");
+  const { group, card } = lane(page, "remote");
+  await expect(group).toHaveAttribute("data-remote-view", "latest");
   await expect(card(3)).toBeVisible();
   await expect(card(0)).not.toContainText("에서 인기");
   await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("128");

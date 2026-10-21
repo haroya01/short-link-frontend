@@ -62,7 +62,7 @@ function RoomReplyPreview({ replies, total, href }: { replies: RoomReply[]; tota
       <span className="min-w-0 flex-1 space-y-1.5 py-0.5">
         {replies.map((reply) => (
           <span key={reply.id} data-room-reply className="flex items-start gap-2">
-            <Avatar src={reply.author.avatarUrl} name={replyName(reply)} seed={reply.author.id} size="xs" />
+            <Avatar src={reply.author.avatarUrl} name={replyName(reply)} handle={reply.author.username} size="xs" />
             <span className="line-clamp-2 min-w-0 text-[14px] leading-5 text-slate-700 dark:text-slate-300">
               <span className="font-semibold text-slate-900 dark:text-slate-100">{replyName(reply)}</span>
               <span aria-hidden>{"  "}</span>
