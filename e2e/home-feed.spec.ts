@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { scrollUntilPresent } from "./helpers/scroll-until";
 
 // Mock-on lane: signed in as @dohyun. 홈 is one feed of notes and blog posts in the note row grammar;
-// the bar carries 홈 · 둘러보기 · 알림 · 계정; the old notes feeds land on 홈 or 둘러보기.
+// the bar carries 홈 · 방 · 둘러보기 · 알림 · 계정; the old notes feeds land on 홈 or 둘러보기.
 test.use({ viewport: { width: 390, height: 844 } });
 
 async function openHome(page: Page, path = "/ko/blog") {
@@ -78,10 +78,10 @@ test("더 보기 holds 추천, 시리즈 and, on 팔로잉, 리포스트 보기"
   await expect(menu.getByRole("menuitemcheckbox", { name: "리포스트 보기" })).toBeVisible();
 });
 
-test("the phone bar is 홈 · 둘러보기 · 알림 · 계정, and 둘러보기 opens /explore", async ({ page }) => {
+test("the phone bar is 홈 · 방 · 둘러보기 · 알림 · 계정, and 둘러보기 opens /explore", async ({ page }) => {
   await openHome(page);
   const bar = page.locator("nav.vt-bottom-nav");
-  await expect(bar.locator(":scope > a, :scope > button")).toHaveText(["홈", "둘러보기", "알림", "계정"]);
+  await expect(bar.locator(":scope > a, :scope > button")).toHaveText(["홈", "방", "둘러보기", "알림", "계정"]);
   await expect(bar.getByRole("link", { name: "홈" })).toHaveAttribute("aria-current", "page");
   await bar.getByRole("link", { name: "둘러보기" }).click();
   await expect(page).toHaveURL(/\/explore$/);
@@ -94,10 +94,10 @@ test("the phone bar is 홈 · 둘러보기 · 알림 · 계정, and 둘러보기
 test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  test("the header links read 홈 · 둘러보기", async ({ page }) => {
+  test("the header links read 홈 · 방 · 둘러보기", async ({ page }) => {
     await openHome(page);
     const sections = page.getByRole("banner").getByRole("navigation").first();
-    await expect(sections.getByRole("link")).toHaveText(["홈", "둘러보기"]);
+    await expect(sections.getByRole("link")).toHaveText(["홈", "방", "둘러보기"]);
     await expect(sections.getByRole("link", { name: "홈" })).toHaveAttribute("aria-current", "page");
   });
 });

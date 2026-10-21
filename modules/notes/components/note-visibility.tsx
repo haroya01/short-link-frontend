@@ -1,7 +1,7 @@
 import { AtSign, Globe, Lock, Moon } from "lucide-react";
 import type { NoteVisibility } from "@/modules/notes/api/notes";
 
-const ICONS = { public: Globe, unlisted: Moon, private: Lock, direct: AtSign } as const;
+const ICONS = { public: Globe, unlisted: Moon, private: Lock, direct: AtSign, room: Lock } as const;
 
 export function VisibilityIcon({
   visibility,

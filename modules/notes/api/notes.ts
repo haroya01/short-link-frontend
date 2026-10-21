@@ -14,6 +14,8 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 노트는 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
 const noteMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
+const roomMocks: typeof import("@/modules/rooms/api/_mocks") | null =
+  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("@/modules/rooms/api/_mocks") : null;
 
 export const NOTE_MAX_LENGTH = 500;
 /** A thread posts 2 to this many notes at once (the server's limit). */
@@ -114,6 +116,12 @@ export interface Note {
   hidden?: boolean;
   /** What it was on its server; null for notes written here, absent from servers that predate it. */
   remote?: RemoteNoteShape | null;
+  room?: NoteRoom | null;
+}
+
+export interface NoteRoom {
+  id: number;
+  name: string;
 }
 
 /** ARTICLE, PAGE and VIDEO keep only a summary in `body` and one picture in `media`; the rest
@@ -201,6 +209,8 @@ export interface NoteDraft {
   language?: string | null;
   /** Ignored on a reply: a thread follows its first note's policy. */
   replyPolicy?: NoteReplyPolicy | null;
+  /** Posts into a friend room; the server refuses any other visibility with it. */
+  roomId?: number | null;
 }
 
 export const NOTE_MAX_WARNING_LENGTH = 100;
@@ -208,7 +218,7 @@ export const NOTE_MAX_WARNING_LENGTH = 100;
 /** Mastodon's four: public everywhere; unlisted stays out of the shared feeds; private is for
  *  followers and mentioned members; direct only for mentioned members. Only the first two can be
  *  reposted or quoted. */
-export type NoteVisibility = "public" | "unlisted" | "private" | "direct";
+export type NoteVisibility = "public" | "unlisted" | "private" | "direct" | "room";
 
 export function isShareable(visibility: NoteVisibility | undefined): boolean {
   return visibility === undefined || visibility === "public" || visibility === "unlisted";
@@ -762,6 +772,7 @@ export async function cancelScheduledNote(id: number): Promise<void> {
 }
 
 export function createNote(draft: NoteDraft): Promise<Note> {
+  if (draft.roomId && roomMocks) return roomMocks.mockPostInRoom(draft);
   if (noteMocks) return Promise.resolve(noteMocks.mockCreate(draft));
   return request<Note>("/api/v1/notes", { method: "POST", body: draft });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Home, Search, User } from "lucide-react";
+import { Bell, Home, Search, User, UsersRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -17,7 +17,7 @@ const TAB =
   "focus-ring flex h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 둘러보기 · 알림 · 계정. 계정 opens a
+ * Mobile-only bottom tab bar (blog surfaces). Five tabs: 홈 · 방 · 둘러보기 · 알림 · 계정. 계정 opens a
  * full-width sheet; the rest navigate. 알림 carries the unread badge (mirrors the desktop bell).
  * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
@@ -42,6 +42,7 @@ export function BlogBottomNav() {
   // Locale optional: the blog host rewrites a no-locale entry in place (pathname `/`, `/notes`), and
   // also serves `/ko`; dev/preview paths are `/ko/blog`, `/ko/blog-preview`.
   const isHome = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/?$/.test(pathname);
+  const isRooms = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/rooms(\/|$)/.test(pathname);
   const isExplore = sheet === null && /^(\/[a-z]{2})?(\/(blog|blog-preview))?\/explore\/?$/.test(pathname);
   const isNotif = sheet === null && /\/notifications(\/|$)/.test(pathname);
 
@@ -60,6 +61,14 @@ export function BlogBottomNav() {
         >
           <Home className="h-5 w-5" />
           {t("home")}
+        </BlogChromeLink>
+        <BlogChromeLink
+          href={blogHref("/rooms")}
+          aria-current={isRooms ? "page" : undefined}
+          className={cn(TAB, isRooms ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400")}
+        >
+          <UsersRound className="h-5 w-5" />
+          {t("rooms")}
         </BlogChromeLink>
         <BlogChromeLink
           href={blogHref("/explore")}

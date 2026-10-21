@@ -33,6 +33,7 @@ import type {
   TrendingNoteLink,
   TrendingNoteTag,
 } from "./notes";
+import { mockFollowingRoomNotes } from "@/modules/rooms/api/_mocks";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
 import type { RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
@@ -1588,7 +1589,7 @@ function homePost(item: PublicFeedItem, viewer: boolean): HomePost {
 export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean): HomePage {
   if (tab === "following" && !viewer) return { items: [], next: null };
   const noteList =
-    tab === "following" ? mockFollowingNotes(0).items : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;
+    tab === "following" ? [...mockFollowingRoomNotes(), ...mockFollowingNotes(0).items] : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;
   const postList =
     tab === "following" ? mockFollowingView().items : mockFeedView({ sort: tab === "trending" ? "trending" : "recent", viewer }).items;
   const [n0, p0] = (cursor ?? "0.0").split(".").map((v) => Number(v) || 0);

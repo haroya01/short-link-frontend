@@ -50,8 +50,8 @@ export const CLIENT_MESSAGE_SCOPES = {
   "links/visual-fixtures": ["events.public", "publicProfile.contactCard"],
   blog: [
     "auth", "collections", "compose", "cookieConsent", "errors", "footer", "languageSwitcher", "loginPrompt", "mentions",
-    "nav", "notes", "notifications", "publicFeed", "publicPost", "publicProfile.gallery", "recent", "sidebar.blog",
-    "sidebar.common",
+    "nav", "notes", "notifications", "publicFeed", "publicPost", "publicProfile.gallery", "recent", "rooms",
+    "sidebar.blog", "sidebar.common",
   ],
   "blog/admin": ["abuseReports", "admin.servers", "blogAdminMetrics"],
   "blog/analytics": ["blogWorkspace", "settings.profile.stats", "stats"],

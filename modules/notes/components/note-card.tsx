@@ -51,6 +51,8 @@ import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { noteHref, openNote } from "@/modules/notes/lib/note-href";
 import { ReplyPolicyDialog, replyRestrictedKey } from "./note-reply-policy";
+import { roomPath } from "@/modules/rooms/lib/room-href";
+import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
 
 const NOTE_RING_NUMBER_FROM = 20;
 
@@ -147,6 +149,9 @@ export function NoteCard({
   const setsReplyPolicy =
     mine && note.inReplyToId === null && !note.author.remoteId && note.replyPolicy !== undefined;
   const tCollections = useTranslations("collections");
+  const insideRoom = useInsideRoom();
+  const inRoom = note.room ?? null;
+  const roomLine = inRoom && insideRoom !== inRoom.id ? inRoom : null;
 
   useEffect(() => {
     setLiked(note.likedByMe === true);
@@ -372,8 +377,20 @@ export function NoteCard({
           <span className="truncate">{t("repostedBy", { username: repostedBy })}</span>
         </p>
       )}
+      {!repostedBy && roomLine && (
+        <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
+          <span aria-hidden className="w-9 shrink-0" />
+          <BlogLink
+            href={roomPath(roomLine.id)}
+            data-note-room={note.id}
+            className="focus-ring min-w-0 truncate rounded hover:text-slate-800 hover:underline dark:hover:text-slate-200"
+          >
+            {t("fromRoom", { room: roomLine.name })}
+          </BlogLink>
+        </p>
+      )}
       {context}
-      {!repostedBy && !context && showsPin && note.pinned && (
+      {!repostedBy && !roomLine && !context && showsPin && note.pinned && (
         <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
           <span className="flex w-9 shrink-0 justify-end">
             <Pin className="h-3.5 w-3.5" aria-hidden />
@@ -443,10 +460,10 @@ export function NoteCard({
                   {stamp}
                 </BlogLink>
               ))}
-            {note.visibility && note.visibility !== "public" && (
+            {note.visibility && note.visibility !== "public" && !(inRoom && insideRoom === inRoom.id) && (
               <VisibilityIcon
                 visibility={note.visibility}
-                label={t(`visibilityShort.${note.visibility}`)}
+                label={inRoom ? t("roomMembersOnly", { room: inRoom.name }) : t(`visibilityShort.${note.visibility}`)}
                 className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400"
               />
             )}
@@ -471,7 +488,7 @@ export function NoteCard({
                   onBookmark={toggleBookmark}
                   conversationMuted={conversationMuted}
                   onConversationMute={toggleConversationMute}
-                  onConnect={() => setConnecting(true)}
+                  onConnect={inRoom ? undefined : () => setConnecting(true)}
                   onReport={!mine && !emphasis ? () => setReporting(true) : undefined}
                   onEdit={mine ? startEditing : undefined}
                   onDelete={mine ? remove : undefined}
@@ -705,7 +722,7 @@ export function NoteCard({
                   <span className="sr-only">{t("replyLabel")} </span>
                   {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
                 </button>
-                <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />
+                {!inRoom && <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />}
                 {emphasis && (
                   <button
                     type="button"
@@ -717,7 +734,7 @@ export function NoteCard({
                     <NoteGlyph name="bookmark" active={bookmarked} className="h-[18px] w-[18px]" />
                   </button>
                 )}
-                <ShareControl note={note} buttonClass={action} />
+                {!inRoom && <ShareControl note={note} buttonClass={action} />}
                 {emphasis && !mine && (
                   <span className="ml-auto">
                     <ReportButton
@@ -1089,7 +1106,7 @@ function NoteMenu({
   onBookmark: () => void;
   conversationMuted: boolean;
   onConversationMute: () => void;
-  onConnect: () => void;
+  onConnect?: () => void;
   onCopy?: () => void;
   onReport?: () => void;
   onEdit?: () => void;
@@ -1167,17 +1184,19 @@ function NoteMenu({
           >
             {bookmarked ? t("unbookmark") : t("bookmark")}
           </button>
-          <button
-            type="button"
-            role="menuitem"
-            className={cn(item, "text-slate-700 dark:text-slate-200")}
-            onClick={() => {
-              setOpen(false);
-              onConnect();
-            }}
-          >
-            {t("connectToCollection")}
-          </button>
+          {onConnect && (
+            <button
+              type="button"
+              role="menuitem"
+              className={cn(item, "text-slate-700 dark:text-slate-200")}
+              onClick={() => {
+                setOpen(false);
+                onConnect();
+              }}
+            >
+              {t("connectToCollection")}
+            </button>
+          )}
           <button
             type="button"
             role="menuitem"
