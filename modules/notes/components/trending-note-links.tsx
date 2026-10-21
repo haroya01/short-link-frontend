@@ -16,7 +16,7 @@ export function linkHost(url: string): string {
   }
 }
 
-export function linkedNotesHref(url: string): string {
+function linkedNotesHref(url: string): string {
   return blogPath(`/notes/link?url=${encodeURIComponent(url)}`);
 }
 

@@ -57,7 +57,7 @@ import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
 const NOTE_RING_NUMBER_FROM = 20;
 
 /** A member's notes on their blog, or an account on another server on its remote page. */
-export function noteAuthorHref(author: Note["author"], locale: string): string {
+function noteAuthorHref(author: Note["author"], locale: string): string {
   return author.remoteId ? blogPath(`/remote/${author.remoteId}`) : authorHref(author.username, locale);
 }
 

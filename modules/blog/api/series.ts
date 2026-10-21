@@ -56,7 +56,7 @@ export function updateSeries(
   return request<SeriesDetailView>(`/api/v1/series/${id}`, { method: "PUT", body: payload });
 }
 
-export function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDetailView> {
+function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDetailView> {
   if (authoringMocks) return Promise.resolve(authoringMocks.mockSetSeriesPosts(id, postIds));
   return request<SeriesDetailView>(`/api/v1/series/${id}/posts`, {
     method: "PUT",
@@ -87,10 +87,7 @@ export function deleteSeries(id: number): Promise<void> {
   return request(`/api/v1/series/${id}`, { method: "DELETE" });
 }
 
-/**
- * Move a post's series membership. Membership is owned by the series' ordered post list, so this
- * detaches from the old series (if any) and appends to the new one. No-op when unchanged.
- */
+/** Membership lives in the series' ordered list: detach from the old series, append to the new. */
 export async function assignPostToSeries(
   postId: number,
   newSeriesId: number | null,

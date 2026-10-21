@@ -246,18 +246,6 @@ export class NoteImageUploadError extends Error {
   }
 }
 
-export function listEveryoneNotes(page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockEveryoneNotes(page));
-  return request<NoteFeed>(`/api/v1/public/notes?page=${page}&size=20`, { method: "GET" });
-}
-
-export function listTrendingNotes(page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockTrendingNotes(page));
-  return request<NoteFeed>(`/api/v1/public/notes?sort=trending&page=${page}&size=20`, {
-    method: "GET",
-  });
-}
-
 /** Mastodon's trending hashtags: tags several accounts used this week, notes per day oldest first. */
 export interface TrendingNoteTag {
   tag: string;
@@ -292,11 +280,6 @@ export function listLinkedNotes(url: string, page = 0): Promise<NoteFeed> {
     `/api/v1/public/notes/links?url=${encodeURIComponent(url)}&page=${page}&size=20`,
     { method: "GET" },
   );
-}
-
-export function listFollowingNotes(page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockFollowingNotes(page));
-  return request<NoteFeed>(`/api/v1/notes/following?page=${page}&size=20`, { method: "GET" });
 }
 
 export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
@@ -834,13 +817,6 @@ export function setNoteRepost(
 ): Promise<{ reposted: boolean; repostCount: number }> {
   if (noteMocks) return Promise.resolve(noteMocks.mockRepost(id, on));
   return request(`/api/v1/notes/${id}/repost`, { method: on ? "PUT" : "DELETE" });
-}
-
-export function likedNoteIds(ids: number[]): Promise<number[]> {
-  if (ids.length === 0 || USE_MOCKS) return Promise.resolve([]);
-  return request<{ likedIds: number[] }>(`/api/v1/notes/like-status?ids=${ids.join(",")}`, {
-    method: "GET",
-  }).then((r) => r.likedIds);
 }
 
 /** presign → PUT straight to storage. Returns the key to name when posting, plus a preview URL. */

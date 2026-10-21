@@ -3,7 +3,7 @@ import { mockFailure, request } from "@/lib/api/client";
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /** Shorter queries never reach the server, which answers them with an empty page. */
-export const PEOPLE_MIN_QUERY = 2;
+const PEOPLE_MIN_QUERY = 2;
 const PEOPLE_MAX_QUERY = 30;
 
 export interface PersonMatch {

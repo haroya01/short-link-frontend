@@ -1,13 +1,8 @@
-/**
- * In-memory mocks for the viewer's 서재 (liked + bookmarked posts with folders). Reuses the public
- * feed items as the "posts I saved/liked". Module-level so edits (move to folder, new folder, remove)
- * persist across the SPA session; a reload reseeds. See saved.ts for the public contract.
- */
+/** Module-level state: edits persist across the SPA session and a reload reseeds. */
 import { MOCK_ALL_ITEMS } from "@/modules/blog/api/_mocks";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
 
-// Liked: a handful of posts the viewer hearted.
 const LIKED_SLUGS = [
   "nextjs-14-app-router-blog",
   "hexagonal-too-much",
@@ -22,7 +17,6 @@ export function mockListLikedFeed(): PublicFeedItem[] {
   return LIKED_SLUGS.map(bySlug).filter((x): x is PublicFeedItem => Boolean(x));
 }
 
-// Folders (manual). Seeded with two; users add more.
 const folders = new Map<number, string>();
 let folderSeq = 9000;
 folders.set(++folderSeq, "나중에 읽기");
@@ -30,7 +24,6 @@ const FOLDER_LATER = folderSeq;
 folders.set(++folderSeq, "영감");
 const FOLDER_INSPO = folderSeq;
 
-// Saved posts → folderId (null = unfiled, auto-grouped by tag in the UI).
 const saved = new Map<number, SavedPost>();
 function seedSaved(slug: string, folderId: number | null) {
   const it = bySlug(slug);
@@ -58,18 +51,6 @@ export function mockCreateFolder(name: string): BookmarkFolder {
   const id = ++folderSeq;
   folders.set(id, name);
   return { id, name, count: 0 };
-}
-
-export function mockRenameFolder(id: number, name: string): BookmarkFolder {
-  folders.set(id, name);
-  const count = [...saved.values()].filter((s) => s.folderId === id).length;
-  return { id, name, count };
-}
-
-export function mockDeleteFolder(id: number): void {
-  folders.delete(id);
-  // Items in the deleted folder fall back to unfiled (auto-grouped).
-  for (const [pid, s] of saved) if (s.folderId === id) saved.set(pid, { ...s, folderId: null });
 }
 
 export function mockMoveToFolder(postId: number, folderId: number | null): void {

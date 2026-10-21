@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getPublicLinkStats, getStats } from "./stats";
 
-export const statsKeys = {
+const statsKeys = {
   all: ["stats"] as const,
   link: (shortCode: string) => ["stats", "link", shortCode] as const,
   publicLink: (shortCode: string) => ["stats", "public-link", shortCode] as const,

@@ -10,7 +10,7 @@ import { useCallback } from "react";
 
 import { getLinkDetail, listMyLinks, listTags, type MyLinksFilters } from "./links";
 
-export const linksKeys = {
+const linksKeys = {
   all: ["links"] as const,
   list: (filters: MyLinksFilters) => {
     // cursor 는 useInfiniteQuery 의 pageParam 이 관리 — key 에서 빼야 페이지마다 캐시가 갈리지 않음
@@ -21,7 +21,7 @@ export const linksKeys = {
   detail: (shortCode: string) => ["links", "detail", shortCode] as const,
 };
 
-export const tagsKeys = {
+const tagsKeys = {
   all: ["tags"] as const,
 };
 

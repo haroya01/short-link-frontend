@@ -3,8 +3,8 @@
 export const BLOG_FEED_COOKIE = "kurl_blog_default_tab";
 export const NOTES_FEED_COOKIE = "kurl_notes_feed";
 
-export const BLOG_SWITCHER = ["following", "recent", "trending"] as const;
-export const NOTES_SWITCHER = ["following", "everyone", "trending"] as const;
+const BLOG_SWITCHER = ["following", "recent", "trending"] as const;
+const NOTES_SWITCHER = ["following", "everyone", "trending"] as const;
 
 export type BlogSwitcherTab = (typeof BLOG_SWITCHER)[number];
 export type NotesSwitcherFeed = (typeof NOTES_SWITCHER)[number];

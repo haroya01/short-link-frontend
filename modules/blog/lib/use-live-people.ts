@@ -7,7 +7,7 @@ import type { RemoteAccount } from "@/modules/notes/api/notes";
 import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
 import { remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
 
-export const LIVE_REMOTE_PEOPLE = 3;
+const LIVE_REMOTE_PEOPLE = 3;
 
 export function useLivePeople(
   query: string,

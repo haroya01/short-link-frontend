@@ -5,7 +5,7 @@ import { searchRemoteAccounts } from "@/modules/notes/api/federation-search";
 import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
 import { listMentionCandidates, type MentionCandidate } from "./api/mention-candidates";
 
-export const REMOTE_MENTION_LIMIT = 3;
+const REMOTE_MENTION_LIMIT = 3;
 
 /** Candidates for the @name being typed; null query = not typing a mention. Stale answers are dropped. */
 export function useMentionCandidates(query: string | null, enabled: boolean, remote = false) {

@@ -3,8 +3,7 @@ import { stripImageMetadata } from "@/lib/image-resize";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
-/** Why an image upload was rejected, as a code the caller localizes (keeps display copy out of this
- *  data module). `too-large` carries the sizes so the message can name the actual limit. */
+/** `too-large` carries the sizes so the message can name the actual limit. */
 export type PostImageErrorCode = "not-image" | "unsupported-format" | "too-large" | "upload-failed";
 
 export class PostImageUploadError extends Error {
@@ -17,8 +16,6 @@ export class PostImageUploadError extends Error {
   }
 }
 
-/** Map an upload rejection to a `postEditor` message key (+ interpolation values), so the two upload
- *  surfaces (editor body, cover picker) share one copy decision. Non-typed errors → the generic key. */
 export function postImageErrorMessageKey(e: unknown): {
   key: "uploadNotImage" | "uploadUnsupportedFormat" | "uploadTooLarge" | "imageError";
   values?: Record<string, string | number>;
@@ -56,7 +53,7 @@ export interface CommitResult {
   key: string;
 }
 
-export function presignPostImage(
+function presignPostImage(
   postId: number,
   contentType: string,
 ): Promise<PresignResult> {
@@ -66,18 +63,14 @@ export function presignPostImage(
   });
 }
 
-export function commitPostImage(postId: number, key: string): Promise<CommitResult> {
+function commitPostImage(postId: number, key: string): Promise<CommitResult> {
   return request<CommitResult>(`/api/v1/posts/${postId}/images/commit`, {
     method: "POST",
     body: { key },
   });
 }
 
-/**
- * Re-host an external image URL into our bucket (server fetches it). For images pasted from Notion
- * 등 where the clipboard carries an `<img src>` pointing at an expiring/CORS-locked URL — hotlinking
- * those would rot after publish, so the server re-hosts to a kurl-owned URL.
- */
+/** Pasted `<img src>` URLs (Notion etc.) expire or are CORS-locked, so the server re-hosts them. */
 export async function importPostImage(postId: number, url: string): Promise<string> {
   // Mock: no backend to re-host through, so leave the external URL as-is — the editor still shows it.
   if (USE_MOCKS) return url;
@@ -88,17 +81,12 @@ export async function importPostImage(postId: number, url: string): Promise<stri
   return result.imageUrl;
 }
 
-/**
- * Two-step upload: presign → PUT → commit. 결과적으로 markdown 에 박을 수 있는 public URL 반환.
- */
 export async function uploadPostImage(postId: number, file: File): Promise<string> {
   const typeError = postImageTypeError(file);
   if (typeError) throw typeError;
-  // Mock: skip presign→PUT→commit (no backend / object store) and hand back a local object URL so the
-  // image drops into the editor markdown immediately. Lives only for this session — fine for a demo.
+  // Mock: no object store, so a session-only object URL stands in for the uploaded image.
   if (USE_MOCKS) return URL.createObjectURL(file);
-  // Re-encode to drop EXIF (incl. capture GPS) before it reaches our bucket / a public post. The
-  // cropper already does this for avatar/banner/profile images; body images uploaded raw did not.
+  // Drop EXIF (incl. capture GPS) before the file reaches the bucket or a public post.
   const safe = await stripImageMetadata(file);
   const presigned = await presignPostImage(postId, safe.type);
   if (safe.size > presigned.maxBytes) {

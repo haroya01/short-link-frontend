@@ -1,10 +1,3 @@
-/**
- * Public Post API client — kurl content platform (U3 subdomain 모델). Server-side fetch 만 사용.
- * Cloudflare Worker 가 `{username}.kurl.me/...` 를 Vercel 로 proxy 하면, Next.js middleware 가
- * X-Original-Host 헤더에서 subdomain 추출 → `/p/[username]/...` 로 internal rewrite. 본 client 는
- * 그 페이지에서 backend 호출.
- */
-
 import { cache } from "react";
 import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
@@ -15,8 +8,6 @@ import { redactCard, type AudienceFields } from "@/modules/blog/lib/post-audienc
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
-// ISR revalidate window. 작성자 발행/수정 후 visitors 가 30초 내 새 내용 봄.
-// 백엔드도 어차피 캐시 없이 직접 조회라 backend 부하 큰 차이는 아님.
 const REVALIDATE_SECONDS = 30;
 
 export interface PublicAuthor {
@@ -144,7 +135,6 @@ export interface PublicSeriesList {
   series: PublicSeriesListItem[];
 }
 
-/** A minimal reference to a series member post — for the card's "what's inside" preview. */
 export interface SeriesPostRef {
   slug: string;
   title: string;
@@ -153,7 +143,6 @@ export interface SeriesPostRef {
   ogImageUrl?: string | null;
 }
 
-/** A card's preview member — a post (slug) or a note (noteId, its excerpt as the title). */
 export interface SeriesCardItem {
   type: SeriesItemType;
   slug: string | null;
@@ -162,9 +151,7 @@ export interface SeriesCardItem {
   ogImageUrl: string | null;
 }
 
-/** A series as it appears on the discovery feed (cross-author series card). */
 export interface PublicSeriesCard {
-  /** Series id — the target for the subscribe toggle. */
   id: number;
   author: PublicAuthor;
   slug: string;
@@ -261,14 +248,9 @@ export async function fetchPublic<T>(
   const url = `${API_BASE}${path}`;
   const token = await viewerToken();
   const extra = opts?.headers ?? {};
-  // Detail lookups fetch with no-store: fetch can't cache only the 200 and skip the 404, so an ISR
-  // window would serve a stale 404 on the publish→share path (a just-published post staying 404 for
-  // up to the revalidate window). List/feed fetches stay on ISR — a momentarily missing card is far
-  // cheaper than a broken shared link. The backend reads straight from the DB, so no-store here just
-  // means one DB read per view.
-  // try/catch: a thrown fetch (backend down, or the API unreachable while a STATIC feed page
-  // prerenders at build) must degrade to the page's empty state — not 500 the render or fail the
-  // build. ISR refills within REVALIDATE_SECONDS once the API answers again.
+  // Detail lookups are no-store: fetch can't cache the 200 without also caching a 404, which would
+  // keep a just-published post 404 for a whole revalidate window. A thrown fetch (API down, or
+  // unreachable while a static page prerenders at build) must degrade to the empty state.
   try {
     const own = Object.keys(extra).length > 0 ? { headers: extra } : {};
     const res = await fetchWithTimeout(
@@ -314,7 +296,6 @@ function redactFeedResult(result: FetchResult<PublicFeedView>): FetchResult<Publ
   return result.ok ? { ok: true, data: redactFeedView(result.data) } : result;
 }
 
-/** `&lang=ko` when a language is selected; empty (all languages) otherwise. */
 function langParam(lang?: string): string {
   return lang ? `&lang=${encodeURIComponent(lang)}` : "";
 }
@@ -334,7 +315,6 @@ export function listFeedByTag(
   ).then(redactFeedResult);
 }
 
-/** Free-text search across title / excerpt / tags / author handle. `sort` re-ranks the matches. */
 export function searchPublicFeed(
   query: string,
   sort: FeedSort = "recent",
@@ -463,14 +443,13 @@ export interface TagCount {
   count: number;
 }
 
-/** A tag that sits next to a search's words on posts and notes; `posts` + `notes` say how often. */
 export interface RelatedTag {
   tag: string;
   posts: number;
   notes: number;
 }
 
-/** Public — tags used around a query; empty (or a server without the endpoint) means show nothing. */
+/** Empty, also from a server without the endpoint, means show nothing. */
 export async function listRelatedTags(query: string, limit = 8): Promise<RelatedTag[]> {
   const q = query.trim();
   if (q.length < 2) return [];
@@ -481,7 +460,6 @@ export async function listRelatedTags(query: string, limit = 8): Promise<Related
   return result.ok ? (result.data.tags ?? []) : [];
 }
 
-/** Most-used tags across published posts, most popular first — the 주제 index. */
 export function listPopularTags(limit = 50): Promise<FetchResult<TagCount[]>> {
   if (blogMocks)
     return Promise.resolve({ ok: true, data: blogMocks.MOCK_POPULAR_TAGS.slice(0, limit) });
@@ -493,43 +471,10 @@ export interface SuggestedAuthor {
   postCount: number;
 }
 
-/** Authors ranked by published-post count — the discovery rail's 추천 작가 list. */
 export function listSuggestedAuthors(limit = 5): Promise<FetchResult<SuggestedAuthor[]>> {
   if (blogMocks)
     return Promise.resolve({ ok: true, data: blogMocks.mockSuggestedAuthors(limit, hasViewer()) });
   return fetchPublic<SuggestedAuthor[]>(`/api/v1/public/authors?limit=${limit}`);
-}
-
-export interface TrendingTagSection {
-  tag: string;
-  postCount: number; // total published posts under the tag (for the "더보기" affordance)
-  posts: PublicFeedItem[]; // top posts in the tag, most popular first
-}
-
-/**
- * Popular posts grouped by tag — backs the 인기 tab's "주제별 인기" sections (one horizontal row per
- * topic). `tagLimit` = how many topic rows; `perTag` = posts per row.
- */
-export function listTrendingByTag(
-  tagLimit = 6,
-  perTag = 8,
-): Promise<FetchResult<TrendingTagSection[]>> {
-  if (blogMocks)
-    return Promise.resolve({ ok: true, data: redactSections(blogMocks.mockTrendingByTag(tagLimit, perTag)) });
-  return fetchPublic<TrendingTagSection[]>(
-    `/api/v1/public/feed/trending-by-tag?tagLimit=${tagLimit}&perTag=${perTag}`,
-    { tags: [PUBLIC_POSTS_TAG] },
-  ).then((result) => (result.ok ? { ok: true, data: redactSections(result.data) } : result));
-}
-
-function redactSections(sections: TrendingTagSection[]): TrendingTagSection[] {
-  return sections.map((section) => ({ ...section, posts: section.posts.map(redactCard) }));
-}
-
-/** Cross-author active series for the feed's series cards — most recently active first. */
-export function listDiscoverSeries(limit = 6): Promise<FetchResult<PublicSeriesCard[]>> {
-  if (blogMocks) return Promise.resolve({ ok: true, data: blogMocks.mockDiscoverSeries(limit) });
-  return fetchPublic<PublicSeriesCard[]>(`/api/v1/public/series?limit=${limit}`);
 }
 
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {
@@ -560,8 +505,6 @@ export interface LinkPreview {
 }
 
 export function getLinkPreview(url: string): Promise<FetchResult<LinkPreview>> {
-  // Mocks have no backend to scrape — return a believable rich preview so the card layout (image +
-  // title + domain) is exercised in dev/storybook without a network call.
   if (USE_MOCKS) {
     let host = url;
     try {

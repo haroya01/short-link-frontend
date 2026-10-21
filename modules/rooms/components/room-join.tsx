@@ -33,7 +33,7 @@ const BLOCK_TITLE: Record<Blocked, string> = {
   missing: "inviteMissing",
 };
 
-export function blockedBy(error: unknown): Blocked | null {
+function blockedBy(error: unknown): Blocked | null {
   if (!(error instanceof ApiError)) return null;
   if (error.status === 404) return "missing";
   if (error.status === 403) return "removed";

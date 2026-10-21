@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function HeaderSkeleton({ shortCode }: { shortCode?: string }) {
+function HeaderSkeleton({ shortCode }: { shortCode?: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6">
       <Skeleton className="h-3 w-20" />
@@ -18,7 +18,6 @@ export function HeaderSkeleton({ shortCode }: { shortCode?: string }) {
   );
 }
 
-/** 통계를 받는 동안의 자리 — 머리 아래 탭 줄·본문 자리까지 한 화면 이상을 채운다. */
 export function StatsSkeleton({ shortCode }: { shortCode?: string }) {
   return (
     <>

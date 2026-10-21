@@ -1,34 +1,21 @@
 "use client";
 
-import type { Connection, ConnectionEvent } from "@/modules/blog/api/collections";
+import type { Connection } from "@/modules/blog/api/collections";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref, postHref } from "@/modules/blog/lib/author-href";
 
-/** The flat block fields shared by a {@link Connection} and a {@link ConnectionEvent}. */
 type BlockFields = Pick<
   Connection,
   "blockType" | "title" | "excerpt" | "slug" | "username" | "quote" | "body" | "noteId"
 > & { refId?: number };
 
-/** Deep-link a highlight to its source post AT that sentence — `?hl=<encoded quote>` is read by
- *  PostHighlights, which scrolls to the matching painted span and flashes it (mirrors the iOS
- *  postFocusQuote deep-link). */
+/** PostHighlights reads `?hl=` and `&highlightId=`; the iOS postFocusQuote deep link uses the same shape. */
 export function quoteHref(username: string, slug: string, quote: string, locale: string, highlightId?: number): string {
   const base = postHref(username, slug, locale);
   const sep = base.includes("?") ? "&" : "?";
   return `${base}${sep}hl=${encodeURIComponent(quote)}${highlightId != null && highlightId > 0 ? `&highlightId=${highlightId}` : ""}`;
 }
 
-/**
- * A connected block — converged to the 일반 글 카드 문법(#891): the block's own content is the card,
- * with no type-tag pill, no decorative icon, and no nested box. Post = title as a plain card-title link
- * on the paper (like any feed card) · highlight = green left-rule quote (the pulled passage IS the
- * content, so its spine stays) · note = the held thought, plain and quietest. Shared by the path read,
- * the collection list, related blocks, and the highlight thread panel.
- *
- * A post block links to the post; a highlight block deep-links to the source post at that sentence; a
- * note block links to the note (its author over the body).
- */
 export function ConnectionBlock({ block, locale }: { block: BlockFields; locale: string }) {
   if (block.blockType === "POST" && block.slug && block.username) {
     return (
@@ -92,24 +79,9 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
     );
   }
 
-  // NOTE — a held thought. Plain on the paper, the quietest of the three.
   return (
     <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
       {block.body}
     </p>
   );
-}
-
-/** Pull the flat block fields off a discovery event (same shape, extra envelope fields). */
-export function eventBlock(event: ConnectionEvent): BlockFields {
-  return {
-    blockType: event.blockType,
-    title: event.title,
-    excerpt: event.excerpt,
-    slug: event.slug,
-    username: event.username,
-    quote: event.quote,
-    body: event.body,
-    noteId: event.noteId ?? null,
-  };
 }
