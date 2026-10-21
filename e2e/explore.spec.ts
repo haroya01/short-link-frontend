@@ -69,6 +69,22 @@ test("lanes switch in place under a head that does not move, and the URL keeps t
   await expect(page.getByTestId("explore-picks")).toHaveCount(0);
 });
 
+test("다른 서버 draws kept notes and pool items in the order they came, and pages on", async ({ page }) => {
+  await open(page, "/ko/blog/explore?lane=remote");
+  const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
+  const rows = latest.locator("[data-remote-kept], [data-remote-uri]");
+  await expect(rows.first()).toBeVisible({ timeout: 30_000 });
+  await expect(latest.locator("[data-remote-kept]").first()).toBeVisible();
+  await expect(latest.locator("[data-remote-uri]").first()).toBeVisible();
+  await expect(latest.getByRole("heading", { name: "받은 노트" })).toHaveCount(0);
+  await expect
+    .poll(async () => {
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      return rows.count();
+    })
+    .toBeGreaterThan(5);
+});
+
 test("더 보기 on the follow cards opens 사람 with every suggestion", async ({ page }) => {
   await open(page);
   const strip = page.getByTestId("explore-people-strip");

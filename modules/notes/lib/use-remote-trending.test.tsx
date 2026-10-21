@@ -102,7 +102,7 @@ async function flush() {
 }
 
 function pool(items: TrendingNote[], next: string | null = null): RemoteNotesPage {
-  return { kind: "pool", items, next };
+  return { items: items.map((item) => ({ kind: "pool", item })), next };
 }
 
 describe("the list of posts from other servers", () => {
@@ -146,7 +146,7 @@ describe("the list of posts from other servers", () => {
   });
 
   it("follows next page by page until it runs out", async () => {
-    const kept = { kind: "kept", items: [{ id: 12 } as Note], next: null } as RemoteNotesPage;
+    const kept: RemoteNotesPage = { items: [{ kind: "kept", note: { id: 12 } as Note }], next: null };
     mocks.listRemoteNotes
       .mockResolvedValueOnce(pool([item], "t20"))
       .mockResolvedValueOnce(pool([], "r"))
