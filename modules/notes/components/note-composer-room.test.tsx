@@ -27,11 +27,12 @@ vi.mock("./scheduled-notes", () => ({
   useWhen: () => (iso: string) => iso,
 }));
 vi.mock("@/modules/mentions/mention-textarea", () => ({
-  MentionTextarea: forwardRef<HTMLTextAreaElement, { value: string; onValueChange: (v: string) => void }>(
-    function MentionTextarea({ value, onValueChange }, ref) {
+  MentionTextarea: forwardRef<HTMLTextAreaElement, { value: string; placeholder?: string; onValueChange: (v: string) => void }>(
+    function MentionTextarea({ value, placeholder, onValueChange }, ref) {
       return createElement("textarea", {
         ref,
         "aria-label": "body",
+        placeholder,
         value,
         onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => onValueChange(e.target.value),
       });
@@ -100,6 +101,14 @@ describe("the composer inside a room", () => {
     await act(async () => button("postToRoom")!.click());
     expect(mocks.createNote).toHaveBeenCalledWith(expect.objectContaining({ roomId: 5, visibility: null }));
     expect(mocks.listMyRooms).not.toHaveBeenCalled();
+  });
+
+  it("asks what you're up to, while a reply in the room keeps the reply prompt", async () => {
+    const field = () => host.querySelector<HTMLTextAreaElement>('textarea[aria-label="body"]')!;
+    await act(async () => root.render(<NoteComposer room={FAMILY} onCreated={vi.fn()} />));
+    expect(field().placeholder).toBe("roomPlaceholder");
+    await act(async () => root.render(<NoteComposer room={FAMILY} inReplyToId={3} onCreated={vi.fn()} />));
+    expect(field().placeholder).toBe("replyPlaceholder");
   });
 });
 

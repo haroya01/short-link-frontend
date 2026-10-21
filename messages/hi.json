@@ -4740,7 +4740,7 @@
     "destinationMine": "मेरे नोट",
     "postToRoom": "{room} में पोस्ट करें",
     "roomAudience": "केवल {room} के सदस्य देख सकते हैं",
-    "roomPlaceholder": "{room} में कुछ कहें"
+    "roomPlaceholder": "अभी क्या कर रहे हैं?"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"

@@ -83,16 +83,16 @@ function seedRooms(): Room[] {
 }
 
 const POSTS: Post[] = [
-  { id: 9910, roomId: 1, author: MINJI, body: "내일 몇 시에 봐? 저녁 먹고 가도 될 듯", minutesAgo: 3 },
-  { id: 9909, roomId: 1, author: JUNHO, body: "7시 어때. 역 앞 카페에서 모이자", minutesAgo: 9 },
-  { id: 9908, roomId: 1, author: YUKI, body: "지난주 사진 정리해서 올릴게요", minutesAgo: 52 },
-  { id: 9905, roomId: 2, author: KIM, body: "졸업 앨범 사진 받았어? 단체 사진 하나 더 있대", minutesAgo: 60 * 20 },
-  { id: 9907, roomId: 2, author: MINJI, body: "다음 달에 동기 모임 한번 하자. 날짜 몇 개 올려볼게", minutesAgo: 60 * 3 },
-  { id: 9906, roomId: 1, author: ME, body: "다들 7시 괜찮으면 거기서 봐요", minutesAgo: 60 * 6 },
-  { id: 9904, roomId: 1, author: JUNHO, body: "어제 찍은 사진 다들 받았지? 단체 사진은 내가 보정해서 다시 올릴게", minutesAgo: 60 * 27 },
-  { id: 9902, roomId: 5, author: MOM, body: "주말에 김치 보낼게. 받으면 꼭 연락하고 밥 잘 챙겨 먹어", minutesAgo: 60 * 24 * 12 },
-  { id: 9901, roomId: 6, author: HANEUL, body: "사진 앨범 링크 다시 올려요. 다들 받아 가세요", minutesAgo: 60 * 24 * 40 },
-  { id: 9903, roomId: 3, author: YUKI, body: "다음 주는 포트·어댑터 이름 짓기 정리해 올게요", minutesAgo: 60 * 24 * 5 },
+  { id: 9910, roomId: 1, author: MINJI, body: "퇴근길에 한강 들렀다. 바람이 벌써 가을이다", minutesAgo: 3 },
+  { id: 9909, roomId: 1, author: JUNHO, body: "오늘 처음으로 5km 안 쉬고 뛰었다", minutesAgo: 9 },
+  { id: 9908, roomId: 1, author: YUKI, body: "지난주 엠티 사진 정리하는 중. 생각보다 많네요", minutesAgo: 52 },
+  { id: 9905, roomId: 2, author: KIM, body: "졸업 앨범 받아 왔다. 우리 과 페이지 아직도 웃기다", minutesAgo: 60 * 20 },
+  { id: 9907, roomId: 2, author: MINJI, body: "요즘 퇴근하고 도자기 공방 다니는 중. 첫 컵 망했다", minutesAgo: 60 * 3 },
+  { id: 9906, roomId: 1, author: ME, body: "새로 산 필름카메라 첫 롤 맡겼다. 결과 두근두근", minutesAgo: 60 * 6 },
+  { id: 9904, roomId: 1, author: JUNHO, body: "어제 찍은 단체 사진 보정 끝. 다들 표정이 제각각이다", minutesAgo: 60 * 27 },
+  { id: 9902, roomId: 5, author: MOM, body: "올해 김장 끝냈다. 허리는 아파도 맛은 좋다", minutesAgo: 60 * 24 * 12 },
+  { id: 9901, roomId: 6, author: HANEUL, body: "오랜만에 앨범 정리했어요. 그때 다들 어렸네요", minutesAgo: 60 * 24 * 40 },
+  { id: 9903, roomId: 3, author: YUKI, body: "포트·어댑터 이름 짓다가 한 시간이 갔다", minutesAgo: 60 * 24 * 5 },
 ];
 
 const LONG_ROOM_ID = 1;
@@ -147,10 +147,10 @@ const BLOG_POSTS: BlogPost[] = [
 
 const REPLIES: Record<string, [number, Person, string][]> = {
   "note-9910": [
-    [9951, JUNHO, "7시 괜찮아. 저녁은 거기서 같이 먹자"],
-    [9952, YUKI, "나 조금 늦을 수도"],
+    [9951, JUNHO, "나도 어제 거기 있었는데"],
+    [9952, YUKI, "사진 있으면 올려 줘요"],
   ],
-  "note-9909": [[9953, MINJI, "역 앞 카페 좋아, 자리 맡아 둘게"]],
+  "note-9909": [[9953, MINJI, "와 축하해! 다음엔 같이 뛰자"]],
   "post-8801": [
     [9954, MINJI, "단체 사진 진짜 한 장도 없는 거 실화냐"],
     [9955, JUNHO, "보드게임 진 사람 누구였지"],

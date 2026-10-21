@@ -4740,7 +4740,7 @@
     "destinationMine": "내 노트",
     "postToRoom": "{room}에 올리기",
     "roomAudience": "{room} 멤버만 볼 수 있어요",
-    "roomPlaceholder": "{room}에 한마디"
+    "roomPlaceholder": "지금 뭐 하고 있어요?"
   },
   "mentions": {
     "suggestions": "멘션할 사람"

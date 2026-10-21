@@ -27,7 +27,7 @@ test("the rooms tab reads 초대 → pinned → lively → quiet → suggestion,
   const club = page.locator('[data-room-block="1"]');
   await expect(club).toContainText("새 글 3");
   await expect(club.locator("article[data-note-id]")).toHaveCount(2);
-  await expect(club.locator("article[data-note-id]").first()).toContainText("내일 몇 시에 봐?");
+  await expect(club.locator("article[data-note-id]").first()).toContainText("퇴근길에 한강 들렀다.");
   await expect(club.locator("[data-note-room]")).toHaveCount(0);
   await expect(page.locator('[data-room-block="5"] [data-room-pinned]')).toBeVisible();
 
@@ -109,7 +109,7 @@ test("a sixth pin is refused with the limit", async ({ page }) => {
 test("a room note has like and reply but no repost, share or lock", async ({ page }) => {
   await page.goto("/ko/blog/rooms/1");
   const note = page.locator("article[data-note-id]").first();
-  await expect(note).toContainText("내일 몇 시에 봐?", { timeout: 30_000 });
+  await expect(note).toContainText("퇴근길에 한강 들렀다.", { timeout: 30_000 });
   await expect(note.getByRole("button", { name: "좋아요", exact: true })).toBeVisible();
   await expect(note.locator("[data-note-reply]")).toBeVisible();
   await expect(note.getByRole("button", { name: /리포스트/ })).toHaveCount(0);
@@ -132,7 +132,7 @@ test("a room shows 오늘 and 어제 and keeps reading past the first page", asy
 
 test("a note written in a room goes to that room, said so on the button and below it", async ({ page }) => {
   await page.goto("/ko/blog/rooms/1");
-  const box = page.getByRole("textbox", { name: "동아리 사람들에 한마디" });
+  const box = page.getByRole("textbox", { name: "지금 뭐 하고 있어요?" });
   await box.fill("저도 7시 좋아요", { timeout: 30_000 });
   await expect(page.locator("[data-note-room-audience]")).toHaveText("동아리 사람들 멤버만 볼 수 있어요");
   await expect(page.getByRole("combobox", { name: "공개 범위" })).toHaveCount(0);
@@ -155,7 +155,7 @@ test("opening a room reads it, so 새 글 is gone on the way back", async ({ pag
 test("on 홈, a room note carries its room line, opens the room, and has no repost or share", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.setItem("kurl:mock-home-rooms", "1"));
   await page.goto("/ko/blog?sort=following");
-  const note = page.locator("article[data-note-id]", { hasText: "내일 몇 시에 봐?" });
+  const note = page.locator("article[data-note-id]", { hasText: "퇴근길에 한강 들렀다." });
   await expect(note.locator("[data-note-room]")).toHaveText("동아리 사람들 방에서", { timeout: 30_000 });
   await expect(note.getByRole("img", { name: "동아리 사람들 멤버만" })).toBeVisible();
   await expect(note.getByRole("button", { name: /리포스트/ })).toHaveCount(0);

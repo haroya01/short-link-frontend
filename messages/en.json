@@ -4740,7 +4740,7 @@
     "destinationMine": "My notes",
     "postToRoom": "Post to {room}",
     "roomAudience": "Only {room} members can see this",
-    "roomPlaceholder": "Say something to {room}"
+    "roomPlaceholder": "What are you up to?"
   },
   "mentions": {
     "suggestions": "People to mention"

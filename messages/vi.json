@@ -4740,7 +4740,7 @@
     "destinationMine": "Ghi chú của tôi",
     "postToRoom": "Đăng vào {room}",
     "roomAudience": "Chỉ thành viên {room} mới xem được",
-    "roomPlaceholder": "Nói gì đó với {room}"
+    "roomPlaceholder": "Bạn đang làm gì?"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"
