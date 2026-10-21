@@ -23,7 +23,7 @@ import {
 } from "@/modules/notes/api/notes";
 import { NoteList } from "./note-list";
 
-export const NOTE_LISTS_SETTINGS = blogPath("/settings#lists");
+const NOTE_LISTS_SETTINGS = blogPath("/settings#lists");
 
 export function NoteListTimeline({ list }: { list: NoteListSummary }) {
   const t = useTranslations("notes");

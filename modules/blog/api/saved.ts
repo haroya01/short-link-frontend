@@ -1,10 +1,3 @@
-/**
- * "내 서재" — the signed-in viewer's own liked + bookmarked posts, shown privately on their own
- * author profile (only when me === profile owner). Bookmarks support user folders ("스마트 셸프": auto
- * tag grouping for unfiled items + manual folders). Folders are a NEW capability the flat bookmarks
- * API doesn't have yet, so in mock this is an in-memory store; against a real backend these map to
- * /api/v1/me/{liked,saved} + /api/v1/bookmarks/folders (backend work — owner's domain).
- */
 import { mockEmpty, mockFailure, request } from "@/lib/api/client";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { savedMocks } from "@/modules/blog/api/_mock-gates";
@@ -36,19 +29,6 @@ export function listFolders(): Promise<BookmarkFolder[]> {
 export function createFolder(name: string): Promise<BookmarkFolder> {
   if (savedMocks) return Promise.resolve(savedMocks.mockCreateFolder(name));
   return request<BookmarkFolder>("/api/v1/bookmarks/folders", { method: "POST", body: { name } });
-}
-
-export function renameFolder(id: number, name: string): Promise<BookmarkFolder> {
-  if (savedMocks) return Promise.resolve(savedMocks.mockRenameFolder(id, name));
-  return request<BookmarkFolder>(`/api/v1/bookmarks/folders/${id}`, { method: "PATCH", body: { name } });
-}
-
-export function deleteFolder(id: number): Promise<void> {
-  if (savedMocks) {
-    savedMocks.mockDeleteFolder(id);
-    return Promise.resolve();
-  }
-  return request(`/api/v1/bookmarks/folders/${id}`, { method: "DELETE" });
 }
 
 export function moveSavedToFolder(postId: number, folderId: number | null): Promise<void> {

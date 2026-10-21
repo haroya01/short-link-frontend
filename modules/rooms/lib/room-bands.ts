@@ -1,8 +1,8 @@
 import type { RoomItem, RoomListItem } from "@/modules/rooms/api/rooms";
 import { itemRoomId } from "@/modules/rooms/lib/room-items";
 
-export const QUIET_AFTER_MS = 7 * 86_400_000;
-export const ROOM_BLOCK_NOTES = 2;
+const QUIET_AFTER_MS = 7 * 86_400_000;
+const ROOM_BLOCK_NOTES = 2;
 
 export function isLively(room: RoomListItem, now: number = Date.now()): boolean {
   if (!room.lastNote || !room.lastActivityAt) return false;

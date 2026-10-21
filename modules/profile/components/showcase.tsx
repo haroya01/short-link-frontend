@@ -13,7 +13,6 @@ import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { cn, inert } from "@/lib/utils";
 
 const FIRST = SHOWCASE_PROFILES.find((p) => p.username === "haruka.dev") ?? SHOWCASE_PROFILES[0];
-/** The signed-out profile page: the shared feature-page grammar around the examples below. */
 export function ShowcaseLanding() {
   const t = useTranslations("showcase");
   return (
@@ -39,12 +38,7 @@ export function ShowcaseLanding() {
   );
 }
 
-/**
- * Profile examples: a hairline list of example pages beside the chosen one, drawn with the real
- * {@link ProfileHeader} + {@link EntryList} at phone width. The window scrolls on its own; nothing is
- * scaled down, faded or cut off to fit, and nothing moves by itself.
- */
-export function ProfileShowcase() {
+function ProfileShowcase() {
   const t = useTranslations("showcase");
   const [selected, setSelected] = useState(FIRST.username);
   const profile = SHOWCASE_PROFILES.find((p) => p.username === selected) ?? FIRST;

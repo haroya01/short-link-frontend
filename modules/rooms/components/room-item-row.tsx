@@ -15,7 +15,7 @@ function replyName(reply: RoomReply): string {
   return reply.author.displayName?.trim() || reply.author.username;
 }
 
-export function replyTotal(item: RoomItem): number {
+function replyTotal(item: RoomItem): number {
   return Math.max(item.kind === "note" ? item.note.replyCount : item.post.commentCount, item.replies.length);
 }
 

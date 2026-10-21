@@ -11,7 +11,7 @@ import { useMarkDockedComposer } from "@/modules/blog/lib/docked-composer";
 import { Button } from "@/components/ui/button";
 import { MentionTextarea } from "@/modules/mentions/mention-textarea";
 
-export const CONVERSATION_MAX_LENGTH = 2000;
+const CONVERSATION_MAX_LENGTH = 2000;
 const COUNTER_FROM = 200;
 
 export function ConversationComposer({

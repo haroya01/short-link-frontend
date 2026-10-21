@@ -73,7 +73,7 @@ export function passwordProblem(
   return length < PASSWORD_MIN || length > PASSWORD_MAX ? "length" : null;
 }
 
-export function sameCountries(a: readonly string[], b: readonly string[]): boolean {
+function sameCountries(a: readonly string[], b: readonly string[]): boolean {
   if (a.length !== b.length) return false;
   const left = [...a].sort();
   const right = [...b].sort();

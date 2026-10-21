@@ -154,11 +154,6 @@ export function renameRoom(id: number, name: string): Promise<RoomDetail> {
   return request<RoomDetail>(`${base}/${id}`, { method: "PATCH", body: { name } });
 }
 
-export function listRoomNotes(id: number, page = 0): Promise<NoteFeed> {
-  if (roomMocks) return roomMocks.mockRoomNotes(id, page);
-  return request<NoteFeed>(`${base}/${id}/notes?page=${page}&size=20`, { method: "GET" });
-}
-
 function tidyItems(page: RoomItemsPage): RoomItemsPage {
   const items = (Array.isArray(page?.items) ? page.items : []).flatMap((item): RoomItem[] => {
     const replies = Array.isArray(item?.replies) ? item.replies : [];
@@ -179,11 +174,6 @@ export async function listAllRoomItems(cursor: string | null = null, limit = 20)
   if (roomMocks) return roomMocks.mockAllRoomItems(cursor, limit);
   const query = `limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
   return tidyItems(await request<RoomItemsPage>(`${base}/items?${query}`, { method: "GET" }));
-}
-
-export function listRoomsFeed(page = 0, size = 50): Promise<NoteFeed> {
-  if (roomMocks) return roomMocks.mockRoomsFeed(page, size);
-  return request<NoteFeed>(`${base}/feed?page=${page}&size=${size}`, { method: "GET" });
 }
 
 export function markRoomRead(id: number, noteId: number): Promise<unknown> {

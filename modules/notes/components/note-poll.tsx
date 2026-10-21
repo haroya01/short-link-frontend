@@ -246,7 +246,7 @@ function remaining(
   return t("pollDaysLeft", { count: Math.floor(seconds / 86_400) });
 }
 
-export const POLL_DURATIONS = [300, 1800, 3600, 21_600, 43_200, 86_400, 259_200, 604_800] as const;
+const POLL_DURATIONS = [300, 1800, 3600, 21_600, 43_200, 86_400, 259_200, 604_800] as const;
 
 export function emptyPoll(): NotePollDraft {
   return { options: ["", ""], expiresIn: 86_400, multiple: false };

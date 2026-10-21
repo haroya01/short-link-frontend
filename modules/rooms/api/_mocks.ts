@@ -335,24 +335,6 @@ export function mockRename(id: number, name: string): Promise<RoomDetail> {
 
 const PAGE = 20;
 
-export function mockRoomNotes(id: number, page: number): Promise<NoteFeed> {
-  if (!state().some((r) => r.id === id)) {
-    return Promise.reject(new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" }));
-  }
-  const all = roomPosts(id);
-  return done({
-    items: all.slice(page * PAGE, page * PAGE + PAGE).map(noteOf),
-    page,
-    hasNext: all.length > (page + 1) * PAGE,
-  });
-}
-
-export function mockRoomsFeed(page: number, size: number): Promise<NoteFeed> {
-  const mine = new Set(state().map((r) => r.id));
-  const all = [...posts, ...longRoomPosts()].filter((p) => mine.has(p.roomId)).sort(newestFirst);
-  return done({ items: all.slice(page * size, page * size + size).map(noteOf), page, hasNext: all.length > (page + 1) * size });
-}
-
 export function mockFollowingRoomNotes(): Note[] {
   if (readStorageString("kurl:mock-home-rooms") !== "1") return [];
   const shown = new Set(state().filter((r) => !r.hiddenFromFeed).map((r) => r.id));

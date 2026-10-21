@@ -32,7 +32,7 @@ import { RoomInviteSheet } from "./room-invite-sheet";
 
 type Detail = { kind: "loading" } | { kind: "missing" } | { kind: "failed" } | { kind: "loaded"; room: RoomDetail };
 
-export function memberLine(room: RoomDetail, t: (key: string, values?: Record<string, string | number>) => string) {
+function memberLine(room: RoomDetail, t: (key: string, values?: Record<string, string | number>) => string) {
   const names = room.members.slice(0, 2).map(personName).join(", ");
   const rest = room.memberCount - Math.min(2, room.members.length);
   return rest > 0 ? t("memberLine", { names, count: rest }) : names;

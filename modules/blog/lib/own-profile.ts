@@ -7,7 +7,7 @@ import { ME_QUERY_KEY } from "@/hooks/use-me";
 import { getMyProfile } from "@/modules/profile/api/profile";
 import type { Me, MyProfile } from "@/types";
 
-export const MY_PROFILE_KEY = ["myProfile"] as const;
+const MY_PROFILE_KEY = ["myProfile"] as const;
 
 export function useOwnProfile(username: string): MyProfile | undefined {
   const { me } = useAuth();

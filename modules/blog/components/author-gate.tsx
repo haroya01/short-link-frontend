@@ -7,7 +7,7 @@ import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { BlockedAuthorNotice } from "@/modules/notes/components/blocked-author-notice";
 
-export function useBlocksViewer(username: string): boolean {
+function useBlocksViewer(username: string): boolean {
   const { ready, authenticated } = useAuth();
   const [answer, setAnswer] = useState<{ username: string; blocks: boolean } | null>(null);
 
@@ -29,7 +29,7 @@ export function useBlocksViewer(username: string): boolean {
 
 export type AuthorGateState = "open" | "blocked" | "blocksViewer";
 
-export function useAuthorGate(username: string): AuthorGateState {
+function useAuthorGate(username: string): AuthorGateState {
   const blocked = useBlockedNames().has(username);
   const blocksViewer = useBlocksViewer(username);
   if (blocked) return "blocked";
