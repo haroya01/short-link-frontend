@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Clock, Loader2, UserCheck, UserPlus, X } from "lucide-react";
+import { Check, Clock, Loader2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { followToggleClass } from "@/modules/blog/lib/follow-toggle";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { ApiError } from "@/lib/api/client";
@@ -15,15 +16,21 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
+import { blogPath } from "@/lib/host";
+import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
+import type { RemoteAccount } from "@/modules/notes/api/notes";
+import { RemoteFollowButton } from "@/modules/notes/components/remote-account";
 import {
+  followEntryKey,
   followUser,
-  listFollowers,
-  listFollowing,
+  listFollowEntries,
   unfollowUser,
+  type FollowEntry,
+  type FollowListKind,
   type FollowUser,
 } from "@/modules/blog/api/follows";
 
-export type FollowTab = "followers" | "following";
+export type FollowTab = FollowListKind;
 
 /**
  * The followers / following lists for an author (Medium-style). A focus-trapped, scroll-locked
@@ -47,7 +54,7 @@ export function FollowListDialog({
   const t = useTranslations("publicPost");
   const locale = useLocale();
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [items, setItems] = useState<FollowUser[]>([]);
+  const [items, setItems] = useState<FollowEntry[]>([]);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -73,12 +80,11 @@ export function FollowListDialog({
     async (next: number) => {
       setLoading(true);
       try {
-        const fetcher = tab === "followers" ? listFollowers : listFollowing;
-        const res = await fetcher(username, next);
+        const res = await listFollowEntries(username, tab, next);
         setItems((prev) => {
           if (next === 0) return res.items;
-          const seen = new Set(prev.map((u) => u.id));
-          return [...prev, ...res.items.filter((u) => !seen.has(u.id))];
+          const seen = new Set(prev.map(followEntryKey));
+          return [...prev, ...res.items.filter((e) => !seen.has(followEntryKey(e)))];
         });
         setPage(res.page);
         setHasNext(res.hasNext);
@@ -101,7 +107,11 @@ export function FollowListDialog({
 
   if (!open || !mounted) return null;
 
-  const shown = items.filter((u) => !blocked.has(u.username));
+  const shown = items.filter((e) => e.type === "remote" || !blocked.has(e.username));
+  const replaceAccount = (next: RemoteAccount) =>
+    setItems((prev) =>
+      prev.map((e) => (e.type === "remote" && e.account.id === next.id ? { ...e, account: next } : e)),
+    );
   const empty = !loading && shown.length === 0;
 
   // Portal to <body>: a transformed/animated ancestor (a will-change page wrapper, the post
@@ -147,9 +157,18 @@ export function FollowListDialog({
             </p>
           )}
           <ul>
-            {shown.map((u) => (
-              <FollowRow key={u.id} user={u} locale={locale} onNavigate={() => onOpenChange(false)} />
-            ))}
+            {shown.map((e) =>
+              e.type === "local" ? (
+                <FollowRow key={followEntryKey(e)} user={e} locale={locale} onNavigate={() => onOpenChange(false)} />
+              ) : (
+                <RemoteFollowRow
+                  key={followEntryKey(e)}
+                  account={e.account}
+                  onChange={replaceAccount}
+                  onNavigate={() => onOpenChange(false)}
+                />
+              ),
+            )}
           </ul>
           {hasNext && !loading && (
             <button
@@ -237,6 +256,43 @@ function FollowRow({
   );
 }
 
+function RemoteFollowRow({
+  account,
+  onChange,
+  onNavigate,
+}: {
+  account: RemoteAccount;
+  onChange: (next: RemoteAccount) => void;
+  onNavigate: () => void;
+}) {
+  const subtitle = account.displayName && account.displayName.toLowerCase() !== account.username.toLowerCase()
+    ? account.displayName
+    : null;
+  return (
+    <li className="flex items-center gap-3 rounded-surface px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+      <BlogLink
+        href={blogPath(`/remote/${account.id}`)}
+        onClick={onNavigate}
+        className="focus-ring group flex min-w-0 flex-1 items-center gap-3"
+      >
+        <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size="md" />
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate text-[14px] text-slate-800 dark:text-slate-200">
+            <span className="font-semibold group-hover:text-slate-900">@{account.username}</span>
+            <span className="text-slate-500 dark:text-slate-400">@{account.domain}</span>
+          </span>
+          {subtitle && (
+            <span lang={contentLang(subtitle)} className="truncate text-[12px] text-slate-500 dark:text-slate-400">
+              {subtitle}
+            </span>
+          )}
+        </span>
+      </BlogLink>
+      {!hiddenFromViewer(account) && <RemoteFollowButton account={account} onChange={onChange} />}
+    </li>
+  );
+}
+
 /**
  * A compact follow toggle seeded from the list row's `followedByMe` — no per-row status fetch.
  * Hidden on your own row; an anonymous click starts sign-in. Optimistic with rollback.
@@ -288,20 +344,13 @@ function RowFollowButton({
       type="button"
       onClick={() => void toggle()}
       aria-pressed={pressed}
-      className={cn(
-        "touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors focus-ring",
-        pressed
-          ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
-          : "border-transparent bg-accent-700 text-white hover:bg-accent-800",
-      )}
+      className={cn(followToggleClass(pressed, true), "gap-1")}
     >
       {following ? (
-        <UserCheck className="h-3.5 w-3.5" />
+        <Check aria-hidden className="h-3.5 w-3.5" />
       ) : requested ? (
-        <Clock className="h-3.5 w-3.5" />
-      ) : (
-        <UserPlus className="h-3.5 w-3.5" />
-      )}
+        <Clock aria-hidden className="h-3.5 w-3.5" />
+      ) : null}
       {following ? t("following") : requested ? t("requested") : t("follow")}
     </button>
   );

@@ -47,6 +47,19 @@ describe("the profile counts row", () => {
     expect(row()!.hasAttribute("inert")).toBe(false);
   });
 
+  it("adds accepted follows on other servers to each number", async () => {
+    fetchFollowStatus.mockResolvedValue({
+      following: false,
+      followerCount: 128,
+      followingCount: 12,
+      remoteFollowerCount: 1,
+      remoteFollowingCount: 2,
+      hideFollowerCount: false,
+    });
+    await render(<FollowCounts username="kazuki" trailing={posts} />);
+    expect(buttons()).toEqual(["countFollowers 129", "countFollowing 14"]);
+  });
+
   it("drops the whole pair when the author hides their counts, leaving the post count", async () => {
     fetchFollowStatus.mockResolvedValue({ following: false, hideFollowerCount: true });
     await render(<FollowCounts username="sora" trailing={posts} />);
