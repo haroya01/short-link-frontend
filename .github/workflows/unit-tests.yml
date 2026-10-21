@@ -26,3 +26,16 @@ jobs:
         run: npm run typecheck
       - name: Vitest
         run: npm run test:run
+
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Quality ratchet (knip + import boundaries + reduced-motion + history comments)
+        run: npm run quality

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "public/sw.js",
+    "scripts/*.mjs",
+    "**/_mocks*.ts",
+    "lib/api/*-mock*.ts",
+    "e2e/**/*.ts"
+  ],
+  "ignore": [
+    "cloudflare-worker/**"
+  ]
+}
