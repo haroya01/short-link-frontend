@@ -28,7 +28,7 @@ test("comments show under an item, two in the room with the rest behind 모두 �
   const noteReplies = page.locator('[data-room-item="note-9910"] [data-room-replies]');
   await expect(noteReplies.locator("[data-room-reply]")).toHaveCount(2);
   await expect(noteReplies).toContainText("준호");
-  await expect(noteReplies).toContainText("나 조금 늦을 수도");
+  await expect(noteReplies).toContainText("사진 있으면 올려 줘요");
   await expect(noteReplies).not.toContainText("모두 보기");
 
   const postReplies = page.locator('[data-room-item="post-8801"] [data-room-replies]');
@@ -109,7 +109,7 @@ test("글쓰기 asks where first, always from 모두에게, and a note for a roo
 
 test("a note posted in a room lands with the same arrival as on 홈", async ({ page }) => {
   await openRoom(page);
-  await page.getByRole("textbox", { name: "동아리 사람들에 한마디" }).fill("도착 연출 확인");
+  await page.getByRole("textbox", { name: "지금 뭐 하고 있어요?" }).fill("도착 연출 확인");
   await page.getByRole("button", { name: "동아리 사람들에 올리기" }).click();
   const first = page.locator("[data-room-item]").first();
   await expect(first).toContainText("도착 연출 확인");

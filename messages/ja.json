@@ -4741,7 +4741,7 @@
     "destinationMine": "自分のノート",
     "postToRoom": "{room}に投稿",
     "roomAudience": "{room}のメンバーだけが見られます",
-    "roomPlaceholder": "{room}にひとこと"
+    "roomPlaceholder": "いま何してる？"
   },
   "mentions": {
     "suggestions": "メンションする人"
