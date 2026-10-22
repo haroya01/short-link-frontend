@@ -211,3 +211,23 @@ describe("the account menu on another server", () => {
     expect(items()).toEqual(["notes.domainUnblock:mastodon.social"]);
   });
 });
+
+describe("the link to the account on its own server", () => {
+  const serverLink = () =>
+    Array.from(host.querySelectorAll("a")).find((a) => a.textContent === "notes.remoteOpenOnServer:mastodon.social");
+
+  it("opens the account's web page", async () => {
+    await open(mina);
+    expect(serverLink()?.getAttribute("href")).toBe("https://mastodon.social/@mina");
+  });
+
+  it("drops the link when the server sends a non-web address", async () => {
+    for (const [i, url] of ["javascript:alert(1)", "data:text/html,x", " javascript:alert(1)"].entries()) {
+      await open({ ...mina, id: 9900 + i, url });
+      expect(host.textContent).toContain("Mina");
+      expect(serverLink()).toBeUndefined();
+      expect(host.querySelector('a[href^="javascript"], a[href^="data"]')).toBeNull();
+    }
+    expect(mocks.getRemoteAccount.mock.calls.map(([id]) => id)).toEqual([9900, 9901, 9902]);
+  });
+});

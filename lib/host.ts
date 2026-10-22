@@ -43,16 +43,25 @@ export function blogPath(path: string = "/"): string {
   return `/blog-preview${path === "/" ? "" : path}`;
 }
 
+export function trustedOriginalHost(raw: string | null): string | null {
+  const host = raw?.trim().toLowerCase().split(":")[0];
+  if (!host || !/^[a-z0-9.-]+$/.test(host)) return null;
+  const roots = ["kurl.me", process.env.NEXT_PUBLIC_KURL_HOST, process.env.NEXT_PUBLIC_BLOG_HOST]
+    .filter((h): h is string => !!h)
+    .map((h) => h.toLowerCase().split(":")[0]);
+  return roots.some((root) => host === root || host.endsWith(`.${root}`)) ? host : null;
+}
+
 /**
  * The visitor-facing origin for a route-handler request (feeds, etc.). Behind the Cloudflare Worker
  * proxy, `req.url` carries the internal Vercel deployment host (…vercel.app); the proxy forwards the
- * real host in `x-original-host`. Prefer it so the channel <link>, atom:link rel=self, and any
- * dev-relative item URLs point at the public host; fall back to the request origin (dev/preview, no
- * proxy). Mirrors the header precedence in {@link authorBaseUrl}.
+ * real host in `x-original-host`. Prefer it when it names a kurl host so the channel <link>,
+ * atom:link rel=self, and any dev-relative item URLs point at the public host; fall back to the
+ * request origin (dev/preview, no proxy). Mirrors the header precedence in {@link authorBaseUrl}.
  */
 export function publicOrigin(req: Request): string {
-  const originalHost = req.headers.get("x-original-host");
-  if (originalHost) return `https://${originalHost.split(":")[0]}`;
+  const originalHost = trustedOriginalHost(req.headers.get("x-original-host"));
+  if (originalHost) return `https://${originalHost}`;
   return new URL(req.url).origin;
 }
 

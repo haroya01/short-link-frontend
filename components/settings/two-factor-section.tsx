@@ -186,6 +186,7 @@ export function TwoFactorSection() {
               <Image
                 src={qrDataUrl}
                 alt="2FA QR"
+                data-sentry-block
                 width={220}
                 height={220}
                 unoptimized
@@ -196,7 +197,7 @@ export function TwoFactorSection() {
             )}
             <div className="flex-1 space-y-2">
               <p>{t("manualKeyHint")}</p>
-              <code className="block break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
+              <code data-sentry-mask className="block break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
                 {setup.secret}
               </code>
             </div>
@@ -316,7 +317,7 @@ function RecoveryCodesPanel({ codes, onDismiss }: { codes: string[]; onDismiss: 
     <div className="space-y-3 rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
       <p className="font-medium">{t("recoveryTitle")}</p>
       <p>{t("recoveryHint")}</p>
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-5">
+      <div data-sentry-mask className="grid grid-cols-2 gap-1.5 sm:grid-cols-5">
         {codes.map((c) => (
           <code
             key={c}

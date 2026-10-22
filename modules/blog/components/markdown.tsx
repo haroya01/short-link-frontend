@@ -17,9 +17,9 @@ import { VariantImage } from "@/components/common/variant-image";
  * Inline color / highlight from the editor are authored as `<span style="color|background-color">`
  * and `<mark>`, so we DO allow a tightly-scoped slice of raw HTML — but safely:
  *   rehypeRaw (parse) → safeStyle (drop every CSS declaration except color / background-color with
- *   a literal color value — kills url()/expression/etc.) → rehypeHighlight → rehypeSanitize
- *   (whitelist: only span/mark add class+style; everything else is the conservative default, so
- *   scripts / iframes / event handlers are stripped).
+ *   a literal color value — kills url()/expression/etc.) → rehypeSanitize (whitelist: only span/mark
+ *   add style; no author-supplied class survives, so scripts / iframes / event handlers / utility-class
+ *   overlays are stripped) → rehypeHighlight (adds its own hljs classes after sanitizing).
  */
 const SAFE_STYLE_DECL =
   /^(color|background-color)\s*:\s*(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\)|hsla?\([\d.,\s%]+\)|[a-zA-Z]+)$/;
@@ -67,17 +67,13 @@ function remarkNewlineBreaks() {
   };
 }
 
-// Allow span/mark to carry className (hljs spans) + a style (already value-filtered above);
-// keep className on code/pre for syntax highlighting. Everything else stays on the safe default.
 const schema = {
   ...defaultSchema,
   tagNames: [...(defaultSchema.tagNames ?? []), "span", "mark"],
   attributes: {
     ...defaultSchema.attributes,
-    span: [...(defaultSchema.attributes?.span ?? []), "className", "style"],
-    mark: ["className", "style"],
-    code: [...(defaultSchema.attributes?.code ?? []), "className"],
-    pre: [...(defaultSchema.attributes?.pre ?? []), "className"],
+    span: [...(defaultSchema.attributes?.span ?? []), "style"],
+    mark: ["style"],
   },
 };
 
@@ -88,7 +84,7 @@ export function Markdown({ children, inline = false }: { children: string; inlin
       rehypePlugins={
         inline
           ? [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema]]
-          : [rehypeRaw, rehypeSafeStyle, rehypeHighlight, [rehypeSanitize, schema]]
+          : [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema], rehypeHighlight]
       }
       components={{
         // Legacy paragraphs and list items can contain markdown images without becoming IMAGE

@@ -10,6 +10,7 @@ import {
   formatEventTime,
   timezoneLabel,
 } from "@/modules/events/lib/format";
+import { isHttpUrl } from "@/lib/extract-url";
 
 export type EventHeadData = Pick<
   PublicEvent,
@@ -97,7 +98,7 @@ export function EventHead({ event, heading = "h1" }: { event: EventHeadData; hea
         </MetaRow>
         {event.locationText ? (
           <MetaRow label={t("metaPlace")}>
-            {event.locationUrl ? (
+            {event.locationUrl && isHttpUrl(event.locationUrl) ? (
               <a
                 href={event.locationUrl}
                 target="_blank"
@@ -111,7 +112,7 @@ export function EventHead({ event, heading = "h1" }: { event: EventHeadData; hea
             )}
           </MetaRow>
         ) : null}
-        {event.onlineUrl ? (
+        {event.onlineUrl && isHttpUrl(event.onlineUrl) ? (
           <MetaRow label={t("metaOnline")}>
             <a
               href={event.onlineUrl}
