@@ -23,7 +23,7 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
     await page.setViewportSize(viewport);
     await page.goto("/ko/demo");
     const tabs = page.getByRole("tablist", { name: "통계 섹션" });
-    await expect(tabs.getByRole("tab")).toHaveCount(4);
+    await expect(tabs.getByRole("tab")).toHaveCount(5);
     await capture(page, `stats-${viewport.width}`);
     await tabs.getByRole("tab", { name: "방문 환경" }).click();
     await expect(page.getByRole("tabpanel")).toContainText("클릭 품질");

@@ -1628,6 +1628,7 @@
       "traffic": "Lưu lượng",
       "sources": "Nguồn",
       "audience": "Đối tượng",
+      "log": "Nhật ký",
       "settings": "Cài đặt"
     },
     "live": {
@@ -1968,14 +1969,11 @@
       "detailClose": "Đóng"
     },
     "rawData": {
-      "title": "Dữ liệu thô · xuất",
-      "description": "Xem nhật ký lượt nhấp thô của liên kết này hoặc xuất ra CSV.",
       "exportEvents": "CSV sự kiện nhấp",
       "exportStats": "CSV thống kê hằng ngày",
       "exporting": "Đang xuất…",
-      "showLog": "Nhật ký nhấp thô",
-      "hideLog": "Ẩn nhật ký",
       "loadMore": "Xem thêm",
+      "retention": "Không lưu từng lượt nhấp cũ hơn {days} ngày",
       "empty": "Chưa có lượt nhấp.",
       "bot": "Bot",
       "colTime": "Thời gian",
@@ -1988,7 +1986,8 @@
     "chart": {
       "peak": "Đỉnh"
     },
-    "exportCsv": "Xuất CSV",
+    "exportSummaryCsv": "CSV tóm tắt",
+    "rawWindow": "{days} ngày gần nhất",
     "chapters": {
       "who": "Ai",
       "when": "Khi nào",
@@ -2790,7 +2789,7 @@
   },
   "privacy": {
     "title": "Chính sách quyền riêng tư",
-    "updatedAt": "Cập nhật lần cuối: 2026-07-21",
+    "updatedAt": "Cập nhật lần cuối: 2026-10-22",
     "intro": "kurl chỉ thu thập lượng dữ liệu cá nhân tối thiểu cần thiết để vận hành Dịch vụ và ẩn danh theo mặc định. Chính sách này tuân theo Luật Bảo vệ Thông tin Cá nhân Hàn Quốc (PIPA) và GDPR của EU (Điều 13).",
     "sections": [
       {
@@ -2803,7 +2802,7 @@
       },
       {
         "h": "3. Thời gian lưu giữ",
-        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian chờ 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản. Nhật ký bảo mật/kiểm toán được giữ khoảng 180 ngày và nhật ký yêu cầu vận hành khoảng 90 ngày trước khi dọn, và việc xóa tài khoản sẽ ẩn danh định danh của bạn còn lại trong các nhật ký đó. Quy trình và phương thức tiêu hủy như sau: thông tin cá nhân ở dạng tệp điện tử được xóa vĩnh viễn theo cách không thể khôi phục hay tái tạo — bao gồm việc xóa vĩnh viễn (không thể khôi phục) được thực hiện sau thời gian chờ 30 ngày khi bạn xóa tài khoản. Thông tin được lưu riêng theo quy định của pháp luật sẽ được tiêu hủy không chậm trễ khi hết thời gian lưu giữ. Dữ liệu gốc của sự kiện hành vi đọc trên trang bài viết được tự động xóa sau 90 ngày."
+        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Bản ghi gốc của lượt nhấp liên kết rút gọn (gồm IP và thông tin trình duyệt) bị xóa sau 90 ngày; sau đó chỉ còn số liệu tổng hợp theo ngày. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian chờ 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản. Nhật ký bảo mật/kiểm toán được giữ khoảng 180 ngày và nhật ký yêu cầu vận hành khoảng 30 ngày trước khi dọn, và việc xóa tài khoản sẽ ẩn danh định danh của bạn còn lại trong các nhật ký đó. Quy trình và phương thức tiêu hủy như sau: thông tin cá nhân ở dạng tệp điện tử được xóa vĩnh viễn theo cách không thể khôi phục hay tái tạo — bao gồm việc xóa vĩnh viễn (không thể khôi phục) được thực hiện sau thời gian chờ 30 ngày khi bạn xóa tài khoản. Thông tin được lưu riêng theo quy định của pháp luật sẽ được tiêu hủy không chậm trễ khi hết thời gian lưu giữ. Dữ liệu gốc của sự kiện hành vi đọc trên trang bài viết được tự động xóa sau 90 ngày."
       },
       {
         "h": "4. Ẩn danh IP",

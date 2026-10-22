@@ -1628,6 +1628,7 @@
       "traffic": "Traffic",
       "sources": "Sources",
       "audience": "Audience",
+      "log": "Log",
       "settings": "Settings"
     },
     "live": {
@@ -1968,14 +1969,11 @@
       "detailClose": "Close"
     },
     "rawData": {
-      "title": "Raw data · export",
-      "description": "View this link's raw click log or export it as CSV.",
       "exportEvents": "Click events CSV",
       "exportStats": "Daily stats CSV",
       "exporting": "Exporting…",
-      "showLog": "Raw click log",
-      "hideLog": "Hide log",
       "loadMore": "Load more",
+      "retention": "Individual clicks older than {days} days aren't kept",
       "empty": "No clicks yet.",
       "bot": "Bot",
       "colTime": "Time",
@@ -1988,7 +1986,8 @@
     "chart": {
       "peak": "Peak"
     },
-    "exportCsv": "Export CSV",
+    "exportSummaryCsv": "Summary CSV",
+    "rawWindow": "Last {days} days",
     "chapters": {
       "who": "Who",
       "when": "When",
@@ -2790,7 +2789,7 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "updatedAt": "Last updated: 2026-07-21",
+    "updatedAt": "Last updated: 2026-10-22",
     "intro": "kurl collects only the minimum personal data needed to run the Service and anonymizes by default. This policy follows Korea's Personal Information Protection Act (PIPA) and the EU GDPR (Article 13).",
     "sections": [
       {
@@ -2803,7 +2802,7 @@
       },
       {
         "h": "3. Retention",
-        "p": "Anonymous links auto-expire after 24h. Authenticated users' links and content persist until you delete them. Expired links and their click events are auto-cleaned 30 days after expiry. When you delete your account, it and its data are hidden immediately and permanently erased after a 30-day grace period; signing in again within that period restores the account. Security/audit logs are kept about 180 days and operational request logs about 90 days before cleanup, and deleting your account anonymizes your identifier left in those logs. Destruction procedure and method: personal data held in electronic files is permanently deleted in a way that makes recovery or reconstruction impossible — this includes the permanent, unrecoverable deletion carried out after the 30-day grace period when you delete your account. Information retained separately under applicable law is destroyed without delay once its retention period ends. Raw reading-behavior events from post pages are automatically deleted after 90 days."
+        "p": "Anonymous links auto-expire after 24h. Authenticated users' links and content persist until you delete them. Expired links and their click events are auto-cleaned 30 days after expiry. Raw click records for short links (including IP and browser details) are deleted after 90 days; only per-day totals remain after that. When you delete your account, it and its data are hidden immediately and permanently erased after a 30-day grace period; signing in again within that period restores the account. Security/audit logs are kept about 180 days and operational request logs about 30 days before cleanup, and deleting your account anonymizes your identifier left in those logs. Destruction procedure and method: personal data held in electronic files is permanently deleted in a way that makes recovery or reconstruction impossible — this includes the permanent, unrecoverable deletion carried out after the 30-day grace period when you delete your account. Information retained separately under applicable law is destroyed without delay once its retention period ends. Raw reading-behavior events from post pages are automatically deleted after 90 days."
       },
       {
         "h": "4. IP anonymization",
