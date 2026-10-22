@@ -62,6 +62,39 @@ describe("mixing other servers into 홈 최신", () => {
     expect(mixHome(local(16), remote(3), true).wanted).toBe(0);
   });
 
+  it("keeps at least two of my rows between a connection card and a pair, moving the pair one row on at a time", () => {
+    const cards = new Set([5, 10]);
+    expect(shown(mixHome(local(16), remote(6), false, cards).rows)).toEqual([
+      ...local(8),
+      "R1",
+      "R2",
+      ...local(5, 9),
+      "R3",
+      "R4",
+      ...local(3, 14),
+    ]);
+  });
+
+  it("moves a pair off the very row a card follows, and five of mine still separate one pair from the next", () => {
+    const rows = shown(mixHome(local(14), remote(4), false, new Set([4])).rows);
+    expect(rows).toEqual([...local(7), "R1", "R2", ...local(5, 8), "R3", "R4", ...local(2, 13)]);
+  });
+
+  it("does not move a pair for a card further than one row away", () => {
+    const rows = shown(mixHome(local(8), remote(2), false, new Set([7])).rows);
+    expect(rows).toEqual([...local(5), "R1", "R2", ...local(3, 6)]);
+  });
+
+  it("a moved pair waits at the end of a page for the next one, and lands in the same place once it comes", () => {
+    const cards = new Set([5]);
+    const first = mixHome(local(7), remote(2), false, cards);
+    expect(shown(first.rows)).toEqual(local(7));
+    expect(first.wanted).toBe(0);
+    const more = mixHome(local(12), remote(2), false, cards);
+    expect(shown(more.rows)).toEqual([...local(8), "R1", "R2", ...local(4, 9)]);
+    expect(more.wanted).toBe(2);
+  });
+
   it("is the same for the same input", () => {
     expect(mixHome(local(23), remote(9), false)).toEqual(mixHome(local(23), remote(9), false));
   });

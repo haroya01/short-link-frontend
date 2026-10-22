@@ -130,10 +130,11 @@ test("leaving with my words deleted says what goes", async ({ page }) => {
 test("pressing 홈 on 홈 brings in what is new on top", async ({ page }) => {
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
-  await expect(feed.locator("article[data-note-id]").first()).toBeVisible({ timeout: 30_000 });
-  const before = await feed.locator("article[data-note-id]").count();
+  const mine = feed.locator("article[data-note-id]:not([data-remote-kept] article)");
+  await expect(mine.first()).toBeVisible({ timeout: 30_000 });
+  const before = await mine.count();
   await page.locator("nav.vt-bottom-nav").getByRole("link", { name: "홈" }).click();
-  await expect(feed.locator("article[data-note-id]").first()).toContainText("방금 올라온 노트");
-  await expect(feed.locator("article[data-note-id]")).toHaveCount(before + 1);
+  await expect(mine.first()).toContainText("방금 올라온 노트");
+  await expect(mine).toHaveCount(before + 1);
   expect(await page.evaluate(() => (globalThis as { __kurlHomeSince?: string[] }).__kurlHomeSince)).toEqual(["latest:mock.1"]);
 });

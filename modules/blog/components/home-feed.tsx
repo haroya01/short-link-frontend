@@ -302,7 +302,13 @@ function HomeList({
   const remote = forYou.state === "ready" ? forYou : null;
   const remoteRows = remote ? remoteBesides(remoteRowsOf(remote.pages), localNotes) : [];
   const localDone = data !== undefined && !hasNextPage;
-  const mixed = mixing ? mixHome(rows, remoteRows, localDone) : { rows: rows.map(asLocal), wanted: 0 };
+  const connectAfter = new Map<number, ConnectionEvent>();
+  connectionEvents.forEach((event, k) => {
+    const at = CONNECTION_FIRST + k * CONNECTION_EVERY;
+    if (at < rows.length) connectAfter.set(at, event);
+  });
+  const cards = new Set(connectAfter.keys());
+  const mixed = mixing ? mixHome(rows, remoteRows, localDone, cards) : { rows: rows.map(asLocal), wanted: 0 };
   const remoteMore =
     remote !== null && remote.hasMore && !remote.loadingMore && !remote.moreFailed && !remote.stalled ? remote.more : null;
   const remoteShort =
@@ -358,11 +364,6 @@ function HomeList({
     );
   }
 
-  const connectAfter = new Map<number, ConnectionEvent>();
-  connectionEvents.forEach((event, k) => {
-    const at = CONNECTION_FIRST + k * CONNECTION_EVERY;
-    if (at < rows.length) connectAfter.set(at, event);
-  });
   let localIndex = -1;
 
   return (

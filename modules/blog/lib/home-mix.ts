@@ -9,20 +9,29 @@ export function mixHome<L, R>(
   local: readonly L[],
   remote: readonly R[],
   localDone: boolean,
+  cards: ReadonlySet<number> = new Set(),
 ): { rows: Mixed<L, R>[]; wanted: number } {
   const rows: Mixed<L, R>[] = [];
+  const crowded = (at: number) => cards.has(at - 1) || cards.has(at) || cards.has(at + 1);
   let next = 0;
+  let slot = MIX_EVERY - 1;
+  let wanted = 0;
   local.forEach((item, i) => {
     rows.push({ kind: "local", item });
-    const count = i + 1;
-    if (count % MIX_EVERY !== 0 || count === local.length) return;
+    if (i !== slot) return;
+    if (crowded(i)) {
+      slot = i + 1;
+      return;
+    }
+    if (i === local.length - 1) return;
+    slot = i + MIX_EVERY;
+    wanted += MIX_TAKE;
     for (let k = 0; k < MIX_TAKE && next < remote.length; k += 1) {
       rows.push({ kind: "remote", item: remote[next++], tail: false });
     }
   });
   if (localDone) while (next < remote.length) rows.push({ kind: "remote", item: remote[next++], tail: true });
-  const wanted = localDone ? 0 : MIX_TAKE * Math.floor(Math.max(local.length - 1, 0) / MIX_EVERY);
-  return { rows, wanted };
+  return { rows, wanted: localDone ? 0 : wanted };
 }
 
 export function remoteBesides(rows: readonly RemoteRow[], localNotes: ReadonlySet<number>): RemoteRow[] {

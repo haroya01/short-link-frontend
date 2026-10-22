@@ -53,18 +53,28 @@ test("a post row's heart likes the post and shows the server's count", async ({ 
   await expect(liked).toHaveText("63");
 });
 
-test("최신 keeps the public connection cards, one after the fifth row and then every five", async ({ page }) => {
+test("최신 keeps the public connection cards, one after the sixth of my rows and then every five, clear of the 맞춤 pairs", async ({
+  page,
+}) => {
   const feed = await openHome(page);
   const rows = feed.locator(":scope > div > *");
   await expect(feed.getByTestId("home-connection").first()).toBeVisible();
+  await expect(feed.locator("[data-remote-mark]").first()).toBeAttached();
   const kids = await rows.evaluateAll((all) =>
     all.map((el) =>
       el.matches("[data-testid=home-connection]") ? "c" : el.matches("[data-remote-uri], [data-remote-kept]") ? "m" : "r",
     ),
   );
-  const firstCard = kids.indexOf("c");
-  expect(kids.slice(0, firstCard).filter((k) => k === "r")).toHaveLength(6);
-  expect(kids.slice(0, firstCard).filter((k) => k === "m")).toHaveLength(2);
+  const cards = kids.flatMap((kid, i) => (kid === "c" ? [i] : []));
+  const mine = (from: number, to: number) => kids.slice(from, to).filter((kid) => kid === "r").length;
+  expect(mine(0, cards[0])).toBe(6);
+  cards.slice(1).forEach((at, k) => expect(mine(cards[k], at)).toBe(5));
+  kids.forEach((kid, i) => {
+    if (kid !== "c") return;
+    expect(kids.slice(Math.max(i - 2, 0), i)).not.toContain("m");
+    expect(kids.slice(i + 1, i + 3)).not.toContain("m");
+  });
+  expect(kids.filter((kid) => kid === "m").length).toBeGreaterThan(0);
 });
 
 test("a note written in the composer lands at the top of 홈", async ({ page }) => {
