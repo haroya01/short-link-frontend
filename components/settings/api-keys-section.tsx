@@ -114,7 +114,7 @@ export function ApiKeysSection() {
           <p className="font-medium">{t("justIssuedTitle")}</p>
           <p className="mt-1">{t("justIssuedHint")}</p>
           <div className="mt-2 flex gap-2">
-            <code className="flex-1 break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
+            <code data-sentry-mask className="flex-1 break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
               {revealed ? issued.rawKey : "•".repeat(issued.rawKey.length)}
             </code>
             <Button
