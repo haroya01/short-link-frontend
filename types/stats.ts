@@ -74,6 +74,8 @@ export type LinkStats = {
   languageClicks: LanguageClick[];
   asnClicks: AsnClick[];
   datacenterClicks: number;
+  rawRetentionDays?: number;
+  rawSince?: string | null;
 };
 
 /**

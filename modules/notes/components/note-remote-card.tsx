@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import type { Note, NoteMedia, RemoteNoteShape } from "@/modules/notes/api/notes";
+import { textWithoutCardedLink } from "@/modules/notes/lib/note-text";
 
 export function remoteCardOf(note: Note): RemoteNoteShape | null {
   const kind = note.remote?.kind;
@@ -25,19 +26,22 @@ export function webAddress(url: string | null | undefined): { href: string; host
 
 export function NoteRemoteCard({
   shape,
-  summary,
+  summary: body,
   picture,
   language,
   full = false,
+  cardUrl,
 }: {
   shape: RemoteNoteShape;
   summary: string;
   picture: NoteMedia | null;
   language?: string | null;
   full?: boolean;
+  cardUrl?: string | null;
 }) {
   const t = useTranslations("notes");
   const summaryId = useId();
+  const summary = textWithoutCardedLink(body, cardUrl);
   const address = webAddress(shape.url);
   const video = shape.kind === "VIDEO";
   const frame = "mt-1.5 block overflow-hidden rounded-surface border border-slate-200 dark:border-slate-800";
@@ -92,7 +96,7 @@ export function NoteRemoteCard({
         {summary && (
           <span
             id={summaryId}
-            lang={contentLang(summary, language)}
+            lang={contentLang(body, language)}
             className={cn(
               "block whitespace-pre-wrap break-words leading-[1.45] text-slate-600 dark:text-slate-300",
               full ? "text-[15px]" : "text-[14px] line-clamp-3",

@@ -988,7 +988,7 @@ const TRENDING: TrendingNote[] = [
   }),
   trendingItem(
     "https://fedibird.com/users/sora/statuses/4401",
-    "長く使える道具の選び方について書きました。",
+    "長く使える道具の選び方について書きました。\nhttps://sora.example/tools",
     "sora@fedibird.com",
     "そら",
     250,

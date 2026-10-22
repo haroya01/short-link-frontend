@@ -51,6 +51,28 @@ export function splitNoteText(body: string, mentions: readonly string[] = []): N
   return parts;
 }
 
+export function withoutCardedLink(parts: NoteTextPart[], cardUrl: string | null | undefined): NoteTextPart[] {
+  if (!cardUrl) return parts;
+  let end = parts.length;
+  while (end > 0 && parts[end - 1].kind === "text" && !parts[end - 1].value.trim()) end--;
+  const last = parts[end - 1];
+  if (last?.kind !== "link" || last.value !== cardUrl) return parts;
+  const kept = parts.slice(0, end - 1);
+  const before = kept.at(-1);
+  if (before?.kind === "text") {
+    const value = before.value.trimEnd();
+    kept.splice(-1, 1, ...(value ? [{ kind: "text" as const, value }] : []));
+  }
+  return kept;
+}
+
+export function textWithoutCardedLink(body: string, cardUrl: string | null | undefined): string {
+  if (!cardUrl) return body;
+  return withoutCardedLink(splitNoteText(body), cardUrl)
+    .map((part) => (part.kind === "tag" ? `#${part.value}` : part.value))
+    .join("");
+}
+
 /** The address a note's link card is about — the first link, the same pick the server makes. Notes
  *  with photos or a quote already carry a card and get none. */
 export function previewUrl(body: string, hasMedia: boolean, hasQuote: boolean): string | null {

@@ -29,3 +29,18 @@ describe("a note body on a page in another language", () => {
     expect(paragraph(<NoteBody body="Shipped the new editor today" />)?.hasAttribute("lang")).toBe(false);
   });
 });
+
+describe("a note body under its link card", () => {
+  const video = "https://youtu.be/6Zo0eMZB6t4";
+
+  it("shows the text without the closing link the card already shows", () => {
+    const p = paragraph(<NoteBody body={`切り抜き\n${video}`} cardUrl={video} />);
+    expect(p?.textContent).toBe("切り抜き");
+    expect(p?.querySelector("a")).toBeNull();
+  });
+
+  it("renders nothing when the note is only that link, and keeps the link when there is no card", () => {
+    expect(paragraph(<NoteBody body={video} cardUrl={video} />)).toBeNull();
+    expect(paragraph(<NoteBody body={video} />)?.querySelector("a")?.getAttribute("href")).toBe(video);
+  });
+});
