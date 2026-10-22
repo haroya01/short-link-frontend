@@ -4631,6 +4631,7 @@
     "remoteCaptionRequested": "Đã gửi yêu cầu theo dõi. Khi {domain} chấp nhận, bạn sẽ theo dõi.",
     "remoteOpenOnServer": "Xem trên {domain}",
     "receivedNotes": "Ghi chú đã nhận",
+    "remoteSeenDivider": "Bài đã xem",
     "trendingFailed": "Không tải được bài thịnh hành",
     "latestFailed": "Không tải được bài mới nhất",
     "latestEmpty": "Chưa có bài mới từ máy chủ khác",

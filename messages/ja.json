@@ -4631,6 +4631,7 @@
     "remoteCaptionRequested": "フォローをリクエストしました。{domain}が承認するとフォロー中になります。",
     "remoteOpenOnServer": "{domain}で見る",
     "receivedNotes": "受け取ったノート",
+    "remoteSeenDivider": "もう見た投稿",
     "trendingFailed": "人気の投稿を読み込めませんでした",
     "latestFailed": "最新の投稿を読み込めませんでした",
     "latestEmpty": "ほかのサーバーの新しい投稿はまだありません",

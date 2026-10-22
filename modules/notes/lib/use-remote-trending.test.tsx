@@ -129,7 +129,10 @@ describe("the list of posts from other servers", () => {
     return seen as Extract<RemoteNotes, { state: "ready" }>;
   }
 
-  beforeEach(() => vi.useFakeTimers());
+  beforeEach(() => {
+    vi.useFakeTimers();
+    mocks.listRemoteNotes.mockReset();
+  });
 
   it("waits for the session before asking, then shows what came back", async () => {
     mocks.auth = { authenticated: false, ready: false };
@@ -189,6 +192,56 @@ describe("the list of posts from other servers", () => {
     await act(async () => loaded().more());
     await flush();
     expect(loaded().moreFailed).toBe(false);
+    expect(loaded().hasMore).toBe(false);
+  });
+
+  it("an empty page with a next asks for the next one at once, three times in a row at most", async () => {
+    mocks.listRemoteNotes.mockImplementation((_view: string, cursor: string | null) =>
+      Promise.resolve(pool([], `u${Number(cursor?.slice(1) ?? 0) + 1}`)),
+    );
+    await mount("latest");
+    await flush();
+    expect(mocks.listRemoteNotes.mock.calls).toEqual([
+      ["latest", null],
+      ["latest", "u1"],
+      ["latest", "u2"],
+      ["latest", "u3"],
+    ]);
+    expect(loaded().stalled).toBe(true);
+    expect(loaded().loadingMore).toBe(false);
+
+    await act(async () => loaded().more());
+    await flush();
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(5);
+    expect(loaded().stalled).toBe(true);
+  });
+
+  it("the chain starts over once a page brings posts", async () => {
+    mocks.listRemoteNotes
+      .mockResolvedValueOnce(pool([], "u1"))
+      .mockResolvedValueOnce(pool([item], "u2"))
+      .mockResolvedValueOnce(pool([], "u3"))
+      .mockResolvedValueOnce(pool([], "u4"))
+      .mockResolvedValueOnce(pool([], "u5"))
+      .mockResolvedValueOnce(pool([], "u6"))
+      .mockResolvedValue(pool([], null));
+    await mount("latest");
+    await flush();
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(2);
+    expect(loaded().stalled).toBe(false);
+
+    await act(async () => loaded().more());
+    await flush();
+    await flush();
+    expect(mocks.listRemoteNotes.mock.calls.map(([, cursor]) => cursor)).toEqual([null, "u1", "u2", "u3", "u4", "u5"]);
+    expect(loaded().stalled).toBe(true);
+  });
+
+  it("an empty last page ends the list without asking again", async () => {
+    mocks.listRemoteNotes.mockResolvedValueOnce(pool([], null));
+    await mount("latest");
+    await flush();
+    expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(1);
     expect(loaded().hasMore).toBe(false);
   });
 
