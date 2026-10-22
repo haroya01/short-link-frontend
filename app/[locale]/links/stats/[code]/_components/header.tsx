@@ -118,7 +118,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
               />
             )}
             <Button variant="outline" size="lg" className="w-full" onClick={exportCsv}>
-              {t("exportCsv")}
+              {t("exportSummaryCsv")}
             </Button>
           </div>
         </BottomSheet>
@@ -131,8 +131,8 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
             </Button>
           )}
           {!demo && <PublicStatsToggle shortCode={data.shortCode} className="px-2" />}
-          <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
-            CSV
+          <Button variant="ghost" size="sm" onClick={exportCsv}>
+            {t("exportSummaryCsv")}
           </Button>
         </div>
       </div>

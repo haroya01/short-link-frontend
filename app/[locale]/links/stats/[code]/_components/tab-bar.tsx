@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import type { TabKey } from "../_lib/use-tab-hash";
 
@@ -22,12 +23,24 @@ export function TabBar({ active, onSelect, items }: Props) {
     { key: "when", label: t("analysisTabs.when") },
     { key: "where", label: t("analysisTabs.where") },
     { key: "who", label: t("analysisTabs.who") },
+    { key: "log", label: t("tabs.log") },
     { key: "settings", label: t("tabs.settings") },
   ];
   const tabs = items ? all.filter((it) => items.includes(it.key)) : all;
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const list = listRef.current;
+    const tab = list?.querySelector<HTMLElement>(`#stats-tab-${active}`);
+    if (!list || !tab) return;
+    const bounds = list.getBoundingClientRect();
+    const rect = tab.getBoundingClientRect();
+    if (rect.left < bounds.left) list.scrollLeft -= bounds.left - rect.left + 16;
+    else if (rect.right > bounds.right) list.scrollLeft += rect.right - bounds.right + 16;
+  }, [active]);
   // 세그먼트 밑 사용법 설명문은 두지 않는다 — 화면이 스스로 설명돼야 한다.
   return (
     <div
+      ref={listRef}
       role="tablist"
       aria-label={t("tabs.aria")}
       className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
