@@ -1,13 +1,13 @@
 import React, { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { FollowUser } from "@/modules/blog/api/follows";
+import type { FollowEntry } from "@/modules/blog/api/follows";
+import type { RemoteAccount } from "@/modules/notes/api/notes";
 import { FollowListDialog } from "./follow-list-dialog";
 
 const mocks = vi.hoisted(() => ({
   toast: vi.fn(),
-  listFollowers: vi.fn(),
-  listFollowing: vi.fn(),
+  listFollowEntries: vi.fn(),
   followUser: vi.fn(),
   unfollowUser: vi.fn(),
   listBlockedUsers: vi.fn(),
@@ -27,10 +27,21 @@ vi.mock("@/modules/blog/components/avatar", () => ({ Avatar: () => null }));
 vi.mock("@/modules/blog/components/blog-link", () => ({
   BlogLink: ({ children, href }: { children: React.ReactNode; href: string }) => createElement("a", { href }, children),
 }));
-vi.mock("@/modules/blog/api/follows", () => mocks);
+vi.mock("@/modules/blog/api/follows", async (original) => ({ ...(await original()), ...mocks }));
+vi.mock("@/modules/notes/components/remote-account", () => ({
+  RemoteFollowButton: ({ account }: { account: RemoteAccount }) =>
+    createElement("button", { "aria-pressed": account.following }, account.following ? "remoteFollowing" : "remoteFollow"),
+}));
 
-const person = (id: number, username: string): FollowUser => ({
-  id, username, bio: null, avatarUrl: null, followerCount: 1, followedByMe: false,
+const person = (id: number, username: string): FollowEntry => ({
+  type: "local", id, username, bio: null, avatarUrl: null, followerCount: 1, followedByMe: false,
+});
+const remote = (id: number, username: string, domain: string, following: boolean): FollowEntry => ({
+  type: "remote",
+  account: {
+    id, acct: `${username}@${domain}`, username, domain, displayName: null, avatarUrl: null,
+    url: `https://${domain}/@${username}`, following, requested: false,
+  },
 });
 const status = (over: { following: boolean; requested?: boolean }) => ({
   followerCount: 1, followingCount: 0, hideFollowerCount: false, ...over,
@@ -72,7 +83,7 @@ const rowButton = (username: string) =>
 
 describe("the followers list", () => {
   it("adds a later page without repeating someone an earlier page showed", async () => {
-    mocks.listFollowers.mockImplementation(async (_: string, page: number) =>
+    mocks.listFollowEntries.mockImplementation(async (_: string, __: string, page: number) =>
       page === 0
         ? { items: [person(1, "haneul"), person(2, "minseo")], page: 0, size: 2, hasNext: true }
         : { items: [person(2, "minseo"), person(3, "yuna")], page: 1, size: 2, hasNext: false },
@@ -84,7 +95,7 @@ describe("the followers list", () => {
   });
 
   it("shows a locked writer's row as requested, not following", async () => {
-    mocks.listFollowers.mockResolvedValue({ items: [person(4, "haruka")], page: 0, size: 20, hasNext: false });
+    mocks.listFollowEntries.mockResolvedValue({ items: [person(4, "haruka")], page: 0, size: 20, hasNext: false });
     mocks.followUser.mockResolvedValue(status({ following: false, requested: true }));
     await open();
     await act(async () => rowButton("haruka").click());
@@ -100,7 +111,7 @@ describe("the followers list", () => {
   });
 
   it("puts the row back and says so when the follow fails", async () => {
-    mocks.listFollowers.mockResolvedValue({ items: [person(3, "yuna")], page: 0, size: 20, hasNext: false });
+    mocks.listFollowEntries.mockResolvedValue({ items: [person(3, "yuna")], page: 0, size: 20, hasNext: false });
     mocks.followUser.mockRejectedValue(new TypeError("Failed to fetch"));
     await open();
     await act(async () => rowButton("yuna").click());
@@ -113,7 +124,7 @@ describe("someone else's followers list", () => {
   it("leaves out people I blocked", async () => {
     mocks.me = { id: 1, username: "dohyun" };
     mocks.listBlockedUsers.mockResolvedValue([{ id: 9, username: "mallory", avatarUrl: null }]);
-    mocks.listFollowers.mockResolvedValue({
+    mocks.listFollowEntries.mockResolvedValue({
       items: [person(1, "haneul"), person(9, "mallory")],
       page: 0,
       size: 20,
@@ -122,5 +133,39 @@ describe("someone else's followers list", () => {
     await open();
     expect(rows().map((li) => li.querySelector("a")?.textContent)).toEqual(["@haneul"]);
     mocks.me = { username: "dohyun" };
+  });
+});
+
+describe("a list mixing kurl members and accounts on other servers", () => {
+  it("shows a remote row as @user@domain linking to its account page, with the viewer's own follow state", async () => {
+    mocks.listBlockedUsers.mockResolvedValue([{ id: 9, username: "mallory", avatarUrl: null }]);
+    mocks.listFollowEntries.mockResolvedValue({
+      items: [person(1, "haneul"), remote(9805, "ren", "mastodon.online", false), remote(9806, "mallory", "blog.example", true)],
+      page: 0,
+      size: 20,
+      hasNext: false,
+    });
+    await open();
+    expect(mocks.listFollowEntries).toHaveBeenCalledWith("dohyun", "followers", 0);
+    expect(rows().map((li) => li.querySelector("a")?.textContent)).toEqual([
+      "@haneul",
+      "@ren@mastodon.online",
+      "@mallory@blog.example",
+    ]);
+    expect(rows()[1].querySelector("a")!.getAttribute("href")).toMatch(/\/remote\/9805$/);
+    expect(rowButton("ren@mastodon.online").textContent).toBe("remoteFollow");
+    expect(rowButton("mallory@blog.example").getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("keeps a kurl member and a remote account that share an id as two rows across pages", async () => {
+    mocks.listFollowEntries.mockImplementation(async (_: string, __: string, page: number) =>
+      page === 0
+        ? { items: [person(7, "haneul"), remote(7, "ren", "mastodon.online", false)], page: 0, size: 2, hasNext: true }
+        : { items: [remote(7, "ren", "mastodon.online", false), person(8, "yuna")], page: 1, size: 2, hasNext: false },
+    );
+    await open();
+    const more = Array.from(document.querySelectorAll("button")).find((b) => b.textContent === "publicPost.loadMore")!;
+    await act(async () => more.click());
+    expect(rows().map((li) => li.querySelector("a")?.textContent)).toEqual(["@haneul", "@ren@mastodon.online", "@yuna"]);
   });
 });

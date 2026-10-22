@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { readStorageJson, removeStorageItem, writeStorageJson } from "@/lib/storage-json";
+import { followCountTotals } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { inert } from "@/lib/utils";
 import { FollowListDialog, type FollowTab } from "./follow-list-dialog";
@@ -53,14 +54,14 @@ export function FollowCounts({
     if (cached) setCounts(cached);
     fetchFollowStatus(username)
       .then((s) => {
+        const next = followCountTotals(s);
         // Hidden author: the backend omits the count keys entirely. Purge any cached numbers too, so an
         // author who just hid their counts stops flashing the old values on the next visit.
-        if (s.hideFollowerCount || s.followerCount == null || s.followingCount == null) {
+        if (!next) {
           setHidden(true);
           removeStorageItem(cacheKey(username), { session: true });
           return;
         }
-        const next = { followers: s.followerCount, following: s.followingCount };
         setCounts(next);
         writeStorageJson(cacheKey(username), next, { session: true });
       })
