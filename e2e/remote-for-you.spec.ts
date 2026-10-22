@@ -1,5 +1,6 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock lane (Playwright routes): other servers come in 맞춤 order from /federation/for-you. 홈 최신 puts
 // two of them after every five of mine, each marked 다른 서버, and once mine run out they carry on alone.
@@ -70,10 +71,9 @@ const MIXED: Record<string, Body> = {
   [CURSOR]: { items: [pooled(4), pooled(5)], next: null, seenFrom: 1 },
 };
 
-async function serve(
-  page: Page,
-  { forYou = EXPLORE, home = { items: [], next: null } }: { forYou?: Record<string, Body> | null; home?: Body } = {},
-) {
+type Options = { forYou?: Record<string, Body> | null; again?: Body; home?: Body; since?: unknown[] };
+
+async function serve(page: Page, { forYou = EXPLORE, again, home = { items: [], next: null }, since = [] }: Options = {}) {
   const asked = { forYou: [] as string[], home: [] as string[], devices: [] as (string | null)[], seen: [] as Seen[] };
   await mockBackend(page, {
     "GET /api/v1/federation/for-you": (route: Route) => {
@@ -81,7 +81,8 @@ async function serve(
       asked.forYou.push(cursor ?? "");
       asked.devices.push(route.request().headers()["x-kurl-device"] ?? null);
       if (!forYou) return route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } });
-      return route.fulfill({ json: forYou[cursor ?? "first"] });
+      const repeat = cursor === null && again && asked.forYou.filter((sent) => sent === "").length > 1;
+      return route.fulfill({ json: repeat ? again : forYou[cursor ?? "first"] });
     },
     "POST /api/v1/federation/seen": (route: Route) => {
       asked.seen.push(route.request().postDataJSON());
@@ -90,7 +91,10 @@ async function serve(
     "GET /api/v1/public/home": (route: Route) => {
       const url = new URL(route.request().url());
       asked.home.push(url.search);
-      if (url.searchParams.has("since")) return route.fulfill({ json: { items: [], next: null, gap: false } });
+      if (url.searchParams.has("since")) {
+        const items = asked.home.filter((sent) => sent.includes("since=")).length === 1 ? since : [];
+        return route.fulfill({ json: { items, next: null, gap: false, newest: "150" } });
+      }
       return route.fulfill({ json: { ...home, newest: "101" } });
     },
   });
@@ -232,21 +236,42 @@ test("with nothing of mine 맞춤 is the whole feed, and with none either 홈 sa
   await expect(page.getByText("아직 발행된 글이 없어요")).toBeVisible({ timeout: 30_000 });
 });
 
-test("a since refresh asks 맞춤 again from its first page, and 맞춤 that fails leaves mine as they are", async ({ page }) => {
+test("a refresh puts only what is new since the last one on top, mixed in, and leaves every row below where it was", async ({
+  page,
+}) => {
   await signIn(page);
-  const asked = await serve(page, { forYou: MIXED, home: { items: MINE.slice(0, 6), next: null } });
+  const later = { ...pooled(90), createdAt: "2099-01-01T00:00:00Z" };
+  const asked = await serve(page, {
+    forYou: { first: { items: [pooled(1), pooled(2), kept(31), pooled(3), pooled(4)], next: null } },
+    again: { items: [later, pooled(1), pooled(91), kept(31)], next: "f1792656999999.20", seenFrom: 0 },
+    home: { items: MINE, next: null },
+    since: [{ kind: "note", note: note(150, "방금 올라온 노트") }],
+  });
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
-  await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeAttached({ timeout: 30_000 });
-  const before = asked.forYou.length;
-  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
-  await expect.poll(() => asked.home.some((q) => q.includes("since=101"))).toBe(true);
-  await expect.poll(() => asked.forYou.slice(before)).toContain("");
-  await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeAttached();
+  await expect(feed.locator(`[data-remote-uri="${uri(4)}"]`)).toBeAttached({ timeout: 30_000 });
+  const before = await homeOrder(page);
 
-  await page.unrouteAll({ behavior: "ignoreErrors" });
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
+  await expect(feed.locator('article[data-note-id="150"]')).toBeVisible();
+  await expect(feed.locator(`[data-remote-uri="${uri(90)}"]`)).toBeAttached();
+  expect(await homeOrder(page)).toEqual(["150", "R90", ...before]);
+  await expect(feed.locator(`[data-remote-uri="${uri(91)}"]`)).toHaveCount(0);
+  await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toHaveCount(1);
+  await expect(feed.getByRole("heading", { name: "이미 본 글" })).toHaveCount(0);
+  await expect(toastBy(page, "새 글이 없어요")).toHaveCount(0);
+  expect(asked.forYou).toEqual(["", ""]);
+
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
+  await expectOnTop(toastBy(page, "새 글이 없어요"));
+  expect(await homeOrder(page)).toEqual(["150", "R90", ...before]);
+});
+
+test("맞춤 that fails leaves mine as they are", async ({ page }) => {
+  await signIn(page);
   await serve(page, { forYou: null, home: { items: MINE.slice(0, 6), next: null } });
-  await page.reload();
+  await page.goto("/ko/blog");
+  const feed = page.getByTestId("home-feed");
   await expect(feed.locator('article[data-note-id="106"]')).toBeVisible({ timeout: 30_000 });
   await expect(feed.locator("[data-remote-mark]")).toHaveCount(0);
   await expect(page.getByText("다른 서버 글을 불러오지 못했어요")).toHaveCount(0);
