@@ -615,6 +615,7 @@ export function NoteCard({
                       picture={mediaConcealed ? null : (note.media.find((m) => m.contentType.startsWith("image/")) ?? null)}
                       language={note.language}
                       full={emphasis}
+                      cardUrl={note.linkPreview?.url}
                     />
                   ) : (
                     <NoteBody

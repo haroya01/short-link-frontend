@@ -66,6 +66,13 @@ export function withoutCardedLink(parts: NoteTextPart[], cardUrl: string | null 
   return kept;
 }
 
+export function textWithoutCardedLink(body: string, cardUrl: string | null | undefined): string {
+  if (!cardUrl) return body;
+  return withoutCardedLink(splitNoteText(body), cardUrl)
+    .map((part) => (part.kind === "tag" ? `#${part.value}` : part.value))
+    .join("");
+}
+
 /** The address a note's link card is about — the first link, the same pick the server makes. Notes
  *  with photos or a quote already carry a card and get none. */
 export function previewUrl(body: string, hasMedia: boolean, hasQuote: boolean): string | null {

@@ -143,6 +143,21 @@ describe("a post from another server that is more than a note", () => {
     expect(card.getAttribute("aria-label")).toBe("remoteOpenHost(lemmy.example)");
   });
 
+  it("leaves the closing link out of the summary when the link card below shows it, and keeps it otherwise", async () => {
+    const shape = { kind: "PAGE" as const, title: null, url: "https://lemmy.example/post/1", community: null };
+    const preview = { url: "https://youtu.be/6Zo0eMZB6t4", title: "Clip", description: null, image: null };
+    await render(
+      <NoteCard note={note({ body: `Worth a watch #garden\n${preview.url}`, remote: shape, linkPreview: preview })} />,
+    );
+    const card = host.querySelector('a[data-remote-card="PAGE"]')!;
+    expect(card.textContent).toContain("Worth a watch #garden");
+    expect(card.textContent).not.toContain(preview.url);
+    expect(host.querySelector("a[data-note-link-card]")?.getAttribute("href")).toBe(preview.url);
+
+    await render(<NoteCard note={note({ body: `Worth a watch\n${preview.url}`, remote: shape })} />);
+    expect(host.querySelector('a[data-remote-card="PAGE"]')!.textContent).toContain(`Worth a watch\n${preview.url}`);
+  });
+
   it("names the community of a community post", async () => {
     await render(
       <NoteCard

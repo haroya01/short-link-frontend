@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { noteLength, previewUrl, splitNoteText, withoutCardedLink } from "./note-text";
+import { noteLength, previewUrl, splitNoteText, textWithoutCardedLink, withoutCardedLink } from "./note-text";
 
 describe("noteLength", () => {
   it("counts code points like the server", () => {
@@ -83,5 +83,13 @@ describe("withoutCardedLink", () => {
 
   it("leaves nothing when the note is only the carded link", () => {
     expect(withoutCardedLink(splitNoteText(` ${video} `), video)).toEqual([]);
+  });
+});
+
+describe("textWithoutCardedLink", () => {
+  it("gives back the text as written, tags and their marks included, without the carded closing link", () => {
+    expect(textWithoutCardedLink("道具の話 #kurl·\nhttps://sora.example/tools", "https://sora.example/tools")).toBe("道具の話 #kurl·");
+    expect(textWithoutCardedLink("道具の話 https://sora.example/tools", null)).toBe("道具の話 https://sora.example/tools");
+    expect(textWithoutCardedLink("https://sora.example/tools", "https://sora.example/tools")).toBe("");
   });
 });
