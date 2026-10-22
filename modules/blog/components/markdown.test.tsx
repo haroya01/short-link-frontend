@@ -85,3 +85,38 @@ describe("reader markdown links alone on a line", () => {
     expect(labeled.querySelector("a")?.textContent).toBe("읽어 볼 글");
   });
 });
+
+describe("reader markdown classes", () => {
+  const classesIn = (root: DocumentFragment) =>
+    Array.from(root.querySelectorAll("[class]")).flatMap((el) => Array.from(el.classList));
+
+  it("drops author-supplied classes on span, mark and pre", () => {
+    for (const html of [
+      '<span class="fixed inset-0 z-50">a</span>',
+      '<mark class="fixed inset-0">b</mark>',
+      '<pre class="fixed inset-0">c</pre>',
+      '<code class="fixed inset-0">d</code>',
+    ]) {
+      for (const root of [render(html), render(html, true)]) {
+        expect(classesIn(root)).not.toContain("fixed");
+        expect(classesIn(root)).not.toContain("inset-0");
+      }
+    }
+  });
+
+  it("keeps color styles on span and mark", () => {
+    const root = render('<span style="color: #e11d48">a</span> <mark style="background-color: yellow">b</mark>');
+    expect(root.querySelector("span")?.getAttribute("style")).toBe("color:#e11d48");
+    expect(root.querySelector("mark")?.getAttribute("style")).toBe("background-color:yellow");
+  });
+
+  it("drops a forged hljs class but keeps highlighting on fenced code", () => {
+    const forged = render('<span class="hljs-keyword">x</span>');
+    expect(forged.querySelector("span")?.hasAttribute("class")).toBe(false);
+    const root = render("```js\nconst a = 1;\n```");
+    const code = root.querySelector("pre code")!;
+    expect(code.classList).toContain("hljs");
+    expect(code.classList).toContain("language-js");
+    expect(classesIn(root).some((c) => c.startsWith("hljs-"))).toBe(true);
+  });
+});
