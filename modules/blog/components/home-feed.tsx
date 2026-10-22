@@ -272,12 +272,13 @@ function HomeList({
     try {
       if (hiding) await seenQueue().flush();
       const since = lastRefresh.current;
-      lastRefresh.current = Date.now();
+      const startedAt = Date.now();
       const asked = newest.current;
       const [found, remotePage] = await Promise.all([
         asked === null ? refetch().then(() => null) : listHomeSince(API_TAB[sort], asked, undefined, hiding),
         mixing ? listRemoteNotes("for-you", null, undefined, hiding).catch(() => null) : Promise.resolve(null),
       ]);
+      if (remotePage) lastRefresh.current = startedAt;
       const remote = remotePage ? freshRemote(remotePage.items, known.current, since) : [];
       if (found?.ok && found.data.newest) newest.current = found.data.newest;
       if (found?.ok && found.data.gap) {

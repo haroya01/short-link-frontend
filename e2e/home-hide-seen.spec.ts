@@ -190,3 +190,39 @@ test("팔로잉 and 인기 do not hide and do not count rows", async ({ page }) 
   expect(asked.home.some((sent) => sent.search.includes("seen="))).toBe(false);
   await expect(page.getByTestId("home-caught-up")).toHaveCount(0);
 });
+
+test("a refresh whose 맞춤 failed does not move the last-refresh time, so the next one still adds what was written since", async ({
+  page,
+}) => {
+  await signIn(page);
+  let calls = 0;
+  let failedAt = 0;
+  await mockBackend(page, {
+    "GET /api/v1/public/home": (route: Route) => {
+      const url = new URL(route.request().url());
+      if (url.searchParams.has("since")) return route.fulfill({ json: { items: [], next: null, gap: false } });
+      return route.fulfill({ json: { ...MINE, newest: "102.201" } });
+    },
+    "GET /api/v1/federation/for-you": (route: Route) => {
+      calls += 1;
+      if (calls === 2) {
+        failedAt = Date.now();
+        return route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } });
+      }
+      if (calls === 1) return route.fulfill({ json: { items: [pooled(1)], next: null } });
+      const between = { ...pooled(60), createdAt: new Date(failedAt - 300).toISOString() };
+      return route.fulfill({ json: { items: [between, pooled(1)], next: null } });
+    },
+    "POST /api/v1/federation/seen": (route: Route) => route.fulfill({ status: 202, body: "" }),
+  });
+  await page.goto("/ko/blog");
+  const feed = page.getByTestId("home-feed");
+  await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeAttached({ timeout: 30_000 });
+  await page.waitForTimeout(1_200);
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
+  await expect.poll(() => calls).toBe(2);
+  await page.waitForTimeout(600);
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
+  await expect.poll(() => calls).toBe(3);
+  await expect(feed.locator(`[data-remote-uri="${uri(60)}"]`)).toBeAttached();
+});
