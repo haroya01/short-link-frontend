@@ -1,7 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 
-// Mock lane (Playwright routes): 다른 서버 최신 puts what the reader has not seen first. The page that
+// Mock lane (Playwright routes): 다른 서버 맞춤 puts what the reader has not seen first. The page that
 // starts the seen part carries seenFrom and the list draws 이미 본 글 above that row. A post counts as
 // seen after a second at least half on screen; those go to /federation/seen in batches, with the
 // device id when signed out. An empty page with a next is followed at once, three times in a row.
@@ -110,7 +110,7 @@ test("a signed-out reader sees 이미 본 글 above the row at seenFrom, and wha
       : { items: Array.from({ length: 12 }, (_, i) => pooled(i + 1)), next: "s1.t12", seenFrom: 2 },
   );
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote&order=latest");
+  await page.goto("/ko/blog/explore?lane=remote");
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
 
@@ -149,7 +149,7 @@ test("a signed-out reader sees 이미 본 글 above the row at seenFrom, and wha
 test("a row scrolled past in under a second is not sent", async ({ page }) => {
   const asked = await serve(page, () => ({ items: Array.from({ length: 20 }, (_, i) => pooled(i + 1)), next: null }));
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote&order=latest");
+  await page.goto("/ko/blog/explore?lane=remote");
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
 
@@ -173,7 +173,7 @@ test("empty pages with a next are followed at once, three in a row, then the lis
     return { items: [pooled(1)], next: null };
   });
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote&order=latest");
+  await page.goto("/ko/blog/explore?lane=remote");
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
   expect(asked.latest).toEqual(["", "u1", "u2", "u3"]);
@@ -188,7 +188,7 @@ test("empty pages with a next are followed at once, three in a row, then the lis
   await expect.poll(() => asked.latest).toEqual(["", "u1", "u2", "u3", "u4"]);
 });
 
-test("in 홈 the tail draws 이미 본 글 under its own heading, and a signed-in reader is sent by token, not device", async ({
+test("in 홈, other servers that follow after mine draw 이미 본 글 at seenFrom, and a signed-in reader is sent by token, not device", async ({
   page,
 }) => {
   await signIn(page);
@@ -198,11 +198,11 @@ test("in 홈 the tail draws 이미 본 글 under its own heading, and a signed-i
     { items: [{ kind: "note", note: note(101, "kurl 노트") }], next: null },
   );
   await page.goto("/ko/blog");
-  const tail = page.getByTestId("home-remote-tail");
-  await expect(tail.getByRole("heading", { name: "다른 서버", exact: true, level: 2 })).toBeVisible({ timeout: 30_000 });
-  const divider = tail.getByRole("heading", { name: "이미 본 글", level: 3 });
+  const feed = page.getByTestId("home-feed");
+  await expect(feed.locator('[data-remote-kept="31"]')).toBeVisible({ timeout: 30_000 });
+  const divider = feed.getByRole("heading", { name: "이미 본 글", level: 2 });
   await expect(divider).toHaveCount(1);
-  await expect(tail.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
+  await expect(feed.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
   expect(asked.devices.every((sent) => sent === null)).toBe(true);
 
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));

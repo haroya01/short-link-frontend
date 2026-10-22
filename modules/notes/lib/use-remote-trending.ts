@@ -42,7 +42,7 @@ function trailingEmptyPages(pages: RemoteNotesPage[]): number {
   return count;
 }
 
-export function useRemoteNotes(view: RemoteView): RemoteNotes {
+export function useRemoteNotes(view: RemoteView, enabled = true): RemoteNotes {
   const { ready, authenticated } = useAuth();
   const { data, isError, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery({
@@ -50,7 +50,7 @@ export function useRemoteNotes(view: RemoteView): RemoteNotes {
       queryFn: ({ pageParam }) => listRemoteNotes(view, pageParam),
       initialPageParam: null as string | null,
       getNextPageParam: (last) => last.next,
-      enabled: ready,
+      enabled: ready && enabled,
       staleTime: REMOTE_TRENDING_STALE_MS,
     });
   const empties = data ? trailingEmptyPages(data.pages) : 0;

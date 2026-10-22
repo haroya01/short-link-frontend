@@ -18,7 +18,7 @@ import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { listFollowSuggestions } from "@/modules/notes/api/follow-suggestions";
 import { FollowSuggestions } from "@/modules/notes/components/follow-suggestions";
 import { NoteListSkeleton } from "@/modules/notes/components/note-list";
-import { RemoteFeed, RemoteOrderedFeed } from "@/modules/notes/components/remote-feed";
+import { RemoteFeed } from "@/modules/notes/components/remote-feed";
 
 export type ExploreLane = "picks" | "remote" | "people";
 
@@ -28,7 +28,7 @@ const STRIP_MAX = 8;
 const AUTHORS = 5;
 
 export function ExploreLanePanel({ lane, onPeople }: { lane: ExploreLane; onPeople: () => void }) {
-  if (lane === "remote") return <RemoteOrderedFeed />;
+  if (lane === "remote") return <RemoteFeed view="for-you" />;
   if (lane === "people") return <PeopleLane />;
   return <PicksLane onPeople={onPeople} />;
 }

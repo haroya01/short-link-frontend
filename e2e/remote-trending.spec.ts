@@ -105,16 +105,17 @@ async function serve(page: Page, { trending: list, latest, resolve }: Serve = {}
     reposted: [] as string[],
     created: [] as unknown[],
   };
+  const forYou = async (route: Route) => {
+    seen.latest.push(new URL(route.request().url()).search);
+    if (latest) await latest(route);
+    else await route.fulfill({ json: { items: ITEMS.slice(2), next: null } });
+  };
   await mockBackend(page, {
+    "GET /api/v1/federation/for-you": forYou,
     "GET /api/v1/federation/trending": async (route) => {
       seen.trending.push(new URL(route.request().url()).search);
       if (list) await list(route, seen.trending.length);
       else await route.fulfill({ json: { items: ITEMS } });
-    },
-    "GET /api/v1/federation/latest": async (route) => {
-      seen.latest.push(new URL(route.request().url()).search);
-      if (latest) await latest(route);
-      else await route.fulfill({ json: { items: ITEMS.slice(2), next: null } });
     },
     "GET /api/v1/federation/resolve": async (route) => {
       seen.resolved.push(new URL(route.request().url()).searchParams.get("q") ?? "");
@@ -217,7 +218,7 @@ test("추천 ends in what is trending elsewhere and keeps going as the reader sc
   expect(seen.resolved).toEqual([]);
 });
 
-test("다른 서버 최신 lists the latest posts from other servers without the trending line, and pages on its own cursor", async ({
+test("다른 서버 lists other servers' posts in 맞춤 order without the trending line, and pages on its own cursor", async ({
   page,
 }) => {
   await signIn(page);
@@ -234,9 +235,7 @@ test("다른 서버 최신 lists the latest posts from other servers without the
   await expect(page).toHaveURL(/\/explore\?lane=remote$/);
   await expect(page.getByRole("tab", { name: "다른 서버" })).toHaveAttribute("aria-selected", "true");
   const { group, card } = lane(page, "remote");
-  await group.getByRole("group", { name: "정렬" }).getByRole("button", { name: "최신" }).click();
-  await expect(page).toHaveURL(/\/explore\?lane=remote&order=latest$/);
-  await expect(group).toHaveAttribute("data-remote-view", "latest");
+  await expect(group).toHaveAttribute("data-remote-view", "for-you");
   await expect(card(3)).toBeVisible();
   await expect(card(0)).not.toContainText("에서 인기");
   await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("128");

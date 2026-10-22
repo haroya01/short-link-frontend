@@ -57,9 +57,14 @@ test("최신 keeps the public connection cards, one after the fifth row and then
   const feed = await openHome(page);
   const rows = feed.locator(":scope > div > *");
   await expect(feed.getByTestId("home-connection").first()).toBeVisible();
-  const kids = await rows.evaluateAll((all) => all.map((el) => (el.matches("[data-testid=home-connection]") ? "c" : "r")));
+  const kids = await rows.evaluateAll((all) =>
+    all.map((el) =>
+      el.matches("[data-testid=home-connection]") ? "c" : el.matches("[data-remote-uri], [data-remote-kept]") ? "m" : "r",
+    ),
+  );
   const firstCard = kids.indexOf("c");
   expect(kids.slice(0, firstCard).filter((k) => k === "r")).toHaveLength(6);
+  expect(kids.slice(0, firstCard).filter((k) => k === "m")).toHaveLength(2);
 });
 
 test("a note written in the composer lands at the top of 홈", async ({ page }) => {
