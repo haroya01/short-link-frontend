@@ -1,15 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
-export type TabKey = "overview" | "who" | "when" | "where" | "settings";
+export type TabKey = "overview" | "who" | "when" | "where" | "log" | "settings";
 
-const VALID: ReadonlyArray<TabKey> = ["overview", "who", "when", "where", "settings"];
+const VALID: ReadonlyArray<TabKey> = ["overview", "who", "when", "where", "log", "settings"];
 
 function readHash(): TabKey {
   if (typeof window === "undefined") return "overview";
   const h = window.location.hash.replace("#", "") as TabKey;
   return VALID.includes(h) ? h : "overview";
+}
+
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  window.addEventListener("hashchange", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("hashchange", listener);
+  };
 }
 
 /**
@@ -20,25 +31,17 @@ function readHash(): TabKey {
  * 되게 한다(2층 뷰의 예측 가능한 탈출구). 개요/같은 값으로의 이동만 {@code replaceState}.
  */
 export function useTabHash(): [TabKey, (next: TabKey) => void] {
-  const [tab, setTab] = useState<TabKey>(() => readHash());
-  useEffect(() => {
-    const onHash = () => setTab(readHash());
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
-  }, []);
+  const tab = useSyncExternalStore(subscribe, readHash, () => "overview" as TabKey);
   return [
     tab,
     (next: TabKey) => {
-      setTab((current) => {
-        if (typeof window !== "undefined" && next !== current) {
-          if (next === "overview") {
-            history.replaceState(null, "", window.location.pathname + window.location.search);
-          } else {
-            history.pushState(null, "", `#${next}`);
-          }
-        }
-        return next;
-      });
+      if (next === readHash()) return;
+      if (next === "overview") {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      } else {
+        history.pushState(null, "", `#${next}`);
+      }
+      listeners.forEach((listener) => listener());
     },
   ];
 }

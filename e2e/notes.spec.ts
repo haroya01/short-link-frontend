@@ -264,7 +264,7 @@ test("the reposts tab lists what the author reposted under a reposted-by line", 
 test("clicking a note's text opens it, while its links and buttons keep their own job", async ({ page }) => {
   await page.goto("/ko/blog");
   const seed = page.locator('article[data-note-id="3"]');
-  await expect(seed.getByRole("link", { name: "https://kurl.me/about" })).toBeVisible({ timeout: 30_000 });
+  await expect(seed.locator("a[data-note-link-card]")).toBeVisible({ timeout: 30_000 });
   await seed.getByRole("button", { name: "공유" }).click();
   await expect(seed.getByRole("menuitem", { name: "링크 복사" })).toBeVisible();
   await expect(page).toHaveURL(/\/blog$/);
