@@ -305,7 +305,8 @@ export function NoteCard({
 
   function openFromBody(e: React.MouseEvent<HTMLDivElement>) {
     if (emphasis || editing) return;
-    if ((e.target as HTMLElement).closest("a, button, textarea, video, audio, [role='menu']")) return;
+    if (!e.currentTarget.contains(e.target as Node)) return;
+    if ((e.target as HTMLElement).closest("a, button, textarea, video, audio, dialog, [role='menu'], [role='dialog']")) return;
     if (window.getSelection()?.toString()) return;
     if (detached) {
       if (e.button === 0) detached.onOpen();
@@ -413,7 +414,11 @@ export function NoteCard({
             {avatar}
           </button>
         )}
-        <div className={emphasis ? "contents" : "min-w-0 flex-1"}>
+        <div
+          className={emphasis ? "contents" : "min-w-0 flex-1 cursor-pointer"}
+          onClick={openFromBody}
+          onAuxClick={openFromBody}
+        >
           <header className="flex min-h-5 items-center gap-1.5 text-[15px] leading-5">
             {emphasis ? (
               <div className="min-w-0">
@@ -513,12 +518,7 @@ export function NoteCard({
               {t("hiddenReplyNotice")}
             </p>
           )}
-          <div
-            className={emphasis ? "col-span-2 mt-3" : "cursor-pointer"}
-            onClick={openFromBody}
-            onAuxClick={openFromBody}
-            data-note-body
-          >
+          <div className={emphasis ? "col-span-2 mt-3" : undefined} data-note-body>
             {note.contentWarning && !editing && (
               <p
                 data-note-warning
@@ -615,9 +615,16 @@ export function NoteCard({
                       picture={mediaConcealed ? null : (note.media.find((m) => m.contentType.startsWith("image/")) ?? null)}
                       language={note.language}
                       full={emphasis}
+                      cardUrl={note.linkPreview?.url}
                     />
                   ) : (
-                    <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                    <NoteBody
+                      body={note.body}
+                      mentions={note.mentions}
+                      large={emphasis}
+                      language={note.language}
+                      cardUrl={note.linkPreview?.url}
+                    />
                   )}
                 </div>
               )}

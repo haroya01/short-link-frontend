@@ -4,7 +4,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { contentLang } from "@/modules/blog/lib/content-lang";
-import { splitNoteText } from "@/modules/notes/lib/note-text";
+import { splitNoteText, withoutCardedLink } from "@/modules/notes/lib/note-text";
 
 const linkClass =
   "rounded text-accent-700 decoration-1 underline-offset-[0.2em] hover:underline focus-ring dark:text-accent-400";
@@ -18,14 +18,17 @@ export function NoteBody({
   mentions = [],
   large = false,
   language,
+  cardUrl,
 }: {
   body: string;
   mentions?: readonly string[];
   large?: boolean;
   language?: string | null;
+  cardUrl?: string | null;
 }) {
   const locale = useLocale();
-  if (!body) return null;
+  const parts = withoutCardedLink(splitNoteText(body, mentions), cardUrl);
+  if (parts.length === 0) return null;
   return (
     <p
       lang={contentLang(body, language)}
@@ -34,7 +37,7 @@ export function NoteBody({
         large ? "text-[17px]" : "text-[15px]",
       )}
     >
-      {splitNoteText(body, mentions).map((part, i) =>
+      {parts.map((part, i) =>
         part.kind === "link" ? (
           <a key={i} href={part.value} target="_blank" rel="nofollow noopener noreferrer" className={linkClass}>
             {part.value}
