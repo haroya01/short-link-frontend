@@ -81,6 +81,9 @@ export function WhereChapter({ data }: { data: LinkStats }) {
           id="section-channel-depth"
           title={t("section.channelDepth.title")}
           description={t("section.channelDepth.desc")}
+          action={data.rawSince && data.rawRetentionDays ? (
+            <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("rawWindow", { days: data.rawRetentionDays })}</span>
+          ) : undefined}
         >
           <ChannelDepthTable data={channelDepth} timezone={data.timezone} />
         </Section>

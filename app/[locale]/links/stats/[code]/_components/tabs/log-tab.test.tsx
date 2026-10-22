@@ -78,9 +78,11 @@ it("says one line when there are no clicks", async () => {
   expect(container.querySelector("table")).toBeNull();
 });
 
-it("names the retention window only when the stats carry one", async () => {
+it("names the retention window only once the stats carry a raw boundary", async () => {
   api.getLinkEvents.mockResolvedValue({ items: [event("Seoul")], nextCursor: null });
   await act(async () => root.render(createElement(LogTab, { data: stats() })));
+  expect(container.textContent).not.toContain("retention");
+  await act(async () => root.render(createElement(LogTab, { data: stats({ rawRetentionDays: 90, rawSince: null }) })));
   expect(container.textContent).not.toContain("retention");
   await act(async () => root.render(createElement(LogTab, { data: stats({ rawRetentionDays: 90, rawSince: "2026-07-24T00:00:00Z" }) })));
   expect(container.textContent).toContain('retention:{"days":90}');

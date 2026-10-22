@@ -21,13 +21,28 @@ test("the log tab opens straight into the click rows and pages by cursor", async
   await panel.getByRole("button", { name: "더 보기" }).click();
   await expect(rows).toHaveCount(62);
   await expect(panel.getByRole("button", { name: "더 보기" })).toHaveCount(0);
-  await expect(panel.getByText("최근 90일 기록이에요", { exact: true })).toBeVisible();
+  await expect(panel.getByText("90일보다 오래된 개별 클릭은 보관하지 않아요", { exact: true })).toBeVisible();
+});
+
+test("returning ratio and channel depth name the raw window they are counted over", async ({ page }) => {
+  await page.goto(`/ko/stats/${CODE}#who`);
+  const returning = page.locator("#stats-panel-who .rounded-2xl", { hasText: "재방문 비율" });
+  await expect(returning).toContainText("최근 90일");
+
+  await page.getByRole("tab", { name: "유입 경로", exact: true }).click();
+  await expect(page.locator("#section-channel-depth header")).toContainText("최근 90일");
 });
 
 test("the header export is named for the summary it holds, apart from the log tab's two", async ({ page }) => {
   await page.goto(`/ko/stats/${CODE}#log`);
   await expect(page.getByRole("button", { name: "요약 CSV", exact: true })).toHaveText("요약 CSV");
   await expect(page.locator("button", { hasText: /^CSV$/ })).toHaveCount(0);
+});
+
+test("the privacy policy says raw clicks go after 90 days and request logs after about 30", async ({ page }) => {
+  await page.goto("/ko/privacy");
+  await expect(page.getByText(/단축 링크 클릭의 원본 기록\(IP·브라우저 정보 포함\)은 90일 뒤 삭제되고, 그 뒤에는 날짜별 집계만 남습니다/)).toBeVisible();
+  await expect(page.getByText(/운영 요청 로그는 약 30일/)).toBeVisible();
 });
 
 test("link settings no longer carry the click log or its exports", async ({ page }) => {

@@ -12,6 +12,7 @@ import type { LinkStats } from "@/types";
  */
 export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const t = useTranslations("stats.quality");
+  const tStats = useTranslations("stats");
   const total = data.totalClicks;
   if (total === 0) return null;
 
@@ -24,9 +25,10 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const realClicks = data.humanClicks;
   const previewRatio = total === 0 ? 0 : previewClicks / total;
 
-  const cards: { label: string; value: string; hint?: string }[] = [
+  const cards: { label: string; value: string; hint?: string; window?: string }[] = [
     {
       label: t("returning"),
+      window: data.rawSince && data.rawRetentionDays ? tStats("rawWindow", { days: data.rawRetentionDays }) : undefined,
       value: formatShare(returningRatio),
       hint: t("returningHint", { count: returningCount }),
     },
@@ -58,8 +60,9 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
             key={c.label}
             className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-card-flat"
           >
-            <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
-              {c.label}
+            <div className="flex items-baseline justify-between gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+              <span className="font-semibold">{c.label}</span>
+              {c.window && <span>{c.window}</span>}
             </div>
             <div className="mt-1.5 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
               {c.value}

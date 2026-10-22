@@ -157,9 +157,9 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
             </Button>
           </div>
         )}
-        {typeof data.rawRetentionDays === "number" && (
+        {data.rawSince && data.rawRetentionDays ? (
           <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">{t("retention", { days: data.rawRetentionDays })}</p>
-        )}
+        ) : null}
       </div>
     </section>
   );
