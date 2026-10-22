@@ -206,7 +206,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
           <p className="text-[13px] font-semibold text-accent-800 dark:text-accent-200">{t("secretTitle")}</p>
           <p className="mt-0.5 text-[12px] text-accent-700/80 dark:text-accent-300/80">{t("secretHint")}</p>
           <div className="mt-2 flex items-center gap-2">
-            <code className="min-w-0 flex-1 truncate rounded-lg bg-white px-3 py-2 font-mono text-[12px] text-slate-700 ring-1 ring-accent-200 dark:bg-slate-900 dark:text-slate-200 dark:ring-accent-500/30">
+            <code data-sentry-mask className="min-w-0 flex-1 truncate rounded-lg bg-white px-3 py-2 font-mono text-[12px] text-slate-700 ring-1 ring-accent-200 dark:bg-slate-900 dark:text-slate-200 dark:ring-accent-500/30">
               {secret}
             </code>
             <button

@@ -240,13 +240,13 @@ export function NoteComposer({
     quotedNote !== null ||
     error !== null;
   const textarea = useRef<HTMLTextAreaElement>(null);
-  const placeholder = room
-    ? t("roomPlaceholder", { room: room.name })
-    : inReplyToId
+  const placeholder = inReplyToId
     ? t("replyPlaceholder")
     : quotedNote || quote
       ? t("quotePlaceholder")
-      : t("composerPlaceholder");
+      : room
+        ? t("roomPlaceholder")
+        : t("composerPlaceholder");
 
   async function addFiles(files: FileList | File[] | null) {
     if (!files) return;

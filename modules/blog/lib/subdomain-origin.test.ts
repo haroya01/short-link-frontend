@@ -31,6 +31,12 @@ describe("authorBaseUrl", () => {
     expect(authorBaseUrl(req, "dohyeon")).toBe("https://blog.kurl.me/@dohyeon");
   });
 
+  it("ignores an x-original-host that is not a kurl host", () => {
+    delete process.env.NEXT_PUBLIC_BLOG_HOST;
+    const req = headers({ "x-original-host": "evil.example", host: "blog.kurl.me" });
+    expect(authorBaseUrl(req, "dohyeon")).toBe("https://blog.kurl.me/@dohyeon");
+  });
+
   it("falls back to blog.kurl.me with no host header", () => {
     delete process.env.NEXT_PUBLIC_BLOG_HOST;
     const req = headers({});

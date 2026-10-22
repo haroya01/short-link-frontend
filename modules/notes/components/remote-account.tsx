@@ -35,6 +35,7 @@ import {
 } from "@/modules/notes/api/notes";
 import { MuteDialog } from "./mute-dialog";
 import { NoteList } from "./note-list";
+import { webAddress } from "./note-remote-card";
 
 export function followFailure(error: unknown): "disabled" | "missing" | "invalid" | "blocked" | "other" {
   const code = error instanceof ApiError ? error.detail.code : undefined;
@@ -351,6 +352,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
     return <div className="mt-10 h-24 animate-pulse rounded-surface bg-slate-100 dark:bg-slate-900" aria-hidden />;
   }
   const hidden = hiddenFromViewer(account);
+  const serverPage = webAddress(account.url);
   const caption = account.following
     ? t("remoteCaptionFollowing", { domain: account.domain })
     : account.requested
@@ -372,15 +374,17 @@ export function RemoteAccountScreen({ id }: { id: number }) {
               onChange={setAccount}
               onServerChange={() => setVersion((v) => v + 1)}
             />
-            <a
-              href={account.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="focus-ring inline-flex items-center gap-1 rounded text-[13px] font-medium text-accent-700 hover:underline dark:text-accent-300"
-            >
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-              {t("remoteOpenOnServer", { domain: account.domain })}
-            </a>
+            {serverPage && (
+              <a
+                href={serverPage.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="focus-ring inline-flex items-center gap-1 rounded text-[13px] font-medium text-accent-700 hover:underline dark:text-accent-300"
+              >
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                {t("remoteOpenOnServer", { domain: account.domain })}
+              </a>
+            )}
           </div>
           {!hidden && <p className="mt-3 text-[13px] text-slate-500 dark:text-slate-400">{caption}</p>}
         </div>

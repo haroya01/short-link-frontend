@@ -4631,6 +4631,7 @@
     "remoteCaptionRequested": "फ़ॉलो अनुरोध भेजा। {domain} स्वीकार करते ही आप फ़ॉलो करने लगेंगे।",
     "remoteOpenOnServer": "{domain} पर देखें",
     "receivedNotes": "मिले हुए नोट",
+    "remoteSeenDivider": "पहले देखी गई पोस्ट",
     "trendingFailed": "ट्रेंडिंग पोस्ट लोड नहीं हो सकीं",
     "latestFailed": "नवीनतम पोस्ट लोड नहीं हो सकीं",
     "latestEmpty": "अभी अन्य सर्वरों से कोई नई पोस्ट नहीं है",
@@ -4741,7 +4742,7 @@
     "destinationMine": "मेरे नोट",
     "postToRoom": "{room} में पोस्ट करें",
     "roomAudience": "केवल {room} के सदस्य देख सकते हैं",
-    "roomPlaceholder": "{room} में कुछ कहें"
+    "roomPlaceholder": "अभी क्या कर रहे हैं?"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"

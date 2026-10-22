@@ -4631,6 +4631,7 @@
     "remoteCaptionRequested": "Follow requested. You'll be following once {domain} accepts.",
     "remoteOpenOnServer": "View on {domain}",
     "receivedNotes": "Received notes",
+    "remoteSeenDivider": "Already seen",
     "trendingFailed": "Couldn't load trending posts",
     "latestFailed": "Couldn't load the latest posts",
     "latestEmpty": "No new posts from other servers yet",
@@ -4741,7 +4742,7 @@
     "destinationMine": "My notes",
     "postToRoom": "Post to {room}",
     "roomAudience": "Only {room} members can see this",
-    "roomPlaceholder": "Say something to {room}"
+    "roomPlaceholder": "What are you up to?"
   },
   "mentions": {
     "suggestions": "People to mention"

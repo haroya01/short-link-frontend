@@ -120,3 +120,119 @@ describe("decodeRemoteItems", () => {
     expect(decodeRemoteItems(undefined)).toEqual([]);
   });
 });
+
+describe("what the server is told about the viewer", () => {
+  const DEVICE = "kurl:device-id";
+  const ID = "0f8fad5b-d9cb-469f-a165-70867728950e";
+  let sent: { url: string; headers: Headers; body: unknown; keepalive?: boolean }[] = [];
+
+  function answer(status: number, body?: unknown) {
+    sent = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init: RequestInit = {}) => {
+        sent.push({
+          url: String(input),
+          headers: new Headers(init.headers),
+          body: typeof init.body === "string" ? JSON.parse(init.body) : init.body,
+          keepalive: init.keepalive,
+        });
+        return new Response(body === undefined ? "" : JSON.stringify(body), { status });
+      }),
+    );
+  }
+
+  it("reads seenFrom against the items it kept", async () => {
+    answer(200, { items: [item, null, { ...item, uri: "https://qdon.space/2" }, { ...item, uri: "https://qdon.space/3" }], next: "s1.t2", seenFrom: 3 });
+    const { listRemoteNotes } = await api();
+    const page = await listRemoteNotes("latest");
+    expect(page.seenFrom).toBe(2);
+    expect(page.items).toHaveLength(3);
+  });
+
+  it("reads seenFrom past the last item as the next page starting seen, and ignores one that is not an index", async () => {
+    answer(200, { items: [item], next: "s1.t1", seenFrom: 1 });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("latest")).resolves.toMatchObject({ seenFrom: 1 });
+    answer(200, { items: [item], next: null, seenFrom: "1" });
+    expect(await listRemoteNotes("latest")).not.toHaveProperty("seenFrom");
+    answer(200, { items: [item], next: null, seenFrom: -1 });
+    expect(await listRemoteNotes("latest")).not.toHaveProperty("seenFrom");
+  });
+
+  it("reads a kept note's uri", async () => {
+    const kept = { id: 31, body: "저장된 노트", uri: "https://mastodon.social/users/mina/statuses/31" };
+    answer(200, { items: [kept], next: null });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("latest")).resolves.toEqual({
+      items: [{ kind: "kept", note: kept, uri: kept.uri }],
+      next: null,
+    });
+  });
+
+  it("a signed-out reader's latest carries one device id that stays, trending never does", async () => {
+    answer(200, { items: [], next: null });
+    const { listRemoteNotes } = await api();
+    await listRemoteNotes("latest");
+    const first = sent[0].headers.get("X-Kurl-Device");
+    expect(first).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    await listRemoteNotes("latest");
+    expect(sent[1].headers.get("X-Kurl-Device")).toBe(first);
+    expect(window.localStorage.getItem(DEVICE)).toBe(first);
+    await listRemoteNotes("trending");
+    expect(sent[2].headers.has("X-Kurl-Device")).toBe(false);
+  });
+
+  it("a signed-in reader is known by their token, not the device", async () => {
+    window.localStorage.setItem("short-link:access-token", "header.e30.sig");
+    window.localStorage.setItem(DEVICE, ID);
+    answer(200, { items: [], next: null });
+    const { listRemoteNotes } = await api();
+    await listRemoteNotes("latest");
+    expect(sent[0].headers.get("Authorization")).toBe("Bearer header.e30.sig");
+    expect(sent[0].headers.has("X-Kurl-Device")).toBe(false);
+  });
+
+  it("an id that is not a UUID is replaced, and storage that throws leaves the header off", async () => {
+    window.localStorage.setItem(DEVICE, "not-a-uuid");
+    answer(200, { items: [], next: null });
+    const { listRemoteNotes } = await api();
+    await listRemoteNotes("latest");
+    expect(sent[0].headers.get("X-Kurl-Device")).not.toBe("not-a-uuid");
+    expect(sent[0].headers.get("X-Kurl-Device")).toBe(window.localStorage.getItem(DEVICE));
+
+    const spy = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("denied");
+    });
+    await listRemoteNotes("latest");
+    expect(sent[1].headers.has("X-Kurl-Device")).toBe(false);
+    spy.mockRestore();
+  });
+
+  it("posts seen uris with the device id, keepalive when asked", async () => {
+    window.localStorage.setItem(DEVICE, ID);
+    answer(202);
+    const { sendRemoteSeen } = await api();
+    await sendRemoteSeen(["https://qdon.space/1", "https://qdon.space/2"], true);
+    expect(sent).toHaveLength(1);
+    expect(sent[0].url).toBe("/api/v1/federation/seen");
+    expect(sent[0].body).toEqual({ uris: ["https://qdon.space/1", "https://qdon.space/2"] });
+    expect(sent[0].headers.get("X-Kurl-Device")).toBe(ID);
+    expect(sent[0].keepalive).toBe(true);
+  });
+
+  it("sends nothing when there is neither a token nor a device id", async () => {
+    vi.stubGlobal("crypto", {});
+    answer(202);
+    const { sendRemoteSeen } = await api();
+    await sendRemoteSeen(["https://qdon.space/1"]);
+    expect(sent).toEqual([]);
+  });
+
+  it("a failed post throws, so the batch can go again", async () => {
+    window.localStorage.setItem(DEVICE, ID);
+    answer(503, { status: 503, title: "Service Unavailable" });
+    const { sendRemoteSeen } = await api();
+    await expect(sendRemoteSeen(["https://qdon.space/1"])).rejects.toMatchObject({ status: 503 });
+  });
+});

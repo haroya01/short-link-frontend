@@ -2,8 +2,11 @@ import { request } from "@/lib/api/client";
 import { readStorageString } from "@/lib/storage-json";
 import type { PublicAuthor, PublicFeedView } from "@/modules/blog/api/public-posts";
 import { blogMocks } from "@/modules/blog/api/_mock-gates";
+import type { RemoteAccount } from "@/modules/notes/api/notes";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+const remoteMocks: typeof import("@/modules/notes/api/_mocks") | null =
+  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("@/modules/notes/api/_mocks") : null;
 
 export interface FollowingSeriesNote {
   id: number;
@@ -49,6 +52,9 @@ export interface FollowStatus {
    */
   followerCount?: number;
   followingCount?: number;
+  /** Accepted follows with accounts on other servers. Absent on an older backend and on a hidden author. */
+  remoteFollowerCount?: number;
+  remoteFollowingCount?: number;
   hideFollowerCount: boolean;
   /** The viewer rang this author's bell: a notice for every new note (Mastodon's notify). */
   notifyNotes?: boolean;
@@ -61,21 +67,29 @@ export interface FollowStatus {
 }
 
 // Mock lane: haruka approves followers by hand, so following her leaves a request; sora hides follower counts;
-// kurl:mock-following lists the authors a spec has the viewer already follow.
+// kurl:mock-following lists the authors a spec has the viewer already follow; kazuki also has follows on other servers.
 const MOCK_LOCKED = new Set(["haruka"]);
 const MOCK_HIDES_COUNTS = new Set(["sora"]);
 const mockRequested = new Set<string>();
 const MOCK_FOLLOWING_KEY = "kurl:mock-following";
+const MOCK_REMOTE_FOLLOWS: Record<string, Record<FollowListKind, { at: number; id: number }[]>> = {
+  kazuki: { following: [{ at: 1, id: 9801 }, { at: 3, id: 9806 }], followers: [{ at: 2, id: 9803 }] },
+};
 
 function mockFollowing(username: string): boolean {
   return readStorageString(MOCK_FOLLOWING_KEY)?.split(",").includes(username) === true;
+}
+
+function mockRemoteCounts(username: string) {
+  const remote = MOCK_REMOTE_FOLLOWS[username];
+  return remote ? { remoteFollowerCount: remote.followers.length, remoteFollowingCount: remote.following.length } : {};
 }
 
 function mockStatus(username: string, following: boolean): FollowStatus {
   const hidden = MOCK_HIDES_COUNTS.has(username);
   return {
     following,
-    ...(hidden ? {} : { followerCount: following ? 129 : 128, followingCount: 12 }),
+    ...(hidden ? {} : { followerCount: following ? 129 : 128, followingCount: 12, ...mockRemoteCounts(username) }),
     hideFollowerCount: hidden,
     requested: mockRequested.has(username),
     locked: MOCK_LOCKED.has(username),
@@ -175,6 +189,62 @@ export function listFollowing(username: string, page = 0, size = 20): Promise<Fo
     `/api/v1/users/${encodeURIComponent(username)}/following?page=${page}&size=${size}`,
     { method: "GET" },
   );
+}
+
+export type FollowEntry = ({ type: "local" } & FollowUser) | { type: "remote"; account: RemoteAccount };
+
+export interface FollowEntryPage {
+  items: FollowEntry[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
+export type FollowListKind = "followers" | "following";
+
+export function followEntries(items: unknown[]): FollowEntry[] {
+  return items.filter((item): item is FollowEntry => {
+    if (typeof item !== "object" || item === null) return false;
+    const entry = item as { type?: unknown; account?: unknown };
+    if (entry.type === "local") return true;
+    return entry.type === "remote" && typeof entry.account === "object" && entry.account !== null;
+  });
+}
+
+export const followEntryKey = (entry: FollowEntry) =>
+  entry.type === "local" ? `local:${entry.id}` : `remote:${entry.account.id}`;
+
+async function mockFollowEntries(username: string, kind: FollowListKind): Promise<FollowEntry[]> {
+  const locals: FollowEntry[] = MOCK_FOLLOW_USERS.map((u) => ({ type: "local", ...u }));
+  const remotes = MOCK_REMOTE_FOLLOWS[username]?.[kind] ?? [];
+  const accounts = await Promise.all(remotes.map((r) => remoteMocks!.mockRemoteAccount(r.id)));
+  const mixed = [...locals];
+  remotes.forEach((r, i) => mixed.splice(r.at, 0, { type: "remote", account: accounts[i] }));
+  return mixed;
+}
+
+export async function listFollowEntries(
+  username: string,
+  kind: FollowListKind,
+  page = 0,
+  size = 20,
+): Promise<FollowEntryPage> {
+  if (USE_MOCKS && remoteMocks) {
+    return { items: await mockFollowEntries(username, kind), page, size, hasNext: false };
+  }
+  const res = await request<{ items: unknown[]; page: number; size: number; hasNext: boolean }>(
+    `/api/v1/users/${encodeURIComponent(username)}/${kind}?page=${page}&size=${size}&include=remote`,
+    { method: "GET" },
+  );
+  return { ...res, items: followEntries(res.items) };
+}
+
+export function followCountTotals(s: FollowStatus): { followers: number; following: number } | null {
+  if (s.hideFollowerCount || s.followerCount == null || s.followingCount == null) return null;
+  return {
+    followers: s.followerCount + (s.remoteFollowerCount ?? 0),
+    following: s.followingCount + (s.remoteFollowingCount ?? 0),
+  };
 }
 
 /** Someone the viewer blocked — newest first. */

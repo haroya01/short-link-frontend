@@ -29,7 +29,7 @@ if (dsn) {
 
   whenIdle(() => {
     Sentry.lazyLoadIntegration("replayIntegration")
-      .then((replay) => Sentry.getClient()?.addIntegration(replay({ maskAllText: false, blockAllMedia: true })))
+      .then((replay) => Sentry.getClient()?.addIntegration(replay({ maskAllText: true, maskAllInputs: true, blockAllMedia: true })))
       .catch(() => undefined);
   });
 }
