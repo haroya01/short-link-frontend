@@ -26,7 +26,7 @@ function loadCodeMirror(view: PMEditorView) {
   });
 }
 
-export class PlainCodeView {
+class PlainCodeView {
   dom: HTMLElement;
   contentDOM: HTMLElement;
   private languageSelect: HTMLSelectElement;

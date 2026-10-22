@@ -1,4 +1,4 @@
-export const CODE_LANGUAGES = [
+const CODE_LANGUAGES = [
   "plaintext", "javascript", "typescript", "jsx", "tsx", "json", "html", "css",
   "python", "java", "kotlin", "go", "rust", "c", "cpp", "csharp", "php", "ruby",
   "sql", "yaml", "bash", "markdown",
