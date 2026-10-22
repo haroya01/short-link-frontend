@@ -1985,7 +1985,7 @@
     "chart": {
       "peak": "Peak"
     },
-    "exportCsv": "Export CSV",
+    "exportSummaryCsv": "Summary CSV",
     "chapters": {
       "who": "Who",
       "when": "When",

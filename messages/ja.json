@@ -1985,7 +1985,7 @@
     "chart": {
       "peak": "ピーク"
     },
-    "exportCsv": "CSVエクスポート",
+    "exportSummaryCsv": "サマリー CSV",
     "chapters": {
       "who": "誰が",
       "when": "いつ",

@@ -1985,7 +1985,7 @@
     "chart": {
       "peak": "Đỉnh"
     },
-    "exportCsv": "Xuất CSV",
+    "exportSummaryCsv": "CSV tóm tắt",
     "chapters": {
       "who": "Ai",
       "when": "Khi nào",

@@ -1985,7 +1985,7 @@
     "chart": {
       "peak": "शिखर"
     },
-    "exportCsv": "CSV निर्यात",
+    "exportSummaryCsv": "सारांश CSV",
     "chapters": {
       "who": "कौन",
       "when": "कब",

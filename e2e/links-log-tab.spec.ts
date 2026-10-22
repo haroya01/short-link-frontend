@@ -24,6 +24,12 @@ test("the log tab opens straight into the click rows and pages by cursor", async
   await expect(panel.getByText("최근 90일 기록이에요", { exact: true })).toBeVisible();
 });
 
+test("the header export is named for the summary it holds, apart from the log tab's two", async ({ page }) => {
+  await page.goto(`/ko/stats/${CODE}#log`);
+  await expect(page.getByRole("button", { name: "요약 CSV", exact: true })).toHaveText("요약 CSV");
+  await expect(page.locator("button", { hasText: /^CSV$/ })).toHaveCount(0);
+});
+
 test("link settings no longer carry the click log or its exports", async ({ page }) => {
   await page.goto(`/ko/stats/${CODE}#settings`);
   await expect(page.getByRole("heading", { name: "보호" })).toBeVisible();
