@@ -1,7 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 
-// Mock lane (Playwright routes): 다른 서버 최신 puts what the reader has not seen first. The page that
+// Mock lane (Playwright routes): 다른 서버 맞춤 puts what the reader has not seen first. The page that
 // starts the seen part carries seenFrom and the list draws 이미 본 글 above that row. A post counts as
 // seen after a second at least half on screen; those go to /federation/seen in batches, with the
 // device id when signed out. An empty page with a next is followed at once, three times in a row.
@@ -60,13 +60,15 @@ type Seen = { uris: string[]; device: string | null; auth: string | null };
 
 async function serve(page: Page, latest: (cursor: string | null) => Page_, home?: Page_) {
   const asked = { latest: [] as string[], devices: [] as (string | null)[], seen: [] as Seen[] };
+  const list = (route: Route) => {
+    const cursor = new URL(route.request().url()).searchParams.get("cursor");
+    asked.latest.push(cursor ?? "");
+    asked.devices.push(route.request().headers()["x-kurl-device"] ?? null);
+    return route.fulfill({ json: latest(cursor) });
+  };
   await mockBackend(page, {
-    "GET /api/v1/federation/latest": (route: Route) => {
-      const cursor = new URL(route.request().url()).searchParams.get("cursor");
-      asked.latest.push(cursor ?? "");
-      asked.devices.push(route.request().headers()["x-kurl-device"] ?? null);
-      return route.fulfill({ json: latest(cursor) });
-    },
+    "GET /api/v1/federation/latest": list,
+    "GET /api/v1/federation/for-you": list,
     "POST /api/v1/federation/seen": (route: Route) => {
       const headers = route.request().headers();
       asked.seen.push({
@@ -186,7 +188,7 @@ test("empty pages with a next are followed at once, three in a row, then the lis
   await expect.poll(() => asked.latest).toEqual(["", "u1", "u2", "u3", "u4"]);
 });
 
-test("in 홈 the tail draws 이미 본 글 under its own heading, and a signed-in reader is sent by token, not device", async ({
+test("in 홈, other servers that follow after mine draw 이미 본 글 at seenFrom, and a signed-in reader is sent by token, not device", async ({
   page,
 }) => {
   await signIn(page);
@@ -196,11 +198,11 @@ test("in 홈 the tail draws 이미 본 글 under its own heading, and a signed-i
     { items: [{ kind: "note", note: note(101, "kurl 노트") }], next: null },
   );
   await page.goto("/ko/blog");
-  const tail = page.getByTestId("home-remote-tail");
-  await expect(tail.getByRole("heading", { name: "다른 서버 최신", level: 2 })).toBeVisible({ timeout: 30_000 });
-  const divider = tail.getByRole("heading", { name: "이미 본 글", level: 3 });
+  const feed = page.getByTestId("home-feed");
+  await expect(feed.locator('[data-remote-kept="31"]')).toBeVisible({ timeout: 30_000 });
+  const divider = feed.getByRole("heading", { name: "이미 본 글", level: 2 });
   await expect(divider).toHaveCount(1);
-  await expect(tail.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
+  await expect(feed.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
   expect(asked.devices.every((sent) => sent === null)).toBe(true);
 
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));

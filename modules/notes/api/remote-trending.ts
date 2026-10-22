@@ -16,10 +16,10 @@ export interface TrendingNote extends Omit<Note, "id" | "author"> {
   servers: string[];
 }
 
-/** Backend contract: GET /api/v1/federation/trending and /federation/latest ?limit=&cursor= (anonymous allowed).
- *  An item with an id is a note this server keeps; one without is still in the pool. `next` is opaque.
- *  Latest puts what the viewer has not seen first; `seenFrom` is the index where the seen ones start,
- *  sent only on the page where they begin. */
+/** Backend contract: GET /api/v1/federation/trending, /federation/latest and /federation/for-you
+ *  ?limit=&cursor= (anonymous allowed). An item with an id is a note this server keeps; one without is
+ *  still in the pool. `next` is opaque. Latest and for-you put what the viewer has not seen first;
+ *  `seenFrom` is the index where the seen ones start, sent only on the page where they begin. */
 export interface RemoteNotesBody {
   items: (TrendingNote | (Note & { uri?: string | null }))[];
   next?: string | null;
@@ -34,7 +34,11 @@ export interface RemoteNotesPage {
   seenFrom?: number;
 }
 
-export type RemoteView = "trending" | "latest";
+export type RemoteView = "for-you" | "latest" | "trending";
+
+export type SeenFeed = Exclude<RemoteView, "trending">;
+
+export type SeenBatch = { feed: SeenFeed; uris: string[]; dwell: { uri: string; ms: number }[] };
 
 function decodeRemoteItem(entry: unknown): RemoteItem | null {
   if (!entry || typeof entry !== "object") return null;
@@ -78,15 +82,16 @@ export async function listRemoteNotes(
     ? await (mockFailure(`remote-${view}`) ?? noteMocks.mockRemoteNotes(view, cursor, limit))
     : await request<RemoteNotesBody>(`/api/v1/federation/${view}?${query(cursor, limit)}`, {
         method: "GET",
-        headers: view === "latest" ? viewerHeaders() : undefined,
+        headers: view === "trending" ? undefined : viewerHeaders(),
       });
   const next = typeof body?.next === "string" && body.next !== "" ? body.next : null;
   return { ...decodeRemotePage(body?.items, body?.seenFrom), next };
 }
 
-export async function sendRemoteSeen(uris: string[], keepalive = false): Promise<void> {
+export async function sendRemoteSeen({ feed, uris, dwell }: SeenBatch, keepalive = false): Promise<void> {
   if (noteMocks) return;
   const headers = viewerHeaders();
   if (!readToken() && !headers[DEVICE_HEADER]) return;
-  await request<void>("/api/v1/federation/seen", { method: "POST", body: { uris }, headers, keepalive });
+  const body = dwell.length > 0 ? { uris, dwell, feed } : { uris, feed };
+  await request<void>("/api/v1/federation/seen", { method: "POST", body, headers, keepalive });
 }

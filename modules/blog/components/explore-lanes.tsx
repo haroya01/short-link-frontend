@@ -28,7 +28,7 @@ const STRIP_MAX = 8;
 const AUTHORS = 5;
 
 export function ExploreLanePanel({ lane, onPeople }: { lane: ExploreLane; onPeople: () => void }) {
-  if (lane === "remote") return <RemoteFeed view="latest" />;
+  if (lane === "remote") return <RemoteFeed view="for-you" />;
   if (lane === "people") return <PeopleLane />;
   return <PicksLane onPeople={onPeople} />;
 }

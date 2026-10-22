@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -34,10 +34,12 @@ export function TrendingNoteCard({
   item,
   filteredBy,
   trending = true,
+  context,
 }: {
   item: TrendingNote;
   filteredBy?: string[];
   trending?: boolean;
+  context?: ReactNode;
 }) {
   const t = useTranslations("notes");
   const locale = useLocale();
@@ -57,14 +59,15 @@ export function TrendingNoteCard({
         note={note}
         filteredBy={filteredBy}
         context={
-          trending && (
+          context ??
+          (trending && (
           <p className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
             <span aria-hidden className="w-9 shrink-0" />
             <span className="truncate">
               {others > 0 ? t("trendingOnMore", { server: first, count: others }) : t("trendingOn", { server: first })}
             </span>
           </p>
-          )
+          ))
         }
         detached={{
           authorHref: item.author.remoteId ? blogPath(`/remote/${item.author.remoteId}`) : null,

@@ -24,8 +24,9 @@ export function remoteRows(
         if (uris.has(entry.item.uri)) return;
         uris.add(entry.item.uri);
       } else {
-        if (ids.has(entry.note.id) || blocked.has(entry.note.author.username)) return;
+        if (ids.has(entry.note.id) || (entry.uri && uris.has(entry.uri)) || blocked.has(entry.note.author.username)) return;
         ids.add(entry.note.id);
+        if (entry.uri) uris.add(entry.uri);
       }
       const verdict = judge(entry);
       if (verdict?.action === "hide") return;

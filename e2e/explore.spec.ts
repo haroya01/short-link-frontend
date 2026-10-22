@@ -48,10 +48,10 @@ test("lanes switch in place under a head that does not move, and the URL keeps t
   await page.getByRole("tab", { name: "다른 서버" }).click();
   await expect(page).toHaveURL(/\/explore\?lane=remote$/);
   await expect(page.getByRole("tab", { name: "다른 서버" })).toHaveAttribute("aria-selected", "true");
-  const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
-  await expect(latest).toHaveAttribute("data-remote-view", "latest");
-  await expect(latest.locator("[data-remote-uri]").first()).toBeVisible();
-  await expect(latest.locator("[data-remote-uri]").first()).not.toContainText("에서 인기");
+  const remote = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
+  await expect(remote).toHaveAttribute("data-remote-view", "for-you");
+  await expect(remote.locator("[data-remote-uri]").first()).toBeVisible();
+  await expect(remote.locator("[data-remote-uri]").first()).not.toContainText("에서 인기");
   await expect(page.getByTestId("explore-picks")).toBeHidden();
   expect(await head.boundingBox()).toEqual(before);
 

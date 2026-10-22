@@ -8,9 +8,9 @@ import { useAuth } from "@/lib/auth";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import type { Note } from "@/modules/notes/api/notes";
-import type { RemoteView } from "@/modules/notes/api/remote-trending";
+import type { RemoteNotesPage, RemoteView, SeenFeed } from "@/modules/notes/api/remote-trending";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
-import { remoteRows } from "@/modules/notes/lib/remote-rows";
+import { remoteRows, type RemoteRow } from "@/modules/notes/lib/remote-rows";
 import { seenQueue, watchSeen } from "@/modules/notes/lib/remote-seen";
 import { useRemoteNotes } from "@/modules/notes/lib/use-remote-trending";
 import { NoteCard } from "./note-card";
@@ -28,29 +28,33 @@ export function RemoteFeed({ view }: { view: RemoteView }) {
 const receivedHeading =
   "border-t border-slate-100 pt-5 text-[13px] font-semibold text-slate-500 dark:border-slate-800 dark:text-slate-400";
 const rowHeading = "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400";
+const FAILED = { "for-you": "forYouFailed", latest: "latestFailed", trending: "trendingFailed" } as const;
 
-export function RemoteNotesList({
-  view,
-  heading,
-  fallback,
-}: {
-  view: RemoteView;
-  heading?: ReactNode;
-  fallback?: ReactNode;
-}) {
-  const quiet = fallback !== undefined;
+export function useRemoteRows(): (pages: RemoteNotesPage[]) => RemoteRow[] {
+  const filters = useNoteFilters();
+  const blocked = useBlockedNames();
+  const { me } = useAuth();
+  return (pages) =>
+    remoteRows(
+      pages,
+      (entry) =>
+        noteVerdict(entry.kind === "pool" ? trendingDisplayNote(entry.item) : entry.note, filters, "public", me?.id),
+      blocked,
+    );
+}
+
+function RemoteNotesList({ view }: { view: RemoteView }) {
   const t = useTranslations("notes");
   const tFeed = useTranslations("publicFeed");
   const notes = useRemoteNotes(view);
-  const filters = useNoteFilters();
-  const blocked = useBlockedNames();
-  const { me, ready, authenticated } = useAuth();
+  const rowsOf = useRemoteRows();
+  const { ready, authenticated } = useAuth();
   const sentinel = useRef<HTMLDivElement>(null);
   const loaded = notes.state === "ready" ? notes : null;
   const autoLoad = loaded !== null && loaded.hasMore && !loaded.moreFailed && !loaded.loadingMore;
   const stalled = loaded?.stalled === true;
   const more = loaded?.more;
-  const latest = view === "latest";
+  const feed = view === "trending" ? null : view;
 
   useEffect(() => {
     const el = sentinel.current;
@@ -70,16 +74,15 @@ export function RemoteNotesList({
   }, [autoLoad, stalled, more]);
 
   useEffect(() => {
-    if (!latest) return;
+    if (!feed) return;
     return () => seenQueue().flush();
-  }, [latest]);
+  }, [feed]);
 
   if (notes.state === "loading") return <NoteListSkeleton rows={3} />;
   if (notes.state === "failed") {
-    if (quiet) return fallback;
     return (
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 py-4 text-[14px] text-slate-500 dark:text-slate-400">
-        <span>{view === "latest" ? t("latestFailed") : t("trendingFailed")}</span>
+        <span>{t(FAILED[view])}</span>
         <button
           type="button"
           onClick={notes.retry}
@@ -91,21 +94,14 @@ export function RemoteNotesList({
     );
   }
 
-  const rows = remoteRows(
-    notes.pages,
-    (entry) =>
-      noteVerdict(entry.kind === "pool" ? trendingDisplayNote(entry.item) : entry.note, filters, "public", me?.id),
-    blocked,
-  );
+  const rows = rowsOf(notes.pages);
   const firstKept = view === "trending" && rows[0]?.kind === "pool" ? rows.findIndex((row) => row.kind === "kept") : -1;
   const signedOut = ready && !authenticated;
   const ended = !notes.hasMore;
-  const SeenHeading = heading ? "h3" : "h2";
 
   if (rows.length === 0 && ended) {
-    if (quiet) return fallback;
     if (view === "trending" && signedOut) return <SignInEmptyState reason="federatedNotes" icon={Globe} />;
-    return view === "latest" ? (
+    return view !== "trending" ? (
       <BlogEmpty title={t("latestEmpty")} />
     ) : (
       <BlogEmpty title={t("emptyFederated")} body={t("emptyFederatedBody")} />
@@ -114,23 +110,21 @@ export function RemoteNotesList({
 
   return (
     <div>
-      {rows.length > 0 && heading}
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
-        {rows.map((row, i) => {
-          const divider = row.seenStart && <SeenHeading className={rowHeading}>{t("remoteSeenDivider")}</SeenHeading>;
-          return row.kind === "pool" ? (
-            <SeenWatch key={`pool-${row.uri}`} uri={latest ? row.uri : null} data-remote-uri={row.uri}>
-              {divider}
-              <TrendingNoteCard item={row.item} filteredBy={row.filteredBy} trending={view === "trending"} />
-            </SeenWatch>
-          ) : (
-            <SeenWatch key={`kept-${row.note.id}`} uri={latest ? row.uri : null} data-remote-kept={row.note.id}>
-              {divider}
-              {i === firstKept && <h2 className={rowHeading}>{t("receivedNotes")}</h2>}
-              <KeptNote note={row.note} filteredBy={row.filteredBy} />
-            </SeenWatch>
-          );
-        })}
+        {rows.map((row, i) => (
+          <RemoteRowView
+            key={remoteRowKey(row)}
+            row={row}
+            feed={feed}
+            trending={view === "trending"}
+            above={
+              <>
+                {row.seenStart && <SeenDivider />}
+                {i === firstKept && <h2 className={rowHeading}>{t("receivedNotes")}</h2>}
+              </>
+            }
+          />
+        ))}
       </div>
       {notes.hasMore ? (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-6 flex flex-col items-center gap-2 pb-6">
@@ -157,8 +151,7 @@ export function RemoteNotesList({
         </div>
       ) : (
         view === "trending" &&
-        signedOut &&
-        !quiet && (
+        signedOut && (
           <>
             <h2 className={receivedHeading}>{t("receivedNotes")}</h2>
             <SignInEmptyState reason="federatedNotes" icon={Globe} />
@@ -169,12 +162,63 @@ export function RemoteNotesList({
   );
 }
 
+export function remoteRowKey(row: RemoteRow): string {
+  return row.kind === "pool" ? `pool-${row.uri}` : `kept-${row.note.id}`;
+}
+
+export function SeenDivider() {
+  const t = useTranslations("notes");
+  return <h2 className={rowHeading}>{t("remoteSeenDivider")}</h2>;
+}
+
+function RemoteMark() {
+  const t = useTranslations("notes");
+  return (
+    <p
+      data-remote-mark
+      className="-mt-1 mb-1.5 flex items-center gap-3 text-[13px] font-medium text-slate-500 dark:text-slate-400"
+    >
+      <span aria-hidden className="w-9 shrink-0" />
+      <span className="truncate">{t("feedFederated")}</span>
+    </p>
+  );
+}
+
+export function RemoteRowView({
+  row,
+  feed,
+  above,
+  trending = false,
+  marked = false,
+}: {
+  row: RemoteRow;
+  feed: SeenFeed | null;
+  above?: ReactNode;
+  trending?: boolean;
+  marked?: boolean;
+}) {
+  const mark = marked ? <RemoteMark /> : undefined;
+  return row.kind === "pool" ? (
+    <SeenWatch uri={row.uri} feed={feed} data-remote-uri={row.uri}>
+      {above}
+      <TrendingNoteCard item={row.item} filteredBy={row.filteredBy} trending={trending} context={mark} />
+    </SeenWatch>
+  ) : (
+    <SeenWatch uri={row.uri} feed={feed} data-remote-kept={row.note.id}>
+      {above}
+      <KeptNote note={row.note} filteredBy={row.filteredBy} context={mark} />
+    </SeenWatch>
+  );
+}
+
 function SeenWatch({
   uri,
+  feed,
   children,
   ...data
 }: {
   uri: string | null;
+  feed: SeenFeed | null;
   children: ReactNode;
   "data-remote-uri"?: string;
   "data-remote-kept"?: number;
@@ -182,9 +226,9 @@ function SeenWatch({
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
-    if (!el || !uri) return;
-    return watchSeen(el, uri);
-  }, [uri]);
+    if (!el || !uri || !feed) return;
+    return watchSeen(el, uri, feed);
+  }, [uri, feed]);
   return (
     <div ref={box} {...data}>
       {children}
@@ -192,7 +236,7 @@ function SeenWatch({
   );
 }
 
-function KeptNote({ note, filteredBy }: { note: Note; filteredBy?: string[] }) {
+function KeptNote({ note, filteredBy, context }: { note: Note; filteredBy?: string[]; context?: ReactNode }) {
   const [current, setCurrent] = useState(note);
   const [removed, setRemoved] = useState(false);
   if (removed) return null;
@@ -200,6 +244,7 @@ function KeptNote({ note, filteredBy }: { note: Note; filteredBy?: string[] }) {
     <NoteCard
       note={current}
       filteredBy={filteredBy}
+      context={context}
       onChange={(changed) => setCurrent({ ...changed, thread: changed.thread ?? current.thread })}
       onDelete={() => setRemoved(true)}
     />

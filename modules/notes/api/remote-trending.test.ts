@@ -213,19 +213,48 @@ describe("what the server is told about the viewer", () => {
     window.localStorage.setItem(DEVICE, ID);
     answer(202);
     const { sendRemoteSeen } = await api();
-    await sendRemoteSeen(["https://qdon.space/1", "https://qdon.space/2"], true);
+    await sendRemoteSeen({ feed: "latest", uris: ["https://qdon.space/1", "https://qdon.space/2"], dwell: [] }, true);
     expect(sent).toHaveLength(1);
     expect(sent[0].url).toBe("/api/v1/federation/seen");
-    expect(sent[0].body).toEqual({ uris: ["https://qdon.space/1", "https://qdon.space/2"] });
+    expect(sent[0].body).toEqual({ uris: ["https://qdon.space/1", "https://qdon.space/2"], feed: "latest" });
     expect(sent[0].headers.get("X-Kurl-Device")).toBe(ID);
     expect(sent[0].keepalive).toBe(true);
+  });
+
+  it("posts the time each post stayed on screen with the feed it was shown in", async () => {
+    window.localStorage.setItem(DEVICE, ID);
+    answer(202);
+    const { sendRemoteSeen } = await api();
+    await sendRemoteSeen({
+      feed: "for-you",
+      uris: [],
+      dwell: [{ uri: "https://qdon.space/1", ms: 12_000 }],
+    });
+    expect(sent[0].body).toEqual({ uris: [], dwell: [{ uri: "https://qdon.space/1", ms: 12_000 }], feed: "for-you" });
+  });
+
+  it("asks for-you with the viewer like latest, and passes its f cursor back as it came", async () => {
+    window.localStorage.setItem(DEVICE, ID);
+    answer(200, { items: [item], next: "f1792656810855.20", seenFrom: 1 });
+    const { listRemoteNotes } = await api();
+    await expect(listRemoteNotes("for-you")).resolves.toEqual({
+      items: [{ kind: "pool", item }],
+      next: "f1792656810855.20",
+      seenFrom: 1,
+    });
+    await listRemoteNotes("for-you", "f1792656810855.20");
+    expect(sent.map((call) => call.url)).toEqual([
+      "/api/v1/federation/for-you?limit=20",
+      "/api/v1/federation/for-you?limit=20&cursor=f1792656810855.20",
+    ]);
+    expect(sent.every((call) => call.headers.get("X-Kurl-Device") === ID)).toBe(true);
   });
 
   it("sends nothing when there is neither a token nor a device id", async () => {
     vi.stubGlobal("crypto", {});
     answer(202);
     const { sendRemoteSeen } = await api();
-    await sendRemoteSeen(["https://qdon.space/1"]);
+    await sendRemoteSeen({ feed: "latest", uris: ["https://qdon.space/1"], dwell: [] });
     expect(sent).toEqual([]);
   });
 
@@ -233,6 +262,6 @@ describe("what the server is told about the viewer", () => {
     window.localStorage.setItem(DEVICE, ID);
     answer(503, { status: 503, title: "Service Unavailable" });
     const { sendRemoteSeen } = await api();
-    await expect(sendRemoteSeen(["https://qdon.space/1"])).rejects.toMatchObject({ status: 503 });
+    await expect(sendRemoteSeen({ feed: "latest", uris: ["https://qdon.space/1"], dwell: [] })).rejects.toMatchObject({ status: 503 });
   });
 });

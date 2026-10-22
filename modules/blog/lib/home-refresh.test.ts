@@ -33,4 +33,24 @@ describe("when 홈 refreshes", () => {
     expect(refresh).toHaveBeenCalledTimes(1);
     off();
   });
+
+  it("starts over instead after half an hour away, and keeps adding only what is new before that", () => {
+    vi.useFakeTimers();
+    const refresh = vi.fn();
+    const reload = vi.fn();
+    const off = onHomeRefresh(refresh, reload);
+    setVisibility("hidden");
+    vi.advanceTimersByTime(30 * 60_000 - 1);
+    setVisibility("visible");
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(reload).not.toHaveBeenCalled();
+    setVisibility("hidden");
+    vi.advanceTimersByTime(30 * 60_000);
+    setVisibility("visible");
+    expect(reload).toHaveBeenCalledTimes(1);
+    expect(refresh).toHaveBeenCalledTimes(1);
+    requestHomeRefresh();
+    expect(refresh).toHaveBeenCalledTimes(2);
+    off();
+  });
 });

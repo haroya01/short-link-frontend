@@ -57,3 +57,23 @@ describe("where 이미 본 글 starts", () => {
     expect(rows.map((row) => row.uri)).toEqual(["https://mastodon.social/users/mina/statuses/9", null]);
   });
 });
+
+describe("duplicates across pages", () => {
+  const at = (n: number) => `https://mastodon.social/users/mina/statuses/${n}`;
+  const shown = (pages: RemoteNotesPage[]) =>
+    remoteRows(pages, keep, none).map((row) => (row.kind === "pool" ? row.uri : `kept:${row.note.id}`));
+
+  it("a kept note that comes back on a later page under the same uri is shown once", () => {
+    expect(shown([page([kept(9, at(9)), pool(1)]), page([kept(9, at(9)), pool(2)])])).toEqual([
+      "kept:9",
+      "https://qdon.space/users/a/statuses/1",
+      "https://qdon.space/users/a/statuses/2",
+    ]);
+  });
+
+  it("a pool item and a kept note with the same uri are one post", () => {
+    const same = "https://qdon.space/users/a/statuses/5";
+    expect(shown([page([pool(5)]), page([kept(40, same), kept(41, at(41))])])).toEqual([same, "kept:41"]);
+    expect(shown([page([kept(40, same)]), page([pool(5)])])).toEqual(["kept:40"]);
+  });
+});
