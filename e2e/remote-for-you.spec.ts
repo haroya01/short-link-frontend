@@ -1,8 +1,8 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 
-// Mock lane (Playwright routes): other-server posts open in 추천순 (/federation/for-you) in 둘러보기 and
-// in the 홈 tail, and 최신순 switches to /federation/latest and stays in the URL. A for-you page can
+// Mock lane (Playwright routes): other-server posts open in 맞춤 order (/federation/for-you) in 둘러보기 and
+// in the 홈 tail. 최신 at the top of 둘러보기 다른 서버 switches to /federation/latest and stays in the URL. A for-you page can
 // repeat a post from the page before; it is drawn once. What stayed on screen goes to
 // /federation/seen with the feed it was shown in and how long it stayed at least half on screen.
 test.use({ viewport: { width: 390, height: 844 } });
@@ -96,7 +96,7 @@ async function hideTab(page: Page) {
   });
 }
 
-test("둘러보기 다른 서버 opens in 추천순 over two pages, sends the time read with its feed, and 최신순 switches and stays", async ({
+test("둘러보기 다른 서버 opens in 맞춤 over two pages, sends the time read with its feed, and 최신 switches and stays", async ({
   page,
 }) => {
   const asked = await serve(page);
@@ -106,8 +106,8 @@ test("둘러보기 다른 서버 opens in 추천순 over two pages, sends the ti
   const order = feed.getByRole("group", { name: "정렬" });
   await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
   await expect(feed).toHaveAttribute("data-remote-view", "for-you");
-  await expect(order.getByRole("button")).toHaveText(["추천순", "최신순"]);
-  await expect(order.getByRole("button", { name: "추천순" })).toHaveAttribute("aria-pressed", "true");
+  await expect(order.getByRole("button")).toHaveText(["맞춤", "최신"]);
+  await expect(order.getByRole("button", { name: "맞춤" })).toHaveAttribute("aria-pressed", "true");
   expect(asked.forYou).toEqual([""]);
   expect(asked.latest).toEqual([]);
   expect(asked.devices[0]).toMatch(/^[0-9a-f-]{36}$/);
@@ -137,10 +137,10 @@ test("둘러보기 다른 서버 opens in 추천순 over two pages, sends the ti
   await expect(feed.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
 
   await page.evaluate(() => window.scrollTo(0, 0));
-  await order.getByRole("button", { name: "최신순" }).click();
+  await order.getByRole("button", { name: "최신" }).click();
   await expect(page).toHaveURL(/\/explore\?lane=remote&order=latest$/);
   await expect(feed).toHaveAttribute("data-remote-view", "latest");
-  await expect(order.getByRole("button", { name: "최신순" })).toHaveAttribute("aria-pressed", "true");
+  await expect(order.getByRole("button", { name: "최신" })).toHaveAttribute("aria-pressed", "true");
   await expect(feed.locator(`[data-remote-uri="${uri(50)}"]`)).toBeVisible();
   await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toHaveCount(0);
   expect(asked.latest).toEqual([""]);
@@ -153,28 +153,23 @@ test("둘러보기 다른 서버 opens in 추천순 over two pages, sends the ti
 
   await page.reload();
   await expect(feed.locator(`[data-remote-uri="${uri(50)}"]`)).toBeVisible({ timeout: 30_000 });
-  await expect(feed.getByRole("group", { name: "정렬" }).getByRole("button", { name: "최신순" })).toHaveAttribute(
+  await expect(feed.getByRole("group", { name: "정렬" }).getByRole("button", { name: "최신" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
-  await feed.getByRole("group", { name: "정렬" }).getByRole("button", { name: "추천순" }).click();
+  await feed.getByRole("group", { name: "정렬" }).getByRole("button", { name: "맞춤" }).click();
   await expect(page).toHaveURL(/\/explore\?lane=remote$/);
   await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible();
 });
 
-test("the 홈 tail opens in 추천순 under 다른 서버, and 최신순 keeps its heading while the list loads", async ({ page }) => {
+test("the 홈 tail follows in 맞춤 order under 다른 서버, with no switch", async ({ page }) => {
   await signIn(page);
   const asked = await serve(page, { items: [{ kind: "note", note: note(101, "kurl 노트") }], next: null });
   await page.goto("/ko/blog");
   const tail = page.getByTestId("home-remote-tail");
-  await expect(tail.getByRole("heading", { name: "다른 서버", level: 2 })).toBeVisible({ timeout: 30_000 });
-  await expect(tail).toHaveAttribute("data-remote-view", "for-you");
+  await expect(tail.getByRole("heading", { name: "다른 서버", exact: true, level: 2 })).toBeVisible({ timeout: 30_000 });
   await expect(tail.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible();
+  await expect(tail.getByRole("group", { name: "정렬" })).toHaveCount(0);
+  expect(asked.forYou[0]).toBe("");
   expect(asked.latest).toEqual([]);
-
-  await tail.getByRole("button", { name: "최신순" }).click();
-  await expect(page).toHaveURL(/\/blog\?order=latest$/);
-  await expect(tail.locator(`[data-remote-uri="${uri(50)}"]`)).toBeVisible();
-  await expect(tail.getByRole("heading", { name: "다른 서버", level: 2 })).toBeVisible();
-  expect(asked.latest).toEqual([""]);
 });

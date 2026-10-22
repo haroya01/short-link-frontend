@@ -217,7 +217,7 @@ test("추천 ends in what is trending elsewhere and keeps going as the reader sc
   expect(seen.resolved).toEqual([]);
 });
 
-test("다른 서버 lists the latest posts from other servers without the trending line, and pages on its own cursor", async ({
+test("다른 서버 최신 lists the latest posts from other servers without the trending line, and pages on its own cursor", async ({
   page,
 }) => {
   await signIn(page);
@@ -234,6 +234,8 @@ test("다른 서버 lists the latest posts from other servers without the trendi
   await expect(page).toHaveURL(/\/explore\?lane=remote$/);
   await expect(page.getByRole("tab", { name: "다른 서버" })).toHaveAttribute("aria-selected", "true");
   const { group, card } = lane(page, "remote");
+  await group.getByRole("group", { name: "정렬" }).getByRole("button", { name: "최신" }).click();
+  await expect(page).toHaveURL(/\/explore\?lane=remote&order=latest$/);
   await expect(group).toHaveAttribute("data-remote-view", "latest");
   await expect(card(3)).toBeVisible();
   await expect(card(0)).not.toContainText("에서 인기");

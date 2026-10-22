@@ -60,13 +60,15 @@ type Seen = { uris: string[]; device: string | null; auth: string | null };
 
 async function serve(page: Page, latest: (cursor: string | null) => Page_, home?: Page_) {
   const asked = { latest: [] as string[], devices: [] as (string | null)[], seen: [] as Seen[] };
+  const list = (route: Route) => {
+    const cursor = new URL(route.request().url()).searchParams.get("cursor");
+    asked.latest.push(cursor ?? "");
+    asked.devices.push(route.request().headers()["x-kurl-device"] ?? null);
+    return route.fulfill({ json: latest(cursor) });
+  };
   await mockBackend(page, {
-    "GET /api/v1/federation/latest": (route: Route) => {
-      const cursor = new URL(route.request().url()).searchParams.get("cursor");
-      asked.latest.push(cursor ?? "");
-      asked.devices.push(route.request().headers()["x-kurl-device"] ?? null);
-      return route.fulfill({ json: latest(cursor) });
-    },
+    "GET /api/v1/federation/latest": list,
+    "GET /api/v1/federation/for-you": list,
     "POST /api/v1/federation/seen": (route: Route) => {
       const headers = route.request().headers();
       asked.seen.push({
@@ -195,7 +197,7 @@ test("in 홈 the tail draws 이미 본 글 under its own heading, and a signed-i
     () => ({ items: [pooled(1), kept(31), pooled(2)], next: null, seenFrom: 1 }),
     { items: [{ kind: "note", note: note(101, "kurl 노트") }], next: null },
   );
-  await page.goto("/ko/blog?order=latest");
+  await page.goto("/ko/blog");
   const tail = page.getByTestId("home-remote-tail");
   await expect(tail.getByRole("heading", { name: "다른 서버", exact: true, level: 2 })).toBeVisible({ timeout: 30_000 });
   const divider = tail.getByRole("heading", { name: "이미 본 글", level: 3 });

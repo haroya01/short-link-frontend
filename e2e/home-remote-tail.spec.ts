@@ -1,7 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 
-// Mock lane (Playwright routes): when 홈 최신 has no next page, the latest from other servers follows
+// Mock lane (Playwright routes): when 홈 최신 has no next page, other servers' posts in 맞춤 order follow
 // under its label and keeps paging. Each item is read by its shape (an id is a kept note, no id is
 // still in the pool), the cursor goes back as it came, and a refresh keeps the tail and asks it again.
 test.use({ viewport: { width: 390, height: 844 } });
@@ -69,7 +69,7 @@ async function serve(page: Page, { home = HOME, latest }: Options = {}) {
       if (url.searchParams.has("since")) return route.fulfill({ json: { items: [], next: null, gap: false } });
       return route.fulfill({ json: { ...home, newest: "101" } });
     },
-    "GET /api/v1/federation/latest": (route) => {
+    "GET /api/v1/federation/for-you": (route) => {
       const cursor = new URL(route.request().url()).searchParams.get("cursor");
       seen.latest.push(cursor ?? "");
       if (latest) return latest(route, cursor);
@@ -83,12 +83,12 @@ async function scrollToEnd(page: Page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
 }
 
-test("under the last kurl row, 다른 서버 최신 follows with kept notes and pool items in order, and pages on", async ({
+test("under the last kurl row, 다른 서버 follows in 맞춤 order with kept notes and pool items in order, and pages on", async ({
   page,
 }) => {
   await signIn(page);
   const seen = await serve(page);
-  await page.goto("/ko/blog?order=latest");
+  await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
   await expect(feed.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
 
@@ -119,7 +119,7 @@ test("under the last kurl row, 다른 서버 최신 follows with kept notes and 
 test("a since refresh keeps the tail and asks it again from its first page", async ({ page }) => {
   await signIn(page);
   const seen = await serve(page);
-  await page.goto("/ko/blog?order=latest");
+  await page.goto("/ko/blog");
   const tail = page.getByTestId("home-remote-tail");
   await expect
     .poll(
@@ -144,7 +144,7 @@ test("with no kurl rows the tail starts at once, and when the tail is empty too 
 }) => {
   await signIn(page);
   await serve(page, { home: { items: [], next: null } });
-  await page.goto("/ko/blog?order=latest");
+  await page.goto("/ko/blog");
   const tail = page.getByTestId("home-remote-tail");
   await expect(tail.getByRole("heading", { name: "다른 서버", exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(tail.locator('[data-remote-kept="31"]')).toBeVisible();
@@ -161,11 +161,11 @@ test("a tail that fails ends the feed quietly, and 인기 never grows a tail", a
   const seen = await serve(page, {
     latest: (route) => route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } }),
   });
-  await page.goto("/ko/blog?order=latest");
+  await page.goto("/ko/blog");
   await expect(page.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
   await expect.poll(() => seen.latest.length).toBeGreaterThan(0);
   await expect(page.getByRole("heading", { name: "다른 서버", exact: true })).toHaveCount(0);
-  await expect(page.getByText("최신 글을 불러오지 못했어요")).toHaveCount(0);
+  await expect(page.getByText("다른 서버 글을 불러오지 못했어요")).toHaveCount(0);
 
   await page.goto("/ko/blog?sort=trending");
   await expect(page.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });

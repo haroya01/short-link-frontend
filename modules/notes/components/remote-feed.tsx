@@ -33,23 +33,21 @@ function orderOf(value: string | null): RemoteOrder {
   return value === "latest" ? "latest" : "for-you";
 }
 
-export function useRemoteOrder(): [RemoteOrder, (order: RemoteOrder) => void, boolean] {
+function useRemoteOrder(): [RemoteOrder, (order: RemoteOrder) => void] {
   const params = useSearchParams();
   const [order, setOrder] = useState<RemoteOrder>(() => orderOf(params.get("order")));
-  const [picked, setPicked] = useState(false);
   function pick(next: RemoteOrder) {
     if (next === order) return;
     setOrder(next);
-    setPicked(true);
     const url = new URL(window.location.href);
     if (next === "for-you") url.searchParams.delete("order");
     else url.searchParams.set("order", next);
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   }
-  return [order, pick, picked];
+  return [order, pick];
 }
 
-export function RemoteOrderSwitch({ order, onOrder }: { order: RemoteOrder; onOrder: (order: RemoteOrder) => void }) {
+function RemoteOrderSwitch({ order, onOrder }: { order: RemoteOrder; onOrder: (order: RemoteOrder) => void }) {
   const t = useTranslations("notes");
   const label: Record<RemoteOrder, string> = { "for-you": t("orderForYou"), latest: t("orderLatest") };
   return (
@@ -96,12 +94,10 @@ export function RemoteNotesList({
   view,
   heading,
   fallback,
-  headingWhileLoading = false,
 }: {
   view: RemoteView;
   heading?: ReactNode;
   fallback?: ReactNode;
-  headingWhileLoading?: boolean;
 }) {
   const quiet = fallback !== undefined;
   const t = useTranslations("notes");
@@ -139,14 +135,7 @@ export function RemoteNotesList({
     return () => seenQueue().flush();
   }, [feed]);
 
-  if (notes.state === "loading") {
-    return (
-      <>
-        {headingWhileLoading && heading}
-        <NoteListSkeleton rows={3} />
-      </>
-    );
-  }
+  if (notes.state === "loading") return <NoteListSkeleton rows={3} />;
   if (notes.state === "failed") {
     if (quiet) return fallback;
     return (
