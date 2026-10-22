@@ -1627,6 +1627,7 @@
       "traffic": "Lưu lượng",
       "sources": "Nguồn",
       "audience": "Đối tượng",
+      "log": "Nhật ký",
       "settings": "Cài đặt"
     },
     "live": {
@@ -1967,14 +1968,11 @@
       "detailClose": "Đóng"
     },
     "rawData": {
-      "title": "Dữ liệu thô · xuất",
-      "description": "Xem nhật ký lượt nhấp thô của liên kết này hoặc xuất ra CSV.",
       "exportEvents": "CSV sự kiện nhấp",
       "exportStats": "CSV thống kê hằng ngày",
       "exporting": "Đang xuất…",
-      "showLog": "Nhật ký nhấp thô",
-      "hideLog": "Ẩn nhật ký",
       "loadMore": "Xem thêm",
+      "retention": "Lượt nhấp trong {days} ngày gần nhất",
       "empty": "Chưa có lượt nhấp.",
       "bot": "Bot",
       "colTime": "Thời gian",

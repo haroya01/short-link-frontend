@@ -1627,6 +1627,7 @@
       "traffic": "トラフィック",
       "sources": "流入",
       "audience": "訪問者",
+      "log": "記録",
       "settings": "設定"
     },
     "live": {
@@ -1967,14 +1968,11 @@
       "detailClose": "閉じる"
     },
     "rawData": {
-      "title": "生データ・エクスポート",
-      "description": "このリンクのクリック生ログを見たり、CSV でエクスポートできます。",
       "exportEvents": "クリックイベント CSV",
       "exportStats": "日次統計 CSV",
       "exporting": "エクスポート中…",
-      "showLog": "クリック生ログ",
-      "hideLog": "ログを隠す",
       "loadMore": "もっと見る",
+      "retention": "直近{days}日の記録です",
       "empty": "まだクリックがありません。",
       "bot": "ボット",
       "colTime": "時刻",

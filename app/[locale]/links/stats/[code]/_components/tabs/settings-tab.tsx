@@ -6,7 +6,6 @@ import {
   LinkBlockedCountriesSection,
   LinkDestinationsSection,
 } from "@/components/links/destinations-section";
-import { LinkExportSection } from "@/components/links/link-export-section";
 import { LinkPeriodSection } from "@/components/links/link-period-section";
 import { LinkProtectionSection } from "@/components/links/link-protection-section";
 import { LinkVisitSection } from "@/components/links/link-visit-section";
@@ -52,7 +51,6 @@ export function SettingsTab({
       />
       <LinkBlockedCountriesSection shortCode={data.shortCode} />
       <LinkWebhooksSection shortCode={data.shortCode} />
-      <LinkExportSection shortCode={data.shortCode} />
     </div>
   );
 }
@@ -71,7 +69,6 @@ function DemoSettingsBody() {
       <DemoLinkDestinationsPreview />
       <DemoLinkBlockedCountriesPreview />
       <DemoLinkWebhooksPreview />
-      <DemoLinkExportPreview />
     </div>
   );
 }
@@ -109,54 +106,6 @@ function DemoLinkBlockedCountriesPreview() {
           </span>
         ))}
       </div>
-    </section>
-  );
-}
-
-/**
- * Demo mirror of {@link LinkExportSection}: disabled CSV buttons + a seeded raw-click row so the
- * /demo settings surface shows the export/raw-log feature shape (mirror principle) without a session.
- */
-function DemoLinkExportPreview() {
-  const t = useTranslations("stats.rawData");
-  const tDemo = useTranslations("demo.settingsDemo");
-  const { toast } = useToast();
-  const lock = () => toast(tDemo("lockedToast"), "default");
-  return (
-    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-card-flat">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
-          <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
-        </div>
-        <DemoBadge />
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" size="sm" variant="ghost" disabled onClick={lock}>
-          {t("exportEvents")}
-        </Button>
-        <Button type="button" size="sm" variant="ghost" disabled onClick={lock}>
-          {t("exportStats")}
-        </Button>
-      </div>
-      <table className="mt-4 w-full border-collapse text-[12px]">
-        <thead>
-          <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] text-slate-500 dark:text-slate-400">
-            <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
-            <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
-            <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>
-            <th className="py-1.5 pr-3 font-medium">{t("colReferrer")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="border-b border-slate-100 dark:border-slate-800">
-            <td className="py-1.5 pr-3 tabular-nums text-slate-600 dark:text-slate-300">2026-05-10 20:14</td>
-            <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">Seoul, KR</td>
-            <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">mobile · iOS · Safari</td>
-            <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">instagram.com</td>
-          </tr>
-        </tbody>
-      </table>
     </section>
   );
 }
@@ -551,7 +500,7 @@ X-Kurl-Signature: sha256=8b1a9953c4611296a827abf8c47804d7
   );
 }
 
-function DemoBadge() {
+export function DemoBadge() {
   const tDemo = useTranslations("demo.settingsDemo");
   return (
     <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-2 py-1 text-[10px] font-medium text-slate-600 dark:text-slate-300">

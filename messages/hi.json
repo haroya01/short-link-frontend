@@ -1627,6 +1627,7 @@
       "traffic": "ट्रैफ़िक",
       "sources": "स्रोत",
       "audience": "दर्शक",
+      "log": "लॉग",
       "settings": "सेटिंग्स"
     },
     "live": {
@@ -1967,14 +1968,11 @@
       "detailClose": "बंद करें"
     },
     "rawData": {
-      "title": "कच्चा डेटा · निर्यात",
-      "description": "इस लिंक का कच्चा क्लिक लॉग देखें या इसे CSV के रूप में निर्यात करें।",
       "exportEvents": "क्लिक इवेंट CSV",
       "exportStats": "दैनिक आँकड़े CSV",
       "exporting": "निर्यात हो रहा है…",
-      "showLog": "कच्चा क्लिक लॉग",
-      "hideLog": "लॉग छिपाएँ",
       "loadMore": "और देखें",
+      "retention": "पिछले {days} दिनों के क्लिक",
       "empty": "अभी तक कोई क्लिक नहीं।",
       "bot": "बॉट",
       "colTime": "समय",

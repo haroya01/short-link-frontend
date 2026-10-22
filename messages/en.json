@@ -1627,6 +1627,7 @@
       "traffic": "Traffic",
       "sources": "Sources",
       "audience": "Audience",
+      "log": "Log",
       "settings": "Settings"
     },
     "live": {
@@ -1967,14 +1968,11 @@
       "detailClose": "Close"
     },
     "rawData": {
-      "title": "Raw data · export",
-      "description": "View this link's raw click log or export it as CSV.",
       "exportEvents": "Click events CSV",
       "exportStats": "Daily stats CSV",
       "exporting": "Exporting…",
-      "showLog": "Raw click log",
-      "hideLog": "Hide log",
       "loadMore": "Load more",
+      "retention": "Last {days} days of clicks",
       "empty": "No clicks yet.",
       "bot": "Bot",
       "colTime": "Time",

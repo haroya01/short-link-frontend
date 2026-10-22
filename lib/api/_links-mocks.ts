@@ -166,10 +166,12 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
   }
   // per-link 통계·상세 — 통계 페이지(모프·보호 섹션 포함)를 목 모드에서 QA 가능하게.
   // 데모 페이지와 같은 합성 통계를 그대로 쓴다(화면 계약 일치).
+  const eventsMatch = /^\/api\/v1\/links\/[^/]+\/events$/.exec(p);
+  if (eventsMatch) return mockLinkEvents(new URLSearchParams(path.split("?")[1] ?? "").get("cursor"));
   const linkMatch = /^\/api\/v1\/links\/([^/]+)\/(stats|detail)$/.exec(p);
   if (linkMatch) {
     const [, code, kind] = linkMatch;
-    if (kind === "stats") return { ...buildDemoLinkStats(), shortCode: code };
+    if (kind === "stats") return { ...buildDemoLinkStats(), shortCode: code, rawRetentionDays: 90, rawSince: "2026-07-24T00:00:00Z" };
     return {
       shortCode: code,
       originalUrl: "https://blog.example.com/2026/08/spring-sale-landing",
@@ -193,6 +195,35 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
     };
   }
   return undefined;
+}
+
+const MOCK_EVENT_PLACES = [["Seoul", "KR", "instagram.com"], ["Tokyo", "JP", "x.com"], ["Busan", "KR", null], ["Osaka", "JP", "google.com"]] as const;
+
+function mockLinkEvents(cursor: string | null): unknown {
+  const start = cursor === "page-2" ? 50 : 0;
+  const count = cursor === "page-2" ? 12 : 50;
+  const items = Array.from({ length: count }, (_, idx) => {
+    const i = start + idx;
+    const [city, country, referrerHost] = MOCK_EVENT_PLACES[i % MOCK_EVENT_PLACES.length];
+    const bot = i % 9 === 4;
+    return {
+      clickedAt: new Date(Date.UTC(2026, 9, 21, 23, 50) - i * 7 * 60_000).toISOString(),
+      country,
+      region: null,
+      city,
+      device: bot ? null : i % 3 === 0 ? "desktop" : "mobile",
+      os: bot ? null : i % 3 === 0 ? "macOS" : "iOS",
+      browser: bot ? null : i % 3 === 0 ? "Chrome" : "Safari",
+      referrer: null,
+      referrerHost,
+      channel: referrerHost ? "social" : "direct",
+      language: country === "KR" ? "ko" : "ja",
+      bot,
+      botName: bot ? "Slackbot" : null,
+      ipMasked: null,
+    };
+  });
+  return { items, nextCursor: cursor === "page-2" ? null : "page-2" };
 }
 
 function mockProfileStats(): unknown {

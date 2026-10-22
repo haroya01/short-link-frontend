@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-export type TabKey = "overview" | "who" | "when" | "where" | "settings";
+export type TabKey = "overview" | "who" | "when" | "where" | "log" | "settings";
 
-const VALID: ReadonlyArray<TabKey> = ["overview", "who", "when", "where", "settings"];
+const VALID: ReadonlyArray<TabKey> = ["overview", "who", "when", "where", "log", "settings"];
 
 function readHash(): TabKey {
   if (typeof window === "undefined") return "overview";
