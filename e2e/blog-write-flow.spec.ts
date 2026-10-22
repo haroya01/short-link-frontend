@@ -2202,3 +2202,77 @@ test("opening an imported post turns its old Note label into a box that saves in
   expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "QUOTE"]);
   expect(blocks[1].content?.startsWith("[!NOTE]\n**Event loop?**")).toBe(true);
 });
+
+test("a code block works while CodeMirror is still on its way, keeps its height when it arrives, and undo still steps back", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => (release = resolve));
+  await page.route("**/_next/static/chunks/**", async (route) => {
+    await held;
+    await route.continue();
+  });
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("```js");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("const a = 1");
+  const plain = page.locator(".tiptap [data-code-block-plain]");
+  await expect(plain).toContainText("const a = 1");
+  await expect(page.locator(".tiptap .cm-content")).toHaveCount(0);
+  const before = (await plain.boundingBox())!.height;
+
+  release();
+  const cm = page.locator(".tiptap .cm-codeblock .cm-content");
+  await expect(cm).toHaveText("const a = 1", { timeout: 15_000 });
+  await expect(plain).toHaveCount(0);
+  const after = (await page.locator(".tiptap .cm-codeblock").boundingBox())!.height;
+  expect(Math.abs(after - before)).toBeLessThanOrEqual(1);
+
+  await cm.click();
+  await page.keyboard.press("End");
+  await page.evaluate(() => navigator.clipboard.writeText(";\nconst b = 2"));
+  await page.waitForTimeout(700);
+  await page.keyboard.press("ControlOrMeta+v");
+  await expect(cm).toContainText("const b = 2");
+  await page.keyboard.press("ControlOrMeta+z");
+  await expect(cm).not.toContainText("const b = 2");
+  await expect(cm).toContainText("const a = 1");
+
+  captured.blocks = null;
+  await page.locator(".tiptap").getByText("const a = 1").click();
+  await page.keyboard.press("End");
+  await page.keyboard.type(" // 끝");
+  const blocks = await save(page, captured);
+  const code = blocks.find((b) => b.type === "CODE");
+  expect(JSON.parse(code!.content!)).toEqual({ lang: "js", code: "const a = 1 // 끝" });
+});
+
+test("a saved post with a code block opens in CodeMirror", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      captured.blocks = route.request().postDataJSON()?.blocks ?? null;
+      return route.fulfill({ json: [] });
+    }
+    return route.fulfill({
+      json: [
+        { type: "PARAGRAPH", content: "앞 문단" },
+        { type: "CODE", content: JSON.stringify({ lang: "python", code: "print('hi')\nprint('bye')" }) },
+      ],
+    });
+  });
+  await openEditor(page);
+  const cm = page.locator(".tiptap .cm-codeblock .cm-content");
+  await expect(cm).toContainText("print('hi')", { timeout: 15_000 });
+  await expect(cm.locator(".cm-line")).toHaveCount(2);
+  await expect(page.locator(".tiptap .cm-codeblock select")).toHaveValue("python");
+  await expect(page.locator(".tiptap [data-code-block-plain]")).toHaveCount(0);
+});
