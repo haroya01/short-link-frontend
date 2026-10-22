@@ -6,13 +6,8 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref, linksHref } from "@/lib/host";
 import { writeLoginNextCookie } from "@/lib/login-next-cookie";
+import { sameOriginPath } from "@/lib/same-origin-path";
 import { LoginPanel } from "@/components/auth/login-panel";
-
-// ?next= 는 같은 오리진 내부 경로만 허용 — callback 의 동일 가드와 맞춰 open-redirect 차단.
-function sanitizeNext(raw: string | null): string | null {
-  if (!raw || !/^\/(?!\/)/.test(raw) || raw.includes("\\")) return null;
-  return raw;
-}
 
 export default function BlogLoginPage() {
   // useSearchParams 는 Suspense 경계가 필요(빌드 시 prerender 가드).
@@ -25,7 +20,7 @@ export default function BlogLoginPage() {
 
 function BlogLoginInner() {
   const searchParams = useSearchParams();
-  return <BlogLoginShell next={sanitizeNext(searchParams.get("next"))} />;
+  return <BlogLoginShell next={sameOriginPath(searchParams.get("next"))} />;
 }
 
 function BlogLoginShell({ next }: { next: string | null }) {
