@@ -52,3 +52,31 @@ test("a note from another server drops its closing link under the card too", asy
   });
   await expect(remote.locator("[data-note-body] p")).toHaveText("長く使える道具の選び方について書きました。");
 });
+
+test("a note that is only a link opens from the row around its card, while the card opens the link in a new tab", async ({
+  page,
+  context,
+}) => {
+  await context.route("https://example.com/**", (route) =>
+    route.fulfill({ status: 200, contentType: "text/html", body: "<title>essay</title>" }),
+  );
+  await page.goto("/ko/blog");
+  await page.getByRole("textbox", { name: "노트 쓰기" }).fill("https://example.com/only");
+  await expect(page.locator("div[data-note-link-card]")).toContainText("example.com", { timeout: 30_000 });
+  await page.getByRole("button", { name: "올리기" }).click();
+  await page.getByRole("dialog").filter({ hasText: "노트는 다른 서버에도 전해져요" })
+    .getByRole("button", { name: "알겠어요, 올릴게요" }).click();
+  const only = page.locator("article").first();
+  const card = only.locator("a[data-note-link-card]");
+  await expect(card).toHaveAttribute("href", "https://example.com/only");
+
+  const opened = context.waitForEvent("page");
+  await card.click();
+  await expect(await opened).toHaveURL("https://example.com/only");
+  await expect(page).toHaveURL(/\/blog$/);
+
+  const id = await only.getAttribute("data-note-id");
+  const box = (await card.boundingBox())!;
+  await page.mouse.click(box.x + 24, box.y - 4);
+  await expect(page).toHaveURL(new RegExp(`/notes/${id}$`));
+});
