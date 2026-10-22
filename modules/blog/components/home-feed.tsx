@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { keepPreviousData, useInfiniteQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -30,7 +30,7 @@ import type { Note, QuotedPost } from "@/modules/notes/api/notes";
 import { NoteComposer } from "@/modules/notes/components/note-composer";
 import { NoteDraftsButton } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
-import { RemoteNotesList } from "@/modules/notes/components/remote-feed";
+import { RemoteNotesList, RemoteOrderSwitch, useRemoteOrder } from "@/modules/notes/components/remote-feed";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { useShowReposts } from "@/modules/notes/lib/use-show-reposts";
@@ -239,7 +239,7 @@ function HomeList({
   const refreshNow = useCallback(async () => {
     if (refreshing.current) return;
     window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-    if (sort === "recent") void queryClient.resetQueries({ queryKey: REMOTE_LATEST_KEY });
+    if (sort === "recent") REMOTE_KEYS.forEach((queryKey) => void queryClient.resetQueries({ queryKey }));
     if (sort === "trending" || newest.current === null) {
       setArrived([]);
       newest.current = null;
@@ -404,25 +404,41 @@ function HomeList({
   );
 }
 
-const REMOTE_LATEST_KEY = ["notes", "remote", "latest"];
+const REMOTE_KEYS = [
+  ["notes", "remote", "for-you"],
+  ["notes", "remote", "latest"],
+];
 
-function RemoteTail({ divided, fallback }: { divided: boolean; fallback: ReactNode }) {
-  const t = useTranslations("publicFeed");
+function RemoteTail(props: { divided: boolean; fallback: ReactNode }) {
   return (
-    <section aria-labelledby="home-remote-tail" data-testid="home-remote-tail">
+    <Suspense fallback={<NoteListSkeleton rows={3} />}>
+      <OrderedRemoteTail {...props} />
+    </Suspense>
+  );
+}
+
+function OrderedRemoteTail({ divided, fallback }: { divided: boolean; fallback: ReactNode }) {
+  const t = useTranslations("notes");
+  const [order, pick, picked] = useRemoteOrder();
+  return (
+    <section aria-labelledby="home-remote-tail" data-testid="home-remote-tail" data-remote-view={order}>
       <RemoteNotesList
-        view="latest"
+        key={order}
+        view={order}
         fallback={fallback}
+        headingWhileLoading={picked}
         heading={
-          <h2
-            id="home-remote-tail"
+          <div
             className={cn(
-              "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400",
+              "flex items-center justify-between gap-3 pt-4",
               divided && "border-t border-slate-100 dark:border-slate-800",
             )}
           >
-            {t("homeRemoteTail")}
-          </h2>
+            <h2 id="home-remote-tail" className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+              {t("feedFederated")}
+            </h2>
+            <RemoteOrderSwitch order={order} onOrder={pick} />
+          </div>
         }
       />
     </section>

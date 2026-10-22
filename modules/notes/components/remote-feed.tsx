@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Globe, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import type { Note } from "@/modules/notes/api/notes";
-import type { RemoteView } from "@/modules/notes/api/remote-trending";
+import type { RemoteView, SeenFeed } from "@/modules/notes/api/remote-trending";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { remoteRows } from "@/modules/notes/lib/remote-rows";
 import { seenQueue, watchSeen } from "@/modules/notes/lib/remote-seen";
@@ -25,18 +27,81 @@ export function RemoteFeed({ view }: { view: RemoteView }) {
   );
 }
 
+export type RemoteOrder = SeenFeed;
+
+function orderOf(value: string | null): RemoteOrder {
+  return value === "latest" ? "latest" : "for-you";
+}
+
+export function useRemoteOrder(): [RemoteOrder, (order: RemoteOrder) => void, boolean] {
+  const params = useSearchParams();
+  const [order, setOrder] = useState<RemoteOrder>(() => orderOf(params.get("order")));
+  const [picked, setPicked] = useState(false);
+  function pick(next: RemoteOrder) {
+    if (next === order) return;
+    setOrder(next);
+    setPicked(true);
+    const url = new URL(window.location.href);
+    if (next === "for-you") url.searchParams.delete("order");
+    else url.searchParams.set("order", next);
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }
+  return [order, pick, picked];
+}
+
+export function RemoteOrderSwitch({ order, onOrder }: { order: RemoteOrder; onOrder: (order: RemoteOrder) => void }) {
+  const t = useTranslations("notes");
+  const label: Record<RemoteOrder, string> = { "for-you": t("orderForYou"), latest: t("orderLatest") };
+  return (
+    <div role="group" aria-label={t("orderLabel")} className="-mx-1.5 flex gap-1 text-[13px] font-semibold">
+      {(["for-you", "latest"] as const).map((key) => (
+        <button
+          key={key}
+          type="button"
+          aria-pressed={order === key}
+          data-remote-order={key}
+          onClick={() => onOrder(key)}
+          className={cn(
+            "focus-ring touch-target rounded px-1.5 py-1 transition-colors",
+            order === key
+              ? "text-slate-900 dark:text-slate-100"
+              : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200",
+          )}
+        >
+          {label[key]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function RemoteOrderedFeed() {
+  const [order, pick] = useRemoteOrder();
+  return (
+    <section data-testid="remote-feed" data-remote-view={order}>
+      <div className="pt-3">
+        <RemoteOrderSwitch order={order} onOrder={pick} />
+      </div>
+      <RemoteNotesList key={order} view={order} />
+    </section>
+  );
+}
+
 const receivedHeading =
   "border-t border-slate-100 pt-5 text-[13px] font-semibold text-slate-500 dark:border-slate-800 dark:text-slate-400";
 const rowHeading = "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400";
+const FAILED = { "for-you": "forYouFailed", latest: "latestFailed", trending: "trendingFailed" } as const;
 
 export function RemoteNotesList({
   view,
   heading,
   fallback,
+  headingWhileLoading = false,
 }: {
   view: RemoteView;
   heading?: ReactNode;
   fallback?: ReactNode;
+  headingWhileLoading?: boolean;
 }) {
   const quiet = fallback !== undefined;
   const t = useTranslations("notes");
@@ -50,7 +115,7 @@ export function RemoteNotesList({
   const autoLoad = loaded !== null && loaded.hasMore && !loaded.moreFailed && !loaded.loadingMore;
   const stalled = loaded?.stalled === true;
   const more = loaded?.more;
-  const latest = view === "latest";
+  const feed = view === "trending" ? null : view;
 
   useEffect(() => {
     const el = sentinel.current;
@@ -70,16 +135,23 @@ export function RemoteNotesList({
   }, [autoLoad, stalled, more]);
 
   useEffect(() => {
-    if (!latest) return;
+    if (!feed) return;
     return () => seenQueue().flush();
-  }, [latest]);
+  }, [feed]);
 
-  if (notes.state === "loading") return <NoteListSkeleton rows={3} />;
+  if (notes.state === "loading") {
+    return (
+      <>
+        {headingWhileLoading && heading}
+        <NoteListSkeleton rows={3} />
+      </>
+    );
+  }
   if (notes.state === "failed") {
     if (quiet) return fallback;
     return (
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 py-4 text-[14px] text-slate-500 dark:text-slate-400">
-        <span>{view === "latest" ? t("latestFailed") : t("trendingFailed")}</span>
+        <span>{t(FAILED[view])}</span>
         <button
           type="button"
           onClick={notes.retry}
@@ -105,7 +177,7 @@ export function RemoteNotesList({
   if (rows.length === 0 && ended) {
     if (quiet) return fallback;
     if (view === "trending" && signedOut) return <SignInEmptyState reason="federatedNotes" icon={Globe} />;
-    return view === "latest" ? (
+    return view !== "trending" ? (
       <BlogEmpty title={t("latestEmpty")} />
     ) : (
       <BlogEmpty title={t("emptyFederated")} body={t("emptyFederatedBody")} />
@@ -119,12 +191,12 @@ export function RemoteNotesList({
         {rows.map((row, i) => {
           const divider = row.seenStart && <SeenHeading className={rowHeading}>{t("remoteSeenDivider")}</SeenHeading>;
           return row.kind === "pool" ? (
-            <SeenWatch key={`pool-${row.uri}`} uri={latest ? row.uri : null} data-remote-uri={row.uri}>
+            <SeenWatch key={`pool-${row.uri}`} uri={row.uri} feed={feed} data-remote-uri={row.uri}>
               {divider}
               <TrendingNoteCard item={row.item} filteredBy={row.filteredBy} trending={view === "trending"} />
             </SeenWatch>
           ) : (
-            <SeenWatch key={`kept-${row.note.id}`} uri={latest ? row.uri : null} data-remote-kept={row.note.id}>
+            <SeenWatch key={`kept-${row.note.id}`} uri={row.uri} feed={feed} data-remote-kept={row.note.id}>
               {divider}
               {i === firstKept && <h2 className={rowHeading}>{t("receivedNotes")}</h2>}
               <KeptNote note={row.note} filteredBy={row.filteredBy} />
@@ -171,10 +243,12 @@ export function RemoteNotesList({
 
 function SeenWatch({
   uri,
+  feed,
   children,
   ...data
 }: {
   uri: string | null;
+  feed: SeenFeed | null;
   children: ReactNode;
   "data-remote-uri"?: string;
   "data-remote-kept"?: number;
@@ -182,9 +256,9 @@ function SeenWatch({
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
-    if (!el || !uri) return;
-    return watchSeen(el, uri);
-  }, [uri]);
+    if (!el || !uri || !feed) return;
+    return watchSeen(el, uri, feed);
+  }, [uri, feed]);
   return (
     <div ref={box} {...data}>
       {children}

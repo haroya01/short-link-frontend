@@ -1,37 +1,57 @@
-import { sendRemoteSeen } from "@/modules/notes/api/remote-trending";
+import { sendRemoteSeen, type SeenBatch, type SeenFeed } from "@/modules/notes/api/remote-trending";
 
 export const SEEN_BATCH = 20;
 export const SEEN_FLUSH_MS = 10_000;
 export const SEEN_QUEUE_MAX = 200;
 export const SEEN_DWELL_MS = 1_000;
+export const DWELL_MAX_MS = 600_000;
 const SEEN_REQUEST_MAX = 100;
 
-type Send = (uris: string[], keepalive: boolean) => Promise<void>;
+type Send = (batch: SeenBatch, keepalive: boolean) => Promise<void>;
 
-export type SeenQueue = { add: (uri: string) => void; flush: (keepalive?: boolean) => void };
+export type SeenQueue = {
+  add: (uri: string, feed: SeenFeed) => void;
+  dwell: (uri: string, ms: number, feed: SeenFeed) => void;
+  flush: (keepalive?: boolean) => void;
+};
 
 export function createSeenQueue(send: Send): SeenQueue {
   const reported = new Set<string>();
+  const dwelt = new Map<string, number>();
   const failedOnce = new Set<string>();
-  let pending: string[] = [];
+  let pending: { uri: string; feed: SeenFeed }[] = [];
+  const dwelling = new Map<string, { ms: number; feed: SeenFeed }>();
   let timer: ReturnType<typeof setTimeout> | null = null;
 
+  const size = () => pending.length + dwelling.size;
+
   function schedule() {
-    if (timer === null && pending.length > 0) timer = setTimeout(() => flush(), SEEN_FLUSH_MS);
+    if (timer === null && size() > 0) timer = setTimeout(() => flush(), SEEN_FLUSH_MS);
   }
 
-  function requeue(batch: string[]) {
-    const again: string[] = [];
-    for (const uri of batch) {
-      if (failedOnce.has(uri) || pending.length + again.length >= SEEN_QUEUE_MAX) {
-        failedOnce.delete(uri);
+  function requeue(batch: SeenBatch) {
+    const again: { uri: string; feed: SeenFeed }[] = [];
+    for (const uri of batch.uris) {
+      const key = `seen:${uri}`;
+      if (failedOnce.has(key) || size() + again.length >= SEEN_QUEUE_MAX) {
+        failedOnce.delete(key);
         reported.delete(uri);
       } else {
-        failedOnce.add(uri);
-        again.push(uri);
+        failedOnce.add(key);
+        again.push({ uri, feed: batch.feed });
       }
     }
     pending = [...again, ...pending];
+    for (const { uri, ms } of batch.dwell) {
+      const key = `dwell:${uri}`;
+      if (failedOnce.has(key) || (!dwelling.has(uri) && size() >= SEEN_QUEUE_MAX)) {
+        failedOnce.delete(key);
+        if (dwelt.get(uri) === ms) dwelt.delete(uri);
+      } else {
+        failedOnce.add(key);
+        if ((dwelling.get(uri)?.ms ?? 0) < ms) dwelling.set(uri, { ms, feed: batch.feed });
+      }
+    }
     schedule();
   }
 
@@ -40,24 +60,56 @@ export function createSeenQueue(send: Send): SeenQueue {
       clearTimeout(timer);
       timer = null;
     }
-    while (pending.length > 0) {
-      const batch = pending.splice(0, SEEN_REQUEST_MAX);
-      send(batch, keepalive).then(
-        () => batch.forEach((uri) => failedOnce.delete(uri)),
-        () => requeue(batch),
-      );
+    const byFeed = new Map<SeenFeed, SeenBatch>();
+    const batchOf = (feed: SeenFeed) => {
+      const batch = byFeed.get(feed) ?? { feed, uris: [], dwell: [] };
+      byFeed.set(feed, batch);
+      return batch;
+    };
+    for (const { uri, feed } of pending) batchOf(feed).uris.push(uri);
+    for (const [uri, { ms, feed }] of dwelling) batchOf(feed).dwell.push({ uri, ms });
+    pending = [];
+    dwelling.clear();
+    for (const { feed, uris, dwell } of byFeed.values()) {
+      for (let at = 0; at < Math.max(uris.length, dwell.length); at += SEEN_REQUEST_MAX) {
+        const batch = {
+          feed,
+          uris: uris.slice(at, at + SEEN_REQUEST_MAX),
+          dwell: dwell.slice(at, at + SEEN_REQUEST_MAX),
+        };
+        send(batch, keepalive).then(
+          () => {
+            batch.uris.forEach((uri) => failedOnce.delete(`seen:${uri}`));
+            batch.dwell.forEach(({ uri }) => failedOnce.delete(`dwell:${uri}`));
+          },
+          () => requeue(batch),
+        );
+      }
     }
   }
 
-  function add(uri: string) {
-    if (reported.has(uri) || pending.length >= SEEN_QUEUE_MAX) return;
-    reported.add(uri);
-    pending.push(uri);
-    if (pending.length >= SEEN_BATCH) flush();
+  function gathered() {
+    if (size() >= SEEN_BATCH) flush();
     else schedule();
   }
 
-  return { add, flush };
+  function add(uri: string, feed: SeenFeed) {
+    if (reported.has(uri) || size() >= SEEN_QUEUE_MAX) return;
+    reported.add(uri);
+    pending.push({ uri, feed });
+    gathered();
+  }
+
+  function dwell(uri: string, ms: number, feed: SeenFeed) {
+    const total = Math.min(Math.round(ms), DWELL_MAX_MS);
+    if (total < SEEN_DWELL_MS || (dwelt.get(uri) ?? 0) >= total) return;
+    if (!dwelling.has(uri) && size() >= SEEN_QUEUE_MAX) return;
+    dwelt.set(uri, total);
+    dwelling.set(uri, { ms: total, feed });
+    gathered();
+  }
+
+  return { add, dwell, flush };
 }
 
 let shared: SeenQueue | null = null;
@@ -73,7 +125,14 @@ export function seenQueue(): SeenQueue {
   return queue;
 }
 
-type Watch = { uri: string; timer: ReturnType<typeof setTimeout> | null };
+type Watch = {
+  uri: string;
+  feed: SeenFeed;
+  counted: boolean;
+  timer: ReturnType<typeof setTimeout> | null;
+  since: number | null;
+  total: number;
+};
 
 let observer: IntersectionObserver | null = null;
 const watched = new Map<Element, Watch>();
@@ -83,46 +142,66 @@ function stopTimer(watch: Watch) {
   watch.timer = null;
 }
 
+function leave(watch: Watch) {
+  stopTimer(watch);
+  if (watch.since === null) return;
+  watch.total += Date.now() - watch.since;
+  watch.since = null;
+  seenQueue().dwell(watch.uri, watch.total, watch.feed);
+}
+
 function onEntries(entries: IntersectionObserverEntry[]) {
   for (const entry of entries) {
     const watch = watched.get(entry.target);
     if (!watch) continue;
     if (!entry.isIntersecting || entry.intersectionRatio < 0.5 || document.visibilityState !== "visible") {
-      stopTimer(watch);
+      leave(watch);
       continue;
     }
+    watch.since ??= Date.now();
+    if (watch.counted) continue;
     watch.timer ??= setTimeout(() => {
       watch.timer = null;
-      unwatch(entry.target);
-      seenQueue().add(watch.uri);
+      watch.counted = true;
+      seenQueue().add(watch.uri, watch.feed);
     }, SEEN_DWELL_MS);
   }
 }
 
+function leaveAll() {
+  if (watched.size === 0) return;
+  watched.forEach(leave);
+  seenQueue().flush(true);
+}
+
 function lookAgain() {
   if (!observer) return;
-  for (const [el, watch] of watched) {
-    stopTimer(watch);
+  if (document.visibilityState !== "visible") {
+    leaveAll();
+    return;
+  }
+  for (const el of watched.keys()) {
     observer.unobserve(el);
-    if (document.visibilityState === "visible") observer.observe(el);
+    observer.observe(el);
   }
 }
 
 function unwatch(el: Element) {
   const watch = watched.get(el);
   if (!watch) return;
-  stopTimer(watch);
+  leave(watch);
   watched.delete(el);
   observer?.unobserve(el);
 }
 
-export function watchSeen(el: Element, uri: string): () => void {
+export function watchSeen(el: Element, uri: string, feed: SeenFeed): () => void {
   if (typeof IntersectionObserver === "undefined") return () => {};
   if (!observer) {
     observer = new IntersectionObserver(onEntries, { threshold: 0.5 });
     document.addEventListener("visibilitychange", lookAgain);
+    window.addEventListener("pagehide", leaveAll);
   }
-  watched.set(el, { uri, timer: null });
+  watched.set(el, { uri, feed, counted: false, timer: null, since: null, total: 0 });
   observer.observe(el);
   return () => unwatch(el);
 }

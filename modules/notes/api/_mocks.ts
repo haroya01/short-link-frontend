@@ -1021,16 +1021,36 @@ const TRENDING: TrendingNote[] = [
 
 const MOCK_LATEST_PAGE = 5;
 
-function mockLatest(cursor: string | null): RemoteNotesBody {
+function latestRemote(): (TrendingNote | Note)[] {
   const kept: (TrendingNote | Note)[] = mockFederatedNotes(0).items;
-  const all = [...kept, ...TRENDING].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...kept, ...TRENDING].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+function mockLatest(cursor: string | null): RemoteNotesBody {
+  const all = latestRemote();
   const offset = Number(cursor?.slice(1)) || 0;
   const end = offset + MOCK_LATEST_PAGE;
   return { items: all.slice(offset, end), next: end < all.length ? `r${end}` : null };
 }
 
+const FOR_YOU_AS_OF = 1792656810855;
+
+function mockForYou(cursor: string | null): RemoteNotesBody {
+  const kept: (TrendingNote | Note)[] = mockFederatedNotes(0).items;
+  const pool = [...TRENDING].reverse();
+  const ranked = Array.from({ length: Math.max(kept.length, pool.length) }, (_, i) => [pool[i], kept[i]])
+    .flat()
+    .filter((item): item is TrendingNote | Note => item !== undefined);
+  const half = Math.ceil(ranked.length / 2);
+  const offset = Number(/^f\d+\.(\d+)$/.exec(cursor ?? "")?.[1] ?? 0);
+  if (offset === 0) return { items: ranked.slice(0, half), next: `f${FOR_YOU_AS_OF}.${half}` };
+  const items = [ranked[offset - 1], ...ranked.slice(offset)];
+  return { items, next: null, seenFrom: items.length - 2 };
+}
+
 export function mockRemoteNotes(view: RemoteView, cursor: string | null, limit: number): Promise<RemoteNotesBody> {
   if (view === "latest") return Promise.resolve(mockLatest(cursor));
+  if (view === "for-you") return Promise.resolve(mockForYou(cursor));
   if (cursor?.startsWith("r")) return Promise.resolve({ items: mockFederatedNotes(0).items, next: null });
   const offset = Number(cursor?.slice(1)) || 0;
   const end = offset + limit;

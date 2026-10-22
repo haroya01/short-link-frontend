@@ -108,7 +108,7 @@ test("a signed-out reader sees 이미 본 글 above the row at seenFrom, and wha
       : { items: Array.from({ length: 12 }, (_, i) => pooled(i + 1)), next: "s1.t12", seenFrom: 2 },
   );
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote");
+  await page.goto("/ko/blog/explore?lane=remote&order=latest");
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
 
@@ -147,7 +147,7 @@ test("a signed-out reader sees 이미 본 글 above the row at seenFrom, and wha
 test("a row scrolled past in under a second is not sent", async ({ page }) => {
   const asked = await serve(page, () => ({ items: Array.from({ length: 20 }, (_, i) => pooled(i + 1)), next: null }));
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote");
+  await page.goto("/ko/blog/explore?lane=remote&order=latest");
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
 
@@ -171,7 +171,7 @@ test("empty pages with a next are followed at once, three in a row, then the lis
     return { items: [pooled(1)], next: null };
   });
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote");
+  await page.goto("/ko/blog/explore?lane=remote&order=latest");
   const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
   expect(asked.latest).toEqual(["", "u1", "u2", "u3"]);
@@ -195,9 +195,9 @@ test("in 홈 the tail draws 이미 본 글 under its own heading, and a signed-i
     () => ({ items: [pooled(1), kept(31), pooled(2)], next: null, seenFrom: 1 }),
     { items: [{ kind: "note", note: note(101, "kurl 노트") }], next: null },
   );
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog?order=latest");
   const tail = page.getByTestId("home-remote-tail");
-  await expect(tail.getByRole("heading", { name: "다른 서버 최신", level: 2 })).toBeVisible({ timeout: 30_000 });
+  await expect(tail.getByRole("heading", { name: "다른 서버", exact: true, level: 2 })).toBeVisible({ timeout: 30_000 });
   const divider = tail.getByRole("heading", { name: "이미 본 글", level: 3 });
   await expect(divider).toHaveCount(1);
   await expect(tail.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
