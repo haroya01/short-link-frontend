@@ -617,7 +617,13 @@ export function NoteCard({
                       full={emphasis}
                     />
                   ) : (
-                    <NoteBody body={note.body} mentions={note.mentions} large={emphasis} language={note.language} />
+                    <NoteBody
+                      body={note.body}
+                      mentions={note.mentions}
+                      large={emphasis}
+                      language={note.language}
+                      cardUrl={note.linkPreview?.url}
+                    />
                   )}
                 </div>
               )}
