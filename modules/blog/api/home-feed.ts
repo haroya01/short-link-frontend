@@ -1,3 +1,4 @@
+import { viewerHeaders } from "@/lib/device-id";
 import { redactCard } from "@/modules/blog/lib/post-audience";
 import type { Note } from "@/modules/notes/api/notes";
 import { fetchPublic, hasViewer, PUBLIC_POSTS_TAG, type FetchResult, type PublicFeedItem } from "./public-posts";
@@ -19,7 +20,8 @@ export interface HomePost extends PublicFeedItem {
 export type HomeItem = { kind: "note"; note: Note } | { kind: "post"; post: HomePost };
 
 /** Backend contract: GET /api/v1/public/home?tab=&limit=&cursor= — one feed of notes and posts;
- *  following is empty when signed out. `next` is an opaque cursor, null at the end. */
+ *  following is empty when signed out. `next` is an opaque cursor, null at the end. With `seen=hide`
+ *  and a viewer (token or X-Kurl-Device), latest leaves out what the viewer has seen, except their own. */
 export interface HomePage {
   items: HomeItem[];
   next: string | null;
@@ -47,16 +49,28 @@ export async function listHome(
   tab: HomeTab,
   cursor: string | null = null,
   limit = HOME_PAGE_SIZE,
+  hide = false,
 ): Promise<FetchResult<HomePage>> {
   if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHome(tab, cursor, hasViewer())) };
-  const query = `tab=${tab}&limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;
-  const result = await fetchPublic<HomePage>(`/api/v1/public/home?${query}`, { tags: [PUBLIC_POSTS_TAG] });
+  const query = `tab=${tab}&limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}${hide ? "&seen=hide" : ""}`;
+  const result = await fetchPublic<HomePage>(
+    `/api/v1/public/home?${query}`,
+    hide ? { noStore: true, headers: viewerHeaders() } : { tags: [PUBLIC_POSTS_TAG] },
+  );
   return result.ok ? { ok: true, data: tidy(result.data) } : result;
 }
 
-export async function listHomeSince(tab: HomeTab, since: string, limit = HOME_PAGE_SIZE): Promise<FetchResult<HomePage>> {
+export async function listHomeSince(
+  tab: HomeTab,
+  since: string,
+  limit = HOME_PAGE_SIZE,
+  hide = false,
+): Promise<FetchResult<HomePage>> {
   if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHomeSince(tab, since, hasViewer())) };
-  const query = `tab=${tab}&limit=${limit}&since=${encodeURIComponent(since)}`;
-  const result = await fetchPublic<HomePage>(`/api/v1/public/home?${query}`, { noStore: true });
+  const query = `tab=${tab}&limit=${limit}&since=${encodeURIComponent(since)}${hide ? "&seen=hide" : ""}`;
+  const result = await fetchPublic<HomePage>(
+    `/api/v1/public/home?${query}`,
+    hide ? { noStore: true, headers: viewerHeaders() } : { noStore: true },
+  );
   return result.ok ? { ok: true, data: tidy(result.data) } : result;
 }

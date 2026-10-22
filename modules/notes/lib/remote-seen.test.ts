@@ -54,8 +54,26 @@ describe("the queue of other-server posts the reader has seen", () => {
   });
 
   it("a flush with nothing gathered sends nothing", () => {
-    createSeenQueue(mocks.send).flush(true);
+    void createSeenQueue(mocks.send).flush(true);
     expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  it("a flush can be waited on until what it sent is answered, even when that fails", async () => {
+    let answer: (() => void) | null = null;
+    mocks.send.mockImplementationOnce(() => new Promise<void>((done) => (answer = done)));
+    const queue = createSeenQueue(mocks.send);
+    queue.add("kurl:post:77", "for-you");
+    let done = false;
+    const waited = queue.flush().then(() => (done = true));
+    await settle();
+    expect(done).toBe(false);
+    answer!();
+    await waited;
+    expect(done).toBe(true);
+
+    mocks.send.mockRejectedValueOnce(new Error("503"));
+    queue.add("kurl:post:78", "for-you");
+    await expect(queue.flush()).resolves.toBeUndefined();
   });
 
   it("a batch that fails rides along with the next one once, then is let go", async () => {
@@ -203,7 +221,7 @@ describe("what counts as seen", () => {
       class {
         constructor(callback: Callback, options: IntersectionObserverInit) {
           fire = callback;
-          expect(options.threshold).toBe(0.5);
+          expect(options.threshold).toEqual([0, 0.5]);
         }
         observe(el: Element) {
           observed.add(el);
@@ -223,11 +241,11 @@ describe("what counts as seen", () => {
     vi.unstubAllGlobals();
   });
 
-  async function setup() {
+  async function setup(key = uri(7), glance = false) {
     vi.resetModules();
     const seen = await import("./remote-seen");
     const el = document.createElement("div");
-    const stop = seen.watchSeen(el, uri(7), "for-you");
+    const stop = seen.watchSeen(el, key, "for-you", glance);
     stops.push(stop);
     const show = (ratio: number) =>
       fire([{ target: el, isIntersecting: ratio > 0, intersectionRatio: ratio }]);
@@ -282,6 +300,25 @@ describe("what counts as seen", () => {
     document.dispatchEvent(new Event("visibilitychange"));
     Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
     expect(mocks.send.mock.calls).toEqual([[batch([uri(7)], "for-you", [{ uri: uri(7), ms: 1_200 }]), true]]);
+  });
+
+  it("in 홈 a row counts the moment any of it shows, with no wait", async () => {
+    const { seen, show } = await setup(uri(7), true);
+    show(0.01);
+    seen.seenQueue().flush();
+    expect(mocks.send).toHaveBeenCalledWith(batch([uri(7)], "for-you"), false);
+  });
+
+  it("in 홈 a kurl row is sent by its key, once, and never with a time on screen", async () => {
+    const { seen, stop, show } = await setup("kurl:note:812", true);
+    show(0.2);
+    show(0.9);
+    await vi.advanceTimersByTimeAsync(5_000);
+    show(0);
+    show(0.4);
+    stop();
+    seen.seenQueue().flush();
+    expect(mocks.send.mock.calls).toEqual([[batch(["kurl:note:812"], "for-you"), false]]);
   });
 
   it("a row that leaves the page stops being watched", async () => {

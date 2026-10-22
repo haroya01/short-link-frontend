@@ -37,9 +37,9 @@ import type { Note, QuotedPost } from "@/modules/notes/api/notes";
 import { NoteComposer } from "@/modules/notes/components/note-composer";
 import { NoteDraftsButton } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
-import { RemoteRowView, SeenDivider, remoteRowKey, useRemoteRows } from "@/modules/notes/components/remote-feed";
+import { RemoteRowView, SeenDivider, SeenWatch, remoteRowKey, useRemoteRows } from "@/modules/notes/components/remote-feed";
 import type { RemoteRow } from "@/modules/notes/lib/remote-rows";
-import { seenQueue } from "@/modules/notes/lib/remote-seen";
+import { kurlNoteKey, kurlPostKey, seenQueue } from "@/modules/notes/lib/remote-seen";
 import { useRemoteNotes } from "@/modules/notes/lib/use-remote-trending";
 import { listRemoteNotes, type RemoteItem } from "@/modules/notes/api/remote-trending";
 import { useToast } from "@/components/ui/toast";
@@ -231,27 +231,28 @@ function HomeList({
         : Promise.resolve(null),
     "connections",
   );
+  const mixing = sort === "recent";
+  const hiding = mixing && ready;
   const { data, isError, refetch, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["home", sort, anonymous ? "anonymous" : "member", refresh],
+      queryKey: ["home", sort, anonymous ? "anonymous" : "member", refresh, hiding ? "hide" : "all"],
       queryFn: async ({ pageParam }) => {
-        const result = await listHome(API_TAB[sort], pageParam);
+        const result = await listHome(API_TAB[sort], pageParam, undefined, hiding);
         if (!result.ok) throw new Error(String(result.status));
         return result.data;
       },
       initialPageParam: null as string | null,
       getNextPageParam: (last) => last.next,
-      initialData: anonymous && initial && refresh === 0 ? { pages: [initial], pageParams: [null] } : undefined,
+      initialData: anonymous && !hiding && initial && refresh === 0 ? { pages: [initial], pageParams: [null] } : undefined,
       placeholderData: keepPreviousData,
       enabled: ready,
       staleTime: 30_000,
     });
-  const mixing = sort === "recent";
-  const forYou = useRemoteNotes("for-you", mixing);
+  const forYou = useRemoteNotes("for-you", mixing, hiding);
   const remoteRowsOf = useRemoteRows();
   const autoLoad = Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError;
   const queryKey = useRef<unknown[]>([]);
-  queryKey.current = ["home", sort, anonymous ? "anonymous" : "member", refresh];
+  queryKey.current = ["home", sort, anonymous ? "anonymous" : "member", refresh, hiding ? "hide" : "all"];
 
   const firstPage = data?.pages[0];
   useEffect(() => {
@@ -269,12 +270,13 @@ function HomeList({
     }
     refreshing.current = true;
     try {
+      if (hiding) await seenQueue().flush();
       const since = lastRefresh.current;
       lastRefresh.current = Date.now();
       const asked = newest.current;
       const [found, remotePage] = await Promise.all([
-        asked === null ? refetch().then(() => null) : listHomeSince(API_TAB[sort], asked),
-        mixing ? listRemoteNotes("for-you").catch(() => null) : Promise.resolve(null),
+        asked === null ? refetch().then(() => null) : listHomeSince(API_TAB[sort], asked, undefined, hiding),
+        mixing ? listRemoteNotes("for-you", null, undefined, hiding).catch(() => null) : Promise.resolve(null),
       ]);
       const remote = remotePage ? freshRemote(remotePage.items, known.current, since) : [];
       if (found?.ok && found.data.newest) newest.current = found.data.newest;
@@ -292,21 +294,22 @@ function HomeList({
     } finally {
       refreshing.current = false;
     }
-  }, [sort, mixing, refetch, queryClient, toast, t]);
+  }, [sort, mixing, hiding, refetch, queryClient, toast, t]);
 
-  const reloadAll = useCallback(() => {
+  const reloadAll = useCallback(async () => {
     if (!mixing) {
       void refreshNow();
       return;
     }
+    if (hiding) await seenQueue().flush();
     setBatches([]);
     newest.current = null;
     lastRefresh.current = Date.now();
     void queryClient.resetQueries({ queryKey: queryKey.current });
     void queryClient.resetQueries({ queryKey: REMOTE_FOR_YOU_KEY });
-  }, [mixing, refreshNow, queryClient]);
+  }, [mixing, hiding, refreshNow, queryClient]);
 
-  useEffect(() => onHomeRefresh(() => void refreshNow(), reloadAll), [refreshNow, reloadAll]);
+  useEffect(() => onHomeRefresh(() => void refreshNow(), () => void reloadAll()), [refreshNow, reloadAll]);
 
   const top: Row[] = [];
   const arrived: Row[][] = batches.map(() => []);
@@ -388,7 +391,7 @@ function HomeList({
 
   useEffect(() => {
     if (!mixing) return;
-    return () => seenQueue().flush();
+    return () => void seenQueue().flush();
   }, [mixing]);
 
   useEffect(() => {
@@ -410,8 +413,22 @@ function HomeList({
   );
   const freshPosts = new Set(arrived.flat().flatMap((row) => (row.kind === "post" ? [row.post.id] : [])));
 
+  const caughtUp = (
+    <div data-testid="home-caught-up">
+      <BlogEmpty
+        title={t("homeCaughtUp")}
+        action={
+          <BlogLink href={blogHref("/?sort=following")} className={blogCta({ variant: "text" })}>
+            {t("feed")}
+          </BlogLink>
+        }
+      />
+    </div>
+  );
+
   if (entries.length === 0 && !hasNextPage) {
     if (mixing && (forYou.state === "loading" || remoteMore !== null)) return <NoteListSkeleton />;
+    if (hiding) return caughtUp;
     return sort === "following" ? (
       <BlogEmpty
         title={t("homeEmptyFollowing")}
@@ -439,29 +456,39 @@ function HomeList({
                 row={entry.row}
                 feed="for-you"
                 marked
+                glance={hiding}
                 above={entry.divider && <SeenDivider />}
               />
             );
           }
           const row = entry.row;
+          const shownRow =
+            row.kind === "note" ? (
+              <NoteFeedRow
+                note={row.note}
+                isNew={fresh.has(row.note.id)}
+                repostedBy={row.note.repostedBy?.username}
+                onQuoted={onQuoted}
+                filteredBy={row.filteredBy}
+                onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
+                onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
+              />
+            ) : freshPosts.has(row.post.id) ? (
+              <div className="note-arrive">
+                <HomePostRow post={row.post} />
+              </div>
+            ) : (
+              <HomePostRow post={row.post} />
+            );
+          const key = row.kind === "note" ? kurlNoteKey(row.note.id) : kurlPostKey(row.post.id);
           return (
             <Fragment key={row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`}>
-              {row.kind === "note" ? (
-                <NoteFeedRow
-                  note={row.note}
-                  isNew={fresh.has(row.note.id)}
-                  repostedBy={row.note.repostedBy?.username}
-                  onQuoted={onQuoted}
-                  filteredBy={row.filteredBy}
-                  onReplace={(next) => setChanged((current) => new Map(current).set(next.id, next))}
-                  onRemove={(id) => setRemoved((current) => new Set(current).add(id))}
-                />
-              ) : freshPosts.has(row.post.id) ? (
-                <div className="note-arrive">
-                  <HomePostRow post={row.post} />
-                </div>
+              {hiding ? (
+                <SeenWatch uri={key} feed="for-you" glance data-home-seen={key}>
+                  {shownRow}
+                </SeenWatch>
               ) : (
-                <HomePostRow post={row.post} />
+                shownRow
               )}
               {entry.card && (
                 <ul data-testid="home-connection">
@@ -473,6 +500,7 @@ function HomeList({
         })}
       </div>
       </BelongingProvider>
+      {hiding && localDone && !pager && forYou.state !== "loading" && caughtUp}
       {pager && (
         <div ref={sentinel} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">
           <button

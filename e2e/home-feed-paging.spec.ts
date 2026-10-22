@@ -99,7 +99,7 @@ test("홈 asks for 최신 and follows the cursor to the next page as the reader 
       },
       { timeout: 20_000 },
     )
-    .toEqual(["?tab=latest&limit=20", "?tab=latest&limit=20&cursor=13.1"]);
+    .toEqual(["?tab=latest&limit=20&seen=hide", "?tab=latest&limit=20&cursor=13.1&seen=hide"]);
   await expect(feed.locator('article[data-note-id="301"]')).toBeVisible();
   await page.waitForTimeout(600);
   expect(seen.home).toHaveLength(2);
@@ -151,7 +151,10 @@ test("a later page that fails says so under the list, and 다시 시도 asks the
   await expect(page.getByText("불러오지 못했어요", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "다시 시도" }).click();
   await expect(page.locator('article[data-note-id="301"]')).toBeVisible();
-  expect(seen.home.slice(1)).toEqual(["?tab=latest&limit=20&cursor=13.1", "?tab=latest&limit=20&cursor=13.1"]);
+  expect(seen.home.slice(1)).toEqual([
+    "?tab=latest&limit=20&cursor=13.1&seen=hide",
+    "?tab=latest&limit=20&cursor=13.1&seen=hide",
+  ]);
 });
 
 test("signed out, 팔로잉 asks to sign in and never asks /public/home for it", async ({ page }) => {

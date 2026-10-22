@@ -211,5 +211,7 @@ test("in 홈, other servers that follow after mine draw 이미 본 글 at seenFr
   await expect.poll(() => asked.seen.length).toBe(1);
   expect(asked.seen[0].auth).toBe("Bearer e2e-token");
   expect(asked.seen[0].device).toBeNull();
-  expect(sentUris(asked).sort()).toEqual([uri(1), uri(2), "https://mastodon.social/users/mina/statuses/31"].sort());
+  expect(sentUris(asked).sort()).toEqual(
+    [uri(1), uri(2), "https://mastodon.social/users/mina/statuses/31", "kurl:note:101"].sort(),
+  );
 });

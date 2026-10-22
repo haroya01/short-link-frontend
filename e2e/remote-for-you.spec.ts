@@ -202,7 +202,7 @@ test("홈 최신 puts two 맞춤 after every five of mine, each marked 다른 �
   await hideTab(page);
   await expect.poll(() => asked.seen.flatMap((batch) => batch.uris)).toContain(uri(5));
   expect(asked.seen.every((batch) => batch.feed === "for-you")).toBe(true);
-  expect(asked.seen.flatMap((batch) => batch.uris).some((sent) => sent.includes("kurl"))).toBe(false);
+  expect(asked.seen.flatMap((batch) => batch.uris)).toEqual(expect.arrayContaining(["kurl:note:101", "kurl:note:112"]));
 });
 
 test("이미 본 글 is not drawn between my posts, only where 맞춤 carries on alone", async ({ page }) => {
@@ -222,7 +222,7 @@ test("이미 본 글 is not drawn between my posts, only where 맞춤 carries on
   await expect(feed.getByRole("heading", { name: "이미 본 글" })).toHaveCount(0);
 });
 
-test("with nothing of mine 맞춤 is the whole feed, and with none either 홈 says it is empty", async ({ page }) => {
+test("with nothing of mine 맞춤 is the whole feed, and with none either 홈 says 다 봤어요", async ({ page }) => {
   await signIn(page);
   await serve(page, { forYou: { first: { items: [pooled(1), kept(31)], next: null } } });
   await page.goto("/ko/blog");
@@ -233,7 +233,9 @@ test("with nothing of mine 맞춤 is the whole feed, and with none either 홈 sa
   await page.unrouteAll({ behavior: "ignoreErrors" });
   await serve(page, { forYou: { first: { items: [], next: null } } });
   await page.reload();
-  await expect(page.getByText("아직 발행된 글이 없어요")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("home-caught-up").getByRole("heading", { name: "다 봤어요" })).toBeVisible({
+    timeout: 30_000,
+  });
 });
 
 test("a refresh puts only what is new since the last one on top, mixed in, and leaves every row below where it was", async ({
