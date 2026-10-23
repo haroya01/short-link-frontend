@@ -1,4 +1,5 @@
 import { test, expect, type Locator } from "@playwright/test";
+import { openHome } from "./helpers/home";
 
 // Mock-on lane at phone width: @yuna's note 10 is a single-choice poll and note 21 a multiple-choice one,
 // neither voted by the @dohyun session. Before a vote every option is its own outlined button (surface
@@ -32,7 +33,7 @@ function expectSeparateButtons(rows: Awaited<ReturnType<typeof shapes>>) {
 }
 
 test("a single-choice poll offers each option as its own button that votes when pressed", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await openHome(page, "/ko/blog/notes");
   const poll = page.locator('[data-note-poll="10"]');
   await expect(poll.getByRole("button", { name: "국밥" })).toBeVisible({ timeout: 30_000 });
   const options = poll.getByRole("button", { name: /^(국밥|파스타|샐러드)$/ });
@@ -50,7 +51,7 @@ test("a single-choice poll offers each option as its own button that votes when 
 });
 
 test("a multiple-choice poll marks each picked option, then 투표 sends them", async ({ page }) => {
-  await page.goto("/ko/blog/notes");
+  await openHome(page, "/ko/blog/notes");
   const poll = page.locator('[data-note-poll="21"]');
   const options = poll.getByRole("checkbox");
   await expect(options).toHaveCount(3, { timeout: 30_000 });

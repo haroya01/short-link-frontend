@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openHome } from "./helpers/home";
 
 // Mock-on lane: signed in as @dohyun. Rooms carry blog posts too (iOS MockRooms room-posts scene):
 // 동아리 사람들 has yuki_dev's "비 오던 엠티의 밤" with three comments, 대학 동기 "졸업 앨범을 받은 날",
@@ -82,7 +83,7 @@ test("on 홈, a room post carries its room line, which opens the room", async ({
 });
 
 test("글쓰기 asks where first, always from 모두에게, and a note for a room lands in that room", async ({ page }) => {
-  await page.goto("/ko/blog");
+  await openHome(page);
   const trigger = page.locator('header.vt-app-header [data-compose-trigger="mobile"]');
   await trigger.click({ timeout: 30_000 });
   const sheet = page.getByRole("dialog", { name: "글쓰기" });
@@ -128,7 +129,7 @@ test("leaving with my words deleted says what goes", async ({ page }) => {
 });
 
 test("pressing 홈 on 홈 asks 최신 again from the start, with what is new on top", async ({ page }) => {
-  await page.goto("/ko/blog");
+  await openHome(page);
   const feed = page.getByTestId("home-feed");
   const mine = feed.locator("article[data-note-id]:not([data-remote-kept] article)");
   await expect(mine.first()).toBeVisible({ timeout: 30_000 });

@@ -1593,13 +1593,17 @@ let homeArrived: Note[] = [];
 
 function mockRanked(viewer: boolean): HomeItem[] {
   const local = mockHome("latest", null, viewer).items;
+  const key = (item: HomeItem) => (item.kind === "note" ? `n${item.note.id}` : item.kind === "post" ? `p${item.post.id}` : "");
+  const mine = new Map(local.map((item) => [key(item), item]));
   const ranked: HomeItem[] = [];
-  local.forEach((item, i) => {
-    ranked.push(item);
+  mockHome("latest", null, false).items.forEach((item, i) => {
+    const kept = mine.get(key(item));
+    if (kept) ranked.push(kept);
     const remote = TRENDING[Math.floor(i / 3)];
     if (i % 3 === 2 && remote) ranked.push({ kind: "remote", remote: remote as unknown as RemoteItem });
   });
-  return ranked;
+  const placed = new Set(ranked.map(key));
+  return [...ranked, ...local.filter((item) => !placed.has(key(item)))];
 }
 
 export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean, hide = false): HomePage {
