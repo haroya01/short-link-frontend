@@ -73,23 +73,21 @@ describe("what a 홈 pull says (kurl.seen-rules pull)", () => {
     }).map((row) => row.split(":")[1]);
     return pullNotice(new Set(before), after, { own: c.own.result === "failed", remote: c.remote.result === "failed" });
   };
-  const ruledOtherwise = new Set(["pull-011", "pull-013"]);
   const cases = (seenVectors.tables.pull.cases as PullCase[]).map((c) => [c.id, c] as const);
 
-  it.each(cases.filter(([id]) => !ruledOtherwise.has(id)))("%s", (_, c) => {
+  it.each(cases)("%s", (_, c) => {
     expect(notice(c)).toBe(c.notice);
   });
-
-  it.fails.each(cases.filter(([id]) => ruledOtherwise.has(id)))(
-    "%s: follows the lead's 10-23 rule (new rows laid out stay silent even when my feed failed; no new rows with a failure is failed) until the table's v2 settles it",
-    (_, c) => {
-      expect(notice(c)).toBe(c.notice);
-    },
-  );
 });
 
 describe("which requests carry seen=hide and the device (kurl.seen-rules requests)", () => {
-  type RequestCase = { id: string; surface: string; what: string; seenHide: boolean; deviceHeader: boolean };
+  type RequestCase = {
+    id: string;
+    surface: string;
+    what: string;
+    seenHide: boolean;
+    deviceHeader: "required" | "notNeeded";
+  };
   const DEVICE = "0f8fad5b-d9cb-469f-a165-70867728950e";
   let calls: { url: string; headers: Headers }[] = [];
 
@@ -129,6 +127,6 @@ describe("which requests carry seen=hide and the device (kurl.seen-rules request
     await ask(c);
     const call = calls.find((sent) => !sent.url.endsWith("/auth/refresh"))!;
     expect(new URL(call.url, "http://x").searchParams.get("seen") === "hide").toBe(c.seenHide);
-    expect(call.headers.get("X-Kurl-Device") === DEVICE).toBe(c.deviceHeader);
+    if (c.deviceHeader === "required") expect(call.headers.get("X-Kurl-Device")).toBe(DEVICE);
   });
 });

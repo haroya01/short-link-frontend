@@ -55,7 +55,7 @@ export async function listHome(
   const query = `tab=${tab}&limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}${hide ? "&seen=hide" : ""}`;
   const result = await fetchPublic<HomePage>(
     `/api/v1/public/home?${query}`,
-    hide ? { noStore: true, headers: viewerHeaders() } : { tags: [PUBLIC_POSTS_TAG], headers: viewerHeaders() },
+    hide ? { noStore: true, headers: viewerHeaders() } : { tags: [PUBLIC_POSTS_TAG] },
   );
   return result.ok ? { ok: true, data: tidy(result.data) } : result;
 }
@@ -70,7 +70,7 @@ export async function listHomeSince(
   const query = `tab=${tab}&limit=${limit}&since=${encodeURIComponent(since)}${hide ? "&seen=hide" : ""}`;
   const result = await fetchPublic<HomePage>(
     `/api/v1/public/home?${query}`,
-    { noStore: true, headers: viewerHeaders() },
+    hide ? { noStore: true, headers: viewerHeaders() } : { noStore: true },
   );
   return result.ok ? { ok: true, data: tidy(result.data) } : result;
 }
