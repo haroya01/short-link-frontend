@@ -82,7 +82,8 @@ async function serve(page: Page, latest: (cursor: string | null) => Page_, home?
       if (new URL(route.request().url()).searchParams.has("since")) {
         return route.fulfill({ json: { items: [], next: null, gap: false } });
       }
-      return route.fulfill({ json: { ...(home ?? { items: [], next: null }), newest: "101" } });
+      const following = new URL(route.request().url()).searchParams.get("tab") === "following";
+      return route.fulfill({ json: { ...(home ?? { items: [], next: null }), ...(following ? { newest: "101" } : {}) } });
     },
   });
   return asked;
@@ -188,22 +189,23 @@ test("empty pages with a next are followed at once, three in a row, then the lis
   await expect.poll(() => asked.latest).toEqual(["", "u1", "u2", "u3", "u4"]);
 });
 
-test("in 홈, other servers that follow after mine draw 이미 본 글 at seenFrom, and a signed-in reader is sent by token, not device", async ({
+test("in 홈 추천, a signed-in reader's rows are sent by token, not device, kurl rows by key and other servers' by uri", async ({
   page,
 }) => {
   await signIn(page);
-  const asked = await serve(
-    page,
-    () => ({ items: [pooled(1), kept(31), pooled(2)], next: null, seenFrom: 1 }),
-    { items: [{ kind: "note", note: note(101, "kurl 노트") }], next: null },
-  );
+  const asked = await serve(page, () => ({ items: [], next: null }), {
+    items: [
+      { kind: "note", note: note(101, "kurl 노트") },
+      { kind: "remote", remote: pooled(1) },
+      { kind: "remote", remote: kept(31) },
+      { kind: "remote", remote: pooled(2) },
+    ],
+    next: null,
+  });
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
   await expect(feed.locator('[data-remote-kept="31"]')).toBeVisible({ timeout: 30_000 });
-  const divider = feed.getByRole("heading", { name: "이미 본 글", level: 2 });
-  await expect(divider).toHaveCount(1);
-  await expect(feed.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
-  expect(asked.devices.every((sent) => sent === null)).toBe(true);
+  await expect(feed.getByRole("heading", { name: "이미 본 글" })).toHaveCount(0);
 
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(1_500);

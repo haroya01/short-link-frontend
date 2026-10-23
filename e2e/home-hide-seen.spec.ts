@@ -2,11 +2,11 @@ import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
-// Mock lane (Playwright routes): 홈 최신 asks the server to leave out what the reader has already
-// seen (seen=hide on every page, since and the mixed 맞춤, with the device when signed out); 둘러보기 맞춤
-// does not. In 홈 a row counts as seen the moment any of it shows, kurl rows by kurl:note:/kurl:post:
-// keys. A refresh first waits for what is pending to be answered, then asks both lists from the start
-// and lays them out again. When both lists end, 홈 says 다 봤어요 with a way to 팔로잉.
+// Mock lane (Playwright routes): 추천 asks the server to leave out what the reader has already seen
+// (tab=for-you&seen=hide on every page, with the device when signed out); 둘러보기 맞춤 does not. In 추천
+// a row counts as seen the moment any of it shows, kurl rows by kurl:note:/kurl:post: keys and other
+// servers' rows by uri. A refresh first waits for what is pending to be answered, then asks the first
+// page again and lays it out. When the list ends, 추천 says 다 봤어요 with a way to 팔로잉.
 test.use({ viewport: { width: 390, height: 844 } });
 
 const NOW = "2026-10-23T09:00:00Z";
@@ -70,21 +70,20 @@ function pooled(n: number) {
 }
 
 type Body = { items: unknown[]; next: string | null };
+const remote = (n: number) => ({ kind: "remote", remote: pooled(n) });
 const MINE: Body = {
   items: [
     { kind: "note", note: note(101, "kurl 노트 1") },
+    remote(1),
     { kind: "post", post: post(201, "kurl 글") },
     { kind: "note", note: note(102, "kurl 노트 2") },
   ],
   next: null,
 };
 
-type Serve = { home?: Body | Body[]; forYou?: Body | Body[]; slowSeen?: number; homeFails?: boolean };
+type Serve = { home?: Body | Body[]; slowSeen?: number; homeFails?: boolean };
 
-async function serve(
-  page: Page,
-  { home = MINE, forYou = { items: [pooled(1)], next: null }, slowSeen = 0, homeFails = false }: Serve = {},
-) {
+async function serve(page: Page, { home = MINE, slowSeen = 0, homeFails = false }: Serve = {}) {
   const asked = {
     home: [] as { search: string; device: string | null }[],
     forYou: [] as { search: string; device: string | null }[],
@@ -101,12 +100,13 @@ async function serve(
       if (url.searchParams.has("since")) return route.fulfill({ json: { items: [], next: null, gap: false, newest: "102.201" } });
       if (url.searchParams.has("cursor")) return route.fulfill({ json: { items: [], next: null } });
       if (asked.armed && homeFails) return route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } });
-      return route.fulfill({ json: { ...nth(home, asked.armed ? 1 : 0), newest: "102.201" } });
+      const following = url.searchParams.get("tab") === "following";
+      return route.fulfill({ json: { ...nth(home, asked.armed ? 1 : 0), ...(following ? { newest: "102.201" } : {}) } });
     },
     "GET /api/v1/federation/for-you": (route: Route) => {
       const url = new URL(route.request().url());
       asked.forYou.push({ search: url.search, device: route.request().headers()["x-kurl-device"] ?? null });
-      return route.fulfill({ json: nth(forYou, asked.armed ? 1 : 0) });
+      return route.fulfill({ json: { items: [pooled(1)], next: null } });
     },
     "POST /api/v1/federation/seen": async (route: Route) => {
       asked.seen.push(route.request().postDataJSON().uris);
@@ -118,7 +118,7 @@ async function serve(
   return asked;
 }
 
-test("홈 최신 asks every list with seen=hide and the device, and 둘러보기 맞춤 asks without it", async ({ page }) => {
+test("추천 asks every page with tab=for-you, seen=hide and the device, and 둘러보기 맞춤 asks without seen", async ({ page }) => {
   const asked = await serve(page);
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
   await page.goto("/ko/blog");
@@ -126,30 +126,26 @@ test("홈 최신 asks every list with seen=hide and the device, and 둘러보기
   await expect(feed.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
   await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeAttached();
 
-  const latest = asked.home.filter((sent) => sent.search.includes("tab=latest"));
-  expect(latest.length).toBeGreaterThan(0);
-  expect(latest.every((sent) => new URLSearchParams(sent.search).get("seen") === "hide")).toBe(true);
-  expect(latest.every((sent) => UUID.test(sent.device ?? ""))).toBe(true);
-  expect(asked.forYou.every((sent) => new URLSearchParams(sent.search).get("seen") === "hide")).toBe(true);
-  expect(asked.forYou[0].device).toBe(latest[0].device);
+  const ranked = asked.home.filter((sent) => sent.search.includes("tab=for-you"));
+  expect(ranked.length).toBeGreaterThan(0);
+  expect(asked.home.filter((sent) => !sent.search.includes("tab=for-you"))).toEqual([]);
+  expect(ranked.every((sent) => new URLSearchParams(sent.search).get("seen") === "hide")).toBe(true);
+  expect(ranked.every((sent) => UUID.test(sent.device ?? ""))).toBe(true);
+  expect(asked.forYou).toEqual([]);
 
   const homeBefore = asked.home.length;
-  const forYouBefore = asked.forYou.length;
   asked.armed = true;
   await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
   await expect.poll(() => asked.home.length).toBe(homeBefore + 1);
-  await expect.poll(() => asked.forYou.length).toBe(forYouBefore + 1);
   const again = new URLSearchParams(asked.home.at(-1)!.search);
-  expect([again.get("tab"), again.get("seen"), again.get("cursor"), again.get("since")]).toEqual(["latest", "hide", null, null]);
-  const remoteAgain = new URLSearchParams(asked.forYou.at(-1)!.search);
-  expect([remoteAgain.get("seen"), remoteAgain.get("cursor")]).toEqual(["hide", null]);
+  expect([again.get("tab"), again.get("seen"), again.get("cursor"), again.get("since")]).toEqual(["for-you", "hide", null, null]);
+  expect(asked.forYou).toEqual([]);
 
-  const before = asked.forYou.length;
   await page.goto("/ko/blog/explore?lane=remote");
   await expect(page.locator(`[data-explore-lane="remote"] [data-remote-uri="${uri(1)}"]`)).toBeVisible({
     timeout: 30_000,
   });
-  expect(asked.forYou.slice(before).map((sent) => new URLSearchParams(sent.search).get("seen"))).toEqual([null]);
+  expect(asked.forYou.map((sent) => new URLSearchParams(sent.search).get("seen"))).toEqual([null]);
 });
 
 test("a row counts the moment it shows, kurl rows by their key, and a refresh waits for that to be answered first", async ({
@@ -175,8 +171,7 @@ test("a row counts the moment it shows, kurl rows by their key, and a refresh wa
 test("a refresh lays out what is still unseen from the start, without the rows that were on screen", async ({ page }) => {
   await signIn(page);
   const asked = await serve(page, {
-    home: [MINE, { items: [{ kind: "note", note: note(103, "kurl 노트 3") }], next: null }],
-    forYou: [{ items: [pooled(1)], next: null }, { items: [pooled(2)], next: null }],
+    home: [MINE, { items: [{ kind: "note", note: note(103, "kurl 노트 3") }, remote(2)], next: null }],
   });
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
@@ -210,30 +205,9 @@ test("a refresh that brings back the same rows says 새 글이 없어요, and on
   await expect(feed.locator('article[data-note-id="101"]')).toBeVisible();
 });
 
-test("a refresh that brings back the same first pages says 새 글이 없어요, even when 맞춤 has more than the slots", async ({
-  page,
-}) => {
-  await signIn(page);
-  const twelve = {
-    items: Array.from({ length: 12 }, (_, i) => ({ kind: "note", note: note(111 + i, `kurl 노트 ${i}`) })),
-    next: "h1.12.0",
-  };
-  const asked = await serve(page, { home: twelve, forYou: { items: Array.from({ length: 10 }, (_, i) => pooled(i + 1)), next: null } });
-  await page.goto("/ko/blog");
-  const feed = page.getByTestId("home-feed");
-  await expect(feed.locator(`[data-remote-uri="${uri(4)}"]`)).toBeAttached({ timeout: 30_000 });
-  await expect(feed.locator(`[data-remote-uri="${uri(5)}"]`)).toHaveCount(0);
-  asked.armed = true;
-  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
-  await expectOnTop(toastBy(page, "새 글이 없어요"));
-});
-
 test("a refresh that finds nothing left shows 다 봤어요 in place of the rows", async ({ page }) => {
   await signIn(page);
-  const asked = await serve(page, {
-    home: [MINE, { items: [], next: null }],
-    forYou: [{ items: [pooled(1)], next: null }, { items: [], next: null }],
-  });
+  const asked = await serve(page, { home: [MINE, { items: [], next: null }] });
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
   await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeAttached({ timeout: 30_000 });
@@ -243,7 +217,7 @@ test("a refresh that finds nothing left shows 다 봤어요 in place of the rows
   await expect(page.locator('article[data-note-id="101"]')).toHaveCount(0);
 });
 
-test("when both lists end, 홈 says 다 봤어요 with a way to 팔로잉, under the rows or on its own", async ({ page }) => {
+test("when the list ends, 추천 says 다 봤어요 with a way to 팔로잉, under the rows or on its own", async ({ page }) => {
   await signIn(page);
   await serve(page);
   await page.goto("/ko/blog");
@@ -252,11 +226,11 @@ test("when both lists end, 홈 says 다 봤어요 with a way to 팔로잉, under
   const done = page.getByTestId("home-caught-up");
   await expect(done.getByRole("heading", { name: "다 봤어요" })).toBeVisible();
   await expect(done.getByRole("link", { name: "팔로잉" })).toHaveAttribute("href", /sort=following/);
-  const last = (await feed.locator(`[data-remote-uri="${uri(1)}"]`).boundingBox())!;
+  const last = (await feed.locator('article[data-note-id="102"]').boundingBox())!;
   expect((await done.boundingBox())!.y).toBeGreaterThan(last.y);
 
   await page.unrouteAll({ behavior: "ignoreErrors" });
-  await serve(page, { home: { items: [], next: null }, forYou: { items: [], next: null } });
+  await serve(page, { home: { items: [], next: null } });
   await page.reload();
   await expect(page.getByTestId("home-caught-up").getByRole("heading", { name: "다 봤어요" })).toBeVisible({
     timeout: 30_000,
@@ -264,13 +238,11 @@ test("when both lists end, 홈 says 다 봤어요 with a way to 팔로잉, under
   await expect(page.getByText("아직 발행된 글이 없어요")).toHaveCount(0);
 });
 
-test("팔로잉 and 인기 do not hide and do not count rows", async ({ page }) => {
+test("팔로잉 does not hide and does not count rows", async ({ page }) => {
   await signIn(page);
   const asked = await serve(page);
-  for (const sort of ["trending", "following"]) {
-    await page.goto(`/ko/blog?sort=${sort}`);
-    await expect(page.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
-  }
+  await page.goto("/ko/blog?sort=following");
+  await expect(page.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator("[data-home-seen]")).toHaveCount(0);
   expect(asked.home.some((sent) => sent.search.includes("seen="))).toBe(false);
   await expect(page.getByTestId("home-caught-up")).toHaveCount(0);

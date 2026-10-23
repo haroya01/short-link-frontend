@@ -40,7 +40,7 @@ export type SeenFeed = Exclude<RemoteView, "trending">;
 
 export type SeenBatch = { feed: SeenFeed; uris: string[]; dwell: { uri: string; ms: number }[] };
 
-function decodeRemoteItem(entry: unknown): RemoteItem | null {
+export function decodeRemoteItem(entry: unknown): RemoteItem | null {
   if (!entry || typeof entry !== "object") return null;
   const item = entry as TrendingNote | Note;
   if (item.id != null) {

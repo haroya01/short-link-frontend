@@ -31,7 +31,6 @@ import { SearchedPeople } from "./searched-people";
 import { RemoteSearchFallback, RemoteSearchResult } from "@/modules/notes/components/remote-search";
 import { remoteQueryDomain } from "@/modules/notes/lib/remote-handle";
 import { FollowingFeed } from "./following-feed";
-import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { TrendingTopics } from "./trending-topics";
 import { FeedErrorState } from "./feed-error-state";
@@ -119,38 +118,39 @@ export async function FeedScreen({
     : "";
 
   // The caller (browse route / middleware) already resolved the saved default-tab cookie into
-  // sortParam; bare = "recent".
-  const resolvedSort = sortParam ?? "recent";
+  // sortParam; bare = 추천.
+  const resolvedSort = sortParam ?? "for-you";
 
-  // "following" is client-rendered (auth needed); recent/trending are server-fetched here. A search
-  // spans every author, so it only honors recent/trending — the following sort collapses to recent.
-  const tab: "recent" | "trending" | "for-you" | "following" | "series" =
-    resolvedSort === "trending" ||
-    resolvedSort === "for-you" ||
-    resolvedSort === "following" ||
-    resolvedSort === "series"
+  const tab: "recent" | "trending" | "for-you" | "following" | "blog" | "series" =
+    resolvedSort === "following" || resolvedSort === "series" || resolvedSort === "blog"
       ? resolvedSort
-      : "recent";
+      : resolvedSort === "posts"
+        ? "blog"
+        : resolvedSort === "trending" && (searching || activeTag || activeLang)
+        ? "trending"
+        : searching || activeTag || activeLang
+          ? "recent"
+          : "for-you";
   const sort: FeedSort = tab === "trending" ? "trending" : "recent";
   const activeTab = searching ? sort : tab;
 
   const t = await getTranslations({ locale, namespace: "publicFeed" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
   // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
   // 인증이 필요한 자체 클라이언트 면(아래에서 각자 그리드로 렌더).
-  const home = !searching && !activeTag && !activeLang && (tab === "following" || tab === "recent" || tab === "trending");
-  const showsServerFeed =
-    !home && (searching || (tab !== "following" && tab !== "series" && tab !== "for-you"));
+  const home = !searching && !activeTag && !activeLang && (tab === "following" || tab === "for-you" || tab === "blog");
+  const showsServerFeed = !home && (searching || (tab !== "following" && tab !== "series" && tab !== "blog"));
   const needFlat = showsServerFeed && !notesView && !peopleView;
   const remoteQuery = searching && remoteQueryDomain(query) !== null;
   // 공개 연결 이벤트를 발견 목록(최신·인기, 비검색·비태그)에 몇 행마다 한 행씩 끼운다. 비로그인 포함
   // 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
-  const wantConnections = (showsServerFeed || (home && tab !== "following")) && !searching && !activeTag;
+  const wantConnections = (showsServerFeed || (home && tab === "for-you")) && !searching && !activeTag;
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
   // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
   // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
-  const wantTopics = tab === "trending" && !searching;
+  const wantTopics = tab === "trending" && !searching && !home;
 
   const [feedResult, authorsResult, topicsResult, connectionsResult, relatedTags, homeResult] =
     await Promise.all([
@@ -168,7 +168,7 @@ export async function FeedScreen({
       // 피드는 그대로 뜬다.
       wantConnections ? listPublicConnectionFeed(0, 6) : Promise.resolve(null),
       searching && !remoteQuery ? listRelatedTags(query) : Promise.resolve([]),
-      home && tab === "recent" ? listHome("latest") : Promise.resolve(null),
+      home && (tab === "for-you" || tab === "blog") ? listHome(tab) : Promise.resolve(null),
     ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
@@ -176,7 +176,7 @@ export async function FeedScreen({
   // A server feed fetch that failed outright (backend/network down) — distinct from a genuinely empty
   // feed. Collapsing it to [] would render the empty state ("첫 글을 써보세요"), disguising an outage as a fresh
   // account. `status: "error"` is the fetch-failure case (a 404/410 is a real "nothing here"); when it's
-  // that, we show a retry state instead of the empty state. Mirrors for-you-feed's initialError branch.
+  // that, we show a retry state instead of the empty state.
   const feedErrored =
     showsServerFeed && !!feedResult && !feedResult.ok && feedResult.status === "error";
   // 검색이 비었을 때만 인기 주제를 한 번 더 가져온다 — SearchEmpty 의 "다른 주제 둘러보기" 칩이
@@ -194,7 +194,7 @@ export async function FeedScreen({
   // search), so the content block replays its slide instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
   // Tab order drives the slide direction (FeedContentTransition): 팔로잉 → 최신 → 인기, then "더 보기".
-  const tabIndex = ["following", "recent", "trending", "for-you", "series"].indexOf(activeTab);
+  const tabIndex = ["for-you", "following", "blog", "recent", "trending", "series"].indexOf(activeTab);
 
   // 검색 결과가 1~2건뿐일 땐 와이드 메이슨리 그리드가 반쪽 타일 하나를 덩그러니 남긴다. 이 경우엔
   // 읽기 컬럼(max-w-2xl) 안 전폭 목록 행으로 떨어뜨려, 결과가 완성된 한 줄로 읽히게 한다(0건 빈 상태·
@@ -248,11 +248,10 @@ export async function FeedScreen({
         <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
           <HomeFeed
             locale={locale}
-            sort={tab as "following" | "recent" | "trending"}
+            sort={tab as "following" | "for-you" | "blog"}
             initial={homeResult && homeResult.ok ? homeResult.data : null}
             suggestedAuthors={authors}
             connectionEvents={connectionEvents}
-            aboveList={wantTopics ? <TrendingTopics topics={topics} locale={locale} activeTag="" /> : undefined}
           />
         </div>
       ) : (
@@ -267,20 +266,25 @@ export async function FeedScreen({
             surface="blog"
             tabs={[
               ...(searching
-                ? []
-                : [{ key: "following", label: t("feed"), href: "?sort=following", active: tab === "following" }]),
-              {
-                key: "recent",
-                label: t("recent"),
-                href: sortHref("recent"),
-                active: activeTab === "recent" && !notesView && !peopleView,
-              },
-              {
-                key: "trending",
-                label: t("trending"),
-                href: sortHref("trending"),
-                active: activeTab === "trending" && !notesView && !peopleView,
-              },
+                ? [
+                    {
+                      key: "recent",
+                      label: t("recent"),
+                      href: sortHref("recent"),
+                      active: activeTab === "recent" && !notesView && !peopleView,
+                    },
+                    {
+                      key: "trending",
+                      label: t("trending"),
+                      href: sortHref("trending"),
+                      active: activeTab === "trending" && !notesView && !peopleView,
+                    },
+                  ]
+                : [
+                    { key: "for-you", label: t("forYou"), href: "?sort=for-you", active: false },
+                    { key: "following", label: t("feed"), href: "?sort=following", active: tab === "following" },
+                    { key: "blog", label: tNav("blog"), href: "?sort=blog", active: false },
+                  ]),
               ...(searching
                 ? [
                     {
@@ -301,10 +305,7 @@ export async function FeedScreen({
             more={
               searching
                 ? undefined
-                : [
-                    { key: "for-you", label: t("forYou"), icon: "binoculars", href: "?sort=for-you", active: tab === "for-you" },
-                    { key: "series", label: t("seriesTab"), icon: "series", href: "?sort=series", active: tab === "series" },
-                  ]
+                : [{ key: "series", label: t("seriesTab"), icon: "series", href: "?sort=series", active: tab === "series" }]
             }
           />
         </div>
@@ -325,10 +326,6 @@ export async function FeedScreen({
           <ReadingShell className="mt-6">
             <SearchedPeople query={query} />
           </ReadingShell>
-        ) : tab === "for-you" && !searching ? (
-          <FeedContentTransition index={tabIndex} contentKey={contentKey}>
-            <ForYouFeed locale={locale} />
-          </FeedContentTransition>
         ) : tab === "following" && !searching ? (
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <FollowingFeed locale={locale} suggestedAuthors={authors} />

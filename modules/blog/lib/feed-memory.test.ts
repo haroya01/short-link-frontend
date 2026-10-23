@@ -20,12 +20,14 @@ function clearCookies() {
 afterEach(clearCookies);
 
 describe("remembered switcher tab", () => {
-  it("restores only the three blog switcher tabs and drops the retired series choice", () => {
+  it("restores 추천, 팔로잉 and 블로그, reads an old 최신 or 인기 as 추천, and drops the retired series choice", () => {
     expect(rememberedBlogTab("following")).toBe("following");
-    expect(rememberedBlogTab("recent")).toBe("recent");
-    expect(rememberedBlogTab("trending")).toBe("trending");
+    expect(rememberedBlogTab("for-you")).toBe("for-you");
+    expect(rememberedBlogTab("recent")).toBe("for-you");
+    expect(rememberedBlogTab("trending")).toBe("for-you");
+    expect(rememberedBlogTab("blog")).toBe("blog");
+    expect(rememberedBlogTab("posts")).toBe("blog");
     expect(rememberedBlogTab("series")).toBeNull();
-    expect(rememberedBlogTab("for-you")).toBeNull();
     expect(rememberedBlogTab(undefined)).toBeNull();
   });
 
@@ -37,29 +39,28 @@ describe("remembered switcher tab", () => {
     expect(rememberedNotesFeed("lists")).toBeNull();
   });
 
-  it("carries a remembered notes tab over to the merged home, 모두 as 최신", () => {
+  it("carries a remembered notes tab over to the merged home, 모두 and 인기 as 추천", () => {
     expect(rememberedHomeTab("following")).toBe("following");
-    expect(rememberedHomeTab("everyone")).toBe("recent");
-    expect(rememberedHomeTab("trending")).toBe("trending");
+    expect(rememberedHomeTab("everyone")).toBe("for-you");
+    expect(rememberedHomeTab("trending")).toBe("for-you");
     expect(rememberedHomeTab("bookmarks")).toBeNull();
     expect(rememberedHomeTab(undefined)).toBeNull();
   });
 
   it("writes a switcher tab to its own surface's cookie and nothing else", () => {
-    writeFeedMemory(BLOG_MEMORY, "trending");
-    writeFeedMemory(NOTES_MEMORY, "following");
-    expect(document.cookie).toContain("kurl_blog_default_tab=trending");
-    expect(document.cookie).toContain("kurl_notes_feed=following");
-    expect(readFeedMemory(BLOG_MEMORY)).toBe("trending");
-    expect(readFeedMemory(NOTES_MEMORY)).toBe("following");
+    writeFeedMemory(BLOG_MEMORY, "following");
+    writeFeedMemory(NOTES_MEMORY, "trending");
+    expect(document.cookie).toContain("kurl_blog_default_tab=following");
+    expect(document.cookie).toContain("kurl_notes_feed=trending");
+    expect(readFeedMemory(BLOG_MEMORY)).toBe("following");
+    expect(readFeedMemory(NOTES_MEMORY)).toBe("trending");
   });
 
   it("never saves a 더 보기 source", () => {
-    writeFeedMemory(BLOG_MEMORY, "recent");
     writeFeedMemory(BLOG_MEMORY, "for-you");
     writeFeedMemory(BLOG_MEMORY, "series");
     writeFeedMemory(NOTES_MEMORY, "bookmarks");
-    expect(readFeedMemory(BLOG_MEMORY)).toBe("recent");
+    expect(readFeedMemory(BLOG_MEMORY)).toBe("for-you");
     expect(readFeedMemory(NOTES_MEMORY)).toBeNull();
   });
 

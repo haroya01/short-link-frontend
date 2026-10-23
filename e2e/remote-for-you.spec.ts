@@ -1,11 +1,10 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 
-// Mock lane (Playwright routes): other servers come in 맞춤 order from /federation/for-you. 홈 최신 puts
-// two of them after every five of mine, each marked 다른 서버, and once mine run out they carry on alone.
-// 둘러보기 다른 서버 is 맞춤 only. A for-you page can repeat a post from the page before; it is drawn
-// once. What stayed on screen goes to /federation/seen with feed for-you and how long it stayed at least
-// half on screen.
+// Mock lane (Playwright routes): 둘러보기 다른 서버 is 맞춤 only, from /federation/for-you. A for-you page
+// can repeat a post from the page before; it is drawn once. What stayed on screen goes to
+// /federation/seen with feed for-you and how long it stayed at least half on screen. 홈 추천 is one list
+// the server ranks (tab=for-you); other servers' posts in it are marked 다른 서버.
 test.use({ viewport: { width: 390, height: 844 } });
 
 const NOW = "2026-10-22T09:00:00Z";
@@ -65,10 +64,6 @@ const EXPLORE: Record<string, Body> = {
 };
 
 const MINE = Array.from({ length: 12 }, (_, i) => ({ kind: "note", note: note(101 + i, `kurl 노트 ${i + 1}`) }));
-const MIXED: Record<string, Body> = {
-  first: { items: [pooled(1), pooled(2), kept(31), pooled(3), pooled(4)], next: CURSOR },
-  [CURSOR]: { items: [pooled(4), pooled(5)], next: null, seenFrom: 1 },
-};
 
 type Options = { forYou?: Record<string, Body> | null; again?: Body; home?: Body; since?: unknown[] };
 
@@ -94,7 +89,7 @@ async function serve(page: Page, { forYou = EXPLORE, again, home = { items: [], 
         const items = asked.home.filter((sent) => sent.includes("since=")).length === 1 ? since : [];
         return route.fulfill({ json: { items, next: null, gap: false, newest: "150" } });
       }
-      return route.fulfill({ json: { ...home, newest: "101" } });
+      return route.fulfill({ json: { ...home, ...(url.searchParams.get("tab") === "following" ? { newest: "101" } : {}) } });
     },
   });
   return asked;
@@ -165,95 +160,41 @@ test("둘러보기 다른 서버 is 맞춤 only, over two pages, and sends the t
   await expect(feed.locator('[data-remote-kept="31"]')).toContainText("이미 본 글");
 });
 
-test("홈 최신 puts two 맞춤 after every five of mine, each marked 다른 서버, and carries on with 맞춤 once mine end", async ({
+test("추천 draws other servers' posts among mine in the order the server ranked them, each marked 다른 서버", async ({
   page,
 }) => {
   await signIn(page);
-  const asked = await serve(page, { forYou: MIXED, home: { items: MINE, next: null } });
+  const asked = await serve(page, {
+    forYou: EXPLORE,
+    home: {
+      items: [
+        { kind: "remote", remote: pooled(1) },
+        { kind: "note", note: note(101, "kurl 노트 1") },
+        { kind: "remote", remote: kept(31) },
+        { kind: "note", note: note(102, "kurl 노트 2") },
+        { kind: "remote", remote: pooled(1) },
+        { kind: "remote", remote: { ...kept(101), uri: "https://mastodon.social/users/mina/statuses/101" } },
+        { kind: "remote", remote: pooled(2) },
+      ],
+      next: null,
+    },
+  });
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
-  await expect(feed.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
-  await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toBeAttached();
-
-  await expect
-    .poll(
-      async () => {
-        await scrollToEnd(page);
-        return asked.forYou;
-      },
-      { timeout: 20_000 },
-    )
-    .toEqual(["", CURSOR]);
-  await expect(feed.locator(`[data-remote-uri="${uri(5)}"]`)).toBeVisible();
-  expect(await homeOrder(page)).toEqual([
-    "101", "102", "103", "104", "105", "R1", "R2",
-    "106", "107", "108", "109", "110", "K31", "R3",
-    "111", "112", "R4", "R5",
-  ]);
-  await expect(feed.locator("[data-remote-mark]")).toHaveCount(6);
+  await expect(feed.locator(`[data-remote-uri="${uri(2)}"]`)).toBeAttached({ timeout: 30_000 });
+  expect(await homeOrder(page)).toEqual(["R1", "101", "K31", "102", "R2"]);
+  await expect(feed.locator("[data-remote-mark]")).toHaveCount(3);
   await expect(feed.locator('[data-remote-kept="31"] [data-remote-mark]')).toHaveText("다른 서버");
   await expect(feed.locator('article[data-note-id="101"]')).not.toContainText("다른 서버");
-  await expect(feed.getByRole("heading", { name: "이미 본 글", level: 2 })).toHaveCount(1);
-  await expect(feed.locator(`[data-remote-uri="${uri(5)}"]`)).toContainText("이미 본 글");
-  await expect(page.getByRole("heading", { name: "다른 서버", exact: true })).toHaveCount(0);
-
-  await page.waitForTimeout(1_500);
-  await hideTab(page);
-  await expect.poll(() => asked.seen.flatMap((batch) => batch.uris)).toContain(uri(5));
-  expect(asked.seen.every((batch) => batch.feed === "for-you")).toBe(true);
-  expect(asked.seen.flatMap((batch) => batch.uris)).toEqual(expect.arrayContaining(["kurl:note:101", "kurl:note:112"]));
+  expect(asked.forYou).toEqual([]);
+  expect(asked.home.every((search) => new URLSearchParams(search).get("tab") === "for-you")).toBe(true);
 });
 
-test("이미 본 글 is not drawn between my posts, only where 맞춤 carries on alone", async ({ page }) => {
+test("팔로잉 never mixes in other servers' 맞춤", async ({ page }) => {
   await signIn(page);
-  await serve(page, {
-    forYou: { first: { items: [pooled(1), pooled(2), pooled(3)], next: null, seenFrom: 0 } },
-    home: { items: MINE, next: null },
-  });
-  await page.goto("/ko/blog");
-  const feed = page.getByTestId("home-feed");
-  await expect(feed.locator(`[data-remote-uri="${uri(3)}"]`)).toBeAttached({ timeout: 30_000 });
-  expect(await homeOrder(page)).toEqual([
-    "101", "102", "103", "104", "105", "R1", "R2",
-    "106", "107", "108", "109", "110", "R3",
-    "111", "112",
-  ]);
-  await expect(feed.getByRole("heading", { name: "이미 본 글" })).toHaveCount(0);
-});
-
-test("with nothing of mine 맞춤 is the whole feed, and with none either 홈 says 다 봤어요", async ({ page }) => {
-  await signIn(page);
-  await serve(page, { forYou: { first: { items: [pooled(1), kept(31)], next: null } } });
-  await page.goto("/ko/blog");
-  const feed = page.getByTestId("home-feed");
-  await expect(feed.locator('[data-remote-kept="31"]')).toBeVisible({ timeout: 30_000 });
-  expect(await homeOrder(page)).toEqual(["R1", "K31"]);
-
-  await page.unrouteAll({ behavior: "ignoreErrors" });
-  await serve(page, { forYou: { first: { items: [], next: null } } });
-  await page.reload();
-  await expect(page.getByTestId("home-caught-up").getByRole("heading", { name: "다 봤어요" })).toBeVisible({
-    timeout: 30_000,
-  });
-});
-
-test("맞춤 that fails leaves mine as they are", async ({ page }) => {
-  await signIn(page);
-  await serve(page, { forYou: null, home: { items: MINE.slice(0, 6), next: null } });
-  await page.goto("/ko/blog");
-  const feed = page.getByTestId("home-feed");
-  await expect(feed.locator('article[data-note-id="106"]')).toBeVisible({ timeout: 30_000 });
-  await expect(feed.locator("[data-remote-mark]")).toHaveCount(0);
-  await expect(page.getByText("다른 서버 글을 불러오지 못했어요")).toHaveCount(0);
-});
-
-test("팔로잉 and 인기 never mix in 맞춤", async ({ page }) => {
-  await signIn(page);
-  const asked = await serve(page, { forYou: MIXED, home: { items: MINE, next: null } });
-  for (const sort of ["trending", "following"]) {
-    await page.goto(`/ko/blog?sort=${sort}`);
-    await expect(page.locator('article[data-note-id="112"]')).toBeAttached({ timeout: 30_000 });
-    await expect(page.locator("[data-remote-mark]")).toHaveCount(0);
-  }
+  const asked = await serve(page, { forYou: EXPLORE, home: { items: MINE, next: null } });
+  await page.goto("/ko/blog?sort=following");
+  await expect(page.locator('article[data-note-id="112"]')).toBeAttached({ timeout: 30_000 });
+  await expect(page.locator("[data-remote-mark]")).toHaveCount(0);
   expect(asked.forYou).toEqual([]);
 });

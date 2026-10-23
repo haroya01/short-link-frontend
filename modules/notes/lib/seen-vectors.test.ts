@@ -55,7 +55,7 @@ describe("the key a row is reported by (kurl.seen-rules keyFormat)", () => {
 describe("what counts as seen on each surface (kurl.seen-rules exposure)", () => {
   type ExposureCase = {
     id: string;
-    surface: "home-latest" | "explore-remote" | "home-following" | "home-trending";
+    surface: "home-for-you" | "explore-remote" | "home-following";
     visibleRatio: number;
     visibleMs: number;
     appActive: boolean;
@@ -67,7 +67,7 @@ describe("what counts as seen on each surface (kurl.seen-rules exposure)", () =>
   it.each(cases)("%s", async (_, c) => {
     const seen = await reporter();
     const el = document.createElement("div");
-    if (c.surface === "home-latest") seen.watchSeen(el, KEY, "for-you", true);
+    if (c.surface === "home-for-you") seen.watchSeen(el, KEY, "for-you", true);
     if (c.surface === "explore-remote") seen.watchSeen(el, KEY, "for-you");
     setActive(c.appActive);
     fire([{ target: el, isIntersecting: c.visibleRatio > 0, intersectionRatio: c.visibleRatio }]);

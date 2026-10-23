@@ -1,12 +1,13 @@
 import { viewerHeaders } from "@/lib/device-id";
 import { redactCard } from "@/modules/blog/lib/post-audience";
+import { decodeRemoteItem, type RemoteItem } from "@/modules/notes/api/remote-trending";
 import type { Note } from "@/modules/notes/api/notes";
 import { fetchPublic, hasViewer, PUBLIC_POSTS_TAG, type FetchResult, type PublicFeedItem } from "./public-posts";
 
 const noteMocks: typeof import("@/modules/notes/api/_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("@/modules/notes/api/_mocks") : null;
 
-export const HOME_TABS = ["following", "latest", "trending"] as const;
+export const HOME_TABS = ["following", "latest", "trending", "for-you", "blog"] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
 const HOME_PAGE_SIZE = 20;
 
@@ -17,7 +18,10 @@ export interface HomePost extends PublicFeedItem {
   room?: { id: number; name: string } | null;
 }
 
-export type HomeItem = { kind: "note"; note: Note } | { kind: "post"; post: HomePost };
+export type HomeItem =
+  | { kind: "note"; note: Note }
+  | { kind: "post"; post: HomePost }
+  | { kind: "remote"; remote: RemoteItem };
 
 /** Backend contract: GET /api/v1/public/home?tab=&limit=&cursor= — one feed of notes and posts;
  *  following is empty when signed out. `next` is an opaque cursor, null at the end. With `seen=hide`
@@ -35,6 +39,10 @@ function tidy(page: HomePage): HomePage {
   const items = (Array.isArray(page?.items) ? page.items : []).flatMap((item): HomeItem[] => {
     if (item?.kind === "note" && item.note) return [{ kind: "note", note: item.note }];
     if (item?.kind === "post" && item.post) return [{ kind: "post", post: redactCard(item.post) }];
+    if (item?.kind === "remote") {
+      const remote = decodeRemoteItem((item as { remote?: unknown }).remote);
+      return remote ? [{ kind: "remote", remote }] : [];
+    }
     return [];
   });
   return {
