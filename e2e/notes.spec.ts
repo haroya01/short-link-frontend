@@ -375,14 +375,11 @@ test("a link page refuses to link out to anything but the web", async ({ page })
   await expect(page.getByText("아직 이 링크를 실은 노트가 없어요")).toBeVisible();
 });
 
-test("홈 has tabs: trending ranks by reactions, following carries reposts with who reposted", async ({ page }) => {
+test("홈 has tabs 추천, 팔로잉 and 블로그, and 팔로잉 carries reposts with who reposted", async ({ page }) => {
   await page.goto("/ko/blog");
-  const tabs = page.getByRole("navigation").filter({ hasText: "최신" });
-  await expect(tabs.getByRole("link", { name: "최신" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
-  await expect(tabs.getByRole("link")).toHaveText(["팔로잉", "최신", "인기"]);
-  await tabs.getByRole("link", { name: "인기" }).click();
-  await expect(page).toHaveURL(/sort=trending/);
-  await expect(tabs.getByRole("link", { name: "인기" })).toHaveAttribute("aria-current", "page");
+  const tabs = page.getByRole("navigation").filter({ hasText: "팔로잉" });
+  await expect(tabs.getByRole("link", { name: "추천" })).toHaveAttribute("aria-current", "page", { timeout: 30_000 });
+  await expect(tabs.getByRole("link")).toHaveText(["추천", "팔로잉", "블로그"]);
   await tabs.getByRole("link", { name: "팔로잉" }).click();
   await expect(page).toHaveURL(/sort=following/);
   await expect(page.getByText("yuna님이 리포스트함")).toBeVisible({ timeout: 15_000 });

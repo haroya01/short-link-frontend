@@ -42,7 +42,7 @@ function trailingEmptyPages(pages: RemoteNotesPage[]): number {
   return count;
 }
 
-export function remoteNotesKey(view: RemoteView, member: boolean, hide: boolean) {
+function remoteNotesKey(view: RemoteView, member: boolean, hide: boolean) {
   return ["notes", "remote", view, member ? "member" : "anonymous", hide ? "hide" : "all"];
 }
 

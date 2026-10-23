@@ -3,7 +3,7 @@
 export const BLOG_FEED_COOKIE = "kurl_blog_default_tab";
 export const NOTES_FEED_COOKIE = "kurl_notes_feed";
 
-const BLOG_SWITCHER = ["following", "recent", "trending"] as const;
+const BLOG_SWITCHER = ["for-you", "following", "blog"] as const;
 const NOTES_SWITCHER = ["following", "everyone", "trending"] as const;
 
 export type BlogSwitcherTab = (typeof BLOG_SWITCHER)[number];
@@ -15,7 +15,7 @@ export const BLOG_MEMORY: FeedMemory = {
   cookie: BLOG_FEED_COOKIE,
   keys: BLOG_SWITCHER,
   param: "sort",
-  fallback: "recent",
+  fallback: "for-you",
 };
 export const NOTES_MEMORY: FeedMemory = {
   cookie: NOTES_FEED_COOKIE,
@@ -25,7 +25,9 @@ export const NOTES_MEMORY: FeedMemory = {
 };
 
 export function rememberedBlogTab(value: string | null | undefined): BlogSwitcherTab | null {
-  return (BLOG_SWITCHER as readonly string[]).includes(value ?? "") ? (value as BlogSwitcherTab) : null;
+  if (value === "following") return "following";
+  if (value === "blog" || value === "posts") return "blog";
+  return value === "for-you" || value === "recent" || value === "trending" ? "for-you" : null;
 }
 
 export function rememberedNotesFeed(value: string | null | undefined): NotesSwitcherFeed | null {
@@ -34,7 +36,7 @@ export function rememberedNotesFeed(value: string | null | undefined): NotesSwit
 
 export function rememberedHomeTab(notesFeed: string | null | undefined): BlogSwitcherTab | null {
   const feed = rememberedNotesFeed(notesFeed);
-  return feed === "everyone" ? "recent" : feed;
+  return feed === "following" ? "following" : feed ? "for-you" : null;
 }
 
 export function readFeedMemory(memory: FeedMemory): string | null {

@@ -210,7 +210,7 @@ export function ComposeEntry({ variant, className, label, children }: ComposeTri
           }
           if (emitNotePosted(note)) return;
           holdArrivingNote(note);
-          const sort = readFeedMemory(BLOG_MEMORY) === "following" ? "following" : "recent";
+          const sort = readFeedMemory(BLOG_MEMORY) === "following" ? "following" : "for-you";
           const url = new URL(blogHref(`/?sort=${sort}`), window.location.href);
           if (url.origin === window.location.origin) router.push(url.pathname + url.search);
           else window.location.assign(url.href);

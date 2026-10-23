@@ -7,7 +7,7 @@ const intlMiddleware = createMiddleware(routing);
 
 /**
  * Feed route split. The bare feed URL (/{locale}/blog) is a STATIC ISR page; every parameterized
- * view — ?sort/?q/?tag/?lang, or a visitor whose last switcher tab isn't "recent" — is served by the
+ * view — ?sort/?q/?tag/?lang, or a visitor whose last switcher tab isn't 추천 — is served by the
  * per-request ./browse sibling. Mutates `url` in place (pathname + sort param); the visitor-facing
  * URL never changes because these are rewrites.
  */
@@ -18,7 +18,7 @@ function routeFeedVariant(req: NextRequest, url: URL): void {
     const saved =
       rememberedBlogTab(req.cookies.get(BLOG_FEED_COOKIE)?.value) ??
       rememberedHomeTab(req.cookies.get(NOTES_FEED_COOKIE)?.value);
-    if (!saved || saved === "recent") return;
+    if (!saved || saved === "for-you") return;
     url.searchParams.set("sort", saved);
   }
   url.pathname = `${url.pathname.replace(/\/$/, "")}/browse`;

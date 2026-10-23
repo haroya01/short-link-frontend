@@ -4,13 +4,12 @@ test.use({ viewport: { width: 1280, height: 900 } });
 
 const POST = "/ko/p/dohyun/nextjs-14-app-router-blog";
 
-test("추천 in the feed's 더 보기 wears binoculars, and nothing on the feed sparkles", async ({ page }) => {
+test("the feed's 더 보기 holds 시리즈 alone, and nothing on the feed sparkles", async ({ page }) => {
   await page.goto("/ko/blog");
   const switcher = page.locator('header[data-feed-switcher="blog"]');
   await expect(switcher.locator("[data-feed-more]")).toBeVisible({ timeout: 30_000 });
   await switcher.getByRole("button", { name: "더 보기" }).click();
-  const pick = page.getByRole("menuitem", { name: "추천" });
-  await expect(pick.locator("svg.lucide-binoculars")).toHaveCount(1);
+  await expect(page.getByRole("menuitem")).toHaveText(["시리즈"]);
   await expect(page.locator("svg.lucide-sparkles")).toHaveCount(0);
 });
 

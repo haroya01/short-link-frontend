@@ -30,7 +30,7 @@ const receivedHeading =
 const rowHeading = "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400";
 const FAILED = { "for-you": "forYouFailed", latest: "latestFailed", trending: "trendingFailed" } as const;
 
-export function useRemoteRows(): (pages: RemoteNotesPage[]) => RemoteRow[] {
+function useRemoteRows(): (pages: RemoteNotesPage[]) => RemoteRow[] {
   const filters = useNoteFilters();
   const blocked = useBlockedNames();
   const { me } = useAuth();
@@ -166,7 +166,7 @@ export function remoteRowKey(row: RemoteRow): string {
   return row.kind === "pool" ? `pool-${row.uri}` : `kept-${row.note.id}`;
 }
 
-export function SeenDivider() {
+function SeenDivider() {
   const t = useTranslations("notes");
   return <h2 className={rowHeading}>{t("remoteSeenDivider")}</h2>;
 }

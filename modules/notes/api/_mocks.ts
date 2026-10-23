@@ -36,7 +36,7 @@ import { mockFollowingRoomNotes, mockFollowingRoomPosts } from "@/modules/rooms/
 import { readStorageString } from "@/lib/storage-json";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
-import type { RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
+import type { RemoteItem, RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -1591,19 +1591,37 @@ function homePost(item: PublicFeedItem, viewer: boolean): HomePost {
 let homeUnseenAsks = 0;
 let homeArrived: Note[] = [];
 
+function mockRanked(viewer: boolean): HomeItem[] {
+  const local = mockHome("latest", null, viewer).items;
+  const ranked: HomeItem[] = [];
+  local.forEach((item, i) => {
+    ranked.push(item);
+    const remote = TRENDING[Math.floor(i / 3)];
+    if (i % 3 === 2 && remote) ranked.push({ kind: "remote", remote: remote as unknown as RemoteItem });
+  });
+  return ranked;
+}
+
 export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean, hide = false): HomePage {
-  if (tab === "latest" && hide && cursor === null) {
-    homeUnseenAsks += 1;
-    if (homeUnseenAsks > 1) {
-      const asked = (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload ?? 0;
-      (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload = asked + 1;
-      const fresh = note({ id: sinceNoteId++, body: "방금 올라온 노트", author: YUNA, createdAt: new Date().toISOString() });
-      homeArrived = [fresh, ...homeArrived];
+  if (tab === "for-you") {
+    if (hide && cursor === null) {
+      homeUnseenAsks += 1;
+      if (homeUnseenAsks > 1) {
+        const asked = (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload ?? 0;
+        (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload = asked + 1;
+        const fresh = note({ id: sinceNoteId++, body: "방금 올라온 노트", author: YUNA, createdAt: new Date().toISOString() });
+        homeArrived = [fresh, ...homeArrived];
+      }
     }
-    const page = mockHome(tab, null, viewer);
-    return { ...page, items: [...homeArrived.map((n): HomeItem => ({ kind: "note", note: n })), ...page.items] };
+    const ranked = mockRanked(viewer);
+    const unseen = hide && readStorageString("kurl:mock-home-seen") === "first" ? ranked.slice(1) : ranked;
+    return { items: [...homeArrived.map((n): HomeItem => ({ kind: "note", note: n })), ...unseen], next: null };
   }
   if (tab === "following" && !viewer) return { items: [], next: null };
+  if (tab === "blog") {
+    const posts = mockFeedView({ sort: "recent", viewer }).items.map((post): HomeItem => ({ kind: "post", post: homePost(post, viewer) }));
+    return { items: posts, next: null, ...(cursor === null ? { newest: "mock.1" } : {}) };
+  }
   const noteList =
     tab === "following" ? [...mockFollowingRoomNotes(), ...mockFollowingNotes(0).items] : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;
   const postList: PublicFeedItem[] =

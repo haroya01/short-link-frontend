@@ -30,11 +30,11 @@ for (const viewport of [
   test.describe(viewport.name, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    test("홈 opens on one header: 팔로잉 · 최신 · 인기 with 최신 picked", async ({ page }) => {
+    test("홈 opens on one header: 추천 · 팔로잉 · 블로그 with 추천 picked", async ({ page }) => {
       await page.goto(BLOG);
       await settled(page);
-      await expect(tabs(page)).toHaveText(["팔로잉", "최신", "인기"]);
-      await expect(activeTab(page)).toHaveText("최신");
+      await expect(tabs(page)).toHaveText(["추천", "팔로잉", "블로그"]);
+      await expect(activeTab(page)).toHaveText("추천");
       await expect(page.locator("header[data-feed-switcher]")).toHaveCount(1);
     });
   });
@@ -85,22 +85,22 @@ test.describe("desktop", () => {
     await settled(page);
     const slot = switcher(page).locator("[data-feed-more] > button");
     await slot.click();
-    await expect(page.getByRole("menuitem")).toHaveText(["추천", "시리즈"]);
-    await page.getByRole("menuitem", { name: "추천" }).click();
-    await expect(slot).toHaveAccessibleName("홈 피드 더 보기: 추천");
-    await expect(page).toHaveURL(/sort=for-you/, { timeout: 30_000 });
+    await expect(page.getByRole("menuitem")).toHaveText(["시리즈"]);
+    await page.getByRole("menuitem", { name: "시리즈" }).click();
+    await expect(slot).toHaveAccessibleName("홈 피드 더 보기: 시리즈");
+    await expect(page).toHaveURL(/sort=series/, { timeout: 30_000 });
     await expect(activeTab(page)).toHaveCount(0);
-    await expect(slot).toHaveText("추천");
+    await expect(slot).toHaveText("시리즈");
     await expectBarWithin(page, slot);
   });
 
   test("an open 더 보기 feed sits in the slot, and a tab takes the underline back", async ({ page }) => {
-    await page.goto(`${BLOG}?sort=for-you`);
+    await page.goto(`${BLOG}?sort=series`);
     await settled(page);
     const slot = switcher(page).locator("[data-feed-more] > button");
-    await expect(slot).toHaveAccessibleName("홈 피드 더 보기: 추천");
-    await tabs(page).filter({ hasText: "최신" }).click();
-    await expect(page).toHaveURL(/sort=recent/, { timeout: 30_000 });
+    await expect(slot).toHaveAccessibleName("홈 피드 더 보기: 시리즈");
+    await tabs(page).filter({ hasText: "추천" }).click();
+    await expect(page).toHaveURL(/sort=for-you/, { timeout: 30_000 });
     await expect(slot).toHaveAccessibleName("홈 피드 더 보기");
     await expectBarWithin(page, activeTab(page));
   });
@@ -119,33 +119,35 @@ test.describe("desktop", () => {
   test("the bare URL reopens on the last switcher tab, never on a 더 보기 source", async ({ page }) => {
     await page.goto(BLOG);
     await settled(page);
-    await tabs(page).filter({ hasText: "인기" }).click();
-    await expect(page).toHaveURL(/sort=trending/, { timeout: 30_000 });
-
-    await page.goto(BLOG);
-    await settled(page);
-    await expect(activeTab(page)).toHaveText("인기");
-    await expect(page).not.toHaveURL(/sort/);
-
-    await switcher(page).getByRole("button", { name: "더 보기" }).click();
-    await page.getByRole("menuitem").first().click();
-    await expect(page).toHaveURL(/sort=/, { timeout: 30_000 });
-    await page.goto(BLOG);
-    await settled(page);
-    await expect(activeTab(page)).toHaveText("인기");
-
     await tabs(page).filter({ hasText: "팔로잉" }).click();
     await expect(page).toHaveURL(/sort=following/, { timeout: 30_000 });
+
     await page.goto(BLOG);
     await settled(page);
     await expect(activeTab(page)).toHaveText("팔로잉");
-  });
+    await expect(page).not.toHaveURL(/sort/);
 
-  test("a series tab saved before the switcher had three tabs reopens on 최신", async ({ page, context, baseURL }) => {
-    await context.addCookies([{ name: "kurl_blog_default_tab", value: "series", url: baseURL! }]);
+    await switcher(page).getByRole("button", { name: "더 보기" }).click();
+    await page.getByRole("menuitem", { name: "시리즈" }).click();
+    await expect(page).toHaveURL(/sort=series/, { timeout: 30_000 });
     await page.goto(BLOG);
     await settled(page);
-    await expect(activeTab(page)).toHaveText("최신");
+    await expect(activeTab(page)).toHaveText("팔로잉");
+
+    await tabs(page).filter({ hasText: "추천" }).click();
+    await expect(page).toHaveURL(/sort=for-you/, { timeout: 30_000 });
+    await page.goto(BLOG);
+    await settled(page);
+    await expect(activeTab(page)).toHaveText("추천");
+  });
+
+  test("an old saved series, 최신 or 인기 reopens on 추천", async ({ page, context, baseURL }) => {
+    for (const value of ["series", "recent", "trending"]) {
+      await context.addCookies([{ name: "kurl_blog_default_tab", value, url: baseURL! }]);
+      await page.goto(BLOG);
+      await settled(page);
+      await expect(activeTab(page)).toHaveText("추천");
+    }
   });
 });
 
@@ -160,7 +162,7 @@ for (const width of [360, 390]) {
         const { feedMoreBlog } = catalog.notes;
         for (const [path, source] of [
           [`/${lang}/blog`, null],
-          [`/${lang}/blog?sort=for-you`, catalog.publicFeed.forYou],
+          [`/${lang}/blog?sort=series`, catalog.publicFeed.seriesTab],
           [`/${lang}/blog?sort=following`, null],
         ] as const) {
           await page.goto(path);

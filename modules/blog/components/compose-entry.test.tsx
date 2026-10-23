@@ -200,7 +200,7 @@ describe("the 글쓰기 chooser", () => {
     await act(async () => choices()[0].click());
     await act(async () => mocks.onPosted!({ id: 77, author: { username: "dohyun" } }));
     expect(mocks.toast).not.toHaveBeenCalled();
-    expect(mocks.push).toHaveBeenCalledWith(expect.stringMatching(/\/\?sort=recent$/));
+    expect(mocks.push).toHaveBeenCalledWith(expect.stringMatching(/\/\?sort=for-you$/));
     expect(takeArrivingNote()).toMatchObject({ id: 77 });
   });
 

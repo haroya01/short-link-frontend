@@ -53,7 +53,7 @@ test("a post row's heart likes the post and shows the server's count", async ({ 
   await expect(liked).toHaveText("63");
 });
 
-test("최신 keeps the public connection cards, one after the sixth of my rows and then every five, clear of the 맞춤 pairs", async ({
+test("추천 keeps the public connection cards, one after the sixth row and then every five, other servers' rows counted as rows", async ({
   page,
 }) => {
   const feed = await openHome(page);
@@ -61,36 +61,37 @@ test("최신 keeps the public connection cards, one after the sixth of my rows a
   await expect(feed.getByTestId("home-connection").first()).toBeVisible();
   await expect(feed.locator("[data-remote-mark]").first()).toBeAttached();
   const kids = await rows.evaluateAll((all) =>
-    all.map((el) =>
-      el.matches("[data-testid=home-connection]") ? "c" : el.matches("[data-remote-uri], [data-remote-kept]") ? "m" : "r",
-    ),
+    all.map((el) => (el.matches("[data-testid=home-connection]") ? "c" : el.matches("[data-remote-uri], [data-remote-kept]") ? "m" : "r")),
   );
   const cards = kids.flatMap((kid, i) => (kid === "c" ? [i] : []));
-  const mine = (from: number, to: number) => kids.slice(from, to).filter((kid) => kid === "r").length;
-  expect(mine(0, cards[0])).toBe(6);
-  cards.slice(1).forEach((at, k) => expect(mine(cards[k], at)).toBe(5));
-  kids.forEach((kid, i) => {
-    if (kid !== "c") return;
-    expect(kids.slice(Math.max(i - 2, 0), i)).not.toContain("m");
-    expect(kids.slice(i + 1, i + 3)).not.toContain("m");
-  });
-  expect(kids.filter((kid) => kid === "m").length).toBeGreaterThan(0);
+  const between = (from: number, to: number) => kids.slice(from, to).filter((kid) => kid !== "c").length;
+  expect(between(0, cards[0])).toBe(6);
+  cards.slice(1).forEach((at, k) => expect(between(cards[k] + 1, at)).toBe(5));
+  expect(kids.slice(0, cards[0])).toContain("m");
 });
 
-test("rows the server drew stay the same elements once 최신 starts hiding what was seen", async ({ page }) => {
+test("추천 is drawn on the server, then swapped for the seen=hide list without drawing the rows that stay again", async ({
+  page,
+}) => {
+  const html = await (await page.request.get("/ko/blog")).text();
+  expect(html).toContain('data-testid="home-feed"');
+  expect(html).toMatch(/data-note-id="\d+"/);
   await page.addInitScript(() => {
+    window.localStorage.setItem("kurl:mock-home-seen", "first");
     new MutationObserver(() => {
-      const holder = window as unknown as { __firstRow?: Element };
-      holder.__firstRow ??= document.querySelector('[data-testid="home-feed"] article[data-note-id]') ?? undefined;
+      const holder = window as unknown as { __rows?: Element[] };
+      if (holder.__rows) return;
+      const rows = [...document.querySelectorAll('[data-testid="home-feed"] > div > *')];
+      if (rows.length >= 2) holder.__rows = rows.slice(0, 2);
     }).observe(document, { childList: true, subtree: true });
   });
   await page.goto("/ko/blog");
   await expect(page.getByTestId("home-feed").locator("[data-home-seen]").first()).toBeAttached({ timeout: 30_000 });
-  const kept = await page.evaluate(() => {
-    const first = (window as unknown as { __firstRow?: Element }).__firstRow;
-    return first ? first.isConnected : null;
-  });
-  expect(kept).toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as unknown as { __rows?: Element[] }).__rows?.map((row) => row.isConnected) ?? null),
+    )
+    .toEqual([false, true]);
 });
 
 test("a note written in the composer lands at the top of 홈", async ({ page }) => {
@@ -101,11 +102,11 @@ test("a note written in the composer lands at the top of 홈", async ({ page }) 
   await expect(feed.locator("article[data-note-id]").first()).toContainText("홈에서 쓴 노트");
 });
 
-test("더 보기 holds 추천, 시리즈 and, on 팔로잉, 리포스트 보기", async ({ page }) => {
+test("더 보기 holds 시리즈 and, on 팔로잉, 리포스트 보기", async ({ page }) => {
   await openHome(page, "/ko/blog?sort=following");
   await page.locator("[data-feed-switcher] [data-feed-more] > button").click();
   const menu = page.getByRole("menu");
-  await expect(menu.getByRole("menuitem")).toHaveText(["추천", "시리즈"]);
+  await expect(menu.getByRole("menuitem")).toHaveText(["시리즈"]);
   await expect(menu.getByRole("menuitemcheckbox", { name: "리포스트 보기" })).toBeVisible();
 });
 
@@ -156,10 +157,10 @@ test("노트 북마크, 개인 멘션 and 리스트 stay as their own pages unde
   await expect(page.getByRole("heading", { level: 1, name: "리스트" })).toBeVisible({ timeout: 30_000 });
 });
 
-test("a reader who last used the notes 인기 tab opens 홈 on 인기", async ({ page, context }) => {
+test("a reader who last used the notes 인기 tab opens 홈 on 추천", async ({ page, context }) => {
   await context.addCookies([{ name: "kurl_notes_feed", value: "trending", url: "http://localhost" }]);
   await openHome(page);
-  await expect(page.locator("[data-feed-switcher]").getByRole("link", { name: "인기" })).toHaveAttribute(
+  await expect(page.locator("[data-feed-switcher]").getByRole("link", { name: "추천" })).toHaveAttribute(
     "aria-current",
     "page",
   );

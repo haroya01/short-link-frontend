@@ -45,7 +45,6 @@ const ROOTS = ["app/[locale]/blog", "app/[locale]/p", "modules/blog", "modules/n
 const FIRST_RUN = new Set([
   "modules/blog/components/feed-screen.tsx",
   "modules/blog/components/following-feed.tsx",
-  "modules/blog/components/for-you-feed.tsx",
   "modules/blog/components/subscribed-series-feed.tsx",
   "modules/notes/components/notes-feed.tsx",
   "modules/notes/components/note-lists.tsx",
