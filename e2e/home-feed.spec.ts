@@ -77,6 +77,22 @@ test("최신 keeps the public connection cards, one after the sixth of my rows a
   expect(kids.filter((kid) => kid === "m").length).toBeGreaterThan(0);
 });
 
+test("rows the server drew stay the same elements once 최신 starts hiding what was seen", async ({ page }) => {
+  await page.addInitScript(() => {
+    new MutationObserver(() => {
+      const holder = window as unknown as { __firstRow?: Element };
+      holder.__firstRow ??= document.querySelector('[data-testid="home-feed"] article[data-note-id]') ?? undefined;
+    }).observe(document, { childList: true, subtree: true });
+  });
+  await page.goto("/ko/blog");
+  await expect(page.getByTestId("home-feed").locator("[data-home-seen]").first()).toBeAttached({ timeout: 30_000 });
+  const kept = await page.evaluate(() => {
+    const first = (window as unknown as { __firstRow?: Element }).__firstRow;
+    return first ? first.isConnected : null;
+  });
+  expect(kept).toBe(true);
+});
+
 test("a note written in the composer lands at the top of 홈", async ({ page }) => {
   const feed = await openHome(page);
   await page.getByRole("textbox", { name: "노트 쓰기" }).fill("홈에서 쓴 노트");

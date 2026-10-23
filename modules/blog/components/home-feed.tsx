@@ -484,8 +484,8 @@ function HomeList({
           const key = row.kind === "note" ? kurlNoteKey(row.note.id) : kurlPostKey(row.post.id);
           return (
             <Fragment key={row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`}>
-              {hiding ? (
-                <SeenWatch uri={key} feed="for-you" glance data-home-seen={key}>
+              {mixing ? (
+                <SeenWatch uri={hiding ? key : null} feed="for-you" glance data-home-seen={hiding ? key : undefined}>
                   {shownRow}
                 </SeenWatch>
               ) : (
