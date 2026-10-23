@@ -22,12 +22,12 @@ describe("mixing other servers into 홈 최신", () => {
     ]);
   });
 
-  it("puts a pair after the last row of a page too, and the next page joins below it without moving anything", () => {
+  it("does not put any after the last row of a page while mine may go on, so the next page joins without a gap", () => {
     const first = mixHome(local(10), remote(10), false);
-    expect(shown(first.rows)).toEqual([...local(5), "R1", "R2", ...local(5, 6), "R3", "R4"]);
+    expect(shown(first.rows)).toEqual([...local(5), "R1", "R2", ...local(5, 6)]);
     const both = mixHome(local(15), remote(10), false);
     expect(shown(both.rows).slice(0, first.rows.length)).toEqual(shown(first.rows));
-    expect(shown(both.rows).slice(first.rows.length)).toEqual([...local(5, 11), "R5", "R6"]);
+    expect(shown(both.rows).slice(first.rows.length)).toEqual(["R3", "R4", ...local(5, 11)]);
   });
 
   it("once mine run out, the rest of the other servers follow on as the tail", () => {
@@ -41,7 +41,7 @@ describe("mixing other servers into 홈 최신", () => {
       "R5*",
       "R6*",
     ]);
-    expect(shown(mixHome(local(5), remote(3), true).rows)).toEqual([...local(5), "R1", "R2", "R3*"]);
+    expect(shown(mixHome(local(5), remote(3), true).rows)).toEqual([...local(5), "R1*", "R2*", "R3*"]);
   });
 
   it("with nothing of mine, the other servers are the whole feed", () => {
@@ -57,8 +57,7 @@ describe("mixing other servers into 홈 최신", () => {
     const short = mixHome(local(16), remote(3), false);
     expect(shown(short.rows)).toEqual([...local(5), "R1", "R2", ...local(5, 6), "R3", ...local(6, 11)]);
     expect(short.wanted).toBe(6);
-    expect(mixHome(local(4), [], false).wanted).toBe(0);
-    expect(mixHome(local(5), [], false).wanted).toBe(2);
+    expect(mixHome(local(5), [], false).wanted).toBe(0);
     expect(mixHome(local(6), [], false).wanted).toBe(2);
     expect(mixHome(local(16), remote(3), true).wanted).toBe(0);
   });

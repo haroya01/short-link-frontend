@@ -23,6 +23,7 @@ export function mixHome<L, R>(
       slot = i + 1;
       return;
     }
+    if (i === local.length - 1) return;
     slot = i + MIX_EVERY;
     wanted += MIX_TAKE;
     for (let k = 0; k < MIX_TAKE && next < remote.length; k += 1) {
