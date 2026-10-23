@@ -129,8 +129,14 @@ export function seenQueue(): SeenQueue {
   return queue;
 }
 
-export const kurlNoteKey = (id: number) => `kurl:note:${id}`;
-export const kurlPostKey = (id: number) => `kurl:post:${id}`;
+type KurlRow = { kind: "note" | "post"; id: number | string };
+export type SeenRow = KurlRow | { kind: "remote"; uri: string | null };
+
+export function seenKeyOf(row: KurlRow): string;
+export function seenKeyOf(row: SeenRow): string | null;
+export function seenKeyOf(row: SeenRow): string | null {
+  return row.kind === "remote" ? row.uri : `kurl:${row.kind}:${row.id}`;
+}
 
 type Watch = {
   uri: string;
@@ -169,7 +175,7 @@ function onEntries(entries: IntersectionObserverEntry[]) {
     const watch = watched.get(entry.target);
     if (!watch) continue;
     const visible = document.visibilityState === "visible";
-    if (watch.glance && entry.isIntersecting && visible) count(watch);
+    if (watch.glance && entry.isIntersecting && entry.intersectionRatio > 0 && visible) count(watch);
     if (!entry.isIntersecting || entry.intersectionRatio < 0.5 || !visible) {
       leave(watch);
       continue;

@@ -32,7 +32,7 @@ import { NoteDraftsButton } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
 import { RemoteRowView, SeenDivider, SeenWatch, remoteRowKey, useRemoteRows } from "@/modules/notes/components/remote-feed";
 import type { RemoteRow } from "@/modules/notes/lib/remote-rows";
-import { kurlNoteKey, kurlPostKey, seenQueue } from "@/modules/notes/lib/remote-seen";
+import { seenKeyOf, seenQueue } from "@/modules/notes/lib/remote-seen";
 import { remoteNotesKey, useRemoteNotes } from "@/modules/notes/lib/use-remote-trending";
 import { listRemoteNotes, type RemoteNotesPage } from "@/modules/notes/api/remote-trending";
 import { useToast } from "@/components/ui/toast";
@@ -490,7 +490,7 @@ function HomeList({
             ) : (
               <HomePostRow post={row.post} />
             );
-          const key = row.kind === "note" ? kurlNoteKey(row.note.id) : kurlPostKey(row.post.id);
+          const key = seenKeyOf(row.kind === "note" ? { kind: "note", id: row.note.id } : { kind: "post", id: row.post.id });
           return (
             <Fragment key={row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`}>
               {mixing ? (

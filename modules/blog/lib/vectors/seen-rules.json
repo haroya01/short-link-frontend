@@ -4,8 +4,7 @@
   "decisions": [
     "vault decisions/2026-10-23-home-latest-hide-seen",
     "vault decisions/2026-10-23-home-pull-reloads-unseen",
-    "vault decisions/2026-10-22-remote-latest-seen-later",
-    "kurl-ai-local/home-hide-seen/contract.md"
+    "vault decisions/2026-10-22-remote-latest-seen-later"
   ],
   "rules": [
     "a kurl note row is reported as kurl:note:{id}, a blog post row as kurl:post:{id}, a remote row by its uri; a remote row without a uri is not reported",
@@ -27,7 +26,7 @@
   ],
   "format": {
     "keyFormat": "row → key a client reports",
-    "accepted": "a string a client sends → as local (kind, id as a decimal string), remote, or dropped",
+    "accepted": "a string a client sends → as local (kind, itemId as a decimal string), remote, or dropped",
     "exposure": "surface, visibleRatio (0..1), visibleMs, appActive → counted",
     "dwell": "running total in ms for a key → sentMs, or null when nothing is sent",
     "requests": "which requests carry seen=hide and the X-Kurl-Device header",
@@ -48,12 +47,12 @@
       {"id":"key-008","row":{"kind":"remote","uri":null},"key":null}
     ]},
     "accepted": {"platforms": ["server"], "cases": [
-      {"id":"1","sent":"kurl:note:1","as":"local","kind":"note"},
-      {"id":"812","sent":"kurl:note:812","as":"local","kind":"note"},
-      {"id":"77","sent":"kurl:post:77","as":"local","kind":"post"},
-      {"id":"9223372036854775807","sent":"kurl:note:9223372036854775807","as":"local","kind":"note"},
-      {"id":"9223372036854775807","sent":"kurl:post:9223372036854775807","as":"local","kind":"post"},
-      {"id":"1000000000000000000","sent":"kurl:post:1000000000000000000","as":"local","kind":"post"},
+      {"id":"accept-001","sent":"kurl:note:1","as":"local","kind":"note","itemId":"1"},
+      {"id":"accept-002","sent":"kurl:note:812","as":"local","kind":"note","itemId":"812"},
+      {"id":"accept-003","sent":"kurl:post:77","as":"local","kind":"post","itemId":"77"},
+      {"id":"accept-004","sent":"kurl:note:9223372036854775807","as":"local","kind":"note","itemId":"9223372036854775807"},
+      {"id":"accept-005","sent":"kurl:post:9223372036854775807","as":"local","kind":"post","itemId":"9223372036854775807"},
+      {"id":"accept-006","sent":"kurl:post:1000000000000000000","as":"local","kind":"post","itemId":"1000000000000000000"},
       {"id":"accept-007","sent":"https://mastodon.social/users/a/statuses/1","as":"remote"},
       {"id":"accept-008","sent":"http://a.example/x","as":"remote"},
       {"id":"accept-009","sent":"HTTPS://A.example/x","as":"remote"},
