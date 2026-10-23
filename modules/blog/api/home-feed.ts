@@ -51,7 +51,7 @@ export async function listHome(
   limit = HOME_PAGE_SIZE,
   hide = false,
 ): Promise<FetchResult<HomePage>> {
-  if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHome(tab, cursor, hasViewer())) };
+  if (noteMocks) return { ok: true, data: tidy(noteMocks.mockHome(tab, cursor, hasViewer(), hide)) };
   const query = `tab=${tab}&limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}${hide ? "&seen=hide" : ""}`;
   const result = await fetchPublic<HomePage>(
     `/api/v1/public/home?${query}`,

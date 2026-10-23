@@ -42,11 +42,15 @@ function trailingEmptyPages(pages: RemoteNotesPage[]): number {
   return count;
 }
 
+export function remoteNotesKey(view: RemoteView, member: boolean, hide: boolean) {
+  return ["notes", "remote", view, member ? "member" : "anonymous", hide ? "hide" : "all"];
+}
+
 export function useRemoteNotes(view: RemoteView, enabled = true, hide = false): RemoteNotes {
   const { ready, authenticated } = useAuth();
   const { data, isError, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["notes", "remote", view, authenticated ? "member" : "anonymous", hide ? "hide" : "all"],
+      queryKey: remoteNotesKey(view, authenticated, hide),
       queryFn: ({ pageParam }) =>
         hide ? listRemoteNotes(view, pageParam, undefined, true) : listRemoteNotes(view, pageParam),
       initialPageParam: null as string | null,

@@ -1,6 +1,5 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
-import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock lane (Playwright routes): other servers come in 맞춤 order from /federation/for-you. 홈 최신 puts
 // two of them after every five of mine, each marked 다른 서버, and once mine run out they carry on alone.
@@ -236,37 +235,6 @@ test("with nothing of mine 맞춤 is the whole feed, and with none either 홈 sa
   await expect(page.getByTestId("home-caught-up").getByRole("heading", { name: "다 봤어요" })).toBeVisible({
     timeout: 30_000,
   });
-});
-
-test("a refresh puts only what is new since the last one on top, mixed in, and leaves every row below where it was", async ({
-  page,
-}) => {
-  await signIn(page);
-  const later = { ...pooled(90), createdAt: "2099-01-01T00:00:00Z" };
-  const asked = await serve(page, {
-    forYou: { first: { items: [pooled(1), pooled(2), kept(31), pooled(3), pooled(4)], next: null } },
-    again: { items: [later, pooled(1), pooled(91), kept(31)], next: "f1792656999999.20", seenFrom: 0 },
-    home: { items: MINE, next: null },
-    since: [{ kind: "note", note: note(150, "방금 올라온 노트") }],
-  });
-  await page.goto("/ko/blog");
-  const feed = page.getByTestId("home-feed");
-  await expect(feed.locator(`[data-remote-uri="${uri(4)}"]`)).toBeAttached({ timeout: 30_000 });
-  const before = await homeOrder(page);
-
-  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
-  await expect(feed.locator('article[data-note-id="150"]')).toBeVisible();
-  await expect(feed.locator(`[data-remote-uri="${uri(90)}"]`)).toBeAttached();
-  expect(await homeOrder(page)).toEqual(["150", "R90", ...before]);
-  await expect(feed.locator(`[data-remote-uri="${uri(91)}"]`)).toHaveCount(0);
-  await expect(feed.locator(`[data-remote-uri="${uri(1)}"]`)).toHaveCount(1);
-  await expect(feed.getByRole("heading", { name: "이미 본 글" })).toHaveCount(0);
-  await expect(toastBy(page, "새 글이 없어요")).toHaveCount(0);
-  expect(asked.forYou).toEqual(["", ""]);
-
-  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
-  await expectOnTop(toastBy(page, "새 글이 없어요"));
-  expect(await homeOrder(page)).toEqual(["150", "R90", ...before]);
 });
 
 test("맞춤 that fails leaves mine as they are", async ({ page }) => {

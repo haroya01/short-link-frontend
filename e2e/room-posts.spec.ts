@@ -127,7 +127,7 @@ test("leaving with my words deleted says what goes", async ({ page }) => {
   );
 });
 
-test("pressing 홈 on 홈 brings in what is new on top", async ({ page }) => {
+test("pressing 홈 on 홈 asks 최신 again from the start, with what is new on top", async ({ page }) => {
   await page.goto("/ko/blog");
   const feed = page.getByTestId("home-feed");
   const mine = feed.locator("article[data-note-id]:not([data-remote-kept] article)");
@@ -136,5 +136,5 @@ test("pressing 홈 on 홈 brings in what is new on top", async ({ page }) => {
   await page.locator("nav.vt-bottom-nav").getByRole("link", { name: "홈" }).click();
   await expect(mine.first()).toContainText("방금 올라온 노트");
   await expect(mine).toHaveCount(before + 1);
-  expect(await page.evaluate(() => (globalThis as { __kurlHomeSince?: string[] }).__kurlHomeSince)).toEqual(["latest:mock.1"]);
+  expect(await page.evaluate(() => (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload)).toBe(1);
 });

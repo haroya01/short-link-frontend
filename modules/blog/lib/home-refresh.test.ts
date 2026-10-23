@@ -53,4 +53,23 @@ describe("when 홈 refreshes", () => {
     expect(refresh).toHaveBeenCalledTimes(2);
     off();
   });
+
+  it("can leave a short absence alone while still starting over after a long one", () => {
+    vi.useFakeTimers();
+    const refresh = vi.fn();
+    const reload = vi.fn();
+    const off = onHomeRefresh(refresh, reload, () => {});
+    setVisibility("hidden");
+    vi.advanceTimersByTime(5 * 60_000);
+    setVisibility("visible");
+    expect(refresh).not.toHaveBeenCalled();
+    expect(reload).not.toHaveBeenCalled();
+    setVisibility("hidden");
+    vi.advanceTimersByTime(30 * 60_000);
+    setVisibility("visible");
+    expect(reload).toHaveBeenCalledTimes(1);
+    requestHomeRefresh();
+    expect(refresh).toHaveBeenCalledTimes(1);
+    off();
+  });
 });
