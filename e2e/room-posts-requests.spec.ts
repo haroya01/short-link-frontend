@@ -96,7 +96,46 @@ test.describe("a room post", () => {
 test.describe("홈 refresh", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("pressing 홈 on 홈 asks only for what came after the newest it has, then lays it on top", async ({ page }) => {
+  test("pressing 홈 on 최신 asks the first page again with seen=hide, and lays out what is still unseen in place of what was there", async ({
+    page,
+  }) => {
+    const asked: string[] = [];
+    let seenBeforeAgain = false;
+    await signIn(page);
+    await mockBackend(page, {
+      "GET /api/v1/public/home": (route) => {
+        const url = new URL(route.request().url());
+        asked.push(url.search);
+        const again = asked.filter((search) => !search.includes("cursor=")).length > 1;
+        const items = again
+          ? [{ kind: "note", note: note(102, "새로 온 노트") }, { kind: "note", note: note(103, "아직 안 본 노트") }]
+          : [{ kind: "note", note: note(101, "원래 있던 노트") }];
+        return route.fulfill({ json: { items, next: null, newest: again ? "102.0" : "101.0" } });
+      },
+      "GET /api/v1/federation/for-you": (route) => route.fulfill({ json: { items: [], next: null } }),
+      "POST /api/v1/federation/seen": (route) => {
+        seenBeforeAgain = asked.length === 1;
+        return route.fulfill({ status: 202, body: "" });
+      },
+    });
+    await page.goto("/ko/blog");
+    const feed = page.getByTestId("home-feed");
+    await expect(feed.locator("article[data-note-id]")).toHaveText([/원래 있던 노트/], { timeout: 30_000 });
+
+    await page.locator("nav.vt-bottom-nav").getByRole("link", { name: "홈" }).click();
+    await expect(feed.locator("article[data-note-id]")).toHaveText([/새로 온 노트/, /아직 안 본 노트/]);
+    expect(seenBeforeAgain).toBe(true);
+    expect(asked).toHaveLength(2);
+    const again = new URLSearchParams(asked[1]);
+    expect([again.get("tab"), again.get("seen"), again.get("since"), again.get("cursor")]).toEqual([
+      "latest",
+      "hide",
+      null,
+      null,
+    ]);
+  });
+
+  test("pressing 홈 on 팔로잉 asks only for what came after the newest it has, then lays it on top", async ({ page }) => {
     const asked: string[] = [];
     await signIn(page);
     await mockBackend(page, {
@@ -115,7 +154,7 @@ test.describe("홈 refresh", () => {
         });
       },
     });
-    await page.goto("/ko/blog");
+    await page.goto("/ko/blog?sort=following");
     const feed = page.getByTestId("home-feed");
     await expect(feed.locator("article[data-note-id]")).toHaveText([/원래 있던 노트/], { timeout: 30_000 });
 
