@@ -99,6 +99,7 @@ async function serve(
       asked.home.push({ search: url.search, device: route.request().headers()["x-kurl-device"] ?? null });
       if (asked.armed) asked.order.push("home");
       if (url.searchParams.has("since")) return route.fulfill({ json: { items: [], next: null, gap: false, newest: "102.201" } });
+      if (url.searchParams.has("cursor")) return route.fulfill({ json: { items: [], next: null } });
       if (asked.armed && homeFails) return route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } });
       return route.fulfill({ json: { ...nth(home, asked.armed ? 1 : 0), newest: "102.201" } });
     },
@@ -207,6 +208,24 @@ test("a refresh that brings back the same rows says 새 글이 없어요, and on
   await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
   await expectOnTop(toastBy(page, "새로고침하지 못했어요"));
   await expect(feed.locator('article[data-note-id="101"]')).toBeVisible();
+});
+
+test("a refresh that brings back the same first pages says 새 글이 없어요, even when 맞춤 has more than the slots", async ({
+  page,
+}) => {
+  await signIn(page);
+  const twelve = {
+    items: Array.from({ length: 12 }, (_, i) => ({ kind: "note", note: note(111 + i, `kurl 노트 ${i}`) })),
+    next: "h1.12.0",
+  };
+  const asked = await serve(page, { home: twelve, forYou: { items: Array.from({ length: 10 }, (_, i) => pooled(i + 1)), next: null } });
+  await page.goto("/ko/blog");
+  const feed = page.getByTestId("home-feed");
+  await expect(feed.locator(`[data-remote-uri="${uri(4)}"]`)).toBeAttached({ timeout: 30_000 });
+  await expect(feed.locator(`[data-remote-uri="${uri(5)}"]`)).toHaveCount(0);
+  asked.armed = true;
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("kurl:home-refresh")));
+  await expectOnTop(toastBy(page, "새 글이 없어요"));
 });
 
 test("a refresh that finds nothing left shows 다 봤어요 in place of the rows", async ({ page }) => {

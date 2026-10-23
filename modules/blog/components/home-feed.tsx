@@ -9,7 +9,7 @@ import { SignInRow } from "@/components/auth/sign-in-row";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { listHome, listHomeSince, type HomeItem, type HomePage, type HomePost, type HomeTab } from "@/modules/blog/api/home-feed";
-import { mixHome, remoteBesides, type Mixed } from "@/modules/blog/lib/home-mix";
+import { mixHome, pullNotice, remoteBesides, type Mixed } from "@/modules/blog/lib/home-mix";
 import { onHomeRefresh } from "@/modules/blog/lib/home-refresh";
 import { fetchPublicConnectionFeed, type ConnectionEvent } from "@/modules/blog/api/collections";
 import type { SuggestedAuthor } from "@/modules/blog/api/public-posts";
@@ -34,7 +34,7 @@ import { RemoteRowView, SeenDivider, SeenWatch, remoteRowKey, useRemoteRows } fr
 import type { RemoteRow } from "@/modules/notes/lib/remote-rows";
 import { kurlNoteKey, kurlPostKey, seenQueue } from "@/modules/notes/lib/remote-seen";
 import { remoteNotesKey, useRemoteNotes } from "@/modules/notes/lib/use-remote-trending";
-import { listRemoteNotes, type RemoteItem, type RemoteNotesPage } from "@/modules/notes/api/remote-trending";
+import { listRemoteNotes, type RemoteNotesPage } from "@/modules/notes/api/remote-trending";
 import { useToast } from "@/components/ui/toast";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
@@ -212,6 +212,9 @@ function HomeList({
   const [arrived, setArrived] = useState<HomeItem[]>([]);
   const newest = useRef<string | null>(null);
   const shownKeys = useRef<ReadonlySet<string>>(new Set());
+  const [pulled, setPulled] = useState<{ before: ReadonlySet<string>; failed: { own: boolean; remote: boolean } } | null>(
+    null,
+  );
   const { toast } = useToast();
   const refreshing = useRef(false);
   const connectionEvents = useViewerList(
@@ -257,31 +260,24 @@ function HomeList({
         listHome(API_TAB[sort], null, undefined, true),
         listRemoteNotes("for-you", null, undefined, true).catch(() => null),
       ]);
-      if (!found.ok) {
-        if (!quiet) toast(t("homeRefreshFailed"), "error");
-        return;
-      }
       const before = shownKeys.current;
-      setArrived([]);
-      newest.current = found.data.newest ?? null;
-      queryClient.setQueryData<InfiniteData<HomePage, string | null>>(queryKey.current, {
-        pages: [found.data],
-        pageParams: [null],
-      });
-      const forYouKey = remoteNotesKey("for-you", authenticated, true);
+      if (found.ok) {
+        setArrived([]);
+        newest.current = found.data.newest ?? null;
+        queryClient.setQueryData<InfiniteData<HomePage, string | null>>(queryKey.current, {
+          pages: [found.data],
+          pageParams: [null],
+        });
+      }
       if (remote) {
-        queryClient.setQueryData<InfiniteData<RemoteNotesPage, string | null>>(forYouKey, {
+        queryClient.setQueryData<InfiniteData<RemoteNotesPage, string | null>>(remoteNotesKey("for-you", authenticated, true), {
           pages: [remote],
           pageParams: [null],
         });
-      } else {
-        void queryClient.resetQueries({ queryKey: forYouKey });
       }
-      if (quiet) return;
-      const after = [...found.data.items.map(homeItemKey), ...(remote?.items ?? []).map(remoteItemKey)];
-      if (after.length > 0 && after.every((key) => before.has(key))) toast(t("homeNothingNew"));
+      if (!quiet) setPulled({ before, failed: { own: !found.ok, remote: remote === null } });
     },
-    [sort, authenticated, queryClient, toast, t],
+    [sort, authenticated, queryClient],
   );
 
   const refreshNow = useCallback(async () => {
@@ -378,9 +374,9 @@ function HomeList({
   const cards = new Set(connectAfter.keys());
   const mixed = mixing ? mixHome(main, remoteRows, localDone, cards) : { rows: main.map(asLocal), wanted: 0 };
   const entries: Entry[] = [...top.map((row): Entry => ({ kind: "local", row })), ...mainEntries(mixed.rows, connectAfter)];
-  shownKeys.current = new Set(
-    entries.map((entry) => (entry.kind === "remote" ? remoteRowKey(entry.row) : rowKey(entry.row))),
-  );
+  const laidKeys = entries.map((entry) => (entry.kind === "remote" ? remoteRowKey(entry.row) : rowKey(entry.row)));
+  shownKeys.current = new Set(laidKeys);
+  const notice = pulled ? pullNotice(pulled.before, laidKeys, pulled.failed) : null;
   const remoteMore =
     remote !== null && remote.hasMore && !remote.loadingMore && !remote.moreFailed && !remote.stalled ? remote.more : null;
   const remoteShort =
@@ -393,6 +389,13 @@ function HomeList({
   const autoMore = useRef<(() => void) | null>(null);
   autoMore.current = pager?.auto ? pager.more : null;
   const autoFrom = pager?.auto ? (hasNextPage ? "home" : "remote") : null;
+
+  useEffect(() => {
+    if (!notice) return;
+    setPulled(null);
+    if (notice === "nothingNew") toast(t("homeNothingNew"));
+    else if (notice === "failed") toast(t("homeRefreshFailed"), "error");
+  }, [notice, toast, t]);
 
   useEffect(() => {
     if (remoteShort) remoteMore?.();
@@ -549,16 +552,8 @@ function mainEntries(rows: Mixed<Row, RemoteRow>[], cards: Map<number, Connectio
   });
 }
 
-function homeItemKey(item: HomeItem): string {
-  return item.kind === "note" ? `note-${item.note.id}` : `post-${item.post.id}`;
-}
-
 function rowKey(row: Row): string {
   return row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`;
-}
-
-function remoteItemKey(entry: RemoteItem): string {
-  return entry.kind === "pool" ? `pool-${entry.item.uri}` : `kept-${entry.note.id}`;
 }
 
 function asLocal(item: Row): Mixed<Row, RemoteRow> {
