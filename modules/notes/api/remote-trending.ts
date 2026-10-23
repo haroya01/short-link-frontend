@@ -69,18 +69,20 @@ function decodeRemotePage(raw: unknown, seenFrom: unknown): { items: RemoteItem[
   return start === undefined ? { items } : { items, seenFrom: start };
 }
 
-function query(cursor: string | null, limit: number) {
-  return cursor ? `limit=${limit}&cursor=${encodeURIComponent(cursor)}` : `limit=${limit}`;
+function query(cursor: string | null, limit: number, hide: boolean) {
+  const base = cursor ? `limit=${limit}&cursor=${encodeURIComponent(cursor)}` : `limit=${limit}`;
+  return hide ? `${base}&seen=hide` : base;
 }
 
 export async function listRemoteNotes(
   view: RemoteView,
   cursor: string | null = null,
   limit = REMOTE_TRENDING_LIMIT,
+  hide = false,
 ): Promise<RemoteNotesPage> {
   const body = noteMocks
     ? await (mockFailure(`remote-${view}`) ?? noteMocks.mockRemoteNotes(view, cursor, limit))
-    : await request<RemoteNotesBody>(`/api/v1/federation/${view}?${query(cursor, limit)}`, {
+    : await request<RemoteNotesBody>(`/api/v1/federation/${view}?${query(cursor, limit, hide)}`, {
         method: "GET",
         headers: view === "trending" ? undefined : viewerHeaders(),
       });

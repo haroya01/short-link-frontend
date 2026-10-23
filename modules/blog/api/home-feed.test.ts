@@ -2,13 +2,15 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const fetchPublic = vi.fn();
 
+vi.mock("@/lib/device-id", () => ({ viewerHeaders: () => ({ "X-Kurl-Device": "0f8fad5b-d9cb-469f-a165-70867728950e" }) }));
+
 vi.mock("./public-posts", () => ({
   fetchPublic: (...args: unknown[]) => fetchPublic(...args),
   hasViewer: () => false,
   PUBLIC_POSTS_TAG: "public-posts",
 }));
 
-import { listHome } from "./home-feed";
+import { listHome, listHomeSince } from "./home-feed";
 
 const note = { id: 1, body: "노트" };
 const post = { id: 2, title: "글", author: { username: "minji" }, readMinutes: 3, commentCount: 0, likedByMe: null };
@@ -23,6 +25,27 @@ describe("the home feed", () => {
     expect(fetchPublic.mock.calls.map(([path]) => path)).toEqual([
       "/api/v1/public/home?tab=latest&limit=20",
       "/api/v1/public/home?tab=following&limit=40&cursor=12.8",
+    ]);
+  });
+
+  it("asks latest with seen=hide and the device when it is to hide what was seen, on every page and on since", async () => {
+    fetchPublic.mockResolvedValue({ ok: true, data: { items: [], next: null } });
+    await listHome("latest", null, 20, true);
+    await listHome("latest", "h1792656810855.20.3", 20, true);
+    await listHomeSince("latest", "812.77", 20, true);
+    expect(fetchPublic.mock.calls).toEqual([
+      [
+        "/api/v1/public/home?tab=latest&limit=20&seen=hide",
+        { noStore: true, headers: { "X-Kurl-Device": "0f8fad5b-d9cb-469f-a165-70867728950e" } },
+      ],
+      [
+        "/api/v1/public/home?tab=latest&limit=20&cursor=h1792656810855.20.3&seen=hide",
+        { noStore: true, headers: { "X-Kurl-Device": "0f8fad5b-d9cb-469f-a165-70867728950e" } },
+      ],
+      [
+        "/api/v1/public/home?tab=latest&limit=20&since=812.77&seen=hide",
+        { noStore: true, headers: { "X-Kurl-Device": "0f8fad5b-d9cb-469f-a165-70867728950e" } },
+      ],
     ]);
   });
 

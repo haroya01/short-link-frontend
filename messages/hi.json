@@ -84,6 +84,8 @@
     "exploreTitle": "ब्राउज़ करें",
     "homeEmptyFollowing": "आप जिन्हें फ़ॉलो करते हैं उनकी कोई पोस्ट अभी नहीं है",
     "homeNothingNew": "कोई नई पोस्ट नहीं",
+    "homeRefreshFailed": "रीफ़्रेश नहीं हो सका",
+    "homeCaughtUp": "आपने सब देख लिया",
     "recentSearches": "हाल की खोजें",
     "recentSearchesClear": "हाल की खोजें साफ़ करें",
     "recentSearchesClearShort": "साफ़ करें",

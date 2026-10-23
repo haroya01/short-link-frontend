@@ -243,9 +243,11 @@ describe("what the server is told about the viewer", () => {
       seenFrom: 1,
     });
     await listRemoteNotes("for-you", "f1792656810855.20");
+    await listRemoteNotes("for-you", "f1792656810855.20", 20, true);
     expect(sent.map((call) => call.url)).toEqual([
       "/api/v1/federation/for-you?limit=20",
       "/api/v1/federation/for-you?limit=20&cursor=f1792656810855.20",
+      "/api/v1/federation/for-you?limit=20&cursor=f1792656810855.20&seen=hide",
     ]);
     expect(sent.every((call) => call.headers.get("X-Kurl-Device") === ID)).toBe(true);
   });

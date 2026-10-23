@@ -1,4 +1,3 @@
-import type { RemoteItem } from "@/modules/notes/api/remote-trending";
 import type { RemoteRow } from "@/modules/notes/lib/remote-rows";
 
 const MIX_EVERY = 5;
@@ -35,35 +34,18 @@ export function mixHome<L, R>(
   return { rows, wanted: localDone ? 0 : wanted };
 }
 
-export function remoteBesides(
-  rows: readonly RemoteRow[],
-  notes: ReadonlySet<number>,
-  uris: ReadonlySet<string> = new Set(),
-): RemoteRow[] {
-  return rows.filter((row) =>
-    row.kind === "pool" ? !uris.has(row.uri) : !notes.has(row.note.id) && !(row.uri && uris.has(row.uri)),
-  );
+export function remoteBesides(rows: readonly RemoteRow[], localNotes: ReadonlySet<number>): RemoteRow[] {
+  return rows.filter((row) => row.kind === "pool" || !localNotes.has(row.note.id));
 }
 
-export type KnownRemote = { uris: Set<string>; notes: Set<number> };
+export type PullNotice = "newRows" | "nothingNew" | "caughtUp" | "failed";
 
-export function knownRemote(items: readonly RemoteItem[]): KnownRemote {
-  const known: KnownRemote = { uris: new Set(), notes: new Set() };
-  for (const entry of items) {
-    if (entry.kind === "pool") known.uris.add(entry.item.uri);
-    else {
-      known.notes.add(entry.note.id);
-      if (entry.uri) known.uris.add(entry.uri);
-    }
-  }
-  return known;
-}
-
-export function freshRemote(items: readonly RemoteItem[], known: KnownRemote, since: number): RemoteItem[] {
-  return items.filter((entry) => {
-    const written = Date.parse(entry.kind === "pool" ? entry.item.createdAt : entry.note.createdAt);
-    if (!(written > since)) return false;
-    if (entry.kind === "pool") return !known.uris.has(entry.item.uri);
-    return !known.notes.has(entry.note.id) && !(entry.uri && known.uris.has(entry.uri));
-  });
+export function pullNotice(
+  before: ReadonlySet<string>,
+  after: readonly string[],
+  failed: { own: boolean; remote: boolean },
+): PullNotice {
+  if (after.some((key) => !before.has(key))) return "newRows";
+  if (failed.own || failed.remote) return "failed";
+  return after.length === 0 ? "caughtUp" : "nothingNew";
 }

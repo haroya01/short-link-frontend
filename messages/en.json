@@ -84,6 +84,8 @@
     "exploreTitle": "Browse",
     "homeEmptyFollowing": "Nothing from people you follow yet",
     "homeNothingNew": "No new posts",
+    "homeRefreshFailed": "Couldn't refresh",
+    "homeCaughtUp": "You're all caught up",
     "recentSearches": "Recent searches",
     "recentSearchesClear": "Clear recent searches",
     "recentSearchesClearShort": "Clear",

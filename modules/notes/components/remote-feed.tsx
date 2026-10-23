@@ -75,7 +75,7 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
 
   useEffect(() => {
     if (!feed) return;
-    return () => seenQueue().flush();
+    return () => void seenQueue().flush();
   }, [feed]);
 
   if (notes.state === "loading") return <NoteListSkeleton rows={3} />;
@@ -190,45 +190,50 @@ export function RemoteRowView({
   above,
   trending = false,
   marked = false,
+  glance = false,
 }: {
   row: RemoteRow;
   feed: SeenFeed | null;
   above?: ReactNode;
   trending?: boolean;
   marked?: boolean;
+  glance?: boolean;
 }) {
   const mark = marked ? <RemoteMark /> : undefined;
   return row.kind === "pool" ? (
-    <SeenWatch uri={row.uri} feed={feed} data-remote-uri={row.uri}>
+    <SeenWatch uri={row.uri} feed={feed} glance={glance} data-remote-uri={row.uri}>
       {above}
       <TrendingNoteCard item={row.item} filteredBy={row.filteredBy} trending={trending} context={mark} />
     </SeenWatch>
   ) : (
-    <SeenWatch uri={row.uri} feed={feed} data-remote-kept={row.note.id}>
+    <SeenWatch uri={row.uri} feed={feed} glance={glance} data-remote-kept={row.note.id}>
       {above}
       <KeptNote note={row.note} filteredBy={row.filteredBy} context={mark} />
     </SeenWatch>
   );
 }
 
-function SeenWatch({
+export function SeenWatch({
   uri,
   feed,
+  glance = false,
   children,
   ...data
 }: {
   uri: string | null;
   feed: SeenFeed | null;
+  glance?: boolean;
   children: ReactNode;
   "data-remote-uri"?: string;
   "data-remote-kept"?: number;
+  "data-home-seen"?: string;
 }) {
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el || !uri || !feed) return;
-    return watchSeen(el, uri, feed);
-  }, [uri, feed]);
+    return watchSeen(el, uri, feed, glance);
+  }, [uri, feed, glance]);
   return (
     <div ref={box} {...data}>
       {children}

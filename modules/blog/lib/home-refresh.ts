@@ -6,7 +6,11 @@ export function requestHomeRefresh(): void {
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
-export function onHomeRefresh(refresh: () => void, reload: () => void = refresh): () => void {
+export function onHomeRefresh(
+  refresh: () => void,
+  reload: () => void = refresh,
+  back: () => void = refresh,
+): () => void {
   let hiddenAt: number | null = null;
   const onVisibility = () => {
     if (document.visibilityState === "hidden") {
@@ -15,7 +19,7 @@ export function onHomeRefresh(refresh: () => void, reload: () => void = refresh)
     }
     const away = hiddenAt === null ? 0 : Date.now() - hiddenAt;
     if (away >= LONG_AWAY_MS) reload();
-    else if (away >= AWAY_MS) refresh();
+    else if (away >= AWAY_MS) back();
     hiddenAt = null;
   };
   window.addEventListener(EVENT, refresh);

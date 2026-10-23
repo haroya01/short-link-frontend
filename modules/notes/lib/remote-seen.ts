@@ -12,7 +12,7 @@ type Send = (batch: SeenBatch, keepalive: boolean) => Promise<void>;
 export type SeenQueue = {
   add: (uri: string, feed: SeenFeed) => void;
   dwell: (uri: string, ms: number, feed: SeenFeed) => void;
-  flush: (keepalive?: boolean) => void;
+  flush: (keepalive?: boolean) => Promise<void>;
 };
 
 export function createSeenQueue(send: Send): SeenQueue {
@@ -55,7 +55,7 @@ export function createSeenQueue(send: Send): SeenQueue {
     schedule();
   }
 
-  function flush(keepalive = false) {
+  function flush(keepalive = false): Promise<void> {
     if (timer !== null) {
       clearTimeout(timer);
       timer = null;
@@ -70,6 +70,7 @@ export function createSeenQueue(send: Send): SeenQueue {
     for (const [uri, { ms, feed }] of dwelling) batchOf(feed).dwell.push({ uri, ms });
     pending = [];
     dwelling.clear();
+    const sent: Promise<void>[] = [];
     for (const { feed, uris, dwell } of byFeed.values()) {
       for (let at = 0; at < Math.max(uris.length, dwell.length); at += SEEN_REQUEST_MAX) {
         const batch = {
@@ -77,15 +78,18 @@ export function createSeenQueue(send: Send): SeenQueue {
           uris: uris.slice(at, at + SEEN_REQUEST_MAX),
           dwell: dwell.slice(at, at + SEEN_REQUEST_MAX),
         };
-        send(batch, keepalive).then(
-          () => {
-            batch.uris.forEach((uri) => failedOnce.delete(`seen:${uri}`));
-            batch.dwell.forEach(({ uri }) => failedOnce.delete(`dwell:${uri}`));
-          },
-          () => requeue(batch),
+        sent.push(
+          send(batch, keepalive).then(
+            () => {
+              batch.uris.forEach((uri) => failedOnce.delete(`seen:${uri}`));
+              batch.dwell.forEach(({ uri }) => failedOnce.delete(`dwell:${uri}`));
+            },
+            () => requeue(batch),
+          ),
         );
       }
     }
+    return Promise.all(sent).then(() => undefined);
   }
 
   function gathered() {
@@ -119,15 +123,19 @@ export function seenQueue(): SeenQueue {
   const queue = createSeenQueue(sendRemoteSeen);
   shared = queue;
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") queue.flush(true);
+    if (document.visibilityState === "hidden") void queue.flush(true);
   });
-  window.addEventListener("pagehide", () => queue.flush(true));
+  window.addEventListener("pagehide", () => void queue.flush(true));
   return queue;
 }
+
+export const kurlNoteKey = (id: number) => `kurl:note:${id}`;
+export const kurlPostKey = (id: number) => `kurl:post:${id}`;
 
 type Watch = {
   uri: string;
   feed: SeenFeed;
+  glance: boolean;
   counted: boolean;
   timer: ReturnType<typeof setTimeout> | null;
   since: number | null;
@@ -147,14 +155,22 @@ function leave(watch: Watch) {
   if (watch.since === null) return;
   watch.total += Date.now() - watch.since;
   watch.since = null;
-  seenQueue().dwell(watch.uri, watch.total, watch.feed);
+  if (!watch.uri.startsWith("kurl:")) seenQueue().dwell(watch.uri, watch.total, watch.feed);
+}
+
+function count(watch: Watch) {
+  if (watch.counted) return;
+  watch.counted = true;
+  seenQueue().add(watch.uri, watch.feed);
 }
 
 function onEntries(entries: IntersectionObserverEntry[]) {
   for (const entry of entries) {
     const watch = watched.get(entry.target);
     if (!watch) continue;
-    if (!entry.isIntersecting || entry.intersectionRatio < 0.5 || document.visibilityState !== "visible") {
+    const visible = document.visibilityState === "visible";
+    if (watch.glance && entry.isIntersecting && visible) count(watch);
+    if (!entry.isIntersecting || entry.intersectionRatio < 0.5 || !visible) {
       leave(watch);
       continue;
     }
@@ -162,8 +178,7 @@ function onEntries(entries: IntersectionObserverEntry[]) {
     if (watch.counted) continue;
     watch.timer ??= setTimeout(() => {
       watch.timer = null;
-      watch.counted = true;
-      seenQueue().add(watch.uri, watch.feed);
+      count(watch);
     }, SEEN_DWELL_MS);
   }
 }
@@ -171,7 +186,7 @@ function onEntries(entries: IntersectionObserverEntry[]) {
 function leaveAll() {
   if (watched.size === 0) return;
   watched.forEach(leave);
-  seenQueue().flush(true);
+  void seenQueue().flush(true);
 }
 
 function lookAgain() {
@@ -194,14 +209,14 @@ function unwatch(el: Element) {
   observer?.unobserve(el);
 }
 
-export function watchSeen(el: Element, uri: string, feed: SeenFeed): () => void {
+export function watchSeen(el: Element, uri: string, feed: SeenFeed, glance = false): () => void {
   if (typeof IntersectionObserver === "undefined") return () => {};
   if (!observer) {
-    observer = new IntersectionObserver(onEntries, { threshold: 0.5 });
+    observer = new IntersectionObserver(onEntries, { threshold: [0, 0.5] });
     document.addEventListener("visibilitychange", lookAgain);
     window.addEventListener("pagehide", leaveAll);
   }
-  watched.set(el, { uri, feed, counted: false, timer: null, since: null, total: 0 });
+  watched.set(el, { uri, feed, glance, counted: false, timer: null, since: null, total: 0 });
   observer.observe(el);
   return () => unwatch(el);
 }

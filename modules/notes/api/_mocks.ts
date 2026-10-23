@@ -1588,7 +1588,21 @@ function homePost(item: PublicFeedItem, viewer: boolean): HomePost {
   return { ...item, readMinutes: 1 + (item.id % 5), commentCount: item.id % 4, likedByMe: viewer ? false : null };
 }
 
-export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean): HomePage {
+let homeUnseenAsks = 0;
+let homeArrived: Note[] = [];
+
+export function mockHome(tab: HomeTab, cursor: string | null, viewer: boolean, hide = false): HomePage {
+  if (tab === "latest" && hide && cursor === null) {
+    homeUnseenAsks += 1;
+    if (homeUnseenAsks > 1) {
+      const asked = (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload ?? 0;
+      (globalThis as { __kurlHomeReload?: number }).__kurlHomeReload = asked + 1;
+      const fresh = note({ id: sinceNoteId++, body: "방금 올라온 노트", author: YUNA, createdAt: new Date().toISOString() });
+      homeArrived = [fresh, ...homeArrived];
+    }
+    const page = mockHome(tab, null, viewer);
+    return { ...page, items: [...homeArrived.map((n): HomeItem => ({ kind: "note", note: n })), ...page.items] };
+  }
   if (tab === "following" && !viewer) return { items: [], next: null };
   const noteList =
     tab === "following" ? [...mockFollowingRoomNotes(), ...mockFollowingNotes(0).items] : tab === "trending" ? mockTrendingNotes(0).items : mockEveryoneNotes(0).items;

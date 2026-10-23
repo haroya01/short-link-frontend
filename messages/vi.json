@@ -84,6 +84,8 @@
     "exploreTitle": "Duyệt xem",
     "homeEmptyFollowing": "Chưa có bài nào từ người bạn theo dõi",
     "homeNothingNew": "Không có bài mới",
+    "homeRefreshFailed": "Không làm mới được",
+    "homeCaughtUp": "Bạn đã xem hết",
     "recentSearches": "Tìm kiếm gần đây",
     "recentSearchesClear": "Xóa tìm kiếm gần đây",
     "recentSearchesClearShort": "Xóa",
