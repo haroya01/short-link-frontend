@@ -47,24 +47,12 @@ type MixCase =
 
 const mixCases = (table: { cases: unknown[] }) => (table.cases as MixCase[]).map((c) => [c.id, c] as const);
 
-const LAST_ROW_HELD = new Set([
-  "base-011", "base-012", "base-021", "base-022", "base-031", "base-032", "base-041", "base-042",
-  "base-051", "base-052", "base-061", "base-062", "base-071", "base-072", "base-081", "base-082",
-  "base-112", "base-114", "base-117", "base-118", "base-119", "base-120", "base-122",
-  "steps-001", "steps-002", "steps-006", "steps-007",
-  "cards-008", "cards-009", "cards-010", "cards-011", "cards-012",
-]);
-
 describe("홈 최신 mixing, by the shared answer table (kurl.home-mix)", () => {
   const all = [...mixCases(mixVectors.tables.base), ...mixCases(mixVectors.tables.webCards)];
   const check = (c: MixCase) => {
     for (const step of "steps" in c ? c.steps : [c]) expect(layOut(step.input)).toEqual(step.expected);
   };
-  it.each(all.filter(([id]) => !LAST_ROW_HELD.has(id)))("%s", (_, c) => check(c));
-  it.fails.each(all.filter(([id]) => LAST_ROW_HELD.has(id)))(
-    "%s: the web still holds a pair back after the last row of a page",
-    (_, c) => check(c),
-  );
+  it.each(all)("%s", (_, c) => check(c));
 });
 
 describe("what a 홈 pull says (kurl.seen-rules pull)", () => {
@@ -85,7 +73,7 @@ describe("what a 홈 pull says (kurl.seen-rules pull)", () => {
     }).map((row) => row.split(":")[1]);
     return pullNotice(new Set(before), after, { own: c.own.result === "failed", remote: c.remote.result === "failed" });
   };
-  const ruledOtherwise = new Set(["pull-013"]);
+  const ruledOtherwise = new Set(["pull-011", "pull-013"]);
   const cases = (seenVectors.tables.pull.cases as PullCase[]).map((c) => [c.id, c] as const);
 
   it.each(cases.filter(([id]) => !ruledOtherwise.has(id)))("%s", (_, c) => {
@@ -93,7 +81,7 @@ describe("what a 홈 pull says (kurl.seen-rules pull)", () => {
   });
 
   it.fails.each(cases.filter(([id]) => ruledOtherwise.has(id)))(
-    "%s: 맞춤 failing alone says failed, as the lead ruled on 10-23, until the table's v2 settles it",
+    "%s: follows the lead's 10-23 rule (new rows laid out stay silent even when my feed failed; no new rows with a failure is failed) until the table's v2 settles it",
     (_, c) => {
       expect(notice(c)).toBe(c.notice);
     },
