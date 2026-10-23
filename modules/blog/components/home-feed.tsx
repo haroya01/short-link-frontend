@@ -83,14 +83,16 @@ export function HomeFeed({
     const reduce = prefersReducedMotion();
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   }, []);
+  const writes = sort !== "blog";
   useEffect(() => {
+    if (!writes) return;
     const held = takeArrivingNote();
     if (held) arrive(held);
     return onNotePosted((note) => {
       arrive(note);
       return true;
     });
-  }, [arrive]);
+  }, [writes, arrive]);
   useEffect(() => setQuote(quoteFromParams(new URLSearchParams(window.location.search))), []);
 
   const pickDraft = (next: NoteDraft) => {
@@ -118,33 +120,35 @@ export function HomeFeed({
               : [{ key: "reposts", label: tNotes("showReposts"), checked: reposts.shown, onChange: reposts.set }]
           }
         />
-        <div className="border-b border-slate-100 dark:border-slate-800">
-          {!ready ? (
-            <div aria-hidden className="h-[60px]" />
-          ) : authenticated ? (
-            <NoteComposer
-              key={draft?.id ?? "home"}
-              draft={draft}
-              quote={quote}
-              quotedNote={draft?.quote && "note" in draft.quote ? draft.quote.note : null}
-              onClearQuote={() => setQuote(null)}
-              onCreated={(note) => {
-                setPosted((current) => [note, ...current]);
-                setDraft(null);
-              }}
-              draftsButton={(currentId, hidden) => (
-                <NoteDraftsButton
-                  onPick={pickDraft}
-                  currentId={currentId}
-                  hidden={hidden}
-                  className="shrink-0 self-center whitespace-nowrap"
-                />
-              )}
-            />
-          ) : (
-            <SignInRow reason="note" placeholder={tNotes("composerPlaceholder")} />
-          )}
-        </div>
+        {writes && (
+          <div className="border-b border-slate-100 dark:border-slate-800">
+            {!ready ? (
+              <div aria-hidden className="h-[60px]" />
+            ) : authenticated ? (
+              <NoteComposer
+                key={draft?.id ?? "home"}
+                draft={draft}
+                quote={quote}
+                quotedNote={draft?.quote && "note" in draft.quote ? draft.quote.note : null}
+                onClearQuote={() => setQuote(null)}
+                onCreated={(note) => {
+                  setPosted((current) => [note, ...current]);
+                  setDraft(null);
+                }}
+                draftsButton={(currentId, hidden) => (
+                  <NoteDraftsButton
+                    onPick={pickDraft}
+                    currentId={currentId}
+                    hidden={hidden}
+                    className="shrink-0 self-center whitespace-nowrap"
+                  />
+                )}
+              />
+            ) : (
+              <SignInRow reason="note" placeholder={tNotes("composerPlaceholder")} />
+            )}
+          </div>
+        )}
         <FeedContentTransition index={SORTS.indexOf(sort)} contentKey={sort}>
           {sort === "following" && signedOut ? (
             <FollowingFeed locale={locale} suggestedAuthors={suggestedAuthors} />
@@ -157,7 +161,7 @@ export function HomeFeed({
               connectionEvents={sort === "for-you" ? connectionEvents : undefined}
               sort={sort}
               initial={sort === "following" ? null : initial}
-              posted={sort === "blog" ? [] : posted}
+              posted={writes ? posted : []}
             />
           )}
         </FeedContentTransition>

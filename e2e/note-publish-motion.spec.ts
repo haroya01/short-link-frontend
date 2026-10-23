@@ -53,6 +53,18 @@ test("a note posted away from the feed goes to the feed that shows it and settle
   await expect(toastBy(page)).toHaveCount(0);
 });
 
+test("블로그 has no note composer, and a note posted there from the header goes to 추천 and settles in at the top", async ({
+  page,
+}) => {
+  await page.goto("/ko/blog?sort=blog");
+  await expect(page.getByTestId("home-feed").locator("[data-post-id]").first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("textbox", { name: "노트 쓰기" })).toHaveCount(0);
+  await postFromHeader(page, "블로그 탭에서 쓴 노트");
+  await expect(page).toHaveURL(/\?sort=for-you$/, { timeout: 30_000 });
+  await expect(page.locator("article[data-note-id]").first()).toContainText("블로그 탭에서 쓴 노트");
+  await expect(page.getByRole("textbox", { name: "노트 쓰기" })).toBeVisible();
+});
+
 test("with reduced motion the note does not move, and only the wash fades", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/ko/blog");
