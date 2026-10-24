@@ -80,6 +80,7 @@
     "searchPlaceholder": "Posts, notes, tags, authors",
     "searchLabel": "Search",
     "exploreTitle": "Browse",
+    "exploreDiscover": "Discover",
     "homeEmptyFollowing": "Nothing from people you follow yet",
     "homeNothingNew": "No new posts",
     "homeRefreshFailed": "Couldn't refresh",

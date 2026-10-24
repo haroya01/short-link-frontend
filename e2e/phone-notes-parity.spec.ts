@@ -15,7 +15,7 @@ async function openExplore(page: Page) {
 
 test("둘러보기 keeps follow suggestions in 사람 and hashtags behind the search box, in the app's order", async ({ page }) => {
   const explore = await openExplore(page);
-  await expect(explore.getByRole("tab")).toHaveText(["추천", "다른 서버", "사람"]);
+  await expect(explore.getByRole("tab")).toHaveText(["발견", "다른 서버", "사람"]);
   await explore.getByRole("tab", { name: "사람" }).click();
   await expect(explore.getByTestId("follow-suggestions").getByTestId("suggestion-haruka")).toBeVisible({ timeout: 30_000 });
   await expect(explore.getByTestId("explore-writers").getByRole("heading")).toHaveText("작가");

@@ -157,7 +157,7 @@ async function scrollToEnd(page: Page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
 }
 
-test("추천 ends in what is trending elsewhere and keeps going as the reader scrolls: the trending pool, then received notes under their heading", async ({
+test("발견 ends in what is trending elsewhere and keeps going as the reader scrolls: the trending pool, then received notes under their heading", async ({
   page,
 }) => {
   const answer = gate();
@@ -180,7 +180,7 @@ test("추천 ends in what is trending elsewhere and keeps going as the reader sc
   });
   const { group, card } = await open(page);
 
-  await expect(page.getByRole("tab", { name: "추천" })).toHaveAttribute("aria-selected", "true", { timeout: 30_000 });
+  await expect(page.getByRole("tab", { name: "발견" })).toHaveAttribute("aria-selected", "true", { timeout: 30_000 });
   await expect(group).toHaveAttribute("data-remote-view", "trending");
   await expect(group.locator('[data-testid="note-list-skeleton"] > div')).toHaveCount(3);
   answer.open();

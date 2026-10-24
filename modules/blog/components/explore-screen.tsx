@@ -158,7 +158,7 @@ function LaneTabs({
   const tabs = useRef<HTMLDivElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number; ms: number } | null>(null);
   const label: Record<ExploreLane, string> = {
-    picks: t("forYou"),
+    picks: t("exploreDiscover"),
     remote: tNotes("feedFederated"),
     people: t("searchPeopleTab"),
   };
