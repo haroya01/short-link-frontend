@@ -278,7 +278,12 @@ function NoteImageFrame({
   const [showAlt, setShowAlt] = useState(false);
   return (
     <figure style={frameStyle} className="relative w-fit shrink-0 snap-start">
-      <button type="button" onClick={onOpen} className={cn("focus-ring block cursor-zoom-in rounded-surface", frameStyle && "w-full")}>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={image.altText ? undefined : t("photoOpen")}
+        className={cn("focus-ring block cursor-zoom-in rounded-surface", frameStyle && "w-full")}
+      >
         <VariantImage
           src={image.url}
           alt={image.altText ?? ""}
@@ -305,7 +310,7 @@ function NoteImageFrame({
             onClick={() => setShowAlt((v) => !v)}
             aria-expanded={showAlt}
             aria-label={t("altShow")}
-            className="focus-ring absolute bottom-2 left-2 rounded-surface bg-slate-950/70 px-1.5 py-0.5 text-[11px] font-bold tracking-wide text-white backdrop-blur-sm hover:bg-slate-950/85"
+            className="focus-ring absolute bottom-2 left-2 inline-flex min-h-6 items-center rounded-surface bg-slate-950/70 px-1.5 text-[11px] font-bold tracking-wide text-white backdrop-blur-sm hover:bg-slate-950/85"
           >
             ALT
           </button>

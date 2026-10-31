@@ -79,3 +79,18 @@ test("photos and videos far below the first screen are not fetched until the rea
   await expect(video).toHaveAttribute("preload", "metadata");
   await expect.poll(() => requested.filter((name) => name.endsWith(".mp4"))).toEqual([`${500 + VIDEO_AT}.mp4`]);
 });
+
+test("a photo without a description is still a named button, and the ALT badge is a full-size target", async ({ page }) => {
+  await page.route("https://media.remote.test/**", () => {});
+  const described = { ...note(600, 0), media: [{ url: "https://media.remote.test/600.png", altText: "강가의 고양이", contentType: "image/png", width: 1200, height: 1600 }] };
+  await mockBackend(page, {
+    "GET /api/v1/public/home": (route) =>
+      route.fulfill({ json: { items: [{ kind: "note", note: note(500, 0) }, { kind: "note", note: described }], next: null } }),
+  });
+  await page.goto("/ko/blog");
+  await expect(page.locator('article[data-note-id="500"]').getByRole("button", { name: "사진 크게 보기" })).toBeVisible({ timeout: 30_000 });
+  const badge = page.locator('article[data-note-id="600"]').getByRole("button", { name: "사진 설명 보기" });
+  const box = (await badge.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(24);
+  expect(box.width).toBeGreaterThanOrEqual(24);
+});
