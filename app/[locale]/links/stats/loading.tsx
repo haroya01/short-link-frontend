@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { StatsBackLink } from "./[code]/_components/back-button";
 import { StatsSkeleton } from "./[code]/_components/stats-skeleton";
+import { LinksPage } from "@/components/links/links-page";
 
 /**
  * 통계로 들어가는 탭이 서버 왕복을 기다리지 않고 바로 커밋되게 하는 자리. 대시보드·메인에서 오면 경로가
@@ -13,9 +14,9 @@ import { StatsSkeleton } from "./[code]/_components/stats-skeleton";
 export default function StatsLoading() {
   const { code } = useParams<{ code?: string }>();
   return (
-    <div className="container max-w-6xl space-y-5 py-10">
+    <LinksPage className="space-y-5">
       <StatsBackLink />
       <StatsSkeleton shortCode={code} />
-    </div>
+    </LinksPage>
   );
 }

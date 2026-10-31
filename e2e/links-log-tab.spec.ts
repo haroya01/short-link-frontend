@@ -35,7 +35,8 @@ test("returning ratio and channel depth name the raw window they are counted ove
 
 test("the header export is named for the summary it holds, apart from the log tab's two", async ({ page }) => {
   await page.goto(`/ko/stats/${CODE}#log`);
-  await expect(page.getByRole("button", { name: "요약 CSV", exact: true })).toHaveText("요약 CSV");
+  await page.getByRole("button", { name: "작업 더 보기" }).click();
+  await expect(page.getByRole("menuitem", { name: "요약 CSV", exact: true })).toHaveText("요약 CSV");
   await expect(page.locator("button", { hasText: /^CSV$/ })).toHaveCount(0);
 });
 

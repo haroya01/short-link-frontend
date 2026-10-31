@@ -29,6 +29,7 @@ import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
 import { BatchCard } from "./_components/batch-card";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
 import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function CampaignDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +77,7 @@ export default function CampaignDetailPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-6 py-10">
+    <LinksPage className="space-y-6">
       <Link
         href="/campaigns"
         className="touch-target focus-ring inline-flex items-center gap-1.5 rounded-sm text-[12px] font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
@@ -150,7 +151,7 @@ export default function CampaignDetailPage() {
         <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : null}
       {confirmDialog}
-    </div>
+    </LinksPage>
   );
 }
 
@@ -258,10 +259,10 @@ function PrepareSection({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
-            QR ZIP
+            {t("prepare.qrZip")}
           </Button>
           <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
-            Batch CSV
+            {t("prepare.batchCsv")}
           </Button>
           <Link href={`/campaigns/${campaignId}/print-sheet`} className={buttonVariants({ variant: "outline" })}>
             {t("prepare.printSheet")}

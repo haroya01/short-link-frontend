@@ -36,11 +36,15 @@ test.describe("stats page", () => {
       },
     });
     await page.goto(`/ko/stats/${CODE}`);
-    const publicSwitch = page.getByRole("switch", { name: "통계 공개" });
-    await expect(publicSwitch).toHaveAttribute("aria-checked", "false");
-    await publicSwitch.click();
-    await expect(publicSwitch).toHaveAttribute("aria-checked", "true");
-    expect(statsPublic).toBe(true);
+    const more = page.getByRole("button", { name: "작업 더 보기" });
+    const publicItem = page.getByRole("menuitemcheckbox", { name: "통계 공개" });
+    await more.click();
+    await expect(publicItem).toHaveAttribute("aria-checked", "false");
+    await publicItem.click();
+    await expect.poll(() => statsPublic).toBe(true);
+    await more.click();
+    await expect(publicItem).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("menuitem", { name: "공개 링크 복사" })).toBeVisible();
 
     const visitor = await browser.newPage();
     await visitor.route(`**/api/v1/links/${CODE}/public-stats`, (route) => route.fulfill({ json: demoStats() }));

@@ -9,6 +9,7 @@ import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { MyEvent } from "@/modules/events/api/events";
 import { getMyEvent, updateEvent } from "@/modules/events/api/events";
 import { EventForm } from "@/modules/events/components/event-form";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function EditEventPage() {
   const { id: idParam } = useParams<{ id: string }>();
@@ -33,14 +34,14 @@ export default function EditEventPage() {
   }
 
   if (failed) {
-    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-red-600 dark:text-red-400">{t("errors.generic")}</p>;
+    return <LinksPage width="form"><p className="text-[13px] text-red-600 dark:text-red-400">{t("errors.generic")}</p></LinksPage>;
   }
   if (!event) {
-    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-slate-400">…</p>;
+    return <LinksPage width="form"><p className="text-[13px] text-slate-400">…</p></LinksPage>;
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8">
+    <LinksPage width="form">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("editTitle")}</h1>
       <div className="mt-6">
         <EventForm
@@ -52,6 +53,6 @@ export default function EditEventPage() {
           }}
         />
       </div>
-    </div>
+    </LinksPage>
   );
 }

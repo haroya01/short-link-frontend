@@ -3490,7 +3490,9 @@
         "title": "印刷所・Canva に渡す素材",
         "description": "{count}個のバッチの QR コードとメタ情報。ポスターやチラシに配置して発注できます。",
         "printSheet": "A4 シート",
-        "posterBuilder": "ポスターに QR"
+        "posterBuilder": "ポスターに QR",
+        "qrZip": "QR ZIP",
+        "batchCsv": "バッチ CSV"
       },
       "policy": {
         "eyebrow": "終了後の動作",

@@ -23,6 +23,7 @@ import { CustomDomainsSection } from "@/components/settings/custom-domains-secti
 import { Section as SharedSection } from "@/components/common/section";
 import type { Me } from "@/types";
 import { formatDate } from "@/lib/utils";
+import { LinksPage } from "@/components/links/links-page";
 
 function localeName(l: string): string {
   try {
@@ -106,16 +107,16 @@ export default function SettingsPage() {
 
   if (!me) {
     return (
-      <div aria-busy className="container max-w-2xl space-y-6 py-12">
+      <LinksPage width="form" aria-busy className="space-y-6">
         <Skeleton className="h-9 w-32" />
         <Skeleton className="h-10 w-72" />
         <Skeleton className="h-40 w-full rounded-2xl" />
-      </div>
+      </LinksPage>
     );
   }
 
   return (
-    <div className="container max-w-2xl space-y-6 py-12">
+    <LinksPage width="form" className="space-y-6">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
         {t("title")}
       </h1>
@@ -256,7 +257,7 @@ export default function SettingsPage() {
           onChange={(e) => setConfirmText(e.target.value)}
         />
       </ConfirmDialog>
-    </div>
+    </LinksPage>
   );
 }
 

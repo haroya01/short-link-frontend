@@ -3490,7 +3490,9 @@
         "title": "Assets for print shops and Canva",
         "description": "QR codes and metadata for {count} batches. Drop them into posters or flyers before ordering print.",
         "printSheet": "A4 sheet",
-        "posterBuilder": "Add QR to poster"
+        "posterBuilder": "Add QR to poster",
+        "qrZip": "QR ZIP",
+        "batchCsv": "Batch CSV"
       },
       "policy": {
         "eyebrow": "After campaign ends",

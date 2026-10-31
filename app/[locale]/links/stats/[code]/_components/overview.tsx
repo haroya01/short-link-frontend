@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
+import { KpiLine } from "@/components/links/stats/kpi-line";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { StatsJournal } from "@/components/links/stats/journal";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
@@ -35,26 +36,14 @@ export function StatsOverview({
 
   return (
     <div>
-      <section className="border-b border-slate-200 pb-6 dark:border-slate-800">
-        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-          <dl className="grid grid-cols-3 items-end gap-x-4 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-8">
-            <div className="col-span-3 sm:col-span-1">
-              <dt className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-                {t("kpi.human")}
-              </dt>
-              <dd className="mt-1.5 text-[38px] font-bold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
-                {formatNumber(data.humanClicks ?? 0)}
-              </dd>
-            </div>
-            <Metric label={t("kpi.totalClicks")} value={formatNumber(total)} muted />
-            <Metric
-              label={t("kpi.unique")}
-              value={formatNumber(data.uniqueClicks ?? 0)}
-            />
-            <Metric label={t("kpi.bot")} value={formatShare(botRatio)} muted />
-          </dl>
-        </div>
-      </section>
+      <KpiLine
+        hero={{ label: t("kpi.human"), value: formatNumber(data.humanClicks ?? 0) }}
+        metrics={[
+          { label: t("kpi.totalClicks"), value: formatNumber(total), muted: true },
+          { label: t("kpi.unique"), value: formatNumber(data.uniqueClicks ?? 0) },
+          { label: t("kpi.bot"), value: formatShare(botRatio), muted: true },
+        ]}
+      />
 
       <section className="mt-5">
         <h2 className="sr-only text-base font-semibold sm:not-sr-only sm:block text-slate-900 dark:text-slate-100">
@@ -121,34 +110,6 @@ export function StatsOverview({
           </Tile>
         </div>
       </section>
-    </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  muted,
-  className,
-}: {
-  label: string;
-  value: string;
-  muted?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={cn("flex min-w-0 flex-col gap-1 pb-0.5 sm:flex-row sm:items-baseline sm:gap-2", className)}>
-      <dt className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{label}</dt>
-      <dd
-        className={cn(
-          "text-[16px] font-bold leading-none tracking-tight tabular-nums",
-          muted
-              ? "text-slate-500 dark:text-slate-400"
-              : "text-slate-900 dark:text-slate-100",
-        )}
-      >
-        {value}
-      </dd>
     </div>
   );
 }

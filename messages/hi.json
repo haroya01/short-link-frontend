@@ -3490,7 +3490,9 @@
         "title": "प्रिंट शॉप और Canva के लिए एसेट",
         "description": "{count} बैच के लिए QR कोड और मेटाडेटा। प्रिंट ऑर्डर करने से पहले इन्हें पोस्टर या फ़्लायर में डालें।",
         "printSheet": "A4 शीट",
-        "posterBuilder": "पोस्टर में QR जोड़ें"
+        "posterBuilder": "पोस्टर में QR जोड़ें",
+        "qrZip": "QR ZIP",
+        "batchCsv": "बैच CSV"
       },
       "policy": {
         "eyebrow": "कैंपेन समाप्त होने के बाद",

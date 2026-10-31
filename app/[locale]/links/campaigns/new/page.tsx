@@ -15,6 +15,7 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignPostEndAction } from "@/types";
 import { RequiredMark } from "@/components/ui/required-mark";
+import { LinksPage } from "@/components/links/links-page";
 
 type StartMode = "now" | "schedule";
 
@@ -107,7 +108,7 @@ export default function NewCampaignPage() {
   }
 
   return (
-    <div className="container max-w-2xl space-y-6 py-10">
+    <LinksPage width="form" className="space-y-6">
       <div>
         <Link
           href="/campaigns"
@@ -259,7 +260,7 @@ export default function NewCampaignPage() {
         </div>
       </form>
       {confirmDialog}
-    </div>
+    </LinksPage>
   );
 }
 

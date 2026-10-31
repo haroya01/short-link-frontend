@@ -3490,7 +3490,9 @@
         "title": "인쇄소 · Canva에 넘길 자산",
         "description": "묶음 {count}개의 QR 코드와 메타 표예요. 디자인 도구에서 포스터·전단지에 넣어 발주하세요.",
         "printSheet": "A4 시트",
-        "posterBuilder": "포스터에 QR"
+        "posterBuilder": "포스터에 QR",
+        "qrZip": "QR ZIP",
+        "batchCsv": "묶음 CSV"
       },
       "policy": {
         "eyebrow": "종료 후 동작",
