@@ -17,6 +17,7 @@ import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignDetail } from "@/types";
 import { formatNumber } from "@/lib/utils";
 import { RequiredMark } from "@/components/ui/required-mark";
+import { LinksPage } from "@/components/links/links-page";
 
 type RowDraft = {
   id: string;
@@ -169,7 +170,7 @@ export default function NewBatchPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-6 py-10">
+    <LinksPage className="space-y-6">
       <Link
         href={`/campaigns/${campaignId}`}
         className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
@@ -237,7 +238,7 @@ export default function NewBatchPage() {
           onCancel={() => router.push(`/campaigns/${campaignId}`)}
         />
       </form>
-    </div>
+    </LinksPage>
   );
 }
 

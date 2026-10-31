@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { Link } from "@/i18n/navigation";
+import { TransitionLink } from "@/components/common/transition-link";
 import { useLinksPathname } from "@/hooks/use-links-pathname";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { buttonVariants } from "@/components/ui/button";
@@ -87,14 +87,14 @@ export function Nav() {
             {entry.label}
           </a>
         ) : (
-          <Link
+          <TransitionLink
             key={entry.href}
             href={entry.href}
             aria-current={active ? "page" : undefined}
             className={className}
           >
             {entry.label}
-          </Link>
+          </TransitionLink>
         );
       })}
     </nav>
@@ -114,10 +114,10 @@ export function Nav() {
           {/* 360px 미만에선 마크만. 풀 워드마크를 두면 우측 "blog.kurl" 필과 겹쳐 워드마크의 l 이
               가려졌다(320 에서 4px). 여백을 넓히면 그 겹침이 더 커지므로 같이 처리한다. 블로그
               헤더가 이미 같은 방식(<sm 마크만)이라 문법도 어긋나지 않는다. */}
-          <Link href={authenticated ? "/dashboard" : "/"} aria-label="kurl" className="mark-hoverable shrink-0">
+          <TransitionLink href={authenticated ? "/dashboard" : "/"} aria-label="kurl" className="mark-hoverable shrink-0">
             <Logo animated showText={false} className="min-[360px]:hidden" />
             <Logo animated className="hidden min-[360px]:inline-flex" />
-          </Link>
+          </TransitionLink>
           {(!ready || !authenticated) && (
             <div data-auth-slot={ready ? undefined : "anon"} className="contents">
               {entryNav(anonymousEntries(t))}

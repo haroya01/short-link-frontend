@@ -134,7 +134,7 @@ export function QrButton({
   );
 }
 
-function QrModal({
+export function QrModal({
   baseUrl,
   filename,
   logoSrc,

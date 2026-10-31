@@ -21,6 +21,7 @@ import { formatEventRange, shortUrlOf } from "@/modules/events/lib/format";
 import { AnalyticsPanel } from "@/modules/events/components/analytics-panel";
 import { AttendeeTable } from "@/modules/events/components/attendee-table";
 import { SharePanel } from "@/modules/events/components/share-panel";
+import { LinksPage } from "@/components/links/links-page";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kurl.me";
@@ -68,10 +69,10 @@ export default function EventDetailPage() {
   }
 
   if (failed) {
-    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-red-600 dark:text-red-400">{t("loadFailed")}</p>;
+    return <LinksPage width="form"><p className="text-[13px] text-red-600 dark:text-red-400">{t("loadFailed")}</p></LinksPage>;
   }
   if (!event) {
-    return <p className="mx-auto max-w-2xl px-4 py-10 text-[13px] text-slate-400">{t("loading")}</p>;
+    return <LinksPage width="form"><p className="text-[13px] text-slate-400">{t("loading")}</p></LinksPage>;
   }
 
   const publicUrl = `${SITE_URL}/${locale}/e/${event.slug}`;
@@ -87,7 +88,7 @@ export default function EventDetailPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-8">
+    <LinksPage width="form" className="flex flex-col gap-5">
       {/* 페이지 정체를 헤더 한 곳에 집약 — 상태·일시·장소·신청 수까지 여기서 다 읽힌다.
           이하 카드는 "공유 → 신청 현황 → 유입 분석 → 관리" 순서의 운영 도구. */}
       <header>
@@ -191,7 +192,7 @@ export default function EventDetailPage() {
           setConfirmCancel(false);
         }}
       />
-    </div>
+    </LinksPage>
   );
 }
 

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { BarChart3, CalendarDays, Contact, Ellipsis, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { Link } from "@/i18n/navigation";
+import { TransitionLink } from "@/components/common/transition-link";
 import { useLinksPathname } from "@/hooks/use-links-pathname";
 import { cn } from "@/lib/utils";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
@@ -75,7 +75,7 @@ export function LinksBottomNav() {
       )}
     >
       {tabs.map(({ href, label, Icon, active }) => (
-        <Link
+        <TransitionLink
           key={label}
           href={href}
           aria-current={active ? "page" : undefined}
@@ -83,7 +83,7 @@ export function LinksBottomNav() {
         >
           <Icon className="h-5 w-5" />
           <span className="max-w-full truncate px-1">{label}</span>
-        </Link>
+        </TransitionLink>
       ))}
     </nav>
   );

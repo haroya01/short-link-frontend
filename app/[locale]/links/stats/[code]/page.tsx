@@ -13,6 +13,7 @@ import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { StatsBackLink } from "./_components/back-button";
 import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
+import { LinksPage } from "@/components/links/links-page";
 
 // The live click feed fires one SSE tick per click (no backend batching). Refetching the heavy
 // stats aggregation on every tick floods a busy link, so collapse ticks into at most one refetch
@@ -81,7 +82,7 @@ export default function StatsPage() {
   }
 
   return (
-    <div className="container max-w-6xl space-y-5 py-10">
+    <LinksPage className="space-y-5">
       <StatsBackLink />
 
       {loading ? (
@@ -106,6 +107,6 @@ export default function StatsPage() {
           shortCodeLabel={t("shortCode")}
         />
       )}
-    </div>
+    </LinksPage>
   );
 }

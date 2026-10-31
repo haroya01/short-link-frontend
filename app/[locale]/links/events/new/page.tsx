@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { createEvent } from "@/modules/events/api/events";
 import { EventForm } from "@/modules/events/components/event-form";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function NewEventPage() {
   const t = useTranslations("events.form");
@@ -19,7 +20,7 @@ export default function NewEventPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8">
+    <LinksPage width="form">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("newTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("newSubtitle")}</p>
       <div className="mt-6">
@@ -32,6 +33,6 @@ export default function NewEventPage() {
           }}
         />
       </div>
-    </div>
+    </LinksPage>
   );
 }

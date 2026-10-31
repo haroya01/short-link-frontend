@@ -10,6 +10,7 @@ import { LogoutButton } from "@/components/common/logout-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { appStoreUrl, type IosApp } from "@/lib/app-store";
+import { LinksPage } from "@/components/links/links-page";
 
 const TOOLS = [
   ["/settings/profile", "profile"],
@@ -26,15 +27,15 @@ export default function MorePage() {
 
   if (!me) {
     return (
-      <div aria-busy className="container max-w-3xl space-y-6 py-8">
+      <LinksPage width="narrow" aria-busy className="space-y-6">
         <Skeleton className="h-9 w-32" />
         <Skeleton className="h-64 w-full rounded-2xl" />
-      </div>
+      </LinksPage>
     );
   }
 
   return (
-    <div className="container max-w-3xl space-y-6 py-8">
+    <LinksPage width="narrow" className="space-y-6">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
         {t("title")}
       </h1>
@@ -63,7 +64,7 @@ export default function MorePage() {
       </Section>
 
       <LogoutButton />
-    </div>
+    </LinksPage>
   );
 }
 

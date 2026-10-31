@@ -146,7 +146,8 @@ test.describe("demo page artifacts", () => {
   }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "링크 설정" }).click();
+    await page.getByRole("button", { name: "작업 더 보기" }).click();
+    await page.getByRole("menuitem", { name: "링크 설정" }).click();
 
     // A/B destinations mirror — title + sample rows visible
     const destSection = page.locator('section:has-text("A/B")').first();

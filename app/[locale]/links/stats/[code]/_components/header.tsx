@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { Download, Eye, Link2, MoreHorizontal, QrCode, SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { ActionMenu, type ActionMenuItem } from "@/components/common/action-menu";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
 import { DestinationHealthBanner } from "@/components/links/stats/destination-health-banner";
 import { LinkModerationBanner } from "@/components/links/stats/link-moderation-banner";
-import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
-import { QrButton } from "@/components/links/qr/button";
+import { PublicStatsToggle, usePublicStats } from "@/components/links/stats/public-stats-toggle";
+import { QrButton, QrModal } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
 import { buildStatsCsv, statsCsvFilename } from "@/lib/stats-csv";
 import { useLinkDetail } from "@/lib/api/links.queries";
@@ -24,7 +25,6 @@ type Props = {
    */
   demo?: boolean;
   onSettings?: () => void;
-  settingsActive?: boolean;
 };
 
 /**
@@ -37,9 +37,13 @@ type Props = {
  * {@code PATCH /api/v1/links/{code}/visibility} which would 401 on the public {@code /demo} route.
  * Copy + QR still work because they read from the local value.
  */
-export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSettings, settingsActive }: Props) {
+export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSettings }: Props) {
   const t = useTranslations("stats");
+  const tQr = useTranslations("qr");
+  const tPublic = useTranslations("publicStats");
   const [moreOpen, setMoreOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
+  const publicStats = usePublicStats(demo ? null : data.shortCode);
   const display = shortUrl || `/${data.shortCode}`;
   const { data: detail } = useLinkDetail(demo ? undefined : data.shortCode);
   let destinationHost = "";
@@ -56,6 +60,25 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
     a.click();
     URL.revokeObjectURL(url);
   }
+
+  const menuItems: ActionMenuItem[] = [
+    { label: tQr("title"), icon: QrCode, onSelect: () => setQrOpen(true) },
+    ...(onSettings ? [{ label: t("linkSettings"), icon: SlidersHorizontal, onSelect: onSettings }] : []),
+    ...(demo
+      ? []
+      : [
+          {
+            label: tPublic("switchLabel"),
+            icon: Eye,
+            checked: publicStats.isPublic === true,
+            disabled: publicStats.busy || publicStats.isPublic === null,
+            onSelect: () => void publicStats.toggle(),
+          },
+        ]),
+    ...(publicStats.isPublic ? [{ label: tPublic("shareButton"), icon: Link2, onSelect: () => void publicStats.copyPublicUrl() }] : []),
+    { label: t("exportSummaryCsv"), icon: Download, onSelect: exportCsv },
+  ];
+
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -113,7 +136,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
             )}
             {!demo && (
               <PublicStatsToggle
-                shortCode={data.shortCode}
+                state={publicStats}
                 className="min-h-11 flex-wrap justify-between rounded-lg border border-slate-300 px-4 dark:border-slate-700"
               />
             )}
@@ -122,19 +145,17 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
             </Button>
           </div>
         </BottomSheet>
-        <div className="hidden flex-wrap items-center gap-1.5 sm:flex">
+        <div className="hidden items-center gap-2 sm:flex">
           <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} />
-          <QrButton value={display} filename={`${data.shortCode}.png`} />
-          {onSettings && (
-            <Button variant={settingsActive ? "subtle" : "ghost"} size="sm" className="min-h-9" onClick={onSettings} aria-pressed={settingsActive}>
-              {t("linkSettings")}
-            </Button>
-          )}
-          {!demo && <PublicStatsToggle shortCode={data.shortCode} className="px-2" />}
-          <Button variant="ghost" size="sm" onClick={exportCsv}>
-            {t("exportSummaryCsv")}
-          </Button>
+          <ActionMenu
+            label={t("moreActions")}
+            items={menuItems}
+            triggerVariant="outline"
+            triggerSize="sm"
+            triggerClassName="px-2.5"
+          />
         </div>
+        {qrOpen && <QrModal baseUrl={display} filename={`${data.shortCode}.png`} showSrcInput defaultSrcHint="" onClose={() => setQrOpen(false)} />}
       </div>
       {!demo && detail && <LinkModerationBanner detail={detail} />}
       {!demo && detail && <DestinationHealthBanner detail={detail} shortUrl={display} />}

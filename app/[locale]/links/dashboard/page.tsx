@@ -35,6 +35,7 @@ import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function DashboardPage() {
   const { authenticated, ready, me } = useAuth();
@@ -170,7 +171,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-4 py-8 max-sm:pb-24">
+    <LinksPage className="space-y-4 max-sm:pb-16">
       <div className="flex items-end justify-between gap-3">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
@@ -315,7 +316,7 @@ export default function DashboardPage() {
           )}
         </>
       )}
-    </div>
+    </LinksPage>
   );
 }
 
