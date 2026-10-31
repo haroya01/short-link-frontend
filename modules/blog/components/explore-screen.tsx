@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type RefObject } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { blogHref } from "@/lib/host";
@@ -24,11 +24,10 @@ function laneOf(value: string | null): ExploreLane {
 export function ExploreScreen() {
   const t = useTranslations("publicFeed");
   const router = useRouter();
-  const params = useSearchParams();
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
-  const [lane, setLane] = useState<ExploreLane>(() => laneOf(params.get("lane")));
-  const [visited, setVisited] = useState<ReadonlySet<ExploreLane>>(() => new Set([laneOf(params.get("lane"))]));
+  const [lane, setLane] = useState<ExploreLane>("picks");
+  const [visited, setVisited] = useState<ReadonlySet<ExploreLane>>(() => new Set<ExploreLane>(["picks"]));
   const [from, setFrom] = useState<ExploreLane | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -54,6 +53,13 @@ export function ExploreScreen() {
     else url.searchParams.set("lane", next);
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   }
+
+  useLayoutEffect(() => {
+    const linked = laneOf(new URLSearchParams(window.location.search).get("lane"));
+    if (linked === "picks") return;
+    setLane(linked);
+    setVisited(new Set([linked]));
+  }, []);
 
   useLayoutEffect(() => {
     if (from === null) return;
