@@ -11,6 +11,10 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await page.setViewportSize(PHONE);
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
+  await page.mouse.wheel(0, 400);
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
+  await page.mouse.wheel(0, -200);
+  await expect(dock(page)).not.toHaveAttribute("data-tucked", "true");
   await expect(dock(page).getByRole("button")).toHaveText(["", "", /^\d+$/, ""]);
   await expect(dock(page).getByRole("button", { name: "목차" })).toBeVisible();
   await expect(dock(page).getByRole("button", { name: /컬렉션에 엮기$/ })).toBeVisible();
@@ -30,7 +34,7 @@ test("휴대폰은 헤더 대신 독에 목차·엮기·좋아요·북마크가 
   await expect(header.getByRole("button", { name: "북마크에 저장" })).toBeVisible();
 });
 
-test("독은 하단 탭 위에 떠 있다가, 읽어 내려가면 숨고 멈춰도 숨은 채이며, 위로 올리면 탭 위로 돌아온다", async ({ page }) => {
+test("독은 글 첫 화면에선 접혀 본문을 가리지 않고, 읽어 내려가는 동안에도 접혀 있다가, 위로 올리면 탭 위로 나온다", async ({ page }) => {
   await page.setViewportSize(PHONE);
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
@@ -40,22 +44,25 @@ test("독은 하단 탭 위에 떠 있다가, 읽어 내려가면 숨고 멈춰�
     const n = (await nav.boundingBox())!;
     expect(d.y + d.height).toBeLessThanOrEqual(n.y - 8);
   };
-  await expect(aboveNav).toPass();
-  await expect(dock(page)).not.toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
+  await expect(dock(page)).toHaveCSS("opacity", "0");
 
   await page.mouse.wheel(0, 600);
-  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
   await expect(dock(page)).toHaveCSS("opacity", "0");
   await expect(dock(page)).not.toHaveAttribute("aria-hidden", "true");
   await page.waitForTimeout(800);
-  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
   await expect(dock(page)).toHaveCSS("opacity", "0");
 
   await page.mouse.wheel(0, -200);
-  await expect(dock(page)).not.toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).not.toHaveAttribute("data-tucked", "true");
   await expect(dock(page)).toHaveCSS("opacity", "1");
   await expect(nav).not.toHaveClass(/translate-y-full/);
   await expect(aboveNav).toPass();
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
 });
 
 test("움직임 줄이기에서도 읽는 동안 독은 숨되, 미끄러지지 않고 바로 숨는다", async ({ page }) => {
@@ -64,8 +71,9 @@ test("움직임 줄이기에서도 읽는 동안 독은 숨되, 미끄러지지 
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   await expect(dock(page)).toHaveCSS("transition-property", "none");
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
   await page.mouse.wheel(0, 600);
-  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
   await expect(dock(page)).toHaveCSS("opacity", "0");
 });
 
@@ -74,7 +82,7 @@ test("읽는 동안 숨은 독도 키보드로 들어가면 다시 보인다", a
   await page.goto(POST);
   await expect(dock(page)).toBeVisible({ timeout: 30_000 });
   await page.mouse.wheel(0, 600);
-  await expect(dock(page)).toHaveAttribute("data-reading", "true");
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
   await dock(page).getByRole("button", { name: /글 좋아요$/ }).focus();
   await expect(dock(page)).toHaveCSS("opacity", "1");
 });
@@ -83,7 +91,11 @@ test("목차 버튼은 제목 시트를 열고, 제목을 고르면 시트가 �
   await page.setViewportSize(PHONE);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(POST);
-  await dock(page).getByRole("button", { name: "목차" }).click({ timeout: 30_000 });
+  await expect(dock(page)).toBeVisible({ timeout: 30_000 });
+  await page.mouse.wheel(0, 400);
+  await expect(dock(page)).toHaveAttribute("data-tucked", "true");
+  await page.mouse.wheel(0, -200);
+  await dock(page).getByRole("button", { name: "목차" }).click();
   const sheet = page.getByRole("dialog", { name: "목차" });
   await expect(sheet).toBeVisible();
   const link = sheet.getByRole("link").nth(1);
