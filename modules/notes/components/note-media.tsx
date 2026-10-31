@@ -76,6 +76,7 @@ function ConcealedMedia({
               width={image.width ?? undefined}
               height={image.height ?? undefined}
               loading="lazy"
+              sharpen={false}
               className={cn(
                 "block w-auto scale-110 object-cover blur-2xl",
                 single ? singleImageClass(image) : "h-60 min-w-28 max-w-none",

@@ -94,3 +94,42 @@ test("a photo without a description is still a named button, and the ALT badge i
   expect(box.height).toBeGreaterThanOrEqual(24);
   expect(box.width).toBeGreaterThanOrEqual(24);
 });
+
+const PIXEL = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", "base64");
+const MASTODON = "https://files.masto.test/media_attachments/files/117/536/041/202/441/643";
+
+async function serveMastodonNote(page: Page, small: "ok" | "missing") {
+  const requested: string[] = [];
+  await page.route("https://files.masto.test/**", (route) => {
+    const path = new URL(route.request().url()).pathname;
+    requested.push(path.includes("/small/") ? "small" : "original");
+    if (path.includes("/small/") && small === "missing") return route.fulfill({ status: 404, body: "" });
+    return route.fulfill({ status: 200, contentType: "image/png", body: PIXEL });
+  });
+  const item = {
+    ...note(700, 0),
+    media: [{ url: `${MASTODON}/original/a.png`, altText: null, contentType: "image/png", width: 1200, height: 1600 }],
+  };
+  await mockBackend(page, {
+    "GET /api/v1/public/home": (route) => route.fulfill({ json: { items: [{ kind: "note", note: item }], next: null } }),
+  });
+  return requested;
+}
+
+test("a Mastodon photo paints its small preview first, then swaps to the original once on screen", async ({ page }) => {
+  const requested = await serveMastodonNote(page, "ok");
+  await page.goto("/ko/blog");
+  const img = page.locator('article[data-note-id="700"] button img');
+  await expect(img).toHaveAttribute("src", `${MASTODON}/original/a.png`, { timeout: 30_000 });
+  expect(requested[0]).toBe("small");
+  expect(requested).toContain("original");
+});
+
+test("a Mastodon photo without a small preview falls back to the original", async ({ page }) => {
+  const requested = await serveMastodonNote(page, "missing");
+  await page.goto("/ko/blog");
+  const img = page.locator('article[data-note-id="700"] button img');
+  await expect(img).toHaveAttribute("src", `${MASTODON}/original/a.png`, { timeout: 30_000 });
+  await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(0);
+  expect(requested[0]).toBe("small");
+});
