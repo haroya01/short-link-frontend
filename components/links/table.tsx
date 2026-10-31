@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { ComponentType } from "react";
-import { ArrowUpDown, ExternalLink, MoreHorizontal, Pencil, Star, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { ArrowUpDown, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StatsMorphLink } from "@/components/links/stats-morph-link";
 import { Button } from "@/components/ui/button";
+import { ActionMenu } from "@/components/common/action-menu";
 import { CopyButton } from "@/components/common/copy-button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
@@ -345,7 +345,7 @@ export function LinksTable({
                 </div>
                 <div className="flex shrink-0 items-center">
                   <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} />
-                  <RowMenu
+                  <ActionMenu
                     label={t("actions.more")}
                     items={[
                       {
@@ -456,119 +456,6 @@ function expiryState(expiresAt: string | null | undefined): ExpiryState {
   const days = Math.floor((expires - now) / 86_400_000);
   if (days <= 7) return { kind: "soon", days };
   return { kind: "later" };
-}
-
-type RowMenuItem = {
-  label: string;
-  icon: ComponentType<{ className?: string }>;
-  onSelect?: () => void;
-  href?: string;
-  destructive?: boolean;
-  disabled?: boolean;
-};
-
-function RowMenu({ label, items }: { label: string; items: RowMenuItem[] }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const items = () => Array.from(ref.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([disabled])') ?? []);
-    items()[0]?.focus();
-    function onPointer(event: PointerEvent) {
-      if (!ref.current?.contains(event.target as Node)) setOpen(false);
-    }
-    function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-        triggerRef.current?.focus();
-        return;
-      }
-      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-      event.preventDefault();
-      const list = items();
-      const index = list.indexOf(document.activeElement as HTMLElement);
-      const next = event.key === "ArrowDown" ? (index + 1) % list.length : (index - 1 + list.length) % list.length;
-      list[next]?.focus();
-    }
-    function onFocus(event: FocusEvent) {
-      if (!ref.current?.contains(event.target as Node)) setOpen(false);
-    }
-    document.addEventListener("pointerdown", onPointer);
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("focusin", onFocus);
-    return () => {
-      document.removeEventListener("pointerdown", onPointer);
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("focusin", onFocus);
-    };
-  }, [open]);
-
-  const itemClass = (destructive?: boolean) =>
-    cn(
-      "flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-left text-sm transition-colors disabled:opacity-50",
-      destructive
-        ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-        : "text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800",
-    );
-
-  return (
-    <div ref={ref} className="relative">
-      <Button
-        ref={triggerRef}
-        variant="ghost"
-        size="icon"
-        aria-label={label}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className="h-11 w-11 text-slate-500 dark:text-slate-400"
-      >
-        <MoreHorizontal className="h-4 w-4" />
-      </Button>
-      {open && (
-        <div
-          role="menu"
-          aria-label={label}
-          className="absolute right-0 top-full z-20 mt-1 w-52 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
-        >
-          {items.map(({ label: itemLabel, icon: Icon, onSelect, href, destructive, disabled }) =>
-            href ? (
-              <a
-                key={itemLabel}
-                role="menuitem"
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => setOpen(false)}
-                className={itemClass(destructive)}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                {itemLabel}
-              </a>
-            ) : (
-              <button
-                key={itemLabel}
-                type="button"
-                role="menuitem"
-                disabled={disabled}
-                onClick={() => {
-                  setOpen(false);
-                  triggerRef.current?.focus();
-                  onSelect?.();
-                }}
-                className={itemClass(destructive)}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                {itemLabel}
-              </button>
-            ),
-          )}
-        </div>
-      )}
-    </div>
-  );
 }
 
 /**

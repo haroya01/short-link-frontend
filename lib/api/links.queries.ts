@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { useCallback } from "react";
 
 import { getLinkDetail, listMyLinks, listTags, type MyLinksFilters } from "./links";
+import type { LinkDetail } from "@/types";
 
 const linksKeys = {
   all: ["links"] as const,
@@ -52,6 +53,15 @@ export function useLinkDetail(shortCode: string | undefined | null) {
     queryFn: () => getLinkDetail(shortCode as string),
     enabled: !!shortCode,
   });
+}
+
+export function useSetLinkDetail() {
+  const queryClient = useQueryClient();
+  return useCallback(
+    (shortCode: string, patch: Partial<LinkDetail>) =>
+      queryClient.setQueryData<LinkDetail>(linksKeys.detail(shortCode), (prev) => (prev ? { ...prev, ...patch } : prev)),
+    [queryClient],
+  );
 }
 
 export function useInvalidateLinks() {

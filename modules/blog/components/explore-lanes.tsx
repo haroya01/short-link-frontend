@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth";
 import { listPublicFeed, listSuggestedAuthors } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -84,9 +85,11 @@ function PicksLane({ onPeople }: { onPeople: () => void }) {
           {!posts.isPending && items.length === 0 && <PeopleStrip onMore={onPeople} />}
         </div>
       </BelongingProvider>
-      <div className="border-t border-slate-100 dark:border-slate-800">
-        <RemoteFeed view="trending" />
-      </div>
+      {!posts.isPending && (
+        <div className="border-t border-slate-100 dark:border-slate-800">
+          <RemoteFeed view="trending" />
+        </div>
+      )}
     </div>
   );
 }
@@ -123,6 +126,8 @@ function PeopleStrip({ onMore }: { onMore: () => void }) {
             following: undefined,
           }))
         : [];
+  const loading = !ready || (authenticated && suggestions.isPending) || (fallback && authors.isPending);
+  if (loading) return <PeopleStripSkeleton onMore={onMore} />;
   if (people.length === 0) return null;
 
   return (
@@ -156,6 +161,43 @@ function PeopleStrip({ onMore }: { onMore: () => void }) {
               <span className="line-clamp-2 h-8 text-[12px] leading-4 text-slate-500 dark:text-slate-400">{person.reason}</span>
             </BlogLink>
             <FollowButton username={person.username} initialFollowerCount={0} initialFollowing={person.following} compact quiet />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function PeopleStripSkeleton({ onMore }: { onMore: () => void }) {
+  const t = useTranslations("publicFeed");
+  const tNotes = useTranslations("notes");
+  return (
+    <section aria-busy aria-labelledby="explore-people-strip" data-testid="explore-people-strip-skeleton" className="py-5">
+      <div className="flex items-center justify-between gap-3">
+        <RailHeading id="explore-people-strip">{tNotes("suggestionsTitle")}</RailHeading>
+        <button
+          type="button"
+          onClick={onMore}
+          className="focus-ring touch-target inline-flex items-center gap-0.5 rounded text-[13px] font-semibold text-slate-500 transition-colors hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+        >
+          {t("exploreMorePeople")}
+          <ChevronRight aria-hidden strokeWidth={2.5} className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <ul aria-hidden className="-mx-4 mt-3 flex gap-2.5 overflow-hidden px-4 pb-1 sm:-mx-6 sm:px-6">
+        {[0, 1, 2, 3].map((i) => (
+          <li
+            key={i}
+            className="flex w-[140px] shrink-0 flex-col items-center gap-2.5 rounded-surface border border-slate-200 bg-white px-2.5 pb-3.5 pt-4 dark:border-slate-800 dark:bg-slate-900"
+          >
+            <div className="flex w-full flex-col items-center gap-1.5">
+              <Skeleton className="h-14 w-14 rounded-full" />
+              <div className="mt-0.5 w-full text-[14px] font-semibold">
+                <Skeleton className="mx-auto h-[1lh] w-16 rounded" />
+              </div>
+              <div className="h-8" />
+            </div>
+            <div className="h-7 w-[4.5rem] rounded-full border border-slate-200 dark:border-slate-700" />
           </li>
         ))}
       </ul>

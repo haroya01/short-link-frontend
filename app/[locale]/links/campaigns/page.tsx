@@ -12,6 +12,7 @@ import { CampaignOnboarding } from "@/components/links/campaigns/onboarding";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignSummary } from "@/types";
 import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function CampaignsPage() {
   const t = useTranslations("campaignsApp");
@@ -53,7 +54,7 @@ export default function CampaignsPage() {
   }
 
   return (
-    <div className="container max-w-5xl space-y-6 py-8">
+    <LinksPage className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-4 sm:items-end">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
@@ -81,7 +82,7 @@ export default function CampaignsPage() {
       ) : (
         <CampaignList items={items ?? []} />
       )}
-    </div>
+    </LinksPage>
   );
 }
 

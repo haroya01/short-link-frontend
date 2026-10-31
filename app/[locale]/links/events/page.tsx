@@ -14,6 +14,7 @@ import { EventStatusBadge } from "@/modules/events/components/event-status-badge
 import { ErrorState } from "@/components/common/error-state";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function EventsListPage() {
   const { ready, authenticated } = useAuth();
@@ -63,7 +64,7 @@ function EventsList({
   const locale = useLocale();
 
   return (
-    <div className="container max-w-5xl py-8">
+    <LinksPage>
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
@@ -116,6 +117,6 @@ function EventsList({
           ))}
         </ul>
       )}
-    </div>
+    </LinksPage>
   );
 }

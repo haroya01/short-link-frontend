@@ -22,6 +22,7 @@ import {
   type CtaStyle,
   type CtaView,
 } from "@/lib/api/ctas";
+import { LinksPage } from "@/components/links/links-page";
 
 const STYLE_OPTIONS: CtaStyle[] = ["PRIMARY", "SECONDARY"];
 const PURPOSE_OPTIONS: CtaPurpose[] = [
@@ -76,7 +77,7 @@ export default function CtaLibraryPage() {
   if (!authenticated) return <SignInEmptyState page reason="ctas" />;
 
   return (
-    <div className="container max-w-3xl space-y-6 py-10">
+    <LinksPage width="narrow" className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
@@ -146,7 +147,7 @@ export default function CtaLibraryPage() {
         </ul>
       )}
       {confirmDialog}
-    </div>
+    </LinksPage>
   );
 }
 

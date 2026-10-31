@@ -13,6 +13,7 @@ import { ProfileSection, type ProfileDraft } from "@/modules/profile/components/
 import { ProfilePreview } from "@/modules/profile/components/preview";
 import { ProfileVisitSummaryCard } from "@/modules/profile/components/visit-summary-card";
 import { ProfilePublicUrlBanner } from "@/modules/profile/components/public-url-banner";
+import { LinksPage } from "@/components/links/links-page";
 
 export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");
@@ -45,17 +46,17 @@ export default function ProfileEditPage() {
 
   if (!ready) {
     return (
-      <div aria-busy className="container max-w-5xl space-y-6 py-12">
+      <LinksPage aria-busy className="space-y-6">
         <Skeleton className="h-9 w-40" />
         <Skeleton className="h-64 w-full rounded-2xl" />
-      </div>
+      </LinksPage>
     );
   }
 
   const hasEmailForm = draft.entries.some((e) => e.kind === "EMAIL_FORM");
 
   return (
-    <div className="container max-w-5xl space-y-6 py-12">
+    <LinksPage className="space-y-6">
       {isOnboarding && (
         <div className="rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 p-5 shadow-card-flat">
           <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
@@ -163,7 +164,7 @@ export default function ProfileEditPage() {
           entries={draft.entries}
         />
       </MobilePreviewSheet>
-    </div>
+    </LinksPage>
   );
 }
 

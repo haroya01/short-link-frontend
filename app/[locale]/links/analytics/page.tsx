@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { WeekLinkRow } from "./_components/week-link-row";
+import { LinksPage } from "@/components/links/links-page";
 
 // 하단 탭 '분석'은 어느 화면에서나 프리페치된다 — recharts 는 막대를 그릴 때만 받는다. 막대 칸은
 // h-44 고정이라 자리표시자가 같은 칸을 채운다.
@@ -48,7 +49,7 @@ export default function LinkAnalyticsPage() {
   const daily = (data?.dailyClicks ?? []).map((d) => ({ ...d, label: d.date.slice(5) }));
 
   return (
-    <div className="container max-w-3xl space-y-10 py-8">
+    <LinksPage width="narrow" className="space-y-10">
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
         {t("title")}
       </h1>
@@ -129,7 +130,7 @@ export default function LinkAnalyticsPage() {
           )}
         </>
       )}
-    </div>
+    </LinksPage>
   );
 }
 

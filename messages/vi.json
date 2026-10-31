@@ -3490,7 +3490,9 @@
         "title": "Tài nguyên cho nhà in và Canva",
         "description": "Mã QR và siêu dữ liệu cho {count} đợt. Thả chúng vào áp phích hoặc tờ rơi trước khi đặt in.",
         "printSheet": "Trang A4",
-        "posterBuilder": "Thêm QR vào áp phích"
+        "posterBuilder": "Thêm QR vào áp phích",
+        "qrZip": "QR ZIP",
+        "batchCsv": "CSV theo đợt"
       },
       "policy": {
         "eyebrow": "Sau khi chiến dịch kết thúc",
@@ -4345,6 +4347,7 @@
     "altLabel": "Văn bản thay thế",
     "altPlaceholder": "Mô tả ảnh cho trình đọc màn hình",
     "altShow": "Xem mô tả ảnh",
+    "photoOpen": "Xem ảnh lớn",
     "addAlt": "Thêm văn bản thay thế",
     "imageNotImage": "Chỉ thêm được tệp hình ảnh",
     "imageTooLarge": "Ảnh quá lớn",

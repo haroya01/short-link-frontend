@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -37,9 +36,7 @@ export default async function ExplorePage({ params }: { params: Promise<{ locale
   setRequestLocale(locale);
   return (
     <div className="mx-auto max-w-2xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-      <Suspense>
-        <ExploreScreen />
-      </Suspense>
+      <ExploreScreen />
     </div>
   );
 }

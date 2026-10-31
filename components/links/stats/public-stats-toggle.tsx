@@ -1,41 +1,38 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
-import { getLinkDetail, setLinkVisibility } from "@/lib/api";
+import { setLinkVisibility } from "@/lib/api";
+import { useLinkDetail, useSetLinkDetail } from "@/lib/api/links.queries";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
-export function PublicStatsToggle({ shortCode, className }: { shortCode: string; className?: string }) {
+export type PublicStatsState = {
+  isPublic: boolean | null;
+  busy: boolean;
+  toggle: () => Promise<void>;
+  copyPublicUrl: () => Promise<void>;
+};
+
+export function usePublicStats(shortCode: string | null): PublicStatsState {
   const t = useTranslations("publicStats");
   const locale = useLocale();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
+  const { data: detail } = useLinkDetail(shortCode);
+  const setDetail = useSetLinkDetail();
   const [busy, setBusy] = useState(false);
-  const [isPublic, setIsPublic] = useState<boolean | null>(null);
-  const labelId = useId();
-
-  useEffect(() => {
-    let active = true;
-    setIsPublic(null);
-    getLinkDetail(shortCode)
-      .then((detail) => active && setIsPublic(Boolean(detail.statsPublic)))
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, [shortCode]);
+  const isPublic = detail ? Boolean(detail.statsPublic) : null;
 
   async function toggle() {
-    if (busy || isPublic === null) return;
+    if (!shortCode || busy || isPublic === null) return;
     setBusy(true);
     try {
-      const next = !isPublic;
-      const res = await setLinkVisibility(shortCode, next);
-      setIsPublic(res.statsPublic);
+      const res = await setLinkVisibility(shortCode, !isPublic);
+      setDetail(shortCode, { statsPublic: res.statsPublic });
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     } finally {
@@ -44,10 +41,8 @@ export function PublicStatsToggle({ shortCode, className }: { shortCode: string;
   }
 
   async function copyPublicUrl() {
-    const url =
-      typeof window === "undefined"
-        ? ""
-        : `${window.location.origin}/${locale}/stats/${shortCode}/public`;
+    if (!shortCode) return;
+    const url = `${window.location.origin}/${locale}/stats/${shortCode}/public`;
     try {
       await navigator.clipboard.writeText(url);
       toast(t("shareCopied"), "success");
@@ -55,6 +50,14 @@ export function PublicStatsToggle({ shortCode, className }: { shortCode: string;
       toast(t("shareCopyFailed"), "error");
     }
   }
+
+  return { isPublic, busy, toggle, copyPublicUrl };
+}
+
+export function PublicStatsToggle({ state, className }: { state: PublicStatsState; className?: string }) {
+  const t = useTranslations("publicStats");
+  const labelId = useId();
+  const { isPublic, busy, toggle, copyPublicUrl } = state;
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
@@ -70,7 +73,7 @@ export function PublicStatsToggle({ shortCode, className }: { shortCode: string;
         />
       </span>
       {isPublic === true && (
-        <Button variant="ghost" size="sm" onClick={copyPublicUrl}>
+        <Button variant="ghost" size="sm" onClick={() => void copyPublicUrl()}>
           {t("shareButton")}
         </Button>
       )}

@@ -95,7 +95,6 @@ export function StatsBody({
         shortCodeLabel={shortCodeLabel}
         demo={demo}
         onSettings={() => setView("settings")}
-        settingsActive={view === "settings"}
       />
       {data.totalClicks === 0 && view !== "settings" && view !== "log" && (
         <StatsEmptyState />

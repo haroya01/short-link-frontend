@@ -1,0 +1,50 @@
+const HOSTS = ["qdon.space", "mstdn.jp", "planet.moe", "fedibird.com", "mastodon.social", "social.silicon.moe", "misskey.io"];
+
+export function remoteTrendingItem(index: number) {
+  const host = HOSTS[index];
+  const user = `user${index}`;
+  return {
+    id: null,
+    body: `인기 글 ${index + 1}번`,
+    createdAt: "2026-10-16T13:48:01.441Z",
+    editedAt: null,
+    likeCount: 128,
+    likedByMe: null,
+    author: {
+      id: index === 0 ? -412 : null,
+      username: `${user}@${host}`,
+      avatarUrl: null,
+      displayName: `작성자 ${index + 1}`,
+      remoteId: index === 0 ? 412 : null,
+      url: `https://${host}/@${user}`,
+    },
+    media: [],
+    quotedPost: null,
+    inReplyToId: null,
+    replyCount: 4,
+    repostCount: 37,
+    repostedByMe: null,
+    quotedNote: null,
+    linkPreview: null,
+    repostedBy: null,
+    quoteCount: 0,
+    bookmarkedByMe: null,
+    mentions: [],
+    contentWarning: null,
+    sensitive: false,
+    pinned: false,
+    visibility: "public",
+    poll: null,
+    conversationMuted: null,
+    language: "ko",
+    thread: null,
+    replyPolicy: "everyone",
+    canReply: null,
+    hidden: false,
+    remote: { kind: "NOTE", title: null, url: `https://${host}/@${user}/${1000 + index}`, community: null },
+    uri: `https://${host}/users/${user}/statuses/${1000 + index}`,
+    url: `https://${host}/@${user}/${1000 + index}`,
+    sourceHost: host,
+    servers: index === 0 ? [host, "planet.moe"] : [host],
+  };
+}
