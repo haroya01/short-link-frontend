@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Section } from "@/components/common/section";
+import { KpiLine } from "@/components/links/stats/kpi-line";
 import type { CampaignRecommendation, CampaignStats } from "@/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -88,39 +89,15 @@ export function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount
   );
   const ratePerHundred = totalQuantity > 0 ? (stats.totalClicks * 100) / totalQuantity : 0;
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <Kpi label={t("kpi.totalClicks")} value={formatNumber(stats.totalClicks)} />
-      <Kpi label={t("kpi.batches")} value={t("units.count", { count: batchCount })} />
-      <Kpi
-        label={t("kpi.totalDistributed")}
-        value={t("units.sheets", { count: formatNumber(totalQuantity) })}
-      />
-      <Kpi
-        label={t("kpi.perHundred")}
-        value={ratePerHundred.toFixed(1)}
-        hint={t("kpi.perHundredHint")}
-      />
-    </ul>
-  );
-}
-
-function Kpi({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
-  return (
-    <li className="rounded-2xl border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-      <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{label}</p>
-      <p className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100">
-        {value}
-      </p>
-      {hint && <p className="mt-1.5 text-[11px] leading-snug text-slate-500 dark:text-slate-400">{hint}</p>}
-    </li>
+    <KpiLine
+      hero={{ label: t("kpi.totalClicks"), value: formatNumber(stats.totalClicks) }}
+      metrics={[
+        { label: t("kpi.batches"), value: t("units.count", { count: batchCount }) },
+        { label: t("kpi.totalDistributed"), value: t("units.sheets", { count: formatNumber(totalQuantity) }) },
+        { label: t("kpi.perHundred"), value: ratePerHundred.toFixed(1) },
+      ]}
+      note={`${t("kpi.perHundred")} · ${t("kpi.perHundredHint")}`}
+    />
   );
 }
 

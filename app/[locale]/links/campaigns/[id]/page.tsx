@@ -259,10 +259,10 @@ function PrepareSection({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
-            QR ZIP
+            {t("prepare.qrZip")}
           </Button>
           <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
-            Batch CSV
+            {t("prepare.batchCsv")}
           </Button>
           <Link href={`/campaigns/${campaignId}/print-sheet`} className={buttonVariants({ variant: "outline" })}>
             {t("prepare.printSheet")}

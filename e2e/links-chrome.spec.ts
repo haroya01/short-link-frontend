@@ -98,3 +98,18 @@ test("the desktop stats header keeps one primary action and moves the rest into 
   await menu.getByRole("menuitem", { name: "QR 코드" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
 });
+
+test("더보기 groups its rows under headings that sit outside the card, like a settings list", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signIn(page);
+  await mockBackend(page);
+  await page.goto("/ko/more");
+  for (const name of ["도구", "앱", "계정"]) {
+    const heading = page.getByRole("heading", { level: 2, name, exact: true });
+    await expect(heading).toBeVisible();
+    const card = heading.locator("xpath=following-sibling::div[1]");
+    const [h, c] = [(await heading.boundingBox())!, (await card.boundingBox())!];
+    expect(h.y + h.height).toBeLessThanOrEqual(c.y);
+    await expect(card.getByRole("link").first()).toBeVisible();
+  }
+});
