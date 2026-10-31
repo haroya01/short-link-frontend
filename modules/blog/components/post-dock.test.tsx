@@ -119,7 +119,7 @@ describe("PostDock", () => {
     expect(away()).toBe(true);
   });
 
-  it("tucks away while reading down, stays tucked when the reader stops, and returns on the way up", async () => {
+  it("starts tucked on the first screen, stays tucked while reading down, and comes out on the way up", async () => {
     await render();
     report(1200);
     const scrollTo = async (y: number) =>
@@ -127,24 +127,25 @@ describe("PostDock", () => {
         Object.defineProperty(window, "scrollY", { value: y, configurable: true });
         window.dispatchEvent(new Event("scroll"));
       });
-    const reading = () => dock().hasAttribute("data-reading");
+    const tucked = () => dock().hasAttribute("data-tucked");
+    expect(tucked()).toBe(true);
     await scrollTo(20);
     await scrollTo(40);
-    expect(reading()).toBe(false);
+    expect(tucked()).toBe(true);
     for (let y = 60; y <= 200; y += 5) await scrollTo(y);
-    expect(reading()).toBe(true);
+    expect(tucked()).toBe(true);
     expect(away()).toBe(false);
     expect(dock().getAttribute("aria-hidden")).toBeNull();
-    await scrollTo(200);
-    expect(reading()).toBe(true);
     await scrollTo(180);
-    expect(reading()).toBe(true);
+    expect(tucked()).toBe(true);
     for (let y = 175; y >= 130; y -= 5) await scrollTo(y);
-    expect(reading()).toBe(false);
+    expect(tucked()).toBe(false);
     for (let y = 135; y <= 400; y += 20) await scrollTo(y);
-    expect(reading()).toBe(true);
+    expect(tucked()).toBe(true);
+    for (let y = 380; y >= 300; y -= 20) await scrollTo(y);
+    expect(tucked()).toBe(false);
     await scrollTo(4);
-    expect(reading()).toBe(false);
+    expect(tucked()).toBe(true);
   });
 
   it("steps away while the docked comment composer is open", async () => {

@@ -113,3 +113,16 @@ test("더보기 groups its rows under headings that sit outside the card, like a
     await expect(card.getByRole("link").first()).toBeVisible();
   }
 });
+
+test("on a phone the shorten bar and the tab bar read as one sheet: no line between them", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signIn(page);
+  await mockBackend(page);
+  await page.goto("/ko/dashboard");
+  const bar = page.locator("[data-composer-bar]");
+  const nav = page.locator(".vt-bottom-nav");
+  await expect(bar).toBeVisible();
+  await expect(nav).toHaveCSS("border-top-color", "rgba(0, 0, 0, 0)");
+  const [b, n] = [(await bar.boundingBox())!, (await nav.boundingBox())!];
+  expect(Math.abs(b.y + b.height - n.y)).toBeLessThanOrEqual(1);
+});
