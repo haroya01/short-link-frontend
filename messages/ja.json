@@ -4347,6 +4347,7 @@
     "altLabel": "代替テキスト",
     "altPlaceholder": "写真の説明を書いてください。スクリーンリーダーが読み上げます",
     "altShow": "画像の説明を表示",
+    "photoOpen": "写真を大きく表示",
     "addAlt": "代替テキストを追加",
     "imageNotImage": "画像ファイルだけ追加できます",
     "imageTooLarge": "写真が大きすぎます",
