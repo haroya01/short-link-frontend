@@ -38,6 +38,12 @@ export const themeCookieNameScript =
   `var n=(${isBlogSurfaceAt.toString()})(location.hostname,location.pathname,${JSON.stringify(BLOG_HOST)})` +
   "?'theme':'kurl_theme';";
 
+/** pre-paint 스크립트에서 `n`(쿠키 이름)·`t`(고른 값)을 정한 바로 뒤에 붙는다. */
+export const followSystemThemeScript =
+  "if(!t&&n==='theme'&&window.matchMedia){var q=matchMedia('(prefers-color-scheme: dark)');if(q.matches)t='dark';" +
+  "if(q.addEventListener)q.addEventListener('change',function(e){" +
+  "if(!/(?:^|; )theme=(dark|light)/.test(document.cookie))document.documentElement.classList.toggle('dark',e.matches);});}";
+
 /**
  * Persist the dark/light choice in a cookie scoped to the PARENT domain (e.g. `.kurl.me`) so the theme
  * is shared across the surfaces of the SAME product — blog spans blog.kurl.me and the apex /p routes,

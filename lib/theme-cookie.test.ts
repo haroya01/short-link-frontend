@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import {
+  followSystemThemeScript,
   isBlogSurface,
   themeCookieName,
   themeCookieNameScript,
@@ -86,5 +87,46 @@ describe("writeThemeCookie", () => {
     const written = at("localhost", "/ko/blog/settings");
     writeThemeCookie("light");
     expect(written).toEqual(["theme=light; path=/; max-age=31536000; samesite=lax"]);
+  });
+});
+
+describe("followSystemThemeScript", () => {
+  function run({ name, chosen, cookie, systemDark }: { name: "theme" | "kurl_theme"; chosen: string | null; cookie: string; systemDark: boolean }) {
+    let onChange: ((e: { matches: boolean }) => void) | null = null;
+    const classes = new Set<string>();
+    const doc = {
+      cookie,
+      documentElement: { classList: { toggle: (c: string, on: boolean) => (on ? classes.add(c) : classes.delete(c)) } },
+    };
+    const win = {
+      matchMedia: () => ({ matches: systemDark, addEventListener: (_: string, cb: (e: { matches: boolean }) => void) => (onChange = cb) }),
+    };
+    const t = new Function("window", "matchMedia", "document", `var n=${JSON.stringify(name)},t=${JSON.stringify(chosen)};${followSystemThemeScript}return t;`)(
+      win,
+      win.matchMedia,
+      doc,
+    );
+    return { t, classes, doc, change: (matches: boolean) => onChange?.({ matches }) };
+  }
+
+  it("paints the blog dark when nothing was chosen and the OS is dark", () => {
+    expect(run({ name: "theme", chosen: null, cookie: "", systemDark: true }).t).toBe("dark");
+    expect(run({ name: "theme", chosen: null, cookie: "", systemDark: false }).t).toBeNull();
+  });
+
+  it("keeps a chosen value on the blog and the white default on kurl", () => {
+    expect(run({ name: "theme", chosen: "light", cookie: "theme=light", systemDark: true }).t).toBe("light");
+    expect(run({ name: "kurl_theme", chosen: null, cookie: "", systemDark: true }).t).toBeNull();
+  });
+
+  it("follows the OS while the blog page is open, until the reader chooses", () => {
+    const page = run({ name: "theme", chosen: null, cookie: "", systemDark: false });
+    page.change(true);
+    expect(page.classes.has("dark")).toBe(true);
+    page.change(false);
+    expect(page.classes.has("dark")).toBe(false);
+    page.doc.cookie = "theme=light";
+    page.change(true);
+    expect(page.classes.has("dark")).toBe(false);
   });
 });

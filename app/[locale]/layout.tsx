@@ -12,7 +12,7 @@ import { FirstLoadMark } from "@/components/common/first-load-mark";
 import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
 import { ThemeColorSync } from "@/components/common/theme-color-sync";
-import { themeCookieNameScript } from "@/lib/theme-cookie";
+import { followSystemThemeScript, themeCookieNameScript } from "@/lib/theme-cookie";
 import "../globals.css";
 
 /*
@@ -191,15 +191,14 @@ export default async function RootLayout({
   // (사용자 결정 2026-07-15): 블로그에서 다크를 써도 kurl(링크단축)은 기본 백을 지킨다. 블로그
   // 표면은 `theme` 쿠키, kurl 표면(명함 {user}.kurl.me 포함)은 전용 `kurl_theme` — 어느 쪽인지는
   // lib/theme-cookie.ts 의 themeCookieNameScript(isBlogSurface() 의 pre-paint 판본)가 고른다.
-  // We deliberately do NOT auto-darken from the OS `prefers-color-scheme` — that flipped surfaces
-  // inconsistently across hosts and read as "it forced dark mode on me."
+  // 고른 값이 없을 때: 블로그 표면은 OS 다크 설정을 따르고(followSystemThemeScript), kurl 표면은 흰 기본.
   // The auth hint shares this tag: a second standalone inline <script> in <head> was dropped from
   // the streamed head on some routes (React head reconciliation), so both pre-paint flags ride the
   // one tag that's proven to survive everywhere.
   // The choice is a `.kurl.me` cookie. localStorage is per-origin, so ON the platform (any *.kurl.me)
   // we must NOT fall back to it: a stale 'dark' left in the apex's localStorage would paint the
   // dashboard dark while the shared cookie — and the card on {user}.kurl.me — are light. So
-  // on-platform the cookie is the SOLE source of truth (light is the safe default when it's absent,
+  // on-platform the cookie is the SOLE stored choice (absent → the surface default: OS on blog, light on kurl,
   // e.g. after iOS Safari's 7-day script-cookie cap expires); only off-platform (localhost / Vercel
   // previews, a single origin) does the localStorage fallback still apply.
   const platformHost = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
@@ -213,6 +212,7 @@ export default async function RootLayout({
     themeCookieNameScript +
     "var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=(dark|light)'));" +
     "var t=m?m[1]:(onP?null:localStorage.getItem(n));" +
+    followSystemThemeScript +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
     // Safari(ITP)는 스크립트가 쓴 쿠키를 7일로 캡한다 — 방문할 때마다 같은 값으로 재기입해
     // 창을 밀어 둔다(주 1회만 와도 선택이 유지). 서버 Set-Cookie 경유가 정석이지만 /api/* 는

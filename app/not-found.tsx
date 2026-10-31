@@ -9,7 +9,7 @@ import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import vi from "@/messages/vi.json";
 import { Mark } from "@/components/common/logo";
-import { themeCookieNameScript } from "@/lib/theme-cookie";
+import { followSystemThemeScript, themeCookieNameScript } from "@/lib/theme-cookie";
 import "./globals.css";
 
 /**
@@ -64,6 +64,7 @@ const themeInitScript =
   themeCookieNameScript +
   "var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=(dark|light)'));" +
   "var t=m?m[1]:(onP?null:localStorage.getItem(n));" +
+  followSystemThemeScript +
   "if(t==='dark'){document.documentElement.classList.add('dark');}" +
   "}catch(e){}})()";
 
