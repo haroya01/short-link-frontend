@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { NoteMedia as NoteImage } from "@/modules/notes/api/notes";
@@ -63,6 +63,7 @@ function ConcealedMedia({
         {pictures.map((image) => (
           <span
             key={image.url}
+            style={single ? singleFrame(image) : undefined}
             className={cn(
               "block shrink-0 overflow-hidden rounded-surface border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900",
               single ? "w-fit max-w-full" : "h-60",
@@ -77,7 +78,7 @@ function ConcealedMedia({
               loading="lazy"
               className={cn(
                 "block w-auto scale-110 object-cover blur-2xl",
-                single ? "max-h-[430px] max-w-full" : "h-60 min-w-28 max-w-none",
+                single ? singleImageClass(image) : "h-60 min-w-28 max-w-none",
               )}
             />
           </span>
@@ -103,6 +104,16 @@ function ConcealedMedia({
 // Reduced motion and data saving keep it still until the reader presses play.
 function NoteVideo({ video }: { video: NoteImage }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || near) return;
+    const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setNear(true), {
+      rootMargin: "600px 0px",
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [near]);
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -127,7 +138,7 @@ function NoteVideo({ video }: { video: NoteImage }) {
       muted
       loop
       playsInline
-      preload="metadata"
+      preload={near ? "metadata" : "none"}
       width={video.width ?? undefined}
       height={video.height ?? undefined}
       aria-label={video.altText ?? undefined}
@@ -149,7 +160,8 @@ function NotePictures({ media }: { media: NoteImage[] }) {
         <NoteImageFrame
           image={media[0]}
           sizes={singleSizes(media[0])}
-          className="max-h-[430px] max-w-full"
+          frameStyle={singleFrame(media[0])}
+          className={singleImageClass(media[0])}
           onOpen={() => setViewing(0)}
         />
         {viewer}
@@ -223,10 +235,23 @@ function NoteImageStrip({ media, onOpen }: { media: NoteImage[]; onOpen: (index:
   );
 }
 
-function singleSizes(image: NoteImage): string | undefined {
+function singleWidth(image: NoteImage): number | undefined {
   if (!image.width || !image.height) return undefined;
-  const width = Math.round((Math.min(image.height, 430) * image.width) / image.height);
-  return `(max-width: ${width}px) 100vw, ${width}px`;
+  return Math.round((Math.min(image.height, 430) * image.width) / image.height);
+}
+
+function singleFrame(image: NoteImage): CSSProperties | undefined {
+  const width = singleWidth(image);
+  return width ? { width: `min(100%, ${width}px)` } : undefined;
+}
+
+function singleImageClass(image: NoteImage): string {
+  return singleWidth(image) ? "h-auto max-h-[430px] w-full" : "max-h-[430px] max-w-full";
+}
+
+function singleSizes(image: NoteImage): string | undefined {
+  const width = singleWidth(image);
+  return width ? `(max-width: ${width}px) 100vw, ${width}px` : undefined;
 }
 
 function stripSizes(image: NoteImage): string | undefined {
@@ -237,12 +262,14 @@ function stripSizes(image: NoteImage): string | undefined {
 function NoteImageFrame({
   image,
   sizes,
+  frameStyle,
   className,
   onOpen,
   onLoad,
 }: {
   image: NoteImage;
   sizes: string | undefined;
+  frameStyle?: CSSProperties;
   className: string;
   onOpen: () => void;
   onLoad?: () => void;
@@ -250,8 +277,8 @@ function NoteImageFrame({
   const t = useTranslations("notes");
   const [showAlt, setShowAlt] = useState(false);
   return (
-    <figure className="relative w-fit shrink-0 snap-start">
-      <button type="button" onClick={onOpen} className="focus-ring block cursor-zoom-in rounded-surface">
+    <figure style={frameStyle} className="relative w-fit shrink-0 snap-start">
+      <button type="button" onClick={onOpen} className={cn("focus-ring block cursor-zoom-in rounded-surface", frameStyle && "w-full")}>
         <VariantImage
           src={image.url}
           alt={image.altText ?? ""}
