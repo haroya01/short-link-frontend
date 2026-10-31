@@ -134,6 +134,9 @@ body:is([data-bottom-nav], :has(.vt-bottom-nav)) {
     --toast-bottom: calc(var(--bottom-nav-h) + 4.5rem);
     --cookie-bottom: calc(var(--bottom-nav-h) + 3.75rem);
   }
+  body:is([data-composer], :has([data-composer-bar])) .vt-bottom-nav {
+    border-top-color: transparent;
+  }
 }
 
 @media (max-width: 639px) {

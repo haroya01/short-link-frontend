@@ -108,9 +108,10 @@ export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string;
           e.preventDefault();
           void shorten(value);
         }}
+        data-composer-bar
         className={cn(
-          "fixed inset-x-0 bottom-[var(--bottom-nav-h)] z-30 border-t border-slate-200 bg-white px-3 py-2 transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800 dark:bg-slate-950 sm:hidden",
-          navHidden && "translate-y-14",
+          "fixed inset-x-0 bottom-[var(--bottom-nav-h)] z-30 border-t border-slate-200/80 bg-white px-3 pb-1 pt-2.5 transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 dark:bg-slate-950 sm:hidden",
+          navHidden && "translate-y-14 pb-2",
         )}
       >
         {error && (
