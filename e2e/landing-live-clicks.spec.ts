@@ -37,6 +37,8 @@ test("a link made without signing in shows its own clicks as they land", async (
   await expect(live).toContainText("클릭 1", { timeout: 10_000 });
   await expect(live).toContainText("봇 1");
   await expect(live).toContainText("KR · iOS · instagram");
+  await expect(live.locator(".count-roll")).toHaveText("클릭 1");
+  await expect(page.getByTestId("result-line").first().getByTestId("click-pass")).toBeAttached();
   expect(streams[0]).toContain("claimToken=claim-e2e");
   expect(streams[0]).not.toContain("streamToken");
 });

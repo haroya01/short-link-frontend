@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
@@ -40,6 +41,7 @@ export function ResultLine({
 }: Props) {
   const t = useTranslations("result");
   const display = result.shortUrl.replace(/^https?:\/\//, "");
+  const [passes, setPasses] = useState(0);
 
   return (
     <div
@@ -75,6 +77,11 @@ export function ResultLine({
           aria-hidden
           className={`absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 rounded-full bg-accent-600 ${fold ? "motion-safe:animate-[result-underline-draw_420ms_var(--ease)_560ms_both]" : "motion-safe:animate-[result-underline-draw_420ms_var(--ease)_220ms_both]"} motion-reduce:scale-x-100 dark:bg-accent-500`}
         />
+        {passes > 0 && (
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] overflow-hidden rounded-full">
+            <span key={passes} data-testid="click-pass" className="line-pass block h-full w-2/5" />
+          </span>
+        )}
       </div>
 
       <div
@@ -119,7 +126,11 @@ export function ResultLine({
 
       {!authenticated && result.claimToken && (
         <div className="result-beat mt-3" style={{ ["--beat" as string]: 2 } as React.CSSProperties}>
-          <LiveClicks shortCode={result.shortCode} claimToken={result.claimToken} />
+          <LiveClicks
+            shortCode={result.shortCode}
+            claimToken={result.claimToken}
+            onTick={() => setPasses((n) => n + 1)}
+          />
         </div>
       )}
     </div>
