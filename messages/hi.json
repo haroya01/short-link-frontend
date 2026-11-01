@@ -1282,7 +1282,10 @@
     "profileCtaDesc": "इसे अपनी सार्वजनिक प्रोफ़ाइल पर फ़ीचर करें",
     "anonymousExpiryInline": "24 घंटे में समाप्त",
     "anonymousExpiryAt": "{when} समाप्त होगा",
-    "anonymousExpirySignup": "अपने आँकड़े रखने के लिए साइन इन करें"
+    "anonymousExpirySignup": "अपने आँकड़े रखने के लिए साइन इन करें",
+    "liveWaiting": "पहले क्लिक का इंतज़ार",
+    "liveCount": "{count} क्लिक",
+    "liveBots": "{count} बॉट"
   },
   "login": {
     "title": "साइन इन करें",

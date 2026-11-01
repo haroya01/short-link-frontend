@@ -116,7 +116,6 @@
   "knip:types|app/[locale]/links/qr-campaigns/_lib/mock-data.ts|MockRow": 1,
   "knip:types|components/common/sidebar.tsx|SidebarEntry": 1,
   "knip:types|hooks/use-account-click-stream.ts|AccountLiveClick": 1,
-  "knip:types|hooks/use-click-stream.ts|LiveClick": 1,
   "knip:types|lib/image-resize.ts|ResizeOptions": 1,
   "knip:types|modules/blog/api/admin.ts|BlogTopPost": 1,
   "knip:types|modules/blog/api/analytics.ts|PostLinkClick": 1,

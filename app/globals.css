@@ -1718,6 +1718,24 @@ body[data-cookie-consent="visible"] {
     opacity: 0;
   }
 }
+.live-dot-once::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: theme(colors.accent.500);
+  opacity: 0;
+  animation: live-ping 900ms var(--ease) 1;
+}
+.live-arrive {
+  animation: result-beat 460ms var(--ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot-once::after,
+  .live-arrive {
+    animation: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .live-dot::after {
     animation: none;
