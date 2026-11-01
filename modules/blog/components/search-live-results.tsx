@@ -15,6 +15,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
 import { AuthorName, META_HANDLE } from "@/modules/blog/components/author-name";
 import { listRelatedTags } from "@/modules/blog/api/public-posts";
 import { RelatedTags } from "@/modules/blog/components/related-tags";
+import { ErrorState } from "@/components/common/error-state";
 
 export function SearchLiveResults({
   value,
@@ -66,15 +67,8 @@ export function SearchLiveResults({
         </ul>
       )}
       {!loading && results.length === 0 && failed && (
-        <div role="alert" className="flex flex-col items-center gap-2 px-3 py-10 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">{t("searchFailed")}</p>
-          <button
-            type="button"
-            onClick={retry}
-            className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
-          >
-            {t("retry")}
-          </button>
+        <div role="alert" className="px-3">
+          <ErrorState message={t("searchFailed")} onRetry={retry} />
         </div>
       )}
       {!loading &&
@@ -84,7 +78,7 @@ export function SearchLiveResults({
         remote.length === 0 &&
         !lookup &&
         !completions.hold && (
-          <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
+          <p className="px-3 py-6 text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
       {results.length > 0 && (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">

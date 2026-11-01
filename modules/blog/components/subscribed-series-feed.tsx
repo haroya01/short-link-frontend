@@ -13,6 +13,7 @@ import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
+import { ErrorState } from "@/components/common/error-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
@@ -52,15 +53,8 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
 
   if (initialError) {
     return (
-      <div className="mt-4 flex flex-col items-center gap-3 py-20 text-center">
-        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
-        <button
-          type="button"
-          onClick={() => setReloadKey((k) => k + 1)}
-          className="inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
-        >
-          {t("retry")}
-        </button>
+      <div className="mx-auto mt-4 max-w-2xl">
+        <ErrorState message={t("loadMoreError")} onRetry={() => setReloadKey((k) => k + 1)} />
       </div>
     );
   }

@@ -33,7 +33,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
 
       <p className="text-xs text-slate-500 dark:text-slate-400">{t("scope")}</p>
       {items.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-10 text-center text-[12px] text-slate-500 dark:text-slate-400">
+        <p className="py-4 text-[12px] text-slate-500 dark:text-slate-400">
           {reconnecting ? t("disconnectedHint") : t("waiting")}
         </p>
       ) : (

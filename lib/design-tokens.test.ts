@@ -57,6 +57,11 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
     // 하우스 곡선 미러(0.16, 1, 0.3, 1)만 허용 — 공백 유무 불문.
     allow: /cubic-bezier\(\s*0?\.16\s*,\s*1\s*,\s*0?\.3\s*,\s*1\s*\)/,
   },
+  {
+    name: "점선 상자 가운데 글(빈 칸 템플릿) — 빈·오류 상태는 왼쪽 정렬 사실 한 줄로",
+    pattern: /border-dashed[^"'`]*text-center|text-center[^"'`]*border-dashed/,
+    allowFile: /(poster-builder[\\/]page|gallery-block-dialog|u[\\/]\[username\][\\/]_components[\\/]entry-list|article-blocks)\.tsx$/,
+  },
 ];
 
 function filesUnder(dir: string): string[] {

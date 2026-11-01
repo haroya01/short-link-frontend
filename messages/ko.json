@@ -2476,7 +2476,7 @@
     }
   },
   "common": {
-    "errorTitle": "문제가 발생했어요",
+    "errorTitle": "불러오지 못했어요",
     "errorDesc": "잠시 후 다시 시도해 주세요.",
     "retry": "다시 시도",
     "loading": "불러오는 중…",

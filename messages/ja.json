@@ -2476,7 +2476,7 @@
     }
   },
   "common": {
-    "errorTitle": "問題が発生しました",
+    "errorTitle": "読み込めませんでした",
     "errorDesc": "しばらくしてから再試行してください。",
     "retry": "再試行",
     "loading": "読み込み中...",

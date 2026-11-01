@@ -6,7 +6,7 @@ test.describe("백엔드 순단 중의 명함", () => {
   test("없는 명함(404)이 아니라 HTTP 500 과 다시 시도 화면", async ({ page }) => {
     const res = await page.goto("/ko/u/dohyun");
     expect(res?.status()).toBe(500);
-    await expect(page.getByText("문제가 발생했어요")).toBeVisible();
+    await expect(page.getByText("불러오지 못했어요")).toBeVisible();
     await expect(page.getByRole("button", { name: "다시 시도" })).toBeVisible();
     await expect(page.getByTestId("not-found")).toHaveCount(0);
     await expect(page).toHaveTitle("@dohyun · kurl");

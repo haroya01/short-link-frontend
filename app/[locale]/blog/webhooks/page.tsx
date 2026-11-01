@@ -46,7 +46,7 @@ export default function BlogWebhooksPage() {
         {hooks === null ? (
           <SkeletonRows count={2} />
         ) : hooks.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 px-6 py-12 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          <p className="py-4 text-sm text-slate-500 dark:text-slate-400">
             {t("empty")}
           </p>
         ) : (

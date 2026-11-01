@@ -2476,7 +2476,7 @@
     }
   },
   "common": {
-    "errorTitle": "Đã có lỗi xảy ra",
+    "errorTitle": "Không tải được",
     "errorDesc": "Vui lòng thử lại sau.",
     "retry": "Thử lại",
     "loading": "Đang tải...",

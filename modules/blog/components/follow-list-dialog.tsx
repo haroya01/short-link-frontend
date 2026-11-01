@@ -152,7 +152,7 @@ export function FollowListDialog({
 
         <div className="flex-1 overflow-y-auto px-2 py-2">
           {empty && (
-            <p className="px-3 py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
+            <p className="px-3 py-6 text-[14px] text-slate-500 dark:text-slate-400">
               {tab === "followers" ? t("followersEmpty") : t("followingEmpty")}
             </p>
           )}

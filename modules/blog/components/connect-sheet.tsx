@@ -8,6 +8,7 @@ import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { useToast } from "@/components/ui/toast";
 import { Switch } from "@/components/ui/switch";
+import { ErrorState } from "@/components/common/error-state";
 import {
   connectBlock,
   createCollection,
@@ -304,17 +305,8 @@ export function ConnectSheet({
                   <Loader2 className="h-5 w-5 animate-spin" />
                 </div>
               ) : loadFailed && collections.length === 0 ? (
-                <div className="py-10 text-center" role="alert">
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400">
-                    {t("myCollectionsLoadError")}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setReloadKey((k) => k + 1)}
-                    className="focus-ring mt-3 rounded-surface border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/60"
-                  >
-                    {tCommon("retry")}
-                  </button>
+                <div className="px-3" role="alert">
+                  <ErrorState message={t("myCollectionsLoadError")} onRetry={() => setReloadKey((k) => k + 1)} />
                 </div>
               ) : (
                 <ul>

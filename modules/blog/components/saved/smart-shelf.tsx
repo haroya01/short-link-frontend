@@ -165,7 +165,7 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   }, [unfiled, t]);
 
   if (ready && !isOwner) {
-    return <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">{t("private")}</p>;
+    return <p className="py-8 text-[14px] text-slate-500 dark:text-slate-400">{t("private")}</p>;
   }
   if (loading) {
     return (
