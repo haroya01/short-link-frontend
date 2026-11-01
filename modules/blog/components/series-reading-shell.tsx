@@ -308,7 +308,7 @@ export function SeriesReadingShell({
                     {p.excerpt && (
                       <span
                         lang={contentLang(p.excerpt, p.languageTag)}
-                        className="mt-1.5 line-clamp-2 block text-[14px] leading-relaxed text-slate-500 dark:text-slate-400"
+                        className="mt-1.5 line-clamp-2 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400"
                       >
                         {p.excerpt}
                       </span>

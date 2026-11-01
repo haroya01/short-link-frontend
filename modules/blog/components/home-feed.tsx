@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { keepPreviousData, useInfiniteQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -31,6 +31,7 @@ import type { Note, QuotedPost } from "@/modules/notes/api/notes";
 import { NoteComposer } from "@/modules/notes/components/note-composer";
 import { NoteDraftsButton } from "@/modules/notes/components/note-drafts-sheet";
 import { NoteFeedRow, NoteListSkeleton } from "@/modules/notes/components/note-list";
+import { MediaPriorityContext, type MediaPriority } from "@/modules/notes/components/note-media";
 import { RemoteRowView, SeenWatch, remoteRowKey } from "@/modules/notes/components/remote-feed";
 import { trendingDisplayNote } from "@/modules/notes/components/remote-trending";
 import { seenKeyOf, seenQueue } from "@/modules/notes/lib/remote-seen";
@@ -409,10 +410,10 @@ function HomeList({
           );
           if (row.kind === "remote") {
             return (
-              <Fragment key={homeRowKey(row)}>
+              <MediaPriorityContext.Provider key={homeRowKey(row)} value={leadPriority(i)}>
                 <RemoteRowView row={row.row} feed="for-you" marked glance={hiding} />
                 {after}
-              </Fragment>
+              </MediaPriorityContext.Provider>
             );
           }
           const shownRow =
@@ -435,7 +436,7 @@ function HomeList({
             );
           const key = seenKeyOf(row.kind === "note" ? { kind: "note", id: row.note.id } : { kind: "post", id: row.post.id });
           return (
-            <Fragment key={homeRowKey(row)}>
+            <MediaPriorityContext.Provider key={homeRowKey(row)} value={leadPriority(i)}>
               {ranked ? (
                 <SeenWatch uri={hiding ? key : null} feed="for-you" glance data-home-seen={hiding ? key : undefined}>
                   {shownRow}
@@ -444,7 +445,7 @@ function HomeList({
                 shownRow
               )}
               {after}
-            </Fragment>
+            </MediaPriorityContext.Provider>
           );
         })}
       </div>
@@ -481,4 +482,8 @@ function HomeList({
 function homeRowKey(row: HomeRow): string {
   if (row.kind === "remote") return remoteRowKey(row.row);
   return row.kind === "note" ? `note-${row.note.id}` : `post-${row.post.id}`;
+}
+
+function leadPriority(index: number): MediaPriority {
+  return index < 2 ? "high" : index === 2 ? "eager" : null;
 }

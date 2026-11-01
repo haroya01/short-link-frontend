@@ -48,7 +48,7 @@ export async function SeriesNext({
                 {next.type === "NOTE" && <SeriesNoteMarker label={tf("seriesNoteMarker")} />}
               </span>
               {next.type === "NOTE" ? (
-                <span className="mt-1 line-clamp-3 block text-[15px] leading-relaxed text-slate-600 transition-colors group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
+                <span className="mt-1 line-clamp-3 text-[15px] leading-relaxed text-slate-600 transition-colors group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
                   {next.title}
                 </span>
               ) : (

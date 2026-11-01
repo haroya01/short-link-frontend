@@ -67,7 +67,7 @@ export default async function PublicCollectionsIndexPage({
                       {c.title}
                     </span>
                     {c.description && (
-                      <span className="mt-0.5 block line-clamp-1 text-[14px] text-slate-500 dark:text-slate-400">
+                      <span className="mt-0.5 line-clamp-1 text-[14px] text-slate-500 dark:text-slate-400">
                         {c.description}
                       </span>
                     )}

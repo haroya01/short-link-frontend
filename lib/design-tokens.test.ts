@@ -57,6 +57,11 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
     // 하우스 곡선 미러(0.16, 1, 0.3, 1)만 허용 — 공백 유무 불문.
     allow: /cubic-bezier\(\s*0?\.16\s*,\s*1\s*,\s*0?\.3\s*,\s*1\s*\)/,
   },
+  {
+    name: "한 클래스 문자열의 line-clamp + display 유틸(block·flex…) — 스타일시트에서 display 가 뒤라 자르기가 꺼진다",
+    pattern:
+      /line-clamp-\d[^"'`]*?(?<![\w:/-])(?:block|inline-block|flex|inline-flex|grid|inline-grid|inline|table)(?![\w-])|(?<![\w:/-])(?:block|inline-block|flex|inline-flex|grid|inline-grid|inline|table)(?![\w-])[^"'`]*?line-clamp-\d/,
+  },
 ];
 
 function filesUnder(dir: string): string[] {
