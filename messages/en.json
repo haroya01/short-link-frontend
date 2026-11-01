@@ -1222,14 +1222,35 @@
     "recentLogin": "Sign in",
     "abilities": {
       "title": "What each link can do",
-      "password": { "line": "Only people with the password get through", "name": "Password" },
-      "schedule": { "line": "Opens at the time you set, closes on the day you set", "name": "Schedule · Expiry" },
-      "split": { "line": "Splits one link across two pages", "name": "A/B" },
-      "countries": { "line": "Sends each country to its own page, or keeps it out", "name": "Countries" },
-      "openOutside": { "line": "Opens in Safari or Chrome even when tapped inside KakaoTalk or LINE", "name": "Open outside apps" },
-      "card": { "line": "You choose the card people see when it's pasted into a chat", "name": "Preview card" },
-      "bots": { "line": "Counts only the clicks people made", "name": "Bots left out" },
-      "qr": { "line": "Shows which flyer a QR scan came from", "name": "QR" }
+      "access": {
+        "line": "Decide who gets in, and when",
+        "items": {
+          "password": "Password",
+          "block": "Country block",
+          "schedule": "Scheduled start",
+          "expiry": "Expiry"
+        }
+      },
+      "route": {
+        "line": "Decide where it goes, and how it looks",
+        "items": {
+          "split": "A/B split",
+          "targets": "Pages by country and device",
+          "openOutside": "Open outside apps",
+          "card": "Preview card"
+        }
+      },
+      "watch": {
+        "line": "See who clicked",
+        "items": {
+          "live": "Live",
+          "bots": "Bots left out",
+          "qr": "QR by flyer"
+        }
+      },
+      "scene": {
+        "flyer": "QR · Flyer A"
+      }
     }
   },
   "showcase": {
@@ -2678,7 +2699,21 @@
     "terms": "Terms",
     "privacy": "Privacy",
     "github": "GitHub",
-    "report": "Report a link"
+    "report": "Report a link",
+    "useTitle": "Use cases",
+    "learnTitle": "Learn",
+    "learn": "Short links, explained",
+    "qrCampaigns": "QR campaigns",
+    "use": {
+      "freeUrlShortener": "Free URL shortener",
+      "bitlyAlternative": "Bitly alternative",
+      "linkInBio": "Link in bio",
+      "instagramProfileLink": "Instagram profile link",
+      "kakaotalkLinkPreview": "KakaoTalk preview",
+      "posterQrCode": "Poster QR code",
+      "flyerQrTracking": "Flyer QR tracking",
+      "qrCampaignAnalytics": "QR campaign analytics"
+    }
   },
   "about": {
     "title": "kurl · URL shortener with click analytics",

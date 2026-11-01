@@ -1222,14 +1222,35 @@
     "recentLogin": "로그인",
     "abilities": {
       "title": "링크마다 할 수 있는 것",
-      "password": { "line": "아는 사람만 열려요", "name": "비밀번호" },
-      "schedule": { "line": "정한 시각에 열리고, 정한 날 닫혀요", "name": "예약 · 만료" },
-      "split": { "line": "한 링크로 두 페이지에 나눠 보내요", "name": "A/B" },
-      "countries": { "line": "나라마다 다른 페이지로 보내거나, 아예 막아요", "name": "나라" },
-      "openOutside": { "line": "카톡에서 눌러도 사파리·크롬으로 열려요", "name": "앱 밖에서 열기" },
-      "card": { "line": "카톡에 붙였을 때 보이는 카드를 직접 정해요", "name": "미리보기 카드" },
-      "bots": { "line": "사람이 누른 것만 세요", "name": "봇 제외" },
-      "qr": { "line": "어느 전단지에서 찍었는지까지 나눠 봐요", "name": "QR" }
+      "access": {
+        "line": "누가, 언제 열지 정해요",
+        "items": {
+          "password": "비밀번호",
+          "block": "나라 차단",
+          "schedule": "예약 공개",
+          "expiry": "만료"
+        }
+      },
+      "route": {
+        "line": "어디로, 어떻게 보낼지 정해요",
+        "items": {
+          "split": "A/B",
+          "targets": "나라와 기기별 페이지",
+          "openOutside": "앱 밖에서 열기",
+          "card": "미리보기 카드"
+        }
+      },
+      "watch": {
+        "line": "누가 눌렀는지 봐요",
+        "items": {
+          "live": "실시간",
+          "bots": "봇 제외",
+          "qr": "전단지별 QR"
+        }
+      },
+      "scene": {
+        "flyer": "QR · 전단지 A"
+      }
     }
   },
   "showcase": {
@@ -2678,7 +2699,21 @@
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
     "github": "GitHub",
-    "report": "링크 신고"
+    "report": "링크 신고",
+    "useTitle": "쓰임새",
+    "learnTitle": "알아보기",
+    "learn": "숏링크 안내서",
+    "qrCampaigns": "QR 캠페인",
+    "use": {
+      "freeUrlShortener": "무료 URL 단축",
+      "bitlyAlternative": "Bitly 대안",
+      "linkInBio": "링크 인 바이오",
+      "instagramProfileLink": "인스타그램 프로필 링크",
+      "kakaotalkLinkPreview": "카카오톡 미리보기",
+      "posterQrCode": "포스터 QR 코드",
+      "flyerQrTracking": "전단지 QR 추적",
+      "qrCampaignAnalytics": "QR 캠페인 분석"
+    }
   },
   "about": {
     "title": "kurl · 단축 링크와 클릭 분석",

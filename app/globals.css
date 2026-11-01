@@ -1730,6 +1730,45 @@ body[data-cookie-consent="visible"] {
 .live-arrive {
   animation: result-beat 460ms var(--ease) both;
 }
+@keyframes count-roll {
+  from {
+    opacity: 0;
+    transform: translateY(70%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.count-roll {
+  display: inline-block;
+  animation: count-roll 420ms var(--ease) both;
+}
+@keyframes line-pass {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+.line-pass {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.9), transparent);
+  transform: translateX(-100%);
+  animation: line-pass 900ms var(--ease) both;
+}
+.dark .line-pass {
+  background: linear-gradient(90deg, transparent, theme(colors.accent.200), transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .count-roll,
+  .line-pass {
+    animation: none;
+  }
+  .line-pass {
+    opacity: 0;
+  }
+}
 @keyframes fold-long-start {
   0% {
     opacity: 0;
@@ -1828,6 +1867,50 @@ body[data-cookie-consent="visible"] {
       animation-timeline: view();
       animation-range: entry 10% cover 28%;
     }
+  }
+}
+@keyframes scene-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.scene-draw {
+  stroke-dasharray: 1;
+}
+.scene-line {
+  transform-origin: left center;
+}
+html[data-js] [data-reveal="off"] :is(.scene-in, .scene-roll) {
+  opacity: 0;
+}
+html[data-js] [data-reveal="off"] .scene-line {
+  transform: scaleX(0);
+}
+html[data-js] [data-reveal="off"] .scene-draw {
+  stroke-dashoffset: 1;
+}
+[data-reveal="on"] .scene-in {
+  animation: result-beat 460ms var(--ease) var(--at, 0ms) both;
+}
+[data-reveal="on"] .scene-roll {
+  animation: count-roll 420ms var(--ease) var(--at, 0ms) both;
+}
+[data-reveal="on"] .scene-line {
+  transform: scaleX(0);
+  animation: result-underline-draw 420ms var(--ease) var(--at, 0ms) forwards;
+}
+[data-reveal="on"] .scene-draw {
+  animation: scene-draw 560ms var(--ease) var(--at, 0ms) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-js] [data-reveal] :is(.scene-in, .scene-roll, .scene-line, .scene-draw) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    stroke-dashoffset: 0;
   }
 }
 .fold-line {
