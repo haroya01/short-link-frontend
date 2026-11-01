@@ -17,7 +17,7 @@ async function titleLeft(page: Page, path: string) {
   await page.goto(path);
   const title = page.locator("main h1").first();
   await expect(title).toBeVisible();
-  return Math.round((await title.boundingBox())!.x);
+  return Math.round(await title.evaluate((el) => el.getBoundingClientRect().x));
 }
 
 async function countViewTransitions(page: Page) {
