@@ -8,7 +8,8 @@ import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table"
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Sparkline } from "@/components/links/stats/sparkline";
-import { LazyDailyChart, LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
+import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
 import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
@@ -17,7 +18,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
   const t = useTranslations("stats");
   switch (evidence) {
     case "section-daily":
-      return <LazyDailyChart data={data.dailyClicks ?? []} compact />;
+      return <DailyChart data={data.dailyClicks ?? []} compact />;
     case "section-hourly":
       return <LazyHourChart data={data.hourClicks ?? []} compact />;
     case "section-sources":
@@ -136,13 +137,9 @@ export function StatsJournal({
                 onClick={() => toggle(entry.key)}
                 aria-expanded={open}
                 aria-controls={panelId}
-                className="focus-ring group w-full rounded-lg px-1 py-3.5 text-left transition-[background-color] duration-150 ease-out hover:bg-slate-50/70 active:bg-slate-100/70 dark:hover:bg-slate-800/40 dark:active:bg-slate-800/60"
+                className="focus-ring group -mx-1 w-[calc(100%+0.5rem)] rounded-lg px-1 py-3.5 text-left transition-[background-color] duration-150 ease-out hover:bg-slate-50/70 active:bg-slate-100/70 dark:hover:bg-slate-800/40 dark:active:bg-slate-800/60"
               >
                 <span className="flex items-start gap-3">
-                  <span
-                    aria-hidden
-                    className="mt-[9px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600 dark:bg-accent-400"
-                  />
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
                     {t(entry.key, resolveParams(entry, tStats, locale))}
                   </span>
@@ -157,21 +154,21 @@ export function StatsJournal({
                     />
                   </span>
                 </span>
-                          {entry.spark && entry.spark.length > 1 && (
-                  <span className="mt-1.5 block pl-[18px]">
+                {entry.spark && entry.spark.length > 1 && (
+                  <span className="mt-1.5 block">
                     <Sparkline
                       values={entry.spark}
                       width={96}
                       height={20}
-                      className="text-accent-600 dark:text-accent-400"
+                      className="text-accent-600"
                     />
                   </span>
                 )}
                 {entry.ratio !== undefined && !entry.spark && (
-                  <span aria-hidden className="mt-2 block pl-[18px]">
-                    <span className="block h-1.5 w-28 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                  <span aria-hidden className="mt-2 block">
+                    <span className="block h-1.5 w-28 bg-slate-100 dark:bg-slate-800">
                       <span
-                        className="block h-full rounded-full bg-accent-600 dark:bg-accent-400"
+                        className="block h-full bg-accent-600"
                         style={{ width: `${Math.round(Math.min(1, entry.ratio) * 100)}%` }}
                       />
                     </span>
@@ -206,7 +203,7 @@ export function StatsJournal({
           );
         })}
       </ul>
-      {entries.length > initialVisible && <button type="button" onClick={() => setShowAll((value) => !value)} aria-expanded={showAll} className="focus-ring min-h-11 rounded-lg px-2 text-sm font-medium text-slate-600 dark:text-slate-300">{showAll ? t("showLess") : t("showMore", { count: entries.length - initialVisible })}</button>}
+      {entries.length > initialVisible && <button type="button" onClick={() => setShowAll((value) => !value)} aria-expanded={showAll} className="focus-ring -mx-2 min-h-11 rounded-lg px-2 text-sm font-medium text-slate-600 dark:text-slate-300">{showAll ? t("showLess") : t("showMore", { count: entries.length - initialVisible })}</button>}
     </section>
   );
 }

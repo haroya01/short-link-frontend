@@ -4,7 +4,8 @@ import { useTranslations } from "next-intl";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
-import { LazyDailyChart, LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
+import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
 import { Reveal } from "@/components/common/reveal";
 import { Section } from "@/components/common/section";
 import { cn } from "@/lib/utils";
@@ -75,7 +76,7 @@ export function WhenChapter({
             description={t("scope.daily", { days: range, tz: data.timezone })}
             className="lg:col-span-2"
           >
-            <LazyDailyChart data={dailyClicks ?? data.dailyClicks} />
+            <DailyChart data={dailyClicks ?? data.dailyClicks} />
           </Section>
           <Section
             id="section-hourly"

@@ -1806,6 +1806,30 @@ body[data-cookie-consent="visible"] {
     opacity: 0;
   }
 }
+@keyframes bar-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes bar-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+.bar-grow-y {
+  transform-origin: bottom;
+  animation: bar-grow-y 640ms var(--ease) both;
+}
+.bar-grow-x {
+  transform-origin: left;
+  animation: bar-grow-x 640ms var(--ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-grow-y,
+  .bar-grow-x {
+    animation: none;
+  }
+}
 
 /* The Tailwind animation utilities (dialogs, sheets, dropdowns, toasts) have no reduced-motion
    guard of their own — collapse them for users who ask for less motion. The exit classes are here

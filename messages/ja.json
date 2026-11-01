@@ -1637,11 +1637,10 @@
       "title": "リアルタイムクリック",
       "connecting": "接続中…",
       "connected": "ライブ",
-      "waiting": "新しいクリックがここに表示されます。",
       "scope": "この画面を開いてからのクリック · 端末のタイムゾーン",
       "reconnecting": "切断 · 再接続中",
-      "disconnectedHint": "リアルタイム更新が途切れました。自動で再接続します。既存の統計は引き続き確認できます。",
-      "example": "サンプル"
+      "example": "サンプル",
+      "now": "今"
     },
     "quality": {
       "title": "クリック品質",
@@ -1829,7 +1828,7 @@
         "desc": "ブラウザ別の分布"
       },
       "referrerHost": {
-        "title": "リファラーホスト",
+        "title": "流入元",
         "desc": "ホスト単位の集計"
       },
       "referrerUrl": {
@@ -1986,7 +1985,7 @@
       "logLoadFailed": "クリックログを読み込めませんでした。もう一度お試しください。"
     },
     "chart": {
-      "peak": "ピーク"
+      "summary": "最多 {date} {count}回"
     },
     "exportSummaryCsv": "サマリー CSV",
     "rawWindow": "直近{days}日",
@@ -2062,10 +2061,8 @@
     },
     "linkSettings": "リンク設定",
     "scope": {
-      "report": "累計統計 · 日別グラフは選択期間の人によるクリック · {tz}",
       "daily": "直近{days}日の人によるクリック · {tz}"
     },
-    "trendTitle": "クリック推移",
     "rangeDays": "{days}日",
     "moreActions": "その他の操作",
     "period": {
@@ -2641,10 +2638,6 @@
   },
   "recent": {
     "claimedToast": "{count}件のリンクをアカウントに保存しました"
-  },
-  "statsEmpty": {
-    "title": "まだクリックがありません",
-    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。"
   },
   "utm": {
     "toggle": "UTMパラメータを追加",

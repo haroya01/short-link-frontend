@@ -1637,11 +1637,10 @@
       "title": "Live clicks",
       "connecting": "Connecting…",
       "connected": "Live",
-      "waiting": "Clicks will appear here as they come in.",
       "scope": "Clicks since opening this view · device local time",
       "reconnecting": "Disconnected · reconnecting",
-      "disconnectedHint": "Live updates paused. Reconnecting automatically. Existing stats are still available.",
-      "example": "Sample"
+      "example": "Sample",
+      "now": "Now"
     },
     "quality": {
       "title": "Click quality",
@@ -1829,7 +1828,7 @@
         "desc": "Browser distribution"
       },
       "referrerHost": {
-        "title": "Referrer hosts",
+        "title": "Sources",
         "desc": "Aggregated by host"
       },
       "referrerUrl": {
@@ -1986,7 +1985,7 @@
       "logLoadFailed": "Could not load the click log. Please try again."
     },
     "chart": {
-      "peak": "Peak"
+      "summary": "Peak: {count} on {date}"
     },
     "exportSummaryCsv": "Summary CSV",
     "rawWindow": "Last {days} days",
@@ -2062,10 +2061,8 @@
     },
     "linkSettings": "Link settings",
     "scope": {
-      "report": "Lifetime totals · daily charts show human clicks in the selected period · {tz}",
       "daily": "Human clicks in the last {days} days · {tz}"
     },
-    "trendTitle": "Click trends",
     "rangeDays": "{days} days",
     "moreActions": "More actions",
     "period": {
@@ -2641,10 +2638,6 @@
   },
   "recent": {
     "claimedToast": "{count, plural, one {Saved # link} other {Saved # links}} to your account"
-  },
-  "statsEmpty": {
-    "title": "No clicks yet",
-    "description": "Share this short link on KakaoTalk, Slack, or social media. Stats start the moment someone clicks."
   },
   "utm": {
     "toggle": "Add UTM parameters",

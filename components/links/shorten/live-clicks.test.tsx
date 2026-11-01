@@ -75,3 +75,33 @@ describe("LiveClicks", () => {
     expect(host.textContent).toContain('result.liveCount:{"count":1}');
   });
 });
+
+describe("LiveClicks on a signed-in stats page", () => {
+  const onTick = () => {};
+  async function renderStats(value: UseClickStreamResult) {
+    stream.value = value;
+    await act(async () =>
+      root.render(<LiveClicks shortCode="abc1234" onTick={onTick} label="now" hideWhileWaiting />),
+    );
+  }
+
+  it("takes the stream-token path: no claim token, and every click reaches the page", async () => {
+    await renderStats({ items: [], connected: true, reconnecting: false, count: 0 });
+    expect(calls[0]).toEqual(["abc1234", { claimToken: undefined, maxItems: 200, onTick }]);
+  });
+
+  it("shows nothing while connected and waiting, not even a sentence", async () => {
+    await renderStats({ items: [], connected: true, reconnecting: false, count: 0 });
+    expect(host.querySelector('[data-testid="live-clicks"]')).toBeNull();
+    expect(host.textContent).toBe("");
+    expect(host.firstElementChild!.className).toContain("grid-rows-[0fr]");
+  });
+
+  it("opens one labelled line when the first click lands", async () => {
+    await renderStats({ items: [click(1, false)], connected: true, reconnecting: false, count: 1 });
+    expect(host.firstElementChild!.className).toContain("grid-rows-[1fr]");
+    expect(host.firstElementChild!.getAttribute("aria-live")).toBe("polite");
+    const line = host.querySelector('[data-testid="live-clicks"]')!;
+    expect(line.textContent).toBe('nowresult.liveCount:{"count":1}KR · iOS · instagram');
+  });
+});
