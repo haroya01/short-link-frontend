@@ -21,6 +21,7 @@ export function ShortenPanel({
   onResultsChange,
   initialUrl,
   onCreated,
+  foldOnArrive = false,
 }: {
   authenticated: boolean;
   ready: boolean;
@@ -28,6 +29,7 @@ export function ShortenPanel({
   onResultsChange: (next: ShortenedEntry[]) => void;
   initialUrl?: string;
   onCreated?: () => void;
+  foldOnArrive?: boolean;
 }) {
   const tResult = useTranslations("result");
   const [composing, setComposing] = useState(false);
@@ -75,6 +77,7 @@ export function ShortenPanel({
               authenticated={authenticated}
               passwordRequested={r.passwordRequested}
               enterIndex={i}
+              fold={foldOnArrive}
             />
           ))}
           {!composing && (

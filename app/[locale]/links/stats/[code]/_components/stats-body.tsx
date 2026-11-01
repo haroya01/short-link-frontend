@@ -9,7 +9,6 @@ import { WhenChapter, type RangeDays } from "./chapters/when-chapter";
 import { WhereChapter } from "./chapters/where-chapter";
 import { WhoChapter } from "./chapters/who-chapter";
 import { Header } from "./header";
-import { StatsEmptyState } from "./stats-empty-state";
 import { TabBar } from "./tab-bar";
 import { LogTab } from "./tabs/log-tab";
 import { SettingsTab } from "./tabs/settings-tab";
@@ -96,13 +95,7 @@ export function StatsBody({
         demo={demo}
         onSettings={() => setView("settings")}
       />
-      {data.totalClicks === 0 && view !== "settings" && view !== "log" && (
-        <StatsEmptyState />
-      )}
       <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who", "log"]} />
-      {view !== "settings" && view !== "log" && (
-        <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">{t("scope.report", { tz: data.timezone })}</p>
-      )}
       <div key={view} role="tabpanel" aria-label={view === "settings" ? t("linkSettings") : undefined} id={`stats-panel-${view}`} aria-labelledby={view === "settings" ? undefined : `stats-tab-${view}`} className="view-enter">
         {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} onTick={onTick} demo={demo} />}
         {view === "who" && <WhoChapter data={data} />}

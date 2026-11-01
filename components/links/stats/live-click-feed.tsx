@@ -21,7 +21,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
           <span
             className={
               "inline-block h-2 w-2 rounded-full " +
-              (connected ? "animate-pulse bg-accent-600" : "bg-slate-300 dark:bg-slate-700")
+              (connected ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700")
             }
             aria-hidden
           />
@@ -32,11 +32,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
       </div>
 
       <p className="text-xs text-slate-500 dark:text-slate-400">{t("scope")}</p>
-      {items.length === 0 ? (
-        <p className="py-4 text-[12px] text-slate-500 dark:text-slate-400">
-          {reconnecting ? t("disconnectedHint") : t("waiting")}
-        </p>
-      ) : (
+      {items.length > 0 && (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-card-flat">
           {items.map((item) => (
             <li key={item.id} className="flex items-center gap-3 px-4 py-2.5 text-[12px]">

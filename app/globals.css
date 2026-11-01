@@ -1779,6 +1779,57 @@ body[data-cookie-consent="visible"] {
 .fold-short {
   animation: result-beat 460ms var(--ease) 1000ms both;
 }
+@keyframes result-fold-out {
+  from {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+}
+.result-fold-long {
+  animation: result-fold-out 420ms var(--ease) 60ms both;
+}
+.result-fold-short {
+  animation: result-beat 460ms var(--ease) 300ms both;
+}
+.result-fold .result-beat {
+  opacity: 0;
+  animation: result-beat 460ms var(--ease) forwards;
+  animation-delay: calc(var(--beat, 0) * 60ms + 420ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-fold-long {
+    animation: none;
+    opacity: 0;
+  }
+  .result-fold-short,
+  .result-fold .result-beat {
+    animation: none;
+    opacity: 1;
+  }
+}
+@keyframes ability-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ability-row {
+      animation: ability-in var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 28%;
+    }
+  }
+}
 .fold-line {
   transform: scaleX(0);
   animation: result-underline-draw 420ms var(--ease) 1320ms forwards;
@@ -1804,6 +1855,30 @@ body[data-cookie-consent="visible"] {
   .live-dot::after {
     animation: none;
     opacity: 0;
+  }
+}
+@keyframes bar-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes bar-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+.bar-grow-y {
+  transform-origin: bottom;
+  animation: bar-grow-y 640ms var(--ease) both;
+}
+.bar-grow-x {
+  transform-origin: left;
+  animation: bar-grow-x 640ms var(--ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-grow-y,
+  .bar-grow-x {
+    animation: none;
   }
 }
 

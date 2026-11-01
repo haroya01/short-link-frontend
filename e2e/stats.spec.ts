@@ -23,7 +23,7 @@ test.describe("stats page", () => {
     await page.goto(`/ko/stats/${CODE}`);
     await expect(page.getByText("누적 전체 클릭", { exact: true })).toBeVisible();
     await expect(page.getByText("주목할 변화", { exact: true })).toBeVisible();
-    await expect(page.getByText("실시간 클릭").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "일별 사람 클릭" })).toBeVisible();
   });
 
   test("public toggle flips visibility and the public route renders without sign-in", async ({ page, browser }) => {

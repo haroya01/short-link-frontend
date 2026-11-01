@@ -4,13 +4,15 @@ import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { KpiLine } from "@/components/links/stats/kpi-line";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
+import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { StatsJournal } from "@/components/links/stats/journal";
-import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
-import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
-import { LazyDailyChart } from "@/components/links/stats/charts/lazy-charts";
+import { LiveClicks } from "@/components/links/shorten/live-clicks";
+import { EmptyState } from "@/components/common/empty-state";
 import { cn, countryFlag, countryName, formatNumber, formatShare } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 import type { RangeDays } from "./chapters/when-chapter";
+
+const HEADING = "text-base font-semibold text-slate-900 dark:text-slate-100";
 
 export function StatsOverview({
   data,
@@ -33,27 +35,27 @@ export function StatsOverview({
   const locale = useLocale();
   const total = data.totalClicks ?? 0;
   const botRatio = total > 0 ? (data.botClicks ?? 0) / total : 0;
+  const empty = total === 0;
 
   return (
     <div>
-      <KpiLine
-        hero={{ label: t("kpi.human"), value: formatNumber(data.humanClicks ?? 0) }}
-        metrics={[
-          { label: t("kpi.totalClicks"), value: formatNumber(total), muted: true },
-          { label: t("kpi.unique"), value: formatNumber(data.uniqueClicks ?? 0) },
-          { label: t("kpi.bot"), value: formatShare(botRatio), muted: true },
-        ]}
-      />
-
-      <section className="mt-5">
-        <h2 className="sr-only text-base font-semibold sm:not-sr-only sm:block text-slate-900 dark:text-slate-100">
-          {t("trendTitle")}
-        </h2>
-        <div className="grid grid-cols-1 gap-3 sm:mt-4 sm:gap-4 lg:grid-cols-12">
-          <Tile
-            label={t("section.daily.title")}
-            className="lg:col-span-7"
-            actions={
+      {empty ? (
+        <EmptyState title={t("noClicks")} className="border-t-0 pt-1" />
+      ) : (
+        <>
+          <KpiLine
+            hero={{ label: t("kpi.human"), value: formatNumber(data.humanClicks ?? 0) }}
+            metrics={[
+              { label: t("kpi.totalClicks"), value: formatNumber(total), muted: true },
+              { label: t("kpi.unique"), value: formatNumber(data.uniqueClicks ?? 0) },
+              { label: t("kpi.bot"), value: formatShare(botRatio), muted: true },
+            ]}
+          />
+          <section aria-labelledby="overview-daily" className="mt-8">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="overview-daily" className={HEADING}>
+                {t("section.daily.title")}
+              </h2>
               <div className="inline-flex gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
                 {([7, 30] as const).map((d) => (
                   <button
@@ -72,72 +74,53 @@ export function StatsOverview({
                   </button>
                 ))}
               </div>
-            }
-          >
-            <LazyDailyChart data={slicedDaily} compact />
-          </Tile>
+            </div>
+            <div className="mt-3">
+              <DailyChart data={slicedDaily} compact />
+            </div>
+          </section>
+        </>
+      )}
 
-          <Tile className="lg:col-span-5">
-            {demo ? <LiveClickFeedDemo /> : <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />}
-          </Tile>
+      {!demo && <LiveClicks shortCode={data.shortCode} onTick={onTick} label={t("live.now")} hideWhileWaiting />}
 
-          <div className="lg:col-span-12"><StatsJournal data={data} onNavigate={onNavigate} initialVisible={2} /></div>
-          <Tile
-            label={t("section.referrerHost.title")}
-            className="cv-auto lg:col-span-4"
-          >
-            <BreakdownList
-              items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
-              maxItems={5}
-            />
-          </Tile>
-
-          <Tile
-            label={t("section.device.title")}
-            className="cv-auto lg:col-span-4"
-          >
-            <DeviceChart data={data.deviceClicks} />
-          </Tile>
-
-          <Tile
-            label={t("section.country.title")}
-            className="cv-auto lg:col-span-4"
-          >
-            <BreakdownList
-              items={data.countryClicks.map((c) => ({ label: countryLabel(c.country, locale, t("countryTable.unknown")), count: c.count }))}
-              maxItems={5}
-            />
-          </Tile>
-        </div>
-      </section>
+      {!empty && (
+        <>
+          <div className="mt-10">
+            <StatsJournal data={data} onNavigate={onNavigate} initialVisible={2} />
+          </div>
+          <div className="mt-10 space-y-10 sm:grid sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto] sm:gap-x-4 sm:gap-y-10 sm:space-y-0">
+            <Breakdown title={t("section.referrerHost.title")}>
+              <BreakdownList
+                items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
+                maxItems={5}
+                subgrid
+              />
+            </Breakdown>
+            <Breakdown title={t("section.device.title")}>
+              <DeviceChart data={data.deviceClicks} subgrid />
+            </Breakdown>
+            <Breakdown title={t("section.country.title")}>
+              <BreakdownList
+                items={data.countryClicks.map((c) => ({
+                  label: countryLabel(c.country, locale, t("countryTable.unknown")),
+                  count: c.count,
+                }))}
+                maxItems={5}
+                subgrid
+              />
+            </Breakdown>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function Tile({
-  label,
-  actions,
-  children,
-  className,
-}: {
-  label?: string;
-  actions?: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
-}) {
+function Breakdown({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section
-      className={cn(
-        "rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:p-5",
-        className,
-      )}
-    >
-      {(label || actions) && (
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{label}</h3>
-          {actions}
-        </div>
-      )}
+    <section className="sm:col-span-full sm:grid sm:grid-cols-subgrid sm:content-start sm:gap-y-3">
+      <h2 className={cn(HEADING, "mb-3 sm:col-span-full sm:mb-0")}>{title}</h2>
       {children}
     </section>
   );

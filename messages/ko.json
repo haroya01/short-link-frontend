@@ -1219,7 +1219,18 @@
     },
     "recentKept": "이 브라우저에 24시간 보관돼요",
     "recentClaim": "로그인하면 이 링크들이 계정으로 옮겨져 만료 없이 남아요.",
-    "recentLogin": "로그인"
+    "recentLogin": "로그인",
+    "abilities": {
+      "title": "링크마다 할 수 있는 것",
+      "password": { "line": "아는 사람만 열려요", "name": "비밀번호" },
+      "schedule": { "line": "정한 시각에 열리고, 정한 날 닫혀요", "name": "예약 · 만료" },
+      "split": { "line": "한 링크로 두 페이지에 나눠 보내요", "name": "A/B" },
+      "countries": { "line": "나라마다 다른 페이지로 보내거나, 아예 막아요", "name": "나라" },
+      "openOutside": { "line": "카톡에서 눌러도 사파리·크롬으로 열려요", "name": "앱 밖에서 열기" },
+      "card": { "line": "카톡에 붙였을 때 보이는 카드를 직접 정해요", "name": "미리보기 카드" },
+      "bots": { "line": "사람이 누른 것만 세요", "name": "봇 제외" },
+      "qr": { "line": "어느 전단지에서 찍었는지까지 나눠 봐요", "name": "QR" }
+    }
   },
   "showcase": {
     "title": "하는 일에 맞춰 꾸민 프로필",
@@ -1637,11 +1648,10 @@
       "title": "실시간 클릭",
       "connecting": "연결 중…",
       "connected": "라이브",
-      "waiting": "들어오는 클릭이 여기에 보여요.",
       "scope": "이 화면을 연 이후의 클릭 · 기기 시간 기준",
       "reconnecting": "연결 끊김 · 재연결 중",
-      "disconnectedHint": "새 클릭 연결이 끊겼어요. 자동으로 다시 연결해요. 기존 통계는 계속 볼 수 있어요.",
-      "example": "예시"
+      "example": "예시",
+      "now": "지금"
     },
     "quality": {
       "title": "클릭 품질",
@@ -1829,7 +1839,7 @@
         "desc": "브라우저별 분포"
       },
       "referrerHost": {
-        "title": "레퍼러 호스트",
+        "title": "유입 경로",
         "desc": "유입 도메인 단위 집계"
       },
       "referrerUrl": {
@@ -1986,7 +1996,7 @@
       "logLoadFailed": "클릭 로그를 불러오지 못했어요. 다시 시도해 주세요."
     },
     "chart": {
-      "peak": "피크"
+      "summary": "최고 {date} {count}회"
     },
     "exportSummaryCsv": "요약 CSV",
     "rawWindow": "최근 {days}일",
@@ -2062,10 +2072,8 @@
     },
     "linkSettings": "링크 설정",
     "scope": {
-      "report": "누적 통계 · 일별 차트는 선택 기간의 사람 클릭 · {tz}",
       "daily": "최근 {days}일 사람 클릭 · {tz}"
     },
-    "trendTitle": "클릭 흐름",
     "rangeDays": "{days}일",
     "moreActions": "작업 더 보기",
     "period": {
@@ -2641,10 +2649,6 @@
   },
   "recent": {
     "claimedToast": "{count}개 링크를 계정에 저장했어요"
-  },
-  "statsEmpty": {
-    "title": "아직 클릭이 없어요",
-    "description": "이 링크를 카톡·슬랙·SNS 등에 공유하면, 클릭이 들어오는 순간부터 분석이 시작돼요."
   },
   "utm": {
     "toggle": "UTM 파라미터 추가",

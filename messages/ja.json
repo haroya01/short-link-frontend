@@ -1219,7 +1219,18 @@
     },
     "recentKept": "このブラウザに24時間保存されます",
     "recentClaim": "ログインするとこれらのリンクがアカウントに移り、期限なく残ります。",
-    "recentLogin": "ログイン"
+    "recentLogin": "ログイン",
+    "abilities": {
+      "title": "リンクごとにできること",
+      "password": { "line": "パスワードを知っている人だけが開けます", "name": "パスワード" },
+      "schedule": { "line": "決めた時刻に開き、決めた日に閉じます", "name": "予約 · 期限" },
+      "split": { "line": "1つのリンクで2つのページに振り分けます", "name": "A/B" },
+      "countries": { "line": "国ごとに別のページへ送ったり、開かないようにしたりできます", "name": "国" },
+      "openOutside": { "line": "LINEやカカオトークで押してもSafariやChromeで開きます", "name": "アプリの外で開く" },
+      "card": { "line": "チャットに貼ったときのカードを自分で決められます", "name": "プレビューカード" },
+      "bots": { "line": "人が押したクリックだけを数えます", "name": "ボット除外" },
+      "qr": { "line": "どのチラシから読み取られたかまで分けて見られます", "name": "QR" }
+    }
   },
   "showcase": {
     "title": "仕事に合わせたプロフィール",
@@ -1637,11 +1648,10 @@
       "title": "リアルタイムクリック",
       "connecting": "接続中…",
       "connected": "ライブ",
-      "waiting": "新しいクリックがここに表示されます。",
       "scope": "この画面を開いてからのクリック · 端末のタイムゾーン",
       "reconnecting": "切断 · 再接続中",
-      "disconnectedHint": "リアルタイム更新が途切れました。自動で再接続します。既存の統計は引き続き確認できます。",
-      "example": "サンプル"
+      "example": "サンプル",
+      "now": "今"
     },
     "quality": {
       "title": "クリック品質",
@@ -1829,7 +1839,7 @@
         "desc": "ブラウザ別の分布"
       },
       "referrerHost": {
-        "title": "リファラーホスト",
+        "title": "流入元",
         "desc": "ホスト単位の集計"
       },
       "referrerUrl": {
@@ -1986,7 +1996,7 @@
       "logLoadFailed": "クリックログを読み込めませんでした。もう一度お試しください。"
     },
     "chart": {
-      "peak": "ピーク"
+      "summary": "最多 {date} {count}回"
     },
     "exportSummaryCsv": "サマリー CSV",
     "rawWindow": "直近{days}日",
@@ -2062,10 +2072,8 @@
     },
     "linkSettings": "リンク設定",
     "scope": {
-      "report": "累計統計 · 日別グラフは選択期間の人によるクリック · {tz}",
       "daily": "直近{days}日の人によるクリック · {tz}"
     },
-    "trendTitle": "クリック推移",
     "rangeDays": "{days}日",
     "moreActions": "その他の操作",
     "period": {
@@ -2641,10 +2649,6 @@
   },
   "recent": {
     "claimedToast": "{count}件のリンクをアカウントに保存しました"
-  },
-  "statsEmpty": {
-    "title": "まだクリックがありません",
-    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。"
   },
   "utm": {
     "toggle": "UTMパラメータを追加",

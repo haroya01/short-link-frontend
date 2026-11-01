@@ -1219,7 +1219,18 @@
     },
     "recentKept": "Lưu trên trình duyệt này trong 24 giờ",
     "recentClaim": "Đăng nhập để chuyển các liên kết này vào tài khoản, không bị hết hạn.",
-    "recentLogin": "Đăng nhập"
+    "recentLogin": "Đăng nhập",
+    "abilities": {
+      "title": "Mỗi liên kết có thể làm gì",
+      "password": { "line": "Chỉ người biết mật khẩu mới mở được", "name": "Mật khẩu" },
+      "schedule": { "line": "Mở vào giờ bạn đặt, đóng vào ngày bạn chọn", "name": "Hẹn giờ · Hết hạn" },
+      "split": { "line": "Một liên kết chia sang hai trang", "name": "A/B" },
+      "countries": { "line": "Gửi mỗi quốc gia đến trang riêng, hoặc chặn hẳn", "name": "Quốc gia" },
+      "openOutside": { "line": "Mở bằng Safari hoặc Chrome dù được nhấp trong KakaoTalk hay LINE", "name": "Mở ngoài ứng dụng" },
+      "card": { "line": "Tự chọn thẻ hiện ra khi dán vào cuộc trò chuyện", "name": "Thẻ xem trước" },
+      "bots": { "line": "Chỉ đếm lượt nhấp của người thật", "name": "Loại bỏ bot" },
+      "qr": { "line": "Biết lượt quét QR đến từ tờ rơi nào", "name": "QR" }
+    }
   },
   "showcase": {
     "title": "Hồ sơ hợp với công việc của bạn",
@@ -1637,11 +1648,10 @@
       "title": "Lượt nhấp trực tiếp",
       "connecting": "Đang kết nối…",
       "connected": "Trực tiếp",
-      "waiting": "Lượt nhấp sẽ xuất hiện ở đây khi có.",
       "scope": "Lượt nhấp từ khi mở màn hình · giờ trên thiết bị",
       "reconnecting": "Mất kết nối · đang kết nối lại",
-      "disconnectedHint": "Kết nối lượt nhấp trực tiếp bị ngắt. Đang tự động kết nối lại. Bạn vẫn có thể xem thống kê đã có.",
-      "example": "Ví dụ"
+      "example": "Ví dụ",
+      "now": "Bây giờ"
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
@@ -1829,7 +1839,7 @@
         "desc": "Phân bố trình duyệt"
       },
       "referrerHost": {
-        "title": "Host giới thiệu",
+        "title": "Nguồn truy cập",
         "desc": "Tổng hợp theo host"
       },
       "referrerUrl": {
@@ -1986,7 +1996,7 @@
       "logLoadFailed": "Không tải được nhật ký lượt nhấp. Vui lòng thử lại."
     },
     "chart": {
-      "peak": "Đỉnh"
+      "summary": "Cao nhất {date}: {count} lượt nhấp"
     },
     "exportSummaryCsv": "CSV tóm tắt",
     "rawWindow": "{days} ngày gần nhất",
@@ -2062,10 +2072,8 @@
     },
     "linkSettings": "Cài đặt liên kết",
     "scope": {
-      "report": "Tổng tích lũy · biểu đồ hàng ngày là lượt nhấp của người trong khoảng đã chọn · {tz}",
       "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
     },
-    "trendTitle": "Xu hướng nhấp",
     "rangeDays": "{days} ngày",
     "moreActions": "Thao tác khác",
     "period": {
@@ -2641,10 +2649,6 @@
   },
   "recent": {
     "claimedToast": "Đã lưu {count} liên kết vào tài khoản của bạn"
-  },
-  "statsEmpty": {
-    "title": "Chưa có lượt nhấp",
-    "description": "Chia sẻ liên kết ngắn này trên KakaoTalk, Slack hay mạng xã hội. Thống kê bắt đầu ngay khi có người nhấp."
   },
   "utm": {
     "toggle": "Thêm tham số UTM",

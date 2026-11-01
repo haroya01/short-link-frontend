@@ -96,7 +96,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
             >
               {display.replace(/^https?:\/\//, "")}
             </a>
-            {destinationHost && (
+            {destinationHost && destinationHost !== title && (
               <>
                 <span aria-hidden className="text-slate-300 dark:text-slate-600">→</span>
                 <span className="truncate text-slate-500 dark:text-slate-400">{destinationHost}</span>
@@ -105,11 +105,10 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           </p>}
         </div>
         <div className="flex gap-2 sm:hidden">
-          <CopyButton variant={demo ? "outline" : "accent"} size="lg" value={display} className="flex-1" />
-          <ShareButton url={display} title={title || display} variant="outline" size="lg" className="flex-1" />
+          <CopyButton variant={demo ? "outline" : "accent"} value={display} />
+          <ShareButton url={display} title={title || display} variant="outline" size="md" />
           <Button
             variant="outline"
-            size="lg"
             className="px-3"
             onClick={() => setMoreOpen(true)}
             aria-label={t("moreActions")}
