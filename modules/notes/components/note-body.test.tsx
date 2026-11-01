@@ -44,3 +44,29 @@ describe("a note body under its link card", () => {
     expect(paragraph(<NoteBody body={video} />)?.querySelector("a")?.getAttribute("href")).toBe(video);
   });
 });
+
+describe("a note body from a server with custom emojis", () => {
+  const emojis = [{ shortcode: "neoghost", url: "https://media.example/neoghost.png" }];
+
+  it("draws a listed shortcode as a picture that reads as its name", () => {
+    const p = paragraph(<NoteBody body="boo :neoghost: :blobcat:" emojis={emojis} />);
+    const img = p?.querySelector("img");
+    expect(img?.getAttribute("src")).toBe("https://media.example/neoghost.png");
+    expect(img?.getAttribute("alt")).toBe(":neoghost:");
+    expect(img?.getAttribute("title")).toBe(":neoghost:");
+    expect(img?.getAttribute("loading")).toBe("lazy");
+    expect(img?.getAttribute("decoding")).toBe("async");
+    expect(img?.getAttribute("draggable")).toBe("false");
+    expect(p?.querySelectorAll("img")).toHaveLength(1);
+    expect(p?.textContent).toBe("boo  :blobcat:");
+  });
+
+  it("keeps links and hashtags as they were", () => {
+    const p = paragraph(<NoteBody body="https://media.example/:neoghost: #neoghost" emojis={emojis} />);
+    expect(p?.querySelector("img")).toBeNull();
+    expect([...(p?.querySelectorAll("a") ?? [])].map((a) => a.textContent)).toEqual([
+      "https://media.example/:neoghost",
+      "#neoghost",
+    ]);
+  });
+});

@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import type { NoteEmoji } from "@/modules/notes/api/notes";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -10,6 +11,7 @@ export interface MentionCandidate {
   following: boolean;
   /** Set for an account on another server: username is then user@server. */
   remoteId?: number;
+  emojis?: NoteEmoji[];
 }
 
 const MOCK: MentionCandidate[] = [

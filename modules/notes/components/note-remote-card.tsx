@@ -5,8 +5,9 @@ import { Play } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { contentLang } from "@/modules/blog/lib/content-lang";
-import type { Note, NoteMedia, RemoteNoteShape } from "@/modules/notes/api/notes";
+import type { Note, NoteEmoji, NoteMedia, RemoteNoteShape } from "@/modules/notes/api/notes";
 import { textWithoutCardedLink } from "@/modules/notes/lib/note-text";
+import { EmojiText } from "./emoji-text";
 
 export function remoteCardOf(note: Note): RemoteNoteShape | null {
   const kind = note.remote?.kind;
@@ -31,6 +32,7 @@ export function NoteRemoteCard({
   language,
   full = false,
   cardUrl,
+  emojis,
 }: {
   shape: RemoteNoteShape;
   summary: string;
@@ -38,6 +40,7 @@ export function NoteRemoteCard({
   language?: string | null;
   full?: boolean;
   cardUrl?: string | null;
+  emojis?: readonly NoteEmoji[] | null;
 }) {
   const t = useTranslations("notes");
   const summaryId = useId();
@@ -103,7 +106,7 @@ export function NoteRemoteCard({
               (shape.title || shape.community) && "mt-1",
             )}
           >
-            {summary}
+            <EmojiText text={summary} emojis={emojis} />
           </span>
         )}
         {address && (

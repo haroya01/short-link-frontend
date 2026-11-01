@@ -25,6 +25,11 @@ export const NOTE_ALT_MAX_LENGTH = 1500;
 export const NOTE_POLL_MAX_OPTIONS = 4;
 export const NOTE_POLL_OPTION_MAX_LENGTH = 50;
 
+export interface NoteEmoji {
+  shortcode: string;
+  url: string;
+}
+
 export interface NoteAuthor {
   id: number;
   username: string;
@@ -33,6 +38,7 @@ export interface NoteAuthor {
   /** Set for an account on another server: username is then user@server and id is negative. */
   remoteId?: number | null;
   url?: string | null;
+  emojis?: NoteEmoji[];
 }
 
 export interface NoteMedia {
@@ -66,6 +72,7 @@ export interface QuotedNote {
   media: NoteMedia[];
   contentWarning?: string | null;
   sensitive?: boolean;
+  emojis?: NoteEmoji[];
 }
 
 /** `likeCount` and `repostCount` are the author's own numbers and null for everyone else (counts are
@@ -117,6 +124,7 @@ export interface Note {
   /** What it was on its server; null for notes written here, absent from servers that predate it. */
   remote?: RemoteNoteShape | null;
   room?: NoteRoom | null;
+  emojis?: NoteEmoji[];
 }
 
 export interface NoteRoom {
@@ -292,6 +300,7 @@ export interface RemoteAccount {
   /** Absent on a backend without account blocks and mutes for other servers. */
   blocking?: boolean;
   muting?: boolean;
+  emojis?: NoteEmoji[];
 }
 
 export interface DomainBlock {

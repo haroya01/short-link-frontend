@@ -14,6 +14,7 @@ import type {
   Note,
   NoteAuthor,
   NoteDraft,
+  NoteEmoji,
   NoteEdit,
   NoteFeed,
   NoteHistory,
@@ -928,6 +929,12 @@ function trendingItem(
   };
 }
 
+const TWEMOJI = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/72x72";
+
+function withNameEmojis(item: TrendingNote, emojis: NoteEmoji[]): TrendingNote {
+  return { ...item, author: { ...item.author, emojis } };
+}
+
 const TRENDING: TrendingNote[] = [
   trendingItem(
     "https://mastodon.social/users/mina/statuses/9600",
@@ -999,14 +1006,23 @@ const TRENDING: TrendingNote[] = [
       linkPreview: { url: "https://sora.example/tools", title: "長く使える道具", description: "十年使った鞄とペンの話", image: null },
     },
   ),
-  trendingItem(
-    "https://social.silicon.moe/users/lee/statuses/5501",
-    "작은 서버를 오래 운영하며 배운 것 세 가지.",
-    "lee@social.silicon.moe",
-    "이",
-    330,
-    ["social.silicon.moe"],
-    { replyCount: 1 },
+  withNameEmojis(
+    trendingItem(
+      "https://social.silicon.moe/users/lee/statuses/5501",
+      "작은 서버를 오래 운영하며 배운 것 세 가지. :desktop::coffee:\u200B 정리는 내일 :sleepy_cat: #운영",
+      "lee@social.silicon.moe",
+      "이 :black_cat:",
+      330,
+      ["social.silicon.moe"],
+      {
+        replyCount: 1,
+        emojis: [
+          { shortcode: "desktop", url: `${TWEMOJI}/1f5a5.png` },
+          { shortcode: "coffee", url: `${TWEMOJI}/2615.png` },
+        ],
+      },
+    ),
+    [{ shortcode: "black_cat", url: `${TWEMOJI}/1f408-200d-2b1b.png` }],
   ),
   trendingItem(
     "https://mastodon.social/users/alice/statuses/6601",
@@ -1074,6 +1090,7 @@ function bringOver(item: TrendingNote): Promise<Note> {
         displayName: item.author.displayName,
         remoteId: account.id,
         url: item.author.url,
+        emojis: item.author.emojis,
       },
       media: item.media,
       replyCount: item.replyCount,
@@ -1086,6 +1103,7 @@ function bringOver(item: TrendingNote): Promise<Note> {
       poll: item.poll,
       language: item.language,
       remote: item.remote,
+      emojis: item.emojis,
     });
     notes = [local, ...notes];
     broughtOver.set(item.uri, local.id);

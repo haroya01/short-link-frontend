@@ -34,6 +34,7 @@ import {
 import { noteLength } from "@/modules/notes/lib/note-text";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { NoteBody } from "./note-body";
+import { EmojiText } from "./emoji-text";
 import { NoteReplyDialog } from "./note-reply-dialog";
 import { TextToggle } from "./note-composer";
 import { NoteMedia } from "./note-media";
@@ -426,7 +427,11 @@ export function NoteCard({
                   href={noteAuthorHref(note.author, locale)}
                   className="block truncate rounded font-semibold text-slate-900 hover:underline focus-ring dark:text-slate-100"
                 >
-                  {note.author.displayName || note.author.username}
+                  {note.author.displayName ? (
+                    <EmojiText text={note.author.displayName} emojis={note.author.emojis} />
+                  ) : (
+                    note.author.username
+                  )}
                 </BlogLink>
                 <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">
                   {note.author.remoteId ? `@${note.author.username}` : `@${note.author.username}@${FEDERATION_HOST}`}
@@ -434,7 +439,12 @@ export function NoteCard({
               </div>
             ) : authorHref ? (
               <BlogLink href={authorHref} className="flex min-w-0 rounded focus-ring hover:underline">
-                <AuthorName name={note.author.displayName} handle={note.author.username} className={STRONG_NAME} />
+                <AuthorName
+                  name={note.author.displayName}
+                  handle={note.author.username}
+                  emojis={note.author.emojis}
+                  className={STRONG_NAME}
+                />
               </BlogLink>
             ) : (
               <button
@@ -442,7 +452,12 @@ export function NoteCard({
                 onClick={detached?.onAuthor}
                 className="flex min-w-0 rounded text-left focus-ring hover:underline"
               >
-                <AuthorName name={note.author.displayName} handle={note.author.username} className={STRONG_NAME} />
+                <AuthorName
+                  name={note.author.displayName}
+                  handle={note.author.username}
+                  emojis={note.author.emojis}
+                  className={STRONG_NAME}
+                />
               </button>
             )}
             {!emphasis && (
@@ -528,7 +543,7 @@ export function NoteCard({
                   emphasis ? "text-[17px]" : "mt-1 text-[15px]",
                 )}
               >
-                {note.contentWarning}
+                <EmojiText text={note.contentWarning} emojis={note.emojis} />
               </p>
             )}
             <div className={emphasis ? (note.contentWarning && !editing ? "mt-1" : undefined) : "mt-1"}>
@@ -616,6 +631,7 @@ export function NoteCard({
                       language={note.language}
                       full={emphasis}
                       cardUrl={note.linkPreview?.url}
+                      emojis={note.emojis}
                     />
                   ) : (
                     <NoteBody
@@ -624,6 +640,7 @@ export function NoteCard({
                       large={emphasis}
                       language={note.language}
                       cardUrl={note.linkPreview?.url}
+                      emojis={note.emojis}
                     />
                   )}
                 </div>

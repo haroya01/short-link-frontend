@@ -33,6 +33,7 @@ import {
   type DomainBlock,
   type RemoteAccount,
 } from "@/modules/notes/api/notes";
+import { EmojiText } from "./emoji-text";
 import { MuteDialog } from "./mute-dialog";
 import { NoteList } from "./note-list";
 import { webAddress } from "./note-remote-card";
@@ -130,7 +131,9 @@ export function RemoteAccountRow({
       >
         <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size={roomy ? "lg" : "md"} />
         <span className="min-w-0">
-          <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
+          <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+            <EmojiText text={name} emojis={account.emojis} />
+          </span>
           <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
         </span>
       </BlogLink>
@@ -364,7 +367,7 @@ export function RemoteAccountScreen({ id }: { id: number }) {
         <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size="xl" />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-[24px] font-bold tracking-tight text-slate-900 dark:text-slate-50">
-            {account.displayName || account.username || account.acct}
+            <EmojiText text={account.displayName || account.username || account.acct} emojis={account.emojis} />
           </h1>
           <p className="truncate text-[14px] text-slate-500 dark:text-slate-400">@{account.acct}</p>
           <div className="relative mt-3 flex flex-wrap items-center gap-3">
