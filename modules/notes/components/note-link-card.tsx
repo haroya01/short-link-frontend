@@ -28,12 +28,12 @@ export function NoteLinkCard({ preview, linked = true }: { preview: NoteLinkPrev
       <span className="block px-3.5 py-2.5">
         <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">{domain}</span>
         {preview.title && (
-          <span className="mt-0.5 line-clamp-2 block text-[15px] font-medium leading-snug text-slate-900 dark:text-slate-100">
+          <span className="mt-0.5 line-clamp-2 text-[15px] font-medium leading-snug text-slate-900 dark:text-slate-100">
             {preview.title}
           </span>
         )}
         {preview.description && !preview.image && (
-          <span className="mt-0.5 line-clamp-2 block text-[13px] leading-snug text-slate-500 dark:text-slate-400">
+          <span className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-slate-500 dark:text-slate-400">
             {preview.description}
           </span>
         )}

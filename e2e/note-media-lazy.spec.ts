@@ -48,7 +48,7 @@ async function serve(page: Page) {
 
 test("a single remote photo holds its box before it loads", async ({ page }) => {
   await serve(page);
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog", { waitUntil: "domcontentloaded" });
   const first = page.locator('article[data-note-id="500"] img').first();
   await expect(first).toBeAttached({ timeout: 30_000 });
   const box = (await first.boundingBox())!;
@@ -59,7 +59,7 @@ test("a single remote photo holds its box before it loads", async ({ page }) => 
 
 test("photos and videos far below the first screen are not fetched until the reader nears them", async ({ page }) => {
   const requested = await serve(page);
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog", { waitUntil: "domcontentloaded" });
   await expect(page.locator('article[data-note-id="500"] img').first()).toBeAttached({ timeout: 30_000 });
   await page.waitForTimeout(1500);
 
@@ -80,6 +80,20 @@ test("photos and videos far below the first screen are not fetched until the rea
   await expect.poll(() => requested.filter((name) => name.endsWith(".mp4"))).toEqual([`${500 + VIDEO_AT}.mp4`]);
 });
 
+test("the first rows' photos are fetched right away, and the first two ask for high priority", async ({ page }) => {
+  await serve(page);
+  await page.goto("/ko/blog", { waitUntil: "domcontentloaded" });
+  const img = (id: number) => page.locator(`article[data-note-id="${id}"] button img`);
+  await expect(img(500)).toBeAttached({ timeout: 30_000 });
+  for (const id of [500, 501]) {
+    await expect(img(id)).toHaveAttribute("loading", "eager");
+    await expect(img(id)).toHaveAttribute("fetchpriority", "high");
+  }
+  await expect(img(502)).toHaveAttribute("loading", "eager");
+  await expect(img(502)).not.toHaveAttribute("fetchpriority", /.*/);
+  await expect(img(503)).toHaveAttribute("loading", "lazy");
+});
+
 test("a photo without a description is still a named button, and the ALT badge is a full-size target", async ({ page }) => {
   await page.route("https://media.remote.test/**", () => {});
   const described = { ...note(600, 0), media: [{ url: "https://media.remote.test/600.png", altText: "강가의 고양이", contentType: "image/png", width: 1200, height: 1600 }] };
@@ -87,7 +101,7 @@ test("a photo without a description is still a named button, and the ALT badge i
     "GET /api/v1/public/home": (route) =>
       route.fulfill({ json: { items: [{ kind: "note", note: note(500, 0) }, { kind: "note", note: described }], next: null } }),
   });
-  await page.goto("/ko/blog");
+  await page.goto("/ko/blog", { waitUntil: "domcontentloaded" });
   await expect(page.locator('article[data-note-id="500"]').getByRole("button", { name: "사진 크게 보기" })).toBeVisible({ timeout: 30_000 });
   const badge = page.locator('article[data-note-id="600"]').getByRole("button", { name: "사진 설명 보기" });
   const box = (await badge.boundingBox())!;

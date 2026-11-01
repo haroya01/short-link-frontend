@@ -38,7 +38,7 @@ export function PostAuthorCard({
             {author.bio && (
               <span
                 lang={contentLang(author.bio)}
-                className="mt-1 line-clamp-2 block text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400"
+                className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400"
               >
                 {author.bio}
               </span>

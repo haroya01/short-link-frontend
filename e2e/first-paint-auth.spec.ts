@@ -43,7 +43,7 @@ test.describe("첫 화면에 엉뚱한 쪽이 번쩍이지 않는다", () => {
     await freezeBeforeHydration(page);
     await page.goto("/ko/blog");
 
-    await expect(page.getByRole("heading", { level: 1, name: "kurl 사람들이 쓴 글" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "kurl과 다른 서버 사람들이 쓴 글" })).toBeVisible();
   });
 
   test("로그인 흔적이 있으면: 블로그 홈 머리글이 보이지 않는다", async ({ page }) => {
@@ -54,7 +54,7 @@ test.describe("첫 화면에 엉뚱한 쪽이 번쩍이지 않는다", () => {
     await page.goto("/ko/blog");
 
     await expect(page.locator("header").first()).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1, name: "kurl 사람들이 쓴 글" })).toBeHidden();
+    await expect(page.getByRole("heading", { level: 1, name: "kurl과 다른 서버 사람들이 쓴 글" })).toBeHidden();
   });
 });
 
