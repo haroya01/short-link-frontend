@@ -35,8 +35,8 @@ test("the product card in structured data names kurl.me and lists what a link ca
   const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
   const app = blocks.flatMap((b) => b["@graph"] ?? [b]).find((node) => node["@type"] === "SoftwareApplication");
   expect(app.alternateName).toBe("kurl.me");
-  expect(app.featureList).toHaveLength(8);
-  expect(app.featureList[0]).toBe("아는 사람만 열려요");
+  expect(app.featureList).toHaveLength(11);
+  expect(app.featureList.slice(0, 4)).toEqual(["비밀번호", "나라 차단", "예약 공개", "만료"]);
   expect(app.sameAs.every((url: string) => url.startsWith("https://apps.apple.com/app/id"))).toBe(true);
 });
 

@@ -65,7 +65,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <LinkAbilities locale={locale} />
+          <LinkAbilities />
         </div>
       </section>
 

@@ -1222,14 +1222,35 @@
     "recentLogin": "ログイン",
     "abilities": {
       "title": "リンクごとにできること",
-      "password": { "line": "パスワードを知っている人だけが開けます", "name": "パスワード" },
-      "schedule": { "line": "決めた時刻に開き、決めた日に閉じます", "name": "予約 · 期限" },
-      "split": { "line": "1つのリンクで2つのページに振り分けます", "name": "A/B" },
-      "countries": { "line": "国ごとに別のページへ送ったり、開かないようにしたりできます", "name": "国" },
-      "openOutside": { "line": "LINEやカカオトークで押してもSafariやChromeで開きます", "name": "アプリの外で開く" },
-      "card": { "line": "チャットに貼ったときのカードを自分で決められます", "name": "プレビューカード" },
-      "bots": { "line": "人が押したクリックだけを数えます", "name": "ボット除外" },
-      "qr": { "line": "どのチラシから読み取られたかまで分けて見られます", "name": "QR" }
+      "access": {
+        "line": "誰が、いつ開けるかを決められます",
+        "items": {
+          "password": "パスワード",
+          "block": "国でブロック",
+          "schedule": "公開予約",
+          "expiry": "期限"
+        }
+      },
+      "route": {
+        "line": "どこへ、どう届けるかを決められます",
+        "items": {
+          "split": "A/B",
+          "targets": "国や端末ごとの行き先",
+          "openOutside": "アプリの外で開く",
+          "card": "プレビューカード"
+        }
+      },
+      "watch": {
+        "line": "誰が押したかが見えます",
+        "items": {
+          "live": "リアルタイム",
+          "bots": "ボット除外",
+          "qr": "チラシごとのQR"
+        }
+      },
+      "scene": {
+        "flyer": "QR · チラシA"
+      }
     }
   },
   "showcase": {

@@ -1869,6 +1869,50 @@ body[data-cookie-consent="visible"] {
     }
   }
 }
+@keyframes scene-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.scene-draw {
+  stroke-dasharray: 1;
+}
+.scene-line {
+  transform-origin: left center;
+}
+html[data-js] [data-reveal="off"] :is(.scene-in, .scene-roll) {
+  opacity: 0;
+}
+html[data-js] [data-reveal="off"] .scene-line {
+  transform: scaleX(0);
+}
+html[data-js] [data-reveal="off"] .scene-draw {
+  stroke-dashoffset: 1;
+}
+[data-reveal="on"] .scene-in {
+  animation: result-beat 460ms var(--ease) var(--at, 0ms) both;
+}
+[data-reveal="on"] .scene-roll {
+  animation: count-roll 420ms var(--ease) var(--at, 0ms) both;
+}
+[data-reveal="on"] .scene-line {
+  transform: scaleX(0);
+  animation: result-underline-draw 420ms var(--ease) var(--at, 0ms) forwards;
+}
+[data-reveal="on"] .scene-draw {
+  animation: scene-draw 560ms var(--ease) var(--at, 0ms) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-js] [data-reveal] :is(.scene-in, .scene-roll, .scene-line, .scene-draw) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    stroke-dashoffset: 0;
+  }
+}
 .fold-line {
   transform: scaleX(0);
   animation: result-underline-draw 420ms var(--ease) 1320ms forwards;

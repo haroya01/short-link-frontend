@@ -14,7 +14,7 @@ import { OfflineBanner } from "@/components/common/offline-banner";
 import { ThemeColorSync } from "@/components/common/theme-color-sync";
 import { followSystemThemeScript, themeCookieNameScript } from "@/lib/theme-cookie";
 import { appStoreUrl } from "@/lib/app-store";
-import { ABILITY_KEYS } from "@/components/landing/link-abilities";
+import { ABILITY_GROUPS } from "@/components/landing/link-abilities";
 import "../globals.css";
 
 /*
@@ -179,7 +179,7 @@ export default async function RootLayout({
         name: "kurl",
         alternateName: "kurl.me",
         url: SITE_URL,
-        featureList: ABILITY_KEYS.map((key) => abilities(`${key}.line`)),
+        featureList: ABILITY_GROUPS.flatMap((group) => group.items.map((item) => abilities(`${group.key}.items.${item}`))),
         sameAs: [appStoreUrl("links"), appStoreUrl("blog")],
         applicationCategory: "WebApplication",
         operatingSystem: "Any",
