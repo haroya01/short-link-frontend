@@ -9,7 +9,7 @@ import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Sparkline } from "@/components/links/stats/sparkline";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
-import { LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
+import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
@@ -20,7 +20,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
     case "section-daily":
       return <DailyChart data={data.dailyClicks ?? []} compact />;
     case "section-hourly":
-      return <LazyHourChart data={data.hourClicks ?? []} compact />;
+      return <HourChart data={data.hourClicks ?? []} compact />;
     case "section-sources":
       return (
         <BreakdownList

@@ -1666,13 +1666,8 @@
       "settings": "Cài đặt"
     },
     "live": {
-      "title": "Lượt nhấp trực tiếp",
-      "connecting": "Đang kết nối…",
-      "connected": "Trực tiếp",
-      "scope": "Lượt nhấp từ khi mở màn hình · giờ trên thiết bị",
-      "reconnecting": "Mất kết nối · đang kết nối lại",
-      "example": "Ví dụ",
-      "now": "Bây giờ"
+      "now": "Bây giờ",
+      "bot": "Bot"
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
@@ -1832,16 +1827,14 @@
     },
     "section": {
       "heatmap": {
-        "title": "Bản đồ nhiệt giờ × thứ trong tuần",
-        "desc": "{tz} · đậm hơn = nhiều lượt nhấp hơn"
+        "title": "Thứ × giờ"
       },
       "daily": {
         "title": "Lượt nhấp của người hàng ngày",
         "desc": "30 ngày qua · {tz}"
       },
       "hourly": {
-        "title": "Giờ trong ngày",
-        "desc": "Phân bố 0-23"
+        "title": "Giờ trong ngày"
       },
       "device": {
         "title": "Thiết bị",
@@ -2017,7 +2010,8 @@
       "logLoadFailed": "Không tải được nhật ký lượt nhấp. Vui lòng thử lại."
     },
     "chart": {
-      "summary": "Cao nhất {date}: {count} lượt nhấp"
+      "summary": "Cao nhất {label}: {count} lượt nhấp",
+      "hour": "{hour} giờ"
     },
     "exportSummaryCsv": "CSV tóm tắt",
     "rawWindow": "{days} ngày gần nhất",
@@ -2092,9 +2086,6 @@
       "who": "Thiết bị truy cập"
     },
     "linkSettings": "Cài đặt liên kết",
-    "scope": {
-      "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
-    },
     "rangeDays": "{days} ngày",
     "moreActions": "Thao tác khác",
     "period": {

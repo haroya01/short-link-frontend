@@ -1666,13 +1666,8 @@
       "settings": "설정"
     },
     "live": {
-      "title": "실시간 클릭",
-      "connecting": "연결 중…",
-      "connected": "라이브",
-      "scope": "이 화면을 연 이후의 클릭 · 기기 시간 기준",
-      "reconnecting": "연결 끊김 · 재연결 중",
-      "example": "예시",
-      "now": "지금"
+      "now": "지금",
+      "bot": "봇"
     },
     "quality": {
       "title": "클릭 품질",
@@ -1832,16 +1827,14 @@
     },
     "section": {
       "heatmap": {
-        "title": "시간대 × 요일 히트맵",
-        "desc": "{tz} · 진할수록 클릭 많음"
+        "title": "요일 × 시간"
       },
       "daily": {
         "title": "일별 사람 클릭",
         "desc": "최근 30일 · {tz}"
       },
       "hourly": {
-        "title": "시간대",
-        "desc": "0~23시 분포"
+        "title": "시간대"
       },
       "device": {
         "title": "디바이스",
@@ -2017,7 +2010,8 @@
       "logLoadFailed": "클릭 로그를 불러오지 못했어요. 다시 시도해 주세요."
     },
     "chart": {
-      "summary": "최고 {date} {count}회"
+      "summary": "최고 {label} {count}회",
+      "hour": "{hour}시"
     },
     "exportSummaryCsv": "요약 CSV",
     "rawWindow": "최근 {days}일",
@@ -2092,9 +2086,6 @@
       "who": "방문 환경"
     },
     "linkSettings": "링크 설정",
-    "scope": {
-      "daily": "최근 {days}일 사람 클릭 · {tz}"
-    },
     "rangeDays": "{days}일",
     "moreActions": "작업 더 보기",
     "period": {

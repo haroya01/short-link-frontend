@@ -1666,13 +1666,8 @@
       "settings": "Settings"
     },
     "live": {
-      "title": "Live clicks",
-      "connecting": "Connecting…",
-      "connected": "Live",
-      "scope": "Clicks since opening this view · device local time",
-      "reconnecting": "Disconnected · reconnecting",
-      "example": "Sample",
-      "now": "Now"
+      "now": "Now",
+      "bot": "Bot"
     },
     "quality": {
       "title": "Click quality",
@@ -1832,16 +1827,14 @@
     },
     "section": {
       "heatmap": {
-        "title": "Hour × day-of-week heatmap",
-        "desc": "{tz} · darker = more clicks"
+        "title": "Weekday × hour"
       },
       "daily": {
         "title": "Daily human clicks",
         "desc": "Last 30 days · {tz}"
       },
       "hourly": {
-        "title": "Hour of day",
-        "desc": "0-23 distribution"
+        "title": "Hour of day"
       },
       "device": {
         "title": "Device",
@@ -2017,7 +2010,8 @@
       "logLoadFailed": "Could not load the click log. Please try again."
     },
     "chart": {
-      "summary": "Peak: {count} on {date}"
+      "summary": "Peak: {count} at {label}",
+      "hour": "{hour}:00"
     },
     "exportSummaryCsv": "Summary CSV",
     "rawWindow": "Last {days} days",
@@ -2092,9 +2086,6 @@
       "who": "Devices"
     },
     "linkSettings": "Link settings",
-    "scope": {
-      "daily": "Human clicks in the last {days} days · {tz}"
-    },
     "rangeDays": "{days} days",
     "moreActions": "More actions",
     "period": {

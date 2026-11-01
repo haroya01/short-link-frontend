@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import type { ProfileStats } from "@/types";
 import { StatsCards } from "@/components/links/stats/cards";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
-import { LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
+import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { CountryTable } from "@/components/links/stats/country-table";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
@@ -37,7 +37,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
           <DailyChart data={data.dailyVisits} />
         </Section>
         <Section id="section-hourly" title={t("hourly.title")} description={t("hourly.desc")}>
-          <LazyHourChart data={data.hourVisits} />
+          <HourChart data={data.hourVisits} />
         </Section>
       </div>
 

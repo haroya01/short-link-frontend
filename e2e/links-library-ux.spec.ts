@@ -29,7 +29,8 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
     await expect(page.getByRole("tabpanel")).toContainText("클릭 품질");
     await tabs.getByRole("tab", { name: "클릭 추이" }).click();
     await page.getByRole("button", { name: "7일", exact: true }).click();
-    await expect(page.locator("#section-daily")).toContainText("최근 7일 사람 클릭");
+    await expect(page.getByRole("button", { name: "7일", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#section-daily [data-count]")).toHaveCount(7);
     await expect(tabs.getByRole("tab", { name: "방문 환경" })).toBeVisible();
     await tabs.getByRole("tab", { name: "개요", exact: true }).click();
     const more = page.getByRole("button", { name: /변화 \d개 더 보기/ });
