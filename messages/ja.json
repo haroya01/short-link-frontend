@@ -1282,7 +1282,10 @@
     "profileCtaDesc": "公開プロフィールのリンクブロックに配置",
     "anonymousExpiryInline": "24 時間で失効",
     "anonymousExpiryAt": "{when} 失効",
-    "anonymousExpirySignup": "ログインして統計を保存"
+    "anonymousExpirySignup": "ログインして統計を保存",
+    "liveWaiting": "最初のクリックを待っています",
+    "liveCount": "クリック {count}",
+    "liveBots": "ボット {count}"
   },
   "login": {
     "title": "ログイン",

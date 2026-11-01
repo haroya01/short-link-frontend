@@ -7,6 +7,7 @@ import { ShareButton } from "@/components/common/share-button";
 import { QrButton } from "@/components/links/qr/button";
 import { Link } from "@/i18n/navigation";
 import { SignInLink } from "@/components/auth/sign-in-link";
+import { LiveClicks } from "@/components/links/shorten/live-clicks";
 import { truncateMiddle } from "@/lib/utils";
 import type { CreateLinkResponse } from "@/types";
 
@@ -105,6 +106,12 @@ export function ResultLine({
           </span>
         )}
       </div>
+
+      {!authenticated && result.claimToken && (
+        <div className="result-beat mt-3" style={{ ["--beat" as string]: 2 } as React.CSSProperties}>
+          <LiveClicks shortCode={result.shortCode} claimToken={result.claimToken} />
+        </div>
+      )}
     </div>
   );
 }

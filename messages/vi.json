@@ -1282,7 +1282,10 @@
     "profileCtaDesc": "Đưa nó nổi bật trên hồ sơ công khai của bạn",
     "anonymousExpiryInline": "Hết hạn sau 24 giờ",
     "anonymousExpiryAt": "Hết hạn {when}",
-    "anonymousExpirySignup": "Đăng nhập để giữ thống kê của bạn"
+    "anonymousExpirySignup": "Đăng nhập để giữ thống kê của bạn",
+    "liveWaiting": "Đang chờ lượt nhấp đầu tiên",
+    "liveCount": "{count} lượt nhấp",
+    "liveBots": "{count} bot"
   },
   "login": {
     "title": "Đăng nhập",
