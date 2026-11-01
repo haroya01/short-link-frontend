@@ -193,7 +193,7 @@ export function CollectionDetailView({
 
   if (state === "missing" || !detail) {
     return (
-      <p className="py-24 text-center text-[14px] text-slate-500 dark:text-slate-400">
+      <p className="py-8 text-[14px] text-slate-500 dark:text-slate-400">
         {t("notFound")}
       </p>
     );
@@ -247,7 +247,7 @@ export function CollectionDetailView({
           )}
 
           {detail.connections.length === 0 ? (
-            <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">
+            <p className="py-8 text-[14px] text-slate-500 dark:text-slate-400">
               {t("empty")}
             </p>
           ) : ordered ? (

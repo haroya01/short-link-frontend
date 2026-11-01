@@ -1282,7 +1282,10 @@
     "profileCtaDesc": "Feature it on your public profile",
     "anonymousExpiryInline": "Expires in 24h",
     "anonymousExpiryAt": "Expires {when}",
-    "anonymousExpirySignup": "Sign in to keep your stats"
+    "anonymousExpirySignup": "Sign in to keep your stats",
+    "liveWaiting": "Waiting for the first click",
+    "liveCount": "{count, plural, one {# click} other {# clicks}}",
+    "liveBots": "{count, plural, one {# bot} other {# bots}}"
   },
   "login": {
     "title": "Sign in",
@@ -2476,7 +2479,7 @@
     }
   },
   "common": {
-    "errorTitle": "Something went wrong",
+    "errorTitle": "Couldn't load this",
     "errorDesc": "Please try again later.",
     "retry": "Retry",
     "loading": "Loading...",

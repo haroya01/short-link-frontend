@@ -3,11 +3,11 @@ import { mockBackend, signIn } from "./helpers/mock-backend";
 import { mockAnonymousShorten } from "./helpers/mock-shorten";
 
 test.describe("password while shortening", () => {
-  test("anonymous visitors learn that signing in lets them lock links", async ({ page }) => {
+  test("anonymous visitors get no lock button, since locking comes with signing in", async ({ page }) => {
     await mockAnonymousShorten(page);
     await page.goto("/ko");
 
-    await expect(page.getByText("로그인하면 통계를 보고 비밀번호도 걸 수 있어요", { exact: false })).toBeVisible();
+    await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "비밀번호 걸기" })).toHaveCount(0);
   });
 

@@ -1282,7 +1282,10 @@
     "profileCtaDesc": "공개 프로필 링크 블록으로 배치",
     "anonymousExpiryInline": "24시간 후 만료",
     "anonymousExpiryAt": "{when} 만료",
-    "anonymousExpirySignup": "로그인하고 통계 보관하기"
+    "anonymousExpirySignup": "로그인하고 통계 보관하기",
+    "liveWaiting": "첫 클릭을 기다리는 중",
+    "liveCount": "클릭 {count}",
+    "liveBots": "봇 {count}"
   },
   "login": {
     "title": "로그인",
@@ -2476,7 +2479,7 @@
     }
   },
   "common": {
-    "errorTitle": "문제가 발생했어요",
+    "errorTitle": "불러오지 못했어요",
     "errorDesc": "잠시 후 다시 시도해 주세요.",
     "retry": "다시 시도",
     "loading": "불러오는 중…",

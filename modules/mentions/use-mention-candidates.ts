@@ -40,6 +40,7 @@ export function useMentionCandidates(query: string | null, enabled: boolean, rem
               avatarUrl: account.avatarUrl,
               following: account.following,
               remoteId: account.id,
+              emojis: account.emojis,
             })),
         );
       });

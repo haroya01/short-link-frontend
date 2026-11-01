@@ -131,7 +131,7 @@ export default function PrintSheetPage() {
         ) : error ? (
           <ErrorState message={error} onRetry={() => window.location.reload()} />
         ) : (batches ?? []).length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
+          <div className="py-4 text-[13px] text-slate-500 dark:text-slate-400">
             {t("empty")}
           </div>
         ) : null}

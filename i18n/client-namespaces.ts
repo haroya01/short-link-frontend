@@ -16,7 +16,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   root: ["common"],
   links: [
     "auth", "cookieConsent", "footer", "home", "languageSwitcher", "loginPrompt", "nav", "qr", "recent",
-    "result", "share", "shortenForm", "stats.kpi", "stats.live",
+    "result", "share", "shortenForm",
   ],
   "links/admin": ["abuseReports", "admin", "stats"],
   "links/analytics": ["linkAnalytics"],

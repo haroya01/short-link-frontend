@@ -2,6 +2,7 @@
 
 import { Avatar } from "@/modules/blog/components/avatar";
 import { cn } from "@/lib/utils";
+import { EmojiText } from "@/modules/notes/components/emoji-text";
 import type { MentionCandidate } from "./api/mention-candidates";
 
 export function MentionSuggestions({
@@ -48,7 +49,7 @@ export function MentionSuggestions({
             <Avatar src={c.avatarUrl} name={c.displayName || c.username} handle={c.username} size="sm" />
             <span className="min-w-0">
               <span className="block truncate text-[14px] font-medium text-slate-900 dark:text-slate-100">
-                {c.displayName ?? c.username}
+                <EmojiText text={c.displayName ?? c.username} emojis={c.emojis} />
               </span>
               <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">@{c.username}</span>
             </span>

@@ -19,6 +19,7 @@ import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { blogPath } from "@/lib/host";
 import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
 import type { RemoteAccount } from "@/modules/notes/api/notes";
+import { EmojiText } from "@/modules/notes/components/emoji-text";
 import { RemoteFollowButton } from "@/modules/notes/components/remote-account";
 import {
   followEntryKey,
@@ -152,7 +153,7 @@ export function FollowListDialog({
 
         <div className="flex-1 overflow-y-auto px-2 py-2">
           {empty && (
-            <p className="px-3 py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
+            <p className="px-3 py-6 text-[14px] text-slate-500 dark:text-slate-400">
               {tab === "followers" ? t("followersEmpty") : t("followingEmpty")}
             </p>
           )}
@@ -283,7 +284,7 @@ function RemoteFollowRow({
           </span>
           {subtitle && (
             <span lang={contentLang(subtitle)} className="truncate text-[12px] text-slate-500 dark:text-slate-400">
-              {subtitle}
+              <EmojiText text={subtitle} emojis={account.emojis} />
             </span>
           )}
         </span>

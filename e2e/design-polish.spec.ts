@@ -9,7 +9,7 @@ async function visualLineCount(locator: Locator) {
 }
 
 test.describe("design polish guards", () => {
-  test("mobile hero headline and subhead stay within two lines in every locale", async ({
+  test("mobile hero headline stays on one line in every locale, with nothing stacked under it", async ({
     page,
   }) => {
     for (const viewport of [
@@ -21,16 +21,13 @@ test.describe("design polish guards", () => {
       for (const locale of ["ko", "en", "ja"]) {
         await page.goto(`/${locale}`);
         await page.waitForFunction(() => document.querySelector("link[data-pretendard]")?.getAttribute("media") === "all");
-        await page.evaluate(() => document.fonts.load('700 40px "Pretendard Variable"', "단축은 한 줄 클릭은 언제, 어디서"));
+        await page.evaluate(() => document.fonts.load('700 40px "Pretendard Variable"', "단축은 한 줄"));
         await page.evaluate(() => document.fonts.ready);
 
         const heading = page.getByTestId("home-hero-heading");
-        const subhead = page.getByTestId("home-hero-subhead");
         await expect(heading).toBeVisible();
-        await expect(subhead).toBeVisible();
-
-        expect(await visualLineCount(heading)).toBeLessThanOrEqual(2);
-        expect(await visualLineCount(subhead)).toBeLessThanOrEqual(2);
+        expect(await visualLineCount(heading)).toBe(1);
+        await expect(page.getByTestId("home-hero-subhead")).toHaveCount(0);
       }
     }
   });

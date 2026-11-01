@@ -9,6 +9,7 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { VariantImage } from "@/components/common/variant-image";
+import { EmojiText } from "./emoji-text";
 
 export function QuotedNoteCard({
   note,
@@ -38,7 +39,7 @@ export function QuotedNoteCard({
             lang={contentLang(note.contentWarning)}
             className="mt-1 line-clamp-2 break-words text-[15px] leading-[1.45] text-slate-900 dark:text-slate-100"
           >
-            {note.contentWarning}
+            <EmojiText text={note.contentWarning} emojis={note.emojis} />
           </span>
           {note.body && (
             <span
@@ -55,7 +56,7 @@ export function QuotedNoteCard({
             lang={contentLang(note.body)}
             className={`mt-1 whitespace-pre-line break-words text-[15px] leading-[1.45] text-slate-800 dark:text-slate-200${full ? "" : " line-clamp-4"}`}
           >
-            {note.body}
+            <EmojiText text={note.body} emojis={note.emojis} />
           </span>
         )
       )}

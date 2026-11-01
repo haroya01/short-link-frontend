@@ -55,7 +55,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
   }, [items, query]);
 
   if (ready && !isOwner) {
-    return <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">{t("private")}</p>;
+    return <p className="py-8 text-[14px] text-slate-500 dark:text-slate-400">{t("private")}</p>;
   }
   if (loading) {
     return (
@@ -98,7 +98,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">{t("noResults")}</p>
+        <p className="py-8 text-[14px] text-slate-500 dark:text-slate-400">{t("noResults")}</p>
       ) : (
         <ul className="flex max-w-2xl flex-col">
           {filtered.map((h) => (

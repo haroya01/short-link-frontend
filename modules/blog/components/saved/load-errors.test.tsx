@@ -39,7 +39,7 @@ afterEach(async () => {
 });
 
 const retry = () =>
-  Array.from(host.querySelectorAll("button")).find((b) => b.textContent === "savedLibrary.retry")!;
+  Array.from(host.querySelectorAll("button")).find((b) => b.textContent === "common.retry")!;
 
 describe("library load failures", () => {
   it("bookmarks: a failed load says so with a retry instead of 'nothing saved yet'", async () => {
