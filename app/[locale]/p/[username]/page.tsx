@@ -43,13 +43,13 @@ export async function generateMetadata({
     title: `@${author.username}`,
     description: author.bio ?? undefined,
     alternates: {
-      canonical: `${origin}/`,
+      canonical: origin,
       types: { "application/rss+xml": `${origin}/feed` },
     },
     openGraph: {
       title: `@${author.username}`,
       description: author.bio ?? undefined,
-      url: `${origin}/`,
+      url: origin,
       type: "profile",
     },
     // Without an explicit twitter card the author home inherits the generic site card on X/Slack.
@@ -91,12 +91,12 @@ export default async function PublicProfileHomepage({
   const profileJsonLd = {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
-    url: `${origin}/`,
+    url: origin,
     mainEntity: {
       "@type": "Person",
       name: author.username,
       alternateName: `@${author.username}`,
-      url: `${origin}/`,
+      url: origin,
       ...(author.bio ? { description: author.bio } : {}),
       ...(author.avatarUrl ? { image: author.avatarUrl } : {}),
     },

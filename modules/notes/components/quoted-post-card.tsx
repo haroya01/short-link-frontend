@@ -36,14 +36,14 @@ export function QuotedPostCard({
         </span>
         <span
           lang={contentLang(post.title, detail.languageTag)}
-          className="mt-0.5 line-clamp-2 block text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100"
+          className="mt-0.5 line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100"
         >
           {post.title}
         </span>
         {detail.excerpt && (
           <span
             lang={contentLang(detail.excerpt, detail.languageTag)}
-            className="mt-1 line-clamp-2 block text-[14px] leading-snug text-slate-600 dark:text-slate-400"
+            className="mt-1 line-clamp-2 text-[14px] leading-snug text-slate-600 dark:text-slate-400"
           >
             {detail.excerpt}
           </span>

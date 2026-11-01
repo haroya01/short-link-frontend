@@ -93,14 +93,14 @@ export function HomePostRow({ post, context }: { post: PostRowItem; context?: Re
                 <span className="block min-w-0">
                   <span
                     lang={contentLang(post.title, post.languageTag)}
-                    className="line-clamp-3 block text-card-title-sm font-bold leading-[1.3] tracking-tight text-slate-900 dark:text-slate-100"
+                    className="line-clamp-3 text-card-title-sm font-bold leading-[1.3] tracking-tight text-slate-900 dark:text-slate-100"
                   >
                     {post.title}
                   </span>
                   {post.excerpt && (
                     <span
                       lang={contentLang(post.excerpt, post.languageTag)}
-                      className="mt-1 line-clamp-2 block text-[14px] leading-snug text-slate-600 dark:text-slate-400"
+                      className="mt-1 line-clamp-2 text-[14px] leading-snug text-slate-600 dark:text-slate-400"
                     >
                       {post.excerpt}
                     </span>
