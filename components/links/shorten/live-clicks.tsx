@@ -69,8 +69,10 @@ function LiveLine({
         <span>{t("liveWaiting")}</span>
       ) : (
         <>
-          <span className="font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-            {t("liveCount", { count: people })}
+          <span className="inline-flex overflow-hidden">
+            <span key={people} className="count-roll font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+              {t("liveCount", { count: people })}
+            </span>
           </span>
           {bots > 0 && <span className="tabular-nums">{t("liveBots", { count: bots })}</span>}
           {detail && (

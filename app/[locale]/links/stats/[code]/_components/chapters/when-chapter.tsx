@@ -3,15 +3,10 @@
 import { useTranslations } from "next-intl";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
-import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
-import { LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
-import { Reveal } from "@/components/common/reveal";
-import { Section } from "@/components/common/section";
-import { cn } from "@/lib/utils";
+import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import type { LinkStats } from "@/types";
-
-export type RangeDays = 7 | 30;
+import { HEADING, RangeSwitch, type RangeDays } from "../section-parts";
 
 export function WhenChapter({
   data,
@@ -30,63 +25,38 @@ export function WhenChapter({
 }) {
   const t = useTranslations("stats");
   return (
-    <div id="chapter-when" className="scroll-mt-28 space-y-4">
-      <div id="section-live">
-        {demo ? (
-          <LiveClickFeedDemo />
-        ) : (
-          <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />
-        )}
+    <div id="chapter-when" className="scroll-mt-28">
+      <div id="section-live" className="scroll-mt-28">
+        {!demo && <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />}
       </div>
-      <Reveal>
-        <Section
-          id="section-heatmap"
-          title={t("section.heatmap.title")}
-          description={t("section.heatmap.desc", { tz: data.timezone })}
-        >
+      <section id="section-daily" aria-labelledby="when-daily" className="scroll-mt-28">
+        <div className="flex items-center justify-between gap-3">
+          <h2 id="when-daily" className={HEADING}>
+            {t("section.daily.title")}
+          </h2>
+          <RangeSwitch range={range} onRange={onRange} />
+        </div>
+        <div className="mt-3">
+          <DailyChart data={dailyClicks ?? data.dailyClicks} compact />
+        </div>
+      </section>
+      <section id="section-hourly" aria-labelledby="when-hourly" className="mt-10 scroll-mt-28">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 id="when-hourly" className={HEADING}>
+            {t("section.hourly.title")}
+          </h2>
+          <span className="text-[12px] text-slate-500 dark:text-slate-400">{data.timezone}</span>
+        </div>
+        <div className="mt-3">
+          <HourChart data={data.hourClicks} compact />
+        </div>
+        <h3 id="section-heatmap" className="mt-8 scroll-mt-28 text-[14px] font-semibold text-slate-900 dark:text-slate-100">
+          {t("section.heatmap.title")}
+        </h3>
+        <div className="mt-3">
           <Heatmap data={data.heatmap} />
-        </Section>
-      </Reveal>
-      {/* 7D/30D 만: API 에 기간 파라미터가 없다. */}
-      <div className="flex justify-end">
-        <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
-          {([7, 30] as const).map((d) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => onRange(d)}
-              aria-pressed={range === d}
-              className={cn(
-                "min-h-9 whitespace-nowrap rounded-md px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
-                range === d
-                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
-              )}
-            >
-              {t("rangeDays", { days: d })}
-            </button>
-          ))}
         </div>
-      </div>
-      <Reveal delay={60}>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <Section
-            id="section-daily"
-            title={t("section.daily.title")}
-            description={t("scope.daily", { days: range, tz: data.timezone })}
-            className="lg:col-span-2"
-          >
-            <DailyChart data={dailyClicks ?? data.dailyClicks} />
-          </Section>
-          <Section
-            id="section-hourly"
-            title={t("section.hourly.title")}
-            description={t("section.hourly.desc")}
-          >
-            <LazyHourChart data={data.hourClicks} />
-          </Section>
-        </div>
-      </Reveal>
+      </section>
     </div>
   );
 }

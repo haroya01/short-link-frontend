@@ -20,7 +20,7 @@ import { Section } from "@/components/common/section";
 import { ByBatchTable, GroupChart, KpiRow, RecommendationCard } from "@/components/links/campaigns/stats-cards";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { DailyChart as DailyTrendChart } from "@/components/links/stats/charts/daily-chart";
-import { LazyHourChart as HourRhythmChart } from "@/components/links/stats/charts/lazy-charts";
+import { HourChart as HourRhythmChart } from "@/components/links/stats/charts/hour-chart";
 import type { HeatmapCell } from "@/types";
 import type {
   CampaignDetail,
@@ -281,7 +281,6 @@ function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
 
 function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
   const t = useTranslations("campaignApp.campaignStats");
-  // Hour-of-day is a continuous rhythm → the shared curve (it fills the empty 0–23 hours itself).
   const series = useMemo(() => data.map((d) => ({ hour: d.hour, count: d.clicks })), [data]);
   return (
     <Section title={t("hourly.title")} description={t("hourly.description")}>

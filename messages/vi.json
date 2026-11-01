@@ -1222,14 +1222,35 @@
     "recentLogin": "Đăng nhập",
     "abilities": {
       "title": "Mỗi liên kết có thể làm gì",
-      "password": { "line": "Chỉ người biết mật khẩu mới mở được", "name": "Mật khẩu" },
-      "schedule": { "line": "Mở vào giờ bạn đặt, đóng vào ngày bạn chọn", "name": "Hẹn giờ · Hết hạn" },
-      "split": { "line": "Một liên kết chia sang hai trang", "name": "A/B" },
-      "countries": { "line": "Gửi mỗi quốc gia đến trang riêng, hoặc chặn hẳn", "name": "Quốc gia" },
-      "openOutside": { "line": "Mở bằng Safari hoặc Chrome dù được nhấp trong KakaoTalk hay LINE", "name": "Mở ngoài ứng dụng" },
-      "card": { "line": "Tự chọn thẻ hiện ra khi dán vào cuộc trò chuyện", "name": "Thẻ xem trước" },
-      "bots": { "line": "Chỉ đếm lượt nhấp của người thật", "name": "Loại bỏ bot" },
-      "qr": { "line": "Biết lượt quét QR đến từ tờ rơi nào", "name": "QR" }
+      "access": {
+        "line": "Quyết định ai được mở, và khi nào",
+        "items": {
+          "password": "Mật khẩu",
+          "block": "Chặn theo quốc gia",
+          "schedule": "Hẹn giờ mở",
+          "expiry": "Hết hạn"
+        }
+      },
+      "route": {
+        "line": "Quyết định đưa đến đâu, và hiện ra thế nào",
+        "items": {
+          "split": "A/B",
+          "targets": "Trang theo quốc gia và thiết bị",
+          "openOutside": "Mở ngoài ứng dụng",
+          "card": "Thẻ xem trước"
+        }
+      },
+      "watch": {
+        "line": "Xem ai đã nhấp",
+        "items": {
+          "live": "Trực tiếp",
+          "bots": "Loại bỏ bot",
+          "qr": "QR theo tờ rơi"
+        }
+      },
+      "scene": {
+        "flyer": "QR · Tờ rơi A"
+      }
     }
   },
   "showcase": {
@@ -1645,13 +1666,8 @@
       "settings": "Cài đặt"
     },
     "live": {
-      "title": "Lượt nhấp trực tiếp",
-      "connecting": "Đang kết nối…",
-      "connected": "Trực tiếp",
-      "scope": "Lượt nhấp từ khi mở màn hình · giờ trên thiết bị",
-      "reconnecting": "Mất kết nối · đang kết nối lại",
-      "example": "Ví dụ",
-      "now": "Bây giờ"
+      "now": "Bây giờ",
+      "bot": "Bot"
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
@@ -1811,16 +1827,14 @@
     },
     "section": {
       "heatmap": {
-        "title": "Bản đồ nhiệt giờ × thứ trong tuần",
-        "desc": "{tz} · đậm hơn = nhiều lượt nhấp hơn"
+        "title": "Thứ × giờ"
       },
       "daily": {
         "title": "Lượt nhấp của người hàng ngày",
         "desc": "30 ngày qua · {tz}"
       },
       "hourly": {
-        "title": "Giờ trong ngày",
-        "desc": "Phân bố 0-23"
+        "title": "Giờ trong ngày"
       },
       "device": {
         "title": "Thiết bị",
@@ -1996,7 +2010,8 @@
       "logLoadFailed": "Không tải được nhật ký lượt nhấp. Vui lòng thử lại."
     },
     "chart": {
-      "summary": "Cao nhất {date}: {count} lượt nhấp"
+      "summary": "Cao nhất {label}: {count} lượt nhấp",
+      "hour": "{hour} giờ"
     },
     "exportSummaryCsv": "CSV tóm tắt",
     "rawWindow": "{days} ngày gần nhất",
@@ -2071,9 +2086,6 @@
       "who": "Thiết bị truy cập"
     },
     "linkSettings": "Cài đặt liên kết",
-    "scope": {
-      "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
-    },
     "rangeDays": "{days} ngày",
     "moreActions": "Thao tác khác",
     "period": {
@@ -2678,7 +2690,21 @@
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
     "github": "GitHub",
-    "report": "Báo cáo liên kết"
+    "report": "Báo cáo liên kết",
+    "useTitle": "Cách dùng",
+    "learnTitle": "Tìm hiểu",
+    "learn": "Hướng dẫn cho người mới",
+    "qrCampaigns": "Chiến dịch QR",
+    "use": {
+      "freeUrlShortener": "Rút gọn URL miễn phí",
+      "bitlyAlternative": "Thay thế Bitly",
+      "linkInBio": "Link in bio",
+      "instagramProfileLink": "Liên kết hồ sơ Instagram",
+      "kakaotalkLinkPreview": "Xem trước KakaoTalk",
+      "posterQrCode": "Mã QR cho áp phích",
+      "flyerQrTracking": "Theo dõi QR tờ rơi",
+      "qrCampaignAnalytics": "Phân tích chiến dịch QR"
+    }
   },
   "about": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",

@@ -15,232 +15,171 @@ const MOBILE_BUCKET_STARTS = Array.from(
   (_, i) => i * MOBILE_BUCKET_HOURS,
 );
 
-type Hover = { day: string; hour: number; count: number; span: number };
-type Selected = Hover;
+const RAMP = [
+  "bg-slate-50 ring-1 ring-inset ring-slate-200 dark:bg-slate-900 dark:ring-slate-800",
+  "bg-slate-200 dark:bg-slate-800",
+  "bg-slate-300 dark:bg-slate-700",
+  "bg-slate-400 dark:bg-slate-600",
+  "bg-slate-500 dark:bg-slate-500",
+] as const;
+
+type Cell = { day: string; hour: number; count: number; span: number };
+
+function same(a: Cell | null, day: string, hour: number, span: number) {
+  return a !== null && a.day === day && a.hour === hour && a.span === span;
+}
+
+function rampStep(count: number, scale: number): number {
+  if (count <= 0 || scale <= 0) return 0;
+  return Math.min(4, Math.ceil((count / scale) * 4));
+}
+
+function hottest(grid: Record<string, number[]>, starts: number[], span: number): Cell | null {
+  let best: Cell | null = null;
+  for (const day of DAYS) {
+    for (let idx = 0; idx < starts.length; idx += 1) {
+      const count = grid[day]?.[idx] ?? 0;
+      if (count > (best?.count ?? 0)) best = { day, hour: starts[idx], count, span };
+    }
+  }
+  return best;
+}
 
 function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
   const t = useTranslations("stats.heatmap");
   const tDay = useTranslations("stats.weekday");
   const tShared = useTranslations("stats");
-  const [hover, setHover] = useState<Hover | null>(null);
-  // Click → persistent selection (until user clicks the same cell again or close button).
-  // hover is independent: hover updates on mouse move / focus, selection updates on click only.
-  const [selected, setSelected] = useState<Selected | null>(null);
+  const [hover, setHover] = useState<Cell | null>(null);
+  const [selected, setSelected] = useState<Cell | null>(null);
 
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{tShared("noData")}</p>;
+    return <p className="py-6 text-[13px] text-slate-500 dark:text-slate-400">{tShared("noData")}</p>;
   }
 
-  const grid: Record<string, Record<number, number>> = {};
+  const hourly: Record<string, number[]> = {};
   let max = 0;
   let total = 0;
-  for (const d of DAYS) grid[d] = {};
+  for (const d of DAYS) hourly[d] = Array.from({ length: 24 }, () => 0);
   for (const cell of data) {
-    if (!grid[cell.dayOfWeek]) grid[cell.dayOfWeek] = {};
-    grid[cell.dayOfWeek][cell.hour] = cell.count;
+    if (!hourly[cell.dayOfWeek]) hourly[cell.dayOfWeek] = Array.from({ length: 24 }, () => 0);
+    hourly[cell.dayOfWeek][cell.hour] = cell.count;
     if (cell.count > max) max = cell.count;
     total += cell.count;
   }
 
-  const mobileGrid: Record<string, number[]> = {};
-  let mobileMax = 0;
+  const buckets: Record<string, number[]> = {};
+  let bucketMax = 0;
   for (const day of DAYS) {
-    const buckets: number[] = [];
-    for (const start of MOBILE_BUCKET_STARTS) {
+    buckets[day] = MOBILE_BUCKET_STARTS.map((start) => {
       let sum = 0;
-      for (let h = start; h < start + MOBILE_BUCKET_HOURS; h += 1) {
-        sum += grid[day]?.[h] ?? 0;
-      }
-      buckets.push(sum);
-      if (sum > mobileMax) mobileMax = sum;
-    }
-    mobileGrid[day] = buckets;
-  }
-
-  function toggleSelect(next: Selected) {
-    setSelected((prev) => {
-      if (
-        prev &&
-        prev.day === next.day &&
-        prev.hour === next.hour &&
-        prev.span === next.span
-      ) {
-        return null;
-      }
-      return next;
+      for (let h = start; h < start + MOBILE_BUCKET_HOURS; h += 1) sum += hourly[day]?.[h] ?? 0;
+      if (sum > bucketMax) bucketMax = sum;
+      return sum;
     });
   }
 
-  function isSelected(day: string, hour: number, span: number): boolean {
+  const hours = Array.from({ length: 24 }, (_, h) => h);
+  const hotHour = hottest(hourly, hours, 1);
+  const hotBucket = hottest(buckets, MOBILE_BUCKET_STARTS, MOBILE_BUCKET_HOURS);
+  const pointed = selected ?? (hover && hover.count > 0 ? hover : null);
+  const activeHour = pointed?.span === 1 ? pointed : pointed ? null : hotHour;
+  const activeBucket = pointed?.span === MOBILE_BUCKET_HOURS ? pointed : pointed ? null : hotBucket;
+
+  function toggleSelect(next: Cell) {
+    setSelected((prev) => (same(prev, next.day, next.hour, next.span) ? null : next));
+  }
+
+  function cellButton(day: string, hour: number, count: number, span: number, scale: number, active: Cell | null) {
+    const isActive = same(active, day, hour, span);
+    const label =
+      span === 1
+        ? t("tooltip", { day: tDay(day), hour, count })
+        : t("tooltipBucket", { day: tDay(day), from: hour, to: hour + span - 1, count });
     return (
-      selected !== null &&
-      selected.day === day &&
-      selected.hour === hour &&
-      selected.span === span
+      <button
+        key={`${day}-${span}-${hour}`}
+        type="button"
+        tabIndex={count > 0 ? 0 : -1}
+        data-active={isActive || undefined}
+        onMouseEnter={() => setHover({ day, hour, count, span })}
+        onMouseLeave={() => setHover(null)}
+        onFocus={() => setHover({ day, hour, count, span })}
+        onBlur={() => setHover(null)}
+        onClick={() => toggleSelect({ day, hour, count, span })}
+        aria-label={label}
+        aria-pressed={same(selected, day, hour, span)}
+        className={cn(
+          span === 1 ? "h-6" : "h-7",
+          "rounded-md transition-[background-color] duration-150 ease-[var(--ease)]",
+          isActive ? "bg-accent-600" : RAMP[rampStep(count, scale)],
+        )}
+      />
     );
   }
 
   return (
-    <div>
+    <div data-testid="heatmap">
       <div className="hidden md:block">
-        {/* xl 2열 그리드의 카드 내폭(~590px)보다 좁게 — 640 이면 카드 안에서 우측 시간대(21~23시)가
-            스크롤 뒤로 숨어 잘린 것처럼 보인다. */}
         <div className="overflow-x-auto">
           <div className="min-w-[560px]">
-            <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
+            <div data-testid="heatmap-hours" className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
               <div className="h-6" />
-              {Array.from({ length: 24 }, (_, h) => (
+              {hours.map((h) => (
                 <div
                   key={h}
                   className={cn(
                     "text-center tabular-nums text-[10px]",
-                    h % 6 === 0 ? "text-slate-700 dark:text-slate-300 font-medium dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
+                    h % 6 === 0 ? "font-medium text-slate-700 dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                   )}
                   style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
                 >
                   {h}
                 </div>
               ))}
-              {DAYS.map((day) => {
-                const isWeekend = day === "SATURDAY" || day === "SUNDAY";
-                return (
-                  <Fragment key={day}>
-                    <div
-                      className={cn(
-                        "flex h-6 items-center justify-end pr-2 text-[11px]",
-                        isWeekend ? "font-semibold text-slate-700 dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
-                      )}
-                    >
-                      {tDay(day)}
-                    </div>
-                    {Array.from({ length: 24 }, (_, h) => {
-                      const count = grid[day]?.[h] ?? 0;
-                      const isHover =
-                        hover && hover.day === day && hover.hour === h && hover.span === 1;
-                      const isSel = isSelected(day, h, 1);
-                      return (
-                        <button
-                          key={`${day}-${h}`}
-                          type="button"
-                          tabIndex={count > 0 ? 0 : -1}
-                          onMouseEnter={() => setHover({ day, hour: h, count, span: 1 })}
-                          onMouseLeave={() => setHover(null)}
-                          onFocus={() => setHover({ day, hour: h, count, span: 1 })}
-                          onBlur={() => setHover(null)}
-                          onClick={() => toggleSelect({ day, hour: h, count, span: 1 })}
-                          aria-label={t("tooltip", { day: tDay(day), hour: h, count })}
-                          aria-pressed={isSel}
-                          className={cn(
-                            "h-6 rounded-md transition-[transform,box-shadow,background-color] duration-150 ease-[var(--ease)]",
-                            colorFor(count, max),
-                            count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
-                            isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1 dark:ring-accent-400 dark:ring-offset-slate-950",
-                            isSel && "scale-110 ring-2 ring-accent-700 ring-offset-1 dark:ring-accent-400 dark:ring-offset-slate-950",
-                          )}
-                        />
-                      );
-                    })}
-                  </Fragment>
-                );
-              })}
+              {DAYS.map((day) => (
+                <Fragment key={day}>
+                  <DayLabel day={day} label={tDay(day)} className="h-6" />
+                  {hours.map((h) => cellButton(day, h, hourly[day]?.[h] ?? 0, 1, max, activeHour))}
+                </Fragment>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       <div className="block md:hidden">
-        <div className="grid grid-cols-[36px_repeat(6,minmax(0,1fr))] gap-px">
+        <div data-testid="heatmap-buckets" className="grid grid-cols-[36px_repeat(6,minmax(0,1fr))] gap-px">
           <div className="h-5" />
           {MOBILE_BUCKET_STARTS.map((h) => (
-            <div
-              key={h}
-              className="text-center tabular-nums text-[10px] font-medium text-slate-700 dark:text-slate-200"
-            >
+            <div key={h} className="text-center tabular-nums text-[10px] font-medium text-slate-700 dark:text-slate-200">
               {h}
             </div>
           ))}
-          {DAYS.map((day) => {
-            const isWeekend = day === "SATURDAY" || day === "SUNDAY";
-            return (
-              <Fragment key={day}>
-                <div
-                  className={cn(
-                    "flex h-7 items-center justify-end pr-2 text-[11px]",
-                    isWeekend ? "font-semibold text-slate-700 dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
-                  )}
-                >
-                  {tDay(day)}
-                </div>
-                {MOBILE_BUCKET_STARTS.map((startHour, idx) => {
-                  const count = mobileGrid[day]?.[idx] ?? 0;
-                  const isHover =
-                    hover &&
-                    hover.day === day &&
-                    hover.hour === startHour &&
-                    hover.span === MOBILE_BUCKET_HOURS;
-                  const isSel = isSelected(day, startHour, MOBILE_BUCKET_HOURS);
-                  return (
-                    <button
-                      key={`${day}-m-${startHour}`}
-                      type="button"
-                      tabIndex={count > 0 ? 0 : -1}
-                      onMouseEnter={() =>
-                        setHover({ day, hour: startHour, count, span: MOBILE_BUCKET_HOURS })
-                      }
-                      onMouseLeave={() => setHover(null)}
-                      onFocus={() =>
-                        setHover({ day, hour: startHour, count, span: MOBILE_BUCKET_HOURS })
-                      }
-                      onBlur={() => setHover(null)}
-                      onClick={() =>
-                        toggleSelect({
-                          day,
-                          hour: startHour,
-                          count,
-                          span: MOBILE_BUCKET_HOURS,
-                        })
-                      }
-                      aria-label={t("tooltipBucket", {
-                        day: tDay(day),
-                        from: startHour,
-                        to: startHour + MOBILE_BUCKET_HOURS - 1,
-                        count,
-                      })}
-                      aria-pressed={isSel}
-                      className={cn(
-                        "h-7 rounded-md transition-[transform,box-shadow,background-color] duration-150 ease-[var(--ease)]",
-                        colorFor(count, mobileMax),
-                        count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
-                        isHover && "scale-105 ring-2 ring-accent-700 ring-offset-1",
-                        isSel && "scale-105 ring-2 ring-accent-700 ring-offset-1",
-                      )}
-                    />
-                  );
-                })}
-              </Fragment>
-            );
-          })}
+          {DAYS.map((day) => (
+            <Fragment key={day}>
+              <DayLabel day={day} label={tDay(day)} className="h-7" />
+              {MOBILE_BUCKET_STARTS.map((start, idx) =>
+                cellButton(day, start, buckets[day]?.[idx] ?? 0, MOBILE_BUCKET_HOURS, bucketMax, activeBucket),
+              )}
+            </Fragment>
+          ))}
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="mt-3 flex flex-col items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-h-[1rem] min-w-0 items-center gap-2">
-          <ActiveCellLabel
-            active={selected ?? (hover && hover.count > 0 ? hover : null)}
-            total={total}
-            isSelected={selected !== null}
-            tDay={tDay}
-            t={t}
-            onClear={() => setSelected(null)}
-          />
+          <span className="contents md:hidden">
+            <ActiveCellLabel active={activeBucket} total={total} pinned={selected !== null} tDay={tDay} t={t} onClear={() => setSelected(null)} />
+          </span>
+          <span className="hidden md:contents">
+            <ActiveCellLabel active={activeHour} total={total} pinned={selected !== null} tDay={tDay} t={t} onClear={() => setSelected(null)} />
+          </span>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div aria-hidden className="flex shrink-0 items-center gap-1.5">
           <span>{t("less")}</span>
-          <div className="h-2.5 w-2.5 rounded-sm bg-slate-50 dark:bg-slate-800/50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
-          <div className="h-2.5 w-2.5 rounded-sm bg-accent-100" />
-          <div className="h-2.5 w-2.5 rounded-sm bg-accent-300" />
-          <div className="h-2.5 w-2.5 rounded-sm bg-accent-500" />
-          <div className="h-2.5 w-2.5 rounded-sm bg-accent-700" />
+          {RAMP.map((step) => (
+            <span key={step} className={cn("h-2.5 w-2.5 rounded-sm", step)} />
+          ))}
           <span>{t("more")}</span>
         </div>
       </div>
@@ -248,29 +187,32 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
   );
 }
 
-function colorFor(count: number, scale: number): string {
-  if (count === 0) return "bg-slate-50 dark:bg-slate-800/60";
-  if (scale === 0) return "bg-slate-50 dark:bg-slate-800/60";
-  const intensity = Math.min(1, count / scale);
-  if (intensity < 0.15) return "bg-accent-50 dark:bg-accent-500/15";
-  if (intensity < 0.3) return "bg-accent-100 dark:bg-accent-500/25";
-  if (intensity < 0.5) return "bg-accent-300 dark:bg-accent-500/45";
-  if (intensity < 0.7) return "bg-accent-500 dark:bg-accent-500/70";
-  if (intensity < 0.85) return "bg-accent-600 dark:bg-accent-500/85";
-  return "bg-accent-700 dark:bg-accent-400";
+function DayLabel({ day, label, className }: { day: string; label: string; className: string }) {
+  const weekend = day === "SATURDAY" || day === "SUNDAY";
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-end pr-2 text-[11px]",
+        className,
+        weekend ? "font-semibold text-slate-700 dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
+      )}
+    >
+      {label}
+    </div>
+  );
 }
 
 function ActiveCellLabel({
   active,
   total,
-  isSelected,
+  pinned,
   tDay,
   t,
   onClear,
 }: {
-  active: Hover | Selected | null;
+  active: Cell | null;
   total: number;
-  isSelected: boolean;
+  pinned: boolean;
   tDay: (key: string) => string;
   t: (key: string, params?: Record<string, string | number>) => string;
   onClear: () => void;
@@ -281,37 +223,30 @@ function ActiveCellLabel({
   const rangeLabel =
     active.span === 1
       ? t("detailHourly", { day: dayLabel, hour: active.hour })
-      : t("detailBucket", {
-          day: dayLabel,
-          from: active.hour,
-          to: active.hour + active.span - 1,
-        });
+      : t("detailBucket", { day: dayLabel, from: active.hour, to: active.hour + active.span - 1 });
   const shareLabel = formatShare(total > 0 ? active.count / total : 0);
 
   return (
     <div
-      role={isSelected ? "status" : undefined}
-      aria-live={isSelected ? "polite" : undefined}
-      className="flex min-w-0 items-center gap-2 tabular-nums"
+      data-testid="heatmap-detail"
+      role={pinned ? "status" : undefined}
+      aria-live={pinned ? "polite" : undefined}
+      className="flex min-w-0 items-center gap-2 whitespace-nowrap tabular-nums"
     >
       <span className="truncate text-slate-700 dark:text-slate-200">{rangeLabel}</span>
       <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">
         ·
       </span>
-      <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100">
-        {t("detailClicks", { count: active.count })}
-      </span>
+      <span className="font-medium text-slate-900 dark:text-slate-100">{t("detailClicks", { count: active.count })}</span>
       {total > 0 && active.count > 0 && (
         <>
           <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">
             ·
           </span>
-          <span className="tabular-nums text-slate-500 dark:text-slate-400">
-            {t("detailShare", { share: shareLabel })}
-          </span>
+          <span className="text-slate-500 dark:text-slate-400">{t("detailShare", { share: shareLabel })}</span>
         </>
       )}
-      {isSelected && (
+      {pinned && (
         <button
           type="button"
           onClick={onClear}

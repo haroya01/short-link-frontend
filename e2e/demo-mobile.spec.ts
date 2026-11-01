@@ -6,7 +6,7 @@ import path from "node:path";
  *
  * /demo renders the dashboard's {@code /stats/[code]} surface (Header + masthead + journal +
  * detail tiles, 개요/설정 pills) against synthetic data, so the tests here focus on the dashboard
- * chrome — same Header, same pills, heatmap fills with accent cells, no horizontal overflow on
+ * chrome — same Header, same pills, heatmap fills a neutral ramp, no horizontal overflow on
  * phones. Chapter details (누가/언제/어디서) are reached via tile arrows.
  *
  * Visual drift is captured as PNG artifacts under {@code test-results/demo/<viewport>/} so
@@ -67,34 +67,15 @@ test.describe("demo page artifacts", () => {
    * /demo previews. Visual drift stays in the artifact PNGs above; these tests fail loudly
    * when the chart machinery is wired up wrong.
    */
-  test("heatmap renders accent cells (not all empty)", async ({ page }) => {
+  test("heatmap fills a neutral ramp (not all empty) with one accent cell", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "클릭 추이" }).click();
-    const cells = page.locator("button[aria-label]").filter({ hasNot: page.locator('[role="tab"]') });
-    // The dashboard chrome has a Copy + QR button on the Header — they also match
-    // button[aria-label], so the 168-cell expectation is "≥ 168", not exactly 168. Heatmap
-    // tooltip aria-label format is `{day} {hour}시, {count}회` (ko), so the "시," infix is the needle
-    // that hits every cell on /ko/demo.
-    const heatmapCells = page.locator('button[aria-label*="시,"]');
-    const total = await heatmapCells.count();
-    expect(total).toBeGreaterThanOrEqual(168);
-    const accentSelectors = [
-      "button.bg-accent-50",
-      "button.bg-accent-100",
-      "button.bg-accent-300",
-      "button.bg-accent-500",
-      "button.bg-accent-600",
-      "button.bg-accent-700",
-    ];
-    let accentCount = 0;
-    for (const sel of accentSelectors) {
-      accentCount += await page.locator(sel).count();
-    }
-    // ≥ 40 — enough to read as a filled grid, lenient enough that small data tweaks don't
-    // flake. The actual count for the seeded distribution sits around 110+.
-    expect(accentCount).toBeGreaterThanOrEqual(40);
-    expect(cells.count()).resolves.toBeGreaterThan(0);
+    const cells = page.getByTestId("heatmap-hours").locator("button");
+    await expect(cells).toHaveCount(168);
+    const filled = await page.locator('[data-testid="heatmap-hours"] button:is(.bg-slate-200, .bg-slate-300, .bg-slate-400, .bg-slate-500)').count();
+    expect(filled).toBeGreaterThanOrEqual(40);
+    await expect(page.locator('[data-testid="heatmap-hours"] button[class*="bg-accent"]')).toHaveCount(1);
   });
 
   test("the where tab opens the full geo mirror", async ({ page }) => {
