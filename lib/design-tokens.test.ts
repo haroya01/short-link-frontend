@@ -58,6 +58,11 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
     allow: /cubic-bezier\(\s*0?\.16\s*,\s*1\s*,\s*0?\.3\s*,\s*1\s*\)/,
   },
   {
+    name: "한 클래스 문자열의 line-clamp + display 유틸(block·flex…) — 스타일시트에서 display 가 뒤라 자르기가 꺼진다",
+    pattern:
+      /line-clamp-\d[^"'`]*?(?<![\w:/-])(?:block|inline-block|flex|inline-flex|grid|inline-grid|inline|table)(?![\w-])|(?<![\w:/-])(?:block|inline-block|flex|inline-flex|grid|inline-grid|inline|table)(?![\w-])[^"'`]*?line-clamp-\d/,
+  },
+  {
     name: "점선 상자 가운데 글(빈 칸 템플릿) — 빈·오류 상태는 왼쪽 정렬 사실 한 줄로",
     pattern: /border-dashed[^"'`]*text-center|text-center[^"'`]*border-dashed/,
     allowFile: /(poster-builder[\\/]page|gallery-block-dialog|u[\\/]\[username\][\\/]_components[\\/]entry-list|article-blocks)\.tsx$/,

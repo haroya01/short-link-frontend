@@ -449,7 +449,7 @@ function EdgeCard({
         <span
           className={
             link.type === "NOTE"
-              ? "mt-1 line-clamp-3 block text-[15px] leading-relaxed text-slate-600 dark:text-slate-300"
+              ? "mt-1 line-clamp-3 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300"
               : "mt-0.5 block text-[17px] font-semibold leading-snug text-slate-900 dark:text-slate-100"
           }
         >

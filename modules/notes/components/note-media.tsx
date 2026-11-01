@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type CSSProperties } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { NoteMedia as NoteImage } from "@/modules/notes/api/notes";
@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 import { VariantImage } from "@/components/common/variant-image";
 import { PhotoLightbox } from "@/app/[locale]/u/[username]/_components/photo-lightbox";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
+
+export type MediaPriority = "high" | "eager" | null;
+export const MediaPriorityContext = createContext<MediaPriority>(null);
 
 // Video and audio come only from other servers; they play from where they live.
 export function NoteMedia({
@@ -150,6 +153,7 @@ function NoteVideo({ video }: { video: NoteImage }) {
 
 function NotePictures({ media }: { media: NoteImage[] }) {
   const [viewing, setViewing] = useState<number | null>(null);
+  const priority = useContext(MediaPriorityContext);
   if (media.length === 0) return null;
   const viewer =
     viewing !== null ? (
@@ -163,6 +167,7 @@ function NotePictures({ media }: { media: NoteImage[] }) {
           sizes={singleSizes(media[0])}
           frameStyle={singleFrame(media[0])}
           className={singleImageClass(media[0])}
+          priority={priority}
           onOpen={() => setViewing(0)}
         />
         {viewer}
@@ -171,13 +176,21 @@ function NotePictures({ media }: { media: NoteImage[] }) {
   }
   return (
     <>
-      <NoteImageStrip media={media} onOpen={setViewing} />
+      <NoteImageStrip media={media} priority={priority} onOpen={setViewing} />
       {viewer}
     </>
   );
 }
 
-function NoteImageStrip({ media, onOpen }: { media: NoteImage[]; onOpen: (index: number) => void }) {
+function NoteImageStrip({
+  media,
+  priority,
+  onOpen,
+}: {
+  media: NoteImage[];
+  priority: MediaPriority;
+  onOpen: (index: number) => void;
+}) {
   const t = useTranslations("publicProfile.gallery");
   const strip = useRef<HTMLDivElement>(null);
   const [edges, setEdges] = useState({ prev: false, next: false });
@@ -217,6 +230,7 @@ function NoteImageStrip({ media, onOpen }: { media: NoteImage[]; onOpen: (index:
             image={image}
             sizes={stripSizes(image)}
             className="h-60 min-w-28 max-w-none"
+            priority={index === 0 ? priority : null}
             onOpen={() => onOpen(index)}
             onLoad={measure}
           />
@@ -265,6 +279,7 @@ function NoteImageFrame({
   sizes,
   frameStyle,
   className,
+  priority = null,
   onOpen,
   onLoad,
 }: {
@@ -272,6 +287,7 @@ function NoteImageFrame({
   sizes: string | undefined;
   frameStyle?: CSSProperties;
   className: string;
+  priority?: MediaPriority;
   onOpen: () => void;
   onLoad?: () => void;
 }) {
@@ -291,7 +307,8 @@ function NoteImageFrame({
           sizes={sizes}
           width={image.width ?? undefined}
           height={image.height ?? undefined}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority === "high" ? "high" : undefined}
           onLoad={onLoad}
           className={cn(
             "block w-auto rounded-surface border border-slate-200 bg-slate-100 object-cover dark:border-slate-800 dark:bg-slate-900",
