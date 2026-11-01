@@ -112,7 +112,7 @@ function DirectoryFooter({ app }: { app?: IosApp }) {
   return (
     <footer data-testid="footer-directory" className="site-footer border-t border-slate-200 dark:border-slate-800">
       <div className="container py-10 sm:py-14">
-        <nav className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-[2fr_1fr_1fr]">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-[2fr_1fr_1fr]">
           <section className="col-span-2 sm:col-span-1">
             <h2 className={HEADING}>{t("useTitle")}</h2>
             <ul className={`${LIST} grid-cols-2 gap-x-6`}>
@@ -177,7 +177,7 @@ function DirectoryFooter({ app }: { app?: IosApp }) {
               </li>
             </ul>
           </section>
-        </nav>
+        </div>
         <p className="mt-10 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
           {t("copyright", { year: new Date().getFullYear() })}
         </p>
