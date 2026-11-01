@@ -188,7 +188,7 @@ export function NoteThreadView({
 
   if (unavailable) {
     return (
-      <p role="status" data-testid="note-unavailable" className="py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
+      <p role="status" data-testid="note-unavailable" className="py-8 text-[14px] text-slate-500 dark:text-slate-400">
         {t("threadUnavailable")}
       </p>
     );
@@ -196,7 +196,7 @@ export function NoteThreadView({
 
   if (deleted) {
     return (
-      <p className="py-10 text-center text-[14px] text-slate-500 dark:text-slate-400">
+      <p className="py-8 text-[14px] text-slate-500 dark:text-slate-400">
         <BlogLink href={authorHref(initial.note.author.username, locale, "notes")} className="focus-ring rounded-surface underline">
           {t("backToNotes")}
         </BlogLink>

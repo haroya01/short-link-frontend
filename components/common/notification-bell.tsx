@@ -147,18 +147,18 @@ function NotificationDropdown({
             ))}
           </div>
         ) : isError ? (
-          <div role="alert" className="flex flex-col items-center gap-2 px-3 py-8 text-center">
+          <div role="alert" className="px-3 py-6">
             <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
             <button
               type="button"
               onClick={() => void refetch()}
-              className="focus-ring rounded-full px-3 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+              className="touch-target focus-ring -mx-1 mt-1 rounded-full px-1 py-0.5 text-[13px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
             >
               {tc("retry")}
             </button>
           </div>
         ) : items.length === 0 ? (
-          <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
+          <p className="px-3 py-6 text-[13px] text-slate-500 dark:text-slate-400">
             {t(filter === "mentions" ? "mentionsEmpty" : "empty")}
           </p>
         ) : (

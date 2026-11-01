@@ -422,7 +422,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {series.length === 0 && ungrouped.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+        <p className="py-4 text-sm text-slate-500 dark:text-slate-400">
           {t("seriesEmpty")}
         </p>
       )}

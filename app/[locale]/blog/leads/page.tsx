@@ -8,6 +8,8 @@ import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { blogPath, linksHref } from "@/lib/host";
 import { SwitchLink } from "@/components/common/switch-link";
+import { ErrorState } from "@/components/common/error-state";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import {
   deleteEmailLead,
   emailLeadsExportUrl,
@@ -171,18 +173,9 @@ export default function ProfileLeadsPage() {
           <SkeletonRows count={8} />
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-dashed border-red-300 bg-red-50/50 px-4 py-12 text-center dark:border-red-900/60 dark:bg-red-950/20">
-          <p className="text-sm font-medium text-red-700 dark:text-red-300">{error}</p>
-          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("errorHint")}</p>
-          <Button variant="outline" className="mt-4" onClick={() => setReloadKey((k) => k + 1)}>
-            {t("retry")}
-          </Button>
-        </div>
+        <ErrorState message={error} onRetry={() => setReloadKey((k) => k + 1)} />
       ) : leads.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center dark:border-slate-700 dark:bg-slate-800/40">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t("emptyTitle")}</p>
-          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("emptyHint")}</p>
-        </div>
+        <BlogEmpty title={t("emptyTitle")} />
       ) : (
         /* Surface card uses rounded-2xl + flat shadow to read as a sibling of Section / stats
            cards (PR #245 unified surface). The table interior keeps its tight rounded-md tone

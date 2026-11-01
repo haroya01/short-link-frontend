@@ -2479,7 +2479,7 @@
     }
   },
   "common": {
-    "errorTitle": "Something went wrong",
+    "errorTitle": "Couldn't load this",
     "errorDesc": "Please try again later.",
     "retry": "Retry",
     "loading": "Loading...",

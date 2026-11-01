@@ -109,7 +109,7 @@ export function ByBatchTable({ stats }: { stats: CampaignStats }) {
   );
   if (sorted.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center text-[12px] text-slate-500 dark:text-slate-400">
+      <div className="py-4 text-[12px] text-slate-500 dark:text-slate-400">
         {t("byBatch.empty")}
       </div>
     );

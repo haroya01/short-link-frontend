@@ -7,6 +7,9 @@ import { useAuth } from "@/lib/auth";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
+import { ErrorState } from "@/components/common/error-state";
 import { isOrdered, listMyCollections, type CollectionSummary } from "@/modules/blog/api/collections";
 
 /**
@@ -50,25 +53,20 @@ export function MyCollectionsList() {
 
   if (state === "error") {
     return (
-      <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">
-        {t("myCollectionsLoadError")}
-      </p>
+      <ErrorState message={t("myCollectionsLoadError")} />
     );
   }
 
   if (collections.length === 0) {
     return (
-      <div className="py-16 text-center">
-        <p className="text-[15px] font-medium text-slate-700 dark:text-slate-200">
-          {t("myCollectionsEmptyTitle")}
-        </p>
-        <BlogLink
-          href={blogPath("/")}
-          className="focus-ring mt-5 inline-flex rounded-surface bg-accent-700 px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800"
-        >
-          {t("myCollectionsEmptyCta")}
-        </BlogLink>
-      </div>
+      <BlogEmpty
+        title={t("myCollectionsEmptyTitle")}
+        action={
+          <BlogLink href={blogPath("/")} className={blogCta({ variant: "text" })}>
+            {t("myCollectionsEmptyCta")}
+          </BlogLink>
+        }
+      />
     );
   }
 
