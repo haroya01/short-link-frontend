@@ -12,6 +12,8 @@ const ROWS: { key: string; use?: string }[] = [
   { key: "qr", use: "flyer-qr-tracking" },
 ];
 
+export const ABILITY_KEYS = ROWS.map((row) => row.key);
+
 const ROW =
   "ability-row flex flex-col-reverse gap-1 border-b border-slate-200 py-5 dark:border-slate-800 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 sm:py-6";
 

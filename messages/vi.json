@@ -2678,7 +2678,21 @@
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
     "github": "GitHub",
-    "report": "Báo cáo liên kết"
+    "report": "Báo cáo liên kết",
+    "useTitle": "Cách dùng",
+    "learnTitle": "Tìm hiểu",
+    "learn": "Hướng dẫn cho người mới",
+    "qrCampaigns": "Chiến dịch QR",
+    "use": {
+      "freeUrlShortener": "Rút gọn URL miễn phí",
+      "bitlyAlternative": "Thay thế Bitly",
+      "linkInBio": "Link in bio",
+      "instagramProfileLink": "Liên kết hồ sơ Instagram",
+      "kakaotalkLinkPreview": "Xem trước KakaoTalk",
+      "posterQrCode": "Mã QR cho áp phích",
+      "flyerQrTracking": "Theo dõi QR tờ rơi",
+      "qrCampaignAnalytics": "Phân tích chiến dịch QR"
+    }
   },
   "about": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",

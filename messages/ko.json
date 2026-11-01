@@ -2678,7 +2678,21 @@
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
     "github": "GitHub",
-    "report": "링크 신고"
+    "report": "링크 신고",
+    "useTitle": "쓰임새",
+    "learnTitle": "알아보기",
+    "learn": "숏링크 안내서",
+    "qrCampaigns": "QR 캠페인",
+    "use": {
+      "freeUrlShortener": "무료 URL 단축",
+      "bitlyAlternative": "Bitly 대안",
+      "linkInBio": "링크 인 바이오",
+      "instagramProfileLink": "인스타그램 프로필 링크",
+      "kakaotalkLinkPreview": "카카오톡 미리보기",
+      "posterQrCode": "포스터 QR 코드",
+      "flyerQrTracking": "전단지 QR 추적",
+      "qrCampaignAnalytics": "QR 캠페인 분석"
+    }
   },
   "about": {
     "title": "kurl · 단축 링크와 클릭 분석",

@@ -2678,7 +2678,21 @@
     "terms": "利用規約",
     "privacy": "プライバシー",
     "github": "GitHub",
-    "report": "リンクを報告"
+    "report": "リンクを報告",
+    "useTitle": "使い方",
+    "learnTitle": "知る",
+    "learn": "はじめての方へ",
+    "qrCampaigns": "QRキャンペーン",
+    "use": {
+      "freeUrlShortener": "無料のURL短縮",
+      "bitlyAlternative": "Bitlyの代わりに",
+      "linkInBio": "リンクインバイオ",
+      "instagramProfileLink": "Instagramのプロフィールリンク",
+      "kakaotalkLinkPreview": "カカオトークのプレビュー",
+      "posterQrCode": "ポスターのQRコード",
+      "flyerQrTracking": "チラシのQR追跡",
+      "qrCampaignAnalytics": "QRキャンペーン分析"
+    }
   },
   "about": {
     "title": "kurl · URL短縮とクリック分析",

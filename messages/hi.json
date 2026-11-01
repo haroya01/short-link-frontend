@@ -2678,7 +2678,21 @@
     "terms": "शर्तें",
     "privacy": "गोपनीयता",
     "github": "GitHub",
-    "report": "लिंक रिपोर्ट करें"
+    "report": "लिंक रिपोर्ट करें",
+    "useTitle": "उपयोग",
+    "learnTitle": "जानें",
+    "learn": "शुरुआती गाइड",
+    "qrCampaigns": "QR अभियान",
+    "use": {
+      "freeUrlShortener": "मुफ़्त URL शॉर्टनर",
+      "bitlyAlternative": "Bitly का विकल्प",
+      "linkInBio": "लिंक इन बायो",
+      "instagramProfileLink": "Instagram प्रोफ़ाइल लिंक",
+      "kakaotalkLinkPreview": "KakaoTalk प्रीव्यू",
+      "posterQrCode": "पोस्टर QR कोड",
+      "flyerQrTracking": "फ़्लायर QR ट्रैकिंग",
+      "qrCampaignAnalytics": "QR अभियान एनालिटिक्स"
+    }
   },
   "about": {
     "title": "kurl · क्लिक विश्लेषण वाला URL शॉर्टनर",

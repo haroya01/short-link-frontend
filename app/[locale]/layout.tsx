@@ -13,6 +13,8 @@ import { ImageFade } from "@/components/common/image-fade";
 import { OfflineBanner } from "@/components/common/offline-banner";
 import { ThemeColorSync } from "@/components/common/theme-color-sync";
 import { followSystemThemeScript, themeCookieNameScript } from "@/lib/theme-cookie";
+import { appStoreUrl } from "@/lib/app-store";
+import { ABILITY_KEYS } from "@/components/landing/link-abilities";
 import "../globals.css";
 
 /*
@@ -148,6 +150,7 @@ export default async function RootLayout({
         "if(localStorage.getItem('kurl:mock-signed-out')!=='1'){document.documentElement.dataset.authHint='1';}"
       : "if(localStorage.getItem('short-link:access-token')){document.documentElement.dataset.authHint='1';}";
 
+  const abilities = await getTranslations({ locale, namespace: "home.abilities" });
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -174,7 +177,10 @@ export default async function RootLayout({
       {
         "@type": "SoftwareApplication",
         name: "kurl",
+        alternateName: "kurl.me",
         url: SITE_URL,
+        featureList: ABILITY_KEYS.map((key) => abilities(`${key}.line`)),
+        sameAs: [appStoreUrl("links"), appStoreUrl("blog")],
         applicationCategory: "WebApplication",
         operatingSystem: "Any",
         inLanguage: locale,

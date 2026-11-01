@@ -2678,7 +2678,21 @@
     "terms": "Terms",
     "privacy": "Privacy",
     "github": "GitHub",
-    "report": "Report a link"
+    "report": "Report a link",
+    "useTitle": "Use cases",
+    "learnTitle": "Learn",
+    "learn": "Short links, explained",
+    "qrCampaigns": "QR campaigns",
+    "use": {
+      "freeUrlShortener": "Free URL shortener",
+      "bitlyAlternative": "Bitly alternative",
+      "linkInBio": "Link in bio",
+      "instagramProfileLink": "Instagram profile link",
+      "kakaotalkLinkPreview": "KakaoTalk preview",
+      "posterQrCode": "Poster QR code",
+      "flyerQrTracking": "Flyer QR tracking",
+      "qrCampaignAnalytics": "QR campaign analytics"
+    }
   },
   "about": {
     "title": "kurl · URL shortener with click analytics",
