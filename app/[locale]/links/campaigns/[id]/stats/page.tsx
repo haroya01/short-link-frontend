@@ -19,10 +19,8 @@ import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { Section } from "@/components/common/section";
 import { ByBatchTable, GroupChart, KpiRow, RecommendationCard } from "@/components/links/campaigns/stats-cards";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
-import {
-  LazyDailyChart as DailyTrendChart,
-  LazyHourChart as HourRhythmChart,
-} from "@/components/links/stats/charts/lazy-charts";
+import { DailyChart as DailyTrendChart } from "@/components/links/stats/charts/daily-chart";
+import { LazyHourChart as HourRhythmChart } from "@/components/links/stats/charts/lazy-charts";
 import type { HeatmapCell } from "@/types";
 import type {
   CampaignDetail,
@@ -273,8 +271,6 @@ function CompareCell({ label, value }: { label: string; value: string }) {
 
 function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
   const t = useTranslations("campaignApp.campaignStats");
-  // Daily volume is a trend, so it reuses the link-stats area chart (line + faint fill + peak dot)
-  // instead of a bar row — same reading language across the whole product.
   const series = useMemo(() => data.map((d) => ({ date: d.day, count: d.clicks })), [data]);
   return (
     <Section title={t("daily.title")} description={t("daily.description")}>

@@ -1,146 +1,127 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ReferenceDot,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { useTranslations } from "next-intl";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import type { DailyClick } from "@/types";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
   data: DailyClick[];
-  /** 개요 타일·일지 인라인 근거용 압축 높이(h-52) — 기본은 챕터 상세의 h-72. */
   compact?: boolean;
 };
 
-// Full ISO dates (YYYY-MM-DD) collapse to MM-DD; anything already short (a campaign day bucket
-// that arrives pre-shortened) is left as-is so the axis never shows an empty tick.
-function shortDate(v: string): string {
-  return v.length >= 10 ? v.slice(5) : v;
-}
-
-export function DailyChart({ data, compact = false }: Props) {
-  const reducedMotion = useReducedMotion();
-  const t = useTranslations("stats");
-  // On mobile (< 640 px) the recharts default Y-axis tick label needs the full computed track
-  // width — pulling the chart back with `left: -16` cuts off "100" / "1k" on narrow viewports.
-  // Desktop keeps the original tighter offset because the wider parent absorbs the axis cleanly.
-  const isMobile = useIsMobile();
-  // The peak marker lands once the line has drawn to it; a range switch redraws the line.
-  const [lineDrawn, setLineDrawn] = useState(false);
-  const series = data.map((d) => `${d.date}:${d.count}`).join(",");
-  useEffect(() => setLineDrawn(false), [series]);
-  if (data.length === 0) {
-    return <p className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">{t("noClicks")}</p>;
-  }
-  const peak = data.reduce((best, d) => (d.count > best.count ? d : best), data[0]);
-  return (
-    <div className="w-full">
-      {peak.count > 0 && (
-        <p className="mb-2 text-[11px] text-slate-500 dark:text-slate-400">
-          <span className="font-medium text-slate-700 dark:text-slate-300">{t("chart.peak")}</span>
-          <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
-            ·
-          </span>
-          <span className="tabular-nums">{shortDate(peak.date)}</span>
-          <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
-            ·
-          </span>
-          <span className="tabular-nums">
-            {t("clickCount", { count: formatNumber(peak.count) })}
-          </span>
-        </p>
-      )}
-      <div className={`${compact ? "h-52" : "h-72"} w-full text-slate-500 dark:text-slate-400`}>
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={data}
-          margin={{ top: 8, right: 8, bottom: 0, left: isMobile ? 0 : -16 }}
-        >
-          <defs>
-            <linearGradient id="dailyFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#059669" stopOpacity={0.25} />
-              <stop offset="100%" stopColor="#059669" stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
-          <XAxis
-            dataKey="date"
-            tick={{ fontSize: 11, fill: "currentColor" }}
-            tickFormatter={shortDate}
-            tickLine={false}
-            axisLine={false}
-            interval="preserveStartEnd"
-            minTickGap={20}
-          />
-          <YAxis
-            tick={{ fontSize: 11, fill: "currentColor" }}
-            tickLine={false}
-            axisLine={false}
-            allowDecimals={false}
-          />
-          <Tooltip
-            cursor={{ stroke: "#059669", strokeWidth: 1, strokeDasharray: "3 3" }}
-            contentStyle={{
-              borderRadius: 12,
-              border: "1px solid var(--chart-tooltip-border)",
-              backgroundColor: "var(--chart-tooltip-bg)",
-              color: "var(--chart-tooltip-text)",
-              fontSize: 12,
-              boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
-              padding: "8px 12px",
-            }}
-            itemStyle={{ color: "var(--chart-tooltip-text)" }}
-            labelStyle={{ color: "var(--chart-tooltip-text)" }}
-            formatter={(value) => [t("clickCount", { count: String(value) }), t("countryTable.clicks")]}
-            labelFormatter={(label: string) => label}
-          />
-          <Area
-            isAnimationActive={!reducedMotion}
-            type="monotone"
-            dataKey="count"
-            stroke="#059669"
-            strokeWidth={1.5}
-            fill="url(#dailyFill)"
-            animationDuration={900}
-            animationEasing="ease-out"
-            onAnimationEnd={() => setLineDrawn(true)}
-          />
-          {peak.count > 0 && (reducedMotion || lineDrawn) && (
-            <ReferenceDot
-              x={peak.date}
-              y={peak.count}
-              r={3.5}
-              fill="#059669"
-              stroke="#fff"
-              strokeWidth={1.5}
-              isFront
-            />
-          )}
-        </AreaChart>
-      </ResponsiveContainer>
-      </div>
-    </div>
+function dayLabel(date: string, locale: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!match) return date;
+  const [, year, month, day] = match.map(Number);
+  return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", timeZone: "UTC" }).format(
+    Date.UTC(year, month - 1, day),
   );
 }
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 639px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return isMobile;
+export function DailyChart({ data, compact = false }: Props) {
+  const t = useTranslations("stats");
+  const locale = useLocale();
+  const [pointed, setPointed] = useState<number | null>(null);
+  const [intro, setIntro] = useState(true);
+  if (data.length === 0) {
+    return <p className="py-6 text-[13px] text-slate-500 dark:text-slate-400">{t("noClicks")}</p>;
+  }
+
+  const max = data.reduce((best, d) => Math.max(best, d.count), 0);
+  const peak = data.findIndex((d) => d.count === max);
+  const active = pointed ?? (max > 0 ? peak : null);
+  const last = data.length - 1;
+  const anchor = active === null ? 0 : ((active + 0.5) / data.length) * 100;
+
+  function indexAt(event: PointerEvent<HTMLElement>) {
+    const box = event.currentTarget.getBoundingClientRect();
+    const ratio = (event.clientX - box.left) / box.width;
+    return Math.min(last, Math.max(0, Math.floor(ratio * data.length)));
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const from = active ?? last;
+    const next =
+      event.key === "ArrowLeft" ? from - 1
+      : event.key === "ArrowRight" ? from + 1
+      : event.key === "Home" ? 0
+      : event.key === "End" ? last
+      : null;
+    if (next === null) return;
+    event.preventDefault();
+    setPointed(Math.min(last, Math.max(0, next)));
+  }
+
+  const title = t("section.daily.title");
+  const summary =
+    max > 0 ? `${title}. ${t("chart.summary", { date: dayLabel(data[peak].date, locale), count: formatNumber(max) })}` : title;
+
+  return (
+    <figure className="w-full" data-testid="daily-chart">
+      <div
+        role="img"
+        tabIndex={0}
+        aria-label={summary}
+        onKeyDown={onKeyDown}
+        onBlur={() => setPointed(null)}
+        className={cn("focus-ring relative touch-pan-y rounded-lg pt-7", compact ? "h-40" : "h-72")}
+        onPointerDown={(event) => setPointed(indexAt(event))}
+        onPointerMove={(event) => setPointed(indexAt(event))}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "mouse") setPointed(null);
+        }}
+      >
+        <div className="relative flex h-full items-end gap-0.5 border-b border-slate-200 dark:border-slate-800">
+          {data.map((d, i) => (
+            <span key={d.date} data-count={d.count} className="flex h-full min-w-0 flex-1 items-end justify-center">
+              {d.count > 0 && (
+                <span
+                  className={cn(
+                    "block w-3/5 max-w-4 transition-colors duration-150 ease-[var(--ease)]",
+                    active === i ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700",
+                    intro && "bar-grow-y",
+                  )}
+                  style={{ height: `max(2px, ${(d.count / max) * 100}%)`, animationDelay: intro ? `${i * 14}ms` : undefined }}
+                  onAnimationEnd={i === last ? () => setIntro(false) : undefined}
+                />
+              )}
+            </span>
+          ))}
+          {active !== null && (
+            <span
+              data-testid="daily-chart-label"
+              className="pointer-events-none absolute whitespace-nowrap text-[12px] leading-none"
+              style={{
+                left: `${anchor}%`,
+                transform: `translateX(-${anchor}%)`,
+                bottom: `calc(${max > 0 ? (data[active].count / max) * 100 : 0}% + 8px)`,
+              }}
+            >
+              <span className="font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                {formatNumber(data[active].count)}
+              </span>
+              <span className="ml-1.5 text-slate-500 dark:text-slate-400">{dayLabel(data[active].date, locale)}</span>
+            </span>
+          )}
+        </div>
+      </div>
+      <div aria-hidden className="mt-2 flex justify-between text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
+        <span>{dayLabel(data[0].date, locale)}</span>
+        {last > 0 && <span>{dayLabel(data[last].date, locale)}</span>}
+      </div>
+      <div className="sr-only">
+        <table>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.date}>
+                <th scope="row">{dayLabel(d.date, locale)}</th>
+                <td>{t("clickCount", { count: formatNumber(d.count) })}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </figure>
+  );
 }

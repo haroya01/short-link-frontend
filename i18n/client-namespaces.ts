@@ -32,7 +32,7 @@ export const CLIENT_MESSAGE_SCOPES = {
     "campaignsApp.onboarding.scene", "composer", "dashboard", "edit", "errors", "expiringBanner",
     "linkSheet", "tags",
   ],
-  "links/demo": ["demo", "edit", "errors", "publicStats", "stats", "statsEmpty", "tags"],
+  "links/demo": ["demo", "edit", "errors", "publicStats", "stats", "tags"],
   "links/events": [
     "errors", "events.analytics", "events.attendees", "events.detail", "events.form", "events.intro",
     "events.list", "events.public", "events.share", "events.status",
@@ -44,8 +44,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "links/settings": ["avatar", "banner", "errors", "imageCropper", "publicProfile", "settings"],
   "links/showcase": ["publicProfile", "showcase"],
   "links/stats/[code]": [
-    "demo.settingsDemo", "demo.settingsNotice", "edit", "errors", "publicStats", "stats", "statsEmpty",
-    "tags",
+    "demo.settingsDemo", "demo.settingsNotice", "edit", "errors", "publicStats", "stats", "tags",
   ],
   "links/visual-fixtures": ["events.public", "publicProfile.contactCard"],
   blog: [
