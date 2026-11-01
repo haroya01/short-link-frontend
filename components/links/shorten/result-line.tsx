@@ -18,6 +18,7 @@ type Props = {
   passwordRequested?: boolean;
   /** 영수증 스택에서 몇 번째 줄인가 — 등장 계단(70ms)의 기준. */
   enterIndex?: number;
+  fold?: boolean;
 };
 
 /** 속삭임 행의 텍스트 링크 문법 — 본문 링크 밑줄(§10)과 같은 결. */
@@ -35,6 +36,7 @@ export function ResultLine({
   authenticated,
   passwordRequested = false,
   enterIndex = 0,
+  fold = false,
 }: Props) {
   const t = useTranslations("result");
   const display = result.shortUrl.replace(/^https?:\/\//, "");
@@ -42,10 +44,18 @@ export function ResultLine({
   return (
     <div
       data-testid="result-line"
-      className="result-enter"
+      className={fold ? "result-fold" : "result-enter"}
       style={{ ["--idx" as string]: enterIndex } as React.CSSProperties}
     >
       <div className="relative flex items-end gap-4 pb-2.5">
+        {fold && (
+          <span
+            aria-hidden
+            className="result-fold-long pointer-events-none absolute bottom-3 left-0 right-24 truncate font-mono text-[16px] font-medium text-slate-400 dark:text-slate-500"
+          >
+            {originalUrl}
+          </span>
+        )}
         <a
           href={result.shortUrl}
           target="_blank"
@@ -53,7 +63,7 @@ export function ResultLine({
           className="focus-ring min-w-0 flex-1 rounded-sm"
         >
           <span
-            className="result-beat block truncate font-mono text-[21px] font-bold tracking-tight text-accent-700 dark:text-accent-400 sm:text-[24px]"
+            className={`${fold ? "result-fold-short" : "result-beat"} block truncate font-mono text-[21px] font-bold tracking-tight text-accent-700 dark:text-accent-400 sm:text-[24px]`}
             style={{ ["--beat" as string]: 0 } as React.CSSProperties}
           >
             {display}
@@ -63,7 +73,7 @@ export function ResultLine({
         {/* 답의 밑줄 — 입력 줄과 같은 자리 문법인데, 이번엔 초록이 그어진 채로 남는다. */}
         <span
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 rounded-full bg-accent-600 [animation-delay:220ms] motion-safe:animate-[result-underline-draw_420ms_var(--ease)_both] motion-reduce:scale-x-100 dark:bg-accent-500"
+          className={`absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 rounded-full bg-accent-600 ${fold ? "motion-safe:animate-[result-underline-draw_420ms_var(--ease)_560ms_both]" : "motion-safe:animate-[result-underline-draw_420ms_var(--ease)_220ms_both]"} motion-reduce:scale-x-100 dark:bg-accent-500`}
         />
       </div>
 

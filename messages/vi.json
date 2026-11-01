@@ -1219,7 +1219,18 @@
     },
     "recentKept": "Lưu trên trình duyệt này trong 24 giờ",
     "recentClaim": "Đăng nhập để chuyển các liên kết này vào tài khoản, không bị hết hạn.",
-    "recentLogin": "Đăng nhập"
+    "recentLogin": "Đăng nhập",
+    "abilities": {
+      "title": "Mỗi liên kết có thể làm gì",
+      "password": { "line": "Chỉ người biết mật khẩu mới mở được", "name": "Mật khẩu" },
+      "schedule": { "line": "Mở vào giờ bạn đặt, đóng vào ngày bạn chọn", "name": "Hẹn giờ · Hết hạn" },
+      "split": { "line": "Một liên kết chia sang hai trang", "name": "A/B" },
+      "countries": { "line": "Gửi mỗi quốc gia đến trang riêng, hoặc chặn hẳn", "name": "Quốc gia" },
+      "openOutside": { "line": "Mở bằng Safari hoặc Chrome dù được nhấp trong KakaoTalk hay LINE", "name": "Mở ngoài ứng dụng" },
+      "card": { "line": "Tự chọn thẻ hiện ra khi dán vào cuộc trò chuyện", "name": "Thẻ xem trước" },
+      "bots": { "line": "Chỉ đếm lượt nhấp của người thật", "name": "Loại bỏ bot" },
+      "qr": { "line": "Biết lượt quét QR đến từ tờ rơi nào", "name": "QR" }
+    }
   },
   "showcase": {
     "title": "Hồ sơ hợp với công việc của bạn",

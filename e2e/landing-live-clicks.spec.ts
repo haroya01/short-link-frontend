@@ -82,10 +82,40 @@ test("with reduced motion the fold is already done: the short address and its li
   await context.close();
 });
 
-test("the landing is the tool alone: one line of heading, the field, no staged example", async ({ page }) => {
+test("the landing leads with the tool, then lists what a link can do in plain words, no staged example", async ({ page }) => {
   await page.goto("/ko");
   await expect(page.getByTestId("home-hero-heading")).toHaveText("단축은 한 줄");
   await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toBeVisible();
   await expect(page.getByText("예시", { exact: true })).toHaveCount(0);
-  await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveCount(0);
+  const headings = page.getByRole("main").getByRole("heading", { level: 2 });
+  await expect(headings).toHaveCount(1);
+  await expect(headings).toHaveText("링크마다 할 수 있는 것");
+
+  const list = page.getByRole("region", { name: "링크마다 할 수 있는 것" }).getByRole("listitem");
+  await expect(list).toHaveCount(8);
+  await expect(list.first()).toContainText("아는 사람만 열려요");
+  await expect(list.first()).toContainText("비밀번호");
+  await expect(page.getByRole("link", { name: /카톡에 붙였을 때 보이는 카드를 직접 정해요/ })).toHaveAttribute("href", /\/ko\/use\/kakaotalk-link-preview$/);
+  await expect(page.getByRole("link", { name: /어느 전단지에서 찍었는지까지 나눠 봐요/ })).toHaveAttribute("href", /\/ko\/use\/flyer-qr-tracking$/);
+});
+
+test("shortening folds the address you typed into the short one, in place", async ({ page }) => {
+  await page.route("**/api/v1/pow/challenge", (route) =>
+    route.fulfill({ json: { challenge: "e2e-challenge", difficulty: 1 } }),
+  );
+  await page.route("**/api/v1/links", (route) =>
+    route.request().method() !== "POST"
+      ? route.fallback()
+      : route.fulfill({ status: 201, json: { shortCode: "e2eFold2", shortUrl: "http://localhost:3001/e2eFold2", claimToken: null } }),
+  );
+  await page.goto("/ko");
+  await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("https://example.com/a/very/long/path?utm_source=fold");
+  await page.getByRole("button", { name: "단축하기" }).click();
+  const line = page.getByTestId("result-line").first();
+  await expect(line).toBeVisible({ timeout: 10_000 });
+  const folding = line.locator(".result-fold-long");
+  await expect(folding).toHaveAttribute("aria-hidden", "true");
+  await expect(folding).toHaveText("https://example.com/a/very/long/path?utm_source=fold");
+  await expect.poll(() => folding.evaluate((el) => getComputedStyle(el).opacity), { timeout: 3_000 }).toBe("0");
+  await expect(line.getByRole("link", { name: /e2eFold2/ })).toBeVisible();
 });
