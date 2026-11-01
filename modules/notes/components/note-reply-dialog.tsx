@@ -10,6 +10,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { AuthorName, STRONG_NAME } from "@/modules/blog/components/author-name";
 import { contentLang } from "@/modules/blog/lib/content-lang";
 import type { Note } from "@/modules/notes/api/notes";
+import { EmojiText } from "./emoji-text";
 import { NoteComposer } from "./note-composer";
 
 export function NoteReplyDialog({
@@ -100,7 +101,12 @@ export function NoteReplyDialog({
               <span className="mt-1 w-0.5 flex-1 rounded-full bg-slate-200 dark:bg-slate-700" />
             </div>
             <div className="min-w-0 flex-1 pb-5 text-[15px] leading-5">
-              <AuthorName name={shown.author.displayName} handle={shown.author.username} className={STRONG_NAME} />
+              <AuthorName
+                name={shown.author.displayName}
+                handle={shown.author.username}
+                emojis={shown.author.emojis}
+                className={STRONG_NAME}
+              />
               {excerpt && (
                 <p
                   lang={contentLang(excerpt, shown.language)}
@@ -109,7 +115,7 @@ export function NoteReplyDialog({
                     shown.contentWarning ? "text-slate-500 dark:text-slate-400" : "text-slate-800 dark:text-slate-200",
                   )}
                 >
-                  {excerpt}
+                  <EmojiText text={excerpt} emojis={shown.emojis} />
                 </p>
               )}
             </div>

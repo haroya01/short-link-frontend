@@ -4,7 +4,9 @@ import { authorHref } from "@/modules/blog/lib/author-href";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { contentLang } from "@/modules/blog/lib/content-lang";
+import type { NoteEmoji } from "@/modules/notes/api/notes";
 import { splitNoteText, withoutCardedLink } from "@/modules/notes/lib/note-text";
+import { EmojiText } from "./emoji-text";
 
 const linkClass =
   "rounded text-accent-700 decoration-1 underline-offset-[0.2em] hover:underline focus-ring dark:text-accent-400";
@@ -19,12 +21,14 @@ export function NoteBody({
   large = false,
   language,
   cardUrl,
+  emojis,
 }: {
   body: string;
   mentions?: readonly string[];
   large?: boolean;
   language?: string | null;
   cardUrl?: string | null;
+  emojis?: readonly NoteEmoji[] | null;
 }) {
   const locale = useLocale();
   const parts = withoutCardedLink(splitNoteText(body, mentions), cardUrl);
@@ -51,7 +55,9 @@ export function NoteBody({
             @{part.value}
           </BlogLink>
         ) : (
-          <span key={i}>{part.value}</span>
+          <span key={i}>
+            <EmojiText text={part.value} emojis={emojis} />
+          </span>
         ),
       )}
     </p>
