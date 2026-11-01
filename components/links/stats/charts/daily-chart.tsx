@@ -79,7 +79,7 @@ export function DailyChart({ data, compact = false }: Props) {
                 <span
                   className={cn(
                     "block w-3/5 max-w-4 transition-colors duration-150 ease-[var(--ease)]",
-                    pointed === i ? "bg-accent-700 dark:bg-accent-500" : "bg-accent-600",
+                    active === i ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700",
                     intro && "bar-grow-y",
                   )}
                   style={{ height: `max(2px, ${(d.count / max) * 100}%)`, animationDelay: intro ? `${i * 14}ms` : undefined }}

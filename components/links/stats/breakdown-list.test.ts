@@ -40,18 +40,20 @@ describe("BreakdownList row grammar", () => {
     expect(bar.className).toContain("row-start-2");
     expect(bar.className).toContain("col-span-full");
     expect([count.textContent, share.textContent]).toEqual(["30", "75%"]);
+    expect(bar.firstElementChild!.className).toContain("bg-slate-300");
+    expect(bar.firstElementChild!.className).not.toContain("accent");
   });
 
-  it("lets the bar take only the width the name leaves, capped so numbers stay near names", () => {
+  it("lets the bar take the width the name leaves, so numbers sit on the column's right edge", () => {
     const list = render({ items }).querySelector("ul")!;
-    expect(list.className).toContain("sm:grid-cols-[minmax(0,max-content)_minmax(4rem,24rem)_auto_auto]");
+    expect(list.className).toContain("sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto]");
     expect(list.querySelector("li")!.className).toContain("sm:grid-cols-subgrid");
   });
 
   it("joins a parent grid when asked so sibling lists line up as one table", () => {
     const list = render({ items, subgrid: true }).querySelector("ul")!;
     expect(list.className).toContain("sm:grid-cols-subgrid");
-    expect(list.className).not.toContain("minmax(4rem,24rem)");
+    expect(list.className).not.toContain("minmax(4rem,1fr)");
   });
 
   it("says there is no data in a plain left-aligned line", () => {

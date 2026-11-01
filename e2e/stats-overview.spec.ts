@@ -63,6 +63,10 @@ test.describe("stats overview reads as one column", () => {
     );
     expect(new Set(edges.map((e) => e.bar)).size).toBe(1);
     expect(new Set(edges.map((e) => e.count)).size).toBe(1);
+
+    const chartRight = await page.getByTestId("daily-chart").evaluate((el) => Math.round(el.getBoundingClientRect().right));
+    const shareRight = await lists.first().evaluate((ul) => Math.round(ul.querySelector("li")!.lastElementChild!.getBoundingClientRect().right));
+    expect(shareRight).toBe(chartRight);
   });
 
   test("the header names the destination once", async ({ page }) => {
@@ -96,6 +100,34 @@ test.describe("daily human clicks are bars", () => {
     await page.getByRole("button", { name: "30일", exact: true }).click();
     await expect(chart.locator("[data-count]")).toHaveCount(30);
     await expect(chart.locator(".bar-grow-y")).toHaveCount(0);
+  });
+
+  test("only the active bar wears the accent; every other bar and every list bar is neutral", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await openOverview(page);
+    const accent = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      probe.className = "bg-accent-600";
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    });
+    const greens = () =>
+      page.locator("#stats-panel-overview").evaluate(
+        (panel, green) =>
+          [...panel.querySelectorAll<HTMLElement>("span")]
+            .filter((el) => getComputedStyle(el).backgroundColor === green)
+            .map((el) => el.parentElement?.getAttribute("data-count") ?? "other"),
+        accent,
+      );
+    await expect.poll(greens).toEqual([String(PEAK)]);
+
+    const chart = page.getByTestId("daily-chart");
+    const second = chart.locator("[data-count]").nth(1);
+    const box = (await second.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height - 4);
+    await expect.poll(greens).toEqual([await second.getAttribute("data-count")]);
   });
 
   test("hovering a bar moves the one label to that day", async ({ page }) => {

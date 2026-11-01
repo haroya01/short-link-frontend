@@ -160,15 +160,15 @@ export function StatsJournal({
                       values={entry.spark}
                       width={96}
                       height={20}
-                      className="text-accent-600"
+                      className="text-slate-400 dark:text-slate-500"
                     />
                   </span>
                 )}
                 {entry.ratio !== undefined && !entry.spark && (
                   <span aria-hidden className="mt-2 block">
-                    <span className="block h-1.5 w-28 bg-slate-100 dark:bg-slate-800">
+                    <span className="block h-1.5 w-28 bg-slate-100 dark:bg-slate-900">
                       <span
-                        className="block h-full bg-accent-600"
+                        className="block h-full bg-slate-300 dark:bg-slate-700"
                         style={{ width: `${Math.round(Math.min(1, entry.ratio) * 100)}%` }}
                       />
                     </span>

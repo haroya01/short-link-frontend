@@ -89,7 +89,7 @@ export function StatsOverview({
           <div className="mt-10">
             <StatsJournal data={data} onNavigate={onNavigate} initialVisible={2} />
           </div>
-          <div className="mt-10 space-y-10 sm:grid sm:grid-cols-[minmax(0,max-content)_minmax(4rem,24rem)_auto_auto] sm:justify-start sm:gap-x-4 sm:gap-y-10 sm:space-y-0">
+          <div className="mt-10 space-y-10 sm:grid sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto] sm:gap-x-4 sm:gap-y-10 sm:space-y-0">
             <Breakdown title={t("section.referrerHost.title")}>
               <BreakdownList
                 items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}

@@ -76,6 +76,16 @@ describe("DailyChart draws one bar per day, never a curve between days", () => {
     expect(label()).toBe("12Oct 29");
   });
 
+  it("paints only the active bar in the accent and the rest in one neutral tone", async () => {
+    await render();
+    const accented = () => slots().filter((slot) => slot.firstElementChild?.className.includes("bg-accent-600"));
+    const bars = slots().filter((slot) => slot.firstElementChild);
+    expect(accented().map((slot) => slot.dataset.count)).toEqual(["12"]);
+    expect(bars.filter((slot) => slot.firstElementChild!.className.includes("bg-slate-300"))).toHaveLength(bars.length - 1);
+    await act(async () => plot().dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true })));
+    expect(accented().map((slot) => slot.dataset.count)).toEqual(["3"]);
+  });
+
   it("plays the grow-in once and leaves new bars still after a range switch", async () => {
     await render();
     expect(slots()[2].firstElementChild!.className).toContain("bar-grow-y");

@@ -32,7 +32,7 @@ function BreakdownListImpl({ items, maxItems = 10, subgrid = false }: Props) {
         "space-y-3 sm:grid sm:items-center sm:gap-x-4 sm:gap-y-2.5 sm:space-y-0",
         subgrid
           ? "sm:col-span-full sm:grid-cols-subgrid"
-          : "sm:grid-cols-[minmax(0,max-content)_minmax(4rem,24rem)_auto_auto] sm:justify-start",
+          : "sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto]",
       )}
     >
       {top.map((item, i) => {
@@ -51,7 +51,7 @@ function BreakdownListImpl({ items, maxItems = 10, subgrid = false }: Props) {
             </span>
             <span aria-hidden className="col-span-full row-start-2 mt-1 flex h-1 sm:col-span-1 sm:row-start-auto sm:mt-0 sm:h-1.5">
               <span
-                className="bar-grow-x block h-full bg-accent-600"
+                className="bar-grow-x block h-full bg-slate-300 dark:bg-slate-700"
                 style={{ width: `max(2px, ${share * 100}%)`, animationDelay: `${i * 40}ms` }}
               />
             </span>
