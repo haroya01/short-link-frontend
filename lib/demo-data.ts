@@ -60,14 +60,6 @@ function demoAnchor(): Date {
 const TODAY_UTC = demoAnchor();
 const DEMO_BOT_CLICKS = 184;
 
-/** The landing's analytics scene shows the same demo01 numbers the /demo page renders. */
-export function buildDemoHeadline(): { total: number; human: number; series: number[] } {
-  const daily = buildDaily(30);
-  const human = daily.reduce((s, d) => s + d.count, 0);
-  const total = human + DEMO_BOT_CLICKS;
-  return { total, human, series: daily.map((d) => d.count) };
-}
-
 export function buildDemoLinkStats(): LinkStats {
   const daily = buildDaily(30);
   const human = daily.reduce((s, d) => s + d.count, 0);
