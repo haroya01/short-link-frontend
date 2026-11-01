@@ -34,7 +34,8 @@ async function openOverview(page: Page, handlers: Parameters<typeof mockBackend>
     ...handlers,
   });
   await page.goto(`/ko/stats/${CODE}`);
-  await expect(page.getByTestId("daily-chart").or(page.getByText("아직 클릭이 없어요", { exact: true }))).toBeVisible();
+  await expect(page.locator("#stats-panel-overview")).toBeVisible();
+  await expect(page.locator("main h1")).toHaveText("blog.example.com");
 }
 
 test.describe("stats overview reads as one column", () => {
@@ -169,7 +170,7 @@ test.describe("on a phone", () => {
   test("source, device and country names are never cut short to make room for a bar", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openOverview(page);
-    const names = page.locator("#stats-panel-overview [data-testid=breakdown-name]");
+    const names = page.locator("#stats-panel-overview ul > li > span:first-child");
     await expect(names.first()).toBeVisible();
     const cut = await names.evaluateAll((els) =>
       els.filter((el) => el.scrollWidth > el.clientWidth).map((el) => el.textContent),

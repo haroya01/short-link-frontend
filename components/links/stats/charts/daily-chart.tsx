@@ -53,17 +53,16 @@ export function DailyChart({ data, compact = false }: Props) {
     setPointed(Math.min(last, Math.max(0, next)));
   }
 
+  const title = t("section.daily.title");
   const summary =
-    max > 0
-      ? t("chart.summary", { date: dayLabel(data[peak].date, locale), count: formatNumber(max) })
-      : t("noClicks");
+    max > 0 ? `${title}. ${t("chart.summary", { date: dayLabel(data[peak].date, locale), count: formatNumber(max) })}` : title;
 
   return (
     <figure className="w-full" data-testid="daily-chart">
       <div
         role="img"
         tabIndex={0}
-        aria-label={`${t("section.daily.title")}. ${summary}`}
+        aria-label={summary}
         onKeyDown={onKeyDown}
         onBlur={() => setPointed(null)}
         className={cn("focus-ring relative touch-pan-y rounded-lg pt-7", compact ? "h-40" : "h-72")}
