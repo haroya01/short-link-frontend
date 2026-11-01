@@ -1,12 +1,11 @@
-const LONG_URL =
-  "https://shop.example.com/products/7334412345?itemId=18763542&vendorItemId=85912345&utm_source=instagram&utm_campaign=fall_sale";
+const LONG_URL = "https://shop.example.com/products/7334412345?utm_source=instagram";
 const SHORT_URL = "kurl.me/k8Tq2Za";
 
 export function FoldDemo() {
   return (
     <div aria-hidden data-testid="fold-demo" className="relative mb-8 h-12 overflow-hidden font-mono sm:mb-10">
       <span className="absolute bottom-3 left-0 sm:left-1/2 sm:-translate-x-1/2">
-        <span className="fold-long block whitespace-nowrap text-[16px] font-medium text-slate-400 dark:text-slate-500 sm:text-[18px]">
+        <span className="fold-long block whitespace-nowrap text-[16px] font-medium text-slate-400 dark:text-slate-500">
           {LONG_URL}
         </span>
       </span>
