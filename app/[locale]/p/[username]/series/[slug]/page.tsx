@@ -98,7 +98,7 @@ export default async function PublicSeriesPage({
     name: series.title,
     url: seriesUrl,
     isPartOf: { "@type": "WebSite", url: origin, name: `@${author.username}` },
-    author: { "@type": "Person", name: author.username, alternateName: `@${author.username}`, url: `${origin}/` },
+    author: { "@type": "Person", name: author.username, alternateName: `@${author.username}`, url: origin },
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: entries.length,
@@ -115,7 +115,7 @@ export default async function PublicSeriesPage({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: `@${author.username}`, item: `${origin}/` },
+      { "@type": "ListItem", position: 1, name: `@${author.username}`, item: origin },
       { "@type": "ListItem", position: 2, name: series.title, item: seriesUrl },
     ],
   };

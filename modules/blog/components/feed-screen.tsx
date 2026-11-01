@@ -55,9 +55,9 @@ export async function feedMetadata(locale: string): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "publicFeed" });
   const url = `${BLOG_URL}/${locale}`;
   const description = t("metaDescription");
-  const ogTitle = `${t("mastheadTagline")} · blog.kurl`;
+  const ogTitle = `${t("mastheadTagline")} · kurl log`;
   return {
-    title: "blog.kurl",
+    title: "kurl log",
     description,
     alternates: {
       canonical: url,
@@ -72,7 +72,7 @@ export async function feedMetadata(locale: string): Promise<Metadata> {
     openGraph: {
       type: "website",
       url,
-      siteName: "blog.kurl",
+      siteName: "kurl log",
       title: ogTitle,
       description,
       locale: OG_LOCALE[locale] ?? "en_US",
