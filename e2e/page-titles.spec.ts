@@ -26,6 +26,7 @@ const PUBLIC: [string, string][] = [
   ["/ko/learn", "숏링크 · URL 단축 · 링크 인 바이오 가이드 · kurl"],
   ["/ko/use/free-url-shortener", "무료 URL 단축과 클릭 통계 · kurl"],
   ["/ko/stats/e2eTitle/public", "/e2eTitle · 공개 통계 · kurl"],
+  ["/ko/blog", "kurl log"],
 ];
 
 test.describe("탭 제목", () => {
