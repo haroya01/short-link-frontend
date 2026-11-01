@@ -1,75 +1,52 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useClickStream } from "@/hooks/use-click-stream";
+import { cn } from "@/lib/utils";
 
-/**
- * Stats-page live feed. Auth runs through the JWT path inside {@link useClickStream} (no claim
- * token here — by the time you've reached the stats page you're authenticated).
- */
 export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick?: () => void }) {
-  const t = useTranslations("stats.live");
-  const { items, connected, reconnecting } = useClickStream(shortCode, { onTick });
+  const t = useTranslations("stats");
+  const locale = useLocale();
+  const { items, count } = useClickStream(shortCode, { onTick });
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
-          {t("title")}
-        </h3>
-        <div className="flex items-center gap-1.5 text-[11px]">
-          <span
-            className={
-              "inline-block h-2 w-2 rounded-full " +
-              (connected ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700")
-            }
-            aria-hidden
-          />
-          <span className={connected ? "font-medium text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400"}>
-            {connected ? t("connected") : reconnecting ? t("reconnecting") : t("connecting")}
-          </span>
-        </div>
-      </div>
-
-      <p className="text-xs text-slate-500 dark:text-slate-400">{t("scope")}</p>
-      {items.length > 0 && (
-        <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-card-flat">
-          {items.map((item) => (
-            <li key={item.id} className="flex items-center gap-3 px-4 py-2.5 text-[12px]">
-              <span className="tabular-nums text-slate-500 dark:text-slate-400" suppressHydrationWarning>
-                {formatTime(item.occurredAt)}
-              </span>
-              {item.countryCode && (
-                <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 tabular-nums text-[10px] text-slate-700 dark:text-slate-300">
-                  {item.countryCode}
-                </span>
-              )}
-              {item.deviceClass && (
-                <span className="text-slate-600 dark:text-slate-300">{item.deviceClass}</span>
-              )}
-              {item.channel && (
-                <span className="truncate text-slate-500 dark:text-slate-400" title={item.channel}>
-                  · {item.channel}
-                </span>
-              )}
-              {item.bot && (
-                <span className="ml-auto rounded-md bg-amber-50 dark:bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">
-                  bot
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+    <div
+      aria-live="polite"
+      className={cn(
+        "grid transition-[grid-template-rows] duration-500 ease-[var(--ease)] motion-reduce:transition-none",
+        count > 0 ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
       )}
+    >
+      <div className="min-h-0 overflow-hidden">
+        {count > 0 && (
+          <section data-testid="live-feed" className="pb-10">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("live.now")}</h2>
+            <ul className="mt-2 divide-y divide-slate-100 dark:divide-slate-800">
+              {items.map((item) => (
+                <li key={item.id} className="live-arrive flex min-w-0 items-baseline gap-3 py-2.5 text-[13px]">
+                  <time
+                    dateTime={item.occurredAt}
+                    className="shrink-0 tabular-nums text-slate-500 dark:text-slate-400"
+                    suppressHydrationWarning
+                  >
+                    {formatTime(item.occurredAt, locale)}
+                  </time>
+                  <span className="min-w-0 truncate text-slate-900 dark:text-slate-100">
+                    {[item.countryCode, item.deviceClass, item.channel].filter(Boolean).join(" · ")}
+                  </span>
+                  {item.bot && <span className="ml-auto shrink-0 text-slate-500 dark:text-slate-400">{t("live.bot")}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
     </div>
   );
 }
 
-function formatTime(iso: string): string {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleTimeString();
-  } catch {
-    return iso;
-  }
+function formatTime(iso: string, locale: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }

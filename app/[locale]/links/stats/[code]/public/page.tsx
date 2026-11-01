@@ -88,7 +88,7 @@ export default function PublicStatsPage() {
 
       <Section
         title={t("section.heatmap.title")}
-        description={t("section.heatmap.desc", { tz: data.timezone })}
+        description={data.timezone}
       >
         <Heatmap data={data.heatmap} />
       </Section>

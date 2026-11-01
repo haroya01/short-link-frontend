@@ -100,7 +100,7 @@ describe("DailyChart draws one bar per day, never a curve between days", () => {
     const rows = [...host.querySelectorAll("table tr")].map((tr) => tr.textContent);
     expect(rows).toHaveLength(6);
     expect(rows[2]).toBe('Oct 29clickCount:{"count":"12"}');
-    expect(plot().getAttribute("aria-label")).toContain('chart.summary:{"date":"Oct 29","count":"12"}');
+    expect(plot().getAttribute("aria-label")).toContain('chart.summary:{"label":"Oct 29","count":"12"}');
   });
 
   it("shows no label when the range has no clicks", async () => {

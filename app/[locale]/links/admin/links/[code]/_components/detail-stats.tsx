@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
-import { LazyHourChart } from "@/components/links/stats/charts/lazy-charts";
+import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
@@ -32,7 +32,7 @@ export function DetailStats({ stats }: { stats: LinkStats }) {
           title={t("detail.section.hourly.title")}
           description={t("detail.section.hourly.desc")}
         >
-          <LazyHourChart data={stats.hourClicks} />
+          <HourChart data={stats.hourClicks} />
         </Section>
       </div>
 

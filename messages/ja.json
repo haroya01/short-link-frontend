@@ -1645,13 +1645,8 @@
       "settings": "設定"
     },
     "live": {
-      "title": "リアルタイムクリック",
-      "connecting": "接続中…",
-      "connected": "ライブ",
-      "scope": "この画面を開いてからのクリック · 端末のタイムゾーン",
-      "reconnecting": "切断 · 再接続中",
-      "example": "サンプル",
-      "now": "今"
+      "now": "今",
+      "bot": "ボット"
     },
     "quality": {
       "title": "クリック品質",
@@ -1811,16 +1806,14 @@
     },
     "section": {
       "heatmap": {
-        "title": "時間帯 × 曜日 ヒートマップ",
-        "desc": "{tz} · 濃いほどクリック多"
+        "title": "曜日 × 時間"
       },
       "daily": {
         "title": "日別の人によるクリック",
         "desc": "直近30日 · {tz}"
       },
       "hourly": {
-        "title": "時間帯",
-        "desc": "0〜23時の分布"
+        "title": "時間帯"
       },
       "device": {
         "title": "デバイス",
@@ -1996,7 +1989,8 @@
       "logLoadFailed": "クリックログを読み込めませんでした。もう一度お試しください。"
     },
     "chart": {
-      "summary": "最多 {date} {count}回"
+      "summary": "最多 {label} {count}回",
+      "hour": "{hour}時"
     },
     "exportSummaryCsv": "サマリー CSV",
     "rawWindow": "直近{days}日",
@@ -2071,9 +2065,6 @@
       "who": "訪問環境"
     },
     "linkSettings": "リンク設定",
-    "scope": {
-      "daily": "直近{days}日の人によるクリック · {tz}"
-    },
     "rangeDays": "{days}日",
     "moreActions": "その他の操作",
     "period": {
