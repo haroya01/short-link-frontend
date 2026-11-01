@@ -17,6 +17,7 @@ import {
 } from "@/modules/notes/api/follow-suggestions";
 import type { RemoteAccount } from "@/modules/notes/api/notes";
 import { listRemoteSuggestions } from "@/modules/notes/api/remote-safety";
+import { EmojiText } from "./emoji-text";
 import { RemoteFollowButton } from "./remote-account";
 
 function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
@@ -31,7 +32,9 @@ function RemoteSuggestion({ initial }: { initial: RemoteAccount }) {
         >
           <Avatar src={account.avatarUrl} name={account.username || account.acct} handle={account.acct} size="sm" />
           <span className="min-w-0">
-            <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">{name}</span>
+            <span className="block truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">
+              <EmojiText text={name} emojis={account.emojis} />
+            </span>
             <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">@{account.acct}</span>
           </span>
         </BlogLink>

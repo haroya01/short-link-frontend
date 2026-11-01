@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { mockBackend } from "./helpers/mock-backend";
+import { mockBackend, signIn } from "./helpers/mock-backend";
 
 const PIXEL = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", "base64");
 const ZWSP = String.fromCharCode(0x200b);
@@ -73,4 +73,38 @@ test("a remote note draws the emojis it lists, keeps the rest as text, and falls
 
   await expect(card.locator("header").getByRole("img", { name: ":neoghost:" })).toBeVisible();
   await expect(card.locator("header")).toContainText("Aramaki");
+});
+
+test("a remote profile header draws the emojis in the display name", async ({ page }) => {
+  await signIn(page);
+  await page.route(`${EMOJI}/**`, (route) => route.fulfill({ status: 200, contentType: "image/png", body: PIXEL }));
+  await mockBackend(page, {
+    "GET /api/v1/federation/accounts/9820": (route) =>
+      route.fulfill({
+        json: {
+          id: 9820,
+          acct: "popoyo@misskey.remote.test",
+          username: "popoyo",
+          domain: "misskey.remote.test",
+          displayName: `${ZWSP}:new_l:${ZWSP} ぽぽよもちのキャンディー屋さん ${ZWSP}:new_r:${ZWSP}`,
+          avatarUrl: null,
+          url: "https://misskey.remote.test/@popoyo",
+          following: false,
+          requested: false,
+          emojis: [
+            { shortcode: "new_l", url: `${EMOJI}/new_l.png` },
+            { shortcode: "new_r", url: `${EMOJI}/new_r.png` },
+          ],
+        },
+      }),
+    "GET /api/v1/federation/accounts/9820/notes": (route) =>
+      route.fulfill({ json: { items: [], page: 0, hasNext: false } }),
+  });
+  await page.goto("/ko/blog/remote/9820");
+  const heading = page.getByRole("heading", { level: 1 });
+  await expect(heading.getByRole("img", { name: ":new_l:" })).toBeVisible({ timeout: 30_000 });
+  await expect(heading.getByRole("img", { name: ":new_r:" })).toBeVisible();
+  await expect(heading).toContainText("ぽぽよもちのキャンディー屋さん");
+  await expect(heading).not.toContainText(":new_l:");
+  expect(await heading.textContent()).not.toContain(ZWSP);
 });

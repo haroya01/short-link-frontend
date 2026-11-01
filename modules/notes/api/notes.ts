@@ -300,6 +300,7 @@ export interface RemoteAccount {
   /** Absent on a backend without account blocks and mutes for other servers. */
   blocking?: boolean;
   muting?: boolean;
+  emojis?: NoteEmoji[];
 }
 
 export interface DomainBlock {

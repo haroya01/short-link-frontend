@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import type { NoteEmoji } from "@/modules/notes/api/notes";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -12,6 +13,7 @@ export interface FollowRequest {
   displayName: string | null;
   avatarUrl: string | null;
   requestedAt: string | null;
+  emojis?: NoteEmoji[];
 }
 
 interface MemberRow {
@@ -28,6 +30,7 @@ interface RemoteRow {
   displayName: string | null;
   avatarUrl: string | null;
   requestedAt: string | null;
+  emojis?: NoteEmoji[];
 }
 
 const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
@@ -66,6 +69,7 @@ function merge(members: MemberRow[], remotes: RemoteRow[]): FollowRequest[] {
       displayName: r.displayName,
       avatarUrl: r.avatarUrl,
       requestedAt: r.requestedAt,
+      emojis: r.emojis,
     })),
   ].sort((a, b) => (b.requestedAt ?? "").localeCompare(a.requestedAt ?? ""));
 }

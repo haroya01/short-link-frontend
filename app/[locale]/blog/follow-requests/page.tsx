@@ -14,6 +14,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { FollowRequestAnswer } from "@/modules/notifications/components/follow-request-answer";
 import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { useFollowRequests } from "@/modules/notifications/lib/use-notifications";
+import { EmojiText } from "@/modules/notes/components/emoji-text";
 
 /** 기다리는 팔로우 요청 — 이 서버 회원과 다른 서버 계정을 한 목록에서 승인·거절한다(마스토돈 잠긴 계정). */
 export default function FollowRequestsPage() {
@@ -80,7 +81,7 @@ export default function FollowRequestsPage() {
                     <Avatar src={r.avatarUrl} name={r.displayName || r.handle} handle={r.handle} size="md" />
                     <span className="min-w-0">
                       <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
-                        {r.displayName || r.handle}
+                        <EmojiText text={r.displayName || r.handle} emojis={r.emojis} />
                       </span>
                       <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">
                         @{r.handle}

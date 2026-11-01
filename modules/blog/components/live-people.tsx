@@ -6,6 +6,7 @@ import type { PersonMatch } from "@/modules/blog/api/people";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import type { RemoteAccount } from "@/modules/notes/api/notes";
 import type { LiveRemoteLookup } from "@/modules/notes/lib/use-remote-resolution";
+import { EmojiText } from "@/modules/notes/components/emoji-text";
 import { blogPath } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { Avatar } from "./avatar";
@@ -150,7 +151,7 @@ export function LiveRemotePeople({
                       dense ? "text-[13px]" : "text-[14px]",
                     )}
                   >
-                    {account.displayName?.trim() || account.username}
+                    <EmojiText text={account.displayName?.trim() || account.username} emojis={account.emojis} />
                   </span>
                   <span className={cn("truncate text-slate-500 dark:text-slate-400", dense ? "text-[11px]" : "text-[12px]")}>
                     @{account.acct}

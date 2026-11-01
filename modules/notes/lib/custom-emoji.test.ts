@@ -60,6 +60,20 @@ describe("splitEmoji", () => {
   });
 });
 
+describe("a remote display name", () => {
+  it("draws both halves of a name wrapped in Mastodon's zero-width spaces", () => {
+    const name = `${ZWSP}:new_l:${ZWSP} ぽぽよもちのキャンディー屋さん ${ZWSP}:new_r:${ZWSP}`;
+    const left = { shortcode: "new_l", url: "https://media.example/new_l.png" };
+    const right = { shortcode: "new_r", url: "https://media.example/new_r.png" };
+    expect(splitNoteEmoji(name, [left, right])).toEqual([
+      picture(left),
+      { kind: "text", value: " ぽぽよもちのキャンディー屋さん " },
+      picture(right),
+    ]);
+    expect(splitNoteEmoji(name, undefined)).toEqual([{ kind: "text", value: name }]);
+  });
+});
+
 describe("splitNoteEmoji", () => {
   it("never touches a shortcode inside a link or a hashtag", () => {
     expect(

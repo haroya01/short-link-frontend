@@ -19,6 +19,7 @@ import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { blogPath } from "@/lib/host";
 import { hiddenFromViewer } from "@/modules/notes/api/remote-safety";
 import type { RemoteAccount } from "@/modules/notes/api/notes";
+import { EmojiText } from "@/modules/notes/components/emoji-text";
 import { RemoteFollowButton } from "@/modules/notes/components/remote-account";
 import {
   followEntryKey,
@@ -283,7 +284,7 @@ function RemoteFollowRow({
           </span>
           {subtitle && (
             <span lang={contentLang(subtitle)} className="truncate text-[12px] text-slate-500 dark:text-slate-400">
-              {subtitle}
+              <EmojiText text={subtitle} emojis={account.emojis} />
             </span>
           )}
         </span>
