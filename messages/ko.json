@@ -1219,7 +1219,18 @@
     },
     "recentKept": "이 브라우저에 24시간 보관돼요",
     "recentClaim": "로그인하면 이 링크들이 계정으로 옮겨져 만료 없이 남아요.",
-    "recentLogin": "로그인"
+    "recentLogin": "로그인",
+    "abilities": {
+      "title": "링크마다 할 수 있는 것",
+      "password": { "line": "아는 사람만 열려요", "name": "비밀번호" },
+      "schedule": { "line": "정한 시각에 열리고, 정한 날 닫혀요", "name": "예약 · 만료" },
+      "split": { "line": "한 링크로 두 페이지에 나눠 보내요", "name": "A/B" },
+      "countries": { "line": "나라마다 다른 페이지로 보내거나, 아예 막아요", "name": "나라" },
+      "openOutside": { "line": "카톡에서 눌러도 사파리·크롬으로 열려요", "name": "앱 밖에서 열기" },
+      "card": { "line": "카톡에 붙였을 때 보이는 카드를 직접 정해요", "name": "미리보기 카드" },
+      "bots": { "line": "사람이 누른 것만 세요", "name": "봇 제외" },
+      "qr": { "line": "어느 전단지에서 찍었는지까지 나눠 봐요", "name": "QR" }
+    }
   },
   "showcase": {
     "title": "하는 일에 맞춰 꾸민 프로필",

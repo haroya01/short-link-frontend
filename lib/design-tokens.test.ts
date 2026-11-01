@@ -67,6 +67,10 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
     pattern: /border-dashed[^"'`]*text-center|text-center[^"'`]*border-dashed/,
     allowFile: /(poster-builder[\\/]page|gallery-block-dialog|u[\\/]\[username\][\\/]_components[\\/]entry-list|article-blocks)\.tsx$/,
   },
+  {
+    name: "한 클래스 문자열의 [animation-delay:…] + animate-[…] — animation 축약이 지연을 0 으로 덮는다(지연은 animate-[…] 안에)",
+    pattern: /\[animation-delay:[^\]]+\][^"'`]*animate-\[|animate-\[[^\]]+\][^"'`]*\[animation-delay:/,
+  },
 ];
 
 function filesUnder(dir: string): string[] {

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { HomeRecent } from "@/components/links/home-recent";
 import { FoldDemo } from "@/components/landing/fold-demo";
+import { LinkAbilities } from "@/components/landing/link-abilities";
 import { useAuth } from "@/lib/auth";
 import { useSharedUrl } from "@/lib/use-shared-url";
 import { useRouter } from "@/i18n/navigation";
@@ -56,12 +57,15 @@ export default function HomePage() {
               results={results}
               onResultsChange={setResults}
               initialUrl={sharedUrl ?? undefined}
+              foldOnArrive
             />
 
             <div className="mt-10">
               <HomeRecent exclude={results?.map((r) => r.res.shortCode) ?? []} />
             </div>
           </div>
+
+          <LinkAbilities locale={locale} />
         </div>
       </section>
 
