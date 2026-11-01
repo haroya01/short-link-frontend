@@ -41,6 +41,47 @@ test("a link made without signing in shows its own clicks as they land", async (
   expect(streams[0]).not.toContain("streamToken");
 });
 
+test("the heading's line folds a long address into a short one once, then gives way to the real answer", async ({ page }) => {
+  await page.route("**/api/v1/pow/challenge", (route) =>
+    route.fulfill({ json: { challenge: "e2e-challenge", difficulty: 1 } }),
+  );
+  await page.route("**/api/v1/links", (route) =>
+    route.request().method() !== "POST"
+      ? route.fallback()
+      : route.fulfill({ status: 201, json: { shortCode: "e2eFold1", shortUrl: "http://localhost:3001/e2eFold1", claimToken: null } }),
+  );
+  await page.goto("/ko");
+  const demo = page.getByTestId("fold-demo");
+  await expect(demo).toHaveAttribute("aria-hidden", "true");
+  await expect(demo).toContainText("kurl.me/");
+  const runs = await demo.evaluate((el) =>
+    el.getAnimations({ subtree: true }).map((a) => (a.effect as KeyframeEffect).getTiming().iterations),
+  );
+  expect(runs.length).toBeGreaterThan(0);
+  expect(runs.every((n) => n === 1)).toBe(true);
+
+  await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("https://example.com/fold");
+  await page.getByRole("button", { name: "단축하기" }).click();
+  await expect(page.getByTestId("result-line").first()).toBeVisible({ timeout: 10_000 });
+  await expect(demo).toHaveCount(0);
+});
+
+test("with reduced motion the fold is already done: the short address and its line, nothing moving", async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce", baseURL: test.info().project.use.baseURL });
+  const page = await context.newPage();
+  await page.goto("/ko");
+  const demo = page.getByTestId("fold-demo");
+  await expect(demo).toBeAttached();
+  const state = await demo.evaluate((el) => ({
+    moving: el.getAnimations({ subtree: true }).length,
+    long: getComputedStyle(el.querySelector(".fold-long")!).opacity,
+    short: getComputedStyle(el.querySelector(".fold-short")!).opacity,
+    line: getComputedStyle(el.querySelector(".fold-line")!).transform,
+  }));
+  expect(state).toEqual({ moving: 0, long: "0", short: "1", line: "matrix(1, 0, 0, 1, 0, 0)" });
+  await context.close();
+});
+
 test("the landing is the tool alone: one line of heading, the field, no staged example", async ({ page }) => {
   await page.goto("/ko");
   await expect(page.getByTestId("home-hero-heading")).toHaveText("단축은 한 줄");

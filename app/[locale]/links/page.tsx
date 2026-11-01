@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { HomeRecent } from "@/components/links/home-recent";
+import { FoldDemo } from "@/components/landing/fold-demo";
 import { useAuth } from "@/lib/auth";
 import { useSharedUrl } from "@/lib/use-shared-url";
 import { useRouter } from "@/i18n/navigation";
@@ -42,10 +43,12 @@ export default function HomePage() {
           <div className="mx-auto max-w-2xl">
             <h1
               data-testid="home-hero-heading"
-              className={`mb-9 text-balance font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 sm:mb-11 sm:text-center ${headlineSizeClass}`}
+              className={`mb-6 text-balance font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 sm:mb-8 sm:text-center ${headlineSizeClass}`}
             >
               {t.rich("headline1", { line: (chunks) => chunks })}
             </h1>
+
+            {!results?.length && <FoldDemo />}
 
             <ShortenPanel
               authenticated={authenticated}
