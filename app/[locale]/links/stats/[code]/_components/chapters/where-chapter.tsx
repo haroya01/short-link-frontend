@@ -5,7 +5,7 @@ import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
 import { CountryTable } from "@/components/links/stats/country-table";
-import { FetchSiteBreakdown } from "@/components/links/stats/labeled-breakdowns";
+import { FetchSiteBreakdown, RegionBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Section } from "@/components/common/section";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
@@ -183,9 +183,7 @@ export function WhereChapter({ data }: { data: LinkStats }) {
       </Section>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("section.region.title")} description={t("section.region.desc")}>
-          <BreakdownList
-            items={data.regionClicks.map((r) => ({ label: r.region, count: r.count }))}
-          />
+          <RegionBreakdown items={data.regionClicks} />
         </Section>
         <Section title={t("section.city.title")} description={t("section.city.desc")}>
           <BreakdownList

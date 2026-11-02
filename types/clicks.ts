@@ -47,7 +47,7 @@ export type ChannelDepth = {
   returnRatio: number;
 };
 export type CountryClick = { country: string; count: number };
-export type RegionClick = { region: string; count: number };
+export type RegionClick = { region: string; regionCode?: string | null; count: number };
 export type CityClick = { city: string; count: number };
 export type LanguageClick = { language: string; count: number };
 export type AsnClick = { asn: number | null; organization: string; count: number };

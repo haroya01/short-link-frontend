@@ -5,6 +5,7 @@ export interface LinkEvent {
   clickedAt: string;
   country: string | null;
   region: string | null;
+  regionCode?: string | null;
   city: string | null;
   device: string | null;
   os: string | null;
