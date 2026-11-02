@@ -6,10 +6,10 @@ import { describe, expect, it } from "vitest";
 const ROOTS = ["app", "components", "hooks", "lib", "modules"];
 const CJK = /[가-힣ぁ-んァ-ン一-龥]/;
 // modules/*/api clients carry their mock-mode fixtures inline, seo-landing is a per-locale content
-// table, the slash menu's search aliases are deliberately multilingual, and link-templates holds
-// brand names that read the same in every locale — none of them is UI copy.
+// table, the slash menu's search aliases are deliberately multilingual, and link-templates and
+// booking-providers hold brand names that read the same in every locale — none of them is UI copy.
 const EXCLUDED =
-  /(\.test\.|fixtures|mock-data|demo-data|admin-request-metrics-mock|_mocks?[-.]|mock-profile|modules[\\/][^\\/]+[\\/]api[\\/]|seo-landing|tiptap-slash-menu|messages[\\/]|modules[\\/]profile[\\/]lib[\\/]link-templates\.ts$)/;
+  /(\.test\.|fixtures|mock-data|demo-data|admin-request-metrics-mock|_mocks?[-.]|mock-profile|modules[\\/][^\\/]+[\\/]api[\\/]|seo-landing|tiptap-slash-menu|messages[\\/]|modules[\\/]profile[\\/]lib[\\/]link-templates\.ts$|modules[\\/]profile[\\/]curation[\\/]booking-providers\.ts$)/;
 
 function filesUnder(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];

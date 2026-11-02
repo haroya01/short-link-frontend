@@ -2,11 +2,11 @@
 
 import { useMemo } from "react";
 import { Calendar, CheckCircle2, AlertCircle } from "lucide-react";
-import type { useTranslations } from "next-intl";
+import { useLocale, type useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/modules/profile/curation/form-field";
-import { BOOKING_PROVIDERS, resolveBookingProvider } from "@/modules/profile/curation/booking-providers";
+import { bookingProvidersFor, resolveBookingProvider } from "@/modules/profile/curation/booking-providers";
 import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Config = {
@@ -32,6 +32,7 @@ type Props = {
  * ✗ unsupported" inline, but the backend remains authoritative on validation.
  */
 export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
+  const locale = useLocale();
   const [config, setConfig] = useBlockDialogForm<Config>(open, initialJson, (raw) => {
     if (raw) {
       try {
@@ -139,7 +140,7 @@ export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
             {t("bookingSupportedProviders")}
           </p>
           <p className="mt-1 text-[10px] leading-relaxed text-slate-500 dark:text-slate-400">
-            {BOOKING_PROVIDERS.map((p) => p.name).join(" · ")}
+            {bookingProvidersFor(locale).map((p) => p.name).join(" · ")}
           </p>
         </div>
       </div>

@@ -317,7 +317,15 @@ export type BookingProvider =
   | "microsoft_bookings"
   | "tidycal"
   | "acuity"
-  | "catchtable";
+  | "catchtable"
+  | "hotpepper_beauty"
+  | "hotpepper_gourmet"
+  | "tabelog"
+  | "tablecheck"
+  | "airreserve"
+  | "reserva"
+  | "stores_reserve"
+  | "ikyu_restaurant";
 
 /**
  * Trimmed oembed response from the backend proxy. Fields mirror the provider's payload but only

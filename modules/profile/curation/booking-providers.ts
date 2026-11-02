@@ -12,19 +12,8 @@ type ProviderSpec = {
   hosts: readonly string[];
   /** Human-readable name shown in dialog hints and as a tag on the public card. */
   name: string;
+  japan?: true;
 };
-
-const NAVER_BOOKING_NAME = String.fromCharCode(0xb124, 0xc774, 0xbc84, 0x0020, 0xc608, 0xc57d);
-const KAKAO_CHANNEL_NAME = String.fromCharCode(
-  0xce74,
-  0xce74,
-  0xc624,
-  0x0020,
-  0xd1a1,
-  0xcc44,
-  0xb110,
-);
-const CATCHTABLE_NAME = String.fromCharCode(0xce90, 0xce58, 0xd14c, 0xc774, 0xbe14);
 
 const PROVIDERS: readonly ProviderSpec[] = [
   { id: "calendly", hosts: ["calendly.com", "www.calendly.com"], name: "Calendly" },
@@ -37,9 +26,9 @@ const PROVIDERS: readonly ProviderSpec[] = [
   {
     id: "naver_booking",
     hosts: ["booking.naver.com", "m.booking.naver.com"],
-    name: NAVER_BOOKING_NAME,
+    name: "네이버 예약",
   },
-  { id: "kakao_channel", hosts: ["pf.kakao.com"], name: KAKAO_CHANNEL_NAME },
+  { id: "kakao_channel", hosts: ["pf.kakao.com"], name: "카카오 톡채널" },
   {
     id: "microsoft_bookings",
     hosts: ["outlook.office.com", "outlook.office365.com", "bookwithme.microsoft.com"],
@@ -47,9 +36,25 @@ const PROVIDERS: readonly ProviderSpec[] = [
   },
   { id: "tidycal", hosts: ["tidycal.com", "www.tidycal.com"], name: "TidyCal" },
   { id: "acuity", hosts: ["app.acuityscheduling.com"], name: "Acuity" },
-  { id: "catchtable", hosts: ["app.catchtable.co.kr", "catchtable.co.kr"], name: CATCHTABLE_NAME },
+  { id: "catchtable", hosts: ["app.catchtable.co.kr", "catchtable.co.kr"], name: "캐치테이블" },
+  {
+    id: "hotpepper_beauty",
+    hosts: ["beauty.hotpepper.jp"],
+    name: "ホットペッパービューティー",
+    japan: true,
+  },
+  { id: "hotpepper_gourmet", hosts: ["www.hotpepper.jp"], name: "ホットペッパーグルメ", japan: true },
+  { id: "tabelog", hosts: ["tabelog.com", "s.tabelog.com"], name: "食べログ", japan: true },
+  { id: "tablecheck", hosts: ["www.tablecheck.com", "tablecheck.com"], name: "TableCheck", japan: true },
+  { id: "airreserve", hosts: ["airrsv.net"], name: "Airリザーブ", japan: true },
+  { id: "reserva", hosts: ["reserva.be"], name: "RESERVA", japan: true },
+  { id: "stores_reserve", hosts: ["coubic.com"], name: "STORES 予約", japan: true },
+  { id: "ikyu_restaurant", hosts: ["restaurant.ikyu.com"], name: "一休.comレストラン", japan: true },
 ] as const;
 
 export const resolveBookingProvider = createHostResolver(PROVIDERS);
 
-export const BOOKING_PROVIDERS = PROVIDERS;
+export function bookingProvidersFor(locale: string): readonly ProviderSpec[] {
+  if (locale !== "ja") return PROVIDERS;
+  return [...PROVIDERS.filter((p) => p.japan), ...PROVIDERS.filter((p) => !p.japan)];
+}
