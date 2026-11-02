@@ -1850,23 +1850,28 @@ body[data-cookie-consent="visible"] {
     opacity: 1;
   }
 }
-@keyframes ability-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
+@keyframes ability-hold {
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .ability-row {
-      animation: ability-in var(--ease) both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 28%;
-    }
+.ability-line {
+  transform: scaleX(0);
+  animation: result-underline-draw 420ms var(--ease) forwards;
+}
+.ability-line[data-turning] {
+  animation:
+    result-underline-draw 420ms var(--ease) forwards,
+    ability-hold 4500ms var(--ease);
+}
+.ability-stage:is(:hover, :focus-within, [data-paused]) .ability-line {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ability-line,
+  .ability-line[data-turning] {
+    animation: none;
+    transform: none;
   }
 }
 @keyframes scene-draw {

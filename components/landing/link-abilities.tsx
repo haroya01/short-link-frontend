@@ -1,58 +1,149 @@
-import type { CSSProperties } from "react";
-import { useTranslations } from "next-intl";
-import { RevealOnView } from "@/components/landing/reveal-on-view";
+"use client";
 
-export const ABILITY_GROUPS = [
-  { key: "access", items: ["password", "block", "schedule", "expiry"] },
-  { key: "route", items: ["split", "targets", "openOutside", "card"] },
-  { key: "watch", items: ["live", "bots", "qr"] },
-] as const;
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useTranslations } from "next-intl";
+import { ABILITY_GROUPS } from "@/components/landing/ability-groups";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const SHORT_URL = "kurl.me/k8Tq2Za";
+
+const FIRST_ACT_AFTER_MS = 1800;
 
 const at = (ms: number) => ({ ["--at" as string]: `${ms}ms` }) as CSSProperties;
 
 export function LinkAbilities() {
   const t = useTranslations("home.abilities");
+  const ref = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const [run, setRun] = useState(0);
+  const [auto, setAuto] = useState(true);
+  const [revealed, setRevealed] = useState(false);
+  const [inView, setInView] = useState(false);
+  const reduced = useReducedMotion();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (!entry.isIntersecting || timer) return;
+        timer = setTimeout(() => setRevealed(true), Math.max(0, FIRST_ACT_AFTER_MS - performance.now()));
+      },
+      { threshold: 0.6 },
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const pick = (index: number) => {
+    setAuto(false);
+    setActive(index);
+    setRun((n) => n + 1);
+  };
+
+  const advance = () => {
+    if (active === ABILITY_GROUPS.length - 1) {
+      setAuto(false);
+      setActive(0);
+    } else {
+      setActive(active + 1);
+    }
+    setRun((n) => n + 1);
+  };
+
+  const current = ABILITY_GROUPS[active].key;
+
   return (
-    <section aria-labelledby="link-abilities" className="mx-auto mt-28 max-w-2xl sm:mt-40">
-      <h2 id="link-abilities" className="ability-row text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+    <section
+      ref={ref}
+      aria-labelledby="link-abilities"
+      data-paused={inView ? undefined : ""}
+      className="ability-stage mx-auto mt-[max(3rem,9vh)] max-w-2xl"
+    >
+      <h2 id="link-abilities" className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
         {t("title")}
       </h2>
-      <ul className="mt-4 border-t border-slate-200 dark:border-slate-800">
-        {ABILITY_GROUPS.map((group) => (
-          <li
-            key={group.key}
-            data-testid="ability-group"
-            className="ability-row grid gap-6 border-b border-slate-200 py-8 dark:border-slate-800 sm:grid-cols-[1fr_320px] sm:items-center sm:gap-10 sm:py-11"
-          >
-            <div>
-              <h3 className="text-[21px] font-semibold leading-snug tracking-[-0.015em] text-slate-900 dark:text-slate-100 sm:text-[24px]">
-                {t(`${group.key}.line`)}
-              </h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-                {group.items.map((item, i) => {
-                  const more = i < group.items.length - 1;
-                  return (
-                    <span key={item}>
-                      <span className="whitespace-nowrap">
-                        {t(`${group.key}.items.${item}`)}
-                        {more && " ·"}
-                      </span>
-                      {more && " "}
+      <div className="mt-4 grid gap-6 sm:grid-cols-[1fr_336px] sm:items-start sm:gap-12">
+        <ul className="border-t border-slate-200 dark:border-slate-800">
+          {ABILITY_GROUPS.map((group, i) => {
+            const on = i === active;
+            return (
+              <li
+                key={group.key}
+                data-testid="ability-group"
+                className="relative border-b border-slate-200 dark:border-slate-800"
+              >
+                <h3>
+                  <button
+                    type="button"
+                    aria-expanded={on}
+                    aria-controls={`ability-${group.key}`}
+                    onClick={() => pick(i)}
+                    className={`focus-ring w-full rounded-sm py-3.5 text-left text-[18px] font-semibold leading-snug tracking-[-0.015em] transition-colors sm:text-[20px] ${
+                      on
+                        ? "text-slate-900 dark:text-slate-100"
+                        : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    {t(`${group.key}.line`)}
+                  </button>
+                </h3>
+                <div
+                  id={`ability-${group.key}`}
+                  aria-hidden={!on}
+                  className={`grid transition-[grid-template-rows] duration-[420ms] ease-[var(--ease)] motion-reduce:transition-none ${
+                    on ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  }`}
+                >
+                  <p className="min-h-0 overflow-hidden">
+                    <span className="block pb-4 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+                      {group.items.map((item, n) => {
+                        const more = n < group.items.length - 1;
+                        return (
+                          <span key={item}>
+                            <span className="whitespace-nowrap">
+                              {t(`${group.key}.items.${item}`)}
+                              {more && " ·"}
+                            </span>
+                            {more && " "}
+                          </span>
+                        );
+                      })}
                     </span>
-                  );
-                })}
-              </p>
-            </div>
-            <RevealOnView className="flex items-center sm:h-[88px]">
-              {group.key === "access" && <AccessScene />}
-              {group.key === "route" && <RouteScene />}
-              {group.key === "watch" && <WatchScene />}
-            </RevealOnView>
-          </li>
-        ))}
-      </ul>
+                  </p>
+                </div>
+                {on && (revealed || reduced) && (
+                  <span
+                    key={run}
+                    aria-hidden
+                    data-testid="ability-line"
+                    data-turning={auto && !reduced ? "" : undefined}
+                    className="ability-line absolute inset-x-0 -bottom-px h-[2px] origin-left rounded-full bg-accent-600 dark:bg-accent-500"
+                    onAnimationEnd={(event) => event.animationName === "ability-hold" && advance()}
+                  />
+                )}
+              </li>
+            );
+          })}
+        </ul>
+        <div
+          key={`${current}-${run}`}
+          aria-hidden
+          data-testid="ability-stage"
+          data-active={current}
+          data-reveal={revealed ? "on" : "off"}
+          className="flex h-[92px] items-start sm:mt-4"
+        >
+          {current === "access" && <AccessScene />}
+          {current === "route" && <RouteScene />}
+          {current === "watch" && <WatchScene />}
+        </div>
+      </div>
     </section>
   );
 }
@@ -60,8 +151,8 @@ export function LinkAbilities() {
 function AccessScene() {
   return (
     <div>
-      <p className="font-mono text-[13px] text-slate-500 dark:text-slate-400">{SHORT_URL}</p>
-      <div className="relative mt-3 flex w-[168px] items-center gap-2.5 pb-2.5">
+      <p className="font-mono text-[14px] text-slate-500 dark:text-slate-400">{SHORT_URL}</p>
+      <div className="relative mt-3.5 flex w-[184px] items-center gap-3 pb-3">
         {[0, 1, 2, 3].map((i) => (
           <span key={i} className="scene-in h-2 w-2 rounded-full bg-slate-900 dark:bg-slate-100" style={at(120 + i * 110)} />
         ))}
@@ -82,7 +173,7 @@ const BRANCHES = [
 
 function RouteScene() {
   return (
-    <div className="flex items-center font-mono text-[13px]">
+    <div className="flex items-center font-mono text-[14px]">
       <span className="text-slate-500 dark:text-slate-400">{SHORT_URL}</span>
       <svg viewBox="0 0 44 56" className="mx-1 h-14 w-11 shrink-0 text-slate-300 dark:text-slate-700">
         {BRANCHES.map((branch) => (
@@ -119,7 +210,7 @@ function WatchScene() {
     { text: `JP · Android · ${scene("flyer")}`, bot: false },
   ];
   return (
-    <div className="text-[13px] text-slate-500 dark:text-slate-400">
+    <div className="text-[14px] text-slate-500 dark:text-slate-400">
       <p className="flex items-center gap-x-2">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" />
         <span className="inline-flex overflow-hidden">

@@ -68,7 +68,7 @@ test("the heading's line folds a long address into a short one once, then gives 
   await expect(demo).toHaveCount(0);
 });
 
-test("with reduced motion the fold and the three scenes are already done, nothing moving", async ({ browser }) => {
+test("with reduced motion the fold is done, nothing turns by itself, and each picked scene is already complete", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce", baseURL: test.info().project.use.baseURL });
   const page = await context.newPage();
   await page.goto("/ko");
@@ -81,23 +81,30 @@ test("with reduced motion the fold and the three scenes are already done, nothin
     line: getComputedStyle(el.querySelector(".fold-line")!).transform,
   }));
   expect(state).toEqual({ moving: 0, long: "0", short: "1", line: "matrix(1, 0, 0, 1, 0, 0)" });
-  const scenes = await page.locator("[data-reveal]").evaluateAll((els) =>
-    els.map((el) => ({
+  const line = page.getByTestId("ability-line");
+  await expect(line).toHaveCSS("transform", "none");
+  expect(await line.evaluate((el) => el.hasAttribute("data-turning"))).toBe(false);
+  const region = page.getByRole("region", { name: "링크마다 할 수 있는 것" });
+  const stage = page.getByTestId("ability-stage");
+  for (const [name, key] of [
+    ["누가, 언제 열지 정해요", "access"],
+    ["어디로, 어떻게 보낼지 정해요", "route"],
+    ["누가 눌렀는지 봐요", "watch"],
+  ]) {
+    await region.getByRole("button", { name }).click();
+    await expect(stage).toHaveAttribute("data-active", key);
+    const state = await stage.evaluate((el) => ({
       moving: el.getAnimations({ subtree: true }).length,
       hidden: [...el.querySelectorAll(".scene-in, .scene-roll")].filter((piece) => getComputedStyle(piece).opacity !== "1").length,
       undrawn: [...el.querySelectorAll(".scene-draw")].filter((path) => getComputedStyle(path).strokeDashoffset !== "0px").length,
-      line: [...el.querySelectorAll(".scene-line")].map((line) => getComputedStyle(line).transform),
-    })),
-  );
-  expect(scenes).toEqual([
-    { moving: 0, hidden: 0, undrawn: 0, line: ["none"] },
-    { moving: 0, hidden: 0, undrawn: 0, line: [] },
-    { moving: 0, hidden: 0, undrawn: 0, line: ["none"] },
-  ]);
+      lines: [...el.querySelectorAll(".scene-line")].filter((line) => getComputedStyle(line).transform !== "none").length,
+    }));
+    expect(state).toEqual({ moving: 0, hidden: 0, undrawn: 0, lines: 0 });
+  }
   await context.close();
 });
 
-test("the landing leads with the tool, then says what a link can do in three lines, each acted out once", async ({ page }) => {
+test("under the tool, one stage acts out what a link can do, one line at a time, once around", async ({ page }) => {
   await page.goto("/ko");
   await expect(page.getByTestId("home-hero-heading")).toHaveText("단축은 한 줄");
   await expect(page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true })).toBeVisible();
@@ -107,30 +114,45 @@ test("the landing leads with the tool, then says what a link can do in three lin
   await expect(headings).toHaveText("링크마다 할 수 있는 것");
 
   const region = page.getByRole("region", { name: "링크마다 할 수 있는 것" });
+  await expect(region).toBeInViewport();
   await expect(region.getByRole("heading", { level: 3 })).toHaveText([
     "누가, 언제 열지 정해요",
     "어디로, 어떻게 보낼지 정해요",
     "누가 눌렀는지 봐요",
   ]);
-  const groups = region.getByTestId("ability-group");
-  await expect(groups).toHaveCount(3);
-  await expect(groups.first()).toContainText("비밀번호 · 나라 차단 · 예약 공개 · 만료");
-  await expect(groups.nth(1)).toContainText("A/B · 나라와 기기별 페이지 · 앱 밖에서 열기 · 미리보기 카드");
   await expect(region.getByRole("link")).toHaveCount(0);
+  await expect(region.getByRole("button", { name: "누가, 언제 열지 정해요" })).toHaveAttribute("aria-expanded", "true");
+  await expect(region.getByTestId("ability-group").first()).toContainText("비밀번호 · 나라 차단 · 예약 공개 · 만료");
 
-  const scene = groups.last().locator("[data-reveal]");
-  await expect(scene).toHaveAttribute("aria-hidden", "true");
-  await expect(scene).toHaveAttribute("data-reveal", "off");
-  await expect.poll(() => scene.locator(".scene-in").first().evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
-  await scene.scrollIntoViewIfNeeded();
-  await expect(scene).toHaveAttribute("data-reveal", "on");
+  const stage = page.getByTestId("ability-stage");
+  await expect(stage).toHaveAttribute("aria-hidden", "true");
+  await expect(stage).toHaveAttribute("data-active", "access");
+  await expect(stage).toHaveAttribute("data-reveal", "on", { timeout: 5_000 });
+
+  const line = page.getByTestId("ability-line");
+  await expect(region.getByTestId("ability-group").first().getByTestId("ability-line")).toHaveClass(/bg-accent-600/);
+  for (const next of ["route", "watch"]) {
+    await line.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
+    await expect(stage).toHaveAttribute("data-active", next);
+  }
+  await expect(region.getByRole("button", { name: "누가 눌렀는지 봐요" })).toHaveAttribute("aria-expanded", "true");
+  await expect(region.getByRole("button", { name: "누가, 언제 열지 정해요" })).toHaveAttribute("aria-expanded", "false");
   await expect
-    .poll(() => scene.evaluate((el) => el.getAnimations({ subtree: true }).map((a) => a.playState)), { timeout: 4_000 })
-    .toEqual(Array(6).fill("finished"));
-  await expect(scene).toContainText("클릭 2");
-  await expect(scene.locator(".scene-in").first()).toHaveCSS("opacity", "1");
-  await expect(scene.getByTestId("scene-strike")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-  await expect(scene.getByTestId("scene-strike").locator("..")).toHaveText("US · Bot · direct");
+    .poll(() => stage.evaluate((el) => el.getAnimations({ subtree: true }).every((a) => a.playState === "finished")), { timeout: 4_000 })
+    .toBe(true);
+  await expect(stage).toContainText("클릭 2");
+  await expect(stage.getByTestId("scene-strike")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+  await line.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
+  await expect(stage).toHaveAttribute("data-active", "access");
+  await expect.poll(() => line.evaluate((el) => el.hasAttribute("data-turning"))).toBe(false);
+  await expect(line).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+  await region.getByRole("button", { name: "어디로, 어떻게 보낼지 정해요" }).click();
+  await expect(stage).toHaveAttribute("data-active", "route");
+  await expect(stage).toContainText("70%");
+  await expect(region.getByTestId("ability-group").nth(1).getByTestId("ability-line")).toHaveCount(1);
+  await expect.poll(() => line.evaluate((el) => el.hasAttribute("data-turning"))).toBe(false);
 });
 
 test("shortening folds the address you typed into the short one, in place", async ({ page }) => {

@@ -14,7 +14,7 @@ import { OfflineBanner } from "@/components/common/offline-banner";
 import { ThemeColorSync } from "@/components/common/theme-color-sync";
 import { followSystemThemeScript, themeCookieNameScript } from "@/lib/theme-cookie";
 import { appStoreUrl } from "@/lib/app-store";
-import { ABILITY_GROUPS } from "@/components/landing/link-abilities";
+import { ABILITY_GROUPS } from "@/components/landing/ability-groups";
 import "../globals.css";
 
 /*
