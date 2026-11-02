@@ -7,7 +7,7 @@ import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const SHORT_URL = "kurl.me/k8Tq2Za";
 
-const FIRST_ACT_AFTER_MS = 1800;
+const FIRST_ACT_AFTER_MS = 1600;
 
 const at = (ms: number) => ({ ["--at" as string]: `${ms}ms` }) as CSSProperties;
 
@@ -53,23 +53,28 @@ export function LinkAbilities() {
     return () => observer.disconnect();
   }, []);
 
-  const pick = (index: number) => {
-    setAuto(false);
+  const [leaving, setLeaving] = useState<{ key: SceneKey; run: number } | null>(null);
+  const current = ABILITY_GROUPS[active].key;
+
+  const show = (index: number) => {
+    if (revealed && !reduced) setLeaving({ key: current, run });
     setActive(index);
     setRun((n) => n + 1);
+  };
+
+  const pick = (index: number) => {
+    setAuto(false);
+    show(index);
   };
 
   const advance = () => {
     if (active === ABILITY_GROUPS.length - 1) {
       setAuto(false);
-      setActive(0);
+      show(0);
     } else {
-      setActive(active + 1);
+      show(active + 1);
     }
-    setRun((n) => n + 1);
   };
-
-  const current = ABILITY_GROUPS[active].key;
 
   return (
     <section
@@ -152,21 +157,39 @@ export function LinkAbilities() {
             );
           })}
         </ul>
-        <div
-          key={`${current}-${run}`}
-          aria-hidden
-          data-testid="ability-stage"
-          data-active={current}
-          data-reveal={revealed ? "on" : "off"}
-          className="flex h-[92px] items-start sm:mt-4"
-        >
-          {current === "access" && <AccessScene />}
-          {current === "route" && <RouteScene />}
-          {current === "watch" && <WatchScene />}
+        <div className="grid h-[92px] sm:mt-4">
+          {leaving && (
+            <div
+              key={`leave-${leaving.key}-${leaving.run}`}
+              aria-hidden
+              className="scene-leave flex items-start [grid-area:1/1]"
+              onAnimationEnd={() => setLeaving(null)}
+            >
+              <Scene name={leaving.key} />
+            </div>
+          )}
+          <div
+            key={`${current}-${run}`}
+            aria-hidden
+            data-testid="ability-stage"
+            data-active={current}
+            data-reveal={revealed ? "on" : "off"}
+            className="flex items-start [grid-area:1/1]"
+          >
+            <Scene name={current} />
+          </div>
         </div>
       </div>
     </section>
   );
+}
+
+type SceneKey = (typeof ABILITY_GROUPS)[number]["key"];
+
+function Scene({ name }: { name: SceneKey }) {
+  if (name === "access") return <AccessScene />;
+  if (name === "route") return <RouteScene />;
+  return <WatchScene />;
 }
 
 function AccessScene() {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -9,10 +8,8 @@ import type { MyLinksFilters } from "@/lib/api";
 import { cn, formatDate } from "@/lib/utils";
 
 type Props = {
-  className?: string;
   filters: MyLinksFilters;
   onChange: (next: MyLinksFilters) => void;
-  tagOptions?: string[];
 };
 
 const EXPIRY_OPTIONS: NonNullable<MyLinksFilters["expiry"]>[] = [
@@ -23,159 +20,169 @@ const EXPIRY_OPTIONS: NonNullable<MyLinksFilters["expiry"]>[] = [
   "EXPIRED",
 ];
 
-export function MyLinksFiltersBar({ className, filters, onChange, tagOptions }: Props) {
+function patcher(filters: MyLinksFilters, onChange: Props["onChange"]) {
+  return (p: Partial<MyLinksFilters>) => onChange({ ...filters, ...p, after: undefined });
+}
+
+export function MyLinksFiltersToggle({
+  filters,
+  onChange,
+  open,
+  onOpenChange,
+}: Props & { open: boolean; onOpenChange: (open: boolean) => void }) {
   const t = useTranslations("dashboard.filters");
-  const [open, setOpen] = useState(false);
-
   const activeCount = countActive(filters);
-
-  function patch(p: Partial<MyLinksFilters>) {
-    onChange({ ...filters, ...p, after: undefined });
-  }
+  const patch = patcher(filters, onChange);
 
   function clearAll() {
     onChange({ size: filters.size, sort: filters.sort, dir: filters.dir });
   }
 
   return (
-    <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {t("toggle")}
-          {activeCount > 0 && (
-            <span className="rounded-full bg-slate-900 dark:bg-white px-1.5 py-0.5 text-[10px] font-semibold text-white dark:text-slate-900">
-              {activeCount}
-            </span>
-          )}
-          <ChevronDown
-            className={cn("h-3.5 w-3.5 transition", open && "rotate-180")}
-          />
-        </Button>
-
-        {filters.tag && (
-          <Chip label={`#${filters.tag}`} onRemove={() => patch({ tag: undefined })} />
-        )}
-        {filters.domain && (
-          <Chip
-            label={`${t("domain")}: ${filters.domain}`}
-            onRemove={() => patch({ domain: undefined })}
-          />
-        )}
-        {filters.expiry && filters.expiry !== "ACTIVE" && (
-          <Chip
-            label={t(`expiry.${filters.expiry}`)}
-            onRemove={() => patch({ expiry: undefined })}
-          />
-        )}
-        {filters.createdAfter && (
-          <Chip
-            label={`${t("after")}: ${formatDate(filters.createdAfter)}`}
-            onRemove={() => patch({ createdAfter: undefined })}
-          />
-        )}
-        {filters.createdBefore && (
-          <Chip
-            label={`${t("before")}: ${formatDate(filters.createdBefore)}`}
-            onRemove={() => patch({ createdBefore: undefined })}
-          />
-        )}
-
+    <div className="flex flex-wrap items-center gap-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        aria-expanded={open}
+        onClick={() => onOpenChange(!open)}
+      >
+        {t("toggle")}
         {activeCount > 0 && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="ml-auto text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-          >
-            {t("clearAll")}
-          </button>
+          <span className="rounded-full bg-slate-900 dark:bg-white px-1.5 py-0.5 text-[10px] font-semibold text-white dark:text-slate-900">
+            {activeCount}
+          </span>
         )}
-      </div>
+        <ChevronDown
+          className={cn("h-3.5 w-3.5 transition", open && "rotate-180")}
+        />
+      </Button>
 
-      {open && (
-        <div className="grid basis-full gap-3 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:grid-cols-2">
-          <Field label={t("domain")}>
-            <Input
-              type="text"
-              value={filters.domain ?? ""}
-              onChange={(e) =>
-                patch({ domain: e.target.value.trim() || undefined })
-              }
-              placeholder="example.com"
-            />
-          </Field>
-
-          <Field label={t("tag")}>
-            {tagOptions && tagOptions.length > 0 ? (
-              <select
-                value={filters.tag ?? ""}
-                onChange={(e) => patch({ tag: e.target.value || undefined })}
-                className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
-              >
-                <option value="">{t("any")}</option>
-                {tagOptions.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <Input
-                type="text"
-                value={filters.tag ?? ""}
-                onChange={(e) =>
-                  patch({ tag: e.target.value.trim() || undefined })
-                }
-                placeholder={t("tagPlaceholder")}
-              />
-            )}
-          </Field>
-
-          <Field label={t("expiryLabel")}>
-            <select
-              value={filters.expiry ?? ""}
-              onChange={(e) =>
-                patch({
-                  expiry:
-                    (e.target.value as MyLinksFilters["expiry"]) || undefined,
-                })
-              }
-              className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
-            >
-              <option value="">{t("any")}</option>
-              {EXPIRY_OPTIONS.map((value) => (
-                <option key={value} value={value}>
-                  {t(`expiry.${value}`)}
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field label={t("dateRange")}>
-            <div className="flex items-center gap-1">
-              <Input
-                type="date"
-                value={dateOnly(filters.createdAfter)}
-                onChange={(e) =>
-                  patch({ createdAfter: toIsoStart(e.target.value) })
-                }
-              />
-              <span className="text-slate-400 dark:text-slate-400">–</span>
-              <Input
-                type="date"
-                value={dateOnly(filters.createdBefore)}
-                onChange={(e) =>
-                  patch({ createdBefore: toIsoEnd(e.target.value) })
-                }
-              />
-            </div>
-          </Field>
-        </div>
+      {filters.tag && (
+        <Chip label={`#${filters.tag}`} onRemove={() => patch({ tag: undefined })} />
       )}
+      {filters.domain && (
+        <Chip
+          label={`${t("domain")}: ${filters.domain}`}
+          onRemove={() => patch({ domain: undefined })}
+        />
+      )}
+      {filters.expiry && filters.expiry !== "ACTIVE" && (
+        <Chip
+          label={t(`expiry.${filters.expiry}`)}
+          onRemove={() => patch({ expiry: undefined })}
+        />
+      )}
+      {filters.createdAfter && (
+        <Chip
+          label={`${t("after")}: ${formatDate(filters.createdAfter)}`}
+          onRemove={() => patch({ createdAfter: undefined })}
+        />
+      )}
+      {filters.createdBefore && (
+        <Chip
+          label={`${t("before")}: ${formatDate(filters.createdBefore)}`}
+          onRemove={() => patch({ createdBefore: undefined })}
+        />
+      )}
+
+      {activeCount > 0 && (
+        <button
+          type="button"
+          onClick={clearAll}
+          className="ml-auto text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+        >
+          {t("clearAll")}
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function MyLinksFiltersPanel({ filters, onChange, tagOptions }: Props & { tagOptions?: string[] }) {
+  const t = useTranslations("dashboard.filters");
+  const patch = patcher(filters, onChange);
+
+  return (
+    <div data-testid="filters-panel" className="grid gap-3 rounded-md border border-slate-200 bg-white p-3 motion-safe:animate-[result-beat_260ms_var(--ease)] dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-2">
+      <Field label={t("domain")}>
+        <Input
+          type="text"
+          value={filters.domain ?? ""}
+          onChange={(e) =>
+            patch({ domain: e.target.value.trim() || undefined })
+          }
+          placeholder="example.com"
+        />
+      </Field>
+
+      <Field label={t("tag")}>
+        {tagOptions && tagOptions.length > 0 ? (
+          <select
+            value={filters.tag ?? ""}
+            onChange={(e) => patch({ tag: e.target.value || undefined })}
+            className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+          >
+            <option value="">{t("any")}</option>
+            {tagOptions.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <Input
+            type="text"
+            value={filters.tag ?? ""}
+            onChange={(e) =>
+              patch({ tag: e.target.value.trim() || undefined })
+            }
+            placeholder={t("tagPlaceholder")}
+          />
+        )}
+      </Field>
+
+      <Field label={t("expiryLabel")}>
+        <select
+          value={filters.expiry ?? ""}
+          onChange={(e) =>
+            patch({
+              expiry:
+                (e.target.value as MyLinksFilters["expiry"]) || undefined,
+            })
+          }
+          className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+        >
+          <option value="">{t("any")}</option>
+          {EXPIRY_OPTIONS.map((value) => (
+            <option key={value} value={value}>
+              {t(`expiry.${value}`)}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label={t("dateRange")}>
+        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-center sm:gap-1">
+          <Input
+            type="date"
+            className="min-w-0"
+            value={dateOnly(filters.createdAfter)}
+            onChange={(e) =>
+              patch({ createdAfter: toIsoStart(e.target.value) })
+            }
+          />
+          <span aria-hidden className="hidden text-slate-400 dark:text-slate-400 sm:block">–</span>
+          <Input
+            type="date"
+            className="min-w-0"
+            value={dateOnly(filters.createdBefore)}
+            onChange={(e) =>
+              patch({ createdBefore: toIsoEnd(e.target.value) })
+            }
+          />
+        </div>
+      </Field>
     </div>
   );
 }
