@@ -91,7 +91,7 @@ test.describe("demo page artifacts", () => {
     expect(await rows.count()).toBeGreaterThanOrEqual(5);
     // Region + city must show the leading KR metro entry, not be empty.
     const regionSection = page.locator('section:has-text("지역")').first();
-    await expect(regionSection).toContainText("Seoul");
+    await expect(regionSection).toContainText("서울특별시");
     const citySection = page.locator('section:has-text("도시")').first();
     await expect(citySection).toContainText("Seoul");
   });

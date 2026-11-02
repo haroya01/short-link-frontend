@@ -2,8 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
+import { mergeRegionClicks, regionMessageKey } from "@/lib/regions";
 import { CLIENT_APPS, FETCH_SITE_KEYS } from "@/lib/stats-labels";
-import type { ClientAppClick, FetchSiteClick } from "@/types";
+import type { ClientAppClick, FetchSiteClick, RegionClick } from "@/types";
 
 /**
  * 원값을 사람 말로 바꿔 {@link BreakdownList} 에 넘기는 두 분해. 상세의 다른 분해(레퍼러·기기·
@@ -34,6 +35,18 @@ export function FetchSiteBreakdown({ items }: { items: FetchSiteClick[] }) {
         const key = FETCH_SITE_KEYS[f.fetchSite];
         return { label: key ? t(`fetchSite.${key}`) : f.fetchSite, count: f.count };
       })}
+    />
+  );
+}
+
+export function RegionBreakdown({ items }: { items: RegionClick[] }) {
+  const t = useTranslations("stats");
+  return (
+    <BreakdownList
+      items={mergeRegionClicks(items).map((r) => ({
+        label: r.code ? t(`regionNames.${regionMessageKey(r.code)}`) : r.region,
+        count: r.count,
+      }))}
     />
   );
 }
