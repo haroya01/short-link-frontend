@@ -40,7 +40,7 @@ export default function HomePage() {
   return (
     <div>
       <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
-        <div className="container relative z-10 pb-12 pt-14 sm:pb-16 sm:pt-[18vh]">
+        <div className="container relative z-10 pb-12 pt-14 sm:pb-16 sm:pt-[10vh]">
           <div className="mx-auto max-w-2xl">
             <h1
               data-testid="home-hero-heading"
@@ -57,7 +57,6 @@ export default function HomePage() {
               results={results}
               onResultsChange={setResults}
               initialUrl={sharedUrl ?? undefined}
-              foldOnArrive
             />
 
             <div className="mt-10">
