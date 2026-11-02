@@ -57,7 +57,6 @@ export default function HomePage() {
               results={results}
               onResultsChange={setResults}
               initialUrl={sharedUrl ?? undefined}
-              foldOnArrive
             />
 
             <div className="mt-10">

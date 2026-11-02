@@ -21,7 +21,6 @@ export function ShortenPanel({
   onResultsChange,
   initialUrl,
   onCreated,
-  foldOnArrive = false,
 }: {
   authenticated: boolean;
   ready: boolean;
@@ -29,7 +28,6 @@ export function ShortenPanel({
   onResultsChange: (next: ShortenedEntry[]) => void;
   initialUrl?: string;
   onCreated?: () => void;
-  foldOnArrive?: boolean;
 }) {
   const tResult = useTranslations("result");
   const [composing, setComposing] = useState(false);
@@ -77,15 +75,14 @@ export function ShortenPanel({
               authenticated={authenticated}
               passwordRequested={r.passwordRequested}
               enterIndex={i}
-              fold={foldOnArrive}
             />
           ))}
           {!composing && (
             <button
               type="button"
               onClick={() => setComposing(true)}
-              className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
-              style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
+              className="focus-ring sweep-after inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+              style={{ ["--sweep-at" as string]: `${results.length * 70 + 60}ms`, ["--after" as string]: "460ms" } as React.CSSProperties}
             >
               {tResult("moreShorten")}
               <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">

@@ -76,11 +76,10 @@ test("with reduced motion the fold is done, nothing turns by itself, and each pi
   await expect(demo).toBeAttached();
   const state = await demo.evaluate((el) => ({
     moving: el.getAnimations({ subtree: true }).length,
-    long: getComputedStyle(el.querySelector(".fold-long")!).opacity,
-    short: getComputedStyle(el.querySelector(".fold-short")!).opacity,
-    line: getComputedStyle(el.querySelector(".fold-line")!).transform,
+    long: getComputedStyle(el.querySelector(".sweep-out")!).visibility,
+    short: getComputedStyle(el.querySelector(".sweep-in")!).clipPath,
   }));
-  expect(state).toEqual({ moving: 0, long: "0", short: "1", line: "matrix(1, 0, 0, 1, 0, 0)" });
+  expect(state).toEqual({ moving: 0, long: "hidden", short: "none" });
   await expect(page.getByTestId("ability-progress")).toHaveCount(0);
   const region = page.getByRole("region", { name: "링크마다 할 수 있는 것" });
   const stage = page.getByTestId("ability-stage");
@@ -151,7 +150,7 @@ test("under the tool, one stage acts out what a link can do, one line at a time,
   await expect(progress).toHaveCount(0);
 });
 
-test("shortening folds the address you typed into the short one, in place", async ({ page }) => {
+test("shortening sweeps one green line left to right, and the address you typed turns into the short one right at its edge", async ({ page }) => {
   await page.route("**/api/v1/pow/challenge", (route) =>
     route.fulfill({ json: { challenge: "e2e-challenge", difficulty: 1 } }),
   );
@@ -161,13 +160,32 @@ test("shortening folds the address you typed into the short one, in place", asyn
       : route.fulfill({ status: 201, json: { shortCode: "e2eFold2", shortUrl: "http://localhost:3001/e2eFold2", claimToken: null } }),
   );
   await page.goto("/ko");
-  await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill("https://example.com/a/very/long/path?utm_source=fold");
+  const typed = "https://example.com/a/very/long/path?utm_source=fold";
+  await page.getByPlaceholder("긴 주소 붙여넣기").filter({ visible: true }).fill(typed);
   await page.getByRole("button", { name: "단축하기" }).click();
   const line = page.getByTestId("result-line").first();
   await expect(line).toBeVisible({ timeout: 10_000 });
-  const folding = line.locator(".result-fold-long");
-  await expect(folding).toHaveAttribute("aria-hidden", "true");
-  await expect(folding).toHaveText("https://example.com/a/very/long/path?utm_source=fold");
-  await expect.poll(() => folding.evaluate((el) => getComputedStyle(el).opacity), { timeout: 3_000 }).toBe("0");
+  const out = line.getByTestId("result-sweep-out");
+  await expect(out).toHaveAttribute("aria-hidden", "true");
+  await expect(out).toHaveText(typed);
+
+  const midway = await line.evaluate((el) => {
+    const percent = (clip: string) => [...clip.matchAll(/(-?\d+(?:\.\d+)?)%/g)].map((m) => Number(m[1]));
+    const anims = el.getAnimations({ subtree: true });
+    anims.forEach((a) => a.pause());
+    const sweep = anims.filter((a) => ["sweep-out", "sweep-in"].includes((a as CSSAnimation).animationName) && !((a.effect as KeyframeEffect).target as Element).closest(".sweep-after"));
+    sweep.forEach((a) => (a.currentTime = 60 + 120));
+    const cutFromLeft = percent(getComputedStyle(el.querySelector('[data-testid="result-sweep-out"]')!).clipPath)[0];
+    const hiddenOnRight = percent(getComputedStyle(el.querySelector('[data-testid="result-sweep-in"]')!).clipPath)[0];
+    anims.forEach((a) => a.finish());
+    return { cutFromLeft, hiddenOnRight, sweeps: sweep.length };
+  });
+  expect(midway.sweeps).toBe(2);
+  expect(midway.cutFromLeft).toBeGreaterThan(5);
+  expect(midway.cutFromLeft).toBeLessThan(95);
+  expect(midway.cutFromLeft + midway.hiddenOnRight).toBeCloseTo(100, 1);
+
+  await expect(out).toHaveCSS("clip-path", "inset(0px 0px 0px 100%)");
+  await expect(line.getByTestId("result-sweep-in")).toHaveCSS("clip-path", "none");
   await expect(line.getByRole("link", { name: /e2eFold2/ })).toBeVisible();
 });
