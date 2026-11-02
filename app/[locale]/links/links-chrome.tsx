@@ -42,8 +42,8 @@ export function LinksChrome({ children }: { children: React.ReactNode }) {
     <AppProviders>
       <Nav />
       {/* 첫 화면에 푸터가 걸리지 않게 — 짧은 로딩 상태 아래 푸터가 첫 화면에 떴다가 본문 도착과 함께
-          밀려 내려가던 레이아웃 이동(CLS)을 막는다. */}
-      <main className="min-h-screen flex-1 pb-20 sm:pb-0">{children}</main>
+          밀려 내려가던 레이아웃 이동(CLS)을 막는다. 서버가 본문을 다 그려 보내는 랜딩은 예외. */}
+      <main className={`${internalPath === "/" ? "" : "min-h-screen "}flex-1 pb-20 sm:pb-0`}>{children}</main>
       <Footer app="links" directory />
       <CookieConsent darkAware />
       <ClaimToastListener />
