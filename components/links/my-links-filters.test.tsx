@@ -5,7 +5,7 @@ import type { MyLinksFilters } from "@/lib/api";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
 
-import { MyLinksFiltersBar } from "./my-links-filters";
+import { MyLinksFiltersPanel, MyLinksFiltersToggle } from "./my-links-filters";
 
 const previousTz = process.env.TZ;
 let root: Root;
@@ -25,9 +25,19 @@ afterEach(async () => {
   process.env.TZ = previousTz;
 });
 
+function Harness({ filters, onChange }: { filters: MyLinksFilters; onChange: (next: MyLinksFilters) => void }) {
+  const [open, setOpen] = React.useState(false);
+  return createElement(
+    React.Fragment,
+    null,
+    createElement(MyLinksFiltersToggle, { filters, onChange, open, onOpenChange: setOpen }),
+    open && createElement(MyLinksFiltersPanel, { filters, onChange, tagOptions: [] }),
+  );
+}
+
 async function render(filters: MyLinksFilters, onChange = vi.fn()) {
   await act(async () => {
-    root.render(createElement(MyLinksFiltersBar, { filters, onChange, tagOptions: [] }));
+    root.render(createElement(Harness, { filters, onChange }));
   });
   return onChange;
 }

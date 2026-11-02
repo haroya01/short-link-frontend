@@ -1799,7 +1799,16 @@ body[data-cookie-consent="visible"] {
   }
 }
 .ability-progress {
-  animation: ability-progress 4500ms linear both;
+  animation: ability-progress 3000ms linear both;
+}
+@keyframes scene-leave {
+  to {
+    opacity: 0;
+  }
+}
+.scene-leave {
+  pointer-events: none;
+  animation: scene-leave 200ms var(--ease) forwards;
 }
 .ability-stage:is(:hover, :focus-within, [data-paused]) .ability-progress {
   animation-play-state: paused;

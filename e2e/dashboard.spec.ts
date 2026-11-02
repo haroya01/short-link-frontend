@@ -85,3 +85,31 @@ test.describe("dashboard (auth)", () => {
     expect(deleted).toEqual(["delMe"]);
   });
 });
+
+test.describe("dashboard filters", () => {
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    test(`opening the filters keeps the search box and lays the panel out below the toolbar (${viewport.width}px)`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await withLinks(page, [link("filt1", "https://example.com/filter-1")]);
+      await page.goto("/ko/dashboard");
+      const search = page.getByPlaceholder(/목적지 또는 코드/);
+      await expect(search).toBeVisible();
+      const before = await search.boundingBox();
+
+      const toggle = page.getByRole("button", { name: /^필터/ });
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-expanded", "true");
+      const panel = page.getByTestId("filters-panel");
+      await expect(panel).toBeVisible();
+
+      const after = await search.boundingBox();
+      expect(after!.width).toBe(before!.width);
+      const panelBox = await panel.boundingBox();
+      const toggleBox = await toggle.boundingBox();
+      expect(panelBox!.y).toBeGreaterThan(toggleBox!.y + toggleBox!.height);
+      expect(panelBox!.x + panelBox!.width).toBeLessThanOrEqual(viewport.width);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(overflow).toBeLessThanOrEqual(0);
+    });
+  }
+});

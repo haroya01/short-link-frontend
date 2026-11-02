@@ -28,7 +28,7 @@ import { MobileComposer } from "@/components/links/mobile-composer";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { useSharedUrl } from "@/lib/use-shared-url";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
-import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
+import { MyLinksFiltersPanel, MyLinksFiltersToggle } from "@/components/links/my-links-filters";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
@@ -63,6 +63,7 @@ export default function DashboardPage() {
   const [made, setMade] = useState<ShortenedEntry[] | null>(null);
   const sharedUrl = useSharedUrl();
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [ordering, setOrdering] = useState(false);
   const favorites = useLinkFavorites();
 
@@ -251,9 +252,10 @@ export default function DashboardPage() {
                   ))}
                 </div>
                 {favoritesOnly && favorites.items.length > 1 && <Button variant="ghost" className="min-h-10" onClick={() => setOrdering((value) => !value)} aria-expanded={ordering}>{ordering ? t("favorite.orderDone") : t("favorite.orderTitle")}</Button>}
-                <MyLinksFiltersBar className="contents" filters={filters} onChange={setFilters} tagOptions={tagOptions} />
+                <MyLinksFiltersToggle filters={filters} onChange={setFilters} open={filtersOpen} onOpenChange={setFiltersOpen} />
               </div>
             </div>
+            {filtersOpen && <MyLinksFiltersPanel filters={filters} onChange={setFilters} tagOptions={tagOptions} />}
             {favoritesOnly && <p className="text-xs text-slate-500 dark:text-slate-400">{t("favorite.syncedHint")}</p>}
             {ordering && favoritesOnly && <FavoriteOrder items={favorites.items} busy={favorites.busy} onReorder={(codes) => void reorderFavorites(codes)} />}
 
