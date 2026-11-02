@@ -2753,7 +2753,7 @@
       "instagramProfileLink": "Instagramのプロフィールリンク",
       "kakaotalkLinkPreview": "カカオトークのプレビュー",
       "posterQrCode": "ポスターのQRコード",
-      "flyerQrTracking": "チラシのQR追跡",
+      "flyerQrTracking": "ポスティングの反響測定",
       "qrCampaignAnalytics": "QRキャンペーン分析"
     }
   },
@@ -3488,41 +3488,41 @@
     "entry": {
       "title": "QR キャンペーン",
       "badge": "オフライン",
-      "description": "ポスターやチラシを複数の配布バッチに分け、どのバッチの反応が良かったかを測定します。通常の短縮リンクとは別のモードです。",
+      "description": "ポスターやチラシを配布先ごとに別の QR で配り、どこの反響が良かったかを測ります。通常の短縮リンクとは別のモードです。",
       "cta": "始める"
     },
     "batchCard": {
-      "quantityUnit": "{count}枚",
+      "quantityUnit": "{count}部",
       "distributor": "配布担当 · {name}",
       "downloadQr": "{name}の QR をダウンロード",
       "edit": "{name}を編集",
       "delete": "{name}を削除"
     },
     "batchDialogs": {
-      "editTitle": "配布バッチを編集",
-      "editDescription": "名前・配布担当・エリア・数量・メモのみ編集できます。印刷済み QR の短縮リンクは変わりません。",
+      "editTitle": "配布先を編集",
+      "editDescription": "名前・配布担当・エリア・部数・メモのみ編集できます。印刷済み QR の短縮リンクは変わりません。",
       "save": "保存",
-      "updated": "配布バッチを更新しました",
+      "updated": "配布先を更新しました",
       "updateFailed": "更新に失敗しました",
-      "name": "バッチ名",
+      "name": "配布先名",
       "distributor": "配布担当",
       "area": "エリア",
-      "quantity": "数量",
+      "quantity": "部数",
       "memo": "メモ",
-      "deleteTitle": "配布バッチを削除",
+      "deleteTitle": "配布先を削除",
       "delete": "削除",
-      "deleted": "配布バッチを削除しました",
+      "deleted": "配布先を削除しました",
       "deleteFailed": "削除に失敗しました",
       "deleteWarningTitle": "短縮リンクも削除されます。",
       "deleteWarningBody": "印刷済み QR を読み取るとリンクなしページが表示されます。発注前なら安全ですが、配布後は終了ポリシーで生かす運用を先に検討してください。",
-      "quantityUnit": "{count}枚"
+      "quantityUnit": "{count}部"
     },
     "new": {
       "created": "QR キャンペーンを作成しました",
       "createFailed": "QR キャンペーンの作成に失敗しました",
       "backToList": "QR キャンペーン一覧",
       "title": "新しい QR キャンペーン",
-      "intro": "期間と終了ポリシーを決めると、その中に配布バッチを作成できます。",
+      "intro": "期間と終了ポリシーを決めると、その中に配布先を追加できます。",
       "nameLabel": "QR キャンペーン名",
       "namePlaceholder": "例：新宿の春ポスター配布",
       "startLabel": "開始時点",
@@ -3531,7 +3531,7 @@
       "startSchedule": "開始時刻を予約",
       "endLabel": "終了時点",
       "defaultUrlLabel": "デフォルトのリンク先URL",
-      "defaultUrlHint": "空にすると、各バッチごとに URL を指定する必要があります。",
+      "defaultUrlHint": "空にすると、配布先ごとに URL を指定する必要があります。",
       "postEndLabel": "終了後の動作",
       "policy": {
         "keepTitle": "そのまま維持",
@@ -3572,11 +3572,11 @@
       "prepare": {
         "eyebrow": "配布準備",
         "title": "印刷所・Canva に渡す素材",
-        "description": "{count}個のバッチの QR コードとメタ情報。ポスターやチラシに配置して発注できます。",
+        "description": "{count}件の配布先の QR コードとメタ情報。ポスターやチラシに配置して発注できます。",
         "printSheet": "A4 シート",
         "posterBuilder": "ポスターに QR",
         "qrZip": "QR ZIP",
-        "batchCsv": "バッチ CSV"
+        "batchCsv": "配布先 CSV"
       },
       "policy": {
         "eyebrow": "終了後の動作",
@@ -3596,10 +3596,10 @@
         "defaultDestination": "デフォルトのリンク先URL · {url}"
       },
       "batches": {
-        "title": "配布バッチ",
-        "description": "同じ QR を複数枚印刷して配布する単位です。配布担当・エリア別に分けると分析が意味を持ちます。",
-        "add": "配布バッチを追加",
-        "emptyTitle": "配布バッチはまだありません"
+        "title": "配布先",
+        "description": "同じ QR を印刷したチラシを配る先です。配布担当やエリアごとに分けると、反響を比べられます。",
+        "add": "配布先を追加",
+        "emptyTitle": "配布先はまだありません"
       },
       "csvFailed": "CSVのダウンロードに失敗しました"
     },
@@ -3607,20 +3607,20 @@
       "loadFailed": "読み込みに失敗しました",
       "pasteEmpty": "貼り付けたテキストに行が見つかりません",
       "pasteAdded": "{count}行を追加しました",
-      "created": "{count}個の配布バッチを作成しました",
+      "created": "{count}件の配布先を追加しました",
       "createFailed": "作成に失敗しました",
       "backToCampaign": "QR キャンペーンへ",
-      "title": "配布バッチを追加",
-      "introCampaign": "<name></name> の新しいバッチ。",
+      "title": "配布先を追加",
+      "introCampaign": "<name></name> の新しい配布先。",
       "addRow": "行を追加",
       "pasteToggle": "スプレッドシートから貼り付け",
-      "defaultUrlActive": "<strong>デフォルトのリンク先URLを使用中。</strong> リンク先欄を空にすると <code></code> が自動で入ります。別 URL を使うバッチだけ入力してください。",
-      "defaultUrlMissing": "<strong>デフォルトのリンク先URLが設定されていません。</strong> 各バッチにリンク先URLを入力してください。",
+      "defaultUrlActive": "<strong>デフォルトのリンク先URLを使用中。</strong> リンク先欄を空にすると <code></code> が自動で入ります。別 URL を使う配布先だけ入力してください。",
+      "defaultUrlMissing": "<strong>デフォルトのリンク先URLが設定されていません。</strong> 配布先ごとにリンク先URLを入力してください。",
       "fields": {
-        "name": "バッチ名",
+        "name": "配布先名",
         "distributor": "配布担当",
         "area": "エリア",
-        "quantity": "数量",
+        "quantity": "部数",
         "destinationUrl": "リンク先URL"
       },
       "compareHint": "比較分析に使用",
@@ -3634,15 +3634,15 @@
         "defaultRequired": "必須 (デフォルトなし)"
       },
       "errors": {
-        "nameRequired": "バッチ名は必須です",
-        "quantityRequired": "数量は必須です",
+        "nameRequired": "配布先名は必須です",
+        "quantityRequired": "部数は必須です",
         "quantityPositive": "1以上を入力してください",
         "destinationRequired": "URLを入力してください。キャンペーンの既定URLがありません。",
         "destinationUrl": "http:// または https:// で始めてください"
       },
       "removeRow": "{index}行目を削除",
       "pasteTitle": "スプレッドシート行を貼り付け",
-      "pasteColumns": "列順: <code>バッチ名 / 配布担当 / エリア / 数量 / リンク先URL / メモ</code> (タブまたはカンマ区切り)",
+      "pasteColumns": "列順：<code>配布先名 / 配布担当 / エリア / 部数 / リンク先URL / メモ</code> (タブまたはカンマ区切り)",
       "close": "閉じる",
       "pastePlaceholder": "新宿駅東口\tA\tShinjuku East\t500\t\n大久保\tB\tOkubo\t300\thttps://example.com/okubo",
       "pasteZeroRows": "0行",
@@ -3650,9 +3650,9 @@
       "cancel": "キャンセル",
       "pasteApply": "{count}行を追加",
       "invalidRows": "{count}行に入力エラーがあります。赤いセルを修正してください。",
-      "summary": "<strong>{rowCount}</strong>個のバッチ · <strong>{totalQuantity}</strong>枚を印刷・配布予定",
+      "summary": "<strong>{rowCount}</strong>件の配布先 · <strong>{totalQuantity}</strong>部を印刷・配布予定",
       "creating": "作成中…",
-      "submit": "{count}個のバッチを作成"
+      "submit": "{count}件の配布先を追加"
     },
     "posterBuilder": {
       "loadFailed": "読み込みに失敗しました",
@@ -3662,11 +3662,11 @@
       "composeFailed": "合成に失敗しました",
       "backToCampaign": "QR キャンペーンへ",
       "title": "ポスターに QR を配置",
-      "introCampaign": "<name></name> · 全配布バッチ ({count}個) ごとに PDF ページを複製し、それぞれ別 QR を配置して結合 PDF をダウンロードします。",
+      "introCampaign": "<name></name> · 配布先 ({count}件) ごとに PDF ページを複製し、それぞれ別の QR を配置した結合 PDF をダウンロードします。",
       "toolHint": "Canva・InDesign・PowerPoint などでデザインを仕上げて PDF を書き出し、ここでは QR の位置だけを決めます。",
       "targetLabel": "合成対象",
-      "targetSummary": "<strong>{count}個</strong>の配布バッチ · 結果は<strong>{pages}ページ</strong>の PDF",
-      "noBatchesHint": "先に配布バッチを追加してください。(QR キャンペーン詳細 → 配布バッチを追加)",
+      "targetSummary": "<strong>{count}件</strong>の配布先 · 結果は<strong>{pages}ページ</strong>の PDF",
+      "noBatchesHint": "先に配布先を追加してください。(QR キャンペーン詳細 → 配布先を追加)",
       "composing": "合成中…",
       "download": "結合 PDF をダウンロード ({count}ページ)",
       "notSavedHint": "QR の位置は保存されません。同じ PDF で戻っても、ボックスは再度指定してください。",
@@ -3675,8 +3675,8 @@
       "removePdf": "PDF を削除",
       "otherPdf": "別の PDF",
       "dragHint": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。",
-      "dragHintWithBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。プレビューは最初のバッチ (全{count}個中1番目) です。各バッチには別の QR が入ります。",
-      "dragHintWithoutBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。配布バッチがないため placeholder QR でプレビューしています。実際の合成はバッチ追加後に可能です。",
+      "dragHintWithBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。プレビューは最初の配布先 (全{count}件中1件目) です。配布先ごとに別の QR が入ります。",
+      "dragHintWithoutBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。配布先がないため placeholder QR でプレビューしています。実際の合成は配布先を追加してから行えます。",
       "boxAria": "QR ボックスの位置とサイズ",
       "qrPreviewAlt": "QR プレビュー"
     },
@@ -3686,7 +3686,7 @@
       "title": "A4 QR シート",
       "introCampaign": "<name></name> · ブラウザ印刷で PDF 保存 (Cmd/Ctrl + P)。",
       "print": "印刷",
-      "empty": "印刷する配布バッチがありません。先に追加してください。",
+      "empty": "印刷する配布先がありません。先に追加してください。",
       "perPage": "1ページあたり",
       "layouts": {
         "comfortable": {
@@ -3704,67 +3704,67 @@
       },
       "showLabel": "ラベル表示",
       "cutMarks": "カット線",
-      "pagePerBatch": "バッチごとに1ページ"
+      "pagePerBatch": "配布先ごとに1ページ"
     },
     "campaignStats": {
       "loadFailed": "読み込みに失敗しました",
       "backToCampaign": "QR キャンペーンへ",
       "title": "分析",
-      "introCampaign": "<name></name> · 開始後のクリックのみ集計。ボット/プレビューは除外。",
+      "introCampaign": "<name></name> · 開始後の反響のみ集計。ボット/プレビューは除外。",
       "loading": "読み込み中…",
       "groups": {
-        "distributorTitle": "配布担当別の成果",
-        "distributorHint": "100枚あたりのクリック率なので、配布数が違っても効率を比較できます。",
-        "areaTitle": "エリア別の成果",
-        "areaHint": "次の配布場所を決める基準です。",
-        "tooltip": "{rate}回 / 100枚 · クリック {clicks} / 配布 {quantity}",
-        "efficiency": "効率",
-        "meta": "クリック {clicks} · {quantity}枚"
+        "distributorTitle": "配布担当別の反響",
+        "distributorHint": "100部あたりの反響なので、配布部数が違っても比べられます。",
+        "areaTitle": "エリア別の反響",
+        "areaHint": "次の配布エリアを決める目安です。",
+        "tooltip": "100部あたり{rate}件 · 反響{clicks}件 / 配布{quantity}部",
+        "efficiency": "反響率",
+        "meta": "反響{clicks}件 · {quantity}部"
       },
       "compare": {
         "title": "他キャンペーンと比較",
-        "description": "1回目 vs 2回目、または別シーズンの効率を比較します。",
+        "description": "1回目と2回目、または別シーズンのキャンペーンの反響を比べます。",
         "none": "比較なし",
         "current": "現在",
         "comparison": "比較",
         "selectHint": "上のドロップダウンから比較するキャンペーンを選択してください。"
       },
       "kpi": {
-        "totalClicks": "総クリック",
-        "perHundred": "100枚あたり",
-        "topArea": "Top エリア",
-        "batches": "配布バッチ",
-        "totalDistributed": "総印刷・配布",
-        "perHundredHint": "平均効率 (クリック / 配布 × 100)"
+        "totalClicks": "反響数",
+        "perHundred": "100部あたりの反響",
+        "topArea": "反響1位のエリア",
+        "batches": "配布先",
+        "totalDistributed": "配布部数",
+        "perHundredHint": "平均 (反響数 ÷ 配布部数 × 100)"
       },
       "units": {
-        "count": "{count}個",
-        "sheets": "{count}枚"
+        "count": "{count}件",
+        "sheets": "{count}部"
       },
       "recommendation": {
         "title": "次回配布のおすすめ",
-        "description": "現在の合計{total}枚を同じ総量で配り直します。平均は100枚あたり {average}。",
-        "footnote": "効率比率に基づくおすすめ。平均の30%未満は削減し、残りを比率で再配分します (1バッチ最大3倍)。",
+        "description": "いまの合計{total}部を同じ総量で配り直します。平均は100部あたり{average}件です。",
+        "footnote": "反響率をもとにしたおすすめです。平均の30%未満の配布先は外し、残りを反響率に応じて配り直します (配布先ごとに最大3倍)。",
         "verdict": {
           "BOOST": "増加",
           "KEEP": "維持",
           "REDUCE": "減少",
           "PRUNE": "削除"
         },
-        "rowMeta": "{current} → {recommended}枚 · 100枚あたり {rate}"
+        "rowMeta": "{current} → {recommended}部 · 100部あたり{rate}件"
       },
       "daily": {
-        "title": "日別クリック",
+        "title": "日別の反響",
         "description": "キャンペーン開始以降"
       },
       "hourly": {
-        "title": "時間帯別クリック",
+        "title": "時間帯別の反響",
         "description": "0–23時",
-        "tooltip": "{hour}時: {clicks}"
+        "tooltip": "{hour}時：{clicks}件"
       },
       "heatmap": {
         "title": "曜日 × 時間帯分布",
-        "description": "濃いほどクリックが多い時間帯です。"
+        "description": "濃いほど反響が多い時間帯です。"
       },
       "testScans": {
         "title": "開始前テストスキャン",
@@ -3772,10 +3772,10 @@
         "last": "最後のテスト · {date}"
       },
       "byBatch": {
-        "empty": "配布バッチはまだありません。追加するとここにバッチ別成果が表示されます。",
-        "title": "バッチ別の成果",
-        "description": "クリック数の降順。バーは最大値に対する相対比です。",
-        "meta": "/ {quantity}枚 · {rate}%"
+        "empty": "配布先はまだありません",
+        "title": "配布先別の反響",
+        "description": "反響の多い順。バーは最大値に対する割合です。",
+        "meta": "/ {quantity}部 · 反響率{rate}%"
       }
     }
   },
@@ -3791,27 +3791,27 @@
     "subtitleCount": "{count}件のQRキャンペーン。",
     "loadFailed": "QRキャンペーンを読み込めませんでした。",
     "newCampaign": "新しいQRキャンペーン",
-    "batchCount": "{count}件の束",
+    "batchCount": "{count}件の配布先",
     "details": "詳細",
     "onboarding": {
-      "title": "チラシの束ごとに別の QR で反応を比べる",
-      "body": "地域・配布者・束ごとに QR を分けて配り、どの束でクリックが多かったかを見ます。次の配布場所はその数字で決められます。",
+      "title": "チラシの配布先ごとに別の QR で反響を比べる",
+      "body": "エリアや配布担当ごとに別の QR を付けて配り、どこの反響が多かったかを見ます。次の配布エリアはその数字で決められます。",
       "steps": [
         {
           "title": "分けて配る",
-          "desc": "地域・配布者・束ごとに別の QR を付けます。"
+          "desc": "配布先ごとに別の QR を付けます。"
         },
         {
-          "title": "束ごとに見る",
-          "desc": "100枚あたりのクリック数で、どの束が良かったかを比べます。"
+          "title": "配布先ごとに見る",
+          "desc": "100部あたりの反響で、どの配布先が良かったかを比べます。"
         },
         {
           "title": "次の配布を決める",
-          "desc": "クリックの多い場所に多めに配り、終わったキャンペーンの QR は次のページへつなぎます。"
+          "desc": "反響の多いエリアに多めに配り、終わったキャンペーンの QR は次のページへつなぎます。"
         }
       ],
       "scene": {
-        "scans": "クリック",
+        "scans": "スキャン",
         "place1": "渋谷",
         "place2": "新宿",
         "example": "例"
@@ -3821,8 +3821,8 @@
   "qrDownload": {
     "zipTitle": "QR ZIPをダウンロード",
     "singleTitle": "{name}のQRをダウンロード",
-    "zipDescription": "キャンペーン内のすべての配布束QRをまとめたファイルです。印刷会社やデザイナーへそのまま渡せます。",
-    "singleDescription": "単一配布束のQR PNGです。",
+    "zipDescription": "キャンペーン内のすべての配布先の QR をまとめたファイルです。印刷会社やデザイナーへそのまま渡せます。",
+    "singleDescription": "1件の配布先の QR PNG です。",
     "confirm": "ダウンロード",
     "sizeLabel": "サイズ",
     "sizes": {
@@ -3840,29 +3840,29 @@
       "maximum": "最大保護"
     },
     "labelText": "ラベルテキスト",
-    "labelHint": "QRの下に束名を小さく入れると印刷時に識別しやすくなります。",
-    "labelCheckbox": "QRの下に束名を印刷",
+    "labelHint": "QR の下に配布先名を小さく入れると、印刷したあとで見分けやすくなります。",
+    "labelCheckbox": "QR の下に配布先名を印刷",
     "notSaved": "ダウンロード設定は保存されません。同じキャンペーンを別の設定で何度でもダウンロードできます。"
   },
   "qrCampaigns": {
     "meta": {
-      "title": "QRキャンペーン · チラシQRのクリック計測",
-      "description": "チラシ・ポスター・クーポンのQRをエリア・配布者・ロットごとに分けて、クリックを比べます。100枚あたりのクリック数で次の配布先を決められます。"
+      "title": "QRキャンペーン · チラシQRの反響測定",
+      "description": "チラシ・ポスター・クーポンのQRを配布先ごとに分けて、エリア・配布担当ごとの反響を比べます。100部あたりの反響で次の配布エリアを決められます。"
     },
     "hero": {
       "title1": "チラシごとに、違う QR。",
-      "title2": "どこで反応があったかが見えます。",
-      "sub": "エリア・出口・配布者ごとに別のQRを作り、100枚あたりのクリック数で次の配布先を決めます。",
+      "title2": "どこで反響があったかが見えます。",
+      "sub": "エリア・出口・配布担当ごとに別のQRを作り、100部あたりの反響で次の配布エリアを決めます。",
       "cta": "QR作成"
     },
     "example": {
       "title": "キャンペーンを作ると、こんな統計が見られます",
-      "desc": "ロットごとにQRが違うので、100枚あたりのクリックでどこが良かったかすぐに比べられます。下は例のデータです。"
+      "desc": "配布先ごとにQRが違うので、100部あたりの反響でどこが良かったかすぐに比べられます。下は例のデータです。"
     },
     "s2": {
-      "line1": "エリア・出口・配布者ごとに",
+      "line1": "エリア・出口・配布担当ごとに",
       "line2": "QRを分けます。",
-      "aux": "ロットは、同じQRを貼るチラシのまとまりです。"
+      "aux": "1つの配布先には、同じQRを付けたチラシを配ります。"
     },
     "s3": {
       "line1": "デザインはそのままで、",
