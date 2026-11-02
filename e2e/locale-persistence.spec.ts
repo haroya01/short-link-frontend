@@ -15,7 +15,7 @@ test.describe("locale persistence", () => {
     context,
   }) => {
     await page.goto("/ja");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/短縮はひと行で/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/短縮は1行で/);
 
     // Open the globe switcher and pick Korean.
     await page.getByRole("button", { name: "言語" }).click();

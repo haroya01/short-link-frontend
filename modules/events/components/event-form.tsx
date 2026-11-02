@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Markdown as MarkdownType } from "@/modules/blog/components/markdown";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +15,10 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { RequiredMark } from "@/components/ui/required-mark";
 
 const TIMEZONES = ["Asia/Tokyo", "Asia/Seoul", "UTC", "America/Los_Angeles", "Europe/London"];
-const CONTACT_FIELDS: ContactField[] = ["EMAIL", "PHONE", "KAKAO", "LINE", "INSTAGRAM"];
+const CONTACT_FIELDS: Record<"ko" | "other", ContactField[]> = {
+  ko: ["EMAIL", "PHONE", "KAKAO", "LINE", "INSTAGRAM"],
+  other: ["EMAIL", "PHONE", "LINE", "INSTAGRAM", "KAKAO"],
+};
 
 type FormState = {
   title: string;
@@ -68,6 +71,7 @@ export function EventForm({
   onSubmit: (draft: EventDraft) => Promise<void>;
 }) {
   const t = useTranslations("events.form");
+  const locale = useLocale();
   const errorMessage = useApiErrorMessage();
   const [form, setForm] = useState<FormState>(() => initialState(event));
   const [busy, setBusy] = useState(false);
@@ -238,7 +242,7 @@ export function EventForm({
         {event == null ? (
           <Field label={t("contactField")} htmlFor="ef-contact" hint={t("contactFieldHint")}>
             <div className="flex gap-2">
-              {CONTACT_FIELDS.map((field) => (
+              {CONTACT_FIELDS[locale === "ko" ? "ko" : "other"].map((field) => (
                 <button
                   key={field}
                   type="button"

@@ -9,7 +9,7 @@ test.describe("i18n locale switch", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText(/Shorten in one line/);
 
     await page.goto("/ja");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/短縮はひと行で/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/短縮は1行で/);
   });
 
   test("hreflang alternates present in head", async ({ page }) => {
