@@ -2,13 +2,20 @@
 
 import { useRef, useState } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { setLinkOgOverride, shortenUrl, toggleLinkOnProfile } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import {
+  KNOWN_TEMPLATE_LABELS,
+  extractHandle,
+  fillTemplate,
+  templatesFor,
+  type LinkTemplate,
+} from "@/modules/profile/lib/link-templates";
 
 /**
  * Free-form add: paste any URL + a label. The label gets persisted as the link's OG-title
@@ -16,115 +23,6 @@ import { cn } from "@/lib/utils";
  * optional shortcut — clicking one only fills the URL field with a template the user then
  * completes (the placeholder portion is pre-selected), and the user still types their own label.
  */
-
-type Template = {
-  id: string;
-  label: string;
-  urlTemplate: string;
-  placeholder: string;
-  /**
-   * Single capture-group regex used in two directions: to pull the handle out of an existing URL
-   * (so "github.com/haroya" + Instagram chip → "instagram.com/haroya"), and to detect "what
-   * platform is this URL on" for chip-to-chip swaps.
-   */
-  handleRegex: RegExp;
-};
-
-const KAKAO_CHANNEL_LABEL = String.fromCharCode(
-  0xce74,
-  0xce74,
-  0xc624,
-  0xd1a1,
-  0x0020,
-  0xcc44,
-  0xb110,
-);
-const NAVER_BLOG_LABEL = String.fromCharCode(0xb124, 0xc774, 0xbc84, 0x0020, 0xbe14, 0xb85c, 0xadf8);
-
-const TEMPLATES: Template[] = [
-  {
-    id: "instagram",
-    label: "Instagram",
-    urlTemplate: "https://instagram.com/{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/(?:www\.)?instagram\.com\/([^/?#]+)/i,
-  },
-  {
-    id: "x",
-    label: "X",
-    urlTemplate: "https://x.com/{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/([^/?#]+)/i,
-  },
-  {
-    id: "youtube",
-    label: "YouTube",
-    urlTemplate: "https://youtube.com/@{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/(?:www\.)?youtube\.com\/@?([^/?#]+)/i,
-  },
-  {
-    id: "tiktok",
-    label: "TikTok",
-    urlTemplate: "https://tiktok.com/@{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/(?:www\.)?tiktok\.com\/@([^/?#]+)/i,
-  },
-  {
-    id: "github",
-    label: "GitHub",
-    urlTemplate: "https://github.com/{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/(?:www\.)?github\.com\/([^/?#]+)/i,
-  },
-  {
-    id: "kakao",
-    label: KAKAO_CHANNEL_LABEL,
-    urlTemplate: "https://pf.kakao.com/_{h}",
-    placeholder: "abcDEF",
-    handleRegex: /^https?:\/\/pf\.kakao\.com\/_([^/?#]+)/i,
-  },
-  {
-    id: "naver-blog",
-    label: NAVER_BLOG_LABEL,
-    urlTemplate: "https://blog.naver.com/{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/blog\.naver\.com\/([^/?#]+)/i,
-  },
-  {
-    id: "velog",
-    label: "Velog",
-    urlTemplate: "https://velog.io/@{h}",
-    placeholder: "haroya",
-    handleRegex: /^https?:\/\/velog\.io\/@([^/?#]+)/i,
-  },
-  // Email is a special case — we don't show the technical "mailto:" prefix in the field; the
-  // input is just an address and we add the scheme on submit (see normalizeScheme).
-  {
-    id: "email",
-    label: "Email",
-    urlTemplate: "{h}",
-    placeholder: "you@example.com",
-    handleRegex: /^(?:mailto:)?([^\s@]+@[^\s@]+\.[^\s@]+)$/i,
-  },
-];
-
-const KNOWN_LABELS = new Set(TEMPLATES.map((t) => t.label));
-
-/**
- * If the field already has a recognizable platform URL, pull out the handle so it can be
- * re-applied to a different platform's template. Returns null when the current URL doesn't match
- * any known shape — caller falls back to the new template's placeholder.
- */
-function extractHandle(url: string): string | null {
-  const v = url.trim();
-  if (!v) return null;
-  for (const tpl of TEMPLATES) {
-    const m = tpl.handleRegex.exec(v);
-    if (m && m[1]) return m[1];
-  }
-  return null;
-}
 
 type Props = {
   onAdded: () => void;
@@ -134,6 +32,7 @@ type Props = {
 
 export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   const t = useTranslations("settings.profile.quickAdd");
+  const locale = useLocale();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [url, setUrl] = useState("");
@@ -141,16 +40,16 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   const [busy, setBusy] = useState(false);
   const urlInputRef = useRef<HTMLInputElement | null>(null);
 
-  function applyTemplate(tpl: Template) {
+  function applyTemplate(tpl: LinkTemplate) {
     // Preserve the handle the user already typed (or extracted from a different platform's URL).
     // e.g. "github.com/haroya" + Instagram chip → "instagram.com/haroya". Falls back to the new
     // template's placeholder when the field is empty or doesn't match any known shape.
     const handle = extractHandle(url) ?? tpl.placeholder;
-    const filled = tpl.urlTemplate.replace("{h}", handle);
+    const filled = fillTemplate(tpl, handle);
     setUrl(filled);
     // Swap the label too when it's still empty or matches some known template's label — meaning
     // the user hasn't customized it. A user-typed label stays.
-    if (!label.trim() || KNOWN_LABELS.has(label.trim())) {
+    if (!label.trim() || KNOWN_TEMPLATE_LABELS.has(label.trim())) {
       setLabel(tpl.label);
     }
     requestAnimationFrame(() => {
@@ -249,13 +148,13 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
         </div>
       </div>
 
-      <TemplatesRow templates={TEMPLATES} onPick={applyTemplate} t={t} />
+      <TemplatesRow templates={templatesFor(locale)} onPick={applyTemplate} t={t} />
     </div>
   );
 }
 
 /**
- * 9 social-template chips would otherwise eat 2 wrapped rows on every page load even after a user
+ * Social-template chips would otherwise eat 2 wrapped rows on every page load even after a user
  * has memorized which one they want. Show {@code DEFAULT_VISIBLE} most-common chips by default
  * and gate the rest behind a "+ N" toggle. State is local; collapses again on profile reload.
  */
@@ -266,8 +165,8 @@ function TemplatesRow({
   onPick,
   t,
 }: {
-  templates: Template[];
-  onPick: (tpl: Template) => void;
+  templates: readonly LinkTemplate[];
+  onPick: (tpl: LinkTemplate) => void;
   t: ReturnType<typeof useTranslations<"settings.profile.quickAdd">>;
 }) {
   const [showAll, setShowAll] = useState(false);
