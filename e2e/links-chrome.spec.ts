@@ -126,3 +126,30 @@ test("on a phone the shorten bar and the tab bar read as one sheet: no line betw
   const [b, n] = [(await bar.boundingBox())!, (await nav.boundingBox())!];
   expect(Math.abs(b.y + b.height - n.y)).toBeLessThanOrEqual(1);
 });
+
+test("on a tall iPad screen the landing's footer follows the stage, while app screens keep the screen-tall body", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 834, height: 1194 }, baseURL: test.info().project.use.baseURL });
+  const page = await context.newPage();
+  await page.goto("/ko");
+  const gap = await page.evaluate(() => {
+    const stage = document.querySelector('section[aria-labelledby="link-abilities"]')!.getBoundingClientRect().bottom;
+    const footer = document.querySelector("footer.site-footer")!.getBoundingClientRect().top;
+    return Math.round(footer - stage);
+  });
+  expect(gap).toBeGreaterThan(0);
+  expect(gap).toBeLessThanOrEqual(120);
+
+  const footerTop = () => page.evaluate(() => Math.round(document.querySelector("footer.site-footer")!.getBoundingClientRect().top + scrollY));
+  const before = await footerTop();
+  const progress = page.getByTestId("ability-progress");
+  for (const next of ["route", "watch"]) {
+    await progress.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
+    await expect(page.getByTestId("ability-stage")).toHaveAttribute("data-active", next);
+    await page.waitForTimeout(500);
+    expect(await footerTop()).toBe(before);
+  }
+
+  await page.goto("/ko/qr-campaigns");
+  await expect(page.locator("main")).toHaveCSS("min-height", "1194px");
+  await context.close();
+});

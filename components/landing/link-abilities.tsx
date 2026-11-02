@@ -19,6 +19,9 @@ export function LinkAbilities() {
   const [auto, setAuto] = useState(true);
   const [revealed, setRevealed] = useState(false);
   const [inView, setInView] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+  const namesRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [namesHeight, setNamesHeight] = useState<number>();
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -38,6 +41,16 @@ export function LinkAbilities() {
       observer.disconnect();
       clearTimeout(timer);
     };
+  }, []);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const observer = new ResizeObserver(() =>
+      setNamesHeight(Math.max(...namesRefs.current.map((el) => el?.offsetHeight ?? 0))),
+    );
+    observer.observe(list);
+    return () => observer.disconnect();
   }, []);
 
   const pick = (index: number) => {
@@ -69,7 +82,7 @@ export function LinkAbilities() {
         {t("title")}
       </h2>
       <div className="mt-4 grid gap-6 sm:grid-cols-[1fr_336px] sm:items-start sm:gap-12">
-        <ul className="border-t border-slate-200 dark:border-slate-800">
+        <ul ref={listRef} className="border-t border-slate-200 dark:border-slate-800">
           {ABILITY_GROUPS.map((group, i) => {
             const on = i === active;
             return (
@@ -102,18 +115,27 @@ export function LinkAbilities() {
                 >
                   <p className="min-h-0 overflow-hidden">
                     <span className="block pb-4 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-                      {group.items.map((item, n) => {
-                        const more = n < group.items.length - 1;
-                        return (
-                          <span key={item}>
-                            <span className="whitespace-nowrap">
-                              {t(`${group.key}.items.${item}`)}
-                              {more && " ·"}
-                            </span>
-                            {more && " "}
-                          </span>
-                        );
-                      })}
+                      <span className="block" style={{ minHeight: namesHeight }}>
+                        <span
+                          ref={(el) => {
+                            namesRefs.current[i] = el;
+                          }}
+                          className="block"
+                        >
+                          {group.items.map((item, n) => {
+                            const more = n < group.items.length - 1;
+                            return (
+                              <span key={item}>
+                                <span className="whitespace-nowrap">
+                                  {t(`${group.key}.items.${item}`)}
+                                  {more && " ·"}
+                                </span>
+                                {more && " "}
+                              </span>
+                            );
+                          })}
+                        </span>
+                      </span>
                     </span>
                   </p>
                 </div>
