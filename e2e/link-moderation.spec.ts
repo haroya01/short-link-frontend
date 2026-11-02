@@ -243,3 +243,27 @@ test.describe("switching a link off", () => {
     expect(await notice.textContent()).not.toMatch(/[。、] /);
   });
 });
+
+test("the admin link page names each country instead of showing its two-letter code", async ({ page }) => {
+  await signInAsAdmin(page);
+  const stats = mockLinksResponse(`/api/v1/links/${CODE}/stats`, "GET") as Record<string, unknown>;
+  await mockBackend(
+    page,
+    {
+      [`GET /api/v1/admin/links/${CODE}`]: (route) =>
+        route.fulfill({
+          json: {
+            meta: ADMIN_LINK_ROW,
+            stats: { ...stats, countryClicks: [{ country: "IT", count: 5 }, { country: "KR", count: 3 }] },
+          },
+        }),
+      "GET /api/v1/admin/blocked-domains": (route) => route.fulfill({ json: [] }),
+    },
+    ADMIN,
+  );
+  await page.goto(`/ko/admin/links/${CODE}`);
+  const countries = page.getByRole("region", { name: "국가" }).or(page.locator("section").filter({ hasText: "국가별 클릭" })).first();
+  await expect(countries).toContainText("이탈리아");
+  await expect(countries).toContainText("대한민국");
+  await expect(countries.getByText("IT", { exact: true })).toHaveCount(0);
+});

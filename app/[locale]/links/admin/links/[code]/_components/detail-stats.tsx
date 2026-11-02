@@ -1,12 +1,13 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
 import { Section } from "@/components/common/section";
+import { countryName } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 
 /**
@@ -16,7 +17,8 @@ import type { LinkStats } from "@/types";
  */
 export function DetailStats({ stats }: { stats: LinkStats }) {
   const t = useTranslations("admin");
-  const countryItems = stats.countryClicks.map((c) => ({ label: c.country, count: c.count }));
+  const locale = useLocale();
+  const countryItems = stats.countryClicks.map((c) => ({ label: countryName(c.country, locale), count: c.count }));
 
   return (
     <div className="space-y-5">
