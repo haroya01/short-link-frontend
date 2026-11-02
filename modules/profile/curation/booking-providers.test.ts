@@ -43,6 +43,29 @@ describe("resolveBookingProvider", () => {
     expect(provider?.name).toBe(name);
   });
 
+  it.each(["https://abc123.stores.jp/reserve/shop", "https://coubic.com/shop"])(
+    "takes STORES 予約 at %s",
+    (url) => {
+      expect(resolveBookingProvider(url)?.id).toBe("stores_reserve");
+    },
+  );
+
+  it.each([
+    "https://stores.jp/reserve/features",
+    "https://x.stores.jp/items/1",
+    "https://x.stores.jp/RESERVE/a",
+    "https://x.stores.jp/%72eserve/a",
+    "https://x.stores.jp/reserve%2Fa",
+    "https://x.stores.jp/reserve/../items/1",
+    "https://x.stores.jp/reserve/a/../b",
+    "https://x.stores.jp/reserve/%2e%2e/items",
+    "https://evilstores.jp/reserve/a",
+    "https://shop.stores.jp.evil.example/reserve/a",
+    "https://evil.example/x.stores.jp/reserve/a",
+  ])("rejects %s, which is not a STORES shop's reservation page", (url) => {
+    expect(resolveBookingProvider(url)).toBeNull();
+  });
+
   it("matches a Japanese host exactly, not as a prefix of another domain", () => {
     expect(resolveBookingProvider("https://tabelog.com.example.com/")).toBeNull();
     expect(resolveBookingProvider("https://beauty.hotpepper.jp.example.com/")).toBeNull();

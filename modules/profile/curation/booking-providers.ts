@@ -13,6 +13,8 @@ type ProviderSpec = {
   /** Human-readable name shown in dialog hints and as a tag on the public card. */
   name: string;
   japan?: true;
+  subdomainOf?: string;
+  subdomainPath?: string;
 };
 
 const PROVIDERS: readonly ProviderSpec[] = [
@@ -48,11 +50,41 @@ const PROVIDERS: readonly ProviderSpec[] = [
   { id: "tablecheck", hosts: ["www.tablecheck.com", "tablecheck.com"], name: "TableCheck", japan: true },
   { id: "airreserve", hosts: ["airrsv.net"], name: "Airリザーブ", japan: true },
   { id: "reserva", hosts: ["reserva.be"], name: "RESERVA", japan: true },
-  { id: "stores_reserve", hosts: ["coubic.com"], name: "STORES 予約", japan: true },
+  {
+    id: "stores_reserve",
+    hosts: ["coubic.com"],
+    subdomainOf: ".stores.jp",
+    subdomainPath: "/reserve/",
+    name: "STORES 予約",
+    japan: true,
+  },
   { id: "ikyu_restaurant", hosts: ["restaurant.ikyu.com"], name: "一休.comレストラン", japan: true },
 ] as const;
 
-export const resolveBookingProvider = createHostResolver(PROVIDERS);
+const resolveByHost = createHostResolver(PROVIDERS);
+
+/** Same check as the backend: the raw path, case-sensitive, with no percent-escape and no "..". */
+function servesSubdomainPage(p: ProviderSpec, url: string): boolean {
+  if (!p.subdomainOf || !p.subdomainPath) return false;
+  let parsed: URL;
+  try {
+    parsed = new URL(url.trim());
+  } catch {
+    return false;
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+  if (!parsed.host.toLowerCase().endsWith(p.subdomainOf)) return false;
+  const rawPath = /^[a-z][a-z0-9+.-]*:\/\/[^/?#]*([^?#]*)/i.exec(url.trim())?.[1] ?? "";
+  return (
+    rawPath.startsWith(p.subdomainPath) &&
+    !/[%\\]/.test(rawPath) &&
+    !rawPath.split("/").includes("..")
+  );
+}
+
+export function resolveBookingProvider(url: string): ProviderSpec | null {
+  return resolveByHost(url) ?? PROVIDERS.find((p) => servesSubdomainPage(p, url)) ?? null;
+}
 
 export function bookingProvidersFor(locale: string): readonly ProviderSpec[] {
   if (locale !== "ja") return PROVIDERS;
