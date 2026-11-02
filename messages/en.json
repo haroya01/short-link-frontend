@@ -1201,22 +1201,7 @@
   },
   "home": {
     "headline1": "Shorten in <line>one line</line>",
-    "headline2": "See when and where",
-    "subhead": "Paste a long link and get a short one right away. See who clicked, when, and from where, with bot clicks kept apart.",
-    "mobileSubhead": "See who clicked, when, and where. Bots kept apart.",
-    "anonymousHint": "Free, no sign-in needed. Sign in to see stats and add a password.",
-    "demoLink": "Preview the stats page",
     "recentTitle": "Recent links",
-    "stage": {
-      "title": "Sign in and every link gets stats like these",
-      "desc": "Every click is recorded. Stats are free, and the screens below use example data.",
-      "feedTitle": "Where each click came from",
-      "feedDesc": "Country, device, and channel, one line per click. Keep the stats page open and they arrive live.",
-      "trendTitle": "30-day trend in human clicks",
-      "trendDesc": "Bot clicks are filtered out, so the number you see first is clicks from people.",
-      "ctaStart": "Sign in to start",
-      "ctaDemo": "See the demo stats"
-    },
     "recentKept": "Kept in this browser for 24 hours",
     "recentClaim": "Sign in and these links move to your account, with no expiry.",
     "recentLogin": "Sign in",

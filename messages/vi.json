@@ -1201,22 +1201,7 @@
   },
   "home": {
     "headline1": "Rút gọn trong <line>một dòng</line>",
-    "headline2": "Khi nào, ở đâu",
-    "subhead": "Dán một liên kết dài là có ngay liên kết ngắn. Xem ai đã nhấp, khi nào và từ đâu, lượt nhấp của bot được tách riêng.",
-    "mobileSubhead": "Ai nhấp, khi nào, từ đâu. Bot được tách riêng.",
-    "anonymousHint": "Miễn phí, không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu.",
-    "demoLink": "Xem trước trang thống kê",
     "recentTitle": "Liên kết gần đây",
-    "stage": {
-      "title": "Đăng nhập để mỗi liên kết có thống kê như thế này",
-      "desc": "Mỗi lượt nhấp đều được ghi lại. Thống kê hoàn toàn miễn phí, màn hình bên dưới dùng dữ liệu ví dụ.",
-      "feedTitle": "Mỗi lượt nhấp đến từ đâu",
-      "feedDesc": "Quốc gia, thiết bị và kênh, mỗi lượt một dòng. Mở trang thống kê là thấy lượt nhấp theo thời gian thực.",
-      "trendTitle": "Xu hướng 30 ngày theo lượt nhấp thật",
-      "trendDesc": "Lượt nhấp của bot được lọc riêng, nên con số đầu tiên bạn thấy là lượt nhấp thật.",
-      "ctaStart": "Đăng nhập để bắt đầu",
-      "ctaDemo": "Xem thống kê mẫu"
-    },
     "recentKept": "Lưu trên trình duyệt này trong 24 giờ",
     "recentClaim": "Đăng nhập để chuyển các liên kết này vào tài khoản, không bị hết hạn.",
     "recentLogin": "Đăng nhập",

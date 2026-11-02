@@ -48,3 +48,11 @@ test("signed in, the app keeps the one-line footer", async ({ page }) => {
   await expect(page.getByTestId("footer-directory")).toHaveCount(0);
   await expect(page.locator("footer.site-footer").getByRole("link", { name: "이용약관" })).toBeVisible();
 });
+
+test("in Japanese the directory leaves out the KakaoTalk page, which only Korean visitors use", async ({ page }) => {
+  await page.goto("/ja");
+  const footer = page.getByTestId("footer-directory");
+  await expect(footer.locator('a[href*="/use/"]')).toHaveCount(7);
+  await expect(footer.locator('a[href$="/ja/use/kakaotalk-link-preview"]')).toHaveCount(0);
+  await expect(footer).not.toContainText("カカオ");
+});

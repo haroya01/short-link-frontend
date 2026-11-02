@@ -140,8 +140,9 @@ test("on a tall iPad screen the landing's footer follows the stage, while app sc
   expect(gap).toBeLessThanOrEqual(120);
 
   const footerTop = () => page.evaluate(() => Math.round(document.querySelector("footer.site-footer")!.getBoundingClientRect().top + scrollY));
-  const before = await footerTop();
   const progress = page.getByTestId("ability-progress");
+  await expect(progress).toBeAttached();
+  const before = await footerTop();
   for (const next of ["route", "watch"]) {
     await progress.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
     await expect(page.getByTestId("ability-stage")).toHaveAttribute("data-active", next);

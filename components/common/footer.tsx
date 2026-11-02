@@ -108,7 +108,9 @@ const LIST = "mt-3 grid gap-y-1.5 text-[13px] text-slate-500 dark:text-slate-400
 
 function DirectoryFooter({ app }: { app?: IosApp }) {
   const t = useTranslations("footer");
+  const locale = useLocale();
   const marketingHref = useMarketingHref();
+  const usePages = USE_PAGES.filter(([slug]) => locale === "ko" || slug !== "kakaotalk-link-preview");
   return (
     <footer data-testid="footer-directory" className="site-footer border-t border-slate-200 dark:border-slate-800">
       <div className="container py-10 sm:py-14">
@@ -116,7 +118,7 @@ function DirectoryFooter({ app }: { app?: IosApp }) {
           <section className="col-span-2 sm:col-span-1">
             <h2 className={HEADING}>{t("useTitle")}</h2>
             <ul className={`${LIST} grid-cols-2 gap-x-6`}>
-              {USE_PAGES.map(([slug, key]) => (
+              {usePages.map(([slug, key]) => (
                 <li key={slug}>
                   <a href={marketingHref(`/use/${slug}`)} className={LINK}>
                     {t(`use.${key}`)}
