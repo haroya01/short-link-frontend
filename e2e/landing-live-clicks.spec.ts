@@ -81,9 +81,7 @@ test("with reduced motion the fold is done, nothing turns by itself, and each pi
     line: getComputedStyle(el.querySelector(".fold-line")!).transform,
   }));
   expect(state).toEqual({ moving: 0, long: "0", short: "1", line: "matrix(1, 0, 0, 1, 0, 0)" });
-  const line = page.getByTestId("ability-line");
-  await expect(line).toHaveCSS("transform", "none");
-  expect(await line.evaluate((el) => el.hasAttribute("data-turning"))).toBe(false);
+  await expect(page.getByTestId("ability-progress")).toHaveCount(0);
   const region = page.getByRole("region", { name: "링크마다 할 수 있는 것" });
   const stage = page.getByTestId("ability-stage");
   for (const [name, key] of [
@@ -129,10 +127,10 @@ test("under the tool, one stage acts out what a link can do, one line at a time,
   await expect(stage).toHaveAttribute("data-active", "access");
   await expect(stage).toHaveAttribute("data-reveal", "on", { timeout: 5_000 });
 
-  const line = page.getByTestId("ability-line");
-  await expect(region.getByTestId("ability-group").first().getByTestId("ability-line")).toHaveClass(/bg-accent-600/);
+  const progress = page.getByTestId("ability-progress");
+  await expect(region.getByTestId("ability-group").first().getByTestId("ability-progress")).toHaveCount(1);
   for (const next of ["route", "watch"]) {
-    await line.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
+    await progress.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
     await expect(stage).toHaveAttribute("data-active", next);
   }
   await expect(region.getByRole("button", { name: "누가 눌렀는지 봐요" })).toHaveAttribute("aria-expanded", "true");
@@ -143,16 +141,14 @@ test("under the tool, one stage acts out what a link can do, one line at a time,
   await expect(stage).toContainText("클릭 2");
   await expect(stage.getByTestId("scene-strike")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
 
-  await line.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
+  await progress.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
   await expect(stage).toHaveAttribute("data-active", "access");
-  await expect.poll(() => line.evaluate((el) => el.hasAttribute("data-turning"))).toBe(false);
-  await expect(line).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+  await expect(progress).toHaveCount(0);
 
   await region.getByRole("button", { name: "어디로, 어떻게 보낼지 정해요" }).click();
   await expect(stage).toHaveAttribute("data-active", "route");
   await expect(stage).toContainText("70%");
-  await expect(region.getByTestId("ability-group").nth(1).getByTestId("ability-line")).toHaveCount(1);
-  await expect.poll(() => line.evaluate((el) => el.hasAttribute("data-turning"))).toBe(false);
+  await expect(progress).toHaveCount(0);
 });
 
 test("shortening folds the address you typed into the short one, in place", async ({ page }) => {

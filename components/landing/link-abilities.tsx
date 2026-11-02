@@ -117,14 +117,13 @@ export function LinkAbilities() {
                     </span>
                   </p>
                 </div>
-                {on && (revealed || reduced) && (
+                {on && auto && !reduced && revealed && (
                   <span
                     key={run}
                     aria-hidden
-                    data-testid="ability-line"
-                    data-turning={auto && !reduced ? "" : undefined}
-                    className="ability-line absolute inset-x-0 -bottom-px h-[2px] origin-left rounded-full bg-accent-600 dark:bg-accent-500"
-                    onAnimationEnd={(event) => event.animationName === "ability-hold" && advance()}
+                    data-testid="ability-progress"
+                    className="ability-progress absolute inset-x-0 -bottom-px h-px origin-left bg-slate-900 dark:bg-slate-100"
+                    onAnimationEnd={advance}
                   />
                 )}
               </li>

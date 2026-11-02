@@ -1850,28 +1850,23 @@ body[data-cookie-consent="visible"] {
     opacity: 1;
   }
 }
-@keyframes ability-hold {
+@keyframes ability-progress {
+  from {
+    transform: scaleX(0);
+  }
   to {
-    opacity: 1;
+    transform: scaleX(1);
   }
 }
-.ability-line {
-  transform: scaleX(0);
-  animation: result-underline-draw 420ms var(--ease) forwards;
+.ability-progress {
+  animation: ability-progress 4500ms linear both;
 }
-.ability-line[data-turning] {
-  animation:
-    result-underline-draw 420ms var(--ease) forwards,
-    ability-hold 4500ms var(--ease);
-}
-.ability-stage:is(:hover, :focus-within, [data-paused]) .ability-line {
+.ability-stage:is(:hover, :focus-within, [data-paused]) .ability-progress {
   animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ability-line,
-  .ability-line[data-turning] {
-    animation: none;
-    transform: none;
+  .ability-progress {
+    display: none;
   }
 }
 @keyframes scene-draw {
