@@ -190,6 +190,23 @@ test.describe("on a phone", () => {
 test.describe("on a desktop", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
+  test("a new comment on a folded thread shows under the first five instead of hiding behind 모두 보기", async ({ page }) => {
+    const live = await fakeLive(page);
+    await page.goto("/ko/p/kazuki/weekend-hiking-burnout");
+    const tops = page.locator("#comments li[data-comment-top]");
+    await expect(tops).toHaveCount(5, { timeout: 30_000 });
+    await expect.poll(() => live.streams.length).toBe(1);
+    expect(live.streams[0].searchParams.get("since")).toBe("55");
+
+    await arrive(page, { comments: [{ id: 601, body: "접힌 스레드에 온 새 댓글" }] });
+    live.send(sse("changed", { items: [{ kind: "comment", id: 601 }], more: false, cursor: "601" }, "601"));
+
+    await expect(page.locator("#comment-601")).toContainText("접힌 스레드에 온 새 댓글");
+    await expect(tops).toHaveCount(6);
+    await expect(tops.last()).toHaveAttribute("data-comment-top", "601");
+    await expect(page.getByTestId("comments-show-all")).toBeVisible();
+  });
+
   test("a room note lands on top right away when the reader is at the top", async ({ page }) => {
     const live = await fakeLive(page);
     await page.goto("/ko/blog/rooms/1");

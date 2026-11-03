@@ -321,7 +321,7 @@ export function PostComments({
   shownIds.current = new Set(shown.filter((c) => !c.deleted).map((c) => c.id));
   const counted = shown.filter((c) => !c.deleted).length;
   const tops = shown.filter((c) => c.parentId == null);
-  const visibleTops = expanded ? tops : tops.slice(0, COLLAPSED_TOPS);
+  const visibleTops = expanded ? tops : tops.filter((c, index) => index < COLLAPSED_TOPS || arrived.has(c.id));
   const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
   function showAll() {
     revealFrom.current = tops[COLLAPSED_TOPS]?.id ?? null;
