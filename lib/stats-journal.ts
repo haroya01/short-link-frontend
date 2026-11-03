@@ -1,16 +1,9 @@
-import { CLIENT_APPS } from "@/lib/stats-labels";
 import type { ChannelDepth, LinkStats } from "@/types";
 
 export type JournalEntry = {
   /** i18n 키 (stats.journal.*) */
   key: string;
   params: Record<string, string | number>;
-  /**
-   * {@link params} 중 값 자체가 메시지 키(stats.* 기준)인 항목들. 저장된 원값(예:
-   * {@code kakaotalk})이 한국어 문장 한가운데 그대로 박히지 않도록, 렌더 직전에 카탈로그로
-   * 한 번 더 옮긴다. 룰 엔진은 i18n 을 모르는 순수 함수로 남는다.
-   */
-  translatedParams?: string[];
   /** 근거 층 앵커 — 문장 클릭 시 스크롤 목적지 */
   evidence: string;
   /** 인라인 미니 드로잉 — 시계열 조각 */
@@ -43,11 +36,13 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
 
   const daily = data.dailyClicks ?? [];
   const counts = daily.map((d) => d.count);
+  const human = data.humanClicks ?? 0;
+  const enoughHuman = human >= MIN_TOTAL_FOR_INSIGHTS;
 
   // 지금 이 순간 — 평소 대비 속도. 저표본 게이트 필수: 총 2클릭짜리 링크가 "24.0배"를
   // 말하면 통계 전체의 신뢰가 무너진다(과장광고 방지 계약).
   const velocity = data.velocity?.ratio ?? 0;
-  if (velocity >= 1.5 && (data.humanClicks ?? 0) >= MIN_HUMAN_FOR_VELOCITY) {
+  if (velocity >= 1.5 && human >= MIN_HUMAN_FOR_VELOCITY) {
     entries.push({
       key: "velocity",
       params: { x: velocity.toFixed(1) },
@@ -59,7 +54,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   // 7일 추세 (직전 7일 대비)
   const last7 = counts.slice(-7).reduce((s, c) => s + c, 0);
   const prev7 = counts.slice(-14, -7).reduce((s, c) => s + c, 0);
-  if (prev7 > 0) {
+  if (prev7 >= MIN_TOTAL_FOR_INSIGHTS) {
     const delta = (last7 - prev7) / prev7;
     if (Math.abs(delta) >= 0.15) {
       entries.push({
@@ -89,9 +84,8 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
 
   // 상위 유입원의 지분
   const hosts = data.referrerHostClicks ?? [];
-  const hostSum = hosts.reduce((s, h) => s + h.count, 0);
-  if (hosts[0] && hostSum > 0) {
-    const share = hosts[0].count / hostSum;
+  if (hosts[0] && enoughHuman) {
+    const share = hosts[0].count / human;
     if (share >= 0.25) {
       entries.push({
         key: "topSource",
@@ -127,24 +121,12 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   // 인앱 브라우저 — 링크가 어디에 붙어 있나가 아니라 어디에서 *열렸나*. 앱 웹뷰에서 로그인
   // 리다이렉트·다운로드·폰트가 곧잘 깨지니, 비중이 크면 오늘 고칠 수 있는 사실이 된다.
   const apps = data.clientAppClicks ?? [];
-  const human = data.humanClicks ?? 0;
-  if (apps.length > 0 && human >= MIN_TOTAL_FOR_INSIGHTS) {
-    let inApp = 0;
-    let topApp = apps[0];
-    for (const a of apps) {
-      inApp += a.count;
-      if (a.count > topApp.count) topApp = a;
-    }
-    const share = inApp / human;
+  if (apps.length > 0 && enoughHuman) {
+    const share = apps.reduce((sum, a) => sum + a.count, 0) / human;
     if (share >= IN_APP_SHARE_THRESHOLD) {
-      const known = CLIENT_APPS.has(topApp.app);
       entries.push({
         key: "inAppBrowser",
-        params: {
-          app: known ? `clientApp.${topApp.app}` : topApp.app,
-          percent: Math.round(share * 100),
-        },
-        translatedParams: known ? ["app"] : undefined,
+        params: { percent: Math.round(share * 100) },
         evidence: "section-client-app",
         ratio: share,
         weight: 78,
@@ -165,10 +147,12 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   // 재방문 — 링크가 소모품이 아니라는 신호. 채널별 충성도 문장이 이미 섰으면 쓰지 않는다:
   // 재방문 이야기 두 줄이 나란히 서면 일지가 아니라 대시보드가 된다(채널별이 더 구체적).
   const returning = data.returnRate?.ratio ?? 0;
-  if (!loyal && returning >= 0.15) {
+  const visitors = (data.returnRate?.newVisitors ?? 0) + (data.returnRate?.returningVisitors ?? 0);
+  if (!loyal && returning >= 0.15 && visitors >= MIN_TOTAL_FOR_INSIGHTS) {
+    const days = data.rawSince ? data.rawRetentionDays : undefined;
     entries.push({
-      key: "returning",
-      params: { percent: Math.round(returning * 100) },
+      key: days ? "returningRecent" : "returning",
+      params: days ? { percent: Math.round(returning * 100), days } : { percent: Math.round(returning * 100) },
       evidence: "chapter-who",
       ratio: returning,
       weight: 65,
@@ -176,14 +160,13 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   }
 
   // 최상위 국가 집중
-  const countries = data.countryClicks ?? [];
-  const countrySum = countries.reduce((s, c) => s + c.count, 0);
-  if (countries[0] && countrySum > 0) {
-    const share = countries[0].count / countrySum;
+  const topCountry = (data.countryClicks ?? []).find((c) => c.country !== "unknown");
+  if (topCountry && enoughHuman) {
+    const share = topCountry.count / human;
     if (share >= 0.4) {
       entries.push({
         key: "topCountry",
-        params: { country: countries[0].country, percent: Math.round(share * 100) },
+        params: { country: topCountry.country, percent: Math.round(share * 100) },
         evidence: "chapter-where",
         ratio: share,
         weight: 60,
@@ -193,35 +176,36 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
 
   // 기기 성향
   const devices = data.deviceClicks ?? [];
-  const deviceSum = devices.reduce((s, d) => s + d.count, 0);
-  const mobile = devices.find((d) => d.device.toLowerCase().includes("mobile"));
-  if (mobile && deviceSum > 0) {
-    const share = mobile.count / deviceSum;
-    if (share >= 0.6) {
+  const deviceShare = (name: string) =>
+    (devices.find((d) => d.device.toLowerCase() === name)?.count ?? 0) / human;
+  if (enoughHuman) {
+    const mobile = deviceShare("mobile");
+    const desktop = deviceShare("desktop");
+    if (mobile >= 0.6) {
       entries.push({
         key: "mobileHeavy",
-        params: { percent: Math.round(share * 100) },
+        params: { percent: Math.round(mobile * 100) },
         evidence: "section-device",
-        ratio: share,
+        ratio: mobile,
         weight: 55,
       });
-    } else if (share <= 0.4) {
+    } else if (desktop >= 0.6) {
       entries.push({
         key: "desktopHeavy",
-        params: { percent: Math.round((1 - share) * 100) },
+        params: { percent: Math.round(desktop * 100) },
         evidence: "section-device",
-        ratio: 1 - share,
+        ratio: desktop,
         weight: 55,
       });
     }
   }
 
   // 사람/봇 — 걷어낸 뒤의 진짜 숫자
-  const botRatio = total > 0 ? (data.botClicks ?? 0) / total : 0;
+  const botRatio = total >= MIN_TOTAL_FOR_INSIGHTS ? (data.botClicks ?? 0) / total : 0;
   if (botRatio >= 0.2) {
     entries.push({
       key: "botHigh",
-      params: { percent: Math.round(botRatio * 100), human: data.humanClicks ?? 0 },
+      params: { percent: Math.round(botRatio * 100), human },
       evidence: "section-bots",
       ratio: botRatio,
       weight: 72,
@@ -229,7 +213,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   } else if (botRatio >= 0.05) {
     entries.push({
       key: "botFiltered",
-      params: { percent: Math.round(botRatio * 100), human: data.humanClicks ?? 0 },
+      params: { percent: Math.round(botRatio * 100), human },
       evidence: "section-bots",
       ratio: botRatio,
       weight: 50,
