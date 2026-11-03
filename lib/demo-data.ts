@@ -245,7 +245,6 @@ function buildReferrerHosts(total: number): ReferrerHostClick[] {
     { host: "haru.notion.site", count: Math.round(total * 0.13) },
     { host: "x.com", count: Math.round(total * 0.09) },
     { host: "blog.naver.com", count: Math.round(total * 0.06) },
-    { host: "(direct)", count: Math.round(total * 0.17) },
   ];
 }
 

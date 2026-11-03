@@ -9,6 +9,7 @@ import { StatsJournal } from "@/components/links/stats/journal";
 import { LiveClicks } from "@/components/links/shorten/live-clicks";
 import { EmptyState } from "@/components/common/empty-state";
 import { cn, countryFlag, countryName, formatNumber, formatShare } from "@/lib/utils";
+import { sourceBreakdown } from "@/lib/stats-sources";
 import type { LinkStats } from "@/types";
 import { HEADING, RangeSwitch, type RangeDays } from "./section-parts";
 
@@ -72,11 +73,7 @@ export function StatsOverview({
           </div>
           <div className="mt-10 space-y-10 sm:grid sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto] sm:gap-x-4 sm:gap-y-10 sm:space-y-0">
             <Breakdown title={t("section.referrerHost.title")}>
-              <BreakdownList
-                items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
-                maxItems={5}
-                subgrid
-              />
+              <BreakdownList {...sourceBreakdown(data, t("breakdown.direct"))} maxItems={5} subgrid />
             </Breakdown>
             <Breakdown title={t("section.device.title")}>
               <DeviceChart data={data.deviceClicks} subgrid />
@@ -87,6 +84,7 @@ export function StatsOverview({
                   label: countryLabel(c.country, locale, t("countryTable.unknown")),
                   count: c.count,
                 }))}
+                total={data.humanClicks}
                 maxItems={5}
                 subgrid
               />
