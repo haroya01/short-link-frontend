@@ -4076,49 +4076,32 @@
   "events": {
     "intro": {
       "title": "Nhận đăng ký sự kiện qua một liên kết",
-      "subtitle": "Tạo trang giới thiệu và mẫu đăng ký cho nhóm học, meetup hay câu lạc bộ. Khi đủ chỗ, đăng ký tự đóng, và bạn xem được mỗi lượt đăng ký đến từ đâu.",
       "example": {
-        "title": "Người tham gia sẽ mở trang như thế này",
-        "desc": "Mở liên kết là thấy ngay thời gian, địa điểm và số chỗ còn lại, còn bạn biết mỗi lượt đăng ký đến từ nhóm chat nào. Dưới đây là ví dụ.",
         "guest": "Trang người tham gia thấy",
         "host": "Tình hình đăng ký bạn thấy"
-      },
-      "step1": {
-        "title": "Tạo trang",
-        "body": "Chỉ cần tiêu đề và ngày giờ là có trang."
-      },
-      "step2": {
-        "title": "Dán liên kết vào nhóm chat",
-        "body": "Liên kết ngắn và QR được tạo tự động."
-      },
-      "step3": {
-        "title": "Đăng ký tự đến",
-        "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
       },
       "ctaLogin": "Đăng nhập để bắt đầu",
       "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
       "demo": {
         "eventTitle": "CLB đọc sách khu phố",
-        "eventDate": "Thứ Tư · 19:00",
         "eventPlace": "Quán cà phê tầng 2",
-        "registerButton": "Đăng ký",
-        "example": "Ví dụ",
-        "byChannel": "Đăng ký theo kênh",
         "channels": {
           "groupChat": "Nhóm chat",
           "instagram": "Instagram",
           "qrPoster": "Poster QR"
         },
-        "hostName": "Nhóm đọc sách buổi tối"
+        "hostName": "Nhóm đọc sách buổi tối",
+        "about": "Mỗi tháng gặp nhau một tối thứ Tư. Tháng này ai cũng đọc một truyện ngắn bất kỳ rồi mang tới",
+        "note1": "Chưa đọc xong cũng cứ đến",
+        "note2": "Đồ uống ai nấy tự gọi",
+        "question": "Dạo này bạn đọc gì?"
       }
     },
     "public": {
       "hostedBy": "Tổ chức bởi",
-      "cta": "Đăng ký",
       "attending": "{count} người tham gia",
       "addToCalendar": "Thêm vào Google Calendar",
       "onlineLink": "Liên kết tham gia trực tuyến",
-      "full": "Sự kiện đã đủ người",
       "spotsLeft": "Còn {count} / {capacity} chỗ",
       "formTitle": "Đăng ký tham gia",
       "nameLabel": "Họ tên",
@@ -4140,7 +4123,7 @@
       "viralHook": "Trang này được tạo bằng kurl.",
       "viralCta": "Tạo trang sự kiện",
       "canceledNotice": "Sự kiện đã bị hủy.",
-      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy, hãy quay lại sau.",
+      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy.",
       "closedNotice": "Đã đóng đăng ký.",
       "cancelTitle": "Hủy đăng ký",
       "cancelBody": "Hủy đăng ký \"{title}\"? Chỗ của bạn sẽ dành cho người khác.",
@@ -4149,8 +4132,8 @@
       "cancelDoneBody": "Hẹn gặp lần sau. Bạn có thể đăng ký lại với cùng liên hệ.",
       "cancelError": "Không thể hủy. Liên kết có thể đã hết hạn hoặc đã được dùng.",
       "errors": {
-        "answerRequired": "Vui lòng điền \"{label}\"",
-        "choiceRequired": "Vui lòng chọn một mục cho \"{label}\"",
+        "answerRequired": "Vui lòng trả lời câu hỏi này",
+        "choiceRequired": "Vui lòng chọn một mục",
         "consentRequired": "Vui lòng đồng ý chia sẻ thông tin liên hệ",
         "full": "Chỗ cuối cùng vừa được lấy",
         "alreadyRegistered": "Liên hệ này đã đăng ký rồi",
@@ -4160,22 +4143,30 @@
         "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
         "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)",
         "invalidLine": "Vui lòng kiểm tra LINE ID.",
-        "invalidInstagram": "Vui lòng kiểm tra tên Instagram."
+        "invalidInstagram": "Vui lòng kiểm tra tên Instagram.",
+        "nameRequired": "Vui lòng nhập tên",
+        "contactRequired": "Vui lòng nhập thông tin liên hệ"
       },
-      "metaDate": "Ngày",
-      "metaTime": "Giờ",
       "metaPlace": "Địa điểm",
       "metaOnline": "Trực tuyến",
       "metaAttendance": "Chỗ",
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Tên Instagram",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "Thời gian",
+      "aboutTitle": "Giới thiệu",
+      "endedNotice": "Sự kiện đã kết thúc.",
+      "am": "SA",
+      "pm": "CH"
     },
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loadFailed": "Không tải được danh sách."
+      "loadFailed": "Không tải được danh sách.",
+      "empty": "Chưa có sự kiện nào",
+      "signups": "{count} người",
+      "signupsOf": "{count}/{capacity} người"
     },
     "form": {
       "newTitle": "Sự kiện mới",
@@ -4184,28 +4175,25 @@
       "title": "Tiêu đề",
       "titlePlaceholder": "Nhóm học lập trình Tokyo #3",
       "description": "Giới thiệu",
-      "descriptionHint": "Hỗ trợ Markdown (# tiêu đề, - danh sách, **đậm**)",
       "descriptionPlaceholder": "Buổi gặp này về gì, dành cho ai?",
       "whenTitle": "Thời gian",
       "startsAt": "Bắt đầu",
-      "endsAt": "Kết thúc (tùy chọn)",
+      "endsAt": "Kết thúc",
       "timezone": "Múi giờ",
       "whereTitle": "Địa điểm",
       "locationPlaceholder": "Tên địa điểm hoặc địa chỉ",
       "clearPlace": "Xóa địa điểm",
       "locationUrl": "Liên kết bản đồ",
       "addMapLink": "Dùng liên kết bản đồ",
-      "onlineUrl": "Liên kết trực tuyến (tùy chọn)",
-      "onlineUrlHint": "Liên kết họp cho sự kiện online/hybrid",
+      "onlineUrl": "Liên kết trực tuyến",
       "limitsTitle": "Sĩ số & hạn chót",
-      "capacity": "Sĩ số (tùy chọn)",
+      "capacity": "Sĩ số",
       "capacityHint": "Tự động đóng khi đủ người",
       "capacityPlaceholder": "10",
-      "closeAt": "Hạn đăng ký (tùy chọn)",
-      "closeAtHint": "Không nhận đăng ký sau thời điểm này",
+      "closeAt": "Hạn đăng ký",
       "formSectionTitle": "Mẫu đăng ký",
       "contactField": "Thông tin liên hệ thu thập",
-      "contactFieldHint": "Chọn email để tự động gửi mail xác nhận/hủy. Điện thoại, KakaoTalk, LINE, Instagram dùng khi bạn tự liên hệ.",
+      "contactFieldHint": "Chọn email thì mail xác nhận/hủy được gửi tự động",
       "contactFields": {
         "EMAIL": "Email",
         "PHONE": "Điện thoại",
@@ -4229,45 +4217,50 @@
       "save": "Lưu",
       "errors": {
         "startRequired": "Vui lòng chọn thời gian bắt đầu",
-        "generic": "Không lưu được. Vui lòng kiểm tra lại."
+        "generic": "Không lưu được. Vui lòng kiểm tra lại.",
+        "titleRequired": "Nhập tiêu đề",
+        "endBeforeStart": "Giờ kết thúc đang trước giờ bắt đầu",
+        "closeAfterEnd": "Hạn đăng ký đang sau giờ kết thúc",
+        "closeAfterStart": "Hạn đăng ký đang sau giờ bắt đầu",
+        "capacityMin": "Sĩ số tối thiểu là 1"
       },
-      "optional": "Tùy chọn",
       "cover": "Ảnh bìa",
       "coverFailed": "Tải lên thất bại. Vui lòng thử lại.",
       "coverHint": "Hiển thị lớn trong bản xem trước chat/mạng xã hội (JPG/PNG/WebP, tỉ lệ 2:1)",
       "coverReplace": "Đổi ảnh",
       "coverUpload": "Chọn ảnh",
       "coverUploading": "Đang tải lên…",
-      "descWrite": "Viết",
-      "descPreview": "Xem trước",
-      "descPreviewEmpty": "Chưa có nội dung. Viết markdown ở tab Viết để xem trước tại đây.",
       "useGoogleMaps": "Tạo liên kết Google Maps cho “{place}”",
-      "openMap": "Mở bản đồ ↗"
+      "openMap": "Mở bản đồ ↗",
+      "requiredNote": "Bắt buộc",
+      "viewTabs": "Soạn và xem trước",
+      "tabs": {
+        "edit": "Soạn",
+        "preview": "Xem trước"
+      },
+      "previewLabel": "Người tham gia sẽ thấy",
+      "untitled": "Chưa có tiêu đề"
     },
     "detail": {
-      "loading": "Đang tải…",
       "loadFailed": "Không tải được.",
-      "createdBanner": "Trang sự kiện đã được xuất bản. Dán liên kết này vào nhóm chat và mạng xã hội.",
       "edit": "Sửa",
       "viewPublicPage": "Xem trang công khai",
       "manageTitle": "Quản lý",
       "close": "Đóng đăng ký",
       "reopen": "Mở lại đăng ký",
       "cancelEvent": "Hủy sự kiện",
-      "canceledNote": "Sự kiện đã bị hủy.",
       "statusChanged": "Đã cập nhật",
       "statusChangeFailed": "Cập nhật thất bại",
       "cancelDialogTitle": "Hủy sự kiện này?",
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
       "cancelDialogConfirm": "Hủy sự kiện",
-      "heroCopy": "Sao chép liên kết",
-      "heroCopied": "Đã sao chép"
+      "heroCopy": "Sao chép liên kết"
     },
     "share": {
       "copied": "Đã sao chép",
       "qr": "QR",
       "title": "Liên kết chia sẻ",
-      "subtitle": "Dùng liên kết riêng cho mỗi kênh (nhóm chat, Twitter, Instagram) và phân tích sẽ tự tách người đăng ký theo nguồn.",
+      "subtitle": "Dùng liên kết riêng cho mỗi kênh thì lượt đăng ký được tách theo kênh",
       "copy": "Sao chép liên kết",
       "downloadQr": "Tải QR",
       "aliasPlaceholder": "Tên kênh (VD: nhóm chat)",
@@ -4277,14 +4270,13 @@
       "aliasFailed": "Không tạo được liên kết"
     },
     "analytics": {
-      "shareNudge": "Chưa có lượt nhấp. Dán liên kết chia sẻ vào nhóm chat hoặc mạng xã hội, kết quả sẽ hiện ở đây.",
       "title": "Nguồn truy cập",
       "totalClicks": "Lượt nhấp trang",
       "totalRegistrations": "Lượt đăng ký",
       "conversion": "Tỷ lệ chuyển đổi",
       "registrationsByChannel": "Đăng ký theo kênh",
       "clicksByLink": "Nhấp theo liên kết",
-      "clicksByClientApp": "Nhấp theo ứng dụng (KakaoTalk, Instagram in-app…)",
+      "clicksByClientApp": "Nhấp theo ứng dụng",
       "noRegistrations": "Chưa có đăng ký",
       "noClicks": "Chưa có lượt nhấp"
     },
@@ -4302,7 +4294,9 @@
     "status": {
       "open": "Đang mở",
       "closed": "Đã đóng",
-      "canceled": "Đã hủy"
+      "canceled": "Đã hủy",
+      "ended": "Đã kết thúc",
+      "full": "Hết chỗ"
     }
   },
   "linkAnalytics": {

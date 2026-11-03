@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CalendarX2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { cancelRegistration } from "@/modules/events/api/events";
+
+const SECTION = "mt-8";
 
 export function CancelRegistrationPanel({
   token,
@@ -27,30 +31,21 @@ export function CancelRegistrationPanel({
 
   if (phase === "done") {
     return (
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 text-center dark:border-slate-800 dark:bg-slate-900">
-        <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          {t("cancelDone")}
-        </p>
-        <p className="mt-1 text-[15px] text-slate-500 dark:text-slate-400">
-          {t("cancelDoneBody")}
-        </p>
+      <section className={SECTION} aria-live="polite">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">{t("cancelDone")}</h2>
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{t("cancelDoneBody")}</p>
       </section>
     );
   }
 
   return (
-    <section className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-900 dark:bg-red-950/30">
-      <div className="flex items-center gap-2.5">
-        <CalendarX2 className="h-5 w-5 text-red-500" />
-        <h2 className="text-lg font-semibold text-red-900 dark:text-red-200">
-          {t("cancelTitle")}
-        </h2>
-      </div>
-      <p className="mt-2 text-[15px] leading-relaxed text-red-800 dark:text-red-300">
+    <section className={SECTION}>
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">{t("cancelTitle")}</h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
         {t("cancelBody", { title: eventTitle })}
       </p>
       {phase === "error" ? (
-        <p role="alert" className="mt-2 text-[14px] font-medium text-red-600 dark:text-red-400">
+        <p role="alert" className="mt-3 text-[15px] font-medium text-red-600 dark:text-red-400">
           {t("cancelError")}
         </p>
       ) : null}
@@ -58,7 +53,7 @@ export function CancelRegistrationPanel({
         type="button"
         onClick={cancel}
         disabled={phase === "busy"}
-        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-base font-semibold text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+        className={cn(buttonVariants({ variant: "destructive", size: "xl" }), "mt-5 h-12 w-full text-base font-semibold")}
       >
         {phase === "busy" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {t("cancelConfirm")}

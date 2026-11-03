@@ -19,20 +19,28 @@ const SITE_TONE: MadeWithKurlTone = {
  * Profile pages paint their own theme regardless of the site's dark mode, so they pass the theme's
  * text/border classes as `tone`; everywhere else the site tone follows dark mode.
  */
-export function MadeWithKurl({ className, tone = SITE_TONE }: { className?: string; tone?: MadeWithKurlTone }) {
+export function MadeWithKurl({
+  className,
+  tone = SITE_TONE,
+  plain = false,
+}: {
+  className?: string;
+  tone?: MadeWithKurlTone;
+  plain?: boolean;
+}) {
   return (
     <a
       href={linksHref("/?ref=made-with-kurl")}
       target="_blank"
       rel="noopener"
       className={cn(
-        "focus-ring inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors",
-        tone.border,
+        "focus-ring inline-flex items-center gap-1.5 rounded-md text-[12px] font-medium transition-colors",
+        plain ? null : ["border px-2.5 py-1", tone.border],
         tone.text,
         className,
       )}
     >
-      <Mark className="h-3 text-accent-600" />
+      {plain ? null : <Mark className="h-3 text-accent-600" />}
       <span>
         Made with <span className={cn("font-bold", tone.strong)}>kurl</span>
       </span>

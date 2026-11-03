@@ -4076,49 +4076,32 @@
   "events": {
     "intro": {
       "title": "Take event sign-ups with a link",
-      "subtitle": "Make an intro page and a sign-up form for a study group, meetup or club. Sign-ups close when it's full, and you can see where each one came from.",
       "example": {
-        "title": "Your guests open a page like this",
-        "desc": "The link shows the date, place, and spots left at a glance, and you see which chat each sign-up came from. This is an example.",
         "guest": "What guests see",
         "host": "What you see as the host"
-      },
-      "step1": {
-        "title": "Make a page",
-        "body": "Add a title and a date, and the page is ready."
-      },
-      "step2": {
-        "title": "Paste the link in your chat",
-        "body": "A short link and QR are created automatically."
-      },
-      "step3": {
-        "title": "Watch signups arrive",
-        "body": "The list keeps itself, capacity closes itself, and you see which channel people came from."
       },
       "ctaLogin": "Sign in to start",
       "ctaHint": "Attendees register without an account.",
       "demo": {
         "eventTitle": "Neighborhood book club",
-        "eventDate": "Wednesday · 7:00 PM",
         "eventPlace": "Neighborhood cafe, 2F",
-        "registerButton": "Register",
-        "example": "Example",
-        "byChannel": "Sign-ups by channel",
         "channels": {
           "groupChat": "Group chat",
           "instagram": "Instagram",
           "qrPoster": "QR poster"
         },
-        "hostName": "Night Readers"
+        "hostName": "Night Readers",
+        "about": "We meet one Wednesday evening a month. This time just bring any short story you read",
+        "note1": "Didn't finish it? Come anyway",
+        "note2": "Drinks are on you",
+        "question": "What are you reading lately?"
       }
     },
     "public": {
       "hostedBy": "Hosted by",
-      "cta": "Register",
       "attending": "{count} going",
       "addToCalendar": "Add to Google Calendar",
       "onlineLink": "Online meeting link",
-      "full": "This event is full",
       "spotsLeft": "{count} of {capacity} spots left",
       "formTitle": "Register",
       "nameLabel": "Name",
@@ -4140,7 +4123,7 @@
       "viralHook": "Made with kurl.",
       "viralCta": "Make an event page",
       "canceledNotice": "This event has been canceled.",
-      "fullNotice": "This event is full. Spots open up again when someone cancels, so check back later.",
+      "fullNotice": "This event is full. Spots open again when someone cancels.",
       "closedNotice": "Registration is closed.",
       "cancelTitle": "Cancel registration",
       "cancelBody": "Cancel your registration for \"{title}\"? Your spot goes back to others.",
@@ -4149,8 +4132,8 @@
       "cancelDoneBody": "See you next time. You can register again with the same contact.",
       "cancelError": "Could not cancel. The link may be expired or already used.",
       "errors": {
-        "answerRequired": "Please fill in \"{label}\"",
-        "choiceRequired": "Please pick one option for \"{label}\"",
+        "answerRequired": "Please answer this question",
+        "choiceRequired": "Please pick one",
         "consentRequired": "Please agree to share your contact info",
         "full": "The last spot was just taken",
         "alreadyRegistered": "This contact is already registered",
@@ -4160,22 +4143,30 @@
         "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
         "invalidKakao": "Please check the KakaoTalk ID (2–30 letters/numbers)",
         "invalidLine": "Please check the LINE ID format.",
-        "invalidInstagram": "Please check the Instagram handle."
+        "invalidInstagram": "Please check the Instagram handle.",
+        "nameRequired": "Please enter your name",
+        "contactRequired": "Please enter your contact"
       },
-      "metaDate": "Date",
-      "metaTime": "Time",
       "metaPlace": "Place",
       "metaOnline": "Online",
       "metaAttendance": "Seats",
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Instagram handle",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "When",
+      "aboutTitle": "About",
+      "endedNotice": "This event has ended.",
+      "am": "AM",
+      "pm": "PM"
     },
     "list": {
       "title": "Events",
       "new": "New event",
-      "loadFailed": "Could not load events."
+      "loadFailed": "Could not load events.",
+      "empty": "No events yet",
+      "signups": "{count} signed up",
+      "signupsOf": "{count}/{capacity} signed up"
     },
     "form": {
       "newTitle": "New event",
@@ -4184,28 +4175,25 @@
       "title": "Title",
       "titlePlaceholder": "Tokyo Dev Study Group #3",
       "description": "Description",
-      "descriptionHint": "Markdown supported (# heading, - list, **bold**)",
       "descriptionPlaceholder": "What is this gathering, and who is it for?",
       "whenTitle": "When",
       "startsAt": "Starts",
-      "endsAt": "Ends (optional)",
-      "timezone": "Timezone",
+      "endsAt": "Ends",
+      "timezone": "Time zone",
       "whereTitle": "Where",
       "locationPlaceholder": "Place name or address",
       "clearPlace": "Clear venue",
       "locationUrl": "Map link",
       "addMapLink": "Use a map link",
-      "onlineUrl": "Online link (optional)",
-      "onlineUrlHint": "Meeting link for online/hybrid",
+      "onlineUrl": "Online link",
       "limitsTitle": "Capacity & deadline",
-      "capacity": "Capacity (optional)",
+      "capacity": "Capacity",
       "capacityHint": "Closes automatically when full",
       "capacityPlaceholder": "10",
-      "closeAt": "Registration deadline (optional)",
-      "closeAtHint": "No registrations after this time",
+      "closeAt": "Registration deadline",
       "formSectionTitle": "Registration form",
       "contactField": "Contact to collect",
-      "contactFieldHint": "Email sends confirmation/cancel mail automatically. Phone, KakaoTalk, LINE and Instagram are for reaching attendees yourself.",
+      "contactFieldHint": "With email, confirmation and cancel mails go out automatically",
       "contactFields": {
         "EMAIL": "Email",
         "PHONE": "Phone",
@@ -4229,45 +4217,50 @@
       "save": "Save",
       "errors": {
         "startRequired": "Please set a start time",
-        "generic": "Could not save. Please check your input."
+        "generic": "Could not save. Please check your input.",
+        "titleRequired": "Enter a title",
+        "endBeforeStart": "The end is before the start",
+        "closeAfterEnd": "The deadline is after the event ends",
+        "closeAfterStart": "The deadline is after the event starts",
+        "capacityMin": "Capacity must be at least 1"
       },
-      "optional": "Optional",
       "cover": "Cover image",
       "coverFailed": "Upload failed. Please try again.",
       "coverHint": "Shown large in chat/social previews (JPG/PNG/WebP, 2:1 recommended)",
       "coverReplace": "Replace image",
       "coverUpload": "Choose image",
       "coverUploading": "Uploading…",
-      "descWrite": "Write",
-      "descPreview": "Preview",
-      "descPreviewEmpty": "Nothing here yet. Write in Markdown on the Write tab to preview it here.",
       "useGoogleMaps": "Create a Google Maps link for “{place}”",
-      "openMap": "Open map ↗"
+      "openMap": "Open map ↗",
+      "requiredNote": "Required",
+      "viewTabs": "Edit and preview",
+      "tabs": {
+        "edit": "Edit",
+        "preview": "Preview"
+      },
+      "previewLabel": "What guests see",
+      "untitled": "Untitled"
     },
     "detail": {
-      "loading": "Loading…",
       "loadFailed": "Could not load.",
-      "createdBanner": "Your event page is live. Paste this link into your group chats and socials.",
       "edit": "Edit",
       "viewPublicPage": "View public page",
       "manageTitle": "Manage",
       "close": "Close registration",
       "reopen": "Reopen registration",
       "cancelEvent": "Cancel event",
-      "canceledNote": "This event is canceled.",
       "statusChanged": "Updated",
       "statusChangeFailed": "Update failed",
       "cancelDialogTitle": "Cancel this event?",
       "cancelDialogBody": "The public page shows it as canceled and registration stops. This cannot be undone. To only stop new registrations, use 'Close registration'.",
       "cancelDialogConfirm": "Cancel event",
-      "heroCopy": "Copy link",
-      "heroCopied": "Copied"
+      "heroCopy": "Copy link"
     },
     "share": {
       "copied": "Copied",
       "qr": "QR",
       "title": "Share links",
-      "subtitle": "Use a different link per channel (group chat, Twitter, Instagram) and traffic analytics splits registrants by source automatically.",
+      "subtitle": "Use a separate link per channel and sign-ups are split by channel",
       "copy": "Copy link",
       "downloadQr": "Download QR",
       "aliasPlaceholder": "Channel name (e.g. group chat)",
@@ -4277,14 +4270,13 @@
       "aliasFailed": "Could not create link"
     },
     "analytics": {
-      "shareNudge": "No clicks yet. Paste your share link into a group chat or social feed and results will show up here.",
       "title": "Traffic",
       "totalClicks": "Page clicks",
       "totalRegistrations": "Registrations",
       "conversion": "Conversion",
       "registrationsByChannel": "Registrations by channel",
       "clicksByLink": "Clicks by link",
-      "clicksByClientApp": "Clicks by app (KakaoTalk, Instagram in-app…)",
+      "clicksByClientApp": "Clicks by app",
       "noRegistrations": "No registrations yet",
       "noClicks": "No clicks yet"
     },
@@ -4302,7 +4294,9 @@
     "status": {
       "open": "Open",
       "closed": "Closed",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "ended": "Ended",
+      "full": "Full"
     }
   },
   "linkAnalytics": {

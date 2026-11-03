@@ -4076,49 +4076,32 @@
   "events": {
     "intro": {
       "title": "एक लिंक से इवेंट पंजीकरण लें",
-      "subtitle": "स्टडी ग्रुप, मीटअप या क्लब के लिए परिचय पेज और पंजीकरण फ़ॉर्म बनाएँ। सीटें भरते ही पंजीकरण अपने-आप बंद हो जाता है, और आप देख सकते हैं हर पंजीकरण कहाँ से आया।",
       "example": {
-        "title": "मेहमानों के लिए ऐसा पेज खुलता है",
-        "desc": "लिंक खोलते ही तारीख, जगह और बची सीटें एक नज़र में दिखती हैं, और आपको पता चलता है कि हर पंजीकरण किस चैट से आया। नीचे एक उदाहरण है।",
         "guest": "मेहमान क्या देखते हैं",
         "host": "आयोजक के रूप में आप क्या देखते हैं"
-      },
-      "step1": {
-        "title": "पेज बनाएँ",
-        "body": "बस शीर्षक और तारीख़ डालें, पेज तैयार।"
-      },
-      "step2": {
-        "title": "लिंक ग्रुप चैट में चिपकाएँ",
-        "body": "छोटा लिंक और QR अपने आप बन जाते हैं।"
-      },
-      "step3": {
-        "title": "पंजीकरण आते जाते हैं",
-        "body": "सूची और सीमा अपने आप संभलती है, स्रोत भी दिखता है।"
       },
       "ctaLogin": "साइन इन करके शुरू करें",
       "ctaHint": "प्रतिभागी बिना खाते के पंजीकरण करते हैं।",
       "demo": {
         "eventTitle": "मोहल्ला बुक क्लब",
-        "eventDate": "बुधवार · शाम 7 बजे",
         "eventPlace": "कैफ़े, दूसरी मंज़िल",
-        "registerButton": "पंजीकरण",
-        "example": "उदाहरण",
-        "byChannel": "चैनल के अनुसार पंजीकरण",
         "channels": {
           "groupChat": "ग्रुप चैट",
           "instagram": "Instagram",
           "qrPoster": "QR पोस्टर"
         },
-        "hostName": "रात के पाठक"
+        "hostName": "रात के पाठक",
+        "about": "महीने में एक बार बुधवार शाम को मिलते हैं। इस बार कोई भी एक छोटी कहानी पढ़कर आइए",
+        "note1": "पूरी नहीं पढ़ी? फिर भी आइए",
+        "note2": "ड्रिंक्स अपनी-अपनी",
+        "question": "आजकल क्या पढ़ रहे हैं?"
       }
     },
     "public": {
       "hostedBy": "आयोजक",
-      "cta": "पंजीकरण करें",
       "attending": "{count} शामिल",
       "addToCalendar": "Google कैलेंडर में जोड़ें",
       "onlineLink": "ऑनलाइन भागीदारी लिंक",
-      "full": "इवेंट भर गया है",
       "spotsLeft": "{capacity} में से {count} सीटें बाकी",
       "formTitle": "पंजीकरण करें",
       "nameLabel": "नाम",
@@ -4140,7 +4123,7 @@
       "viralHook": "यह पेज kurl से बना है।",
       "viralCta": "इवेंट पेज बनाएँ",
       "canceledNotice": "यह इवेंट रद्द कर दिया गया है।",
-      "fullNotice": "इवेंट भर गया है। कोई रद्द करे तो सीट फिर खुलती है, इसलिए बाद में दोबारा देखें।",
+      "fullNotice": "इवेंट भर गया है। कोई रद्द करे तो सीट फिर खुलती है।",
       "closedNotice": "पंजीकरण बंद है।",
       "cancelTitle": "पंजीकरण रद्द करें",
       "cancelBody": "\"{title}\" का पंजीकरण रद्द करें? आपकी सीट किसी और को मिल जाएगी।",
@@ -4149,8 +4132,8 @@
       "cancelDoneBody": "फिर मिलेंगे। आप उसी संपर्क से दोबारा पंजीकरण कर सकते हैं।",
       "cancelError": "रद्द नहीं हो सका। लिंक समाप्त हो चुका है या पहले ही इस्तेमाल हो चुका है।",
       "errors": {
-        "answerRequired": "कृपया \"{label}\" भरें",
-        "choiceRequired": "कृपया \"{label}\" में से एक चुनें",
+        "answerRequired": "कृपया इस प्रश्न का उत्तर दें",
+        "choiceRequired": "कृपया एक विकल्प चुनें",
         "consentRequired": "कृपया संपर्क जानकारी साझा करने की सहमति दें",
         "full": "आख़िरी सीट अभी-अभी भर गई",
         "alreadyRegistered": "यह संपर्क पहले से पंजीकृत है",
@@ -4160,22 +4143,30 @@
         "invalidPhone": "कृपया फ़ोन नंबर दोबारा जाँचें (जैसे: 090-1234-5678)",
         "invalidKakao": "कृपया KakaoTalk ID दोबारा जाँचें (2–30 अक्षर/अंक)",
         "invalidLine": "कृपया LINE ID जाँचें।",
-        "invalidInstagram": "कृपया Instagram हैंडल जाँचें।"
+        "invalidInstagram": "कृपया Instagram हैंडल जाँचें।",
+        "nameRequired": "कृपया अपना नाम लिखें",
+        "contactRequired": "कृपया संपर्क जानकारी लिखें"
       },
-      "metaDate": "तिथि",
-      "metaTime": "समय",
       "metaPlace": "स्थान",
       "metaOnline": "ऑनलाइन",
       "metaAttendance": "सीटें",
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Instagram हैंडल",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "कब",
+      "aboutTitle": "विवरण",
+      "endedNotice": "यह इवेंट समाप्त हो चुका है।",
+      "am": "am",
+      "pm": "pm"
     },
     "list": {
       "title": "इवेंट",
       "new": "नया इवेंट",
-      "loadFailed": "सूची लोड नहीं हो सकी।"
+      "loadFailed": "सूची लोड नहीं हो सकी।",
+      "empty": "अभी कोई इवेंट नहीं है",
+      "signups": "{count} लोग",
+      "signupsOf": "{count}/{capacity} लोग"
     },
     "form": {
       "newTitle": "नया इवेंट",
@@ -4184,28 +4175,25 @@
       "title": "शीर्षक",
       "titlePlaceholder": "टोक्यो डेव स्टडी ग्रुप #3",
       "description": "विवरण",
-      "descriptionHint": "Markdown समर्थित (# शीर्षक, - सूची, **बोल्ड**)",
       "descriptionPlaceholder": "यह मिलन किस बारे में है, किसके लिए है?",
       "whenTitle": "कब",
       "startsAt": "शुरुआत",
-      "endsAt": "समाप्ति (वैकल्पिक)",
+      "endsAt": "समाप्ति",
       "timezone": "समय क्षेत्र",
       "whereTitle": "कहाँ",
       "locationPlaceholder": "स्थान का नाम या पता",
       "clearPlace": "स्थान हटाएँ",
       "locationUrl": "नक्शा लिंक",
       "addMapLink": "नक्शा लिंक जोड़ें",
-      "onlineUrl": "ऑनलाइन लिंक (वैकल्पिक)",
-      "onlineUrlHint": "ऑनलाइन/हाइब्रिड के लिए मीटिंग लिंक",
+      "onlineUrl": "ऑनलाइन लिंक",
       "limitsTitle": "सीमा और समय-सीमा",
-      "capacity": "सीट सीमा (वैकल्पिक)",
+      "capacity": "सीट सीमा",
       "capacityHint": "भरने पर अपने आप बंद",
       "capacityPlaceholder": "10",
-      "closeAt": "पंजीकरण की अंतिम तिथि (वैकल्पिक)",
-      "closeAtHint": "इस समय के बाद पंजीकरण नहीं",
+      "closeAt": "पंजीकरण की अंतिम तिथि",
       "formSectionTitle": "पंजीकरण फ़ॉर्म",
       "contactField": "कौन-सा संपर्क लें",
-      "contactFieldHint": "ईमेल चुनने पर पुष्टि/रद्द मेल अपने आप जाता है। फ़ोन, KakaoTalk, LINE, Instagram से आप स्वयं संपर्क करें।",
+      "contactFieldHint": "ईमेल चुनने पर पुष्टि/रद्द मेल अपने आप जाता है",
       "contactFields": {
         "EMAIL": "ईमेल",
         "PHONE": "फ़ोन",
@@ -4229,45 +4217,50 @@
       "save": "सहेजें",
       "errors": {
         "startRequired": "कृपया शुरुआत का समय चुनें",
-        "generic": "सहेज नहीं सके। कृपया इनपुट जाँचें।"
+        "generic": "सहेज नहीं सके। कृपया इनपुट जाँचें।",
+        "titleRequired": "शीर्षक लिखें",
+        "endBeforeStart": "समाप्ति समय शुरुआत से पहले है",
+        "closeAfterEnd": "अंतिम तिथि इवेंट की समाप्ति के बाद है",
+        "closeAfterStart": "अंतिम तिथि इवेंट की शुरुआत के बाद है",
+        "capacityMin": "सीटें कम से कम 1 होनी चाहिए"
       },
-      "optional": "वैकल्पिक",
       "cover": "कवर छवि",
       "coverFailed": "अपलोड विफल। कृपया फिर प्रयास करें।",
       "coverHint": "चैट/सोशल प्रीव्यू में बड़ा दिखता है (JPG/PNG/WebP, 2:1 अनुशंसित)",
       "coverReplace": "छवि बदलें",
       "coverUpload": "छवि चुनें",
       "coverUploading": "अपलोड हो रहा है…",
-      "descWrite": "लिखें",
-      "descPreview": "पूर्वावलोकन",
-      "descPreviewEmpty": "अभी कुछ नहीं है। लिखें टैब में मार्कडाउन लिखें और यहाँ पूर्वावलोकन देखें।",
       "useGoogleMaps": "“{place}” के लिए Google Maps लिंक बनाएँ",
-      "openMap": "नक्शा खोलें ↗"
+      "openMap": "नक्शा खोलें ↗",
+      "requiredNote": "ज़रूरी",
+      "viewTabs": "लिखें और पूर्वावलोकन",
+      "tabs": {
+        "edit": "लिखें",
+        "preview": "पूर्वावलोकन"
+      },
+      "previewLabel": "मेहमान क्या देखेंगे",
+      "untitled": "बिना शीर्षक"
     },
     "detail": {
-      "loading": "लोड हो रहा है…",
       "loadFailed": "लोड नहीं हो सका।",
-      "createdBanner": "आपका इवेंट पेज लाइव है। यह लिंक ग्रुप चैट और सोशल पर चिपकाएँ।",
       "edit": "संपादित करें",
       "viewPublicPage": "सार्वजनिक पेज देखें",
       "manageTitle": "प्रबंधन",
       "close": "पंजीकरण बंद करें",
       "reopen": "पंजीकरण फिर खोलें",
       "cancelEvent": "इवेंट रद्द करें",
-      "canceledNote": "यह इवेंट रद्द है।",
       "statusChanged": "अपडेट हो गया",
       "statusChangeFailed": "अपडेट विफल",
       "cancelDialogTitle": "यह इवेंट रद्द करें?",
       "cancelDialogBody": "सार्वजनिक पेज पर रद्द दिखेगा और पंजीकरण रुक जाएगा। इसे वापस नहीं किया जा सकता। सिर्फ़ नए पंजीकरण रोकने हों तो 'पंजीकरण बंद करें' चुनें।",
       "cancelDialogConfirm": "इवेंट रद्द करें",
-      "heroCopy": "लिंक कॉपी करें",
-      "heroCopied": "कॉपी हो गया"
+      "heroCopy": "लिंक कॉपी करें"
     },
     "share": {
       "copied": "कॉपी हो गया",
       "qr": "QR",
       "title": "साझा लिंक",
-      "subtitle": "हर चैनल (ग्रुप चैट, Twitter, Instagram) के लिए अलग लिंक इस्तेमाल करें। विश्लेषण अपने आप स्रोत के अनुसार बाँट देगा।",
+      "subtitle": "हर चैनल के लिए अलग लिंक रखें तो पंजीकरण चैनल के अनुसार बँट जाते हैं",
       "copy": "लिंक कॉपी करें",
       "downloadQr": "QR डाउनलोड करें",
       "aliasPlaceholder": "चैनल नाम (जैसे: ग्रुप चैट)",
@@ -4277,14 +4270,13 @@
       "aliasFailed": "लिंक नहीं बन सका"
     },
     "analytics": {
-      "shareNudge": "अभी कोई क्लिक नहीं। ऊपर का लिंक ग्रुप चैट या सोशल पर चिपकाएँ, नतीजे यहाँ दिखेंगे।",
       "title": "ट्रैफ़िक",
       "totalClicks": "पेज क्लिक",
       "totalRegistrations": "पंजीकरण",
       "conversion": "रूपांतरण दर",
       "registrationsByChannel": "चैनल के अनुसार पंजीकरण",
       "clicksByLink": "लिंक के अनुसार क्लिक",
-      "clicksByClientApp": "ऐप के अनुसार क्लिक (KakaoTalk, Instagram in-app…)",
+      "clicksByClientApp": "ऐप के अनुसार क्लिक",
       "noRegistrations": "अभी कोई पंजीकरण नहीं",
       "noClicks": "अभी कोई क्लिक नहीं"
     },
@@ -4302,7 +4294,9 @@
     "status": {
       "open": "खुला",
       "closed": "बंद",
-      "canceled": "रद्द"
+      "canceled": "रद्द",
+      "ended": "समाप्त",
+      "full": "भर गया"
     }
   },
   "linkAnalytics": {

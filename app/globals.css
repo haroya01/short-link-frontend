@@ -653,6 +653,17 @@ html[data-first-load] .profile-fade {
   .prose-text-block th {
     @apply bg-slate-50 font-semibold;
   }
+  .prose-event p,
+  .prose-event li {
+    @apply text-[15px];
+  }
+  .prose-event h1,
+  .prose-event h2 {
+    @apply mt-5 text-base font-semibold;
+  }
+  .prose-event h3 {
+    @apply mt-4 text-[15px] font-semibold;
+  }
 
   /*
    * Long-form reading typography for the public blog post body. Distinct from .prose-text-block:

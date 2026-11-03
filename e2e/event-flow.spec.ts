@@ -45,16 +45,16 @@ test.describe("event organizer flow", () => {
   test("organizer creates and publishes an event with a capacity", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await expect(page.getByPlaceholder("어떤 모임인지, 누구를 기다리는지", { exact: true })).toBeVisible();
     await page.getByLabel("제목", { exact: false }).fill("E2E 테스트 스터디");
     await page.locator("#ef-starts").fill("2030-01-15T19:00");
-    await page.getByText("정원과 마감").click();
     await page.locator("#ef-cap").fill("5");
     await page.getByRole("button", { name: "발행하기" }).click();
 
     await expect(page.getByRole("heading", { name: "E2E 테스트 스터디" })).toBeVisible();
     await expect(page.getByText("모집 중", { exact: true })).toBeVisible();
-    await expect(page.getByText("0/5", { exact: true })).toBeVisible();
+    await expect(page.getByText("0/5명", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "공개 페이지 보기" })).toHaveAttribute("href", /\/e\/e2e-1$/);
     await expect(page.getByText("아직 신청자가 없어요.", { exact: true })).toBeVisible();
     expect(events[0]).toMatchObject({ title: "E2E 테스트 스터디", capacity: 5 });
@@ -63,6 +63,7 @@ test.describe("event organizer flow", () => {
   test("the description preview renders with the public page's renderer, code highlighting included", async ({ page }) => {
     await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.locator("#ef-desc").fill("## 준비물\n\n```js\nconst seat = 1;\n```");
 
     const preview = page.locator(".prose-text-block");
@@ -73,6 +74,7 @@ test.describe("event organizer flow", () => {
   test("without a Maps key the place is typed by hand and a Google Maps link is made from it", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("키 없는 모집");
     await page.locator("#ef-starts").fill("2030-04-01T10:00");
 
@@ -94,6 +96,7 @@ test.describe("event organizer flow", () => {
   test("closing registration flips the event status", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("마감 테스트");
     await page.locator("#ef-starts").fill("2030-02-01T10:00");
     await page.getByRole("button", { name: "발행하기" }).click();
@@ -107,6 +110,7 @@ test.describe("event organizer flow", () => {
   test("신청이 들어온 모집도 고칠 수 있다 — 잠긴 질문은 보내지 않는다", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("신청 받은 모집");
     await page.locator("#ef-starts").fill("2030-03-01T10:00");
     await page.getByRole("button", { name: "발행하기" }).click();

@@ -41,18 +41,16 @@ export default function EditEventPage() {
   }
 
   return (
-    <LinksPage width="form">
-      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("editTitle")}</h1>
-      <div className="mt-6">
-        <EventForm
-          event={event}
-          questionsLocked={event.registrationCount > 0}
-          onSubmit={async (draft) => {
-            await updateEvent(event.id, draft);
-            router.replace(`/events/${event.id}`);
-          }}
-        />
-      </div>
+    <LinksPage>
+      <EventForm
+        event={event}
+        questionsLocked={event.registrationCount > 0}
+        title={t("editTitle")}
+        onSubmit={async (draft) => {
+          await updateEvent(event.id, draft);
+          router.replace(`/events/${event.id}`);
+        }}
+      />
     </LinksPage>
   );
 }

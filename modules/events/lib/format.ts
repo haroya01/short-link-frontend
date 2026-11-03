@@ -5,33 +5,34 @@ export function shortUrlOf(code: string): string {
 }
 
 /** 이벤트 자체 타임존으로 표시 — 뷰어 로컬이 아니라 "모임이 열리는 곳"의 시간이 기준. */
-export function formatEventDate(iso: string, timezone: string, locale: string): string {
-  const parts = new Intl.DateTimeFormat(locale, {
-    timeZone: safeZone(timezone),
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-  }).formatToParts(new Date(iso));
-  const weekday = parts.find((p) => p.type === "weekday")?.value;
-  const withoutWeekday = parts
-    .filter((p) => p.type !== "weekday")
-    .map((p) => p.value)
-    .join("")
-    .replace(/[\s,]+$/, "")
-    .trim();
+function formatEventDate(iso: string, timezone: string, locale: string): string {
+  const date = new Date(iso);
+  const timeZone = safeZone(timezone);
+  const day = new Intl.DateTimeFormat(locale, { timeZone, year: "numeric", month: "long", day: "numeric" }).format(date);
+  const weekday = new Intl.DateTimeFormat(locale, { timeZone, weekday: "short" }).format(date);
   // ko/ja 관례 — "8월 5일 (수)" / "8月5日(水)". Intl ko 는 괄호를 안 붙인다.
-  if (!weekday) return withoutWeekday;
-  if (locale.startsWith("ja")) return `${withoutWeekday}(${weekday})`;
-  return `${withoutWeekday} (${weekday})`;
+  if (locale.startsWith("ja")) return `${day}(${weekday})`;
+  return `${day} (${weekday})`;
 }
 
-export function formatEventTime(iso: string, timezone: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, {
+export type DayPeriods = { am: string; pm: string };
+
+export type EventWhenText = { day: string; time: string; zone: string };
+
+function formatEventTime(iso: string, timezone: string, locale: string, dayPeriods?: DayPeriods): string {
+  const date = new Date(iso);
+  const parts = new Intl.DateTimeFormat(locale, {
     timeZone: safeZone(timezone),
     hour: "numeric",
     minute: "2-digit",
-  }).format(new Date(iso));
+  }).formatToParts(date);
+  if (!dayPeriods) return parts.map((part) => part.value).join("");
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", { timeZone: safeZone(timezone), hour: "numeric", hourCycle: "h23" }).format(date),
+  );
+  return parts
+    .map((part) => (part.type === "dayPeriod" ? (hour < 12 ? dayPeriods.am : dayPeriods.pm) : part.value))
+    .join("");
 }
 
 export function formatEventRange(
@@ -39,21 +40,39 @@ export function formatEventRange(
   endsAt: string | null,
   timezone: string,
   locale: string,
+  dayPeriods?: DayPeriods,
 ): string {
   const date = formatEventDate(startsAt, timezone, locale);
-  const start = formatEventTime(startsAt, timezone, locale);
+  const start = formatEventTime(startsAt, timezone, locale, dayPeriods);
   if (!endsAt) return `${date} · ${start}`;
   const sameDay =
     formatEventDate(startsAt, timezone, locale) === formatEventDate(endsAt, timezone, locale);
   const end = sameDay
-    ? formatEventTime(endsAt, timezone, locale)
-    : `${formatEventDate(endsAt, timezone, locale)} ${formatEventTime(endsAt, timezone, locale)}`;
+    ? formatEventTime(endsAt, timezone, locale, dayPeriods)
+    : `${formatEventDate(endsAt, timezone, locale)} ${formatEventTime(endsAt, timezone, locale, dayPeriods)}`;
   const sep = locale.startsWith("ja") ? "〜" : " – ";
   return `${date} · ${start}${sep}${end}`;
 }
 
+export function eventWhenText(
+  event: { startsAt: string; endsAt: string | null; timezone: string },
+  locale: string,
+  dayPeriods: DayPeriods,
+): EventWhenText {
+  const { startsAt, endsAt, timezone } = event;
+  const zone = timezoneLabel(timezone, locale);
+  const startDay = formatEventDate(startsAt, timezone, locale);
+  const start = formatEventTime(startsAt, timezone, locale, dayPeriods);
+  const ja = locale.startsWith("ja");
+  if (!endsAt) return { day: startDay, time: start, zone };
+  const endDay = formatEventDate(endsAt, timezone, locale);
+  const end = formatEventTime(endsAt, timezone, locale, dayPeriods);
+  if (endDay === startDay) return { day: startDay, time: `${start}${ja ? "〜" : " – "}${end}`, zone };
+  return { day: `${startDay} ${start}${ja ? "〜" : " –"}`, time: `${endDay} ${end}`, zone };
+}
+
 /** "(Asia/Tokyo)" 같은 IANA id 대신 "일본 시간"/"日本時間" 류의 로케일 라벨. 실패 시 도시명 폴백. */
-export function timezoneLabel(timezone: string, locale: string): string {
+function timezoneLabel(timezone: string, locale: string): string {
   try {
     const parts = new Intl.DateTimeFormat(locale, {
       timeZone: safeZone(timezone),
