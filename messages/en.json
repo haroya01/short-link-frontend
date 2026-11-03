@@ -4213,7 +4213,6 @@
       "endsAt": "Ends (optional)",
       "timezone": "Timezone",
       "whereTitle": "Where",
-      "locationText": "Venue",
       "locationPlaceholder": "Place name or address",
       "clearPlace": "Clear venue",
       "locationUrl": "Map link",

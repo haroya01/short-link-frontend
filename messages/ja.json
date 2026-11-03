@@ -4213,7 +4213,6 @@
       "endsAt": "終了 (任意)",
       "timezone": "タイムゾーン",
       "whereTitle": "場所",
-      "locationText": "会場",
       "locationPlaceholder": "場所名や住所",
       "clearPlace": "会場をクリア",
       "locationUrl": "地図リンク",

@@ -21,11 +21,13 @@ const TEXT_BUTTON =
   "text-[12px] font-medium text-slate-500 underline-offset-2 transition-colors hover:text-slate-800 hover:underline dark:text-slate-400 dark:hover:text-slate-200";
 
 export function LocationField({
+  labelledBy,
   text,
   url,
   onTextChange,
   onUrlChange,
 }: {
+  labelledBy: string;
   text: string;
   url: string;
   onTextChange: (value: string) => void;
@@ -168,13 +170,11 @@ export function LocationField({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="ef-loc" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
-          {t("locationText")}
-        </label>
         <div className="relative">
           <Input
             ref={inputRef}
             id="ef-loc"
+            aria-labelledby={labelledBy}
             value={text}
             onChange={(e) => changeText(e.target.value)}
             onKeyDown={MAPS_KEY ? onKeyDown : undefined}
@@ -201,7 +201,7 @@ export function LocationField({
           ) : null}
           {open ? (
             <div className="absolute top-full z-20 mt-1 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-float motion-safe:animate-dropdown-in dark:border-slate-700 dark:bg-slate-850">
-              <ul id={listId} role="listbox" aria-label={t("locationText")}>
+              <ul id={listId} role="listbox" aria-labelledby={labelledBy}>
                 {suggestions.map((suggestion, i) => (
                   <li
                     key={suggestion.placeId}

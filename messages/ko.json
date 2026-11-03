@@ -4213,7 +4213,6 @@
       "endsAt": "종료 (선택)",
       "timezone": "타임존",
       "whereTitle": "장소",
-      "locationText": "장소",
       "locationPlaceholder": "장소 이름이나 주소",
       "clearPlace": "장소 지우기",
       "locationUrl": "지도 링크",

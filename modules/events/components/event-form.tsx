@@ -190,8 +190,9 @@ export function EventForm({
         </div>
       </Section>
 
-      <Section title={t("whereTitle")}>
+      <Section title={t("whereTitle")} titleId="ef-where-title">
         <LocationField
+          labelledBy="ef-where-title"
           text={form.locationText}
           url={form.locationUrl}
           onTextChange={(value) => set("locationText", value)}
@@ -338,11 +339,19 @@ function DescriptionPreview({ value }: { value: string }) {
   return Markdown ? <Markdown>{value}</Markdown> : <p className="whitespace-pre-line">{value}</p>;
 }
 
-function Section({ title, children }: { title?: string; children: React.ReactNode }) {
+function Section({
+  title,
+  titleId,
+  children,
+}: {
+  title?: string;
+  titleId?: string;
+  children: React.ReactNode;
+}) {
   return (
     <section className="flex flex-col gap-4 border-t border-slate-200 pt-6 first:border-t-0 first:pt-0 dark:border-slate-800">
       {title ? (
-        <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+        <h2 id={titleId} className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
           {title}
         </h2>
       ) : null}
