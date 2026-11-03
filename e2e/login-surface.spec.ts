@@ -71,7 +71,7 @@ test("머리글 로그인과 기능 소개의 시작 버튼도 같은 시트를 
   await page.route("**/oauth2/authorization/google", (route) => route.fulfill({ status: 200, body: "google" }));
   await page.goto("/ko/events");
   const start = page.getByRole("main").getByRole("link", { name: /로그인하고 시작하기/ }).first();
-  await expect(start).toHaveAttribute("href", /\/login\?next=\/events$/);
+  await expect(start).toHaveAttribute("href", /\/login\?next=\/events\/new$/);
   await start.click();
   const events = sheet(page, "모집 페이지를 관리하려면 로그인하세요");
   await expect(events).toBeVisible();

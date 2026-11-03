@@ -69,7 +69,7 @@ export function EventsIntro() {
   return (
     <div className="bg-white dark:bg-slate-950">
       <div className="container max-w-5xl">
-        <header className="pb-12 pt-12 sm:pb-14 sm:pt-16">
+        <div className="pb-12 pt-12 sm:pb-14 sm:pt-16">
           <h1 className="text-balance break-keep text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
@@ -79,7 +79,7 @@ export function EventsIntro() {
             </SignInLink>
             <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("ctaHint")}</p>
           </div>
-        </header>
+        </div>
 
         <Band label={t("example.guest")}>
           <EventPageView

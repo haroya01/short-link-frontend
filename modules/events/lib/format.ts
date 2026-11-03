@@ -5,7 +5,7 @@ export function shortUrlOf(code: string): string {
 }
 
 /** 이벤트 자체 타임존으로 표시 — 뷰어 로컬이 아니라 "모임이 열리는 곳"의 시간이 기준. */
-export function formatEventDate(iso: string, timezone: string, locale: string): string {
+function formatEventDate(iso: string, timezone: string, locale: string): string {
   const parts = new Intl.DateTimeFormat(locale, {
     timeZone: safeZone(timezone),
     year: "numeric",
@@ -26,7 +26,7 @@ export function formatEventDate(iso: string, timezone: string, locale: string): 
   return `${withoutWeekday} (${weekday})`;
 }
 
-export function formatEventTime(iso: string, timezone: string, locale: string): string {
+function formatEventTime(iso: string, timezone: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, {
     timeZone: safeZone(timezone),
     hour: "numeric",

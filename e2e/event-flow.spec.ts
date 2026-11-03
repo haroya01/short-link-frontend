@@ -48,7 +48,6 @@ test.describe("event organizer flow", () => {
     await expect(page.getByPlaceholder("어떤 모임인지, 누구를 기다리는지", { exact: true })).toBeVisible();
     await page.getByLabel("제목", { exact: false }).fill("E2E 테스트 스터디");
     await page.locator("#ef-starts").fill("2030-01-15T19:00");
-    await page.getByText("정원과 마감").click();
     await page.locator("#ef-cap").fill("5");
     await page.getByRole("button", { name: "발행하기" }).click();
 

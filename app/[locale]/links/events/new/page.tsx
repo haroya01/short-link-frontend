@@ -3,9 +3,9 @@
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { createEvent } from "@/modules/events/api/events";
 import { EventForm } from "@/modules/events/components/event-form";
+import { EventsIntro } from "@/modules/events/components/events-intro";
 import { LinksPage } from "@/components/links/links-page";
 
 export default function NewEventPage() {
@@ -13,26 +13,29 @@ export default function NewEventPage() {
   const router = useRouter();
   const { ready, authenticated } = useAuth();
 
-  if (ready && !authenticated) {
-    return (
-      <SignInEmptyState page reason="events" />
-    );
-  }
-
   return (
-    <LinksPage width="form">
-      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("newTitle")}</h1>
-      <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("newSubtitle")}</p>
-      <div className="mt-6">
-        <EventForm
-          event={null}
-          questionsLocked={false}
-          onSubmit={async (draft) => {
-            const created = await createEvent(draft);
-            router.replace(`/events/${created.id}?created=1`);
-          }}
-        />
-      </div>
-    </LinksPage>
+    <>
+      {(!ready || !authenticated) && (
+        <div data-auth-slot={ready ? undefined : "anon"} className="contents">
+          <EventsIntro />
+        </div>
+      )}
+      {(!ready || authenticated) && (
+        <div data-auth-slot={ready ? undefined : "authed"} className="contents">
+          <LinksPage>
+            <EventForm
+              event={null}
+              questionsLocked={false}
+              title={t("newTitle")}
+              subtitle={t("newSubtitle")}
+              onSubmit={async (draft) => {
+                const created = await createEvent(draft);
+                router.replace(`/events/${created.id}?created=1`);
+              }}
+            />
+          </LinksPage>
+        </div>
+      )}
+    </>
   );
 }

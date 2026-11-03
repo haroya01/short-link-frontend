@@ -7,7 +7,7 @@ type PhaseInput = Pick<
   "status" | "acceptingRegistrations" | "startsAt" | "endsAt" | "closeAt" | "spotsLeft"
 >;
 
-export function eventEndsAt(event: Pick<PublicEvent, "startsAt" | "endsAt">): number {
+function eventEndsAt(event: Pick<PublicEvent, "startsAt" | "endsAt">): number {
   const start = Date.parse(event.startsAt);
   const end = event.endsAt ? Date.parse(event.endsAt) : start;
   return Math.max(start, end);

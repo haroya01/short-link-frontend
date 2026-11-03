@@ -35,7 +35,9 @@ export function EventPageView({
   const t = useTranslations("events.public");
   const locale = useLocale();
   const Heading = heading;
-  const when = formatEventWhen(event.startsAt, event.endsAt, event.timezone, locale);
+  const when = Number.isNaN(Date.parse(event.startsAt))
+    ? null
+    : formatEventWhen(event.startsAt, event.endsAt, event.timezone, locale);
   const placeId = MAPS_KEY && event.locationUrl ? placeIdFromUrl(event.locationUrl) : null;
 
   return (
@@ -64,11 +66,17 @@ export function EventPageView({
 
       <dl className="mt-7 border-t border-slate-200 dark:border-slate-800">
         <Fact label={t("metaWhen")}>
-          <span className="block">{when.day}</span>
-          <span className="block">
-            {when.time}{" "}
-            <span className="text-slate-500 dark:text-slate-400">({timezoneLabel(event.timezone, locale)})</span>
-          </span>
+          {when ? (
+            <>
+              <span className="block">{when.day}</span>
+              <span className="block">
+                {when.time}{" "}
+                <span className="text-slate-500 dark:text-slate-400">({timezoneLabel(event.timezone, locale)})</span>
+              </span>
+            </>
+          ) : (
+            "—"
+          )}
         </Fact>
         {event.locationText ? (
           <Fact label={t("metaPlace")}>

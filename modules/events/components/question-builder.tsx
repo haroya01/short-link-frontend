@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { QuestionSpec } from "@/modules/events/api/events";
 
 const MAX_QUESTIONS = 10;
@@ -25,11 +27,11 @@ export function QuestionBuilder({
     onChange([...questions, { type: "SHORT_TEXT", label: "", required: false }]);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       {questions.map((question, index) => (
         <div
           key={index}
-          className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5 dark:border-slate-700 dark:bg-slate-800/50"
+          className="flex flex-col gap-3 border-l-2 border-slate-200 pl-4 dark:border-slate-700"
         >
           <div className="flex items-center gap-2">
             <Input
@@ -83,11 +85,7 @@ export function QuestionBuilder({
         </div>
       ))}
       {questions.length < MAX_QUESTIONS ? (
-        <button
-          type="button"
-          onClick={add}
-          className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-300 text-[13px] font-medium text-slate-500 transition-colors hover:border-slate-500 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400"
-        >
+        <button type="button" onClick={add} className={cn(buttonVariants({ variant: "outline", size: "md" }), "self-start")}>
           {t("addQuestion")}
         </button>
       ) : null}
