@@ -420,7 +420,7 @@ function DemoLinkWebhooksPreview() {
       <div className="mt-4 space-y-2">
         <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 grow basis-56">
               <span className="mr-2 font-medium text-slate-900 dark:text-slate-100">{DEMO_WEBHOOK.name}</span>
               <code
                 className="break-all font-mono text-[11px] text-slate-600 dark:text-slate-300"

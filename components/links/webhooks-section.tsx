@@ -165,10 +165,10 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
           ) : (
             <p className="mt-1">{t("issuedHint")}</p>
           )}
+          <code className="mt-2 block min-w-0 break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
+            {revealed ? issued.secret : "•".repeat(48)}
+          </code>
           <div className="mt-2 flex gap-2">
-            <code className="flex-1 break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
-              {revealed ? issued.secret : "•".repeat(48)}
-            </code>
             <Button
               type="button"
               size="sm"
@@ -206,7 +206,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
               }
             >
               <div className="flex flex-wrap items-center gap-2">
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 grow basis-56">
                   {hook.name && (
                     <span className="mr-2 font-medium text-slate-900 dark:text-slate-100">{hook.name}</span>
                   )}

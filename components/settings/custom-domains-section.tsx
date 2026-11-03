@@ -264,11 +264,11 @@ function CopyCell({ label, className = "" }: { label: string; className?: string
       type="button"
       onClick={copy}
       className={
-        "group flex items-center justify-between gap-2 px-2 py-1.5 text-left text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 " +
+        "group flex min-w-0 items-center justify-between gap-2 px-2 py-1.5 text-left text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 " +
         className
       }
     >
-      <span className="truncate">{label}</span>
+      <span className="min-w-0 truncate">{label}</span>
       {copied ? (
         <Check className="h-3 w-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
       ) : (

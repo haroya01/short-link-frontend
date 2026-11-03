@@ -236,7 +236,7 @@ h1, h2, h3, p {
   overflow-wrap: break-word;
   line-break: strict;
 }
-:lang(ko) {
+:lang(ko):where(:not(.break-all)) {
   word-break: keep-all;
 }
 
