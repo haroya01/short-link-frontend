@@ -13,6 +13,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kurl.me";
 
 async function fetchEvent(slug: string): Promise<PublicEvent | null> {
+  if (process.env.NEXT_PUBLIC_USE_MOCKS === "1") {
+    return (await import("@/modules/events/api/_mocks")).mockPublicEvent(slug);
+  }
   try {
     const url = `${API_BASE}/api/v1/public/events/${encodeURIComponent(slug)}`;
     const res = await fetch(url, {

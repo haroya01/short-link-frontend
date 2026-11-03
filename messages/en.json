@@ -4136,7 +4136,6 @@
     },
     "public": {
       "hostedBy": "Hosted by",
-      "cta": "Register",
       "attending": "{count} going",
       "addToCalendar": "Add to Google Calendar",
       "onlineLink": "Online meeting link",
@@ -4162,7 +4161,7 @@
       "viralHook": "Made with kurl.",
       "viralCta": "Make an event page",
       "canceledNotice": "This event has been canceled.",
-      "fullNotice": "This event is full. Spots open up again when someone cancels, so check back later.",
+      "fullNotice": "This event is full. Spots open again when someone cancels.",
       "closedNotice": "Registration is closed.",
       "cancelTitle": "Cancel registration",
       "cancelBody": "Cancel your registration for \"{title}\"? Your spot goes back to others.",
@@ -4171,8 +4170,8 @@
       "cancelDoneBody": "See you next time. You can register again with the same contact.",
       "cancelError": "Could not cancel. The link may be expired or already used.",
       "errors": {
-        "answerRequired": "Please fill in \"{label}\"",
-        "choiceRequired": "Please pick one option for \"{label}\"",
+        "answerRequired": "Please answer this question",
+        "choiceRequired": "Please pick one",
         "consentRequired": "Please agree to share your contact info",
         "full": "The last spot was just taken",
         "alreadyRegistered": "This contact is already registered",
@@ -4182,7 +4181,9 @@
         "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
         "invalidKakao": "Please check the KakaoTalk ID (2–30 letters/numbers)",
         "invalidLine": "Please check the LINE ID format.",
-        "invalidInstagram": "Please check the Instagram handle."
+        "invalidInstagram": "Please check the Instagram handle.",
+        "nameRequired": "Please enter your name",
+        "contactRequired": "Please enter your contact"
       },
       "metaDate": "Date",
       "metaTime": "Time",
@@ -4192,7 +4193,10 @@
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Instagram handle",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "When",
+      "aboutTitle": "About",
+      "endedNotice": "This event has ended."
     },
     "list": {
       "title": "Events",

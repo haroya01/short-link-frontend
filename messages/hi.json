@@ -4136,7 +4136,6 @@
     },
     "public": {
       "hostedBy": "आयोजक",
-      "cta": "पंजीकरण करें",
       "attending": "{count} शामिल",
       "addToCalendar": "Google कैलेंडर में जोड़ें",
       "onlineLink": "ऑनलाइन भागीदारी लिंक",
@@ -4162,7 +4161,7 @@
       "viralHook": "यह पेज kurl से बना है।",
       "viralCta": "इवेंट पेज बनाएँ",
       "canceledNotice": "यह इवेंट रद्द कर दिया गया है।",
-      "fullNotice": "इवेंट भर गया है। कोई रद्द करे तो सीट फिर खुलती है, इसलिए बाद में दोबारा देखें।",
+      "fullNotice": "इवेंट भर गया है। कोई रद्द करे तो सीट फिर खुलती है।",
       "closedNotice": "पंजीकरण बंद है।",
       "cancelTitle": "पंजीकरण रद्द करें",
       "cancelBody": "\"{title}\" का पंजीकरण रद्द करें? आपकी सीट किसी और को मिल जाएगी।",
@@ -4171,8 +4170,8 @@
       "cancelDoneBody": "फिर मिलेंगे। आप उसी संपर्क से दोबारा पंजीकरण कर सकते हैं।",
       "cancelError": "रद्द नहीं हो सका। लिंक समाप्त हो चुका है या पहले ही इस्तेमाल हो चुका है।",
       "errors": {
-        "answerRequired": "कृपया \"{label}\" भरें",
-        "choiceRequired": "कृपया \"{label}\" में से एक चुनें",
+        "answerRequired": "कृपया इस प्रश्न का उत्तर दें",
+        "choiceRequired": "कृपया एक विकल्प चुनें",
         "consentRequired": "कृपया संपर्क जानकारी साझा करने की सहमति दें",
         "full": "आख़िरी सीट अभी-अभी भर गई",
         "alreadyRegistered": "यह संपर्क पहले से पंजीकृत है",
@@ -4182,7 +4181,9 @@
         "invalidPhone": "कृपया फ़ोन नंबर दोबारा जाँचें (जैसे: 090-1234-5678)",
         "invalidKakao": "कृपया KakaoTalk ID दोबारा जाँचें (2–30 अक्षर/अंक)",
         "invalidLine": "कृपया LINE ID जाँचें।",
-        "invalidInstagram": "कृपया Instagram हैंडल जाँचें।"
+        "invalidInstagram": "कृपया Instagram हैंडल जाँचें।",
+        "nameRequired": "कृपया अपना नाम लिखें",
+        "contactRequired": "कृपया संपर्क जानकारी लिखें"
       },
       "metaDate": "तिथि",
       "metaTime": "समय",
@@ -4192,7 +4193,10 @@
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Instagram हैंडल",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "कब",
+      "aboutTitle": "विवरण",
+      "endedNotice": "यह इवेंट समाप्त हो चुका है।"
     },
     "list": {
       "title": "इवेंट",

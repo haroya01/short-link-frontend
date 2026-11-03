@@ -4136,7 +4136,6 @@
     },
     "public": {
       "hostedBy": "주최",
-      "cta": "신청하기",
       "attending": "참여 {count}명",
       "addToCalendar": "Google 캘린더에 추가",
       "onlineLink": "온라인 참가 링크",
@@ -4162,7 +4161,7 @@
       "viralHook": "kurl로 만든 모집 페이지예요.",
       "viralCta": "모집 페이지 만들기",
       "canceledNotice": "이 모임은 취소되었어요.",
-      "fullNotice": "정원이 가득 찼어요. 취소가 나오면 자리가 다시 열리니 나중에 다시 확인해 주세요.",
+      "fullNotice": "자리가 다 찼어요. 취소가 생기면 다시 열려요.",
       "closedNotice": "신청이 마감되었어요.",
       "cancelTitle": "신청 취소",
       "cancelBody": "\"{title}\" 신청을 취소할까요? 취소하면 자리가 다른 분에게 돌아가요.",
@@ -4171,8 +4170,8 @@
       "cancelDoneBody": "다음에 또 만나요. 같은 연락처로 다시 신청할 수도 있어요.",
       "cancelError": "취소에 실패했어요. 링크가 만료되었거나 이미 취소되었을 수 있어요.",
       "errors": {
-        "answerRequired": "\"{label}\" 항목을 적어 주세요",
-        "choiceRequired": "\"{label}\" 항목에서 하나를 골라 주세요",
+        "answerRequired": "답을 적어 주세요",
+        "choiceRequired": "하나를 골라 주세요",
         "consentRequired": "개인정보 제공에 동의해 주세요",
         "full": "방금 정원이 마감됐어요",
         "alreadyRegistered": "이미 이 연락처로 신청되어 있어요",
@@ -4182,7 +4181,9 @@
         "invalidPhone": "전화번호를 다시 확인해 주세요 (예: 010-1234-5678)",
         "invalidKakao": "카카오톡 ID를 다시 확인해 주세요 (영문·숫자 2~30자)",
         "invalidLine": "라인 ID 형식을 확인해주세요.",
-        "invalidInstagram": "인스타그램 핸들 형식을 확인해주세요."
+        "invalidInstagram": "인스타그램 핸들 형식을 확인해주세요.",
+        "nameRequired": "이름을 적어 주세요",
+        "contactRequired": "연락처를 적어 주세요"
       },
       "metaDate": "날짜",
       "metaTime": "시간",
@@ -4192,7 +4193,10 @@
       "contactLine": "라인 ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "인스타그램 핸들",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "일시",
+      "aboutTitle": "소개",
+      "endedNotice": "끝난 모임이에요."
     },
     "list": {
       "title": "모집",

@@ -52,6 +52,22 @@ export function formatEventRange(
   return `${date} · ${start}${sep}${end}`;
 }
 
+export function formatEventWhen(
+  startsAt: string,
+  endsAt: string | null,
+  timezone: string,
+  locale: string,
+): { day: string; time: string } {
+  const startDay = formatEventDate(startsAt, timezone, locale);
+  const start = formatEventTime(startsAt, timezone, locale);
+  const ja = locale.startsWith("ja");
+  if (!endsAt) return { day: startDay, time: start };
+  const endDay = formatEventDate(endsAt, timezone, locale);
+  const end = formatEventTime(endsAt, timezone, locale);
+  if (endDay === startDay) return { day: startDay, time: `${start}${ja ? "〜" : " – "}${end}` };
+  return { day: `${startDay} ${start}${ja ? "〜" : " –"}`, time: `${endDay} ${end}` };
+}
+
 /** "(Asia/Tokyo)" 같은 IANA id 대신 "일본 시간"/"日本時間" 류의 로케일 라벨. 실패 시 도시명 폴백. */
 export function timezoneLabel(timezone: string, locale: string): string {
   try {

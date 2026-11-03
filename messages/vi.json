@@ -4136,7 +4136,6 @@
     },
     "public": {
       "hostedBy": "Tổ chức bởi",
-      "cta": "Đăng ký",
       "attending": "{count} người tham gia",
       "addToCalendar": "Thêm vào Google Calendar",
       "onlineLink": "Liên kết tham gia trực tuyến",
@@ -4162,7 +4161,7 @@
       "viralHook": "Trang này được tạo bằng kurl.",
       "viralCta": "Tạo trang sự kiện",
       "canceledNotice": "Sự kiện đã bị hủy.",
-      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy, hãy quay lại sau.",
+      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy.",
       "closedNotice": "Đã đóng đăng ký.",
       "cancelTitle": "Hủy đăng ký",
       "cancelBody": "Hủy đăng ký \"{title}\"? Chỗ của bạn sẽ dành cho người khác.",
@@ -4171,8 +4170,8 @@
       "cancelDoneBody": "Hẹn gặp lần sau. Bạn có thể đăng ký lại với cùng liên hệ.",
       "cancelError": "Không thể hủy. Liên kết có thể đã hết hạn hoặc đã được dùng.",
       "errors": {
-        "answerRequired": "Vui lòng điền \"{label}\"",
-        "choiceRequired": "Vui lòng chọn một mục cho \"{label}\"",
+        "answerRequired": "Vui lòng trả lời câu hỏi này",
+        "choiceRequired": "Vui lòng chọn một mục",
         "consentRequired": "Vui lòng đồng ý chia sẻ thông tin liên hệ",
         "full": "Chỗ cuối cùng vừa được lấy",
         "alreadyRegistered": "Liên hệ này đã đăng ký rồi",
@@ -4182,7 +4181,9 @@
         "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
         "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)",
         "invalidLine": "Vui lòng kiểm tra LINE ID.",
-        "invalidInstagram": "Vui lòng kiểm tra tên Instagram."
+        "invalidInstagram": "Vui lòng kiểm tra tên Instagram.",
+        "nameRequired": "Vui lòng nhập tên",
+        "contactRequired": "Vui lòng nhập thông tin liên hệ"
       },
       "metaDate": "Ngày",
       "metaTime": "Giờ",
@@ -4192,7 +4193,10 @@
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Tên Instagram",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "Thời gian",
+      "aboutTitle": "Giới thiệu",
+      "endedNotice": "Sự kiện đã kết thúc."
     },
     "list": {
       "title": "Sự kiện",

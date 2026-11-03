@@ -4136,7 +4136,6 @@
     },
     "public": {
       "hostedBy": "主催",
-      "cta": "申し込む",
       "attending": "参加{count}名",
       "addToCalendar": "Google カレンダーに追加",
       "onlineLink": "オンライン参加リンク",
@@ -4162,7 +4161,7 @@
       "viralHook": "kurlで作った募集ページです。",
       "viralCta": "募集ページを作る",
       "canceledNotice": "このイベントは中止になりました。",
-      "fullNotice": "定員に達しました。キャンセルが出ると席が再び空くので、後ほどまたご確認ください。",
+      "fullNotice": "定員に達しました。キャンセルが出ると再び申し込めます。",
       "closedNotice": "受付は終了しました。",
       "cancelTitle": "申し込みキャンセル",
       "cancelBody": "「{title}」の申し込みをキャンセルしますか？空いた席は他の方に回ります。",
@@ -4171,8 +4170,8 @@
       "cancelDoneBody": "またの機会に。同じ連絡先で再度申し込むこともできます。",
       "cancelError": "キャンセルできませんでした。リンクが無効か、すでにキャンセル済みの可能性があります。",
       "errors": {
-        "answerRequired": "「{label}」をご記入ください",
-        "choiceRequired": "「{label}」から1つお選びください",
+        "answerRequired": "回答をご記入ください",
+        "choiceRequired": "1つお選びください",
         "consentRequired": "個人情報の提供に同意してください",
         "full": "たった今定員に達しました",
         "alreadyRegistered": "この連絡先はすでに申し込み済みです",
@@ -4182,7 +4181,9 @@
         "invalidPhone": "電話番号をご確認ください (例：090-1234-5678)",
         "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)",
         "invalidLine": "LINE IDの形式をご確認ください。",
-        "invalidInstagram": "Instagramハンドルをご確認ください。"
+        "invalidInstagram": "Instagramハンドルをご確認ください。",
+        "nameRequired": "お名前をご記入ください",
+        "contactRequired": "連絡先をご記入ください"
       },
       "metaDate": "日付",
       "metaTime": "時間",
@@ -4192,7 +4193,10 @@
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Instagramハンドル",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "日時",
+      "aboutTitle": "詳細",
+      "endedNotice": "このイベントは終了しました。"
     },
     "list": {
       "title": "イベント",
