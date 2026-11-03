@@ -30,7 +30,8 @@ function overview(rows: Row[]) {
   };
 }
 
-const later = (ms: number, fn: () => Promise<void>) => new Promise<void>((resolve) => setTimeout(() => void fn().then(resolve), ms));
+const later = (ms: number, fn: () => Promise<void>) =>
+  new Promise<void>((resolve) => setTimeout(() => void fn().catch(() => undefined).then(resolve), ms));
 
 async function dashboard(
   page: Page,
@@ -73,16 +74,17 @@ async function watchShifts(page: Page) {
 const row = (page: Page, code: string) => page.locator("main li").filter({ hasText: `/${code}` }).first();
 
 test.describe("dashboard first impression", () => {
-  test("a new account sees one plain line, never a search miss, even while the overview is slow or fails", async ({ page }) => {
+  test("a new account sees one plain line, never a search miss, while the overview is slow", async ({ page }) => {
     await dashboard(page, [], { overviewDelay: 2_000 });
     await page.goto("/ko/dashboard");
     await expect(page.getByText("아직 만든 링크가 없어요")).toBeVisible();
     await expect(page.getByText("검색 결과가 없어요")).toHaveCount(0);
     await expect(page.getByText("예시")).toHaveCount(0);
+  });
 
-    await page.unrouteAll({ behavior: "ignoreErrors" });
+  test("a new account still sees the plain line when the overview fails", async ({ page }) => {
     await dashboard(page, [], { overviewStatus: 500 });
-    await page.reload();
+    await page.goto("/ko/dashboard");
     await expect(page.getByText("아직 만든 링크가 없어요")).toBeVisible();
     await expect(page.getByText(/결과가 없어요|조건에 맞는/)).toHaveCount(0);
   });
@@ -103,14 +105,19 @@ test.describe("dashboard first impression", () => {
   }
 
   test("clearing the filters leaves the search box and the list saying the same thing", async ({ page }) => {
-    await dashboard(page, [link("alpha", { originalUrl: "https://alpha.example.org/a" }), link("beta", { originalUrl: "https://beta.example.com/b" })]);
+    const asked: string[] = [];
+    await dashboard(page, [link("alpha", { originalUrl: "https://alpha.example.org/a" }), link("beta", { originalUrl: "https://beta.example.com/b" })], {
+      onList: (url) => asked.push(url.search),
+    });
     await page.goto("/ko/dashboard");
     const search = page.getByRole("searchbox");
     await search.fill("alpha");
-    await page.getByRole("button", { name: /^필터/ }).click();
+    await expect.poll(() => asked.some((s) => s.includes("q=alpha"))).toBe(true);
+    await page.getByRole("button", { name: /^필터( \d+)?$/ }).click();
     await page.getByLabel("도메인").fill("example.org");
-    await expect(page.getByRole("button", { name: "필터 모두 지우기" })).toBeVisible();
+    await expect.poll(() => asked.some((s) => s.includes("domain=example.org"))).toBe(true);
     await page.getByRole("button", { name: "필터 모두 지우기" }).click();
+    await expect(page.getByRole("button", { name: "필터 모두 지우기" })).toHaveCount(0);
     await expect(search).toHaveValue("alpha");
     await expect(row(page, "alpha")).toBeVisible();
     await expect(row(page, "beta")).toHaveCount(0);

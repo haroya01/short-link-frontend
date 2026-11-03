@@ -6,7 +6,7 @@ import { OnboardingSteps } from "@/components/common/onboarding-steps";
 
 /**
  * Campaigns wedge — QR 캠페인 0개일 때 노출. 단일 패널 안에 "배포 → 측정 → 조정" 3스텝만 보여줘 도구가 무엇을 하는지 한눈에 잡히게 하고,
- * 하나의 CTA 가 주인공이 되게 한다. (dashboard-onboarding 과 같은 문법)
+ * 하나의 CTA 가 주인공이 되게 한다.
  */
 export function CampaignOnboarding() {
   const t = useTranslations("campaignsApp.onboarding");
