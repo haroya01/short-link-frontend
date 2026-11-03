@@ -368,7 +368,7 @@ function ConfigForm({
           max={100}
           value={sampleRate}
           onChange={(e) => setSampleRate(Number(e.target.value))}
-          className="mt-1 h-1 w-full cursor-pointer accent-slate-900"
+          className="mt-1 h-1 w-full cursor-pointer accent-slate-900 dark:accent-slate-100"
           aria-label={t("optSampleRateAria")}
         />
       </div>
