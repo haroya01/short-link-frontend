@@ -75,14 +75,14 @@ test("right after publishing, the short link sweeps in with one copy button and 
   const line = page.getByTestId("event-created-line");
   await expect(line.getByRole("link", { name: /\/mk11$/ })).toBeVisible();
   await expect(line.getByRole("button")).toHaveCount(1);
-  await expect(line.getByRole("button")).toHaveText("링크 복사");
+  await expect(line.getByRole("button", { name: "링크 복사", exact: true })).toBeVisible();
   await expect(page.getByText("이 링크를 단톡이나 SNS에 올려 주세요", { exact: false })).toHaveCount(0);
 });
 
 test("share rows, attendees and analytics carry no boxes or position hints", async ({ page }) => {
   await organizer(page, event());
   await page.goto("/ko/events/1");
-  const copy = main(page).getByRole("button", { name: "복사", exact: true }).first();
+  const copy = main(page).getByRole("button", { name: "링크 복사", exact: true }).first();
   await expect(copy).toBeVisible();
   await expect(copy).toHaveCSS("border-top-width", "0px");
   await expect(main(page).locator("table .rounded-full")).toHaveCount(0);
