@@ -9,10 +9,11 @@ export type BreakdownRowsProps = {
   /** Limit visible rows only; percentages retain the complete population as their denominator. */
   maxItems?: number;
   subgrid?: boolean;
+  total?: number;
 };
 
-export function BreakdownRows({ items, maxItems = 10, subgrid = false }: BreakdownRowsProps) {
-  const total = items.reduce((a, b) => a + b.count, 0) || 1;
+export function BreakdownRows({ items, maxItems = 10, subgrid = false, total: population }: BreakdownRowsProps) {
+  const total = Math.max(population ?? 0, items.reduce((a, b) => a + b.count, 0)) || 1;
   const top = [...items].sort((a, b) => b.count - a.count).slice(0, maxItems);
   return (
     <ul

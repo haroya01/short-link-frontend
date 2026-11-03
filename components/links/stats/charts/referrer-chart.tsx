@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import type { ReferrerClick } from "@/types";
 
-type Props = { data: ReferrerClick[] };
+type Props = { data: ReferrerClick[]; total?: number };
 
 /**
  * Referrer URLs read as a ranking, not a distribution — the question is "which links sent people
@@ -13,7 +13,7 @@ type Props = { data: ReferrerClick[] };
  * visible label keeps the host + path so it stays distinct from the host-only panel beside it; the
  * full URL rides in the hover title.
  */
-export function ReferrerChart({ data }: Props) {
+export function ReferrerChart({ data, total }: Props) {
   const t = useTranslations("stats");
   if (data.length === 0) {
     return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("referrerNoData")}</p>;
@@ -23,7 +23,7 @@ export function ReferrerChart({ data }: Props) {
     count: d.count,
     title: d.referrer,
   }));
-  return <BreakdownList items={items} />;
+  return <BreakdownList items={items} total={total} />;
 }
 
 function prettyReferrer(ref: string): string {

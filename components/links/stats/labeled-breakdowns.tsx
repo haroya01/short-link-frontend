@@ -14,11 +14,20 @@ import type { ClientAppClick, FetchSiteClick, RegionClick } from "@/types";
  * <p>두 컴포넌트가 한 파일에 있는 건 일지의 근거 펼침과 챕터 상세가 같은 렌더를 공유해야 하기
  * 때문이다(문장 따로 근거 따로 ❌).
  */
-export function ClientAppBreakdown({ items, maxItems }: { items: ClientAppClick[]; maxItems?: number }) {
+export function ClientAppBreakdown({
+  items,
+  maxItems,
+  total,
+}: {
+  items: ClientAppClick[];
+  maxItems?: number;
+  total?: number;
+}) {
   const t = useTranslations("stats");
   return (
     <BreakdownList
       maxItems={maxItems}
+      total={total}
       items={items.map((a) => ({
         label: CLIENT_APPS.has(a.app) ? t(`clientApp.${a.app}`) : a.app,
         count: a.count,
@@ -27,10 +36,11 @@ export function ClientAppBreakdown({ items, maxItems }: { items: ClientAppClick[
   );
 }
 
-export function FetchSiteBreakdown({ items }: { items: FetchSiteClick[] }) {
+export function FetchSiteBreakdown({ items, total }: { items: FetchSiteClick[]; total?: number }) {
   const t = useTranslations("stats");
   return (
     <BreakdownList
+      total={total}
       items={items.map((f) => {
         const key = FETCH_SITE_KEYS[f.fetchSite];
         return { label: key ? t(`fetchSite.${key}`) : f.fetchSite, count: f.count };
@@ -39,10 +49,11 @@ export function FetchSiteBreakdown({ items }: { items: FetchSiteClick[] }) {
   );
 }
 
-export function RegionBreakdown({ items }: { items: RegionClick[] }) {
+export function RegionBreakdown({ items, total }: { items: RegionClick[]; total?: number }) {
   const t = useTranslations("stats");
   return (
     <BreakdownList
+      total={total}
       items={mergeRegionClicks(items).map((r) => ({
         label: r.code ? t(`regionNames.${regionMessageKey(r.code)}`) : r.region,
         count: r.count,
