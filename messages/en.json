@@ -1900,8 +1900,8 @@
       "detailClose": "Close"
     },
     "rawData": {
-      "exportEvents": "Click events CSV",
-      "exportStats": "Daily stats CSV",
+      "exportEvents": "Click log CSV",
+      "exportStats": "Daily clicks CSV",
       "exporting": "Exporting…",
       "loadMore": "Load more",
       "retention": "Individual clicks older than {days} days aren't kept",

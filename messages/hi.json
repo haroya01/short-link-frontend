@@ -1900,8 +1900,8 @@
       "detailClose": "बंद करें"
     },
     "rawData": {
-      "exportEvents": "क्लिक इवेंट CSV",
-      "exportStats": "दैनिक आँकड़े CSV",
+      "exportEvents": "क्लिक लॉग CSV",
+      "exportStats": "दैनिक क्लिक CSV",
       "exporting": "निर्यात हो रहा है…",
       "loadMore": "और देखें",
       "retention": "{days} दिन से पुराने अलग-अलग क्लिक नहीं रखे जाते",

@@ -1900,8 +1900,8 @@
       "detailClose": "닫기"
     },
     "rawData": {
-      "exportEvents": "클릭 이벤트 CSV",
-      "exportStats": "일별 통계 CSV",
+      "exportEvents": "클릭 기록 CSV",
+      "exportStats": "일별 클릭 CSV",
       "exporting": "내보내는 중…",
       "loadMore": "더 보기",
       "retention": "{days}일보다 오래된 개별 클릭은 보관하지 않아요",

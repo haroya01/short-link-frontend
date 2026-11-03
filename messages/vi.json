@@ -1900,8 +1900,8 @@
       "detailClose": "Đóng"
     },
     "rawData": {
-      "exportEvents": "CSV sự kiện nhấp",
-      "exportStats": "CSV thống kê hằng ngày",
+      "exportEvents": "CSV nhật ký nhấp",
+      "exportStats": "CSV lượt nhấp hằng ngày",
       "exporting": "Đang xuất…",
       "loadMore": "Xem thêm",
       "retention": "Không lưu từng lượt nhấp cũ hơn {days} ngày",
