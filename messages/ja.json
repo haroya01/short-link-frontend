@@ -1613,8 +1613,7 @@
   },
   "stats": {
     "breakdown": {
-      "unknown": "不明",
-      "direct": "直接"
+      "unknown": "不明"
     },
     "shortCode": "短縮リンク",
     "detailsTitle": "詳細",

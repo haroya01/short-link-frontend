@@ -1613,8 +1613,7 @@
   },
   "stats": {
     "breakdown": {
-      "unknown": "알 수 없음",
-      "direct": "직접 유입"
+      "unknown": "알 수 없음"
     },
     "shortCode": "단축 링크",
     "detailsTitle": "상세",
@@ -2134,7 +2133,7 @@
       "email": "이메일",
       "newsletter": "뉴스레터",
       "other": "기타",
-      "direct": "직접"
+      "direct": "직접 유입"
     },
     "device": {
       "mobile": "모바일",

@@ -69,7 +69,7 @@ export function WhereChapter({ data }: { data: LinkStats }) {
           title={t("section.referrerHost.title")}
           description={t("section.referrerHost.desc")}
         >
-          <BreakdownList {...sourceBreakdown(data, t("breakdown.direct"))} />
+          <BreakdownList {...sourceBreakdown(data, labels.channel("direct"))} />
         </Section>
         <Section
           title={t("section.referrerUrl.title")}

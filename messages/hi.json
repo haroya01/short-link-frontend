@@ -1613,8 +1613,7 @@
   },
   "stats": {
     "breakdown": {
-      "unknown": "अज्ञात",
-      "direct": "प्रत्यक्ष"
+      "unknown": "अज्ञात"
     },
     "shortCode": "छोटा लिंक",
     "detailsTitle": "विवरण",

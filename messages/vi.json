@@ -1613,8 +1613,7 @@
   },
   "stats": {
     "breakdown": {
-      "unknown": "Không rõ",
-      "direct": "Trực tiếp"
+      "unknown": "Không rõ"
     },
     "shortCode": "liên kết ngắn",
     "detailsTitle": "Chi tiết",

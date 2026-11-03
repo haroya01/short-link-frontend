@@ -50,5 +50,5 @@ it("divides all-time human clicks by all-time estimated visitors, not by the 90-
   await act(async () => root.render(createElement(ClickQualitySummary, { data: realLinkStats() })));
   const card = [...container.querySelectorAll(".rounded-2xl")].find((el) => el.textContent?.startsWith("clicksPerUnique"))!;
   expect(card.textContent).toContain("1.8");
-  expect(card.textContent).toContain('clicksPerUniqueHint:{"unique":640}');
+  expect(card.textContent).toContain('clicksPerUniqueHint:{"unique":"640"}');
 });

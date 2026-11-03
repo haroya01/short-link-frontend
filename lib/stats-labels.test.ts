@@ -17,7 +17,7 @@ const koLabels = statsLabels(translator(ko.statLabels), "ko");
 describe("stored stats values read as people's words", () => {
   it("names channels and devices instead of the classifier keys", () => {
     expect(["social", "messaging", "search", "email", "newsletter", "other", "direct"].map(koLabels.channel)).toEqual([
-      "소셜", "메신저", "검색", "이메일", "뉴스레터", "기타", "직접",
+      "소셜", "메신저", "검색", "이메일", "뉴스레터", "기타", "직접 유입",
     ]);
     expect(["mobile", "desktop", "tablet", "bot", "unknown"].map(koLabels.device)).toEqual([
       "모바일", "데스크톱", "태블릿", "자동 접속", "기타",

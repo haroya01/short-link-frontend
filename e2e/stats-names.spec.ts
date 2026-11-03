@@ -71,7 +71,7 @@ test.describe("one name per number, people's words for stored values", () => {
     await openStats(page, "#where");
     const panel = page.locator("#stats-panel-where");
     const section = (title: string) => panel.locator("section").filter({ has: page.getByRole("heading", { name: title, exact: true }) });
-    await expect(section("채널").getByTestId("breakdown-name")).toHaveText(["메신저", "직접"]);
+    await expect(section("채널").getByTestId("breakdown-name")).toHaveText(["메신저", "직접 유입"]);
     await expect(section("공유 채널 (?src)").getByTestId("breakdown-name")).toHaveText(["프로필 @dohyun"]);
   });
 
@@ -136,7 +136,7 @@ test.describe("one name per number, people's words for stored values", () => {
     });
     await page.goto(`/ko/stats/${CODE}#log`);
     const row = page.locator("#stats-panel-log tbody tr").first();
-    await expect(row).toHaveText(/2026\.10\.21 07:00:00\s*Osaka, 일본\s*모바일 · iOS · Safari\s*직접/);
+    await expect(row).toHaveText(/2026\.10\.21 07:00:00\s*Osaka, 일본\s*모바일 · iOS · Safari\s*직접 유입/);
     await expect(page.locator("#stats-panel-log").getByText("America/New_York", { exact: true })).toBeVisible();
   });
 });

@@ -25,7 +25,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
     case "section-hourly":
       return <HourChart data={data.hourClicks ?? []} compact />;
     case "section-sources":
-      return <BreakdownList {...sourceBreakdown(data, t("breakdown.direct"))} maxItems={5} />;
+      return <BreakdownList {...sourceBreakdown(data, labels.channel("direct"))} maxItems={5} />;
     case "section-device":
       return <DeviceChart data={data.deviceClicks ?? []} />;
     case "section-bots": {

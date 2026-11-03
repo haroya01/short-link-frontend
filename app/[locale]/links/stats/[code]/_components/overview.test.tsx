@@ -37,6 +37,6 @@ describe("overview referrer sources", () => {
       }),
     );
     expect(rows["instagram.com"]).toBe("34%");
-    expect(rows["breakdown.direct"]).toBe("17%");
+    expect(rows["channel.direct"]).toBe("17%");
   });
 });

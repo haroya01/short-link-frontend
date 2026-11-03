@@ -1613,8 +1613,7 @@
   },
   "stats": {
     "breakdown": {
-      "unknown": "Unknown",
-      "direct": "Direct"
+      "unknown": "Unknown"
     },
     "shortCode": "short link",
     "detailsTitle": "Details",

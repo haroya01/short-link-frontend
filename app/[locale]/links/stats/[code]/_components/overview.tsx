@@ -10,6 +10,7 @@ import { LiveClicks } from "@/components/links/shorten/live-clicks";
 import { EmptyState } from "@/components/common/empty-state";
 import { cn, countryFlag, countryName, formatNumber, formatShare } from "@/lib/utils";
 import { sourceBreakdown } from "@/lib/stats-sources";
+import { useStatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 import { HEADING, RangeSwitch, type RangeDays } from "./section-parts";
 
@@ -31,6 +32,7 @@ export function StatsOverview({
   demo?: boolean;
 }) {
   const t = useTranslations("stats");
+  const labels = useStatsLabels();
   const locale = useLocale();
   const total = data.totalClicks ?? 0;
   const botRatio = total > 0 ? (data.botClicks ?? 0) / total : 0;
@@ -73,7 +75,7 @@ export function StatsOverview({
           </div>
           <div className="mt-10 space-y-10 sm:grid sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto] sm:gap-x-4 sm:gap-y-10 sm:space-y-0">
             <Breakdown title={t("section.referrerHost.title")}>
-              <BreakdownList {...sourceBreakdown(data, t("breakdown.direct"))} maxItems={5} subgrid />
+              <BreakdownList {...sourceBreakdown(data, labels.channel("direct"))} maxItems={5} subgrid />
             </Breakdown>
             <Breakdown title={t("section.device.title")}>
               <DeviceChart data={data.deviceClicks} subgrid />
