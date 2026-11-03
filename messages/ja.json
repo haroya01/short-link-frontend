@@ -4156,7 +4156,9 @@
       "contactInstagramPlaceholder": "@handle",
       "metaWhen": "日時",
       "aboutTitle": "詳細",
-      "endedNotice": "このイベントは終了しました。"
+      "endedNotice": "このイベントは終了しました。",
+      "am": "午前",
+      "pm": "午後"
     },
     "list": {
       "title": "イベント",

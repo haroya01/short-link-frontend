@@ -4156,7 +4156,9 @@
       "contactInstagramPlaceholder": "@handle",
       "metaWhen": "일시",
       "aboutTitle": "소개",
-      "endedNotice": "끝난 모임이에요."
+      "endedNotice": "끝난 모임이에요.",
+      "am": "오전",
+      "pm": "오후"
     },
     "list": {
       "title": "모집",

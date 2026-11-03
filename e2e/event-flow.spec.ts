@@ -45,6 +45,7 @@ test.describe("event organizer flow", () => {
   test("organizer creates and publishes an event with a capacity", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await expect(page.getByPlaceholder("어떤 모임인지, 누구를 기다리는지", { exact: true })).toBeVisible();
     await page.getByLabel("제목", { exact: false }).fill("E2E 테스트 스터디");
     await page.locator("#ef-starts").fill("2030-01-15T19:00");
@@ -62,6 +63,7 @@ test.describe("event organizer flow", () => {
   test("the description preview renders with the public page's renderer, code highlighting included", async ({ page }) => {
     await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.locator("#ef-desc").fill("## 준비물\n\n```js\nconst seat = 1;\n```");
 
     const preview = page.locator(".prose-text-block");
@@ -72,6 +74,7 @@ test.describe("event organizer flow", () => {
   test("without a Maps key the place is typed by hand and a Google Maps link is made from it", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("키 없는 모집");
     await page.locator("#ef-starts").fill("2030-04-01T10:00");
 
@@ -93,6 +96,7 @@ test.describe("event organizer flow", () => {
   test("closing registration flips the event status", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("마감 테스트");
     await page.locator("#ef-starts").fill("2030-02-01T10:00");
     await page.getByRole("button", { name: "발행하기" }).click();
@@ -106,6 +110,7 @@ test.describe("event organizer flow", () => {
   test("신청이 들어온 모집도 고칠 수 있다 — 잠긴 질문은 보내지 않는다", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("신청 받은 모집");
     await page.locator("#ef-starts").fill("2030-03-01T10:00");
     await page.getByRole("button", { name: "발행하기" }).click();

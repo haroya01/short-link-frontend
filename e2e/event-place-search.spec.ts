@@ -74,6 +74,7 @@ test.describe("event place search", () => {
     const { searches, unexpected } = await google(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("장소 모집");
 
     await place(page).fill("渋谷");
@@ -120,6 +121,7 @@ test.describe("event place search", () => {
     const { unexpected } = await google(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("장소 모집");
 
     await place(page).fill("渋谷駅");
@@ -149,6 +151,7 @@ test.describe("event place search", () => {
     const { unexpected } = await google(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("장소 모집");
 
     await place(page).fill("渋谷");
@@ -196,6 +199,7 @@ test.describe("event place search", () => {
     await google(page);
     await organizer(page, { locationText: "성수 카페", locationUrl: "https://naver.me/5kurl" });
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await expect(page.getByRole("button", { name: "링크로 넣기" })).toBeVisible();
     await expect(page.getByLabel("지도 링크")).toHaveCount(0);
 
