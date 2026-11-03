@@ -14,11 +14,21 @@ describe("buildStatsCsv", () => {
     const csv = buildStatsCsv(base);
     expect(csv.startsWith("﻿")).toBe(true);
     const lines = csv.slice(1).split("\n");
-    expect(lines[0]).toBe("section,label,count");
-    expect(lines).toContain("daily,2026-07-22,3");
-    expect(lines).toContain("referrer,x.com,2");
-    expect(lines).toContain("country,KR,5");
-    expect(lines).toContain("device,mobile,4");
+    expect(lines[0]).toBe("section,label,count,scope");
+    expect(lines).toContain("daily,2026-07-22,3,human");
+    expect(lines).toContain("referrer,x.com,2,human");
+    expect(lines).toContain("country,KR,5,human");
+    expect(lines).toContain("device,mobile,4,human");
+  });
+
+  it("KPI 행이 맨 앞에 오고, 사람·자동 접속·전체를 scope 로 가른다", () => {
+    const csv = buildStatsCsv({ ...base, humanClicks: 1125, uniqueClicks: 980, botClicks: 42, totalClicks: 1167 } as unknown as LinkStats);
+    expect(csv.slice(1).split("\n").slice(1, 5)).toEqual([
+      "kpi,human_clicks,1125,human",
+      "kpi,estimated_visitors,980,human",
+      "kpi,automated,42,automated",
+      "kpi,total_clicks,1167,all",
+    ]);
   });
 
   it("쉼표/따옴표 라벨은 RFC4180 이스케이프", () => {
@@ -26,7 +36,7 @@ describe("buildStatsCsv", () => {
       ...base,
       referrerHostClicks: [{ host: 'a,"b"', count: 1 }],
     } as unknown as LinkStats);
-    expect(csv).toContain('referrer,"a,""b""",1');
+    expect(csv).toContain('referrer,"a,""b""",1,human');
   });
 
   it("누락 섹션은 건너뛴다 (부분 payload 안전)", () => {

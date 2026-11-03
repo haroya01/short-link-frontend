@@ -71,10 +71,7 @@ export function QrDownloadDialog({
 
   const title =
     target.kind === "zip" ? t("zipTitle") : t("singleTitle", { name: target.batchName });
-  const description =
-    target.kind === "zip"
-      ? t("zipDescription")
-      : t("singleDescription");
+  const description = target.kind === "zip" ? t("zipDescription") : undefined;
 
   return (
     <ConfirmDialog
@@ -123,20 +120,15 @@ export function QrDownloadDialog({
             ))}
           </div>
         </OptionGroup>
-        <OptionGroup label={t("labelText")} hint={t("labelHint")}>
-          <label className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-            <input
-              type="checkbox"
-              checked={label}
-              onChange={(e) => setLabel(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
-            />
-            <span className="text-[13px] text-slate-700 dark:text-slate-300">{t("labelCheckbox")}</span>
-          </label>
-        </OptionGroup>
-        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
-          {t("notSaved")}
-        </div>
+        <label className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+          <input
+            type="checkbox"
+            checked={label}
+            onChange={(e) => setLabel(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
+          />
+          <span className="text-[13px] text-slate-700 dark:text-slate-300">{t("labelCheckbox")}</span>
+        </label>
       </div>
     </ConfirmDialog>
   );

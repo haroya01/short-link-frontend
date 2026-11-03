@@ -1900,8 +1900,8 @@
       "detailClose": "बंद करें"
     },
     "rawData": {
-      "exportEvents": "क्लिक इवेंट CSV",
-      "exportStats": "दैनिक आँकड़े CSV",
+      "exportEvents": "क्लिक लॉग CSV",
+      "exportStats": "दैनिक क्लिक CSV",
       "exporting": "निर्यात हो रहा है…",
       "loadMore": "और देखें",
       "retention": "{days} दिन से पुराने अलग-अलग क्लिक नहीं रखे जाते",
@@ -3472,14 +3472,15 @@
     },
     "batchCard": {
       "quantityUnit": "{count} शीट",
-      "distributor": "वितरक · {name}",
-      "downloadQr": "{name} के लिए QR डाउनलोड करें",
-      "edit": "{name} संपादित करें",
-      "delete": "{name} हटाएँ"
+      "edit": "संपादित करें",
+      "delete": "हटाएँ",
+      "menu": "{name} मेनू",
+      "qr": "QR डाउनलोड करें",
+      "open": "लिंक खोलें"
     },
     "batchDialogs": {
       "editTitle": "वितरण बैच संपादित करें",
-      "editDescription": "आप केवल नाम, वितरक, क्षेत्र, मात्रा और मेमो संपादित कर सकते हैं। QR में प्रिंट किया छोटा लिंक अपरिवर्तित रहता है।",
+      "editDescription": "छपे QR का शॉर्ट लिंक वही रहता है।",
       "save": "सहेजें",
       "updated": "बैच अपडेट किया गया",
       "updateFailed": "अपडेट करने में विफल",
@@ -3493,7 +3494,7 @@
       "deleted": "बैच हटाया गया",
       "deleteFailed": "हटाने में विफल",
       "deleteWarningTitle": "छोटा लिंक भी हट जाएगा।",
-      "deleteWarningBody": "पहले से प्रिंट किए QR कोड स्कैन करने वाले लोगों को लिंक-नहीं-मिला पेज दिखेगा। प्रिंट ऑर्डर करने से पहले यह सुरक्षित है, पर वितरण के बाद आम तौर पर इसे एक एंड पॉलिसी के साथ जीवित रखना चाहिए।",
+      "deleteWarningBody": "छपे हुए QR 'लिंक नहीं मिला' पेज खोलेंगे।",
       "quantityUnit": "{count} शीट"
     },
     "new": {
@@ -3505,7 +3506,7 @@
       "nameLabel": "QR कैंपेन नाम",
       "namePlaceholder": "जैसे Shinjuku स्प्रिंग पोस्टर ड्रॉप",
       "startLabel": "शुरू",
-      "startHint": "आमतौर पर अभी शुरू करें। केवल तब शेड्यूल करें जब प्रिंट या ऑर्डर तिथियाँ ज़रूरी हों।",
+      "startHint": "शुरू होने से पहले के स्कैन टेस्ट के रूप में अलग गिने जाते हैं।",
       "startNow": "अभी शुरू करें",
       "startSchedule": "शुरुआत शेड्यूल करें",
       "endLabel": "समाप्त",
@@ -3520,13 +3521,15 @@
         "redirectTitle": "कहीं और रीडायरेक्ट करें",
         "redirectBody": "प्रिंट किए QR को एक समीक्षा पेज, अगले कैंपेन, वेटलिस्ट, या किसी फ़ॉलो-अप URL पर भेजें।"
       },
-      "messagePlaceholder": "जैसे यह कैंपेन समाप्त हो गया। दिसंबर में अगले इवेंट पर मिलते हैं।\nसंपर्क: @kurl_official",
+      "messagePlaceholder": "जैसे: यह इवेंट खत्म हो गया। दिसंबर में मिलते हैं।",
       "messageHint": "खाली रहने पर डिफ़ॉल्ट संदेश इस्तेमाल होता है। पंक्ति विराम बने रहते हैं ·",
       "redirectHint": "कैंपेन समाप्त होने पर रीडायरेक्ट URL प्रिंट किए QR कोड पर लागू होता है।",
       "cancel": "रद्द करें",
       "creating": "बनाया जा रहा है...",
       "submit": "QR कैंपेन बनाएँ",
-      "leaveConfirm": "बिना सहेजे छोड़ें? आपके द्वारा दर्ज की गई जानकारी खो जाएगी।"
+      "leaveConfirm": "बिना सहेजे छोड़ें? आपके द्वारा दर्ज की गई जानकारी खो जाएगी।",
+      "messageLabel": "समाप्ति पेज का संदेश",
+      "redirectLabel": "खत्म होने के बाद भेजने का URL"
     },
     "detail": {
       "loadFailed": "लोड विफल",
@@ -3541,46 +3544,47 @@
       "confirmArchiveDesc": "यह सूची से छिप जाएगा, पर डेटा बरकरार रहता है।",
       "archived": "QR कैंपेन संग्रहित हुआ",
       "archiveFailed": "संग्रहित करने में विफल",
-      "cancel": "रद्द करें",
       "actions": {
         "stats": "आँकड़े",
         "endNow": "अभी समाप्त करें",
         "reapply": "एंड पॉलिसी फिर से लागू करें",
-        "archive": "संग्रहित करें"
+        "archive": "संग्रहित करें",
+        "more": "और"
       },
       "prepare": {
-        "eyebrow": "वितरण तैयारी",
-        "title": "प्रिंट शॉप और Canva के लिए एसेट",
-        "description": "{count} बैच के लिए QR कोड और मेटाडेटा। प्रिंट ऑर्डर करने से पहले इन्हें पोस्टर या फ़्लायर में डालें।",
+        "title": "प्रिंट की तैयारी",
         "printSheet": "A4 शीट",
         "posterBuilder": "पोस्टर में QR जोड़ें",
         "qrZip": "QR ZIP",
         "batchCsv": "बैच CSV"
       },
       "policy": {
-        "eyebrow": "कैंपेन समाप्त होने के बाद",
         "keep": "जैसा है वैसा रखें",
         "expire": "समाप्ति पेज दिखाएँ",
         "redirect": "कहीं और रीडायरेक्ट करें",
-        "savedEnded": "संदेश सहेजा गया। इसे प्रिंट किए QR पर भेजने के लिए एंड पॉलिसी फिर से लागू करें।",
-        "saved": "समाप्ति-पेज संदेश सहेजा गया",
-        "saveFailed": "सहेजने में विफल",
         "messageLabel": "समाप्ति-पेज संदेश",
-        "edit": "संपादित करें",
-        "add": "जोड़ें",
-        "messagePlaceholder": "जैसे यह कैंपेन समाप्त हो गया। दिसंबर में अगले इवेंट पर मिलते हैं।",
-        "saving": "सहेजा जा रहा है...",
-        "save": "सहेजें",
         "defaultMessageHint": "डिफ़ॉल्ट सूचना दिखाने के लिए संदेश खाली छोड़ें।",
-        "defaultDestination": "डिफ़ॉल्ट गंतव्य URL · {url}"
+        "defaultDestination": "डिफ़ॉल्ट गंतव्य URL",
+        "heading": "खत्म होने के बाद",
+        "title": "व्यवहार",
+        "redirectLabel": "यहाँ भेजता है"
       },
       "batches": {
         "title": "वितरण बैच",
-        "description": "एक ही QR का उपयोग करते हुए प्रिंट वितरण की एक इकाई। सार्थक विश्लेषण के लिए वितरक या क्षेत्र के अनुसार बाँटें।",
         "add": "बैच जोड़ें",
         "emptyTitle": "अभी तक कोई वितरण बैच नहीं"
       },
-      "csvFailed": "CSV डाउनलोड विफल"
+      "csvFailed": "CSV डाउनलोड विफल",
+      "settings": {
+        "open": "सेटिंग",
+        "title": "कैंपेन सेटिंग",
+        "save": "सहेजें",
+        "saved": "कैंपेन सेटिंग सहेजी गई",
+        "savedEnded": "सहेजा गया। छपे QR पर लागू करने के लिए समाप्ति नीति फिर से लागू करें।",
+        "saveFailed": "सहेजा नहीं जा सका। फिर से कोशिश करें।",
+        "defaultUrlHint": "इसे बदलने से पहले बने बैच की डेस्टिनेशन नहीं बदलती।"
+      },
+      "statsFailed": "आँकड़े लोड नहीं हो सके"
     },
     "batchesNew": {
       "loadFailed": "लोड विफल",
@@ -3590,11 +3594,11 @@
       "createFailed": "बनाने में विफल",
       "backToCampaign": "QR कैंपेन पर वापस",
       "title": "वितरण बैच जोड़ें",
-      "introCampaign": "<name></name> के लिए नए बैच।",
+      "introCampaign": "<name></name>",
       "addRow": "पंक्ति जोड़ें",
       "pasteToggle": "स्प्रेडशीट से पेस्ट करें",
-      "defaultUrlActive": "<strong>डिफ़ॉल्ट गंतव्य URL सेट है।</strong> <code></code> इस्तेमाल करने के लिए गंतव्य फ़ील्ड खाली छोड़ें। केवल उन बैचों के लिए URL दर्ज करें जिन्हें अलग गंतव्य चाहिए।",
-      "defaultUrlMissing": "<strong>कोई डिफ़ॉल्ट गंतव्य URL सेट नहीं है।</strong> हर बैच को अपना गंतव्य URL चाहिए।",
+      "defaultUrlActive": "डेस्टिनेशन खाली छोड़ें तो डिफ़ॉल्ट URL इस्तेमाल होगा · <code></code>",
+      "defaultUrlMissing": "डिफ़ॉल्ट URL नहीं है, इसलिए हर बैच को डेस्टिनेशन चाहिए।",
       "fields": {
         "name": "बैच नाम",
         "distributor": "वितरक",
@@ -3602,11 +3606,12 @@
         "quantity": "मात्रा",
         "destinationUrl": "गंतव्य URL"
       },
-      "compareHint": "तुलना के लिए उपयोगी",
       "placeholders": {
         "name": "जैसे Shinjuku Station East",
         "distributor": "A या वितरक का नाम",
-        "defaultValue": "(डिफ़ॉल्ट)"
+        "defaultValue": "(डिफ़ॉल्ट)",
+        "quantity": "जैसे 500",
+        "area": "जैसे Shinjuku East"
       },
       "hints": {
         "defaultOptional": "खाली रहने पर डिफ़ॉल्ट इस्तेमाल होता है",
@@ -3616,19 +3621,19 @@
         "nameRequired": "बैच नाम आवश्यक है",
         "quantityRequired": "मात्रा आवश्यक है",
         "quantityPositive": "1 या उससे ज़्यादा डालें",
-        "destinationRequired": "URL डालें। इस कैंपेन का कोई डिफ़ॉल्ट URL नहीं है।",
+        "destinationRequired": "डेस्टिनेशन लिखें",
         "destinationUrl": "http:// या https:// से शुरू होना चाहिए"
       },
       "removeRow": "पंक्ति {index} हटाएँ",
       "pasteTitle": "स्प्रेडशीट पंक्तियाँ पेस्ट करें",
       "pasteColumns": "कॉलम क्रम: <code>बैच नाम / वितरक / क्षेत्र / मात्रा / गंतव्य URL / मेमो</code> (टैब या अल्पविराम से अलग)",
       "close": "बंद करें",
-      "pastePlaceholder": "Shinjuku Station East\tA\tShinjuku East\t500\t\nOkubo\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pastePlaceholder": "Shinjuku Station East\tA\tShinjuku East\t500",
       "pasteZeroRows": "0 पंक्तियाँ",
       "pastePreviewRows": "{count} पंक्तियाँ पहचानी गईं",
       "cancel": "रद्द करें",
       "pasteApply": "{count} पंक्तियाँ जोड़ें",
-      "invalidRows": "{count} पंक्तियों में इनपुट त्रुटियाँ हैं। हाइलाइट किए सेल ठीक करें।",
+      "invalidRows": "{count} पंक्तियाँ ठीक करनी हैं",
       "summary": "<strong>{rowCount}</strong> बैच · <strong>{totalQuantity}</strong> शीट नियोजित",
       "creating": "बनाया जा रहा है...",
       "submit": "{count} बैच बनाएँ"
@@ -3641,49 +3646,45 @@
       "composeFailed": "कंपोज़िशन विफल",
       "backToCampaign": "QR कैंपेन पर वापस",
       "title": "पोस्टर में QR जोड़ें",
-      "introCampaign": "<name></name> · PDF को प्रति बैच एक बार ({count} कुल) डुप्लिकेट करें, हर एक का अपना QR हो, फिर एक मर्ज किया PDF डाउनलोड करें।",
-      "toolHint": "डिज़ाइन Canva, InDesign या PowerPoint में पूरा करके PDF निर्यात करें। यहाँ आप केवल QR की जगह तय करते हैं।",
+      "introCampaign": "<name></name> · {count} बैच में से हर एक के अलग QR वाली एक PDF।",
       "targetLabel": "कंपोज़िशन लक्ष्य",
       "targetSummary": "<strong>{count}</strong> बैच · आउटपुट एक <strong>{pages}-पेज</strong> PDF है",
-      "noBatchesHint": "पहले वितरण बैच जोड़ें। (QR कैंपेन विवरण → बैच जोड़ें)",
+      "noBatchesHint": "अभी कोई बैच नहीं",
       "composing": "कंपोज़ हो रहा है...",
       "download": "मर्ज किया PDF डाउनलोड करें ({count} पेज)",
-      "notSavedHint": "QR प्लेसमेंट सहेजा नहीं जाता। यदि आप बाद में उसी PDF के साथ लौटें, तो बॉक्स फिर से बनाएँ। कैंपेन प्रिंट रन को एक-बार के ऑर्डर के रूप में माना जाता है।",
+      "notSavedHint": "QR की जगह सेव नहीं होती।",
       "dropTitle": "यहाँ एक PDF छोड़ें या अपलोड करने के लिए क्लिक करें",
-      "dropSubtitle": "1-पेज PDF · Canva/InDesign निर्यात अनुशंसित",
+      "dropSubtitle": "1 पेज की PDF",
       "removePdf": "PDF हटाएँ",
       "otherPdf": "एक और PDF",
-      "dragHint": "QR बॉक्स को हिलाने के लिए खींचें, या नीचे-दाएँ हैंडल से इसका आकार बदलें।",
-      "dragHintWithBatches": "QR बॉक्स को हिलाने के लिए खींचें, या नीचे-दाएँ हैंडल से इसका आकार बदलें। पूर्वावलोकन पहला बैच इस्तेमाल करता है ({count} में से 1)। हर बैच को अलग QR मिलता है।",
-      "dragHintWithoutBatches": "QR बॉक्स को हिलाने के लिए खींचें, या नीचे-दाएँ हैंडल से इसका आकार बदलें। अभी कोई बैच नहीं, इसलिए पूर्वावलोकन एक प्लेसहोल्डर QR इस्तेमाल करता है। बैच जोड़ने के बाद असली कंपोज़िशन उपलब्ध है।",
+      "dragHint": "बॉक्स को खींचकर हिलाएँ, कोने को खींचकर आकार बदलें।",
       "boxAria": "QR बॉक्स स्थिति और आकार",
-      "qrPreviewAlt": "QR पूर्वावलोकन"
+      "qrPreviewAlt": "QR पूर्वावलोकन",
+      "addBatch": "बैच जोड़ें"
     },
     "printSheet": {
       "loadFailed": "लोड विफल",
       "backToCampaign": "QR कैंपेन पर वापस",
       "title": "A4 QR शीट",
-      "introCampaign": "<name></name> · ब्राउज़र प्रिंट (Cmd/Ctrl + P) के ज़रिए PDF के रूप में सहेजें।",
+      "introCampaign": "<name></name> · प्रिंट डायलॉग से PDF के रूप में सेव करें।",
       "print": "प्रिंट करें",
-      "empty": "प्रिंट करने के लिए कोई बैच नहीं। पहले एक बैच जोड़ें।",
+      "empty": "प्रिंट करने के लिए कोई बैच नहीं",
       "perPage": "प्रति पेज",
       "layouts": {
         "comfortable": {
-          "label": "12 (3×4)",
-          "hint": "खुला · बिज़नेस-कार्ड आकार"
+          "label": "12 (3×4)"
         },
         "standard": {
-          "label": "20 (4×5)",
-          "hint": "मानक"
+          "label": "20 (4×5)"
         },
         "dense": {
-          "label": "30 (5×6)",
-          "hint": "सघन · छोटे लेबल"
+          "label": "30 (5×6)"
         }
       },
       "showLabel": "लेबल दिखाएँ",
       "cutMarks": "कट मार्क",
-      "pagePerBatch": "प्रति बैच एक पूरा पेज"
+      "pagePerBatch": "हर बैच का एक पेज उसके QR से भरें",
+      "addBatch": "बैच जोड़ें"
     },
     "campaignStats": {
       "loadFailed": "लोड विफल",
@@ -3693,10 +3694,7 @@
       "loading": "लोड हो रहा है...",
       "groups": {
         "distributorTitle": "वितरक के अनुसार प्रदर्शन",
-        "distributorHint": "प्रति 100 शीट क्लिक, इसलिए अलग-अलग मात्राएँ बाँटने वाले वितरकों की भी तुलना हो सकती है।",
-        "areaTitle": "क्षेत्र के अनुसार प्रदर्शन",
-        "areaHint": "अगला वितरण स्थान तय करने के लिए इसका उपयोग करें।",
-        "meta": "क्लिक {clicks} · {quantity} शीट"
+        "areaTitle": "क्षेत्र के अनुसार प्रदर्शन"
       },
       "compare": {
         "title": "किसी अन्य कैंपेन से तुलना करें",
@@ -3704,7 +3702,7 @@
         "none": "कोई तुलना नहीं",
         "current": "वर्तमान",
         "comparison": "तुलना",
-        "selectHint": "ऊपर ड्रॉपडाउन से एक कैंपेन चुनें।"
+        "selectHint": "साथ-साथ देखने के लिए कोई कैंपेन चुनें।"
       },
       "kpi": {
         "totalClicks": "मानवीय क्लिक",
@@ -3721,41 +3719,34 @@
       },
       "recommendation": {
         "title": "अगले वितरण की अनुशंसा",
-        "description": "{total} शीट का वही कुल फिर से बाँटें। औसत प्रति 100 शीट {average} है।",
         "footnote": "अनुशंसा दक्षता अनुपात पर आधारित है। औसत के 30% से कम छाँट दिया जाता है; बाकी अनुपात के अनुसार पुनः आवंटित, प्रति बैच 3x तक सीमित।",
         "verdict": {
           "BOOST": "बढ़ाएँ",
           "KEEP": "बनाए रखें",
           "REDUCE": "घटाएँ",
-          "PRUNE": "छाँटें"
+          "PRUNE": "हटाएँ"
         },
         "rowMeta": "{current} → {recommended} शीट · प्रति 100 शीट {rate}",
         "tooFewBatches": "{minimum} या अधिक बैच होने पर सुझाव दिखेंगे। अभी {current} हैं।",
-        "tooFewClicks": "{minimum} मानवीय क्लिक के बाद सुझाव दिखेंगे। अभी {current} हैं।"
+        "tooFewClicks": "{minimum} मानवीय क्लिक के बाद सुझाव दिखेंगे। अभी {current} हैं।",
+        "aside": "{total} शीट · औसत {average} प्रति 100"
       },
       "daily": {
-        "title": "दैनिक क्लिक",
-        "description": "कैंपेन शुरू होने के बाद से · {tz}"
+        "title": "दैनिक क्लिक"
       },
       "hourly": {
-        "title": "घंटे के अनुसार क्लिक",
-        "description": "{tz}",
-        "tooltip": "{hour}:00: {clicks}"
+        "title": "घंटे के अनुसार क्लिक"
       },
       "heatmap": {
-        "title": "दिन × घंटा वितरण",
-        "description": "{tz}"
+        "title": "दिन × घंटा वितरण"
       },
       "testScans": {
-        "title": "शुरुआत-पूर्व टेस्ट स्कैन",
-        "description": "कैंपेन शुरू होने से पहले <strong>{count}</strong>। विश्लेषण कुल से बाहर।",
-        "last": "आख़िरी टेस्ट · {date}"
+        "note": "शुरुआत से पहले के {count} टेस्ट स्कैन शामिल नहीं हैं।"
       },
       "byBatch": {
-        "empty": "अभी तक कोई वितरण बैच नहीं। एक जोड़ने के बाद बैच प्रदर्शन यहाँ दिखता है।",
+        "empty": "अभी कोई बैच नहीं",
         "title": "बैच के अनुसार प्रदर्शन",
-        "description": "क्लिक के घटते क्रम में। बार सबसे ऊँची पंक्ति के सापेक्ष हैं।",
-        "meta": "/ {quantity} शीट · प्रति 100 शीट {rate}"
+        "add": "बैच जोड़ें"
       }
     }
   },
@@ -3772,7 +3763,6 @@
     "loadFailed": "QR कैंपेन लोड नहीं हो सके।",
     "newCampaign": "नया QR कैंपेन",
     "batchCount": "{count} बैच",
-    "details": "विवरण",
     "onboarding": {
       "title": "हर पर्चा-बैच का अलग QR, फिर तुलना करें",
       "body": "हर क्षेत्र, वितरक और बैच के लिए अलग QR बनाएँ, फिर देखें किस बैच से ज़्यादा क्लिक आए। अगली बार कहाँ बाँटना है, यह इन्हीं आँकड़ों से तय करें।",
@@ -3801,8 +3791,7 @@
   "qrDownload": {
     "zipTitle": "QR ZIP डाउनलोड करें",
     "singleTitle": "{name} QR डाउनलोड करें",
-    "zipDescription": "सभी बैच QR कोड एक पैकेज में, प्रिंटर या डिज़ाइनर को सौंपने के लिए तैयार।",
-    "singleDescription": "एक वितरण बैच के लिए QR PNG।",
+    "zipDescription": "हर बैच का एक PNG, एक ही ZIP में।",
     "confirm": "डाउनलोड करें",
     "sizeLabel": "आकार",
     "sizes": {
@@ -3811,18 +3800,15 @@
       "print": "मानक प्रिंट",
       "poster": "बड़ा पोस्टर"
     },
-    "ecLabel": "क्षति सहनशीलता (त्रुटि सुधार)",
-    "ecHint": "बाहरी या गंदे वातावरण के लिए उच्च स्तर का उपयोग करें।",
+    "ecLabel": "क्षति सहनशीलता",
+    "ecHint": "ऊँचा स्तर गंदगी में भी पढ़ा जाता है, पर पैटर्न घना हो जाता है।",
     "ec": {
       "data": "डेटा प्राथमिकता",
       "standard": "मानक",
       "outdoor": "बाहरी / गंदा",
       "maximum": "अधिकतम सुरक्षा"
     },
-    "labelText": "लेबल टेक्स्ट",
-    "labelHint": "QR के नीचे बैच नाम प्रिंट करें ताकि प्रिंटर इसे पहचान सकें।",
-    "labelCheckbox": "QR के नीचे बैच नाम प्रिंट करें",
-    "notSaved": "डाउनलोड विकल्प सहेजे नहीं जाते। आप एक ही कैंपेन को अलग विकल्पों के साथ कई बार डाउनलोड कर सकते हैं।"
+    "labelCheckbox": "QR के नीचे बैच का नाम जोड़ें"
   },
   "qrCampaigns": {
     "meta": {
