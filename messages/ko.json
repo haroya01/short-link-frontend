@@ -1840,16 +1840,6 @@
         "note": "데이터센터 클릭 {dc}건은 자동 접속으로 분류했어요."
       }
     },
-    "clientApp": {
-      "kakaotalk": "카카오톡",
-      "instagram": "인스타그램",
-      "line": "라인",
-      "facebook": "페이스북",
-      "naver": "네이버",
-      "daum": "다음",
-      "tiktok": "틱톡",
-      "twitter": "X(트위터)"
-    },
     "fetchSite": {
       "direct": "직접 열기",
       "crossSite": "링크를 눌러서",
@@ -2086,6 +2076,17 @@
   "statLabels": {
     "unknown": "알 수 없음",
     "kakaotalk": "카카오톡",
+    "clientApp": {
+      "kakaotalk": "카카오톡",
+      "instagram": "인스타그램",
+      "line": "라인",
+      "facebook": "페이스북",
+      "naver": "네이버",
+      "daum": "다음",
+      "tiktok": "틱톡",
+      "twitter": "X(트위터)",
+      "browser": "일반 브라우저"
+    },
     "channel": {
       "social": "소셜",
       "messaging": "메신저",

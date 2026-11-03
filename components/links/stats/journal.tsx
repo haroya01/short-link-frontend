@@ -14,7 +14,7 @@ import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn, formatNumber } from "@/lib/utils";
 import { countryItems } from "@/components/links/stats/stat-sections";
 import { sourceBreakdown } from "@/lib/stats-sources";
-import { useStatsLabels } from "@/lib/stats-labels";
+import { useStatsLabels, type StatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 
 function EvidenceNumbers({ items }: { items: { label: string; value: number }[] }) {
@@ -118,9 +118,10 @@ function EvidenceBody({ entry, data }: { entry: JournalEntry; data: LinkStats })
   }
 }
 
-/** 룰 엔진은 i18n 을 모르는 순수 함수다. 메시지 키·날짜 번역은 렌더 직전 여기서만 한다. */
-function resolveParams(entry: JournalEntry, locale: string) {
+/** 룰 엔진은 i18n 을 모르는 순수 함수다. 메시지 키·날짜·원값 번역은 렌더 직전 여기서만 한다. */
+function resolveParams(entry: JournalEntry, locale: string, labels: StatsLabels) {
   const resolved = { ...entry.params };
+  if (typeof resolved.country === "string") resolved.country = labels.country(resolved.country);
   const date = resolved.date;
   if (typeof date === "string" && /^\d{2}-\d{2}$/.test(date)) {
     const [month, day] = date.split("-").map(Number);
@@ -142,6 +143,7 @@ export function StatsJournal({
 }) {
   const t = useTranslations("stats.journal");
   const locale = useLocale();
+  const labels = useStatsLabels();
   const entries = buildJournal(data);
   const [showAll, setShowAll] = useState(false);
   const [openKeys, setOpenKeys] = useState<ReadonlySet<string>>(new Set());
@@ -180,7 +182,7 @@ export function StatsJournal({
               >
                 <span className="flex items-start gap-3">
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
-                    {t(entry.key, resolveParams(entry, locale))}
+                    {t(entry.key, resolveParams(entry, locale, labels))}
                   </span>
                   <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
                     {t("evidence")}

@@ -52,9 +52,9 @@ export function EventsIntro({ when }: { when: EventWhenText }) {
       registrationsByChannel: [4, 2, 1].map((count, i) => ({ key: channels[i], count })),
       clicksByLink: [31, 19, 8].map((count, i) => ({ key: channels[i], count })),
       clicksByClientApp: [
-        { key: "KakaoTalk", count: 29 },
-        { key: "Instagram", count: 18 },
-        { key: "Safari", count: 11 },
+        { key: "kakaotalk", count: 29 },
+        { key: "instagram", count: 18 },
+        { key: "direct", count: 11 },
       ],
       dailyRegistrations: [],
     };
