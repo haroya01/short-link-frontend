@@ -1599,7 +1599,6 @@
       "imageLabel": "画像URL上書き"
     },
     "protection": {
-      "description": "パスワードと最大閲覧回数を設定してリンクを保護できます。",
       "passwordLabel": "パスワード",
       "passwordPlaceholder": "空欄ならパスワードなし",
       "passwordSetHint": "パスワード設定済み (変更するには新しいパスワードを入力)",

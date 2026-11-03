@@ -1599,7 +1599,6 @@
       "imageLabel": "이미지 URL 덮어쓰기"
     },
     "protection": {
-      "description": "비밀번호와 최대 조회수를 설정해 링크를 보호할 수 있어요.",
       "passwordLabel": "비밀번호",
       "passwordPlaceholder": "비워두면 비밀번호 없이 접속",
       "passwordSetHint": "비밀번호가 이미 설정됨 (변경하려면 새 비밀번호 입력)",

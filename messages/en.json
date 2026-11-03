@@ -1599,7 +1599,6 @@
       "imageLabel": "Image URL override"
     },
     "protection": {
-      "description": "Set a password and a maximum view count to protect this link.",
       "passwordLabel": "Password",
       "passwordPlaceholder": "Leave blank for no password",
       "passwordSetHint": "Password already set (type a new one to change)",

@@ -1599,7 +1599,6 @@
       "imageLabel": "Ghi đè URL ảnh"
     },
     "protection": {
-      "description": "Đặt mật khẩu và số lượt xem tối đa để bảo vệ liên kết này.",
       "passwordLabel": "Mật khẩu",
       "passwordPlaceholder": "Để trống nếu không đặt mật khẩu",
       "passwordSetHint": "Đã đặt mật khẩu (gõ mật khẩu mới để đổi)",
