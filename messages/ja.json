@@ -4100,8 +4100,6 @@
       "title": "参加申し込みをリンクで受け付けます",
       "subtitle": "勉強会やミートアップ、サークルの紹介ページと申込フォームを作れます。定員に達すると自動で締め切られ、どこから申し込みが来たかも確認できます。",
       "example": {
-        "title": "参加者にはこんなページが開きます",
-        "desc": "リンクを開くと日時・場所・残り枠がひと目でわかり、主催者にはどのチャットから申し込まれたかがたまります。下は例です。",
         "guest": "参加者が見るページ",
         "host": "主催者が見る申し込み状況"
       },
@@ -4131,7 +4129,11 @@
           "instagram": "Instagram",
           "qrPoster": "QRポスター"
         },
-        "hostName": "夜の読書会"
+        "hostName": "夜の読書会",
+        "about": "月に一度、水曜の夜に集まってます。今月は好きな短編をひとつ読んできてください",
+        "note1": "読み終わってなくても大丈夫",
+        "note2": "飲み物は各自で注文",
+        "question": "最近読んでる本"
       }
     },
     "public": {
@@ -4139,7 +4141,6 @@
       "attending": "参加{count}名",
       "addToCalendar": "Google カレンダーに追加",
       "onlineLink": "オンライン参加リンク",
-      "full": "定員に達しました",
       "spotsLeft": "残り {count} / {capacity} 席",
       "formTitle": "参加申し込み",
       "nameLabel": "お名前",
@@ -4185,8 +4186,6 @@
         "nameRequired": "お名前をご記入ください",
         "contactRequired": "連絡先をご記入ください"
       },
-      "metaDate": "日付",
-      "metaTime": "時間",
       "metaPlace": "場所",
       "metaOnline": "オンライン",
       "metaAttendance": "定員",

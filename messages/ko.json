@@ -4100,8 +4100,6 @@
       "title": "모임 신청을 링크로 받아요",
       "subtitle": "스터디나 밋업, 소모임의 소개 페이지와 신청 폼을 만들어요. 정원이 차면 자동으로 마감되고, 신청자가 어디서 왔는지도 볼 수 있어요.",
       "example": {
-        "title": "참가자에게는 이런 페이지가 열려요",
-        "desc": "링크를 누르면 일시·장소·남은 자리가 한눈에 보이고, 주최자에게는 어느 방에서 신청했는지가 쌓여요. 아래는 예시예요.",
         "guest": "참가자가 보는 페이지",
         "host": "주최자가 보는 신청 현황"
       },
@@ -4131,7 +4129,11 @@
           "instagram": "인스타그램",
           "qrPoster": "QR 포스터"
         },
-        "hostName": "책 읽는 밤"
+        "hostName": "책 읽는 밤",
+        "about": "한 달에 한 번 수요일 저녁에 모여요. 이번 달은 아무 단편이나 하나씩 읽어 와요",
+        "note1": "다 못 읽었어도 그냥 와요",
+        "note2": "음료는 각자 시켜요",
+        "question": "요즘 읽는 책"
       }
     },
     "public": {
@@ -4139,7 +4141,6 @@
       "attending": "참여 {count}명",
       "addToCalendar": "Google 캘린더에 추가",
       "onlineLink": "온라인 참가 링크",
-      "full": "정원이 마감됐어요",
       "spotsLeft": "남은 자리 {count} / {capacity}",
       "formTitle": "참가 신청",
       "nameLabel": "이름",
@@ -4185,8 +4186,6 @@
         "nameRequired": "이름을 적어 주세요",
         "contactRequired": "연락처를 적어 주세요"
       },
-      "metaDate": "날짜",
-      "metaTime": "시간",
       "metaPlace": "장소",
       "metaOnline": "온라인",
       "metaAttendance": "인원",

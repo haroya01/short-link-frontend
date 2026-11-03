@@ -1,44 +1,54 @@
 "use client";
 
-import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useMemo, type ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
 import { SignInLink } from "@/components/auth/sign-in-link";
-import { PromoActions, PromoExample, PromoHero, PromoLines, PromoSection } from "@/components/landing/promo";
-import type { EventAnalytics } from "@/modules/events/api/events";
+import { inert } from "@/lib/utils";
+import type { ContactField, EventAnalytics, PublicEvent } from "@/modules/events/api/events";
 import { AnalyticsPanel } from "./analytics-panel";
-import { EventHead, type EventHeadData } from "./event-head";
+import { EventPageView } from "./event-page-view";
 
 const DAY_MS = 86_400_000;
 
-/** A week and a bit after the build, 7pm in Seoul — the example never shows a date already past. */
-function exampleStart(): Date {
+function exampleNow(): number {
   const built = Date.parse(`${process.env.NEXT_PUBLIC_BUILD_DATE ?? ""}T10:00:00Z`);
-  return new Date((Number.isNaN(built) ? Date.UTC(2026, 8, 28, 10) : built) + 9 * DAY_MS);
+  return Number.isNaN(built) ? Date.UTC(2026, 8, 28, 10) : built;
 }
+
+const CONTACT: Record<string, ContactField> = { ko: "KAKAO", ja: "LINE" };
 
 export function EventsIntro() {
   const t = useTranslations("events.intro");
   const tDemo = useTranslations("events.intro.demo");
+  const locale = useLocale();
+  const now = exampleNow();
 
-  const event = useMemo<EventHeadData>(() => {
-    const start = exampleStart();
+  const event = useMemo<PublicEvent>(() => {
+    const start = now + 9 * DAY_MS;
     return {
-      coverImageUrl: null,
+      slug: "example",
       title: tDemo("eventTitle"),
-      organizerName: tDemo("hostName"),
-      organizerAvatarUrl: null,
-      startsAt: start.toISOString(),
-      endsAt: new Date(start.getTime() + 2 * 3_600_000).toISOString(),
-      timezone: "Asia/Seoul",
+      descriptionMd: null,
+      coverImageUrl: null,
+      startsAt: new Date(start).toISOString(),
+      endsAt: new Date(start + 2 * 3_600_000).toISOString(),
+      timezone: locale === "ja" ? "Asia/Tokyo" : "Asia/Seoul",
       locationText: tDemo("eventPlace"),
       locationUrl: null,
       onlineUrl: null,
-      attending: 7,
       capacity: 20,
       spotsLeft: 13,
+      closeAt: null,
+      contactField: CONTACT[locale] ?? "EMAIL",
+      status: "OPEN",
+      acceptingRegistrations: true,
+      attending: 7,
+      organizerName: tDemo("hostName"),
+      organizerAvatarUrl: null,
+      questions: [{ id: 1, type: "SHORT_TEXT", label: tDemo("question"), options: [], required: false }],
     };
-  }, [tDemo]);
+  }, [tDemo, locale, now]);
 
   const analytics = useMemo<EventAnalytics>(() => {
     const channels = [tDemo("channels.groupChat"), tDemo("channels.instagram"), tDemo("channels.qrPoster")];
@@ -58,46 +68,54 @@ export function EventsIntro() {
 
   return (
     <div className="bg-white dark:bg-slate-950">
-      <PromoHero
-        title={t("title")}
-        lead={t("subtitle")}
-        action={
-          <SignInLink reason="events" next="/events" className={buttonVariants({ variant: "accent", size: "xl" })}>
-            {t("ctaLogin")}
-          </SignInLink>
-        }
-        hint={t("ctaHint")}
-      />
-
-      <PromoSection title={t("example.title")} desc={t("example.desc")}>
-        <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-12">
-          <div className="min-w-0">
-            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("example.guest")}</h3>
-            <PromoExample className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950 sm:p-6">
-              <EventHead event={event} heading="h3" />
-            </PromoExample>
+      <div className="container max-w-5xl">
+        <header className="pb-12 pt-12 sm:pb-14 sm:pt-16">
+          <h1 className="text-balance break-keep text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+            {t("title")}
+          </h1>
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <SignInLink reason="events" next="/events/new" className={buttonVariants({ size: "lg" })}>
+              {t("ctaLogin")}
+            </SignInLink>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("ctaHint")}</p>
           </div>
-          <div className="min-w-0">
-            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("example.host")}</h3>
-            <PromoExample className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950 sm:p-6">
-              <AnalyticsPanel analytics={analytics} className="border-t-0 pt-0" />
-            </PromoExample>
-          </div>
-        </div>
+        </header>
 
-        <PromoLines
-          items={(["step1", "step2", "step3"] as const).map((step) => ({
-            title: t(`${step}.title`),
-            body: t(`${step}.body`),
-          }))}
-        />
+        <Band label={t("example.guest")}>
+          <EventPageView
+            event={event}
+            now={now}
+            heading="h2"
+            preview
+            description={
+              <>
+                <p>{tDemo("about")}</p>
+                <ul>
+                  <li>{tDemo("note1")}</li>
+                  <li>{tDemo("note2")}</li>
+                </ul>
+              </>
+            }
+          />
+        </Band>
 
-        <PromoActions>
-          <SignInLink reason="events" next="/events" className={buttonVariants({ variant: "outline", size: "lg" })}>
-            {t("ctaLogin")}
-          </SignInLink>
-        </PromoActions>
-      </PromoSection>
+        <Band label={t("example.host")}>
+          <AnalyticsPanel analytics={analytics} className="border-t-0 pt-0" />
+        </Band>
+      </div>
     </div>
+  );
+}
+
+function Band({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <section className="grid gap-y-6 border-t border-slate-200 py-12 dark:border-slate-800 sm:py-16 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-x-12">
+      <h2 className="self-start break-keep text-[15px] font-semibold text-slate-900 dark:text-slate-100 lg:sticky lg:top-24">
+        {label}
+      </h2>
+      <div aria-hidden {...inert(true)} className="w-full max-w-[42rem] select-none">
+        {children}
+      </div>
+    </section>
   );
 }

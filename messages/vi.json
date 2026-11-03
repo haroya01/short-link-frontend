@@ -4100,8 +4100,6 @@
       "title": "Nhận đăng ký sự kiện qua một liên kết",
       "subtitle": "Tạo trang giới thiệu và mẫu đăng ký cho nhóm học, meetup hay câu lạc bộ. Khi đủ chỗ, đăng ký tự đóng, và bạn xem được mỗi lượt đăng ký đến từ đâu.",
       "example": {
-        "title": "Người tham gia sẽ mở trang như thế này",
-        "desc": "Mở liên kết là thấy ngay thời gian, địa điểm và số chỗ còn lại, còn bạn biết mỗi lượt đăng ký đến từ nhóm chat nào. Dưới đây là ví dụ.",
         "guest": "Trang người tham gia thấy",
         "host": "Tình hình đăng ký bạn thấy"
       },
@@ -4131,7 +4129,11 @@
           "instagram": "Instagram",
           "qrPoster": "Poster QR"
         },
-        "hostName": "Nhóm đọc sách buổi tối"
+        "hostName": "Nhóm đọc sách buổi tối",
+        "about": "Mỗi tháng gặp nhau một tối thứ Tư. Tháng này ai cũng đọc một truyện ngắn bất kỳ rồi mang tới",
+        "note1": "Chưa đọc xong cũng cứ đến",
+        "note2": "Đồ uống ai nấy tự gọi",
+        "question": "Dạo này bạn đọc gì?"
       }
     },
     "public": {
@@ -4139,7 +4141,6 @@
       "attending": "{count} người tham gia",
       "addToCalendar": "Thêm vào Google Calendar",
       "onlineLink": "Liên kết tham gia trực tuyến",
-      "full": "Sự kiện đã đủ người",
       "spotsLeft": "Còn {count} / {capacity} chỗ",
       "formTitle": "Đăng ký tham gia",
       "nameLabel": "Họ tên",
@@ -4185,8 +4186,6 @@
         "nameRequired": "Vui lòng nhập tên",
         "contactRequired": "Vui lòng nhập thông tin liên hệ"
       },
-      "metaDate": "Ngày",
-      "metaTime": "Giờ",
       "metaPlace": "Địa điểm",
       "metaOnline": "Trực tuyến",
       "metaAttendance": "Chỗ",

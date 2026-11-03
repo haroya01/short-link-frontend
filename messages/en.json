@@ -4100,8 +4100,6 @@
       "title": "Take event sign-ups with a link",
       "subtitle": "Make an intro page and a sign-up form for a study group, meetup or club. Sign-ups close when it's full, and you can see where each one came from.",
       "example": {
-        "title": "Your guests open a page like this",
-        "desc": "The link shows the date, place, and spots left at a glance, and you see which chat each sign-up came from. This is an example.",
         "guest": "What guests see",
         "host": "What you see as the host"
       },
@@ -4131,7 +4129,11 @@
           "instagram": "Instagram",
           "qrPoster": "QR poster"
         },
-        "hostName": "Night Readers"
+        "hostName": "Night Readers",
+        "about": "We meet one Wednesday evening a month. This time just bring any short story you read",
+        "note1": "Didn't finish it? Come anyway",
+        "note2": "Drinks are on you",
+        "question": "What are you reading lately?"
       }
     },
     "public": {
@@ -4139,7 +4141,6 @@
       "attending": "{count} going",
       "addToCalendar": "Add to Google Calendar",
       "onlineLink": "Online meeting link",
-      "full": "This event is full",
       "spotsLeft": "{count} of {capacity} spots left",
       "formTitle": "Register",
       "nameLabel": "Name",
@@ -4185,8 +4186,6 @@
         "nameRequired": "Please enter your name",
         "contactRequired": "Please enter your contact"
       },
-      "metaDate": "Date",
-      "metaTime": "Time",
       "metaPlace": "Place",
       "metaOnline": "Online",
       "metaAttendance": "Seats",
