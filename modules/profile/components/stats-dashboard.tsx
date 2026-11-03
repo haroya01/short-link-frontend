@@ -92,11 +92,13 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         <Section title={t("utmCampaigns.title")} description={t("utmCampaigns.desc")}>
           <BreakdownList
             items={data.utmCampaignVisits.map((u) => ({ label: u.campaign, count: u.count }))}
+            total={data.humanVisits}
           />
         </Section>
         <Section title={t("utmSources.title")} description={t("utmSources.desc")}>
           <BreakdownList
             items={data.utmSourceVisits.map((u) => ({ label: u.source, count: u.count }))}
+            total={data.humanVisits}
           />
         </Section>
       </div>

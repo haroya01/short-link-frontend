@@ -25,11 +25,15 @@ export function WhoChapter({ data }: { data: LinkStats }) {
           <DeviceChart data={data.deviceClicks} />
         </Section>
         <Section title={t("section.os.title")} description={t("section.os.desc")}>
-          <BreakdownList items={data.osClicks.map((o) => ({ label: o.os, count: o.count }))} />
+          <BreakdownList
+            items={data.osClicks.map((o) => ({ label: o.os, count: o.count }))}
+            total={data.humanClicks}
+          />
         </Section>
         <Section title={t("section.browser.title")} description={t("section.browser.desc")}>
           <BreakdownList
             items={data.browserClicks.map((b) => ({ label: b.browser, count: b.count }))}
+            total={data.humanClicks}
           />
         </Section>
       </div>
@@ -39,12 +43,13 @@ export function WhoChapter({ data }: { data: LinkStats }) {
           title={t("section.clientApp.title")}
           description={t("section.clientApp.desc")}
         >
-          <ClientAppBreakdown items={clientApps} />
+          <ClientAppBreakdown items={clientApps} total={data.humanClicks} />
         </Section>
       )}
       <Section title={t("section.language.title")} description={t("section.language.desc")}>
         <BreakdownList
           items={data.languageClicks.map((l) => ({ label: l.language, count: l.count }))}
+          total={data.humanClicks}
         />
       </Section>
       <Section

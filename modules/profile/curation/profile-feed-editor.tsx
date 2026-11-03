@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   CalendarClock,
   CalendarDays,
@@ -24,6 +24,8 @@ import {
 import { useLocale, type useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
 import { useCollapsedSections } from "@/hooks/use-collapsed-sections";
+import { useDismiss } from "@/hooks/use-dismiss";
+import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { summarizeTextBody } from "@/modules/profile/lib/feed-summarizers";
 import type { FeedItem } from "@/modules/profile/curation/types";
 import { BLOCK_ROW_META, isCommonBlockType } from "@/modules/profile/curation/block-row-meta";
@@ -249,11 +251,8 @@ export function ProfileFeedEditor({
   );
 }
 
-/**
- * Single "+" button that opens a small menu of block kinds. Replaces the row of three separate
- * "+ 헤더 / + 구분선 / + 이미지" pills — same affordance, less visual noise. Closes on outside
- * click or Escape so it doesn't trap focus.
- */
+const MENU_EDGE = 8;
+
 function AddMenu({
   onAddText,
   onAddDivider,
@@ -282,23 +281,34 @@ function AddMenu({
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
+  const [shift, setShift] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  useDismiss(open, containerRef, () => setOpen(false));
+  const { onKeyDown, focusFirst } = useMenuKeys(menuRef, {
+    onClose: (refocus) => {
+      setOpen(false);
+      if (refocus) triggerRef.current?.focus();
+    },
+  });
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setShift(0);
+      return;
+    }
+    const menu = menuRef.current?.getBoundingClientRect();
+    const trigger = triggerRef.current?.getBoundingClientRect();
+    if (!menu || !trigger) return;
+    const start = menu.right > window.innerWidth - MENU_EDGE ? trigger.right - menu.width : menu.left;
+    const left = Math.max(MENU_EDGE, Math.min(start, window.innerWidth - MENU_EDGE - menu.width));
+    setShift(left - menu.left);
+  }, [open]);
 
   useEffect(() => {
-    if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("click", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("click", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
+    if (open) focusFirst();
+  }, [open, focusFirst]);
 
   function fire(handler: () => void) {
     setOpen(false);
@@ -308,6 +318,7 @@ function AddMenu({
   return (
     <div ref={containerRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
@@ -317,13 +328,13 @@ function AddMenu({
         {t("addBlockMenu")}
       </button>
       {open && (
-        // Two-group menu: the three blocks most users reach for first (Header / Image / Embed)
-        // sit on top so the menu doesn't read as an 11-item paralysis grid. The other eight
-        // are tucked below a small "More blocks" separator — still one tap away, but visually
-        // demoted.
         <div
+          ref={menuRef}
           role="menu"
-          className="absolute right-0 top-full z-20 mt-1 w-48 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
+          aria-label={t("addBlockMenu")}
+          onKeyDown={onKeyDown}
+          style={shift ? { transform: `translateX(${shift}px)` } : undefined}
+          className="absolute left-0 top-full z-20 mt-1 w-48 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
         >
           <MenuItem onClick={() => fire(onAddText)} icon={<Type className="h-3.5 w-3.5" />}>
             {t("addHeader")}
