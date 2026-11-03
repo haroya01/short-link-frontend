@@ -35,6 +35,7 @@ import type {
 } from "./notes";
 import { mockFollowingRoomNotes, mockFollowingRoomPosts } from "@/modules/rooms/api/_mocks";
 import { readStorageString } from "@/lib/storage-json";
+import { mockLiveArrivals } from "@/lib/api/mock-live";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
 import type { RemoteItem, RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
@@ -1370,7 +1371,24 @@ export function mockSetReplyPolicy(id: number, replyPolicy: NoteReplyPolicy): { 
   return { replyPolicy };
 }
 
+function absorbLiveReplies() {
+  for (const arrival of mockLiveArrivals().replies ?? []) {
+    if (notes.some((n) => n.id === arrival.id)) continue;
+    notes = [
+      ...notes.map((n) => (n.id === arrival.inReplyToId ? { ...n, replyCount: n.replyCount + 1 } : n)),
+      note({
+        id: arrival.id,
+        body: arrival.body,
+        author: HARUKA,
+        inReplyToId: arrival.inReplyToId,
+        createdAt: new Date().toISOString(),
+      }),
+    ];
+  }
+}
+
 export function mockThread(id: number): NoteThread | null {
+  absorbLiveReplies();
   if (id === RIN_NOTE.id) return { note: RIN_NOTE, parent: null, replies: [], continuation: [], series: null };
   const main = notes.find((n) => n.id === id);
   if (!main) return null;

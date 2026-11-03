@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
@@ -24,8 +24,12 @@ import { NoteReplyDialog } from "./note-reply-dialog";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { openNote } from "@/modules/notes/lib/note-href";
-import { placeReply } from "@/modules/notes/lib/thread-reply";
+import { appendReplies, placeReply, threadNoteIds } from "@/modules/notes/lib/thread-reply";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLiveScope } from "@/hooks/use-live-scope";
+import { useHeldArrivals } from "@/hooks/use-held-arrivals";
+import { readsOneByOne } from "@/lib/live-scope";
+import { LivePill, LiveRow } from "@/components/common/live-arrivals";
 
 export function NoteThreadView({
   initial,
@@ -49,6 +53,12 @@ export function NoteThreadView({
   const [showingHidden, setShowingHidden] = useState(false);
   const [replying, setReplying] = useState(false);
   const [landed, setLanded] = useState<number | null>(null);
+  const [viewerLoaded, setViewerLoaded] = useState(false);
+  const [arriving, setArriving] = useState<Set<number>>(new Set());
+  const [arrivedNote, setArrivedNote] = useState("");
+  const threadRef = useRef(thread);
+  const repliesEnd = useRef<HTMLDivElement>(null);
+  const repliesSection = useRef<HTMLElement>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -62,7 +72,9 @@ export function NoteThreadView({
 
   function land(reply: Note) {
     setReplying(false);
-    const placed = placeReply(thread, reply);
+    const placed = threadNoteIds(thread).has(reply.id)
+      ? { thread, landing: "replies" as const }
+      : placeReply(thread, reply);
     setThread(placed.thread);
     if (placed.landing === "elsewhere") {
       toast(t("replyPosted"), "default", {
@@ -85,11 +97,55 @@ export function NoteThreadView({
   useEffect(() => {
     if (!ready || !authenticated) return;
     getNoteThread(initial.note.id)
-      .then(setThread)
+      .then((next) => {
+        setThread(next);
+        setViewerLoaded(true);
+      })
       .catch((error) => {
         if (error instanceof ApiError && error.status === 404) setUnavailable(true);
       });
   }, [ready, authenticated, initial.note.id]);
+
+  useEffect(() => {
+    threadRef.current = thread;
+  }, [thread]);
+
+  const arrivals = useHeldArrivals<Note>(
+    () =>
+      repliesEnd.current
+        ? { element: repliesEnd.current, edge: "bottom" }
+        : repliesSection.current
+          ? { element: repliesSection.current, edge: "top" }
+          : null,
+    (items) => {
+      setThread((current) => appendReplies(current, items));
+      const ids = items.map((reply) => reply.id);
+      setFreshReplies((current) => new Set([...current, ...ids]));
+      setArriving((current) => new Set([...current, ...ids]));
+      setArrivedNote(t("liveNewReplies", { count: items.length }));
+    },
+  );
+
+  useLiveScope("note", initial.note.id, {
+    enabled: viewerLoaded && !unavailable && !deleted,
+    since: String(Math.max(0, ...threadNoteIds(thread))),
+    known: (id) => threadNoteIds(threadRef.current).has(id) || arrivals.isHeld(id),
+    refresh: async (change) => {
+      const incoming = readsOneByOne(change)
+        ? await Promise.all(change.ids.map((id) => getNoteThread(id).then((found) => found.note, () => null)))
+        : (await getNoteThread(initial.note.id)).replies;
+      const known = threadNoteIds(threadRef.current);
+      arrivals.offer(
+        incoming.filter((reply): reply is Note => reply !== null && reply.inReplyToId === initial.note.id && !known.has(reply.id)),
+      );
+    },
+    onRevoked: () =>
+      void getNoteThread(initial.note.id)
+        .then(setThread)
+        .catch((error) => {
+          if (error instanceof ApiError && error.status === 404) setUnavailable(true);
+        }),
+  });
 
   const replaceReply = (next: Note) =>
     setThread((current) => ({
@@ -279,7 +335,7 @@ export function NoteThreadView({
         )}
       </div>
 
-      <section aria-labelledby={thread.replies.length > 0 ? "note-replies" : undefined}>
+      <section ref={repliesSection} aria-labelledby={thread.replies.length > 0 ? "note-replies" : undefined}>
         {thread.replies.length > 0 && (
           <h2 id="note-replies" className="pt-4 text-[15px] font-semibold text-slate-900 dark:text-slate-100">
             {t("repliesTitle")}{" "}
@@ -287,13 +343,13 @@ export function NoteThreadView({
           </h2>
         )}
         {thread.replies.length > 0 && (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div ref={repliesEnd} className="divide-y divide-slate-100 dark:divide-slate-800">
             {thread.replies.map((reply) => {
               const verdict = noteVerdict(reply, filters, "thread", me?.id);
               if (verdict?.action === "hide" || blocked.has(reply.author.username)) return null;
               return (
+              <LiveRow key={reply.id} arriving={arriving.has(reply.id)}>
               <NoteCard
-                key={reply.id}
                 note={reply}
                 isNew={freshReplies.has(reply.id)}
                 filteredBy={verdict?.action === "warn" ? verdict.phrases : undefined}
@@ -308,6 +364,7 @@ export function NoteThreadView({
                   }))
                 }
               />
+              </LiveRow>
               );
             })}
           </div>
@@ -350,6 +407,12 @@ export function NoteThreadView({
           </div>
         )}
       </section>
+      <LivePill
+        count={arrivals.held}
+        label={t("liveNewReplies", { count: arrivals.held })}
+        onShow={arrivals.show}
+        announce={arrivedNote}
+      />
       <NoteReplyDialog target={replying ? thread.note : null} onClose={() => setReplying(false)} onReplied={land} />
     </div>
   );

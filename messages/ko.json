@@ -34,7 +34,8 @@
     "jumpMissing": "이 댓글은 삭제됐거나 볼 수 없어요.",
     "notesTab": "노트 {count, number}",
     "discussionTabs": "댓글과 노트",
-    "notesTabHint": "이 글을 인용한 노트예요"
+    "notesTabHint": "이 글을 인용한 노트예요",
+    "liveNew": "새 댓글 {count, number}개"
   },
   "publicFeed": {
     "recent": "최신",
@@ -4829,7 +4830,8 @@
     "destinationMine": "내 노트",
     "postToRoom": "{room}에 올리기",
     "roomAudience": "{room} 멤버만 볼 수 있어요",
-    "roomPlaceholder": "지금 뭐 하고 있어요?"
+    "roomPlaceholder": "지금 뭐 하고 있어요?",
+    "liveNewReplies": "새 답글 {count, number}개"
   },
   "mentions": {
     "suggestions": "멘션할 사람"
@@ -4986,6 +4988,7 @@
     "allReplies": "댓글 {count, number}개 모두 보기",
     "post": "글",
     "writePost": "{room}에 글 쓰기",
-    "leaveDeleteHint": "삭제하면 이 방에 올린 내 노트·블로그 글·댓글이 모두 사라져요."
+    "leaveDeleteHint": "삭제하면 이 방에 올린 내 노트·블로그 글·댓글이 모두 사라져요.",
+    "liveNew": "새 글 {count, number}개"
   }
 }

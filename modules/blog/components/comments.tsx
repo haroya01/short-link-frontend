@@ -33,6 +33,9 @@ import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLiveScope } from "@/hooks/use-live-scope";
+import { useHeldArrivals } from "@/hooks/use-held-arrivals";
+import { LivePill, LiveRow } from "@/components/common/live-arrivals";
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
@@ -117,6 +120,11 @@ export function PostComments({
   const { toast } = useToast();
   const focusedRef = useRef(false);
   const [confirm, confirmDialog] = useConfirm();
+  const [arrived, setArrived] = useState<Set<number>>(new Set());
+  const [arrivedNote, setArrivedNote] = useState("");
+  const commentsRef = useRef(comments);
+  const sectionRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   const loadSeq = useRef(0);
   const load = useCallback(() => {
@@ -137,6 +145,36 @@ export function PostComments({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    commentsRef.current = comments;
+  }, [comments]);
+
+  const arrivals = useHeldArrivals<CommentView>(
+    (c) => {
+      const row =
+        c.parentId == null
+          ? (listRef.current?.lastElementChild ?? sectionRef.current)
+          : document.querySelector(`[data-comment-top="${c.parentId}"]`);
+      return row ? { element: row, edge: "bottom" } : null;
+    },
+    (items) => {
+      setComments((prev) => [...prev, ...items.filter((c) => !prev.some((p) => p.id === c.id))]);
+      setArrived((prev) => new Set([...prev, ...items.map((c) => c.id)]));
+      setArrivedNote(t("liveNew", { count: items.length }));
+    },
+  );
+
+  useLiveScope("comments", postId, {
+    enabled: ready && authenticated && loaded && !loadFailed,
+    since: String(Math.max(0, ...comments.map((c) => c.id))),
+    known: (id) => commentsRef.current.some((c) => c.id === id) || arrivals.isHeld(id),
+    refresh: async () => {
+      const list = await listComments(postId);
+      const known = new Set(commentsRef.current.map((c) => c.id));
+      arrivals.offer(list.filter((c) => !known.has(c.id)));
+    },
+  });
 
   useEffect(() => {
     if (!ready || !authenticated || !loaded || draftsRestored.current) return;
@@ -390,6 +428,7 @@ export function PostComments({
 
   return (
     <section
+      ref={sectionRef}
       id="comments"
       className={cn(END_SECTION, "flow-root scroll-mt-24")}
       style={dockHeight ? { paddingBottom: dockHeight } : undefined}
@@ -508,9 +547,9 @@ export function PostComments({
         </p>
       )}
       {shown.length > 0 && (
-        <ul className="mt-8 space-y-6">
+        <ul ref={listRef} className="mt-8 space-y-6">
           {visibleTops.map((c) => (
-            <li key={c.id} data-comment-top={c.id}>
+            <LiveRow as="li" key={c.id} data-comment-top={c.id} arriving={arrived.has(c.id)}>
               {c.deleted ? (
                 <ConversationTombstone id={`comment-${c.id}`} flash={flashId === c.id} label={t("deleted")} />
               ) : (
@@ -526,7 +565,7 @@ export function PostComments({
                 liked={likedIds.has(c.id)}
                 likeLabel={t("like")}
                 onToggleLike={() => void toggleLike(c)}
-                isNew={c.id === justAddedId}
+                isNew={c.id === justAddedId || arrived.has(c.id)}
               >
                 <button
                   type="button"
@@ -542,7 +581,7 @@ export function PostComments({
               {repliesOf(c.id).length > 0 && (
                 <ul className="mt-4 space-y-4 pl-12">
                   {repliesOf(c.id).map((r) => (
-                    <li key={r.id}>
+                    <LiveRow as="li" key={r.id} arriving={arrived.has(r.id)}>
                       <CommentRow
                         anchorId={`comment-${r.id}`}
                         flash={flashId === r.id}
@@ -555,7 +594,7 @@ export function PostComments({
                         liked={likedIds.has(r.id)}
                         likeLabel={t("like")}
                         onToggleLike={() => void toggleLike(r)}
-                        isNew={r.id === justAddedId}
+                        isNew={r.id === justAddedId || arrived.has(r.id)}
                       >
                         {!c.deleted && (
                           <button
@@ -572,12 +611,12 @@ export function PostComments({
                           </button>
                         )}
                       </CommentRow>
-                    </li>
+                    </LiveRow>
                   ))}
                 </ul>
               )}
 
-            </li>
+            </LiveRow>
           ))}
         </ul>
       )}
@@ -593,6 +632,12 @@ export function PostComments({
       )}
       </>
       )}
+      <LivePill
+        count={arrivals.held}
+        label={t("liveNew", { count: arrivals.held })}
+        onShow={arrivals.show}
+        announce={arrivedNote}
+      />
       {confirmDialog}
     </section>
   );

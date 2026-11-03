@@ -951,7 +951,42 @@ html[data-first-load] .profile-fade {
     background-color: transparent;
   }
 }
+@keyframes live-open {
+  from {
+    grid-template-rows: 0fr;
+    margin-top: 0;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+.live-open {
+  display: grid;
+  animation: live-open 360ms var(--ease) both;
+}
+.live-open > * {
+  min-height: 0;
+  overflow: hidden;
+}
+@keyframes live-pill-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+.live-pill {
+  animation: live-pill-in 360ms var(--ease) both;
+}
 @media (prefers-reduced-motion: reduce) {
+  .live-open {
+    animation: none;
+  }
+  .live-open > * {
+    overflow: visible;
+  }
+  .live-pill {
+    animation: none;
+  }
   .comment-in {
     animation: none;
   }

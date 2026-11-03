@@ -34,7 +34,8 @@
     "jumpMissing": "このコメントは削除されたか、表示できません。",
     "notesTab": "ノート {count, number}",
     "discussionTabs": "コメントとノート",
-    "notesTabHint": "この記事を引用したノート"
+    "notesTabHint": "この記事を引用したノート",
+    "liveNew": "新しいコメント{count, number}件"
   },
   "publicFeed": {
     "recent": "最新",
@@ -4829,7 +4830,8 @@
     "destinationMine": "自分のノート",
     "postToRoom": "{room}に投稿",
     "roomAudience": "{room}のメンバーだけが見られます",
-    "roomPlaceholder": "いま何してる？"
+    "roomPlaceholder": "いま何してる？",
+    "liveNewReplies": "新しい返信{count, number}件"
   },
   "mentions": {
     "suggestions": "メンションする人"
@@ -4986,6 +4988,7 @@
     "allReplies": "コメント{count, number}件をすべて見る",
     "post": "記事",
     "writePost": "{room}に記事を書く",
-    "leaveDeleteHint": "削除すると、このルームに投稿したノート・ブログ記事・コメントがすべて消えます。"
+    "leaveDeleteHint": "削除すると、このルームに投稿したノート・ブログ記事・コメントがすべて消えます。",
+    "liveNew": "新しい投稿{count, number}件"
   }
 }

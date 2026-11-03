@@ -1,6 +1,7 @@
 import { request } from "@/lib/api/client";
 import { blogMocks } from "./_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
+import { mockLiveArrivals } from "@/lib/api/mock-live";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 import { announcePostLocked, postAccessHeaders, withPostAccess } from "@/modules/blog/lib/post-access";
 
@@ -60,11 +61,30 @@ const MOCK_LONG_THREAD: CommentView[] = [
 ];
 let mockCommentSeq = 100;
 const mockLiked = new Set<number>();
+const MOCK_LIVE_AUTHOR: PublicAuthor = { id: 2, username: "minji", displayName: "민지", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=45" };
+
+function absorbLiveComments() {
+  for (const arrival of mockLiveArrivals().comments ?? []) {
+    if (mockComments.some((c) => c.id === arrival.id)) continue;
+    mockComments = [
+      ...mockComments,
+      {
+        id: arrival.id,
+        parentId: arrival.parentId ?? null,
+        author: MOCK_LIVE_AUTHOR,
+        body: arrival.body,
+        createdAt: new Date().toISOString(),
+        likeCount: 0,
+      },
+    ];
+  }
+}
 
 /** Public — anyone can read a post's comments (oldest first, flat with parentId). */
 export async function listComments(postId: number): Promise<CommentView[]> {
   if (USE_MOCKS) {
     if (mockFails("comments")) throw new Error("comments 500");
+    absorbLiveComments();
     const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
     const thread = postId === blogMocks?.MOCK_LONG_THREAD_POST_ID ? [...mockComments, ...MOCK_LONG_THREAD] : mockComments;
     return thread.filter((c) => !hidden?.has(c.author?.username ?? ""));

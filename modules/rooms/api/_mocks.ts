@@ -1,5 +1,6 @@
 import { ApiError, mockEmpty } from "@/lib/api/client";
 import { readStorageString } from "@/lib/storage-json";
+import { mockLiveArrivals } from "@/lib/api/mock-live";
 import type { HomePost } from "@/modules/blog/api/home-feed";
 import type { Note, NoteDraft, NoteFeed } from "@/modules/notes/api/notes";
 import type {
@@ -564,7 +565,25 @@ function paged(all: RoomItem[], cursor: string | null, limit: number): RoomItems
   return { items: all.slice(start, end), next: end < all.length ? `${end}.0` : null };
 }
 
+function absorbLiveRoomNotes() {
+  for (const arrival of mockLiveArrivals().room ?? []) {
+    if (posts.some((p) => p.id === arrival.id)) continue;
+    posts = [
+      ...posts,
+      { id: arrival.id, roomId: arrival.roomId, author: MINJI, body: arrival.body, minutesAgo: 0, createdAt: new Date().toISOString() },
+    ];
+  }
+}
+
+export function mockRoomNote(id: number): Promise<Note> {
+  absorbLiveRoomNotes();
+  const found = posts.find((p) => p.id === id);
+  if (!found) return Promise.reject(new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" }));
+  return done(noteOf(found));
+}
+
 export function mockRoomItems(id: number, cursor: string | null, limit: number): Promise<RoomItemsPage> {
+  absorbLiveRoomNotes();
   if (!state().some((r) => r.id === id)) {
     return Promise.reject(new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" }));
   }
