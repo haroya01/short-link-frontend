@@ -1,9 +1,3 @@
-const SHORT_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://kurl.me";
-
-export function shortUrlOf(code: string): string {
-  return `${SHORT_BASE}/${code}`;
-}
-
 /** 이벤트 자체 타임존으로 표시 — 뷰어 로컬이 아니라 "모임이 열리는 곳"의 시간이 기준. */
 function formatEventDate(iso: string, timezone: string, locale: string): string {
   const date = new Date(iso);

@@ -18,7 +18,8 @@ import {
   getEventAnalytics,
   getMyEvent,
 } from "@/modules/events/api/events";
-import { formatEventRange, shortUrlOf } from "@/modules/events/lib/format";
+import { formatEventRange } from "@/modules/events/lib/format";
+import { shortUrlOf } from "@/lib/short-url";
 import { ownerEventPhase } from "@/modules/events/lib/phase";
 import { AnalyticsPanel } from "@/modules/events/components/analytics-panel";
 import { AttendeeTable } from "@/modules/events/components/attendee-table";
