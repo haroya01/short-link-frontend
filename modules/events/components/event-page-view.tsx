@@ -5,7 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { isHttpUrl } from "@/lib/extract-url";
 import type { PublicEvent } from "@/modules/events/api/events";
-import { formatEventWhen, placeIdFromUrl, timezoneLabel } from "@/modules/events/lib/format";
+import { formatEventWhen, timezoneLabel } from "@/modules/events/lib/format";
+import { placeIdFromUrl } from "@/modules/events/lib/place";
 import { eventPhase } from "@/modules/events/lib/phase";
 import { RegistrationPanel } from "./registration-panel";
 

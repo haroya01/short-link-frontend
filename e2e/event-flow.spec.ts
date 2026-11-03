@@ -70,6 +70,27 @@ test.describe("event organizer flow", () => {
     await expect(preview.locator("pre code .hljs-keyword", { hasText: "const" })).toBeVisible();
   });
 
+  test("without a Maps key the place is typed by hand and a Google Maps link is made from it", async ({ page }) => {
+    const events = await organizerBackend(page);
+    await page.goto("/ko/events/new");
+    await page.getByLabel("제목", { exact: false }).fill("키 없는 모집");
+    await page.locator("#ef-starts").fill("2030-04-01T10:00");
+
+    await expect(page.getByRole("button", { name: "링크로 넣기" })).toBeVisible();
+    await expect(page.getByLabel("지도 링크")).toHaveCount(0);
+    const place = page.getByLabel("장소", { exact: true });
+    await expect(place).not.toHaveAttribute("role", "combobox");
+    await place.fill("성수 카페");
+    await page.getByRole("button", { name: "‘성수 카페’ 구글 지도 링크 만들기" }).click();
+    const made = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("성수 카페")}`;
+    await expect(page.getByLabel("지도 링크")).toHaveValue(made);
+    await expect(page.getByRole("button", { name: "링크로 넣기" })).toHaveCount(0);
+
+    await page.getByRole("button", { name: "발행하기" }).click();
+    await expect(page.getByRole("heading", { name: "키 없는 모집" })).toBeVisible();
+    expect(events[0]).toMatchObject({ locationText: "성수 카페", locationUrl: made });
+  });
+
   test("closing registration flips the event status", async ({ page }) => {
     const events = await organizerBackend(page);
     await page.goto("/ko/events/new");
