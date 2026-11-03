@@ -2627,7 +2627,9 @@
       "inDays": "{days}日後",
       "inWeeks": "{weeks}週間後",
       "ended": "終了",
-      "eventEnded": "終了したイベント"
+      "eventEnded": "終了したイベント",
+      "am": "午前",
+      "pm": "午後"
     },
     "place": {
       "directions": "経路",
@@ -2945,7 +2947,7 @@
       },
       "socialsLabel": "共有 / SNS ボタン",
       "socialKakaoLabel": "カカオトークチャンネル",
-      "socialsHint": "公開プロフィールの下に表示する SNS を選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大2つまで、選んだ順に表示されます。",
+      "socialsHint": "選んだ順に、プロフィールの下へ2つまで表示されます。",
       "socialsCount": "{count}/{max} 選択",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2955,7 +2957,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "有効な http(s) URL を入力してください。",
-      "previewTitle": "公開プロフィールのライブプレビュー",
+      "previewTitle": "プレビュー",
       "closePreview": "プレビューを閉じる",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",
@@ -2966,8 +2968,7 @@
       "quickAdd": {
         "title": "リンクを追加",
         "firstTitle": "最初のリンクを追加",
-        "firstHint": "Instagram・ブログ・YouTube など、どんな URL もラベル付きで bio 用1ページに並びます。",
-        "hint": "URL + ラベルを入力 → 短縮 + プロフィール表示まで自動。連続で何個でも追加できます。",
+        "hint": "入れた URL は短縮リンクになり、すぐプロフィールに載ります。",
         "urlPlaceholder": "https://… または mailto:…",
         "labelPlaceholder": "ラベル (例：📝 ブログ)",
         "templatesLabel": "または URL だけクイック追加（ラベルはご自身で入力）",
@@ -2989,17 +2990,14 @@
       "openShort": "開く",
       "yourPage": "公開プロフィール",
       "featuredTitle": "公開プロフィールに表示する項目",
-      "featuredHint": "ドラッグで並び替えます（モバイルは ↑↓）。★ を付けたリンクがおすすめとして一番上に来ます。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
-      "sectionExpand": "セクションを開く",
-      "sectionCollapse": "セクションを閉じる",
-      "sectionItemCount": "{count}件",
+      "featuredHint": "おすすめは1つだけ選べて、一番上に表示されます。",
       "featuredEmpty": "表示するリンクがありません。",
       "featuredEmptyHasOthers": "表示するリンクがありません。選べる自分のリンクが{count}件あります。",
       "addBlockMenu": "追加",
       "addMoreBlocks": "その他のブロック",
       "remove": "削除",
-      "removeLink": "外す",
-      "highlight": "おすすめとして一番上に (1つのみ)",
+      "removeLink": "プロフィールから外す",
+      "highlight": "おすすめにする",
       "labelEdit": "ラベルを編集 (訪問者に表示)",
       "labelEmpty": "ラベル追加",
       "labelPlaceholder": "例：📝 ブログ",
@@ -3103,17 +3101,15 @@
       "addEmailForm": "メール収集",
       "addEmailFormTitle": "メール収集フォームを追加",
       "editEmailFormTitle": "メール収集フォームを編集",
-      "addEmailFormDescription": "訪問者がメールを残せる小さなフォーム。収集したアドレスはダッシュボード / CSV で取得できます。",
+      "addEmailFormDescription": "集まったメールはあなただけが見られ、CSV で書き出せます。",
       "addEmailFormPlaceholder": "(メールフォーム未設定)",
       "emailFormFieldTitle": "案内文",
       "emailFormFieldTitlePlaceholder": "例：ニュースレター登録",
       "emailFormFieldSubtitle": "サブテキスト (任意)",
       "emailFormFieldSubtitlePlaceholder": "例：新作・講座開催・限定メニューの情報をいち早くお届けします。",
-      "emailFormFieldSubtitleHint": "なぜメールを残すべきか、訪問者が分かるよう一言添えてください。",
       "emailFormFieldPlaceholder": "入力欄ヒント",
       "emailFormFieldSuccess": "送信後メッセージ",
       "emailFormFieldSuccessPlaceholder": "例：登録完了。ありがとうございます :)",
-      "emailFormHowItWorks": "訪問者が残したメールはオーナーだけが見られる 'leads' ダッシュボードに集約されます。CSV エクスポートで Mailchimp などに取り込めます。",
       "emailFormViewLeadsCta": "収集したメールを見る",
       "leadsLink": "収集したメール",
       "stats": {
@@ -3123,7 +3119,7 @@
         "loadFailed": "統計を読み込めませんでした。",
         "summary": {
           "title": "プロフィール訪問",
-          "today": "今日",
+          "today": "24時間",
           "week": "7日",
           "month": "30日",
           "allTime": "累計"
@@ -3323,7 +3319,11 @@
         "midnight": "ミッドナイト",
         "champagne": "シャンパン",
         "aurora": "オーロラ"
-      }
+      },
+      "featuredMark": "おすすめ",
+      "rowActions": "その他の操作",
+      "moveUp": "上へ移動",
+      "moveDown": "下へ移動"
     },
     "profileTitle": "アカウント情報",
     "email": "メール",
@@ -4088,7 +4088,7 @@
     "public": {
       "hostedBy": "主催",
       "attending": "参加{count}名",
-      "addToCalendar": "Google カレンダーに追加",
+      "addToCalendar": "カレンダーに追加",
       "onlineLink": "オンライン参加リンク",
       "spotsLeft": "残り {count} / {capacity} 席",
       "formTitle": "参加申し込み",
@@ -4125,9 +4125,7 @@
         "answerRequired": "回答をご記入ください",
         "choiceRequired": "1つお選びください",
         "consentRequired": "個人情報の提供に同意してください",
-        "full": "たった今定員に達しました",
         "alreadyRegistered": "この連絡先はすでに申し込み済みです",
-        "closed": "受付は終了しました",
         "generic": "申し込みに失敗しました。しばらくしてから再度お試しください。",
         "invalidEmail": "メールアドレスをご確認ください (例：hong@gmail.com)",
         "invalidPhone": "電話番号をご確認ください (例：090-1234-5678)",
@@ -4148,7 +4146,10 @@
       "aboutTitle": "詳細",
       "endedNotice": "このイベントは終了しました。",
       "am": "午前",
-      "pm": "午後"
+      "pm": "午後",
+      "calendarGoogle": "Google カレンダー",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple / .ics ダウンロード"
     },
     "list": {
       "title": "イベント",
@@ -4243,8 +4244,7 @@
       "statusChangeFailed": "変更に失敗しました",
       "cancelDialogTitle": "イベントを中止しますか？",
       "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
-      "cancelDialogConfirm": "中止する",
-      "heroCopy": "リンクをコピー"
+      "cancelDialogConfirm": "中止する"
     },
     "share": {
       "copied": "コピー済み",
@@ -4279,7 +4279,8 @@
       "channel": "流入元",
       "status": "状態",
       "confirmed": "確定",
-      "canceled": "キャンセル"
+      "canceled": "キャンセル",
+      "exportFailed": "CSVをダウンロードできませんでした"
     },
     "status": {
       "open": "受付中",
@@ -4287,6 +4288,9 @@
       "canceled": "中止",
       "ended": "終了",
       "full": "満席"
+    },
+    "meta": {
+      "description": "イベントの紹介ページと申し込みフォームをリンクひとつで作れます。参加者はログイン不要で申し込め、定員になると締め切られます。"
     }
   },
   "linkAnalytics": {

@@ -70,6 +70,31 @@ function emailSignup(): PublicProfileEntry {
   };
 }
 
+function block(id: number, kind: "EVENT" | "CONTACT_CARD", content: object): PublicProfileEntry {
+  return {
+    kind,
+    id,
+    shortCode: null,
+    shortUrl: null,
+    originalUrl: null,
+    ogTitle: null,
+    ogImage: null,
+    clickCount: null,
+    highlighted: false,
+    content: JSON.stringify(content),
+  };
+}
+
+const EVENT_AND_CARD: PublicProfileEntry[] = [
+  block(910, "CONTACT_CARD", { name: "김도현", title: "프로덕트 디자이너", company: "kurl", email: "dohyun@kurl.me" }),
+  block(911, "EVENT", {
+    title: "북토크: 짧은 글의 힘",
+    startsAt: "2099-11-12T19:00:00+09:00",
+    endsAt: "2099-11-12T21:00:00+09:00",
+    location: "성수 카페 어니언",
+  }),
+];
+
 // 명함의 HTTP 상태를 확인할 때 쓰는 핸들. 이름을 바꾼 지 30일이 안 된 옛 핸들은 백엔드가 지금 주인의
 // 명함으로 풀어 주고, 없는 핸들에는 아무것도 주지 않는다.
 const RENAMED_HANDLES = new Map([["dohyun_old", "dohyun"]]);
@@ -90,6 +115,13 @@ export function mockPublicProfile(username: string): PublicProfile | null {
   if (username === "email-signup") {
     const base = demoProfile("dohyun");
     return { ...base, username, entries: [...base.entries, emailSignup()] };
+  }
+  if (username === "event-card") {
+    const base = demoProfile("dohyun");
+    return { ...base, username, entries: [...EVENT_AND_CARD, ...base.entries.slice(0, 2)] };
+  }
+  if (username === "empty-card") {
+    return { ...demoProfile(username), bio: null, bannerUrl: null, publishedPostCount: 0, entries: [] };
   }
   return demoProfile(username);
 }

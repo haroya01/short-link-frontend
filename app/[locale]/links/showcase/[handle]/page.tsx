@@ -95,6 +95,7 @@ export default async function ShowcaseHandlePage({
           username={profile.username}
           colors={colors}
           socials={profile.socials ?? []}
+          qrFilename={`${profile.username}.png`}
           labels={{
             visitOn: {
               x: tPub("visit.x"),

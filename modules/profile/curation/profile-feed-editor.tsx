@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   CalendarClock,
   CalendarDays,
   ChevronDown,
-  ChevronRight,
   ChevronUp,
   Contact,
   GalleryHorizontal,
@@ -14,61 +13,22 @@ import {
   Mail,
   MapPin,
   Minus,
+  MinusCircle,
   Pencil,
   Play,
   ShoppingBag,
   Star,
+  Trash2,
   Type,
-  X,
 } from "lucide-react";
 import { useLocale, type useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
-import { useCollapsedSections } from "@/hooks/use-collapsed-sections";
+import { ActionMenu, type ActionMenuItem } from "@/components/common/action-menu";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { useMenuKeys } from "@/hooks/use-menu-keys";
 import { summarizeTextBody } from "@/modules/profile/lib/feed-summarizers";
 import type { FeedItem } from "@/modules/profile/curation/types";
 import { BLOCK_ROW_META, isCommonBlockType } from "@/modules/profile/curation/block-row-meta";
-
-type SectionMeta = {
-  /** Index of the TEXT header that anchors this section, or null when the row sits above the
-   *  first header (the "ungrouped prefix"). */
-  headerIdx: number | null;
-  /** profile_block id of the section header — the stable key used in localStorage so a header
-   *  stays collapsed across reorders that change its array position. */
-  headerId: number | null;
-  /** Items in this section excluding the header itself. Shown as "3 items" on the header chip. */
-  count: number;
-};
-
-/**
- * Walks the flat feed once and returns, per row, which TEXT header it belongs to plus the
- * section's body count. The returned array is index-aligned with {@code items}, so callers can do
- * {@code sectionByIdx[idx]} during a render loop without re-scanning the array per row.
- */
-function computeSectionMeta(items: FeedItem[]): SectionMeta[] {
-  const meta: { headerIdx: number | null; headerId: number | null }[] = [];
-  let currentIdx: number | null = null;
-  let currentId: number | null = null;
-  for (let i = 0; i < items.length; i++) {
-    const it = items[i];
-    if (it.kind === "BLOCK" && it.type === "TEXT") {
-      currentIdx = i;
-      currentId = it.id;
-    }
-    meta.push({ headerIdx: currentIdx, headerId: currentId });
-  }
-  const counts = new Map<number, number>();
-  for (const m of meta) {
-    if (m.headerIdx !== null) counts.set(m.headerIdx, (counts.get(m.headerIdx) ?? 0) + 1);
-  }
-  return meta.map((m) => ({
-    headerIdx: m.headerIdx,
-    headerId: m.headerId,
-    // Subtract 1 because the count includes the header row itself.
-    count: m.headerIdx !== null ? (counts.get(m.headerIdx) ?? 1) - 1 : 0,
-  }));
-}
 
 type Props = {
   items: FeedItem[];
@@ -315,9 +275,11 @@ function AddMenu({
     }
     const menu = menuRef.current?.getBoundingClientRect();
     const trigger = triggerRef.current?.getBoundingClientRect();
+    const column = containerRef.current?.parentElement?.getBoundingClientRect();
     if (!menu || !trigger) return;
-    const start = menu.right > window.innerWidth - MENU_EDGE ? trigger.right - menu.width : menu.left;
-    const left = Math.max(MENU_EDGE, Math.min(start, window.innerWidth - MENU_EDGE - menu.width));
+    const right = Math.min(window.innerWidth - MENU_EDGE, column?.right ?? Infinity);
+    const start = menu.right > right ? trigger.right - menu.width : menu.left;
+    const left = Math.max(MENU_EDGE, Math.min(start, right - menu.width));
     setShift(left - menu.left);
   }, [open]);
 
@@ -452,12 +414,6 @@ function FeedEmptyState({
   );
 }
 
-/**
- * Section-aware wrapper around the flat item list. Computes which TEXT header anchors each row,
- * hides rows inside a collapsed section (everything except the header itself), and renders a
- * thin left rail on indented rows so the visual grouping is obvious without an
- * extra wrapper element that would have broken the existing drag-and-drop flat-index contract.
- */
 function FeedItemList({
   items,
   links,
@@ -501,67 +457,38 @@ function FeedItemList({
   onEditLabel: (shortCode: string, label: string) => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
-  const { collapsed, toggle } = useCollapsedSections();
-  const sectionByIdx = useMemo(() => computeSectionMeta(items), [items]);
-
   return (
     <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 dark:divide-slate-800">
-      {items.map((item, idx) => {
-        const meta = sectionByIdx[idx];
-        const isHeader = item.kind === "BLOCK" && item.type === "TEXT";
-        const sectionId = meta.headerId;
-        const isCollapsed = sectionId != null && collapsed.has(sectionId);
-        // Hide non-header rows that live inside a collapsed section. The header itself always
-        // renders so the user can still toggle it back open.
-        if (isCollapsed && !isHeader) return null;
-        const sectionInfo =
-          isHeader && sectionId != null
-            ? {
-                collapsed: collapsed.has(sectionId),
-                count: meta.count,
-                onToggle: () => toggle(sectionId),
-              }
-            : null;
-        const indented = !isHeader && meta.headerId != null;
-        return (
-          <FeedItemRow
-            key={item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`}
-            item={item}
-            idx={idx}
-            totalCount={items.length}
-            links={links}
-            highlightedShortCode={highlightedShortCode}
-            highlightedBlockId={highlightedBlockId}
-            pendingShortCode={pendingShortCode}
-            labelByShortCode={labelByShortCode}
-            isDragging={dragIndex === idx}
-            isOver={overIndex === idx && dragIndex !== null && dragIndex !== idx}
-            sectionInfo={sectionInfo}
-            indented={indented}
-            onMove={onMove}
-            onDragStart={onDragStart}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onDragEnd={onDragEnd}
-            onHighlight={onHighlight}
-            onHighlightBlock={onHighlightBlock}
-            onToggle={onToggle}
-            onEditBlock={onEditBlock}
-            onDeleteBlock={onDeleteBlock}
-            onEditLabel={onEditLabel}
-            t={t}
-          />
-        );
-      })}
+      {items.map((item, idx) => (
+        <FeedItemRow
+          key={item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`}
+          item={item}
+          idx={idx}
+          totalCount={items.length}
+          links={links}
+          highlightedShortCode={highlightedShortCode}
+          highlightedBlockId={highlightedBlockId}
+          pendingShortCode={pendingShortCode}
+          labelByShortCode={labelByShortCode}
+          isDragging={dragIndex === idx}
+          isOver={overIndex === idx && dragIndex !== null && dragIndex !== idx}
+          onMove={onMove}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onDragEnd={onDragEnd}
+          onHighlight={onHighlight}
+          onHighlightBlock={onHighlightBlock}
+          onToggle={onToggle}
+          onEditBlock={onEditBlock}
+          onDeleteBlock={onDeleteBlock}
+          onEditLabel={onEditLabel}
+          t={t}
+        />
+      ))}
     </ul>
   );
 }
-
-type SectionHeaderInfo = {
-  collapsed: boolean;
-  count: number;
-  onToggle: () => void;
-};
 
 type RowProps = {
   item: FeedItem;
@@ -574,11 +501,6 @@ type RowProps = {
   labelByShortCode: Record<string, string>;
   isDragging: boolean;
   isOver: boolean;
-  /** Non-null only on TEXT header rows — drives the collapse chevron + count chip. */
-  sectionInfo: SectionHeaderInfo | null;
-  /** True when this row sits inside a section (any non-TEXT row that follows a TEXT header).
-   *  Drives the left rail + indent that signals "this belongs to the section above". */
-  indented: boolean;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -604,8 +526,6 @@ function FeedItemRow({
   labelByShortCode,
   isDragging,
   isOver,
-  sectionInfo,
-  indented,
   onMove,
   onDragStart,
   onDragOver,
@@ -627,56 +547,39 @@ function FeedItemRow({
     onDrop: (e: React.DragEvent) => onDrop(idx, e),
     onDragEnd,
   };
-  // Drop-zone indicator: a thin accent bar that hovers just above the target row. Positioned
-  // absolutely so it takes *zero* layout space — earlier versions added `mt-4` to push rows apart,
-  // which combined with an all-property transition and the bubbling dragleave/dragover events made the row
-  // animate open/closed at ~60Hz as the cursor crossed child elements ("엄청 깜빡거림"). The fix is
-  // twofold: (1) drop the per-row onDragLeave handler at the call site so child-element traversal
-  // no longer clears overIndex, (2) keep the indicator out of the layout flow so siblings don't
-  // shift even when isOver flips quickly.
+  // Drop-zone indicator: a thin bar that hovers just above the target row. Positioned absolutely so
+  // it takes zero layout space — rows that shifted on dragover flickered at ~60Hz as the cursor
+  // crossed child elements.
   const dropIndicator = isOver
     ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-slate-900 "
     : "";
-  // Lifted/transparent state while being dragged so the user perceives the dragged row as "in
-  // their hand" rather than just half-faded in place.
-  const draggingState = isDragging
-    ? "scale-[0.98] opacity-30 ring-2 ring-slate-300 rounded-md "
-    : "";
-  // Indented rows (items that follow a TEXT header) get a thin rail on the left and
-  // extra padding so the user can see "this belongs to the section above" without breaking the
-  // flat-index drag layout — the rail is a left border, not a wrapping element, so drop indices
-  // stay 1:1 with the flat items array.
-  const indentRail = indented ? "border-l-2 border-slate-200 pl-4 dark:border-slate-700 " : "";
-  // `relative` is permanent (not gated on isOver) so toggling the indicator doesn't reflow the row.
-  // Transitions only animate properties that don't affect layout — opacity / transform / box-shadow —
-  // so the dragged row fades smoothly without dragging siblings into a transition loop.
+  const draggingState = isDragging ? "scale-[0.98] opacity-30 ring-2 ring-slate-300 rounded-md " : "";
   const baseRow =
     "relative flex items-center justify-between gap-3 px-3 py-2 transition-[opacity,transform,box-shadow] duration-150 " +
-    indentRail +
     draggingState +
     dropIndicator;
-  const dragHandle = <DragHandle idx={idx} totalCount={totalCount} onMove={onMove} />;
+  const dragHandle = <DragHandle idx={idx} totalCount={totalCount} onMove={onMove} t={t} />;
+  const blockMenu = (featured?: { active: boolean; onToggle: () => void }) => (
+    <RowMenu
+      t={t}
+      items={[
+        ...(featured ? [featureItem(t, featured.active, featured.onToggle)] : []),
+        ...(item.kind === "BLOCK" && item.type !== "DIVIDER"
+          ? [{ label: t("editTextAction"), icon: Pencil, onSelect: () => onEditBlock(item.id, item.content ?? "") }]
+          : []),
+        ...(item.kind === "BLOCK"
+          ? [{ label: t("remove"), icon: Trash2, destructive: true, onSelect: () => onDeleteBlock(item.id) }]
+          : []),
+      ]}
+    />
+  );
 
   if (item.kind === "BLOCK" && item.type === "DIVIDER") {
-    // Slim row — a divider on the public profile is a thin horizontal rule, so the editor row
-    // shouldn't pretend it's a heavy item. Compact padding + a centered hr communicates that.
-    const slimRow =
-      "relative flex items-center gap-2 px-3 py-1 transition-[opacity,transform,box-shadow] duration-150 " +
-      indentRail +
-      draggingState +
-      dropIndicator;
     return (
-      <li {...dndProps} className={slimRow}>
+      <li {...dndProps} className={baseRow.replace("py-2", "py-1")}>
         {dragHandle}
         <hr className="flex-1 border-t border-slate-300 dark:border-slate-700" aria-label={t("dividerLabel")} />
-        <button
-          type="button"
-          onClick={() => onDeleteBlock(item.id)}
-          className="text-slate-300 hover:text-red-600"
-          aria-label={t("remove")}
-        >
-          <X className="h-3.5 w-3.5" />
-        </button>
+        {blockMenu()}
       </li>
     );
   }
@@ -687,11 +590,7 @@ function FeedItemRow({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {item.content ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={item.content}
-              alt=""
-              className="h-10 w-10 shrink-0 rounded object-cover"
-            />
+            <img src={item.content} alt="" className="h-10 w-10 shrink-0 rounded object-cover" />
           ) : (
             <ImageIcon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           )}
@@ -699,86 +598,31 @@ function FeedItemRow({
             {item.content || t("addImagePlaceholder")}
           </span>
         </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
+        {blockMenu()}
       </li>
     );
   }
-  if (item.kind === "BLOCK" && isCommonBlockType(item.type)) {
-    const meta = BLOCK_ROW_META[item.type];
-    const Icon = meta.Icon;
-    const text = meta.render(item.content, t, locale) || t(meta.placeholderKey);
+  if (item.kind === "BLOCK" && (isCommonBlockType(item.type) || item.type === "TEXT")) {
+    const meta = item.type === "TEXT" ? null : BLOCK_ROW_META[item.type];
+    const Icon = meta ? meta.Icon : Type;
+    const text = meta
+      ? meta.render(item.content, t, locale) || t(meta.placeholderKey)
+      : summarizeTextBody(item.content) || t("addTextPlaceholder");
     const textClass =
-      meta.textStyle === "primary"
+      !meta || meta.textStyle === "primary"
         ? "truncate text-sm font-medium text-slate-900 dark:text-slate-100"
         : "truncate text-[11px] text-slate-500 dark:text-slate-400";
+    const featurable = item.type === "EVENT" || item.type === "PRODUCT_CARD";
+    const featured = featurable && highlightedBlockId === item.id;
     return (
       <li {...dndProps} className={baseRow}>
         {dragHandle}
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           <span className={textClass}>{text}</span>
+          {featured ? <FeaturedMark t={t} /> : null}
         </div>
-        {(item.type === "EVENT" || item.type === "PRODUCT_CARD") && (
-          <FeatureStar
-            active={highlightedBlockId === item.id}
-            onClick={() => onHighlightBlock(item.id)}
-            label={t("highlight")}
-          />
-        )}
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "TEXT") {
-    // TEXT is the section anchor: heavier background tint, chevron toggle on the left side of the
-    // label so the disclosure affordance is sibling to the title, and an item-count chip on the
-    // right side near the edit/delete actions. The chevron + count are decorations on top of the
-    // existing row — drag, edit, and delete affordances stay identical to other blocks.
-    const headerRow = baseRow + " bg-slate-50/60 dark:bg-slate-800/40";
-    const collapsed = sectionInfo?.collapsed ?? false;
-    return (
-      <li {...dndProps} className={headerRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          {sectionInfo ? (
-            <button
-              type="button"
-              onClick={sectionInfo.onToggle}
-              aria-expanded={!collapsed}
-              aria-label={collapsed ? t("sectionExpand") : t("sectionCollapse")}
-              className="grid h-5 w-5 shrink-0 place-items-center rounded text-slate-500 transition hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
-            >
-              {collapsed ? (
-                <ChevronRight className="h-3.5 w-3.5" />
-              ) : (
-                <ChevronDown className="h-3.5 w-3.5" />
-              )}
-            </button>
-          ) : (
-            <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          )}
-          <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
-            {summarizeTextBody(item.content) || t("addTextPlaceholder")}
-          </span>
-          {sectionInfo && sectionInfo.count > 0 && (
-            <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-              {t("sectionItemCount", { count: sectionInfo.count })}
-            </span>
-          )}
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
+        {blockMenu(featurable ? { active: featured, onToggle: () => onHighlightBlock(item.id) } : undefined)}
       </li>
     );
   }
@@ -791,27 +635,32 @@ function FeedItemRow({
     <li {...dndProps} className={baseRow}>
       {dragHandle}
       <div className="min-w-0 flex-1">
-        <LinkLabelField
-          shortCode={link.shortCode}
-          currentLabel={labelByShortCode[link.shortCode] ?? ""}
-          onSave={onEditLabel}
-          t={t}
-        />
+        <div className="flex min-w-0 items-center gap-2">
+          <LinkLabelField
+            shortCode={link.shortCode}
+            currentLabel={labelByShortCode[link.shortCode] ?? ""}
+            onSave={onEditLabel}
+            t={t}
+          />
+          {highlighted ? <FeaturedMark t={t} /> : null}
+        </div>
         <p className="truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
           /{link.shortCode} · {link.originalUrl}
         </p>
       </div>
-      <div className="flex items-center gap-2">
-        <FeatureStar active={highlighted} onClick={() => onHighlight(link.shortCode)} label={t("highlight")} />
-        <button
-          type="button"
-          onClick={() => onToggle(link.shortCode, false)}
-          disabled={pendingShortCode === link.shortCode}
-          className="text-[11px] text-slate-500 hover:text-red-600 dark:text-slate-400"
-        >
-          {t("removeLink")}
-        </button>
-      </div>
+      <RowMenu
+        t={t}
+        items={[
+          featureItem(t, highlighted, () => onHighlight(link.shortCode)),
+          {
+            label: t("removeLink"),
+            icon: MinusCircle,
+            destructive: true,
+            disabled: pendingShortCode === link.shortCode,
+            onSelect: () => onToggle(link.shortCode, false),
+          },
+        ]}
+      />
     </li>
   );
 }
@@ -892,16 +741,18 @@ function DragHandle({
   idx,
   totalCount,
   onMove,
+  t,
 }: {
   idx: number;
   totalCount: number;
   onMove: (idx: number, direction: -1 | 1) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
       <span
         aria-label="drag handle"
-        className="cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing dark:hover:text-slate-200"
+        className="hidden cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing dark:hover:text-slate-200 sm:inline"
       >
         <GripVertical className="h-4 w-4" />
       </span>
@@ -909,19 +760,19 @@ function DragHandle({
       <div className="flex flex-col sm:hidden">
         <button
           type="button"
-          aria-label="up"
+          aria-label={t("moveUp")}
           disabled={idx === 0}
           onClick={() => onMove(idx, -1)}
-          className="text-slate-400 hover:text-slate-900 disabled:opacity-30 dark:hover:text-slate-200"
+          className="grid h-[22px] w-8 place-items-center text-slate-400 hover:text-slate-900 disabled:opacity-30 dark:hover:text-slate-200"
         >
           <ChevronUp className="h-3.5 w-3.5" />
         </button>
         <button
           type="button"
-          aria-label="down"
+          aria-label={t("moveDown")}
           disabled={idx === totalCount - 1}
           onClick={() => onMove(idx, 1)}
-          className="text-slate-400 hover:text-slate-900 disabled:opacity-30 dark:hover:text-slate-200"
+          className="grid h-[22px] w-8 place-items-center text-slate-400 hover:text-slate-900 disabled:opacity-30 dark:hover:text-slate-200"
         >
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
@@ -930,52 +781,24 @@ function DragHandle({
   );
 }
 
-// 대표 표시 — 링크·모집·상품 줄이 같은 별을 쓴다(대시보드 즐겨찾기 별과 같은 강조색).
-function FeatureStar({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      title={label}
-      aria-label={label}
-      className={
-        "transition " +
-        (active ? "text-slate-900 dark:text-slate-100" : "text-slate-300 hover:text-slate-700 dark:text-slate-600 dark:hover:text-slate-300")
-      }
-    >
-      <Star className="h-3.5 w-3.5" fill={active ? "currentColor" : "none"} />
-    </button>
-  );
+function featureItem(
+  t: ReturnType<typeof useTranslations<"settings.profile">>,
+  active: boolean,
+  onToggle: () => void,
+): ActionMenuItem {
+  return { label: t("highlight"), icon: Star, checked: active, onSelect: onToggle };
 }
 
-function BlockActions({
-  onEdit,
-  onDelete,
+function FeaturedMark({ t }: { t: ReturnType<typeof useTranslations<"settings.profile">> }) {
+  return <span className="shrink-0 text-[11px] font-medium text-slate-500 dark:text-slate-400">{t("featuredMark")}</span>;
+}
+
+function RowMenu({
+  items,
   t,
 }: {
-  onEdit: () => void;
-  onDelete: () => void;
+  items: ActionMenuItem[];
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={onEdit}
-        className="text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-        aria-label={t("editTextAction")}
-      >
-        <Pencil className="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
-        onClick={onDelete}
-        className="text-slate-400 hover:text-red-600"
-        aria-label={t("remove")}
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
-    </div>
-  );
+  return <ActionMenu label={t("rowActions")} items={items} triggerClassName="h-11 w-11 shrink-0 text-slate-500 dark:text-slate-400" />;
 }

@@ -2627,7 +2627,9 @@
       "inDays": "in {days} days",
       "inWeeks": "in {weeks} weeks",
       "ended": "Ended",
-      "eventEnded": "Event has ended"
+      "eventEnded": "Event has ended",
+      "am": "AM",
+      "pm": "PM"
     },
     "place": {
       "directions": "Directions",
@@ -2945,7 +2947,7 @@
       },
       "socialsLabel": "Social buttons",
       "socialKakaoLabel": "KakaoTalk Channel",
-      "socialsHint": "Pick which channels appear at the bottom of your public profile. Paste your own account URL for each, and visitors who tap the button go there. Up to 2, shown in the order you pick.",
+      "socialsHint": "Up to two show at the bottom of your profile, in the order you pick.",
       "socialsCount": "{count}/{max} selected",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2955,7 +2957,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "Please paste a valid http(s) URL.",
-      "previewTitle": "Live preview",
+      "previewTitle": "Preview",
       "closePreview": "Close preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
@@ -2966,8 +2968,7 @@
       "quickAdd": {
         "title": "Add link",
         "firstTitle": "Add your first link",
-        "firstHint": "Any URL, like Instagram, a blog, or YouTube, goes in with a label and shows on your bio link.",
-        "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
+        "hint": "Each URL becomes a short link and goes straight onto your profile.",
         "urlPlaceholder": "https://... or mailto:...",
         "labelPlaceholder": "Label (e.g. 📝 Blog)",
         "templatesLabel": "Or quick-fill URL (you still type the label)",
@@ -2989,17 +2990,14 @@
       "openShort": "Open",
       "yourPage": "Public profile",
       "featuredTitle": "Profile feed",
-      "featuredHint": "Drag to reorder (↑↓ on mobile). The ★ link sits at the top as your featured one. A header groups the links under it into a section you can collapse and move as one.",
-      "sectionExpand": "Expand section",
-      "sectionCollapse": "Collapse section",
-      "sectionItemCount": "{count, plural, one {# item} other {# items}}",
+      "featuredHint": "You can feature one item, and it shows at the top.",
       "featuredEmpty": "No links are shown yet.",
       "featuredEmptyHasOthers": "No links are shown yet. You have {count, plural, one {# other link} other {# other links}} to pick from.",
       "addBlockMenu": "Add",
       "addMoreBlocks": "More blocks",
       "remove": "Delete",
-      "removeLink": "Remove",
-      "highlight": "Feature at the top (only one)",
+      "removeLink": "Remove from profile",
+      "highlight": "Feature",
       "labelEdit": "Edit label (what visitors see)",
       "labelEmpty": "Add label",
       "labelPlaceholder": "e.g. 📝 Blog",
@@ -3103,17 +3101,15 @@
       "addEmailForm": "Email signup",
       "addEmailFormTitle": "Add email signup form",
       "editEmailFormTitle": "Edit email signup form",
-      "addEmailFormDescription": "A short form visitors fill to leave their email. Collected addresses appear on your dashboard / CSV export.",
+      "addEmailFormDescription": "Only you can see the collected emails, and you can export them as CSV.",
       "addEmailFormPlaceholder": "(no email form yet)",
       "emailFormFieldTitle": "Form title",
       "emailFormFieldTitlePlaceholder": "e.g. Get my newsletter",
       "emailFormFieldSubtitle": "Subtitle (optional)",
       "emailFormFieldSubtitlePlaceholder": "e.g. Be the first to hear about new products, class openings, and limited menus.",
-      "emailFormFieldSubtitleHint": "One or two sentences telling visitors why they should leave their email.",
       "emailFormFieldPlaceholder": "Input placeholder",
       "emailFormFieldSuccess": "Success message",
       "emailFormFieldSuccessPlaceholder": "e.g. Thanks for signing up :)",
-      "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
       "emailFormViewLeadsCta": "View collected emails",
       "leadsLink": "Collected emails",
       "stats": {
@@ -3123,7 +3119,7 @@
         "loadFailed": "Couldn't load stats.",
         "summary": {
           "title": "Profile visits",
-          "today": "Today",
+          "today": "24h",
           "week": "7d",
           "month": "30d",
           "allTime": "All time"
@@ -3323,7 +3319,11 @@
         "midnight": "Midnight",
         "champagne": "Champagne",
         "aurora": "Aurora"
-      }
+      },
+      "featuredMark": "Featured",
+      "rowActions": "More actions",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
     },
     "profileTitle": "Account info",
     "email": "Email",
@@ -4088,7 +4088,7 @@
     "public": {
       "hostedBy": "Hosted by",
       "attending": "{count} going",
-      "addToCalendar": "Add to Google Calendar",
+      "addToCalendar": "Add to calendar",
       "onlineLink": "Online meeting link",
       "spotsLeft": "{count} of {capacity} spots left",
       "formTitle": "Register",
@@ -4125,9 +4125,7 @@
         "answerRequired": "Please answer this question",
         "choiceRequired": "Please pick one",
         "consentRequired": "Please agree to share your contact info",
-        "full": "The last spot was just taken",
         "alreadyRegistered": "This contact is already registered",
-        "closed": "Registration is closed",
         "generic": "Registration failed. Please try again.",
         "invalidEmail": "Please check the email address (e.g. hong@gmail.com)",
         "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
@@ -4148,7 +4146,10 @@
       "aboutTitle": "About",
       "endedNotice": "This event has ended.",
       "am": "AM",
-      "pm": "PM"
+      "pm": "PM",
+      "calendarGoogle": "Google Calendar",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple / .ics download"
     },
     "list": {
       "title": "Events",
@@ -4243,8 +4244,7 @@
       "statusChangeFailed": "Update failed",
       "cancelDialogTitle": "Cancel this event?",
       "cancelDialogBody": "The public page shows it as canceled and registration stops. This cannot be undone. To only stop new registrations, use 'Close registration'.",
-      "cancelDialogConfirm": "Cancel event",
-      "heroCopy": "Copy link"
+      "cancelDialogConfirm": "Cancel event"
     },
     "share": {
       "copied": "Copied",
@@ -4279,7 +4279,8 @@
       "channel": "Channel",
       "status": "Status",
       "confirmed": "Confirmed",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "exportFailed": "Couldn't download the CSV"
     },
     "status": {
       "open": "Open",
@@ -4287,6 +4288,9 @@
       "canceled": "Canceled",
       "ended": "Ended",
       "full": "Full"
+    },
+    "meta": {
+      "description": "Make an event page with a sign-up form behind one link. Guests sign up without an account, and it closes once it's full."
     }
   },
   "linkAnalytics": {

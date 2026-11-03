@@ -24,6 +24,7 @@ type Props = {
    * drifts from what visitors will actually see.
    */
   entries: PublicProfileEntry[];
+  framed?: boolean;
 };
 
 const SITE_URL =
@@ -53,11 +54,65 @@ export function ProfilePreview({
   bannerUrl,
   socials,
   entries,
+  framed = true,
 }: Props) {
   const t = useTranslations("publicProfile");
   const tEditor = useTranslations("settings.profile");
   const colors = THEME_TABLE[theme ?? "default"];
   const displayUsername = username || tEditor("previewUsernamePlaceholder");
+
+  const screen = (
+    <div className="mx-auto w-full max-w-md px-4 py-6">
+      <ProfileHeader
+        headingLevel="h2"
+        username={displayUsername}
+        bio={bio || null}
+        avatarUrl={avatarUrl}
+        bannerUrl={bannerUrl}
+        colors={colors}
+      />
+      <EntryList
+        entries={entries}
+        username={displayUsername}
+        colors={colors}
+        emptyLabel={t("empty")}
+      />
+      {(socials.length > 0 || entries.length > 0) && (
+        <ShareRow
+          url={`${SITE_URL}/u/${displayUsername}`}
+          username={displayUsername}
+          colors={colors}
+          socials={socials}
+          qrFilename={`${displayUsername}.png`}
+          labels={{
+            visitOn: {
+              x: t("visit.x"),
+              line: t("visit.line"),
+              threads: t("visit.threads"),
+              facebook: t("visit.facebook"),
+              kakao: t("visit.kakao"),
+              instagram: t("visit.instagram"),
+              linkedin: t("visit.linkedin"),
+            },
+            shareMore: t("share.more"),
+            copy: t("share.copy"),
+            copied: t("share.copied"),
+          }}
+        />
+      )}
+      <div className="mt-6 flex justify-center">
+        <MadeWithKurl tone={{ text: colors.muted, strong: colors.primary, border: colors.cardBorder }} />
+      </div>
+    </div>
+  );
+
+  if (!framed) {
+    return (
+      <div className={colors.page} style={colors.pageBgHex ? { backgroundColor: colors.pageBgHex } : undefined}>
+        {screen}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -104,48 +159,7 @@ export function ProfilePreview({
                   same way the real iOS device does. */}
               <div aria-hidden className="h-10 w-full" />
 
-              {/* Body: identical to /u/[username]/page.tsx — ProfileHeader + EntryList + ShareRow. */}
-              <div className="mx-auto w-full max-w-md px-4 py-6">
-                <ProfileHeader
-                  headingLevel="h2"
-                  username={displayUsername}
-                  bio={bio || null}
-                  avatarUrl={avatarUrl}
-                  bannerUrl={bannerUrl}
-                  colors={colors}
-                />
-                <EntryList
-                  entries={entries}
-                  username={displayUsername}
-                  colors={colors}
-                  emptyLabel={t("empty")}
-                />
-                {(socials.length > 0 || entries.length > 0) && (
-                  <ShareRow
-                    url={`${SITE_URL}/u/${displayUsername}`}
-                    username={displayUsername}
-                    colors={colors}
-                    socials={socials}
-                    labels={{
-                      visitOn: {
-                        x: t("visit.x"),
-                        line: t("visit.line"),
-                        threads: t("visit.threads"),
-                        facebook: t("visit.facebook"),
-                        kakao: t("visit.kakao"),
-                        instagram: t("visit.instagram"),
-                        linkedin: t("visit.linkedin"),
-                      },
-                      shareMore: t("share.more"),
-                      copy: t("share.copy"),
-                      copied: t("share.copied"),
-                    }}
-                  />
-                )}
-                <div className="mt-6 flex justify-center">
-                  <MadeWithKurl tone={{ text: colors.muted, strong: colors.primary, border: colors.cardBorder }} />
-                </div>
-              </div>
+              {screen}
             </div>
           </div>
           <div className="device-stripe" />

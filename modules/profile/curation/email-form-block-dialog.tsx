@@ -1,6 +1,5 @@
 "use client";
 
-import { ExternalLink, Info } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { blogHref } from "@/lib/host";
 import { ConfirmDialog } from "@/components/ui/dialog";
@@ -80,19 +79,14 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
       }}
     >
       <div className="space-y-3">
-        <div className="flex items-start gap-2 rounded-md border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] text-sky-900">
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          <div className="space-y-0.5">
-            <p>{t("emailFormHowItWorks")}</p>
-            <a
-              href={blogHref("/leads")}
-              className="inline-flex items-center gap-0.5 font-medium underline-offset-2 hover:underline"
-            >
-              {t("emailFormViewLeadsCta")}
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
-        </div>
+        {initialJson && (
+          <a
+            href={blogHref("/leads")}
+            className="focus-ring inline-flex min-h-11 items-center rounded-sm text-sm font-medium text-slate-700 underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-500 dark:text-slate-300 dark:decoration-slate-600"
+          >
+            {t("emailFormViewLeadsCta")}
+          </a>
+        )}
 
         <FormField label={t("emailFormFieldTitle")} required>
           <Input
@@ -111,7 +105,6 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
             onChange={(e) => setConfig((c) => ({ ...c, subtitle: e.target.value }))}
             placeholder={t("emailFormFieldSubtitlePlaceholder")}
           />
-          <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">{t("emailFormFieldSubtitleHint")}</p>
         </FormField>
         <FormField label={t("emailFormFieldPlaceholder")}>
           <Input

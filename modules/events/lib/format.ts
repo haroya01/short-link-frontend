@@ -129,27 +129,6 @@ function zoneOffsetMs(date: Date, timeZone: string): number {
   return asUtc - date.getTime();
 }
 
-/** 확인 화면의 "캘린더에 추가" — .ics 없이 링크만으로 되는 Google Calendar 템플릿 URL. */
-export function googleCalendarUrl(event: {
-  title: string;
-  startsAt: string;
-  endsAt: string | null;
-  locationText: string | null;
-  onlineUrl: string | null;
-}): string {
-  const basic = (iso: string) => iso.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  const endIso =
-    event.endsAt ?? new Date(new Date(event.startsAt).getTime() + 2 * 3600_000).toISOString();
-  const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: event.title,
-    dates: `${basic(event.startsAt)}/${basic(endIso)}`,
-  });
-  const location = event.locationText ?? event.onlineUrl;
-  if (location) params.set("location", location);
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
-}
-
 function safeZone(timezone: string): string {
   try {
     new Intl.DateTimeFormat("en-US", { timeZone: timezone });
