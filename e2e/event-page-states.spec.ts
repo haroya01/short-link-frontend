@@ -63,3 +63,13 @@ test("an empty submit puts each error right under its own field and focuses the 
   await name.fill("김도현");
   await expect(page.locator("#ev-name-error")).toHaveCount(0);
 });
+
+test("the page hydrates without a text mismatch, so the pre-paint flags on <html> survive", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/ko/e/mock-open");
+  await expect(register(page)).toBeEnabled();
+  await page.waitForTimeout(500);
+  await expect(page.locator("html")).toHaveAttribute("data-js", "");
+  expect(errors.filter((message) => /#4(18|23|25)\b|hydrat/i.test(message))).toEqual([]);
+});

@@ -123,6 +123,16 @@ test.describe("phone", () => {
 });
 
 test.describe("signed out", () => {
+  test("the intro hydrates without a text mismatch, so the pre-paint flags on <html> survive", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.goto("/ko/events");
+    await expect(page.getByRole("link", { name: "로그인하고 시작하기" })).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(page.locator("html")).toHaveAttribute("data-js", "");
+    expect(errors.filter((message) => /#4(18|23|25)\b|hydrat/i.test(message))).toEqual([]);
+  });
+
   test("the events intro shows the real participant page and the real analytics panel", async ({ page }) => {
     await page.goto("/ko/events");
     await expect(page.getByRole("heading", { level: 1, name: "모임 신청을 링크로 받아요" })).toBeVisible();
