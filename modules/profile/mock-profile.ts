@@ -20,6 +20,7 @@ function link(
     originalUrl: url,
     ogTitle: title,
     ogImage: null,
+    clickCount: null,
     highlighted,
     protected: false,
     content: null,
@@ -48,6 +49,7 @@ function featuredEvent(): PublicProfileEntry {
     originalUrl: null,
     ogTitle: null,
     ogImage: null,
+    clickCount: null,
     highlighted: true,
     content: JSON.stringify({ title: "주말 스터디 모집", startsAt: "2099-10-12T10:00:00+09:00", location: "성수" }),
   };

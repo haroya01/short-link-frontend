@@ -4119,6 +4119,8 @@
       "submit": "신청하기",
       "submitting": "신청 중…",
       "successTitle": "신청했어요",
+      "alreadyRegisteredTitle": "이미 신청했어요",
+      "registerAnother": "다른 사람도 신청하기",
       "successBodyEmail": "확인 메일을 보냈어요. 참석이 어려워지면 메일 속 링크로 취소할 수 있어요.",
       "successBody": "참석이 어려워지면 아래 취소 링크로 취소할 수 있어요. 링크를 꼭 보관해 주세요.",
       "copyCancelLink": "취소 링크 복사",

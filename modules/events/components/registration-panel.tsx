@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
@@ -13,6 +13,7 @@ import type { PublicEvent, RegistrationResult } from "@/modules/events/api/event
 import { registerForEvent } from "@/modules/events/api/events";
 import { googleCalendarUrl } from "@/modules/events/lib/format";
 import type { EventPhase } from "@/modules/events/lib/phase";
+import { rememberRegistration, rememberedRegistration } from "@/modules/events/lib/remembered-registration";
 import { RequiredMark } from "@/components/ui/required-mark";
 
 type Step = "idle" | "submitting" | "done";
@@ -42,10 +43,25 @@ export function RegistrationPanel({
   const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [result, setResult] = useState<RegistrationResult | null>(null);
+  const [remembered, setRemembered] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  useEffect(() => {
+    if (!preview) setRemembered(rememberedRegistration(event.slug));
+  }, [event.slug, preview]);
+
   if (step === "done" && result) {
-    return <SuccessPanel event={event} result={result} />;
+    return <SuccessPanel event={event} cancelToken={result.cancelToken} />;
+  }
+  if (remembered) {
+    return (
+      <SuccessPanel
+        event={event}
+        cancelToken={remembered}
+        returning
+        onRegisterAnother={phase === "open" ? () => setRemembered(null) : undefined}
+      />
+    );
   }
   if (phase !== "open") {
     return <ClosedState message={closedMessage(t, phase)} />;
@@ -88,6 +104,7 @@ export function RegistrationPanel({
     setStep("submitting");
     try {
       const res = await registerForEvent(event.slug, { name, contact, answers });
+      rememberRegistration(event.slug, res.cancelToken);
       setResult(res);
       setStep("done");
       onRegistered?.(res.spotsLeft);
@@ -247,17 +264,27 @@ export function RegistrationPanel({
   );
 }
 
-function SuccessPanel({ event, result }: { event: PublicEvent; result: RegistrationResult }) {
+function SuccessPanel({
+  event,
+  cancelToken,
+  returning = false,
+  onRegisterAnother,
+}: {
+  event: PublicEvent;
+  cancelToken: string;
+  returning?: boolean;
+  onRegisterAnother?: () => void;
+}) {
   const t = useTranslations("events.public");
   const [copied, setCopied] = useState(false);
   const sectionRef = React.useRef<HTMLElement | null>(null);
   React.useEffect(() => {
-    sectionRef.current?.focus();
-  }, []);
+    if (!returning) sectionRef.current?.focus();
+  }, [returning]);
   const cancelUrl =
     typeof window === "undefined"
       ? ""
-      : `${window.location.origin}${window.location.pathname}?cancel=${result.cancelToken}`;
+      : `${window.location.origin}${window.location.pathname}?cancel=${cancelToken}`;
 
   return (
     <section
@@ -268,7 +295,9 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
       aria-atomic="true"
       className={cn(SECTION, "outline-none")}
     >
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">{t("successTitle")}</h2>
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+        {returning ? t("alreadyRegisteredTitle") : t("successTitle")}
+      </h2>
       <p className="mt-2 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
         {event.contactField === "EMAIL" ? t("successBodyEmail") : t("successBody")}
       </p>
@@ -293,6 +322,15 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
           {copied ? t("cancelLinkCopied") : t("copyCancelLink")}
         </button>
       </div>
+      {onRegisterAnother ? (
+        <button
+          type="button"
+          onClick={onRegisterAnother}
+          className="mt-4 text-[14px] font-medium text-slate-600 underline-offset-[3px] hover:underline dark:text-slate-300"
+        >
+          {t("registerAnother")}
+        </button>
+      ) : null}
       <p className="mt-6 text-[14px] text-slate-500 dark:text-slate-400">
         {t("viralHook")}{" "}
         <a

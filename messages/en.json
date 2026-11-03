@@ -4119,6 +4119,8 @@
       "submit": "Register",
       "submitting": "Registering…",
       "successTitle": "You're registered",
+      "alreadyRegisteredTitle": "You're already registered",
+      "registerAnother": "Register someone else",
       "successBodyEmail": "We sent a confirmation email. Use the link inside to cancel if plans change.",
       "successBody": "Keep the cancellation link below in case plans change.",
       "copyCancelLink": "Copy cancellation link",

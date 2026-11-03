@@ -4119,6 +4119,8 @@
       "submit": "Đăng ký",
       "submitting": "Đang gửi…",
       "successTitle": "Bạn đã đăng ký",
+      "alreadyRegisteredTitle": "Bạn đã đăng ký rồi",
+      "registerAnother": "Đăng ký cho người khác",
       "successBodyEmail": "Chúng tôi đã gửi email xác nhận. Dùng liên kết trong email để hủy nếu bận.",
       "successBody": "Hãy lưu liên kết hủy bên dưới phòng khi bạn bận.",
       "copyCancelLink": "Sao chép liên kết hủy",

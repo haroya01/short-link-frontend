@@ -6,13 +6,16 @@ import { Loader2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { cancelRegistration } from "@/modules/events/api/events";
+import { forgetRegistration } from "@/modules/events/lib/remembered-registration";
 
 const SECTION = "mt-8";
 
 export function CancelRegistrationPanel({
+  slug,
   token,
   eventTitle,
 }: {
+  slug: string;
   token: string;
   eventTitle: string;
 }) {
@@ -23,6 +26,7 @@ export function CancelRegistrationPanel({
     setPhase("busy");
     try {
       await cancelRegistration(token);
+      forgetRegistration(slug, token);
       setPhase("done");
     } catch {
       setPhase("error");
