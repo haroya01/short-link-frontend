@@ -3450,10 +3450,11 @@
     },
     "batchCard": {
       "quantityUnit": "{count} tờ",
-      "distributor": "Người phát · {name}",
-      "downloadQr": "Tải QR cho {name}",
-      "edit": "Sửa {name}",
-      "delete": "Xóa {name}"
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "menu": "Menu {name}",
+      "qr": "Tải QR",
+      "open": "Mở liên kết"
     },
     "batchDialogs": {
       "editTitle": "Sửa đợt phát",
@@ -3504,7 +3505,9 @@
       "cancel": "Hủy",
       "creating": "Đang tạo...",
       "submit": "Tạo chiến dịch QR",
-      "leaveConfirm": "Rời đi mà không lưu? Nội dung bạn đã nhập sẽ bị mất."
+      "leaveConfirm": "Rời đi mà không lưu? Nội dung bạn đã nhập sẽ bị mất.",
+      "messageLabel": "Thông điệp trang kết thúc",
+      "redirectLabel": "URL chuyển đến sau khi kết thúc"
     },
     "detail": {
       "loadFailed": "Tải thất bại",
@@ -3519,46 +3522,47 @@
       "confirmArchiveDesc": "Nó sẽ bị ẩn khỏi danh sách, nhưng dữ liệu vẫn còn nguyên.",
       "archived": "Đã lưu trữ chiến dịch QR",
       "archiveFailed": "Lưu trữ thất bại",
-      "cancel": "Hủy",
       "actions": {
         "stats": "Thống kê",
         "endNow": "Kết thúc ngay",
         "reapply": "Áp dụng lại chính sách kết thúc",
-        "archive": "Lưu trữ"
+        "archive": "Lưu trữ",
+        "more": "Thêm"
       },
       "prepare": {
-        "eyebrow": "Chuẩn bị phát",
-        "title": "Tài nguyên cho nhà in và Canva",
-        "description": "Mã QR và siêu dữ liệu cho {count} đợt. Thả chúng vào áp phích hoặc tờ rơi trước khi đặt in.",
+        "title": "Chuẩn bị in",
         "printSheet": "Trang A4",
         "posterBuilder": "Thêm QR vào áp phích",
         "qrZip": "QR ZIP",
         "batchCsv": "CSV theo đợt"
       },
       "policy": {
-        "eyebrow": "Sau khi chiến dịch kết thúc",
         "keep": "Giữ nguyên",
         "expire": "Hiện trang hết hạn",
         "redirect": "Chuyển hướng nơi khác",
-        "savedEnded": "Đã lưu thông báo. Dùng áp dụng lại chính sách kết thúc để đẩy nó tới QR đã in.",
-        "saved": "Đã lưu thông báo trang hết hạn",
-        "saveFailed": "Lưu thất bại",
         "messageLabel": "Thông báo trang hết hạn",
-        "edit": "Sửa",
-        "add": "Thêm",
-        "messagePlaceholder": "ví dụ: Chiến dịch này đã kết thúc. Hẹn gặp ở sự kiện tiếp theo vào tháng Mười Hai.",
-        "saving": "Đang lưu...",
-        "save": "Lưu",
         "defaultMessageHint": "Để trống thông báo để hiện thông báo mặc định.",
-        "defaultDestination": "URL đích mặc định · {url}"
+        "defaultDestination": "URL đích mặc định",
+        "heading": "Sau khi kết thúc",
+        "title": "Hành vi",
+        "redirectLabel": "Chuyển đến"
       },
       "batches": {
         "title": "Các đợt phát",
-        "description": "Một đơn vị phát in dùng cùng một QR. Chia theo người phát hoặc khu vực để phân tích có ý nghĩa.",
         "add": "Thêm đợt",
         "emptyTitle": "Chưa có đợt phát nào"
       },
-      "csvFailed": "Tải CSV thất bại"
+      "csvFailed": "Tải CSV thất bại",
+      "settings": {
+        "open": "Cài đặt",
+        "title": "Cài đặt chiến dịch",
+        "save": "Lưu",
+        "saved": "Đã lưu cài đặt chiến dịch",
+        "savedEnded": "Đã lưu. Hãy áp dụng lại chính sách kết thúc để cập nhật QR đã in.",
+        "saveFailed": "Không lưu được. Hãy thử lại.",
+        "defaultUrlHint": "Đổi URL này không ảnh hưởng các đợt đã tạo."
+      },
+      "statsFailed": "Không tải được số liệu"
     },
     "batchesNew": {
       "loadFailed": "Tải thất bại",
@@ -3583,7 +3587,9 @@
       "placeholders": {
         "name": "ví dụ: Ga Shinjuku cửa Đông",
         "distributor": "A hoặc tên người phát",
-        "defaultValue": "(mặc định)"
+        "defaultValue": "(mặc định)",
+        "quantity": "ví dụ: 500",
+        "area": "ví dụ: Shinjuku Đông"
       },
       "hints": {
         "defaultOptional": "Để trống sẽ dùng mặc định",
@@ -3666,10 +3672,7 @@
       "loading": "Đang tải...",
       "groups": {
         "distributorTitle": "Hiệu quả theo người phát",
-        "distributorHint": "Lượt nhấp trên 100 tờ, nên có thể so sánh các người phát ngay cả khi số lượng khác nhau.",
-        "areaTitle": "Hiệu quả theo khu vực",
-        "areaHint": "Dùng cái này để quyết định nơi phát tiếp theo.",
-        "meta": "lượt nhấp {clicks} · {quantity} tờ"
+        "areaTitle": "Hiệu quả theo khu vực"
       },
       "compare": {
         "title": "So sánh với chiến dịch khác",
@@ -3694,7 +3697,6 @@
       },
       "recommendation": {
         "title": "Gợi ý phát đợt tiếp theo",
-        "description": "Phân phối lại cùng tổng {total} tờ. Trung bình là {average} lượt / 100 tờ.",
         "footnote": "Gợi ý dựa trên tỷ lệ hiệu suất. Dưới 30% mức trung bình bị cắt; phần còn lại được phân bổ lại theo tỷ lệ, giới hạn 3 lần mỗi đợt.",
         "verdict": {
           "BOOST": "Tăng",
@@ -3704,31 +3706,25 @@
         },
         "rowMeta": "{current} → {recommended} tờ · {rate} lượt / 100 tờ",
         "tooFewBatches": "Gợi ý sẽ hiện khi có từ {minimum} đợt trở lên. Hiện có {current}.",
-        "tooFewClicks": "Gợi ý sẽ hiện sau {minimum} lượt nhấp của người. Hiện có {current}."
+        "tooFewClicks": "Gợi ý sẽ hiện sau {minimum} lượt nhấp của người. Hiện có {current}.",
+        "aside": "{total} tờ · TB {average} mỗi 100"
       },
       "daily": {
-        "title": "Lượt nhấp hằng ngày",
-        "description": "Kể từ khi chiến dịch bắt đầu · {tz}"
+        "title": "Lượt nhấp hằng ngày"
       },
       "hourly": {
-        "title": "Lượt nhấp theo giờ",
-        "description": "{tz}",
-        "tooltip": "{hour}:00: {clicks}"
+        "title": "Lượt nhấp theo giờ"
       },
       "heatmap": {
-        "title": "Phân bố thứ × giờ",
-        "description": "{tz}"
+        "title": "Phân bố thứ × giờ"
       },
       "testScans": {
-        "title": "Quét thử trước khi bắt đầu",
-        "description": "<strong>{count}</strong> trước khi chiến dịch bắt đầu. Đã loại khỏi tổng phân tích.",
-        "last": "Lần thử cuối · {date}"
+        "note": "Đã loại {count} lượt quét thử trước khi bắt đầu."
       },
       "byBatch": {
-        "empty": "Chưa có đợt phát nào. Hiệu quả từng đợt hiện ở đây sau khi bạn thêm một đợt.",
+        "empty": "Chưa có đợt nào",
         "title": "Hiệu quả theo đợt",
-        "description": "Sắp xếp theo lượt nhấp giảm dần. Các thanh tương đối so với dòng cao nhất.",
-        "meta": "/ {quantity} tờ · {rate} lượt / 100 tờ"
+        "add": "Thêm đợt"
       }
     }
   },
@@ -3745,7 +3741,6 @@
     "loadFailed": "Không tải được chiến dịch QR.",
     "newCampaign": "Chiến dịch QR mới",
     "batchCount": "{count} đợt",
-    "details": "Chi tiết",
     "onboarding": {
       "title": "Mỗi lô tờ rơi một mã QR riêng để so sánh",
       "body": "Tạo mã QR riêng cho từng khu vực, người phát và lô, rồi xem lô nào có nhiều lượt nhấp. Dùng các con số đó để chọn nơi phát lần sau.",

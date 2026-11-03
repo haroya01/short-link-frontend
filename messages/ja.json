@@ -1935,7 +1935,7 @@
       "trendUp": "直近7日のクリックはその前の7日より{percent}%増えました({count}クリック)",
       "trendDown": "直近7日のクリックはその前の7日より{percent}%減りました({count}クリック)",
       "peakDay": "{date}が1日{count}クリックで最多でした",
-      "topSource": "{host}が流入の{percent}%を連れてきました",
+      "topSource": "流入の{percent}%は{host}からです",
       "peakHour": "1日の中では{hour}時がいちばん賑わいます",
       "returning": "訪れた人の{percent}%が戻ってきました",
       "returningRecent": "直近{days}日に訪れた人の{percent}%が戻ってきました",
@@ -3450,10 +3450,11 @@
     },
     "batchCard": {
       "quantityUnit": "{count}部",
-      "distributor": "配布担当 · {name}",
-      "downloadQr": "{name}の QR をダウンロード",
-      "edit": "{name}を編集",
-      "delete": "{name}を削除"
+      "edit": "編集",
+      "delete": "削除",
+      "menu": "{name}のメニュー",
+      "qr": "QR をダウンロード",
+      "open": "リンクを開く"
     },
     "batchDialogs": {
       "editTitle": "配布先を編集",
@@ -3504,7 +3505,9 @@
       "cancel": "キャンセル",
       "creating": "作成中…",
       "submit": "QR キャンペーンを作成",
-      "leaveConfirm": "保存せずに移動しますか？入力した内容は失われます。"
+      "leaveConfirm": "保存せずに移動しますか？入力した内容は失われます。",
+      "messageLabel": "終了ページのメッセージ",
+      "redirectLabel": "終了後の移動先 URL"
     },
     "detail": {
       "loadFailed": "読み込みに失敗しました",
@@ -3519,46 +3522,47 @@
       "confirmArchiveDesc": "一覧から非表示になりますが、データは保持されます。",
       "archived": "QR キャンペーンをアーカイブしました",
       "archiveFailed": "アーカイブに失敗しました",
-      "cancel": "キャンセル",
       "actions": {
         "stats": "分析",
         "endNow": "今すぐ終了",
         "reapply": "終了ポリシーを再適用",
-        "archive": "アーカイブ"
+        "archive": "アーカイブ",
+        "more": "その他"
       },
       "prepare": {
-        "eyebrow": "配布準備",
-        "title": "印刷所・Canva に渡す素材",
-        "description": "{count}件の配布先の QR コードとメタ情報。ポスターやチラシに配置して発注できます。",
+        "title": "印刷の準備",
         "printSheet": "A4 シート",
         "posterBuilder": "ポスターに QR",
         "qrZip": "QR ZIP",
         "batchCsv": "配布先 CSV"
       },
       "policy": {
-        "eyebrow": "終了後の動作",
         "keep": "そのまま維持",
         "expire": "終了ページを表示",
         "redirect": "別ページへ自動転送",
-        "savedEnded": "メッセージを保存しました。印刷済み QR に反映するには終了ポリシーを再適用してください。",
-        "saved": "終了ページメッセージを保存しました",
-        "saveFailed": "保存に失敗しました",
         "messageLabel": "終了ページメッセージ",
-        "edit": "編集",
-        "add": "追加",
-        "messagePlaceholder": "例：このキャンペーンは終了しました。次回イベントは12月です。",
-        "saving": "保存中…",
-        "save": "保存",
         "defaultMessageHint": "メッセージを空にすると標準案内文が表示されます。",
-        "defaultDestination": "デフォルトのリンク先URL · {url}"
+        "defaultDestination": "デフォルトのリンク先URL",
+        "heading": "終了後",
+        "title": "動作",
+        "redirectLabel": "移動先"
       },
       "batches": {
         "title": "配布先",
-        "description": "同じ QR を印刷したチラシを配る先です。配布担当やエリアごとに分けると、反響を比べられます。",
         "add": "配布先を追加",
         "emptyTitle": "配布先はまだありません"
       },
-      "csvFailed": "CSVのダウンロードに失敗しました"
+      "csvFailed": "CSVのダウンロードに失敗しました",
+      "settings": {
+        "open": "設定",
+        "title": "キャンペーン設定",
+        "save": "保存",
+        "saved": "キャンペーン設定を保存しました",
+        "savedEnded": "保存しました。印刷済み QR に反映するには終了ポリシーを再適用してください。",
+        "saveFailed": "保存できませんでした。もう一度お試しください。",
+        "defaultUrlHint": "変更しても、作成済みの配布先のリンク先はそのままです。"
+      },
+      "statsFailed": "数値を読み込めませんでした"
     },
     "batchesNew": {
       "loadFailed": "読み込みに失敗しました",
@@ -3583,7 +3587,9 @@
       "placeholders": {
         "name": "例：新宿駅東口",
         "distributor": "A または配布担当名",
-        "defaultValue": "(デフォルト)"
+        "defaultValue": "(デフォルト)",
+        "quantity": "例：500",
+        "area": "例：新宿東口"
       },
       "hints": {
         "defaultOptional": "空ならデフォルト使用",
@@ -3666,10 +3672,7 @@
       "loading": "読み込み中…",
       "groups": {
         "distributorTitle": "配布担当別の反響",
-        "distributorHint": "100部あたりの反響なので、配布部数が違っても比べられます。",
-        "areaTitle": "エリア別の反響",
-        "areaHint": "次の配布エリアを決める目安です。",
-        "meta": "反響{clicks}件 · {quantity}部"
+        "areaTitle": "エリア別の反響"
       },
       "compare": {
         "title": "他キャンペーンと比較",
@@ -3694,7 +3697,6 @@
       },
       "recommendation": {
         "title": "次回配布のおすすめ",
-        "description": "いまの合計{total}部を同じ総量で配り直します。平均は100部あたり{average}件です。",
         "footnote": "反響率をもとにしたおすすめです。平均の30%未満の配布先は外し、残りを反響率に応じて配り直します (配布先ごとに最大3倍)。",
         "verdict": {
           "BOOST": "増やす",
@@ -3704,31 +3706,25 @@
         },
         "rowMeta": "{current} → {recommended}部 · 100部あたり{rate}件",
         "tooFewBatches": "配布先が{minimum}件以上になるとおすすめを表示します。いまは{current}件です。",
-        "tooFewClicks": "反響が{minimum}件以上になるとおすすめを表示します。いまは{current}件です。"
+        "tooFewClicks": "反響が{minimum}件以上になるとおすすめを表示します。いまは{current}件です。",
+        "aside": "計{total}部 · 平均100部あたり{average}件"
       },
       "daily": {
-        "title": "日別の反響",
-        "description": "キャンペーン開始以降 · {tz}"
+        "title": "日別の反響"
       },
       "hourly": {
-        "title": "時間帯別の反響",
-        "description": "{tz}",
-        "tooltip": "{hour}時：{clicks}件"
+        "title": "時間帯別の反響"
       },
       "heatmap": {
-        "title": "曜日 × 時間帯分布",
-        "description": "{tz}"
+        "title": "曜日 × 時間帯分布"
       },
       "testScans": {
-        "title": "開始前テストスキャン",
-        "description": "<strong>{count}回</strong>: キャンペーン開始前のスキャンのため、分析の合計から除外されます。",
-        "last": "最後のテスト · {date}"
+        "note": "開始前のテストスキャン{count}回は除いています。"
       },
       "byBatch": {
         "empty": "配布先はまだありません",
         "title": "配布先別の反響",
-        "description": "反響の多い順。バーは最大値に対する割合です。",
-        "meta": "/ {quantity}部 · 100部あたり{rate}件"
+        "add": "配布先を追加"
       }
     }
   },
@@ -3745,7 +3741,6 @@
     "loadFailed": "QRキャンペーンを読み込めませんでした。",
     "newCampaign": "新しいQRキャンペーン",
     "batchCount": "{count}件の配布先",
-    "details": "詳細",
     "onboarding": {
       "title": "チラシの配布先ごとに別の QR で反響を比べる",
       "body": "エリアや配布担当ごとに別の QR を付けて配り、どこの反響が多かったかを見ます。次の配布エリアはその数字で決められます。",

@@ -3450,10 +3450,11 @@
     },
     "batchCard": {
       "quantityUnit": "{count}장",
-      "distributor": "배포자 · {name}",
-      "downloadQr": "{name} QR 다운로드",
-      "edit": "{name} 편집",
-      "delete": "{name} 삭제"
+      "edit": "편집",
+      "delete": "삭제",
+      "menu": "{name} 메뉴",
+      "qr": "QR 내려받기",
+      "open": "링크 열기"
     },
     "batchDialogs": {
       "editTitle": "배포 묶음 편집",
@@ -3504,7 +3505,9 @@
       "cancel": "취소",
       "creating": "만드는 중…",
       "submit": "QR 캠페인 만들기",
-      "leaveConfirm": "저장하지 않고 나갈까요? 입력한 내용이 사라져요."
+      "leaveConfirm": "저장하지 않고 나갈까요? 입력한 내용이 사라져요.",
+      "messageLabel": "만료 페이지 메시지",
+      "redirectLabel": "끝난 뒤 보낼 주소"
     },
     "detail": {
       "loadFailed": "불러오지 못했어요",
@@ -3519,46 +3522,47 @@
       "confirmArchiveDesc": "목록에서는 숨겨지지만 데이터는 그대로 남아요.",
       "archived": "QR 캠페인을 보관했어요",
       "archiveFailed": "보관하지 못했어요. 다시 시도해 주세요.",
-      "cancel": "취소",
       "actions": {
         "stats": "분석",
         "endNow": "지금 종료",
         "reapply": "종료 정책 다시 적용",
-        "archive": "보관"
+        "archive": "보관",
+        "more": "더 보기"
       },
       "prepare": {
-        "eyebrow": "배포 준비",
-        "title": "인쇄소 · Canva에 넘길 자산",
-        "description": "묶음 {count}개의 QR 코드와 메타 표예요. 디자인 도구에서 포스터·전단지에 넣어 발주하세요.",
+        "title": "인쇄 준비",
         "printSheet": "A4 시트",
         "posterBuilder": "포스터에 QR",
         "qrZip": "QR ZIP",
         "batchCsv": "묶음 CSV"
       },
       "policy": {
-        "eyebrow": "종료 후 동작",
         "keep": "그대로 유지",
         "expire": "만료 페이지로",
         "redirect": "다른 페이지로 자동 전환",
-        "savedEnded": "메시지를 저장했어요. 인쇄된 QR에는 '종료 정책 다시 적용'을 눌러야 반영돼요.",
-        "saved": "만료 페이지 메시지를 저장했어요",
-        "saveFailed": "저장하지 못했어요. 다시 시도해 주세요.",
         "messageLabel": "만료 페이지 메시지",
-        "edit": "수정",
-        "add": "추가",
-        "messagePlaceholder": "예: 캠페인이 종료됐어요. 다음 이벤트는 12월에 만나요.",
-        "saving": "저장 중…",
-        "save": "저장",
         "defaultMessageHint": "메시지를 비워 두면 기본 안내문이 나와요.",
-        "defaultDestination": "기본 목적지 URL · {url}"
+        "defaultDestination": "기본 목적지 URL",
+        "heading": "종료 후",
+        "title": "동작",
+        "redirectLabel": "보낼 주소"
       },
       "batches": {
         "title": "배포 묶음",
-        "description": "QR 한 개를 여러 장 인쇄해서 배포한 한 단위. 배포자·지역별로 나눠야 분석이 의미 있어요.",
         "add": "배포 묶음 추가",
         "emptyTitle": "아직 배포 묶음이 없어요"
       },
-      "csvFailed": "CSV를 내려받지 못했어요. 다시 시도해 주세요."
+      "csvFailed": "CSV를 내려받지 못했어요. 다시 시도해 주세요.",
+      "settings": {
+        "open": "설정",
+        "title": "캠페인 설정",
+        "save": "저장",
+        "saved": "캠페인 설정을 저장했어요",
+        "savedEnded": "저장했어요. 인쇄된 QR에는 '종료 정책 다시 적용'을 눌러야 반영돼요.",
+        "saveFailed": "저장하지 못했어요. 다시 시도해 주세요.",
+        "defaultUrlHint": "바꿔도 이미 만든 묶음의 목적지는 그대로예요."
+      },
+      "statsFailed": "숫자를 불러오지 못했어요"
     },
     "batchesNew": {
       "loadFailed": "불러오지 못했어요",
@@ -3582,8 +3586,10 @@
       },
       "placeholders": {
         "name": "예: 신주쿠역 동쪽",
-        "distributor": "A 또는 김배포",
-        "defaultValue": "(기본값)"
+        "distributor": "예: A",
+        "defaultValue": "(기본값)",
+        "quantity": "예: 500",
+        "area": "예: 신주쿠 동쪽"
       },
       "hints": {
         "defaultOptional": "비우면 기본값 사용",
@@ -3666,10 +3672,7 @@
       "loading": "불러오는 중…",
       "groups": {
         "distributorTitle": "배포자별 성과",
-        "distributorHint": "100장당 클릭 비율이라 수량이 다른 배포자끼리도 효율을 비교할 수 있어요.",
-        "areaTitle": "지역별 성과",
-        "areaHint": "다음에 어디에 뿌릴지 정하는 기준이에요.",
-        "meta": "클릭 {clicks} · {quantity}장"
+        "areaTitle": "지역별 성과"
       },
       "compare": {
         "title": "다른 캠페인과 비교",
@@ -3694,7 +3697,6 @@
       },
       "recommendation": {
         "title": "다음 배포 추천",
-        "description": "지금 총 {total}장을 같은 양으로 다시 나눠요. 평균은 100장당 {average}회예요.",
         "footnote": "효율 비율로 추천해요. 평균의 30% 미만은 빼고, 나머지는 비율대로 다시 나눠요(한 묶음 최대 3배).",
         "verdict": {
           "BOOST": "늘리기",
@@ -3704,31 +3706,25 @@
         },
         "rowMeta": "{current} → {recommended}장 · 100장당 {rate}회",
         "tooFewBatches": "배포 묶음이 {minimum}개 이상이면 추천이 나와요. 지금 {current}개예요.",
-        "tooFewClicks": "사람 클릭이 {minimum}회 이상이면 추천이 나와요. 지금 {current}회예요."
+        "tooFewClicks": "사람 클릭이 {minimum}회 이상이면 추천이 나와요. 지금 {current}회예요.",
+        "aside": "총 {total}장 · 평균 100장당 {average}회"
       },
       "daily": {
-        "title": "일별 클릭",
-        "description": "캠페인 시작 이후 · {tz}"
+        "title": "일별 클릭"
       },
       "hourly": {
-        "title": "시간대별 클릭",
-        "description": "{tz}",
-        "tooltip": "{hour}시: {clicks}"
+        "title": "시간대별 클릭"
       },
       "heatmap": {
-        "title": "요일 × 시간대 분포",
-        "description": "{tz}"
+        "title": "요일 × 시간대 분포"
       },
       "testScans": {
-        "title": "시작 전 테스트 스캔",
-        "description": "<strong>{count}회</strong>: 캠페인 시작 전 스캔이라 분석 합계에서 빠져요.",
-        "last": "마지막 테스트 · {date}"
+        "note": "시작 전 테스트 스캔 {count}회는 빠졌어요."
       },
       "byBatch": {
-        "empty": "아직 배포 묶음이 없어요. 추가하면 여기에 묶음별 성과가 나와요.",
+        "empty": "아직 배포 묶음이 없어요",
         "title": "묶음별 성과",
-        "description": "클릭 수 내림차순. 막대는 최대값 대비 상대 비율.",
-        "meta": "/ {quantity}장 · 100장당 {rate}회"
+        "add": "배포 묶음 추가"
       }
     }
   },
@@ -3745,7 +3741,6 @@
     "loadFailed": "QR 캠페인을 불러오지 못했어요.",
     "newCampaign": "새 QR 캠페인",
     "batchCount": "{count}개 묶음",
-    "details": "자세히",
     "onboarding": {
       "title": "전단지마다 다른 QR로 반응을 비교해요",
       "body": "지역·배포자·묶음마다 QR을 따로 만들어 뿌리고, 어느 묶음에서 클릭이 많았는지 봐요. 다음 배포 위치는 그 숫자로 정하면 돼요.",

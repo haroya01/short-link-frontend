@@ -275,34 +275,14 @@ function DestinationHint({
   defaultDestinationUrl: string | null;
 }) {
   const t = useTranslations("campaignApp.batchesNew");
-  if (defaultDestinationUrl) {
-    return (
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
-        <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
-          {t.rich("defaultUrlActive", {
-            strong: (chunks) => (
-              <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>
-            ),
-            code: () => (
-              <code className="rounded bg-white dark:bg-slate-900 px-1 py-0.5 text-[11px]">
-                {defaultDestinationUrl}
-              </code>
-            ),
-          })}
-        </p>
-      </div>
-    );
-  }
   return (
-    <div className="rounded-2xl border border-amber-200 dark:border-amber-500/30 bg-amber-50/60 px-4 py-3">
-      <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
-        {t.rich("defaultUrlMissing", {
-          strong: (chunks) => (
-            <span className="font-medium text-amber-800 dark:text-amber-300">{chunks}</span>
-          ),
-        })}
-      </p>
-    </div>
+    <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+      {defaultDestinationUrl
+        ? t.rich("defaultUrlActive", {
+            code: () => <code className="break-all font-mono text-[12px] text-slate-700 dark:text-slate-300">{defaultDestinationUrl}</code>,
+          })
+        : t("defaultUrlMissing")}
+    </p>
   );
 }
 
@@ -405,7 +385,7 @@ function RowItem({
           <Input
             value={row.area}
             onChange={(e) => onUpdate({ area: e.target.value })}
-            placeholder="Shinjuku East"
+            placeholder={t("placeholders.area")}
           />
         </Cell>
         <Cell label={t("fields.quantity")} required error={errors.quantity ? t(`errors.${errors.quantity}`) : undefined}>
@@ -418,7 +398,7 @@ function RowItem({
             onChange={(e) => onUpdate({ quantity: e.target.value })}
             onBlur={() => onTouch("quantity")}
             aria-invalid={errors.quantity ? true : undefined}
-            placeholder="500"
+            placeholder={t("placeholders.quantity")}
             className={errors.quantity ? "border-rose-400 focus-visible:ring-rose-400" : undefined}
           />
         </Cell>

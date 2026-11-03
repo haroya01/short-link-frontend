@@ -8,6 +8,9 @@ export type CampaignSummary = {
   startsAt: string;
   endsAt: string;
   batchCount: number;
+  endedAt?: string | null;
+  humanClicks?: number;
+  totalQuantity?: number;
 };
 
 export type CampaignDetail = {

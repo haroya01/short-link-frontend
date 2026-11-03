@@ -6,7 +6,9 @@ import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { buttonVariants } from "@/components/ui/button";
-import { GroupChart, KpiRow, RecommendationCard } from "@/components/links/campaigns/stats-cards";
+import { KpiRow, RecommendationList } from "@/components/links/campaigns/stats-cards";
+import { CampaignRows } from "@/components/links/campaigns/campaign-rows";
+import { STAT_HEADING } from "@/components/links/stats/stat-heading";
 import { PromoActions, PromoExample, PromoHero, PromoLines, PromoSection } from "@/components/landing/promo";
 import { MOCK_BY_LOCALE } from "./_lib/mock-data";
 import { exampleCampaign } from "./_lib/example-stats";
@@ -65,11 +67,17 @@ export default function QrCampaignsLandingPage() {
             <KpiRow stats={stats} batchCount={stats.byBatch.length} />
           </div>
           <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
-            <div data-section-idx={2}>
-              <GroupChart title={tStats("groups.areaTitle")} hint={tStats("groups.areaHint")} groups={stats.byArea} />
-            </div>
+            <section data-section-idx={2}>
+              <h2 className={STAT_HEADING}>{tStats("groups.areaTitle")}</h2>
+              <div className="mt-3">
+                <CampaignRows
+                  total={stats.totalClicks}
+                  rows={stats.byArea.map((g) => ({ key: g.key, label: g.key, clicks: g.clicks, quantity: g.totalQuantity }))}
+                />
+              </div>
+            </section>
             <div data-section-idx={3}>
-              <RecommendationCard data={recommendation} />
+              <RecommendationList data={recommendation} />
             </div>
           </div>
         </PromoExample>

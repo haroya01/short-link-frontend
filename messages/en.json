@@ -3450,10 +3450,11 @@
     },
     "batchCard": {
       "quantityUnit": "{count} sheets",
-      "distributor": "Distributor · {name}",
-      "downloadQr": "Download QR for {name}",
-      "edit": "Edit {name}",
-      "delete": "Delete {name}"
+      "edit": "Edit",
+      "delete": "Delete",
+      "menu": "{name} menu",
+      "qr": "Download QR",
+      "open": "Open link"
     },
     "batchDialogs": {
       "editTitle": "Edit distribution batch",
@@ -3504,7 +3505,9 @@
       "cancel": "Cancel",
       "creating": "Creating...",
       "submit": "Create QR campaign",
-      "leaveConfirm": "Leave without saving? Your changes will be lost."
+      "leaveConfirm": "Leave without saving? Your changes will be lost.",
+      "messageLabel": "Ended page message",
+      "redirectLabel": "URL to send people to afterward"
     },
     "detail": {
       "loadFailed": "Load failed",
@@ -3519,46 +3522,47 @@
       "confirmArchiveDesc": "It will be hidden from the list, but data stays intact.",
       "archived": "QR campaign archived",
       "archiveFailed": "Failed to archive",
-      "cancel": "Cancel",
       "actions": {
         "stats": "Stats",
         "endNow": "End now",
         "reapply": "Reapply end policy",
-        "archive": "Archive"
+        "archive": "Archive",
+        "more": "More"
       },
       "prepare": {
-        "eyebrow": "Distribution prep",
-        "title": "Assets for print shops and Canva",
-        "description": "QR codes and metadata for {count} batches. Drop them into posters or flyers before ordering print.",
+        "title": "Print prep",
         "printSheet": "A4 sheet",
         "posterBuilder": "Add QR to poster",
         "qrZip": "QR ZIP",
         "batchCsv": "Batch CSV"
       },
       "policy": {
-        "eyebrow": "After campaign ends",
         "keep": "Keep as is",
         "expire": "Show expired page",
         "redirect": "Redirect elsewhere",
-        "savedEnded": "Message saved. Use reapply end policy to push it to printed QRs.",
-        "saved": "Expired-page message saved",
-        "saveFailed": "Failed to save",
         "messageLabel": "Expired-page message",
-        "edit": "Edit",
-        "add": "Add",
-        "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.",
-        "saving": "Saving...",
-        "save": "Save",
         "defaultMessageHint": "Leave the message blank to show the default notice.",
-        "defaultDestination": "Default destination URL · {url}"
+        "defaultDestination": "Default destination URL",
+        "heading": "After it ends",
+        "title": "Behavior",
+        "redirectLabel": "Sends to"
       },
       "batches": {
         "title": "Distribution batches",
-        "description": "One unit of printed distribution using the same QR. Split by distributor or area for meaningful analysis.",
         "add": "Add batch",
         "emptyTitle": "No distribution batches yet"
       },
-      "csvFailed": "CSV download failed"
+      "csvFailed": "CSV download failed",
+      "settings": {
+        "open": "Settings",
+        "title": "Campaign settings",
+        "save": "Save",
+        "saved": "Campaign settings saved",
+        "savedEnded": "Saved. Reapply the end policy to apply it to printed QRs.",
+        "saveFailed": "Couldn't save. Please try again.",
+        "defaultUrlHint": "Changing it doesn't move batches you already made."
+      },
+      "statsFailed": "Couldn't load the numbers"
     },
     "batchesNew": {
       "loadFailed": "Load failed",
@@ -3583,7 +3587,9 @@
       "placeholders": {
         "name": "e.g. Shinjuku Station East",
         "distributor": "A or distributor name",
-        "defaultValue": "(default)"
+        "defaultValue": "(default)",
+        "quantity": "e.g. 500",
+        "area": "e.g. Shinjuku East"
       },
       "hints": {
         "defaultOptional": "Blank uses the default",
@@ -3666,10 +3672,7 @@
       "loading": "Loading...",
       "groups": {
         "distributorTitle": "Performance by distributor",
-        "distributorHint": "Clicks per 100 sheets, so distributors can be compared even when they handed out different amounts.",
-        "areaTitle": "Performance by area",
-        "areaHint": "Use this to decide the next distribution location.",
-        "meta": "clicks {clicks} · {quantity} sheets"
+        "areaTitle": "Performance by area"
       },
       "compare": {
         "title": "Compare with another campaign",
@@ -3694,7 +3697,6 @@
       },
       "recommendation": {
         "title": "Next distribution recommendation",
-        "description": "Redistribute the same total of {total} sheets. The average is {average} per 100 sheets.",
         "footnote": "Recommendation based on efficiency ratios. Under 30% of average is pruned; the rest is reallocated by ratio, capped at 3x per batch.",
         "verdict": {
           "BOOST": "Increase",
@@ -3704,31 +3706,25 @@
         },
         "rowMeta": "{current} → {recommended} sheets · {rate} per 100 sheets",
         "tooFewBatches": "Recommendations appear once there are {minimum} or more batches. There are {current} now.",
-        "tooFewClicks": "Recommendations appear after {minimum} human clicks. There are {current} now."
+        "tooFewClicks": "Recommendations appear after {minimum} human clicks. There are {current} now.",
+        "aside": "{total} sheets · avg {average} per 100"
       },
       "daily": {
-        "title": "Daily clicks",
-        "description": "Since campaign start · {tz}"
+        "title": "Daily clicks"
       },
       "hourly": {
-        "title": "Clicks by hour",
-        "description": "{tz}",
-        "tooltip": "{hour}:00: {clicks}"
+        "title": "Clicks by hour"
       },
       "heatmap": {
-        "title": "Day × hour distribution",
-        "description": "{tz}"
+        "title": "Day × hour distribution"
       },
       "testScans": {
-        "title": "Pre-start test scans",
-        "description": "<strong>{count}</strong> before campaign start. Excluded from analytics totals.",
-        "last": "Last test · {date}"
+        "note": "{count} test scans before the start are left out."
       },
       "byBatch": {
-        "empty": "No distribution batches yet. Batch performance appears here after you add one.",
+        "empty": "No batches yet",
         "title": "Performance by batch",
-        "description": "Sorted by clicks descending. Bars are relative to the max row.",
-        "meta": "/ {quantity} sheets · {rate} per 100 sheets"
+        "add": "Add batch"
       }
     }
   },
@@ -3745,7 +3741,6 @@
     "loadFailed": "Could not load QR campaigns.",
     "newCampaign": "New QR campaign",
     "batchCount": "{count} batches",
-    "details": "Details",
     "onboarding": {
       "title": "Give each flyer batch its own QR and compare",
       "body": "Make a separate QR for each area, distributor, and batch, then see which batch got the clicks. Use those numbers to decide where the next batch goes.",

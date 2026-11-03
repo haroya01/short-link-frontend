@@ -13,6 +13,7 @@ import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignSummary } from "@/types";
 import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
 import { LinksPage } from "@/components/links/links-page";
+import { CampaignRows } from "@/components/links/campaigns/campaign-rows";
 
 export default function CampaignsPage() {
   const t = useTranslations("campaignsApp");
@@ -89,30 +90,34 @@ export default function CampaignsPage() {
 function CampaignList({ items }: { items: CampaignSummary[] }) {
   const t = useTranslations("campaignsApp");
   const locale = useLocale();
+  const withNumbers = items.some((c) => typeof c.humanClicks === "number");
+  const rows = items.map((c) => ({
+    key: c.id,
+    href: `/campaigns/${c.id}`,
+    label: c.name,
+    meta: (
+      <>
+        <CampaignStatusBadge status={c.status} /> {formatPeriod(c.startsAt, c.endedAt ?? c.endsAt, locale)} ·{" "}
+        {t("batchCount", { count: c.batchCount })}
+      </>
+    ),
+    clicks: c.humanClicks ?? null,
+    quantity: c.totalQuantity ?? 0,
+  }));
+  if (withNumbers) return <CampaignRows rows={rows} />;
   return (
-    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((c) => (
-        <li key={c.id}>
-          <Link
-            href={`/campaigns/${c.id}`}
-            className="profile-card group block rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 text-left"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <CampaignStatusBadge status={c.status} />
-              <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                {t("batchCount", { count: c.batchCount })}
-              </span>
-            </div>
-            <h3 className="mt-3 text-sm font-medium leading-snug text-slate-900 dark:text-slate-100 line-clamp-2">
-              {c.name}
-            </h3>
-            <p className="mt-2 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
-              {formatPeriod(c.startsAt, c.endsAt, locale)}
-            </p>
-            <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] font-medium text-slate-900 dark:text-slate-100 opacity-0 transition-opacity group-hover:opacity-100">
-              {t("details")}
-            </div>
-          </Link>
+    <ul data-testid="campaign-rows" className="space-y-4">
+      {rows.map((row) => (
+        <li key={row.key} className="relative">
+          <p data-testid="campaign-row-name" className="truncate text-[14px] text-slate-900 dark:text-slate-100">
+            <Link
+              href={row.href}
+              className="focus-ring rounded-sm font-medium decoration-slate-300 underline-offset-4 after:absolute after:inset-0 hover:underline dark:decoration-slate-600"
+            >
+              {row.label}
+            </Link>
+          </p>
+          <p className="mt-0.5 truncate text-[12px] text-slate-500 dark:text-slate-400">{row.meta}</p>
         </li>
       ))}
     </ul>
@@ -121,15 +126,11 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
 
 function CampaignListSkeleton() {
   return (
-    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <li
-          key={i}
-          className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4"
-        >
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="mt-3 h-5 w-3/4" />
-          <Skeleton className="mt-2 h-3 w-1/2" />
+    <ul className="space-y-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <li key={i}>
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="mt-1.5 h-3 w-64" />
         </li>
       ))}
     </ul>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { Archive, ArrowLeft, CircleStop, ExternalLink, Pencil, QrCode, RotateCcw, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -11,10 +11,10 @@ import {
   campaignBatchesCsvUrl,
   endCampaignNow,
   getCampaign,
+  getCampaignStats,
   listCampaignBatches,
   reapplyCampaignPolicy,
   requestBlob,
-  updateCampaign,
 } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -26,8 +26,15 @@ import { useConfirm } from "@/components/ui/use-confirm";
 import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
 import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
 import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
-import { BatchCard } from "./_components/batch-card";
-import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
+import { ActionMenu, type ActionMenuItem } from "@/components/common/action-menu";
+import { EmptyState } from "@/components/common/empty-state";
+import { STAT_HEADING } from "@/components/links/stats/stat-sections";
+import { CampaignRows } from "@/components/links/campaigns/campaign-rows";
+import { CampaignSettingsDialog } from "@/components/links/campaigns/campaign-settings-dialog";
+import { KpiRow } from "@/components/links/campaigns/stats-cards";
+import { useSectionLoad } from "@/hooks/use-section-load";
+import { cn, formatNumber } from "@/lib/utils";
+import type { CampaignBatch, CampaignDetail, CampaignStats, CampaignStatus } from "@/types";
 import { CampaignStatusBadge } from "@/components/links/campaign-status-badge";
 import { LinksPage } from "@/components/links/links-page";
 
@@ -45,6 +52,9 @@ export default function CampaignDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
   const [pending, setPending] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const enabled = ready && authenticated && Number.isFinite(campaignId);
+  const stats = useSectionLoad(enabled, useCallback(() => getCampaignStats(campaignId), [campaignId]), reload);
 
   useEffect(() => {
     if (!ready) return;
@@ -76,8 +86,21 @@ export default function CampaignDetailPage() {
     return <SignInEmptyState page reason="campaigns" />;
   }
 
+  async function run(action: () => Promise<unknown>, done: string, failed: string) {
+    setPending(true);
+    try {
+      await action();
+      toast(done, "success");
+      setReload((n) => n + 1);
+    } catch (e) {
+      toast(errorMessage(e, failed), "error");
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
-    <LinksPage className="space-y-6">
+    <LinksPage className="space-y-10">
       <Link
         href="/campaigns"
         className="touch-target focus-ring inline-flex items-center gap-1.5 rounded-sm text-[12px] font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
@@ -85,64 +108,48 @@ export default function CampaignDetailPage() {
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
       </Link>
 
-      {/* 로드된 콘텐츠가 있으면 항상 그것을 우선 렌더 — 액션 후 재검증(setReload)에서는 스켈레톤으로
-          갈아끼우지 않고 기존 화면을 유지한 채 백그라운드로 refetch 한다(초기 진입에만 스켈레톤). */}
       {campaign ? (
         <>
-          <Header
-            campaign={campaign}
-            pending={pending}
-            onEndNow={async () => {
-              if (!(await confirm({ title: t("confirmEnd"), description: t("confirmEndDesc"), destructive: true }))) return;
-              setPending(true);
-              try {
-                await endCampaignNow(campaign.id);
-                toast(t("ended"), "success");
-                setReload((n) => n + 1);
-              } catch (e) {
-                toast(errorMessage(e, t("endFailed")), "error");
-              } finally {
-                setPending(false);
-              }
-            }}
-            onReapply={async () => {
-              setPending(true);
-              try {
-                await reapplyCampaignPolicy(campaign.id);
-                toast(t("reapplied"), "success");
-                setReload((n) => n + 1);
-              } catch (e) {
-                toast(errorMessage(e, t("reapplyFailed")), "error");
-              } finally {
-                setPending(false);
-              }
-            }}
-            onArchive={async () => {
-              if (!(await confirm({ title: t("confirmArchive"), description: t("confirmArchiveDesc") }))) return;
-              setPending(true);
-              try {
-                await archiveCampaign(campaign.id);
-                toast(t("archived"), "success");
-                setReload((n) => n + 1);
-              } catch (e) {
-                toast(errorMessage(e, t("archiveFailed")), "error");
-              } finally {
-                setPending(false);
-              }
-            }}
-          />
-
-          <PolicySummary campaign={campaign} onChanged={() => setReload((n) => n + 1)} />
-
-          {(batches ?? []).length > 0 && (
-            <PrepareSection campaignId={campaign.id} batchCount={(batches ?? []).length} />
-          )}
+          <div className="space-y-6">
+            <Header
+              campaign={campaign}
+              pending={pending}
+              onSettings={() => setSettingsOpen(true)}
+              onEndNow={async () => {
+                if (!(await confirm({ title: t("confirmEnd"), description: t("confirmEndDesc"), destructive: true }))) return;
+                await run(() => endCampaignNow(campaign.id), t("ended"), t("endFailed"));
+              }}
+              onReapply={() => run(() => reapplyCampaignPolicy(campaign.id), t("reapplied"), t("reapplyFailed"))}
+              onArchive={async () => {
+                if (!(await confirm({ title: t("confirmArchive"), description: t("confirmArchiveDesc") }))) return;
+                await run(() => archiveCampaign(campaign.id), t("archived"), t("archiveFailed"));
+              }}
+            />
+            {(batches ?? []).length > 0 &&
+              (stats.data ? (
+                <KpiRow stats={stats.data} batchCount={campaign.batchCount} />
+              ) : stats.failed ? (
+                <ErrorState message={t("statsFailed")} onRetry={stats.retry} />
+              ) : null)}
+          </div>
 
           <BatchSection
             campaignId={campaign.id}
             campaignStatus={campaign.status}
             batches={batches ?? []}
+            stats={stats.data}
             onChanged={() => setReload((n) => n + 1)}
+          />
+
+          {(batches ?? []).length > 0 && <PrepareSection campaignId={campaign.id} />}
+
+          <PolicySection campaign={campaign} />
+
+          <CampaignSettingsDialog
+            open={settingsOpen}
+            onOpenChange={setSettingsOpen}
+            campaign={campaign}
+            onSaved={() => setReload((n) => n + 1)}
           />
         </>
       ) : loading ? (
@@ -158,18 +165,25 @@ export default function CampaignDetailPage() {
 function Header({
   campaign,
   pending,
+  onSettings,
   onEndNow,
   onReapply,
   onArchive,
 }: {
   campaign: CampaignDetail;
   pending: boolean;
+  onSettings: () => void;
   onEndNow: () => void;
   onReapply: () => void;
   onArchive: () => void;
 }) {
   const t = useTranslations("campaignApp.detail");
   const locale = useLocale();
+  const items: ActionMenuItem[] = [
+    ...(campaign.status === "ACTIVE" ? [{ label: t("actions.endNow"), icon: CircleStop, onSelect: onEndNow, disabled: pending }] : []),
+    ...(campaign.status === "ENDED" ? [{ label: t("actions.reapply"), icon: RotateCcw, onSelect: onReapply, disabled: pending }] : []),
+    ...(campaign.status !== "ARCHIVED" ? [{ label: t("actions.archive"), icon: Archive, onSelect: onArchive, disabled: pending }] : []),
+  ];
   return (
     <header className="space-y-3">
       <div className="flex items-center gap-2">
@@ -182,24 +196,17 @@ function Header({
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {campaign.name}
         </h1>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <Link href={`/campaigns/${campaign.id}/stats`} className={buttonVariants({ variant: "outline" })}>
             {t("actions.stats")}
           </Link>
-          {campaign.status === "ACTIVE" && (
-            <Button variant="outline" onClick={onEndNow} disabled={pending}>
-              {t("actions.endNow")}
-            </Button>
-          )}
-          {campaign.status === "ENDED" && (
-            <Button variant="outline" onClick={onReapply} disabled={pending}>
-              {t("actions.reapply")}
-            </Button>
-          )}
           {campaign.status !== "ARCHIVED" && (
-            <Button variant="outline" onClick={onArchive} disabled={pending}>
-              {t("actions.archive")}
+            <Button variant="outline" onClick={onSettings}>
+              {t("settings.open")}
             </Button>
+          )}
+          {items.length > 0 && (
+            <ActionMenu label={t("actions.more")} items={items} triggerVariant="outline" triggerClassName="h-10 w-10" />
           )}
         </div>
       </div>
@@ -207,13 +214,103 @@ function Header({
   );
 }
 
-function PrepareSection({
+function BatchSection({
   campaignId,
-  batchCount,
+  campaignStatus,
+  batches,
+  stats,
+  onChanged,
 }: {
   campaignId: number;
-  batchCount: number;
+  campaignStatus: CampaignStatus;
+  batches: CampaignBatch[];
+  stats: CampaignStats | null;
+  onChanged: () => void;
 }) {
+  const terminal = campaignStatus === "ENDED" || campaignStatus === "ARCHIVED";
+  const t = useTranslations("campaignApp.detail");
+  const tRow = useTranslations("campaignApp.batchCard");
+  const [editing, setEditing] = useState<CampaignBatch | null>(null);
+  const [deleting, setDeleting] = useState<CampaignBatch | null>(null);
+  const [qrFor, setQrFor] = useState<CampaignBatch | null>(null);
+  const clicks = new Map(stats?.byBatch.map((b) => [b.batchId, b.clicks]) ?? []);
+  const addLink = (variant: "default" | "outline") => (
+    <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ variant, size: "sm" })}>
+      {t("batches.add")}
+    </Link>
+  );
+  return (
+    <section aria-labelledby="campaign-batches">
+      <div className="mb-3 flex items-baseline justify-between gap-3">
+        <h2 id="campaign-batches" className={STAT_HEADING}>
+          {t("batches.title")}
+        </h2>
+        {!terminal && batches.length > 0 && addLink("outline")}
+      </div>
+
+      {batches.length === 0 ? (
+        <EmptyState title={t("batches.emptyTitle")} className="border-t-0 pt-1" action={terminal ? undefined : addLink("default")} />
+      ) : (
+        <CampaignRows
+          total={stats?.totalClicks}
+          rows={batches.map((b) => ({
+            key: b.id,
+            label: b.name,
+            meta: [b.distributorName, b.areaLabel, tRow("quantityUnit", { count: formatNumber(b.quantity) }), `/${b.shortCode}`]
+              .filter(Boolean)
+              .join(" · "),
+            clicks: stats ? (clicks.get(b.id) ?? 0) : null,
+            quantity: b.quantity,
+            action: (
+              <ActionMenu
+                label={tRow("menu", { name: b.name })}
+                triggerClassName="h-9 w-9 text-slate-500 dark:text-slate-400"
+                items={[
+                  { label: tRow("qr"), icon: QrCode, onSelect: () => setQrFor(b) },
+                  { label: tRow("open"), icon: ExternalLink, href: b.shortUrl },
+                  ...(terminal
+                    ? []
+                    : [
+                        { label: tRow("edit"), icon: Pencil, onSelect: () => setEditing(b) },
+                        { label: tRow("delete"), icon: Trash2, onSelect: () => setDeleting(b), destructive: true },
+                      ]),
+                ]}
+              />
+            ),
+          }))}
+        />
+      )}
+
+      <QrDownloadDialog
+        open={qrFor !== null}
+        onOpenChange={(v) => !v && setQrFor(null)}
+        target={qrFor ? { kind: "single", campaignId, batchId: qrFor.id, batchName: qrFor.name } : null}
+      />
+      <BatchEditDialog
+        open={editing !== null}
+        onOpenChange={(v) => !v && setEditing(null)}
+        batch={editing}
+        campaignId={campaignId}
+        onUpdated={() => {
+          setEditing(null);
+          onChanged();
+        }}
+      />
+      <BatchDeleteDialog
+        open={deleting !== null}
+        onOpenChange={(v) => !v && setDeleting(null)}
+        batch={deleting}
+        campaignId={campaignId}
+        onDeleted={() => {
+          setDeleting(null);
+          onChanged();
+        }}
+      />
+    </section>
+  );
+}
+
+function PrepareSection({ campaignId }: { campaignId: number }) {
   const [zipDialogOpen, setZipDialogOpen] = useState(false);
   const [csvPending, setCsvPending] = useState(false);
   const t = useTranslations("campaignApp.detail");
@@ -244,249 +341,59 @@ function PrepareSection({
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-            {t("prepare.eyebrow")}
-          </p>
-          <h2 className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-            {t("prepare.title")}
-          </h2>
-          <p className="mt-0.5 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
-            {t("prepare.description", { count: batchCount })}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
-            {t("prepare.qrZip")}
-          </Button>
-          <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
-            {t("prepare.batchCsv")}
-          </Button>
-          <Link href={`/campaigns/${campaignId}/print-sheet`} className={buttonVariants({ variant: "outline" })}>
-            {t("prepare.printSheet")}
-          </Link>
-          <Link href={`/campaigns/${campaignId}/poster-builder`} className={buttonVariants({ variant: "outline" })}>
-            {t("prepare.posterBuilder")}
-          </Link>
-        </div>
+    <section aria-labelledby="campaign-prepare">
+      <h2 id="campaign-prepare" className={STAT_HEADING}>
+        {t("prepare.title")}
+      </h2>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
+          {t("prepare.qrZip")}
+        </Button>
+        <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
+          {t("prepare.batchCsv")}
+        </Button>
+        <Link href={`/campaigns/${campaignId}/print-sheet`} className={buttonVariants({ variant: "outline" })}>
+          {t("prepare.printSheet")}
+        </Link>
+        <Link href={`/campaigns/${campaignId}/poster-builder`} className={buttonVariants({ variant: "outline" })}>
+          {t("prepare.posterBuilder")}
+        </Link>
       </div>
-      <QrDownloadDialog
-        open={zipDialogOpen}
-        onOpenChange={setZipDialogOpen}
-        target={{ kind: "zip", campaignId }}
-      />
+      <QrDownloadDialog open={zipDialogOpen} onOpenChange={setZipDialogOpen} target={{ kind: "zip", campaignId }} />
     </section>
   );
 }
 
-function PolicySummary({
-  campaign,
-  onChanged,
-}: {
-  campaign: CampaignDetail;
-  onChanged: () => void;
-}) {
-  const { toast } = useToast();
+function PolicySection({ campaign }: { campaign: CampaignDetail }) {
   const t = useTranslations("campaignApp.detail");
-  const errorMessage = useApiErrorMessage();
   const action = campaign.postEndAction;
-  const label =
-    action === "KEEP"
-      ? t("policy.keep")
-      : action === "EXPIRE"
-        ? t("policy.expire")
-        : t("policy.redirect");
-  const editable = campaign.status !== "ARCHIVED";
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(campaign.postEndMessage ?? "");
-  const [saving, setSaving] = useState(false);
-
-  function startEdit() {
-    setDraft(campaign.postEndMessage ?? "");
-    setEditing(true);
+  const label = action === "KEEP" ? t("policy.keep") : action === "EXPIRE" ? t("policy.expire") : t("policy.redirect");
+  const rows: [string, string, boolean?][] = [[t("policy.title"), label]];
+  if (action === "EXPIRE") {
+    rows.push([t("policy.messageLabel"), campaign.postEndMessage ?? t("policy.defaultMessageHint"), !campaign.postEndMessage]);
   }
-
-  async function save() {
-    setSaving(true);
-    try {
-      const trimmed = draft.trim();
-      await updateCampaign(campaign.id, {
-        postEndMessage: trimmed.length > 0 ? trimmed : "",
-      });
-      toast(
-        campaign.status === "ENDED"
-          ? t("policy.savedEnded")
-          : t("policy.saved"),
-        "success",
-      );
-      setEditing(false);
-      onChanged();
-    } catch (e) {
-      toast(errorMessage(e, t("policy.saveFailed")), "error");
-    } finally {
-      setSaving(false);
-    }
-  }
-
+  if (action === "REDIRECT" && campaign.postEndDestinationUrl) rows.push([t("policy.redirectLabel"), campaign.postEndDestinationUrl]);
+  if (campaign.defaultDestinationUrl) rows.push([t("policy.defaultDestination"), campaign.defaultDestinationUrl]);
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
-      <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-        {t("policy.eyebrow")}
-      </p>
-      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
-        {action === "REDIRECT" && campaign.postEndDestinationUrl && (
-          <a
-            href={campaign.postEndDestinationUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-900 dark:text-slate-100 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100"
-          >
-            {campaign.postEndDestinationUrl}
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-          </a>
-        )}
-      </div>
-      {action === "EXPIRE" && (
-        <div className="mt-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 px-3 py-3">
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-              {t("policy.messageLabel")}
-            </p>
-            {editable && !editing && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={startEdit}
-                className="h-auto px-1 py-0 text-[12px] font-medium text-slate-900 dark:text-slate-100 hover:bg-transparent underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100"
-              >
-                {campaign.postEndMessage ? t("policy.edit") : t("policy.add")}
-              </Button>
-            )}
+    <section aria-labelledby="campaign-policy">
+      <h2 id="campaign-policy" className={STAT_HEADING}>
+        {t("policy.heading")}
+      </h2>
+      <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-[13px] sm:grid-cols-[max-content_minmax(0,1fr)]">
+        {rows.map(([term, value, muted]) => (
+          <div key={term} className="contents">
+            <dt className="text-slate-500 dark:text-slate-400">{term}</dt>
+            <dd
+              className={cn(
+                "mb-2 min-w-0 whitespace-pre-wrap break-words sm:mb-0",
+                muted ? "text-slate-500 dark:text-slate-400" : "text-slate-900 dark:text-slate-100",
+              )}
+            >
+              {value}
+            </dd>
           </div>
-          {editing ? (
-            <div className="mt-2 space-y-2">
-              <textarea
-                value={draft}
-                onChange={(e) => setDraft(e.target.value.slice(0, 500))}
-                rows={3}
-                placeholder={t("policy.messagePlaceholder")}
-                className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600"
-              />
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
-                  {draft.length}/500
-                </span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setEditing(false)}
-                    disabled={saving}
-                  >
-                    {t("cancel")}
-                  </Button>
-                  <Button type="button" onClick={save} disabled={saving}>
-                    {saving ? t("policy.saving") : t("policy.save")}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : campaign.postEndMessage ? (
-            <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-slate-700 dark:text-slate-300">
-              {campaign.postEndMessage}
-            </p>
-          ) : (
-            <p className="mt-2 text-[12px] italic text-slate-500 dark:text-slate-400">
-              {t("policy.defaultMessageHint")}
-            </p>
-          )}
-        </div>
-      )}
-      {campaign.defaultDestinationUrl && (
-        <p className="mt-3 text-[12px] text-slate-500 dark:text-slate-400">
-          {t("policy.defaultDestination", { url: campaign.defaultDestinationUrl })}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function BatchSection({
-  campaignId,
-  campaignStatus,
-  batches,
-  onChanged,
-}: {
-  campaignId: number;
-  campaignStatus: CampaignStatus;
-  batches: CampaignBatch[];
-  onChanged: () => void;
-}) {
-  const terminal = campaignStatus === "ENDED" || campaignStatus === "ARCHIVED";
-  const t = useTranslations("campaignApp.detail");
-  const [editing, setEditing] = useState<CampaignBatch | null>(null);
-  const [deleting, setDeleting] = useState<CampaignBatch | null>(null);
-  return (
-    <section className="space-y-3">
-      <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
-        <div>
-          <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("batches.title")}</h2>
-          <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
-            {t("batches.description")}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {!terminal && (
-            <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ variant: "default" })}>
-              {t("batches.add")}
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {batches.length === 0 ? (
-        <p className="border-t border-slate-200 py-4 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
-          {t("batches.emptyTitle")}
-        </p>
-      ) : (
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {batches.map((b) => (
-            <BatchCard
-              key={b.id}
-              batch={b}
-              campaignId={campaignId}
-              canModify={!terminal}
-              onEdit={() => setEditing(b)}
-              onDelete={() => setDeleting(b)}
-            />
-          ))}
-        </ul>
-      )}
-
-      <BatchEditDialog
-        open={editing !== null}
-        onOpenChange={(v) => !v && setEditing(null)}
-        batch={editing}
-        campaignId={campaignId}
-        onUpdated={() => {
-          setEditing(null);
-          onChanged();
-        }}
-      />
-      <BatchDeleteDialog
-        open={deleting !== null}
-        onOpenChange={(v) => !v && setDeleting(null)}
-        batch={deleting}
-        campaignId={campaignId}
-        onDeleted={() => {
-          setDeleting(null);
-          onChanged();
-        }}
-      />
+        ))}
+      </dl>
     </section>
   );
 }

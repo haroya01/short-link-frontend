@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
   compareCampaignStats,
@@ -16,8 +16,12 @@ import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
-import { Section } from "@/components/common/section";
-import { ByBatchTable, GroupChart, KpiRow, RecommendationCard } from "@/components/links/campaigns/stats-cards";
+import { EmptyState } from "@/components/common/empty-state";
+import { buttonVariants } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Breakdown, BreakdownGrid, STAT_HEADING } from "@/components/links/stats/stat-sections";
+import { CampaignRows } from "@/components/links/campaigns/campaign-rows";
+import { KpiRow, RecommendationList } from "@/components/links/campaigns/stats-cards";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { DailyChart as DailyTrendChart } from "@/components/links/stats/charts/daily-chart";
 import { HourChart as HourRhythmChart } from "@/components/links/stats/charts/hour-chart";
@@ -29,9 +33,10 @@ import type {
   CampaignStatsCompareResponse,
   CampaignSummary,
 } from "@/types";
-import { formatNumber, formatDateTime } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 import { fillDailySince } from "@/lib/stats-daily";
 import { LinksPage } from "@/components/links/links-page";
+import { useSectionLoad } from "@/hooks/use-section-load";
 
 const CAMPAIGN_TIMEZONE = "Asia/Seoul";
 
@@ -118,72 +123,93 @@ export default function CampaignStatsPage() {
   }
 
   return (
-    <LinksPage className="space-y-6">
-      <Link
-        href={`/campaigns/${campaignId}`}
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToCampaign")}
-      </Link>
+    <LinksPage className="space-y-10">
+      <div className="space-y-6">
+        <Link
+          href={`/campaigns/${campaignId}`}
+          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToCampaign")}
+        </Link>
 
-      <div>
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("title")}
-        </h1>
-        {/* div, not p: the loading Skeleton renders a block element, and a block inside a <p> is
-            invalid HTML that trips a hydration mismatch (which reset the no-FOUC dark class). */}
-        <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {loading ? (
-            <Skeleton className="inline-block h-4 w-40" />
-          ) : campaign ? (
-            <>
-              {t.rich("introCampaign", {
-                name: () => <span className="font-medium text-slate-700 dark:text-slate-300">{campaign.name}</span>,
-              })}
-            </>
-          ) : null}
+        <div>
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+            {t("title")}
+          </h1>
+          {/* div, not p: the loading Skeleton renders a block element, and a block inside a <p> is
+              invalid HTML that trips a hydration mismatch (which reset the no-FOUC dark class). */}
+          <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {loading ? (
+              <Skeleton className="inline-block h-4 w-40" />
+            ) : campaign ? (
+              <>
+                {t.rich("introCampaign", {
+                  name: () => <span className="font-medium text-slate-700 dark:text-slate-300">{campaign.name}</span>,
+                })}
+              </>
+            ) : null}
+          </div>
         </div>
+
+        {loading ? (
+          <StatsSkeleton />
+        ) : error ? (
+          <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
+        ) : stats && campaign ? (
+          <KpiRow stats={stats} batchCount={campaign.batchCount} />
+        ) : null}
       </div>
 
-      {loading ? (
-        <StatsSkeleton />
-      ) : error ? (
-        <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
-      ) : stats && campaign ? (
+      {!loading && !error && stats && campaign && (
         <>
-          <KpiRow stats={stats} batchCount={campaign.batchCount} />
-          {stats.testScans > 0 && (
-            <TestScansCard count={stats.testScans} lastAt={stats.lastTestScanAt} />
-          )}
-          <ByBatchTable stats={stats} />
-          {stats.byDistributor.length > 0 && (
-            <GroupChart
-              title={t("groups.distributorTitle")}
-              hint={t("groups.distributorHint")}
-              groups={stats.byDistributor}
+          {stats.byBatch.length === 0 ? (
+            <EmptyState
+              title={t("byBatch.empty")}
+              className="border-t-0 pt-0"
+              action={
+                <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ size: "sm" })}>
+                  {t("byBatch.add")}
+                </Link>
+              }
             />
-          )}
-          {stats.byArea.length > 0 && (
-            <GroupChart
-              title={t("groups.areaTitle")}
-              hint={t("groups.areaHint")}
-              groups={stats.byArea}
-            />
+          ) : (
+            <BreakdownGrid>
+              <Breakdown title={t("byBatch.title")}>
+                <CampaignRows
+                  subgrid
+                  total={stats.totalClicks}
+                  rows={[...stats.byBatch]
+                    .sort((a, b) => b.clicks - a.clicks)
+                    .map((b) => ({
+                      key: b.batchId,
+                      label: b.batchName,
+                      meta: [b.distributor, b.area, `/${b.shortCode}`].filter(Boolean).join(" · "),
+                      clicks: b.clicks,
+                      quantity: b.quantity,
+                    }))}
+                />
+              </Breakdown>
+              {stats.byDistributor.length > 0 && (
+                <Breakdown title={t("groups.distributorTitle")}>
+                  <CampaignRows subgrid total={stats.totalClicks} rows={groupRows(stats.byDistributor)} />
+                </Breakdown>
+              )}
+              {stats.byArea.length > 0 && (
+                <Breakdown title={t("groups.areaTitle")}>
+                  <CampaignRows subgrid total={stats.totalClicks} rows={groupRows(stats.byArea)} />
+                </Breakdown>
+              )}
+            </BreakdownGrid>
           )}
           {rec.data ? (
-            <RecommendationCard data={rec.data} />
+            <RecommendationList data={rec.data} />
           ) : rec.failed ? (
-            <Section title={t("recommendation.title")}>
-              <ErrorState message={t("loadFailed")} onRetry={rec.retry} />
-            </Section>
+            <SectionFailure title={t("recommendation.title")} onRetry={rec.retry} />
           ) : null}
           {stats.byDay.length > 0 && <DailyChart data={stats.byDay} startsAt={campaign.startsAt} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
-          {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
-          {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
+          {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} heatmap={stats.heatmap} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
           {others.failed ? (
-            <Section title={t("compare.title")}>
-              <ErrorState message={t("loadFailed")} onRetry={others.retry} />
-            </Section>
+            <SectionFailure title={t("compare.title")} onRetry={others.retry} />
           ) : others.data && others.data.length > 0 ? (
             <CompareSection
               campaigns={others.data}
@@ -197,30 +223,25 @@ export default function CampaignStatsPage() {
             />
           ) : null}
         </>
-      ) : null}
+      )}
     </LinksPage>
   );
 }
 
-function useSectionLoad<T>(enabled: boolean, load: () => Promise<T>) {
-  const [state, setState] = useState<{ data: T | null; failed: boolean }>({ data: null, failed: false });
-  const [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    if (!enabled) return;
-    let cancelled = false;
-    setState({ data: null, failed: false });
-    load()
-      .then((data) => {
-        if (!cancelled) setState({ data, failed: false });
-      })
-      .catch(() => {
-        if (!cancelled) setState({ data: null, failed: true });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, load, attempt]);
-  return { ...state, retry: useCallback(() => setAttempt((n) => n + 1), []) };
+function groupRows(groups: CampaignStats["byDistributor"]) {
+  return [...groups]
+    .sort((a, b) => b.clicks - a.clicks)
+    .map((g) => ({ key: g.key, label: g.key, clicks: g.clicks, quantity: g.totalQuantity }));
+}
+
+function SectionFailure({ title, onRetry }: { title: string; onRetry: () => void }) {
+  const t = useTranslations("campaignApp.campaignStats");
+  return (
+    <section>
+      <h2 className={STAT_HEADING}>{title}</h2>
+      <ErrorState message={t("loadFailed")} onRetry={onRetry} />
+    </section>
+  );
 }
 
 function CompareSection({
@@ -244,14 +265,16 @@ function CompareSection({
 }) {
   const t = useTranslations("campaignApp.campaignStats");
   return (
-    <Section
-      title={t("compare.title")}
-      description={t("compare.description")}
-      action={
-        <select
+    <section aria-labelledby="campaign-compare">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="campaign-compare" className={STAT_HEADING}>
+          {t("compare.title")}
+        </h2>
+        <Select
           value={selectedId ?? ""}
           onChange={(e) => onSelect(e.target.value ? Number(e.target.value) : null)}
-          className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-[12px] text-slate-700 dark:text-slate-300"
+          aria-label={t("compare.title")}
+          className="h-9 w-auto max-w-full text-[13px] sm:h-9"
         >
           <option value="">{t("compare.none")}</option>
           {campaigns.map((c) => (
@@ -259,60 +282,60 @@ function CompareSection({
               {c.name}
             </option>
           ))}
-        </select>
-      }
-    >
-      {loading && <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("loading")}</p>}
-      {data && !loading && (
-        <div className="grid grid-cols-2 gap-3">
-          {data.campaigns.map((c) => {
-            const isCurrent = c.campaignId === currentId;
-            const totalQuantity = c.stats.byBatch.reduce((sum, b) => sum + b.quantity, 0);
-            const ratePerHundred =
-              totalQuantity > 0 ? (c.stats.totalClicks * 100) / totalQuantity : 0;
-            const topArea = c.stats.byArea[0]?.key ?? "—";
-            return (
-              <div
-                key={c.campaignId}
-                className={
-                  "rounded-lg border p-3 " +
-                  (isCurrent
-                    ? "border-slate-900 bg-white dark:border-slate-100 dark:bg-slate-900"
-                    : "border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40")
-                }
-              >
-                <p className="truncate text-[12px] font-semibold text-slate-900 dark:text-slate-100">{c.name}</p>
-                <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
-                  {isCurrent ? t("compare.current") : t("compare.comparison")}
-                </p>
-                <dl className="mt-2.5 grid grid-cols-3 gap-2">
-                  <CompareCell label={t("kpi.totalClicks")} value={formatNumber(c.stats.totalClicks)} />
-                  <CompareCell label={t("kpi.perHundred")} value={t("units.rate", { rate: ratePerHundred.toFixed(1) })} />
-                  <CompareCell label={t("kpi.topArea")} value={topArea} />
-                </dl>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {failed && !loading && <ErrorState message={t("loadFailed")} onRetry={onRetry} />}
-      {!loading && !data && !failed && (
-        <p className="text-[12px] text-slate-500 dark:text-slate-400">
-          {t("compare.selectHint")}
-        </p>
-      )}
-    </Section>
+        </Select>
+      </div>
+      <div className="mt-3">
+        {loading && <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("loading")}</p>}
+        {data && !loading && (
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+            {data.campaigns.map((c) => {
+              const totalQuantity = c.stats.byBatch.reduce((sum, b) => sum + b.quantity, 0);
+              const ratePerHundred = totalQuantity > 0 ? (c.stats.totalClicks * 100) / totalQuantity : null;
+              return (
+                <div key={c.campaignId} className="min-w-0">
+                  <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100">{c.name}</p>
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400">
+                    {c.campaignId === currentId ? t("compare.current") : t("compare.comparison")}
+                  </p>
+                  <dl className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    <CompareCell label={t("kpi.totalClicks")} value={formatNumber(c.stats.totalClicks)} />
+                    <CompareCell label={t("kpi.perHundred")} value={ratePerHundred === null ? "—" : t("units.rate", { rate: ratePerHundred.toFixed(1) })} />
+                    <CompareCell label={t("kpi.topArea")} value={c.stats.byArea[0]?.key ?? "—"} />
+                  </dl>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {failed && !loading && <ErrorState message={t("loadFailed")} onRetry={onRetry} />}
+        {!loading && !data && !failed && (
+          <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("compare.selectHint")}</p>
+        )}
+      </div>
+    </section>
   );
 }
 
 function CompareCell({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <dt className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{label}</dt>
-      <dd className="mt-0.5 truncate text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-        {value}
-      </dd>
+    <div className="min-w-0">
+      <dt className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="mt-0.5 truncate text-[16px] font-bold tabular-nums text-slate-900 dark:text-slate-100">{value}</dd>
     </div>
+  );
+}
+
+function ChartSection({ id, title, timezone, children }: { id: string; title: string; timezone: string; children: React.ReactNode }) {
+  return (
+    <section aria-labelledby={id}>
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id={id} className={STAT_HEADING}>
+          {title}
+        </h2>
+        <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">{timezone}</span>
+      </div>
+      <div className="mt-3">{children}</div>
+    </section>
   );
 }
 
@@ -323,19 +346,28 @@ function DailyChart({ data, startsAt, timezone }: { data: CampaignStats["byDay"]
     [data, startsAt, timezone],
   );
   return (
-    <Section title={t("daily.title")} description={t("daily.description", { tz: timezone })}>
-      <DailyTrendChart data={series} timezone={timezone} />
-    </Section>
+    <ChartSection id="campaign-daily" title={t("daily.title")} timezone={timezone}>
+      <DailyTrendChart data={series} timezone={timezone} compact />
+    </ChartSection>
   );
 }
 
-function HourlyChart({ data, timezone }: { data: CampaignStats["byHour"]; timezone: string }) {
+function HourlyChart({ data, heatmap, timezone }: { data: CampaignStats["byHour"]; heatmap: CampaignStats["heatmap"]; timezone: string }) {
   const t = useTranslations("campaignApp.campaignStats");
   const series = useMemo(() => data.map((d) => ({ hour: d.hour, count: d.clicks })), [data]);
+  const cells = useMemo(() => adaptHeatmap(heatmap), [heatmap]);
   return (
-    <Section title={t("hourly.title")} description={t("hourly.description", { tz: timezone })}>
-      <HourRhythmChart data={series} />
-    </Section>
+    <ChartSection id="campaign-hourly" title={t("hourly.title")} timezone={timezone}>
+      <HourRhythmChart data={series} compact />
+      {cells.length > 0 && (
+        <>
+          <h3 className="mt-8 text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("heatmap.title")}</h3>
+          <div className="mt-3">
+            <Heatmap data={cells} />
+          </div>
+        </>
+      )}
+    </ChartSection>
   );
 }
 
@@ -360,53 +392,11 @@ function adaptHeatmap(cells: CampaignStats["heatmap"]): HeatmapCell[] {
   }));
 }
 
-function HeatmapChart({ data, timezone }: { data: CampaignStats["heatmap"]; timezone: string }) {
-  const t = useTranslations("campaignApp.campaignStats");
-  const adapted = useMemo(() => adaptHeatmap(data), [data]);
-  return (
-    <Section title={t("heatmap.title")} description={t("heatmap.description", { tz: timezone })}>
-      <Heatmap data={adapted} />
-    </Section>
-  );
-}
-
-function TestScansCard({ count, lastAt }: { count: number; lastAt: string | null }) {
-  const t = useTranslations("campaignApp.campaignStats");
-  const locale = useLocale();
-  return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-4">
-      <div className="flex items-start gap-2">
-        <div className="flex-1">
-          <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-            {t("testScans.title")}
-          </p>
-          <p className="mt-1.5 text-sm text-slate-700 dark:text-slate-300">
-            {t.rich("testScans.description", {
-              count: formatNumber(count),
-              strong: (chunks) => <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>,
-            })}
-          </p>
-          {lastAt && (
-            <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
-              {t("testScans.last", { date: formatDateTime(lastAt) })}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function StatsSkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-2xl" />
-        ))}
-      </div>
-      <Skeleton className="h-40 w-full rounded-2xl" />
-      <Skeleton className="h-60 w-full rounded-2xl" />
+    <div className="space-y-6 border-b border-slate-200 pb-6 dark:border-slate-800">
+      <Skeleton className="h-4 w-20" />
+      <Skeleton className="h-10 w-32" />
     </div>
   );
 }

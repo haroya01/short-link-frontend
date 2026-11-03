@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -14,7 +14,7 @@ import { useToast } from "@/components/ui/toast";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import type { CampaignPostEndAction } from "@/types";
-import { RequiredMark } from "@/components/ui/required-mark";
+import { CampaignField, PostEndFields, toLocalInput } from "@/components/links/campaigns/campaign-fields";
 import { LinksPage } from "@/components/links/links-page";
 
 type StartMode = "now" | "schedule";
@@ -129,7 +129,7 @@ export default function NewCampaignPage() {
         onSubmit={handleSubmit}
         className="space-y-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
       >
-        <Field label={t("nameLabel")} required htmlFor="campaign-name">
+        <CampaignField label={t("nameLabel")} required htmlFor="campaign-name">
           <Input
             id="campaign-name"
             value={name}
@@ -138,9 +138,9 @@ export default function NewCampaignPage() {
             maxLength={255}
             required
           />
-        </Field>
+        </CampaignField>
 
-        <Field
+        <CampaignField
           label={t("startLabel")}
           hint={t("startHint")}
         >
@@ -164,9 +164,9 @@ export default function NewCampaignPage() {
               className="mt-2"
             />
           )}
-        </Field>
+        </CampaignField>
 
-        <Field label={t("endLabel")} required htmlFor="campaign-end">
+        <CampaignField label={t("endLabel")} required htmlFor="campaign-end">
           <Input
             id="campaign-end"
             type="datetime-local"
@@ -182,9 +182,9 @@ export default function NewCampaignPage() {
               {tErr("INVALID_CAMPAIGN_PERIOD")}
             </p>
           )}
-        </Field>
+        </CampaignField>
 
-        <Field
+        <CampaignField
           label={t("defaultUrlLabel")}
           hint={t("defaultUrlHint")}
           htmlFor="campaign-default-url"
@@ -196,59 +196,16 @@ export default function NewCampaignPage() {
             onChange={(e) => setDefaultDestinationUrl(e.target.value)}
             placeholder="https://example.com/landing"
           />
-        </Field>
+        </CampaignField>
 
-        <Field label={t("postEndLabel")} required>
-          <div className="space-y-2">
-            <PolicyOption
-              active={postEndAction === "KEEP"}
-              onClick={() => setPostEndAction("KEEP")}
-              title={t("policy.keepTitle")}
-              body={t("policy.keepBody")}
-            />
-            <PolicyOption
-              active={postEndAction === "EXPIRE"}
-              onClick={() => setPostEndAction("EXPIRE")}
-              title={t("policy.expireTitle")}
-              body={t("policy.expireBody")}
-            />
-            {postEndAction === "EXPIRE" && (
-              <div className="ml-6 mt-2 space-y-1.5">
-                <textarea
-                  value={postEndMessage}
-                  onChange={(e) => setPostEndMessage(e.target.value.slice(0, 500))}
-                  placeholder={t("messagePlaceholder")}
-                  rows={3}
-                  className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600"
-                />
-                <p className="text-[12px] text-slate-500 dark:text-slate-400">
-                  {t("messageHint")}{" "}
-                  <span className="tabular-nums">{postEndMessage.length}/500</span>
-                </p>
-              </div>
-            )}
-            <PolicyOption
-              active={postEndAction === "REDIRECT"}
-              onClick={() => setPostEndAction("REDIRECT")}
-              title={t("policy.redirectTitle")}
-              body={t("policy.redirectBody")}
-            />
-          </div>
-          {redirectRequired && (
-            <div className="mt-3">
-              <Input
-                type="url"
-                value={postEndDestinationUrl}
-                onChange={(e) => setPostEndDestinationUrl(e.target.value)}
-                placeholder="https://example.com/after-event"
-                required
-              />
-              <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-                {t("redirectHint")}
-              </p>
-            </div>
-          )}
-        </Field>
+        <PostEndFields
+          action={postEndAction}
+          onAction={setPostEndAction}
+          message={postEndMessage}
+          onMessage={setPostEndMessage}
+          redirectUrl={postEndDestinationUrl}
+          onRedirectUrl={setPostEndDestinationUrl}
+        />
 
         <div className="flex items-center justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-4">
           <Link href="/campaigns" onClick={confirmLeave} className={buttonVariants({ variant: "outline" })}>
@@ -261,49 +218,6 @@ export default function NewCampaignPage() {
       </form>
       {confirmDialog}
     </LinksPage>
-  );
-}
-
-function Field({
-  label,
-  required,
-  hint,
-  htmlFor,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  hint?: string;
-  /** The single control this labels; without it the field is a labelled group of controls. */
-  htmlFor?: string;
-  children: React.ReactNode;
-}) {
-  const groupLabelId = useId();
-  const text = (
-    <>
-      {label}
-      {required && <RequiredMark />}
-    </>
-  );
-  const labelClass = "block text-[13px] font-medium text-slate-900 dark:text-slate-100";
-  return (
-    <div
-      className="space-y-2"
-      role={htmlFor ? undefined : "group"}
-      aria-labelledby={htmlFor ? undefined : groupLabelId}
-    >
-      {htmlFor ? (
-        <label htmlFor={htmlFor} className={labelClass}>
-          {text}
-        </label>
-      ) : (
-        <p id={groupLabelId} className={labelClass}>
-          {text}
-        </p>
-      )}
-      {children}
-      {hint && <p className="text-[12px] text-slate-500 dark:text-slate-400">{hint}</p>}
-    </div>
   );
 }
 
@@ -330,49 +244,6 @@ function Segmented({
       {label}
     </button>
   );
-}
-
-function PolicyOption({
-  active,
-  onClick,
-  title,
-  body,
-}: {
-  active: boolean;
-  onClick: () => void;
-  title: string;
-  body: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={
-        "w-full rounded-lg border px-4 py-3 text-left transition-colors " +
-        (active
-          ? "border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800"
-          : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50")
-      }
-    >
-      <div className="flex items-center gap-2">
-        <span
-          className={
-            "grid h-4 w-4 place-items-center rounded-full border " +
-            (active ? "border-slate-900 dark:border-slate-100 bg-slate-900 dark:bg-slate-100" : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900")
-          }
-        >
-          {active && <span className="h-1.5 w-1.5 rounded-full bg-white dark:bg-slate-900" />}
-        </span>
-        <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">{title}</span>
-      </div>
-      <p className="mt-1.5 pl-6 text-[12px] leading-snug text-slate-500 dark:text-slate-400">{body}</p>
-    </button>
-  );
-}
-
-function toLocalInput(d: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function addDays(d: Date, days: number): Date {
