@@ -4119,6 +4119,8 @@
       "submit": "申し込む",
       "submitting": "送信中…",
       "successTitle": "申し込みました",
+      "alreadyRegisteredTitle": "申し込み済みです",
+      "registerAnother": "別の人も申し込む",
       "successBodyEmail": "確認メールをお送りしました。都合が悪くなったらメール内のリンクからキャンセルできます。",
       "successBody": "都合が悪くなった場合のため、下のキャンセルリンクを保存してください。",
       "copyCancelLink": "キャンセルリンクをコピー",

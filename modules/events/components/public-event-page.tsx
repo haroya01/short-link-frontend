@@ -29,7 +29,7 @@ export function PublicEventPage({
           now={now}
           description={description}
           registration={
-            cancelToken ? <CancelRegistrationPanel token={cancelToken} eventTitle={event.title} /> : undefined
+            cancelToken ? <CancelRegistrationPanel slug={event.slug} token={cancelToken} eventTitle={event.title} /> : undefined
           }
           onRegistered={(spotsLeft) =>
             setEvent((prev) => ({
