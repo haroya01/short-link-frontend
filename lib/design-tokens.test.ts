@@ -19,6 +19,7 @@ import { describe, expect, it } from "vitest";
  *    (var() 를 못 받는 자리용, globals.css 의 잠긴 키프레임은 이 가드 밖).
  *  - 아이콘 하나에 뜻 하나(decisions 2026-10-11 AI 티 다섯 규칙): 반짝이는 쓰지 않고('추천'은 쌍안경),
  *    지구본은 열린 네트워크(공개 범위·다른 서버)를 그리는 파일에만.
+ *  - 초록은 링크가 만들어진 순간·로고·블로그 표면에만(decisions 2026-11-03 kurl-ink-buttons). 주 버튼은 잉크.
  */
 const ROOTS = ["app", "components", "modules", "hooks"];
 // u/_lib/theme.ts 는 12개 프로필 테마의 토큰 원장(테마별 CTA 글로우·네오브루탈 하드 섀도 등이
@@ -27,6 +28,9 @@ const EXCLUDED = /(\.test\.|fixtures|mock-data|demo-data|\.design-sync[\\/]|_lib
 
 const BLOG_SURFACES =
   /^(?!.*-setting\.tsx$)(?!.*publish-celebration\.tsx$)(modules[\\/]notes[\\/]|modules[\\/]blog[\\/]components[\\/](?!editor[\\/]|workspace[\\/])|modules[\\/]blog[\\/]lib[\\/]follow-toggle\.ts$|app[\\/]\[locale\][\\/]p[\\/]|app[\\/]\[locale\][\\/]blog[\\/](browse|collections|curation|explore|feed|follow-requests|notes|notifications|remote|series|tags)[\\/]|app[\\/]\[locale\][\\/]blog[\\/](page|blog-chrome|layout|template)\.tsx$|components[\\/]common[\\/](app-header|notification-bell|blog-header-search|blog-bottom-nav|account-sheet)\.tsx$)/;
+
+const GREEN_ALLOWED =
+  /(modules[\\/](blog|notes|rooms|notifications)[\\/]|app[\\/]\[locale\][\\/](blog|p)[\\/]|components[\\/]common[\\/](blog-header-search|blog-bottom-nav|account-sheet|notification-bell|unread-dot|account-menu|language-switcher|logo|made-with-kurl|apps-grid|app-providers|share-button|onboarding-scenes)\.tsx$|components[\\/]ui[\\/](button\.tsx|button-variants\.ts)$|components[\\/]links[\\/](shorten[\\/]result-line|link-sheet)\.tsx$|components[\\/]landing[\\/]fold-demo\.tsx$|modules[\\/]events[\\/]components[\\/]created-line\.tsx$|modules[\\/]profile[\\/]curation[\\/](text-block-dialog|profile-meta-form)\.tsx$|_components[\\/](text-entry\.tsx|contact-card-palettes\.ts)$|visual-fixtures[\\/])/;
 
 const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegExp; onlyFile?: RegExp }[] = [
   {
@@ -66,6 +70,12 @@ const BANNED: { name: string; pattern: RegExp; allow?: RegExp; allowFile?: RegEx
     name: "점선 상자 가운데 글(빈 칸 템플릿) — 빈·오류 상태는 왼쪽 정렬 사실 한 줄로",
     pattern: /border-dashed[^"'`]*text-center|text-center[^"'`]*border-dashed/,
     allowFile: /(poster-builder[\\/]page|gallery-block-dialog|u[\\/]\[username\][\\/]_components[\\/]entry-list|article-blocks)\.tsx$/,
+  },
+  {
+    name: "허용 목록 밖의 초록(accent·emerald·#059669·variant accent)",
+    pattern: /-(?:accent|emerald)-\d{2,3}|#059669|["']accent["']/,
+    allow: /<Mark\b/,
+    allowFile: GREEN_ALLOWED,
   },
   {
     name: "한 클래스 문자열의 [animation-delay:…] + animate-[…] — animation 축약이 지연을 0 으로 덮는다(지연은 animate-[…] 안에)",

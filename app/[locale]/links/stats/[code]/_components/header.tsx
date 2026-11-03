@@ -10,8 +10,11 @@ import { LinkModerationBanner } from "@/components/links/stats/link-moderation-b
 import { PublicStatsToggle, usePublicStats } from "@/components/links/stats/public-stats-toggle";
 import { QrButton, QrModal } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { buildStatsCsv, statsCsvFilename } from "@/lib/stats-csv";
 import { useLinkDetail } from "@/lib/api/links.queries";
+import { linkDisplayName } from "@/lib/link-library-view";
+import { LinkStateBadges } from "@/components/links/link-state-badges";
 import type { LinkStats } from "@/types";
 
 type Props = {
@@ -45,10 +48,11 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
   const [qrOpen, setQrOpen] = useState(false);
   const publicStats = usePublicStats(demo ? null : data.shortCode);
   const display = shortUrl || `/${data.shortCode}`;
-  const { data: detail } = useLinkDetail(demo ? undefined : data.shortCode);
+  const { data: detail, isError: detailFailed } = useLinkDetail(demo ? undefined : data.shortCode);
   let destinationHost = "";
   try { destinationHost = detail?.originalUrl ? new URL(detail.originalUrl).hostname : ""; } catch { /* Keep the short URL as fallback. */ }
-  const title = detail?.note?.trim() || detail?.ogTitleOverride || detail?.ogTitle || destinationHost;
+  const shortLabel = display.replace(/^https?:\/\//, "");
+  const title = detail ? linkDisplayName(detail) : demo || detailFailed ? shortLabel : null;
 
   // 데이터 소유권: 화면의 수치는 언제나 들고 나갈 수 있어야 한다(마크다운 개방 캠페인의 통계판).
   function exportCsv() {
@@ -83,18 +87,25 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
     <div className="space-y-3">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="line-clamp-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-            {title || display}
-          </h1>
-          {title && <p className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-sm">
+          {title === null ? (
+            <div aria-hidden className="relative text-headline-sm sm:text-headline-md">
+              &nbsp;
+              <Skeleton className="absolute inset-y-[0.2em] left-0 w-64 max-w-full" />
+            </div>
+          ) : (
+            <h1 className="line-clamp-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+              {title}
+            </h1>
+          )}
+          <p className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-sm">
             <a
               href={display}
               target="_blank"
               rel="noreferrer"
               aria-label={shortCodeLabel}
-              className="vt-link-code truncate font-mono font-medium text-accent-700 hover:underline dark:text-accent-400"
+              className="vt-link-code truncate font-mono font-medium text-slate-900 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
             >
-              {display.replace(/^https?:\/\//, "")}
+              {shortLabel}
             </a>
             {destinationHost && destinationHost !== title && (
               <>
@@ -102,11 +113,12 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
                 <span className="truncate text-slate-500 dark:text-slate-400">{destinationHost}</span>
               </>
             )}
-          </p>}
+            {detail && <LinkStateBadges expiresAt={detail.expiresAt} timezone={data.timezone} passwordProtected={detail.passwordProtected} />}
+          </p>
         </div>
         <div className="flex gap-2 sm:hidden">
-          <CopyButton variant={demo ? "outline" : "accent"} value={display} />
-          <ShareButton url={display} title={title || display} variant="outline" size="md" />
+          <CopyButton variant={demo ? "outline" : "default"} value={display} />
+          <ShareButton url={display} title={title ?? shortLabel} variant="outline" size="md" />
           <Button
             variant="outline"
             className="px-3"
@@ -145,7 +157,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           </div>
         </BottomSheet>
         <div className="hidden items-center gap-2 sm:flex">
-          <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} />
+          <CopyButton variant={demo ? "outline" : "default"} size="sm" value={display} />
           <ActionMenu
             label={t("moreActions")}
             items={menuItems}

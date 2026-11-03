@@ -1,126 +1,104 @@
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api";
 import { usePublicLinkStats } from "@/lib/api/stats.queries";
 import { Link } from "@/i18n/navigation";
-import { StatsCards } from "@/components/links/stats/cards";
-import { Section } from "@/components/common/section";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
-import { DeviceChart } from "@/components/links/stats/charts/device-chart";
-import { BreakdownList } from "@/components/links/stats/breakdown-list";
-import { CountryTable } from "@/components/links/stats/country-table";
+import { STAT_HEADING, StatsEmpty } from "@/components/links/stats/stat-sections";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import { LinksPage } from "@/components/links/links-page";
+import { fillDailyClicks } from "@/lib/stats-daily";
+import { OverviewBreakdowns, OverviewKpis } from "../_components/overview";
 
 export default function PublicStatsPage() {
   const params = useParams<{ code: string }>();
   const t = useTranslations("stats");
   const tPublic = useTranslations("publicStats");
   const code = params.code;
+  const host = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
 
   const { data, error, isLoading } = usePublicLinkStats(code);
   const notFound = error instanceof ApiError && error.status === 404;
   const realError = Boolean(error) && !notFound;
+  const daily = useMemo(() => fillDailyClicks(data?.dailyClicks ?? [], { timezone: data?.timezone }), [data]);
 
   if (isLoading) {
     return (
-      <div className="container max-w-6xl space-y-5 py-10">
-        <Skeleton className="h-7 w-48" />
-        <Skeleton className="h-32 rounded-2xl" />
-      </div>
+      <LinksPage className="space-y-5">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-40 w-full" />
+      </LinksPage>
     );
   }
 
   if (realError) {
     return (
-      <div className="container max-w-2xl py-10">
+      <LinksPage width="narrow">
         <ErrorState onRetry={() => window.location.reload()} />
-      </div>
+      </LinksPage>
     );
   }
 
   if (notFound || !data) {
     return (
-      <div className="container max-w-md py-20">
+      <LinksPage width="narrow">
         <EmptyState
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/" className="focus-ring rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+            <Link href="/" className="focus-ring rounded-sm text-[15px] font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100">
               {t("backToDashboard")}
             </Link>
           }
         />
-      </div>
+      </LinksPage>
     );
   }
 
   return (
-    <div className="container max-w-6xl space-y-5 py-10">
-      <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-card-flat">
-        <div>
-          <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
-            {tPublic("title")}
-          </p>
-          <h1 className="mt-1.5 tabular-nums text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            /{data.shortCode}
-          </h1>
-        </div>
-        <span className="rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-[11px] font-medium text-accent-700 dark:text-accent-400 ring-1 ring-inset ring-accent-200">
-          {tPublic("publicBadge")}
-        </span>
-      </header>
-
-      <StatsCards
-        total={data.totalClicks}
-        human={data.humanClicks}
-        bot={data.botClicks}
-        unique={data.uniqueClicks}
-        timeToFirstClickMinutes={data.timeToFirstClickMinutes}
-        velocityRatio={data.velocity?.ratio ?? 0}
-        dailySeries={data.dailyClicks?.map((d) => d.count)}
-        navigationTargets={["section-daily", "section-device"]}
-      />
-
-      <Section
-        title={t("section.heatmap.title")}
-        description={data.timezone}
-      >
-        <Heatmap data={data.heatmap} />
-      </Section>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Section
-          id="section-daily"
-          title={t("section.daily.title")}
-          description={t("section.daily.desc", { tz: data.timezone })}
-          className="lg:col-span-2"
-        >
-          <DailyChart data={data.dailyClicks} />
-        </Section>
-        <Section
-          id="section-device"
-          title={t("section.device.title")}
-          description={t("section.device.desc")}
-        >
-          <DeviceChart data={data.deviceClicks} />
-        </Section>
+    <LinksPage className="space-y-5">
+      <div>
+        <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">{tPublic("title")}</p>
+        <h1 className="mt-1 font-mono text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+          {host}/{data.shortCode}
+        </h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
-          <BreakdownList
-            items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
-          />
-        </Section>
-        <Section title={t("section.country.title")} description={t("section.country.desc")}>
-          <CountryTable data={data.countryClicks} />
-        </Section>
-      </div>
-    </div>
+      {(data.humanClicks ?? 0) === 0 ? (
+        <>
+          {(data.totalClicks ?? 0) > 0 && <OverviewKpis data={data} />}
+          <StatsEmpty title={t((data.totalClicks ?? 0) === 0 ? "noClicks" : "noHumanClicks")} />
+        </>
+      ) : (
+        <>
+          <OverviewKpis data={data} />
+          <section aria-labelledby="public-daily" className="pt-3">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id="public-daily" className={STAT_HEADING}>{t("section.daily.title")}</h2>
+              <span className="text-[12px] text-slate-500 dark:text-slate-400">{data.timezone}</span>
+            </div>
+            <div className="mt-3">
+              <DailyChart data={daily} timezone={data.timezone} compact />
+            </div>
+          </section>
+          <div className="pt-5">
+            <OverviewBreakdowns data={data} />
+          </div>
+          <section aria-labelledby="public-heatmap" className="pt-5">
+            <h2 id="public-heatmap" className={STAT_HEADING}>{t("section.heatmap.title")}</h2>
+            <div className="mt-3">
+              <Heatmap data={data.heatmap} />
+            </div>
+          </section>
+        </>
+      )}
+    </LinksPage>
   );
 }

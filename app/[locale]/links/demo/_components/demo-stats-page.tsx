@@ -44,7 +44,7 @@ export function DemoStatsPage() {
         </span>
         <Link
           href="/"
-          className="focus-ring inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3.5 text-[13px] font-medium text-white hover:bg-accent-800"
+          className="focus-ring inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-slate-900 dark:bg-slate-100 px-3.5 text-[13px] font-medium text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200"
         >
           {t("createCta")}
         </Link>
@@ -54,12 +54,8 @@ export function DemoStatsPage() {
         data={data}
         shortUrl={shortUrl}
         shortCodeLabel={tStats("shortCode")}
-        onTick={() => {
-          // No-op on /demo — there's no backend to refetch from, and the seeded data is stable
-          // across renders by design. The dashboard's stats page bumps a tick counter here on
-          // every SSE event so the next getStats() refresh runs; on demo the click feed is
-          // scripted and the heatmap / KPIs never need to refresh.
-        }}
+        onLiveClick={() => {}}
+        onChanged={() => {}}
         demo
       />
     </div>

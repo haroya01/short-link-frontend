@@ -73,6 +73,7 @@ export type CampaignBatchBulkPayload = { batches: CampaignBatchCreatePayload[] }
 export type CampaignBatchUpdatePayload = Partial<CampaignBatchCreatePayload>;
 
 export type CampaignStats = {
+  timezone?: string;
   totalClicks: number;
   testScans: number;
   lastTestScanAt: string | null;
@@ -113,6 +114,9 @@ export type CampaignStatsCompareResponse = {
 export type CampaignRecommendation = {
   insufficient: boolean;
   insufficientReason: string | null;
+  insufficientCode?: "TOO_FEW_BATCHES" | "TOO_FEW_CLICKS" | null;
+  insufficientMinimum?: number | null;
+  insufficientCurrent?: number | null;
   totalQuantity: number;
   totalClicks: number;
   avgRatePerHundred: number;

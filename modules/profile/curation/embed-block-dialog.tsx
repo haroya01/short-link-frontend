@@ -61,7 +61,7 @@ export function EmbedBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }
             <p
               className={
                 "mt-1 flex items-center gap-1 text-[11px] " +
-                (provider ? "text-emerald-600" : "text-red-600")
+                (provider ? "text-slate-900 dark:text-slate-100" : "text-red-600")
               }
             >
               {provider ? (

@@ -156,7 +156,7 @@ export function ProfileMetaForm({
                   aria-pressed={active}
                   className={
                     "group relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-offset-1 transition " +
-                    (active ? "ring-accent-600" : "ring-transparent hover:ring-slate-300")
+                    (active ? "ring-slate-900" : "ring-transparent hover:ring-slate-300")
                   }
                 >
                   <div className={`absolute inset-0 ${tm.page}`}>
@@ -226,7 +226,7 @@ function AutoSaveIndicator({
   }
   if (status === "saved") {
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-700 animate-fade-in dark:text-accent-400">
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-900 animate-fade-in dark:text-slate-100">
         <Check className="h-3 w-3" />
         {t("autosaved")}
       </span>
@@ -296,7 +296,7 @@ function SocialsPicker({
               className={
                 "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors " +
                 (active
-                  ? "border-accent-300 bg-accent-50 text-accent-800 dark:border-accent-500/40 dark:bg-accent-500/10 dark:text-accent-300"
+                  ? "border-slate-300 bg-slate-100 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                   : disabled
                     ? "border-slate-100 bg-white text-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-600")
@@ -304,7 +304,7 @@ function SocialsPicker({
             >
               <ChannelIcon channel={ch} className="h-3 w-3" />
               {channelLabel(ch, t)}
-              {active && <span className="text-[10px] text-accent-700 dark:text-accent-400">#{order}</span>}
+              {active && <span className="text-[10px] text-slate-900 dark:text-slate-100">#{order}</span>}
             </button>
           );
         })}

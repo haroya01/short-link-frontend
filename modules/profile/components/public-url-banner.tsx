@@ -60,7 +60,7 @@ export function ProfilePublicUrlBanner({
         <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
           {t("yourPage")}
         </span>
-        <span className="truncate font-mono text-[13px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+        <span className="truncate font-mono text-[13px] font-medium text-slate-900 underline-offset-4 group-hover:underline dark:text-slate-100">
           {display}
         </span>
       </a>
@@ -78,7 +78,7 @@ export function ProfilePublicUrlBanner({
           className="grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
         >
           {copied ? (
-            <Check className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
+            <Check className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100" />
           ) : (
             <Copy className="h-3.5 w-3.5" />
           )}
@@ -97,7 +97,7 @@ export function ProfilePublicUrlBanner({
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 rounded-md bg-accent-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-800"
+          className="inline-flex items-center gap-1 rounded-md bg-slate-900 dark:bg-slate-100 px-3 py-1.5 text-xs font-medium text-white dark:text-slate-900 transition-colors hover:bg-slate-800 dark:hover:bg-slate-200"
         >
           {t("openShort")}
           <ExternalLink className="h-3 w-3" />

@@ -36,15 +36,15 @@ const CELLS: HeatmapCell[] = [
 
 const desktop = () => [...host.querySelectorAll<HTMLButtonElement>('[data-testid="heatmap-hours"] button')];
 const mobile = () => [...host.querySelectorAll<HTMLButtonElement>('[data-testid="heatmap-buckets"] button')];
-const accent = (cells: HTMLButtonElement[]) => cells.filter((cell) => cell.className.includes("bg-accent"));
+const accent = (cells: HTMLButtonElement[]) => cells.filter((cell) => /(?:^|\s)bg-slate-900(?:\s|$)/.test(cell.className));
 const cell = (day: string, hour: number) => desktop().find((b) => b.getAttribute("aria-label")?.startsWith(`tooltip:${day}/${hour}/`))!;
 
 async function render(data = CELLS) {
   await act(async () => root.render(<Heatmap data={data} />));
 }
 
-describe("Heatmap is a neutral ramp with one accent cell", () => {
-  it("gives the accent only to the hottest hour, and to the hottest 4h bucket on a phone", async () => {
+describe("Heatmap is a neutral ramp with one ink cell", () => {
+  it("gives ink only to the hottest hour, and to the hottest 4h bucket on a phone", async () => {
     await render();
     expect(accent(desktop()).map((b) => b.getAttribute("aria-label"))).toEqual(["tooltip:SATURDAY/21/12"]);
     expect(accent(mobile()).map((b) => b.getAttribute("aria-label"))).toEqual(["tooltipBucket:SATURDAY/20/23/12"]);
@@ -56,7 +56,7 @@ describe("Heatmap is a neutral ramp with one accent cell", () => {
     expect(cell("MONDAY", 9).className).toContain("bg-slate-200");
     expect(cell("SUNDAY", 2).className).toContain("bg-slate-200");
     expect(cell("TUESDAY", 4).className).toContain("bg-slate-50");
-    expect(desktop().filter((b) => /bg-accent-(?!600)/.test(b.className))).toEqual([]);
+    expect(desktop().filter((b) => /bg-accent-/.test(b.className))).toEqual([]);
   });
 
   it("keeps the low end off the page background in dark mode", async () => {
@@ -68,7 +68,7 @@ describe("Heatmap is a neutral ramp with one accent cell", () => {
     expect(host.innerHTML).not.toContain("dark:bg-slate-950");
   });
 
-  it("moves the accent to the hovered cell and back to the hottest when the pointer leaves", async () => {
+  it("moves the ink to the hovered cell and back to the hottest when the pointer leaves", async () => {
     await render();
     await act(async () => cell("MONDAY", 10).dispatchEvent(new MouseEvent("mouseover", { bubbles: true })));
     expect(accent(desktop()).map((b) => b.getAttribute("aria-label"))).toEqual(["tooltip:MONDAY/10/6"]);

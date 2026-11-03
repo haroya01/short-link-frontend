@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, Fragment, useState } from "react";
+import { memo, Fragment, useState, type KeyboardEvent } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn, formatShare } from "@/lib/utils";
@@ -89,8 +89,30 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
     setSelected((prev) => (same(prev, next.day, next.hour, next.span) ? null : next));
   }
 
+  function moveFocus(event: KeyboardEvent<HTMLButtonElement>, day: string, hour: number, span: number) {
+    const starts = span === 1 ? hours : MOBILE_BUCKET_STARTS;
+    const row = DAYS.indexOf(day);
+    const col = starts.indexOf(hour);
+    const next =
+      event.key === "ArrowRight" ? [row, col + 1]
+      : event.key === "ArrowLeft" ? [row, col - 1]
+      : event.key === "ArrowDown" ? [row + 1, col]
+      : event.key === "ArrowUp" ? [row - 1, col]
+      : event.key === "Home" ? [row, 0]
+      : event.key === "End" ? [row, starts.length - 1]
+      : null;
+    if (!next) return;
+    event.preventDefault();
+    const r = Math.min(DAYS.length - 1, Math.max(0, next[0]));
+    const c = Math.min(starts.length - 1, Math.max(0, next[1]));
+    event.currentTarget.parentElement
+      ?.querySelector<HTMLButtonElement>(`[data-cell="${DAYS[r]}-${starts[c]}"]`)
+      ?.focus();
+  }
+
   function cellButton(day: string, hour: number, count: number, span: number, scale: number, active: Cell | null) {
     const isActive = same(active, day, hour, span);
+    const anchor = active ?? { day: DAYS[0], hour: 0, count: 0, span };
     const label =
       span === 1
         ? t("tooltip", { day: tDay(day), hour, count })
@@ -99,8 +121,10 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
       <button
         key={`${day}-${span}-${hour}`}
         type="button"
-        tabIndex={count > 0 ? 0 : -1}
+        tabIndex={same(anchor, day, hour, span) ? 0 : -1}
+        data-cell={`${day}-${hour}`}
         data-active={isActive || undefined}
+        onKeyDown={(event) => moveFocus(event, day, hour, span)}
         onMouseEnter={() => setHover({ day, hour, count, span })}
         onMouseLeave={() => setHover(null)}
         onFocus={() => setHover({ day, hour, count, span })}
@@ -111,7 +135,7 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
         className={cn(
           span === 1 ? "h-6" : "h-7",
           "rounded-md transition-[background-color] duration-150 ease-[var(--ease)]",
-          isActive ? "bg-accent-600" : RAMP[rampStep(count, scale)],
+          isActive ? "bg-slate-900 dark:bg-slate-100" : RAMP[rampStep(count, scale)],
         )}
       />
     );

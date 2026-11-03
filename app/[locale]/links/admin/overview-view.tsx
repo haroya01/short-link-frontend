@@ -132,21 +132,21 @@ export function AdminOverviewView() {
             href="/admin/users"
             className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
           >
-            <Users className="h-3.5 w-3.5 text-accent-600" />
+            <Users className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100" />
             {t("browse.usersTab")}
           </Link>
           <Link
             href="/admin/links"
             className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
           >
-            <Link2 className="h-3.5 w-3.5 text-accent-600" />
+            <Link2 className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100" />
             {t("browse.linksTab")}
           </Link>
           <Link
             href="/admin/blocked-domains"
             className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
           >
-            <ShieldBan className="h-3.5 w-3.5 text-accent-600" />
+            <ShieldBan className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100" />
             {t("browse.blockedTab")}
           </Link>
         </nav>
@@ -330,7 +330,7 @@ function Kpi({
         </span>
         <Icon
           className={`h-3.5 w-3.5 shrink-0 ${
-            accent ? "text-accent-600 dark:text-accent-400" : muted ? "text-slate-500 dark:text-slate-400" : "text-slate-500 dark:text-slate-400"
+            accent ? "text-slate-900 dark:text-slate-100" : muted ? "text-slate-500 dark:text-slate-400" : "text-slate-500 dark:text-slate-400"
           }`}
         />
       </div>

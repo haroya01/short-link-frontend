@@ -37,7 +37,7 @@ export function BatchCard({ batch, campaignId, canModify, onEdit, onDelete }: Pr
           href={batch.shortUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-w-0 items-center gap-1.5 truncate text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:underline"
+          className="inline-flex min-w-0 items-center gap-1.5 truncate text-[12px] font-medium text-slate-900 dark:text-slate-100 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100"
         >
           <span className="truncate">{batch.shortUrl}</span>
           <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />

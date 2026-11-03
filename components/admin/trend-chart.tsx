@@ -39,9 +39,8 @@ export function AdminTrendChart({
         />
         <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }} />
         <Legend wrapperStyle={{ fontSize: 11 }} />
-        {/* Three series share one accent — clicks (the lead metric) carries brand-600,
-            links + signups lean on slate so the chart reads as brand-anchored rather than
-            rainbow-coded. Distinguishable by hue weight, not unrelated palettes. */}
+        {/* Three series on one gray ramp — clicks (the lead metric) carries ink, links and
+            signups step lighter so the chart reads by weight rather than rainbow-coded. */}
         <Line
           type="monotone"
           dataKey="signups"
@@ -53,7 +52,7 @@ export function AdminTrendChart({
         <Line
           type="monotone"
           dataKey="links"
-          stroke="#334155"
+          stroke="#6d7570"
           strokeWidth={1.5}
           dot={false}
           name={labels.links}
@@ -61,7 +60,7 @@ export function AdminTrendChart({
         <Line
           type="monotone"
           dataKey="clicks"
-          stroke="#059669"
+          stroke="#131a16"
           strokeWidth={1.5}
           dot={false}
           name={labels.clicks}

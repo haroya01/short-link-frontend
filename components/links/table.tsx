@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowUpDown, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink, Pencil, QrCode, SlidersHorizontal, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StatsMorphLink } from "@/components/links/stats-morph-link";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,16 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
 import { LiveDot } from "@/components/common/live-dot";
 import { LinkSheet } from "@/components/links/link-sheet";
+import { QrModal } from "@/components/links/qr/button";
+import { useRouter } from "@/i18n/navigation";
+import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { Sparkline } from "@/components/links/stats/sparkline";
 import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn, formatNumber } from "@/lib/utils";
 import { linkDisplayName } from "@/lib/link-library-view";
+import { LinkStateBadges } from "@/components/links/link-state-badges";
 import type { MyLink } from "@/types";
 
 type SortKey = "createdAt" | "humanClickCount";
@@ -41,6 +45,7 @@ type Props = {
   liveByCode?: Record<string, LiveBump>;
   favoritesDisabled?: boolean;
   sortingDisabled?: boolean;
+  onSelectingChange?: (selecting: boolean) => void;
 };
 
 export function LinksTable({
@@ -55,17 +60,28 @@ export function LinksTable({
   liveByCode,
   favoritesDisabled = false,
   sortingDisabled = false,
+  onSelectingChange,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [editing, setEditing] = useState<MyLink | null>(null);
   const [sheetItem, setSheetItem] = useState<MyLink | null>(null);
+  const [qrItem, setQrItem] = useState<MyLink | null>(null);
+  const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
+  const [bulkCount, setBulkCount] = useState(0);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
+  const navHidden = useHideOnScroll();
+
+  useEffect(() => {
+    onSelectingChange?.(selectMode);
+  }, [selectMode, onSelectingChange]);
+  useEffect(() => () => onSelectingChange?.(false), [onSelectingChange]);
 
   const allOnPage = items.map((s) => s.shortCode);
   const allSelected = allOnPage.length > 0 && allOnPage.every((c) => selected.has(c));
@@ -102,6 +118,16 @@ export function LinksTable({
     });
   }
 
+  function askBulkDelete() {
+    setBulkCount(selected.size);
+    setBulkConfirmOpen(true);
+  }
+
+  function askDelete(code: string) {
+    setConfirmCode(code);
+    setConfirmOpen(true);
+  }
+
   async function handleDelete(code: string) {
     try {
       await deleteLink(code);
@@ -132,7 +158,7 @@ export function LinksTable({
   return (
     <div className="space-y-3">
       {selected.size > 0 && (
-        <div className="flex items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-xs">
+        <div className="hidden items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs dark:border-slate-800 dark:bg-slate-800/50 sm:flex">
           <span className="text-slate-700 dark:text-slate-300">
             {t("bulkSelectedCount", { count: selected.size })}
           </span>
@@ -144,7 +170,7 @@ export function LinksTable({
               type="button"
               size="sm"
               variant="destructive"
-              onClick={() => setBulkConfirmOpen(true)}
+              onClick={askBulkDelete}
             >
               {t("bulkDeleteAction")}
             </Button>
@@ -193,16 +219,15 @@ export function LinksTable({
               if (selectMode) setSelected(new Set());
               setSelectMode((v) => !v);
             }}
-            className="focus-ring min-h-11 px-1 text-xs font-medium text-accent-700 dark:text-accent-400 sm:hidden"
+            className="focus-ring min-h-11 px-1 text-xs font-medium text-slate-900 dark:text-slate-100 sm:hidden"
           >
             {selectMode ? t("selectDone") : t("selectMode")}
           </button>
-          <span className="hidden w-[136px] sm:block" aria-hidden />
+          <span className="hidden w-[76px] sm:block" aria-hidden />
         </div>
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {items.map((item) => {
             const bump = liveByCode?.[item.shortCode];
-            const expiry = expiryState(item.expiresAt);
             const favorite = isFavorite(item.shortCode);
             return (
               <li
@@ -237,16 +262,14 @@ export function LinksTable({
                           {linkDisplayName(item)}
                         </span>
                         {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-slate-900 dark:text-slate-100" />}
-                        {expiry?.kind === "expired" && (
-                          <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
-                        )}
+                        <LinkStateBadges expiresAt={item.expiresAt} timezone={item.timezone} />
                       </span>
                       <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
                         <span className="font-mono">/{item.shortCode}</span> · {hostOf(item.originalUrl)}
                       </span>
                     </span>
                     <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-slate-400 dark:text-slate-500" />
-                    <span className="w-[4.5rem] shrink-0 text-right">
+                    <span className="min-w-[4.5rem] shrink-0 whitespace-nowrap text-right">
                       <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                         {formatNumber((item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0))}
                       </span>
@@ -254,7 +277,7 @@ export function LinksTable({
                         className={cn(
                           "block text-[12px] tabular-nums",
                           (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
-                            ? "text-accent-700 dark:text-accent-400"
+                            ? "text-slate-900 dark:text-slate-100"
                             : "text-slate-500 dark:text-slate-400",
                         )}
                       >
@@ -284,14 +307,7 @@ export function LinksTable({
                       {linkDisplayName(item)}
                     </span>
                     {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-slate-900 dark:text-slate-100" />}
-                    {expiry?.kind === "expired" && (
-                      <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
-                    )}
-                    {expiry?.kind === "soon" && (
-                      <span className="shrink-0 text-xs font-medium text-amber-700 dark:text-amber-400">
-                        {expiry.days === 0 ? t("card.expiresToday") : t("card.expiresIn", { days: expiry.days })}
-                      </span>
-                    )}
+                    <LinkStateBadges expiresAt={item.expiresAt} timezone={item.timezone} />
                   </span>
                   <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
                     <span data-vt-link-code className="shrink-0 font-mono">/{item.shortCode}</span>
@@ -307,10 +323,13 @@ export function LinksTable({
                   </span>
                 </StatsMorphLink>
                 {item.tags && item.tags.length > 0 && (
-                  <div className="hidden max-w-[180px] flex-wrap justify-end gap-1 lg:flex">
-                    {item.tags.slice(0, 3).map((tag) => (
+                  <div className="hidden max-w-[180px] flex-wrap items-center justify-end gap-1 lg:flex">
+                    {(item.tags.length > 3 ? item.tags.slice(0, 2) : item.tags).map((tag) => (
                       <TagFilterChip key={tag} tag={tag} compact onClick={() => onTagClick?.(tag)} />
                     ))}
+                    {item.tags.length > 3 && (
+                      <span className="text-[11px] font-medium tabular-nums text-slate-500 dark:text-slate-400">+{item.tags.length - 2}</span>
+                    )}
                   </div>
                 )}
                 <Sparkline
@@ -321,7 +340,7 @@ export function LinksTable({
                 />
                 <div className="flex shrink-0 items-center gap-1.5 text-right">
                   {bump && <LiveDot />}
-                  <span className="min-w-[4.5rem]">
+                  <span className="min-w-[4.5rem] whitespace-nowrap">
                     <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                       {bump ? (
                         <span key={bump.seq} className="count-bump">
@@ -335,7 +354,7 @@ export function LinksTable({
                       className={cn(
                         "block text-[12px] tabular-nums",
                         (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
-                          ? "text-accent-700 dark:text-accent-400"
+                          ? "text-slate-900 dark:text-slate-100"
                           : "text-slate-500 dark:text-slate-400",
                       )}
                     >
@@ -354,9 +373,11 @@ export function LinksTable({
                         disabled: favoritesDisabled,
                         onSelect: () => onToggleFavorite(item.shortCode),
                       },
+                      { label: t("actions.qr"), icon: QrCode, onSelect: () => setQrItem(item) },
                       { label: t("actions.openOriginal"), icon: ExternalLink, href: item.originalUrl },
                       { label: t("actions.edit"), icon: Pencil, onSelect: () => setEditing(item) },
-                      { label: t("actions.delete"), icon: Trash2, destructive: true, onSelect: () => setConfirmCode(item.shortCode) },
+                      { label: t("actions.settings"), icon: SlidersHorizontal, onSelect: () => router.push(`/stats/${item.shortCode}#settings`) },
+                      { label: t("actions.delete"), icon: Trash2, destructive: true, onSelect: () => askDelete(item.shortCode) },
                     ]}
                   />
                 </div>
@@ -367,10 +388,29 @@ export function LinksTable({
         </ul>
       </div>
 
+      {selectMode && (
+        <div
+          className={cn(
+            "fixed inset-x-0 bottom-[var(--bottom-nav-h)] z-30 flex items-center gap-2 border-t border-slate-200/80 bg-white px-4 py-2.5 transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 dark:bg-slate-950 sm:hidden",
+            navHidden && "translate-y-14",
+          )}
+        >
+          <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-300">
+            {t("bulkSelectedCount", { count: selected.size })}
+          </span>
+          <Button type="button" size="sm" variant="ghost" disabled={selected.size === 0} onClick={() => setSelected(new Set())}>
+            {t("bulkClearSelection")}
+          </Button>
+          <Button type="button" size="sm" variant="destructive" disabled={selected.size === 0} onClick={askBulkDelete}>
+            {t("bulkDeleteAction")}
+          </Button>
+        </div>
+      )}
+
       <ConfirmDialog
-        open={confirmCode !== null}
-        onOpenChange={(o) => !o && setConfirmCode(null)}
-        title={t("deleteConfirmTitle")}
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("deleteConfirmTitle", { code: confirmCode ?? "" })}
         description={t("deleteConfirmDesc")}
         destructive
         confirmLabel={t("deleteOk")}
@@ -382,8 +422,8 @@ export function LinksTable({
       <ConfirmDialog
         open={bulkConfirmOpen}
         onOpenChange={(o) => !bulkDeleting && setBulkConfirmOpen(o)}
-        title={t("bulkDeleteConfirmTitle")}
-        description={t("bulkDeleteConfirmDesc", { count: selected.size })}
+        title={t("bulkDeleteConfirmTitle", { count: bulkCount })}
+        description={t("bulkDeleteConfirmDesc")}
         destructive
         confirmLabel={bulkDeleting ? t("bulkDeleting") : t("bulkDeleteAction")}
         confirmDisabled={bulkDeleting}
@@ -412,14 +452,25 @@ export function LinksTable({
                   setEditing(sheetItem);
                   setSheetItem(null);
                 },
+                settingsHref: `/stats/${sheetItem.shortCode}#settings`,
                 onDelete: () => {
-                  setConfirmCode(sheetItem.shortCode);
+                  askDelete(sheetItem.shortCode);
                   setSheetItem(null);
                 },
               }
             : undefined
         }
       />
+
+      {qrItem && (
+        <QrModal
+          baseUrl={qrItem.shortUrl}
+          filename={`${qrItem.shortCode}.png`}
+          showSrcInput
+          defaultSrcHint=""
+          onClose={() => setQrItem(null)}
+        />
+      )}
 
       <EditLinkDialog
         link={editing}
@@ -433,29 +484,12 @@ export function LinksTable({
   );
 }
 
-type ExpiryState =
-  | { kind: "expired" }
-  | { kind: "soon"; days: number }
-  | { kind: "later" }
-  | null;
-
 function hostOf(url: string): string {
   try {
     return new URL(url).host.replace(/^www\./, "");
   } catch {
     return url;
   }
-}
-
-function expiryState(expiresAt: string | null | undefined): ExpiryState {
-  if (!expiresAt) return null;
-  const expires = +new Date(expiresAt);
-  if (!Number.isFinite(expires)) return null;
-  const now = Date.now();
-  if (expires < now) return { kind: "expired" };
-  const days = Math.floor((expires - now) / 86_400_000);
-  if (days <= 7) return { kind: "soon", days };
-  return { kind: "later" };
 }
 
 /**
@@ -478,8 +512,8 @@ function TagFilterChip({
       type="button"
       onClick={onClick}
       className={cn(
-        "focus-ring inline-flex items-center rounded-full font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
-        compact ? "px-2 py-0.5 text-[10px]" : "px-3 py-1.5 text-[13px]",
+        "focus-ring inline-flex items-center rounded-full font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100",
+        compact ? "px-2 py-0.5 text-[11px]" : "px-3 py-1.5 text-[13px]",
       )}
     >
       {tag}
@@ -510,14 +544,18 @@ function SortHeader({
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-11 items-center gap-1 text-xs font-medium hover:text-slate-900 dark:hover:text-slate-100",
+        "focus-ring inline-flex min-h-11 items-center gap-1 rounded-sm text-xs font-medium hover:text-slate-900 dark:hover:text-slate-100",
         active ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
         align === "right" && "ml-auto",
       )}
     >
       {children}
       {active && <span className="sr-only">{dirLabel}</span>}
-      <ArrowUpDown aria-hidden className={cn("h-3 w-3", active && dir === "asc" && "rotate-180")} />
+      {active ? (
+        dir === "asc" ? <ArrowUp aria-hidden className="h-3 w-3" /> : <ArrowDown aria-hidden className="h-3 w-3" />
+      ) : (
+        <ArrowUpDown aria-hidden className="h-3 w-3 opacity-60" />
+      )}
     </button>
   );
 }

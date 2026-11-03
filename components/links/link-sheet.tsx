@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
-import { ArrowRight, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
+import { ArrowRight, ExternalLink, Pencil, SlidersHorizontal, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
@@ -26,6 +26,7 @@ type Actions = {
   favoriteDisabled?: boolean;
   onToggleFavorite?: () => void;
   onEdit?: () => void;
+  settingsHref?: string;
   onDelete?: () => void;
 };
 
@@ -65,7 +66,7 @@ export function LinkSheet({
             {shown.name && (
               <p className="truncate text-[17px] font-semibold text-slate-900 dark:text-slate-100">{shown.name}</p>
             )}
-            <p className="mt-1 truncate font-mono text-[15px] font-semibold text-accent-700 dark:text-accent-400">
+            <p className={`mt-1 truncate font-mono text-[15px] font-semibold ${created ? "text-accent-700 dark:text-accent-400" : "text-slate-900 dark:text-slate-100"}`}>
               {shown.shortUrl.replace(/^https?:\/\//, "")}
             </p>
             <p className="mt-0.5 truncate text-[13px] text-slate-500 dark:text-slate-400" title={shown.originalUrl}>
@@ -80,12 +81,12 @@ export function LinkSheet({
                 <Figure label={t("week")} value={week} />
                 {shown.total !== undefined && <Figure label={t("total")} value={shown.total} />}
               </dl>
-              <Sparkline values={series} width={80} height={32} className="shrink-0 text-accent-600 dark:text-accent-400" />
+              <Sparkline values={series} width={80} height={32} className="shrink-0 text-slate-900 dark:text-slate-100" />
             </div>
           )}
 
           <div className="flex gap-2">
-            <CopyButton size="lg" variant="accent" label={t("copy")} value={shown.shortUrl} className="flex-1" />
+            <CopyButton size="lg" label={t("copy")} value={shown.shortUrl} className="flex-1" />
             <ShareButton
               url={shown.shortUrl}
               title={shown.name ?? shown.shortUrl}
@@ -118,6 +119,7 @@ export function LinkSheet({
               )}
               <SheetRow icon={ExternalLink} label={t("openOriginal")} href={shown.originalUrl} />
               {actions.onEdit && <SheetRow icon={Pencil} label={t("edit")} onSelect={actions.onEdit} />}
+              {actions.settingsHref && <SheetRow icon={SlidersHorizontal} label={t("settings")} to={actions.settingsHref} />}
               {actions.onDelete && <SheetRow icon={Trash2} label={t("delete")} destructive onSelect={actions.onDelete} />}
             </ul>
           )}
@@ -142,6 +144,7 @@ function SheetRow({
   icon: Icon,
   label,
   href,
+  to,
   onSelect,
   destructive,
   disabled,
@@ -149,6 +152,7 @@ function SheetRow({
   icon: ComponentType<{ className?: string }>;
   label: string;
   href?: string;
+  to?: string;
   onSelect?: () => void;
   destructive?: boolean;
   disabled?: boolean;
@@ -165,7 +169,11 @@ function SheetRow({
   );
   return (
     <li>
-      {href ? (
+      {to ? (
+        <Link href={to} className={cls}>
+          {body}
+        </Link>
+      ) : href ? (
         <a href={href} target="_blank" rel="noreferrer" className={cls}>
           {body}
         </a>

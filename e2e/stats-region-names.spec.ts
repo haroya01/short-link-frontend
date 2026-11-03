@@ -27,8 +27,7 @@ test.describe("stats regions read in the viewer's own place names", () => {
       { region: "Seoul", regionCode: "KR-11", count: 10 },
       { region: "California", regionCode: "US-CA", count: 5 },
     ]);
-    await expect(regionNames(page, "地域")).toHaveText(["東京都", "大阪府", "ソウル特別市", "California"]);
-    await expect(page.getByText("都道府県・州単位", { exact: true })).toBeVisible();
+    await expect(regionNames(page, "都道府県・州")).toHaveText(["東京都", "大阪府", "ソウル特別市", "California"]);
   });
 
   test("Japanese: an older response without regionCode still reads 東京都", async ({ page }) => {
@@ -37,7 +36,7 @@ test.describe("stats regions read in the viewer's own place names", () => {
       { region: "Gyeonggi-do", count: 8 },
       { region: "Berlin", count: 2 },
     ]);
-    await expect(regionNames(page, "地域")).toHaveText(["東京都", "京畿道", "Berlin"]);
+    await expect(regionNames(page, "都道府県・州")).toHaveText(["東京都", "京畿道", "Berlin"]);
   });
 
   test("Korean: one place reported both ways is one row with the counts added", async ({ page }) => {

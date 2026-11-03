@@ -175,13 +175,14 @@ test.describe("on a phone", () => {
     await expect(line).toHaveCount(0);
   });
 
-  test("a long comment list loads in pages, and a new top-level comment waits for its page", async ({ page }) => {
+  test("a long comment list loads in pages with the server's count, and a new top-level comment waits for its page", async ({ page }) => {
     await page.addInitScript(() => window.localStorage.setItem("kurl:mock-comments-many", "1"));
     const live = await fakeLive(page);
     await openComments(page);
     const tops = page.locator("#comments li[data-comment-top]");
     await expect(tops).toHaveCount(5);
-    await expect(page.locator("#comments h2").first()).toHaveText("댓글");
+    const heading = page.locator("#comments h2").first();
+    await expect(heading).toHaveText("댓글 35개");
     await expect(page.getByTestId("comments-show-all")).toHaveCount(0);
     const more = page.getByTestId("comments-more");
     await expect(more).toHaveText("댓글 더 보기");
@@ -197,6 +198,7 @@ test.describe("on a phone", () => {
     live.send(sse("changed", { items: [{ kind: "comment", id: 701 }, { kind: "comment", id: 702 }], more: false, cursor: "702" }, "702"));
     await expect(page.locator("#comment-702")).toContainText("첫 페이지 댓글에 달린 새 답글");
     await expect(page.locator("#comment-701")).toHaveCount(0);
+    await expect(heading).toHaveText("댓글 37개");
 
     await more.click();
     await expect(tops).toHaveCount(20);
@@ -204,7 +206,7 @@ test.describe("on a phone", () => {
     await expect(page.locator("#comments")).toContainText("지난 댓글 30");
     await expect(page.locator("#comment-701")).toContainText("아직 안 부른 페이지 뒤의 새 댓글");
     await expect(more).toHaveCount(0);
-    await expect(page.locator("#comments h2").first()).toHaveText(/^댓글 \d+개$/);
+    await expect(heading).toHaveText("댓글 37개");
   });
 
   test("an older server without comment pages still gets new comments by reading the whole list", async ({ page }) => {

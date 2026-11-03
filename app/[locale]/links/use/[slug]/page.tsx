@@ -77,7 +77,7 @@ export default async function SeoLandingPage({
           {c.title}
         </h1>
         <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{c.intro}</p>
-        <a href={ctaHref} className={buttonVariants({ variant: "accent", size: "lg", className: "mt-8" })}>
+        <a href={ctaHref} className={buttonVariants({ variant: "default", size: "lg", className: "mt-8" })}>
           {c.cta}
         </a>
       </header>
@@ -106,7 +106,7 @@ export default async function SeoLandingPage({
       </section>
 
       <div className="mt-16 border-t border-slate-200 pt-10 dark:border-slate-800">
-        <a href={ctaHref} className={buttonVariants({ variant: "accent", size: "lg" })}>
+        <a href={ctaHref} className={buttonVariants({ variant: "default", size: "lg" })}>
           {c.cta}
         </a>
       </div>

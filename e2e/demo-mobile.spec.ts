@@ -67,7 +67,7 @@ test.describe("demo page artifacts", () => {
    * /demo previews. Visual drift stays in the artifact PNGs above; these tests fail loudly
    * when the chart machinery is wired up wrong.
    */
-  test("heatmap fills a neutral ramp (not all empty) with one accent cell", async ({ page }) => {
+  test("heatmap fills a neutral ramp (not all empty) with one ink cell", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "클릭 추이" }).click();
@@ -75,18 +75,16 @@ test.describe("demo page artifacts", () => {
     await expect(cells).toHaveCount(168);
     const filled = await page.locator('[data-testid="heatmap-hours"] button:is(.bg-slate-200, .bg-slate-300, .bg-slate-400, .bg-slate-500)').count();
     expect(filled).toBeGreaterThanOrEqual(40);
-    await expect(page.locator('[data-testid="heatmap-hours"] button[class*="bg-accent"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="heatmap-hours"] button.bg-slate-900')).toHaveCount(1);
   });
 
   test("the where tab opens the full geo mirror", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "유입 경로" }).click();
-    // {@code stats.section.country.title} = "국가"; the where chapter renders the CountryTable
-    // inside a Section keyed on this exact title.
-    const countrySection = page.locator('section:has-text("국가")').first();
+    const countrySection = page.locator("section").filter({ has: page.getByRole("heading", { name: "국가", exact: true }) });
     await countrySection.scrollIntoViewIfNeeded();
-    const rows = countrySection.locator("tbody tr");
+    const rows = countrySection.getByTestId("breakdown-name");
     // Demo data ships 8 countries. If the renderer or fixture drifts this fails fast.
     expect(await rows.count()).toBeGreaterThanOrEqual(5);
     // Region + city must show the leading KR metro entry, not be empty.
@@ -116,9 +114,8 @@ test.describe("demo page artifacts", () => {
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "방문 환경" }).click();
     // Section titles in ko — pulled from messages/ko.json stats.section.*
-    for (const title of ["언어", "봇 종류", "네트워크(ASN)"]) {
-      const section = page.locator(`section:has-text("${title}")`).first();
-      await expect(section).toBeVisible();
+    for (const title of ["언어", "자동 접속 종류", "네트워크"]) {
+      await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
     }
   });
 

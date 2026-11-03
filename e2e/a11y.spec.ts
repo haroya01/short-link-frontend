@@ -9,8 +9,8 @@ test.describe("accessibility (axe-core)", () => {
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(path);
       await page.waitForLoadState("networkidle");
-      // color-contrast runs too — the palette is token-locked now (focus ring accent-600, green
-      // fills accent-700 under white labels, copy text slate-500+), so flags are real regressions.
+      // color-contrast runs too — the palette is token-locked now (ink focus ring, ink fills under
+      // white labels, copy text slate-500+), so flags are real regressions.
       const results = await new AxeBuilder({ page }).exclude("[data-wordmark]").analyze();
       const blocking = results.violations.filter(
         (v) => v.impact === "critical" || v.impact === "serious",

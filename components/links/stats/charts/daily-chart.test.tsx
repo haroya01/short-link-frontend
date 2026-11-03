@@ -76,9 +76,9 @@ describe("DailyChart draws one bar per day, never a curve between days", () => {
     expect(label()).toBe("12Oct 29");
   });
 
-  it("paints only the active bar in the accent and the rest in one neutral tone", async () => {
+  it("paints only the active bar in ink and the rest in one neutral tone", async () => {
     await render();
-    const accented = () => slots().filter((slot) => slot.firstElementChild?.className.includes("bg-accent-600"));
+    const accented = () => slots().filter((slot) => slot.firstElementChild?.className.includes("bg-slate-900"));
     const bars = slots().filter((slot) => slot.firstElementChild);
     expect(accented().map((slot) => slot.dataset.count)).toEqual(["12"]);
     expect(bars.filter((slot) => slot.firstElementChild!.className.includes("bg-slate-300"))).toHaveLength(bars.length - 1);

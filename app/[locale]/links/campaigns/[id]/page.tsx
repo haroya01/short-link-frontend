@@ -175,7 +175,7 @@ function Header({
       <div className="flex items-center gap-2">
         <CampaignStatusBadge status={campaign.status} />
         <span className="text-[12px] text-slate-500 dark:text-slate-400">
-          {formatPeriod(campaign.startsAt, campaign.endsAt, locale)}
+          {formatPeriod(campaign.startsAt, campaign.endedAt ?? campaign.endsAt, locale)}
         </span>
       </div>
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
@@ -342,7 +342,7 @@ function PolicySummary({
             href={campaign.postEndDestinationUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-900 dark:text-slate-100 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100"
           >
             {campaign.postEndDestinationUrl}
             <ExternalLink className="h-3.5 w-3.5" aria-hidden />
@@ -361,7 +361,7 @@ function PolicySummary({
                 variant="ghost"
                 size="sm"
                 onClick={startEdit}
-                className="h-auto px-1 py-0 text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:bg-transparent hover:underline"
+                className="h-auto px-1 py-0 text-[12px] font-medium text-slate-900 dark:text-slate-100 hover:bg-transparent underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100"
               >
                 {campaign.postEndMessage ? t("policy.edit") : t("policy.add")}
               </Button>
@@ -374,7 +374,7 @@ function PolicySummary({
                 onChange={(e) => setDraft(e.target.value.slice(0, 500))}
                 rows={3}
                 placeholder={t("policy.messagePlaceholder")}
-                className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100 dark:focus:ring-accent-500/20"
+                className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600"
               />
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
@@ -389,7 +389,7 @@ function PolicySummary({
                   >
                     {t("cancel")}
                   </Button>
-                  <Button type="button" variant="accent" onClick={save} disabled={saving}>
+                  <Button type="button" onClick={save} disabled={saving}>
                     {saving ? t("policy.saving") : t("policy.save")}
                   </Button>
                 </div>
@@ -441,7 +441,7 @@ function BatchSection({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {!terminal && (
-            <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ variant: "accent" })}>
+            <Link href={`/campaigns/${campaignId}/batches/new`} className={buttonVariants({ variant: "default" })}>
               {t("batches.add")}
             </Link>
           )}

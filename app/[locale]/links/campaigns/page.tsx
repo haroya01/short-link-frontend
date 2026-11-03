@@ -67,7 +67,7 @@ export default function CampaignsPage() {
           )}
         </div>
         {items && (
-          <Link href="/campaigns/new" className={buttonVariants({ variant: "accent" })}>
+          <Link href="/campaigns/new" className={buttonVariants({ variant: "default" })}>
             {t("newCampaign")}
           </Link>
         )}
@@ -109,7 +109,7 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
             <p className="mt-2 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
               {formatPeriod(c.startsAt, c.endsAt, locale)}
             </p>
-            <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] font-medium text-accent-700 dark:text-accent-400 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] font-medium text-slate-900 dark:text-slate-100 opacity-0 transition-opacity group-hover:opacity-100">
               {t("details")}
             </div>
           </Link>

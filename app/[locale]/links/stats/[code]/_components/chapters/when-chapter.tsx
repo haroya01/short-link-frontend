@@ -5,6 +5,7 @@ import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { HourChart } from "@/components/links/stats/charts/hour-chart";
+import type { UseClickStreamResult } from "@/hooks/use-click-stream";
 import type { LinkStats } from "@/types";
 import { HEADING, RangeSwitch, type RangeDays } from "../section-parts";
 
@@ -13,21 +14,21 @@ export function WhenChapter({
   dailyClicks,
   range,
   onRange,
-  onTick,
+  stream,
   demo = false,
 }: {
   data: LinkStats;
   dailyClicks?: LinkStats["dailyClicks"];
   range: RangeDays;
   onRange: (r: RangeDays) => void;
-  onTick: () => void;
+  stream: UseClickStreamResult;
   demo?: boolean;
 }) {
   const t = useTranslations("stats");
   return (
     <div id="chapter-when" className="scroll-mt-28">
       <div id="section-live" className="scroll-mt-28">
-        {!demo && <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />}
+        {!demo && <LiveClickFeed stream={stream} />}
       </div>
       <section id="section-daily" aria-labelledby="when-daily" className="scroll-mt-28">
         <div className="flex items-center justify-between gap-3">
@@ -37,7 +38,7 @@ export function WhenChapter({
           <RangeSwitch range={range} onRange={onRange} />
         </div>
         <div className="mt-3">
-          <DailyChart data={dailyClicks ?? data.dailyClicks} compact />
+          <DailyChart data={dailyClicks ?? data.dailyClicks} timezone={data.timezone} compact />
         </div>
       </section>
       <section id="section-hourly" aria-labelledby="when-hourly" className="mt-10 scroll-mt-28">

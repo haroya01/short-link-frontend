@@ -30,7 +30,7 @@ export function displayStatus(
 
 // Exported so the admin link-detail page renders the same status badge from one source of truth.
 export const STATUS_STYLES: Record<AdminLinkDisplayStatus, string> = {
-  ACTIVE: "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300",
+  ACTIVE: "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
   EXPIRED: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
   LIMIT_REACHED: "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
   DISABLED: "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-300",
@@ -245,7 +245,7 @@ export function LinkBrowser() {
                         {l.ownerId != null ? (
                           <Link
                             href={`/admin/links?ownerId=${l.ownerId}`}
-                            className="text-accent-700 hover:underline dark:text-accent-400"
+                            className="text-slate-900 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
                           >
                             {l.ownerEmail ?? t("table.anonymous")}
                           </Link>

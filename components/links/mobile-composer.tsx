@@ -25,7 +25,7 @@ const CODE_PATTERN = /^[0-9A-Za-z]{3,16}$/;
  * options sheet (code · expiry · password) is set before shortening, which waits for the button.
  * The result opens as the link sheet (copy · share · QR). Rides the tab bar's hide-on-scroll.
  */
-export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string; onCreated: () => void }) {
+export function MobileComposer({ initialUrl, onCreated, hidden = false }: { initialUrl?: string; onCreated: () => void; hidden?: boolean }) {
   const t = useTranslations("composer");
   const tForm = useTranslations("shortenForm");
   const errorMessage = useApiErrorMessage();
@@ -56,6 +56,11 @@ export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string;
   const optionCount = [customCode.trim(), expiresAt, lockOn ? "lock" : ""].filter(Boolean).length;
 
   async function shorten(raw: string) {
+    if (!raw.trim()) {
+      setError(tForm("errors.empty"));
+      inputRef.current?.focus();
+      return;
+    }
     const url = extractUrl(raw);
     if (!url || !isValidUrl(url)) {
       setError(t("noUrl"));
@@ -112,6 +117,7 @@ export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string;
         className={cn(
           "fixed inset-x-0 bottom-[var(--bottom-nav-h)] z-30 border-t border-slate-200/80 bg-white px-3 pb-1 pt-2.5 transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/80 dark:bg-slate-950 sm:hidden",
           navHidden && "translate-y-14 pb-2",
+          hidden && "hidden",
         )}
       >
         {error && (
@@ -140,7 +146,7 @@ export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string;
             }}
             placeholder={t("placeholder")}
             aria-label={t("placeholder")}
-            className="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-[15px] text-slate-900 placeholder:text-slate-500 focus:border-accent-600 focus:outline-none focus:ring-4 focus:ring-accent-600/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
+            className="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-[15px] text-slate-900 placeholder:text-slate-500 focus:border-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-900 dark:focus:ring-slate-100/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
           />
           <button
             type="button"
@@ -161,8 +167,8 @@ export function MobileComposer({ initialUrl, onCreated }: { initialUrl?: string;
           </button>
           <button
             type="submit"
-            disabled={busy || empty}
-            className={buttonVariants({ variant: "accent", size: "lg" })}
+            disabled={busy}
+            className={buttonVariants({ variant: "default", size: "lg" })}
           >
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("submit")}

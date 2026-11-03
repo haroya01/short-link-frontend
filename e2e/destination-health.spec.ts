@@ -40,7 +40,7 @@ test.describe("destination health", () => {
     await mockBackend(page);
     await page.goto(`/ko/stats/${CODE}`);
 
-    await expect(page.getByText("누적 전체 클릭", { exact: true })).toBeVisible();
+    await expect(page.getByText("자동 접속 포함", { exact: true })).toBeVisible();
     await expect(page.getByText("목적지가 열리지 않아요.")).toHaveCount(0);
   });
 });

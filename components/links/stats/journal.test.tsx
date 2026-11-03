@@ -51,6 +51,6 @@ describe("journal evidence uses the sentence's denominator", () => {
   it("the top source evidence lists direct visits and divides by every human click", () => {
     const rows = openEvidence("topSource");
     expect(rows["instagram.com"]).toBe("34%");
-    expect(rows["breakdown.direct"]).toBe("17%");
+    expect(rows["channel.direct"]).toBe("17%");
   });
 });

@@ -65,6 +65,9 @@ export function ShortenPanel({
         />
       )}
 
+      <p role="status" className="sr-only">
+        {results?.[0] ? `${tResult("completed")} ${results[0].res.shortUrl.replace(/^https?:\/\//, "")}` : ""}
+      </p>
       {results && results.length > 0 && (
         <div className={composing ? "mt-9 space-y-8" : "space-y-8"}>
           {results.map((r, i) => (
@@ -81,13 +84,10 @@ export function ShortenPanel({
             <button
               type="button"
               onClick={() => setComposing(true)}
-              className="focus-ring sweep-after inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+              className="focus-ring sweep-after inline-flex items-baseline rounded-sm text-[14px] font-semibold text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               style={{ ["--sweep-at" as string]: `${results.length * 70 + 60}ms`, ["--after" as string]: "460ms" } as React.CSSProperties}
             >
               {tResult("moreShorten")}
-              <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
-                ↵
-              </span>
             </button>
           )}
         </div>

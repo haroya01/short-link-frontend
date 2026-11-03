@@ -143,7 +143,7 @@ export function CountryCombobox({
         aria-label={t("countryLabel")}
         className={cn(
           "inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-900 transition-colors hover:border-slate-300",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50",
+          "focus-ring disabled:opacity-50",
           "dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-700",
           size === "sm" ? "px-1.5 py-0.5 text-[11px]" : "px-2 py-1.5 text-xs",
         )}
@@ -193,7 +193,7 @@ export function CountryCombobox({
                     className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[13px] text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     <span className="flex-1">{t("countryAny")}</span>
-                    {!value && <Check className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" aria-hidden />}
+                    {!value && <Check className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100" aria-hidden />}
                   </button>
                 </li>
               )}
@@ -220,7 +220,7 @@ export function CountryCombobox({
                         <span aria-hidden className="text-[15px] leading-none">{o.flag}</span>
                         <span className="flex-1 truncate text-slate-800 dark:text-slate-200">{o.name}</span>
                         <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{o.code}</span>
-                        {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-400" aria-hidden />}
+                        {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-slate-900 dark:text-slate-100" aria-hidden />}
                       </button>
                     </li>
                   );

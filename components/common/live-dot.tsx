@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 export function LiveDot({ className }: { className?: string }) {
   return (
     <span aria-hidden className={cn("relative flex h-1.5 w-1.5 shrink-0", className)}>
-      <span className="absolute inline-flex h-full w-full motion-safe:animate-ping rounded-full bg-accent-400 opacity-60" />
-      <span className="relative inline-flex h-full w-full rounded-full bg-accent-500" />
+      <span className="absolute inline-flex h-full w-full motion-safe:animate-ping rounded-full bg-slate-400 opacity-60 dark:bg-slate-500" />
+      <span className="relative inline-flex h-full w-full rounded-full bg-slate-900 dark:bg-slate-100" />
     </span>
   );
 }

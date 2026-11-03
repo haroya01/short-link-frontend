@@ -23,7 +23,7 @@ async function openWhen(page: Page, handlers: Parameters<typeof mockBackend>[1] 
 function accentOf(page: Page) {
   return page.evaluate(() => {
     const probe = document.createElement("span");
-    probe.className = "bg-accent-600";
+    probe.className = "bg-slate-900";
     document.body.append(probe);
     const color = getComputedStyle(probe).backgroundColor;
     probe.remove();
@@ -90,7 +90,7 @@ test.describe("클릭 추이 reads like the overview", () => {
           streams.length === 1
             ? event("ready", { ok: true })
             : event("ready", { ok: true }) +
-              event("click", { occurredAt: "2026-11-02T09:00:00Z", countryCode: "KR", deviceClass: "iOS", channel: "kakao", bot: false });
+              event("click", { occurredAt: "2026-11-02T09:00:00Z", countryCode: "KR", deviceClass: "mobile", channel: "messaging", bot: false });
         return route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body });
       },
     });
@@ -104,7 +104,7 @@ test.describe("클릭 추이 reads like the overview", () => {
     const feed = page.getByTestId("live-feed");
     await expect(feed).toBeVisible({ timeout: 10_000 });
     await expect(feed.getByRole("heading", { name: "지금" })).toBeVisible();
-    await expect(feed.locator("li").first()).toContainText("KR · iOS · kakao");
+    await expect(feed.locator("li").first()).toContainText("대한민국 · 모바일 · 메신저");
     expect(streams[0]).toContain("streamToken=st-e2e");
   });
 

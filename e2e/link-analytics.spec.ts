@@ -51,8 +51,9 @@ async function openWith(page: import("@playwright/test").Page, body: object) {
 test.describe("analytics is one page about the last 7 days", () => {
   test("the headline compares with the 7 days before and the list ranks the week, not all time", async ({ page }) => {
     await openWith(page, overview());
-    await expect(page.getByText("그 전 7일보다 12% 늘었어요(100회)")).toBeVisible();
-    await expect(page.getByText("가장 많이 누른 때 수요일 오후 9시")).toBeVisible();
+    await expect(page.getByText("그 전 7일보다 12% 늘었어요", { exact: true })).toBeVisible();
+    const peak = page.locator("dl > div").filter({ has: page.getByText("가장 많이 누른 때", { exact: true }) });
+    await expect(peak.locator("dd")).toHaveText("수요일 오후 9시");
     await expect(page.getByRole("heading", { name: "최근 7일 많이 클릭된 링크" })).toBeVisible();
     await expect(page.getByRole("link", { name: /This week post/ })).toContainText("112");
     await expect(page.getByText("Old campaign")).toHaveCount(0);

@@ -128,6 +128,10 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
       <div className="mb-3">
         <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
         <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
+        <details className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">
+          <summary className="focus-ring w-fit cursor-pointer rounded-sm">{t("formatTitle")}</summary>
+          <p className="mt-1 leading-relaxed">{t("formatDetail")}</p>
+        </details>
       </div>
 
       <form onSubmit={handleRegister} className="grid gap-2 sm:grid-cols-[1fr_180px_auto]">
@@ -183,7 +187,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
           </div>
           <button
             type="button"
-            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-1 rounded"
+            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900 focus-ring rounded"
             onClick={() => setIssued(null)}
           >
             {t("dismiss")}
@@ -461,7 +465,7 @@ function StatusPill({
     <span
       className={
         "rounded px-1.5 py-0.5 text-[10px] font-medium " +
-        (ok ? "bg-accent-100 dark:bg-accent-500/15 text-accent-700 dark:text-accent-400" : "bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400")
+        (ok ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100" : "bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400")
       }
     >
       {hook.lastStatusCode}

@@ -281,7 +281,7 @@ function OutcomeLookup({
                     <span className="w-24 shrink-0 truncate font-medium text-slate-700 dark:text-slate-300">{outcome}</span>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div
-                        className="h-full rounded-full bg-accent-600"
+                        className="h-full rounded-full bg-slate-900 dark:bg-slate-100"
                         style={{ width: `${(pct * 100).toFixed(1)}%` }}
                       />
                     </div>
@@ -375,7 +375,7 @@ function RawRow({
   row: AdminRequestRawRow;
   fmt: ReturnType<typeof useFormatter>;
 }) {
-  const outcomeStyle = row.status >= 500 ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" : row.status >= 400 ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
+  const outcomeStyle = row.status >= 500 ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" : row.status >= 400 ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100";
   return (
     <div
       className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5"

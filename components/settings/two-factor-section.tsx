@@ -155,7 +155,7 @@ export function TwoFactorSection() {
           <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300">
             {t("statusOff")}
           </span>
-          <Button size="sm" variant="accent" onClick={handleStart} disabled={busy}>
+          <Button size="sm" onClick={handleStart} disabled={busy}>
             {busy ? t("starting") : t("enableButton")}
           </Button>
         </div>
@@ -215,7 +215,6 @@ export function TwoFactorSection() {
             />
             <Button
               size="sm"
-              variant="accent"
               onClick={handleConfirm}
               disabled={busy || code.length !== 6}
             >
@@ -231,7 +230,7 @@ export function TwoFactorSection() {
       {mode === "on" && (
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded bg-emerald-100 dark:bg-emerald-500/15 px-2 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+            <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-[11px] font-medium text-slate-900 dark:text-slate-100">
               {t("statusOn")}
             </span>
             {status?.lastUsedAt && (
@@ -258,7 +257,7 @@ export function TwoFactorSection() {
                 />
                 <Button
                   size="sm"
-                  variant={confirmDisable ? "destructive" : "accent"}
+                  variant={confirmDisable ? "destructive" : "default"}
                   onClick={confirmDisable ? handleDisable : handleRegenerate}
                   disabled={busy || code.length !== 6}
                 >

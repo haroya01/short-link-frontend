@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
+import { useLinkDetail } from "@/lib/api/links.queries";
+import { usePacedRefresh } from "@/hooks/use-paced-refresh";
 import { Link } from "@/i18n/navigation";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
@@ -15,10 +17,7 @@ import { StatsSkeleton } from "./_components/stats-skeleton";
 import { StatsBody } from "./_components/stats-body";
 import { LinksPage } from "@/components/links/links-page";
 
-// The live click feed fires one SSE tick per click (no backend batching). Refetching the heavy
-// stats aggregation on every tick floods a busy link, so collapse ticks into at most one refetch
-// per window.
-const STATS_REFETCH_THROTTLE_MS = 5000;
+const FULL_REPORT_MIN_INTERVAL_MS = 60_000;
 
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
@@ -26,7 +25,9 @@ export default function StatsPage() {
   const { authenticated, ready } = useAuth();
   const code = params.code;
 
-  const [shortUrl, setShortUrl] = useState<string>("");
+  const [shortUrl, setShortUrl] = useState<string>(() =>
+    process.env.NEXT_PUBLIC_API_BASE ? `${process.env.NEXT_PUBLIC_API_BASE.replace(/\/$/, "")}/${code}` : "",
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -40,32 +41,19 @@ export default function StatsPage() {
     }
   }, [code]);
 
-  const { data, error, isLoading, refetch } = useLinkStats(code, {
+  const { data, error, isLoading, refetch, dataUpdatedAt } = useLinkStats(code, {
     enabled: ready && authenticated && !!code,
   });
+  useLinkDetail(ready && authenticated ? code : undefined);
 
-  // Throttle SSE-driven refetches to one per window. Read refetch from a ref so handleTick keeps a
-  // stable identity (it feeds the EventSource hook, which should not tear down on re-render), and
-  // pass cancelRefetch:false so an in-flight request isn't cancelled mid-burst — the backend runs
-  // the full aggregation regardless, and cancelling only stalls the displayed numbers.
   const refetchRef = useRef(refetch);
   useEffect(() => {
     refetchRef.current = refetch;
   }, [refetch]);
-  const tickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handleTick = useCallback(() => {
-    if (tickTimer.current) return;
-    tickTimer.current = setTimeout(() => {
-      tickTimer.current = null;
-      void refetchRef.current({ cancelRefetch: false });
-    }, STATS_REFETCH_THROTTLE_MS);
+  const refreshNow = useCallback(() => {
+    void refetchRef.current({ cancelRefetch: false });
   }, []);
-  useEffect(
-    () => () => {
-      if (tickTimer.current) clearTimeout(tickTimer.current);
-    },
-    [],
-  );
+  const markStale = usePacedRefresh(refreshNow, dataUpdatedAt, FULL_REPORT_MIN_INTERVAL_MS);
 
   // Hold the skeleton through the auth bootstrap too: a disabled query reports isLoading=false with
   // data=undefined, which would otherwise fall through to the "not found" empty state on first paint.
@@ -94,7 +82,7 @@ export default function StatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/dashboard" className="focus-ring rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+            <Link href="/dashboard" className="focus-ring rounded-sm text-[15px] font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100">
               {t("backToDashboard")}
             </Link>
           }
@@ -103,7 +91,8 @@ export default function StatsPage() {
         <StatsBody
           data={data}
           shortUrl={shortUrl}
-          onTick={handleTick}
+          onLiveClick={markStale}
+          onChanged={refreshNow}
           shortCodeLabel={t("shortCode")}
         />
       )}

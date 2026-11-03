@@ -6,8 +6,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { cn } from "@/lib/utils";
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({
+  placement = "down",
+  withLabel = false,
+  product = "blog",
+}: { placement?: "down" | "up"; withLabel?: boolean; product?: "blog" | "links" } = {}) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -32,18 +37,25 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-        aria-label={t("label")}
-        title={locale.toUpperCase()}
+        className={cn(
+          "focus-ring inline-flex h-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100",
+          withLabel ? "gap-1.5 px-2 text-[13px]" : "w-8",
+        )}
+        aria-label={withLabel ? undefined : t("label")}
+        title={withLabel ? undefined : locale.toUpperCase()}
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <Languages className="h-4 w-4" />
+        <Languages aria-hidden className="h-4 w-4" />
+        {withLabel && <span>{t(locale)}</span>}
       </button>
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-1 w-40 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850"
+          className={cn(
+            "absolute z-40 w-40 rounded-2xl border border-slate-200 bg-white p-1 shadow-float dark:border-slate-700 dark:bg-slate-850",
+            placement === "up" ? "bottom-full left-0 mb-1" : "right-0 top-full mt-1",
+          )}
         >
           {routing.locales.map((l) => (
             <button
@@ -55,7 +67,7 @@ export function LanguageSwitcher() {
               className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               {t(l)}
-              {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" aria-hidden />}
+              {l === locale && <Check className={`h-4 w-4 ${product === "links" ? "text-slate-900 dark:text-slate-100" : "text-accent-600 dark:text-accent-400"}`} aria-hidden />}
             </button>
           ))}
         </div>

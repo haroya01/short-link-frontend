@@ -23,10 +23,10 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
     await page.setViewportSize(viewport);
     await page.goto("/ko/demo");
     const tabs = page.getByRole("tablist", { name: "통계 섹션" });
-    await expect(tabs.getByRole("tab")).toHaveCount(5);
+    await expect(tabs.getByRole("tab")).toHaveCount(6);
     await capture(page, `stats-${viewport.width}`);
     await tabs.getByRole("tab", { name: "방문 환경" }).click();
-    await expect(page.getByRole("tabpanel")).toContainText("클릭 품질");
+    await expect(page.getByRole("tabpanel")).toContainText("방문자당 클릭");
     await tabs.getByRole("tab", { name: "클릭 추이" }).click();
     await page.getByRole("button", { name: "7일", exact: true }).click();
     await expect(page.getByRole("button", { name: "7일", exact: true })).toHaveAttribute("aria-pressed", "true");

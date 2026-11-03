@@ -1,75 +1,29 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { formatShare } from "@/lib/utils";
+import { KpiLine } from "@/components/links/stats/kpi-line";
+import { formatNumber, formatShare } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 
-/**
- * Compact "how is this link being used" summary that distills the data the page already has into
- * the four numbers people actually look at: returning ratio, clicks per unique, peak hour, and
- * social-preview hits separated from real clicks. Cards use {@code rounded-2xl} (16 px) —
- * matching the canonical slate card surface token (DESIGN.md §1).
- */
 export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const t = useTranslations("stats.quality");
-  const tStats = useTranslations("stats");
-  const total = data.totalClicks;
-  if (total === 0) return null;
+  const tKpi = useTranslations("stats.kpi");
+  if (data.totalClicks === 0) return null;
 
-  const returningCount = data.returnRate?.returningVisitors ?? 0;
   const unique = data.uniqueClicks ?? 0;
   const clicksPerUnique = unique === 0 ? 0 : data.humanClicks / unique;
-  const returningRatio = data.returnRate?.ratio ?? 0;
-  const previewClicks = data.previewClicks ?? 0;
-  const realClicks = data.humanClicks;
-  const previewRatio = total === 0 ? 0 : previewClicks / total;
-
-  const cards: { label: string; value: string; hint?: string; window?: string }[] = [
-    {
-      label: t("returning"),
-      window: data.rawSince && data.rawRetentionDays ? tStats("rawWindow", { days: data.rawRetentionDays }) : undefined,
-      value: formatShare(returningRatio),
-      hint: t("returningHint", { count: returningCount }),
-    },
-    {
-      label: t("clicksPerUnique"),
-      value: clicksPerUnique.toFixed(1),
-      hint: t("clicksPerUniqueHint", { unique }),
-    },
-    {
-      label: t("realVsPreview"),
-      value: `${realClicks} / ${previewClicks}`,
-      hint: t("realVsPreviewHint", { ratio: formatShare(previewRatio) }),
-    },
-    {
-      label: t("peakHour"),
-      value: data.peakHour != null ? `${String(data.peakHour).padStart(2, "0")}:00` : "—",
-      hint: data.peakHour != null ? t("peakHourHint") : t("peakHourEmpty"),
-    },
-  ];
+  const windowed = Boolean(data.rawSince && data.rawRetentionDays);
 
   return (
-    <section>
-      <h2 className="mb-3 text-[10px] font-semibold text-accent-700 dark:text-accent-400">
-        {t("title")}
-      </h2>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => (
-          <div
-            key={c.label}
-            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-card-flat"
-          >
-            <div className="flex items-baseline justify-between gap-2 text-[10px] text-slate-500 dark:text-slate-400">
-              <span className="font-semibold">{c.label}</span>
-              {c.window && <span>{c.window}</span>}
-            </div>
-            <div className="mt-1.5 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
-              {c.value}
-            </div>
-            {c.hint && <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">{c.hint}</div>}
-          </div>
-        ))}
-      </div>
-    </section>
+    <KpiLine
+      hero={{ label: tKpi("unique"), value: formatNumber(unique) }}
+      metrics={[
+        { label: t("clicksPerUnique"), value: clicksPerUnique.toFixed(1) },
+        { label: t("returning"), value: formatShare(data.returnRate?.ratio ?? 0) },
+        { label: t("previews"), value: formatNumber(data.previewClicks ?? 0), muted: true },
+        { label: t("peakHour"), value: data.peakHour != null ? `${String(data.peakHour).padStart(2, "0")}:00` : "—" },
+      ]}
+      note={windowed ? t("returningWindow", { days: data.rawRetentionDays ?? 0 }) : undefined}
+    />
   );
 }

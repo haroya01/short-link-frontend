@@ -4,202 +4,99 @@ import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
-import { CountryTable } from "@/components/links/stats/country-table";
 import { FetchSiteBreakdown, RegionBreakdown } from "@/components/links/stats/labeled-breakdowns";
-import { Section } from "@/components/common/section";
-import { cn } from "@/lib/utils";
+import { Breakdown, BreakdownGrid, countryItems } from "@/components/links/stats/stat-sections";
 import { sourceBreakdown } from "@/lib/stats-sources";
+import { useStatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 
-/** 3장 어디서 — 유입(호스트/URL/채널 깊이/UTM/채널/글), 지리(국가/지역/도시). */
 export function WhereChapter({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
-  const utmTermClicks = data.utmTermClicks ?? [];
-  const utmHasAny =
-    data.utmSourceClicks.length +
-      data.utmMediumClicks.length +
-      data.utmCampaignClicks.length +
-      data.utmContentClicks.length +
-      utmTermClicks.length >
-    0;
+  const labels = useStatsLabels();
+  const human = data.humanClicks;
   const channelDepth = data.channelDepth ?? [];
   const fetchSites = data.fetchSiteClicks ?? [];
   const postClicks = data.postClicks ?? [];
-  const human = data.humanClicks;
-
-  // fetch-site 는 옛 브라우저·과거 클릭에 값이 아예 없고, 글 귀속은 링크를 글에 실은 적이 있어야
-  // 생긴다 — 둘 다 대부분의 링크에서 빈 배열이다. 하나만 있을 때 반쪽 카드가 남지 않도록 열 수를
-  // 실제 개수에 맞춘다(빈 표는 애초에 안 그린다).
-  const arrivalSections = [
-    fetchSites.length > 0 && (
-      <Section
-        key="fetch-site"
-        id="section-fetch-site"
-        title={t("section.fetchSite.title")}
-        description={t("section.fetchSite.desc")}
-      >
-        <FetchSiteBreakdown items={fetchSites} total={human} />
-      </Section>
-    ),
-    postClicks.length > 0 && (
-      <Section
-        key="post-clicks"
-        id="section-post-clicks"
-        title={t("section.postClicks.title")}
-        description={t("section.postClicks.desc")}
-      >
-        <BreakdownList
-          items={postClicks.map((p) => ({
-            label: p.title ?? t("postClicks.deleted"),
-            count: p.count,
-          }))}
-          total={human}
-        />
-      </Section>
-    ),
-  ].filter(Boolean);
+  const utm = [
+    { key: "utmSource", items: data.utmSourceClicks.map((u) => ({ label: u.source, count: u.count })) },
+    { key: "utmMedium", items: data.utmMediumClicks.map((u) => ({ label: u.medium, count: u.count })) },
+    { key: "utm", items: data.utmCampaignClicks.map((u) => ({ label: u.campaign, count: u.count })) },
+    { key: "utmContent", items: data.utmContentClicks.map((u) => ({ label: u.content, count: u.count })) },
+    { key: "utmTerm", items: (data.utmTermClicks ?? []).map((u) => ({ label: u.term, count: u.count })) },
+  ].filter((section) => section.items.length > 0);
 
   return (
-    <div id="chapter-where" className="scroll-mt-28 space-y-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Section
-          id="section-sources"
-          title={t("section.referrerHost.title")}
-          description={t("section.referrerHost.desc")}
-        >
-          <BreakdownList {...sourceBreakdown(data, t("breakdown.direct"))} />
-        </Section>
-        <Section
-          title={t("section.referrerUrl.title")}
-          description={t("section.referrerUrl.desc")}
-        >
-          <ReferrerChart data={data.referrerClicks} total={human} />
-        </Section>
-      </div>
+    <div id="chapter-where" className="scroll-mt-28 space-y-10">
+      <BreakdownGrid>
+        <Breakdown id="section-sources" title={t("section.referrerHost.title")}>
+          <BreakdownList {...sourceBreakdown(data, labels.channel("direct"))} subgrid />
+        </Breakdown>
+        <Breakdown title={t("section.channel.title")}>
+          <BreakdownList
+            items={data.channelClicks.map((c) => ({ label: labels.channel(c.channel), count: c.count }))}
+            total={human}
+            subgrid
+          />
+        </Breakdown>
+        {data.referrerClicks.length > 0 && (
+          <Breakdown title={t("section.referrerUrl.title")}>
+            <ReferrerChart data={data.referrerClicks} total={human} subgrid />
+          </Breakdown>
+        )}
+        {data.sourceChannelClicks.length > 0 && (
+          <Breakdown title={t("section.srcChannel.title")} aside="?src">
+            <BreakdownList
+              items={data.sourceChannelClicks.map((s) => ({ label: labels.source(s.source), count: s.count }))}
+              total={human}
+              subgrid
+            />
+          </Breakdown>
+        )}
+        {fetchSites.length > 0 && (
+          <Breakdown id="section-fetch-site" title={t("section.fetchSite.title")}>
+            <FetchSiteBreakdown items={fetchSites} total={human} subgrid />
+          </Breakdown>
+        )}
+        {postClicks.length > 0 && (
+          <Breakdown id="section-post-clicks" title={t("section.postClicks.title")}>
+            <BreakdownList
+              items={postClicks.map((p) => ({ label: p.title ?? t("postClicks.deleted"), count: p.count }))}
+              total={human}
+              subgrid
+            />
+          </Breakdown>
+        )}
+        {utm.map((section) => (
+          <Breakdown key={section.key} title={t(`section.${section.key}.title`)}>
+            <BreakdownList items={section.items} total={human} subgrid />
+          </Breakdown>
+        ))}
+        <Breakdown title={t("section.country.title")}>
+          <BreakdownList items={countryItems(data.countryClicks, labels)} total={human} subgrid />
+        </Breakdown>
+        {data.regionClicks.length > 0 && (
+          <Breakdown title={t("section.region.title")}>
+            <RegionBreakdown items={data.regionClicks} total={human} subgrid />
+          </Breakdown>
+        )}
+        {data.cityClicks.length > 0 && (
+          <Breakdown title={t("section.city.title")}>
+            <BreakdownList items={data.cityClicks.map((c) => ({ label: c.city, count: c.count }))} total={human} subgrid />
+          </Breakdown>
+        )}
+      </BreakdownGrid>
 
       {channelDepth.length > 0 && (
-        <Section
+        <Breakdown
           id="section-channel-depth"
           title={t("section.channelDepth.title")}
-          description={t("section.channelDepth.desc")}
-          action={data.rawSince && data.rawRetentionDays ? (
-            <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("rawWindow", { days: data.rawRetentionDays })}</span>
-          ) : undefined}
+          aside={data.rawSince && data.rawRetentionDays ? t("rawWindow", { days: data.rawRetentionDays }) : undefined}
         >
-          <ChannelDepthTable data={channelDepth} timezone={data.timezone} />
-        </Section>
+          <div className="sm:col-span-full">
+            <ChannelDepthTable data={channelDepth} timezone={data.timezone} />
+          </div>
+        </Breakdown>
       )}
-
-      {arrivalSections.length > 0 && (
-        <div
-          className={cn(
-            "grid grid-cols-1 gap-4",
-            arrivalSections.length > 1 && "lg:grid-cols-2",
-          )}
-        >
-          {arrivalSections}
-        </div>
-      )}
-
-      {!utmHasAny ? (
-        <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
-          <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noUtm")}</p>
-        </Section>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {data.utmSourceClicks.length > 0 && (
-            <Section
-              title={t("section.utmSource.title")}
-              description={t("section.utmSource.desc")}
-            >
-              <BreakdownList
-                items={data.utmSourceClicks.map((u) => ({ label: u.source, count: u.count }))}
-                total={human}
-              />
-            </Section>
-          )}
-          {data.utmMediumClicks.length > 0 && (
-            <Section
-              title={t("section.utmMedium.title")}
-              description={t("section.utmMedium.desc")}
-            >
-              <BreakdownList
-                items={data.utmMediumClicks.map((u) => ({ label: u.medium, count: u.count }))}
-                total={human}
-              />
-            </Section>
-          )}
-          {data.utmCampaignClicks.length > 0 && (
-            <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
-              <BreakdownList
-                items={data.utmCampaignClicks.map((u) => ({
-                  label: u.campaign,
-                  count: u.count,
-                }))}
-                total={human}
-              />
-            </Section>
-          )}
-          {data.utmContentClicks.length > 0 && (
-            <Section
-              title={t("section.utmContent.title")}
-              description={t("section.utmContent.desc")}
-            >
-              <BreakdownList
-                items={data.utmContentClicks.map((u) => ({ label: u.content, count: u.count }))}
-                total={human}
-              />
-            </Section>
-          )}
-          {utmTermClicks.length > 0 && (
-            <Section title={t("section.utmTerm.title")} description={t("section.utmTerm.desc")}>
-              <BreakdownList
-                items={utmTermClicks.map((u) => ({ label: u.term, count: u.count }))}
-                total={human}
-              />
-            </Section>
-          )}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
-          <BreakdownList
-            items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
-            total={human}
-          />
-        </Section>
-        <Section
-          title={t("section.srcChannel.title")}
-          description={t("section.srcChannel.desc")}
-        >
-          {data.sourceChannelClicks.length === 0 ? (
-            <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
-              {t("section.srcChannel.empty")}
-            </p>
-          ) : (
-            <BreakdownList
-              items={data.sourceChannelClicks.map((s) => ({ label: s.source, count: s.count }))}
-              total={human}
-            />
-          )}
-        </Section>
-      </div>
-
-      <Section title={t("section.country.title")} description={t("section.country.desc")}>
-        <CountryTable data={data.countryClicks} />
-      </Section>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Section title={t("section.region.title")} description={t("section.region.desc")}>
-          <RegionBreakdown items={data.regionClicks} total={human} />
-        </Section>
-        <Section title={t("section.city.title")} description={t("section.city.desc")}>
-          <BreakdownList
-            items={data.cityClicks.map((c) => ({ label: c.city, count: c.count }))}
-            total={human}
-          />
-        </Section>
-      </div>
     </div>
   );
 }

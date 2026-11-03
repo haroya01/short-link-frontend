@@ -14,7 +14,13 @@ export function RecommendationCard({ data }: { data: CampaignRecommendation }) {
   if (data.insufficient) {
     return (
       <Section title={t("recommendation.title")}>
-        <p className="text-[12px] text-slate-500 dark:text-slate-400">{data.insufficientReason}</p>
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
+          {data.insufficientCode === "TOO_FEW_BATCHES"
+            ? t("recommendation.tooFewBatches", { minimum: data.insufficientMinimum ?? 2, current: data.insufficientCurrent ?? 0 })
+            : data.insufficientCode === "TOO_FEW_CLICKS"
+              ? t("recommendation.tooFewClicks", { minimum: data.insufficientMinimum ?? 10, current: data.insufficientCurrent ?? 0 })
+              : data.insufficientReason}
+        </p>
       </Section>
     );
   }
@@ -40,7 +46,7 @@ export function RecommendationCard({ data }: { data: CampaignRecommendation }) {
 function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const verdictStyle: Record<string, string> = {
-    BOOST: "bg-accent-100 dark:bg-accent-600/10 text-accent-700 dark:text-accent-400",
+    BOOST: "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100",
     KEEP: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
     REDUCE: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400",
     PRUNE: "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400",
@@ -53,7 +59,7 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
   };
   const deltaSign = rec.delta > 0 ? "+" : "";
   const deltaColor =
-    rec.delta > 0 ? "text-accent-700 dark:text-accent-400" : rec.delta < 0 ? "text-rose-600" : "text-slate-500 dark:text-slate-400";
+    rec.delta > 0 ? "text-slate-900 dark:text-slate-100" : rec.delta < 0 ? "text-rose-600" : "text-slate-500 dark:text-slate-400";
   return (
     <li className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-3">
       <div className="min-w-0">
@@ -95,9 +101,8 @@ export function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount
       metrics={[
         { label: t("kpi.batches"), value: t("units.count", { count: batchCount }) },
         { label: t("kpi.totalDistributed"), value: t("units.sheets", { count: formatNumber(totalQuantity) }) },
-        { label: t("kpi.perHundred"), value: ratePerHundred.toFixed(1) },
+        { label: t("kpi.perHundred"), value: totalQuantity > 0 ? t("units.rate", { rate: ratePerHundred.toFixed(1) }) : "—" },
       ]}
-      note={`${t("kpi.perHundred")} · ${t("kpi.perHundredHint")}`}
     />
   );
 }
@@ -158,7 +163,7 @@ export function ByBatchTable({ stats }: { stats: CampaignStats }) {
                   href={shortUrlOf(b.shortCode)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400 hover:text-accent-700 hover:underline"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 hover:underline"
                 >
                   /{b.shortCode}
                   <ExternalLink className="h-3 w-3" aria-hidden />
@@ -203,7 +208,7 @@ export function GroupChart({
                 </p>
                 <div className="flex flex-shrink-0 items-baseline gap-3 text-right">
                   <span className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                    {g.clickRatePerHundred.toFixed(1)}
+                    {t("units.perHundred", { rate: g.clickRatePerHundred.toFixed(1) })}
                   </span>
                   <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                     {t("groups.meta", {

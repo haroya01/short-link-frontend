@@ -20,7 +20,7 @@ export function CreatedLine({ longUrl, shortUrl }: { longUrl: string; shortUrl: 
             {display}
           </span>
         </a>
-        <CopyButton size="sm" variant="accent" label={t("heroCopy")} value={shortUrl} />
+        <CopyButton size="sm" label={t("heroCopy")} value={shortUrl} />
         <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-accent-600 dark:bg-accent-500" />
       </div>
     </div>

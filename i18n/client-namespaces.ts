@@ -16,23 +16,22 @@ export const CLIENT_MESSAGE_SCOPES = {
   root: ["common"],
   links: [
     "auth", "cookieConsent", "footer", "home", "languageSwitcher", "loginPrompt", "nav", "qr", "recent",
-    "result", "share", "shortenForm",
+    "result", "share", "shortenForm", "statLabels",
   ],
   "links/admin": ["abuseReports", "admin", "stats"],
-  "links/analytics": ["linkAnalytics"],
+  "links/analytics": ["linkAnalytics", "stats"],
   "links/auth": ["errors"],
   "links/campaigns": [
     "campaignApp.batchCard", "campaignApp.batchDialogs", "campaignApp.batchesNew",
     "campaignApp.campaignStats", "campaignApp.detail", "campaignApp.new",
     "campaignApp.posterBuilder", "campaignApp.printSheet", "campaignStatus", "campaignsApp",
-    "dashboard.onboarding.scene", "errors", "qrDownload", "stats",
+    "errors", "qrDownload", "stats",
   ],
   "links/ctas": ["ctaLibrary", "errors"],
   "links/dashboard": [
-    "campaignsApp.onboarding.scene", "composer", "dashboard", "edit", "errors", "expiringBanner",
-    "linkSheet", "tags",
+    "composer", "dashboard", "edit", "errors", "linkSheet", "linkState", "tags",
   ],
-  "links/demo": ["demo", "edit", "errors", "publicStats", "stats", "tags"],
+  "links/demo": ["demo", "edit", "errors", "linkState", "publicStats", "stats", "tags"],
   "links/events": [
     "errors", "events.analytics", "events.attendees", "events.detail", "events.form", "events.intro",
     "events.list", "events.public", "events.share", "events.status",
@@ -44,7 +43,7 @@ export const CLIENT_MESSAGE_SCOPES = {
   "links/settings": ["avatar", "banner", "errors", "imageCropper", "publicProfile", "settings"],
   "links/showcase": ["publicProfile", "showcase"],
   "links/stats/[code]": [
-    "demo.settingsDemo", "demo.settingsNotice", "edit", "errors", "publicStats", "stats", "tags",
+    "demo.settingsDemo", "demo.settingsNotice", "edit", "errors", "linkState", "publicStats", "stats", "tags",
   ],
   "links/visual-fixtures": ["events.public", "publicProfile.contactCard"],
   blog: [

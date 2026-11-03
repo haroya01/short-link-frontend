@@ -185,7 +185,7 @@ export function EnforcementCard({
               {t("enforce.warnAnonymous")}
             </p>
           ) : sent ? (
-            <p className="text-sm font-medium text-accent-700 dark:text-accent-400">
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
               {t("enforce.warnSent")}
             </p>
           ) : (

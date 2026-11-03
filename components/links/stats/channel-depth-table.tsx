@@ -80,7 +80,7 @@ export function ChannelDepthTable({
                     <span
                       className={cn(
                         "cd-bar block h-full rounded-full",
-                        isLeader ? "bg-accent-700" : "bg-accent-600",
+                        isLeader ? "bg-slate-900 dark:bg-slate-100" : "bg-slate-300 dark:bg-slate-600",
                       )}
                       style={{
                         width: `${ratio * 100}%`,

@@ -42,7 +42,7 @@ export default async function AuthorChromeLayout({
   setRequestLocale(locale);
   return (
     <MessagesScope locale={locale} scope="p/[username]">
-      <AppProviders>
+      <AppProviders primary="accent">
         <SidebarStateProvider>
           {/* Header inside the dark wrapper so its translucent bg blends with the dark page (not the
               white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}

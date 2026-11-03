@@ -13,19 +13,31 @@ function dayLabel(date: string, locale: string): string {
   );
 }
 
-export function DailyChart({ data, compact = false }: { data: DailyClick[]; compact?: boolean }) {
+export function DailyChart({ data, compact = false, timezone }: { data: DailyClick[]; compact?: boolean; timezone?: string }) {
   const t = useTranslations("stats");
   const locale = useLocale();
   if (data.length === 0) {
     return <p className="py-6 text-[13px] text-slate-500 dark:text-slate-400">{t("noClicks")}</p>;
   }
+  const last = data.length - 1;
+  const today = timezone ? todayIn(timezone) : null;
+  const partial = today !== null && data[last].date === today;
   return (
     <BarPlot
       testId="daily-chart"
       title={t("section.daily.title")}
-      points={data.map((d) => ({ key: d.date, count: d.count, label: dayLabel(d.date, locale) }))}
-      ticks={[0, data.length - 1]}
+      points={data.map((d, i) => ({ key: d.date, count: d.count, label: partial && i === last ? t("chart.today") : dayLabel(d.date, locale) }))}
+      ticks={[0, last]}
       compact={compact}
+      partialLast={partial}
     />
   );
+}
+
+function todayIn(timeZone: string): string | null {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date());
+  } catch {
+    return null;
+  }
 }

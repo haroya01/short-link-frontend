@@ -3,10 +3,11 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LiveClick, UseClickStreamResult } from "@/hooks/use-click-stream";
 
-const stream = vi.hoisted(() => ({ value: { items: [], connected: false, reconnecting: false, count: 0 } as UseClickStreamResult }));
+const stream = vi.hoisted(() => ({ value: { items: [], connected: false, reconnecting: false, count: 0, bots: 0 } as UseClickStreamResult }));
 const calls = vi.hoisted(() => [] as unknown[][]);
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: (namespace: string) => (key: string, values?: Record<string, unknown>) =>
     values ? `${namespace}.${key}:${JSON.stringify(values)}` : `${namespace}.${key}`,
 }));
@@ -23,7 +24,7 @@ let root: Root;
 let host: HTMLDivElement;
 
 function click(id: number, bot: boolean, countryCode = "KR"): LiveClick {
-  return { id, occurredAt: "2026-11-01T09:00:00Z", countryCode, deviceClass: "iOS", channel: "instagram", bot };
+  return { id, occurredAt: "2026-11-01T09:00:00Z", countryCode, deviceClass: bot ? "bot" : "mobile", channel: "social", bot };
 }
 
 beforeEach(() => {
@@ -41,8 +42,11 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function render(value: UseClickStreamResult) {
-  stream.value = value;
+type StreamState = Omit<UseClickStreamResult, "bots">;
+const withBots = (value: StreamState): UseClickStreamResult => ({ ...value, bots: value.items.filter((item) => item.bot).length });
+
+async function render(value: StreamState) {
+  stream.value = withBots(value);
   await act(async () => root.render(<LiveClicks shortCode="abc1234" claimToken="claim-1" />));
 }
 
@@ -67,7 +71,7 @@ describe("LiveClicks", () => {
     const text = host.textContent ?? "";
     expect(text).toContain('result.liveCount:{"count":2}');
     expect(text).toContain('result.liveBots:{"count":1}');
-    expect(text).toContain("KR · iOS · instagram");
+    expect(text).toContain("South Korea · statLabels.device.mobile · statLabels.channel.social");
   });
 
   it("keeps what landed after the stream drops", async () => {
@@ -78,8 +82,8 @@ describe("LiveClicks", () => {
 
 describe("LiveClicks on a signed-in stats page", () => {
   const onTick = () => {};
-  async function renderStats(value: UseClickStreamResult) {
-    stream.value = value;
+  async function renderStats(value: StreamState) {
+    stream.value = withBots(value);
     await act(async () =>
       root.render(<LiveClicks shortCode="abc1234" onTick={onTick} label="now" hideWhileWaiting />),
     );
@@ -102,6 +106,6 @@ describe("LiveClicks on a signed-in stats page", () => {
     expect(host.firstElementChild!.className).toContain("grid-rows-[1fr]");
     expect(host.firstElementChild!.getAttribute("aria-live")).toBe("polite");
     const line = host.querySelector('[data-testid="live-clicks"]')!;
-    expect(line.textContent).toBe('nowresult.liveCount:{"count":1}KR · iOS · instagram');
+    expect(line.textContent).toBe('nowresult.liveCount:{"count":1}South Korea · statLabels.device.mobile · statLabels.channel.social');
   });
 });

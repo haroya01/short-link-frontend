@@ -165,7 +165,6 @@ export function LinkPeriodSection({ shortCode }: { shortCode: string }) {
             <p id={expiryId} className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
               {t("expiry")}
             </p>
-            <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("expiryDesc")}</p>
           </div>
           <Switch
             checked={expiry.on}
