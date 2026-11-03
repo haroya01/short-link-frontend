@@ -22,7 +22,11 @@ function link(shortCode: string) {
 
 type Server = { deleted: Map<string, string>; restored: string[]; deleteCalls: string[] };
 
-async function dashboard(page: Page, codes: string[], opts: { restorable?: boolean; deleteDelay?: number; deletedListStatus?: number } = {}) {
+async function dashboard(
+  page: Page,
+  codes: string[],
+  opts: { restorable?: boolean; deleteDelay?: number; deletedListStatus?: number; restoreError?: { status: number; code: string; limit?: number } } = {},
+) {
   const restorable = opts.restorable ?? true;
   const rows = codes.map(link);
   const server: Server = { deleted: new Map(), restored: [], deleteCalls: [] };
@@ -43,7 +47,10 @@ async function dashboard(page: Page, codes: string[], opts: { restorable?: boole
       if (!restorable || opts.deletedListStatus) return route.fulfill({ status: opts.deletedListStatus ?? 404, json: { status: 404 } });
       const items = rows
         .filter((r) => server.deleted.has(r.shortCode))
-        .map((r) => ({ ...r, deletedAt: server.deleted.get(r.shortCode)!, purgeAt: new Date(Date.parse(server.deleted.get(r.shortCode)!) + 30 * DAY).toISOString() }));
+        .map((r) => {
+          const deletedAt = server.deleted.get(r.shortCode)!;
+          return { link: r, deletedAt, restorableUntil: new Date(Date.parse(deletedAt) + 30 * DAY).toISOString(), daysLeft: 30 };
+        });
       return route.fulfill({ json: { items, hasMore: false, nextCursor: null } });
     },
   });
@@ -59,9 +66,13 @@ async function dashboard(page: Page, codes: string[], opts: { restorable?: boole
     }
     if (req.method() === "POST" && action === "restore") {
       if (!restorable) return route.fulfill({ status: 404, json: { status: 404 } });
+      if (opts.restoreError) {
+        const { status, code: errorCode, limit } = opts.restoreError;
+        return route.fulfill({ status, json: { status, title: "refused", code: errorCode, ...(limit ? { limit } : {}) } });
+      }
       server.deleted.delete(code);
       server.restored.push(code);
-      return route.fulfill({ status: 204, body: "" });
+      return route.fulfill({ json: rows.find((r) => r.shortCode === code) });
     }
     return route.fallback();
   });
@@ -142,6 +153,17 @@ test.describe("deleting a link can be taken back", () => {
     const toast = toastBy(page, "링크를 삭제했어요");
     await expectOnTop(toast);
     await expect(toast.getByRole("button", { name: "되돌리기" })).toHaveCount(0);
+  });
+
+  test("a refused undo says why and keeps undo available for the next delete", async ({ page }) => {
+    await dashboard(page, ["alpha", "beta"], { restoreError: { status: 409, code: "LINK_QUOTA_EXCEEDED", limit: 500 } });
+    await page.goto("/ko/dashboard");
+    await page.locator("main li").filter({ hasText: "/alpha" }).getByRole("button", { name: "더보기" }).click();
+    await page.getByRole("menuitem", { name: "삭제" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "삭제" }).click();
+    await toastBy(page, "링크를 삭제했어요").getByRole("button", { name: "되돌리기" }).click();
+    await expectOnTop(toastBy(page, "링크 생성 한도(500개)에 도달했어요."));
+    await expect(page.getByRole("button", { name: "최근 삭제", exact: true })).toBeVisible();
   });
 
   test("if the deleted list turns out to be missing, the view steps back to all links", async ({ page }) => {

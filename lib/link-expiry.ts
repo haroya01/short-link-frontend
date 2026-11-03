@@ -27,12 +27,3 @@ export function linkExpiry(
   const days = calendarDay(expires, timezone) - calendarDay(now, timezone);
   return expires - now < EXPIRING_SOON_MS ? { kind: "soon", days } : { kind: "later", days };
 }
-
-export function daysUntil(
-  iso: string,
-  { now = Date.now(), timezone = "Asia/Seoul" }: { now?: number; timezone?: string } = {},
-): number {
-  const at = Date.parse(iso);
-  if (!Number.isFinite(at)) return 0;
-  return Math.max(0, calendarDay(at, timezone) - calendarDay(now, timezone));
-}

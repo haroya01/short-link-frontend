@@ -8,6 +8,11 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 
 const UNDO_MS = 10_000;
 
+/** 구버전 서버엔 복구 경로가 없다. 새 서버의 404 는 LINK_NOT_FOUND(30일이 지났거나 내 링크가 아님)라 구분한다. */
+export function isMissingEndpoint(err: unknown): boolean {
+  return err instanceof ApiError && err.status === 404 && err.detail.code !== "LINK_NOT_FOUND";
+}
+
 export function useLinkDeletion({
   restorable,
   onChanged,
@@ -37,13 +42,13 @@ export function useLinkDeletion({
     async (codes: string[]) => {
       const results = await Promise.allSettled(codes.map((code) => restoreLink(code)));
       const restored = codes.filter((_, i) => results[i].status === "fulfilled");
-      const missing = results.some((r) => r.status === "rejected" && r.reason instanceof ApiError && r.reason.status === 404);
+      const failure = results.find((r): r is PromiseRejectedResult => r.status === "rejected");
       setShown(restored, true);
-      if (restored.length < codes.length) toast(t("restoreFailed"), "error");
-      if (missing) onRestoreMissing?.();
+      if (failure) toast(errorMessage(failure.reason, t("restoreFailed")), "error");
+      if (failure && isMissingEndpoint(failure.reason)) onRestoreMissing?.();
       onChanged();
     },
-    [onChanged, onRestoreMissing, setShown, t, toast],
+    [errorMessage, onChanged, onRestoreMissing, setShown, t, toast],
   );
 
   const remove = useCallback(

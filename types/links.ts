@@ -54,7 +54,7 @@ export type MyLinksPage = {
   hasMore: boolean;
 };
 
-export type DeletedLink = MyLink & { deletedAt: string; purgeAt: string };
+export type DeletedLink = { link: MyLink; deletedAt: string; restorableUntil: string; daysLeft: number };
 
 export type DeletedLinksPage = {
   items: DeletedLink[];

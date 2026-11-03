@@ -16,9 +16,9 @@ import { MOCK_VIEWER_AUTHOR } from "@/modules/blog/api/_mocks";
 let mockShortenSeq = 7000;
 let mockFavoriteCodes = ["saved-74", "spr1ng", "d0cs"];
 const MOCK_DAY = 86_400_000;
-const mockDeleted = new Map<string, { deletedAt: string; purgeAt: string }>([
-  ["fl0wer", { deletedAt: new Date(Date.now() - 2 * MOCK_DAY).toISOString(), purgeAt: new Date(Date.now() + 28 * MOCK_DAY).toISOString() }],
-  ["t3st", { deletedAt: new Date(Date.now() - 26 * MOCK_DAY).toISOString(), purgeAt: new Date(Date.now() + 4 * MOCK_DAY).toISOString() }],
+const mockDeleted = new Map<string, string>([
+  ["fl0wer", new Date(Date.now() - 2 * MOCK_DAY).toISOString()],
+  ["t3st", new Date(Date.now() - 26 * MOCK_DAY).toISOString()],
 ]);
 const MOCK_DELETED_ONLY: MyLink[] = [
   { shortCode: "fl0wer", shortUrl: "https://kurl.me/fl0wer", originalUrl: "https://shop.example.com/flower-market", note: "Flower market flyer", createdAt: "2026-03-02T00:00:00Z", expiresAt: null, clickCount: 40, humanClickCount: 38, clicksLast7d: [0, 0, 0, 0, 0, 0, 0], tags: [], timezone: "Asia/Seoul" },
@@ -143,19 +143,25 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
   }
   const restoreMatch = /^\/api\/v1\/links\/([^/]+)\/restore$/.exec(p);
   if (verb === "POST" && restoreMatch) {
-    mockDeleted.delete(decodeURIComponent(restoreMatch[1]));
-    return null;
+    const code = decodeURIComponent(restoreMatch[1]);
+    mockDeleted.delete(code);
+    return [...MOCK_DELETED_ONLY, ...mockLibraryRows()].find((row) => row.shortCode === code) ?? null;
   }
   const deleteMatch = /^\/api\/v1\/links\/([^/]+)$/.exec(p);
   if (verb === "DELETE" && deleteMatch && deleteMatch[1] !== "me") {
-    mockDeleted.set(decodeURIComponent(deleteMatch[1]), { deletedAt: new Date().toISOString(), purgeAt: new Date(Date.now() + 30 * MOCK_DAY).toISOString() });
+    mockDeleted.set(decodeURIComponent(deleteMatch[1]), new Date().toISOString());
     return null;
   }
   if (verb !== "GET") return undefined;
   if (p === "/api/v1/links/me/deleted") {
     const all = [...MOCK_DELETED_ONLY, ...mockLibraryRows()];
     const items = [...mockDeleted.entries()]
-      .flatMap(([code, at]) => all.filter((row) => row.shortCode === code).map((row) => ({ ...row, ...at })))
+      .flatMap(([code, deletedAt]) =>
+        all.filter((row) => row.shortCode === code).map((link) => {
+          const restorableUntil = Date.parse(deletedAt) + 30 * MOCK_DAY;
+          return { link, deletedAt, restorableUntil: new Date(restorableUntil).toISOString(), daysLeft: Math.max(1, Math.ceil((restorableUntil - Date.now()) / MOCK_DAY)) };
+        }),
+      )
       .sort((a, b) => b.deletedAt.localeCompare(a.deletedAt));
     return { items, hasMore: false, nextCursor: null };
   }
