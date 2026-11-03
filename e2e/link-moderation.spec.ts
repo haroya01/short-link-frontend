@@ -214,9 +214,14 @@ test.describe("switching a link off", () => {
     });
     await page.goto(`/ko/stats/${CODE}`);
 
-    const banner = page.getByRole("alert").filter({ hasText: "꺼진 링크예요." });
+    const banner = page.getByRole("status").filter({ hasText: "꺼진 링크예요." });
     await expect(banner).toContainText("2026년 9월 30일에 Google Safe Browsing");
     await expect(banner).not.toContainText("(2026");
+    const look = await banner.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { background: style.backgroundColor, border: style.borderTopWidth, icons: el.querySelectorAll("svg").length };
+    });
+    expect(look).toEqual({ background: "rgba(0, 0, 0, 0)", border: "0px", icons: 0 });
     await banner.getByRole("link", { name: "이의 제기" }).click();
 
     await expect(page).toHaveURL(/\/ko\/report\?/);
@@ -237,7 +242,7 @@ test.describe("switching a link off", () => {
     });
     await page.goto(`/ja/stats/${CODE}`);
 
-    const notice = page.getByRole("alert").filter({ hasText: "このリンクは停止中です。" }).locator("p");
+    const notice = page.getByRole("status").filter({ hasText: "このリンクは停止中です。" }).locator("p");
     await expect(notice).toContainText("このリンクは停止中です。2026年9月30日にGoogle セーフ ブラウジング");
     await expect(notice).toContainText("停止しました。現在このリンクを開くと");
     expect(await notice.textContent()).not.toMatch(/[。、] /);
