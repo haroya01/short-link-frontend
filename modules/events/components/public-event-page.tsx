@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import type { PublicEvent } from "@/modules/events/api/events";
-import { placeIdFromUrl } from "@/modules/events/lib/format";
+import { placeIdFromUrl } from "@/modules/events/lib/place";
 
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 import { CancelRegistrationPanel } from "./cancel-registration-panel";

@@ -1,26 +1,33 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { MapPin } from "lucide-react";
+import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { placeIdFromUrl } from "@/modules/events/lib/format";
+import { cn } from "@/lib/utils";
+import {
+  clearPlace,
+  editPlaceText,
+  pickPlace,
+  savedPlace,
+  type PickedPlace,
+  type PlaceInput,
+  type PlaceSuggestion,
+} from "@/modules/events/lib/place";
 
-/**
- * 장소 입력 = 구글 지도 실연동. 장소명을 치면 Places API(New) 자동완성이 뜨고, 고르는 순간
- * 지도 링크(place_id 딥링크)가 채워지며 아래에 지도 미리보기(Maps Embed)가 박힌다.
- * `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` 가 없으면 수동 입력 + 링크 생성 버튼으로 조용히 폴백.
- */
 const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
-type Suggestion = { placeId: string; main: string; secondary: string };
+const TEXT_BUTTON =
+  "text-[12px] font-medium text-slate-500 underline-offset-2 transition-colors hover:text-slate-800 hover:underline dark:text-slate-400 dark:hover:text-slate-200";
 
 export function LocationField({
+  labelledBy,
   text,
   url,
   onTextChange,
   onUrlChange,
 }: {
+  labelledBy: string;
   text: string;
   url: string;
   onTextChange: (value: string) => void;
@@ -28,24 +35,40 @@ export function LocationField({
 }) {
   const t = useTranslations("events.form");
   const locale = useLocale();
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const listId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [saved] = useState(() => savedPlace(text, url));
+  const [picked, setPicked] = useState<PickedPlace | null>(saved.picked);
+  const [linkOpen, setLinkOpen] = useState(saved.picked == null && url.trim() !== "");
+  const [linkFocus, setLinkFocus] = useState(false);
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
   const [open, setOpen] = useState(false);
-  const [placeId, setPlaceId] = useState<string | null>(() => placeIdFromUrl(url));
+  const [active, setActive] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => () => abortRef.current?.abort(), []);
+  const cancelSearch = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    abortRef.current?.abort();
+  };
+
+  useEffect(
+    () => () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
+    },
+    [],
+  );
 
   const search = (input: string) => {
     if (!MAPS_KEY) return;
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    cancelSearch();
     if (input.trim().length < 2) {
       setSuggestions([]);
       setOpen(false);
       return;
     }
     debounceRef.current = setTimeout(async () => {
-      abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
       try {
@@ -83,125 +106,208 @@ export function LocationField({
           .filter((s) => s.main)
           .slice(0, 5);
         setSuggestions(items);
+        setActive(0);
         setOpen(items.length > 0);
       } catch {
-        // 자동완성 실패는 조용히 — 수동 입력이 항상 살아 있다.
+        if (!controller.signal.aborted) setOpen(false);
       }
     }, 250);
   };
 
-  const pick = (suggestion: Suggestion) => {
-    onTextChange(suggestion.main);
-    onUrlChange(
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(suggestion.main)}&query_place_id=${suggestion.placeId}`,
-    );
-    setPlaceId(suggestion.placeId);
+  const apply = (next: PlaceInput) => {
+    if (next.text !== text) onTextChange(next.text);
+    if (next.url !== url) onUrlChange(next.url);
+    setPicked(next.picked);
+  };
+
+  const changeText = (value: string) => {
+    const next = editPlaceText({ text, url, picked }, value);
+    apply(next);
+    if (!next.picked) search(value);
+  };
+
+  const pick = (suggestion: PlaceSuggestion) => {
+    cancelSearch();
+    apply(pickPlace(suggestion));
     setSuggestions([]);
     setOpen(false);
+    setLinkOpen(false);
   };
+
+  const clear = () => {
+    cancelSearch();
+    apply(clearPlace());
+    setSuggestions([]);
+    setOpen(false);
+    inputRef.current?.focus();
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+    if (!open) {
+      if (e.key === "ArrowDown" && suggestions.length > 0) {
+        e.preventDefault();
+        setActive(0);
+        setOpen(true);
+      }
+      return;
+    }
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const step = e.key === "ArrowDown" ? 1 : -1;
+      setActive((i) => (i + step + suggestions.length) % suggestions.length);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      pick(suggestions[active]);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+    }
+  };
+
+  const offerGoogleLink = !MAPS_KEY && text.trim() !== "" && url.trim() === "";
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative flex flex-col gap-1.5">
-        <label htmlFor="ef-loc" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
-          {t("locationText")}
-        </label>
-        <Input
-          id="ef-loc"
-          value={text}
-          onChange={(e) => {
-            onTextChange(e.target.value);
-            setPlaceId(null);
-            search(e.target.value);
-          }}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
-          maxLength={200}
-          placeholder={t("locationPlaceholder")}
-          autoComplete="off"
-        />
-        {open ? (
-          <div className="absolute top-full z-20 mt-1 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-float dark:border-slate-700 dark:bg-slate-850">
-            {suggestions.map((suggestion) => (
-              <button
-                key={suggestion.placeId}
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => pick(suggestion)}
-                className="flex w-full items-start gap-2.5 px-3.5 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
-              >
-                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
-                <span className="min-w-0">
-                  <span className="block truncate text-[13px] font-medium text-slate-800 dark:text-slate-200">
-                    {suggestion.main}
-                  </span>
-                  {suggestion.secondary ? (
-                    <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">
-                      {suggestion.secondary}
+      <div className="flex flex-col gap-1.5">
+        <div className="relative">
+          <Input
+            ref={inputRef}
+            id="ef-loc"
+            aria-labelledby={labelledBy}
+            value={text}
+            onChange={(e) => changeText(e.target.value)}
+            onKeyDown={MAPS_KEY ? onKeyDown : undefined}
+            onBlur={() => setOpen(false)}
+            maxLength={200}
+            placeholder={t("locationPlaceholder")}
+            autoComplete="off"
+            role={MAPS_KEY ? "combobox" : undefined}
+            aria-autocomplete={MAPS_KEY ? "list" : undefined}
+            aria-expanded={MAPS_KEY ? open : undefined}
+            aria-controls={open ? listId : undefined}
+            aria-activedescendant={open ? `${listId}-${active}` : undefined}
+            className={picked ? "pr-11" : undefined}
+          />
+          {picked ? (
+            <button
+              type="button"
+              onClick={clear}
+              aria-label={t("clearPlace")}
+              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400 transition-colors hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          ) : null}
+          {open ? (
+            <div className="absolute top-full z-20 mt-1 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-float motion-safe:animate-dropdown-in dark:border-slate-700 dark:bg-slate-850">
+              <ul id={listId} role="listbox" aria-labelledby={labelledBy}>
+                {suggestions.map((suggestion, i) => (
+                  <li
+                    key={suggestion.placeId}
+                    id={`${listId}-${i}`}
+                    role="option"
+                    aria-selected={i === active}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onMouseEnter={() => setActive(i)}
+                    onClick={() => pick(suggestion)}
+                    className={cn(
+                      "cursor-pointer px-3.5 py-2.5",
+                      i === active && "bg-slate-100 dark:bg-slate-800",
+                    )}
+                  >
+                    <span className="block truncate text-[13px] font-medium text-slate-800 dark:text-slate-200">
+                      {suggestion.main}
                     </span>
-                  ) : null}
-                </span>
+                    {suggestion.secondary ? (
+                      <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">
+                        {suggestion.secondary}
+                      </span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              <p className="border-t border-slate-100 px-3.5 py-1.5 text-right text-[10px] text-slate-400 dark:border-slate-800 dark:text-slate-500">
+                Powered by Google
+              </p>
+            </div>
+          ) : null}
+        </div>
+
+        {picked && (picked.address || MAPS_KEY) ? (
+          <div key={picked.placeId} className="flex flex-col gap-3 motion-safe:animate-fade-in">
+            {picked.address ? (
+              <p className="truncate text-[12px] text-slate-500 dark:text-slate-400">{picked.address}</p>
+            ) : null}
+            {MAPS_KEY ? (
+              <iframe
+                title={picked.name}
+                className="aspect-[2/1] w-full rounded-lg border-0 bg-slate-100 dark:bg-slate-800"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps/embed/v1/place?key=${MAPS_KEY}&q=place_id:${picked.placeId}&language=${locale}`}
+              />
+            ) : null}
+          </div>
+        ) : null}
+
+        {!picked && (offerGoogleLink || !linkOpen) ? (
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {offerGoogleLink ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onUrlChange(
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(text.trim())}`,
+                  );
+                  setLinkOpen(true);
+                }}
+                className={TEXT_BUTTON}
+              >
+                {t("useGoogleMaps", { place: text.trim() })}
               </button>
-            ))}
-            <p className="border-t border-slate-100 px-3.5 py-1.5 text-right text-[10px] text-slate-300 dark:border-slate-800 dark:text-slate-600">
-              Powered by Google
-            </p>
+            ) : null}
+            {!linkOpen ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setLinkFocus(true);
+                  setLinkOpen(true);
+                }}
+                className={TEXT_BUTTON}
+              >
+                {t("addMapLink")}
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
 
-      {MAPS_KEY && placeId ? (
-        <iframe
-          title="map"
-          className="aspect-[2/1] w-full rounded-lg border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/place?key=${MAPS_KEY}&q=place_id:${placeId}&language=${locale}`}
-        />
+      {!picked && linkOpen ? (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="ef-locurl" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
+            {t("locationUrl")}
+          </label>
+          <Input
+            id="ef-locurl"
+            type="url"
+            value={url}
+            onChange={(e) => onUrlChange(e.target.value)}
+            placeholder="https://"
+            autoFocus={linkFocus}
+          />
+          {url.trim() ? (
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="self-start text-[12px] font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700 dark:text-slate-400"
+            >
+              {t("openMap")}
+            </a>
+          ) : null}
+        </div>
       ) : null}
-
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="ef-locurl"
-          className="text-[12px] font-medium text-slate-600 dark:text-slate-400"
-        >
-          {t("locationUrl")}
-        </label>
-        <Input
-          id="ef-locurl"
-          type="url"
-          value={url}
-          onChange={(e) => {
-            onUrlChange(e.target.value);
-            setPlaceId(placeIdFromUrl(e.target.value));
-          }}
-          placeholder="https://maps.google.com/…"
-        />
-        {!MAPS_KEY && text.trim() && !url.trim() ? (
-          <button
-            type="button"
-            onClick={() =>
-              onUrlChange(
-                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(text.trim())}`,
-              )
-            }
-            className="self-start text-[12px] font-medium text-accent-700 underline underline-offset-2 hover:text-accent-600 dark:text-accent-400"
-          >
-            {t("useGoogleMaps", { place: text.trim() })}
-          </button>
-        ) : null}
-        {url.trim() ? (
-          <a
-            href={url}
-            target="_blank"
-            rel="noreferrer"
-            className="self-start text-[12px] font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700 dark:text-slate-400"
-          >
-            {t("openMap")}
-          </a>
-        ) : null}
-        <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("locationUrlHint")}</p>
-      </div>
     </div>
   );
 }
-
