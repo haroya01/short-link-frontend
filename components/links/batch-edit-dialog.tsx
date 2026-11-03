@@ -59,10 +59,10 @@ export function BatchEditDialog({
         try {
           await updateCampaignBatch(campaignId, batch.id, {
             name: name.trim(),
-            distributorName: distributor.trim() || undefined,
-            areaLabel: area.trim() || undefined,
+            distributorName: distributor.trim(),
+            areaLabel: area.trim(),
             quantity: q,
-            memo: memo.trim() || undefined,
+            memo: memo.trim(),
           });
           toast(t("updated"), "success");
           onUpdated();
@@ -120,12 +120,12 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-1.5">
-      <label className="block text-[12px] font-medium text-slate-700 dark:text-slate-300">
+    <label className="block space-y-1.5">
+      <span className="block text-[12px] font-medium text-slate-700 dark:text-slate-300">
         {label}
         {required && <RequiredMark />}
-      </label>
+      </span>
       {children}
-    </div>
+    </label>
   );
 }

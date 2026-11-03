@@ -176,3 +176,26 @@ test.describe("campaign detail", () => {
     await expect(page.getByText("https://shop.example.com/spring")).toHaveCount(0);
   });
 });
+
+test.describe("editing a batch", () => {
+  test("emptying the distributor, area and memo sends empty strings, so the server clears them", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const bodies: unknown[] = [];
+    await backend(page, {
+      [`PATCH /api/v1/campaigns/${ID}/batches/1`]: (route) => {
+        bodies.push(route.request().postDataJSON());
+        return route.fulfill({ json: { ...BATCHES[0], distributorName: null, areaLabel: null } });
+      },
+    });
+    await page.goto(`/ko/campaigns/${ID}`);
+    await page.getByRole("button", { name: "신주쿠역 동쪽 메뉴" }).click();
+    await page.getByRole("menuitem", { name: "편집" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByLabel("배포자").fill("");
+    await dialog.getByLabel("지역").fill("");
+    await dialog.getByRole("button", { name: "저장", exact: true }).click();
+    await expect.poll(() => bodies.length).toBe(1);
+    expect(bodies[0]).toEqual({ name: "신주쿠역 동쪽", distributorName: "", areaLabel: "", quantity: 500, memo: "" });
+  });
+});
+
