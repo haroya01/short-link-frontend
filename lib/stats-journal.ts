@@ -125,7 +125,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   }
 
   // 최고점이 있던 날
-  if (counts.length > 0) {
+  if (counts.length > 0 && counts.reduce((s, c) => s + c, 0) >= MIN_TOTAL_FOR_INSIGHTS) {
     const peak = Math.max(...counts);
     const peakIdx = counts.lastIndexOf(peak);
     if (peak > 0 && daily[peakIdx]?.date) {
@@ -192,7 +192,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   }
 
   // 하루 중 피크 시간
-  if (typeof data.peakHour === "number" && data.peakHour !== null) {
+  if (typeof data.peakHour === "number" && enoughHuman) {
     entries.push({
       key: "peakHour",
       params: { hour: data.peakHour },

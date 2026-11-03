@@ -220,6 +220,24 @@ describe("buildJournal", () => {
   });
 });
 
+describe("peak sentences need a sample, like the server", () => {
+  const day = (d: number, count: number) => ({ date: `2026-07-0${d}`, count });
+
+  it("a 1·2·3 week says nothing about its peak day; 1·2·7 does", () => {
+    const peak = (counts: number[]) =>
+      buildJournal(stats({ dailyClicks: counts.map((c, i) => day(i + 1, c)) })).find((e) => e.key === "peakDay");
+    expect(peak([1, 2, 3])).toBeUndefined();
+    expect(peak([1, 2, 7])?.params).toEqual({ date: "07-03", count: 7 });
+  });
+
+  it("the peak hour needs ten human clicks", () => {
+    const hour = (humanClicks: number) =>
+      buildJournal(stats({ humanClicks, totalClicks: humanClicks, botClicks: 0, peakHour: 21 })).find((e) => e.key === "peakHour");
+    expect(hour(9)).toBeUndefined();
+    expect(hour(10)?.params).toEqual({ hour: 21 });
+  });
+});
+
 describe("journalEntries", () => {
   it("draws the server's facts in the server's order, with the web's param shapes and evidence anchors", () => {
     const entries = journalEntries(
