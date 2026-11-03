@@ -26,6 +26,7 @@ export type BulkImportSummary = {
 export type MyLink = {
   note?: string | null;
   ogTitle?: string | null;
+  ogTitleOverride?: string | null;
   timezone?: string;
   humanClickCount?: number;
   shortCode: string;
