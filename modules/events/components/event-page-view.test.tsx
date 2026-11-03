@@ -74,17 +74,31 @@ describe("one register button in every state", () => {
     expect(buttons[0].hasAttribute("disabled")).toBe(false);
   });
 
+  it("shows the seats left while the event is open", () => {
+    expect(render(meetup).textContent).toContain("spotsLeft");
+  });
+
   it.each([
-    ["ended", { startsAt: "2026-08-13T11:14:00Z", endsAt: "2026-08-10T00:17:00Z" }, "endedNotice"],
     ["full", { spotsLeft: 0, acceptingRegistrations: false }, "fullNotice"],
     ["closed", { status: "CLOSED" as const, acceptingRegistrations: false }, "closedNotice"],
-    ["canceled", { status: "CANCELED" as const, acceptingRegistrations: false }, "canceledNotice"],
-  ])("is switched off with one status line when %s", (_, patch, notice) => {
+  ])("keeps a switched-off button and drops the seats when %s", (_, patch, notice) => {
     const root = render({ ...meetup, ...patch });
     const buttons = registerButtons(root);
     expect(buttons).toHaveLength(1);
     expect(buttons[0].hasAttribute("disabled")).toBe(true);
     expect(root.querySelector("form")).toBeNull();
     expect(root.textContent).toContain(notice);
+    expect(root.textContent).not.toContain("spotsLeft");
+  });
+
+  it.each([
+    ["ended", { startsAt: "2026-08-13T11:14:00Z", endsAt: "2026-08-10T00:17:00Z" }, "endedNotice"],
+    ["canceled", { status: "CANCELED" as const, acceptingRegistrations: false }, "canceledNotice"],
+  ])("has no button and no seats when %s", (_, patch, notice) => {
+    const root = render({ ...meetup, ...patch });
+    expect(registerButtons(root)).toHaveLength(0);
+    expect(root.querySelector("form")).toBeNull();
+    expect(root.textContent).toContain(notice);
+    expect(root.textContent).not.toContain("spotsLeft");
   });
 });

@@ -11,9 +11,11 @@ import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 export function ThemeToggle({
   className,
   iconOnly = false,
+  bare = false,
 }: {
   className?: string;
   iconOnly?: boolean;
+  bare?: boolean;
 }) {
   const t = useTranslations("nav");
   const [dark, setDark] = useState(false);
@@ -59,15 +61,16 @@ export function ThemeToggle({
     >
       {/* iconOnly 는 누르면 갈 모드를, 행은 지금 모드를 보여 준다. */}
       <span className="inline-flex items-center gap-3">
-        {(iconOnly ? !dark : dark) ? (
-          <Moon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-        ) : (
-          <Sun className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-        )}
+        {!bare &&
+          ((iconOnly ? !dark : dark) ? (
+            <Moon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+          ) : (
+            <Sun className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+          ))}
         {!iconOnly && t("theme")}
       </span>
       {!iconOnly && (
-        <span className="ml-auto pl-3 text-[13px] text-slate-500 dark:text-slate-400">
+        <span className={(bare ? "text-sm font-normal" : "text-[13px]") + " ml-auto pl-3 text-slate-500 dark:text-slate-400"}>
           {dark ? t("themeDark") : t("themeLight")}
         </span>
       )}

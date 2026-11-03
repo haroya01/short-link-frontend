@@ -6,8 +6,9 @@ import { EmptyState } from "@/components/common/empty-state";
 import { cn, countryFlag } from "@/lib/utils";
 import type { StatsLabels } from "@/lib/stats-labels";
 import type { CountryClick } from "@/types";
+import { STAT_HEADING } from "./stat-heading";
 
-export const STAT_HEADING = "text-base font-semibold text-slate-900 dark:text-slate-100";
+export { STAT_HEADING };
 
 export function BreakdownGrid({ className, children }: { className?: string; children: React.ReactNode }) {
   return (

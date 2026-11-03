@@ -1900,8 +1900,8 @@
       "detailClose": "Close"
     },
     "rawData": {
-      "exportEvents": "Click events CSV",
-      "exportStats": "Daily stats CSV",
+      "exportEvents": "Click log CSV",
+      "exportStats": "Daily clicks CSV",
       "exporting": "Exporting…",
       "loadMore": "Load more",
       "retention": "Individual clicks older than {days} days aren't kept",
@@ -2627,7 +2627,9 @@
       "inDays": "in {days} days",
       "inWeeks": "in {weeks} weeks",
       "ended": "Ended",
-      "eventEnded": "Event has ended"
+      "eventEnded": "Event has ended",
+      "am": "AM",
+      "pm": "PM"
     },
     "place": {
       "directions": "Directions",
@@ -2752,7 +2754,7 @@
     },
     "q6": {
       "q": "Is it paid?",
-      "a": "Every feature is free: shortening, analytics, profile pages, every block type and custom domains.\n\nThere's no paid plan, and no ads."
+      "a": "Every feature is free: shortening, analytics, profile pages and every block type.\n\nThere's no paid plan, and no ads."
     },
     "ctaButton": "Shorten a URL"
   },
@@ -2945,7 +2947,7 @@
       },
       "socialsLabel": "Social buttons",
       "socialKakaoLabel": "KakaoTalk Channel",
-      "socialsHint": "Pick which channels appear at the bottom of your public profile. Paste your own account URL for each, and visitors who tap the button go there. Up to 2, shown in the order you pick.",
+      "socialsHint": "Up to two show at the bottom of your profile, in the order you pick.",
       "socialsCount": "{count}/{max} selected",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2955,7 +2957,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "Please paste a valid http(s) URL.",
-      "previewTitle": "Live preview",
+      "previewTitle": "Preview",
       "closePreview": "Close preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
@@ -2966,8 +2968,7 @@
       "quickAdd": {
         "title": "Add link",
         "firstTitle": "Add your first link",
-        "firstHint": "Any URL, like Instagram, a blog, or YouTube, goes in with a label and shows on your bio link.",
-        "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
+        "hint": "Each URL becomes a short link and goes straight onto your profile.",
         "urlPlaceholder": "https://... or mailto:...",
         "labelPlaceholder": "Label (e.g. 📝 Blog)",
         "templatesLabel": "Or quick-fill URL (you still type the label)",
@@ -2989,29 +2990,26 @@
       "openShort": "Open",
       "yourPage": "Public profile",
       "featuredTitle": "Profile feed",
-      "featuredHint": "Drag to reorder (↑↓ on mobile). The ★ link sits at the top as your featured one. A header groups the links under it into a section you can collapse and move as one.",
-      "sectionExpand": "Expand section",
-      "sectionCollapse": "Collapse section",
-      "sectionItemCount": "{count, plural, one {# item} other {# items}}",
+      "featuredHint": "You can feature one item, and it shows at the top.",
       "featuredEmpty": "No links are shown yet.",
       "featuredEmptyHasOthers": "No links are shown yet. You have {count, plural, one {# other link} other {# other links}} to pick from.",
       "addBlockMenu": "Add",
       "addMoreBlocks": "More blocks",
       "remove": "Delete",
-      "removeLink": "Remove",
-      "highlight": "Feature at the top (only one)",
+      "removeLink": "Remove from profile",
+      "highlight": "Feature",
       "labelEdit": "Edit label (what visitors see)",
       "labelEmpty": "Add label",
       "labelPlaceholder": "e.g. 📝 Blog",
       "addMore": "Add from your other links",
       "add": "Add",
-      "addHeader": "+ Text",
-      "addDivider": "+ Divider",
-      "addImage": "+ Image",
-      "addEmbed": "+ Embed",
-      "addContactCard": "+ Contact card",
-      "addGallery": "+ Gallery",
-      "addProductCard": "+ Product cards",
+      "addHeader": "Text",
+      "addDivider": "Divider",
+      "addImage": "Image",
+      "addEmbed": "Embed",
+      "addContactCard": "Contact card",
+      "addGallery": "Gallery",
+      "addProductCard": "Product cards",
       "addProductCardTitle": "Add product cards",
       "editProductCardTitle": "Edit product cards",
       "addProductCardDescription": "Cards for menus / listings / services / courses (max {max}). Visitors swipe through them.",
@@ -3047,13 +3045,13 @@
       "productCardFieldCtaLabelPlaceholder": "e.g. Order",
       "productCardFieldCtaUrl": "Button URL",
       "productCardAddItem": "Add item",
-      "addBooking": "+ Booking",
+      "addBooking": "Booking",
       "addBookingTitle": "Add booking block",
       "editBookingTitle": "Edit booking block",
       "addBookingDescription": "Surface an external booking page (Calendly, Cal.com, Microsoft Bookings, etc.) as a card on your profile.",
       "addBookingPlaceholder": "(no booking set)",
-      "addEvent": "+ Event",
-      "addPlace": "+ Place",
+      "addEvent": "Event",
+      "addPlace": "Place",
       "addPlaceTitle": "Add place",
       "editPlaceTitle": "Edit place",
       "addPlaceDescription": "Show one place as a card, like a café, store, studio, or pop-up. Search Google Places and the address and coordinates fill in automatically.",
@@ -3100,20 +3098,18 @@
       "bookingFieldCtaLabelPlaceholder": "e.g. Book a time",
       "bookingUnsupportedProvider": "This domain isn't supported yet.",
       "bookingSupportedProviders": "Supported providers",
-      "addEmailForm": "+ Email signup",
+      "addEmailForm": "Email signup",
       "addEmailFormTitle": "Add email signup form",
       "editEmailFormTitle": "Edit email signup form",
-      "addEmailFormDescription": "A short form visitors fill to leave their email. Collected addresses appear on your dashboard / CSV export.",
+      "addEmailFormDescription": "Only you can see the collected emails, and you can export them as CSV.",
       "addEmailFormPlaceholder": "(no email form yet)",
       "emailFormFieldTitle": "Form title",
       "emailFormFieldTitlePlaceholder": "e.g. Get my newsletter",
       "emailFormFieldSubtitle": "Subtitle (optional)",
       "emailFormFieldSubtitlePlaceholder": "e.g. Be the first to hear about new products, class openings, and limited menus.",
-      "emailFormFieldSubtitleHint": "One or two sentences telling visitors why they should leave their email.",
       "emailFormFieldPlaceholder": "Input placeholder",
       "emailFormFieldSuccess": "Success message",
       "emailFormFieldSuccessPlaceholder": "e.g. Thanks for signing up :)",
-      "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
       "emailFormViewLeadsCta": "View collected emails",
       "leadsLink": "Collected emails",
       "stats": {
@@ -3123,7 +3119,7 @@
         "loadFailed": "Couldn't load stats.",
         "summary": {
           "title": "Profile visits",
-          "today": "Today",
+          "today": "24h",
           "week": "7d",
           "month": "30d",
           "allTime": "All time"
@@ -3239,9 +3235,9 @@
       "contactFieldName": "Name",
       "contactFieldNamePlaceholder": "Jane Doe",
       "contactFieldTitle": "Title",
-      "contactFieldTitlePlaceholder": "Engineer",
+      "contactFieldTitlePlaceholder": "e.g. Backend engineer",
       "contactFieldCompany": "Company",
-      "contactFieldCompanyPlaceholder": "Acme Inc.",
+      "contactFieldCompanyPlaceholder": "e.g. kurl",
       "contactFieldEmail": "Email",
       "contactFieldPhone": "Phone",
       "contactFieldWebsite": "Website",
@@ -3312,7 +3308,22 @@
       "dividerLabel": "Divider",
       "loading": "Loading...",
       "noLinks": "No links yet.",
-      "toggleFailed": "Failed to update."
+      "toggleFailed": "Failed to update.",
+      "showMoreLinks": "Show {count} more",
+      "contactPalette": {
+        "amethyst": "Amethyst",
+        "rose-gold": "Rose Gold",
+        "emerald": "Emerald",
+        "sapphire": "Sapphire",
+        "sunset": "Sunset",
+        "midnight": "Midnight",
+        "champagne": "Champagne",
+        "aurora": "Aurora"
+      },
+      "featuredMark": "Featured",
+      "rowActions": "More actions",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
     },
     "profileTitle": "Account info",
     "email": "Email",
@@ -3321,15 +3332,14 @@
     "role": "Role",
     "preferencesTitle": "Preferences",
     "timezoneLabel": "Time zone",
-    "timezoneHint": "Used as the report time zone on stats pages.",
+    "timezoneHint": "Your time zone sets where each day starts in your stats.",
     "save": "Save",
     "saved": "Saved",
     "saveFailed": "Save failed.",
     "interfaceLanguage": "Interface language",
     "dataTitle": "Data",
     "exportButton": "Download my data (JSON)",
-    "exportHint": "User info + all links + click events (IPs are masked).",
-    "dangerTitle": "Danger zone",
+    "exportHint": "Includes your account info, every link and click events. IPs are masked.",
     "deleteHint": "Your account enters a 30-day grace period after deletion. Sign back in within that window to restore everything; after 30 days the account and all links/stats are permanently removed. Anonymous links are not affected.",
     "deleteButton": "Delete my account",
     "deleteConfirmTitle": "Really delete?",
@@ -3340,21 +3350,20 @@
     "deleting": "Deleting...",
     "twofa": {
       "title": "Two-factor authentication (2FA)",
-      "description": "Add a TOTP authenticator app (Google Authenticator, Authy, 1Password, etc.) for an extra step at sign-in. Right after you turn it on, save the 10 recovery codes somewhere safe so you can still sign in if you lose the app.",
+      "description": "Sign-in also asks for a 6-digit code from your authenticator app.",
       "loading": "Loading...",
       "statusOn": "Enabled",
       "statusOff": "Disabled",
       "lastUsed": "Last used",
-      "enableButton": "Enable 2FA",
+      "enableButton": "Turn on",
       "starting": "Preparing...",
       "startFailed": "Failed to start 2FA enrolment.",
       "scanTitle": "Scan the QR with your authenticator",
-      "scanHint": "Or type the manual key into your app if scanning isn't possible.",
-      "manualKeyHint": "Manual key:",
+      "manualKeyHint": "Can't scan? Enter this key in your app.",
       "codePlaceholder": "123456",
       "confirmButton": "Activate",
       "confirming": "Verifying...",
-      "confirmFailed": "Code didn't match. Try again.",
+      "confirmFailed": "That code didn't match.",
       "cancel": "Cancel",
       "enrolled": "2FA is now enabled.",
       "regenerateAction": "Regenerate recovery codes",
@@ -3368,18 +3377,19 @@
       "regenerated": "New recovery codes issued.",
       "disabled": "2FA disabled.",
       "recoveryTitle": "Save your recovery codes somewhere safe",
-      "recoveryHint": "Each code works only once. Use them if you lose access to your authenticator app, and keep them printed or in a password manager.",
+      "recoveryHint": "If you lose your authenticator app, sign in with one of these. Each works once.",
       "recoveryCopyAll": "Copy all",
       "recoveryCopied": "Recovery codes copied.",
       "recoveryCopyFailed": "Copy failed.",
       "recoveryDismiss": "I've saved them, close",
       "loadError": "Couldn't load your 2FA status.",
-      "retry": "Retry"
+      "retry": "Retry",
+      "codeLabel": "Authentication code"
     },
     "apiKeys": {
       "title": "API keys",
-      "description": "Use these from scripts or automations that call the kurl API. The full key is shown only once, so copy it somewhere safe right away.",
-      "namePlaceholder": "Name (e.g., 'Internal report bot')",
+      "description": "A new key is shown only once, when you issue it.",
+      "namePlaceholder": "e.g. Internal report bot",
       "issue": "Issue",
       "issuing": "Issuing...",
       "issueFailed": "Failed to issue key.",
@@ -3400,13 +3410,19 @@
       "revoking": "Revoking...",
       "revoked": "Revoked.",
       "revokeFailed": "Failed to revoke.",
-      "revokeConfirm": "Revoking this key disables it immediately. Continue?",
+      "revokeConfirm": "Revoke this key?",
       "revokedLabel": "Revoked",
-      "usageTitle": "What this key can do right away",
+      "usageTitle": "What this key can do",
       "usageShorten": "Shorten a link",
       "usagePublish": "Publish a Markdown file (kurl-publish CLI)",
       "usageExport": "Back up all your posts (zip)",
-      "usageCliHint": "Get the kurl-publish.py script (GitHub)"
+      "usageCliHint": "Get the kurl-publish.py script (GitHub)",
+      "nameLabel": "Key name",
+      "revokeConfirmBody": "Requests with this key are rejected right away.",
+      "loadError": "Couldn't load your API keys.",
+      "retry": "Retry",
+      "usageLinks": "Links",
+      "usageBlog": "kurl log"
     },
     "customDomains": {
       "title": "Custom domains",
@@ -3415,7 +3431,7 @@
       "registering": "Registering...",
       "registerFailed": "Failed to register domain.",
       "loading": "Loading...",
-      "empty": "No domains yet. Enter your domain above to start.",
+      "empty": "No domains yet.",
       "statusPending": "Pending",
       "statusVerified": "Verified",
       "statusAutoChecking": "Auto-checking · {time}",
@@ -3428,8 +3444,14 @@
       "deleteConfirm": "Delete this domain? Short links on this domain will stop working immediately.",
       "deleteFailed": "Failed to delete.",
       "dnsTxtHint": "Ownership check: add this TXT record at your DNS provider",
-      "dnsCnameHint": "Traffic routing: add this CNAME record at the same provider"
-    }
+      "dnsCnameHint": "Traffic routing: add this CNAME record at the same provider",
+      "domainLabel": "Domain",
+      "loadError": "Couldn't load your domains.",
+      "retry": "Retry",
+      "dnsHost": "Host",
+      "dnsValue": "Value"
+    },
+    "exportFailed": "Couldn't download your data."
   },
   "publicStats": {
     "title": "Public stats",
@@ -3450,14 +3472,15 @@
     },
     "batchCard": {
       "quantityUnit": "{count} sheets",
-      "distributor": "Distributor · {name}",
-      "downloadQr": "Download QR for {name}",
-      "edit": "Edit {name}",
-      "delete": "Delete {name}"
+      "edit": "Edit",
+      "delete": "Delete",
+      "menu": "{name} menu",
+      "qr": "Download QR",
+      "open": "Open link"
     },
     "batchDialogs": {
       "editTitle": "Edit distribution batch",
-      "editDescription": "You can edit only the name, distributor, area, quantity, and memo. The short link printed in the QR stays unchanged.",
+      "editDescription": "The short link printed in the QR stays the same.",
       "save": "Save",
       "updated": "Batch updated",
       "updateFailed": "Failed to update",
@@ -3471,7 +3494,7 @@
       "deleted": "Batch deleted",
       "deleteFailed": "Failed to delete",
       "deleteWarningTitle": "The short link will be deleted too.",
-      "deleteWarningBody": "People scanning already-printed QR codes will see a link-not-found page. This is safe before ordering print, but after distribution you should usually keep it alive with an end policy.",
+      "deleteWarningBody": "Printed QRs will open a link-not-found page.",
       "quantityUnit": "{count} sheets"
     },
     "new": {
@@ -3483,7 +3506,7 @@
       "nameLabel": "QR campaign name",
       "namePlaceholder": "e.g. Shinjuku spring poster drop",
       "startLabel": "Start",
-      "startHint": "Usually start now. Schedule it only when print or ordering dates require it.",
+      "startHint": "Scans before the start are counted separately as tests.",
       "startNow": "Start now",
       "startSchedule": "Schedule start",
       "endLabel": "End",
@@ -3498,13 +3521,15 @@
         "redirectTitle": "Redirect elsewhere",
         "redirectBody": "Send printed QRs to a review page, next campaign, waitlist, or any follow-up URL."
       },
-      "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.\nContact: @kurl_official",
+      "messagePlaceholder": "e.g. This event has ended. See you in December.",
       "messageHint": "Blank uses the default message. Line breaks are preserved ·",
       "redirectHint": "The redirect URL is applied to printed QR codes when the campaign ends.",
       "cancel": "Cancel",
       "creating": "Creating...",
       "submit": "Create QR campaign",
-      "leaveConfirm": "Leave without saving? Your changes will be lost."
+      "leaveConfirm": "Leave without saving? Your changes will be lost.",
+      "messageLabel": "Ended page message",
+      "redirectLabel": "URL to send people to afterward"
     },
     "detail": {
       "loadFailed": "Load failed",
@@ -3519,46 +3544,47 @@
       "confirmArchiveDesc": "It will be hidden from the list, but data stays intact.",
       "archived": "QR campaign archived",
       "archiveFailed": "Failed to archive",
-      "cancel": "Cancel",
       "actions": {
         "stats": "Stats",
         "endNow": "End now",
         "reapply": "Reapply end policy",
-        "archive": "Archive"
+        "archive": "Archive",
+        "more": "More"
       },
       "prepare": {
-        "eyebrow": "Distribution prep",
-        "title": "Assets for print shops and Canva",
-        "description": "QR codes and metadata for {count} batches. Drop them into posters or flyers before ordering print.",
+        "title": "Print prep",
         "printSheet": "A4 sheet",
         "posterBuilder": "Add QR to poster",
         "qrZip": "QR ZIP",
         "batchCsv": "Batch CSV"
       },
       "policy": {
-        "eyebrow": "After campaign ends",
         "keep": "Keep as is",
         "expire": "Show expired page",
         "redirect": "Redirect elsewhere",
-        "savedEnded": "Message saved. Use reapply end policy to push it to printed QRs.",
-        "saved": "Expired-page message saved",
-        "saveFailed": "Failed to save",
         "messageLabel": "Expired-page message",
-        "edit": "Edit",
-        "add": "Add",
-        "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.",
-        "saving": "Saving...",
-        "save": "Save",
         "defaultMessageHint": "Leave the message blank to show the default notice.",
-        "defaultDestination": "Default destination URL · {url}"
+        "defaultDestination": "Default destination URL",
+        "heading": "After it ends",
+        "title": "Behavior",
+        "redirectLabel": "Sends to"
       },
       "batches": {
         "title": "Distribution batches",
-        "description": "One unit of printed distribution using the same QR. Split by distributor or area for meaningful analysis.",
         "add": "Add batch",
         "emptyTitle": "No distribution batches yet"
       },
-      "csvFailed": "CSV download failed"
+      "csvFailed": "CSV download failed",
+      "settings": {
+        "open": "Settings",
+        "title": "Campaign settings",
+        "save": "Save",
+        "saved": "Campaign settings saved",
+        "savedEnded": "Saved. Reapply the end policy to apply it to printed QRs.",
+        "saveFailed": "Couldn't save. Please try again.",
+        "defaultUrlHint": "Changing it doesn't move batches you already made."
+      },
+      "statsFailed": "Couldn't load the numbers"
     },
     "batchesNew": {
       "loadFailed": "Load failed",
@@ -3568,11 +3594,11 @@
       "createFailed": "Create failed",
       "backToCampaign": "Back to QR campaign",
       "title": "Add distribution batches",
-      "introCampaign": "New batches for <name></name>.",
+      "introCampaign": "<name></name>",
       "addRow": "Add row",
       "pasteToggle": "Paste from spreadsheet",
-      "defaultUrlActive": "<strong>Default destination URL is set.</strong> Leave the destination field blank to use <code></code>. Enter a URL only for batches that need a different destination.",
-      "defaultUrlMissing": "<strong>No default destination URL is set.</strong> Each batch needs its own destination URL.",
+      "defaultUrlActive": "Leave the destination blank to use the default URL · <code></code>",
+      "defaultUrlMissing": "There's no default URL, so each batch needs a destination.",
       "fields": {
         "name": "Batch name",
         "distributor": "Distributor",
@@ -3580,11 +3606,12 @@
         "quantity": "Quantity",
         "destinationUrl": "Destination URL"
       },
-      "compareHint": "Useful for comparison",
       "placeholders": {
         "name": "e.g. Shinjuku Station East",
         "distributor": "A or distributor name",
-        "defaultValue": "(default)"
+        "defaultValue": "(default)",
+        "quantity": "e.g. 500",
+        "area": "e.g. Shinjuku East"
       },
       "hints": {
         "defaultOptional": "Blank uses the default",
@@ -3594,19 +3621,19 @@
         "nameRequired": "Batch name is required",
         "quantityRequired": "Quantity is required",
         "quantityPositive": "Enter 1 or more",
-        "destinationRequired": "Enter a URL. This campaign has no default URL.",
+        "destinationRequired": "Enter a destination",
         "destinationUrl": "Must start with http:// or https://"
       },
-      "removeRow": "Delete row {index}",
+      "removeRow": "Remove row {index}",
       "pasteTitle": "Paste spreadsheet rows",
       "pasteColumns": "Column order: <code>Batch name / Distributor / Area / Quantity / Destination URL / Memo</code> (tab or comma separated)",
       "close": "Close",
-      "pastePlaceholder": "Shinjuku Station East\tA\tShinjuku East\t500\t\nOkubo\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pastePlaceholder": "Shinjuku Station East\tA\tShinjuku East\t500",
       "pasteZeroRows": "0 rows",
       "pastePreviewRows": "{count} rows detected",
       "cancel": "Cancel",
       "pasteApply": "Add {count} rows",
-      "invalidRows": "{count} rows have input errors. Fix the highlighted cells.",
+      "invalidRows": "{count} rows need fixing",
       "summary": "<strong>{rowCount}</strong> batches · <strong>{totalQuantity}</strong> sheets planned",
       "creating": "Creating...",
       "submit": "Create {count} batches"
@@ -3619,49 +3646,45 @@
       "composeFailed": "Composition failed",
       "backToCampaign": "Back to QR campaign",
       "title": "Add QR to poster",
-      "introCampaign": "<name></name> · Duplicate the PDF once per batch ({count} total), each with its own QR, then download one merged PDF.",
-      "toolHint": "Finish the design in Canva, InDesign or PowerPoint and export a PDF. Here you only place the QR.",
+      "introCampaign": "<name></name> · One merged PDF with a different QR for each of {count} batches.",
       "targetLabel": "Composition target",
       "targetSummary": "<strong>{count}</strong> batches · output is a <strong>{pages}-page</strong> PDF",
-      "noBatchesHint": "Add distribution batches first. (QR campaign detail → Add batch)",
+      "noBatchesHint": "No batches yet",
       "composing": "Composing...",
       "download": "Download merged PDF ({count} pages)",
-      "notSavedHint": "QR placement is not saved. If you return with the same PDF later, redraw the box. Campaign print runs are treated as one-off orders.",
+      "notSavedHint": "QR placement isn't saved.",
       "dropTitle": "Drop a PDF here or click to upload",
-      "dropSubtitle": "1-page PDF · Canva/InDesign export recommended",
+      "dropSubtitle": "1-page PDF",
       "removePdf": "Delete PDF",
       "otherPdf": "Another PDF",
-      "dragHint": "Drag the QR box to move it, or resize it from the bottom-right handle.",
-      "dragHintWithBatches": "Drag the QR box to move it, or resize it from the bottom-right handle. Preview uses the first batch (1 of {count}). Each batch gets a different QR.",
-      "dragHintWithoutBatches": "Drag the QR box to move it, or resize it from the bottom-right handle. No batches yet, so the preview uses a placeholder QR. Real composition is available after adding batches.",
+      "dragHint": "Drag the box to move it, and drag its corner to resize it.",
       "boxAria": "QR box position and size",
-      "qrPreviewAlt": "QR preview"
+      "qrPreviewAlt": "QR preview",
+      "addBatch": "Add batch"
     },
     "printSheet": {
       "loadFailed": "Load failed",
       "backToCampaign": "Back to QR campaign",
       "title": "A4 QR sheet",
-      "introCampaign": "<name></name> · Save as PDF through browser print (Cmd/Ctrl + P).",
+      "introCampaign": "<name></name> · Save it as a PDF from the print dialog.",
       "print": "Print",
-      "empty": "No batches to print. Add a batch first.",
+      "empty": "No batches to print",
       "perPage": "Per page",
       "layouts": {
         "comfortable": {
-          "label": "12 (3×4)",
-          "hint": "Roomy · business-card size"
+          "label": "12 (3×4)"
         },
         "standard": {
-          "label": "20 (4×5)",
-          "hint": "Standard"
+          "label": "20 (4×5)"
         },
         "dense": {
-          "label": "30 (5×6)",
-          "hint": "Dense · small labels"
+          "label": "30 (5×6)"
         }
       },
       "showLabel": "Show labels",
       "cutMarks": "Cut marks",
-      "pagePerBatch": "One full page per batch"
+      "pagePerBatch": "Fill one page per batch with its QR",
+      "addBatch": "Add batch"
     },
     "campaignStats": {
       "loadFailed": "Load failed",
@@ -3671,10 +3694,7 @@
       "loading": "Loading...",
       "groups": {
         "distributorTitle": "Performance by distributor",
-        "distributorHint": "Clicks per 100 sheets, so distributors can be compared even when they handed out different amounts.",
-        "areaTitle": "Performance by area",
-        "areaHint": "Use this to decide the next distribution location.",
-        "meta": "clicks {clicks} · {quantity} sheets"
+        "areaTitle": "Performance by area"
       },
       "compare": {
         "title": "Compare with another campaign",
@@ -3682,7 +3702,7 @@
         "none": "No comparison",
         "current": "Current",
         "comparison": "Compare",
-        "selectHint": "Choose a campaign from the dropdown above."
+        "selectHint": "Pick a campaign to see the two side by side."
       },
       "kpi": {
         "totalClicks": "Human clicks",
@@ -3699,41 +3719,34 @@
       },
       "recommendation": {
         "title": "Next distribution recommendation",
-        "description": "Redistribute the same total of {total} sheets. The average is {average} per 100 sheets.",
         "footnote": "Recommendation based on efficiency ratios. Under 30% of average is pruned; the rest is reallocated by ratio, capped at 3x per batch.",
         "verdict": {
-          "BOOST": "Boost",
+          "BOOST": "Increase",
           "KEEP": "Keep",
           "REDUCE": "Reduce",
-          "PRUNE": "Prune"
+          "PRUNE": "Remove"
         },
         "rowMeta": "{current} → {recommended} sheets · {rate} per 100 sheets",
         "tooFewBatches": "Recommendations appear once there are {minimum} or more batches. There are {current} now.",
-        "tooFewClicks": "Recommendations appear after {minimum} human clicks. There are {current} now."
+        "tooFewClicks": "Recommendations appear after {minimum} human clicks. There are {current} now.",
+        "aside": "{total} sheets · avg {average} per 100"
       },
       "daily": {
-        "title": "Daily clicks",
-        "description": "Since campaign start · {tz}"
+        "title": "Daily clicks"
       },
       "hourly": {
-        "title": "Clicks by hour",
-        "description": "{tz}",
-        "tooltip": "{hour}:00: {clicks}"
+        "title": "Clicks by hour"
       },
       "heatmap": {
-        "title": "Day × hour distribution",
-        "description": "{tz}"
+        "title": "Day × hour distribution"
       },
       "testScans": {
-        "title": "Pre-start test scans",
-        "description": "<strong>{count}</strong> before campaign start. Excluded from analytics totals.",
-        "last": "Last test · {date}"
+        "note": "{count} test scans before the start are left out."
       },
       "byBatch": {
-        "empty": "No distribution batches yet. Batch performance appears here after you add one.",
+        "empty": "No batches yet",
         "title": "Performance by batch",
-        "description": "Sorted by clicks descending. Bars are relative to the max row.",
-        "meta": "/ {quantity} sheets · {rate} per 100 sheets"
+        "add": "Add batch"
       }
     }
   },
@@ -3750,7 +3763,6 @@
     "loadFailed": "Could not load QR campaigns.",
     "newCampaign": "New QR campaign",
     "batchCount": "{count} batches",
-    "details": "Details",
     "onboarding": {
       "title": "Give each flyer batch its own QR and compare",
       "body": "Make a separate QR for each area, distributor, and batch, then see which batch got the clicks. Use those numbers to decide where the next batch goes.",
@@ -3779,8 +3791,7 @@
   "qrDownload": {
     "zipTitle": "Download QR ZIP",
     "singleTitle": "Download {name} QR",
-    "zipDescription": "All batch QR codes in one package, ready to hand off to a printer or designer.",
-    "singleDescription": "QR PNG for one distribution batch.",
+    "zipDescription": "One PNG per batch, in a single ZIP.",
     "confirm": "Download",
     "sizeLabel": "Size",
     "sizes": {
@@ -3789,18 +3800,15 @@
       "print": "Standard print",
       "poster": "Large poster"
     },
-    "ecLabel": "Damage tolerance (Error correction)",
-    "ecHint": "Use a higher level for outdoor or dirty environments.",
+    "ecLabel": "Damage tolerance",
+    "ecHint": "Higher levels survive dirt better but make the pattern denser.",
     "ec": {
       "data": "Data priority",
       "standard": "Standard",
       "outdoor": "Outdoor / dirty",
       "maximum": "Maximum protection"
     },
-    "labelText": "Label text",
-    "labelHint": "Print the batch name below the QR so printers can identify it.",
-    "labelCheckbox": "Print batch name below QR",
-    "notSaved": "Download options are not saved. You can download the same campaign multiple times with different options."
+    "labelCheckbox": "Add the batch name below the QR"
   },
   "qrCampaigns": {
     "meta": {
@@ -4080,7 +4088,7 @@
     "public": {
       "hostedBy": "Hosted by",
       "attending": "{count} going",
-      "addToCalendar": "Add to Google Calendar",
+      "addToCalendar": "Add to calendar",
       "onlineLink": "Online meeting link",
       "spotsLeft": "{count} of {capacity} spots left",
       "formTitle": "Register",
@@ -4099,7 +4107,7 @@
       "alreadyRegisteredTitle": "You're already registered",
       "registerAnother": "Register someone else",
       "successBodyEmail": "We sent a confirmation email. Use the link inside to cancel if plans change.",
-      "successBody": "Keep the cancellation link below in case plans change.",
+      "successBody": "Keep this cancellation link in case plans change.",
       "copyCancelLink": "Copy cancellation link",
       "cancelLinkCopied": "Copied",
       "viralHook": "Made with kurl.",
@@ -4117,9 +4125,7 @@
         "answerRequired": "Please answer this question",
         "choiceRequired": "Please pick one",
         "consentRequired": "Please agree to share your contact info",
-        "full": "The last spot was just taken",
         "alreadyRegistered": "This contact is already registered",
-        "closed": "Registration is closed",
         "generic": "Registration failed. Please try again.",
         "invalidEmail": "Please check the email address (e.g. hong@gmail.com)",
         "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
@@ -4140,7 +4146,10 @@
       "aboutTitle": "About",
       "endedNotice": "This event has ended.",
       "am": "AM",
-      "pm": "PM"
+      "pm": "PM",
+      "calendarGoogle": "Google Calendar",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple / .ics download"
     },
     "list": {
       "title": "Events",
@@ -4235,8 +4244,7 @@
       "statusChangeFailed": "Update failed",
       "cancelDialogTitle": "Cancel this event?",
       "cancelDialogBody": "The public page shows it as canceled and registration stops. This cannot be undone. To only stop new registrations, use 'Close registration'.",
-      "cancelDialogConfirm": "Cancel event",
-      "heroCopy": "Copy link"
+      "cancelDialogConfirm": "Cancel event"
     },
     "share": {
       "copied": "Copied",
@@ -4271,7 +4279,8 @@
       "channel": "Channel",
       "status": "Status",
       "confirmed": "Confirmed",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "exportFailed": "Couldn't download the CSV"
     },
     "status": {
       "open": "Open",
@@ -4279,6 +4288,9 @@
       "canceled": "Canceled",
       "ended": "Ended",
       "full": "Full"
+    },
+    "meta": {
+      "description": "Make an event page with a sign-up form behind one link. Guests sign up without an account, and it closes once it's full."
     }
   },
   "linkAnalytics": {

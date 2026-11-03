@@ -15,8 +15,9 @@ import {
   updateDestination,
 } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import { countryFlag } from "@/lib/utils";
-import { CountryCombobox } from "@/components/links/country-combobox";
+import { cn, countryFlag } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
+import { CountryCombobox, PICKER_SIZE } from "@/components/links/country-combobox";
 import type { DestinationClick, DestinationSummary } from "@/types";
 
 /**
@@ -159,8 +160,8 @@ export function LinkDestinationsSection({
           maxLength={40}
           disabled={busy}
         />
-        <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
-          <CountryCombobox value={country} onChange={setCountry} disabled={busy} allowAny />
+        <div className="grid gap-2 sm:col-span-3 sm:flex sm:flex-wrap sm:items-center">
+          <CountryCombobox value={country} onChange={setCountry} disabled={busy} size="field" allowAny className="w-full sm:w-auto" />
           <DeviceClassSelect value={deviceClass} onChange={setDeviceClass} disabled={busy} t={t} />
           <OsSelect value={os} onChange={setOs} disabled={busy} t={t} />
           <Button
@@ -168,7 +169,7 @@ export function LinkDestinationsSection({
             size="sm"
             variant="outline"
             disabled={busy || !url.trim()}
-            className="ml-auto"
+            className="justify-self-end sm:ml-auto"
           >
             {busy ? t("adding") : t("add")}
           </Button>
@@ -359,7 +360,7 @@ function DestinationRow({
               max={100}
               value={weight}
               onChange={(e) => onWeightChange(Number(e.target.value))}
-              className="h-1 flex-1 cursor-pointer accent-slate-900"
+              className="h-1 flex-1 cursor-pointer accent-slate-900 dark:accent-slate-100"
               aria-label={t("weight")}
             />
           )}
@@ -566,11 +567,11 @@ function DeviceClassSelect({
   t: ReturnType<typeof useTranslations>;
 }) {
   return (
-    <select
+    <Select
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-ring disabled:opacity-50"
+      className={cn(PICKER_SIZE.field, "sm:w-auto")}
       aria-label={t("deviceLabel")}
     >
       <option value="">{t("deviceAny")}</option>
@@ -579,7 +580,7 @@ function DeviceClassSelect({
           {t(`device.${id}`)}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }
 
@@ -595,11 +596,11 @@ function OsSelect({
   t: ReturnType<typeof useTranslations>;
 }) {
   return (
-    <select
+    <Select
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-ring disabled:opacity-50"
+      className={cn(PICKER_SIZE.field, "sm:w-auto")}
       aria-label={t("osLabel")}
     >
       <option value="">{t("osAny")}</option>
@@ -608,7 +609,7 @@ function OsSelect({
           {t(`os.${id}`)}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }
 
@@ -626,10 +627,10 @@ function RowSelect({
   options: { value: string; label: string }[];
 }) {
   return (
-    <select
+    <Select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[11px]"
+      className={cn(PICKER_SIZE.sm, "w-auto")}
       aria-label={ariaLabel}
     >
       <option value="">{anyLabel}</option>
@@ -638,6 +639,6 @@ function RowSelect({
           {o.label}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }

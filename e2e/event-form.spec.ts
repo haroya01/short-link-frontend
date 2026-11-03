@@ -100,7 +100,22 @@ test.describe("desktop", () => {
     await page.locator("#ef-starts").fill("2020-04-01T19:00");
     await page.locator("#ef-ends").fill("2020-04-01T21:00");
     await expect(preview(page)).toContainText("끝난 모임이에요.");
-    await expect(preview(page).getByRole("button", { name: "신청하기" })).toBeDisabled();
+    await expect(preview(page).getByRole("button", { name: "신청하기" })).toHaveCount(0);
+  });
+
+  test("a preview taller than the screen is not boxed into its own scroll, so the page scroll reaches its whole register button", async ({ page }) => {
+    await organizer(page);
+    await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
+    await page.locator("#ef-title").fill("성수 모각코 11월");
+    await page.locator("#ef-desc").fill(Array.from({ length: 30 }, (_, i) => `${i + 1}번째 메모`).join("\n\n"));
+
+    const box = preview(page);
+    await expect(box.locator(".prose-event")).toContainText("30번째 메모");
+    expect(await box.evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(1);
+    const button = box.getByRole("button", { name: "신청하기" });
+    await button.scrollIntoViewIfNeeded();
+    await expect(button).toBeInViewport({ ratio: 1 });
   });
 });
 

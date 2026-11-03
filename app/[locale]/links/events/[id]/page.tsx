@@ -19,11 +19,9 @@ import {
   getMyEvent,
 } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
-import { shortUrlOf } from "@/lib/short-url";
 import { ownerEventPhase } from "@/modules/events/lib/phase";
 import { AnalyticsPanel } from "@/modules/events/components/analytics-panel";
 import { AttendeeTable } from "@/modules/events/components/attendee-table";
-import { CreatedLine } from "@/modules/events/components/created-line";
 import { SharePanel } from "@/modules/events/components/share-panel";
 import { LinksPage } from "@/components/links/links-page";
 
@@ -31,7 +29,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kurl.me";
 
 const TEXT_LINK =
-  "focus-ring rounded-sm font-medium text-slate-700 underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors hover:decoration-slate-500 dark:text-slate-300 dark:decoration-slate-600 dark:hover:decoration-slate-400";
+  "focus-ring inline-flex min-h-11 items-center rounded-sm font-medium text-slate-700 underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors hover:decoration-slate-500 dark:text-slate-300 dark:decoration-slate-600 dark:hover:decoration-slate-400";
 
 export default function EventDetailPage() {
   const { id: idParam } = useParams<{ id: string }>();
@@ -97,7 +95,6 @@ export default function EventDetailPage() {
   }
 
   const publicUrl = `${SITE_URL}/${locale}/e/${event.slug}`;
-  const firstLink = event.links[0]?.shortCode;
   const phase = ownerEventPhase(event, now);
 
   const changeStatus = async (action: "close" | "reopen" | "cancel") => {
@@ -112,8 +109,6 @@ export default function EventDetailPage() {
 
   return (
     <LinksPage width="form">
-      {justCreated && firstLink ? <CreatedLine longUrl={publicUrl} shortUrl={shortUrlOf(firstLink)} /> : null}
-
       <header>
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {event.title}
@@ -155,7 +150,7 @@ export default function EventDetailPage() {
       </header>
 
       <div className="mt-10 flex flex-col gap-10">
-        <SharePanel event={event} onLinksChange={() => void load()} />
+        <SharePanel event={event} onLinksChange={() => void load()} freshFrom={justCreated ? publicUrl : undefined} />
 
         <AttendeeTable eventId={event.id} attendees={attendees} questions={event.questions} />
 

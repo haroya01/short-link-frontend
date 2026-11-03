@@ -322,7 +322,7 @@ function DemoDestinationRow({
           readOnly
           disabled
           onClick={onLock}
-          className="h-1 flex-1 cursor-not-allowed accent-slate-900 opacity-50"
+          className="h-1 flex-1 cursor-not-allowed accent-slate-900 opacity-50 dark:accent-slate-100"
           aria-label={t("weight")}
         />
         <Button type="button" size="sm" variant="ghost" disabled onClick={onLock}>

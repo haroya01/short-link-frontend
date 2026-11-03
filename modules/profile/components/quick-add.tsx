@@ -101,7 +101,7 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
           {highlightEmpty ? t("firstTitle") : t("title")}
         </p>
         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-          {highlightEmpty ? t("firstHint") : t("hint")}
+          {t("hint")}
         </p>
       </div>
 

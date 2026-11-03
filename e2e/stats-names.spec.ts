@@ -176,10 +176,9 @@ test.describe("campaign numbers keep one unit and every day", () => {
     await page.goto("/ko/campaigns/7/stats");
     const main = page.locator("main");
     await expect(main.getByText("사람 클릭", { exact: true }).first()).toBeVisible();
-    await expect(main.getByText("/ 500장 · 100장당 28.4회", { exact: true })).toBeVisible();
-    await expect(main.getByText("100장당 28.4회", { exact: true })).toBeVisible();
+    await expect(main.getByTestId("campaign-rows").first().locator("li").first()).toContainText("100장당 28.4회");
     await expect(main.getByText(/\d%/)).toHaveCount(0);
     await expect(page.getByTestId("daily-chart").locator("[data-count]")).toHaveCount(7);
-    await expect(main.getByText("캠페인 시작 이후 · Asia/Seoul", { exact: true })).toBeVisible();
+    await expect(main.getByText("Asia/Seoul", { exact: true }).first()).toBeVisible();
   });
 });

@@ -462,7 +462,7 @@ export function EventForm({
           </p>
           <div
             data-testid="event-preview"
-            className="lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto lg:rounded-2xl lg:border lg:border-slate-200 lg:p-6 lg:dark:border-slate-800"
+            className="lg:rounded-2xl lg:border lg:border-slate-200 lg:p-6 lg:dark:border-slate-800"
           >
             <EventPageView
               event={preview}

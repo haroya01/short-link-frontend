@@ -112,15 +112,11 @@ describe("message catalog style", () => {
     };
     const plain = (chunks: string) => chunks;
     const runs = [
-      t("campaignApp.posterBuilder.dragHintWithBatches", { count: 3 }),
-      t("campaignApp.posterBuilder.dragHintWithoutBatches"),
       t.markup("collections.footerGuestPrompt", { signIn: plain }),
       t.markup("stats.moderation.notice.ADMIN", { date: "2026年9月30日", title: plain }),
     ];
-    expect(runs[0]).toContain("調整します。プレビュー");
-    expect(runs[1]).toContain("調整します。配布先");
-    expect(runs[2]).toContain("読み進めるには、ログイン");
-    expect(runs[3]).toContain("停止中です。2026年9月30日に");
+    expect(runs[0]).toContain("読み進めるには、ログイン");
+    expect(runs[1]).toContain("停止中です。2026年9月30日に");
     expect(runs.filter((run) => /[。、] /.test(run))).toEqual([]);
   });
 });
