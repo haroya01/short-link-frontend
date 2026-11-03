@@ -67,7 +67,7 @@ test.describe("demo page artifacts", () => {
    * /demo previews. Visual drift stays in the artifact PNGs above; these tests fail loudly
    * when the chart machinery is wired up wrong.
    */
-  test("heatmap fills a neutral ramp (not all empty) with one accent cell", async ({ page }) => {
+  test("heatmap fills a neutral ramp (not all empty) with one ink cell", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "클릭 추이" }).click();
@@ -75,7 +75,7 @@ test.describe("demo page artifacts", () => {
     await expect(cells).toHaveCount(168);
     const filled = await page.locator('[data-testid="heatmap-hours"] button:is(.bg-slate-200, .bg-slate-300, .bg-slate-400, .bg-slate-500)').count();
     expect(filled).toBeGreaterThanOrEqual(40);
-    await expect(page.locator('[data-testid="heatmap-hours"] button[class*="bg-accent"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="heatmap-hours"] button.bg-slate-900')).toHaveCount(1);
   });
 
   test("the where tab opens the full geo mirror", async ({ page }) => {
