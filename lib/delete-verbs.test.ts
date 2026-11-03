@@ -31,6 +31,8 @@ const CLEAR = [
   "publicFeed.tagFilterClear",
   "savedLibrary.clearHistory",
   "dashboard.filters.clearAll",
+  "dashboard.filters.remove",
+  "dashboard.searchClear",
   "events.form.clearPlace",
 ];
 const REMOVE = [
@@ -87,6 +89,8 @@ describe("delete, clear and remove verbs", () => {
       "savedLibrary.clearHistoryConfirm",
       "dashboard.clearTagFilter",
       "dashboard.filters.clearAll",
+      "dashboard.filters.remove",
+      "dashboard.searchClear",
       "events.form.clearPlace",
       "admin.browse.links.clearFilter",
     ]);

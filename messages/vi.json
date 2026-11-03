@@ -1406,12 +1406,6 @@
     "invalidType": "Chỉ cho phép JPG, PNG, WebP",
     "tooBig": "Ảnh quá lớn"
   },
-  "expiringBanner": {
-    "title": "{count} liên kết sẽ hết hạn trong 3 ngày tới",
-    "hint": "Gia hạn hoặc xóa những liên kết bạn không cần.",
-    "showAll": "Xem tất cả",
-    "dismiss": "Bỏ qua"
-  },
   "dashboard": {
     "label": "bảng điều khiển",
     "title": "Liên kết của tôi",
@@ -1448,25 +1442,6 @@
     "emptyTitle": "Tạo liên kết đầu tiên của bạn",
     "emptyDesc": "Rút gọn một URL và trong vòng một phút, các góc nhìn lượt nhấp / quốc gia / kênh / thiết bị sẽ được lấp đầy. Mất 30 giây.",
     "emptyCta": "Rút gọn ngay",
-    "onboarding": {
-      "eyebrow": "Chào mừng",
-      "title": "Ba bước",
-      "subtitle": "Rút gọn một liên kết rồi đăng ở nơi mọi người sẽ thấy. Lượt nhấp sẽ được ghi lại ở đây.",
-      "step1Title": "Rút gọn liên kết",
-      "step1Desc": "Dán URL dài vào ô rút gọn, đặt mã, hạn dùng hoặc mật khẩu nếu cần, rồi nhấn Rút gọn.",
-      "step2Title": "Chia sẻ nó",
-      "step2Desc": "Đăng ở bio Instagram, KakaoTalk hay danh thiếp. Bạn cũng có thể tải mã QR.",
-      "step3Title": "Xem thống kê",
-      "step3Desc": "Lượt nhấp được chia theo kênh, quốc gia, thiết bị và khung giờ.",
-      "secondaryCta": "Hoặc xem trước màn hình phân tích",
-      "scene": {
-        "weekClicks": "Lượt nhấp tuần này",
-        "example": "Ví dụ"
-      }
-    },
-    "noResultTitle": "Không có kết quả",
-    "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
-    "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại.",
     "table": {
       "shortUrl": "Tên liên kết",
       "originalUrl": "Điểm đến",
@@ -1487,15 +1462,15 @@
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
       "more": "Thêm",
-      "openOriginal": "Mở điểm đến"
+      "openOriginal": "Mở điểm đến",
+      "qr": "Mã QR",
+      "settings": "Cài đặt liên kết"
     },
     "favorite": {
       "add": "Thêm vào mục yêu thích",
       "remove": "Bỏ khỏi mục yêu thích",
       "filter": "Yêu thích",
       "emptyTitle": "Chưa có liên kết yêu thích",
-      "emptyDesc": "Đánh dấu sao trong Tất cả liên kết để lưu vào đây.",
-      "syncedHint": "Đã lưu vào tài khoản, dùng chung trên ứng dụng và web.",
       "saveFailed": "Không lưu được mục yêu thích. Vui lòng thử lại.",
       "loadFailed": "Không tải được mục yêu thích.",
       "orderTitle": "Thứ tự yêu thích",
@@ -1504,7 +1479,7 @@
       "moveUp": "Chuyển {name} lên",
       "moveDown": "Chuyển {name} xuống"
     },
-    "deleteConfirmTitle": "Xóa liên kết này?",
+    "deleteConfirmTitle": "Xóa /{code}?",
     "deleteConfirmDesc": "Liên kết đã xóa không thể khôi phục. Thống kê lượt nhấp cũng mất theo.",
     "deleteOk": "Xóa",
     "deleted": "Đã xóa liên kết",
@@ -1528,7 +1503,8 @@
         "HAS_EXPIRY": "Có hạn",
         "EXPIRING_SOON": "Hết hạn trong 3 ngày",
         "EXPIRED": "Đã hết hạn"
-      }
+      },
+      "remove": "Bỏ bộ lọc {label}"
     },
     "bulkSelectAll": "Chọn tất cả liên kết trên trang này",
     "bulkSelectRow": "Chọn /{code}",
@@ -1538,25 +1514,25 @@
     "bulkDeleting": "Đang xóa...",
     "bulkDeleted": "Đã xóa {count} liên kết",
     "bulkDeleteFailed": "{failed} trên {total} xóa thất bại",
-    "bulkDeleteConfirmTitle": "Xóa các liên kết đã chọn?",
-    "bulkDeleteConfirmDesc": "{count} liên kết và toàn bộ thống kê lượt nhấp của chúng sẽ bị xóa vĩnh viễn.",
+    "bulkDeleteConfirmTitle": "Xóa {count} liên kết?",
+    "bulkDeleteConfirmDesc": "Thống kê lượt nhấp cũng sẽ bị xóa vĩnh viễn.",
     "bulkImport": {
       "button": "Nhập CSV",
       "title": "Nhập hàng loạt từ CSV",
       "description": "Các cột tiêu đề: url (bắt buộc), custom_code, expires_at (ISO-8601). Dòng đầu tiên được tự động nhận diện là tiêu đề nếu khớp.",
       "limitHint": "Tối đa 100 dòng mỗi lần tải lên. Bạn sẽ nhận một tệp CSV kết quả sau khi xác thực.",
       "cancel": "Hủy",
-      "close": "Đóng",
       "upload": "Tải lên",
       "uploading": "Đang tải lên...",
       "uploadFailed": "Tải lên thất bại.",
       "resultSummary": "{ok} thành công · {failed} thất bại",
       "resultHint": "Tệp CSV kết quả gồm kết quả từng dòng (short_url hoặc lỗi).",
       "downloadResult": "Tải CSV kết quả",
-      "uploadAnother": "Tải lên tệp khác",
-      "done": "Xong"
+      "done": "Xong",
+      "chooseFile": "Chọn tệp",
+      "noFile": "Chưa chọn tệp"
     },
-    "loadFailed": "Không tải được liên kết. Vui lòng thử lại.",
+    "loadFailed": "Không tải được liên kết.",
     "overviewFailed": "Không tải được thống kê tài khoản.",
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
     "libraryViews": "Chọn danh sách liên kết",
@@ -1564,7 +1540,12 @@
     "subtitleCount": "{count} liên kết",
     "selectMode": "Chọn",
     "selectDone": "Xong",
-    "todayDelta": "Hôm nay {count, number}"
+    "todayDelta": "Hôm nay {count, number}",
+    "firstRunTitle": "Chưa có liên kết nào",
+    "searchClear": "Xóa từ khóa",
+    "noResultQuery": "Không có liên kết nào khớp với “{query}”",
+    "noResultFiltered": "Không có liên kết nào khớp bộ lọc",
+    "expiringSoon": "{count} sắp hết hạn trong 3 ngày"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",
@@ -4345,7 +4326,8 @@
     "edit": "Chỉnh sửa",
     "delete": "Xóa",
     "favorite": "Thêm vào mục yêu thích",
-    "unfavorite": "Bỏ khỏi mục yêu thích"
+    "unfavorite": "Bỏ khỏi mục yêu thích",
+    "settings": "Cài đặt liên kết"
   },
   "linkState": {
     "expired": "Đã hết hạn",

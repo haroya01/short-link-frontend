@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
-import { ArrowRight, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
+import { ArrowRight, ExternalLink, Pencil, SlidersHorizontal, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
@@ -26,6 +26,7 @@ type Actions = {
   favoriteDisabled?: boolean;
   onToggleFavorite?: () => void;
   onEdit?: () => void;
+  settingsHref?: string;
   onDelete?: () => void;
 };
 
@@ -118,6 +119,7 @@ export function LinkSheet({
               )}
               <SheetRow icon={ExternalLink} label={t("openOriginal")} href={shown.originalUrl} />
               {actions.onEdit && <SheetRow icon={Pencil} label={t("edit")} onSelect={actions.onEdit} />}
+              {actions.settingsHref && <SheetRow icon={SlidersHorizontal} label={t("settings")} to={actions.settingsHref} />}
               {actions.onDelete && <SheetRow icon={Trash2} label={t("delete")} destructive onSelect={actions.onDelete} />}
             </ul>
           )}
@@ -142,6 +144,7 @@ function SheetRow({
   icon: Icon,
   label,
   href,
+  to,
   onSelect,
   destructive,
   disabled,
@@ -149,6 +152,7 @@ function SheetRow({
   icon: ComponentType<{ className?: string }>;
   label: string;
   href?: string;
+  to?: string;
   onSelect?: () => void;
   destructive?: boolean;
   disabled?: boolean;
@@ -165,7 +169,11 @@ function SheetRow({
   );
   return (
     <li>
-      {href ? (
+      {to ? (
+        <Link href={to} className={cls}>
+          {body}
+        </Link>
+      ) : href ? (
         <a href={href} target="_blank" rel="noreferrer" className={cls}>
           {body}
         </a>

@@ -25,12 +25,11 @@ export const CLIENT_MESSAGE_SCOPES = {
     "campaignApp.batchCard", "campaignApp.batchDialogs", "campaignApp.batchesNew",
     "campaignApp.campaignStats", "campaignApp.detail", "campaignApp.new",
     "campaignApp.posterBuilder", "campaignApp.printSheet", "campaignStatus", "campaignsApp",
-    "dashboard.onboarding.scene", "errors", "qrDownload", "stats",
+    "errors", "qrDownload", "stats",
   ],
   "links/ctas": ["ctaLibrary", "errors"],
   "links/dashboard": [
-    "campaignsApp.onboarding.scene", "composer", "dashboard", "edit", "errors", "expiringBanner",
-    "linkSheet", "linkState", "tags",
+    "composer", "dashboard", "edit", "errors", "linkSheet", "linkState", "tags",
   ],
   "links/demo": ["demo", "edit", "errors", "linkState", "publicStats", "stats", "tags"],
   "links/events": [
