@@ -23,5 +23,6 @@ describe("complete favorites library", () => {
     expect(linkDisplayName({ ...link("code", ""), ogTitle: "Site title", ogTitleOverride: "Custom card" })).toBe("Custom card");
     expect(linkDisplayName({ ...link("code", "Team note"), ogTitle: "Site title" })).toBe("Team note");
     expect(linkDisplayName({ ...link("code", " "), ogTitle: " " })).toBe("docs.example.com");
+    expect(linkDisplayName({ ...link("code", ""), ogTitle: null, ogTitleOverride: null })).toBe("docs.example.com");
   });
 });
