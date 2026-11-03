@@ -59,7 +59,8 @@ async function organizer(page: Page, saved?: Record<string, unknown>) {
 
 const place = (page: Page) => page.getByRole("combobox", { name: "장소" });
 const options = (page: Page) => page.getByRole("listbox", { name: "장소" }).getByRole("option");
-const map = (page: Page) => page.locator('iframe[src*="/maps/embed/v1/place"]');
+const map = (page: Page) => page.locator('#ef-panel-edit iframe[src*="/maps/embed/v1/place"]');
+const previewMap = (page: Page) => page.getByTestId("event-preview").locator('iframe[src*="/maps/embed/v1/place"]');
 
 async function caretToEnd(page: Page) {
   await place(page).evaluate((input: HTMLInputElement) => {
@@ -73,6 +74,7 @@ test.describe("event place search", () => {
     const { searches, unexpected } = await google(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("장소 모집");
 
     await place(page).fill("渋谷");
@@ -103,6 +105,8 @@ test.describe("event place search", () => {
     expect(searches).toHaveLength(searchesBefore);
     await expect(map(page)).toBeVisible();
     await expect(page.getByRole("listbox")).toBeHidden();
+    await expect(page.getByTestId("event-preview")).toContainText("SHIBUYA SKY, 3층");
+    await expect(previewMap(page)).toHaveAttribute("src", /q=place_id:ChIJ-shibuya-sky&language=ko/);
 
     await page.getByRole("button", { name: "발행하기" }).click();
     await expect.poll(() => sent.length).toBe(1);
@@ -117,6 +121,7 @@ test.describe("event place search", () => {
     const { unexpected } = await google(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("장소 모집");
 
     await place(page).fill("渋谷駅");
@@ -146,6 +151,7 @@ test.describe("event place search", () => {
     const { unexpected } = await google(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.getByLabel("제목", { exact: false }).fill("장소 모집");
 
     await place(page).fill("渋谷");
@@ -193,6 +199,7 @@ test.describe("event place search", () => {
     await google(page);
     await organizer(page, { locationText: "성수 카페", locationUrl: "https://naver.me/5kurl" });
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await expect(page.getByRole("button", { name: "링크로 넣기" })).toBeVisible();
     await expect(page.getByLabel("지도 링크")).toHaveCount(0);
 

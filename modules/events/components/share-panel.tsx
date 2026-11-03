@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import type { EventLink, MyEvent } from "@/modules/events/api/events";
 import { createAliasLink } from "@/modules/events/api/events";
 import { shortUrlOf } from "@/modules/events/lib/format";
+import { cn } from "@/lib/utils";
+
+const ROW_BUTTON =
+  "focus-ring min-h-11 shrink-0 rounded-md px-2.5 text-[14px] font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100";
 
 /**
  * 배포 도구 — 채널별 별칭 링크가 곧 유입 분석의 축. "단톡용 링크는 단톡에만" 이 지켜질수록
@@ -57,33 +61,28 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
 
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-      <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h2>
-      <p className="mt-1 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
-        {t("subtitle")}
-      </p>
+      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h2>
+      <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
 
       <ul className="mt-3 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
         {event.links.map((link) => (
-          <li
-            key={link.linkId}
-            className="flex items-center gap-2 py-2.5"
-          >
+          <li key={link.linkId} className="flex items-center gap-2 py-3">
             <span className="min-w-0 flex-1">
-              <span className="block text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              <span className="block truncate text-[15px] font-medium text-slate-900 dark:text-slate-100">
                 {link.label}
               </span>
-              <span className="block truncate font-mono text-[13px] text-slate-800 dark:text-slate-200">
+              <span className="mt-0.5 block truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
                 {link.shortCode ? shortUrlOf(link.shortCode).replace(/^https?:\/\//, "") : "—"}
               </span>
             </span>
             {link.shortCode ? (
               <>
-                <LabeledButton onClick={() => copy(link.shortCode!)}>
+                <button type="button" onClick={() => copy(link.shortCode!)} className={ROW_BUTTON}>
                   {copiedCode === link.shortCode ? t("copied") : t("copy")}
-                </LabeledButton>
-                <LabeledButton onClick={() => downloadQr(link)}>
+                </button>
+                <button type="button" onClick={() => downloadQr(link)} className={ROW_BUTTON}>
                   {t("qr")}
-                </LabeledButton>
+                </button>
               </>
             ) : null}
           </li>
@@ -98,32 +97,10 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
           placeholder={t("aliasPlaceholder")}
           aria-label={t("aliasLabel")}
         />
-        <button
-          type="submit"
-          disabled={busy || !label.trim()}
-          className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-3.5 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-500 disabled:opacity-40 dark:border-slate-700 dark:text-slate-300"
-        >
+        <button type="submit" disabled={busy || !label.trim()} className={cn(ROW_BUTTON, "disabled:opacity-40")}>
           {t("addAlias")}
         </button>
       </form>
     </section>
-  );
-}
-
-function LabeledButton({
-  onClick,
-  children,
-}: {
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-slate-200 px-2.5 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-400 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-    >
-      {children}
-    </button>
   );
 }

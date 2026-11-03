@@ -28,14 +28,14 @@ export function AttendeeTable({
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
       <div className="flex items-center justify-between">
-        <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
           {t("title", { count: attendees.filter((a) => a.status === "CONFIRMED").length })}
         </h2>
         {attendees.length > 0 ? (
           <button
             type="button"
             onClick={exportCsv}
-            className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 underline underline-offset-2 transition-colors hover:text-slate-700 dark:text-slate-400"
+            className="focus-ring rounded-sm text-[13px] font-medium text-slate-600 underline decoration-slate-300 underline-offset-[3px] transition-colors hover:text-slate-900 dark:text-slate-300 dark:decoration-slate-600"
           >
             {t("exportCsv")}
           </button>
@@ -43,7 +43,7 @@ export function AttendeeTable({
       </div>
 
       {attendees.length === 0 ? (
-        <p className="mt-4 text-[13px] text-slate-400">{t("empty")}</p>
+        <p className="mt-3 text-[14px] text-slate-500 dark:text-slate-400">{t("empty")}</p>
       ) : (
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[560px] text-left text-[13px]">
@@ -66,26 +66,20 @@ export function AttendeeTable({
                   key={attendee.id}
                   className={
                     attendee.status === "CANCELED"
-                      ? "border-b border-slate-100 text-slate-400 line-through dark:border-slate-800"
+                      ? "border-b border-slate-100 text-slate-500 line-through dark:border-slate-800 dark:text-slate-400"
                       : "border-b border-slate-100 text-slate-700 dark:border-slate-800 dark:text-slate-300"
                   }
                 >
                   <td className="py-2.5 pr-3 font-medium">{attendee.name}</td>
                   <td className="py-2.5 pr-3">{attendee.contact}</td>
                   <td className="py-2.5 pr-3">
-                    {attendee.channel ? (
-                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium no-underline dark:bg-slate-800">
-                        {attendee.channel}
-                      </span>
-                    ) : (
-                      <span className="text-slate-300 dark:text-slate-600">—</span>
-                    )}
+                    {attendee.channel ?? <span className="text-slate-500 dark:text-slate-400">—</span>}
                   </td>
-                  <td className="py-2.5 pr-3 text-[12px]">
+                  <td className="py-2.5 pr-3">
                     {attendee.status === "CONFIRMED" ? t("confirmed") : t("canceled")}
                   </td>
                   {questions.map((question) => (
-                    <td key={question.id} className="py-2.5 pr-3 text-[12px]">
+                    <td key={question.id} className="py-2.5 pr-3">
                       {attendee.answers[String(question.id)] ?? ""}
                     </td>
                   ))}

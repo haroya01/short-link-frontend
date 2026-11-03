@@ -285,7 +285,7 @@ export function LocationField({
 
       {!picked && linkOpen ? (
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="ef-locurl" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
+          <label htmlFor="ef-locurl" className="text-[14px] font-medium text-slate-800 dark:text-slate-200">
             {t("locationUrl")}
           </label>
           <Input

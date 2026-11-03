@@ -7,7 +7,7 @@ import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
 import { ErrorState } from "@/components/common/error-state";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { getNoteThread, type NoteThread } from "@/modules/notes/api/notes";
+import { getNoteThread, THREAD_REPLIES_PAGE, type NoteThread } from "@/modules/notes/api/notes";
 import { NoteThreadView } from "@/modules/notes/components/note-thread";
 
 type Read = { id: number; thread: NoteThread | null; failed: boolean };
@@ -27,7 +27,7 @@ export function NoteGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!signedIn) return;
     let live = true;
-    getNoteThread(noteId).then(
+    getNoteThread(noteId, THREAD_REPLIES_PAGE).then(
       (thread) => {
         if (live) setRead({ id: noteId, thread, failed: false });
       },

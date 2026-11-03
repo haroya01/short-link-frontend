@@ -34,7 +34,9 @@
     "jumpMissing": "このコメントは削除されたか、表示できません。",
     "notesTab": "ノート {count, number}",
     "discussionTabs": "コメントとノート",
-    "notesTabHint": "この記事を引用したノート"
+    "notesTabHint": "この記事を引用したノート",
+    "liveNew": "新しいコメント{count, number}件",
+    "showMore": "コメントをもっと見る"
   },
   "publicFeed": {
     "recent": "最新",
@@ -4076,49 +4078,32 @@
   "events": {
     "intro": {
       "title": "参加申し込みをリンクで受け付けます",
-      "subtitle": "勉強会やミートアップ、サークルの紹介ページと申込フォームを作れます。定員に達すると自動で締め切られ、どこから申し込みが来たかも確認できます。",
       "example": {
-        "title": "参加者にはこんなページが開きます",
-        "desc": "リンクを開くと日時・場所・残り枠がひと目でわかり、主催者にはどのチャットから申し込まれたかがたまります。下は例です。",
         "guest": "参加者が見るページ",
         "host": "主催者が見る申し込み状況"
-      },
-      "step1": {
-        "title": "ページを作る",
-        "body": "タイトルと日時を入れればページができます。"
-      },
-      "step2": {
-        "title": "グループチャットに貼る",
-        "body": "短縮リンクとQRが自動で作られます。"
-      },
-      "step3": {
-        "title": "申し込みが集まる",
-        "body": "名簿も締切も自動。どのチャンネルから来たかも分かります。"
       },
       "ctaLogin": "ログインしてはじめる",
       "ctaHint": "参加者はログイン不要で申し込めます。",
       "demo": {
         "eventTitle": "ご近所読書会",
-        "eventDate": "水曜日 19:00",
         "eventPlace": "近所のカフェ2F",
-        "registerButton": "申し込む",
-        "example": "例",
-        "byChannel": "チャネル別の申し込み",
         "channels": {
           "groupChat": "グループチャット",
           "instagram": "Instagram",
           "qrPoster": "QRポスター"
         },
-        "hostName": "夜の読書会"
+        "hostName": "夜の読書会",
+        "about": "月に一度、水曜の夜に集まってます。今月は好きな短編をひとつ読んできてください",
+        "note1": "読み終わってなくても大丈夫",
+        "note2": "飲み物は各自で注文",
+        "question": "最近読んでる本"
       }
     },
     "public": {
       "hostedBy": "主催",
-      "cta": "申し込む",
       "attending": "参加{count}名",
       "addToCalendar": "Google カレンダーに追加",
       "onlineLink": "オンライン参加リンク",
-      "full": "定員に達しました",
       "spotsLeft": "残り {count} / {capacity} 席",
       "formTitle": "参加申し込み",
       "nameLabel": "お名前",
@@ -4140,7 +4125,7 @@
       "viralHook": "kurlで作った募集ページです。",
       "viralCta": "募集ページを作る",
       "canceledNotice": "このイベントは中止になりました。",
-      "fullNotice": "定員に達しました。キャンセルが出ると席が再び空くので、後ほどまたご確認ください。",
+      "fullNotice": "定員に達しました。キャンセルが出ると再び申し込めます。",
       "closedNotice": "受付は終了しました。",
       "cancelTitle": "申し込みキャンセル",
       "cancelBody": "「{title}」の申し込みをキャンセルしますか？空いた席は他の方に回ります。",
@@ -4149,8 +4134,8 @@
       "cancelDoneBody": "またの機会に。同じ連絡先で再度申し込むこともできます。",
       "cancelError": "キャンセルできませんでした。リンクが無効か、すでにキャンセル済みの可能性があります。",
       "errors": {
-        "answerRequired": "「{label}」をご記入ください",
-        "choiceRequired": "「{label}」から1つお選びください",
+        "answerRequired": "回答をご記入ください",
+        "choiceRequired": "1つお選びください",
         "consentRequired": "個人情報の提供に同意してください",
         "full": "たった今定員に達しました",
         "alreadyRegistered": "この連絡先はすでに申し込み済みです",
@@ -4160,22 +4145,30 @@
         "invalidPhone": "電話番号をご確認ください (例：090-1234-5678)",
         "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)",
         "invalidLine": "LINE IDの形式をご確認ください。",
-        "invalidInstagram": "Instagramハンドルをご確認ください。"
+        "invalidInstagram": "Instagramハンドルをご確認ください。",
+        "nameRequired": "お名前をご記入ください",
+        "contactRequired": "連絡先をご記入ください"
       },
-      "metaDate": "日付",
-      "metaTime": "時間",
       "metaPlace": "場所",
       "metaOnline": "オンライン",
       "metaAttendance": "定員",
       "contactLine": "LINE ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "Instagramハンドル",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "日時",
+      "aboutTitle": "詳細",
+      "endedNotice": "このイベントは終了しました。",
+      "am": "午前",
+      "pm": "午後"
     },
     "list": {
       "title": "イベント",
       "new": "新規作成",
-      "loadFailed": "読み込みに失敗しました。"
+      "loadFailed": "読み込みに失敗しました。",
+      "empty": "まだイベントはありません",
+      "signups": "{count}名",
+      "signupsOf": "{count}/{capacity}名"
     },
     "form": {
       "newTitle": "新しい募集",
@@ -4184,28 +4177,25 @@
       "title": "タイトル",
       "titlePlaceholder": "東京エンジニア勉強会 #3",
       "description": "紹介文",
-      "descriptionHint": "Markdown が使えます (# 見出し、- リスト、**強調**)",
       "descriptionPlaceholder": "どんな集まりか、誰に来てほしいか",
       "whenTitle": "日時",
       "startsAt": "開始",
-      "endsAt": "終了 (任意)",
+      "endsAt": "終了",
       "timezone": "タイムゾーン",
       "whereTitle": "場所",
       "locationPlaceholder": "場所名や住所",
       "clearPlace": "会場をクリア",
       "locationUrl": "地図リンク",
       "addMapLink": "リンクで指定",
-      "onlineUrl": "オンラインリンク (任意)",
-      "onlineUrlHint": "オンライン/ハイブリッドの場合の参加リンク",
+      "onlineUrl": "オンラインリンク",
       "limitsTitle": "定員と締切",
-      "capacity": "定員 (任意)",
+      "capacity": "定員",
       "capacityHint": "満席になると自動で締め切ります",
       "capacityPlaceholder": "10",
-      "closeAt": "申込締切 (任意)",
-      "closeAtHint": "この時刻以降は受け付けません",
+      "closeAt": "申込締切",
       "formSectionTitle": "申し込みフォーム",
       "contactField": "収集する連絡先",
-      "contactFieldHint": "メールを選ぶと確認・キャンセルメールが自動送信されます。電話・LINE・Instagram・カカオトークは主催者が直接連絡する用です。",
+      "contactFieldHint": "メールを選ぶと確認・キャンセルメールが自動で届きます",
       "contactFields": {
         "EMAIL": "メール",
         "PHONE": "電話番号",
@@ -4229,45 +4219,50 @@
       "save": "保存",
       "errors": {
         "startRequired": "開始日時を入力してください",
-        "generic": "保存に失敗しました。入力内容をご確認ください。"
+        "generic": "保存に失敗しました。入力内容をご確認ください。",
+        "titleRequired": "タイトルを入力してください",
+        "endBeforeStart": "終了が開始より前になっています",
+        "closeAfterEnd": "申込締切がイベント終了より後になっています",
+        "closeAfterStart": "申込締切がイベント開始より後になっています",
+        "capacityMin": "定員は1名以上にしてください"
       },
-      "optional": "任意",
       "cover": "カバー画像",
       "coverFailed": "アップロードに失敗しました。もう一度お試しください。",
       "coverHint": "チャット・SNSのプレビューに大きく表示されます (JPG/PNG/WebP、2:1推奨)",
       "coverReplace": "画像を変更",
       "coverUpload": "画像を選択",
       "coverUploading": "アップロード中…",
-      "descWrite": "書く",
-      "descPreview": "プレビュー",
-      "descPreviewEmpty": "まだ内容がありません。「書く」タブでマークダウンを書くと、ここで確認できます。",
       "useGoogleMaps": "「{place}」のGoogleマップリンクを作成",
-      "openMap": "地図を開く ↗"
+      "openMap": "地図を開く ↗",
+      "requiredNote": "必須",
+      "viewTabs": "入力とプレビュー",
+      "tabs": {
+        "edit": "入力",
+        "preview": "プレビュー"
+      },
+      "previewLabel": "参加者が見る画面",
+      "untitled": "タイトルなし"
     },
     "detail": {
-      "loading": "読み込み中…",
       "loadFailed": "読み込みに失敗しました。",
-      "createdBanner": "募集ページを公開しました。このリンクをグループチャットやSNSに貼ってください。",
       "edit": "編集",
       "viewPublicPage": "公開ページを見る",
       "manageTitle": "管理",
       "close": "受付を締め切る",
       "reopen": "受付を再開する",
       "cancelEvent": "イベントを中止",
-      "canceledNote": "中止されたイベントです。",
       "statusChanged": "変更しました",
       "statusChangeFailed": "変更に失敗しました",
       "cancelDialogTitle": "イベントを中止しますか？",
       "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
       "cancelDialogConfirm": "中止する",
-      "heroCopy": "リンクをコピー",
-      "heroCopied": "コピーしました"
+      "heroCopy": "リンクをコピー"
     },
     "share": {
       "copied": "コピー済み",
       "qr": "QR",
       "title": "共有リンク",
-      "subtitle": "チャンネル(グループLINE・X・Instagram)ごとに別のリンクを使うと、申込者の流入元が自動で分かれて表示されます。",
+      "subtitle": "チャンネルごとにリンクを分けると、申し込みがチャンネル別に分かれます",
       "copy": "リンクをコピー",
       "downloadQr": "QRをダウンロード",
       "aliasPlaceholder": "チャンネル名 (例：グループLINE用)",
@@ -4277,14 +4272,13 @@
       "aliasFailed": "リンク作成に失敗しました"
     },
     "analytics": {
-      "shareNudge": "まだクリックがありません。上の共有リンクをグループチャットやSNSに貼ると、ここに流入結果が表示されます。",
       "title": "流入分析",
       "totalClicks": "ページクリック",
       "totalRegistrations": "申し込み",
       "conversion": "転換率",
       "registrationsByChannel": "チャンネル別申し込み",
       "clicksByLink": "リンク別クリック",
-      "clicksByClientApp": "アプリ別クリック (LINE・Instagramアプリ内など)",
+      "clicksByClientApp": "アプリ別クリック",
       "noRegistrations": "まだ申し込みがありません",
       "noClicks": "まだクリックがありません"
     },
@@ -4302,7 +4296,9 @@
     "status": {
       "open": "受付中",
       "closed": "締切",
-      "canceled": "中止"
+      "canceled": "中止",
+      "ended": "終了",
+      "full": "満席"
     }
   },
   "linkAnalytics": {
@@ -4807,7 +4803,10 @@
     "destinationMine": "自分のノート",
     "postToRoom": "{room}に投稿",
     "roomAudience": "{room}のメンバーだけが見られます",
-    "roomPlaceholder": "いま何してる？"
+    "roomPlaceholder": "いま何してる？",
+    "liveNewReplies": "新しい返信{count, number}件",
+    "moreReplies": "返信をもっと見る",
+    "repliesLoadFailed": "返信を読み込めませんでした"
   },
   "mentions": {
     "suggestions": "メンションする人"
@@ -4964,6 +4963,7 @@
     "allReplies": "コメント{count, number}件をすべて見る",
     "post": "記事",
     "writePost": "{room}に記事を書く",
-    "leaveDeleteHint": "削除すると、このルームに投稿したノート・ブログ記事・コメントがすべて消えます。"
+    "leaveDeleteHint": "削除すると、このルームに投稿したノート・ブログ記事・コメントがすべて消えます。",
+    "liveNew": "新しい投稿{count, number}件"
   }
 }

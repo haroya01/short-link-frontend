@@ -30,3 +30,26 @@ export function placeReply(thread: NoteThread, reply: Note): { thread: NoteThrea
     landing: "elsewhere",
   };
 }
+
+export function threadNoteIds(thread: NoteThread): Set<number> {
+  return new Set([...thread.replies, ...(thread.continuation ?? [])].map((note) => note.id));
+}
+
+export function appendReplies(thread: NoteThread, incoming: Note[]): NoteThread {
+  const known = threadNoteIds(thread);
+  const fresh = incoming
+    .filter((note, index) => note.inReplyToId === thread.note.id && !known.has(note.id) && incoming.findIndex((n) => n.id === note.id) === index)
+    .sort((a, b) => a.id - b.id);
+  if (fresh.length === 0) return thread;
+  return {
+    ...thread,
+    note: { ...thread.note, replyCount: thread.note.replyCount + fresh.length },
+    replies: [...thread.replies, ...fresh],
+  };
+}
+
+export function appendReplyPage(thread: NoteThread, page: Note[], next: string | null): NoteThread {
+  const known = threadNoteIds(thread);
+  const fresh = page.filter((note, index) => !known.has(note.id) && page.findIndex((n) => n.id === note.id) === index);
+  return { ...thread, replies: [...thread.replies, ...fresh], repliesNext: next };
+}

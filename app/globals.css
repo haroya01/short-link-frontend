@@ -653,6 +653,17 @@ html[data-first-load] .profile-fade {
   .prose-text-block th {
     @apply bg-slate-50 font-semibold;
   }
+  .prose-event p,
+  .prose-event li {
+    @apply text-[15px];
+  }
+  .prose-event h1,
+  .prose-event h2 {
+    @apply mt-5 text-base font-semibold;
+  }
+  .prose-event h3 {
+    @apply mt-4 text-[15px] font-semibold;
+  }
 
   /*
    * Long-form reading typography for the public blog post body. Distinct from .prose-text-block:
@@ -951,7 +962,47 @@ html[data-first-load] .profile-fade {
     background-color: transparent;
   }
 }
+@keyframes live-open {
+  from {
+    grid-template-rows: 0fr;
+    margin-top: 0;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+.live-open {
+  display: grid;
+  animation: live-open 360ms var(--ease) both;
+}
+.live-open > * {
+  min-height: 0;
+  overflow: hidden;
+}
+@keyframes live-line-in {
+  from {
+    transform: translateY(-100%);
+  }
+}
+.live-line {
+  animation: live-line-in 360ms var(--ease) both;
+}
+.live-wash {
+  animation: note-wash 1600ms var(--ease) both;
+}
+.dark .live-wash {
+  animation-name: note-wash-dark;
+}
 @media (prefers-reduced-motion: reduce) {
+  .live-open {
+    animation: none;
+  }
+  .live-open > * {
+    overflow: visible;
+  }
+  .live-line {
+    animation: none;
+  }
   .comment-in {
     animation: none;
   }

@@ -34,7 +34,9 @@
     "jumpMissing": "이 댓글은 삭제됐거나 볼 수 없어요.",
     "notesTab": "노트 {count, number}",
     "discussionTabs": "댓글과 노트",
-    "notesTabHint": "이 글을 인용한 노트예요"
+    "notesTabHint": "이 글을 인용한 노트예요",
+    "liveNew": "새 댓글 {count, number}개",
+    "showMore": "댓글 더 보기"
   },
   "publicFeed": {
     "recent": "최신",
@@ -4076,49 +4078,32 @@
   "events": {
     "intro": {
       "title": "모임 신청을 링크로 받아요",
-      "subtitle": "스터디나 밋업, 소모임의 소개 페이지와 신청 폼을 만들어요. 정원이 차면 자동으로 마감되고, 신청자가 어디서 왔는지도 볼 수 있어요.",
       "example": {
-        "title": "참가자에게는 이런 페이지가 열려요",
-        "desc": "링크를 누르면 일시·장소·남은 자리가 한눈에 보이고, 주최자에게는 어느 방에서 신청했는지가 쌓여요. 아래는 예시예요.",
         "guest": "참가자가 보는 페이지",
         "host": "주최자가 보는 신청 현황"
-      },
-      "step1": {
-        "title": "페이지 만들기",
-        "body": "제목과 날짜만 적으면 페이지가 만들어져요."
-      },
-      "step2": {
-        "title": "단톡에 링크 붙여넣기",
-        "body": "단축 링크와 QR이 자동으로 만들어져요."
-      },
-      "step3": {
-        "title": "신청이 쌓여요",
-        "body": "명단 정리도, 마감도 자동. 어느 방에서 왔는지도 보여요."
       },
       "ctaLogin": "로그인하고 시작하기",
       "ctaHint": "참가자는 로그인 없이 신청할 수 있어요.",
       "demo": {
         "eventTitle": "우리 동네 독서 모임",
-        "eventDate": "수요일 저녁 7시",
         "eventPlace": "동네 카페 2층",
-        "registerButton": "신청하기",
-        "example": "예시",
-        "byChannel": "채널별 신청",
         "channels": {
           "groupChat": "단톡방",
           "instagram": "인스타그램",
           "qrPoster": "QR 포스터"
         },
-        "hostName": "책 읽는 밤"
+        "hostName": "책 읽는 밤",
+        "about": "한 달에 한 번 수요일 저녁에 모여요. 이번 달은 아무 단편이나 하나씩 읽어 와요",
+        "note1": "다 못 읽었어도 그냥 와요",
+        "note2": "음료는 각자 시켜요",
+        "question": "요즘 읽는 책"
       }
     },
     "public": {
       "hostedBy": "주최",
-      "cta": "신청하기",
       "attending": "참여 {count}명",
       "addToCalendar": "Google 캘린더에 추가",
       "onlineLink": "온라인 참가 링크",
-      "full": "정원이 마감됐어요",
       "spotsLeft": "남은 자리 {count} / {capacity}",
       "formTitle": "참가 신청",
       "nameLabel": "이름",
@@ -4140,7 +4125,7 @@
       "viralHook": "kurl로 만든 모집 페이지예요.",
       "viralCta": "모집 페이지 만들기",
       "canceledNotice": "이 모임은 취소되었어요.",
-      "fullNotice": "정원이 가득 찼어요. 취소가 나오면 자리가 다시 열리니 나중에 다시 확인해 주세요.",
+      "fullNotice": "자리가 다 찼어요. 취소가 생기면 다시 열려요.",
       "closedNotice": "신청이 마감되었어요.",
       "cancelTitle": "신청 취소",
       "cancelBody": "\"{title}\" 신청을 취소할까요? 취소하면 자리가 다른 분에게 돌아가요.",
@@ -4149,8 +4134,8 @@
       "cancelDoneBody": "다음에 또 만나요. 같은 연락처로 다시 신청할 수도 있어요.",
       "cancelError": "취소에 실패했어요. 링크가 만료되었거나 이미 취소되었을 수 있어요.",
       "errors": {
-        "answerRequired": "\"{label}\" 항목을 적어 주세요",
-        "choiceRequired": "\"{label}\" 항목에서 하나를 골라 주세요",
+        "answerRequired": "답을 적어 주세요",
+        "choiceRequired": "하나를 골라 주세요",
         "consentRequired": "개인정보 제공에 동의해 주세요",
         "full": "방금 정원이 마감됐어요",
         "alreadyRegistered": "이미 이 연락처로 신청되어 있어요",
@@ -4160,22 +4145,30 @@
         "invalidPhone": "전화번호를 다시 확인해 주세요 (예: 010-1234-5678)",
         "invalidKakao": "카카오톡 ID를 다시 확인해 주세요 (영문·숫자 2~30자)",
         "invalidLine": "라인 ID 형식을 확인해주세요.",
-        "invalidInstagram": "인스타그램 핸들 형식을 확인해주세요."
+        "invalidInstagram": "인스타그램 핸들 형식을 확인해주세요.",
+        "nameRequired": "이름을 적어 주세요",
+        "contactRequired": "연락처를 적어 주세요"
       },
-      "metaDate": "날짜",
-      "metaTime": "시간",
       "metaPlace": "장소",
       "metaOnline": "온라인",
       "metaAttendance": "인원",
       "contactLine": "라인 ID",
       "contactLinePlaceholder": "line_id",
       "contactInstagram": "인스타그램 핸들",
-      "contactInstagramPlaceholder": "@handle"
+      "contactInstagramPlaceholder": "@handle",
+      "metaWhen": "일시",
+      "aboutTitle": "소개",
+      "endedNotice": "끝난 모임이에요.",
+      "am": "오전",
+      "pm": "오후"
     },
     "list": {
       "title": "모집",
       "new": "새 모집",
-      "loadFailed": "목록을 불러오지 못했어요."
+      "loadFailed": "목록을 불러오지 못했어요.",
+      "empty": "아직 만든 모집이 없어요",
+      "signups": "{count}명",
+      "signupsOf": "{count}/{capacity}명"
     },
     "form": {
       "newTitle": "새 모집 만들기",
@@ -4184,28 +4177,25 @@
       "title": "제목",
       "titlePlaceholder": "도쿄 개발자 스터디 3기 모집",
       "description": "소개",
-      "descriptionHint": "마크다운을 쓸 수 있어요 (# 제목, - 목록, **강조**)",
       "descriptionPlaceholder": "어떤 모임인지, 누구를 기다리는지",
       "whenTitle": "일시",
       "startsAt": "시작",
-      "endsAt": "종료 (선택)",
-      "timezone": "타임존",
+      "endsAt": "종료",
+      "timezone": "시간대",
       "whereTitle": "장소",
       "locationPlaceholder": "장소 이름이나 주소",
       "clearPlace": "장소 지우기",
       "locationUrl": "지도 링크",
       "addMapLink": "링크로 넣기",
-      "onlineUrl": "온라인 링크 (선택)",
-      "onlineUrlHint": "온라인/하이브리드면 참가 링크",
+      "onlineUrl": "온라인 링크",
       "limitsTitle": "정원과 마감",
-      "capacity": "정원 (선택)",
+      "capacity": "정원",
       "capacityHint": "차면 자동으로 마감돼요",
       "capacityPlaceholder": "10",
-      "closeAt": "신청 마감 (선택)",
-      "closeAtHint": "이 시각 이후 신청을 받지 않아요",
+      "closeAt": "신청 마감",
       "formSectionTitle": "신청 폼",
       "contactField": "연락처 수집 방식",
-      "contactFieldHint": "이메일을 고르면 확인·취소 메일이 자동으로 가요. 전화번호·카카오톡·라인·인스타그램은 주최자가 직접 연락할 때 써요.",
+      "contactFieldHint": "이메일을 고르면 확인·취소 메일이 자동으로 가요",
       "contactFields": {
         "EMAIL": "이메일",
         "PHONE": "전화번호",
@@ -4229,45 +4219,50 @@
       "save": "저장",
       "errors": {
         "startRequired": "시작 일시를 입력해 주세요",
-        "generic": "저장에 실패했어요. 입력값을 확인해 주세요."
+        "generic": "저장에 실패했어요. 입력값을 확인해 주세요.",
+        "titleRequired": "제목을 적어 주세요",
+        "endBeforeStart": "종료가 시작보다 앞서요",
+        "closeAfterEnd": "신청 마감이 모임 종료보다 늦어요",
+        "closeAfterStart": "신청 마감이 모임 시작보다 늦어요",
+        "capacityMin": "정원은 1명 이상이어야 해요"
       },
-      "optional": "선택",
       "cover": "커버 이미지",
       "coverFailed": "업로드에 실패했어요. 다시 시도해 주세요.",
       "coverHint": "단톡·SNS 미리보기에 크게 나와요 (JPG/PNG/WebP, 2:1 비율 권장)",
       "coverReplace": "이미지 바꾸기",
       "coverUpload": "이미지 선택",
       "coverUploading": "업로드 중…",
-      "descWrite": "쓰기",
-      "descPreview": "미리보기",
-      "descPreviewEmpty": "아직 내용이 없어요. 쓰기 탭에서 마크다운으로 적으면 여기서 미리 볼 수 있어요.",
       "useGoogleMaps": "‘{place}’ 구글 지도 링크 만들기",
-      "openMap": "지도 미리 열기 ↗"
+      "openMap": "지도 미리 열기 ↗",
+      "requiredNote": "필수",
+      "viewTabs": "작성과 미리보기",
+      "tabs": {
+        "edit": "작성",
+        "preview": "미리보기"
+      },
+      "previewLabel": "참가자가 보는 화면",
+      "untitled": "제목 없음"
     },
     "detail": {
-      "loading": "불러오는 중…",
       "loadFailed": "불러오지 못했어요.",
-      "createdBanner": "모집 페이지를 발행했어요. 이 링크를 단톡이나 SNS에 올려 주세요.",
       "edit": "수정",
       "viewPublicPage": "공개 페이지 보기",
       "manageTitle": "관리",
       "close": "신청 마감하기",
       "reopen": "신청 다시 열기",
       "cancelEvent": "모임 취소",
-      "canceledNote": "취소된 모임이에요.",
       "statusChanged": "변경했어요",
       "statusChangeFailed": "변경에 실패했어요",
       "cancelDialogTitle": "모임을 취소할까요?",
       "cancelDialogBody": "공개 페이지에 취소로 표시되고 신청을 더 받지 않아요. 되돌릴 수 없어요. 새 신청만 막으려면 '신청 마감하기'를 쓰세요.",
       "cancelDialogConfirm": "모임 취소",
-      "heroCopy": "링크 복사",
-      "heroCopied": "복사됨"
+      "heroCopy": "링크 복사"
     },
     "share": {
       "copied": "복사됨",
       "qr": "QR",
       "title": "공유 링크",
-      "subtitle": "채널(단톡·트위터·인스타)마다 다른 링크를 쓰면, 신청자가 어디서 왔는지 유입 분석에 자동으로 나뉘어 보여요.",
+      "subtitle": "채널마다 링크를 따로 쓰면 신청이 채널별로 나뉘어요",
       "copy": "링크 복사",
       "downloadQr": "QR 다운로드",
       "aliasPlaceholder": "채널 이름 (예: 단톡용)",
@@ -4277,14 +4272,13 @@
       "aliasFailed": "링크 생성에 실패했어요"
     },
     "analytics": {
-      "shareNudge": "아직 클릭이 없어요. 위의 공유 링크를 단톡이나 SNS에 붙여넣으면 여기에 유입 결과가 쌓여요.",
       "title": "유입 분석",
       "totalClicks": "페이지 클릭",
       "totalRegistrations": "신청",
       "conversion": "전환율",
       "registrationsByChannel": "채널별 신청",
       "clicksByLink": "링크별 클릭",
-      "clicksByClientApp": "앱별 클릭 (카톡·인스타 인앱 등)",
+      "clicksByClientApp": "앱별 클릭",
       "noRegistrations": "아직 신청이 없어요",
       "noClicks": "아직 클릭이 없어요"
     },
@@ -4302,7 +4296,9 @@
     "status": {
       "open": "모집 중",
       "closed": "마감",
-      "canceled": "취소됨"
+      "canceled": "취소됨",
+      "ended": "끝남",
+      "full": "정원 마감"
     }
   },
   "linkAnalytics": {
@@ -4807,7 +4803,10 @@
     "destinationMine": "내 노트",
     "postToRoom": "{room}에 올리기",
     "roomAudience": "{room} 멤버만 볼 수 있어요",
-    "roomPlaceholder": "지금 뭐 하고 있어요?"
+    "roomPlaceholder": "지금 뭐 하고 있어요?",
+    "liveNewReplies": "새 답글 {count, number}개",
+    "moreReplies": "답글 더 보기",
+    "repliesLoadFailed": "답글을 불러오지 못했어요"
   },
   "mentions": {
     "suggestions": "멘션할 사람"
@@ -4964,6 +4963,7 @@
     "allReplies": "댓글 {count, number}개 모두 보기",
     "post": "글",
     "writePost": "{room}에 글 쓰기",
-    "leaveDeleteHint": "삭제하면 이 방에 올린 내 노트·블로그 글·댓글이 모두 사라져요."
+    "leaveDeleteHint": "삭제하면 이 방에 올린 내 노트·블로그 글·댓글이 모두 사라져요.",
+    "liveNew": "새 글 {count, number}개"
   }
 }

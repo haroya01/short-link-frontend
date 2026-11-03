@@ -1,10 +1,10 @@
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ContactCardEntry } from "@/app/[locale]/u/[username]/_components/contact-card-entry";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { Markdown } from "@/modules/blog/components/markdown";
-import { PublicEventPage } from "@/modules/events/components/public-event-page";
+import { EventPageView } from "@/modules/events/components/event-page-view";
+import { eventWhenText } from "@/modules/events/lib/format";
 import type { PublicEvent } from "@/modules/events/api/events";
 import type { ContactCardConfig } from "@/types";
 
@@ -48,14 +48,13 @@ const FIXTURES: Record<string, () => React.ReactNode> = {
     <ContactCardFixture config={{ ...SAMPLE_CONTACT_CARD, palette: "midnight" }} />
   ),
   "blog-avatars": () => <AvatarFixture />,
-  // useSearchParams(취소 토큰) 때문에 force-static 빌드에서 Suspense 경계가 필수.
   "public-event": () => (
-    <Suspense>
-      <PublicEventPage
-        initialEvent={SAMPLE_EVENT}
-        description={<Markdown>{SAMPLE_EVENT.descriptionMd ?? ""}</Markdown>}
-      />
-    </Suspense>
+    <EventPageView
+      event={SAMPLE_EVENT}
+      when={eventWhenText(SAMPLE_EVENT, "ko", { am: "오전", pm: "오후" })}
+      now={Date.parse("2026-08-01T00:00:00Z")}
+      description={<Markdown>{SAMPLE_EVENT.descriptionMd ?? ""}</Markdown>}
+    />
   ),
 };
 

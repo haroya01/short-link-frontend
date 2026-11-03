@@ -18,6 +18,8 @@ export type QuestionSpec = {
 
 export type ContactField = "EMAIL" | "PHONE" | "KAKAO" | "LINE" | "INSTAGRAM";
 
+export type RegistrationClosedReason = "CANCELED" | "ENDED" | "CLOSED" | "DEADLINE" | "FULL";
+
 export type PublicEvent = {
   slug: string;
   title: string;
@@ -35,6 +37,7 @@ export type PublicEvent = {
   contactField: ContactField;
   status: "OPEN" | "CLOSED" | "CANCELED";
   acceptingRegistrations: boolean;
+  registrationClosedReason?: RegistrationClosedReason | null;
   attending: number;
   organizerName: string | null;
   organizerAvatarUrl: string | null;
@@ -63,6 +66,7 @@ export type MyEvent = {
   closeAt: string | null;
   contactField: ContactField;
   status: "OPEN" | "CLOSED" | "CANCELED";
+  registrationClosedReason?: RegistrationClosedReason | null;
   registrationCount: number;
   questions: EventQuestion[];
   links: EventLink[];
