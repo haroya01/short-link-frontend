@@ -4098,32 +4098,15 @@
   "events": {
     "intro": {
       "title": "모임 신청을 링크로 받아요",
-      "subtitle": "스터디나 밋업, 소모임의 소개 페이지와 신청 폼을 만들어요. 정원이 차면 자동으로 마감되고, 신청자가 어디서 왔는지도 볼 수 있어요.",
       "example": {
         "guest": "참가자가 보는 페이지",
         "host": "주최자가 보는 신청 현황"
-      },
-      "step1": {
-        "title": "페이지 만들기",
-        "body": "제목과 날짜만 적으면 페이지가 만들어져요."
-      },
-      "step2": {
-        "title": "단톡에 링크 붙여넣기",
-        "body": "단축 링크와 QR이 자동으로 만들어져요."
-      },
-      "step3": {
-        "title": "신청이 쌓여요",
-        "body": "명단 정리도, 마감도 자동. 어느 방에서 왔는지도 보여요."
       },
       "ctaLogin": "로그인하고 시작하기",
       "ctaHint": "참가자는 로그인 없이 신청할 수 있어요.",
       "demo": {
         "eventTitle": "우리 동네 독서 모임",
-        "eventDate": "수요일 저녁 7시",
         "eventPlace": "동네 카페 2층",
-        "registerButton": "신청하기",
-        "example": "예시",
-        "byChannel": "채널별 신청",
         "channels": {
           "groupChat": "단톡방",
           "instagram": "인스타그램",
@@ -4200,7 +4183,10 @@
     "list": {
       "title": "모집",
       "new": "새 모집",
-      "loadFailed": "목록을 불러오지 못했어요."
+      "loadFailed": "목록을 불러오지 못했어요.",
+      "empty": "아직 만든 모집이 없어요",
+      "signups": "{count}명",
+      "signupsOf": "{count}/{capacity}명"
     },
     "form": {
       "newTitle": "새 모집 만들기",
@@ -4333,7 +4319,9 @@
     "status": {
       "open": "모집 중",
       "closed": "마감",
-      "canceled": "취소됨"
+      "canceled": "취소됨",
+      "ended": "끝남",
+      "full": "정원 마감"
     }
   },
   "linkAnalytics": {

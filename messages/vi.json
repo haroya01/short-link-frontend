@@ -4098,32 +4098,15 @@
   "events": {
     "intro": {
       "title": "Nhận đăng ký sự kiện qua một liên kết",
-      "subtitle": "Tạo trang giới thiệu và mẫu đăng ký cho nhóm học, meetup hay câu lạc bộ. Khi đủ chỗ, đăng ký tự đóng, và bạn xem được mỗi lượt đăng ký đến từ đâu.",
       "example": {
         "guest": "Trang người tham gia thấy",
         "host": "Tình hình đăng ký bạn thấy"
-      },
-      "step1": {
-        "title": "Tạo trang",
-        "body": "Chỉ cần tiêu đề và ngày giờ là có trang."
-      },
-      "step2": {
-        "title": "Dán liên kết vào nhóm chat",
-        "body": "Liên kết ngắn và QR được tạo tự động."
-      },
-      "step3": {
-        "title": "Đăng ký tự đến",
-        "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
       },
       "ctaLogin": "Đăng nhập để bắt đầu",
       "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
       "demo": {
         "eventTitle": "CLB đọc sách khu phố",
-        "eventDate": "Thứ Tư · 19:00",
         "eventPlace": "Quán cà phê tầng 2",
-        "registerButton": "Đăng ký",
-        "example": "Ví dụ",
-        "byChannel": "Đăng ký theo kênh",
         "channels": {
           "groupChat": "Nhóm chat",
           "instagram": "Instagram",
@@ -4200,7 +4183,10 @@
     "list": {
       "title": "Sự kiện",
       "new": "Sự kiện mới",
-      "loadFailed": "Không tải được danh sách."
+      "loadFailed": "Không tải được danh sách.",
+      "empty": "Chưa có sự kiện nào",
+      "signups": "{count} người",
+      "signupsOf": "{count}/{capacity} người"
     },
     "form": {
       "newTitle": "Sự kiện mới",
@@ -4333,7 +4319,9 @@
     "status": {
       "open": "Đang mở",
       "closed": "Đã đóng",
-      "canceled": "Đã hủy"
+      "canceled": "Đã hủy",
+      "ended": "Đã kết thúc",
+      "full": "Hết chỗ"
     }
   },
   "linkAnalytics": {

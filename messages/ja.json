@@ -4098,32 +4098,15 @@
   "events": {
     "intro": {
       "title": "参加申し込みをリンクで受け付けます",
-      "subtitle": "勉強会やミートアップ、サークルの紹介ページと申込フォームを作れます。定員に達すると自動で締め切られ、どこから申し込みが来たかも確認できます。",
       "example": {
         "guest": "参加者が見るページ",
         "host": "主催者が見る申し込み状況"
-      },
-      "step1": {
-        "title": "ページを作る",
-        "body": "タイトルと日時を入れればページができます。"
-      },
-      "step2": {
-        "title": "グループチャットに貼る",
-        "body": "短縮リンクとQRが自動で作られます。"
-      },
-      "step3": {
-        "title": "申し込みが集まる",
-        "body": "名簿も締切も自動。どのチャンネルから来たかも分かります。"
       },
       "ctaLogin": "ログインしてはじめる",
       "ctaHint": "参加者はログイン不要で申し込めます。",
       "demo": {
         "eventTitle": "ご近所読書会",
-        "eventDate": "水曜日 19:00",
         "eventPlace": "近所のカフェ2F",
-        "registerButton": "申し込む",
-        "example": "例",
-        "byChannel": "チャネル別の申し込み",
         "channels": {
           "groupChat": "グループチャット",
           "instagram": "Instagram",
@@ -4200,7 +4183,10 @@
     "list": {
       "title": "イベント",
       "new": "新規作成",
-      "loadFailed": "読み込みに失敗しました。"
+      "loadFailed": "読み込みに失敗しました。",
+      "empty": "まだイベントはありません",
+      "signups": "{count}名",
+      "signupsOf": "{count}/{capacity}名"
     },
     "form": {
       "newTitle": "新しい募集",
@@ -4333,7 +4319,9 @@
     "status": {
       "open": "受付中",
       "closed": "締切",
-      "canceled": "中止"
+      "canceled": "中止",
+      "ended": "終了",
+      "full": "満席"
     }
   },
   "linkAnalytics": {

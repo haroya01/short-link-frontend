@@ -4098,32 +4098,15 @@
   "events": {
     "intro": {
       "title": "Take event sign-ups with a link",
-      "subtitle": "Make an intro page and a sign-up form for a study group, meetup or club. Sign-ups close when it's full, and you can see where each one came from.",
       "example": {
         "guest": "What guests see",
         "host": "What you see as the host"
-      },
-      "step1": {
-        "title": "Make a page",
-        "body": "Add a title and a date, and the page is ready."
-      },
-      "step2": {
-        "title": "Paste the link in your chat",
-        "body": "A short link and QR are created automatically."
-      },
-      "step3": {
-        "title": "Watch signups arrive",
-        "body": "The list keeps itself, capacity closes itself, and you see which channel people came from."
       },
       "ctaLogin": "Sign in to start",
       "ctaHint": "Attendees register without an account.",
       "demo": {
         "eventTitle": "Neighborhood book club",
-        "eventDate": "Wednesday · 7:00 PM",
         "eventPlace": "Neighborhood cafe, 2F",
-        "registerButton": "Register",
-        "example": "Example",
-        "byChannel": "Sign-ups by channel",
         "channels": {
           "groupChat": "Group chat",
           "instagram": "Instagram",
@@ -4200,7 +4183,10 @@
     "list": {
       "title": "Events",
       "new": "New event",
-      "loadFailed": "Could not load events."
+      "loadFailed": "Could not load events.",
+      "empty": "No events yet",
+      "signups": "{count} signed up",
+      "signupsOf": "{count}/{capacity} signed up"
     },
     "form": {
       "newTitle": "New event",
@@ -4333,7 +4319,9 @@
     "status": {
       "open": "Open",
       "closed": "Closed",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "ended": "Ended",
+      "full": "Full"
     }
   },
   "linkAnalytics": {

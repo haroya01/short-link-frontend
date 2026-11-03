@@ -3,18 +3,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
+import { eventPhase, type EventPhase } from "@/modules/events/lib/phase";
 import { EventsIntro } from "@/modules/events/components/events-intro";
-import { EventsOnboarding } from "@/modules/events/components/events-onboarding";
-import { EventStatusBadge } from "@/modules/events/components/event-status-badge";
+import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LinksPage } from "@/components/links/links-page";
+import { cn } from "@/lib/utils";
 
 export default function EventsListPage() {
   const { ready, authenticated } = useAuth();
@@ -61,15 +61,20 @@ function EventsList({
   onRetry: () => void;
 }) {
   const t = useTranslations("events.list");
+  const tStatus = useTranslations("events.status");
   const locale = useLocale();
+  const [now] = useState(() => Date.now());
+  const newEvent = (
+    <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
+      {t("new")}
+    </Link>
+  );
 
   return (
     <LinksPage>
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
-        <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
-          {t("new")}
-        </Link>
+        {events?.length === 0 ? null : newEvent}
       </div>
 
       {error ? (
@@ -86,37 +91,59 @@ function EventsList({
           ))}
         </ul>
       ) : events.length === 0 ? (
-        <EventsOnboarding />
+        <EmptyState title={t("empty")} action={newEvent} className="mt-6" />
       ) : (
-        <ul className="mt-4 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
-          {events.map((event) => (
-            <li key={event.id}>
-              <Link
-                href={`/events/${event.id}`}
-                className="group flex items-center justify-between gap-4 py-4 transition-colors"
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <EventStatusBadge status={event.status} />
-                    <span className="truncate text-[15px] font-semibold text-slate-900 underline-offset-[3px] group-hover:underline group-hover:decoration-slate-300 dark:text-slate-100">
-                      {event.title}
+        <ul className="mt-4 flex flex-col divide-y divide-slate-100 border-t border-slate-200 dark:divide-slate-800/60 dark:border-slate-800">
+          {events.map((event) => {
+            const phase = listPhase(event, now);
+            return (
+              <li key={event.id}>
+                <Link href={`/events/${event.id}`} className="group flex items-center gap-4 py-3.5">
+                  <span className="min-w-0 flex-1">
+                    <span className="flex min-w-0 items-baseline gap-2">
+                      <span className="truncate text-[15px] font-semibold text-slate-900 underline-offset-[3px] group-hover:underline group-hover:decoration-slate-300 dark:text-slate-100">
+                        {event.title}
+                      </span>
+                      {phase === "open" ? null : (
+                        <span
+                          className={cn(
+                            "shrink-0 text-xs font-medium",
+                            phase === "canceled"
+                              ? "text-red-700 dark:text-red-400"
+                              : "text-slate-500 dark:text-slate-400",
+                          )}
+                        >
+                          {tStatus(phase)}
+                        </span>
+                      )}
                     </span>
-                  </div>
-                  <p className="mt-1 truncate text-[12px] text-slate-500 dark:text-slate-400">
-                    {formatEventRange(event.startsAt, event.endsAt, event.timezone, locale)}
-                    {event.locationText ? ` · ${event.locationText}` : ""}
-                  </p>
-                </div>
-                <span className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium tabular-nums text-slate-600 dark:text-slate-300">
-                  <Users className="h-4 w-4 text-slate-400" />
-                  {event.registrationCount}
-                  {event.capacity != null ? `/${event.capacity}` : ""}
-                </span>
-              </Link>
-            </li>
-          ))}
+                    <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
+                      {formatEventRange(event.startsAt, event.endsAt, event.timezone, locale)}
+                      {event.locationText ? ` · ${event.locationText}` : ""}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-right text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                    {event.capacity != null
+                      ? t("signupsOf", { count: event.registrationCount, capacity: event.capacity })
+                      : t("signups", { count: event.registrationCount })}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </LinksPage>
+  );
+}
+
+function listPhase(event: MyEvent, now: number): EventPhase {
+  return eventPhase(
+    {
+      ...event,
+      acceptingRegistrations: event.status === "OPEN",
+      spotsLeft: event.capacity == null ? null : event.capacity - event.registrationCount,
+    },
+    now,
   );
 }
