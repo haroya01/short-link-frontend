@@ -12,6 +12,12 @@ import {
   type CountryOption,
 } from "@/lib/countries";
 
+export const PICKER_SIZE = {
+  field: "h-11 px-3 text-base sm:h-8 sm:px-2.5 sm:text-xs",
+  md: "px-2 py-1.5 text-xs",
+  sm: "h-8 px-2 text-base sm:text-xs",
+} as const;
+
 /**
  * Searchable country picker over the full ISO 3166-1 alpha-2 set (250-ish) — the backend accepts them
  * all and GeoIP resolves them all, so the picker must not fabricate a limit. Names are localized via
@@ -32,13 +38,15 @@ export function CountryCombobox({
   /** Show a leading "any country" option (destination targeting). Omit for the block-list adder. */
   allowAny = false,
   portal = true,
+  className,
 }: {
   value: string;
   onChange: (code: string) => void;
   disabled?: boolean;
-  size?: "sm" | "md";
+  size?: keyof typeof PICKER_SIZE;
   allowAny?: boolean;
   portal?: boolean;
+  className?: string;
 }) {
   const t = useTranslations("stats.destinations");
   const locale = useLocale();
@@ -142,16 +150,20 @@ export function CountryCombobox({
         aria-expanded={open}
         aria-label={t("countryLabel")}
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-900 transition-colors hover:border-slate-300",
+          "inline-flex items-center justify-between gap-1.5 rounded-lg border border-slate-200 bg-white text-slate-900 transition-colors hover:border-slate-300",
           "focus-ring disabled:opacity-50",
-          "dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-700",
-          size === "sm" ? "px-1.5 py-0.5 text-[11px]" : "px-2 py-1.5 text-xs",
+          "dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-600",
+          PICKER_SIZE[size],
+          className,
         )}
       >
         <span className={cn("truncate", !selected && !(allowAny && !value) && "text-slate-500 dark:text-slate-400")}>
           {triggerText}
         </span>
-        <ChevronDown className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-400" aria-hidden />
+        <ChevronDown
+          className={cn("shrink-0 text-slate-400 dark:text-slate-400", size === "md" ? "h-3 w-3" : "h-4 w-4 sm:h-3 sm:w-3")}
+          aria-hidden
+        />
       </button>
 
       {open &&
