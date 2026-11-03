@@ -3457,7 +3457,7 @@
     },
     "batchDialogs": {
       "editTitle": "配布先を編集",
-      "editDescription": "名前・配布担当・エリア・部数・メモのみ編集できます。印刷済み QR の短縮リンクは変わりません。",
+      "editDescription": "印刷済み QR の短縮リンクは変わりません。",
       "save": "保存",
       "updated": "配布先を更新しました",
       "updateFailed": "更新に失敗しました",
@@ -3471,7 +3471,7 @@
       "deleted": "配布先を削除しました",
       "deleteFailed": "削除に失敗しました",
       "deleteWarningTitle": "短縮リンクも削除されます。",
-      "deleteWarningBody": "印刷済み QR を読み取るとリンクなしページが表示されます。発注前なら安全ですが、配布後は終了ポリシーで生かす運用を先に検討してください。",
+      "deleteWarningBody": "印刷済みの QR は「リンクなし」ページになります。",
       "quantityUnit": "{count}部"
     },
     "new": {
@@ -3483,7 +3483,7 @@
       "nameLabel": "QR キャンペーン名",
       "namePlaceholder": "例：新宿の春ポスター配布",
       "startLabel": "開始時点",
-      "startHint": "基本は「今すぐ開始」。発注や印刷日程に合わせる場合のみ予約します。",
+      "startHint": "開始前のスキャンはテストとして別に数えます。",
       "startNow": "今すぐ開始",
       "startSchedule": "開始時刻を予約",
       "endLabel": "終了時点",
@@ -3498,7 +3498,7 @@
         "redirectTitle": "別ページへ自動転送",
         "redirectBody": "レビュー、次回キャンペーン、待機リストなど任意の URL に送れます。"
       },
-      "messagePlaceholder": "例：このキャンペーンは終了しました。次回イベントは12月です。\n問い合わせ: @kurl_official",
+      "messagePlaceholder": "イベントは終了しました。次回は12月です。",
       "messageHint": "空の場合は標準メッセージを表示します。改行はそのまま反映されます ·",
       "redirectHint": "キャンペーン終了時に、印刷済み QR へ一括適用される転送先 URL です。",
       "cancel": "キャンセル",
@@ -3568,11 +3568,11 @@
       "createFailed": "作成に失敗しました",
       "backToCampaign": "QR キャンペーンへ",
       "title": "配布先を追加",
-      "introCampaign": "<name></name> の新しい配布先。",
+      "introCampaign": "<name></name>",
       "addRow": "行を追加",
       "pasteToggle": "スプレッドシートから貼り付け",
-      "defaultUrlActive": "<strong>デフォルトのリンク先URLを使用中。</strong> リンク先欄を空にすると <code></code> が自動で入ります。別 URL を使う配布先だけ入力してください。",
-      "defaultUrlMissing": "<strong>デフォルトのリンク先URLが設定されていません。</strong> 配布先ごとにリンク先URLを入力してください。",
+      "defaultUrlActive": "リンク先を空にするとデフォルトの URL を使います · <code></code>",
+      "defaultUrlMissing": "デフォルトの URL がないため、配布先ごとにリンク先を入力してください。",
       "fields": {
         "name": "配布先名",
         "distributor": "配布担当",
@@ -3580,7 +3580,6 @@
         "quantity": "部数",
         "destinationUrl": "リンク先URL"
       },
-      "compareHint": "比較分析に使用",
       "placeholders": {
         "name": "例：新宿駅東口",
         "distributor": "A または配布担当名",
@@ -3594,19 +3593,19 @@
         "nameRequired": "配布先名は必須です",
         "quantityRequired": "部数は必須です",
         "quantityPositive": "1以上を入力してください",
-        "destinationRequired": "URLを入力してください。キャンペーンの既定URLがありません。",
+        "destinationRequired": "リンク先を入力してください",
         "destinationUrl": "http:// または https:// で始めてください"
       },
-      "removeRow": "{index}行目を削除",
+      "removeRow": "{index}行目を外す",
       "pasteTitle": "スプレッドシート行を貼り付け",
       "pasteColumns": "列順：<code>配布先名 / 配布担当 / エリア / 部数 / リンク先URL / メモ</code> (タブまたはカンマ区切り)",
       "close": "閉じる",
-      "pastePlaceholder": "新宿駅東口\tA\tShinjuku East\t500\t\n大久保\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pastePlaceholder": "新宿駅東口\tA\tShinjuku East\t500",
       "pasteZeroRows": "0行",
       "pastePreviewRows": "{count}行を認識",
       "cancel": "キャンセル",
       "pasteApply": "{count}行を追加",
-      "invalidRows": "{count}行に入力エラーがあります。赤いセルを修正してください。",
+      "invalidRows": "{count}行を修正してください",
       "summary": "<strong>{rowCount}</strong>件の配布先 · <strong>{totalQuantity}</strong>部を印刷・配布予定",
       "creating": "作成中…",
       "submit": "{count}件の配布先を追加"
@@ -3619,49 +3618,45 @@
       "composeFailed": "合成に失敗しました",
       "backToCampaign": "QR キャンペーンへ",
       "title": "ポスターに QR を配置",
-      "introCampaign": "<name></name> · 配布先 ({count}件) ごとに PDF ページを複製し、それぞれ別の QR を配置した結合 PDF をダウンロードします。",
-      "toolHint": "Canva・InDesign・PowerPoint などでデザインを仕上げて PDF を書き出し、ここでは QR の位置だけを決めます。",
+      "introCampaign": "<name></name> · 配布先{count}件それぞれの QR を入れた結合 PDF を作ります。",
       "targetLabel": "合成対象",
       "targetSummary": "<strong>{count}件</strong>の配布先 · 結果は<strong>{pages}ページ</strong>の PDF",
-      "noBatchesHint": "先に配布先を追加してください。(QR キャンペーン詳細 → 配布先を追加)",
+      "noBatchesHint": "配布先はまだありません",
       "composing": "合成中…",
       "download": "結合 PDF をダウンロード ({count}ページ)",
-      "notSavedHint": "QR の位置は保存されません。同じ PDF で戻っても、ボックスは再度指定してください。",
+      "notSavedHint": "QR の位置は保存されません。",
       "dropTitle": "PDF をドロップ、またはクリックしてアップロード",
-      "dropSubtitle": "1ページ PDF · Canva/InDesign 書き出し推奨",
+      "dropSubtitle": "1ページの PDF",
       "removePdf": "PDF を削除",
       "otherPdf": "別の PDF",
-      "dragHint": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。",
-      "dragHintWithBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。プレビューは最初の配布先 (全{count}件中1件目) です。配布先ごとに別の QR が入ります。",
-      "dragHintWithoutBatches": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。配布先がないため placeholder QR でプレビューしています。実際の合成は配布先を追加してから行えます。",
+      "dragHint": "ボックスをドラッグして移動し、角をドラッグしてサイズを変えます。",
       "boxAria": "QR ボックスの位置とサイズ",
-      "qrPreviewAlt": "QR プレビュー"
+      "qrPreviewAlt": "QR プレビュー",
+      "addBatch": "配布先を追加"
     },
     "printSheet": {
       "loadFailed": "読み込みに失敗しました",
       "backToCampaign": "QR キャンペーンへ",
       "title": "A4 QR シート",
-      "introCampaign": "<name></name> · ブラウザ印刷で PDF 保存 (Cmd/Ctrl + P)。",
+      "introCampaign": "<name></name> · 印刷ダイアログから PDF として保存できます。",
       "print": "印刷",
-      "empty": "印刷する配布先がありません。先に追加してください。",
+      "empty": "印刷する配布先がありません",
       "perPage": "1ページあたり",
       "layouts": {
         "comfortable": {
-          "label": "12個 (3×4)",
-          "hint": "余裕あり · 名刺サイズ"
+          "label": "12個 (3×4)"
         },
         "standard": {
-          "label": "20個 (4×5)",
-          "hint": "標準"
+          "label": "20個 (4×5)"
         },
         "dense": {
-          "label": "30個 (5×6)",
-          "hint": "密 · 小ラベル"
+          "label": "30個 (5×6)"
         }
       },
       "showLabel": "ラベル表示",
       "cutMarks": "カット線",
-      "pagePerBatch": "配布先ごとに1ページ"
+      "pagePerBatch": "配布先ごとに1ページを同じ QR で埋める",
+      "addBatch": "配布先を追加"
     },
     "campaignStats": {
       "loadFailed": "読み込みに失敗しました",
@@ -3682,7 +3677,7 @@
         "none": "比較なし",
         "current": "現在",
         "comparison": "比較",
-        "selectHint": "上のドロップダウンから比較するキャンペーンを選択してください。"
+        "selectHint": "比較するキャンペーンを選ぶと並べて表示します。"
       },
       "kpi": {
         "totalClicks": "反響数",
@@ -3702,10 +3697,10 @@
         "description": "いまの合計{total}部を同じ総量で配り直します。平均は100部あたり{average}件です。",
         "footnote": "反響率をもとにしたおすすめです。平均の30%未満の配布先は外し、残りを反響率に応じて配り直します (配布先ごとに最大3倍)。",
         "verdict": {
-          "BOOST": "増加",
+          "BOOST": "増やす",
           "KEEP": "維持",
-          "REDUCE": "減少",
-          "PRUNE": "削除"
+          "REDUCE": "減らす",
+          "PRUNE": "外す"
         },
         "rowMeta": "{current} → {recommended}部 · 100部あたり{rate}件",
         "tooFewBatches": "配布先が{minimum}件以上になるとおすすめを表示します。いまは{current}件です。",
@@ -3779,8 +3774,7 @@
   "qrDownload": {
     "zipTitle": "QR ZIPをダウンロード",
     "singleTitle": "{name}のQRをダウンロード",
-    "zipDescription": "キャンペーン内のすべての配布先の QR をまとめたファイルです。印刷会社やデザイナーへそのまま渡せます。",
-    "singleDescription": "1件の配布先の QR PNG です。",
+    "zipDescription": "配布先ごとの PNG を ZIP ひとつにまとめてダウンロードします。",
     "confirm": "ダウンロード",
     "sizeLabel": "サイズ",
     "sizes": {
@@ -3789,18 +3783,15 @@
       "print": "標準印刷",
       "poster": "大型ポスター"
     },
-    "ecLabel": "破損許容 (Error correction)",
-    "ecHint": "屋外や汚れやすい環境では高めに設定してください。",
+    "ecLabel": "破損許容",
+    "ecHint": "高くするほど汚れても読み取れますが、模様が細かくなります。",
     "ec": {
       "data": "データ優先",
       "standard": "標準",
       "outdoor": "屋外・汚れ",
       "maximum": "最大保護"
     },
-    "labelText": "ラベルテキスト",
-    "labelHint": "QR の下に配布先名を小さく入れると、印刷したあとで見分けやすくなります。",
-    "labelCheckbox": "QR の下に配布先名を印刷",
-    "notSaved": "ダウンロード設定は保存されません。同じキャンペーンを別の設定で何度でもダウンロードできます。"
+    "labelCheckbox": "QR の下に配布先名を入れる"
   },
   "qrCampaigns": {
     "meta": {

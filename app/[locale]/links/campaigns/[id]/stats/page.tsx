@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -45,13 +45,20 @@ export default function CampaignStatsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
-  const [otherCampaigns, setOtherCampaigns] = useState<CampaignSummary[]>([]);
   const [compareWithId, setCompareWithId] = useState<number | null>(null);
   const [compareData, setCompareData] = useState<CampaignStatsCompareResponse | null>(null);
   const [compareLoading, setCompareLoading] = useState(false);
   const [compareFailed, setCompareFailed] = useState(false);
   const [compareReload, setCompareReload] = useState(0);
-  const [recData, setRecData] = useState<CampaignRecommendation | null>(null);
+  const enabled = ready && authenticated && Number.isFinite(campaignId);
+  const others = useSectionLoad(
+    enabled,
+    useCallback(() => listCampaigns().then((all) => all.filter((it) => it.id !== campaignId)), [campaignId]),
+  );
+  const rec = useSectionLoad(
+    enabled,
+    useCallback(() => getCampaignRecommendations(campaignId), [campaignId]),
+  );
 
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(campaignId)) {
@@ -61,18 +68,11 @@ export default function CampaignStatsPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    Promise.all([
-      getCampaign(campaignId),
-      getCampaignStats(campaignId),
-      listCampaigns(),
-      getCampaignRecommendations(campaignId),
-    ])
-      .then(([c, s, all, rec]) => {
+    Promise.all([getCampaign(campaignId), getCampaignStats(campaignId)])
+      .then(([c, s]) => {
         if (cancelled) return;
         setCampaign(c);
         setStats(s);
-        setOtherCampaigns(all.filter((it) => it.id !== campaignId));
-        setRecData(rec);
       })
       .catch(() => {
         if (!cancelled) setError(t("loadFailed"));
@@ -170,13 +170,23 @@ export default function CampaignStatsPage() {
               groups={stats.byArea}
             />
           )}
-          {recData && <RecommendationCard data={recData} />}
+          {rec.data ? (
+            <RecommendationCard data={rec.data} />
+          ) : rec.failed ? (
+            <Section title={t("recommendation.title")}>
+              <ErrorState message={t("loadFailed")} onRetry={rec.retry} />
+            </Section>
+          ) : null}
           {stats.byDay.length > 0 && <DailyChart data={stats.byDay} startsAt={campaign.startsAt} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
           {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
           {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
-          {otherCampaigns.length > 0 && (
+          {others.failed ? (
+            <Section title={t("compare.title")}>
+              <ErrorState message={t("loadFailed")} onRetry={others.retry} />
+            </Section>
+          ) : others.data && others.data.length > 0 ? (
             <CompareSection
-              campaigns={otherCampaigns}
+              campaigns={others.data}
               selectedId={compareWithId}
               onSelect={setCompareWithId}
               data={compareData}
@@ -185,11 +195,32 @@ export default function CampaignStatsPage() {
               failed={compareFailed}
               onRetry={() => setCompareReload((n) => n + 1)}
             />
-          )}
+          ) : null}
         </>
       ) : null}
     </LinksPage>
   );
+}
+
+function useSectionLoad<T>(enabled: boolean, load: () => Promise<T>) {
+  const [state, setState] = useState<{ data: T | null; failed: boolean }>({ data: null, failed: false });
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (!enabled) return;
+    let cancelled = false;
+    setState({ data: null, failed: false });
+    load()
+      .then((data) => {
+        if (!cancelled) setState({ data, failed: false });
+      })
+      .catch(() => {
+        if (!cancelled) setState({ data: null, failed: true });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, load, attempt]);
+  return { ...state, retry: useCallback(() => setAttempt((n) => n + 1), []) };
 }
 
 function CompareSection({

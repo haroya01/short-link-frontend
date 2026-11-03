@@ -3457,7 +3457,7 @@
     },
     "batchDialogs": {
       "editTitle": "Sửa đợt phát",
-      "editDescription": "Bạn chỉ chỉnh được tên, người phát, khu vực, số lượng, và ghi chú. Liên kết ngắn in trong QR giữ nguyên.",
+      "editDescription": "Liên kết rút gọn trong QR đã in vẫn giữ nguyên.",
       "save": "Lưu",
       "updated": "Đã cập nhật đợt",
       "updateFailed": "Cập nhật thất bại",
@@ -3471,7 +3471,7 @@
       "deleted": "Đã xóa đợt",
       "deleteFailed": "Xóa thất bại",
       "deleteWarningTitle": "Liên kết ngắn cũng sẽ bị xóa.",
-      "deleteWarningBody": "Người quét mã QR đã in sẽ thấy trang không tìm thấy liên kết. Việc này an toàn trước khi đặt in, nhưng sau khi phát thì thường nên giữ nó hoạt động với một chính sách kết thúc.",
+      "deleteWarningBody": "QR đã in sẽ mở trang không tìm thấy liên kết.",
       "quantityUnit": "{count} tờ"
     },
     "new": {
@@ -3483,7 +3483,7 @@
       "nameLabel": "Tên chiến dịch QR",
       "namePlaceholder": "ví dụ: Đợt áp phích xuân khu Shinjuku",
       "startLabel": "Bắt đầu",
-      "startHint": "Thường là bắt đầu ngay. Chỉ lên lịch khi ngày in hoặc đặt hàng đòi hỏi.",
+      "startHint": "Lượt quét trước khi bắt đầu được tính riêng là thử nghiệm.",
       "startNow": "Bắt đầu ngay",
       "startSchedule": "Lên lịch bắt đầu",
       "endLabel": "Kết thúc",
@@ -3498,7 +3498,7 @@
         "redirectTitle": "Chuyển hướng nơi khác",
         "redirectBody": "Gửi QR đã in tới trang đánh giá, chiến dịch tiếp theo, danh sách chờ, hay bất kỳ URL theo sau nào."
       },
-      "messagePlaceholder": "ví dụ: Chiến dịch này đã kết thúc. Hẹn gặp ở sự kiện tiếp theo vào tháng Mười Hai.\nLiên hệ: @kurl_official",
+      "messagePlaceholder": "VD: Sự kiện đã kết thúc. Hẹn gặp vào tháng 12.",
       "messageHint": "Để trống sẽ dùng thông báo mặc định. Ngắt dòng được giữ nguyên ·",
       "redirectHint": "URL chuyển hướng được áp dụng cho mã QR đã in khi chiến dịch kết thúc.",
       "cancel": "Hủy",
@@ -3568,11 +3568,11 @@
       "createFailed": "Tạo thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thêm các đợt phát",
-      "introCampaign": "Các đợt mới cho <name></name>.",
+      "introCampaign": "<name></name>",
       "addRow": "Thêm dòng",
       "pasteToggle": "Dán từ bảng tính",
-      "defaultUrlActive": "<strong>Đã đặt URL đích mặc định.</strong> Để trống trường đích để dùng <code></code>. Chỉ nhập URL cho các đợt cần đích khác.",
-      "defaultUrlMissing": "<strong>Chưa đặt URL đích mặc định.</strong> Mỗi đợt cần URL đích riêng.",
+      "defaultUrlActive": "Để trống đích đến để dùng URL mặc định · <code></code>",
+      "defaultUrlMissing": "Chưa có URL mặc định nên mỗi đợt cần đích đến riêng.",
       "fields": {
         "name": "Tên đợt",
         "distributor": "Người phát",
@@ -3580,7 +3580,6 @@
         "quantity": "Số lượng",
         "destinationUrl": "URL đích"
       },
-      "compareHint": "Hữu ích để so sánh",
       "placeholders": {
         "name": "ví dụ: Ga Shinjuku cửa Đông",
         "distributor": "A hoặc tên người phát",
@@ -3594,19 +3593,19 @@
         "nameRequired": "Tên đợt là bắt buộc",
         "quantityRequired": "Số lượng là bắt buộc",
         "quantityPositive": "Nhập số từ 1 trở lên",
-        "destinationRequired": "Nhập URL. Chiến dịch này chưa có URL mặc định.",
+        "destinationRequired": "Nhập đích đến",
         "destinationUrl": "Phải bắt đầu bằng http:// hoặc https://"
       },
-      "removeRow": "Xóa dòng {index}",
+      "removeRow": "Bỏ dòng {index}",
       "pasteTitle": "Dán các dòng bảng tính",
       "pasteColumns": "Thứ tự cột: <code>Tên đợt / Người phát / Khu vực / Số lượng / URL đích / Ghi chú</code> (phân tách bằng tab hoặc dấu phẩy)",
       "close": "Đóng",
-      "pastePlaceholder": "Ga Shinjuku cửa Đông\tA\tShinjuku Đông\t500\t\nOkubo\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pastePlaceholder": "Ga Shinjuku cửa Đông\tA\tShinjuku Đông\t500",
       "pasteZeroRows": "0 dòng",
       "pastePreviewRows": "Phát hiện {count} dòng",
       "cancel": "Hủy",
       "pasteApply": "Thêm {count} dòng",
-      "invalidRows": "{count} dòng có lỗi nhập. Sửa các ô được tô sáng.",
+      "invalidRows": "Cần sửa {count} dòng",
       "summary": "<strong>{rowCount}</strong> đợt · dự kiến <strong>{totalQuantity}</strong> tờ",
       "creating": "Đang tạo...",
       "submit": "Tạo {count} đợt"
@@ -3619,49 +3618,45 @@
       "composeFailed": "Ghép thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thêm QR vào áp phích",
-      "introCampaign": "<name></name> · Nhân bản PDF một lần cho mỗi đợt (tổng {count}), mỗi cái có QR riêng, rồi tải về một PDF gộp.",
-      "toolHint": "Hoàn thiện thiết kế trong Canva, InDesign hay PowerPoint rồi xuất PDF. Ở đây bạn chỉ đặt vị trí QR.",
+      "introCampaign": "<name></name> · Một PDF gộp, mỗi đợt trong {count} đợt có QR riêng.",
       "targetLabel": "Mục tiêu ghép",
       "targetSummary": "<strong>{count}</strong> đợt · đầu ra là PDF <strong>{pages} trang</strong>",
-      "noBatchesHint": "Thêm các đợt phát trước. (Chi tiết chiến dịch QR → Thêm đợt)",
+      "noBatchesHint": "Chưa có đợt nào",
       "composing": "Đang ghép...",
       "download": "Tải PDF gộp ({count} trang)",
-      "notSavedHint": "Vị trí QR không được lưu. Nếu sau này bạn quay lại với cùng PDF, hãy vẽ lại khung. Các đợt in chiến dịch được xem là đơn đặt một lần.",
+      "notSavedHint": "Vị trí QR không được lưu.",
       "dropTitle": "Thả PDF vào đây hoặc nhấp để tải lên",
-      "dropSubtitle": "PDF 1 trang · khuyến nghị xuất từ Canva/InDesign",
+      "dropSubtitle": "PDF 1 trang",
       "removePdf": "Xóa PDF",
       "otherPdf": "PDF khác",
-      "dragHint": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải.",
-      "dragHintWithBatches": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải. Bản xem trước dùng đợt đầu (1 trên {count}). Mỗi đợt có QR khác nhau.",
-      "dragHintWithoutBatches": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải. Chưa có đợt nào, nên bản xem trước dùng QR giữ chỗ. Ghép thật khả dụng sau khi thêm đợt.",
+      "dragHint": "Kéo khung để di chuyển, kéo góc để đổi cỡ.",
       "boxAria": "Vị trí và kích thước khung QR",
-      "qrPreviewAlt": "Xem trước QR"
+      "qrPreviewAlt": "Xem trước QR",
+      "addBatch": "Thêm đợt"
     },
     "printSheet": {
       "loadFailed": "Tải thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Trang QR A4",
-      "introCampaign": "<name></name> · Lưu thành PDF qua in trình duyệt (Cmd/Ctrl + P).",
+      "introCampaign": "<name></name> · Lưu thành PDF từ hộp thoại in.",
       "print": "In",
-      "empty": "Không có đợt nào để in. Thêm một đợt trước.",
+      "empty": "Không có đợt nào để in",
       "perPage": "Mỗi trang",
       "layouts": {
         "comfortable": {
-          "label": "12 (3×4)",
-          "hint": "Thoáng · cỡ danh thiếp"
+          "label": "12 (3×4)"
         },
         "standard": {
-          "label": "20 (4×5)",
-          "hint": "Tiêu chuẩn"
+          "label": "20 (4×5)"
         },
         "dense": {
-          "label": "30 (5×6)",
-          "hint": "Dày đặc · nhãn nhỏ"
+          "label": "30 (5×6)"
         }
       },
       "showLabel": "Hiện nhãn",
       "cutMarks": "Dấu cắt",
-      "pagePerBatch": "Một trang đầy đủ cho mỗi đợt"
+      "pagePerBatch": "Mỗi đợt một trang đầy QR của đợt đó",
+      "addBatch": "Thêm đợt"
     },
     "campaignStats": {
       "loadFailed": "Tải thất bại",
@@ -3682,7 +3677,7 @@
         "none": "Không so sánh",
         "current": "Hiện tại",
         "comparison": "So sánh",
-        "selectHint": "Chọn một chiến dịch từ menu thả xuống ở trên."
+        "selectHint": "Chọn một chiến dịch để xem song song."
       },
       "kpi": {
         "totalClicks": "Lượt nhấp của người",
@@ -3705,7 +3700,7 @@
           "BOOST": "Tăng",
           "KEEP": "Giữ",
           "REDUCE": "Giảm",
-          "PRUNE": "Cắt"
+          "PRUNE": "Bỏ"
         },
         "rowMeta": "{current} → {recommended} tờ · {rate} lượt / 100 tờ",
         "tooFewBatches": "Gợi ý sẽ hiện khi có từ {minimum} đợt trở lên. Hiện có {current}.",
@@ -3779,8 +3774,7 @@
   "qrDownload": {
     "zipTitle": "Tải ZIP QR",
     "singleTitle": "Tải QR {name}",
-    "zipDescription": "Tất cả mã QR của các đợt trong một gói, sẵn sàng giao cho nhà in hoặc nhà thiết kế.",
-    "singleDescription": "PNG QR cho một đợt phát.",
+    "zipDescription": "Mỗi đợt một ảnh PNG, gộp trong một tệp ZIP.",
     "confirm": "Tải về",
     "sizeLabel": "Kích thước",
     "sizes": {
@@ -3789,18 +3783,15 @@
       "print": "In tiêu chuẩn",
       "poster": "Áp phích lớn"
     },
-    "ecLabel": "Mức chịu hư hại (Sửa lỗi)",
-    "ecHint": "Dùng mức cao hơn cho môi trường ngoài trời hoặc bẩn.",
+    "ecLabel": "Mức chịu hư hại",
+    "ecHint": "Mức cao hơn vẫn đọc được khi bẩn nhưng mã dày hơn.",
     "ec": {
       "data": "Ưu tiên dữ liệu",
       "standard": "Tiêu chuẩn",
       "outdoor": "Ngoài trời / bẩn",
       "maximum": "Bảo vệ tối đa"
     },
-    "labelText": "Văn bản nhãn",
-    "labelHint": "In tên đợt dưới QR để nhà in nhận diện.",
-    "labelCheckbox": "In tên đợt dưới QR",
-    "notSaved": "Tùy chọn tải về không được lưu. Bạn có thể tải cùng một chiến dịch nhiều lần với các tùy chọn khác nhau."
+    "labelCheckbox": "Thêm tên đợt bên dưới QR"
   },
   "qrCampaigns": {
     "meta": {
