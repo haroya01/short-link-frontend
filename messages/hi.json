@@ -1517,8 +1517,8 @@
     "bulkDeleting": "हटाया जा रहा है...",
     "bulkDeleted": "{count} लिंक हटा दिए",
     "bulkDeleteFailed": "{total} में से {failed} हटाने में विफल",
-    "bulkDeleteConfirmTitle": "चुने गए लिंक हटाएँ?",
-    "bulkDeleteConfirmDesc": "{count} लिंक और उनके सभी क्लिक आँकड़े स्थायी रूप से हटा दिए जाएँगे।",
+    "bulkDeleteConfirmTitle": "{count} लिंक हटाएँ?",
+    "bulkDeleteConfirmDesc": "उनके क्लिक आँकड़े भी स्थायी रूप से हटा दिए जाएँगे।",
     "bulkImport": {
       "button": "CSV आयात करें",
       "title": "CSV से थोक आयात",

@@ -1517,8 +1517,8 @@
     "bulkDeleting": "삭제 중…",
     "bulkDeleted": "링크 {count}개를 삭제했어요",
     "bulkDeleteFailed": "{total}개 중 {failed}개를 삭제하지 못했어요.",
-    "bulkDeleteConfirmTitle": "선택한 링크를 삭제할까요?",
-    "bulkDeleteConfirmDesc": "링크 {count}개와 모든 클릭 통계가 영구 삭제돼요.",
+    "bulkDeleteConfirmTitle": "링크 {count}개를 삭제할까요?",
+    "bulkDeleteConfirmDesc": "클릭 통계도 함께 영구 삭제돼요.",
     "bulkImport": {
       "button": "CSV 업로드",
       "title": "CSV로 일괄 등록",

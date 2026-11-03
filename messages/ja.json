@@ -1507,7 +1507,7 @@
         "EXPIRING_SOON": "3日以内に期限切れ",
         "EXPIRED": "期限切れ"
       },
-      "remove": "{label}の絞り込みを解除"
+      "remove": "{label}のフィルタをクリア"
     },
     "bulkSelectAll": "このページの全リンクを選択",
     "bulkSelectRow": "/{code}を選択",
@@ -1517,8 +1517,8 @@
     "bulkDeleting": "削除中…",
     "bulkDeleted": "{count}件のリンクを削除しました",
     "bulkDeleteFailed": "{total}件中{failed}件の削除に失敗",
-    "bulkDeleteConfirmTitle": "選択したリンクを削除しますか？",
-    "bulkDeleteConfirmDesc": "{count}件のリンクとクリック統計が完全に削除されます。",
+    "bulkDeleteConfirmTitle": "{count}件のリンクを削除しますか？",
+    "bulkDeleteConfirmDesc": "クリック統計も完全に削除されます。",
     "bulkImport": {
       "button": "CSV インポート",
       "title": "CSVから一括登録",
@@ -1545,7 +1545,7 @@
     "selectDone": "完了",
     "todayDelta": "今日 {count, number}",
     "firstRunTitle": "まだ作成したリンクはありません",
-    "searchClear": "検索語を消去",
+    "searchClear": "検索をクリア",
     "noResultQuery": "「{query}」に一致するリンクはありません",
     "noResultFiltered": "条件に一致するリンクはありません",
     "expiringSoon": "期限間近{count}件"

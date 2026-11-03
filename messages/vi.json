@@ -1517,8 +1517,8 @@
     "bulkDeleting": "Đang xóa...",
     "bulkDeleted": "Đã xóa {count} liên kết",
     "bulkDeleteFailed": "{failed} trên {total} xóa thất bại",
-    "bulkDeleteConfirmTitle": "Xóa các liên kết đã chọn?",
-    "bulkDeleteConfirmDesc": "{count} liên kết và toàn bộ thống kê lượt nhấp của chúng sẽ bị xóa vĩnh viễn.",
+    "bulkDeleteConfirmTitle": "Xóa {count} liên kết?",
+    "bulkDeleteConfirmDesc": "Thống kê lượt nhấp cũng sẽ bị xóa vĩnh viễn.",
     "bulkImport": {
       "button": "Nhập CSV",
       "title": "Nhập hàng loạt từ CSV",

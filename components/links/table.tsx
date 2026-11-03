@@ -71,6 +71,7 @@ export function LinksTable({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
+  const [bulkCount, setBulkCount] = useState(0);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -114,6 +115,11 @@ export function LinksTable({
       for (const c of allOnPage) next.add(c);
       return next;
     });
+  }
+
+  function askBulkDelete() {
+    setBulkCount(selected.size);
+    setBulkConfirmOpen(true);
   }
 
   function askDelete(code: string) {
@@ -163,7 +169,7 @@ export function LinksTable({
               type="button"
               size="sm"
               variant="destructive"
-              onClick={() => setBulkConfirmOpen(true)}
+              onClick={askBulkDelete}
             >
               {t("bulkDeleteAction")}
             </Button>
@@ -404,7 +410,7 @@ export function LinksTable({
           <Button type="button" size="sm" variant="ghost" disabled={selected.size === 0} onClick={() => setSelected(new Set())}>
             {t("bulkClearSelection")}
           </Button>
-          <Button type="button" size="sm" variant="destructive" disabled={selected.size === 0} onClick={() => setBulkConfirmOpen(true)}>
+          <Button type="button" size="sm" variant="destructive" disabled={selected.size === 0} onClick={askBulkDelete}>
             {t("bulkDeleteAction")}
           </Button>
         </div>
@@ -425,8 +431,8 @@ export function LinksTable({
       <ConfirmDialog
         open={bulkConfirmOpen}
         onOpenChange={(o) => !bulkDeleting && setBulkConfirmOpen(o)}
-        title={t("bulkDeleteConfirmTitle")}
-        description={t("bulkDeleteConfirmDesc", { count: selected.size })}
+        title={t("bulkDeleteConfirmTitle", { count: bulkCount })}
+        description={t("bulkDeleteConfirmDesc")}
         destructive
         confirmLabel={bulkDeleting ? t("bulkDeleting") : t("bulkDeleteAction")}
         confirmDisabled={bulkDeleting}

@@ -1507,7 +1507,7 @@
         "EXPIRING_SOON": "Expiring in 3 days",
         "EXPIRED": "Expired"
       },
-      "remove": "Remove filter {label}"
+      "remove": "Clear filter {label}"
     },
     "bulkSelectAll": "Select all links on this page",
     "bulkSelectRow": "Select /{code}",
@@ -1517,8 +1517,8 @@
     "bulkDeleting": "Deleting...",
     "bulkDeleted": "Deleted {count, plural, one {# link} other {# links}}",
     "bulkDeleteFailed": "{failed} of {total} failed to delete",
-    "bulkDeleteConfirmTitle": "Delete selected links?",
-    "bulkDeleteConfirmDesc": "{count, plural, one {# link and all its click stats} other {# links and all their click stats}} will be permanently deleted.",
+    "bulkDeleteConfirmTitle": "{count, plural, one {Delete # link?} other {Delete # links?}}",
+    "bulkDeleteConfirmDesc": "Their click stats will be permanently deleted too.",
     "bulkImport": {
       "button": "Import CSV",
       "title": "Bulk import from CSV",

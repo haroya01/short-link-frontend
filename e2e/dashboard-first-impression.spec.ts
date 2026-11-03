@@ -200,7 +200,9 @@ test.describe("dashboard first impression", () => {
     await expect(page.getByRole("textbox", { name: "긴 주소 붙여넣기" })).toBeHidden();
     await page.getByRole("checkbox", { name: "/alpha 선택" }).check();
     await expect(page.getByText("1개 선택됨").filter({ visible: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "선택 삭제" })).toBeEnabled();
+    await page.getByRole("button", { name: "선택 삭제" }).click();
+    await expect(page.getByRole("dialog", { name: "링크 1개를 삭제할까요?" })).toBeVisible();
+    await page.getByRole("dialog").getByRole("button", { name: "취소" }).click();
     await page.getByRole("button", { name: "완료", exact: true }).click();
     await expect(page.getByRole("textbox", { name: "긴 주소 붙여넣기" })).toBeVisible();
   });
