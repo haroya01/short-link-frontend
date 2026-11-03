@@ -202,7 +202,7 @@ function AccessScene() {
         ))}
         <span className="absolute inset-x-0 bottom-0 h-px bg-slate-300 dark:bg-slate-700" />
         <span
-          className="scene-line absolute inset-x-0 bottom-0 h-[2px] origin-left rounded-full bg-accent-600 dark:bg-accent-500"
+          className="scene-line absolute inset-x-0 bottom-0 h-[2px] origin-left rounded-full bg-slate-900 dark:bg-slate-100"
           style={at(680)}
         />
       </div>
@@ -256,7 +256,7 @@ function WatchScene() {
   return (
     <div className="text-[14px] text-slate-500 dark:text-slate-400">
       <p className="flex items-center gap-x-2">
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" />
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-slate-900 dark:bg-slate-100" />
         <span className="inline-flex overflow-hidden">
           <span className="scene-roll inline-block font-semibold tabular-nums text-slate-900 dark:text-slate-100" style={at(820)}>
             {t("liveCount", { count: 2 })}

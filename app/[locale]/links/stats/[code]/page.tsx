@@ -82,7 +82,7 @@ export default function StatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/dashboard" className="focus-ring rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+            <Link href="/dashboard" className="focus-ring rounded-sm text-[15px] font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100">
               {t("backToDashboard")}
             </Link>
           }

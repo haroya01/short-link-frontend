@@ -151,16 +151,16 @@ export function ShortenForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {hero ? (
-        /* 에러 중엔 빨강이 포커스(초록 링)보다 세다 — 제출 직후 포커스가 버튼(칸 안)에 남아
-           focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
-           onChange 가 에러를 걷어 초록 포커스로 자연 복귀. 칸을 key 로 리마운트하면
+        /* 에러 중엔 빨강이 포커스 링보다 세다 — 제출 직후 포커스가 버튼(칸 안)에 남아
+           focus-within 링이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
+           onChange 가 에러를 걷어 포커스 링으로 자연 복귀. 칸을 key 로 리마운트하면
            타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
         <div
           className={
             "relative flex items-center gap-2 overflow-hidden rounded-2xl border bg-white py-1.5 pl-4 pr-1.5 transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
             (error
               ? "border-red-400 dark:border-red-500/70"
-              : "border-slate-300 hover:border-slate-400 focus-within:border-accent-600 focus-within:ring-4 focus-within:ring-accent-600/10 dark:border-slate-700 dark:hover:border-slate-600 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
+              : "border-slate-300 hover:border-slate-400 focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 dark:border-slate-700 dark:hover:border-slate-600 dark:focus-within:border-slate-100 dark:focus-within:ring-slate-100/15")
           }
         >
           <Input
@@ -186,7 +186,7 @@ export function ShortenForm({
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent-700 px-4 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 sm:h-10 sm:px-5"
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-4 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 active:scale-[0.98] disabled:opacity-60 sm:h-10 sm:px-5"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -223,7 +223,6 @@ export function ShortenForm({
           <Button
             type="submit"
             size="lg"
-            variant="accent"
             disabled={busy}
             className="h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
           >
@@ -261,7 +260,7 @@ export function ShortenForm({
               aria-controls="shorten-password-row"
               className={`touch-target focus-ring inline-flex items-center gap-1 rounded-sm text-xs transition-colors ${
                 lockOn
-                  ? "font-medium text-accent-700 dark:text-accent-400"
+                  ? "font-medium text-slate-900 dark:text-slate-100"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >

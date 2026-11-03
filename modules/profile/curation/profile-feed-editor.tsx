@@ -620,12 +620,12 @@ function FeedItemRow({
   // no longer clears overIndex, (2) keep the indicator out of the layout flow so siblings don't
   // shift even when isOver flips quickly.
   const dropIndicator = isOver
-    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-accent-600 "
+    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-slate-900 "
     : "";
   // Lifted/transparent state while being dragged so the user perceives the dragged row as "in
   // their hand" rather than just half-faded in place.
   const draggingState = isDragging
-    ? "scale-[0.98] opacity-30 ring-2 ring-accent-400 rounded-md "
+    ? "scale-[0.98] opacity-30 ring-2 ring-slate-300 rounded-md "
     : "";
   // Indented rows (items that follow a TEXT header) get a thin rail on the left and
   // extra padding so the user can see "this belongs to the section above" without breaking the
@@ -845,7 +845,7 @@ function LinkLabelField({
         }}
         maxLength={120}
         placeholder={t("labelPlaceholder")}
-        className="block w-full truncate border-b border-accent-600 bg-transparent text-sm font-medium text-slate-900 outline-none dark:border-accent-400 dark:text-slate-100"
+        className="block w-full truncate border-b border-slate-900 bg-transparent text-sm font-medium text-slate-900 outline-none dark:border-slate-600 dark:text-slate-100"
       />
     );
   }
@@ -926,7 +926,7 @@ function FeatureStar({ active, onClick, label }: { active: boolean; onClick: () 
       aria-label={label}
       className={
         "transition " +
-        (active ? "text-accent-600 dark:text-accent-400" : "text-slate-300 hover:text-slate-700 dark:text-slate-600 dark:hover:text-slate-300")
+        (active ? "text-slate-900 dark:text-slate-100" : "text-slate-300 hover:text-slate-700 dark:text-slate-600 dark:hover:text-slate-300")
       }
     >
       <Star className="h-3.5 w-3.5" fill={active ? "currentColor" : "none"} />

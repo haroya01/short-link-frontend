@@ -46,7 +46,7 @@ export function RecommendationCard({ data }: { data: CampaignRecommendation }) {
 function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const verdictStyle: Record<string, string> = {
-    BOOST: "bg-accent-100 dark:bg-accent-600/10 text-accent-700 dark:text-accent-400",
+    BOOST: "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100",
     KEEP: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
     REDUCE: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400",
     PRUNE: "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400",
@@ -59,7 +59,7 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
   };
   const deltaSign = rec.delta > 0 ? "+" : "";
   const deltaColor =
-    rec.delta > 0 ? "text-accent-700 dark:text-accent-400" : rec.delta < 0 ? "text-rose-600" : "text-slate-500 dark:text-slate-400";
+    rec.delta > 0 ? "text-slate-900 dark:text-slate-100" : rec.delta < 0 ? "text-rose-600" : "text-slate-500 dark:text-slate-400";
   return (
     <li className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-3">
       <div className="min-w-0">
@@ -163,7 +163,7 @@ export function ByBatchTable({ stats }: { stats: CampaignStats }) {
                   href={shortUrlOf(b.shortCode)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400 hover:text-accent-700 hover:underline"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 hover:underline"
                 >
                   /{b.shortCode}
                   <ExternalLink className="h-3 w-3" aria-hidden />

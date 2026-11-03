@@ -134,7 +134,7 @@ export function ReportLinkForm({ initialLink, initialReason }: Props) {
           {LINK_REASON_CODES.map((reason) => (
             <label
               key={reason}
-              className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-slate-200 px-3.5 py-3 text-sm text-slate-700 transition-colors hover:bg-slate-50 has-[:checked]:border-slate-900 has-[:checked]:bg-slate-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800/60 dark:has-[:checked]:border-slate-200 dark:has-[:checked]:bg-slate-800"
+              className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-slate-200 px-3.5 py-3 text-sm text-slate-700 transition-colors hover:bg-slate-50 has-[:checked]:border-slate-900 has-[:checked]:bg-slate-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-slate-900 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800/60 dark:has-[:checked]:border-slate-200 dark:has-[:checked]:bg-slate-800"
             >
               <input
                 type="radio"

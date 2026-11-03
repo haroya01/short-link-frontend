@@ -346,7 +346,7 @@ function DestinationRow({
       )}
       <div className="mt-1.5 h-1 w-full overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
         <div
-          className="h-full bg-accent-600"
+          className="h-full bg-slate-900 dark:bg-slate-100"
           style={{ width: `${Math.min(100, pct)}%` }}
         />
       </div>
@@ -570,7 +570,7 @@ function DeviceClassSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50"
+      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-ring disabled:opacity-50"
       aria-label={t("deviceLabel")}
     >
       <option value="">{t("deviceAny")}</option>
@@ -599,7 +599,7 @@ function OsSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50"
+      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-ring disabled:opacity-50"
       aria-label={t("osLabel")}
     >
       <option value="">{t("osAny")}</option>

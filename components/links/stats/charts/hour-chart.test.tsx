@@ -28,7 +28,7 @@ afterEach(async () => {
 });
 
 const slots = () => [...host.querySelectorAll<HTMLElement>("[data-count]")];
-const accented = () => slots().filter((slot) => slot.firstElementChild?.className.includes("bg-accent-600"));
+const accented = () => slots().filter((slot) => slot.firstElementChild?.className.includes("bg-slate-900"));
 const label = () => host.querySelector('[data-testid="hour-chart-label"]')?.textContent;
 const plot = () => host.querySelector<HTMLElement>('[role="img"]')!;
 
@@ -40,7 +40,7 @@ describe("HourChart draws the day's rhythm as 24 bars, not a curve", () => {
     expect(host.querySelector("svg, path")).toBeNull();
   });
 
-  it("paints only the busiest hour in the accent and labels it on its bar", async () => {
+  it("paints only the busiest hour in ink and labels it on its bar", async () => {
     await act(async () => root.render(<HourChart data={[{ hour: 9, count: 4 }, { hour: 21, count: 10 }]} />));
     expect(accented().map((slot) => slot.dataset.count)).toEqual(["10"]);
     expect(slots()[9].firstElementChild!.className).toContain("bg-slate-300");

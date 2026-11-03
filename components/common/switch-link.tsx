@@ -35,7 +35,7 @@ export function SwitchLink({
       href={href}
       title={title}
       className={cn(
-        "focus-ring group inline-flex items-center rounded-full border border-slate-200 font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400",
+        "focus-ring group inline-flex items-center rounded-full border border-slate-200 font-medium text-slate-600 transition-colors hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-slate-100",
         size === "sm" ? "gap-1.5 px-3.5 py-1.5 text-[13px]" : "gap-2 px-4 py-2 text-[14px]",
         className,
       )}

@@ -53,7 +53,7 @@ export default async function AboutPage({
       </section>
 
       <div className="border-t border-slate-200 pt-10 dark:border-slate-800">
-        <Link href="/" className={buttonVariants({ variant: "accent", size: "lg" })}>
+        <Link href="/" className={buttonVariants({ variant: "default", size: "lg" })}>
           {t("ctaShorten")}
         </Link>
       </div>

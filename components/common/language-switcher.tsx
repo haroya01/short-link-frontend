@@ -8,7 +8,11 @@ import { routing } from "@/i18n/routing";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
-export function LanguageSwitcher({ placement = "down", withLabel = false }: { placement?: "down" | "up"; withLabel?: boolean } = {}) {
+export function LanguageSwitcher({
+  placement = "down",
+  withLabel = false,
+  product = "blog",
+}: { placement?: "down" | "up"; withLabel?: boolean; product?: "blog" | "links" } = {}) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -63,7 +67,7 @@ export function LanguageSwitcher({ placement = "down", withLabel = false }: { pl
               className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               {t(l)}
-              {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" aria-hidden />}
+              {l === locale && <Check className={`h-4 w-4 ${product === "links" ? "text-slate-900 dark:text-slate-100" : "text-accent-600 dark:text-accent-400"}`} aria-hidden />}
             </button>
           ))}
         </div>

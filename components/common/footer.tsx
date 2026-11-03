@@ -184,7 +184,7 @@ function DirectoryFooter({ app }: { app?: IosApp }) {
         <div className="mt-10 flex items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
           <p>{t("copyright", { year: new Date().getFullYear() })}</p>
           <div className="sm:hidden">
-            <LanguageSwitcher placement="up" withLabel />
+            <LanguageSwitcher placement="up" withLabel product={app === "blog" ? "blog" : "links"} />
           </div>
         </div>
       </div>

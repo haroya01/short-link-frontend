@@ -247,7 +247,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
                   className={cn(itemClass, "justify-between pl-9")}
                 >
                   {tLang(l)}
-                  {l === locale && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" aria-hidden />}
+                  {l === locale && <Check className={`h-4 w-4 ${isLinks ? "text-slate-900 dark:text-slate-100" : "text-accent-600 dark:text-accent-400"}`} aria-hidden />}
                 </button>
               ))}
             </div>

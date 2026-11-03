@@ -75,7 +75,6 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
         confirmLabel={t("upload")}
         busyLabel={t("uploading")}
         cancelLabel={t("cancel")}
-        confirmVariant="accent"
         confirmDisabled={!file}
         onConfirm={upload}
         compact
@@ -102,7 +101,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
               htmlFor={fileInputId}
               className={cn(
                 buttonVariants({ variant: "outline", size: "sm" }),
-                "shrink-0 cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-accent-600 peer-focus-visible:ring-offset-2 dark:peer-focus-visible:ring-offset-slate-850",
+                "shrink-0 cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-[rgb(var(--focus-ink))] peer-focus-visible:ring-offset-2 dark:peer-focus-visible:ring-offset-slate-850",
               )}
             >
               {t("chooseFile")}

@@ -103,7 +103,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
               target="_blank"
               rel="noreferrer"
               aria-label={shortCodeLabel}
-              className="vt-link-code truncate font-mono font-medium text-accent-700 hover:underline dark:text-accent-400"
+              className="vt-link-code truncate font-mono font-medium text-slate-900 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
             >
               {shortLabel}
             </a>
@@ -117,7 +117,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           </p>
         </div>
         <div className="flex gap-2 sm:hidden">
-          <CopyButton variant={demo ? "outline" : "accent"} value={display} />
+          <CopyButton variant={demo ? "outline" : "default"} value={display} />
           <ShareButton url={display} title={title ?? shortLabel} variant="outline" size="md" />
           <Button
             variant="outline"
@@ -157,7 +157,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
           </div>
         </BottomSheet>
         <div className="hidden items-center gap-2 sm:flex">
-          <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} />
+          <CopyButton variant={demo ? "outline" : "default"} size="sm" value={display} />
           <ActionMenu
             label={t("moreActions")}
             items={menuItems}

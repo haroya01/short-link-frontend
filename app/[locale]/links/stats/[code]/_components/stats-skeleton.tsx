@@ -10,7 +10,7 @@ export function StatsSkeleton({ shortCode }: { shortCode?: string }) {
             <Skeleton className="absolute inset-y-[0.2em] left-0 w-64 max-w-full" />
           </div>
           <p className="mt-1.5 text-sm">
-            <span className="vt-link-code truncate font-mono font-medium text-accent-700 dark:text-accent-400">
+            <span className="vt-link-code truncate font-mono font-medium text-slate-900 underline decoration-slate-300 dark:text-slate-100 dark:decoration-slate-600">
               {(process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "")}/{shortCode}
             </span>
           </p>

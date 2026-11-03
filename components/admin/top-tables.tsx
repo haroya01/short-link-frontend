@@ -216,7 +216,7 @@ function PageControls({
           ) : (
             <Button
               key={n}
-              variant={n === page ? "accent" : "outline"}
+              variant={n === page ? "default" : "outline"}
               size="sm"
               onClick={() => onPage(n)}
               disabled={loading}

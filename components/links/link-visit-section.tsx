@@ -211,7 +211,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
                     </option>
                   ))}
                 </select>
-                <Link href="/ctas" className="text-[12px] font-medium text-accent-700 hover:underline dark:text-accent-400">
+                <Link href="/ctas" className="text-[12px] font-medium text-slate-900 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100">
                   {t("splashManageCtas")}
                 </Link>
               </span>

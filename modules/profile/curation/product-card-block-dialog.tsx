@@ -430,7 +430,7 @@ function PreviewPane({
               <div className="space-y-0.5 px-2 pb-2 pt-1.5">
                 <p className="truncate text-[11px] font-semibold text-slate-900 dark:text-slate-100">{item.name}</p>
                 {item.price.trim() && (
-                  <p className="truncate text-[10px] font-medium text-accent-700 dark:text-accent-400">
+                  <p className="truncate text-[10px] font-medium text-slate-900 dark:text-slate-100">
                     {item.price.trim()}
                   </p>
                 )}

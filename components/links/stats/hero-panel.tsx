@@ -51,23 +51,23 @@ function StatsHeroCoreImpl({ label, caption, value, series, draw = "static", bad
         {formatNumber(value)}
       </p>
       {points && (
-        <svg viewBox="0 0 320 88" fill="none" aria-hidden className="mt-auto w-full pt-4">
+        <svg viewBox="0 0 320 88" fill="none" aria-hidden className="mt-auto w-full pt-4 text-slate-900 dark:text-slate-100">
           <defs>
             <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#059669" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="currentColor" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="currentColor" stopOpacity="0.01" />
             </linearGradient>
           </defs>
           <polygon points={`0,83 ${points.line} ${points.lastX},83`} fill={`url(#${gradId})`} />
           <polyline
             points={points.line}
             pathLength={1}
-            className={cn("stroke-accent-600 dark:stroke-accent-400", draw === "mount" && "hero-draw-once")}
+            className={cn("stroke-slate-900 dark:stroke-slate-100", draw === "mount" && "hero-draw-once")}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <circle cx={points.lastX} cy={points.lastY} r="3" className="fill-accent-600 dark:fill-accent-400" />
+          <circle cx={points.lastX} cy={points.lastY} r="3" className="fill-slate-900 dark:fill-slate-100" />
         </svg>
       )}
     </div>

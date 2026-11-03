@@ -26,7 +26,7 @@ export function CampaignOnboardingScene() {
         >
           <div className="mx-auto h-1.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
           <div className="mx-auto mt-1 h-1.5 w-8 rounded bg-slate-100 dark:bg-slate-800" />
-          <div className="mt-2 h-9 rounded-md bg-accent-50 dark:bg-accent-500/10" />
+          <div className="mt-2 h-9 rounded-md bg-slate-100 dark:bg-slate-800" />
           <div className="mt-2 flex justify-center">
             <QrCode className="h-7 w-7 text-slate-900 dark:text-slate-100" />
           </div>

@@ -163,7 +163,6 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
       maxWidthClass="max-w-md"
       confirmLabel={t("save")}
       cancelLabel={t("cancel")}
-      confirmVariant="accent"
       confirmDisabled={loadingDetail}
       onConfirm={handleSave}
     >
@@ -218,7 +217,7 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
               <Link
                 href={`/stats/${link.shortCode}#settings`}
                 onClick={onClose}
-                className="focus-ring rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
+                className="focus-ring rounded-sm font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
               >
                 {chunks}
               </Link>

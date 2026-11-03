@@ -82,7 +82,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
 
   if (isWorkspace) {
     return (
-      <AppProviders>
+      <AppProviders primary="accent">
         <SidebarStateProvider>
           <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
             <AppHeader product="blog" compose={ComposeEntry} />
@@ -98,7 +98,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
 
   if (internalPath === "/login") {
     return (
-      <AppProviders>
+      <AppProviders primary="accent">
         <main className="flex-1 dark:bg-slate-950">{children}</main>
       </AppProviders>
     );
@@ -106,7 +106,7 @@ export function BlogChrome({ children }: { children: React.ReactNode }) {
 
   // Public surface (feed home + any other public blog page) — header, no workspace sidebar.
   return (
-    <AppProviders>
+    <AppProviders primary="accent">
       <SidebarStateProvider>
         <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
           <AppHeader

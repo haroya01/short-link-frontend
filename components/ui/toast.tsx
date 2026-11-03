@@ -145,7 +145,7 @@ function ToastItem({
       className={cn(
         "pointer-events-auto flex max-w-full items-center gap-3 rounded-3xl py-2 pl-4 pr-2 text-sm shadow-float",
         closing ? "animate-toast-out" : "animate-toast-in",
-        toast.variant === "success" && "bg-accent-700 text-white",
+        toast.variant === "success" && "bg-slate-900 text-white",
         toast.variant === "error" && "bg-red-600 text-white",
         plain && "bg-slate-900 text-white",
       )}
@@ -169,7 +169,7 @@ function ToastItem({
           }}
           className={cn(
             "focus-ring shrink-0 rounded-full px-2 py-0.5 font-semibold underline-offset-2 hover:underline",
-            plain ? "text-accent-300" : "text-white",
+            plain ? "text-white underline decoration-white/50" : "text-white",
           )}
         >
           {toast.action.label}

@@ -69,7 +69,7 @@ export default async function ShowcaseHandlePage({
           <SignInLink
             reason="profile"
             next="/profile/auto"
-            className="focus-ring inline-flex min-h-8 shrink-0 items-center gap-1 rounded font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+            className="focus-ring inline-flex min-h-8 shrink-0 items-center gap-1 rounded font-medium text-slate-900 underline decoration-slate-300 underline-offset-4 hover:decoration-slate-900 dark:text-slate-100 dark:decoration-slate-600 dark:hover:decoration-slate-100"
           >
             {t("sampleCta")}
           </SignInLink>

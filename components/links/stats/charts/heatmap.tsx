@@ -135,7 +135,7 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
         className={cn(
           span === 1 ? "h-6" : "h-7",
           "rounded-md transition-[background-color] duration-150 ease-[var(--ease)]",
-          isActive ? "bg-accent-600" : RAMP[rampStep(count, scale)],
+          isActive ? "bg-slate-900 dark:bg-slate-100" : RAMP[rampStep(count, scale)],
         )}
       />
     );

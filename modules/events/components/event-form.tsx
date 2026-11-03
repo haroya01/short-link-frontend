@@ -255,7 +255,7 @@ export function EventForm({
                 document.getElementById(`ef-tab-${next}`)?.focus();
               }}
               className={cn(
-                "relative -mb-px min-h-11 border-b-2 px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+                "relative -mb-px min-h-11 border-b-2 px-3 text-sm font-medium transition-colors focus-ring",
                 selected
                   ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
                   : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
@@ -342,7 +342,7 @@ export function EventForm({
                 id="ef-tz"
                 value={form.timezone}
                 onChange={(e) => set("timezone", e.target.value)}
-                className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 sm:w-1/2"
+                className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus-ring dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 sm:w-1/2"
               >
                 {(TIMEZONES.includes(form.timezone) ? TIMEZONES : [form.timezone, ...TIMEZONES]).map((zone) => (
                   <option key={zone} value={zone}>

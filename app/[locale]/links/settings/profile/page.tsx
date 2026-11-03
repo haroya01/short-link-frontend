@@ -58,8 +58,8 @@ export default function ProfileEditPage() {
   return (
     <LinksPage className="space-y-6">
       {isOnboarding && (
-        <div className="rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 p-5 shadow-card-flat">
-          <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
+        <div className="rounded-2xl border border-slate-300 bg-slate-50 dark:bg-slate-800 p-5 shadow-card-flat">
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-900 dark:text-slate-100">
             {t("onboardingEyebrow")}
           </div>
           {!steps.username && (
@@ -185,8 +185,8 @@ function OnboardingStep({
         className={
           "grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold transition " +
           (done
-            ? "bg-accent-700 text-white"
-            : "border border-accent-300 bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400")
+            ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
+            : "border border-slate-300 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100")
         }
         aria-hidden
       >
@@ -194,7 +194,7 @@ function OnboardingStep({
       </span>
       <span className={done ? "text-slate-500 dark:text-slate-400 line-through" : "text-slate-700 dark:text-slate-300"}>
         {label}
-        {required && !done && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
+        {required && !done && <span className="ml-1 text-slate-900 dark:text-slate-100">*</span>}
       </span>
     </li>
   );

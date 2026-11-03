@@ -147,7 +147,7 @@ export function ActivityFeed() {
           <ul className="space-y-2.5">
             {trending.slice(0, MAX_ROWS).map((l) => (
               <li key={l.shortCode} className="flex items-center gap-2 text-[13px]">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600" aria-hidden />
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-slate-900 dark:bg-slate-100" aria-hidden />
                 <Link
                   href={`/admin/links/${l.shortCode}`}
                   className="shrink-0 font-mono font-medium text-slate-900 hover:underline dark:text-slate-100"

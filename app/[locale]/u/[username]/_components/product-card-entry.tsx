@@ -170,7 +170,7 @@ export function ProductCardEntry({ content, colors, fadeStyle, featured = false 
                           className={
                             soldOut
                               ? "text-[12px] font-bold text-slate-500 line-through"
-                              : "text-[12px] font-bold text-accent-700"
+                              : `text-[12px] font-bold ${colors.primary}`
                           }
                         >
                           {item.price}
@@ -273,7 +273,7 @@ export function ProductCardEntry({ content, colors, fadeStyle, featured = false 
                           className={
                             soldOut
                               ? "text-base font-bold text-slate-400 line-through"
-                              : "text-base font-bold text-accent-700"
+                              : `text-base font-bold ${colors.primary}`
                           }
                         >
                           {item.price}
@@ -449,7 +449,7 @@ function CardImages({
                 className={
                   "h-10 w-12 shrink-0 overflow-hidden rounded border transition " +
                   (idx === safeIdx
-                    ? "border-accent-600 ring-1 ring-accent-300"
+                    ? "border-slate-900 ring-1 ring-slate-400"
                     : "border-slate-200 opacity-70 hover:opacity-100")
                 }
               >

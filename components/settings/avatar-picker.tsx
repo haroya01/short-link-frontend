@@ -148,7 +148,7 @@ export function AvatarPicker({
         onClick={pick}
         disabled={busy}
         aria-label={t("change")}
-        className="group relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 transition-colors hover:border-accent-300"
+        className="group relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 transition-colors hover:border-slate-400"
       >
         {currentUrl ? (
           // eslint-disable-next-line @next/next/no-img-element

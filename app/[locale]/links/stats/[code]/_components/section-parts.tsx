@@ -18,7 +18,7 @@ export function RangeSwitch({ range, onRange }: { range: RangeDays; onRange: (r:
           onClick={() => onRange(d)}
           aria-pressed={range === d}
           className={cn(
-            "min-h-9 whitespace-nowrap rounded-md px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+            "min-h-9 whitespace-nowrap rounded-md px-3 text-[13px] font-medium transition-colors focus-ring",
             range === d
               ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
               : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",

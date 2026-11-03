@@ -139,7 +139,7 @@ function LifecycleSection({ t }: { t: T }) {
             <Line
               type="monotone"
               dataKey="clicks"
-              stroke="#059669"
+              stroke="#131a16"
               strokeWidth={1.5}
               dot={false}
             />
@@ -298,7 +298,7 @@ function RecentErrorsSection({ t }: { t: T }) {
       {!data ? (
         <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : filtered.length === 0 ? (
-        <p className="py-8 text-center text-xs text-emerald-600 dark:text-emerald-400">
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
           {data.length === 0
             ? t("section.recentErrors.empty")
             : t("section.recentErrors.emptyFiltered")}

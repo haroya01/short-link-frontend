@@ -67,7 +67,7 @@ function EventsList({
   const locale = useLocale();
   const [now] = useState(() => Date.now());
   const newEvent = (
-    <Link href="/events/new" className={buttonVariants({ variant: "accent" })}>
+    <Link href="/events/new" className={buttonVariants({ variant: "default" })}>
       {t("new")}
     </Link>
   );

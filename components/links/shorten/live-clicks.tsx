@@ -78,7 +78,7 @@ function LiveLine({
       <span
         key={count}
         aria-hidden
-        className={`relative inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500 ${count > 0 ? "live-dot-once" : ""}`}
+        className={`relative inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-slate-900 dark:bg-slate-100 ${count > 0 ? "live-dot-once" : ""}`}
       />
       {label && <span className="font-medium text-slate-700 dark:text-slate-300">{label}</span>}
       {count === 0 ? (

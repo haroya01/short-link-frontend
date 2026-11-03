@@ -155,7 +155,7 @@ export function UserBrowser() {
                         {u.linkCount > 0 ? (
                           <Link
                             href={`/admin/links?ownerId=${u.id}`}
-                            className="font-medium text-accent-700 hover:underline dark:text-accent-400"
+                            className="font-medium text-slate-900 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
                           >
                             {formatNumber(u.linkCount)}
                           </Link>
@@ -173,7 +173,7 @@ export function UserBrowser() {
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-accent-600" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-900 dark:bg-slate-100" />
                             {t("browse.users.active")}
                           </span>
                         )}
@@ -199,7 +199,7 @@ function RoleBadge({ role, label }: { role: AdminUserRole; label: string }) {
       className={cn(
         "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
         role === "ADMIN"
-          ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
+          ? "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100"
           : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
       )}
     >

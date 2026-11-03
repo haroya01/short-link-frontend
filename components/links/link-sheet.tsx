@@ -66,7 +66,7 @@ export function LinkSheet({
             {shown.name && (
               <p className="truncate text-[17px] font-semibold text-slate-900 dark:text-slate-100">{shown.name}</p>
             )}
-            <p className="mt-1 truncate font-mono text-[15px] font-semibold text-accent-700 dark:text-accent-400">
+            <p className={`mt-1 truncate font-mono text-[15px] font-semibold ${created ? "text-accent-700 dark:text-accent-400" : "text-slate-900 dark:text-slate-100"}`}>
               {shown.shortUrl.replace(/^https?:\/\//, "")}
             </p>
             <p className="mt-0.5 truncate text-[13px] text-slate-500 dark:text-slate-400" title={shown.originalUrl}>
@@ -81,12 +81,12 @@ export function LinkSheet({
                 <Figure label={t("week")} value={week} />
                 {shown.total !== undefined && <Figure label={t("total")} value={shown.total} />}
               </dl>
-              <Sparkline values={series} width={80} height={32} className="shrink-0 text-accent-600 dark:text-accent-400" />
+              <Sparkline values={series} width={80} height={32} className="shrink-0 text-slate-900 dark:text-slate-100" />
             </div>
           )}
 
           <div className="flex gap-2">
-            <CopyButton size="lg" variant="accent" label={t("copy")} value={shown.shortUrl} className="flex-1" />
+            <CopyButton size="lg" label={t("copy")} value={shown.shortUrl} className="flex-1" />
             <ShareButton
               url={shown.shortUrl}
               title={shown.name ?? shown.shortUrl}

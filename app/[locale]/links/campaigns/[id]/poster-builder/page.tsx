@@ -267,7 +267,6 @@ export default function PosterBuilderPage() {
           </div>
 
           <Button
-            variant="accent"
             onClick={compose}
             disabled={!canCompose}
             className="w-full"
@@ -313,7 +312,7 @@ function DropZone({ onPick }: { onPick: (file: File) => void }) {
       }}
       className={
         "flex aspect-[1/1.414] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white dark:bg-slate-900 text-center transition-colors " +
-        (hover ? "border-accent-600 bg-accent-50/40 dark:bg-accent-500/10" : "border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50")
+        (hover ? "border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800" : "border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >
       <input

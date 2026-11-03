@@ -102,12 +102,12 @@ test.describe("daily human clicks are bars", () => {
     await expect(chart.locator(".bar-grow-y")).toHaveCount(0);
   });
 
-  test("only the active bar wears the accent; every other bar and every list bar is neutral", async ({ page }) => {
+  test("only the active bar wears ink; every other bar and every list bar is neutral", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openOverview(page);
     const accent = await page.evaluate(() => {
       const probe = document.createElement("span");
-      probe.className = "bg-accent-600";
+      probe.className = "bg-slate-900";
       document.body.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();

@@ -68,21 +68,21 @@ export function TagInput({ tags, onChange, limits, placeholder, suggestions, aut
   return (
     <div className="group/tags">
       <div
-        className={`flex flex-wrap items-center gap-1.5 border-slate-200 focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500 ${
+        className={`flex flex-wrap items-center gap-1.5 border-slate-200 focus-within:border-slate-900 dark:border-slate-700 dark:focus-within:border-slate-100 ${
           bare ? "border-b py-1.5" : "rounded-lg border px-2.5 py-2"
         }`}
       >
         {tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-2.5 py-1 text-[13px] font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
+            className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[13px] font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200"
           >
             {tag}
             <button
               type="button"
               onClick={() => onChange(tags.filter((x) => x !== tag))}
               disabled={disabled}
-              className="text-accent-400 hover:text-accent-700"
+              className="text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               aria-label={t("removeTag", { name: tag })}
             >
               <X className="h-3 w-3" />
@@ -120,8 +120,8 @@ export function TagInput({ tags, onChange, limits, placeholder, suggestions, aut
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => addSuggestion(s)}
               disabled={disabled}
-              className={`focus-ring text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300 ${
-                bare ? "rounded px-1 py-1" : "rounded-full border border-slate-200 px-2.5 py-1 hover:border-accent-400 dark:border-slate-700 dark:hover:border-accent-500"
+              className={`focus-ring text-[12px] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 ${
+                bare ? "rounded px-1 py-1" : "rounded-full border border-slate-200 px-2.5 py-1 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500"
               }`}
             >
               + {s}

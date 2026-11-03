@@ -146,7 +146,7 @@ export function MobileComposer({ initialUrl, onCreated, hidden = false }: { init
             }}
             placeholder={t("placeholder")}
             aria-label={t("placeholder")}
-            className="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-[15px] text-slate-900 placeholder:text-slate-500 focus:border-accent-600 focus:outline-none focus:ring-4 focus:ring-accent-600/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
+            className="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-[15px] text-slate-900 placeholder:text-slate-500 focus:border-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-900 dark:focus:ring-slate-100/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400"
           />
           <button
             type="button"
@@ -168,7 +168,7 @@ export function MobileComposer({ initialUrl, onCreated, hidden = false }: { init
           <button
             type="submit"
             disabled={busy}
-            className={buttonVariants({ variant: "accent", size: "lg" })}
+            className={buttonVariants({ variant: "default", size: "lg" })}
           >
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {t("submit")}
