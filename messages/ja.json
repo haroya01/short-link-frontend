@@ -1659,7 +1659,7 @@
       "botHigh": "Bot {percent}%",
       "botHighDetail": "プレビューやクローラーからのアクセスを切り分けて確認してください",
       "botNormal": "Bot {percent}%",
-      "botNormalDetail": "人のクリック{human}件を中心に判断できます",
+      "botNormalDetail": "人によるクリック{human}件を中心に判断できます",
       "direct": "直接流入",
       "unknown": "データ不足"
     },
@@ -4320,7 +4320,7 @@
   "linkAnalytics": {
     "title": "分析",
     "loadFailed": "成果を読み込めませんでした。もう一度お試しください。",
-    "weekHumanClicks": "直近7日の人のクリック",
+    "weekHumanClicks": "直近7日の人によるクリック",
     "today": "今日 {count}",
     "peak": "いちばん押された時間 {when}",
     "vsPrevUp": "前の7日より{percent}%増（{count}回）",
@@ -4332,9 +4332,9 @@
     "zeroClick": "まだクリックのないリンク{count}件",
     "expiring": "3日以内に期限切れになるリンク{count}件",
     "weekTopLinks": "直近7日によくクリックされたリンク",
-    "weekTopLinksNote": "人のクリック基準",
+    "weekTopLinksNote": "人によるクリック基準",
     "weekTopLinksEmpty": "直近7日はまだクリックがありません。",
-    "humanClicks": "人のクリック",
+    "humanClicks": "人によるクリック",
     "createFirst": "最初のリンクを作る",
     "viewFewestClicks": "クリックの少ない順に見る"
   },

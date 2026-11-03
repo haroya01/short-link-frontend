@@ -2470,7 +2470,7 @@
       "recentClicksTitle": "Lượt nhấp gần đây",
       "recentClicksDesc": "Luồng nhấp trực tiếp",
       "trendingTitle": "Thịnh hành · 24h",
-      "trendingDesc": "Hàng đầu theo lượt nhấp thật",
+      "trendingDesc": "Hàng đầu theo lượt nhấp của người",
       "empty": {
         "links": "Chưa có liên kết",
         "clicks": "Chưa có lượt nhấp",
@@ -4320,7 +4320,7 @@
   "linkAnalytics": {
     "title": "Phân tích",
     "loadFailed": "Không tải được số liệu. Vui lòng thử lại.",
-    "weekHumanClicks": "Lượt nhấp thật · 7 ngày qua",
+    "weekHumanClicks": "Lượt nhấp của người · 7 ngày qua",
     "today": "Hôm nay {count}",
     "peak": "Đông nhất: {when}",
     "vsPrevUp": "Tăng {percent}% so với 7 ngày trước đó ({count})",
@@ -4332,9 +4332,9 @@
     "zeroClick": "{count} liên kết chưa có lượt nhấp",
     "expiring": "{count} liên kết hết hạn trong 3 ngày",
     "weekTopLinks": "Được nhấp nhiều nhất trong 7 ngày qua",
-    "weekTopLinksNote": "Theo lượt nhấp thật",
+    "weekTopLinksNote": "Theo lượt nhấp của người",
     "weekTopLinksEmpty": "7 ngày qua chưa có lượt nhấp nào.",
-    "humanClicks": "lượt nhấp thật",
+    "humanClicks": "lượt nhấp của người",
     "createFirst": "Tạo liên kết đầu tiên",
     "viewFewestClicks": "Xem theo ít lượt nhấp nhất"
   },

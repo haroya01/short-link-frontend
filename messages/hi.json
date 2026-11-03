@@ -1659,7 +1659,7 @@
       "botHigh": "बॉट {percent}%",
       "botHighDetail": "माँग आँकने से पहले पूर्वावलोकन और क्रॉलर अलग करें",
       "botNormal": "बॉट {percent}%",
-      "botNormalDetail": "लगभग {human} मानव क्लिक के आसपास व्याख्या करें",
+      "botNormalDetail": "लगभग {human} मानवीय क्लिक के आसपास व्याख्या करें",
       "direct": "प्रत्यक्ष",
       "unknown": "पर्याप्त डेटा नहीं"
     },
@@ -2470,7 +2470,7 @@
       "recentClicksTitle": "हाल के क्लिक",
       "recentClicksDesc": "लाइव क्लिक स्ट्रीम",
       "trendingTitle": "ट्रेंडिंग · 24 घंटे",
-      "trendingDesc": "मानव क्लिक के आधार पर शीर्ष",
+      "trendingDesc": "मानवीय क्लिक के आधार पर शीर्ष",
       "empty": {
         "links": "अभी तक कोई लिंक नहीं",
         "clicks": "अभी तक कोई क्लिक नहीं",
@@ -4320,7 +4320,7 @@
   "linkAnalytics": {
     "title": "विश्लेषण",
     "loadFailed": "आँकड़े लोड नहीं हो सके। फिर से प्रयास करें।",
-    "weekHumanClicks": "मानव क्लिक · पिछले 7 दिन",
+    "weekHumanClicks": "मानवीय क्लिक · पिछले 7 दिन",
     "today": "आज {count}",
     "peak": "सबसे व्यस्त समय {when}",
     "vsPrevUp": "उससे पहले के 7 दिनों से {percent}% ज़्यादा ({count})",
@@ -4332,9 +4332,9 @@
     "zeroClick": "{count} लिंक पर अभी कोई क्लिक नहीं",
     "expiring": "{count} लिंक 3 दिनों में समाप्त",
     "weekTopLinks": "पिछले 7 दिनों में सबसे ज़्यादा क्लिक वाले लिंक",
-    "weekTopLinksNote": "मानव क्लिक के आधार पर",
+    "weekTopLinksNote": "मानवीय क्लिक के आधार पर",
     "weekTopLinksEmpty": "पिछले 7 दिनों में अभी कोई क्लिक नहीं।",
-    "humanClicks": "मानव क्लिक",
+    "humanClicks": "मानवीय क्लिक",
     "createFirst": "पहला लिंक बनाएँ",
     "viewFewestClicks": "सबसे कम क्लिक के क्रम में देखें"
   },
