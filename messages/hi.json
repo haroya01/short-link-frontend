@@ -2627,7 +2627,9 @@
       "inDays": "{days} दिनों में",
       "inWeeks": "{weeks} हफ़्तों में",
       "ended": "समाप्त",
-      "eventEnded": "इवेंट समाप्त हो गया"
+      "eventEnded": "इवेंट समाप्त हो गया",
+      "am": "am",
+      "pm": "pm"
     },
     "place": {
       "directions": "दिशा-निर्देश",
@@ -2945,7 +2947,7 @@
       },
       "socialsLabel": "सोशल बटन",
       "socialKakaoLabel": "KakaoTalk चैनल",
-      "socialsHint": "चुनें कौन-से चैनल आपकी सार्वजनिक प्रोफ़ाइल के नीचे दिखें। हर एक के लिए अपने खाते का URL पेस्ट करें, ताकि बटन टैप करने वाले आगंतुक वहाँ पहुँचें। 2 तक, आपके चुने क्रम में।",
+      "socialsHint": "आपके चुने क्रम में प्रोफ़ाइल के नीचे दो तक दिखते हैं।",
       "socialsCount": "{count}/{max} चुने गए",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2955,7 +2957,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "कृपया एक मान्य http(s) URL पेस्ट करें।",
-      "previewTitle": "लाइव पूर्वावलोकन",
+      "previewTitle": "पूर्वावलोकन",
       "closePreview": "पूर्वावलोकन बंद करें",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "आपका बायो यहाँ दिखेगा",
@@ -2966,8 +2968,7 @@
       "quickAdd": {
         "title": "लिंक जोड़ें",
         "firstTitle": "अपना पहला लिंक जोड़ें",
-        "firstHint": "Instagram, ब्लॉग, YouTube जैसा कोई भी URL लेबल के साथ आपके बायो लिंक पर दिखता है।",
-        "hint": "कोई भी URL + एक लेबल पेस्ट करें। हम इसे छोटा करके फ़ीचर करते हैं। जितने चाहें जोड़ें।",
+        "hint": "हर URL छोटा लिंक बनकर सीधे आपकी प्रोफ़ाइल पर आ जाता है।",
         "urlPlaceholder": "https://... या mailto:...",
         "labelPlaceholder": "लेबल (जैसे 📝 ब्लॉग)",
         "templatesLabel": "या जल्दी से URL भरें (लेबल आपको फिर भी टाइप करना होगा)",
@@ -2989,17 +2990,14 @@
       "openShort": "खोलें",
       "yourPage": "सार्वजनिक प्रोफ़ाइल",
       "featuredTitle": "प्रोफ़ाइल फ़ीड",
-      "featuredHint": "क्रम बदलने के लिए खींचें (मोबाइल पर ↑↓)। ★ वाला लिंक ख़ास के रूप में सबसे ऊपर दिखता है। हेडर जोड़कर आइटम को एक खंड में रखें, जिसे समेटा और एक साथ हिलाया जा सके।",
-      "sectionExpand": "खंड विस्तृत करें",
-      "sectionCollapse": "खंड समेटें",
-      "sectionItemCount": "{count} आइटम",
+      "featuredHint": "केवल एक आइटम ख़ास बन सकता है, और वह सबसे ऊपर दिखता है।",
       "featuredEmpty": "दिखाने के लिए कोई लिंक नहीं है।",
       "featuredEmptyHasOthers": "दिखाने के लिए कोई लिंक नहीं है। चुनने के लिए आपके {count} अन्य लिंक हैं।",
       "addBlockMenu": "जोड़ें",
       "addMoreBlocks": "और ब्लॉक",
       "remove": "हटाएँ",
-      "removeLink": "निकालें",
-      "highlight": "सबसे ऊपर ख़ास के रूप में दिखाएँ (केवल एक)",
+      "removeLink": "प्रोफ़ाइल से निकालें",
+      "highlight": "ख़ास बनाएँ",
       "labelEdit": "लेबल संपादित करें (जो आगंतुक देखते हैं)",
       "labelEmpty": "लेबल जोड़ें",
       "labelPlaceholder": "जैसे 📝 ब्लॉग",
@@ -3103,17 +3101,15 @@
       "addEmailForm": "+ ईमेल साइनअप",
       "addEmailFormTitle": "ईमेल साइनअप फ़ॉर्म जोड़ें",
       "editEmailFormTitle": "ईमेल साइनअप फ़ॉर्म संपादित करें",
-      "addEmailFormDescription": "एक छोटा फ़ॉर्म जिसे आगंतुक अपना ईमेल छोड़ने के लिए भरते हैं। एकत्र किए गए पते आपके डैशबोर्ड / CSV निर्यात पर दिखते हैं।",
+      "addEmailFormDescription": "जमा हुए ईमेल केवल आप देख सकते हैं, और उन्हें CSV में निकाल सकते हैं।",
       "addEmailFormPlaceholder": "(अभी तक कोई ईमेल फ़ॉर्म नहीं)",
       "emailFormFieldTitle": "फ़ॉर्म शीर्षक",
       "emailFormFieldTitlePlaceholder": "जैसे मेरा न्यूज़लेटर पाएँ",
       "emailFormFieldSubtitle": "उपशीर्षक (वैकल्पिक)",
       "emailFormFieldSubtitlePlaceholder": "जैसे नए प्रोडक्ट, क्लास और सीमित मेन्यू की ख़बर सबसे पहले पाएँ।",
-      "emailFormFieldSubtitleHint": "एक या दो वाक्य जो आगंतुकों को बताएँ कि उन्हें अपना ईमेल क्यों छोड़ना चाहिए।",
       "emailFormFieldPlaceholder": "इनपुट प्लेसहोल्डर",
       "emailFormFieldSuccess": "सफलता संदेश",
       "emailFormFieldSuccessPlaceholder": "जैसे साइन अप करने के लिए धन्यवाद :)",
-      "emailFormHowItWorks": "आगंतुकों द्वारा छोड़े गए ईमेल आपके निजी 'लीड' डैशबोर्ड में आते हैं। CSV में निर्यात करें और Mailchimp / अपने ईमेल टूल में आयात करें।",
       "emailFormViewLeadsCta": "एकत्र किए गए ईमेल देखें",
       "leadsLink": "एकत्र किए गए ईमेल",
       "stats": {
@@ -3123,9 +3119,9 @@
         "loadFailed": "आँकड़े लोड नहीं हो सके।",
         "summary": {
           "title": "प्रोफ़ाइल विज़िट",
-          "today": "आज",
-          "week": "7दिन",
-          "month": "30दिन",
+          "today": "24 घंटे",
+          "week": "7 दिन",
+          "month": "30 दिन",
           "allTime": "सर्वकालिक"
         },
         "daily": {
@@ -3312,7 +3308,11 @@
       "dividerLabel": "विभाजक",
       "loading": "लोड हो रहा है...",
       "noLinks": "अभी तक कोई लिंक नहीं।",
-      "toggleFailed": "अपडेट करने में विफल।"
+      "toggleFailed": "अपडेट करने में विफल।",
+      "featuredMark": "ख़ास",
+      "rowActions": "और कार्य",
+      "moveUp": "ऊपर ले जाएँ",
+      "moveDown": "नीचे ले जाएँ"
     },
     "profileTitle": "खाता जानकारी",
     "email": "ईमेल",
@@ -4080,7 +4080,7 @@
     "public": {
       "hostedBy": "आयोजक",
       "attending": "{count} शामिल",
-      "addToCalendar": "Google कैलेंडर में जोड़ें",
+      "addToCalendar": "कैलेंडर में जोड़ें",
       "onlineLink": "ऑनलाइन भागीदारी लिंक",
       "spotsLeft": "{capacity} में से {count} सीटें बाकी",
       "formTitle": "पंजीकरण करें",
@@ -4117,9 +4117,7 @@
         "answerRequired": "कृपया इस प्रश्न का उत्तर दें",
         "choiceRequired": "कृपया एक विकल्प चुनें",
         "consentRequired": "कृपया संपर्क जानकारी साझा करने की सहमति दें",
-        "full": "आख़िरी सीट अभी-अभी भर गई",
         "alreadyRegistered": "यह संपर्क पहले से पंजीकृत है",
-        "closed": "पंजीकरण बंद है",
         "generic": "पंजीकरण विफल रहा। कृपया फिर से प्रयास करें।",
         "invalidEmail": "कृपया ईमेल दोबारा जाँचें (जैसे: hong@gmail.com)",
         "invalidPhone": "कृपया फ़ोन नंबर दोबारा जाँचें (जैसे: 090-1234-5678)",
@@ -4140,7 +4138,10 @@
       "aboutTitle": "विवरण",
       "endedNotice": "यह इवेंट समाप्त हो चुका है।",
       "am": "am",
-      "pm": "pm"
+      "pm": "pm",
+      "calendarGoogle": "Google Calendar",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple / .ics डाउनलोड"
     },
     "list": {
       "title": "इवेंट",
@@ -4235,8 +4236,7 @@
       "statusChangeFailed": "अपडेट विफल",
       "cancelDialogTitle": "यह इवेंट रद्द करें?",
       "cancelDialogBody": "सार्वजनिक पेज पर रद्द दिखेगा और पंजीकरण रुक जाएगा। इसे वापस नहीं किया जा सकता। सिर्फ़ नए पंजीकरण रोकने हों तो 'पंजीकरण बंद करें' चुनें।",
-      "cancelDialogConfirm": "इवेंट रद्द करें",
-      "heroCopy": "लिंक कॉपी करें"
+      "cancelDialogConfirm": "इवेंट रद्द करें"
     },
     "share": {
       "copied": "कॉपी हो गया",
@@ -4271,7 +4271,8 @@
       "channel": "चैनल",
       "status": "स्थिति",
       "confirmed": "पुष्ट",
-      "canceled": "रद्द"
+      "canceled": "रद्द",
+      "exportFailed": "CSV डाउनलोड नहीं हो सकी"
     },
     "status": {
       "open": "खुला",
@@ -4279,6 +4280,9 @@
       "canceled": "रद्द",
       "ended": "समाप्त",
       "full": "भर गया"
+    },
+    "meta": {
+      "description": "एक लिंक से इवेंट पेज और पंजीकरण फ़ॉर्म बनाएँ। मेहमान बिना खाते के पंजीकरण करते हैं, और सीटें भरने पर यह बंद हो जाता है।"
     }
   },
   "linkAnalytics": {

@@ -26,17 +26,29 @@ for (const viewport of [
     });
 
     for (const [slug, notice] of [
-      ["mock-ended", "끝난 모임이에요."],
       ["mock-full", "자리가 다 찼어요. 취소가 생기면 다시 열려요."],
       ["mock-closed", "신청이 마감되었어요."],
-      ["mock-canceled", "이 모임은 취소되었어요."],
     ] as const) {
-      test(`${slug}: one status line over one switched-off button, no form`, async ({ page }) => {
+      test(`${slug}: one status line over one switched-off button, no form and no seats left`, async ({ page }) => {
         await page.goto(`/ko/e/${slug}`);
         await expect(page.getByText(notice, { exact: true })).toBeVisible();
         await expect(register(page)).toHaveCount(1);
         await expect(register(page)).toBeDisabled();
         await expect(page.locator("#register form")).toHaveCount(0);
+        await expect(page.getByText(/남은 자리/)).toHaveCount(0);
+      });
+    }
+
+    for (const [slug, notice] of [
+      ["mock-ended", "끝난 모임이에요."],
+      ["mock-canceled", "이 모임은 취소되었어요."],
+    ] as const) {
+      test(`${slug}: one status line and nothing to press`, async ({ page }) => {
+        await page.goto(`/ko/e/${slug}`);
+        await expect(page.getByText(notice, { exact: true })).toBeVisible();
+        await expect(register(page)).toHaveCount(0);
+        await expect(page.locator("#register form")).toHaveCount(0);
+        await expect(page.getByText(/남은 자리/)).toHaveCount(0);
       });
     }
   });
@@ -72,4 +84,60 @@ test("the page hydrates without a text mismatch, so the pre-paint flags on <html
   await page.waitForTimeout(500);
   await expect(page.locator("html")).toHaveAttribute("data-js", "");
   expect(errors.filter((message) => /#4(18|23|25)\b|hydrat/i.test(message))).toEqual([]);
+});
+
+async function fillForm(page: Page) {
+  await page.locator('[data-field="name"]').fill("김도현");
+  await page.locator('[data-field="contact"]').fill("dohyun_kakao");
+  await page.locator('[data-field="q1"]').fill("블로그 글");
+  await page.locator('[data-field="consent"]').check();
+}
+
+test("when the last seat goes while filling in, the form closes into the full state", async ({ page }) => {
+  await page.route("**/api/v1/pow/challenge", (route) =>
+    route.fulfill({ json: { enforced: false, challenge: "", difficulty: 0 } }),
+  );
+  await page.route("**/api/v1/public/events/mock-open/registrations", (route) =>
+    route.fulfill({ status: 409, json: { status: 409, code: "EVENT_FULL", detail: "full" } }),
+  );
+  await page.goto("/ko/e/mock-open");
+  await expect(page.getByText("남은 자리 13 / 20", { exact: false })).toBeVisible();
+  await fillForm(page);
+  await register(page).click();
+
+  await expect(page.getByText("자리가 다 찼어요. 취소가 생기면 다시 열려요.", { exact: true })).toBeVisible();
+  await expect(page.locator("#register form")).toHaveCount(0);
+  await expect(register(page)).toBeDisabled();
+  await expect(page.getByText(/남은 자리/)).toHaveCount(0);
+});
+
+test("after registering, the calendar is one menu with Google, Outlook and a calendar file", async ({ page }) => {
+  await page.route("**/api/v1/pow/challenge", (route) =>
+    route.fulfill({ json: { enforced: false, challenge: "", difficulty: 0 } }),
+  );
+  await page.route("**/api/v1/public/events/mock-open/registrations", (route) =>
+    route.fulfill({ json: { registrationId: 1, cancelToken: "tok-cal", spotsLeft: 12 } }),
+  );
+  await page.goto("/ko/e/mock-open");
+  await fillForm(page);
+  await register(page).click();
+  await expect(page.getByRole("heading", { name: "신청했어요" })).toBeVisible();
+
+  await expect(page.getByText("Google 캘린더에 추가")).toHaveCount(0);
+  await page.getByRole("button", { name: "내 캘린더에 추가" }).click();
+  const menu = page.getByRole("menu");
+  await expect(menu.getByRole("menuitem")).toHaveText(["Google 캘린더", "Outlook", "Apple 캘린더(.ics) 다운로드"]);
+  await expect(menu.getByRole("menuitem", { name: "Google 캘린더" })).toHaveAttribute("href", /calendar\.google\.com/);
+  const download = page.waitForEvent("download");
+  await menu.getByRole("menuitem", { name: /\.ics/ }).click();
+  expect((await download).suggestedFilename()).toBe("mock-open.ics");
+});
+
+test("the share card is drawn from the title, date and place", async ({ page, request }) => {
+  await page.goto("/ko/e/mock-open");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/ko\/e\/mock-open\/opengraph-image/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+  const res = await request.get("/ko/e/mock-open/opengraph-image");
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toBe("image/png");
 });

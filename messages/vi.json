@@ -2627,7 +2627,9 @@
       "inDays": "trong {days} ngày",
       "inWeeks": "trong {weeks} tuần",
       "ended": "Đã kết thúc",
-      "eventEnded": "Sự kiện đã kết thúc"
+      "eventEnded": "Sự kiện đã kết thúc",
+      "am": "SA",
+      "pm": "CH"
     },
     "place": {
       "directions": "Chỉ đường",
@@ -2945,7 +2947,7 @@
       },
       "socialsLabel": "Nút mạng xã hội",
       "socialKakaoLabel": "Kênh KakaoTalk",
-      "socialsHint": "Chọn các kênh hiện ở cuối hồ sơ công khai của bạn. Với mỗi kênh, dán URL tài khoản của bạn để khách chạm nút sẽ đến đó. Tối đa 2, hiển thị theo thứ tự bạn chọn.",
+      "socialsHint": "Tối đa hai kênh hiện ở cuối hồ sơ, theo thứ tự bạn chọn.",
       "socialsCount": "{count}/{max} đã chọn",
       "socialUrlPlaceholderX": "https://x.com/tencuaban",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~lineid",
@@ -2955,7 +2957,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/tencuaban",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/tencuaban",
       "socialUrlInvalid": "Vui lòng dán một URL http(s) hợp lệ.",
-      "previewTitle": "Xem trước trực tiếp",
+      "previewTitle": "Xem trước",
       "closePreview": "Đóng xem trước",
       "previewUsernamePlaceholder": "tên người dùng",
       "previewBioPlaceholder": "Tiểu sử của bạn sẽ hiện ở đây",
@@ -2966,8 +2968,7 @@
       "quickAdd": {
         "title": "Thêm liên kết",
         "firstTitle": "Thêm liên kết đầu tiên",
-        "firstHint": "Mọi URL như Instagram, blog, YouTube đều hiện trên liên kết bio của bạn kèm nhãn.",
-        "hint": "Dán bất kỳ URL nào + một nhãn. Chúng tôi rút gọn và đưa nó nổi bật. Thêm bao nhiêu tùy thích.",
+        "hint": "Mỗi URL thành một liên kết rút gọn và lên hồ sơ ngay.",
         "urlPlaceholder": "https://... hoặc mailto:...",
         "labelPlaceholder": "Nhãn (ví dụ: 📝 Blog)",
         "templatesLabel": "Hoặc điền nhanh URL (bạn vẫn tự gõ nhãn)",
@@ -2989,17 +2990,14 @@
       "openShort": "Mở",
       "yourPage": "Hồ sơ công khai",
       "featuredTitle": "Dòng tin hồ sơ",
-      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓). Liên kết có ★ nằm trên cùng làm mục nổi bật. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
-      "sectionExpand": "Mở rộng phần",
-      "sectionCollapse": "Thu gọn phần",
-      "sectionItemCount": "{count} mục",
+      "featuredHint": "Chỉ chọn được một mục nổi bật, và mục đó hiện trên cùng.",
       "featuredEmpty": "Chưa có liên kết nào để hiển thị.",
       "featuredEmptyHasOthers": "Chưa có liên kết nào để hiển thị. Bạn có {count} liên kết khác để chọn.",
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
       "remove": "Xóa",
-      "removeLink": "Gỡ",
-      "highlight": "Đưa lên đầu làm mục nổi bật (chỉ một)",
+      "removeLink": "Gỡ khỏi hồ sơ",
+      "highlight": "Đặt làm nổi bật",
       "labelEdit": "Sửa nhãn (thứ khách nhìn thấy)",
       "labelEmpty": "Thêm nhãn",
       "labelPlaceholder": "ví dụ: 📝 Blog",
@@ -3103,17 +3101,15 @@
       "addEmailForm": "+ Đăng ký email",
       "addEmailFormTitle": "Thêm biểu mẫu đăng ký email",
       "editEmailFormTitle": "Sửa biểu mẫu đăng ký email",
-      "addEmailFormDescription": "Một biểu mẫu ngắn để khách để lại email. Các địa chỉ thu thập được hiện trên bảng điều khiển / xuất CSV của bạn.",
+      "addEmailFormDescription": "Chỉ bạn xem được email đã thu thập và có thể xuất ra CSV.",
       "addEmailFormPlaceholder": "(chưa có biểu mẫu email)",
       "emailFormFieldTitle": "Tiêu đề biểu mẫu",
       "emailFormFieldTitlePlaceholder": "ví dụ: Nhận bản tin của tôi",
       "emailFormFieldSubtitle": "Phụ đề (tùy chọn)",
       "emailFormFieldSubtitlePlaceholder": "ví dụ: Biết đầu tiên về sản phẩm mới, lớp học mở và thực đơn giới hạn.",
-      "emailFormFieldSubtitleHint": "Một hoặc hai câu nói cho khách biết vì sao họ nên để lại email.",
       "emailFormFieldPlaceholder": "Văn bản gợi ý trong ô nhập",
       "emailFormFieldSuccess": "Thông báo thành công",
       "emailFormFieldSuccessPlaceholder": "ví dụ: Cảm ơn bạn đã đăng ký :)",
-      "emailFormHowItWorks": "Email khách để lại sẽ vào bảng 'khách tiềm năng' riêng tư của bạn. Xuất ra CSV và nhập vào Mailchimp / công cụ email của bạn.",
       "emailFormViewLeadsCta": "Xem email đã thu thập",
       "leadsLink": "Email đã thu thập",
       "stats": {
@@ -3123,7 +3119,7 @@
         "loadFailed": "Không tải được thống kê.",
         "summary": {
           "title": "Lượt truy cập hồ sơ",
-          "today": "Hôm nay",
+          "today": "24 giờ",
           "week": "7 ngày",
           "month": "30 ngày",
           "allTime": "Toàn thời gian"
@@ -3312,7 +3308,11 @@
       "dividerLabel": "Đường phân cách",
       "loading": "Đang tải...",
       "noLinks": "Chưa có liên kết.",
-      "toggleFailed": "Cập nhật thất bại."
+      "toggleFailed": "Cập nhật thất bại.",
+      "featuredMark": "Nổi bật",
+      "rowActions": "Thêm thao tác",
+      "moveUp": "Chuyển lên",
+      "moveDown": "Chuyển xuống"
     },
     "profileTitle": "Thông tin tài khoản",
     "email": "Email",
@@ -4080,7 +4080,7 @@
     "public": {
       "hostedBy": "Tổ chức bởi",
       "attending": "{count} người tham gia",
-      "addToCalendar": "Thêm vào Google Calendar",
+      "addToCalendar": "Thêm vào lịch",
       "onlineLink": "Liên kết tham gia trực tuyến",
       "spotsLeft": "Còn {count} / {capacity} chỗ",
       "formTitle": "Đăng ký tham gia",
@@ -4117,9 +4117,7 @@
         "answerRequired": "Vui lòng trả lời câu hỏi này",
         "choiceRequired": "Vui lòng chọn một mục",
         "consentRequired": "Vui lòng đồng ý chia sẻ thông tin liên hệ",
-        "full": "Chỗ cuối cùng vừa được lấy",
         "alreadyRegistered": "Liên hệ này đã đăng ký rồi",
-        "closed": "Đã đóng đăng ký",
         "generic": "Đăng ký thất bại. Vui lòng thử lại.",
         "invalidEmail": "Vui lòng kiểm tra lại email (VD: hong@gmail.com)",
         "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
@@ -4140,7 +4138,10 @@
       "aboutTitle": "Giới thiệu",
       "endedNotice": "Sự kiện đã kết thúc.",
       "am": "SA",
-      "pm": "CH"
+      "pm": "CH",
+      "calendarGoogle": "Google Calendar",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple / tải .ics"
     },
     "list": {
       "title": "Sự kiện",
@@ -4235,8 +4236,7 @@
       "statusChangeFailed": "Cập nhật thất bại",
       "cancelDialogTitle": "Hủy sự kiện này?",
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
-      "cancelDialogConfirm": "Hủy sự kiện",
-      "heroCopy": "Sao chép liên kết"
+      "cancelDialogConfirm": "Hủy sự kiện"
     },
     "share": {
       "copied": "Đã sao chép",
@@ -4271,7 +4271,8 @@
       "channel": "Kênh",
       "status": "Trạng thái",
       "confirmed": "Đã xác nhận",
-      "canceled": "Đã hủy"
+      "canceled": "Đã hủy",
+      "exportFailed": "Không tải được CSV"
     },
     "status": {
       "open": "Đang mở",
@@ -4279,6 +4280,9 @@
       "canceled": "Đã hủy",
       "ended": "Đã kết thúc",
       "full": "Hết chỗ"
+    },
+    "meta": {
+      "description": "Tạo trang sự kiện kèm biểu mẫu đăng ký chỉ bằng một liên kết. Người tham gia đăng ký không cần tài khoản, đủ chỗ thì tự đóng."
     }
   },
   "linkAnalytics": {

@@ -2627,7 +2627,9 @@
       "inDays": "{days}일 후",
       "inWeeks": "{weeks}주 후",
       "ended": "종료",
-      "eventEnded": "종료된 이벤트"
+      "eventEnded": "종료된 이벤트",
+      "am": "오전",
+      "pm": "오후"
     },
     "place": {
       "directions": "길찾기",
@@ -2945,7 +2947,7 @@
       },
       "socialsLabel": "공유·SNS 버튼",
       "socialKakaoLabel": "카카오톡 채널",
-      "socialsHint": "공개 프로필 하단에 표시할 채널을 골라 주세요. 각 채널마다 본인 계정 URL을 함께 입력하면 방문자가 그 URL로 이동해요. 최대 2개, 선택한 순서대로 노출돼요.",
+      "socialsHint": "고른 순서대로 프로필 아래에 두 개까지 보여요.",
       "socialsCount": "{count}/{max} 선택",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2955,7 +2957,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "올바른 http(s) URL을 입력해주세요.",
-      "previewTitle": "공개 프로필 미리보기 (실시간)",
+      "previewTitle": "미리보기",
       "closePreview": "미리보기 닫기",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
@@ -2966,8 +2968,7 @@
       "quickAdd": {
         "title": "링크 추가",
         "firstTitle": "첫 링크 추가",
-        "firstHint": "Instagram, 블로그, 유튜브 등 어떤 주소든 라벨과 함께 넣을 수 있어요. 이 페이지는 SNS 프로필 링크가 돼요.",
-        "hint": "URL과 라벨을 넣으면 단축부터 프로필 노출까지 자동이에요. 연달아 여러 개 추가할 수 있어요.",
+        "hint": "넣은 주소는 짧은 링크가 되어 프로필에 바로 올라가요.",
         "urlPlaceholder": "https://... 또는 mailto:...",
         "labelPlaceholder": "라벨 (예: 📝 블로그)",
         "templatesLabel": "또는 빠른 URL 채우기 (라벨은 본인이 입력)",
@@ -2989,17 +2990,14 @@
       "openShort": "열기",
       "yourPage": "공개 프로필",
       "featuredTitle": "공개 프로필에 보일 항목",
-      "featuredHint": "끌어서 순서를 바꿔요(휴대폰은 ↑↓). ★를 누른 링크가 대표로 맨 위에 와요. 헤더로 섹션을 만들면 접고 펴거나 통째로 옮길 수 있어요.",
-      "sectionExpand": "섹션 펴기",
-      "sectionCollapse": "섹션 접기",
-      "sectionItemCount": "{count}개",
+      "featuredHint": "대표는 하나만 고를 수 있고 맨 위에 보여요.",
       "featuredEmpty": "노출할 링크가 없어요.",
       "featuredEmptyHasOthers": "노출할 링크가 없어요. 고를 수 있는 내 링크가 {count}개 있어요.",
       "addBlockMenu": "추가",
       "addMoreBlocks": "그 외 블록",
       "remove": "삭제",
-      "removeLink": "빼기",
-      "highlight": "대표로 맨 위에 (하나만)",
+      "removeLink": "프로필에서 빼기",
+      "highlight": "대표로 올리기",
       "labelEdit": "라벨 수정 (방문자에게 보이는 이름)",
       "labelEmpty": "라벨 추가",
       "labelPlaceholder": "예: 📝 블로그",
@@ -3050,7 +3048,7 @@
       "addEmailForm": "+ 이메일 수집",
       "addEmailFormTitle": "이메일 수집 폼 추가",
       "editEmailFormTitle": "이메일 수집 폼 수정",
-      "addEmailFormDescription": "방문자가 이메일을 남길 수 있는 작은 폼이에요. 모인 주소는 대시보드에서 보거나 CSV로 받을 수 있어요.",
+      "addEmailFormDescription": "모인 이메일은 나만 볼 수 있고 CSV로 받을 수 있어요.",
       "addEmailFormPlaceholder": "(이메일 폼 미설정)",
       "addBooking": "+ 예약",
       "addBookingTitle": "예약 블록 추가",
@@ -3109,11 +3107,9 @@
       "emailFormFieldTitlePlaceholder": "예: 새 소식 받기",
       "emailFormFieldSubtitle": "부가 설명 (옵션)",
       "emailFormFieldSubtitlePlaceholder": "예: 신상품 출시·강의 오픈·한정 메뉴 소식을 가장 먼저 알려드려요.",
-      "emailFormFieldSubtitleHint": "방문자가 '왜 이메일을 남겨야 할지' 알 수 있게 한두 문장 적어주세요.",
       "emailFormFieldPlaceholder": "입력란 안내",
       "emailFormFieldSuccess": "제출 후 메시지",
       "emailFormFieldSuccessPlaceholder": "예: 등록 완료. 감사합니다 :)",
-      "emailFormHowItWorks": "방문자가 이메일을 남기면 나만 볼 수 있는 리드 페이지에 모여요. CSV로 받아 Mailchimp · 스티비 · 채널톡 등으로 가져가세요.",
       "emailFormViewLeadsCta": "수집된 이메일 보기",
       "leadsLink": "수집된 이메일",
       "stats": {
@@ -3123,9 +3119,9 @@
         "loadFailed": "통계를 불러오지 못했어요.",
         "summary": {
           "title": "프로필 방문",
-          "today": "오늘",
-          "week": "7 일",
-          "month": "30 일",
+          "today": "24시간",
+          "week": "7일",
+          "month": "30일",
           "allTime": "누적"
         },
         "daily": {
@@ -3312,7 +3308,11 @@
       "dividerLabel": "구분선",
       "loading": "불러오는 중…",
       "noLinks": "단축한 링크가 아직 없어요.",
-      "toggleFailed": "변경에 실패했어요."
+      "toggleFailed": "변경에 실패했어요.",
+      "featuredMark": "대표",
+      "rowActions": "작업 더 보기",
+      "moveUp": "위로 옮기기",
+      "moveDown": "아래로 옮기기"
     },
     "profileTitle": "계정 정보",
     "email": "이메일",
@@ -4080,7 +4080,7 @@
     "public": {
       "hostedBy": "주최",
       "attending": "참여 {count}명",
-      "addToCalendar": "Google 캘린더에 추가",
+      "addToCalendar": "내 캘린더에 추가",
       "onlineLink": "온라인 참가 링크",
       "spotsLeft": "남은 자리 {count} / {capacity}",
       "formTitle": "참가 신청",
@@ -4117,9 +4117,7 @@
         "answerRequired": "답을 적어 주세요",
         "choiceRequired": "하나를 골라 주세요",
         "consentRequired": "개인정보 제공에 동의해 주세요",
-        "full": "방금 정원이 마감됐어요",
         "alreadyRegistered": "이미 이 연락처로 신청되어 있어요",
-        "closed": "신청이 마감되었어요",
         "generic": "신청에 실패했어요. 잠시 후 다시 시도해 주세요.",
         "invalidEmail": "이메일 주소를 다시 확인해 주세요 (예: hong@naver.com)",
         "invalidPhone": "전화번호를 다시 확인해 주세요 (예: 010-1234-5678)",
@@ -4140,7 +4138,10 @@
       "aboutTitle": "소개",
       "endedNotice": "끝난 모임이에요.",
       "am": "오전",
-      "pm": "오후"
+      "pm": "오후",
+      "calendarGoogle": "Google 캘린더",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple 캘린더(.ics) 다운로드"
     },
     "list": {
       "title": "모집",
@@ -4235,8 +4236,7 @@
       "statusChangeFailed": "변경에 실패했어요",
       "cancelDialogTitle": "모임을 취소할까요?",
       "cancelDialogBody": "공개 페이지에 취소로 표시되고 신청을 더 받지 않아요. 되돌릴 수 없어요. 새 신청만 막으려면 '신청 마감하기'를 쓰세요.",
-      "cancelDialogConfirm": "모임 취소",
-      "heroCopy": "링크 복사"
+      "cancelDialogConfirm": "모임 취소"
     },
     "share": {
       "copied": "복사됨",
@@ -4271,7 +4271,8 @@
       "channel": "유입 채널",
       "status": "상태",
       "confirmed": "확정",
-      "canceled": "취소"
+      "canceled": "취소",
+      "exportFailed": "CSV를 내려받지 못했어요"
     },
     "status": {
       "open": "모집 중",
@@ -4279,6 +4280,9 @@
       "canceled": "취소됨",
       "ended": "끝남",
       "full": "정원 마감"
+    },
+    "meta": {
+      "description": "모임 소개와 신청 폼을 링크 하나로 만들어요. 참가자는 로그인 없이 신청하고, 정원이 차면 마감돼요."
     }
   },
   "linkAnalytics": {

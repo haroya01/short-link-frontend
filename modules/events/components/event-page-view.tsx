@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { isHttpUrl } from "@/lib/extract-url";
-import type { PublicEvent } from "@/modules/events/api/events";
+import type { PublicEvent, RegistrationClosedReason } from "@/modules/events/api/events";
 import type { EventWhenText } from "@/modules/events/lib/format";
 import { placeIdFromUrl } from "@/modules/events/lib/place";
 import { eventPhase } from "@/modules/events/lib/phase";
@@ -24,6 +24,7 @@ export function EventPageView({
   preview = false,
   registration,
   onRegistered,
+  onClosed,
 }: {
   event: PublicEvent;
   when: EventWhenText | null;
@@ -33,10 +34,13 @@ export function EventPageView({
   preview?: boolean;
   registration?: ReactNode;
   onRegistered?: (spotsLeft: number | null) => void;
+  onClosed?: (reason: RegistrationClosedReason) => void;
 }) {
   const t = useTranslations("events.public");
   const locale = useLocale();
   const Heading = heading;
+  const phase = eventPhase(event, now);
+  const attendance = attendanceLine(t, event, phase === "open");
   const placeId = MAPS_KEY && event.locationUrl ? placeIdFromUrl(event.locationUrl) : null;
 
   return (
@@ -94,17 +98,16 @@ export function EventPageView({
             </a>
           </Fact>
         ) : null}
-        {event.attending > 0 || event.capacity != null ? (
-          <Fact label={t("metaAttendance")}>{attendanceLine(t, event)}</Fact>
-        ) : null}
+        {attendance ? <Fact label={t("metaAttendance")}>{attendance}</Fact> : null}
       </dl>
 
       {registration ?? (
         <RegistrationPanel
           event={event}
-          phase={eventPhase(event, now)}
+          phase={phase}
           preview={preview}
           onRegistered={onRegistered}
+          onClosed={onClosed}
         />
       )}
 
@@ -135,10 +138,11 @@ export function EventPageView({
 function attendanceLine(
   t: (key: string, values?: Record<string, string | number>) => string,
   event: Pick<PublicEvent, "attending" | "capacity" | "spotsLeft">,
+  open: boolean,
 ): string {
   const parts: string[] = [];
   if (event.attending > 0) parts.push(t("attending", { count: event.attending }));
-  if (event.capacity != null) {
+  if (open && event.capacity != null) {
     parts.push(t("spotsLeft", { count: Math.max(0, event.spotsLeft ?? 0), capacity: event.capacity }));
   }
   return parts.join(" · ");
