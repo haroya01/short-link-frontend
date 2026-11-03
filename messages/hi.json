@@ -4240,29 +4240,25 @@
       "untitled": "बिना शीर्षक"
     },
     "detail": {
-      "loading": "लोड हो रहा है…",
       "loadFailed": "लोड नहीं हो सका।",
-      "createdBanner": "आपका इवेंट पेज लाइव है। यह लिंक ग्रुप चैट और सोशल पर चिपकाएँ।",
       "edit": "संपादित करें",
       "viewPublicPage": "सार्वजनिक पेज देखें",
       "manageTitle": "प्रबंधन",
       "close": "पंजीकरण बंद करें",
       "reopen": "पंजीकरण फिर खोलें",
       "cancelEvent": "इवेंट रद्द करें",
-      "canceledNote": "यह इवेंट रद्द है।",
       "statusChanged": "अपडेट हो गया",
       "statusChangeFailed": "अपडेट विफल",
       "cancelDialogTitle": "यह इवेंट रद्द करें?",
       "cancelDialogBody": "सार्वजनिक पेज पर रद्द दिखेगा और पंजीकरण रुक जाएगा। इसे वापस नहीं किया जा सकता। सिर्फ़ नए पंजीकरण रोकने हों तो 'पंजीकरण बंद करें' चुनें।",
       "cancelDialogConfirm": "इवेंट रद्द करें",
-      "heroCopy": "लिंक कॉपी करें",
-      "heroCopied": "कॉपी हो गया"
+      "heroCopy": "लिंक कॉपी करें"
     },
     "share": {
       "copied": "कॉपी हो गया",
       "qr": "QR",
       "title": "साझा लिंक",
-      "subtitle": "हर चैनल (ग्रुप चैट, Twitter, Instagram) के लिए अलग लिंक इस्तेमाल करें। विश्लेषण अपने आप स्रोत के अनुसार बाँट देगा।",
+      "subtitle": "हर चैनल के लिए अलग लिंक रखें तो पंजीकरण चैनल के अनुसार बँट जाते हैं",
       "copy": "लिंक कॉपी करें",
       "downloadQr": "QR डाउनलोड करें",
       "aliasPlaceholder": "चैनल नाम (जैसे: ग्रुप चैट)",
@@ -4272,14 +4268,13 @@
       "aliasFailed": "लिंक नहीं बन सका"
     },
     "analytics": {
-      "shareNudge": "अभी कोई क्लिक नहीं। ऊपर का लिंक ग्रुप चैट या सोशल पर चिपकाएँ, नतीजे यहाँ दिखेंगे।",
       "title": "ट्रैफ़िक",
       "totalClicks": "पेज क्लिक",
       "totalRegistrations": "पंजीकरण",
       "conversion": "रूपांतरण दर",
       "registrationsByChannel": "चैनल के अनुसार पंजीकरण",
       "clicksByLink": "लिंक के अनुसार क्लिक",
-      "clicksByClientApp": "ऐप के अनुसार क्लिक (KakaoTalk, Instagram in-app…)",
+      "clicksByClientApp": "ऐप के अनुसार क्लिक",
       "noRegistrations": "अभी कोई पंजीकरण नहीं",
       "noClicks": "अभी कोई क्लिक नहीं"
     },

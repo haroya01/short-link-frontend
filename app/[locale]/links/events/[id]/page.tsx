@@ -4,13 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
-import { ExternalLink, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
+import { ErrorState } from "@/components/common/error-state";
 import { ConfirmDialog } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import type { Attendee, EventAnalytics, MyEvent } from "@/modules/events/api/events";
-import { EventStatusBadge } from "@/modules/events/components/event-status-badge";
 import {
   changeEventStatus,
   getAttendees,
@@ -18,18 +19,25 @@ import {
   getMyEvent,
 } from "@/modules/events/api/events";
 import { formatEventRange, shortUrlOf } from "@/modules/events/lib/format";
+import { ownerEventPhase } from "@/modules/events/lib/phase";
 import { AnalyticsPanel } from "@/modules/events/components/analytics-panel";
 import { AttendeeTable } from "@/modules/events/components/attendee-table";
+import { CreatedLine } from "@/modules/events/components/created-line";
 import { SharePanel } from "@/modules/events/components/share-panel";
 import { LinksPage } from "@/components/links/links-page";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kurl.me";
 
+const TEXT_LINK =
+  "focus-ring rounded-sm font-medium text-slate-700 underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors hover:decoration-slate-500 dark:text-slate-300 dark:decoration-slate-600 dark:hover:decoration-slate-400";
+
 export default function EventDetailPage() {
   const { id: idParam } = useParams<{ id: string }>();
   const id = Number(idParam);
   const t = useTranslations("events.detail");
+  const tList = useTranslations("events.list");
+  const tStatus = useTranslations("events.status");
   const locale = useLocale();
   const { ready, authenticated } = useAuth();
   const { toast } = useToast();
@@ -41,9 +49,10 @@ export default function EventDetailPage() {
   const [analytics, setAnalytics] = useState<EventAnalytics | null>(null);
   const [failed, setFailed] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
-  const [heroCopied, setHeroCopied] = useState(false);
+  const [now] = useState(() => Date.now());
 
   const load = useCallback(async () => {
+    setFailed(false);
     try {
       const [ev, at, an] = await Promise.all([
         getMyEvent(id),
@@ -69,13 +78,25 @@ export default function EventDetailPage() {
   }
 
   if (failed) {
-    return <LinksPage width="form"><p className="text-[13px] text-red-600 dark:text-red-400">{t("loadFailed")}</p></LinksPage>;
+    return (
+      <LinksPage width="form">
+        <ErrorState message={t("loadFailed")} onRetry={() => void load()} />
+      </LinksPage>
+    );
   }
   if (!event) {
-    return <LinksPage width="form"><p className="text-[13px] text-slate-400">{t("loading")}</p></LinksPage>;
+    return (
+      <LinksPage width="form" aria-busy>
+        <Skeleton className="h-7 w-56" />
+        <Skeleton className="mt-3 h-4 w-72" />
+        <Skeleton className="mt-10 h-40 w-full rounded-2xl" />
+      </LinksPage>
+    );
   }
 
   const publicUrl = `${SITE_URL}/${locale}/e/${event.slug}`;
+  const firstLink = event.links[0]?.shortCode;
+  const phase = ownerEventPhase(event, now);
 
   const changeStatus = async (action: "close" | "reopen" | "cancel") => {
     try {
@@ -88,96 +109,69 @@ export default function EventDetailPage() {
   };
 
   return (
-    <LinksPage width="form" className="flex flex-col gap-5">
-      {/* 페이지 정체를 헤더 한 곳에 집약 — 상태·일시·장소·신청 수까지 여기서 다 읽힌다.
-          이하 카드는 "공유 → 신청 현황 → 유입 분석 → 관리" 순서의 운영 도구. */}
-      <header>
-        {justCreated && event.links[0]?.shortCode ? (
-          <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-3.5 pr-2 dark:border-slate-800 dark:bg-slate-900">
-            <p className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-slate-900 dark:text-slate-100">
-              <span className="truncate">
-                {t("createdBanner")}{" "}
-                <span className="font-mono font-semibold">
-                  {shortUrlOf(event.links[0].shortCode).replace(/^https?:\/\//, "")}
-                </span>
-              </span>
-            </p>
-            <button
-              type="button"
-              onClick={async () => {
-                await navigator.clipboard.writeText(shortUrlOf(event.links[0].shortCode!));
-                setHeroCopied(true);
-                setTimeout(() => setHeroCopied(false), 2000);
-              }}
-              className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent-700 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800"
-            >
-              {heroCopied ? t("heroCopied") : t("heroCopy")}
-            </button>
-          </div>
-        ) : null}
+    <LinksPage width="form">
+      {justCreated && firstLink ? <CreatedLine longUrl={publicUrl} shortUrl={shortUrlOf(firstLink)} /> : null}
 
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <EventStatusBadge status={event.status} />
-              <span className="flex items-center gap-1 text-[13px] font-medium tabular-nums text-slate-500 dark:text-slate-400">
-                <Users className="h-3.5 w-3.5" />
-                {event.registrationCount}
-                {event.capacity != null ? `/${event.capacity}` : ""}
-              </span>
-            </div>
-            <h1 className="mt-1.5 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-              {event.title}
-            </h1>
-            <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400">
-              {formatEventRange(event.startsAt, event.endsAt, event.timezone, locale)}
-              {event.locationText ? ` · ${event.locationText}` : ""}
-            </p>
-          </div>
-          <Link
-            href={`/events/${event.id}/edit`}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-500 dark:border-slate-700 dark:text-slate-300"
+      <header>
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+          {event.title}
+        </h1>
+        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+          <span
+            className={cn(
+              "font-medium",
+              phase === "canceled"
+                ? "text-red-700 dark:text-red-400"
+                : phase === "open"
+                  ? "text-slate-700 dark:text-slate-300"
+                  : "text-slate-500 dark:text-slate-400",
+            )}
           >
+            {tStatus(phase)}
+          </span>
+          {" · "}
+          {formatEventRange(event.startsAt, event.endsAt, event.timezone, locale)}
+          {event.locationText ? ` · ${event.locationText}` : ""}
+          {" · "}
+          <span className="tabular-nums">
+            {event.capacity != null
+              ? tList("signupsOf", { count: event.registrationCount, capacity: event.capacity })
+              : tList("signups", { count: event.registrationCount })}
+          </span>
+        </p>
+        <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <a href={publicUrl} target="_blank" rel="noreferrer" className={TEXT_LINK}>
+            {t("viewPublicPage")}
+          </a>
+          <Link href={`/events/${event.id}/edit`} className={TEXT_LINK}>
             {t("edit")}
           </Link>
-        </div>
-        <a
-          href={publicUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500 dark:text-slate-300"
-        >
-          {t("viewPublicPage")}
-          <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+        </p>
       </header>
 
-      <SharePanel event={event} onLinksChange={() => void load()} />
+      <div className="mt-10 flex flex-col gap-10">
+        <SharePanel event={event} onLinksChange={() => void load()} />
 
-      <AttendeeTable eventId={event.id} attendees={attendees} questions={event.questions} />
+        <AttendeeTable eventId={event.id} attendees={attendees} questions={event.questions} />
 
-      {analytics ? <AnalyticsPanel analytics={analytics} /> : null}
+        {analytics ? <AnalyticsPanel analytics={analytics} /> : null}
 
-      <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-        <h2 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
-          {t("manageTitle")}
-        </h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {event.status === "OPEN" ? (
-            <ManageButton onClick={() => changeStatus("close")}>{t("close")}</ManageButton>
-          ) : null}
-          {event.status === "CLOSED" ? (
-            <ManageButton onClick={() => changeStatus("reopen")}>{t("reopen")}</ManageButton>
-          ) : null}
-          {event.status !== "CANCELED" ? (
-            <ManageButton destructive onClick={() => setConfirmCancel(true)}>
-              {t("cancelEvent")}
-            </ManageButton>
-          ) : (
-            <p className="text-[12px] text-red-500">{t("canceledNote")}</p>
-          )}
-        </div>
-      </section>
+        {event.status !== "CANCELED" ? (
+          <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("manageTitle")}</h2>
+            <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+              {event.status === "OPEN" ? (
+                <ManageButton onClick={() => changeStatus("close")}>{t("close")}</ManageButton>
+              ) : (
+                <ManageButton onClick={() => changeStatus("reopen")}>{t("reopen")}</ManageButton>
+              )}
+              <ManageButton destructive onClick={() => setConfirmCancel(true)}>
+                {t("cancelEvent")}
+              </ManageButton>
+            </div>
+          </section>
+        ) : null}
+      </div>
 
       <ConfirmDialog
         open={confirmCancel}
@@ -209,11 +203,12 @@ function ManageButton({
     <button
       type="button"
       onClick={onClick}
-      className={
+      className={cn(
+        "focus-ring -mx-1 min-h-11 rounded-md px-1 text-[15px] font-medium transition-colors",
         destructive
-          ? "rounded-lg border border-red-300 px-3.5 py-2 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/40"
-          : "rounded-lg border border-slate-300 px-3.5 py-2 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-500 dark:border-slate-700 dark:text-slate-300"
-      }
+          ? "text-red-700 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+          : "text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100",
+      )}
     >
       {children}
     </button>

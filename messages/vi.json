@@ -4240,29 +4240,25 @@
       "untitled": "Chưa có tiêu đề"
     },
     "detail": {
-      "loading": "Đang tải…",
       "loadFailed": "Không tải được.",
-      "createdBanner": "Trang sự kiện đã được xuất bản. Dán liên kết này vào nhóm chat và mạng xã hội.",
       "edit": "Sửa",
       "viewPublicPage": "Xem trang công khai",
       "manageTitle": "Quản lý",
       "close": "Đóng đăng ký",
       "reopen": "Mở lại đăng ký",
       "cancelEvent": "Hủy sự kiện",
-      "canceledNote": "Sự kiện đã bị hủy.",
       "statusChanged": "Đã cập nhật",
       "statusChangeFailed": "Cập nhật thất bại",
       "cancelDialogTitle": "Hủy sự kiện này?",
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
       "cancelDialogConfirm": "Hủy sự kiện",
-      "heroCopy": "Sao chép liên kết",
-      "heroCopied": "Đã sao chép"
+      "heroCopy": "Sao chép liên kết"
     },
     "share": {
       "copied": "Đã sao chép",
       "qr": "QR",
       "title": "Liên kết chia sẻ",
-      "subtitle": "Dùng liên kết riêng cho mỗi kênh (nhóm chat, Twitter, Instagram) và phân tích sẽ tự tách người đăng ký theo nguồn.",
+      "subtitle": "Dùng liên kết riêng cho mỗi kênh thì lượt đăng ký được tách theo kênh",
       "copy": "Sao chép liên kết",
       "downloadQr": "Tải QR",
       "aliasPlaceholder": "Tên kênh (VD: nhóm chat)",
@@ -4272,14 +4268,13 @@
       "aliasFailed": "Không tạo được liên kết"
     },
     "analytics": {
-      "shareNudge": "Chưa có lượt nhấp. Dán liên kết chia sẻ vào nhóm chat hoặc mạng xã hội, kết quả sẽ hiện ở đây.",
       "title": "Nguồn truy cập",
       "totalClicks": "Lượt nhấp trang",
       "totalRegistrations": "Lượt đăng ký",
       "conversion": "Tỷ lệ chuyển đổi",
       "registrationsByChannel": "Đăng ký theo kênh",
       "clicksByLink": "Nhấp theo liên kết",
-      "clicksByClientApp": "Nhấp theo ứng dụng (KakaoTalk, Instagram in-app…)",
+      "clicksByClientApp": "Nhấp theo ứng dụng",
       "noRegistrations": "Chưa có đăng ký",
       "noClicks": "Chưa có lượt nhấp"
     },

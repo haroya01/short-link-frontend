@@ -4240,29 +4240,25 @@
       "untitled": "Untitled"
     },
     "detail": {
-      "loading": "Loading…",
       "loadFailed": "Could not load.",
-      "createdBanner": "Your event page is live. Paste this link into your group chats and socials.",
       "edit": "Edit",
       "viewPublicPage": "View public page",
       "manageTitle": "Manage",
       "close": "Close registration",
       "reopen": "Reopen registration",
       "cancelEvent": "Cancel event",
-      "canceledNote": "This event is canceled.",
       "statusChanged": "Updated",
       "statusChangeFailed": "Update failed",
       "cancelDialogTitle": "Cancel this event?",
       "cancelDialogBody": "The public page shows it as canceled and registration stops. This cannot be undone. To only stop new registrations, use 'Close registration'.",
       "cancelDialogConfirm": "Cancel event",
-      "heroCopy": "Copy link",
-      "heroCopied": "Copied"
+      "heroCopy": "Copy link"
     },
     "share": {
       "copied": "Copied",
       "qr": "QR",
       "title": "Share links",
-      "subtitle": "Use a different link per channel (group chat, Twitter, Instagram) and traffic analytics splits registrants by source automatically.",
+      "subtitle": "Use a separate link per channel and sign-ups are split by channel",
       "copy": "Copy link",
       "downloadQr": "Download QR",
       "aliasPlaceholder": "Channel name (e.g. group chat)",
@@ -4272,14 +4268,13 @@
       "aliasFailed": "Could not create link"
     },
     "analytics": {
-      "shareNudge": "No clicks yet. Paste your share link into a group chat or social feed and results will show up here.",
       "title": "Traffic",
       "totalClicks": "Page clicks",
       "totalRegistrations": "Registrations",
       "conversion": "Conversion",
       "registrationsByChannel": "Registrations by channel",
       "clicksByLink": "Clicks by link",
-      "clicksByClientApp": "Clicks by app (KakaoTalk, Instagram in-app…)",
+      "clicksByClientApp": "Clicks by app",
       "noRegistrations": "No registrations yet",
       "noClicks": "No clicks yet"
     },

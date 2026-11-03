@@ -4240,29 +4240,25 @@
       "untitled": "タイトルなし"
     },
     "detail": {
-      "loading": "読み込み中…",
       "loadFailed": "読み込みに失敗しました。",
-      "createdBanner": "募集ページを公開しました。このリンクをグループチャットやSNSに貼ってください。",
       "edit": "編集",
       "viewPublicPage": "公開ページを見る",
       "manageTitle": "管理",
       "close": "受付を締め切る",
       "reopen": "受付を再開する",
       "cancelEvent": "イベントを中止",
-      "canceledNote": "中止されたイベントです。",
       "statusChanged": "変更しました",
       "statusChangeFailed": "変更に失敗しました",
       "cancelDialogTitle": "イベントを中止しますか？",
       "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
       "cancelDialogConfirm": "中止する",
-      "heroCopy": "リンクをコピー",
-      "heroCopied": "コピーしました"
+      "heroCopy": "リンクをコピー"
     },
     "share": {
       "copied": "コピー済み",
       "qr": "QR",
       "title": "共有リンク",
-      "subtitle": "チャンネル(グループLINE・X・Instagram)ごとに別のリンクを使うと、申込者の流入元が自動で分かれて表示されます。",
+      "subtitle": "チャンネルごとにリンクを分けると、申し込みがチャンネル別に分かれます",
       "copy": "リンクをコピー",
       "downloadQr": "QRをダウンロード",
       "aliasPlaceholder": "チャンネル名 (例：グループLINE用)",
@@ -4272,14 +4268,13 @@
       "aliasFailed": "リンク作成に失敗しました"
     },
     "analytics": {
-      "shareNudge": "まだクリックがありません。上の共有リンクをグループチャットやSNSに貼ると、ここに流入結果が表示されます。",
       "title": "流入分析",
       "totalClicks": "ページクリック",
       "totalRegistrations": "申し込み",
       "conversion": "転換率",
       "registrationsByChannel": "チャンネル別申し込み",
       "clicksByLink": "リンク別クリック",
-      "clicksByClientApp": "アプリ別クリック (LINE・Instagramアプリ内など)",
+      "clicksByClientApp": "アプリ別クリック",
       "noRegistrations": "まだ申し込みがありません",
       "noClicks": "まだクリックがありません"
     },

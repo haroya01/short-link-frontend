@@ -4240,29 +4240,25 @@
       "untitled": "제목 없음"
     },
     "detail": {
-      "loading": "불러오는 중…",
       "loadFailed": "불러오지 못했어요.",
-      "createdBanner": "모집 페이지를 발행했어요. 이 링크를 단톡이나 SNS에 올려 주세요.",
       "edit": "수정",
       "viewPublicPage": "공개 페이지 보기",
       "manageTitle": "관리",
       "close": "신청 마감하기",
       "reopen": "신청 다시 열기",
       "cancelEvent": "모임 취소",
-      "canceledNote": "취소된 모임이에요.",
       "statusChanged": "변경했어요",
       "statusChangeFailed": "변경에 실패했어요",
       "cancelDialogTitle": "모임을 취소할까요?",
       "cancelDialogBody": "공개 페이지에 취소로 표시되고 신청을 더 받지 않아요. 되돌릴 수 없어요. 새 신청만 막으려면 '신청 마감하기'를 쓰세요.",
       "cancelDialogConfirm": "모임 취소",
-      "heroCopy": "링크 복사",
-      "heroCopied": "복사됨"
+      "heroCopy": "링크 복사"
     },
     "share": {
       "copied": "복사됨",
       "qr": "QR",
       "title": "공유 링크",
-      "subtitle": "채널(단톡·트위터·인스타)마다 다른 링크를 쓰면, 신청자가 어디서 왔는지 유입 분석에 자동으로 나뉘어 보여요.",
+      "subtitle": "채널마다 링크를 따로 쓰면 신청이 채널별로 나뉘어요",
       "copy": "링크 복사",
       "downloadQr": "QR 다운로드",
       "aliasPlaceholder": "채널 이름 (예: 단톡용)",
@@ -4272,14 +4268,13 @@
       "aliasFailed": "링크 생성에 실패했어요"
     },
     "analytics": {
-      "shareNudge": "아직 클릭이 없어요. 위의 공유 링크를 단톡이나 SNS에 붙여넣으면 여기에 유입 결과가 쌓여요.",
       "title": "유입 분석",
       "totalClicks": "페이지 클릭",
       "totalRegistrations": "신청",
       "conversion": "전환율",
       "registrationsByChannel": "채널별 신청",
       "clicksByLink": "링크별 클릭",
-      "clicksByClientApp": "앱별 클릭 (카톡·인스타 인앱 등)",
+      "clicksByClientApp": "앱별 클릭",
       "noRegistrations": "아직 신청이 없어요",
       "noClicks": "아직 클릭이 없어요"
     },

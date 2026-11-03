@@ -53,7 +53,7 @@ test.describe("event organizer flow", () => {
 
     await expect(page.getByRole("heading", { name: "E2E 테스트 스터디" })).toBeVisible();
     await expect(page.getByText("모집 중", { exact: true })).toBeVisible();
-    await expect(page.getByText("0/5", { exact: true })).toBeVisible();
+    await expect(page.getByText("0/5명", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "공개 페이지 보기" })).toHaveAttribute("href", /\/e\/e2e-1$/);
     await expect(page.getByText("아직 신청자가 없어요.", { exact: true })).toBeVisible();
     expect(events[0]).toMatchObject({ title: "E2E 테스트 스터디", capacity: 5 });
