@@ -1441,6 +1441,7 @@ export function mockRepliesAfter(id: number, after: string, limit: number): Note
     next: newer.length > limit ? String(items[items.length - 1].id) : null,
     latest: String(all[all.length - 1]?.id ?? 0),
     continued: false,
+    total: all.length,
   };
 }
 

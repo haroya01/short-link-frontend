@@ -45,8 +45,8 @@ describe("a thread's replies in pages", () => {
   });
 
   it("reads replies after a cursor, and an empty next as the end", async () => {
-    client.request.mockResolvedValue({ items: [], next: "", latest: "9", continued: false });
-    expect(await listNoteRepliesAfter(3, "8")).toEqual({ items: [], next: null, latest: "9", continued: false });
+    client.request.mockResolvedValue({ items: [], next: "", latest: "9", continued: false, total: 41 });
+    expect(await listNoteRepliesAfter(3, "8")).toEqual({ items: [], next: null, latest: "9", continued: false, total: 41 });
     expect(client.request).toHaveBeenLastCalledWith("/api/v1/public/notes/3/replies?after=8&limit=20", { method: "GET" });
   });
 

@@ -22,16 +22,16 @@ describe("listCommentPage", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("asks for one page of top-level comments, or for what came after a cursor", async () => {
-    fetchMock.mockImplementation(async () => new Response(JSON.stringify({ items: [comment(1)], next: "1", latest: "9" })));
-    expect(await listCommentPage(7, { cursor: "40" })).toEqual({ items: [comment(1)], next: "1", latest: "9" });
+    fetchMock.mockImplementation(async () => new Response(JSON.stringify({ items: [comment(1)], next: "1", latest: "9", total: 64 })));
+    expect(await listCommentPage(7, { cursor: "40" })).toEqual({ items: [comment(1)], next: "1", latest: "9", total: 64 });
     expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/public/posts/7/comments/page?limit=20&tombstones=1&cursor=40");
     await listCommentPage(7, { after: "9", limit: 50 });
     expect(fetchMock.mock.calls[1][0]).toBe("/api/v1/public/posts/7/comments/page?limit=50&tombstones=1&after=9");
   });
 
-  it("reads an empty next as the end and a numeric latest as a string", async () => {
+  it("reads an empty next as the end, a numeric latest as a string, and a missing total as unknown", async () => {
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ items: [], next: "", latest: 12 })));
-    expect(await listCommentPage(7, {})).toEqual({ items: [], next: null, latest: "12" });
+    expect(await listCommentPage(7, {})).toEqual({ items: [], next: null, latest: "12", total: null });
   });
 
   it("answers null when the server predates pages, so the screen falls back to the whole list", async () => {

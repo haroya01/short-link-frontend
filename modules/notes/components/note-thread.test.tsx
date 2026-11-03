@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   listHiddenReplies: vi.fn(),
   setNoteReplyHidden: vi.fn(),
   deleteNote: vi.fn(),
+  listNoteRepliesAfter: vi.fn(),
   toast: vi.fn(),
 }));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key, useLocale: () => "ko" }));
@@ -17,7 +18,7 @@ vi.mock("@/modules/notes/api/notes", () => ({
   listHiddenReplies: mocks.listHiddenReplies,
   setNoteReplyHidden: mocks.setNoteReplyHidden,
   deleteNote: mocks.deleteNote,
-  listNoteRepliesAfter: vi.fn(),
+  listNoteRepliesAfter: mocks.listNoteRepliesAfter,
   NOTE_MAX_THREAD_NOTES: 10,
   THREAD_REPLIES_PAGE: 20,
 }));
@@ -315,5 +316,30 @@ describe("before the server knows reply controls", () => {
     expect(host.querySelector("[data-moderate]")).toBeNull();
     expect(host.textContent).not.toContain("hiddenRepliesShow");
     expect(mocks.listHiddenReplies).not.toHaveBeenCalled();
+  });
+});
+
+describe("a thread longer than one page of replies", () => {
+  it("counts the replies by the server's total until the last page, then by what it shows", async () => {
+    const long = {
+      ...thread,
+      note: { ...thread.note, id: 72 },
+      replies: [reply(1, author(2, "minji")), reply(2, author(3, "haruka"))],
+      repliesNext: "2",
+    } as unknown as NoteThread;
+    mocks.getNoteThread.mockResolvedValue(long);
+    await render(long);
+    const heading = () => host.querySelector("#note-replies")!.textContent;
+    expect(heading()).toBe("repliesTitle ");
+
+    mocks.listNoteRepliesAfter.mockResolvedValueOnce({ items: [reply(3, author(4, "kazuki"))], next: "3", total: 41 });
+    await act(async () => (host.querySelector('[data-testid="note-replies-more"]') as HTMLButtonElement).click());
+    expect(mocks.listNoteRepliesAfter).toHaveBeenLastCalledWith(72, "2");
+    expect(heading()).toBe("repliesTitle 41");
+
+    mocks.listNoteRepliesAfter.mockResolvedValueOnce({ items: [reply(4, author(4, "kazuki"))], next: null, total: 41 });
+    await act(async () => (host.querySelector('[data-testid="note-replies-more"]') as HTMLButtonElement).click());
+    expect(heading()).toBe("repliesTitle 4");
+    expect(host.querySelector('[data-testid="note-replies-more"]')).toBeNull();
   });
 });

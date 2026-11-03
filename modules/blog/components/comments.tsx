@@ -131,6 +131,7 @@ export function PostComments({
   const [arrivedNote, setArrivedNote] = useState("");
   const [pageNext, setPageNext] = useState<string | null>(null);
   const [latest, setLatest] = useState<string | null>(null);
+  const [total, setTotal] = useState<number | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const commentsRef = useRef(comments);
   const pageNextRef = useRef<string | null>(null);
@@ -154,6 +155,7 @@ export function PostComments({
         setComments(list);
         setPageNext(whole || !page ? null : page.next);
         setLatest(page?.latest ?? null);
+        setTotal(page?.total ?? null);
         setLoadFailed(false);
       })
       .catch(() => {
@@ -208,6 +210,7 @@ export function PostComments({
           return readWhole();
         }
         arrivals.offer(freshComments(commentsRef.current, page.items, pageNextRef.current === null));
+        if (page.total !== null) setTotal(page.total);
         if (page.next === null || page.next === after) {
           afterRef.current = page.latest ?? after;
           return;
@@ -229,6 +232,7 @@ export function PostComments({
       const page = await listCommentPage(postId, { cursor: pageNext });
       setComments((prev) => [...prev, ...(page?.items ?? []).filter((c) => !prev.some((p) => p.id === c.id))]);
       setPageNext(page?.next ?? null);
+      if (page && page.total !== null) setTotal(page.total);
     } catch {
       toast(t("loadFailed"), "error");
     } finally {
@@ -380,6 +384,7 @@ export function PostComments({
   );
   shownIds.current = new Set(shown.filter((c) => !c.deleted).map((c) => c.id));
   const counted = shown.filter((c) => !c.deleted).length;
+  const headingCount = pageNext === null ? counted : (total ?? 0);
   const tops = shown.filter((c) => c.parentId == null);
   const visibleTops = expanded ? tops : tops.filter((c, index) => index < COLLAPSED_TOPS || arrived.has(c.id));
   const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
@@ -500,11 +505,11 @@ export function PostComments({
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       {quotes && quotes.total > 0 ? (
         <>
-          <h2 className="sr-only">{counted > 0 && pageNext === null ? t("count", { count: counted }) : t("heading")}</h2>
+          <h2 className="sr-only">{headingCount > 0 ? t("count", { count: headingCount }) : t("heading")}</h2>
           <div role="tablist" aria-label={t("discussionTabs")} className="flex items-baseline gap-5">
             {(
               [
-                ["comments", counted > 0 && pageNext === null ? t("count", { count: counted }) : t("heading")],
+                ["comments", headingCount > 0 ? t("count", { count: headingCount }) : t("heading")],
                 ["notes", t("notesTab", { count: quotes.total })],
               ] as const
             ).map(([key, label]) => (
@@ -528,7 +533,7 @@ export function PostComments({
         </>
       ) : (
         <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {counted > 0 && pageNext === null ? t("count", { count: counted }) : t("heading")}
+          {headingCount > 0 ? t("count", { count: headingCount }) : t("heading")}
         </h2>
       )}
 
