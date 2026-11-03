@@ -1,21 +1,32 @@
-import type { PublicEvent } from "@/modules/events/api/events";
+import type { PublicEvent, RegistrationClosedReason } from "@/modules/events/api/events";
 
 export type EventPhase = "open" | "full" | "closed" | "ended" | "canceled";
 
 type PhaseInput = Pick<
   PublicEvent,
-  "status" | "acceptingRegistrations" | "startsAt" | "endsAt" | "closeAt" | "spotsLeft"
+  | "status"
+  | "acceptingRegistrations"
+  | "registrationClosedReason"
+  | "startsAt"
+  | "endsAt"
+  | "closeAt"
+  | "spotsLeft"
 >;
 
-function eventEndsAt(event: Pick<PublicEvent, "startsAt" | "endsAt">): number {
-  const start = Date.parse(event.startsAt);
-  const end = event.endsAt ? Date.parse(event.endsAt) : start;
-  return Math.max(start, end);
-}
+const FROM_SERVER: Record<RegistrationClosedReason, EventPhase> = {
+  CANCELED: "canceled",
+  ENDED: "ended",
+  CLOSED: "closed",
+  DEADLINE: "closed",
+  FULL: "full",
+};
 
 export function eventPhase(event: PhaseInput, now: number): EventPhase {
+  if (event.registrationClosedReason !== undefined) {
+    return event.registrationClosedReason === null ? "open" : FROM_SERVER[event.registrationClosedReason];
+  }
   if (event.status === "CANCELED") return "canceled";
-  if (now >= eventEndsAt(event)) return "ended";
+  if (now >= Date.parse(event.endsAt ?? event.startsAt)) return "ended";
   if (event.status === "CLOSED") return "closed";
   if (event.closeAt && now >= Date.parse(event.closeAt)) return "closed";
   if (event.spotsLeft != null && event.spotsLeft <= 0) return "full";

@@ -38,9 +38,9 @@ describe("eventPhase", () => {
     expect(eventPhase({ ...open, startsAt: "2026-11-03T13:00:00Z", endsAt: null }, NOW)).toBe("open");
   });
 
-  it("uses the later of start and end when the end was saved before the start", () => {
+  it("ends at the saved end even when it was saved before the start, the moment the server closes", () => {
     const flipped = { ...open, startsAt: "2026-11-10T10:00:00Z", endsAt: "2026-11-01T00:00:00Z" };
-    expect(eventPhase(flipped, NOW)).toBe("open");
+    expect(eventPhase(flipped, NOW)).toBe("ended");
   });
 
   it("puts canceled ahead of every other state, and ended ahead of closed and full", () => {
@@ -49,5 +49,23 @@ describe("eventPhase", () => {
     expect(eventPhase({ ...open, ...past, status: "CLOSED" }, NOW)).toBe("ended");
     expect(eventPhase({ ...open, ...past, spotsLeft: 0 }, NOW)).toBe("ended");
     expect(eventPhase({ ...open, status: "CLOSED", spotsLeft: 0 }, NOW)).toBe("closed");
+  });
+
+  describe("when the server names the reason", () => {
+    it.each([
+      ["CANCELED", "canceled"],
+      ["ENDED", "ended"],
+      ["CLOSED", "closed"],
+      ["DEADLINE", "closed"],
+      ["FULL", "full"],
+    ] as const)("%s reads as %s", (reason, phase) => {
+      expect(eventPhase({ ...open, acceptingRegistrations: false, registrationClosedReason: reason }, NOW)).toBe(phase);
+    });
+
+    it("trusts an open answer over the device clock", () => {
+      const august = { ...open, startsAt: "2026-08-13T11:14:00Z", endsAt: null };
+      expect(eventPhase({ ...august, registrationClosedReason: null }, NOW)).toBe("open");
+      expect(eventPhase(august, NOW)).toBe("ended");
+    });
   });
 });
