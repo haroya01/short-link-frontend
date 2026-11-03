@@ -103,7 +103,7 @@ export async function compareCampaignStats(
 ): Promise<CampaignStatsCompareResponse> {
   return request<CampaignStatsCompareResponse>(`/api/v1/campaigns/stats/compare`, {
     method: "POST",
-    body: JSON.stringify({ campaignIds }),
+    body: { campaignIds },
   });
 }
 

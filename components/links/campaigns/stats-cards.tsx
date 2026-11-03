@@ -7,6 +7,7 @@ import { Section } from "@/components/common/section";
 import { KpiLine } from "@/components/links/stats/kpi-line";
 import type { CampaignRecommendation, CampaignStats } from "@/types";
 import { formatNumber } from "@/lib/utils";
+import { shortUrlOf } from "@/lib/short-url";
 
 export function RecommendationCard({ data }: { data: CampaignRecommendation }) {
   const t = useTranslations("campaignApp.campaignStats");
@@ -154,7 +155,7 @@ export function ByBatchTable({ stats }: { stats: CampaignStats }) {
               </div>
               <div className="mt-1.5 flex items-center justify-end">
                 <a
-                  href={`https://kurl.md/${b.shortCode}`}
+                  href={shortUrlOf(b.shortCode)}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400 hover:text-accent-700 hover:underline"

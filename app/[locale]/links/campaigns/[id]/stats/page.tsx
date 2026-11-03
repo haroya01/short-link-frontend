@@ -46,6 +46,8 @@ export default function CampaignStatsPage() {
   const [compareWithId, setCompareWithId] = useState<number | null>(null);
   const [compareData, setCompareData] = useState<CampaignStatsCompareResponse | null>(null);
   const [compareLoading, setCompareLoading] = useState(false);
+  const [compareFailed, setCompareFailed] = useState(false);
+  const [compareReload, setCompareReload] = useState(0);
   const [recData, setRecData] = useState<CampaignRecommendation | null>(null);
 
   useEffect(() => {
@@ -85,16 +87,20 @@ export default function CampaignStatsPage() {
   useEffect(() => {
     if (!compareWithId) {
       setCompareData(null);
+      setCompareFailed(false);
       return;
     }
     let cancelled = false;
     setCompareLoading(true);
+    setCompareFailed(false);
     compareCampaignStats([campaignId, compareWithId])
       .then((data) => {
         if (!cancelled) setCompareData(data);
       })
       .catch(() => {
-        if (!cancelled) setCompareData(null);
+        if (cancelled) return;
+        setCompareData(null);
+        setCompareFailed(true);
       })
       .finally(() => {
         if (!cancelled) setCompareLoading(false);
@@ -102,7 +108,7 @@ export default function CampaignStatsPage() {
     return () => {
       cancelled = true;
     };
-  }, [campaignId, compareWithId]);
+  }, [campaignId, compareWithId, compareReload]);
 
   if (ready && !authenticated) {
     return <SignInEmptyState page reason="stats" />;
@@ -173,6 +179,8 @@ export default function CampaignStatsPage() {
               data={compareData}
               currentId={campaignId}
               loading={compareLoading}
+              failed={compareFailed}
+              onRetry={() => setCompareReload((n) => n + 1)}
             />
           )}
         </>
@@ -188,6 +196,8 @@ function CompareSection({
   data,
   currentId,
   loading,
+  failed,
+  onRetry,
 }: {
   campaigns: CampaignSummary[];
   selectedId: number | null;
@@ -195,6 +205,8 @@ function CompareSection({
   data: CampaignStatsCompareResponse | null;
   currentId: number;
   loading: boolean;
+  failed: boolean;
+  onRetry: () => void;
 }) {
   const t = useTranslations("campaignApp.campaignStats");
   return (
@@ -249,7 +261,8 @@ function CompareSection({
           })}
         </div>
       )}
-      {!loading && !data && (
+      {failed && !loading && <ErrorState message={t("loadFailed")} onRetry={onRetry} />}
+      {!loading && !data && !failed && (
         <p className="text-[12px] text-slate-500 dark:text-slate-400">
           {t("compare.selectHint")}
         </p>

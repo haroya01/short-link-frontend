@@ -163,7 +163,7 @@ async function tryRefresh(): Promise<string | null> {
 }
 
 export type RequestInitWithBody = Omit<RequestInit, "body"> & {
-  body?: BodyInit | object | null;
+  body?: Exclude<BodyInit, string> | object | null;
   /** Per-call abort ceiling. Omit for the 8s default; pass 0 to opt out (long-running exports). */
   timeoutMs?: number;
 };

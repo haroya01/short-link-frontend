@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import type { EventLink, MyEvent } from "@/modules/events/api/events";
 import { createAliasLink } from "@/modules/events/api/events";
-import { shortUrlOf } from "@/modules/events/lib/format";
+import { shortUrlOf } from "@/lib/short-url";
 import { cn } from "@/lib/utils";
 
 const ROW_BUTTON =
