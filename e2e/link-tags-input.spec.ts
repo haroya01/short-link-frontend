@@ -23,7 +23,7 @@ async function openLinkTags(page: Page) {
   });
   await page.goto(`/ko/stats/${CODE}`);
   await page
-    .getByRole("alert")
+    .getByRole("status")
     .filter({ hasText: "목적지가 열리지 않아요." })
     .getByRole("button", { name: "목적지 바꾸기" })
     .click();
