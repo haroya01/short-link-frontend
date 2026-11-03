@@ -10,7 +10,7 @@ import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns"
 import { Sparkline } from "@/components/links/stats/sparkline";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { HourChart } from "@/components/links/stats/charts/hour-chart";
-import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
+import { journalEntries, type JournalEntry } from "@/lib/stats-journal";
 import { cn, formatNumber } from "@/lib/utils";
 import { countryItems } from "@/components/links/stats/stat-sections";
 import { sourceBreakdown } from "@/lib/stats-sources";
@@ -144,7 +144,7 @@ export function StatsJournal({
   const t = useTranslations("stats.journal");
   const locale = useLocale();
   const labels = useStatsLabels();
-  const entries = buildJournal(data);
+  const entries = journalEntries(data);
   const [showAll, setShowAll] = useState(false);
   const [openKeys, setOpenKeys] = useState<ReadonlySet<string>>(new Set());
   // 접힘 애니메이션 동안 내용이 사라지지 않도록, 한 번 펼친 근거는 마운트를 유지한다.

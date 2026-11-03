@@ -76,6 +76,16 @@ export type LinkStats = {
   datacenterClicks: number;
   rawRetentionDays?: number;
   rawSince?: string | null;
+  insights?: LinkInsight[];
+};
+
+/** 백엔드 LinkInsights 의 사실 하나. code 가 없는 항목은 옛 서버의 문장(message)만 담는다. */
+type LinkInsight = {
+  code?: string | null;
+  params?: Record<string, string | number> | null;
+  evidence?: string | null;
+  ratio?: number | null;
+  spark?: number[] | null;
 };
 
 /**

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildJournal } from "./stats-journal";
+import { buildJournal, journalEntries } from "./stats-journal";
 import { realLinkStats } from "./link-stats-real.fixture";
 import type { LinkStats } from "@/types";
 
@@ -219,3 +219,32 @@ describe("buildJournal", () => {
     });
   });
 });
+
+describe("journalEntries", () => {
+  it("draws the server's facts in the server's order, with the web's param shapes and evidence anchors", () => {
+    const entries = journalEntries(
+      stats({
+        insights: [
+          { code: "velocity", params: { x: 2 }, evidence: "hourly", ratio: null, spark: null },
+          { code: "peakDay", params: { date: "2026-07-02", count: 41 }, evidence: "daily", spark: [3, 5, 41] },
+          { code: "topCountry", params: { country: "KR", percent: 72 }, evidence: "countries", ratio: 0.72 },
+          { code: "SOMETHING_NEW", params: {}, evidence: "elsewhere" },
+        ],
+      }),
+    );
+    expect(entries.map((e) => [e.key, e.params, e.evidence])).toEqual([
+      ["velocity", { x: "2.0" }, "section-hourly"],
+      ["peakDay", { date: "07-02", count: 41 }, "section-daily"],
+      ["topCountry", { country: "KR", percent: 72 }, "chapter-where"],
+    ]);
+    expect(entries[1].spark).toEqual([3, 5, 41]);
+    expect(entries[2].ratio).toBe(0.72);
+  });
+
+  it("an older server without fact codes falls back to the web rules", () => {
+    const data = { ...realLinkStats(), insights: [{ code: null, params: null }] } as LinkStats;
+    expect(journalEntries(data)).toEqual(buildJournal(data));
+    expect(journalEntries(realLinkStats())).toEqual(buildJournal(realLinkStats()));
+  });
+});
+
