@@ -31,7 +31,7 @@ export function MobilePreviewSheet({ children }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="focus-ring inline-flex h-11 shrink-0 items-center rounded-lg border border-slate-300 bg-white px-3.5 text-sm font-medium text-slate-800 transition-colors duration-200 ease-[var(--ease)] hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 lg:hidden"
+        className="focus-ring inline-flex min-h-11 shrink-0 items-center rounded-full border border-slate-200 px-4 text-[14px] font-medium text-slate-600 transition-colors duration-200 ease-[var(--ease)] hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-slate-100 lg:hidden"
       >
         {t("previewTitle")}
       </button>

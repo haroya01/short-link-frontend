@@ -116,7 +116,7 @@ export default function ProfileEditPage() {
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           {hasEmailForm && (
-            <SwitchLink href={blogHref("/leads")} icon={Mail} className="shrink-0">
+            <SwitchLink href={blogHref("/leads")} icon={Mail} className="min-h-11 shrink-0">
               {t("leadsLink")}
             </SwitchLink>
           )}

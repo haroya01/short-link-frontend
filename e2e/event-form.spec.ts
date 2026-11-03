@@ -103,7 +103,7 @@ test.describe("desktop", () => {
     await expect(preview(page).getByRole("button", { name: "신청하기" })).toHaveCount(0);
   });
 
-  test("a preview taller than the screen is not boxed into its own scroll, and the page reaches its whole register button", async ({ page }) => {
+  test("a preview taller than the screen is not boxed into its own scroll, so the page scroll reaches its whole register button", async ({ page }) => {
     await organizer(page);
     await page.goto("/ko/events/new");
     await expect(page.locator("#ef-starts")).not.toHaveValue("");
@@ -113,8 +113,8 @@ test.describe("desktop", () => {
     const box = preview(page);
     await expect(box.locator(".prose-event")).toContainText("30번째 메모");
     expect(await box.evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(1);
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     const button = box.getByRole("button", { name: "신청하기" });
+    await button.scrollIntoViewIfNeeded();
     await expect(button).toBeInViewport({ ratio: 1 });
   });
 });
