@@ -175,7 +175,7 @@ function Header({
       <div className="flex items-center gap-2">
         <CampaignStatusBadge status={campaign.status} />
         <span className="text-[12px] text-slate-500 dark:text-slate-400">
-          {formatPeriod(campaign.startsAt, campaign.endsAt, locale)}
+          {formatPeriod(campaign.startsAt, campaign.endedAt ?? campaign.endsAt, locale)}
         </span>
       </div>
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">

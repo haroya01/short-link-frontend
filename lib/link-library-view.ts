@@ -1,8 +1,18 @@
 import type { MyLink } from "@/types";
 import type { MyLinksFilters } from "./api/links";
+import { linkExpiry } from "./link-expiry";
 
-export function linkDisplayName(link: MyLink): string {
-  if (link.note?.trim()) return link.note.trim();
+export type LinkNameSource = {
+  shortCode: string;
+  originalUrl: string;
+  note?: string | null;
+  ogTitle?: string | null;
+  ogTitleOverride?: string | null;
+};
+
+export function linkDisplayName(link: LinkNameSource): string {
+  const named = link.note?.trim() || link.ogTitleOverride?.trim() || link.ogTitle?.trim();
+  if (named) return named;
   try { return new URL(link.originalUrl).hostname; } catch { return `/${link.shortCode}`; }
 }
 
@@ -17,12 +27,12 @@ export function filterFavoriteLinks(items: MyLink[], filters: MyLinksFilters, no
     }
     if (filters.createdAfter && new Date(item.createdAt) < new Date(filters.createdAfter)) return false;
     if (filters.createdBefore && new Date(item.createdAt) > new Date(filters.createdBefore)) return false;
-    const expiry = item.expiresAt ? +new Date(item.expiresAt) : null;
+    const expiry = linkExpiry(item.expiresAt, { now });
     if (filters.expiry === "NEVER" && expiry !== null) return false;
     if (filters.expiry === "HAS_EXPIRY" && expiry === null) return false;
-    if (filters.expiry === "EXPIRED" && (expiry === null || expiry >= now)) return false;
-    if (filters.expiry === "ACTIVE" && expiry !== null && expiry < now) return false;
-    if (filters.expiry === "EXPIRING_SOON" && (expiry === null || expiry < now || expiry >= now + 3 * 86400000)) return false;
+    if (filters.expiry === "EXPIRED" && expiry?.kind !== "expired") return false;
+    if (filters.expiry === "ACTIVE" && expiry?.kind === "expired") return false;
+    if (filters.expiry === "EXPIRING_SOON" && expiry?.kind !== "soon") return false;
     return true;
   });
 }

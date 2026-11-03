@@ -1282,7 +1282,7 @@
     "anonymousExpirySignup": "अपने आँकड़े रखने के लिए साइन इन करें",
     "liveWaiting": "पहले क्लिक का इंतज़ार",
     "liveCount": "{count} क्लिक",
-    "liveBots": "{count} बॉट"
+    "liveBots": "{count} स्वचालित"
   },
   "login": {
     "title": "साइन इन करें",
@@ -1480,10 +1480,7 @@
       "sortDesc": "अवरोही"
     },
     "card": {
-      "week": "7 दिन के मानवीय क्लिक: {count}",
-      "expiresToday": "आज समाप्त",
-      "expiresIn": "{days} दिन शेष",
-      "expired": "समाप्त"
+      "week": "7 दिन के मानवीय क्लिक: {count}"
     },
     "actions": {
       "stats": "आँकड़े",
@@ -1631,17 +1628,16 @@
       "settings": "सेटिंग्स"
     },
     "live": {
-      "now": "अभी",
-      "bot": "बॉट"
+      "now": "अभी"
     },
     "quality": {
       "title": "क्लिक गुणवत्ता",
       "returning": "वापसी अनुपात",
       "returningHint": "{count} आगंतुक लौटे",
-      "clicksPerUnique": "प्रति अद्वितीय क्लिक",
-      "clicksPerUniqueHint": "{unique} अद्वितीय आगंतुक",
-      "realVsPreview": "असली / पूर्वावलोकन",
-      "realVsPreviewHint": "पूर्वावलोकन कुल का {ratio} हैं",
+      "clicksPerUnique": "प्रति आगंतुक क्लिक",
+      "clicksPerUniqueHint": "{unique} अनुमानित आगंतुक",
+      "realVsPreview": "मानवीय क्लिक / पूर्वावलोकन",
+      "realVsPreviewHint": "पूर्वावलोकन कुल का {ratio}",
       "peakHour": "पीक घंटा",
       "peakHourHint": "इस घंटे में सबसे ज़्यादा क्लिक आते हैं",
       "peakHourEmpty": "पर्याप्त डेटा नहीं"
@@ -1705,7 +1701,7 @@
       "save": "सहेजें",
       "configSaved": "विकल्प सहेजे गए",
       "configFailed": "विकल्प सहेजने में विफल।",
-      "optIncludeBots": "बॉट / पूर्वावलोकन क्लिक शामिल करें",
+      "optIncludeBots": "स्वचालित क्लिक भी भेजें",
       "optBatch": "बैच मोड (हर 5 सेकंड में एक POST, अधिकतम 50 इवेंट)",
       "optSampleRate": "नमूना दर: {rate}%",
       "optSampleRateAria": "नमूना दर",
@@ -1713,7 +1709,7 @@
       "optDailyQuotaPlaceholder": "जैसे 10000 (खाली = असीमित)",
       "optReferrerFilter": "रेफ़रर होस्ट फ़िल्टर",
       "optUtmFilter": "UTM स्रोत फ़िल्टर",
-      "badgeSkipBots": "बॉट छोड़ें",
+      "badgeSkipBots": "स्वचालित छोड़ें",
       "badgeSample": "नमूना {rate}%",
       "badgeBatch": "बैच",
       "badgeQuota": "{n}/दिन",
@@ -1775,7 +1771,7 @@
     "notFoundDesc": "शायद इसे हटा दिया गया या यह कभी अस्तित्व में नहीं था।",
     "backToDashboard": "मेरे लिंक पर वापस",
     "kpi": {
-      "totalClicks": "अब तक के क्लिक",
+      "totalClicks": "स्वचालित सहित",
       "totalVisits": "अब तक की विज़िट",
       "unique": "अनुमानित आगंतुक",
       "human": "मानवीय क्लिक",
@@ -1803,7 +1799,7 @@
       },
       "device": {
         "title": "डिवाइस",
-        "desc": "मोबाइल · डेस्कटॉप · टैबलेट · बॉट"
+        "desc": "मोबाइल · डेस्कटॉप · टैबलेट"
       },
       "channel": {
         "title": "चैनल",
@@ -1867,7 +1863,7 @@
         "desc": "हर चैनल पहली बार कब दिखा, और उसके कितने % विज़िटर लौटे"
       },
       "bots": {
-        "title": "बॉट प्रकार",
+        "title": "स्वचालित ट्रैफ़िक के प्रकार",
         "desc": "Googlebot · Slackbot आदि।"
       },
       "country": {
@@ -1922,7 +1918,7 @@
     "noClicks": "अभी तक कोई क्लिक नहीं",
     "clickCount": "{count} क्लिक",
     "noUtm": "कोई UTM कैंपेन डेटा नहीं",
-    "noBot": "कोई बॉट क्लिक नहीं",
+    "noBot": "कोई स्वचालित क्लिक नहीं",
     "weekday": {
       "MONDAY": "सोम",
       "TUESDAY": "मंगल",
@@ -1931,13 +1927,6 @@
       "FRIDAY": "शुक्र",
       "SATURDAY": "शनि",
       "SUNDAY": "रवि"
-    },
-    "device": {
-      "mobile": "मोबाइल",
-      "desktop": "डेस्कटॉप",
-      "tablet": "टैबलेट",
-      "bot": "बॉट",
-      "unknown": "अन्य"
     },
     "country": {
       "unknown": "अज्ञात"
@@ -1966,7 +1955,6 @@
       "loadMore": "और देखें",
       "retention": "{days} दिन से पुराने अलग-अलग क्लिक नहीं रखे जाते",
       "empty": "अभी तक कोई क्लिक नहीं।",
-      "bot": "बॉट",
       "colTime": "समय",
       "colLocation": "स्थान",
       "colDevice": "डिवाइस",
@@ -2134,6 +2122,35 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
+    }
+  },
+  "statLabels": {
+    "unknown": "अज्ञात",
+    "kakaotalk": "KakaoTalk",
+    "channel": {
+      "social": "सोशल",
+      "messaging": "मैसेजिंग",
+      "search": "सर्च",
+      "email": "ईमेल",
+      "newsletter": "न्यूज़लेटर",
+      "other": "अन्य",
+      "direct": "सीधा"
+    },
+    "device": {
+      "mobile": "मोबाइल",
+      "desktop": "डेस्कटॉप",
+      "tablet": "टैबलेट",
+      "bot": "स्वचालित",
+      "unknown": "अन्य"
+    },
+    "botKind": {
+      "preview": "पूर्वावलोकन",
+      "prefetch": "प्रीफ़ेच",
+      "datacenter": "डेटा सेंटर",
+      "burst": "लगातार दोहराई गई पहुँच"
+    },
+    "source": {
+      "profile": "प्रोफ़ाइल @{user}"
     }
   },
   "admin": {
@@ -3691,15 +3708,13 @@
       "loadFailed": "लोड विफल",
       "backToCampaign": "QR कैंपेन पर वापस",
       "title": "आँकड़े",
-      "introCampaign": "<name></name> · कैंपेन शुरू होने के बाद के क्लिक गिनता है, बॉट और पूर्वावलोकन को छोड़कर।",
+      "introCampaign": "<name></name> · कैंपेन शुरू होने के बाद के मानवीय क्लिक गिनता है।",
       "loading": "लोड हो रहा है...",
       "groups": {
         "distributorTitle": "वितरक के अनुसार प्रदर्शन",
         "distributorHint": "प्रति 100 शीट क्लिक, इसलिए अलग-अलग मात्राएँ बाँटने वाले वितरकों की भी तुलना हो सकती है।",
         "areaTitle": "क्षेत्र के अनुसार प्रदर्शन",
         "areaHint": "अगला वितरण स्थान तय करने के लिए इसका उपयोग करें।",
-        "tooltip": "{rate} / 100 शीट · क्लिक {clicks} / वितरित {quantity}",
-        "efficiency": "दक्षता",
         "meta": "क्लिक {clicks} · {quantity} शीट"
       },
       "compare": {
@@ -3711,20 +3726,21 @@
         "selectHint": "ऊपर ड्रॉपडाउन से एक कैंपेन चुनें।"
       },
       "kpi": {
-        "totalClicks": "कुल क्लिक",
-        "perHundred": "प्रति 100",
+        "totalClicks": "मानवीय क्लिक",
+        "perHundred": "प्रति 100 शीट",
         "topArea": "शीर्ष क्षेत्र",
         "batches": "बैच",
-        "totalDistributed": "प्रिंट/वितरित",
-        "perHundredHint": "औसत दक्षता (क्लिक / वितरित × 100)"
+        "totalDistributed": "प्रिंट/वितरित"
       },
       "units": {
         "count": "{count}",
-        "sheets": "{count} शीट"
+        "sheets": "{count} शीट",
+        "perHundred": "प्रति 100 शीट {rate}",
+        "rate": "{rate}"
       },
       "recommendation": {
         "title": "अगले वितरण की अनुशंसा",
-        "description": "{total} शीट का वही कुल फिर से वितरित करें। आधार औसत प्रति 100 {average} है।",
+        "description": "{total} शीट का वही कुल फिर से बाँटें। औसत प्रति 100 शीट {average} है।",
         "footnote": "अनुशंसा दक्षता अनुपात पर आधारित है। औसत के 30% से कम छाँट दिया जाता है; बाकी अनुपात के अनुसार पुनः आवंटित, प्रति बैच 3x तक सीमित।",
         "verdict": {
           "BOOST": "बढ़ाएँ",
@@ -3732,20 +3748,20 @@
           "REDUCE": "घटाएँ",
           "PRUNE": "छाँटें"
         },
-        "rowMeta": "{current} → {recommended} शीट · {rate} प्रति 100"
+        "rowMeta": "{current} → {recommended} शीट · प्रति 100 शीट {rate}"
       },
       "daily": {
         "title": "दैनिक क्लिक",
-        "description": "कैंपेन शुरू होने के बाद से"
+        "description": "कैंपेन शुरू होने के बाद से · {tz}"
       },
       "hourly": {
         "title": "घंटे के अनुसार क्लिक",
-        "description": "0–23",
+        "description": "{tz}",
         "tooltip": "{hour}:00: {clicks}"
       },
       "heatmap": {
         "title": "दिन × घंटा वितरण",
-        "description": "गहरे सेल का अर्थ ज़्यादा क्लिक।"
+        "description": "{tz}"
       },
       "testScans": {
         "title": "शुरुआत-पूर्व टेस्ट स्कैन",
@@ -3756,7 +3772,7 @@
         "empty": "अभी तक कोई वितरण बैच नहीं। एक जोड़ने के बाद बैच प्रदर्शन यहाँ दिखता है।",
         "title": "बैच के अनुसार प्रदर्शन",
         "description": "क्लिक के घटते क्रम में। बार सबसे ऊँची पंक्ति के सापेक्ष हैं।",
-        "meta": "/ {quantity} शीट · {rate}%"
+        "meta": "/ {quantity} शीट · प्रति 100 शीट {rate}"
       }
     }
   },
@@ -4312,7 +4328,7 @@
     "vsPrevDown": "उससे पहले के 7 दिनों से {percent}% कम ({count})",
     "vsPrevSimilar": "उससे पहले के 7 दिनों जितना ही ({count})",
     "vsPrevNone": "उससे पहले के 7 दिनों में कोई क्लिक नहीं",
-    "scopeNote": "बॉट क्लिक शामिल नहीं। समय {tz} के अनुसार।",
+    "scopeNote": "स्वचालित क्लिक शामिल नहीं। समय {tz} के अनुसार।",
     "attention": "देखने योग्य",
     "zeroClick": "{count} लिंक पर अभी कोई क्लिक नहीं",
     "expiring": "{count} लिंक 3 दिनों में समाप्त",
@@ -4346,6 +4362,12 @@
     "delete": "हटाएँ",
     "favorite": "पसंदीदा में जोड़ें",
     "unfavorite": "पसंदीदा से हटाएँ"
+  },
+  "linkState": {
+    "expired": "समाप्त",
+    "expiresToday": "आज समाप्त",
+    "expiresIn": "{days} दिन शेष",
+    "password": "पासवर्ड"
   },
   "linkReport": {
     "title": "लिंक की रिपोर्ट करें",

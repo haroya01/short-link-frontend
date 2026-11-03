@@ -17,6 +17,7 @@ import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn, formatNumber } from "@/lib/utils";
 import { linkDisplayName } from "@/lib/link-library-view";
+import { LinkStateBadges } from "@/components/links/link-state-badges";
 import type { MyLink } from "@/types";
 
 type SortKey = "createdAt" | "humanClickCount";
@@ -202,7 +203,6 @@ export function LinksTable({
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {items.map((item) => {
             const bump = liveByCode?.[item.shortCode];
-            const expiry = expiryState(item.expiresAt);
             const favorite = isFavorite(item.shortCode);
             return (
               <li
@@ -237,9 +237,7 @@ export function LinksTable({
                           {linkDisplayName(item)}
                         </span>
                         {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-slate-900 dark:text-slate-100" />}
-                        {expiry?.kind === "expired" && (
-                          <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
-                        )}
+                        <LinkStateBadges expiresAt={item.expiresAt} timezone={item.timezone} />
                       </span>
                       <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">
                         <span className="font-mono">/{item.shortCode}</span> · {hostOf(item.originalUrl)}
@@ -284,14 +282,7 @@ export function LinksTable({
                       {linkDisplayName(item)}
                     </span>
                     {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-slate-900 dark:text-slate-100" />}
-                    {expiry?.kind === "expired" && (
-                      <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
-                    )}
-                    {expiry?.kind === "soon" && (
-                      <span className="shrink-0 text-xs font-medium text-amber-700 dark:text-amber-400">
-                        {expiry.days === 0 ? t("card.expiresToday") : t("card.expiresIn", { days: expiry.days })}
-                      </span>
-                    )}
+                    <LinkStateBadges expiresAt={item.expiresAt} timezone={item.timezone} />
                   </span>
                   <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
                     <span data-vt-link-code className="shrink-0 font-mono">/{item.shortCode}</span>
@@ -433,29 +424,12 @@ export function LinksTable({
   );
 }
 
-type ExpiryState =
-  | { kind: "expired" }
-  | { kind: "soon"; days: number }
-  | { kind: "later" }
-  | null;
-
 function hostOf(url: string): string {
   try {
     return new URL(url).host.replace(/^www\./, "");
   } catch {
     return url;
   }
-}
-
-function expiryState(expiresAt: string | null | undefined): ExpiryState {
-  if (!expiresAt) return null;
-  const expires = +new Date(expiresAt);
-  if (!Number.isFinite(expires)) return null;
-  const now = Date.now();
-  if (expires < now) return { kind: "expired" };
-  const days = Math.floor((expires - now) / 86_400_000);
-  if (days <= 7) return { kind: "soon", days };
-  return { kind: "later" };
 }
 
 /**

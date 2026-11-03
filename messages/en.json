@@ -1282,7 +1282,7 @@
     "anonymousExpirySignup": "Sign in to keep your stats",
     "liveWaiting": "Waiting for the first click",
     "liveCount": "{count, plural, one {# click} other {# clicks}}",
-    "liveBots": "{count, plural, one {# bot} other {# bots}}"
+    "liveBots": "{count} automated"
   },
   "login": {
     "title": "Sign in",
@@ -1480,10 +1480,7 @@
       "sortDesc": "descending"
     },
     "card": {
-      "week": "7-day human clicks: {count}",
-      "expiresToday": "Expires today",
-      "expiresIn": "{days}d left",
-      "expired": "Expired"
+      "week": "7-day human clicks: {count}"
     },
     "actions": {
       "stats": "Stats",
@@ -1631,17 +1628,16 @@
       "settings": "Settings"
     },
     "live": {
-      "now": "Now",
-      "bot": "Bot"
+      "now": "Now"
     },
     "quality": {
       "title": "Click quality",
       "returning": "Returning ratio",
       "returningHint": "{count} visitors returned",
-      "clicksPerUnique": "Clicks per unique",
-      "clicksPerUniqueHint": "{unique} unique visitors",
-      "realVsPreview": "Real / preview",
-      "realVsPreviewHint": "Previews are {ratio} of total",
+      "clicksPerUnique": "Clicks per visitor",
+      "clicksPerUniqueHint": "{unique} estimated visitors",
+      "realVsPreview": "Human clicks / previews",
+      "realVsPreviewHint": "Previews are {ratio} of all",
       "peakHour": "Peak hour",
       "peakHourHint": "Most clicks land in this hour",
       "peakHourEmpty": "Not enough data"
@@ -1705,7 +1701,7 @@
       "save": "Save",
       "configSaved": "Options saved",
       "configFailed": "Failed to save options.",
-      "optIncludeBots": "Include bot / preview clicks",
+      "optIncludeBots": "Include automated clicks",
       "optBatch": "Batch mode (one POST every 5s, max 50 events)",
       "optSampleRate": "Sample rate: {rate}%",
       "optSampleRateAria": "Sample rate",
@@ -1713,7 +1709,7 @@
       "optDailyQuotaPlaceholder": "e.g. 10000 (blank = unlimited)",
       "optReferrerFilter": "Referrer host filter",
       "optUtmFilter": "UTM source filter",
-      "badgeSkipBots": "skip bots",
+      "badgeSkipBots": "skip automated",
       "badgeSample": "sample {rate}%",
       "badgeBatch": "batch",
       "badgeQuota": "{n}/day",
@@ -1775,7 +1771,7 @@
     "notFoundDesc": "It may have been deleted or never existed.",
     "backToDashboard": "Back to my links",
     "kpi": {
-      "totalClicks": "Lifetime clicks",
+      "totalClicks": "Incl. automated",
       "totalVisits": "Lifetime visits",
       "unique": "Estimated visitors",
       "human": "Human clicks",
@@ -1803,7 +1799,7 @@
       },
       "device": {
         "title": "Device",
-        "desc": "mobile · desktop · tablet · bot"
+        "desc": "mobile · desktop · tablet"
       },
       "channel": {
         "title": "Channel",
@@ -1867,7 +1863,7 @@
         "desc": "When each channel first showed up, and how many of its visitors came back"
       },
       "bots": {
-        "title": "Bot types",
+        "title": "Automated traffic",
         "desc": "Googlebot · Slackbot etc."
       },
       "country": {
@@ -1922,7 +1918,7 @@
     "noClicks": "No clicks yet",
     "clickCount": "{count} clicks",
     "noUtm": "No UTM campaign data",
-    "noBot": "No bot clicks",
+    "noBot": "No automated clicks",
     "weekday": {
       "MONDAY": "Mon",
       "TUESDAY": "Tue",
@@ -1931,13 +1927,6 @@
       "FRIDAY": "Fri",
       "SATURDAY": "Sat",
       "SUNDAY": "Sun"
-    },
-    "device": {
-      "mobile": "Mobile",
-      "desktop": "Desktop",
-      "tablet": "Tablet",
-      "bot": "Bot",
-      "unknown": "Other"
     },
     "country": {
       "unknown": "Unknown"
@@ -1966,7 +1955,6 @@
       "loadMore": "Load more",
       "retention": "Individual clicks older than {days} days aren't kept",
       "empty": "No clicks yet.",
-      "bot": "Bot",
       "colTime": "Time",
       "colLocation": "Location",
       "colDevice": "Device",
@@ -2134,6 +2122,35 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
+    }
+  },
+  "statLabels": {
+    "unknown": "Unknown",
+    "kakaotalk": "KakaoTalk",
+    "channel": {
+      "social": "Social",
+      "messaging": "Messaging",
+      "search": "Search",
+      "email": "Email",
+      "newsletter": "Newsletter",
+      "other": "Other",
+      "direct": "Direct"
+    },
+    "device": {
+      "mobile": "Mobile",
+      "desktop": "Desktop",
+      "tablet": "Tablet",
+      "bot": "Automated",
+      "unknown": "Other"
+    },
+    "botKind": {
+      "preview": "Preview",
+      "prefetch": "Prefetch",
+      "datacenter": "Datacenter",
+      "burst": "Rapid repeat visits"
+    },
+    "source": {
+      "profile": "Profile @{user}"
     }
   },
   "admin": {
@@ -3691,15 +3708,13 @@
       "loadFailed": "Load failed",
       "backToCampaign": "Back to QR campaign",
       "title": "Stats",
-      "introCampaign": "<name></name> · Counts clicks after campaign start, excluding bots and previews.",
+      "introCampaign": "<name></name> · Counts human clicks after the campaign starts.",
       "loading": "Loading...",
       "groups": {
         "distributorTitle": "Performance by distributor",
         "distributorHint": "Clicks per 100 sheets, so distributors can be compared even when they handed out different amounts.",
         "areaTitle": "Performance by area",
         "areaHint": "Use this to decide the next distribution location.",
-        "tooltip": "{rate} / 100 sheets · clicks {clicks} / distributed {quantity}",
-        "efficiency": "Efficiency",
         "meta": "clicks {clicks} · {quantity} sheets"
       },
       "compare": {
@@ -3711,20 +3726,21 @@
         "selectHint": "Choose a campaign from the dropdown above."
       },
       "kpi": {
-        "totalClicks": "Total clicks",
-        "perHundred": "Per 100",
+        "totalClicks": "Human clicks",
+        "perHundred": "Per 100 sheets",
         "topArea": "Top area",
         "batches": "Batches",
-        "totalDistributed": "Printed/distributed",
-        "perHundredHint": "Average efficiency (clicks / distributed × 100)"
+        "totalDistributed": "Printed/distributed"
       },
       "units": {
         "count": "{count}",
-        "sheets": "{count} sheets"
+        "sheets": "{count} sheets",
+        "perHundred": "{rate} per 100 sheets",
+        "rate": "{rate}"
       },
       "recommendation": {
         "title": "Next distribution recommendation",
-        "description": "Redistribute the same total of {total} sheets. Baseline average is {average} per 100.",
+        "description": "Redistribute the same total of {total} sheets. The average is {average} per 100 sheets.",
         "footnote": "Recommendation based on efficiency ratios. Under 30% of average is pruned; the rest is reallocated by ratio, capped at 3x per batch.",
         "verdict": {
           "BOOST": "Boost",
@@ -3732,20 +3748,20 @@
           "REDUCE": "Reduce",
           "PRUNE": "Prune"
         },
-        "rowMeta": "{current} → {recommended} sheets · {rate} per 100"
+        "rowMeta": "{current} → {recommended} sheets · {rate} per 100 sheets"
       },
       "daily": {
         "title": "Daily clicks",
-        "description": "Since campaign start"
+        "description": "Since campaign start · {tz}"
       },
       "hourly": {
         "title": "Clicks by hour",
-        "description": "0–23",
+        "description": "{tz}",
         "tooltip": "{hour}:00: {clicks}"
       },
       "heatmap": {
         "title": "Day × hour distribution",
-        "description": "Darker cells mean more clicks."
+        "description": "{tz}"
       },
       "testScans": {
         "title": "Pre-start test scans",
@@ -3756,7 +3772,7 @@
         "empty": "No distribution batches yet. Batch performance appears here after you add one.",
         "title": "Performance by batch",
         "description": "Sorted by clicks descending. Bars are relative to the max row.",
-        "meta": "/ {quantity} sheets · {rate}%"
+        "meta": "/ {quantity} sheets · {rate} per 100 sheets"
       }
     }
   },
@@ -4312,7 +4328,7 @@
     "vsPrevDown": "Down {percent}% on the 7 days before ({count})",
     "vsPrevSimilar": "About the same as the 7 days before ({count})",
     "vsPrevNone": "No clicks in the 7 days before",
-    "scopeNote": "Bot clicks excluded. Times in {tz}.",
+    "scopeNote": "Automated clicks excluded. Times in {tz}.",
     "attention": "Worth a look",
     "zeroClick": "{count, plural, one {# link} other {# links}} without clicks yet",
     "expiring": "{count, plural, one {# link expires} other {# links expire}} within 3 days",
@@ -4346,6 +4362,12 @@
     "delete": "Delete",
     "favorite": "Add to favorites",
     "unfavorite": "Remove from favorites"
+  },
+  "linkState": {
+    "expired": "Expired",
+    "expiresToday": "Expires today",
+    "expiresIn": "{days}d left",
+    "password": "Password"
   },
   "linkReport": {
     "title": "Report a link",

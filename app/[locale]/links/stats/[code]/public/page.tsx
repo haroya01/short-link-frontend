@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api";
@@ -15,16 +16,20 @@ import { CountryTable } from "@/components/links/stats/country-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import { useStatsLabels } from "@/lib/stats-labels";
+import { fillDailyClicks } from "@/lib/stats-daily";
 
 export default function PublicStatsPage() {
   const params = useParams<{ code: string }>();
   const t = useTranslations("stats");
   const tPublic = useTranslations("publicStats");
+  const labels = useStatsLabels();
   const code = params.code;
 
   const { data, error, isLoading } = usePublicLinkStats(code);
   const notFound = error instanceof ApiError && error.status === 404;
   const realError = Boolean(error) && !notFound;
+  const daily = useMemo(() => fillDailyClicks(data?.dailyClicks ?? [], { timezone: data?.timezone }), [data]);
 
   if (isLoading) {
     return (
@@ -82,7 +87,7 @@ export default function PublicStatsPage() {
         unique={data.uniqueClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
-        dailySeries={data.dailyClicks?.map((d) => d.count)}
+        dailySeries={daily.map((d) => d.count)}
         navigationTargets={["section-daily", "section-device"]}
       />
 
@@ -100,7 +105,7 @@ export default function PublicStatsPage() {
           description={t("section.daily.desc", { tz: data.timezone })}
           className="lg:col-span-2"
         >
-          <DailyChart data={data.dailyClicks} />
+          <DailyChart data={daily} />
         </Section>
         <Section
           id="section-device"
@@ -114,7 +119,7 @@ export default function PublicStatsPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
           <BreakdownList
-            items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
+            items={data.channelClicks.map((c) => ({ label: labels.channel(c.channel), count: c.count }))}
           />
         </Section>
         <Section title={t("section.country.title")} description={t("section.country.desc")}>

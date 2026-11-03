@@ -3,10 +3,12 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useClickStream } from "@/hooks/use-click-stream";
 import { cn } from "@/lib/utils";
+import { useStatsLabels } from "@/lib/stats-labels";
 
 export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick?: () => void }) {
   const t = useTranslations("stats");
   const locale = useLocale();
+  const labels = useStatsLabels();
   const { items, count } = useClickStream(shortCode, { onTick });
 
   return (
@@ -32,9 +34,9 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
                     {formatTime(item.occurredAt, locale)}
                   </time>
                   <span className="min-w-0 truncate text-slate-900 dark:text-slate-100">
-                    {[item.countryCode, item.deviceClass, item.channel].filter(Boolean).join(" · ")}
+                    {[item.countryCode && labels.country(item.countryCode), item.bot ? null : item.deviceClass && labels.device(item.deviceClass), item.channel && labels.channel(item.channel)].filter(Boolean).join(" · ")}
                   </span>
-                  {item.bot && <span className="ml-auto shrink-0 text-slate-500 dark:text-slate-400">{t("live.bot")}</span>}
+                  {item.bot && <span className="ml-auto shrink-0 text-slate-500 dark:text-slate-400">{labels.device("bot")}</span>}
                 </li>
               ))}
             </ul>

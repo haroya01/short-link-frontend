@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { formatShare } from "@/lib/utils";
+import { formatNumber, formatShare } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 
 /**
@@ -29,16 +29,16 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
       label: t("returning"),
       window: data.rawSince && data.rawRetentionDays ? tStats("rawWindow", { days: data.rawRetentionDays }) : undefined,
       value: formatShare(returningRatio),
-      hint: t("returningHint", { count: returningCount }),
+      hint: t("returningHint", { count: formatNumber(returningCount) }),
     },
     {
       label: t("clicksPerUnique"),
       value: clicksPerUnique.toFixed(1),
-      hint: t("clicksPerUniqueHint", { unique }),
+      hint: t("clicksPerUniqueHint", { unique: formatNumber(unique) }),
     },
     {
       label: t("realVsPreview"),
-      value: `${realClicks} / ${previewClicks}`,
+      value: `${formatNumber(realClicks)} / ${formatNumber(previewClicks)}`,
       hint: t("realVsPreviewHint", { ratio: formatShare(previewRatio) }),
     },
     {

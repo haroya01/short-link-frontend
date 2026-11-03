@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useClickStream, type LiveClick } from "@/hooks/use-click-stream";
 import { cn } from "@/lib/utils";
+import { useStatsLabels } from "@/lib/stats-labels";
 
 type Props = {
   shortCode: string;
@@ -48,10 +49,13 @@ function LiveLine({
   className?: string;
 }) {
   const t = useTranslations("result");
+  const labels = useStatsLabels();
   const latest = items[0];
   const bots = items.filter((item) => item.bot).length;
   const people = items.length - bots;
-  const detail = latest ? [latest.countryCode, latest.deviceClass, latest.channel].filter(Boolean).join(" · ") : "";
+  const detail = latest
+    ? [latest.countryCode && labels.country(latest.countryCode), latest.bot ? labels.device("bot") : latest.deviceClass && labels.device(latest.deviceClass), latest.channel && labels.channel(latest.channel)].filter(Boolean).join(" · ")
+    : "";
 
   return (
     <p

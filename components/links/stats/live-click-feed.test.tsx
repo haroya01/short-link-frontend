@@ -23,7 +23,7 @@ let root: Root;
 let host: HTMLDivElement;
 
 function click(id: number, bot: boolean): LiveClick {
-  return { id, occurredAt: "2026-11-02T09:00:00Z", countryCode: "KR", deviceClass: "iOS", channel: "kakao", bot };
+  return { id, occurredAt: "2026-11-02T09:00:00Z", countryCode: "KR", deviceClass: bot ? "bot" : "mobile", channel: "messaging", bot };
 }
 
 beforeEach(() => {
@@ -65,9 +65,10 @@ describe("LiveClickFeed on the 클릭 추이 tab", () => {
     expect(host.querySelector("h2")!.textContent).toBe("live.now");
     const rows = [...host.querySelectorAll("li")];
     expect(rows).toHaveLength(2);
-    expect(rows[0].textContent).toContain("KR · iOS · kakao");
-    expect(rows[0].textContent).toContain("live.bot");
-    expect(rows[1].textContent).not.toContain("live.bot");
+    expect(rows[0].textContent).toContain("South Korea · channel.messaging");
+    expect(rows[0].textContent).toContain("device.bot");
+    expect(rows[1].textContent).toContain("South Korea · device.mobile · channel.messaging");
+    expect(rows[1].textContent).not.toContain("device.bot");
     expect(host.querySelector('[class*="border"][class*="rounded"]')).toBeNull();
   });
 

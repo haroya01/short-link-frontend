@@ -14,7 +14,7 @@ test("the log tab opens straight into the click rows and pages by cursor", async
   const panel = page.locator("#stats-panel-log");
   const rows = panel.locator("tbody tr");
   await expect(rows).toHaveCount(50);
-  await expect(rows.first()).toContainText("Seoul, KR");
+  await expect(rows.first()).toContainText("Seoul, 대한민국");
   await expect(panel.getByRole("button", { name: "클릭 이벤트 CSV" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "일별 통계 CSV" })).toBeVisible();
 

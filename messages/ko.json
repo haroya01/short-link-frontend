@@ -1282,7 +1282,7 @@
     "anonymousExpirySignup": "로그인하고 통계 보관하기",
     "liveWaiting": "첫 클릭을 기다리는 중",
     "liveCount": "클릭 {count}",
-    "liveBots": "봇 {count}"
+    "liveBots": "자동 접속 {count}"
   },
   "login": {
     "title": "로그인",
@@ -1480,10 +1480,7 @@
       "sortDesc": "내림차순"
     },
     "card": {
-      "week": "7일 사람 클릭 {count}회",
-      "expiresToday": "오늘 만료",
-      "expiresIn": "만료 D-{days}",
-      "expired": "만료됨"
+      "week": "7일 사람 클릭 {count}회"
     },
     "actions": {
       "stats": "통계",
@@ -1529,7 +1526,7 @@
         "ACTIVE": "유효한 링크만",
         "NEVER": "만료 없음",
         "HAS_EXPIRY": "만료가 있는 것",
-        "EXPIRING_SOON": "3 일 내 만료",
+        "EXPIRING_SOON": "3일 안에 만료",
         "EXPIRED": "만료된 링크"
       }
     },
@@ -1631,17 +1628,16 @@
       "settings": "설정"
     },
     "live": {
-      "now": "지금",
-      "bot": "봇"
+      "now": "지금"
     },
     "quality": {
       "title": "클릭 품질",
       "returning": "재방문 비율",
       "returningHint": "{count}명이 2회 이상",
-      "clicksPerUnique": "유니크당 평균 클릭",
-      "clicksPerUniqueHint": "유니크 {unique}명",
-      "realVsPreview": "실제 / 프리뷰",
-      "realVsPreviewHint": "프리뷰 비중 {ratio}",
+      "clicksPerUnique": "방문자당 클릭",
+      "clicksPerUniqueHint": "추정 방문자 {unique}명",
+      "realVsPreview": "사람 클릭 / 미리보기",
+      "realVsPreviewHint": "미리보기 비중 {ratio}",
       "peakHour": "피크 시간",
       "peakHourHint": "이 시간에 가장 많이 클릭됨",
       "peakHourEmpty": "데이터 부족"
@@ -1705,7 +1701,7 @@
       "save": "저장",
       "configSaved": "옵션이 저장되었어요",
       "configFailed": "옵션 저장에 실패했어요.",
-      "optIncludeBots": "봇/프리뷰 클릭도 전송",
+      "optIncludeBots": "자동 접속 클릭도 전송",
       "optBatch": "배치 전송 (5초마다 묶어서 1회 호출)",
       "optSampleRate": "샘플링 비율: {rate}%",
       "optSampleRateAria": "샘플링 비율",
@@ -1713,7 +1709,7 @@
       "optDailyQuotaPlaceholder": "예: 10000 (비우면 무제한)",
       "optReferrerFilter": "레퍼러 호스트 필터",
       "optUtmFilter": "UTM 소스 필터",
-      "badgeSkipBots": "봇 제외",
+      "badgeSkipBots": "자동 접속 제외",
       "badgeSample": "샘플 {rate}%",
       "badgeBatch": "배치",
       "badgeQuota": "한도 {n}/일",
@@ -1775,7 +1771,7 @@
     "notFoundDesc": "삭제되었거나 존재하지 않는 링크일 수 있어요.",
     "backToDashboard": "내 링크로 돌아가기",
     "kpi": {
-      "totalClicks": "누적 전체 클릭",
+      "totalClicks": "자동 접속 포함",
       "totalVisits": "누적 전체 방문",
       "unique": "추정 방문자",
       "human": "사람 클릭",
@@ -1803,7 +1799,7 @@
       },
       "device": {
         "title": "디바이스",
-        "desc": "모바일 · 데스크톱 · 태블릿 · 봇"
+        "desc": "모바일 · 데스크톱 · 태블릿"
       },
       "channel": {
         "title": "채널",
@@ -1867,7 +1863,7 @@
         "desc": "채널마다 언제 처음 나타났고, 그중 몇 %가 다시 왔는지"
       },
       "bots": {
-        "title": "봇 종류",
+        "title": "자동 접속 종류",
         "desc": "Googlebot · Slackbot 등 분리"
       },
       "country": {
@@ -1922,7 +1918,7 @@
     "noClicks": "아직 클릭이 없어요",
     "clickCount": "{count}회",
     "noUtm": "UTM 캠페인 데이터 없음",
-    "noBot": "봇 클릭 없음",
+    "noBot": "자동 접속 없음",
     "weekday": {
       "MONDAY": "월",
       "TUESDAY": "화",
@@ -1931,13 +1927,6 @@
       "FRIDAY": "금",
       "SATURDAY": "토",
       "SUNDAY": "일"
-    },
-    "device": {
-      "mobile": "모바일",
-      "desktop": "데스크톱",
-      "tablet": "태블릿",
-      "bot": "봇",
-      "unknown": "기타"
     },
     "country": {
       "unknown": "알 수 없음"
@@ -1966,7 +1955,6 @@
       "loadMore": "더 보기",
       "retention": "{days}일보다 오래된 개별 클릭은 보관하지 않아요",
       "empty": "아직 클릭이 없어요.",
-      "bot": "봇",
       "colTime": "시각",
       "colLocation": "위치",
       "colDevice": "기기",
@@ -2134,6 +2122,35 @@
       "KR50": "세종특별자치시",
       "KR51": "강원특별자치도",
       "KR52": "전북특별자치도"
+    }
+  },
+  "statLabels": {
+    "unknown": "알 수 없음",
+    "kakaotalk": "카카오톡",
+    "channel": {
+      "social": "소셜",
+      "messaging": "메신저",
+      "search": "검색",
+      "email": "이메일",
+      "newsletter": "뉴스레터",
+      "other": "기타",
+      "direct": "직접"
+    },
+    "device": {
+      "mobile": "모바일",
+      "desktop": "데스크톱",
+      "tablet": "태블릿",
+      "bot": "자동 접속",
+      "unknown": "기타"
+    },
+    "botKind": {
+      "preview": "미리보기",
+      "prefetch": "미리 불러오기",
+      "datacenter": "데이터센터",
+      "burst": "짧은 시간 반복 접속"
+    },
+    "source": {
+      "profile": "프로필 @{user}"
     }
   },
   "admin": {
@@ -3691,15 +3708,13 @@
       "loadFailed": "불러오지 못했어요",
       "backToCampaign": "QR 캠페인으로",
       "title": "분석",
-      "introCampaign": "<name></name> · 시작 이후 클릭만 집계. 봇/프리뷰 제외.",
+      "introCampaign": "<name></name> · 시작 이후의 사람 클릭만 세요.",
       "loading": "불러오는 중…",
       "groups": {
         "distributorTitle": "배포자별 성과",
         "distributorHint": "100장당 클릭 비율이라 수량이 다른 배포자끼리도 효율을 비교할 수 있어요.",
         "areaTitle": "지역별 성과",
         "areaHint": "다음에 어디에 뿌릴지 정하는 기준이에요.",
-        "tooltip": "{rate}회 / 100장 · 클릭 {clicks} / 배포 {quantity}",
-        "efficiency": "효율",
         "meta": "클릭 {clicks} · {quantity}장"
       },
       "compare": {
@@ -3711,20 +3726,21 @@
         "selectHint": "위 목록에서 비교할 캠페인을 골라 주세요."
       },
       "kpi": {
-        "totalClicks": "총 클릭",
+        "totalClicks": "사람 클릭",
         "perHundred": "100장당",
         "topArea": "Top 지역",
         "batches": "배포 묶음",
-        "totalDistributed": "총 인쇄·배포",
-        "perHundredHint": "평균 효율 (클릭 / 배포 × 100)"
+        "totalDistributed": "총 인쇄·배포"
       },
       "units": {
         "count": "{count}개",
-        "sheets": "{count}장"
+        "sheets": "{count}장",
+        "perHundred": "100장당 {rate}회",
+        "rate": "{rate}회"
       },
       "recommendation": {
         "title": "다음 배포 추천",
-        "description": "지금 총 {total}장을 같은 총량으로 다시 나눠요. 평균 100장당 {average} 기준",
+        "description": "지금 총 {total}장을 같은 양으로 다시 나눠요. 평균은 100장당 {average}회예요.",
         "footnote": "효율 비율로 추천해요. 평균의 30% 미만은 빼고, 나머지는 비율대로 다시 나눠요(한 묶음 최대 3배).",
         "verdict": {
           "BOOST": "증가",
@@ -3732,20 +3748,20 @@
           "REDUCE": "감축",
           "PRUNE": "폐기"
         },
-        "rowMeta": "{current} → {recommended}장 · 100당 {rate}"
+        "rowMeta": "{current} → {recommended}장 · 100장당 {rate}회"
       },
       "daily": {
         "title": "일별 클릭",
-        "description": "캠페인 시작 이후"
+        "description": "캠페인 시작 이후 · {tz}"
       },
       "hourly": {
         "title": "시간대별 클릭",
-        "description": "0–23시",
+        "description": "{tz}",
         "tooltip": "{hour}시: {clicks}"
       },
       "heatmap": {
         "title": "요일 × 시간대 분포",
-        "description": "진할수록 클릭이 많은 시간대."
+        "description": "{tz}"
       },
       "testScans": {
         "title": "시작 전 테스트 스캔",
@@ -3756,7 +3772,7 @@
         "empty": "아직 배포 묶음이 없어요. 추가하면 여기에 묶음별 성과가 나와요.",
         "title": "묶음별 성과",
         "description": "클릭 수 내림차순. 막대는 최대값 대비 상대 비율.",
-        "meta": "/ {quantity}장 · {rate}%"
+        "meta": "/ {quantity}장 · 100장당 {rate}회"
       }
     }
   },
@@ -4312,7 +4328,7 @@
     "vsPrevDown": "그 전 7일보다 {percent}% 줄었어요({count}회)",
     "vsPrevSimilar": "그 전 7일과 비슷해요({count}회)",
     "vsPrevNone": "그 전 7일엔 클릭이 없었어요",
-    "scopeNote": "봇 클릭은 빼고 셌어요. 시간은 {tz} 기준이에요.",
+    "scopeNote": "자동 접속은 빼고 셌어요. 시간은 {tz} 기준이에요.",
     "attention": "살펴볼 것",
     "zeroClick": "아직 클릭이 없는 링크 {count}개",
     "expiring": "3일 안에 만료되는 링크 {count}개",
@@ -4346,6 +4362,12 @@
     "delete": "삭제",
     "favorite": "즐겨찾기에 추가",
     "unfavorite": "즐겨찾기 해제"
+  },
+  "linkState": {
+    "expired": "만료됨",
+    "expiresToday": "오늘 만료",
+    "expiresIn": "만료 D-{days}",
+    "password": "비밀번호"
   },
   "linkReport": {
     "title": "링크 신고",

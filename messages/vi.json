@@ -1282,7 +1282,7 @@
     "anonymousExpirySignup": "Đăng nhập để giữ thống kê của bạn",
     "liveWaiting": "Đang chờ lượt nhấp đầu tiên",
     "liveCount": "{count} lượt nhấp",
-    "liveBots": "{count} bot"
+    "liveBots": "{count} truy cập tự động"
   },
   "login": {
     "title": "Đăng nhập",
@@ -1480,10 +1480,7 @@
       "sortDesc": "giảm dần"
     },
     "card": {
-      "week": "Lượt nhấp của người trong 7 ngày: {count}",
-      "expiresToday": "Hết hạn hôm nay",
-      "expiresIn": "Còn {days} ngày",
-      "expired": "Đã hết hạn"
+      "week": "Lượt nhấp của người trong 7 ngày: {count}"
     },
     "actions": {
       "stats": "Thống kê",
@@ -1631,17 +1628,16 @@
       "settings": "Cài đặt"
     },
     "live": {
-      "now": "Bây giờ",
-      "bot": "Bot"
+      "now": "Bây giờ"
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
       "returning": "Tỷ lệ quay lại",
       "returningHint": "{count} khách đã quay lại",
-      "clicksPerUnique": "Lượt nhấp trên mỗi khách",
-      "clicksPerUniqueHint": "{unique} khách riêng biệt",
-      "realVsPreview": "Thật / xem trước",
-      "realVsPreviewHint": "Xem trước chiếm {ratio} tổng số",
+      "clicksPerUnique": "Lượt nhấp mỗi khách",
+      "clicksPerUniqueHint": "{unique} khách ước tính",
+      "realVsPreview": "Lượt nhấp của người / xem trước",
+      "realVsPreviewHint": "Xem trước chiếm {ratio}",
       "peakHour": "Giờ cao điểm",
       "peakHourHint": "Nhiều lượt nhấp nhất rơi vào giờ này",
       "peakHourEmpty": "Chưa đủ dữ liệu"
@@ -1705,7 +1701,7 @@
       "save": "Lưu",
       "configSaved": "Đã lưu tùy chọn",
       "configFailed": "Lưu tùy chọn thất bại.",
-      "optIncludeBots": "Bao gồm lượt nhấp bot / xem trước",
+      "optIncludeBots": "Gồm cả lượt nhấp tự động",
       "optBatch": "Chế độ gộp (một POST mỗi 5 giây, tối đa 50 sự kiện)",
       "optSampleRate": "Tỷ lệ lấy mẫu: {rate}%",
       "optSampleRateAria": "Tỷ lệ lấy mẫu",
@@ -1713,7 +1709,7 @@
       "optDailyQuotaPlaceholder": "ví dụ: 10000 (để trống = không giới hạn)",
       "optReferrerFilter": "Lọc theo host giới thiệu",
       "optUtmFilter": "Lọc theo nguồn UTM",
-      "badgeSkipBots": "bỏ qua bot",
+      "badgeSkipBots": "bỏ qua tự động",
       "badgeSample": "mẫu {rate}%",
       "badgeBatch": "gộp",
       "badgeQuota": "{n}/ngày",
@@ -1775,7 +1771,7 @@
     "notFoundDesc": "Có thể nó đã bị xóa hoặc chưa từng tồn tại.",
     "backToDashboard": "Quay lại liên kết của tôi",
     "kpi": {
-      "totalClicks": "Tổng lượt nhấp",
+      "totalClicks": "Gồm truy cập tự động",
       "totalVisits": "Tổng lượt truy cập",
       "unique": "Khách ước tính",
       "human": "Lượt nhấp của người",
@@ -1803,7 +1799,7 @@
       },
       "device": {
         "title": "Thiết bị",
-        "desc": "di động · máy tính · máy tính bảng · bot"
+        "desc": "di động · máy tính · máy tính bảng"
       },
       "channel": {
         "title": "Kênh",
@@ -1867,7 +1863,7 @@
         "desc": "Mỗi kênh xuất hiện lần đầu khi nào, và bao nhiêu khách của nó đã quay lại"
       },
       "bots": {
-        "title": "Loại bot",
+        "title": "Loại truy cập tự động",
         "desc": "Googlebot · Slackbot v.v."
       },
       "country": {
@@ -1922,7 +1918,7 @@
     "noClicks": "Chưa có lượt nhấp",
     "clickCount": "{count} lượt nhấp",
     "noUtm": "Không có dữ liệu chiến dịch UTM",
-    "noBot": "Không có lượt nhấp bot",
+    "noBot": "Không có truy cập tự động",
     "weekday": {
       "MONDAY": "T2",
       "TUESDAY": "T3",
@@ -1931,13 +1927,6 @@
       "FRIDAY": "T6",
       "SATURDAY": "T7",
       "SUNDAY": "CN"
-    },
-    "device": {
-      "mobile": "Di động",
-      "desktop": "Máy tính",
-      "tablet": "Máy tính bảng",
-      "bot": "Bot",
-      "unknown": "Khác"
     },
     "country": {
       "unknown": "Không rõ"
@@ -1966,7 +1955,6 @@
       "loadMore": "Xem thêm",
       "retention": "Không lưu từng lượt nhấp cũ hơn {days} ngày",
       "empty": "Chưa có lượt nhấp.",
-      "bot": "Bot",
       "colTime": "Thời gian",
       "colLocation": "Vị trí",
       "colDevice": "Thiết bị",
@@ -2134,6 +2122,35 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
+    }
+  },
+  "statLabels": {
+    "unknown": "Không rõ",
+    "kakaotalk": "KakaoTalk",
+    "channel": {
+      "social": "Mạng xã hội",
+      "messaging": "Nhắn tin",
+      "search": "Tìm kiếm",
+      "email": "Email",
+      "newsletter": "Bản tin",
+      "other": "Khác",
+      "direct": "Trực tiếp"
+    },
+    "device": {
+      "mobile": "Di động",
+      "desktop": "Máy tính",
+      "tablet": "Máy tính bảng",
+      "bot": "Tự động",
+      "unknown": "Khác"
+    },
+    "botKind": {
+      "preview": "Xem trước",
+      "prefetch": "Tải trước",
+      "datacenter": "Trung tâm dữ liệu",
+      "burst": "Truy cập lặp lại liên tục"
+    },
+    "source": {
+      "profile": "Hồ sơ @{user}"
     }
   },
   "admin": {
@@ -3691,15 +3708,13 @@
       "loadFailed": "Tải thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thống kê",
-      "introCampaign": "<name></name> · Đếm lượt nhấp sau khi chiến dịch bắt đầu, loại trừ bot và xem trước.",
+      "introCampaign": "<name></name> · Chỉ đếm lượt nhấp của người sau khi chiến dịch bắt đầu.",
       "loading": "Đang tải...",
       "groups": {
         "distributorTitle": "Hiệu quả theo người phát",
         "distributorHint": "Lượt nhấp trên 100 tờ, nên có thể so sánh các người phát ngay cả khi số lượng khác nhau.",
         "areaTitle": "Hiệu quả theo khu vực",
         "areaHint": "Dùng cái này để quyết định nơi phát tiếp theo.",
-        "tooltip": "{rate} / 100 tờ · lượt nhấp {clicks} / đã phát {quantity}",
-        "efficiency": "Hiệu suất",
         "meta": "lượt nhấp {clicks} · {quantity} tờ"
       },
       "compare": {
@@ -3711,20 +3726,21 @@
         "selectHint": "Chọn một chiến dịch từ menu thả xuống ở trên."
       },
       "kpi": {
-        "totalClicks": "Tổng lượt nhấp",
-        "perHundred": "Trên 100",
+        "totalClicks": "Lượt nhấp của người",
+        "perHundred": "Trên 100 tờ",
         "topArea": "Khu vực hàng đầu",
         "batches": "Đợt",
-        "totalDistributed": "Đã in/đã phát",
-        "perHundredHint": "Hiệu suất trung bình (lượt nhấp / đã phát × 100)"
+        "totalDistributed": "Đã in/đã phát"
       },
       "units": {
         "count": "{count}",
-        "sheets": "{count} tờ"
+        "sheets": "{count} tờ",
+        "perHundred": "{rate} lượt / 100 tờ",
+        "rate": "{rate} lượt"
       },
       "recommendation": {
         "title": "Gợi ý phát đợt tiếp theo",
-        "description": "Phân phối lại cùng tổng {total} tờ. Mức trung bình cơ sở là {average} trên 100.",
+        "description": "Phân phối lại cùng tổng {total} tờ. Trung bình là {average} lượt / 100 tờ.",
         "footnote": "Gợi ý dựa trên tỷ lệ hiệu suất. Dưới 30% mức trung bình bị cắt; phần còn lại được phân bổ lại theo tỷ lệ, giới hạn 3 lần mỗi đợt.",
         "verdict": {
           "BOOST": "Tăng",
@@ -3732,20 +3748,20 @@
           "REDUCE": "Giảm",
           "PRUNE": "Cắt"
         },
-        "rowMeta": "{current} → {recommended} tờ · {rate} trên 100"
+        "rowMeta": "{current} → {recommended} tờ · {rate} lượt / 100 tờ"
       },
       "daily": {
         "title": "Lượt nhấp hằng ngày",
-        "description": "Kể từ khi chiến dịch bắt đầu"
+        "description": "Kể từ khi chiến dịch bắt đầu · {tz}"
       },
       "hourly": {
         "title": "Lượt nhấp theo giờ",
-        "description": "0–23",
+        "description": "{tz}",
         "tooltip": "{hour}:00: {clicks}"
       },
       "heatmap": {
         "title": "Phân bố thứ × giờ",
-        "description": "Ô đậm hơn nghĩa là nhiều lượt nhấp hơn."
+        "description": "{tz}"
       },
       "testScans": {
         "title": "Quét thử trước khi bắt đầu",
@@ -3756,7 +3772,7 @@
         "empty": "Chưa có đợt phát nào. Hiệu quả từng đợt hiện ở đây sau khi bạn thêm một đợt.",
         "title": "Hiệu quả theo đợt",
         "description": "Sắp xếp theo lượt nhấp giảm dần. Các thanh tương đối so với dòng cao nhất.",
-        "meta": "/ {quantity} tờ · {rate}%"
+        "meta": "/ {quantity} tờ · {rate} lượt / 100 tờ"
       }
     }
   },
@@ -4312,7 +4328,7 @@
     "vsPrevDown": "Giảm {percent}% so với 7 ngày trước đó ({count})",
     "vsPrevSimilar": "Gần bằng 7 ngày trước đó ({count})",
     "vsPrevNone": "7 ngày trước đó chưa có lượt nhấp",
-    "scopeNote": "Đã loại trừ lượt nhấp của bot. Giờ theo {tz}.",
+    "scopeNote": "Đã loại trừ truy cập tự động. Giờ theo {tz}.",
     "attention": "Cần xem",
     "zeroClick": "{count} liên kết chưa có lượt nhấp",
     "expiring": "{count} liên kết hết hạn trong 3 ngày",
@@ -4346,6 +4362,12 @@
     "delete": "Xóa",
     "favorite": "Thêm vào mục yêu thích",
     "unfavorite": "Bỏ khỏi mục yêu thích"
+  },
+  "linkState": {
+    "expired": "Đã hết hạn",
+    "expiresToday": "Hết hạn hôm nay",
+    "expiresIn": "Còn {days} ngày",
+    "password": "Mật khẩu"
   },
   "linkReport": {
     "title": "Báo cáo liên kết",

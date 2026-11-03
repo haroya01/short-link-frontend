@@ -23,8 +23,8 @@ test("a link made without signing in shows its own clicks as they land", async (
     const body =
       streams.length === 1
         ? event("ready", { ok: true }) +
-          event("click", { occurredAt: "2026-11-01T09:00:00Z", countryCode: "US", deviceClass: "Bot", channel: "direct", bot: true }) +
-          event("click", { occurredAt: "2026-11-01T09:00:02Z", countryCode: "KR", deviceClass: "iOS", channel: "instagram", bot: false })
+          event("click", { occurredAt: "2026-11-01T09:00:00Z", countryCode: "US", deviceClass: "bot", channel: "direct", bot: true }) +
+          event("click", { occurredAt: "2026-11-01T09:00:02Z", countryCode: "KR", deviceClass: "mobile", channel: "social", bot: false })
         : event("ready", { ok: true });
     return route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body });
   });
@@ -35,8 +35,8 @@ test("a link made without signing in shows its own clicks as they land", async (
 
   const live = page.getByTestId("live-clicks");
   await expect(live).toContainText("클릭 1", { timeout: 10_000 });
-  await expect(live).toContainText("봇 1");
-  await expect(live).toContainText("KR · iOS · instagram");
+  await expect(live).toContainText("자동 접속 1");
+  await expect(live).toContainText("대한민국 · 모바일 · 소셜");
   await expect(live.locator(".count-roll")).toHaveText("클릭 1");
   await expect(page.getByTestId("result-line").first().getByTestId("click-pass")).toBeAttached();
   expect(streams[0]).toContain("claimToken=claim-e2e");

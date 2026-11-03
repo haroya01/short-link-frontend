@@ -18,8 +18,26 @@ export function formatDate(iso: string) {
   return `${yyyy}.${mm}.${dd}`;
 }
 
-/** formatDate plus the local 24h time, for logs and "last seen" stamps. */
-export function formatDateTime(iso: string) {
+/** formatDate plus the 24h time, for logs and "last seen" stamps; local time unless a time zone is given. */
+export function formatDateTime(iso: string, timeZone?: string) {
+  if (timeZone) {
+    try {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(new Date(iso));
+      const part = (type: string) => parts.find((p) => p.type === type)?.value ?? "00";
+      return `${part("year")}.${part("month")}.${part("day")} ${part("hour")}:${part("minute")}:${part("second")}`;
+    } catch {
+      return formatDateTime(iso);
+    }
+  }
   const d = new Date(iso);
   const time = [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, "0")).join(":");
   return `${formatDate(iso)} ${time}`;

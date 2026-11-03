@@ -1282,7 +1282,7 @@
     "anonymousExpirySignup": "ログインして統計を保存",
     "liveWaiting": "最初のクリックを待っています",
     "liveCount": "クリック {count}",
-    "liveBots": "ボット {count}"
+    "liveBots": "自動アクセス {count}"
   },
   "login": {
     "title": "ログイン",
@@ -1480,10 +1480,7 @@
       "sortDesc": "降順"
     },
     "card": {
-      "week": "7日間の人によるクリック{count}回",
-      "expiresToday": "本日期限",
-      "expiresIn": "あと{days}日",
-      "expired": "期限切れ"
+      "week": "7日間の人によるクリック{count}回"
     },
     "actions": {
       "stats": "統計",
@@ -1631,16 +1628,15 @@
       "settings": "設定"
     },
     "live": {
-      "now": "今",
-      "bot": "ボット"
+      "now": "今"
     },
     "quality": {
       "title": "クリック品質",
       "returning": "再訪問率",
       "returningHint": "{count}名が2回以上",
-      "clicksPerUnique": "ユニーク当たり平均",
-      "clicksPerUniqueHint": "ユニーク{unique}名",
-      "realVsPreview": "実クリック / プレビュー",
+      "clicksPerUnique": "訪問者あたりのクリック",
+      "clicksPerUniqueHint": "推定訪問者{unique}名",
+      "realVsPreview": "人によるクリック / プレビュー",
       "realVsPreviewHint": "プレビュー比率 {ratio}",
       "peakHour": "ピーク時間",
       "peakHourHint": "この時間に最も多くクリック",
@@ -1705,7 +1701,7 @@
       "save": "保存",
       "configSaved": "オプションを保存しました",
       "configFailed": "オプションの保存に失敗しました。",
-      "optIncludeBots": "ボット/プレビューのクリックも送信",
+      "optIncludeBots": "自動アクセスのクリックも送信",
       "optBatch": "バッチ送信（5秒ごとに1回まとめて送信）",
       "optSampleRate": "サンプリング比率: {rate}%",
       "optSampleRateAria": "サンプリング比率",
@@ -1713,7 +1709,7 @@
       "optDailyQuotaPlaceholder": "例：10000 (空欄で無制限)",
       "optReferrerFilter": "リファラーホストのフィルタ",
       "optUtmFilter": "UTM ソースフィルタ",
-      "badgeSkipBots": "ボット除外",
+      "badgeSkipBots": "自動アクセス除外",
       "badgeSample": "サンプル {rate}%",
       "badgeBatch": "バッチ",
       "badgeQuota": "上限 {n}/日",
@@ -1775,7 +1771,7 @@
     "notFoundDesc": "削除されたか存在しないリンクの可能性があります。",
     "backToDashboard": "マイリンクへ戻る",
     "kpi": {
-      "totalClicks": "累計クリック",
+      "totalClicks": "自動アクセス込み",
       "totalVisits": "累計訪問",
       "unique": "推定訪問者",
       "human": "人によるクリック",
@@ -1803,7 +1799,7 @@
       },
       "device": {
         "title": "デバイス",
-        "desc": "モバイル · デスクトップ · タブレット · ボット"
+        "desc": "モバイル · デスクトップ · タブレット"
       },
       "channel": {
         "title": "チャネル",
@@ -1867,7 +1863,7 @@
         "desc": "チャネルごとに、いつ最初に現れて、そのうち何%が戻ってきたか"
       },
       "bots": {
-        "title": "ボット種別",
+        "title": "自動アクセスの種類",
         "desc": "Googlebot · Slackbot 等の分離"
       },
       "country": {
@@ -1922,7 +1918,7 @@
     "noClicks": "まだクリックがありません",
     "clickCount": "{count}回",
     "noUtm": "UTMキャンペーンデータなし",
-    "noBot": "ボットクリックなし",
+    "noBot": "自動アクセスなし",
     "weekday": {
       "MONDAY": "月",
       "TUESDAY": "火",
@@ -1931,13 +1927,6 @@
       "FRIDAY": "金",
       "SATURDAY": "土",
       "SUNDAY": "日"
-    },
-    "device": {
-      "mobile": "モバイル",
-      "desktop": "デスクトップ",
-      "tablet": "タブレット",
-      "bot": "ボット",
-      "unknown": "その他"
     },
     "country": {
       "unknown": "不明"
@@ -1966,7 +1955,6 @@
       "loadMore": "もっと見る",
       "retention": "{days}日より前の個別のクリックは保存しません",
       "empty": "まだクリックがありません。",
-      "bot": "ボット",
       "colTime": "時刻",
       "colLocation": "地域",
       "colDevice": "デバイス",
@@ -2134,6 +2122,35 @@
       "KR50": "世宗特別自治市",
       "KR51": "江原特別自治道",
       "KR52": "全北特別自治道"
+    }
+  },
+  "statLabels": {
+    "unknown": "不明",
+    "kakaotalk": "カカオトーク",
+    "channel": {
+      "social": "ソーシャル",
+      "messaging": "メッセージアプリ",
+      "search": "検索",
+      "email": "メール",
+      "newsletter": "ニュースレター",
+      "other": "その他",
+      "direct": "直接"
+    },
+    "device": {
+      "mobile": "モバイル",
+      "desktop": "デスクトップ",
+      "tablet": "タブレット",
+      "bot": "自動アクセス",
+      "unknown": "その他"
+    },
+    "botKind": {
+      "preview": "プレビュー",
+      "prefetch": "先読み",
+      "datacenter": "データセンター",
+      "burst": "短時間の連続アクセス"
+    },
+    "source": {
+      "profile": "プロフィール @{user}"
     }
   },
   "admin": {
@@ -3691,15 +3708,13 @@
       "loadFailed": "読み込みに失敗しました",
       "backToCampaign": "QR キャンペーンへ",
       "title": "分析",
-      "introCampaign": "<name></name> · 開始後の反響のみ集計。ボット/プレビューは除外。",
+      "introCampaign": "<name></name> · 開始後の反響のみ集計。自動アクセスは除外。",
       "loading": "読み込み中…",
       "groups": {
         "distributorTitle": "配布担当別の反響",
         "distributorHint": "100部あたりの反響なので、配布部数が違っても比べられます。",
         "areaTitle": "エリア別の反響",
         "areaHint": "次の配布エリアを決める目安です。",
-        "tooltip": "100部あたり{rate}件 · 反響{clicks}件 / 配布{quantity}部",
-        "efficiency": "反響率",
         "meta": "反響{clicks}件 · {quantity}部"
       },
       "compare": {
@@ -3712,15 +3727,16 @@
       },
       "kpi": {
         "totalClicks": "反響数",
-        "perHundred": "100部あたりの反響",
+        "perHundred": "100部あたり",
         "topArea": "反響1位のエリア",
         "batches": "配布先",
-        "totalDistributed": "配布部数",
-        "perHundredHint": "平均 (反響数 ÷ 配布部数 × 100)"
+        "totalDistributed": "配布部数"
       },
       "units": {
         "count": "{count}件",
-        "sheets": "{count}部"
+        "sheets": "{count}部",
+        "perHundred": "100部あたり{rate}件",
+        "rate": "{rate}件"
       },
       "recommendation": {
         "title": "次回配布のおすすめ",
@@ -3736,16 +3752,16 @@
       },
       "daily": {
         "title": "日別の反響",
-        "description": "キャンペーン開始以降"
+        "description": "キャンペーン開始以降 · {tz}"
       },
       "hourly": {
         "title": "時間帯別の反響",
-        "description": "0–23時",
+        "description": "{tz}",
         "tooltip": "{hour}時：{clicks}件"
       },
       "heatmap": {
         "title": "曜日 × 時間帯分布",
-        "description": "濃いほど反響が多い時間帯です。"
+        "description": "{tz}"
       },
       "testScans": {
         "title": "開始前テストスキャン",
@@ -3756,7 +3772,7 @@
         "empty": "配布先はまだありません",
         "title": "配布先別の反響",
         "description": "反響の多い順。バーは最大値に対する割合です。",
-        "meta": "/ {quantity}部 · 反響率{rate}%"
+        "meta": "/ {quantity}部 · 100部あたり{rate}件"
       }
     }
   },
@@ -4312,7 +4328,7 @@
     "vsPrevDown": "前の7日より{percent}%減（{count}回）",
     "vsPrevSimilar": "前の7日とほぼ同じ（{count}回）",
     "vsPrevNone": "前の7日はクリックなし",
-    "scopeNote": "ボットのクリックは除外しています。時刻は{tz}基準です。",
+    "scopeNote": "自動アクセスは除外しています。時刻は{tz}基準です。",
     "attention": "確認すること",
     "zeroClick": "まだクリックのないリンク{count}件",
     "expiring": "3日以内に期限切れになるリンク{count}件",
@@ -4346,6 +4362,12 @@
     "delete": "削除",
     "favorite": "お気に入りに追加",
     "unfavorite": "お気に入りを解除"
+  },
+  "linkState": {
+    "expired": "期限切れ",
+    "expiresToday": "本日期限",
+    "expiresIn": "あと{days}日",
+    "password": "パスワード"
   },
   "linkReport": {
     "title": "リンクを報告",

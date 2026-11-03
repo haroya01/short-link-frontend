@@ -13,10 +13,12 @@ import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn } from "@/lib/utils";
 import { sourceBreakdown } from "@/lib/stats-sources";
+import { useStatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 
 function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats }) {
   const t = useTranslations("stats");
+  const labels = useStatsLabels();
   switch (evidence) {
     case "section-daily":
       return <DailyChart data={data.dailyClicks ?? []} compact />;
@@ -30,7 +32,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
       const bots = data.botClicks2 ?? [];
       if (bots.length > 0) {
         return (
-          <BreakdownList items={bots.map((b) => ({ label: b.bot, count: b.count }))} maxItems={5} />
+          <BreakdownList items={bots.map((b) => ({ label: labels.bot(b.bot), count: b.count }))} maxItems={5} />
         );
       }
       // 봇 분류가 없으면 사람/봇 비중 자체가 근거다.
@@ -38,7 +40,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
         <BreakdownList
           items={[
             { label: t("kpi.human"), count: data.humanClicks ?? 0 },
-            { label: t("kpi.bot"), count: data.botClicks ?? 0 },
+            { label: labels.device("bot"), count: data.botClicks ?? 0 },
           ]}
         />
       );

@@ -9,11 +9,13 @@ import { FetchSiteBreakdown, RegionBreakdown } from "@/components/links/stats/la
 import { Section } from "@/components/common/section";
 import { cn } from "@/lib/utils";
 import { sourceBreakdown } from "@/lib/stats-sources";
+import { useStatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 
 /** 3장 어디서 — 유입(호스트/URL/채널 깊이/UTM/채널/글), 지리(국가/지역/도시). */
 export function WhereChapter({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
+  const labels = useStatsLabels();
   const utmTermClicks = data.utmTermClicks ?? [];
   const utmHasAny =
     data.utmSourceClicks.length +
@@ -165,7 +167,7 @@ export function WhereChapter({ data }: { data: LinkStats }) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
           <BreakdownList
-            items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
+            items={data.channelClicks.map((c) => ({ label: labels.channel(c.channel), count: c.count }))}
             total={human}
           />
         </Section>
@@ -179,7 +181,7 @@ export function WhereChapter({ data }: { data: LinkStats }) {
             </p>
           ) : (
             <BreakdownList
-              items={data.sourceChannelClicks.map((s) => ({ label: s.source, count: s.count }))}
+              items={data.sourceChannelClicks.map((s) => ({ label: labels.source(s.source), count: s.count }))}
               total={human}
             />
           )}

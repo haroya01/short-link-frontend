@@ -12,6 +12,8 @@ import { QrButton, QrModal } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
 import { buildStatsCsv, statsCsvFilename } from "@/lib/stats-csv";
 import { useLinkDetail } from "@/lib/api/links.queries";
+import { linkDisplayName } from "@/lib/link-library-view";
+import { LinkStateBadges } from "@/components/links/link-state-badges";
 import type { LinkStats } from "@/types";
 
 type Props = {
@@ -48,7 +50,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
   const { data: detail } = useLinkDetail(demo ? undefined : data.shortCode);
   let destinationHost = "";
   try { destinationHost = detail?.originalUrl ? new URL(detail.originalUrl).hostname : ""; } catch { /* Keep the short URL as fallback. */ }
-  const title = detail?.note?.trim() || detail?.ogTitleOverride || detail?.ogTitle || destinationHost;
+  const title = detail ? linkDisplayName(detail) : "";
 
   // 데이터 소유권: 화면의 수치는 언제나 들고 나갈 수 있어야 한다(마크다운 개방 캠페인의 통계판).
   function exportCsv() {
@@ -102,6 +104,7 @@ export function Header({ data, shortUrl, shortCodeLabel, demo = false, onSetting
                 <span className="truncate text-slate-500 dark:text-slate-400">{destinationHost}</span>
               </>
             )}
+            {detail && <LinkStateBadges expiresAt={detail.expiresAt} timezone={data.timezone} passwordProtected={detail.passwordProtected} />}
           </p>}
         </div>
         <div className="flex gap-2 sm:hidden">

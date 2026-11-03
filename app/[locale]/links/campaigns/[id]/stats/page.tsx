@@ -30,7 +30,10 @@ import type {
   CampaignSummary,
 } from "@/types";
 import { formatNumber, formatDateTime } from "@/lib/utils";
+import { fillDailySince } from "@/lib/stats-daily";
 import { LinksPage } from "@/components/links/links-page";
+
+const CAMPAIGN_TIMEZONE = "Asia/Seoul";
 
 export default function CampaignStatsPage() {
   const { id } = useParams<{ id: string }>();
@@ -168,7 +171,7 @@ export default function CampaignStatsPage() {
             />
           )}
           {recData && <RecommendationCard data={recData} />}
-          {stats.byDay.length > 0 && <DailyChart data={stats.byDay} />}
+          {stats.byDay.length > 0 && <DailyChart data={stats.byDay} startsAt={campaign.startsAt} />}
           {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} />}
           {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} />}
           {otherCampaigns.length > 0 && (
@@ -253,7 +256,7 @@ function CompareSection({
                 </p>
                 <dl className="mt-2.5 grid grid-cols-3 gap-2">
                   <CompareCell label={t("kpi.totalClicks")} value={formatNumber(c.stats.totalClicks)} />
-                  <CompareCell label={t("kpi.perHundred")} value={ratePerHundred.toFixed(1)} />
+                  <CompareCell label={t("kpi.perHundred")} value={t("units.rate", { rate: ratePerHundred.toFixed(1) })} />
                   <CompareCell label={t("kpi.topArea")} value={topArea} />
                 </dl>
               </div>
@@ -282,11 +285,14 @@ function CompareCell({ label, value }: { label: string; value: string }) {
   );
 }
 
-function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
+function DailyChart({ data, startsAt }: { data: CampaignStats["byDay"]; startsAt: string }) {
   const t = useTranslations("campaignApp.campaignStats");
-  const series = useMemo(() => data.map((d) => ({ date: d.day, count: d.clicks })), [data]);
+  const series = useMemo(
+    () => fillDailySince(data.map((d) => ({ date: d.day, count: d.clicks })), { from: new Date(startsAt), timezone: CAMPAIGN_TIMEZONE }),
+    [data, startsAt],
+  );
   return (
-    <Section title={t("daily.title")} description={t("daily.description")}>
+    <Section title={t("daily.title")} description={t("daily.description", { tz: CAMPAIGN_TIMEZONE })}>
       <DailyTrendChart data={series} />
     </Section>
   );
@@ -296,7 +302,7 @@ function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const series = useMemo(() => data.map((d) => ({ hour: d.hour, count: d.clicks })), [data]);
   return (
-    <Section title={t("hourly.title")} description={t("hourly.description")}>
+    <Section title={t("hourly.title")} description={t("hourly.description", { tz: CAMPAIGN_TIMEZONE })}>
       <HourRhythmChart data={series} />
     </Section>
   );
@@ -327,7 +333,7 @@ function HeatmapChart({ data }: { data: CampaignStats["heatmap"] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const adapted = useMemo(() => adaptHeatmap(data), [data]);
   return (
-    <Section title={t("heatmap.title")} description={t("heatmap.description")}>
+    <Section title={t("heatmap.title")} description={t("heatmap.description", { tz: CAMPAIGN_TIMEZONE })}>
       <Heatmap data={adapted} />
     </Section>
   );

@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { linkDisplayName } from "@/lib/link-library-view";
 import { formatNumber } from "@/lib/utils";
 import type { MyLink } from "@/types";
 
@@ -14,6 +15,8 @@ function destinationHost(url: string): string {
 export function WeekLinkRow({ link }: { link: MyLink }) {
   const t = useTranslations("linkAnalytics");
   const week = link.clicksLast7d.reduce((sum, count) => sum + count, 0);
+  const name = linkDisplayName(link);
+  const host = destinationHost(link.originalUrl);
   return (
     <Link
       href={`/stats/${link.shortCode}`}
@@ -21,11 +24,11 @@ export function WeekLinkRow({ link }: { link: MyLink }) {
     >
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
-          {link.note?.trim() || destinationHost(link.originalUrl)}
+          {name}
         </p>
         <p className="truncate text-sm text-slate-500 dark:text-slate-400">
           <span className="font-mono">/{link.shortCode}</span>
-          {link.note?.trim() && ` · ${destinationHost(link.originalUrl)}`}
+          {name.replace(/^www\./, "") !== host && ` · ${host}`}
         </p>
       </div>
       <p className="shrink-0 text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">

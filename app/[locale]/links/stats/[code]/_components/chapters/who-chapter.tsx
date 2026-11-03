@@ -6,11 +6,13 @@ import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { ClickQualitySummary } from "@/components/links/stats/click-quality-summary";
 import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Section } from "@/components/common/section";
+import { useStatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 
 /** 1장 누가 — 사람/봇 품질, 기기·OS·브라우저·언어, 인앱 브라우저, 봇 정체, ASN. */
 export function WhoChapter({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
+  const labels = useStatsLabels();
   // 인앱 브라우저는 대부분의 링크에서 비어 있다(앱 밖에서만 열린 링크) — 빈 표 대신 섹션을 안 그린다.
   const clientApps = data.clientAppClicks ?? [];
   return (
@@ -26,13 +28,13 @@ export function WhoChapter({ data }: { data: LinkStats }) {
         </Section>
         <Section title={t("section.os.title")} description={t("section.os.desc")}>
           <BreakdownList
-            items={data.osClicks.map((o) => ({ label: o.os, count: o.count }))}
+            items={data.osClicks.map((o) => ({ label: labels.os(o.os), count: o.count }))}
             total={data.humanClicks}
           />
         </Section>
         <Section title={t("section.browser.title")} description={t("section.browser.desc")}>
           <BreakdownList
-            items={data.browserClicks.map((b) => ({ label: b.browser, count: b.count }))}
+            items={data.browserClicks.map((b) => ({ label: labels.browser(b.browser), count: b.count }))}
             total={data.humanClicks}
           />
         </Section>
@@ -48,7 +50,7 @@ export function WhoChapter({ data }: { data: LinkStats }) {
       )}
       <Section title={t("section.language.title")} description={t("section.language.desc")}>
         <BreakdownList
-          items={data.languageClicks.map((l) => ({ label: l.language, count: l.count }))}
+          items={data.languageClicks.map((l) => ({ label: labels.language(l.language), count: l.count }))}
           total={data.humanClicks}
         />
       </Section>
@@ -61,7 +63,7 @@ export function WhoChapter({ data }: { data: LinkStats }) {
           <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noBot")}</p>
         ) : (
           <BreakdownList
-            items={data.botClicks2.map((b) => ({ label: b.bot, count: b.count }))}
+            items={data.botClicks2.map((b) => ({ label: labels.bot(b.bot), count: b.count }))}
           />
         )}
       </Section>

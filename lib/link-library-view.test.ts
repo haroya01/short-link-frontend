@@ -18,4 +18,10 @@ describe("complete favorites library", () => {
     expect(linkDisplayName(link("code", "  Project plan  "))).toBe("Project plan");
     expect(linkDisplayName(link("code", ""))).toBe("docs.example.com");
   });
+  it("names a link by note, then its preview title, then the destination host on every surface", () => {
+    expect(linkDisplayName({ ...link("code", ""), ogTitle: "Spring linen sale" })).toBe("Spring linen sale");
+    expect(linkDisplayName({ ...link("code", ""), ogTitle: "Site title", ogTitleOverride: "Custom card" })).toBe("Custom card");
+    expect(linkDisplayName({ ...link("code", "Team note"), ogTitle: "Site title" })).toBe("Team note");
+    expect(linkDisplayName({ ...link("code", " "), ogTitle: " " })).toBe("docs.example.com");
+  });
 });
