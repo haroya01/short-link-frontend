@@ -3,18 +3,10 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LiveClick, UseClickStreamResult } from "@/hooks/use-click-stream";
 
-const stream = vi.hoisted(() => ({ value: { items: [], connected: false, reconnecting: false, count: 0 } as UseClickStreamResult }));
-const calls = vi.hoisted(() => [] as unknown[][]);
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
   useTranslations: () => (key: string) => key,
-}));
-vi.mock("@/hooks/use-click-stream", () => ({
-  useClickStream: (...args: unknown[]) => {
-    calls.push(args);
-    return stream.value;
-  },
 }));
 
 import { LiveClickFeed } from "./live-click-feed";
@@ -32,7 +24,6 @@ beforeEach(() => {
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
-  calls.length = 0;
 });
 
 afterEach(async () => {
@@ -41,9 +32,8 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function render(value: UseClickStreamResult) {
-  stream.value = value;
-  await act(async () => root.render(<LiveClickFeed shortCode="abc1234" />));
+async function render(value: Omit<UseClickStreamResult, "bots">) {
+  await act(async () => root.render(<LiveClickFeed stream={{ ...value, bots: value.items.filter((item) => item.bot).length }} />));
 }
 
 describe("LiveClickFeed on the 클릭 추이 tab", () => {
@@ -70,11 +60,5 @@ describe("LiveClickFeed on the 클릭 추이 tab", () => {
     expect(rows[1].textContent).toContain("South Korea · device.mobile · channel.messaging");
     expect(rows[1].textContent).not.toContain("device.bot");
     expect(host.querySelector('[class*="border"][class*="rounded"]')).toBeNull();
-  });
-
-  it("listens through the signed-in stream path", async () => {
-    await render({ items: [], connected: false, reconnecting: false, count: 0 });
-    expect(calls[0][0]).toBe("abc1234");
-    expect((calls[0][1] as { claimToken?: string }).claimToken).toBeUndefined();
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
 import { fillDailyClicks } from "@/lib/stats-daily";
@@ -17,6 +17,7 @@ import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
 import { StatsEmpty } from "@/components/links/stats/stat-sections";
 import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
+import { useClickStream, type LiveClick } from "@/hooks/use-click-stream";
 
 const SECTION_CHAPTER: Record<string, TabKey> = {
   "section-device": "who",
@@ -40,28 +41,50 @@ export function StatsBody({
   data: sourceData,
   shortUrl,
   shortCodeLabel,
-  onTick,
+  onLiveClick,
+  onChanged,
   demo = false,
 }: {
   data: LinkStats;
   shortUrl: string;
   shortCodeLabel: string;
-  onTick: () => void;
+  onLiveClick: () => void;
+  onChanged: () => void;
   demo?: boolean;
 }) {
   const t = useTranslations("stats");
+  const [live, setLive] = useState({ source: sourceData, human: 0, automated: 0 });
+  const handleClick = useCallback(
+    (click: Omit<LiveClick, "id">) => {
+      setLive((prev) => {
+        const base = prev.source === sourceData ? prev : { source: sourceData, human: 0, automated: 0 };
+        return click.bot ? { ...base, automated: base.automated + 1 } : { ...base, human: base.human + 1 };
+      });
+      onLiveClick();
+    },
+    [sourceData, onLiveClick],
+  );
+  const stream = useClickStream(demo ? "" : sourceData.shortCode, { maxItems: 200, onTick: handleClick });
   const data = useMemo(() => {
     // Synthetic reports use a fixed snapshot date; live reports always end on today's report day.
     const snapshot = demo || process.env.NEXT_PUBLIC_USE_MOCKS === "1";
     const lastDate = sourceData.dailyClicks?.at(-1)?.date;
+    const extra = live.source === sourceData ? live : { human: 0, automated: 0 };
+    const daily = fillDailyClicks(sourceData.dailyClicks ?? [], {
+      timezone: sourceData.timezone,
+      now: snapshot && lastDate ? new Date(`${lastDate}T12:00:00Z`) : new Date(),
+    });
+    if (extra.human > 0 && daily.length > 0) {
+      daily[daily.length - 1] = { ...daily[daily.length - 1], count: daily[daily.length - 1].count + extra.human };
+    }
     return {
       ...sourceData,
-      dailyClicks: fillDailyClicks(sourceData.dailyClicks ?? [], {
-        timezone: sourceData.timezone,
-        now: snapshot && lastDate ? new Date(`${lastDate}T12:00:00Z`) : new Date(),
-      }),
+      humanClicks: (sourceData.humanClicks ?? 0) + extra.human,
+      botClicks: (sourceData.botClicks ?? 0) + extra.automated,
+      totalClicks: (sourceData.totalClicks ?? 0) + extra.human + extra.automated,
+      dailyClicks: daily,
     };
-  }, [sourceData, demo]);
+  }, [sourceData, demo, live]);
   const [view, setView] = useTabHash();
   const noHumans = (data.humanClicks ?? 0) === 0;
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
@@ -101,18 +124,18 @@ export function StatsBody({
       />
       <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who", "log", "settings"]} />
       <div key={view} role="tabpanel" aria-label={view === "settings" ? t("linkSettings") : undefined} id={`stats-panel-${view}`} aria-labelledby={view === "settings" ? undefined : `stats-tab-${view}`} className="view-enter">
-        {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} onTick={onTick} shortUrl={shortUrl} demo={demo} />}
+        {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} stream={stream} shortUrl={shortUrl} demo={demo} />}
         {noHumans && (view === "who" || view === "when" || view === "where") && (
           <>
-            {view === "when" && !demo && <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />}
+            {view === "when" && !demo && <LiveClickFeed stream={stream} />}
             <StatsEmpty title={t((data.totalClicks ?? 0) === 0 ? "noClicks" : "noHumanClicks")} shortUrl={shortUrl} />
           </>
         )}
         {!noHumans && view === "who" && <WhoChapter data={data} />}
-        {!noHumans && view === "when" && <WhenChapter data={data} dailyClicks={slicedDaily} range={rangeDays} onRange={setRangeDays} onTick={onTick} demo={demo} />}
+        {!noHumans && view === "when" && <WhenChapter data={data} dailyClicks={slicedDaily} range={rangeDays} onRange={setRangeDays} stream={stream} demo={demo} />}
         {!noHumans && view === "where" && <WhereChapter data={data} />}
         {view === "log" && <LogTab data={data} demo={demo} />}
-        {view === "settings" && <SettingsTab data={data} onTick={onTick} demo={demo} />}
+        {view === "settings" && <SettingsTab data={data} onTick={onChanged} demo={demo} />}
       </div>
     </>
   );

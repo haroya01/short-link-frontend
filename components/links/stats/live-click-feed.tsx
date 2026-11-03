@@ -1,15 +1,14 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useClickStream } from "@/hooks/use-click-stream";
+import type { UseClickStreamResult } from "@/hooks/use-click-stream";
 import { cn } from "@/lib/utils";
 import { useStatsLabels } from "@/lib/stats-labels";
 
-export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick?: () => void }) {
+export function LiveClickFeed({ stream: { items, count } }: { stream: UseClickStreamResult }) {
   const t = useTranslations("stats");
   const locale = useLocale();
   const labels = useStatsLabels();
-  const { items, count } = useClickStream(shortCode, { onTick });
 
   return (
     <div

@@ -1487,8 +1487,7 @@
       "edit": "편집",
       "delete": "삭제",
       "more": "더보기",
-      "openOriginal": "목적지 열기",
-      "settings": "링크 설정"
+      "openOriginal": "목적지 열기"
     },
     "favorite": {
       "add": "즐겨찾기에 추가",
@@ -1661,7 +1660,7 @@
     },
     "webhooks": {
       "title": "웹훅",
-      "description": "클릭이 발생하면 등록한 URL로 POST 요청을 보내요. Slack·Discord 인커밍 웹훅은 자동으로 감지해 각 서비스 메시지 형식으로 변환해 전달하고, 그 외 엔드포인트는 kurl JSON payload + HMAC 서명(X-Kurl-Signature)으로 전달돼요. 링크당 최대 5개까지 등록할 수 있어요.",
+      "description": "Slack·Discord 웹훅 주소에는 그 서비스의 메시지 형식으로 바꿔 보내요.",
       "namePlaceholder": "이름 (선택, 예: slack-#alerts)",
       "register": "등록",
       "registering": "등록 중…",
@@ -1708,11 +1707,13 @@
       "badgeSample": "샘플 {rate}%",
       "badgeBatch": "배치",
       "badgeQuota": "한도 {n}/일",
-      "consecutiveFailures": "연속 실패 {n}회"
+      "consecutiveFailures": "연속 실패 {n}회",
+      "formatTitle": "보내는 형식",
+      "formatDetail": "그 밖의 주소에는 kurl JSON 본문을 보내고, HMAC 서명을 X-Kurl-Signature 헤더에 담아요."
     },
     "destinations": {
       "title": "A/B 분배·국가별 목적지",
-      "description": "같은 단축 링크의 클릭을 가중치로 나누거나, 방문자 국가에 맞춰 다른 페이지로 보낼 수 있어요. 국가를 지정한 목적지는 그 나라 방문자에게만 쓰이고, 맞는 게 없으면 국가를 지정하지 않은 목적지로, 그것도 없으면 기본 목적지로 보내요. 링크당 최대 4개.",
+      "description": "나라를 정한 목적지는 그 나라 방문자에게만 쓰이고, 맞는 게 없으면 나라를 정하지 않은 목적지로 가요.",
       "countryLabel": "대상 국가",
       "countryAny": "모든 국가",
       "countryPlaceholder": "국가 선택",
@@ -1752,7 +1753,6 @@
       "disable": "비활성화",
       "delete": "삭제",
       "blockedTitle": "국가 차단",
-      "blockedDesc": "선택한 국가의 방문자는 이 링크로 접근할 수 없어요.",
       "blockedAddHint": "차단할 국가 선택",
       "blockedEmpty": "차단된 국가가 없어요.",
       "blockedLoading": "불러오는 중…",
@@ -1985,11 +1985,11 @@
     "visit": {
       "title": "방문자가 열 때",
       "openInBrowser": "카카오톡·LINE에선 기본 브라우저로 열기",
-      "openInBrowserDesc": "앱 안 브라우저에선 로그인·결제·다운로드가 막힐 때가 있어요. 켜 두면 카카오톡·LINE에서 누른 사람을 기본 브라우저로 보내요.",
+      "openInBrowserDesc": "앱 안 브라우저에서는 로그인·결제·다운로드가 막힐 때가 있어요.",
       "failed": "설정을 바꾸지 못했어요.",
       "loadFailed": "설정을 불러오지 못했어요. 새로고침해 주세요.",
       "splash": "잠깐 보여주기",
-      "splashDesc": "목적지로 가기 전에 안내와 버튼을 잠깐 보여줘요. 방문자가 화면을 누르면 자동 이동이 멈춰요.",
+      "splashDesc": "방문자가 화면을 누르면 자동 이동이 멈춰요.",
       "splashMessage": "안내 문구",
       "splashMessagePlaceholder": "예: 결제할 때 쿠폰 코드 SPRING20을 넣으면 20% 할인돼요",
       "splashSeconds": "보여줄 시간",
@@ -2002,7 +2002,7 @@
       "saved": "저장했어요.",
       "unsaved": "저장하지 않은 변경이 있어요",
       "schedule": "공개 예약",
-      "scheduleDesc": "정한 시각 전에 연 사람에게는 ‘아직 열리지 않은 링크예요’를 보여줘요. 미리보기 카드는 그대로 보여요.",
+      "scheduleDesc": "열리기 전에도 미리보기 카드는 보여요.",
       "scheduleAt": "여는 시각",
       "scheduleInPast": "지금보다 뒤 시각을 골라 주세요."
     },
@@ -2023,7 +2023,6 @@
     "period": {
       "title": "공개 기간",
       "expiry": "만료",
-      "expiryDesc": "정한 시각이 지나면 링크가 닫혀요.",
       "expiryAt": "닫는 시각",
       "expiryBeforeOpen": "만료는 공개 시각보다 뒤여야 해요."
     },
@@ -3728,7 +3727,9 @@
           "REDUCE": "감축",
           "PRUNE": "폐기"
         },
-        "rowMeta": "{current} → {recommended}장 · 100장당 {rate}회"
+        "rowMeta": "{current} → {recommended}장 · 100장당 {rate}회",
+        "tooFewBatches": "배포 묶음이 {minimum}개 이상이면 추천이 나와요. 지금 {current}개예요.",
+        "tooFewClicks": "사람 클릭이 {minimum}회 이상이면 추천이 나와요. 지금 {current}회예요."
       },
       "daily": {
         "title": "일별 클릭",
@@ -4343,8 +4344,7 @@
     "edit": "편집",
     "delete": "삭제",
     "favorite": "즐겨찾기에 추가",
-    "unfavorite": "즐겨찾기 해제",
-    "settings": "링크 설정"
+    "unfavorite": "즐겨찾기 해제"
   },
   "linkState": {
     "expired": "만료됨",

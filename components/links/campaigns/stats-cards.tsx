@@ -14,7 +14,13 @@ export function RecommendationCard({ data }: { data: CampaignRecommendation }) {
   if (data.insufficient) {
     return (
       <Section title={t("recommendation.title")}>
-        <p className="text-[12px] text-slate-500 dark:text-slate-400">{data.insufficientReason}</p>
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
+          {data.insufficientCode === "TOO_FEW_BATCHES"
+            ? t("recommendation.tooFewBatches", { minimum: data.insufficientMinimum ?? 2, current: data.insufficientCurrent ?? 0 })
+            : data.insufficientCode === "TOO_FEW_CLICKS"
+              ? t("recommendation.tooFewClicks", { minimum: data.insufficientMinimum ?? 10, current: data.insufficientCurrent ?? 0 })
+              : data.insufficientReason}
+        </p>
       </Section>
     );
   }

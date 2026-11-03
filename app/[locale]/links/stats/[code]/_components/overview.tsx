@@ -6,7 +6,8 @@ import { KpiLine } from "@/components/links/stats/kpi-line";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { StatsJournal } from "@/components/links/stats/journal";
-import { LiveClicks } from "@/components/links/shorten/live-clicks";
+import { LiveClicksView } from "@/components/links/shorten/live-clicks";
+import type { UseClickStreamResult } from "@/hooks/use-click-stream";
 import { Breakdown, BreakdownGrid, StatsEmpty, countryItems } from "@/components/links/stats/stat-sections";
 import { formatNumber, formatShare } from "@/lib/utils";
 import { sourceBreakdown } from "@/lib/stats-sources";
@@ -54,7 +55,7 @@ export function StatsOverview({
   range,
   onRange,
   onNavigate,
-  onTick,
+  stream,
   shortUrl,
   demo = false,
 }: {
@@ -63,7 +64,7 @@ export function StatsOverview({
   range: RangeDays;
   onRange: (r: RangeDays) => void;
   onNavigate: (section: string) => void;
-  onTick: () => void;
+  stream: UseClickStreamResult;
   shortUrl?: string;
   demo?: boolean;
 }) {
@@ -96,7 +97,7 @@ export function StatsOverview({
         </>
       )}
 
-      {!demo && <LiveClicks shortCode={data.shortCode} onTick={onTick} label={t("live.now")} hideWhileWaiting />}
+      {!demo && <LiveClicksView stream={stream} label={t("live.now")} hideWhileWaiting />}
 
       {human > 0 && (
         <>

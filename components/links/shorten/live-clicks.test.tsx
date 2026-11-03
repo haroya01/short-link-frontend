@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LiveClick, UseClickStreamResult } from "@/hooks/use-click-stream";
 
-const stream = vi.hoisted(() => ({ value: { items: [], connected: false, reconnecting: false, count: 0 } as UseClickStreamResult }));
+const stream = vi.hoisted(() => ({ value: { items: [], connected: false, reconnecting: false, count: 0, bots: 0 } as UseClickStreamResult }));
 const calls = vi.hoisted(() => [] as unknown[][]);
 
 vi.mock("next-intl", () => ({
@@ -42,8 +42,11 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function render(value: UseClickStreamResult) {
-  stream.value = value;
+type StreamState = Omit<UseClickStreamResult, "bots">;
+const withBots = (value: StreamState): UseClickStreamResult => ({ ...value, bots: value.items.filter((item) => item.bot).length });
+
+async function render(value: StreamState) {
+  stream.value = withBots(value);
   await act(async () => root.render(<LiveClicks shortCode="abc1234" claimToken="claim-1" />));
 }
 
@@ -79,8 +82,8 @@ describe("LiveClicks", () => {
 
 describe("LiveClicks on a signed-in stats page", () => {
   const onTick = () => {};
-  async function renderStats(value: UseClickStreamResult) {
-    stream.value = value;
+  async function renderStats(value: StreamState) {
+    stream.value = withBots(value);
     await act(async () =>
       root.render(<LiveClicks shortCode="abc1234" onTick={onTick} label="now" hideWhileWaiting />),
     );

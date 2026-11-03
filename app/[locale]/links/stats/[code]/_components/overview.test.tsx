@@ -23,7 +23,7 @@ describe("overview referrer sources", () => {
         range={30}
         onRange={() => {}}
         onNavigate={() => {}}
-        onTick={() => {}}
+        stream={{ items: [], connected: false, reconnecting: false, count: 0, bots: 0 }}
         demo
       />,
     );

@@ -24,7 +24,7 @@ type UseClickStreamOptions = {
   /** Cap retained in memory; older clicks fall off as new ones arrive. */
   maxItems?: number;
   /** Fired on each click event so callers can drive counters / scroll cues. */
-  onTick?: () => void;
+  onTick?: (click: Omit<LiveClick, "id">) => void;
 };
 
 type StreamTokenResponse = {
@@ -43,6 +43,7 @@ export type UseClickStreamResult = {
   reconnecting: boolean;
   /** Total click events received for the current link/credential (not capped by maxItems). */
   count: number;
+  bots: number;
 };
 
 const DEFAULT_MAX = 30;
@@ -66,6 +67,7 @@ export function useClickStream(
   const [connected, setConnected] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
   const [count, setCount] = useState(0);
+  const [bots, setBots] = useState(0);
   const seqRef = useRef(0);
   const onTickRef = useRef(onTick);
   useEffect(() => {
@@ -75,13 +77,14 @@ export function useClickStream(
   useEffect(() => {
     setItems([]);
     setCount(0);
+    setBots(0);
     seqRef.current = 0;
   }, [shortCode, claimToken]);
 
   useEffect(() => {
     setConnected(false);
     setReconnecting(false);
-    if (!claimToken && !readToken()) return;
+    if (!shortCode || (!claimToken && !readToken())) return;
 
     let es: EventSource | null = null;
     let cancelled = false;
@@ -134,7 +137,8 @@ export function useClickStream(
           const id = ++seqRef.current;
           setItems((prev) => [{ id, ...payload } as LiveClick, ...prev].slice(0, maxItems));
           setCount((c) => c + 1);
-          onTickRef.current?.();
+          if (payload.bot) setBots((b) => b + 1);
+          onTickRef.current?.(payload);
         } catch {
           // ignore malformed payloads
         }
@@ -156,5 +160,5 @@ export function useClickStream(
     };
   }, [shortCode, claimToken, maxItems]);
 
-  return { items, connected, reconnecting, count };
+  return { items, connected, reconnecting, count, bots };
 }

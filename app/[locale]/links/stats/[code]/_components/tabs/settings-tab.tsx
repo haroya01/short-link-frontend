@@ -84,7 +84,6 @@ function DemoLinkBlockedCountriesPreview() {
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("blockedTitle")}</h2>
-          <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("blockedDesc")}</p>
         </div>
         <DemoBadge />
       </div>

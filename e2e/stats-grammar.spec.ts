@@ -1,3 +1,5 @@
+import http from "node:http";
+import type { AddressInfo } from "node:net";
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockLinksResponse } from "../lib/api/_links-mocks";
 import { mockBackend, signIn } from "./helpers/mock-backend";
@@ -114,16 +116,12 @@ test.describe("the header holds still while the link loads", () => {
     await expect(page.locator("main").getByText(/https?:\/\//)).toHaveCount(0);
   });
 
-  test("link settings is a tab, and the dashboard row menu leads to it", async ({ page }) => {
+  test("link settings is the last tab and a #settings link opens it selected", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await open(page);
-    await expect(page.getByRole("tab", { name: "설정", exact: true })).toBeVisible();
-
-    await page.goto("/ko/dashboard");
-    const row = page.getByRole("listitem").filter({ hasText: "/spr1ng" }).first();
-    await row.getByRole("button", { name: "더보기" }).click();
-    await page.getByRole("menuitem", { name: "링크 설정" }).click();
-    await expect(page).toHaveURL(/\/stats\/spr1ng#settings$/);
+    await open(page, "#settings");
+    const tab = page.getByRole("tab", { name: "설정", exact: true });
+    await expect(tab).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab").last()).toHaveText("설정");
   });
 });
 
@@ -190,4 +188,48 @@ test("public stats share the link stats grammar", async ({ page }) => {
   await expect(page.locator("main .rounded-2xl")).toHaveCount(0);
   await expect(page.getByTestId("daily-chart").locator("[data-count]")).toHaveCount(30);
   await expect(page.getByTestId("breakdown-list")).toHaveCount(3);
+});
+
+test.describe("live clicks on the stats page", () => {
+  test("one stream serves every tab, and clicks raise the numbers without pulling the whole report again", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const sockets: http.ServerResponse[] = [];
+    const server = http.createServer((_, res) => {
+      res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache", "access-control-allow-origin": "*" });
+      res.write("event: ready\ndata: {}\n\n");
+      sockets.push(res);
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const port = (server.address() as AddressInfo).port;
+    const counts = { stats: 0, token: 0 };
+    try {
+      await open(page, "", {
+        [`GET /api/v1/links/${CODE}/stats`]: (route) => {
+          counts.stats += 1;
+          return route.fulfill({ json: stats() });
+        },
+        [`POST /api/v1/links/${CODE}/stream-token`]: (route) => {
+          counts.token += 1;
+          return route.fulfill({ json: { streamToken: "st" } });
+        },
+        [`GET /api/v1/links/${CODE}/stream`]: (route) => route.continue({ url: `http://127.0.0.1:${port}/stream` }),
+      });
+      const hero = page.locator("#stats-panel-overview dl dd").first();
+      await expect(hero).toHaveText("1,125");
+      await expect.poll(() => sockets.length).toBe(1);
+      for (const tab of ["클릭 추이", "유입 경로", "개요", "클릭 추이", "개요"]) {
+        await page.getByRole("tab", { name: tab, exact: true }).click();
+      }
+      for (let i = 0; i < 3; i++) {
+        sockets[0].write(`event: click\ndata: ${JSON.stringify({ occurredAt: new Date().toISOString(), countryCode: "KR", deviceClass: "mobile", channel: "social", bot: false })}\n\n`);
+      }
+      await expect(hero).toHaveText("1,128");
+      await page.waitForTimeout(1500);
+      expect(sockets.length).toBe(1);
+      expect(counts).toEqual({ stats: 1, token: 1 });
+    } finally {
+      sockets.forEach((res) => res.end());
+      server.close();
+    }
+  });
 });

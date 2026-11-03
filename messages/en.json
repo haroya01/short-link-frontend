@@ -1487,8 +1487,7 @@
       "edit": "Edit",
       "delete": "Delete",
       "more": "More",
-      "openOriginal": "Open destination",
-      "settings": "Link settings"
+      "openOriginal": "Open destination"
     },
     "favorite": {
       "add": "Add to favorites",
@@ -1661,7 +1660,7 @@
     },
     "webhooks": {
       "title": "Webhooks",
-      "description": "Each click triggers a POST to the URL you register. Slack and Discord incoming webhooks are auto-detected and converted to their native message format; everything else gets the kurl JSON payload with an HMAC-signed X-Kurl-Signature header. Up to 5 per link.",
+      "description": "Slack and Discord webhook URLs get messages in their own format.",
       "namePlaceholder": "Name (optional, e.g. slack-#alerts)",
       "register": "Register",
       "registering": "Registering...",
@@ -1708,11 +1707,13 @@
       "badgeSample": "sample {rate}%",
       "badgeBatch": "batch",
       "badgeQuota": "{n}/day",
-      "consecutiveFailures": "{n} consecutive failures"
+      "consecutiveFailures": "{n} consecutive failures",
+      "formatTitle": "Payload format",
+      "formatDetail": "Other URLs get the kurl JSON payload, signed with HMAC in the X-Kurl-Signature header."
     },
     "destinations": {
       "title": "A/B split / geo-targeting",
-      "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the default destination. Up to 4 per link.",
+      "description": "Country-tagged destinations only serve visitors from that country; everyone else falls back to destinations without a country.",
       "countryLabel": "Target country",
       "countryAny": "Any country",
       "countryPlaceholder": "Select country",
@@ -1752,7 +1753,6 @@
       "disable": "Disable",
       "delete": "Delete",
       "blockedTitle": "Country blocking",
-      "blockedDesc": "Visitors from the selected countries can't open this link.",
       "blockedAddHint": "Pick a country to block",
       "blockedEmpty": "No countries blocked.",
       "blockedLoading": "Loading…",
@@ -1985,11 +1985,11 @@
     "visit": {
       "title": "When someone opens the link",
       "openInBrowser": "Open in the default browser from KakaoTalk and LINE",
-      "openInBrowserDesc": "Sign-in, payments and downloads can fail inside in-app browsers. When on, people who tap the link in KakaoTalk or LINE continue in their default browser.",
+      "openInBrowserDesc": "Sign-in, payments and downloads can fail inside in-app browsers.",
       "failed": "Couldn’t update the setting.",
       "loadFailed": "Couldn’t load the settings. Please refresh.",
       "splash": "Show a note first",
-      "splashDesc": "Show a short note and a button before sending people on. Tapping the page pauses the countdown.",
+      "splashDesc": "Tapping the page stops the automatic redirect.",
       "splashMessage": "Note",
       "splashMessagePlaceholder": "e.g. Use code SPRING20 at checkout for 20% off",
       "splashSeconds": "Show for",
@@ -2002,7 +2002,7 @@
       "saved": "Saved.",
       "unsaved": "Unsaved changes",
       "schedule": "Schedule opening",
-      "scheduleDesc": "Before this time, people see “This link isn’t open yet”. Link previews still show the card.",
+      "scheduleDesc": "Link previews still show the card before it opens.",
       "scheduleAt": "Opens at",
       "scheduleInPast": "Pick a time in the future."
     },
@@ -2023,7 +2023,6 @@
     "period": {
       "title": "Active period",
       "expiry": "Expiry",
-      "expiryDesc": "The link closes after this time.",
       "expiryAt": "Closes at",
       "expiryBeforeOpen": "Expiry has to come after the opening time."
     },
@@ -3728,7 +3727,9 @@
           "REDUCE": "Reduce",
           "PRUNE": "Prune"
         },
-        "rowMeta": "{current} → {recommended} sheets · {rate} per 100 sheets"
+        "rowMeta": "{current} → {recommended} sheets · {rate} per 100 sheets",
+        "tooFewBatches": "Recommendations appear once there are {minimum} or more batches. There are {current} now.",
+        "tooFewClicks": "Recommendations appear after {minimum} human clicks. There are {current} now."
       },
       "daily": {
         "title": "Daily clicks",
@@ -4343,8 +4344,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "favorite": "Add to favorites",
-    "unfavorite": "Remove from favorites",
-    "settings": "Link settings"
+    "unfavorite": "Remove from favorites"
   },
   "linkState": {
     "expired": "Expired",

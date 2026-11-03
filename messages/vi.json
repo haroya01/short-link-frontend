@@ -1487,8 +1487,7 @@
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
       "more": "Thêm",
-      "openOriginal": "Mở điểm đến",
-      "settings": "Cài đặt liên kết"
+      "openOriginal": "Mở điểm đến"
     },
     "favorite": {
       "add": "Thêm vào mục yêu thích",
@@ -1661,7 +1660,7 @@
     },
     "webhooks": {
       "title": "Webhook",
-      "description": "Mỗi lượt nhấp kích hoạt một POST tới URL bạn đăng ký. Webhook đến của Slack và Discord được tự động nhận diện và chuyển sang định dạng tin nhắn gốc của chúng; phần còn lại nhận payload JSON của kurl kèm header X-Kurl-Signature ký HMAC. Tối đa 5 mỗi liên kết.",
+      "description": "URL webhook của Slack và Discord nhận tin nhắn theo định dạng riêng của dịch vụ.",
       "namePlaceholder": "Tên (tùy chọn, ví dụ: slack-#alerts)",
       "register": "Đăng ký",
       "registering": "Đang đăng ký...",
@@ -1708,11 +1707,13 @@
       "badgeSample": "mẫu {rate}%",
       "badgeBatch": "gộp",
       "badgeQuota": "{n}/ngày",
-      "consecutiveFailures": "{n} lần thất bại liên tiếp"
+      "consecutiveFailures": "{n} lần thất bại liên tiếp",
+      "formatTitle": "Định dạng gửi",
+      "formatDetail": "URL khác nhận payload JSON của kurl, ký HMAC trong header X-Kurl-Signature."
     },
     "destinations": {
       "title": "Chia tách A/B / nhắm theo vị trí",
-      "description": "Phân phối lượt nhấp tới các điểm đến theo trọng số, hoặc gửi khách từ một số quốc gia tới trang phù hợp. Biến thể gắn quốc gia chỉ kích hoạt với khách khớp; nếu không, lưu lượng quay về các biến thể không gắn quốc gia, rồi đến điểm đến mặc định. Tối đa 4 mỗi liên kết.",
+      "description": "Đích có gắn quốc gia chỉ dùng cho khách từ quốc gia đó; nếu không khớp sẽ chuyển sang đích không gắn quốc gia.",
       "countryLabel": "Quốc gia mục tiêu",
       "countryAny": "Mọi quốc gia",
       "countryPlaceholder": "Chọn quốc gia",
@@ -1752,7 +1753,6 @@
       "disable": "Tắt",
       "delete": "Xóa",
       "blockedTitle": "Chặn theo quốc gia",
-      "blockedDesc": "Khách từ các quốc gia đã chọn không thể mở liên kết này.",
       "blockedAddHint": "Chọn một quốc gia để chặn",
       "blockedEmpty": "Không có quốc gia nào bị chặn.",
       "blockedLoading": "Đang tải…",
@@ -1985,11 +1985,11 @@
     "visit": {
       "title": "Khi có người mở liên kết",
       "openInBrowser": "Mở bằng trình duyệt mặc định khi từ KakaoTalk và LINE",
-      "openInBrowserDesc": "Trình duyệt trong ứng dụng đôi khi chặn đăng nhập, thanh toán hoặc tải xuống. Khi bật, người nhấn liên kết trong KakaoTalk hoặc LINE sẽ được chuyển sang trình duyệt mặc định.",
+      "openInBrowserDesc": "Đăng nhập, thanh toán và tải xuống có thể lỗi trong trình duyệt của ứng dụng.",
       "failed": "Không thể cập nhật cài đặt.",
       "loadFailed": "Không thể tải cài đặt. Vui lòng tải lại trang.",
       "splash": "Hiện thông báo trước",
-      "splashDesc": "Hiện một thông báo ngắn và một nút trước khi chuyển tiếp. Chạm vào trang sẽ tạm dừng đếm ngược.",
+      "splashDesc": "Chạm vào màn hình sẽ dừng việc tự chuyển hướng.",
       "splashMessage": "Thông báo",
       "splashMessagePlaceholder": "VD: Nhập mã SPRING20 khi thanh toán để giảm 20%",
       "splashSeconds": "Thời gian hiển thị",
@@ -2002,7 +2002,7 @@
       "saved": "Đã lưu.",
       "unsaved": "Có thay đổi chưa lưu",
       "schedule": "Hẹn giờ mở",
-      "scheduleDesc": "Trước thời điểm này, người mở sẽ thấy “Liên kết này chưa mở”. Thẻ xem trước vẫn hiển thị.",
+      "scheduleDesc": "Thẻ xem trước vẫn hiện trước giờ mở.",
       "scheduleAt": "Mở lúc",
       "scheduleInPast": "Vui lòng chọn thời điểm trong tương lai."
     },
@@ -2023,7 +2023,6 @@
     "period": {
       "title": "Thời gian hoạt động",
       "expiry": "Hết hạn",
-      "expiryDesc": "Liên kết sẽ đóng sau thời điểm này.",
       "expiryAt": "Đóng lúc",
       "expiryBeforeOpen": "Thời điểm hết hạn phải sau thời điểm mở."
     },
@@ -3728,7 +3727,9 @@
           "REDUCE": "Giảm",
           "PRUNE": "Cắt"
         },
-        "rowMeta": "{current} → {recommended} tờ · {rate} lượt / 100 tờ"
+        "rowMeta": "{current} → {recommended} tờ · {rate} lượt / 100 tờ",
+        "tooFewBatches": "Gợi ý sẽ hiện khi có từ {minimum} đợt trở lên. Hiện có {current}.",
+        "tooFewClicks": "Gợi ý sẽ hiện sau {minimum} lượt nhấp của người. Hiện có {current}."
       },
       "daily": {
         "title": "Lượt nhấp hằng ngày",
@@ -4343,8 +4344,7 @@
     "edit": "Chỉnh sửa",
     "delete": "Xóa",
     "favorite": "Thêm vào mục yêu thích",
-    "unfavorite": "Bỏ khỏi mục yêu thích",
-    "settings": "Cài đặt liên kết"
+    "unfavorite": "Bỏ khỏi mục yêu thích"
   },
   "linkState": {
     "expired": "Đã hết hạn",

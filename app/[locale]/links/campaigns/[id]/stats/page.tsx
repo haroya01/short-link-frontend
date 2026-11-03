@@ -171,9 +171,9 @@ export default function CampaignStatsPage() {
             />
           )}
           {recData && <RecommendationCard data={recData} />}
-          {stats.byDay.length > 0 && <DailyChart data={stats.byDay} startsAt={campaign.startsAt} />}
-          {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} />}
-          {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} />}
+          {stats.byDay.length > 0 && <DailyChart data={stats.byDay} startsAt={campaign.startsAt} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
+          {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
+          {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} timezone={stats.timezone ?? CAMPAIGN_TIMEZONE} />}
           {otherCampaigns.length > 0 && (
             <CompareSection
               campaigns={otherCampaigns}
@@ -285,24 +285,24 @@ function CompareCell({ label, value }: { label: string; value: string }) {
   );
 }
 
-function DailyChart({ data, startsAt }: { data: CampaignStats["byDay"]; startsAt: string }) {
+function DailyChart({ data, startsAt, timezone }: { data: CampaignStats["byDay"]; startsAt: string; timezone: string }) {
   const t = useTranslations("campaignApp.campaignStats");
   const series = useMemo(
-    () => fillDailySince(data.map((d) => ({ date: d.day, count: d.clicks })), { from: new Date(startsAt), timezone: CAMPAIGN_TIMEZONE }),
-    [data, startsAt],
+    () => fillDailySince(data.map((d) => ({ date: d.day, count: d.clicks })), { from: new Date(startsAt), timezone }),
+    [data, startsAt, timezone],
   );
   return (
-    <Section title={t("daily.title")} description={t("daily.description", { tz: CAMPAIGN_TIMEZONE })}>
-      <DailyTrendChart data={series} timezone={CAMPAIGN_TIMEZONE} />
+    <Section title={t("daily.title")} description={t("daily.description", { tz: timezone })}>
+      <DailyTrendChart data={series} timezone={timezone} />
     </Section>
   );
 }
 
-function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
+function HourlyChart({ data, timezone }: { data: CampaignStats["byHour"]; timezone: string }) {
   const t = useTranslations("campaignApp.campaignStats");
   const series = useMemo(() => data.map((d) => ({ hour: d.hour, count: d.clicks })), [data]);
   return (
-    <Section title={t("hourly.title")} description={t("hourly.description", { tz: CAMPAIGN_TIMEZONE })}>
+    <Section title={t("hourly.title")} description={t("hourly.description", { tz: timezone })}>
       <HourRhythmChart data={series} />
     </Section>
   );
@@ -329,11 +329,11 @@ function adaptHeatmap(cells: CampaignStats["heatmap"]): HeatmapCell[] {
   }));
 }
 
-function HeatmapChart({ data }: { data: CampaignStats["heatmap"] }) {
+function HeatmapChart({ data, timezone }: { data: CampaignStats["heatmap"]; timezone: string }) {
   const t = useTranslations("campaignApp.campaignStats");
   const adapted = useMemo(() => adaptHeatmap(data), [data]);
   return (
-    <Section title={t("heatmap.title")} description={t("heatmap.description", { tz: CAMPAIGN_TIMEZONE })}>
+    <Section title={t("heatmap.title")} description={t("heatmap.description", { tz: timezone })}>
       <Heatmap data={adapted} />
     </Section>
   );

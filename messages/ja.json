@@ -1487,8 +1487,7 @@
       "edit": "編集",
       "delete": "削除",
       "more": "その他",
-      "openOriginal": "リンク先を開く",
-      "settings": "リンク設定"
+      "openOriginal": "リンク先を開く"
     },
     "favorite": {
       "add": "お気に入りに追加",
@@ -1661,7 +1660,7 @@
     },
     "webhooks": {
       "title": "Webhook",
-      "description": "クリックが発生すると登録URLへPOSTを送信します。Slack / Discord Incoming Webhookは自動検出して各サービスのメッセージ形式に変換し、その他のエンドポイントはkurl JSON payload + HMAC署名(X-Kurl-Signature) で送られます。リンクごとに最大5件。",
+      "description": "Slack・DiscordのWebhook URLには、各サービスのメッセージ形式に変換して送ります。",
       "namePlaceholder": "名前 (任意、例：slack-#alerts)",
       "register": "登録",
       "registering": "登録中…",
@@ -1708,11 +1707,13 @@
       "badgeSample": "サンプル {rate}%",
       "badgeBatch": "バッチ",
       "badgeQuota": "上限 {n}/日",
-      "consecutiveFailures": "{n}回連続で失敗"
+      "consecutiveFailures": "{n}回連続で失敗",
+      "formatTitle": "送信形式",
+      "formatDetail": "その他のURLにはkurlのJSON本文を送り、HMAC署名をX-Kurl-Signatureヘッダーに入れます。"
     },
     "destinations": {
       "title": "A/B 振り分け / 国別ターゲティング",
-      "description": "同じ短縮リンクのクリックを重みで分散したり、訪問者の国に合わせてリンク先を切り替えられます。国を指定したリンク先は該当国の訪問者にのみ使われ、合致しない場合は国指定なしのリンク先、それも無ければデフォルトのリンク先に移動します。リンクごとに最大4件。",
+      "description": "国を指定したリンク先はその国の訪問者にだけ使われ、合うものがなければ国指定なしのリンク先に移動します。",
       "countryLabel": "対象国",
       "countryAny": "すべての国",
       "countryPlaceholder": "国を選択",
@@ -1752,7 +1753,6 @@
       "disable": "無効化",
       "delete": "削除",
       "blockedTitle": "国別ブロック",
-      "blockedDesc": "選択した国からの訪問者はこのリンクを開けません。",
       "blockedAddHint": "ブロックする国を選択",
       "blockedEmpty": "ブロック中の国はありません。",
       "blockedLoading": "読み込み中…",
@@ -1985,11 +1985,11 @@
     "visit": {
       "title": "リンクが開かれたとき",
       "openInBrowser": "LINE・カカオトークでは標準ブラウザで開く",
-      "openInBrowserDesc": "アプリ内ブラウザではログイン・決済・ダウンロードがうまくいかないことがあります。オンにすると、LINEやカカオトークでタップした人を標準ブラウザで開き直します。",
+      "openInBrowserDesc": "アプリ内ブラウザではログイン・決済・ダウンロードがうまくいかないことがあります。",
       "failed": "設定を変更できませんでした。",
       "loadFailed": "設定を読み込めませんでした。再読み込みしてください。",
       "splash": "移動の前にお知らせを表示",
-      "splashDesc": "リンク先へ移動する前に、お知らせとボタンを少しだけ表示します。画面をタップすると自動移動が止まります。",
+      "splashDesc": "画面をタップすると自動移動が止まります。",
       "splashMessage": "お知らせ",
       "splashMessagePlaceholder": "例：お会計でクーポン SPRING20 を入れると20%オフ",
       "splashSeconds": "表示時間",
@@ -2002,7 +2002,7 @@
       "saved": "保存しました。",
       "unsaved": "未保存の変更があります",
       "schedule": "公開予約",
-      "scheduleDesc": "この日時より前に開いた人には「まだ公開前のリンクです」と表示します。プレビューカードはそのまま表示されます。",
+      "scheduleDesc": "公開前でもプレビューカードは表示されます。",
       "scheduleAt": "公開日時",
       "scheduleInPast": "現在より後の日時を選んでください。"
     },
@@ -2023,7 +2023,6 @@
     "period": {
       "title": "公開期間",
       "expiry": "期限",
-      "expiryDesc": "指定した時刻を過ぎるとリンクが閉じます。",
       "expiryAt": "閉じる時刻",
       "expiryBeforeOpen": "期限は公開時刻より後にしてください。"
     },
@@ -3728,7 +3727,9 @@
           "REDUCE": "減少",
           "PRUNE": "削除"
         },
-        "rowMeta": "{current} → {recommended}部 · 100部あたり{rate}件"
+        "rowMeta": "{current} → {recommended}部 · 100部あたり{rate}件",
+        "tooFewBatches": "配布先が{minimum}件以上になるとおすすめを表示します。いまは{current}件です。",
+        "tooFewClicks": "反響が{minimum}件以上になるとおすすめを表示します。いまは{current}件です。"
       },
       "daily": {
         "title": "日別の反響",
@@ -4343,8 +4344,7 @@
     "edit": "編集",
     "delete": "削除",
     "favorite": "お気に入りに追加",
-    "unfavorite": "お気に入りを解除",
-    "settings": "リンク設定"
+    "unfavorite": "お気に入りを解除"
   },
   "linkState": {
     "expired": "期限切れ",
