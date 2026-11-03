@@ -14,7 +14,13 @@ export function RecommendationCard({ data }: { data: CampaignRecommendation }) {
   if (data.insufficient) {
     return (
       <Section title={t("recommendation.title")}>
-        <p className="text-[12px] text-slate-500 dark:text-slate-400">{data.insufficientReason}</p>
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
+          {data.insufficientCode === "TOO_FEW_BATCHES"
+            ? t("recommendation.tooFewBatches", { minimum: data.insufficientMinimum ?? 2, current: data.insufficientCurrent ?? 0 })
+            : data.insufficientCode === "TOO_FEW_CLICKS"
+              ? t("recommendation.tooFewClicks", { minimum: data.insufficientMinimum ?? 10, current: data.insufficientCurrent ?? 0 })
+              : data.insufficientReason}
+        </p>
       </Section>
     );
   }
@@ -95,9 +101,8 @@ export function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount
       metrics={[
         { label: t("kpi.batches"), value: t("units.count", { count: batchCount }) },
         { label: t("kpi.totalDistributed"), value: t("units.sheets", { count: formatNumber(totalQuantity) }) },
-        { label: t("kpi.perHundred"), value: ratePerHundred.toFixed(1) },
+        { label: t("kpi.perHundred"), value: totalQuantity > 0 ? t("units.rate", { rate: ratePerHundred.toFixed(1) }) : "—" },
       ]}
-      note={`${t("kpi.perHundred")} · ${t("kpi.perHundredHint")}`}
     />
   );
 }
@@ -203,7 +208,7 @@ export function GroupChart({
                 </p>
                 <div className="flex flex-shrink-0 items-baseline gap-3 text-right">
                   <span className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                    {g.clickRatePerHundred.toFixed(1)}
+                    {t("units.perHundred", { rate: g.clickRatePerHundred.toFixed(1) })}
                   </span>
                   <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                     {t("groups.meta", {

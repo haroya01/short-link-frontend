@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useClickStream, type LiveClick } from "@/hooks/use-click-stream";
+import { useClickStream, type LiveClick, type UseClickStreamResult } from "@/hooks/use-click-stream";
 import { cn } from "@/lib/utils";
+import { useStatsLabels } from "@/lib/stats-labels";
 
 type Props = {
   shortCode: string;
@@ -13,8 +14,19 @@ type Props = {
 };
 
 export function LiveClicks({ shortCode, claimToken, onTick, label, hideWhileWaiting = false }: Props) {
-  const { items, connected, count } = useClickStream(shortCode, { claimToken, maxItems: 200, onTick });
+  const stream = useClickStream(shortCode, { claimToken, maxItems: 200, onTick });
+  return <LiveClicksView stream={stream} label={label} hideWhileWaiting={hideWhileWaiting} />;
+}
 
+export function LiveClicksView({
+  stream: { items, connected, count, bots },
+  label,
+  hideWhileWaiting = false,
+}: {
+  stream: UseClickStreamResult;
+  label?: string;
+  hideWhileWaiting?: boolean;
+}) {
   if (hideWhileWaiting) {
     return (
       <div
@@ -25,33 +37,37 @@ export function LiveClicks({ shortCode, claimToken, onTick, label, hideWhileWait
         )}
       >
         <div className="-ml-2 min-h-0 overflow-hidden pl-2">
-          {count > 0 && <LiveLine items={items} count={count} label={label} className="pt-3" />}
+          {count > 0 && <LiveLine items={items} count={count} bots={bots} label={label} className="pt-3" />}
         </div>
       </div>
     );
   }
   if (!connected && count === 0) return null;
-  return <LiveLine items={items} count={count} label={label} live />;
+  return <LiveLine items={items} count={count} bots={bots} label={label} live />;
 }
 
 function LiveLine({
   items,
   count,
+  bots,
   label,
   live = false,
   className,
 }: {
   items: LiveClick[];
   count: number;
+  bots: number;
   label?: string;
   live?: boolean;
   className?: string;
 }) {
   const t = useTranslations("result");
+  const labels = useStatsLabels();
   const latest = items[0];
-  const bots = items.filter((item) => item.bot).length;
-  const people = items.length - bots;
-  const detail = latest ? [latest.countryCode, latest.deviceClass, latest.channel].filter(Boolean).join(" · ") : "";
+  const people = count - bots;
+  const detail = latest
+    ? [latest.countryCode && labels.country(latest.countryCode), latest.bot ? labels.device("bot") : latest.deviceClass && labels.device(latest.deviceClass), latest.channel && labels.channel(latest.channel)].filter(Boolean).join(" · ")
+    : "";
 
   return (
     <p

@@ -1282,7 +1282,7 @@
     "anonymousExpirySignup": "Sign in to keep your stats",
     "liveWaiting": "Waiting for the first click",
     "liveCount": "{count, plural, one {# click} other {# clicks}}",
-    "liveBots": "{count, plural, one {# bot} other {# bots}}"
+    "liveBots": "{count} automated"
   },
   "login": {
     "title": "Sign in",
@@ -1480,10 +1480,7 @@
       "sortDesc": "descending"
     },
     "card": {
-      "week": "7-day human clicks: {count}",
-      "expiresToday": "Expires today",
-      "expiresIn": "{days}d left",
-      "expired": "Expired"
+      "week": "7-day human clicks: {count}"
     },
     "actions": {
       "stats": "Stats",
@@ -1602,7 +1599,6 @@
       "imageLabel": "Image URL override"
     },
     "protection": {
-      "description": "Set a password and a maximum view count to protect this link.",
       "passwordLabel": "Password",
       "passwordPlaceholder": "Leave blank for no password",
       "passwordSetHint": "Password already set (type a new one to change)",
@@ -1616,8 +1612,7 @@
   },
   "stats": {
     "breakdown": {
-      "unknown": "Unknown",
-      "direct": "Direct"
+      "unknown": "Unknown"
     },
     "shortCode": "short link",
     "detailsTitle": "Details",
@@ -1631,20 +1626,14 @@
       "settings": "Settings"
     },
     "live": {
-      "now": "Now",
-      "bot": "Bot"
+      "now": "Now"
     },
     "quality": {
-      "title": "Click quality",
       "returning": "Returning ratio",
-      "returningHint": "{count} visitors returned",
-      "clicksPerUnique": "Clicks per unique",
-      "clicksPerUniqueHint": "{unique} unique visitors",
-      "realVsPreview": "Real / preview",
-      "realVsPreviewHint": "Previews are {ratio} of total",
+      "clicksPerUnique": "Clicks per visitor",
       "peakHour": "Peak hour",
-      "peakHourHint": "Most clicks land in this hour",
-      "peakHourEmpty": "Not enough data"
+      "previews": "Previews",
+      "returningWindow": "The returning ratio covers the last {days} days."
     },
     "insights": {
       "title": "Interpretation",
@@ -1670,7 +1659,7 @@
     },
     "webhooks": {
       "title": "Webhooks",
-      "description": "Each click triggers a POST to the URL you register. Slack and Discord incoming webhooks are auto-detected and converted to their native message format; everything else gets the kurl JSON payload with an HMAC-signed X-Kurl-Signature header. Up to 5 per link.",
+      "description": "Slack and Discord webhook URLs get messages in their own format.",
       "namePlaceholder": "Name (optional, e.g. slack-#alerts)",
       "register": "Register",
       "registering": "Registering...",
@@ -1705,7 +1694,7 @@
       "save": "Save",
       "configSaved": "Options saved",
       "configFailed": "Failed to save options.",
-      "optIncludeBots": "Include bot / preview clicks",
+      "optIncludeBots": "Include automated clicks",
       "optBatch": "Batch mode (one POST every 5s, max 50 events)",
       "optSampleRate": "Sample rate: {rate}%",
       "optSampleRateAria": "Sample rate",
@@ -1713,15 +1702,17 @@
       "optDailyQuotaPlaceholder": "e.g. 10000 (blank = unlimited)",
       "optReferrerFilter": "Referrer host filter",
       "optUtmFilter": "UTM source filter",
-      "badgeSkipBots": "skip bots",
+      "badgeSkipBots": "skip automated",
       "badgeSample": "sample {rate}%",
       "badgeBatch": "batch",
       "badgeQuota": "{n}/day",
-      "consecutiveFailures": "{n} consecutive failures"
+      "consecutiveFailures": "{n} consecutive failures",
+      "formatTitle": "Payload format",
+      "formatDetail": "Other URLs get the kurl JSON payload, signed with HMAC in the X-Kurl-Signature header."
     },
     "destinations": {
       "title": "A/B split / geo-targeting",
-      "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the default destination. Up to 4 per link.",
+      "description": "Country-tagged destinations only serve visitors from that country; everyone else falls back to destinations without a country.",
       "countryLabel": "Target country",
       "countryAny": "Any country",
       "countryPlaceholder": "Select country",
@@ -1761,7 +1752,6 @@
       "disable": "Disable",
       "delete": "Delete",
       "blockedTitle": "Country blocking",
-      "blockedDesc": "Visitors from the selected countries can't open this link.",
       "blockedAddHint": "Pick a country to block",
       "blockedEmpty": "No countries blocked.",
       "blockedLoading": "Loading…",
@@ -1775,7 +1765,7 @@
     "notFoundDesc": "It may have been deleted or never existed.",
     "backToDashboard": "Back to my links",
     "kpi": {
-      "totalClicks": "Lifetime clicks",
+      "totalClicks": "Incl. automated",
       "totalVisits": "Lifetime visits",
       "unique": "Estimated visitors",
       "human": "Human clicks",
@@ -1795,101 +1785,78 @@
         "title": "Weekday × hour"
       },
       "daily": {
-        "title": "Daily human clicks",
-        "desc": "Last 30 days · {tz}"
+        "title": "Daily human clicks"
       },
       "hourly": {
         "title": "Hour of day"
       },
       "device": {
-        "title": "Device",
-        "desc": "mobile · desktop · tablet · bot"
+        "title": "Device"
       },
       "channel": {
-        "title": "Channel",
-        "desc": "Referrer domain classification"
+        "title": "Channel"
       },
       "os": {
-        "title": "OS",
-        "desc": "Operating system distribution"
+        "title": "OS"
       },
       "browser": {
-        "title": "Browser",
-        "desc": "Browser distribution"
+        "title": "Browser"
       },
       "referrerHost": {
-        "title": "Sources",
-        "desc": "Aggregated by host"
+        "title": "Sources"
       },
       "referrerUrl": {
-        "title": "Top referrer URLs",
-        "desc": "Most common sources"
+        "title": "Top referrer URLs"
       },
       "utm": {
-        "title": "UTM campaigns",
-        "desc": "Aggregated by utm_campaign"
+        "title": "UTM campaigns"
       },
       "utmSource": {
-        "title": "UTM source",
-        "desc": "By utm_source (instagram, naver, ...)"
+        "title": "UTM source"
       },
       "utmMedium": {
-        "title": "UTM medium",
-        "desc": "By utm_medium (bio, ad, email, ...)"
+        "title": "UTM medium"
       },
       "utmContent": {
-        "title": "UTM content",
-        "desc": "By utm_content (banner / A-B slot)"
+        "title": "UTM content"
       },
       "utmTerm": {
-        "title": "UTM term",
-        "desc": "By utm_term (search keyword / ad creative)"
+        "title": "UTM term"
       },
       "srcChannel": {
-        "title": "Share channel (?src)",
-        "desc": "Tracked via the ?src= hint on the short link itself. Covers QR scans, KakaoTalk and offline channels where the referrer header is missing.",
-        "empty": "No clicks carried a ?src parameter."
+        "title": "Share channel"
       },
       "clientApp": {
         "title": "Opened in an app",
-        "desc": "Clicks opened in an app's built-in browser, like KakaoTalk or Instagram. Sign-in redirects and downloads often break there."
+        "note": "Sign-in redirects and downloads often break in in-app browsers."
       },
       "fetchSite": {
-        "title": "How they opened it",
-        "desc": "Whether people typed the address themselves or followed a link. This also sorts out clicks with no referrer."
+        "title": "How they opened it"
       },
       "postClicks": {
-        "title": "Which post",
-        "desc": "Clicks per blog post that carried this link"
+        "title": "Which post"
       },
       "channelDepth": {
-        "title": "Channel depth",
-        "desc": "When each channel first showed up, and how many of its visitors came back"
+        "title": "Channel depth"
       },
       "bots": {
-        "title": "Bot types",
-        "desc": "Googlebot · Slackbot etc."
+        "title": "Automated traffic"
       },
       "country": {
-        "title": "Country",
-        "desc": "Estimated from the visitor's IP"
+        "title": "Country"
       },
       "region": {
-        "title": "Region",
-        "desc": "State, province or prefecture"
+        "title": "Region"
       },
       "city": {
-        "title": "City",
-        "desc": "City level"
+        "title": "City"
       },
       "language": {
-        "title": "Language",
-        "desc": "Browser Accept-Language"
+        "title": "Language"
       },
       "asn": {
-        "title": "Network / ASN",
-        "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
-        "empty": "No network (ASN) data yet"
+        "title": "Network",
+        "note": "{dc} datacenter clicks were counted as automated."
       }
     },
     "clientApp": {
@@ -1921,8 +1888,7 @@
     "referrerNoData": "No referrer data",
     "noClicks": "No clicks yet",
     "clickCount": "{count} clicks",
-    "noUtm": "No UTM campaign data",
-    "noBot": "No bot clicks",
+    "noBot": "No automated clicks",
     "weekday": {
       "MONDAY": "Mon",
       "TUESDAY": "Tue",
@@ -1931,13 +1897,6 @@
       "FRIDAY": "Fri",
       "SATURDAY": "Sat",
       "SUNDAY": "Sun"
-    },
-    "device": {
-      "mobile": "Mobile",
-      "desktop": "Desktop",
-      "tablet": "Tablet",
-      "bot": "Bot",
-      "unknown": "Other"
     },
     "country": {
       "unknown": "Unknown"
@@ -1965,8 +1924,7 @@
       "exporting": "Exporting…",
       "loadMore": "Load more",
       "retention": "Individual clicks older than {days} days aren't kept",
-      "empty": "No clicks yet.",
-      "bot": "Bot",
+      "empty": "No clicks yet",
       "colTime": "Time",
       "colLocation": "Location",
       "colDevice": "Device",
@@ -1976,7 +1934,8 @@
     },
     "chart": {
       "summary": "Peak: {count} at {label}",
-      "hour": "{hour}:00"
+      "hour": "{hour}:00",
+      "today": "Today"
     },
     "exportSummaryCsv": "Summary CSV",
     "rawWindow": "Last {days} days",
@@ -2008,7 +1967,13 @@
       "inAppBrowser": "{percent}% of clicks opened in an in-app browser",
       "channelLoyalty": "{percent}% of the people from {host} came back",
       "showMore": "Show {count} more changes",
-      "showLess": "Show less"
+      "showLess": "Show less",
+      "lastHour": "Last hour",
+      "hourlyAverage": "Hourly average, last 24 hours",
+      "last7": "Last 7 days",
+      "prev7": "7 days before",
+      "peakDayCount": "Busiest day",
+      "dailyAverage": "Daily average, last {days} days"
     },
     "protection": {
       "title": "Protection",
@@ -2019,11 +1984,11 @@
     "visit": {
       "title": "When someone opens the link",
       "openInBrowser": "Open in the default browser from KakaoTalk and LINE",
-      "openInBrowserDesc": "Sign-in, payments and downloads can fail inside in-app browsers. When on, people who tap the link in KakaoTalk or LINE continue in their default browser.",
+      "openInBrowserDesc": "Sign-in, payments and downloads can fail inside in-app browsers.",
       "failed": "Couldn’t update the setting.",
       "loadFailed": "Couldn’t load the settings. Please refresh.",
       "splash": "Show a note first",
-      "splashDesc": "Show a short note and a button before sending people on. Tapping the page pauses the countdown.",
+      "splashDesc": "Tapping the page stops the automatic redirect.",
       "splashMessage": "Note",
       "splashMessagePlaceholder": "e.g. Use code SPRING20 at checkout for 20% off",
       "splashSeconds": "Show for",
@@ -2036,7 +2001,7 @@
       "saved": "Saved.",
       "unsaved": "Unsaved changes",
       "schedule": "Schedule opening",
-      "scheduleDesc": "Before this time, people see “This link isn’t open yet”. Link previews still show the card.",
+      "scheduleDesc": "Link previews still show the card before it opens.",
       "scheduleAt": "Opens at",
       "scheduleInPast": "Pick a time in the future."
     },
@@ -2057,7 +2022,6 @@
     "period": {
       "title": "Active period",
       "expiry": "Expiry",
-      "expiryDesc": "The link closes after this time.",
       "expiryAt": "Closes at",
       "expiryBeforeOpen": "Expiry has to come after the opening time."
     },
@@ -2134,6 +2098,37 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
+    },
+    "noHumanClicks": "No human clicks yet",
+    "copyLink": "Copy link"
+  },
+  "statLabels": {
+    "unknown": "Unknown",
+    "kakaotalk": "KakaoTalk",
+    "channel": {
+      "social": "Social",
+      "messaging": "Messaging",
+      "search": "Search",
+      "email": "Email",
+      "newsletter": "Newsletter",
+      "other": "Other",
+      "direct": "Direct"
+    },
+    "device": {
+      "mobile": "Mobile",
+      "desktop": "Desktop",
+      "tablet": "Tablet",
+      "bot": "Automated",
+      "unknown": "Other"
+    },
+    "botKind": {
+      "preview": "Preview",
+      "prefetch": "Prefetch",
+      "datacenter": "Datacenter",
+      "burst": "Rapid repeat visits"
+    },
+    "source": {
+      "profile": "Profile @{user}"
     }
   },
   "admin": {
@@ -3691,15 +3686,13 @@
       "loadFailed": "Load failed",
       "backToCampaign": "Back to QR campaign",
       "title": "Stats",
-      "introCampaign": "<name></name> · Counts clicks after campaign start, excluding bots and previews.",
+      "introCampaign": "<name></name> · Counts human clicks after the campaign starts.",
       "loading": "Loading...",
       "groups": {
         "distributorTitle": "Performance by distributor",
         "distributorHint": "Clicks per 100 sheets, so distributors can be compared even when they handed out different amounts.",
         "areaTitle": "Performance by area",
         "areaHint": "Use this to decide the next distribution location.",
-        "tooltip": "{rate} / 100 sheets · clicks {clicks} / distributed {quantity}",
-        "efficiency": "Efficiency",
         "meta": "clicks {clicks} · {quantity} sheets"
       },
       "compare": {
@@ -3711,20 +3704,21 @@
         "selectHint": "Choose a campaign from the dropdown above."
       },
       "kpi": {
-        "totalClicks": "Total clicks",
-        "perHundred": "Per 100",
+        "totalClicks": "Human clicks",
+        "perHundred": "Per 100 sheets",
         "topArea": "Top area",
         "batches": "Batches",
-        "totalDistributed": "Printed/distributed",
-        "perHundredHint": "Average efficiency (clicks / distributed × 100)"
+        "totalDistributed": "Printed/distributed"
       },
       "units": {
         "count": "{count}",
-        "sheets": "{count} sheets"
+        "sheets": "{count} sheets",
+        "perHundred": "{rate} per 100 sheets",
+        "rate": "{rate}"
       },
       "recommendation": {
         "title": "Next distribution recommendation",
-        "description": "Redistribute the same total of {total} sheets. Baseline average is {average} per 100.",
+        "description": "Redistribute the same total of {total} sheets. The average is {average} per 100 sheets.",
         "footnote": "Recommendation based on efficiency ratios. Under 30% of average is pruned; the rest is reallocated by ratio, capped at 3x per batch.",
         "verdict": {
           "BOOST": "Boost",
@@ -3732,20 +3726,22 @@
           "REDUCE": "Reduce",
           "PRUNE": "Prune"
         },
-        "rowMeta": "{current} → {recommended} sheets · {rate} per 100"
+        "rowMeta": "{current} → {recommended} sheets · {rate} per 100 sheets",
+        "tooFewBatches": "Recommendations appear once there are {minimum} or more batches. There are {current} now.",
+        "tooFewClicks": "Recommendations appear after {minimum} human clicks. There are {current} now."
       },
       "daily": {
         "title": "Daily clicks",
-        "description": "Since campaign start"
+        "description": "Since campaign start · {tz}"
       },
       "hourly": {
         "title": "Clicks by hour",
-        "description": "0–23",
+        "description": "{tz}",
         "tooltip": "{hour}:00: {clicks}"
       },
       "heatmap": {
         "title": "Day × hour distribution",
-        "description": "Darker cells mean more clicks."
+        "description": "{tz}"
       },
       "testScans": {
         "title": "Pre-start test scans",
@@ -3756,7 +3752,7 @@
         "empty": "No distribution batches yet. Batch performance appears here after you add one.",
         "title": "Performance by batch",
         "description": "Sorted by clicks descending. Bars are relative to the max row.",
-        "meta": "/ {quantity} sheets · {rate}%"
+        "meta": "/ {quantity} sheets · {rate} per 100 sheets"
       }
     }
   },
@@ -4308,13 +4304,11 @@
     "title": "Analytics",
     "loadFailed": "Couldn’t load your stats. Please try again.",
     "weekHumanClicks": "Human clicks · last 7 days",
-    "today": "Today {count}",
-    "peak": "Busiest {when}",
-    "vsPrevUp": "Up {percent}% on the 7 days before ({count})",
-    "vsPrevDown": "Down {percent}% on the 7 days before ({count})",
-    "vsPrevSimilar": "About the same as the 7 days before ({count})",
+    "vsPrevUp": "Up {percent}% on the 7 days before",
+    "vsPrevDown": "Down {percent}% on the 7 days before",
+    "vsPrevSimilar": "About the same as the 7 days before",
     "vsPrevNone": "No clicks in the 7 days before",
-    "scopeNote": "Bot clicks excluded. Times in {tz}.",
+    "scopeNote": "Automated clicks excluded. Times in {tz}.",
     "attention": "Worth a look",
     "zeroClick": "{count, plural, one {# link} other {# links}} without clicks yet",
     "expiring": "{count, plural, one {# link expires} other {# links expire}} within 3 days",
@@ -4323,7 +4317,11 @@
     "weekTopLinksEmpty": "No clicks in the last 7 days yet.",
     "humanClicks": "human clicks",
     "createFirst": "Create your first link",
-    "viewFewestClicks": "Fewest clicks first"
+    "viewFewestClicks": "Fewest clicks first",
+    "todayLabel": "Today",
+    "prevWeekLabel": "7 days before",
+    "peakLabel": "Busiest",
+    "dailyTitle": "Daily human clicks"
   },
   "composer": {
     "placeholder": "Paste a long link",
@@ -4348,6 +4346,12 @@
     "delete": "Delete",
     "favorite": "Add to favorites",
     "unfavorite": "Remove from favorites"
+  },
+  "linkState": {
+    "expired": "Expired",
+    "expiresToday": "Expires today",
+    "expiresIn": "{days}d left",
+    "password": "Password"
   },
   "linkReport": {
     "title": "Report a link",

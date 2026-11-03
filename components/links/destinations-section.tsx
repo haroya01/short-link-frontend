@@ -509,9 +509,6 @@ export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }
         <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
           {t("blockedTitle")}
         </h2>
-        <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t("blockedDesc")}
-        </p>
       </div>
 
       <div className="flex items-center gap-2">

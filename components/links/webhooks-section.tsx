@@ -128,6 +128,10 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
       <div className="mb-3">
         <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
         <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
+        <details className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">
+          <summary className="focus-ring w-fit cursor-pointer rounded-sm">{t("formatTitle")}</summary>
+          <p className="mt-1 leading-relaxed">{t("formatDetail")}</p>
+        </details>
       </div>
 
       <form onSubmit={handleRegister} className="grid gap-2 sm:grid-cols-[1fr_180px_auto]">

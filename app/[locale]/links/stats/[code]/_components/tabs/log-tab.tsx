@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { formatDateTime } from "@/lib/utils";
+import { useStatsLabels, type StatsLabels } from "@/lib/stats-labels";
 import type { LinkStats } from "@/types";
 import { DemoBadge } from "./settings-tab";
 
@@ -26,6 +27,7 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
   const t = useTranslations("stats.rawData");
   const tc = useTranslations("common");
   const tDemo = useTranslations("demo.settingsDemo");
+  const labels = useStatsLabels();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const shortCode = data.shortCode;
@@ -91,9 +93,10 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card-flat dark:border-slate-800 dark:bg-slate-900">
+    <section>
       <div className="flex flex-wrap items-center justify-end gap-2">
-        {demo && <span className="mr-auto"><DemoBadge /></span>}
+        {demo && <DemoBadge />}
+        <span className="mr-auto text-[12px] text-slate-500 dark:text-slate-400">{data.timezone}</span>
         <Button type="button" size="sm" variant="ghost" disabled={demo || busy !== null} onClick={() => exportCsv("events")}>
           {busy === "events" ? t("exporting") : t("exportEvents")}
         </Button>
@@ -113,13 +116,13 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
               {events.map((e, i) => (
                 <li key={i} className="border-b border-slate-100 py-2 text-[12px] dark:border-slate-800">
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="whitespace-nowrap font-mono tabular-nums text-slate-600 dark:text-slate-300">{formatDateTime(e.clickedAt)}</span>
-                    <span className="min-w-0 truncate text-slate-500 dark:text-slate-400">{referrerOf(e)}</span>
+                    <span className="whitespace-nowrap font-mono tabular-nums text-slate-600 dark:text-slate-300">{formatDateTime(e.clickedAt, data.timezone)}</span>
+                    <span className="min-w-0 truncate text-slate-500 dark:text-slate-400">{referrerOf(e, labels)}</span>
                   </div>
                   <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-slate-700 dark:text-slate-200">
-                    <span>{locationOf(e)}</span>
+                    <span>{locationOf(e, labels)}</span>
                     <span aria-hidden className="text-slate-300 dark:text-slate-600">·</span>
-                    <DeviceCell event={e} botLabel={t("bot")} />
+                    <DeviceCell event={e} labels={labels} />
                   </div>
                 </li>
               ))}
@@ -137,13 +140,13 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
                 {events.map((e, i) => (
                   <tr key={i} className="border-b border-slate-100 align-top dark:border-slate-800">
                     <td className="whitespace-nowrap py-1.5 pr-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">
-                      {formatDateTime(e.clickedAt)}
+                      {formatDateTime(e.clickedAt, data.timezone)}
                     </td>
-                    <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">{locationOf(e)}</td>
+                    <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">{locationOf(e, labels)}</td>
                     <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">
-                      <DeviceCell event={e} botLabel={t("bot")} />
+                      <DeviceCell event={e} labels={labels} />
                     </td>
-                    <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">{referrerOf(e)}</td>
+                    <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-200">{referrerOf(e, labels)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -165,20 +168,22 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
   );
 }
 
-function locationOf(e: LinkEvent) {
-  return [e.city, e.country].filter(Boolean).join(", ") || "—";
+function locationOf(e: LinkEvent, labels: StatsLabels) {
+  return [e.city, e.country ? labels.country(e.country) : null].filter(Boolean).join(", ") || "—";
 }
 
-function referrerOf(e: LinkEvent) {
-  return e.referrerHost || e.channel || "—";
+function referrerOf(e: LinkEvent, labels: StatsLabels) {
+  return e.referrerHost || (e.channel ? labels.channel(e.channel) : "—");
 }
 
-function DeviceCell({ event, botLabel }: { event: LinkEvent; botLabel: string }) {
-  if (!event.bot) return <>{[event.device, event.os, event.browser].filter(Boolean).join(" · ") || "—"}</>;
+function DeviceCell({ event, labels }: { event: LinkEvent; labels: StatsLabels }) {
+  if (!event.bot) {
+    return <>{[event.device && labels.device(event.device), event.os, event.browser].filter(Boolean).join(" · ") || "—"}</>;
+  }
   return (
     <span className="inline-flex items-center gap-1">
       <Bot aria-hidden className="h-3.5 w-3.5 text-slate-400" />
-      {event.botName ?? botLabel}
+      {event.botName ? labels.bot(event.botName) : labels.device("bot")}
     </span>
   );
 }

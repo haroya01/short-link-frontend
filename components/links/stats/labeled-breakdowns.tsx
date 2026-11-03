@@ -18,16 +18,19 @@ export function ClientAppBreakdown({
   items,
   maxItems,
   total,
+  subgrid,
 }: {
   items: ClientAppClick[];
   maxItems?: number;
   total?: number;
+  subgrid?: boolean;
 }) {
   const t = useTranslations("stats");
   return (
     <BreakdownList
       maxItems={maxItems}
       total={total}
+      subgrid={subgrid}
       items={items.map((a) => ({
         label: CLIENT_APPS.has(a.app) ? t(`clientApp.${a.app}`) : a.app,
         count: a.count,
@@ -36,11 +39,12 @@ export function ClientAppBreakdown({
   );
 }
 
-export function FetchSiteBreakdown({ items, total }: { items: FetchSiteClick[]; total?: number }) {
+export function FetchSiteBreakdown({ items, total, subgrid }: { items: FetchSiteClick[]; total?: number; subgrid?: boolean }) {
   const t = useTranslations("stats");
   return (
     <BreakdownList
       total={total}
+      subgrid={subgrid}
       items={items.map((f) => {
         const key = FETCH_SITE_KEYS[f.fetchSite];
         return { label: key ? t(`fetchSite.${key}`) : f.fetchSite, count: f.count };
@@ -49,11 +53,12 @@ export function FetchSiteBreakdown({ items, total }: { items: FetchSiteClick[]; 
   );
 }
 
-export function RegionBreakdown({ items, total }: { items: RegionClick[]; total?: number }) {
+export function RegionBreakdown({ items, total, subgrid }: { items: RegionClick[]; total?: number; subgrid?: boolean }) {
   const t = useTranslations("stats");
   return (
     <BreakdownList
       total={total}
+      subgrid={subgrid}
       items={mergeRegionClicks(items).map((r) => ({
         label: r.code ? t(`regionNames.${regionMessageKey(r.code)}`) : r.region,
         count: r.count,

@@ -25,3 +25,13 @@ export function fillDailyClicks(
     return { date, count: counts.get(date) ?? 0 };
   });
 }
+
+export function fillDailySince(
+  daily: DailyClick[],
+  { from, timezone = "Asia/Seoul", now = new Date() }: { from: Date; timezone?: string; now?: Date },
+): DailyClick[] {
+  const day = (instant: Date) => Date.parse(`${new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(instant)}T00:00:00Z`);
+  const last = daily.reduce((max, point) => Math.max(max, Date.parse(`${point.date}T00:00:00Z`)), day(now));
+  const days = Math.max(1, Math.round((last - day(from)) / 86_400_000) + 1);
+  return fillDailyClicks(daily, { days, timezone: "UTC", now: new Date(last) });
+}

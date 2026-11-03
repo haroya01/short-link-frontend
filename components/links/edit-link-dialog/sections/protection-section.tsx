@@ -35,7 +35,6 @@ export function ProtectionSection({
 }: Props) {
   return (
     <div className="space-y-3">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{t("protection.description")}</p>
       <div className="space-y-1">
         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("protection.passwordLabel")}

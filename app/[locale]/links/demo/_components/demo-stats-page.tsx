@@ -54,12 +54,8 @@ export function DemoStatsPage() {
         data={data}
         shortUrl={shortUrl}
         shortCodeLabel={tStats("shortCode")}
-        onTick={() => {
-          // No-op on /demo — there's no backend to refetch from, and the seeded data is stable
-          // across renders by design. The dashboard's stats page bumps a tick counter here on
-          // every SSE event so the next getStats() refresh runs; on demo the click feed is
-          // scripted and the heatmap / KPIs never need to refresh.
-        }}
+        onLiveClick={() => {}}
+        onChanged={() => {}}
         demo
       />
     </div>

@@ -14,7 +14,7 @@ test("the log tab opens straight into the click rows and pages by cursor", async
   const panel = page.locator("#stats-panel-log");
   const rows = panel.locator("tbody tr");
   await expect(rows).toHaveCount(50);
-  await expect(rows.first()).toContainText("Seoul, KR");
+  await expect(rows.first()).toContainText("Seoul, 대한민국");
   await expect(panel.getByRole("button", { name: "클릭 이벤트 CSV" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "일별 통계 CSV" })).toBeVisible();
 
@@ -26,11 +26,10 @@ test("the log tab opens straight into the click rows and pages by cursor", async
 
 test("returning ratio and channel depth name the raw window they are counted over", async ({ page }) => {
   await page.goto(`/ko/stats/${CODE}#who`);
-  const returning = page.locator("#stats-panel-who .rounded-2xl", { hasText: "재방문 비율" });
-  await expect(returning).toContainText("최근 90일");
+  await expect(page.locator("#stats-panel-who").getByText("재방문 비율은 최근 90일 기준이에요.", { exact: true })).toBeVisible();
 
   await page.getByRole("tab", { name: "유입 경로", exact: true }).click();
-  await expect(page.locator("#section-channel-depth header")).toContainText("최근 90일");
+  await expect(page.locator("#section-channel-depth")).toContainText("최근 90일");
 });
 
 test("the header export is named for the summary it holds, apart from the log tab's two", async ({ page }) => {

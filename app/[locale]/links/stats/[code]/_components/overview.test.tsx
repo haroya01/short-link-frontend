@@ -23,7 +23,7 @@ describe("overview referrer sources", () => {
         range={30}
         onRange={() => {}}
         onNavigate={() => {}}
-        onTick={() => {}}
+        stream={{ items: [], connected: false, reconnecting: false, count: 0, bots: 0 }}
         demo
       />,
     );
@@ -37,6 +37,6 @@ describe("overview referrer sources", () => {
       }),
     );
     expect(rows["instagram.com"]).toBe("34%");
-    expect(rows["breakdown.direct"]).toBe("17%");
+    expect(rows["channel.direct"]).toBe("17%");
   });
 });

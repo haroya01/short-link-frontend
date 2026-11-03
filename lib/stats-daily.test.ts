@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fillDailyClicks } from "./stats-daily";
+import { fillDailyClicks, fillDailySince } from "./stats-daily";
 import { buildJournal } from "./stats-journal";
 import type { LinkStats } from "@/types";
 
@@ -47,5 +47,29 @@ describe("calendar-day link statistics", () => {
     ], { now });
     expect(daily[0]).toEqual({ date: "2026-08-08", count: 2 });
     expect(daily.reduce((sum, point) => sum + point.count, 0)).toBe(2);
+  });
+});
+
+describe("campaign days since start", () => {
+  it("fills every day from the start date through today in the report timezone", () => {
+    const daily = fillDailySince(
+      [
+        { date: "2026-10-21", count: 5 },
+        { date: "2026-10-24", count: 2 },
+      ],
+      { from: new Date("2026-10-19T15:30:00Z"), timezone: "Asia/Seoul", now: new Date("2026-10-24T03:00:00Z") },
+    );
+    expect(daily.map((point) => point.date)).toEqual(["2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-24"]);
+    expect(daily.map((point) => point.count)).toEqual([0, 5, 0, 0, 2]);
+  });
+
+  it("keeps a reported day that is ahead of the browser clock", () => {
+    const daily = fillDailySince([{ date: "2026-10-25", count: 1 }], {
+      from: new Date("2026-10-23T00:00:00Z"),
+      timezone: "Asia/Seoul",
+      now: new Date("2026-10-24T00:00:00Z"),
+    });
+    expect(daily.at(-1)).toEqual({ date: "2026-10-25", count: 1 });
+    expect(daily).toHaveLength(3);
   });
 });

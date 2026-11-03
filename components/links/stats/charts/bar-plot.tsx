@@ -12,12 +12,14 @@ export function BarPlot({
   ticks,
   testId,
   compact = false,
+  partialLast = false,
 }: {
   points: BarPoint[];
   title: string;
   ticks: number[];
   testId: string;
   compact?: boolean;
+  partialLast?: boolean;
 }) {
   const t = useTranslations("stats");
   const [pointed, setPointed] = useState<number | null>(null);
@@ -68,12 +70,13 @@ export function BarPlot({
       >
         <div className="relative flex h-full items-end gap-0.5 border-b border-slate-200 dark:border-slate-800">
           {points.map((p, i) => (
-            <span key={p.key} data-count={p.count} className="flex h-full min-w-0 flex-1 items-end justify-center">
+            <span key={p.key} data-count={p.count} data-partial={partialLast && i === last ? "" : undefined} className="flex h-full min-w-0 flex-1 items-end justify-center">
               {p.count > 0 && (
                 <span
                   className={cn(
                     "block w-3/5 max-w-4 transition-colors duration-150 ease-[var(--ease)]",
                     active === i ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700",
+                    partialLast && i === last && "opacity-50",
                     intro && "bar-grow-y",
                   )}
                   style={{ height: `max(2px, ${(p.count / max) * 100}%)`, animationDelay: intro ? `${i * 14}ms` : undefined }}

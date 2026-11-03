@@ -153,7 +153,7 @@ test("a click that lands while the owner looks opens one 지금 line over the st
         streams.length === 1
           ? event("ready", { ok: true })
           : event("ready", { ok: true }) +
-            event("click", { occurredAt: "2026-11-01T09:00:00Z", countryCode: "KR", deviceClass: "iOS", channel: "kakao", bot: false });
+            event("click", { occurredAt: "2026-11-01T09:00:00Z", countryCode: "KR", deviceClass: "mobile", channel: "messaging", bot: false });
       return route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body });
     },
   });
@@ -165,19 +165,23 @@ test("a click that lands while the owner looks opens one 지금 line over the st
 
   await expect(live).toContainText("지금", { timeout: 10_000 });
   await expect(live).toContainText("클릭 1");
-  await expect(live).toContainText("KR · iOS · kakao");
+  await expect(live).toContainText("대한민국 · 모바일 · 메신저");
   expect(streams[0]).toContain("streamToken=st-e2e");
   expect(streams.every((url) => !url.includes("claimToken"))).toBe(true);
 });
 
-test("a link with no clicks says so in one line and keeps listening", async ({ page }) => {
+test("a link with no clicks says so in one line, keeps listening, and counts the first click as it lands", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  const first = event("click", { occurredAt: "2026-11-01T09:00:00Z", countryCode: "JP", deviceClass: "Android", channel: "x", bot: false });
+  const first = event("click", { occurredAt: "2026-11-01T09:00:00Z", countryCode: "JP", deviceClass: "desktop", channel: "search", bot: false });
+  let connections = 0;
   await openOverview(
     page,
     {
-      [`GET /api/v1/links/${CODE}/stream`]: (route) =>
-        route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body: event("ready", { ok: true }) + first }),
+      [`GET /api/v1/links/${CODE}/stream`]: (route) => {
+        connections += 1;
+        const body = event("ready", { ok: true }) + (connections === 2 ? first : "");
+        return route.fulfill({ status: 200, headers: { "content-type": "text/event-stream" }, body });
+      },
     },
     stats({ totalClicks: 0, humanClicks: 0, uniqueClicks: 0, botClicks: 0 }),
   );
@@ -185,7 +189,9 @@ test("a link with no clicks says so in one line and keeps listening", async ({ p
   await expect(page.getByText(/공유하면/)).toHaveCount(0);
   await expect(page.getByText("사람 클릭", { exact: true })).toHaveCount(0);
   await expect(page.getByTestId("daily-chart")).toHaveCount(0);
-  await expect(page.getByTestId("live-clicks")).toContainText("JP · Android · x", { timeout: 10_000 });
+  await expect(page.getByTestId("live-clicks")).toContainText("일본 · 데스크톱 · 검색", { timeout: 10_000 });
+  await expect(page.locator("#stats-panel-overview dl dd").first()).toHaveText("1");
+  await expect(page.getByText("아직 클릭이 없어요", { exact: true })).toHaveCount(0);
 });
 
 test.describe("on a phone", () => {

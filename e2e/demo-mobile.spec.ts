@@ -82,11 +82,9 @@ test.describe("demo page artifacts", () => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "유입 경로" }).click();
-    // {@code stats.section.country.title} = "국가"; the where chapter renders the CountryTable
-    // inside a Section keyed on this exact title.
-    const countrySection = page.locator('section:has-text("국가")').first();
+    const countrySection = page.locator("section").filter({ has: page.getByRole("heading", { name: "국가", exact: true }) });
     await countrySection.scrollIntoViewIfNeeded();
-    const rows = countrySection.locator("tbody tr");
+    const rows = countrySection.getByTestId("breakdown-name");
     // Demo data ships 8 countries. If the renderer or fixture drifts this fails fast.
     expect(await rows.count()).toBeGreaterThanOrEqual(5);
     // Region + city must show the leading KR metro entry, not be empty.
@@ -116,9 +114,8 @@ test.describe("demo page artifacts", () => {
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
     await page.getByRole("tab", { name: "방문 환경" }).click();
     // Section titles in ko — pulled from messages/ko.json stats.section.*
-    for (const title of ["언어", "봇 종류", "네트워크(ASN)"]) {
-      const section = page.locator(`section:has-text("${title}")`).first();
-      await expect(section).toBeVisible();
+    for (const title of ["언어", "자동 접속 종류", "네트워크"]) {
+      await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
     }
   });
 
