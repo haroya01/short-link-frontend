@@ -35,7 +35,8 @@
     "notesTab": "Notes {count, number}",
     "discussionTabs": "Comments and notes",
     "notesTabHint": "Notes that quote this post",
-    "liveNew": "{count, plural, one {# new comment} other {# new comments}}"
+    "liveNew": "{count, plural, one {# new comment} other {# new comments}}",
+    "showMore": "More comments"
   },
   "publicFeed": {
     "recent": "Latest",
@@ -4809,7 +4810,9 @@
     "postToRoom": "Post to {room}",
     "roomAudience": "Only {room} members can see this",
     "roomPlaceholder": "What are you up to?",
-    "liveNewReplies": "{count, plural, one {# new reply} other {# new replies}}"
+    "liveNewReplies": "{count, plural, one {# new reply} other {# new replies}}",
+    "moreReplies": "More replies",
+    "repliesLoadFailed": "Couldn't load replies"
   },
   "mentions": {
     "suggestions": "People to mention"

@@ -2,7 +2,7 @@ import { ApiError, request } from "@/lib/api/client";
 import { listFollowers, listFollowing } from "@/modules/blog/api/follows";
 import { searchPeople } from "@/modules/blog/api/people";
 import type { HomePost } from "@/modules/blog/api/home-feed";
-import type { Note, NoteAuthor, NoteFeed, NoteThread } from "@/modules/notes/api/notes";
+import type { Note, NoteAuthor, NoteFeed } from "@/modules/notes/api/notes";
 
 const roomMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
@@ -170,9 +170,9 @@ export async function listRoomItems(id: number, cursor: string | null = null, li
   return tidyItems(await request<RoomItemsPage>(`${base}/${id}/items?${query}`, { method: "GET" }));
 }
 
-export async function getRoomNote(noteId: number): Promise<Note> {
-  if (roomMocks) return roomMocks.mockRoomNote(noteId);
-  return (await request<NoteThread>(`/api/v1/public/notes/${noteId}`, { method: "GET" })).note;
+export function listRoomNotesAfter(id: number, after: string, size = 20): Promise<NoteFeed> {
+  if (roomMocks) return roomMocks.mockRoomNotesAfter(id, after, size);
+  return request<NoteFeed>(`${base}/${id}/notes?after=${encodeURIComponent(after)}&size=${size}`, { method: "GET" });
 }
 
 export async function listAllRoomItems(cursor: string | null = null, limit = 20): Promise<RoomItemsPage> {

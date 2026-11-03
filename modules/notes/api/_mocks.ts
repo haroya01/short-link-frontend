@@ -25,6 +25,7 @@ import type {
   NoteListSummary,
   NotePoll,
   NoteReplyPolicy,
+  NoteRepliesPage,
   NoteThread,
   PostQuotes,
   ProfileMediaFeed,
@@ -1364,8 +1365,8 @@ function viewerCanReply(target: Note): boolean {
 
 const forViewer = (n: Note): Note => ({ ...n, canReply: viewerCanReply(n) });
 
-export function mockViewerThread(id: number): NoteThread {
-  const thread = id === MENTIONED_THREAD.note.id ? MENTIONED_THREAD : mockThread(id);
+export function mockViewerThread(id: number, replies?: number): NoteThread {
+  const thread = id === MENTIONED_THREAD.note.id ? MENTIONED_THREAD : mockThread(id, replies);
   if (!thread || MOCK_BLOCKS_VIEWER.has(thread.note.author.username)) {
     throw new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" });
   }
@@ -1413,17 +1414,52 @@ function absorbLiveReplies() {
   }
 }
 
-export function mockThread(id: number): NoteThread | null {
+function absorbLongThread() {
+  if (readStorageString("kurl:mock-thread-long") !== "1" || notes.some((n) => n.id === 9400)) return;
+  const extra = Array.from({ length: 25 }, (_, i) =>
+    note({ id: 9400 + i, body: `지난 답글 ${i + 1}`, author: i % 2 ? HARUKA : ME, inReplyToId: 3, createdAt: "2026-10-06T09:00:00Z" }),
+  );
+  notes = [...notes.map((n) => (n.id === 3 ? { ...n, replyCount: n.replyCount + extra.length } : n)), ...extra];
+}
+
+const legacyReplies = () => readStorageString("kurl:mock-replies-legacy") === "1";
+
+function directReplies(id: number, parts: Set<number>): Note[] {
+  return notes.filter((n) => n.inReplyToId === id && !parts.has(n.id) && n.hidden !== true && listedRemote(n));
+}
+
+export function mockRepliesAfter(id: number, after: string, limit: number): NoteRepliesPage | null {
   absorbLiveReplies();
+  absorbLongThread();
+  const main = notes.find((n) => n.id === id);
+  if (legacyReplies() || !main) return null;
+  const all = directReplies(id, new Set(selfChain(main).map((n) => n.id))).sort((a, b) => a.id - b.id);
+  const newer = all.filter((n) => n.id > Number(after));
+  const items = newer.slice(0, limit).map(forViewer);
+  return {
+    items,
+    next: newer.length > limit ? String(items[items.length - 1].id) : null,
+    latest: String(all[all.length - 1]?.id ?? 0),
+    continued: false,
+  };
+}
+
+export function mockThread(id: number, replies?: number): NoteThread | null {
+  absorbLiveReplies();
+  absorbLongThread();
   if (id === RIN_NOTE.id) return { note: RIN_NOTE, parent: null, replies: [], continuation: [], series: null };
   const main = notes.find((n) => n.id === id);
   if (!main) return null;
   const continuation = selfChain(main);
   const parts = new Set(continuation.map((n) => n.id));
+  const all = directReplies(id, parts);
+  const paged = replies !== undefined && !legacyReplies();
+  const sorted = paged ? [...all].sort((a, b) => a.id - b.id) : all;
   return {
     note: withQuotes(main),
     parent: main.inReplyToId === null ? null : (notes.find((n) => n.id === main.inReplyToId) ?? null),
-    replies: notes.filter((n) => n.inReplyToId === id && !parts.has(n.id) && n.hidden !== true && listedRemote(n)),
+    replies: paged ? sorted.slice(0, replies) : all,
+    ...(paged ? { repliesNext: sorted.length > replies ? String(sorted[replies - 1].id) : null } : {}),
     continuation,
     series: mockNoteSeries(id),
     hiddenReplyCount: notes.filter((n) => n.inReplyToId === id && n.hidden === true).length,

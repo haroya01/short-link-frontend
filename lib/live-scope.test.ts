@@ -150,18 +150,65 @@ describe("openLiveScope", () => {
     await vi.advanceTimersByTimeAsync(1);
     expect(FakeEventSource.all).toHaveLength(2);
     expect(latest().params.get("since")).toBe("41");
-    expect(latest().params.get("streamToken")).toBe("t2");
+    expect(latest().params.get("streamToken")).toBe("t1");
+    expect(api.request).toHaveBeenCalledTimes(1);
 
     latest().fail();
     await vi.advanceTimersByTimeAsync(1_999);
     expect(FakeEventSource.all).toHaveLength(2);
     await vi.advanceTimersByTimeAsync(1);
     expect(FakeEventSource.all).toHaveLength(3);
+    expect(api.request).toHaveBeenCalledTimes(2);
+    expect(latest().params.get("streamToken")).toBe("t2");
 
     latest().emit("ready", { cursor: "41" });
     latest().fail();
     await vi.advanceTimersByTimeAsync(1_000);
     expect(FakeEventSource.all).toHaveLength(4);
+    expect(api.request).toHaveBeenCalledTimes(2);
+  });
+
+  it("says goodbye on the server's clock: waits retryMs and comes back on the ready token without a POST", async () => {
+    open();
+    await settle();
+    latest().emit("ready", { cursor: "40", streamToken: "fresh", retryMs: 3_000 });
+    const first = latest();
+    first.emit("bye", { reason: "restart", retryMs: 40_000 });
+    expect(first.closed).toBe(true);
+    await vi.advanceTimersByTimeAsync(39_999);
+    expect(FakeEventSource.all).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(FakeEventSource.all).toHaveLength(2);
+    expect(latest().params.get("streamToken")).toBe("fresh");
+    expect(latest().params.get("since")).toBe("40");
+    expect(api.request).toHaveBeenCalledTimes(1);
+  });
+
+  it("never comes back sooner than the server's retry, keeping its own backoff on top", async () => {
+    open();
+    await settle();
+    latest().emit("ready", { cursor: "40", retryMs: 4_000 });
+    latest().fail();
+    await vi.advanceTimersByTimeAsync(3_999);
+    expect(FakeEventSource.all).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(FakeEventSource.all).toHaveLength(2);
+
+    latest().fail();
+    latest().fail();
+    await vi.advanceTimersByTimeAsync(4_000);
+    expect(FakeEventSource.all).toHaveLength(3);
+  });
+
+  it("asks for a new token when the one it holds is about to run out", async () => {
+    open();
+    await settle();
+    latest().emit("ready", { cursor: "40" });
+    await vi.advanceTimersByTimeAsync(9 * 60_000);
+    latest().emit("bye", { reason: "rotate", retryMs: 1_000 });
+    await vi.advanceTimersByTimeAsync(1_000);
+    expect(api.request).toHaveBeenCalledTimes(2);
+    expect(latest().params.get("streamToken")).toBe("t2");
   });
 
   it("keeps its own cursor when the server says ready, and takes the server's only when it had none", async () => {
@@ -206,10 +253,11 @@ describe("openLiveScope", () => {
     expect(api.request).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(24_000);
     expect(refresh).toHaveBeenCalledTimes(2);
-    expect(api.request).toHaveBeenCalledTimes(1);
+    expect(FakeEventSource.all).toHaveLength(1);
     await vi.advanceTimersByTimeAsync(12_000);
-    expect(api.request).toHaveBeenCalledTimes(2);
     expect(FakeEventSource.all).toHaveLength(2);
+    expect(latest().params.get("streamToken")).toBe("t1");
+    expect(api.request).toHaveBeenCalledTimes(1);
   });
 
   it("polls instead of streaming when the server is full", async () => {

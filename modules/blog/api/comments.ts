@@ -2,6 +2,7 @@ import { request } from "@/lib/api/client";
 import { blogMocks } from "./_mock-gates";
 import { mockFails } from "@/lib/api/mock-fail";
 import { mockLiveArrivals } from "@/lib/api/mock-live";
+import { readStorageString } from "@/lib/storage-json";
 import { hasViewer, viewerHeaders, type PublicAuthor } from "./public-posts";
 import { announcePostLocked, postAccessHeaders, withPostAccess } from "@/modules/blog/lib/post-access";
 
@@ -22,6 +23,14 @@ export interface CommentView {
    *  The server sends these only to readers that ask with `tombstones=1`. */
   deleted?: boolean;
 }
+
+export interface CommentPage {
+  items: CommentView[];
+  next: string | null;
+  latest: string | null;
+}
+
+export const COMMENT_PAGE_SIZE = 20;
 
 export interface CommentLikeStatus {
   likeCount: number;
@@ -80,14 +89,81 @@ function absorbLiveComments() {
   }
 }
 
+const MOCK_MANY: CommentView[] = Array.from({ length: 30 }, (_, i) => ({
+  id: 200 + i,
+  parentId: null,
+  author: [MOCK_LIVE_AUTHOR, { id: 4, username: "kazuki", bio: null, avatarUrl: "https://i.pravatar.cc/120?img=33" }][i % 2],
+  body: `지난 댓글 ${i + 1}`,
+  createdAt: "2026-06-02T09:00:00Z",
+  likeCount: 0,
+}));
+
+function mockThreadOf(postId: number): CommentView[] {
+  absorbLiveComments();
+  const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
+  const thread = postId === blogMocks?.MOCK_LONG_THREAD_POST_ID ? [...mockComments, ...MOCK_LONG_THREAD] : mockComments;
+  const many = readStorageString("kurl:mock-comments-many") === "1" ? MOCK_MANY : [];
+  return [...thread, ...many].filter((c) => !hidden?.has(c.author?.username ?? ""));
+}
+
+function mockCommentPage(postId: number, query: { cursor?: string | null; after?: string | null; limit: number }): CommentPage {
+  const all = [...mockThreadOf(postId)].sort((a, b) => a.id - b.id);
+  const latest = String(all[all.length - 1]?.id ?? 0);
+  if (query.after != null) {
+    const after = Number(query.after);
+    const newer = all.filter((c) => c.id > after);
+    const slice = newer.slice(0, query.limit);
+    const parentIds = new Set(slice.flatMap((c) => (c.parentId != null && c.parentId <= after ? [c.parentId] : [])));
+    const parents = all.filter((c) => parentIds.has(c.id));
+    return {
+      items: [...slice, ...parents].sort((a, b) => a.id - b.id),
+      next: newer.length > query.limit ? String(slice[slice.length - 1].id) : null,
+      latest,
+    };
+  }
+  const tops = all.filter((c) => c.parentId == null && c.id > Number(query.cursor ?? 0));
+  const shown = new Set(tops.slice(0, query.limit).map((c) => c.id));
+  return {
+    items: all.filter((c) => shown.has(c.id) || (c.parentId != null && shown.has(c.parentId))),
+    next: tops.length > query.limit ? String(tops[query.limit - 1].id) : null,
+    latest,
+  };
+}
+
+export async function listCommentPage(
+  postId: number,
+  query: { cursor?: string | null; after?: string | null; limit?: number },
+): Promise<CommentPage | null> {
+  const limit = query.limit ?? COMMENT_PAGE_SIZE;
+  if (USE_MOCKS) {
+    if (mockFails("comments")) throw new Error("comments 500");
+    if (readStorageString("kurl:mock-comments-legacy") === "1") return null;
+    return mockCommentPage(postId, { ...query, limit });
+  }
+  const params = new URLSearchParams({ limit: String(limit), tombstones: "1" });
+  if (query.cursor) params.set("cursor", query.cursor);
+  if (query.after) params.set("after", query.after);
+  const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments/page?${params}`, {
+    cache: "no-store",
+    headers: withPostAccess(await viewerHeaders(), postId),
+  });
+  if (res.status === 404) return null;
+  if (res.status === 403) announcePostLocked();
+  if (!res.ok) throw new Error(`comments ${res.status}`);
+  const body = (await res.json()) as Partial<CommentPage> | CommentView[];
+  if (Array.isArray(body) || !Array.isArray(body?.items)) return null;
+  return {
+    items: body.items,
+    next: typeof body.next === "string" && body.next !== "" ? body.next : null,
+    latest: body.latest == null ? null : String(body.latest),
+  };
+}
+
 /** Public — anyone can read a post's comments (oldest first, flat with parentId). */
 export async function listComments(postId: number): Promise<CommentView[]> {
   if (USE_MOCKS) {
     if (mockFails("comments")) throw new Error("comments 500");
-    absorbLiveComments();
-    const hidden = hasViewer() ? blogMocks?.MOCK_BLOCKS_VIEWER : undefined;
-    const thread = postId === blogMocks?.MOCK_LONG_THREAD_POST_ID ? [...mockComments, ...MOCK_LONG_THREAD] : mockComments;
-    return thread.filter((c) => !hidden?.has(c.author?.username ?? ""));
+    return mockThreadOf(postId);
   }
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/comments?tombstones=1`, {
     cache: "no-store",

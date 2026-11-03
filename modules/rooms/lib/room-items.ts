@@ -21,3 +21,7 @@ export function prependNotes(items: RoomItem[], notes: Note[]): RoomItem[] {
     .map((note): RoomItem => ({ kind: "note", note, replies: [] }));
   return fresh.length > 0 ? [...fresh, ...items] : items;
 }
+
+export function readPastCursor(notes: Note[], after: string): boolean {
+  return notes.some((note) => note.id <= Number(after));
+}

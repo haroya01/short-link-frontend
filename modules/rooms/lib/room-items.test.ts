@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Note } from "@/modules/notes/api/notes";
 import type { RoomItem } from "@/modules/rooms/api/rooms";
-import { prependNotes, roomNoteIds } from "./room-items";
+import { prependNotes, readPastCursor, roomNoteIds } from "./room-items";
 
 const note = (id: number) => ({ id, body: `${id}` }) as unknown as Note;
 const noteItem = (id: number): RoomItem => ({ kind: "note", note: note(id), replies: [] });
@@ -24,5 +24,13 @@ describe("prependNotes", () => {
     const items = [noteItem(10)];
     expect(prependNotes(items, [note(10)])).toBe(items);
     expect([...roomNoteIds(prependNotes(items, [note(11), note(11), note(10)]))]).toEqual([11, 10]);
+  });
+});
+
+describe("readPastCursor", () => {
+  it("tells an older server that answered with its first page apart from one that sent only what is new", () => {
+    expect(readPastCursor([note(12), note(11)], "10")).toBe(false);
+    expect(readPastCursor([note(12), note(10), note(8)], "10")).toBe(true);
+    expect(readPastCursor([], "10")).toBe(false);
   });
 });

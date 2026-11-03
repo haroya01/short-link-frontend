@@ -35,7 +35,8 @@
     "notesTab": "Ghi chú {count, number}",
     "discussionTabs": "Bình luận và ghi chú",
     "notesTabHint": "Ghi chú trích dẫn bài này",
-    "liveNew": "{count, number} bình luận mới"
+    "liveNew": "{count, number} bình luận mới",
+    "showMore": "Xem thêm bình luận"
   },
   "publicFeed": {
     "recent": "Mới nhất",
@@ -4809,7 +4810,9 @@
     "postToRoom": "Đăng vào {room}",
     "roomAudience": "Chỉ thành viên {room} mới xem được",
     "roomPlaceholder": "Bạn đang làm gì?",
-    "liveNewReplies": "{count, number} trả lời mới"
+    "liveNewReplies": "{count, number} trả lời mới",
+    "moreReplies": "Xem thêm trả lời",
+    "repliesLoadFailed": "Không tải được câu trả lời"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"

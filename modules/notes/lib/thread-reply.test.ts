@@ -3,7 +3,7 @@ import type { Note, NoteThread } from "@/modules/notes/api/notes";
 
 vi.mock("@/modules/notes/api/notes", () => ({ NOTE_MAX_THREAD_NOTES: 10 }));
 
-import { appendReplies, placeReply } from "./thread-reply";
+import { appendReplies, appendReplyPage, placeReply } from "./thread-reply";
 
 const note = (id: number, authorId: number, inReplyToId: number | null = null, replyCount = 0) =>
   ({ id, author: { id: authorId, username: `u${authorId}` }, inReplyToId, replyCount, body: `${id}` }) as unknown as Note;
@@ -67,5 +67,15 @@ describe("appendReplies", () => {
     expect(next.replies.map((r) => r.id)).toEqual([20, 42]);
     expect(next.note.replyCount).toBe(2);
     expect(appendReplies(current, [note(20, 3, 10)])).toBe(current);
+  });
+});
+
+describe("appendReplyPage", () => {
+  it("adds the next page after what is shown without counting it again, and remembers where the next one starts", () => {
+    const next = appendReplyPage(thread({ repliesNext: "20" }), [note(20, 3, 10), note(21, 4, 10), note(22, 5, 10)], "22");
+    expect(next.replies.map((r) => r.id)).toEqual([20, 21, 22]);
+    expect(next.note.replyCount).toBe(1);
+    expect(next.repliesNext).toBe("22");
+    expect(appendReplyPage(thread({ repliesNext: "20" }), [], null).repliesNext).toBeNull();
   });
 });

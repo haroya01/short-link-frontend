@@ -47,3 +47,9 @@ export function appendReplies(thread: NoteThread, incoming: Note[]): NoteThread 
     replies: [...thread.replies, ...fresh],
   };
 }
+
+export function appendReplyPage(thread: NoteThread, page: Note[], next: string | null): NoteThread {
+  const known = threadNoteIds(thread);
+  const fresh = page.filter((note, index) => !known.has(note.id) && page.findIndex((n) => n.id === note.id) === index);
+  return { ...thread, replies: [...thread.replies, ...fresh], repliesNext: next };
+}

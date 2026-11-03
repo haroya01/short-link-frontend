@@ -35,7 +35,8 @@
     "notesTab": "ノート {count, number}",
     "discussionTabs": "コメントとノート",
     "notesTabHint": "この記事を引用したノート",
-    "liveNew": "新しいコメント{count, number}件"
+    "liveNew": "新しいコメント{count, number}件",
+    "showMore": "コメントをもっと見る"
   },
   "publicFeed": {
     "recent": "最新",
@@ -4809,7 +4810,9 @@
     "postToRoom": "{room}に投稿",
     "roomAudience": "{room}のメンバーだけが見られます",
     "roomPlaceholder": "いま何してる？",
-    "liveNewReplies": "新しい返信{count, number}件"
+    "liveNewReplies": "新しい返信{count, number}件",
+    "moreReplies": "返信をもっと見る",
+    "repliesLoadFailed": "返信を読み込めませんでした"
   },
   "mentions": {
     "suggestions": "メンションする人"

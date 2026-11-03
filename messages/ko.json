@@ -35,7 +35,8 @@
     "notesTab": "노트 {count, number}",
     "discussionTabs": "댓글과 노트",
     "notesTabHint": "이 글을 인용한 노트예요",
-    "liveNew": "새 댓글 {count, number}개"
+    "liveNew": "새 댓글 {count, number}개",
+    "showMore": "댓글 더 보기"
   },
   "publicFeed": {
     "recent": "최신",
@@ -4809,7 +4810,9 @@
     "postToRoom": "{room}에 올리기",
     "roomAudience": "{room} 멤버만 볼 수 있어요",
     "roomPlaceholder": "지금 뭐 하고 있어요?",
-    "liveNewReplies": "새 답글 {count, number}개"
+    "liveNewReplies": "새 답글 {count, number}개",
+    "moreReplies": "답글 더 보기",
+    "repliesLoadFailed": "답글을 불러오지 못했어요"
   },
   "mentions": {
     "suggestions": "멘션할 사람"

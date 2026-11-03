@@ -968,14 +968,19 @@ html[data-first-load] .profile-fade {
   min-height: 0;
   overflow: hidden;
 }
-@keyframes live-pill-in {
+@keyframes live-line-in {
   from {
-    opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-100%);
   }
 }
-.live-pill {
-  animation: live-pill-in 360ms var(--ease) both;
+.live-line {
+  animation: live-line-in 360ms var(--ease) both;
+}
+.live-wash {
+  animation: note-wash 1600ms var(--ease) both;
+}
+.dark .live-wash {
+  animation-name: note-wash-dark;
 }
 @media (prefers-reduced-motion: reduce) {
   .live-open {
@@ -984,7 +989,7 @@ html[data-first-load] .profile-fade {
   .live-open > * {
     overflow: visible;
   }
-  .live-pill {
+  .live-line {
     animation: none;
   }
   .comment-in {

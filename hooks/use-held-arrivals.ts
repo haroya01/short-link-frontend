@@ -18,10 +18,11 @@ function pushesReader(anchor: ArrivalAnchor | null, top: number): boolean {
 
 export function useHeldArrivals<T extends { id: number }>(
   anchorOf: (item: T) => ArrivalAnchor | null,
-  insert: (items: T[]) => void,
+  insert: (items: T[], revealed: boolean) => void,
 ) {
   const [held, setHeld] = useState<T[]>([]);
   const heldIds = useRef(new Set<number>());
+  const revealing = useRef(false);
   const latest = useRef({ anchorOf, insert });
   useEffect(() => {
     latest.current = { anchorOf, insert };
@@ -35,7 +36,7 @@ export function useHeldArrivals<T extends { id: number }>(
     const fresh = items.filter((item) => !heldIds.current.has(item.id));
     const now = fresh.filter((item) => !pushesReader(latest.current.anchorOf(item), top));
     const later = fresh.filter((item) => !now.includes(item));
-    if (now.length > 0) latest.current.insert(now);
+    if (now.length > 0) latest.current.insert(now, false);
     if (later.length === 0) return;
     later.forEach((item) => heldIds.current.add(item.id));
     setHeld((current) => [...current, ...later.filter((item) => !current.some((c) => c.id === item.id))]);
@@ -49,7 +50,8 @@ export function useHeldArrivals<T extends { id: number }>(
       const top = visibleTop();
       const free = held.filter((item) => !pushesReader(latest.current.anchorOf(item), top));
       if (free.length === 0) return;
-      latest.current.insert(free);
+      latest.current.insert(free, revealing.current);
+      revealing.current = false;
       setHeld((current) => current.filter((item) => !free.some((f) => f.id === item.id)));
     };
     const onScroll = () => {
@@ -67,10 +69,11 @@ export function useHeldArrivals<T extends { id: number }>(
   const show = useCallback(() => {
     const anchor = held[0] ? latest.current.anchorOf(held[0]) : null;
     if (!anchor) {
-      latest.current.insert(held);
+      latest.current.insert(held, true);
       setHeld([]);
       return;
     }
+    revealing.current = true;
     const rect = anchor.element.getBoundingClientRect();
     const by = anchor.edge === "top" ? rect.top - visibleTop() - 8 : rect.bottom - window.innerHeight * 0.4;
     window.scrollBy({ top: by, behavior: prefersReducedMotion() ? "auto" : "smooth" });

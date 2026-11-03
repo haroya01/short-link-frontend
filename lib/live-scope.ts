@@ -22,6 +22,7 @@ const BACKOFF_MAX_MS = 30_000;
 const COOLDOWN_MS = 60_000;
 const POLL_MS = 30_000;
 const COALESCE_MS = 1_000;
+const TOKEN_REUSE_MS = 9 * 60_000;
 
 const ONE_BY_ONE_MAX = 3;
 
@@ -64,6 +65,8 @@ export function openLiveScope(options: LiveScopeOptions): LiveScope {
   let pendingMore = false;
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
   let flushing = false;
+  let token: { value: string; at: number } | null = null;
+  let serverRetry = 0;
 
   function close() {
     generation += 1;
@@ -88,7 +91,7 @@ export function openLiveScope(options: LiveScopeOptions): LiveScope {
 
   function retry() {
     close();
-    later(backoffDelay(attempt, random), () => void connect());
+    later(Math.max(serverRetry, backoffDelay(attempt, random)), () => void connect());
     attempt += 1;
   }
 
@@ -152,25 +155,37 @@ export function openLiveScope(options: LiveScopeOptions): LiveScope {
       return;
     }
     const mine = generation;
-    let token: string;
-    try {
-      token = (await request<{ streamToken: string }>(`${path}/stream-token`, { method: "POST" })).streamToken;
-    } catch (error) {
+    if (!token || Date.now() - token.at >= TOKEN_REUSE_MS) {
+      try {
+        const issued = await request<{ streamToken: string }>(`${path}/stream-token`, { method: "POST" });
+        token = { value: issued.streamToken, at: Date.now() };
+      } catch (error) {
+        if (mine !== generation || stopped || paused) return;
+        if (error instanceof ApiError && error.status === 429) return cool(COOLDOWN_MS);
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) return finish();
+        return retry();
+      }
       if (mine !== generation || stopped || paused) return;
-      if (error instanceof ApiError && error.status === 429) return cool(COOLDOWN_MS);
-      if (error instanceof ApiError && [401, 403, 404].includes(error.status)) return finish();
-      return retry();
     }
-    if (mine !== generation || stopped || paused) return;
-    const query = new URLSearchParams({ streamToken: token });
+    const query = new URLSearchParams({ streamToken: token.value });
     if (cursor) query.set("since", cursor);
     const source = new EventSource(`${withBase(`${path}/stream`)}?${query}`);
     es = source;
+    let reached = false;
     source.addEventListener("ready", (event) => {
       if (es !== source) return;
+      reached = true;
       attempt = 0;
       const data = parse(event);
       if (cursor === null && typeof data?.cursor === "string") cursor = data.cursor;
+      if (typeof data?.streamToken === "string") token = { value: data.streamToken, at: Date.now() };
+      if (typeof data?.retryMs === "number" && data.retryMs > 0) serverRetry = data.retryMs;
+    });
+    source.addEventListener("bye", (event) => {
+      if (es !== source) return;
+      const wait = Number(parse(event)?.retryMs);
+      close();
+      later(Number.isFinite(wait) && wait > 0 ? wait : backoffDelay(0, random), () => void connect());
     });
     source.addEventListener("changed", (event) => {
       if (es !== source) return;
@@ -196,6 +211,7 @@ export function openLiveScope(options: LiveScopeOptions): LiveScope {
     });
     source.onerror = () => {
       if (es !== source) return;
+      if (!reached) token = null;
       retry();
     };
   }

@@ -16,11 +16,15 @@ describe("useHeldArrivals", () => {
   let result: ReturnType<typeof useHeldArrivals<Item>>;
   let anchor: ArrivalAnchor | null;
   let inserted: number[][];
+  let revealed: boolean[];
 
   function Probe() {
     result = useHeldArrivals<Item>(
       () => anchor,
-      (items) => inserted.push(items.map((item) => item.id)),
+      (items, shown) => {
+        inserted.push(items.map((item) => item.id));
+        revealed.push(shown);
+      },
     );
     return null;
   }
@@ -34,6 +38,7 @@ describe("useHeldArrivals", () => {
     window.scrollBy = vi.fn() as unknown as typeof window.scrollBy;
     Object.defineProperty(window, "innerHeight", { configurable: true, value: 800 });
     inserted = [];
+    revealed = [];
     anchor = null;
     root = createRoot(document.createElement("div"));
     await act(async () => root.render(createElement(Probe)));
@@ -98,5 +103,16 @@ describe("useHeldArrivals", () => {
     anchor = { element: box(-1500, -1000), edge: "top" };
     await act(async () => result.show());
     expect(window.scrollBy).toHaveBeenLastCalledWith({ top: -1500 - 8, behavior: "smooth" });
+  });
+
+  it("marks only what the tap brought in, so the screen can wash the first new item", async () => {
+    anchor = { element: box(-900, -400), edge: "bottom" };
+    await act(async () => result.offer([{ id: 1 }]));
+    await act(async () => result.show());
+    anchor = { element: box(100, 300), edge: "bottom" };
+    await act(async () => void window.dispatchEvent(new Event("scroll")));
+    await act(async () => result.offer([{ id: 2 }]));
+    expect(inserted).toEqual([[1], [2]]);
+    expect(revealed).toEqual([true, false]);
   });
 });

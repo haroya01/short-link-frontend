@@ -81,7 +81,7 @@ test.describe("on a phone", () => {
     await expect(arrived).toContainText("방금 단 댓글이에요");
     await expect(arrived).toContainText("minji");
     expect(await page.evaluate(() => (window as unknown as { stayed?: boolean }).stayed)).toBe(true);
-    await expect(page.getByTestId("live-pill")).toHaveCount(0);
+    await expect(page.getByTestId("live-line")).toHaveCount(0);
 
     await expect.poll(() => live.streams.length).toBe(2);
     expect(live.streams[1].searchParams.get("since")).toBe("501");
@@ -135,7 +135,87 @@ test.describe("on a phone", () => {
     expect(live.tokens).toHaveLength(1);
 
     await page.clock.fastForward(30_000);
-    await expect.poll(() => live.tokens.length).toBe(2);
+    await expect.poll(() => live.streams.length).toBe(2);
+    expect(live.tokens).toHaveLength(1);
+  });
+
+  test("after a goodbye the stream comes back on the token ready gave it, without asking for one", async ({ page }) => {
+    const live = await fakeLive(page);
+    await openComments(page);
+    await expect.poll(() => live.streams.length).toBe(1);
+    live.send(
+      sse("ready", { scope: "comments", scopeId: 1, cursor: "7", streamToken: "from-ready", retryMs: 1_000 }) +
+        sse("bye", { reason: "rotate", retryMs: 1_000 }),
+    );
+    await expect.poll(() => live.streams.length).toBe(2);
+    expect(live.streams[1].searchParams.get("streamToken")).toBe("from-ready");
+    expect(live.streams[1].searchParams.get("since")).toBe("7");
+    expect(live.tokens).toHaveLength(1);
+  });
+
+  test("a reply above the reader waits behind the line, and tapping it washes where the new part starts", async ({ page }) => {
+    const live = await fakeLive(page);
+    await openComments(page);
+    await expect.poll(() => live.streams.length).toBe(1);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await arrive(page, { comments: [{ id: 504, parentId: 1, body: "위쪽 댓글에 달린 새 답글" }] });
+    live.send(sse("changed", { items: [{ kind: "comment", id: 504 }], more: false, cursor: "504" }, "504"));
+
+    const line = page.getByTestId("live-line");
+    await expectOnTop(line);
+    await expect(line).toHaveText("새 댓글 1개");
+    await expect(page.locator("#comment-504")).toHaveCount(0);
+
+    await line.click();
+    const washed = page.locator(".live-wash").filter({ has: page.locator("#comment-504") });
+    await expect(washed).toHaveCount(1);
+    await expect(page.locator("#comment-504")).toBeInViewport();
+    expect(await washed.evaluate((el) => el.getAnimations().map((a) => (a as CSSAnimation).animationName))).toContain("note-wash");
+    await expect(page.locator(".live-wash")).toHaveCount(1);
+    await expect(line).toHaveCount(0);
+  });
+
+  test("a long comment list loads in pages, and a new top-level comment waits for its page", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-comments-many", "1"));
+    const live = await fakeLive(page);
+    await openComments(page);
+    const tops = page.locator("#comments li[data-comment-top]");
+    await expect(tops).toHaveCount(5);
+    await expect(page.locator("#comments h2").first()).toHaveText("댓글");
+    await expect(page.getByTestId("comments-show-all")).toHaveCount(0);
+    const more = page.getByTestId("comments-more");
+    await expect(more).toHaveText("댓글 더 보기");
+    await expect.poll(() => live.streams.length).toBe(1);
+    expect(live.streams[0].searchParams.get("since")).toBe("229");
+
+    await arrive(page, {
+      comments: [
+        { id: 701, body: "아직 안 부른 페이지 뒤의 새 댓글" },
+        { id: 702, parentId: 1, body: "첫 페이지 댓글에 달린 새 답글" },
+      ],
+    });
+    live.send(sse("changed", { items: [{ kind: "comment", id: 701 }, { kind: "comment", id: 702 }], more: false, cursor: "702" }, "702"));
+    await expect(page.locator("#comment-702")).toContainText("첫 페이지 댓글에 달린 새 답글");
+    await expect(page.locator("#comment-701")).toHaveCount(0);
+
+    await more.click();
+    await expect(tops).toHaveCount(20);
+    await more.click();
+    await expect(page.locator("#comments")).toContainText("지난 댓글 30");
+    await expect(page.locator("#comment-701")).toContainText("아직 안 부른 페이지 뒤의 새 댓글");
+    await expect(more).toHaveCount(0);
+    await expect(page.locator("#comments h2").first()).toHaveText(/^댓글 \d+개$/);
+  });
+
+  test("an older server without comment pages still gets new comments by reading the whole list", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-comments-legacy", "1"));
+    const live = await fakeLive(page);
+    await openComments(page);
+    await expect.poll(() => live.streams.length).toBe(1);
+    expect(live.streams[0].searchParams.get("since")).toBe("7");
+    await arrive(page, { comments: [{ id: 505, body: "옛 서버에서 받은 댓글" }] });
+    live.send(sse("changed", { items: [{ kind: "comment", id: 505 }], more: false, cursor: "505" }, "505"));
+    await expect(page.locator("#comment-505")).toContainText("옛 서버에서 받은 댓글");
   });
 
   test("a reply in an open thread shows up at the end of the replies", async ({ page }) => {
@@ -159,6 +239,54 @@ test.describe("on a phone", () => {
     await expect(page.locator("#note-replies")).toContainText("2");
   });
 
+  test("a long thread shows its first replies and the rest on request", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-thread-long", "1"));
+    const live = await fakeLive(page);
+    await page.goto("/ko/p/yuna/notes/3");
+    const replies = page.locator('section[aria-labelledby="note-replies"] > div > div > div > article[data-note-id]');
+    const more = page.getByTestId("note-replies-more");
+    await expect(more).toHaveText("답글 더 보기", { timeout: 30_000 });
+    await expect(page.locator("#note-replies")).toHaveText("답글");
+    await expect(replies).toHaveCount(20);
+    await expect.poll(() => live.streams.length).toBe(1);
+
+    await arrive(page, { replies: [{ id: 9602, inReplyToId: 3, body: "다 펼치기 전에 온 답글" }] });
+    live.send(sse("changed", { items: [{ kind: "reply", id: 9602 }], more: false, cursor: "9602" }, "9602"));
+    await page.waitForTimeout(2_000);
+    await expect(page.locator('[data-note-id="9602"]')).toHaveCount(0);
+
+    await more.click();
+    await expect(more).toHaveCount(0);
+    await expect(replies).toHaveCount(27);
+    await expect(replies.last()).toContainText("다 펼치기 전에 온 답글");
+    await expect(page.locator("#note-replies")).toHaveText("답글 27");
+  });
+
+  test("an older server without the replies path still gets a new reply", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-replies-legacy", "1"));
+    const live = await fakeLive(page);
+    await page.goto("/ko/p/yuna/notes/3");
+    await expect(page.locator('[data-note-id="4"]')).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => live.streams.length).toBe(1);
+    await arrive(page, { replies: [{ id: 9603, inReplyToId: 3, body: "옛 서버에서 받은 답글" }] });
+    live.send(sse("changed", { items: [{ kind: "reply", id: 9603 }], more: false, cursor: "9603" }, "9603"));
+    await expect(page.locator('[data-note-id="9603"]')).toContainText("옛 서버에서 받은 답글");
+  });
+
+  test("an older server that ignores after still lands a room note once", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-room-after-ignored", "1"));
+    const live = await fakeLive(page);
+    await page.goto("/ko/blog/rooms/1");
+    const notes = page.locator("[data-room-notes]");
+    await expect(notes.locator("article[data-note-id]").first()).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => live.streams.length).toBe(1);
+    await arrive(page, { room: [{ id: 9992, roomId: 1, body: "옛 서버 방 글" }] });
+    live.send(sse("changed", { items: [{ kind: "note", id: 9992 }], more: false, cursor: "9992" }, "9992"));
+    await expect(notes.locator("article[data-note-id]").first()).toContainText("옛 서버 방 글");
+    await expect(page.locator('[data-note-id="9992"]')).toHaveCount(1);
+    await expect(page.locator('[data-note-id="9910"]')).toHaveCount(1);
+  });
+
   test("a room note that would push the reader waits behind one line until they ask for it", async ({ page }) => {
     await page.addInitScript(() => window.localStorage.setItem("kurl:mock-room-long", "1"));
     const live = await fakeLive(page);
@@ -174,16 +302,16 @@ test.describe("on a phone", () => {
     await arrive(page, { room: [{ id: 9990, roomId: 1, body: "방에 방금 올라온 글" }] });
     live.send(sse("changed", { items: [{ kind: "note", id: 9990 }], more: false, cursor: "9990" }, "9990"));
 
-    const pill = page.getByTestId("live-pill");
-    await expectOnTop(pill);
-    await expect(pill).toHaveText("새 글 1개");
+    const line = page.getByTestId("live-line");
+    await expectOnTop(line);
+    await expect(line).toHaveText("새 글 1개");
     await expect(page.locator('[data-note-id="9990"]')).toHaveCount(0);
     const after = await notes.locator("article[data-note-id]").nth(12).boundingBox();
     expect(after!.y).toBe(before!.y);
 
-    await pill.click();
+    await line.click();
     await expect(notes.locator("article[data-note-id]").first()).toContainText("방에 방금 올라온 글");
-    await expect(pill).toHaveCount(0);
+    await expect(line).toHaveCount(0);
   });
 });
 
@@ -218,6 +346,6 @@ test.describe("on a desktop", () => {
     live.send(sse("changed", { items: [{ kind: "note", id: 9991 }], more: false, cursor: "9991" }, "9991"));
 
     await expect(notes.locator("article[data-note-id]").first()).toContainText("맨 위에서 바로 보는 글");
-    await expect(page.getByTestId("live-pill")).toHaveCount(0);
+    await expect(page.getByTestId("live-line")).toHaveCount(0);
   });
 });

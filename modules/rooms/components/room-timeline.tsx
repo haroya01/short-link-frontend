@@ -15,20 +15,19 @@ import { NoteComposer } from "@/modules/notes/components/note-composer";
 import { NoteListSkeleton } from "@/modules/notes/components/note-list";
 import {
   getRoom,
-  getRoomNote,
   listRoomItems,
+  listRoomNotesAfter,
   markRoomRead,
   personName,
   type RoomDetail,
   type RoomItem,
 } from "@/modules/rooms/api/rooms";
 import { dayBreak, itemTime, newestNoteId, type DayBreak } from "@/modules/rooms/lib/room-bands";
-import { itemKey, prependNotes, roomNoteIds } from "@/modules/rooms/lib/room-items";
+import { itemKey, prependNotes, readPastCursor, roomNoteIds } from "@/modules/rooms/lib/room-items";
 import type { Note } from "@/modules/notes/api/notes";
 import { useLiveScope } from "@/hooks/use-live-scope";
 import { useHeldArrivals } from "@/hooks/use-held-arrivals";
-import { readsOneByOne } from "@/lib/live-scope";
-import { LivePill, LiveRow } from "@/components/common/live-arrivals";
+import { LiveLine, LiveRow } from "@/modules/blog/components/live-arrivals";
 import { blogPath } from "@/lib/host";
 import { RoomItemRow } from "./room-item-row";
 import { roomSettingsPath, roomsPath } from "@/modules/rooms/lib/room-href";
@@ -106,12 +105,15 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
     enabled: ready && authenticated && notesState === "ready" && detail.kind === "loaded",
     since: String(newestNoteId(items) ?? 0),
     known: (id) => roomNoteIds(itemsRef.current).has(id) || arrivals.isHeld(id),
-    refresh: async (change) => {
-      const incoming = readsOneByOne(change)
-        ? await Promise.all(change.ids.map((id) => getRoomNote(id).catch(() => null)))
-        : (await listRoomItems(roomId)).items.flatMap((item) => (item.kind === "note" ? [item.note] : []));
+    refresh: async () => {
+      const after = String(newestNoteId(itemsRef.current) ?? 0);
+      const feed = await listRoomNotesAfter(roomId, after);
+      const incoming =
+        feed.hasNext && !readPastCursor(feed.items, after)
+          ? (await listRoomItems(roomId)).items.flatMap((item) => (item.kind === "note" ? [item.note] : []))
+          : feed.items;
       const known = roomNoteIds(itemsRef.current);
-      arrivals.offer(incoming.filter((note): note is Note => note !== null && !known.has(note.id)));
+      arrivals.offer(incoming.filter((note) => !known.has(note.id)));
     },
     onRevoked: loadDetail,
   });
@@ -302,7 +304,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
           </div>
         )}
       </div>
-      <LivePill
+      <LiveLine
         count={arrivals.held}
         label={t("liveNew", { count: arrivals.held })}
         onShow={arrivals.show}

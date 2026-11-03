@@ -575,11 +575,11 @@ function absorbLiveRoomNotes() {
   }
 }
 
-export function mockRoomNote(id: number): Promise<Note> {
+export function mockRoomNotesAfter(id: number, after: string, size: number): Promise<NoteFeed> {
   absorbLiveRoomNotes();
-  const found = posts.find((p) => p.id === id);
-  if (!found) return Promise.reject(new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" }));
-  return done(noteOf(found));
+  const all = roomPosts(id).map(noteOf);
+  const newer = readStorageString("kurl:mock-room-after-ignored") === "1" ? all : all.filter((n) => n.id > Number(after));
+  return done({ items: newer.slice(0, size), page: 0, hasNext: newer.length > size });
 }
 
 export function mockRoomItems(id: number, cursor: string | null, limit: number): Promise<RoomItemsPage> {
