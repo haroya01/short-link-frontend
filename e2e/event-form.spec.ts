@@ -54,6 +54,26 @@ test.describe("desktop", () => {
     expect(posts).toHaveLength(0);
   });
 
+  test("a time the server rejects lands under its own field too", async ({ page }) => {
+    await signIn(page);
+    await mockBackend(page, {
+      "POST /api/v1/events": (route) =>
+        route.fulfill({
+          status: 400,
+          json: { status: 400, code: "INVALID_EVENT_DETAILS", field: "closeAt", detail: "invalid event details" },
+        }),
+    });
+    await page.goto("/ko/events/new");
+    await page.locator("#ef-title").fill("성수 모각코");
+    await page.locator("#ef-starts").fill("2030-04-01T19:00");
+    await page.locator("#ef-close").fill("2030-04-01T18:00");
+    await page.getByRole("button", { name: "발행하기" }).click();
+
+    await expect(page.locator("#ef-close-error")).toHaveText("신청 마감이 모임 시작보다 늦어요");
+    await expect(page.locator("#ef-close")).toBeFocused();
+    await expect(page.locator("#ef-panel-edit [role=alert]")).toHaveCount(0);
+  });
+
   test("the preview beside the form follows what is typed", async ({ page }) => {
     await organizer(page);
     await page.goto("/ko/events/new");

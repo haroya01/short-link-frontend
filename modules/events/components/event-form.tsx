@@ -8,13 +8,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { buttonVariants } from "@/components/ui/button";
 import { RequiredMark } from "@/components/ui/required-mark";
+import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn } from "@/lib/utils";
 import type { ContactField, EventDraft, MyEvent, PublicEvent, QuestionSpec } from "@/modules/events/api/events";
 import { commitCover, presignCover } from "@/modules/events/api/events";
 import { isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
-import { eventFormErrors, FIELD_ORDER, type EventFormField } from "@/modules/events/lib/form-rules";
+import {
+  eventFormErrors,
+  FIELD_ORDER,
+  serverFieldErrors,
+  type EventFormErrors,
+  type EventFormField,
+} from "@/modules/events/lib/form-rules";
 import { EventPageView } from "./event-page-view";
 import { LocationField } from "./location-field";
 import { QuestionBuilder } from "./question-builder";
@@ -100,13 +107,16 @@ export function EventForm({
   const [form, setForm] = useState<FormState>(() => initialState(event));
   const [coverUrl, setCoverUrl] = useState<string | null>(event?.coverImageUrl ?? null);
   const [touched, setTouched] = useState<Partial<Record<EventFormField, boolean>>>({});
+  const [serverErrors, setServerErrors] = useState<EventFormErrors>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("edit");
   const [now] = useState(() => Date.now());
 
-  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    setServerErrors({});
+  };
   const touch = (field: EventFormField) => setTouched((prev) => (prev[field] ? prev : { ...prev, [field]: true }));
 
   // 기본 시작은 다음 주 19:00(iOS 생성 폼과 같음). 서버와 클라이언트의 now 가 달라 마운트 뒤에 채운다.
@@ -125,7 +135,10 @@ export function EventForm({
   }, []);
 
   const errors = eventFormErrors(form);
-  const shown = (field: EventFormField) => (touched[field] && errors[field] ? t(`errors.${errors[field]}`) : undefined);
+  const shown = (field: EventFormField) => {
+    const code = (touched[field] && errors[field]) || serverErrors[field];
+    return code ? t(`errors.${code}`) : undefined;
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,7 +168,14 @@ export function EventForm({
       });
     } catch (err) {
       setBusy(false);
-      setError(errorMessage(err, t("errors.generic")));
+      const pinned = err instanceof ApiError ? serverFieldErrors(err.detail, form.endsAtLocal !== "") : {};
+      const field = FIELD_ORDER.find((f) => pinned[f]);
+      if (field) {
+        setServerErrors(pinned);
+        document.getElementById(FIELD_ID[field])?.focus();
+      } else {
+        setError(errorMessage(err, t("errors.generic")));
+      }
     }
   };
 

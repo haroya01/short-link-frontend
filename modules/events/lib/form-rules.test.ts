@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { eventFormErrors } from "./form-rules";
+import { eventFormErrors, serverFieldErrors } from "./form-rules";
 
 const filled = {
   title: "성수 모각코",
@@ -40,5 +40,22 @@ describe("eventFormErrors", () => {
       expect(eventFormErrors({ ...filled, capacity: bad }).capacity).toBe("capacityMin");
     }
     expect(eventFormErrors({ ...filled, capacity: "1" })).toEqual({});
+  });
+});
+
+describe("serverFieldErrors", () => {
+  it("pins the server's time and capacity rejections to their fields", () => {
+    expect(serverFieldErrors({ code: "INVALID_EVENT_DETAILS", field: "endsAt" }, true)).toEqual({ endsAt: "endBeforeStart" });
+    expect(serverFieldErrors({ code: "INVALID_EVENT_DETAILS", field: "closeAt" }, true)).toEqual({ closeAt: "closeAfterEnd" });
+    expect(serverFieldErrors({ code: "INVALID_EVENT_DETAILS", field: "closeAt" }, false)).toEqual({ closeAt: "closeAfterStart" });
+    expect(
+      serverFieldErrors({ code: "VALIDATION_FAILED", errors: [{ field: "capacity" }] }, false),
+    ).toEqual({ capacity: "capacityMin" });
+  });
+
+  it("leaves anything else to the line above the publish button", () => {
+    expect(serverFieldErrors({ code: "INVALID_EVENT_DETAILS" }, true)).toEqual({});
+    expect(serverFieldErrors({ code: "VALIDATION_FAILED", errors: [{ field: "title" }] }, true)).toEqual({});
+    expect(serverFieldErrors({}, true)).toEqual({});
   });
 });

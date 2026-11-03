@@ -35,3 +35,17 @@ export function eventFormErrors(form: {
   }
   return errors;
 }
+
+export function serverFieldErrors(
+  problem: { code?: string; field?: unknown; errors?: { field: string }[] },
+  hasEnd: boolean,
+): EventFormErrors {
+  if (problem.code === "INVALID_EVENT_DETAILS") {
+    if (problem.field === "endsAt") return { endsAt: "endBeforeStart" };
+    if (problem.field === "closeAt") return { closeAt: hasEnd ? "closeAfterEnd" : "closeAfterStart" };
+  }
+  if (problem.code === "VALIDATION_FAILED" && problem.errors?.some((e) => e.field === "capacity")) {
+    return { capacity: "capacityMin" };
+  }
+  return {};
+}
