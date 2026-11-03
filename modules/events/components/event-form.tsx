@@ -328,6 +328,7 @@ export function EventForm({
 
           <Section title={t("whereTitle")} id="ef-where">
             <LocationField
+              labelledBy="ef-where-title"
               text={form.locationText}
               url={form.locationUrl}
               onTextChange={(value) => set("locationText", value)}

@@ -4215,7 +4215,6 @@
       "endsAt": "Ends",
       "timezone": "Time zone",
       "whereTitle": "Where",
-      "locationText": "Venue",
       "locationPlaceholder": "Place name or address",
       "clearPlace": "Clear venue",
       "locationUrl": "Map link",
