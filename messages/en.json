@@ -2752,7 +2752,7 @@
     },
     "q6": {
       "q": "Is it paid?",
-      "a": "Every feature is free: shortening, analytics, profile pages, every block type and custom domains.\n\nThere's no paid plan, and no ads."
+      "a": "Every feature is free: shortening, analytics, profile pages and every block type.\n\nThere's no paid plan, and no ads."
     },
     "ctaButton": "Shorten a URL"
   },

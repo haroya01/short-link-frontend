@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { CUSTOM_DOMAINS_ENABLED } from "../lib/feature-flags";
 
 // MOCK-ON: the viewer, the profile and the link library come from the in-app mocks. Settings
 // sections, events and the editor's public-profile read are client calls, so page.route answers them.
@@ -55,7 +56,19 @@ test("a failed API key load says so and retries, instead of claiming there are n
   await expect(page.getByText("리포트 봇")).toBeVisible();
 });
 
+test("custom domains stay out of settings, and a #domains link opens the account tab", async ({ page }) => {
+  test.skip(CUSTOM_DOMAINS_ENABLED, "custom domains are switched on");
+  await settingsApi(page);
+  await page.goto("/ko/settings#domains");
+  const tabs = page.getByRole("tablist", { name: "설정 섹션" }).getByRole("tab");
+  await expect(tabs).toHaveText(["계정", "보안", "데이터"]);
+  await expect(page.getByRole("tab", { name: "계정" })).toHaveAttribute("aria-selected", "true");
+  await expect(page).toHaveURL(/\/ko\/settings#account$/);
+  await expect(page.getByText("커스텀 도메인", { exact: true })).toHaveCount(0);
+});
+
 test("a failed domain load says so and retries", async ({ page }) => {
+  test.skip(!CUSTOM_DOMAINS_ENABLED, "custom domains are hidden");
   await settingsApi(page, { "GET /api/v1/custom-domains": failure });
   await page.goto("/ko/settings#domains");
   await expect(page.getByRole("alert").filter({ hasText: "도메인을 불러오지 못했어요." })).toBeVisible();
@@ -81,6 +94,7 @@ test("the account delete confirmation is as tall as its content", async ({ page 
 });
 
 test("on a phone a DNS record stacks type, host and value, each fully readable", async ({ page }) => {
+  test.skip(!CUSTOM_DOMAINS_ENABLED, "custom domains are hidden");
   await page.setViewportSize(PHONE);
   await settingsApi(page, {
     "GET /api/v1/custom-domains": () => ({

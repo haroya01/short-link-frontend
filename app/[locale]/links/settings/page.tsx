@@ -22,6 +22,7 @@ import { ActionRow, SelectRow, ValueRow } from "@/components/settings/settings-r
 import type { Me } from "@/types";
 import { cn, formatDate } from "@/lib/utils";
 import { LinksPage } from "@/components/links/links-page";
+import { CUSTOM_DOMAINS_ENABLED } from "@/lib/feature-flags";
 
 function localeName(l: string): string {
   try {
@@ -172,7 +173,7 @@ export default function SettingsPage() {
               </>
             )}
 
-            {tab === "domains" && <CustomDomainsSection />}
+            {tab === "domains" && CUSTOM_DOMAINS_ENABLED && <CustomDomainsSection />}
 
             {tab === "data" && (
               <>
@@ -218,6 +219,8 @@ export default function SettingsPage() {
 
 type SettingsTab = "account" | "security" | "domains" | "data";
 
+const SETTINGS_TABS: SettingsTab[] = ["account", "security", ...(CUSTOM_DOMAINS_ENABLED ? (["domains"] as const) : []), "data"];
+
 function SettingsTabs({
   t,
   children,
@@ -228,9 +231,14 @@ function SettingsTabs({
   const [tab, setTab] = useState<SettingsTab>(() => initialSettingsTab());
 
   useEffect(() => {
-    const onHash = () => setTab(initialSettingsTab());
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    const sync = () => {
+      const next = initialSettingsTab();
+      setTab(next);
+      if (window.location.hash && window.location.hash !== `#${next}`) history.replaceState(null, "", `#${next}`);
+    };
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
   }, []);
 
   function selectTab(next: SettingsTab) {
@@ -240,12 +248,7 @@ function SettingsTabs({
     }
   }
 
-  const tabs: { key: SettingsTab; label: string }[] = [
-    { key: "account", label: t("tabs.account") },
-    { key: "security", label: t("tabs.security") },
-    { key: "domains", label: t("tabs.domains") },
-    { key: "data", label: t("tabs.data") },
-  ];
+  const tabs = SETTINGS_TABS.map((key) => ({ key, label: t(`tabs.${key}`) }));
 
   return (
     <div className="space-y-5">
@@ -302,6 +305,5 @@ function SettingsTabs({
 function initialSettingsTab(): SettingsTab {
   if (typeof window === "undefined") return "account";
   const h = window.location.hash.replace("#", "");
-  if (h === "security" || h === "domains" || h === "data") return h;
-  return "account";
+  return SETTINGS_TABS.find((key) => key === h) ?? "account";
 }

@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { CUSTOM_DOMAINS_ENABLED } from "../lib/feature-flags";
 
 const WIDTH = 390;
 const RAW_KEY = "kurl_live_9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c";
@@ -64,6 +65,7 @@ test("the 2FA manual key wraps inside the phone", async ({ page }) => {
 });
 
 test("custom domain DNS values truncate inside their row", async ({ page }) => {
+  test.skip(!CUSTOM_DOMAINS_ENABLED, "custom domains are hidden");
   await mockBackend(page, {
     "GET /api/v1/custom-domains": (route) =>
       route.fulfill({
