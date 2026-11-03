@@ -15,6 +15,8 @@ import { LogTab } from "./tabs/log-tab";
 import { SettingsTab } from "./tabs/settings-tab";
 import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
+import { StatsEmpty } from "@/components/links/stats/stat-sections";
+import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
 
 const SECTION_CHAPTER: Record<string, TabKey> = {
   "section-device": "who",
@@ -61,6 +63,7 @@ export function StatsBody({
     };
   }, [sourceData, demo]);
   const [view, setView] = useTabHash();
+  const noHumans = (data.humanClicks ?? 0) === 0;
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
   const [rangeDays, setRangeDays] = useState<RangeDays>(30);
   // Missing days are filled above so seven rows mean seven calendar days, including idle days.
@@ -96,12 +99,18 @@ export function StatsBody({
         demo={demo}
         onSettings={() => setView("settings")}
       />
-      <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who", "log"]} />
+      <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who", "log", "settings"]} />
       <div key={view} role="tabpanel" aria-label={view === "settings" ? t("linkSettings") : undefined} id={`stats-panel-${view}`} aria-labelledby={view === "settings" ? undefined : `stats-tab-${view}`} className="view-enter">
-        {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} onTick={onTick} demo={demo} />}
-        {view === "who" && <WhoChapter data={data} />}
-        {view === "when" && <WhenChapter data={data} dailyClicks={slicedDaily} range={rangeDays} onRange={setRangeDays} onTick={onTick} demo={demo} />}
-        {view === "where" && <WhereChapter data={data} />}
+        {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} onTick={onTick} shortUrl={shortUrl} demo={demo} />}
+        {noHumans && (view === "who" || view === "when" || view === "where") && (
+          <>
+            {view === "when" && !demo && <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />}
+            <StatsEmpty title={t((data.totalClicks ?? 0) === 0 ? "noClicks" : "noHumanClicks")} shortUrl={shortUrl} />
+          </>
+        )}
+        {!noHumans && view === "who" && <WhoChapter data={data} />}
+        {!noHumans && view === "when" && <WhenChapter data={data} dailyClicks={slicedDaily} range={rangeDays} onRange={setRangeDays} onTick={onTick} demo={demo} />}
+        {!noHumans && view === "where" && <WhereChapter data={data} />}
         {view === "log" && <LogTab data={data} demo={demo} />}
         {view === "settings" && <SettingsTab data={data} onTick={onTick} demo={demo} />}
       </div>

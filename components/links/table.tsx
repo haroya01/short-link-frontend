@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpDown, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
+import { ArrowUpDown, ExternalLink, Pencil, SlidersHorizontal, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StatsMorphLink } from "@/components/links/stats-morph-link";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ActionMenu } from "@/components/common/action-menu";
 import { CopyButton } from "@/components/common/copy-button";
@@ -58,6 +59,7 @@ export function LinksTable({
   sortingDisabled = false,
 }: Props) {
   const t = useTranslations("dashboard");
+  const router = useRouter();
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
   const [editing, setEditing] = useState<MyLink | null>(null);
   const [sheetItem, setSheetItem] = useState<MyLink | null>(null);
@@ -347,6 +349,7 @@ export function LinksTable({
                       },
                       { label: t("actions.openOriginal"), icon: ExternalLink, href: item.originalUrl },
                       { label: t("actions.edit"), icon: Pencil, onSelect: () => setEditing(item) },
+                      { label: t("actions.settings"), icon: SlidersHorizontal, onSelect: () => router.push(`/stats/${item.shortCode}#settings`) },
                       { label: t("actions.delete"), icon: Trash2, destructive: true, onSelect: () => setConfirmCode(item.shortCode) },
                     ]}
                   />
@@ -403,6 +406,7 @@ export function LinksTable({
                   setEditing(sheetItem);
                   setSheetItem(null);
                 },
+                onSettings: () => router.push(`/stats/${sheetItem.shortCode}#settings`),
                 onDelete: () => {
                   setConfirmCode(sheetItem.shortCode);
                   setSheetItem(null);

@@ -37,7 +37,7 @@ export function WhenChapter({
           <RangeSwitch range={range} onRange={onRange} />
         </div>
         <div className="mt-3">
-          <DailyChart data={dailyClicks ?? data.dailyClicks} compact />
+          <DailyChart data={dailyClicks ?? data.dailyClicks} timezone={data.timezone} compact />
         </div>
       </section>
       <section id="section-hourly" aria-labelledby="when-hourly" className="mt-10 scroll-mt-28">

@@ -1487,7 +1487,8 @@
       "edit": "編集",
       "delete": "削除",
       "more": "その他",
-      "openOriginal": "リンク先を開く"
+      "openOriginal": "リンク先を開く",
+      "settings": "リンク設定"
     },
     "favorite": {
       "add": "お気に入りに追加",
@@ -1630,16 +1631,11 @@
       "now": "今"
     },
     "quality": {
-      "title": "クリック品質",
       "returning": "再訪問率",
-      "returningHint": "{count}名が2回以上",
       "clicksPerUnique": "訪問者あたりのクリック",
-      "clicksPerUniqueHint": "推定訪問者{unique}名",
-      "realVsPreview": "人によるクリック / プレビュー",
-      "realVsPreviewHint": "プレビュー比率 {ratio}",
       "peakHour": "ピーク時間",
-      "peakHourHint": "この時間に最も多くクリック",
-      "peakHourEmpty": "データ不足"
+      "previews": "プレビュー",
+      "returningWindow": "再訪問率は直近{days}日の値です。"
     },
     "insights": {
       "title": "ハイライト",
@@ -1790,101 +1786,78 @@
         "title": "曜日 × 時間"
       },
       "daily": {
-        "title": "日別の人によるクリック",
-        "desc": "直近30日 · {tz}"
+        "title": "日別の人によるクリック"
       },
       "hourly": {
         "title": "時間帯"
       },
       "device": {
-        "title": "デバイス",
-        "desc": "モバイル · デスクトップ · タブレット"
+        "title": "デバイス"
       },
       "channel": {
-        "title": "チャネル",
-        "desc": "リファラードメイン分類"
+        "title": "チャネル"
       },
       "os": {
-        "title": "OS",
-        "desc": "OS別の分布"
+        "title": "OS"
       },
       "browser": {
-        "title": "ブラウザ",
-        "desc": "ブラウザ別の分布"
+        "title": "ブラウザ"
       },
       "referrerHost": {
-        "title": "流入元",
-        "desc": "ホスト単位の集計"
+        "title": "流入元"
       },
       "referrerUrl": {
-        "title": "リファラーURL TOP",
-        "desc": "最も流入の多い出所"
+        "title": "リファラーURL TOP"
       },
       "utm": {
-        "title": "UTM キャンペーン",
-        "desc": "utm_campaign 別集計"
+        "title": "UTM キャンペーン"
       },
       "utmSource": {
-        "title": "UTM ソース",
-        "desc": "utm_source 別集計（instagram・x など）"
+        "title": "UTM ソース"
       },
       "utmMedium": {
-        "title": "UTM メディア",
-        "desc": "utm_medium 別集計 (bio, ad, email…)"
+        "title": "UTM メディア"
       },
       "utmContent": {
-        "title": "UTM コンテンツ",
-        "desc": "utm_content 別集計 (バナー / A-B 区分)"
+        "title": "UTM コンテンツ"
       },
       "utmTerm": {
-        "title": "UTM キーワード",
-        "desc": "utm_term 別集計（検索語・広告クリエイティブ）"
+        "title": "UTM キーワード"
       },
       "srcChannel": {
-        "title": "共有チャネル (?src)",
-        "desc": "短縮リンクに付与した ?src= パラメータで追跡（QR・LINE・オフラインなど referrer が空のチャネル）",
-        "empty": "?src パラメータで来たクリックはありません"
+        "title": "共有チャネル"
       },
       "clientApp": {
         "title": "アプリ内で開かれた",
-        "desc": "LINEやInstagramなど、アプリ内ブラウザで開かれたクリックです。ログインのリダイレクトやダウンロードが失敗しやすい場所です。"
+        "note": "アプリ内ブラウザではログインのリダイレクトやダウンロードが失敗しやすいです。"
       },
       "fetchSite": {
-        "title": "どう開いたか",
-        "desc": "自分でアドレスを開いたのか、どこかのリンクをたどってきたのか。リファラーが消えたクリックも分かれます。"
+        "title": "どう開いたか"
       },
       "postClicks": {
-        "title": "どの記事から",
-        "desc": "このリンクを載せた記事ごとのクリック"
+        "title": "どの記事から"
       },
       "channelDepth": {
-        "title": "チャネルの深さ",
-        "desc": "チャネルごとに、いつ最初に現れて、そのうち何%が戻ってきたか"
+        "title": "チャネルの深さ"
       },
       "bots": {
-        "title": "自動アクセスの種類",
-        "desc": "Googlebot · Slackbot 等の分離"
+        "title": "自動アクセスの種類"
       },
       "country": {
-        "title": "国",
-        "desc": "アクセス元IPから推定した国"
+        "title": "国"
       },
       "region": {
-        "title": "地域",
-        "desc": "都道府県・州単位"
+        "title": "地域"
       },
       "city": {
-        "title": "都市",
-        "desc": "都市単位"
+        "title": "都市"
       },
       "language": {
-        "title": "言語",
-        "desc": "ブラウザ Accept-Language 第1項目"
+        "title": "言語"
       },
       "asn": {
-        "title": "ネットワーク / ASN",
-        "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来{dc}件は自動でボットとして分類されます。",
-        "empty": "ネットワーク(ASN)情報はまだありません"
+        "title": "ネットワーク",
+        "note": "データセンター由来の{dc}件は自動アクセスとして分類しています。"
       }
     },
     "clientApp": {
@@ -1916,7 +1889,6 @@
     "referrerNoData": "リファラーデータはありません",
     "noClicks": "まだクリックがありません",
     "clickCount": "{count}回",
-    "noUtm": "UTMキャンペーンデータなし",
     "noBot": "自動アクセスなし",
     "weekday": {
       "MONDAY": "月",
@@ -1953,7 +1925,7 @@
       "exporting": "エクスポート中…",
       "loadMore": "もっと見る",
       "retention": "{days}日より前の個別のクリックは保存しません",
-      "empty": "まだクリックがありません。",
+      "empty": "まだクリックがありません",
       "colTime": "時刻",
       "colLocation": "地域",
       "colDevice": "デバイス",
@@ -1963,7 +1935,8 @@
     },
     "chart": {
       "summary": "最多 {label} {count}回",
-      "hour": "{hour}時"
+      "hour": "{hour}時",
+      "today": "今日"
     },
     "exportSummaryCsv": "サマリー CSV",
     "rawWindow": "直近{days}日",
@@ -1995,7 +1968,13 @@
       "inAppBrowser": "クリックの{percent}%がアプリ内ブラウザで開かれました",
       "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました",
       "showMore": "変化をあと{count}件表示",
-      "showLess": "折りたたむ"
+      "showLess": "折りたたむ",
+      "lastHour": "直近1時間",
+      "hourlyAverage": "過去24時間の1時間あたり平均",
+      "last7": "直近7日",
+      "prev7": "その前の7日",
+      "peakDayCount": "最も多かった日",
+      "dailyAverage": "直近{days}日の1日平均"
     },
     "protection": {
       "title": "保護",
@@ -2121,7 +2100,9 @@
       "KR50": "世宗特別自治市",
       "KR51": "江原特別自治道",
       "KR52": "全北特別自治道"
-    }
+    },
+    "noHumanClicks": "まだ人によるクリックはありません",
+    "copyLink": "リンクをコピー"
   },
   "statLabels": {
     "unknown": "不明",
@@ -4321,11 +4302,9 @@
     "title": "分析",
     "loadFailed": "成果を読み込めませんでした。もう一度お試しください。",
     "weekHumanClicks": "直近7日の人によるクリック",
-    "today": "今日 {count}",
-    "peak": "いちばん押された時間 {when}",
-    "vsPrevUp": "前の7日より{percent}%増（{count}回）",
-    "vsPrevDown": "前の7日より{percent}%減（{count}回）",
-    "vsPrevSimilar": "前の7日とほぼ同じ（{count}回）",
+    "vsPrevUp": "前の7日より{percent}%増えました",
+    "vsPrevDown": "前の7日より{percent}%減りました",
+    "vsPrevSimilar": "前の7日とほぼ同じです",
     "vsPrevNone": "前の7日はクリックなし",
     "scopeNote": "自動アクセスは除外しています。時刻は{tz}基準です。",
     "attention": "確認すること",
@@ -4336,7 +4315,11 @@
     "weekTopLinksEmpty": "直近7日はまだクリックがありません。",
     "humanClicks": "人によるクリック",
     "createFirst": "最初のリンクを作る",
-    "viewFewestClicks": "クリックの少ない順に見る"
+    "viewFewestClicks": "クリックの少ない順に見る",
+    "todayLabel": "今日",
+    "prevWeekLabel": "その前の7日",
+    "peakLabel": "いちばん押された時間",
+    "dailyTitle": "日別の人によるクリック"
   },
   "composer": {
     "placeholder": "長いURLを貼り付け",
@@ -4360,7 +4343,8 @@
     "edit": "編集",
     "delete": "削除",
     "favorite": "お気に入りに追加",
-    "unfavorite": "お気に入りを解除"
+    "unfavorite": "お気に入りを解除",
+    "settings": "リンク設定"
   },
   "linkState": {
     "expired": "期限切れ",

@@ -1487,7 +1487,8 @@
       "edit": "Edit",
       "delete": "Delete",
       "more": "More",
-      "openOriginal": "Open destination"
+      "openOriginal": "Open destination",
+      "settings": "Link settings"
     },
     "favorite": {
       "add": "Add to favorites",
@@ -1630,16 +1631,11 @@
       "now": "Now"
     },
     "quality": {
-      "title": "Click quality",
       "returning": "Returning ratio",
-      "returningHint": "{count} visitors returned",
       "clicksPerUnique": "Clicks per visitor",
-      "clicksPerUniqueHint": "{unique} estimated visitors",
-      "realVsPreview": "Human clicks / previews",
-      "realVsPreviewHint": "Previews are {ratio} of all",
       "peakHour": "Peak hour",
-      "peakHourHint": "Most clicks land in this hour",
-      "peakHourEmpty": "Not enough data"
+      "previews": "Previews",
+      "returningWindow": "The returning ratio covers the last {days} days."
     },
     "insights": {
       "title": "Interpretation",
@@ -1790,101 +1786,78 @@
         "title": "Weekday × hour"
       },
       "daily": {
-        "title": "Daily human clicks",
-        "desc": "Last 30 days · {tz}"
+        "title": "Daily human clicks"
       },
       "hourly": {
         "title": "Hour of day"
       },
       "device": {
-        "title": "Device",
-        "desc": "mobile · desktop · tablet"
+        "title": "Device"
       },
       "channel": {
-        "title": "Channel",
-        "desc": "Referrer domain classification"
+        "title": "Channel"
       },
       "os": {
-        "title": "OS",
-        "desc": "Operating system distribution"
+        "title": "OS"
       },
       "browser": {
-        "title": "Browser",
-        "desc": "Browser distribution"
+        "title": "Browser"
       },
       "referrerHost": {
-        "title": "Sources",
-        "desc": "Aggregated by host"
+        "title": "Sources"
       },
       "referrerUrl": {
-        "title": "Top referrer URLs",
-        "desc": "Most common sources"
+        "title": "Top referrer URLs"
       },
       "utm": {
-        "title": "UTM campaigns",
-        "desc": "Aggregated by utm_campaign"
+        "title": "UTM campaigns"
       },
       "utmSource": {
-        "title": "UTM source",
-        "desc": "By utm_source (instagram, naver, ...)"
+        "title": "UTM source"
       },
       "utmMedium": {
-        "title": "UTM medium",
-        "desc": "By utm_medium (bio, ad, email, ...)"
+        "title": "UTM medium"
       },
       "utmContent": {
-        "title": "UTM content",
-        "desc": "By utm_content (banner / A-B slot)"
+        "title": "UTM content"
       },
       "utmTerm": {
-        "title": "UTM term",
-        "desc": "By utm_term (search keyword / ad creative)"
+        "title": "UTM term"
       },
       "srcChannel": {
-        "title": "Share channel (?src)",
-        "desc": "Tracked via the ?src= hint on the short link itself. Covers QR scans, KakaoTalk and offline channels where the referrer header is missing.",
-        "empty": "No clicks carried a ?src parameter."
+        "title": "Share channel"
       },
       "clientApp": {
         "title": "Opened in an app",
-        "desc": "Clicks opened in an app's built-in browser, like KakaoTalk or Instagram. Sign-in redirects and downloads often break there."
+        "note": "Sign-in redirects and downloads often break in in-app browsers."
       },
       "fetchSite": {
-        "title": "How they opened it",
-        "desc": "Whether people typed the address themselves or followed a link. This also sorts out clicks with no referrer."
+        "title": "How they opened it"
       },
       "postClicks": {
-        "title": "Which post",
-        "desc": "Clicks per blog post that carried this link"
+        "title": "Which post"
       },
       "channelDepth": {
-        "title": "Channel depth",
-        "desc": "When each channel first showed up, and how many of its visitors came back"
+        "title": "Channel depth"
       },
       "bots": {
-        "title": "Automated traffic",
-        "desc": "Googlebot · Slackbot etc."
+        "title": "Automated traffic"
       },
       "country": {
-        "title": "Country",
-        "desc": "Estimated from the visitor's IP"
+        "title": "Country"
       },
       "region": {
-        "title": "Region",
-        "desc": "State, province or prefecture"
+        "title": "Region"
       },
       "city": {
-        "title": "City",
-        "desc": "City level"
+        "title": "City"
       },
       "language": {
-        "title": "Language",
-        "desc": "Browser Accept-Language"
+        "title": "Language"
       },
       "asn": {
-        "title": "Network / ASN",
-        "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
-        "empty": "No network (ASN) data yet"
+        "title": "Network",
+        "note": "{dc} datacenter clicks were counted as automated."
       }
     },
     "clientApp": {
@@ -1916,7 +1889,6 @@
     "referrerNoData": "No referrer data",
     "noClicks": "No clicks yet",
     "clickCount": "{count} clicks",
-    "noUtm": "No UTM campaign data",
     "noBot": "No automated clicks",
     "weekday": {
       "MONDAY": "Mon",
@@ -1953,7 +1925,7 @@
       "exporting": "Exporting…",
       "loadMore": "Load more",
       "retention": "Individual clicks older than {days} days aren't kept",
-      "empty": "No clicks yet.",
+      "empty": "No clicks yet",
       "colTime": "Time",
       "colLocation": "Location",
       "colDevice": "Device",
@@ -1963,7 +1935,8 @@
     },
     "chart": {
       "summary": "Peak: {count} at {label}",
-      "hour": "{hour}:00"
+      "hour": "{hour}:00",
+      "today": "Today"
     },
     "exportSummaryCsv": "Summary CSV",
     "rawWindow": "Last {days} days",
@@ -1995,7 +1968,13 @@
       "inAppBrowser": "{percent}% of clicks opened in an in-app browser",
       "channelLoyalty": "{percent}% of the people from {host} came back",
       "showMore": "Show {count} more changes",
-      "showLess": "Show less"
+      "showLess": "Show less",
+      "lastHour": "Last hour",
+      "hourlyAverage": "Hourly average, last 24 hours",
+      "last7": "Last 7 days",
+      "prev7": "7 days before",
+      "peakDayCount": "Busiest day",
+      "dailyAverage": "Daily average, last {days} days"
     },
     "protection": {
       "title": "Protection",
@@ -2121,7 +2100,9 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
-    }
+    },
+    "noHumanClicks": "No human clicks yet",
+    "copyLink": "Copy link"
   },
   "statLabels": {
     "unknown": "Unknown",
@@ -4321,11 +4302,9 @@
     "title": "Analytics",
     "loadFailed": "Couldn’t load your stats. Please try again.",
     "weekHumanClicks": "Human clicks · last 7 days",
-    "today": "Today {count}",
-    "peak": "Busiest {when}",
-    "vsPrevUp": "Up {percent}% on the 7 days before ({count})",
-    "vsPrevDown": "Down {percent}% on the 7 days before ({count})",
-    "vsPrevSimilar": "About the same as the 7 days before ({count})",
+    "vsPrevUp": "Up {percent}% on the 7 days before",
+    "vsPrevDown": "Down {percent}% on the 7 days before",
+    "vsPrevSimilar": "About the same as the 7 days before",
     "vsPrevNone": "No clicks in the 7 days before",
     "scopeNote": "Automated clicks excluded. Times in {tz}.",
     "attention": "Worth a look",
@@ -4336,7 +4315,11 @@
     "weekTopLinksEmpty": "No clicks in the last 7 days yet.",
     "humanClicks": "human clicks",
     "createFirst": "Create your first link",
-    "viewFewestClicks": "Fewest clicks first"
+    "viewFewestClicks": "Fewest clicks first",
+    "todayLabel": "Today",
+    "prevWeekLabel": "7 days before",
+    "peakLabel": "Busiest",
+    "dailyTitle": "Daily human clicks"
   },
   "composer": {
     "placeholder": "Paste a long link",
@@ -4360,7 +4343,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "favorite": "Add to favorites",
-    "unfavorite": "Remove from favorites"
+    "unfavorite": "Remove from favorites",
+    "settings": "Link settings"
   },
   "linkState": {
     "expired": "Expired",

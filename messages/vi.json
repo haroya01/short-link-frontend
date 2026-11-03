@@ -1487,7 +1487,8 @@
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
       "more": "Thêm",
-      "openOriginal": "Mở điểm đến"
+      "openOriginal": "Mở điểm đến",
+      "settings": "Cài đặt liên kết"
     },
     "favorite": {
       "add": "Thêm vào mục yêu thích",
@@ -1630,16 +1631,11 @@
       "now": "Bây giờ"
     },
     "quality": {
-      "title": "Chất lượng lượt nhấp",
       "returning": "Tỷ lệ quay lại",
-      "returningHint": "{count} khách đã quay lại",
       "clicksPerUnique": "Lượt nhấp mỗi khách",
-      "clicksPerUniqueHint": "{unique} khách ước tính",
-      "realVsPreview": "Lượt nhấp của người / xem trước",
-      "realVsPreviewHint": "Xem trước chiếm {ratio}",
       "peakHour": "Giờ cao điểm",
-      "peakHourHint": "Nhiều lượt nhấp nhất rơi vào giờ này",
-      "peakHourEmpty": "Chưa đủ dữ liệu"
+      "previews": "Xem trước",
+      "returningWindow": "Tỷ lệ quay lại tính trong {days} ngày gần nhất."
     },
     "insights": {
       "title": "Diễn giải",
@@ -1790,101 +1786,78 @@
         "title": "Thứ × giờ"
       },
       "daily": {
-        "title": "Lượt nhấp của người hàng ngày",
-        "desc": "30 ngày qua · {tz}"
+        "title": "Lượt nhấp của người hàng ngày"
       },
       "hourly": {
         "title": "Giờ trong ngày"
       },
       "device": {
-        "title": "Thiết bị",
-        "desc": "di động · máy tính · máy tính bảng"
+        "title": "Thiết bị"
       },
       "channel": {
-        "title": "Kênh",
-        "desc": "Phân loại theo tên miền giới thiệu"
+        "title": "Kênh"
       },
       "os": {
-        "title": "Hệ điều hành",
-        "desc": "Phân bố hệ điều hành"
+        "title": "Hệ điều hành"
       },
       "browser": {
-        "title": "Trình duyệt",
-        "desc": "Phân bố trình duyệt"
+        "title": "Trình duyệt"
       },
       "referrerHost": {
-        "title": "Nguồn truy cập",
-        "desc": "Tổng hợp theo host"
+        "title": "Nguồn truy cập"
       },
       "referrerUrl": {
-        "title": "URL giới thiệu hàng đầu",
-        "desc": "Các nguồn phổ biến nhất"
+        "title": "URL giới thiệu hàng đầu"
       },
       "utm": {
-        "title": "Chiến dịch UTM",
-        "desc": "Tổng hợp theo utm_campaign"
+        "title": "Chiến dịch UTM"
       },
       "utmSource": {
-        "title": "Nguồn UTM",
-        "desc": "Theo utm_source (instagram, naver, ...)"
+        "title": "Nguồn UTM"
       },
       "utmMedium": {
-        "title": "Phương tiện UTM",
-        "desc": "Theo utm_medium (bio, ad, email, ...)"
+        "title": "Phương tiện UTM"
       },
       "utmContent": {
-        "title": "Nội dung UTM",
-        "desc": "Theo utm_content (banner / vị trí A-B)"
+        "title": "Nội dung UTM"
       },
       "utmTerm": {
-        "title": "Từ khoá UTM",
-        "desc": "Theo utm_term (từ khoá tìm kiếm / mẫu quảng cáo)"
+        "title": "Từ khoá UTM"
       },
       "srcChannel": {
-        "title": "Kênh chia sẻ (?src)",
-        "desc": "Được theo dõi qua gợi ý ?src= trên chính liên kết ngắn. Bao quát quét QR, KakaoTalk, các kênh ngoại tuyến nơi thiếu header giới thiệu.",
-        "empty": "Không có lượt nhấp nào kèm tham số ?src."
+        "title": "Kênh chia sẻ"
       },
       "clientApp": {
         "title": "Mở trong ứng dụng",
-        "desc": "Các lượt nhấp mở trong trình duyệt tích hợp của ứng dụng như KakaoTalk hay Instagram. Chuyển hướng đăng nhập và tải xuống hay bị lỗi ở đó."
+        "note": "Chuyển hướng đăng nhập và tải xuống hay bị lỗi trong trình duyệt của ứng dụng."
       },
       "fetchSite": {
-        "title": "Họ mở bằng cách nào",
-        "desc": "Người dùng tự mở địa chỉ hay bấm theo một liên kết. Cũng tách riêng được những lượt nhấp không kèm referrer."
+        "title": "Họ mở bằng cách nào"
       },
       "postClicks": {
-        "title": "Từ bài viết nào",
-        "desc": "Lượt nhấp theo từng bài viết có gắn liên kết này"
+        "title": "Từ bài viết nào"
       },
       "channelDepth": {
-        "title": "Chiều sâu kênh",
-        "desc": "Mỗi kênh xuất hiện lần đầu khi nào, và bao nhiêu khách của nó đã quay lại"
+        "title": "Chiều sâu kênh"
       },
       "bots": {
-        "title": "Loại truy cập tự động",
-        "desc": "Googlebot · Slackbot v.v."
+        "title": "Loại truy cập tự động"
       },
       "country": {
-        "title": "Quốc gia",
-        "desc": "Ước tính từ IP người truy cập"
+        "title": "Quốc gia"
       },
       "region": {
-        "title": "Khu vực",
-        "desc": "Bang / tỉnh"
+        "title": "Khu vực"
       },
       "city": {
-        "title": "Thành phố",
-        "desc": "Cấp thành phố"
+        "title": "Thành phố"
       },
       "language": {
-        "title": "Ngôn ngữ",
-        "desc": "Accept-Language của trình duyệt"
+        "title": "Ngôn ngữ"
       },
       "asn": {
-        "title": "Mạng / ASN",
-        "desc": "Phân bố hệ thống tự trị (ISP / nhà cung cấp đám mây). {dc} lượt nhấp từ trung tâm dữ liệu đã được tự động gắn cờ là bot.",
-        "empty": "Chưa có dữ liệu mạng (ASN)"
+        "title": "Mạng",
+        "note": "{dc} lượt nhấp từ trung tâm dữ liệu được tính là truy cập tự động."
       }
     },
     "clientApp": {
@@ -1916,7 +1889,6 @@
     "referrerNoData": "Không có dữ liệu giới thiệu",
     "noClicks": "Chưa có lượt nhấp",
     "clickCount": "{count} lượt nhấp",
-    "noUtm": "Không có dữ liệu chiến dịch UTM",
     "noBot": "Không có truy cập tự động",
     "weekday": {
       "MONDAY": "T2",
@@ -1953,7 +1925,7 @@
       "exporting": "Đang xuất…",
       "loadMore": "Xem thêm",
       "retention": "Không lưu từng lượt nhấp cũ hơn {days} ngày",
-      "empty": "Chưa có lượt nhấp.",
+      "empty": "Chưa có lượt nhấp",
       "colTime": "Thời gian",
       "colLocation": "Vị trí",
       "colDevice": "Thiết bị",
@@ -1963,7 +1935,8 @@
     },
     "chart": {
       "summary": "Cao nhất {label}: {count} lượt nhấp",
-      "hour": "{hour} giờ"
+      "hour": "{hour} giờ",
+      "today": "Hôm nay"
     },
     "exportSummaryCsv": "CSV tóm tắt",
     "rawWindow": "{days} ngày gần nhất",
@@ -1995,7 +1968,13 @@
       "inAppBrowser": "{percent}% lượt nhấp mở trong trình duyệt của ứng dụng",
       "channelLoyalty": "{percent}% người đến từ {host} đã quay lại",
       "showMore": "Xem thêm {count} thay đổi",
-      "showLess": "Thu gọn"
+      "showLess": "Thu gọn",
+      "lastHour": "1 giờ qua",
+      "hourlyAverage": "Trung bình mỗi giờ trong 24 giờ qua",
+      "last7": "7 ngày qua",
+      "prev7": "7 ngày trước đó",
+      "peakDayCount": "Ngày nhiều nhất",
+      "dailyAverage": "Trung bình mỗi ngày, {days} ngày qua"
     },
     "protection": {
       "title": "Bảo vệ",
@@ -2121,7 +2100,9 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
-    }
+    },
+    "noHumanClicks": "Chưa có lượt nhấp của người",
+    "copyLink": "Sao chép liên kết"
   },
   "statLabels": {
     "unknown": "Không rõ",
@@ -4321,11 +4302,9 @@
     "title": "Phân tích",
     "loadFailed": "Không tải được số liệu. Vui lòng thử lại.",
     "weekHumanClicks": "Lượt nhấp của người · 7 ngày qua",
-    "today": "Hôm nay {count}",
-    "peak": "Đông nhất: {when}",
-    "vsPrevUp": "Tăng {percent}% so với 7 ngày trước đó ({count})",
-    "vsPrevDown": "Giảm {percent}% so với 7 ngày trước đó ({count})",
-    "vsPrevSimilar": "Gần bằng 7 ngày trước đó ({count})",
+    "vsPrevUp": "Tăng {percent}% so với 7 ngày trước đó",
+    "vsPrevDown": "Giảm {percent}% so với 7 ngày trước đó",
+    "vsPrevSimilar": "Gần bằng 7 ngày trước đó",
     "vsPrevNone": "7 ngày trước đó chưa có lượt nhấp",
     "scopeNote": "Đã loại trừ truy cập tự động. Giờ theo {tz}.",
     "attention": "Cần xem",
@@ -4336,7 +4315,11 @@
     "weekTopLinksEmpty": "7 ngày qua chưa có lượt nhấp nào.",
     "humanClicks": "lượt nhấp của người",
     "createFirst": "Tạo liên kết đầu tiên",
-    "viewFewestClicks": "Xem theo ít lượt nhấp nhất"
+    "viewFewestClicks": "Xem theo ít lượt nhấp nhất",
+    "todayLabel": "Hôm nay",
+    "prevWeekLabel": "7 ngày trước đó",
+    "peakLabel": "Đông nhất",
+    "dailyTitle": "Lượt nhấp của người hằng ngày"
   },
   "composer": {
     "placeholder": "Dán liên kết dài",
@@ -4360,7 +4343,8 @@
     "edit": "Chỉnh sửa",
     "delete": "Xóa",
     "favorite": "Thêm vào mục yêu thích",
-    "unfavorite": "Bỏ khỏi mục yêu thích"
+    "unfavorite": "Bỏ khỏi mục yêu thích",
+    "settings": "Cài đặt liên kết"
   },
   "linkState": {
     "expired": "Đã hết hạn",

@@ -61,7 +61,7 @@ test.describe("one name per number, people's words for stored values", () => {
     await expect(panel.getByText("짧은 시간 반복 접속", { exact: true })).toBeVisible();
     await expect(panel.getByText("일본어", { exact: true })).toBeVisible();
     await expect(panel.getByText(/preview:|datacenter:|rate-flood/)).toHaveCount(0);
-    await expect(panel.getByText("사람 클릭 / 미리보기", { exact: true })).toBeVisible();
+    await expect(panel.locator("dt").getByText("미리보기", { exact: true })).toBeVisible();
     await expect(panel.getByText("방문자당 클릭", { exact: true })).toBeVisible();
     await expect(panel.getByText(/유니크|실제 \/|프리뷰/)).toHaveCount(0);
   });
@@ -72,7 +72,7 @@ test.describe("one name per number, people's words for stored values", () => {
     const panel = page.locator("#stats-panel-where");
     const section = (title: string) => panel.locator("section").filter({ has: page.getByRole("heading", { name: title, exact: true }) });
     await expect(section("채널").getByTestId("breakdown-name")).toHaveText(["메신저", "직접 유입"]);
-    await expect(section("공유 채널 (?src)").getByTestId("breakdown-name")).toHaveText(["프로필 @dohyun"]);
+    await expect(section("공유 채널").getByTestId("breakdown-name")).toHaveText(["프로필 @dohyun"]);
   });
 
   test("the total that includes automated visits says so in its own name", async ({ page }) => {

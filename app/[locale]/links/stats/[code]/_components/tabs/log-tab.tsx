@@ -93,7 +93,7 @@ export function LogTab({ data, demo = false }: { data: LinkStats; demo?: boolean
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card-flat dark:border-slate-800 dark:bg-slate-900">
+    <section>
       <div className="flex flex-wrap items-center justify-end gap-2">
         {demo && <DemoBadge />}
         <span className="mr-auto text-[12px] text-slate-500 dark:text-slate-400">{data.timezone}</span>

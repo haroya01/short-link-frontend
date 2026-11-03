@@ -293,7 +293,7 @@ function DailyChart({ data, startsAt }: { data: CampaignStats["byDay"]; startsAt
   );
   return (
     <Section title={t("daily.title")} description={t("daily.description", { tz: CAMPAIGN_TIMEZONE })}>
-      <DailyTrendChart data={series} />
+      <DailyTrendChart data={series} timezone={CAMPAIGN_TIMEZONE} />
     </Section>
   );
 }

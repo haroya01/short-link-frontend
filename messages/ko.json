@@ -1487,7 +1487,8 @@
       "edit": "편집",
       "delete": "삭제",
       "more": "더보기",
-      "openOriginal": "목적지 열기"
+      "openOriginal": "목적지 열기",
+      "settings": "링크 설정"
     },
     "favorite": {
       "add": "즐겨찾기에 추가",
@@ -1630,16 +1631,11 @@
       "now": "지금"
     },
     "quality": {
-      "title": "클릭 품질",
       "returning": "재방문 비율",
-      "returningHint": "{count}명이 2회 이상",
       "clicksPerUnique": "방문자당 클릭",
-      "clicksPerUniqueHint": "추정 방문자 {unique}명",
-      "realVsPreview": "사람 클릭 / 미리보기",
-      "realVsPreviewHint": "미리보기 비중 {ratio}",
       "peakHour": "피크 시간",
-      "peakHourHint": "이 시간에 가장 많이 클릭됨",
-      "peakHourEmpty": "데이터 부족"
+      "previews": "미리보기",
+      "returningWindow": "재방문 비율은 최근 {days}일 기준이에요."
     },
     "insights": {
       "title": "해석 요약",
@@ -1790,101 +1786,78 @@
         "title": "요일 × 시간"
       },
       "daily": {
-        "title": "일별 사람 클릭",
-        "desc": "최근 30일 · {tz}"
+        "title": "일별 사람 클릭"
       },
       "hourly": {
         "title": "시간대"
       },
       "device": {
-        "title": "디바이스",
-        "desc": "모바일 · 데스크톱 · 태블릿"
+        "title": "디바이스"
       },
       "channel": {
-        "title": "채널",
-        "desc": "레퍼러 도메인 분류"
+        "title": "채널"
       },
       "os": {
-        "title": "OS",
-        "desc": "운영체제별 분포"
+        "title": "OS"
       },
       "browser": {
-        "title": "브라우저",
-        "desc": "브라우저별 분포"
+        "title": "브라우저"
       },
       "referrerHost": {
-        "title": "유입 경로",
-        "desc": "유입 도메인 단위 집계"
+        "title": "유입 경로"
       },
       "referrerUrl": {
-        "title": "상위 레퍼러 URL",
-        "desc": "가장 많이 유입된 출처"
+        "title": "상위 레퍼러 URL"
       },
       "utm": {
-        "title": "UTM 캠페인",
-        "desc": "utm_campaign 별 집계"
+        "title": "UTM 캠페인"
       },
       "utmSource": {
-        "title": "UTM 소스",
-        "desc": "utm_source 별 집계 (instagram, naver 등)"
+        "title": "UTM 소스"
       },
       "utmMedium": {
-        "title": "UTM 매체",
-        "desc": "utm_medium 별 집계 (bio, ad, email 등)"
+        "title": "UTM 매체"
       },
       "utmContent": {
-        "title": "UTM 콘텐츠",
-        "desc": "utm_content 별 집계 (배너, A/B 슬롯 구분)"
+        "title": "UTM 콘텐츠"
       },
       "utmTerm": {
-        "title": "UTM 키워드",
-        "desc": "utm_term 별 집계 (검색어·광고 소재)"
+        "title": "UTM 키워드"
       },
       "srcChannel": {
-        "title": "공유 채널 (?src)",
-        "desc": "단축 링크에 붙인 ?src= 파라미터로 추적해요(QR·카톡·오프라인처럼 레퍼러가 비어 있는 경로)",
-        "empty": "?src 파라미터로 들어온 클릭 없음"
+        "title": "공유 채널"
       },
       "clientApp": {
         "title": "앱에서 열림",
-        "desc": "카톡·인스타처럼 앱 안 브라우저로 열린 클릭. 앱 웹뷰에선 로그인 리다이렉트나 다운로드가 곧잘 막혀요."
+        "note": "앱 안 브라우저에서는 로그인 리다이렉트나 다운로드가 곧잘 막혀요."
       },
       "fetchSite": {
-        "title": "어떻게 열었나",
-        "desc": "주소를 직접 열었는지, 어딘가의 링크를 눌러 왔는지. 레퍼러가 없는 클릭도 구분돼요."
+        "title": "어떻게 열었나"
       },
       "postClicks": {
-        "title": "어느 글에서",
-        "desc": "이 링크를 실은 글별 클릭"
+        "title": "어느 글에서"
       },
       "channelDepth": {
-        "title": "채널 깊이",
-        "desc": "채널마다 언제 처음 나타났고, 그중 몇 %가 다시 왔는지"
+        "title": "채널 깊이"
       },
       "bots": {
-        "title": "자동 접속 종류",
-        "desc": "Googlebot · Slackbot 등 분리"
+        "title": "자동 접속 종류"
       },
       "country": {
-        "title": "국가",
-        "desc": "접속 IP로 추정한 국가"
+        "title": "국가"
       },
       "region": {
-        "title": "지역",
-        "desc": "시·도·주 단위"
+        "title": "지역"
       },
       "city": {
-        "title": "도시",
-        "desc": "도시 단위"
+        "title": "도시"
       },
       "language": {
-        "title": "언어",
-        "desc": "브라우저 Accept-Language 첫 항목"
+        "title": "언어"
       },
       "asn": {
-        "title": "네트워크(ASN)",
-        "desc": "들어온 IP가 속한 네트워크(ISP·클라우드 사업자) 분포예요. 데이터센터 클릭 {dc}건은 봇으로 자동 분류했어요.",
-        "empty": "네트워크(ASN) 정보가 아직 없어요"
+        "title": "네트워크",
+        "note": "데이터센터 클릭 {dc}건은 자동 접속으로 분류했어요."
       }
     },
     "clientApp": {
@@ -1916,7 +1889,6 @@
     "referrerNoData": "레퍼러 데이터 없음",
     "noClicks": "아직 클릭이 없어요",
     "clickCount": "{count}회",
-    "noUtm": "UTM 캠페인 데이터 없음",
     "noBot": "자동 접속 없음",
     "weekday": {
       "MONDAY": "월",
@@ -1953,7 +1925,7 @@
       "exporting": "내보내는 중…",
       "loadMore": "더 보기",
       "retention": "{days}일보다 오래된 개별 클릭은 보관하지 않아요",
-      "empty": "아직 클릭이 없어요.",
+      "empty": "아직 클릭이 없어요",
       "colTime": "시각",
       "colLocation": "위치",
       "colDevice": "기기",
@@ -1963,7 +1935,8 @@
     },
     "chart": {
       "summary": "최고 {label} {count}회",
-      "hour": "{hour}시"
+      "hour": "{hour}시",
+      "today": "오늘"
     },
     "exportSummaryCsv": "요약 CSV",
     "rawWindow": "최근 {days}일",
@@ -1995,7 +1968,13 @@
       "inAppBrowser": "클릭의 {percent}%가 앱 안 브라우저에서 열렸어요",
       "channelLoyalty": "{host}에서 온 사람의 {percent}%가 다시 왔어요",
       "showMore": "변화 {count}개 더 보기",
-      "showLess": "간단히 보기"
+      "showLess": "간단히 보기",
+      "lastHour": "최근 1시간",
+      "hourlyAverage": "지난 24시간 시간당 평균",
+      "last7": "최근 7일",
+      "prev7": "그 전 7일",
+      "peakDayCount": "가장 많았던 날",
+      "dailyAverage": "최근 {days}일 하루 평균"
     },
     "protection": {
       "title": "보호",
@@ -2121,7 +2100,9 @@
       "KR50": "세종특별자치시",
       "KR51": "강원특별자치도",
       "KR52": "전북특별자치도"
-    }
+    },
+    "noHumanClicks": "아직 사람 클릭이 없어요",
+    "copyLink": "링크 복사"
   },
   "statLabels": {
     "unknown": "알 수 없음",
@@ -4321,11 +4302,9 @@
     "title": "분석",
     "loadFailed": "성과를 불러오지 못했어요. 다시 시도해 주세요.",
     "weekHumanClicks": "최근 7일 사람 클릭",
-    "today": "오늘 {count}",
-    "peak": "가장 많이 누른 때 {when}",
-    "vsPrevUp": "그 전 7일보다 {percent}% 늘었어요({count}회)",
-    "vsPrevDown": "그 전 7일보다 {percent}% 줄었어요({count}회)",
-    "vsPrevSimilar": "그 전 7일과 비슷해요({count}회)",
+    "vsPrevUp": "그 전 7일보다 {percent}% 늘었어요",
+    "vsPrevDown": "그 전 7일보다 {percent}% 줄었어요",
+    "vsPrevSimilar": "그 전 7일과 비슷해요",
     "vsPrevNone": "그 전 7일엔 클릭이 없었어요",
     "scopeNote": "자동 접속은 빼고 셌어요. 시간은 {tz} 기준이에요.",
     "attention": "살펴볼 것",
@@ -4336,7 +4315,11 @@
     "weekTopLinksEmpty": "최근 7일엔 아직 클릭이 없어요.",
     "humanClicks": "사람 클릭",
     "createFirst": "첫 링크 만들기",
-    "viewFewestClicks": "클릭 적은 순으로 보기"
+    "viewFewestClicks": "클릭 적은 순으로 보기",
+    "todayLabel": "오늘",
+    "prevWeekLabel": "그 전 7일",
+    "peakLabel": "가장 많이 누른 때",
+    "dailyTitle": "일별 사람 클릭"
   },
   "composer": {
     "placeholder": "긴 주소 붙여넣기",
@@ -4360,7 +4343,8 @@
     "edit": "편집",
     "delete": "삭제",
     "favorite": "즐겨찾기에 추가",
-    "unfavorite": "즐겨찾기 해제"
+    "unfavorite": "즐겨찾기 해제",
+    "settings": "링크 설정"
   },
   "linkState": {
     "expired": "만료됨",

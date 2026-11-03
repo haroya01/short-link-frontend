@@ -26,11 +26,10 @@ test("the log tab opens straight into the click rows and pages by cursor", async
 
 test("returning ratio and channel depth name the raw window they are counted over", async ({ page }) => {
   await page.goto(`/ko/stats/${CODE}#who`);
-  const returning = page.locator("#stats-panel-who .rounded-2xl", { hasText: "재방문 비율" });
-  await expect(returning).toContainText("최근 90일");
+  await expect(page.locator("#stats-panel-who").getByText("재방문 비율은 최근 90일 기준이에요.", { exact: true })).toBeVisible();
 
   await page.getByRole("tab", { name: "유입 경로", exact: true }).click();
-  await expect(page.locator("#section-channel-depth header")).toContainText("최근 90일");
+  await expect(page.locator("#section-channel-depth")).toContainText("최근 90일");
 });
 
 test("the header export is named for the summary it holds, apart from the log tab's two", async ({ page }) => {

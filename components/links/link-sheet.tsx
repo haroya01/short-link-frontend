@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
-import { ArrowRight, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
+import { ArrowRight, ExternalLink, Pencil, SlidersHorizontal, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BottomSheet } from "@/components/common/bottom-sheet";
 import { CopyButton } from "@/components/common/copy-button";
@@ -26,6 +26,7 @@ type Actions = {
   favoriteDisabled?: boolean;
   onToggleFavorite?: () => void;
   onEdit?: () => void;
+  onSettings?: () => void;
   onDelete?: () => void;
 };
 
@@ -118,6 +119,7 @@ export function LinkSheet({
               )}
               <SheetRow icon={ExternalLink} label={t("openOriginal")} href={shown.originalUrl} />
               {actions.onEdit && <SheetRow icon={Pencil} label={t("edit")} onSelect={actions.onEdit} />}
+              {actions.onSettings && <SheetRow icon={SlidersHorizontal} label={t("settings")} onSelect={actions.onSettings} />}
               {actions.onDelete && <SheetRow icon={Trash2} label={t("delete")} destructive onSelect={actions.onDelete} />}
             </ul>
           )}

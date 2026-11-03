@@ -19,7 +19,7 @@ export const CLIENT_MESSAGE_SCOPES = {
     "result", "share", "shortenForm", "statLabels",
   ],
   "links/admin": ["abuseReports", "admin", "stats"],
-  "links/analytics": ["linkAnalytics"],
+  "links/analytics": ["linkAnalytics", "stats"],
   "links/auth": ["errors"],
   "links/campaigns": [
     "campaignApp.batchCard", "campaignApp.batchDialogs", "campaignApp.batchesNew",

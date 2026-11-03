@@ -35,20 +35,25 @@ const stats = (extra: Partial<LinkStats>) =>
     ...extra,
   }) as LinkStats;
 
-const returningCard = () => [...container.querySelectorAll(".rounded-2xl")].find((card) => card.textContent?.includes("returning"))!;
+const metric = (label: string) =>
+  [...container.querySelectorAll("dl > div")].find((cell) => cell.querySelector("dt")?.textContent === label)?.querySelector("dd")?.textContent;
 
-it("marks the returning ratio with the raw window only once the stats carry a raw boundary", async () => {
+it("names the 90-day window of the returning ratio once, only when the stats carry a raw boundary", async () => {
   await act(async () => root.render(createElement(ClickQualitySummary, { data: stats({ rawRetentionDays: 90, rawSince: null }) })));
-  expect(container.textContent).not.toContain("rawWindow");
+  expect(container.textContent).not.toContain("returningWindow");
 
   await act(async () => root.render(createElement(ClickQualitySummary, { data: stats({ rawRetentionDays: 90, rawSince: "2026-07-24T00:00:00Z" }) })));
-  expect(returningCard().textContent).toContain('rawWindow:{"days":90}');
-  expect(container.textContent?.match(/rawWindow/g)).toHaveLength(1);
+  expect(container.textContent?.match(/returningWindow:\{"days":90\}/g)).toHaveLength(1);
 });
 
 it("divides all-time human clicks by all-time estimated visitors, not by the 90-day return window", async () => {
   await act(async () => root.render(createElement(ClickQualitySummary, { data: realLinkStats() })));
-  const card = [...container.querySelectorAll(".rounded-2xl")].find((el) => el.textContent?.startsWith("clicksPerUnique"))!;
-  expect(card.textContent).toContain("1.8");
-  expect(card.textContent).toContain('clicksPerUniqueHint:{"unique":"640"}');
+  expect(metric("clicksPerUnique")).toBe("1.8");
+  expect(metric("unique")).toBe("640");
+});
+
+it("reads as one number line, not a row of cards", async () => {
+  await act(async () => root.render(createElement(ClickQualitySummary, { data: stats({}) })));
+  expect(container.querySelector(".rounded-2xl")).toBeNull();
+  expect([...container.querySelectorAll("dt")].map((dt) => dt.textContent)).toEqual(["unique", "clicksPerUnique", "returning", "previews", "peakHour"]);
 });

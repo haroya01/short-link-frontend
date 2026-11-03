@@ -1,31 +1,35 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-function HeaderSkeleton({ shortCode }: { shortCode?: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6">
-      <Skeleton className="h-3 w-20" />
-      {/* 코드는 라우트에서 이미 안다 — 스켈레톤 단계에 실코드를 그려야 대시보드 /코드 와의
-          view-transition 페어(vt-link-code)가 로딩 중에도 성립한다(늦으면 old 만 남아 모프 무산). */}
-      {shortCode ? (
-        <p className="vt-link-code mt-3 w-fit truncate text-base font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 sm:text-2xl">
-          /{shortCode}
-        </p>
-      ) : (
-        <Skeleton className="mt-3 h-7 w-56" />
-      )}
-      <Skeleton className="mt-3 h-4 w-72" />
-    </div>
-  );
-}
-
 export function StatsSkeleton({ shortCode }: { shortCode?: string }) {
   return (
-    <>
-      <HeaderSkeleton shortCode={shortCode} />
-      <div aria-hidden className="min-h-screen space-y-5">
-        <Skeleton className="h-10 w-full max-w-md" />
-        <Skeleton className="h-64 w-full rounded-2xl" />
+    <div aria-hidden className="min-h-screen space-y-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <div className="relative text-headline-sm sm:text-headline-md">
+            &nbsp;
+            <Skeleton className="absolute inset-y-[0.2em] left-0 w-64 max-w-full" />
+          </div>
+          <p className="mt-1.5 text-sm">
+            <span className="vt-link-code truncate font-mono font-medium text-accent-700 dark:text-accent-400">
+              {(process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "")}/{shortCode}
+            </span>
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-9 w-16 rounded-lg" />
+          <Skeleton className="h-9 w-9 rounded-lg" />
+        </div>
       </div>
-    </>
+      <div className="flex h-10 gap-6 border-b border-slate-200 pt-2 dark:border-slate-800">
+        {[40, 56, 56, 56, 32, 32].map((w, i) => (
+          <Skeleton key={i} className="h-4" style={{ width: w }} />
+        ))}
+      </div>
+      <div className="space-y-2 border-b border-slate-200 pb-6 pt-5 dark:border-slate-800">
+        <Skeleton className="h-3 w-16" />
+        <Skeleton className="h-9 w-32" />
+      </div>
+      <Skeleton className="mt-8 h-40 w-full rounded-lg" />
+    </div>
   );
 }

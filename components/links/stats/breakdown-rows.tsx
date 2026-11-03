@@ -34,7 +34,7 @@ export function BreakdownRows({ items, maxItems = 10, subgrid = false, total: po
           >
             <span
               data-testid="breakdown-name"
-              className="truncate text-[14px] text-slate-900 dark:text-slate-100"
+              className="truncate text-[14px] text-slate-900 dark:text-slate-100 sm:max-w-[18rem]"
               title={item.title ?? item.label}
             >
               {item.label}

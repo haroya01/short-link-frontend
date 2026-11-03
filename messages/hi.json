@@ -1487,7 +1487,8 @@
       "edit": "संपादित करें",
       "delete": "हटाएँ",
       "more": "अधिक",
-      "openOriginal": "गंतव्य खोलें"
+      "openOriginal": "गंतव्य खोलें",
+      "settings": "लिंक सेटिंग"
     },
     "favorite": {
       "add": "पसंदीदा में जोड़ें",
@@ -1630,16 +1631,11 @@
       "now": "अभी"
     },
     "quality": {
-      "title": "क्लिक गुणवत्ता",
       "returning": "वापसी अनुपात",
-      "returningHint": "{count} आगंतुक लौटे",
       "clicksPerUnique": "प्रति आगंतुक क्लिक",
-      "clicksPerUniqueHint": "{unique} अनुमानित आगंतुक",
-      "realVsPreview": "मानवीय क्लिक / पूर्वावलोकन",
-      "realVsPreviewHint": "पूर्वावलोकन कुल का {ratio}",
       "peakHour": "पीक घंटा",
-      "peakHourHint": "इस घंटे में सबसे ज़्यादा क्लिक आते हैं",
-      "peakHourEmpty": "पर्याप्त डेटा नहीं"
+      "previews": "पूर्वावलोकन",
+      "returningWindow": "वापसी अनुपात पिछले {days} दिनों का है।"
     },
     "insights": {
       "title": "व्याख्या",
@@ -1790,101 +1786,78 @@
         "title": "दिन × घंटा"
       },
       "daily": {
-        "title": "दैनिक मानवीय क्लिक",
-        "desc": "पिछले 30 दिन · {tz}"
+        "title": "दैनिक मानवीय क्लिक"
       },
       "hourly": {
         "title": "दिन का घंटा"
       },
       "device": {
-        "title": "डिवाइस",
-        "desc": "मोबाइल · डेस्कटॉप · टैबलेट"
+        "title": "डिवाइस"
       },
       "channel": {
-        "title": "चैनल",
-        "desc": "रेफ़रर डोमेन वर्गीकरण"
+        "title": "चैनल"
       },
       "os": {
-        "title": "OS",
-        "desc": "ऑपरेटिंग सिस्टम वितरण"
+        "title": "OS"
       },
       "browser": {
-        "title": "ब्राउज़र",
-        "desc": "ब्राउज़र वितरण"
+        "title": "ब्राउज़र"
       },
       "referrerHost": {
-        "title": "ट्रैफ़िक स्रोत",
-        "desc": "होस्ट के अनुसार समूहित"
+        "title": "ट्रैफ़िक स्रोत"
       },
       "referrerUrl": {
-        "title": "शीर्ष रेफ़रर URL",
-        "desc": "सबसे आम स्रोत"
+        "title": "शीर्ष रेफ़रर URL"
       },
       "utm": {
-        "title": "UTM कैंपेन",
-        "desc": "utm_campaign के अनुसार समूहित"
+        "title": "UTM कैंपेन"
       },
       "utmSource": {
-        "title": "UTM स्रोत",
-        "desc": "utm_source के अनुसार (instagram, naver, ...)"
+        "title": "UTM स्रोत"
       },
       "utmMedium": {
-        "title": "UTM माध्यम",
-        "desc": "utm_medium के अनुसार (bio, ad, email, ...)"
+        "title": "UTM माध्यम"
       },
       "utmContent": {
-        "title": "UTM सामग्री",
-        "desc": "utm_content के अनुसार (banner / A-B slot)"
+        "title": "UTM सामग्री"
       },
       "utmTerm": {
-        "title": "UTM कीवर्ड",
-        "desc": "utm_term के अनुसार (खोज शब्द / विज्ञापन सामग्री)"
+        "title": "UTM कीवर्ड"
       },
       "srcChannel": {
-        "title": "शेयर चैनल (?src)",
-        "desc": "छोटे लिंक पर ?src= संकेत के ज़रिए ट्रैक किया जाता है। QR स्कैन, KakaoTalk और ऑफ़लाइन चैनल, जहाँ रेफ़रर हेडर नहीं होता, इसमें शामिल हैं।",
-        "empty": "किसी क्लिक में ?src पैरामीटर नहीं था।"
+        "title": "शेयर चैनल"
       },
       "clientApp": {
         "title": "ऐप में खुला",
-        "desc": "KakaoTalk, Instagram जैसे ऐप के भीतर के ब्राउज़र में खुले क्लिक। वहाँ लॉगिन रीडायरेक्ट और डाउनलोड अक्सर टूटते हैं।"
+        "note": "ऐप के भीतर के ब्राउज़र में लॉगिन रीडायरेक्ट और डाउनलोड अक्सर टूटते हैं।"
       },
       "fetchSite": {
-        "title": "कैसे खोला",
-        "desc": "लोगों ने पता खुद खोला या किसी लिंक पर क्लिक करके आए। बिना रेफ़रर वाले क्लिक भी अलग हो जाते हैं।"
+        "title": "कैसे खोला"
       },
       "postClicks": {
-        "title": "किस पोस्ट से",
-        "desc": "इस लिंक वाली हर पोस्ट के अनुसार क्लिक"
+        "title": "किस पोस्ट से"
       },
       "channelDepth": {
-        "title": "चैनल की गहराई",
-        "desc": "हर चैनल पहली बार कब दिखा, और उसके कितने % विज़िटर लौटे"
+        "title": "चैनल की गहराई"
       },
       "bots": {
-        "title": "स्वचालित ट्रैफ़िक के प्रकार",
-        "desc": "Googlebot · Slackbot आदि।"
+        "title": "स्वचालित ट्रैफ़िक के प्रकार"
       },
       "country": {
-        "title": "देश",
-        "desc": "विज़िटर के IP से अनुमानित देश"
+        "title": "देश"
       },
       "region": {
-        "title": "क्षेत्र",
-        "desc": "राज्य / प्रांत"
+        "title": "क्षेत्र"
       },
       "city": {
-        "title": "शहर",
-        "desc": "शहर स्तर"
+        "title": "शहर"
       },
       "language": {
-        "title": "भाषा",
-        "desc": "ब्राउज़र Accept-Language"
+        "title": "भाषा"
       },
       "asn": {
-        "title": "नेटवर्क / ASN",
-        "desc": "स्वायत्त सिस्टम (ISP / क्लाउड प्रदाता) वितरण। {dc} डेटासेंटर क्लिक स्वतः बॉट के रूप में चिह्नित किए गए।",
-        "empty": "अभी नेटवर्क (ASN) डेटा नहीं है"
+        "title": "नेटवर्क",
+        "note": "डेटा सेंटर से आए {dc} क्लिक स्वचालित माने गए।"
       }
     },
     "clientApp": {
@@ -1916,7 +1889,6 @@
     "referrerNoData": "कोई रेफ़रर डेटा नहीं",
     "noClicks": "अभी तक कोई क्लिक नहीं",
     "clickCount": "{count} क्लिक",
-    "noUtm": "कोई UTM कैंपेन डेटा नहीं",
     "noBot": "कोई स्वचालित क्लिक नहीं",
     "weekday": {
       "MONDAY": "सोम",
@@ -1953,7 +1925,7 @@
       "exporting": "निर्यात हो रहा है…",
       "loadMore": "और देखें",
       "retention": "{days} दिन से पुराने अलग-अलग क्लिक नहीं रखे जाते",
-      "empty": "अभी तक कोई क्लिक नहीं।",
+      "empty": "अभी तक कोई क्लिक नहीं",
       "colTime": "समय",
       "colLocation": "स्थान",
       "colDevice": "डिवाइस",
@@ -1963,7 +1935,8 @@
     },
     "chart": {
       "summary": "सबसे ज़्यादा {label}: {count} क्लिक",
-      "hour": "{hour} बजे"
+      "hour": "{hour} बजे",
+      "today": "आज"
     },
     "exportSummaryCsv": "सारांश CSV",
     "rawWindow": "पिछले {days} दिन",
@@ -1995,7 +1968,13 @@
       "inAppBrowser": "{percent}% क्लिक ऐप के अंदर के ब्राउज़र में खुले",
       "channelLoyalty": "{host} से आए {percent}% लोग लौटकर आए",
       "showMore": "{count} और बदलाव देखें",
-      "showLess": "कम दिखाएँ"
+      "showLess": "कम दिखाएँ",
+      "lastHour": "पिछला 1 घंटा",
+      "hourlyAverage": "पिछले 24 घंटों का प्रति घंटा औसत",
+      "last7": "पिछले 7 दिन",
+      "prev7": "उससे पहले के 7 दिन",
+      "peakDayCount": "सबसे व्यस्त दिन",
+      "dailyAverage": "पिछले {days} दिनों का दैनिक औसत"
     },
     "protection": {
       "title": "सुरक्षा",
@@ -2121,7 +2100,9 @@
       "KR50": "Sejong",
       "KR51": "Gangwon",
       "KR52": "Jeonbuk"
-    }
+    },
+    "noHumanClicks": "अभी कोई मानवीय क्लिक नहीं",
+    "copyLink": "लिंक कॉपी करें"
   },
   "statLabels": {
     "unknown": "अज्ञात",
@@ -4321,11 +4302,9 @@
     "title": "विश्लेषण",
     "loadFailed": "आँकड़े लोड नहीं हो सके। फिर से प्रयास करें।",
     "weekHumanClicks": "मानवीय क्लिक · पिछले 7 दिन",
-    "today": "आज {count}",
-    "peak": "सबसे व्यस्त समय {when}",
-    "vsPrevUp": "उससे पहले के 7 दिनों से {percent}% ज़्यादा ({count})",
-    "vsPrevDown": "उससे पहले के 7 दिनों से {percent}% कम ({count})",
-    "vsPrevSimilar": "उससे पहले के 7 दिनों जितना ही ({count})",
+    "vsPrevUp": "उससे पहले के 7 दिनों से {percent}% ज़्यादा",
+    "vsPrevDown": "उससे पहले के 7 दिनों से {percent}% कम",
+    "vsPrevSimilar": "उससे पहले के 7 दिनों जितना ही",
     "vsPrevNone": "उससे पहले के 7 दिनों में कोई क्लिक नहीं",
     "scopeNote": "स्वचालित क्लिक शामिल नहीं। समय {tz} के अनुसार।",
     "attention": "देखने योग्य",
@@ -4336,7 +4315,11 @@
     "weekTopLinksEmpty": "पिछले 7 दिनों में अभी कोई क्लिक नहीं।",
     "humanClicks": "मानवीय क्लिक",
     "createFirst": "पहला लिंक बनाएँ",
-    "viewFewestClicks": "सबसे कम क्लिक के क्रम में देखें"
+    "viewFewestClicks": "सबसे कम क्लिक के क्रम में देखें",
+    "todayLabel": "आज",
+    "prevWeekLabel": "उससे पहले के 7 दिन",
+    "peakLabel": "सबसे व्यस्त समय",
+    "dailyTitle": "दैनिक मानवीय क्लिक"
   },
   "composer": {
     "placeholder": "लंबा लिंक चिपकाएँ",
@@ -4360,7 +4343,8 @@
     "edit": "संपादित करें",
     "delete": "हटाएँ",
     "favorite": "पसंदीदा में जोड़ें",
-    "unfavorite": "पसंदीदा से हटाएँ"
+    "unfavorite": "पसंदीदा से हटाएँ",
+    "settings": "लिंक सेटिंग"
   },
   "linkState": {
     "expired": "समाप्त",

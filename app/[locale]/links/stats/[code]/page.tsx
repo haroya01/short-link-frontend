@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
+import { useLinkDetail } from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
@@ -26,7 +27,9 @@ export default function StatsPage() {
   const { authenticated, ready } = useAuth();
   const code = params.code;
 
-  const [shortUrl, setShortUrl] = useState<string>("");
+  const [shortUrl, setShortUrl] = useState<string>(() =>
+    process.env.NEXT_PUBLIC_API_BASE ? `${process.env.NEXT_PUBLIC_API_BASE.replace(/\/$/, "")}/${code}` : "",
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -43,6 +46,7 @@ export default function StatsPage() {
   const { data, error, isLoading, refetch } = useLinkStats(code, {
     enabled: ready && authenticated && !!code,
   });
+  useLinkDetail(ready && authenticated ? code : undefined);
 
   // Throttle SSE-driven refetches to one per window. Read refetch from a ref so handleTick keeps a
   // stable identity (it feeds the EventSource hook, which should not tear down on re-render), and
