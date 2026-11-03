@@ -1,28 +1,26 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Settings } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { deleteMyAccount, downloadMyData, updateMyTimezone } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname, useRouter as useLocaleRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
 import { SignInEmptyState } from "@/components/auth/sign-in-empty-state";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/settings/api-keys-section";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { TwoFactorSection } from "@/components/settings/two-factor-section";
 import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
-import { Section as SharedSection } from "@/components/common/section";
+import { GROUPED_ROW, GroupedList } from "@/components/common/grouped-list";
+import { ActionRow, SelectRow, ValueRow } from "@/components/settings/settings-rows";
 import type { Me } from "@/types";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { LinksPage } from "@/components/links/links-page";
 
 function localeName(l: string): string {
@@ -59,6 +57,7 @@ export default function SettingsPage() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const localeRouter = useLocaleRouter();
   const { authenticated, ready, me: ctxMe, signOut } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -88,6 +87,19 @@ export default function SettingsPage() {
     } catch (err) {
       setTz(previous);
       toast(errorMessage(err, t("saveFailed")), "error");
+    }
+  }
+
+  function changeLocale(next: string) {
+    document.cookie = `NEXT_LOCALE=${next}; Max-Age=31536000; Path=/; SameSite=Lax`;
+    localeRouter.replace(pathname, { locale: next as never });
+  }
+
+  async function handleExport() {
+    try {
+      await downloadMyData();
+    } catch (err) {
+      toast(errorMessage(err, t("exportFailed")), "error");
     }
   }
 
@@ -123,117 +135,59 @@ export default function SettingsPage() {
 
       <SettingsTabs t={t}>
         {(tab) => (
-          <>
+          <div className="space-y-8">
             {tab === "account" && (
-              <div className="space-y-6">
-                <Section title={t("profileTitle")}>
-                  <Row label={t("email")}>{me.email}</Row>
-                  {me.role === "ADMIN" && <Row label={t("role")}>{me.role}</Row>}
-                  <Row label={t("joinedAt")}>{me.createdAt ? formatDate(me.createdAt) : "—"}</Row>
-                </Section>
+              <>
+                <GroupedList title={t("profileTitle")}>
+                  <ValueRow label={t("email")}>{me.email}</ValueRow>
+                  {me.role === "ADMIN" && <ValueRow label={t("role")}>{me.role}</ValueRow>}
+                  <ValueRow label={t("joinedAt")}>{me.createdAt ? formatDate(me.createdAt) : "—"}</ValueRow>
+                </GroupedList>
 
-                <Section title={t("preferencesTitle")}>
-                  <div className="space-y-3">
-                    <label className="block space-y-1.5">
-                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                        {t("timezoneLabel")}
-                      </span>
-                      <Select value={tz} onChange={(e) => void changeTimezone(e.target.value)}>
-                        {zones.map((z) => (
-                          <option key={z} value={z}>
-                            {z}
-                          </option>
-                        ))}
-                      </Select>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{t("timezoneHint")}</p>
-                    </label>
-                  </div>
-
-                  <div className="mt-6 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
-                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                      {t("interfaceLanguage")}
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {routing.locales.map((l) => (
-                        <Link
-                          key={l}
-                          href={pathname}
-                          locale={l}
-                          lang={l}
-                          aria-current={l === locale ? "true" : undefined}
-                          className={
-                            l === locale
-                              ? "rounded-md bg-slate-900 dark:bg-white px-3 py-1.5 text-sm text-white dark:text-slate-900"
-                              : "rounded-md border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                          }
-                        >
-                          {localeName(l)}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 테마도 환경설정의 1급 항목 — 상단 바/계정 메뉴에만 있으면 "설정"에서 찾는
-                      사용자가 못 본다. blog 설정의 화면 섹션과 같은 행 문법(현재값 표시 포함). */}
-                  <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4">
-                    <ThemeToggle className="flex w-full items-center rounded-md px-2 py-2 text-sm text-slate-700 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50" />
-                  </div>
-                </Section>
-
-              </div>
+                <GroupedList title={t("preferencesTitle")} footer={t("timezoneHint")}>
+                  <SelectRow
+                    label={t("timezoneLabel")}
+                    value={tz}
+                    options={zones.map((z) => ({ value: z, label: z }))}
+                    onChange={(next) => void changeTimezone(next)}
+                  />
+                  <SelectRow
+                    label={t("interfaceLanguage")}
+                    value={locale}
+                    options={routing.locales.map((l) => ({ value: l, label: localeName(l), lang: l }))}
+                    onChange={changeLocale}
+                  />
+                  <ThemeToggle
+                    bare
+                    className={cn(GROUPED_ROW, "w-full text-sm font-medium text-slate-900 dark:text-slate-100")}
+                  />
+                </GroupedList>
+              </>
             )}
 
             {tab === "security" && (
-              <div className="space-y-6">
-                <Section title={t("twofa.title")}>
-                  <TwoFactorSection />
-                </Section>
-                <Section title={t("apiKeys.title")}>
-                  <ApiKeysSection />
-                </Section>
-              </div>
+              <>
+                <TwoFactorSection />
+                <ApiKeysSection />
+              </>
             )}
 
-            {tab === "domains" && (
-              <Section title={t("customDomains.title")}>
-                <CustomDomainsSection />
-              </Section>
-            )}
+            {tab === "domains" && <CustomDomainsSection />}
 
             {tab === "data" && (
-              <div className="space-y-6">
-                <Section title={t("dataTitle")}>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("exportHint")}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={async () => {
-                      try {
-                        await downloadMyData();
-                      } catch (err) {
-                        toast(errorMessage(err, t("saveFailed")), "error");
-                      }
-                    }}
-                  >
-                    {t("exportButton")}
-                  </Button>
-                </Section>
+              <>
+                <GroupedList title={t("dataTitle")} footer={t("exportHint")}>
+                  <ActionRow onClick={() => void handleExport()}>{t("exportButton")}</ActionRow>
+                </GroupedList>
 
-                <Section title={t("dangerTitle")} variant="danger">
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("deleteHint")}</p>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="mt-2"
-                    onClick={() => setConfirmOpen(true)}
-                  >
+                <GroupedList footer={t("deleteHint")}>
+                  <ActionRow danger onClick={() => setConfirmOpen(true)}>
                     {t("deleteButton")}
-                  </Button>
-                </Section>
-              </div>
+                  </ActionRow>
+                </GroupedList>
+              </>
             )}
-          </>
+          </div>
         )}
       </SettingsTabs>
 
@@ -246,6 +200,7 @@ export default function SettingsPage() {
         title={t("deleteConfirmTitle")}
         description={t("deleteConfirmDesc")}
         destructive
+        compact
         confirmLabel={deleting ? t("deleting") : t("deleteOk")}
         confirmDisabled={confirmText !== "DELETE" || deleting}
         onConfirm={handleDelete}
@@ -349,37 +304,4 @@ function initialSettingsTab(): SettingsTab {
   const h = window.location.hash.replace("#", "");
   if (h === "security" || h === "domains" || h === "data") return h;
   return "account";
-}
-
-/**
- * Settings 의 자체 Section wrapper — 공용 components/section.tsx 를 base 로 사용하되 settings
- * 도메인 의 *danger variant* (계정 삭제 등) 만 thin wrapper. 토큰 / shadow / radii / header 톤
- * 은 모두 공용 Section 으로 흡수, 중복 정의 제거.
- */
-function Section({
-  title,
-  children,
-  variant,
-}: {
-  title: string;
-  children: React.ReactNode;
-  variant?: "danger";
-}) {
-  return (
-    <SharedSection
-      title={title}
-      className={variant === "danger" ? "border-red-200 dark:border-red-500/30" : undefined}
-    >
-      {children}
-    </SharedSection>
-  );
-}
-
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex justify-between border-b border-slate-100 dark:border-slate-800 py-2 text-sm last:border-b-0">
-      <span className="text-slate-500 dark:text-slate-400">{label}</span>
-      <span className="tabular-nums text-slate-900 dark:text-slate-100">{children}</span>
-    </div>
-  );
 }

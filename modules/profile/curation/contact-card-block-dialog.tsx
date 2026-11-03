@@ -137,7 +137,7 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                   setConfig((c) => ({ ...c, palette: p.id }))
                 }
                 aria-pressed={active}
-                title={p.label}
+                title={t(`contactPalette.${p.id}`)}
                 className={
                   "group flex flex-col items-center gap-1 rounded-md p-1 transition " +
                   (active
@@ -152,7 +152,7 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                   }
                   style={{ backgroundImage: previewBg }}
                 />
-                <span className="text-[10px] font-medium leading-none">{p.label}</span>
+                <span className="text-[10px] font-medium leading-none">{t(`contactPalette.${p.id}`)}</span>
               </button>
             );
           })}

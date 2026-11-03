@@ -58,7 +58,7 @@ test("the 2FA manual key wraps inside the phone", async ({ page }) => {
       }),
   });
   await page.goto("/ko/settings#security");
-  await page.getByRole("button", { name: "2FA 활성화" }).click();
+  await page.getByRole("button", { name: "켜기", exact: true }).click();
   await expectInside(page.locator("code", { hasText: "JBSWY3DPEHPK3PXP" }));
   await expectNoSideScroll(page);
 });

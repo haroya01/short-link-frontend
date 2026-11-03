@@ -55,6 +55,21 @@ function featuredEvent(): PublicProfileEntry {
   };
 }
 
+function emailSignup(): PublicProfileEntry {
+  return {
+    kind: "EMAIL_FORM",
+    id: 901,
+    shortCode: null,
+    shortUrl: null,
+    originalUrl: null,
+    ogTitle: null,
+    ogImage: null,
+    clickCount: null,
+    highlighted: false,
+    content: JSON.stringify({ title: "새 글 소식 받기" }),
+  };
+}
+
 // 명함의 HTTP 상태를 확인할 때 쓰는 핸들. 이름을 바꾼 지 30일이 안 된 옛 핸들은 백엔드가 지금 주인의
 // 명함으로 풀어 주고, 없는 핸들에는 아무것도 주지 않는다.
 const RENAMED_HANDLES = new Map([["dohyun_old", "dohyun"]]);
@@ -71,6 +86,10 @@ export function mockPublicProfile(username: string): PublicProfile | null {
       username,
       entries: [...base.entries.map((e) => ({ ...e, highlighted: false })), featuredEvent()],
     };
+  }
+  if (username === "email-signup") {
+    const base = demoProfile("dohyun");
+    return { ...base, username, entries: [...base.entries, emailSignup()] };
   }
   return demoProfile(username);
 }
