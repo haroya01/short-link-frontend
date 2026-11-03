@@ -34,7 +34,9 @@
     "jumpMissing": "That comment was deleted or isn't available.",
     "notesTab": "Notes {count, number}",
     "discussionTabs": "Comments and notes",
-    "notesTabHint": "Notes that quote this post"
+    "notesTabHint": "Notes that quote this post",
+    "liveNew": "{count, plural, one {# new comment} other {# new comments}}",
+    "showMore": "More comments"
   },
   "publicFeed": {
     "recent": "Latest",
@@ -4801,7 +4803,10 @@
     "destinationMine": "My notes",
     "postToRoom": "Post to {room}",
     "roomAudience": "Only {room} members can see this",
-    "roomPlaceholder": "What are you up to?"
+    "roomPlaceholder": "What are you up to?",
+    "liveNewReplies": "{count, plural, one {# new reply} other {# new replies}}",
+    "moreReplies": "More replies",
+    "repliesLoadFailed": "Couldn't load replies"
   },
   "mentions": {
     "suggestions": "People to mention"
@@ -4958,6 +4963,7 @@
     "allReplies": "{count, plural, one {View # comment} other {View all # comments}}",
     "post": "Post",
     "writePost": "Write a post in {room}",
-    "leaveDeleteHint": "Deleting removes all your notes, blog posts and comments in this room."
+    "leaveDeleteHint": "Deleting removes all your notes, blog posts and comments in this room.",
+    "liveNew": "{count, plural, one {# new note} other {# new notes}}"
   }
 }

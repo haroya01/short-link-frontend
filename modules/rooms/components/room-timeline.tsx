@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, MoreHorizontal, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ErrorState } from "@/components/common/error-state";
@@ -16,13 +16,18 @@ import { NoteListSkeleton } from "@/modules/notes/components/note-list";
 import {
   getRoom,
   listRoomItems,
+  listRoomNotesAfter,
   markRoomRead,
   personName,
   type RoomDetail,
   type RoomItem,
 } from "@/modules/rooms/api/rooms";
 import { dayBreak, itemTime, newestNoteId, type DayBreak } from "@/modules/rooms/lib/room-bands";
-import { itemKey } from "@/modules/rooms/lib/room-items";
+import { itemKey, prependNotes, readPastCursor, roomNoteIds } from "@/modules/rooms/lib/room-items";
+import type { Note } from "@/modules/notes/api/notes";
+import { useLiveScope } from "@/hooks/use-live-scope";
+import { useHeldArrivals } from "@/hooks/use-held-arrivals";
+import { LiveLine, LiveRow } from "@/modules/blog/components/live-arrivals";
 import { blogPath } from "@/lib/host";
 import { RoomItemRow } from "./room-item-row";
 import { roomSettingsPath, roomsPath } from "@/modules/rooms/lib/room-href";
@@ -47,10 +52,14 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
   const [cursor, setCursor] = useState<string | null>(null);
   const [notesState, setNotesState] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
-  const [posted, setPosted] = useState<Set<number>>(new Set());
+  const [fresh, setFresh] = useState<Set<number>>(new Set());
+  const [arriving, setArriving] = useState<Set<number>>(new Set());
+  const [arrivedNote, setArrivedNote] = useState("");
   const [inviting, setInviting] = useState(false);
   const sentinel = useRef<HTMLDivElement>(null);
   const read = useRef<number | null>(null);
+  const itemsRef = useRef(items);
+  const listTop = useRef<HTMLDivElement>(null);
 
   const loadDetail = useCallback(() => {
     getRoom(roomId)
@@ -76,6 +85,38 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
     loadDetail();
     loadFirst();
   }, [ready, authenticated, loadDetail, loadFirst]);
+
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  const arrivals = useHeldArrivals<Note>(
+    () => (listTop.current ? { element: listTop.current, edge: "top" } : null),
+    (notes) => {
+      setItems((current) => prependNotes(current, notes));
+      const ids = notes.map((note) => note.id);
+      setFresh((current) => new Set([...current, ...ids]));
+      setArriving((current) => new Set([...current, ...ids]));
+      setArrivedNote(t("liveNew", { count: notes.length }));
+    },
+  );
+
+  useLiveScope("room", roomId, {
+    enabled: ready && authenticated && notesState === "ready" && detail.kind === "loaded",
+    since: String(newestNoteId(items) ?? 0),
+    known: (id) => roomNoteIds(itemsRef.current).has(id) || arrivals.isHeld(id),
+    refresh: async () => {
+      const after = String(newestNoteId(itemsRef.current) ?? 0);
+      const feed = await listRoomNotesAfter(roomId, after);
+      const incoming =
+        feed.hasNext && !readPastCursor(feed.items, after)
+          ? (await listRoomItems(roomId)).items.flatMap((item) => (item.kind === "note" ? [item.note] : []))
+          : feed.items;
+      const known = roomNoteIds(itemsRef.current);
+      arrivals.offer(incoming.filter((note) => !known.has(note.id)));
+    },
+    onRevoked: loadDetail,
+  });
 
   useEffect(() => {
     const newest = newestNoteId(items);
@@ -188,8 +229,10 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
             <NoteComposer
               room={{ id: room.id, name: room.name }}
               onCreated={(note) => {
-                setItems((current) => [{ kind: "note", note, replies: [] }, ...current]);
-                setPosted((current) => new Set(current).add(note.id));
+                setItems((current) =>
+                  roomNoteIds(current).has(note.id) ? current : [{ kind: "note", note, replies: [] }, ...current],
+                );
+                setFresh((current) => new Set(current).add(note.id));
               }}
             />
           </div>
@@ -218,11 +261,11 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
             }
           />
         ) : (
-          <div data-room-notes>
+          <div ref={listTop} data-room-notes>
             {items.map((item, index) => {
               const day = dayBreak(times, index);
               return (
-                <Fragment key={itemKey(item)}>
+                <LiveRow key={itemKey(item)} arriving={item.kind === "note" && arriving.has(item.note.id)}>
                   {day && (
                     <RailHeading className={index === 0 ? "pt-5" : "border-t border-slate-100 pt-6 dark:border-slate-800"}>
                       <span data-room-day>{label(day)}</span>
@@ -232,7 +275,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
                     <RoomItemRow
                       item={item}
                       maxReplies={2}
-                      isNew={item.kind === "note" && posted.has(item.note.id)}
+                      isNew={item.kind === "note" && fresh.has(item.note.id)}
                       onReplace={(next) =>
                         setItems((current) =>
                           current.map((c) => (c.kind === "note" && c.note.id === next.id ? { ...c, note: next } : c)),
@@ -241,7 +284,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
                       onRemove={(id) => setItems((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)))}
                     />
                   </div>
-                </Fragment>
+                </LiveRow>
               );
             })}
             {hasNext && (
@@ -261,6 +304,12 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
           </div>
         )}
       </div>
+      <LiveLine
+        count={arrivals.held}
+        label={t("liveNew", { count: arrivals.held })}
+        onShow={arrivals.show}
+        announce={arrivedNote}
+      />
       <RoomInviteSheet
         open={inviting}
         roomId={room.id}

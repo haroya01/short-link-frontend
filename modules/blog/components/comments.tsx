@@ -13,9 +13,12 @@ import {
   listLikedCommentIds,
   unlikeComment,
   deleteComment,
+  listCommentPage,
   listComments,
   type CommentView,
 } from "@/modules/blog/api/comments";
+import { freshComments, newestCommentId } from "@/modules/blog/lib/comment-pages";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { END_SECTION } from "@/modules/blog/components/end-section";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
@@ -33,12 +36,18 @@ import { useCompactTime } from "@/modules/notes/lib/use-compact-time";
 import { QuoteInNoteButton } from "@/modules/notes/components/quote-in-note-button";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLiveScope } from "@/hooks/use-live-scope";
+import { useHeldArrivals } from "@/hooks/use-held-arrivals";
+import { LiveLine, LiveRow } from "@/modules/blog/components/live-arrivals";
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
 const COLLAPSED_TOPS = 5;
 
 const commentHash = () => typeof window !== "undefined" && /^#comment-\d+$/.test(window.location.hash);
+const hashedComment = () => Number(/^#comment-(\d+)$/.exec(window.location.hash)?.[1] ?? NaN);
+const LIVE_PAGE = 50;
+const LIVE_ROUNDS = 5;
 
 function appendUnique(prev: CommentView[], created: CommentView): CommentView[] {
   return [...prev.filter((c) => c.id !== created.id), created];
@@ -117,15 +126,34 @@ export function PostComments({
   const { toast } = useToast();
   const focusedRef = useRef(false);
   const [confirm, confirmDialog] = useConfirm();
+  const [arrived, setArrived] = useState<Set<number>>(new Set());
+  const [washed, setWashed] = useState<number | null>(null);
+  const [arrivedNote, setArrivedNote] = useState("");
+  const [pageNext, setPageNext] = useState<string | null>(null);
+  const [latest, setLatest] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const commentsRef = useRef(comments);
+  const pageNextRef = useRef<string | null>(null);
+  const pagedRef = useRef(false);
+  const afterRef = useRef<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   const loadSeq = useRef(0);
   const load = useCallback(() => {
     const seq = ++loadSeq.current;
     setLoadFailed(false);
-    return listComments(postId)
-      .then((list) => {
+    return listCommentPage(postId, {})
+      .then(async (page) => {
+        const target = hashedComment();
+        const whole = !page || (page.next !== null && !page.items.some((c) => c.id === target) && target > 0);
+        const list = whole || !page ? await listComments(postId) : page.items;
         if (seq !== loadSeq.current) return;
+        pagedRef.current = page !== null;
+        afterRef.current = page?.latest ?? null;
         setComments(list);
+        setPageNext(whole || !page ? null : page.next);
+        setLatest(page?.latest ?? null);
         setLoadFailed(false);
       })
       .catch(() => {
@@ -137,6 +165,76 @@ export function PostComments({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    commentsRef.current = comments;
+  }, [comments]);
+
+  useEffect(() => {
+    pageNextRef.current = pageNext;
+  }, [pageNext]);
+
+  const arrivals = useHeldArrivals<CommentView>(
+    (c) => {
+      const row =
+        c.parentId == null
+          ? (listRef.current?.lastElementChild ?? sectionRef.current)
+          : document.querySelector(`[data-comment-top="${c.parentId}"]`);
+      return row ? { element: row, edge: "bottom" } : null;
+    },
+    (items, revealed) => {
+      setComments((prev) => [...prev, ...items.filter((c) => !prev.some((p) => p.id === c.id))]);
+      setArrived((prev) => new Set([...prev, ...items.map((c) => c.id)]));
+      if (revealed) setWashed(Math.min(...items.map((c) => c.id)));
+      setArrivedNote(t("liveNew", { count: items.length }));
+    },
+  );
+
+  async function readWhole() {
+    arrivals.offer(freshComments(commentsRef.current, await listComments(postId), pageNextRef.current === null));
+  }
+
+  useLiveScope("comments", postId, {
+    enabled: ready && authenticated && loaded && !loadFailed,
+    since: latest ?? newestCommentId(comments),
+    known: (id) => commentsRef.current.some((c) => c.id === id) || arrivals.isHeld(id),
+    refresh: async () => {
+      if (!pagedRef.current) return readWhole();
+      let after = afterRef.current ?? newestCommentId(commentsRef.current);
+      for (let round = 0; round < LIVE_ROUNDS; round += 1) {
+        const page = await listCommentPage(postId, { after, limit: LIVE_PAGE });
+        if (!page) {
+          pagedRef.current = false;
+          return readWhole();
+        }
+        arrivals.offer(freshComments(commentsRef.current, page.items, pageNextRef.current === null));
+        if (page.next === null || page.next === after) {
+          afterRef.current = page.latest ?? after;
+          return;
+        }
+        after = page.next;
+      }
+      afterRef.current = after;
+    },
+  });
+
+  async function loadMore() {
+    if (!expanded) {
+      showAll();
+      return;
+    }
+    if (pageNext === null || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const page = await listCommentPage(postId, { cursor: pageNext });
+      setComments((prev) => [...prev, ...(page?.items ?? []).filter((c) => !prev.some((p) => p.id === c.id))]);
+      setPageNext(page?.next ?? null);
+    } catch {
+      toast(t("loadFailed"), "error");
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   useEffect(() => {
     if (!ready || !authenticated || !loaded || draftsRestored.current) return;
@@ -283,7 +381,7 @@ export function PostComments({
   shownIds.current = new Set(shown.filter((c) => !c.deleted).map((c) => c.id));
   const counted = shown.filter((c) => !c.deleted).length;
   const tops = shown.filter((c) => c.parentId == null);
-  const visibleTops = expanded ? tops : tops.slice(0, COLLAPSED_TOPS);
+  const visibleTops = expanded ? tops : tops.filter((c, index) => index < COLLAPSED_TOPS || arrived.has(c.id));
   const repliesOf = (id: number) => shown.filter((c) => c.parentId === id);
   function showAll() {
     revealFrom.current = tops[COLLAPSED_TOPS]?.id ?? null;
@@ -375,7 +473,7 @@ export function PostComments({
         setComments((prev) =>
           prev.map((x) => (x.id === id ? { ...x, author: null, body: null, likeCount: 0, mentions: [], deleted: true } : x)),
         );
-        await load();
+        if (!pagedRef.current) await load();
       } else {
         setComments((prev) => prev.filter((x) => x.id !== id));
       }
@@ -390,6 +488,7 @@ export function PostComments({
 
   return (
     <section
+      ref={sectionRef}
       id="comments"
       className={cn(END_SECTION, "flow-root scroll-mt-24")}
       style={dockHeight ? { paddingBottom: dockHeight } : undefined}
@@ -401,11 +500,11 @@ export function PostComments({
           세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       {quotes && quotes.total > 0 ? (
         <>
-          <h2 className="sr-only">{counted > 0 ? t("count", { count: counted }) : t("heading")}</h2>
+          <h2 className="sr-only">{counted > 0 && pageNext === null ? t("count", { count: counted }) : t("heading")}</h2>
           <div role="tablist" aria-label={t("discussionTabs")} className="flex items-baseline gap-5">
             {(
               [
-                ["comments", counted > 0 ? t("count", { count: counted }) : t("heading")],
+                ["comments", counted > 0 && pageNext === null ? t("count", { count: counted }) : t("heading")],
                 ["notes", t("notesTab", { count: quotes.total })],
               ] as const
             ).map(([key, label]) => (
@@ -429,7 +528,7 @@ export function PostComments({
         </>
       ) : (
         <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {counted > 0 ? t("count", { count: counted }) : t("heading")}
+          {counted > 0 && pageNext === null ? t("count", { count: counted }) : t("heading")}
         </h2>
       )}
 
@@ -508,9 +607,9 @@ export function PostComments({
         </p>
       )}
       {shown.length > 0 && (
-        <ul className="mt-8 space-y-6">
+        <ul ref={listRef} className="mt-8 space-y-6">
           {visibleTops.map((c) => (
-            <li key={c.id} data-comment-top={c.id}>
+            <LiveRow as="li" key={c.id} data-comment-top={c.id} arriving={arrived.has(c.id)} wash={washed === c.id}>
               {c.deleted ? (
                 <ConversationTombstone id={`comment-${c.id}`} flash={flashId === c.id} label={t("deleted")} />
               ) : (
@@ -526,7 +625,7 @@ export function PostComments({
                 liked={likedIds.has(c.id)}
                 likeLabel={t("like")}
                 onToggleLike={() => void toggleLike(c)}
-                isNew={c.id === justAddedId}
+                isNew={c.id === justAddedId || arrived.has(c.id)}
               >
                 <button
                   type="button"
@@ -542,7 +641,7 @@ export function PostComments({
               {repliesOf(c.id).length > 0 && (
                 <ul className="mt-4 space-y-4 pl-12">
                   {repliesOf(c.id).map((r) => (
-                    <li key={r.id}>
+                    <LiveRow as="li" key={r.id} arriving={arrived.has(r.id)} wash={washed === r.id}>
                       <CommentRow
                         anchorId={`comment-${r.id}`}
                         flash={flashId === r.id}
@@ -555,7 +654,7 @@ export function PostComments({
                         liked={likedIds.has(r.id)}
                         likeLabel={t("like")}
                         onToggleLike={() => void toggleLike(r)}
-                        isNew={r.id === justAddedId}
+                        isNew={r.id === justAddedId || arrived.has(r.id)}
                       >
                         {!c.deleted && (
                           <button
@@ -572,16 +671,27 @@ export function PostComments({
                           </button>
                         )}
                       </CommentRow>
-                    </li>
+                    </LiveRow>
                   ))}
                 </ul>
               )}
 
-            </li>
+            </LiveRow>
           ))}
         </ul>
       )}
-      {visibleTops.length < tops.length && (
+      {pageNext !== null ? (
+        <button
+          type="button"
+          onClick={() => void loadMore()}
+          disabled={loadingMore}
+          aria-busy={loadingMore}
+          data-testid="comments-more"
+          className={cn(blogCta({ variant: "text" }), "mt-6 disabled:opacity-60")}
+        >
+          {t("showMore")}
+        </button>
+      ) : visibleTops.length < tops.length && (
         <button
           type="button"
           onClick={showAll}
@@ -593,6 +703,12 @@ export function PostComments({
       )}
       </>
       )}
+      <LiveLine
+        count={arrivals.held}
+        label={t("liveNew", { count: arrivals.held })}
+        onShow={arrivals.show}
+        announce={arrivedNote}
+      />
       {confirmDialog}
     </section>
   );

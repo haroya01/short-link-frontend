@@ -1,4 +1,4 @@
-import { request } from "@/lib/api/client";
+import { ApiError, request } from "@/lib/api/client";
 import { mockFails } from "@/lib/api/mock-fail";
 import { stripImageMetadata } from "@/lib/image-resize";
 import {
@@ -185,7 +185,17 @@ export interface NoteThread {
   hiddenReplyCount?: number;
   /** The reader may hide or remove others' replies here; absent from servers that predate it. */
   viewerCanModerate?: boolean;
+  repliesNext?: string | null;
 }
+
+export interface NoteRepliesPage {
+  items: Note[];
+  next: string | null;
+  latest?: string | null;
+  continued?: boolean;
+}
+
+export const THREAD_REPLIES_PAGE = 20;
 
 export interface NoteSeriesNav {
   slug: string;
@@ -687,24 +697,40 @@ export function fetchAuthorNotes(username: string): Promise<FetchResult<NoteFeed
   );
 }
 
+const repliesQuery = (replies?: number) => (replies ? `?replies=${replies}` : "");
+
 /** Server-side, anonymous thread for the note page and its metadata. */
-export function fetchNoteThread(id: number): Promise<FetchResult<NoteThread>> {
+export function fetchNoteThread(id: number, replies?: number): Promise<FetchResult<NoteThread>> {
   if (noteMocks) {
-    const thread = noteMocks.mockThread(id);
+    const thread = noteMocks.mockThread(id, replies);
     return Promise.resolve(thread ? { ok: true, data: thread } : { ok: false, status: 404 });
   }
-  return fetchPublic<NoteThread>(`/api/v1/public/notes/${id}`, { noStore: true });
+  return fetchPublic<NoteThread>(`/api/v1/public/notes/${id}${repliesQuery(replies)}`, { noStore: true });
 }
 
-export function getNoteThread(id: number): Promise<NoteThread> {
+export function getNoteThread(id: number, replies?: number): Promise<NoteThread> {
   if (noteMocks) {
     try {
-      return Promise.resolve(noteMocks.mockViewerThread(id));
+      return Promise.resolve(noteMocks.mockViewerThread(id, replies));
     } catch (error) {
       return Promise.reject(error);
     }
   }
-  return request<NoteThread>(`/api/v1/public/notes/${id}`, { method: "GET" });
+  return request<NoteThread>(`/api/v1/public/notes/${id}${repliesQuery(replies)}`, { method: "GET" });
+}
+
+export async function listNoteRepliesAfter(id: number, after: string, limit = THREAD_REPLIES_PAGE): Promise<NoteRepliesPage | null> {
+  if (noteMocks) return noteMocks.mockRepliesAfter(id, after, limit);
+  try {
+    const page = await request<NoteRepliesPage>(
+      `/api/v1/public/notes/${id}/replies?after=${encodeURIComponent(after)}&limit=${limit}`,
+      { method: "GET" },
+    );
+    return Array.isArray(page?.items) ? { ...page, next: page.next || null } : null;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
+  }
 }
 
 /** Mastodon's scheduled statuses: kept as written and posted when due; failure names why one could not be. */

@@ -170,6 +170,11 @@ export async function listRoomItems(id: number, cursor: string | null = null, li
   return tidyItems(await request<RoomItemsPage>(`${base}/${id}/items?${query}`, { method: "GET" }));
 }
 
+export function listRoomNotesAfter(id: number, after: string, size = 20): Promise<NoteFeed> {
+  if (roomMocks) return roomMocks.mockRoomNotesAfter(id, after, size);
+  return request<NoteFeed>(`${base}/${id}/notes?after=${encodeURIComponent(after)}&size=${size}`, { method: "GET" });
+}
+
 export async function listAllRoomItems(cursor: string | null = null, limit = 20): Promise<RoomItemsPage> {
   if (roomMocks) return roomMocks.mockAllRoomItems(cursor, limit);
   const query = `limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`;

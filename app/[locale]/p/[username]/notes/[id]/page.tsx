@@ -9,7 +9,7 @@ import { noteSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
-import { fetchNoteThread } from "@/modules/notes/api/notes";
+import { fetchNoteThread, THREAD_REPLIES_PAGE } from "@/modules/notes/api/notes";
 import { NoteThreadView } from "@/modules/notes/components/note-thread";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ type Params = Promise<{ locale: string; username: string; id: string }>;
 async function load(id: string) {
   const noteId = Number(id);
   if (!Number.isInteger(noteId) || noteId <= 0) notFound();
-  const result = await fetchNoteThread(noteId);
+  const result = await fetchNoteThread(noteId, THREAD_REPLIES_PAGE);
   if (!result.ok) {
     if (result.status === "error") throw new Error(`note fetch failed: ${noteId}`);
     notFound();

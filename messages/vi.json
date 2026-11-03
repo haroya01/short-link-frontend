@@ -34,7 +34,9 @@
     "jumpMissing": "Bình luận đó đã bị xóa hoặc không khả dụng.",
     "notesTab": "Ghi chú {count, number}",
     "discussionTabs": "Bình luận và ghi chú",
-    "notesTabHint": "Ghi chú trích dẫn bài này"
+    "notesTabHint": "Ghi chú trích dẫn bài này",
+    "liveNew": "{count, number} bình luận mới",
+    "showMore": "Xem thêm bình luận"
   },
   "publicFeed": {
     "recent": "Mới nhất",
@@ -4801,7 +4803,10 @@
     "destinationMine": "Ghi chú của tôi",
     "postToRoom": "Đăng vào {room}",
     "roomAudience": "Chỉ thành viên {room} mới xem được",
-    "roomPlaceholder": "Bạn đang làm gì?"
+    "roomPlaceholder": "Bạn đang làm gì?",
+    "liveNewReplies": "{count, number} trả lời mới",
+    "moreReplies": "Xem thêm trả lời",
+    "repliesLoadFailed": "Không tải được câu trả lời"
   },
   "mentions": {
     "suggestions": "Người để nhắc đến"
@@ -4958,6 +4963,7 @@
     "allReplies": "Xem tất cả {count, number} bình luận",
     "post": "Bài viết",
     "writePost": "Viết bài trong {room}",
-    "leaveDeleteHint": "Xoá sẽ gỡ toàn bộ ghi chú, bài blog và bình luận của bạn trong phòng này."
+    "leaveDeleteHint": "Xoá sẽ gỡ toàn bộ ghi chú, bài blog và bình luận của bạn trong phòng này.",
+    "liveNew": "{count, number} bài mới"
   }
 }

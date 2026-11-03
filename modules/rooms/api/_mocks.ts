@@ -1,5 +1,6 @@
 import { ApiError, mockEmpty } from "@/lib/api/client";
 import { readStorageString } from "@/lib/storage-json";
+import { mockLiveArrivals } from "@/lib/api/mock-live";
 import type { HomePost } from "@/modules/blog/api/home-feed";
 import type { Note, NoteDraft, NoteFeed } from "@/modules/notes/api/notes";
 import type {
@@ -564,7 +565,25 @@ function paged(all: RoomItem[], cursor: string | null, limit: number): RoomItems
   return { items: all.slice(start, end), next: end < all.length ? `${end}.0` : null };
 }
 
+function absorbLiveRoomNotes() {
+  for (const arrival of mockLiveArrivals().room ?? []) {
+    if (posts.some((p) => p.id === arrival.id)) continue;
+    posts = [
+      ...posts,
+      { id: arrival.id, roomId: arrival.roomId, author: MINJI, body: arrival.body, minutesAgo: 0, createdAt: new Date().toISOString() },
+    ];
+  }
+}
+
+export function mockRoomNotesAfter(id: number, after: string, size: number): Promise<NoteFeed> {
+  absorbLiveRoomNotes();
+  const all = roomPosts(id).map(noteOf);
+  const newer = readStorageString("kurl:mock-room-after-ignored") === "1" ? all : all.filter((n) => n.id > Number(after));
+  return done({ items: newer.slice(0, size), page: 0, hasNext: newer.length > size });
+}
+
 export function mockRoomItems(id: number, cursor: string | null, limit: number): Promise<RoomItemsPage> {
+  absorbLiveRoomNotes();
   if (!state().some((r) => r.id === id)) {
     return Promise.reject(new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" }));
   }

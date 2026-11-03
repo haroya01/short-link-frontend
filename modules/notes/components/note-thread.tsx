@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
@@ -12,7 +12,9 @@ import {
   deleteNote,
   getNoteThread,
   listHiddenReplies,
+  listNoteRepliesAfter,
   setNoteReplyHidden,
+  THREAD_REPLIES_PAGE,
   type Note,
   type NoteThread,
 } from "@/modules/notes/api/notes";
@@ -24,8 +26,16 @@ import { NoteReplyDialog } from "./note-reply-dialog";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { openNote } from "@/modules/notes/lib/note-href";
-import { placeReply } from "@/modules/notes/lib/thread-reply";
+import { appendReplies, appendReplyPage, placeReply, threadNoteIds } from "@/modules/notes/lib/thread-reply";
 import { prefersReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLiveScope } from "@/hooks/use-live-scope";
+import { useHeldArrivals } from "@/hooks/use-held-arrivals";
+import { readsOneByOne } from "@/lib/live-scope";
+import { LiveLine, LiveRow } from "@/modules/blog/components/live-arrivals";
+import { blogCta } from "@/modules/blog/components/blog-cta";
+import { cn } from "@/lib/utils";
+
+const LIVE_ROUNDS = 5;
 
 export function NoteThreadView({
   initial,
@@ -49,6 +59,15 @@ export function NoteThreadView({
   const [showingHidden, setShowingHidden] = useState(false);
   const [replying, setReplying] = useState(false);
   const [landed, setLanded] = useState<number | null>(null);
+  const [viewerLoaded, setViewerLoaded] = useState(false);
+  const [arriving, setArriving] = useState<Set<number>>(new Set());
+  const [arrivedNote, setArrivedNote] = useState("");
+  const [washed, setWashed] = useState<number | null>(null);
+  const [loadingReplies, setLoadingReplies] = useState(false);
+  const repliesAfter = useRef(true);
+  const threadRef = useRef(thread);
+  const repliesEnd = useRef<HTMLDivElement>(null);
+  const repliesSection = useRef<HTMLElement>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -62,7 +81,9 @@ export function NoteThreadView({
 
   function land(reply: Note) {
     setReplying(false);
-    const placed = placeReply(thread, reply);
+    const placed = threadNoteIds(thread).has(reply.id)
+      ? { thread, landing: "replies" as const }
+      : placeReply(thread, reply);
     setThread(placed.thread);
     if (placed.landing === "elsewhere") {
       toast(t("replyPosted"), "default", {
@@ -84,12 +105,97 @@ export function NoteThreadView({
 
   useEffect(() => {
     if (!ready || !authenticated) return;
-    getNoteThread(initial.note.id)
-      .then(setThread)
+    getNoteThread(initial.note.id, THREAD_REPLIES_PAGE)
+      .then((next) => {
+        setThread(next);
+        setViewerLoaded(true);
+      })
       .catch((error) => {
         if (error instanceof ApiError && error.status === 404) setUnavailable(true);
       });
   }, [ready, authenticated, initial.note.id]);
+
+  useEffect(() => {
+    threadRef.current = thread;
+  }, [thread]);
+
+  const arrivals = useHeldArrivals<Note>(
+    () =>
+      repliesEnd.current
+        ? { element: repliesEnd.current, edge: "bottom" }
+        : repliesSection.current
+          ? { element: repliesSection.current, edge: "top" }
+          : null,
+    (items, revealed) => {
+      setThread((current) => appendReplies(current, items));
+      const ids = items.map((reply) => reply.id);
+      setFreshReplies((current) => new Set([...current, ...ids]));
+      setArriving((current) => new Set([...current, ...ids]));
+      if (revealed) setWashed(Math.min(...ids));
+      setArrivedNote(t("liveNewReplies", { count: items.length }));
+    },
+  );
+
+  const offerReplies = (incoming: (Note | null)[]) => {
+    const known = threadNoteIds(threadRef.current);
+    arrivals.offer(
+      incoming.filter((reply): reply is Note => reply !== null && reply.inReplyToId === initial.note.id && !known.has(reply.id)),
+    );
+  };
+
+  async function readNewReplies(): Promise<boolean> {
+    let after = String(Math.max(0, ...threadRef.current.replies.map((reply) => reply.id)));
+    for (let round = 0; round < LIVE_ROUNDS; round += 1) {
+      const page = await listNoteRepliesAfter(initial.note.id, after);
+      if (!page) return false;
+      offerReplies(page.items);
+      if (page.continued) {
+        void getNoteThread(initial.note.id, THREAD_REPLIES_PAGE).then(
+          (fresh) => setThread((current) => ({ ...current, continuation: fresh.continuation })),
+          () => undefined,
+        );
+      }
+      if (page.next === null || page.next === after) return true;
+      after = page.next;
+    }
+    return true;
+  }
+
+  useLiveScope("note", initial.note.id, {
+    enabled: viewerLoaded && !unavailable && !deleted,
+    since: String(Math.max(0, ...threadNoteIds(thread))),
+    known: (id) => threadNoteIds(threadRef.current).has(id) || arrivals.isHeld(id),
+    refresh: async (change) => {
+      if (threadRef.current.repliesNext) return;
+      if (repliesAfter.current && (await readNewReplies())) return;
+      repliesAfter.current = false;
+      offerReplies(
+        readsOneByOne(change)
+          ? await Promise.all(change.ids.map((id) => getNoteThread(id).then((found) => found.note, () => null)))
+          : (await getNoteThread(initial.note.id)).replies,
+      );
+    },
+    onRevoked: () =>
+      void getNoteThread(initial.note.id, THREAD_REPLIES_PAGE)
+        .then(setThread)
+        .catch((error) => {
+          if (error instanceof ApiError && error.status === 404) setUnavailable(true);
+        }),
+  });
+
+  async function moreReplies() {
+    const next = thread.repliesNext;
+    if (!next || loadingReplies) return;
+    setLoadingReplies(true);
+    try {
+      const page = await listNoteRepliesAfter(thread.note.id, next);
+      setThread((current) => appendReplyPage(current, page?.items ?? [], page?.next ?? null));
+    } catch {
+      toast(t("repliesLoadFailed"), "error");
+    } finally {
+      setLoadingReplies(false);
+    }
+  }
 
   const replaceReply = (next: Note) =>
     setThread((current) => ({
@@ -279,21 +385,23 @@ export function NoteThreadView({
         )}
       </div>
 
-      <section aria-labelledby={thread.replies.length > 0 ? "note-replies" : undefined}>
+      <section ref={repliesSection} aria-labelledby={thread.replies.length > 0 ? "note-replies" : undefined}>
         {thread.replies.length > 0 && (
           <h2 id="note-replies" className="pt-4 text-[15px] font-semibold text-slate-900 dark:text-slate-100">
             {t("repliesTitle")}{" "}
-            <span className="font-normal tabular-nums text-slate-500 dark:text-slate-400">{thread.replies.length}</span>
+            {!thread.repliesNext && (
+              <span className="font-normal tabular-nums text-slate-500 dark:text-slate-400">{thread.replies.length}</span>
+            )}
           </h2>
         )}
         {thread.replies.length > 0 && (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div ref={repliesEnd} className="divide-y divide-slate-100 dark:divide-slate-800">
             {thread.replies.map((reply) => {
               const verdict = noteVerdict(reply, filters, "thread", me?.id);
               if (verdict?.action === "hide" || blocked.has(reply.author.username)) return null;
               return (
+              <LiveRow key={reply.id} arriving={arriving.has(reply.id)} wash={washed === reply.id}>
               <NoteCard
-                key={reply.id}
                 note={reply}
                 isNew={freshReplies.has(reply.id)}
                 filteredBy={verdict?.action === "warn" ? verdict.phrases : undefined}
@@ -308,9 +416,22 @@ export function NoteThreadView({
                   }))
                 }
               />
+              </LiveRow>
               );
             })}
           </div>
+        )}
+        {thread.repliesNext && (
+          <button
+            type="button"
+            onClick={() => void moreReplies()}
+            disabled={loadingReplies}
+            aria-busy={loadingReplies}
+            data-testid="note-replies-more"
+            className={cn(blogCta({ variant: "text" }), "my-4 disabled:opacity-60")}
+          >
+            {t("moreReplies")}
+          </button>
         )}
         {hiddenCount > 0 && (
           <div className="border-t border-slate-100 dark:border-slate-800">
@@ -350,6 +471,12 @@ export function NoteThreadView({
           </div>
         )}
       </section>
+      <LiveLine
+        count={arrivals.held}
+        label={t("liveNewReplies", { count: arrivals.held })}
+        onShow={arrivals.show}
+        announce={arrivedNote}
+      />
       <NoteReplyDialog target={replying ? thread.note : null} onClose={() => setReplying(false)} onReplied={land} />
     </div>
   );

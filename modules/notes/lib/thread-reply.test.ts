@@ -3,7 +3,7 @@ import type { Note, NoteThread } from "@/modules/notes/api/notes";
 
 vi.mock("@/modules/notes/api/notes", () => ({ NOTE_MAX_THREAD_NOTES: 10 }));
 
-import { placeReply } from "./thread-reply";
+import { appendReplies, appendReplyPage, placeReply } from "./thread-reply";
 
 const note = (id: number, authorId: number, inReplyToId: number | null = null, replyCount = 0) =>
   ({ id, author: { id: authorId, username: `u${authorId}` }, inReplyToId, replyCount, body: `${id}` }) as unknown as Note;
@@ -51,5 +51,31 @@ describe("placeReply", () => {
     const placed = placeReply(thread(), note(34, 4, 5));
     expect(placed.landing).toBe("elsewhere");
     expect(placed.thread.parent?.replyCount).toBe(2);
+  });
+});
+
+describe("appendReplies", () => {
+  it("adds replies someone else just wrote at the end, oldest first, and counts them", () => {
+    const next = appendReplies(thread(), [note(41, 4, 10), note(40, 5, 10)]);
+    expect(next.replies.map((r) => r.id)).toEqual([20, 40, 41]);
+    expect(next.note.replyCount).toBe(3);
+  });
+
+  it("leaves out what is already on the page, repeats and replies to other notes", () => {
+    const current = thread({ continuation: [note(11, 1, 10)] });
+    const next = appendReplies(current, [note(20, 3, 10), note(11, 1, 10), note(42, 4, 10), note(42, 4, 10), note(43, 4, 20)]);
+    expect(next.replies.map((r) => r.id)).toEqual([20, 42]);
+    expect(next.note.replyCount).toBe(2);
+    expect(appendReplies(current, [note(20, 3, 10)])).toBe(current);
+  });
+});
+
+describe("appendReplyPage", () => {
+  it("adds the next page after what is shown without counting it again, and remembers where the next one starts", () => {
+    const next = appendReplyPage(thread({ repliesNext: "20" }), [note(20, 3, 10), note(21, 4, 10), note(22, 5, 10)], "22");
+    expect(next.replies.map((r) => r.id)).toEqual([20, 21, 22]);
+    expect(next.note.replyCount).toBe(1);
+    expect(next.repliesNext).toBe("22");
+    expect(appendReplyPage(thread({ repliesNext: "20" }), [], null).repliesNext).toBeNull();
   });
 });

@@ -34,7 +34,9 @@
     "jumpMissing": "वह टिप्पणी हटा दी गई है या उपलब्ध नहीं है।",
     "notesTab": "नोट {count, number}",
     "discussionTabs": "टिप्पणियाँ और नोट",
-    "notesTabHint": "इस पोस्ट को उद्धृत करने वाले नोट"
+    "notesTabHint": "इस पोस्ट को उद्धृत करने वाले नोट",
+    "liveNew": "{count, plural, one {# नई टिप्पणी} other {# नई टिप्पणियाँ}}",
+    "showMore": "और टिप्पणियाँ"
   },
   "publicFeed": {
     "recent": "नवीनतम",
@@ -4801,7 +4803,10 @@
     "destinationMine": "मेरे नोट",
     "postToRoom": "{room} में पोस्ट करें",
     "roomAudience": "केवल {room} के सदस्य देख सकते हैं",
-    "roomPlaceholder": "अभी क्या कर रहे हैं?"
+    "roomPlaceholder": "अभी क्या कर रहे हैं?",
+    "liveNewReplies": "{count, plural, one {# नया जवाब} other {# नए जवाब}}",
+    "moreReplies": "और जवाब",
+    "repliesLoadFailed": "जवाब लोड नहीं हो सके"
   },
   "mentions": {
     "suggestions": "उल्लेख करने के लिए लोग"
@@ -4958,6 +4963,7 @@
     "allReplies": "सभी {count, number} टिप्पणियाँ देखें",
     "post": "पोस्ट",
     "writePost": "{room} में पोस्ट लिखें",
-    "leaveDeleteHint": "हटाने पर इस रूम में आपके सभी नोट, ब्लॉग पोस्ट और टिप्पणियाँ चली जाएँगी।"
+    "leaveDeleteHint": "हटाने पर इस रूम में आपके सभी नोट, ब्लॉग पोस्ट और टिप्पणियाँ चली जाएँगी।",
+    "liveNew": "{count, plural, one {# नया नोट} other {# नए नोट}}"
   }
 }

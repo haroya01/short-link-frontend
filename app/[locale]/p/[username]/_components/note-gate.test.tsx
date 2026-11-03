@@ -18,7 +18,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mocks.replace }),
 }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => mocks.auth }));
-vi.mock("@/modules/notes/api/notes", () => ({ getNoteThread: mocks.getNoteThread }));
+vi.mock("@/modules/notes/api/notes", () => ({ getNoteThread: mocks.getNoteThread, THREAD_REPLIES_PAGE: 20 }));
 vi.mock("@/modules/notes/components/note-thread", () => ({
   NoteThreadView: ({ initial }: { initial: NoteThread }) => createElement("article", { "data-note": initial.note.id }, initial.note.body),
 }));

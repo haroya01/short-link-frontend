@@ -17,7 +17,9 @@ vi.mock("@/modules/notes/api/notes", () => ({
   listHiddenReplies: mocks.listHiddenReplies,
   setNoteReplyHidden: mocks.setNoteReplyHidden,
   deleteNote: mocks.deleteNote,
+  listNoteRepliesAfter: vi.fn(),
   NOTE_MAX_THREAD_NOTES: 10,
+  THREAD_REPLIES_PAGE: 20,
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("@/components/auth/login-prompt", () => ({ askToSignIn: vi.fn() }));
