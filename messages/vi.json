@@ -1511,7 +1511,6 @@
     "bulkSelectedCount": "{count} đã chọn",
     "bulkClearSelection": "Xóa",
     "bulkDeleteAction": "Xóa mục đã chọn",
-    "bulkDeleting": "Đang xóa...",
     "bulkDeleted": "Đã xóa {count} liên kết",
     "bulkDeleteFailed": "{failed} trên {total} xóa thất bại",
     "bulkDeleteConfirmTitle": "Xóa {count} liên kết?",
@@ -1545,7 +1544,20 @@
     "searchClear": "Xóa từ khóa",
     "noResultQuery": "Không có liên kết nào khớp với “{query}”",
     "noResultFiltered": "Không có liên kết nào khớp bộ lọc",
-    "expiringSoon": "{count} sắp hết hạn trong 3 ngày"
+    "expiringSoon": "{count} sắp hết hạn trong 3 ngày",
+    "undo": "Hoàn tác",
+    "restoreFailed": "Không khôi phục được liên kết.",
+    "restored": "Đã khôi phục liên kết",
+    "deleteConfirmRestorable": "Liên kết nằm trong mục Đã xóa 30 ngày, bạn có thể khôi phục ở đó.",
+    "views": {
+      "deleted": "Đã xóa"
+    },
+    "deletedEmpty": "Không có liên kết nào mới xóa",
+    "deletedLoadFailed": "Không tải được liên kết đã xóa.",
+    "deletedAt": "Đã xóa {when}",
+    "daysLeft": "{days, plural, =0 {Ngày cuối} other {Còn # ngày}}",
+    "restore": "Khôi phục",
+    "restoreLink": "Khôi phục /{code}"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",

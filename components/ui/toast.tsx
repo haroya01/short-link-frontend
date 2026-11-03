@@ -18,7 +18,7 @@ type Toast = {
 };
 
 type ToastContextValue = {
-  toast: (message: string, variant?: Toast["variant"], options?: { action?: ToastAction }) => void;
+  toast: (message: string, variant?: Toast["variant"], options?: { action?: ToastAction; durationMs?: number }) => void;
 };
 
 type Timer = { handle: ReturnType<typeof setTimeout> | null; remaining: number; startedAt: number };
@@ -87,7 +87,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       const id = ++idRef.current;
       const action = options?.action;
       setToasts((prev) => [...prev, { id, message, variant, action }].slice(-MAX_STACK));
-      arm(id, action ? ACTION_DURATION_MS : DURATION_MS);
+      arm(id, options?.durationMs ?? (action ? ACTION_DURATION_MS : DURATION_MS));
     },
     [arm],
   );

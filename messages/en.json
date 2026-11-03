@@ -1511,7 +1511,6 @@
     "bulkSelectedCount": "{count} selected",
     "bulkClearSelection": "Clear",
     "bulkDeleteAction": "Delete selected",
-    "bulkDeleting": "Deleting...",
     "bulkDeleted": "Deleted {count, plural, one {# link} other {# links}}",
     "bulkDeleteFailed": "{failed} of {total} failed to delete",
     "bulkDeleteConfirmTitle": "{count, plural, one {Delete # link?} other {Delete # links?}}",
@@ -1545,7 +1544,20 @@
     "searchClear": "Clear search",
     "noResultQuery": "No links match “{query}”",
     "noResultFiltered": "No links match these filters",
-    "expiringSoon": "{count} expiring in 3 days"
+    "expiringSoon": "{count} expiring in 3 days",
+    "undo": "Undo",
+    "restoreFailed": "Couldn't restore the link.",
+    "restored": "Link restored",
+    "deleteConfirmRestorable": "It stays in Deleted for 30 days, where you can restore it.",
+    "views": {
+      "deleted": "Deleted"
+    },
+    "deletedEmpty": "No recently deleted links",
+    "deletedLoadFailed": "Couldn't load your deleted links.",
+    "deletedAt": "Deleted {when}",
+    "daysLeft": "{days, plural, =0 {Last day} one {# day left} other {# days left}}",
+    "restore": "Restore",
+    "restoreLink": "Restore /{code}"
   },
   "edit": {
     "title": "Edit link",

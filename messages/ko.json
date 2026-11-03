@@ -1511,7 +1511,6 @@
     "bulkSelectedCount": "{count}개 선택됨",
     "bulkClearSelection": "선택 해제",
     "bulkDeleteAction": "선택 삭제",
-    "bulkDeleting": "삭제 중…",
     "bulkDeleted": "링크 {count}개를 삭제했어요",
     "bulkDeleteFailed": "{total}개 중 {failed}개를 삭제하지 못했어요.",
     "bulkDeleteConfirmTitle": "링크 {count}개를 삭제할까요?",
@@ -1545,7 +1544,20 @@
     "searchClear": "검색어 지우기",
     "noResultQuery": "“{query}” 검색 결과가 없어요",
     "noResultFiltered": "조건에 맞는 링크가 없어요",
-    "expiringSoon": "3일 안에 만료 {count}개"
+    "expiringSoon": "3일 안에 만료 {count}개",
+    "undo": "되돌리기",
+    "restoreFailed": "링크를 되살리지 못했어요.",
+    "restored": "링크를 되살렸어요",
+    "deleteConfirmRestorable": "30일 동안 최근 삭제에서 되살릴 수 있어요.",
+    "views": {
+      "deleted": "최근 삭제"
+    },
+    "deletedEmpty": "최근 삭제한 링크가 없어요",
+    "deletedLoadFailed": "최근 삭제한 링크를 불러오지 못했어요.",
+    "deletedAt": "{when} 삭제",
+    "daysLeft": "{days, plural, =0 {오늘까지} other {#일 남음}}",
+    "restore": "되살리기",
+    "restoreLink": "/{code} 되살리기"
   },
   "edit": {
     "title": "링크 편집",
