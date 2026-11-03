@@ -59,3 +59,47 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  e2e-maps-key:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_API_BASE: http://localhost:0
+      # The Maps key is inlined at build time, so the place search needs its own build. The spec
+      # intercepts every Google request; a key in the lane above would let other pages reach Google.
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: e2e-maps-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Build Next.js (Maps key)
+        run: npm run build
+      - name: Start Next.js
+        run: |
+          PORT=3001 npm start &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3001/ko >/dev/null; then
+              echo "next is up"
+              break
+            fi
+            sleep 1
+          done
+      - name: Run place search e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3001
+          CI: "true"
+        run: npx playwright test e2e/event-place-search.spec.ts --project=chromium
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-maps-key-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

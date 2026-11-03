@@ -7,9 +7,7 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
-  FileText,
   GripVertical,
-  Layers,
   Loader2,
   Pencil,
   Plus,
@@ -55,7 +53,7 @@ const sameEntry = (a: OwnerSeriesEntry, b: OwnerSeriesEntry) =>
 const entryKey = (e: OwnerSeriesEntry) => (e.type === "POST" ? `post-${e.post.id}` : `note-${e.note.id}`);
 
 const addButton =
-  "focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300";
+  "focus-ring inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100";
 
 function PickRow({
   checked,
@@ -376,11 +374,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
         <button
           type="button"
           onClick={() => setCreating((c) => !c)}
-          className={`focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
-            creating
-              ? "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-              : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
-          }`}
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
         >
           {creating ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {creating ? t("seriesCancel") : t("seriesNewTitle")}
@@ -388,7 +382,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       </div>
 
       {creating && (
-        <form onSubmit={handleCreate} className="space-y-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+        <form onSubmit={handleCreate} className="space-y-3 pb-2">
           <input
             value={nTitle}
             onChange={(e) => setNTitle(e.target.value)}
@@ -432,12 +426,8 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
         const members = membersOf(s.id);
         const pickingHere = picking?.seriesId === s.id ? picking.kind : null;
         return (
-        <section
-          key={s.id}
-          className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800"
-        >
-          <header className="flex items-center gap-3 px-4 py-3.5">
-            <Layers aria-hidden className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+        <section key={s.id} className="border-t border-slate-100 pt-2 dark:border-slate-800">
+          <header className="flex items-center gap-3 py-2">
             {renaming === s.id ? (
               <span className="flex flex-1 items-center gap-2">
                 <input
@@ -513,9 +503,9 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
             )}
           </header>
 
-          <div className="border-t border-slate-100 px-3 py-3 dark:border-slate-800">
+          <div className="-mx-2 pb-2">
             {members.length === 0 ? (
-              <p className="px-1 py-1.5 text-sm text-slate-500 dark:text-slate-400">{t("seriesNoMembers")}</p>
+              <p className="px-2 py-1.5 text-sm text-slate-500 dark:text-slate-400">{t("seriesNoMembers")}</p>
             ) : (
               <ol className="space-y-0.5">
                 {members.map((entry, i) => (
@@ -613,9 +603,9 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
               </ol>
             )}
 
-            <div className="mt-2">
+            <div className="mt-1">
               {pickingHere === null ? (
-                <div className={cn("grid gap-2", me?.username && "grid-cols-2")}>
+                <div className="flex flex-wrap gap-1">
                   <button
                     type="button"
                     onClick={() => openPicker(s.id, "post")}
@@ -762,9 +752,8 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
 
       {/* 시리즈 없음 */}
       {ungrouped.length > 0 && (
-        <section className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800">
-          <header className="flex items-center gap-3 px-4 py-3.5">
-            <FileText className="h-4 w-4 shrink-0 text-slate-300 dark:text-slate-600" />
+        <section className="border-t border-slate-100 pt-2 dark:border-slate-800">
+          <header className="flex items-center gap-3 py-2">
             <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-slate-500 dark:text-slate-400">
               {t("seriesNoneGroup")}
             </span>
@@ -772,7 +761,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
               {t("postCount", { count: ungrouped.length })}
             </span>
           </header>
-          <ol className="border-t border-slate-100 px-3 py-3 dark:border-slate-800">
+          <ol className="-mx-2 pb-2">
             {ungrouped.map((p) => (
               <li key={p.id}>
                 <BlogLink

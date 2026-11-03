@@ -71,7 +71,7 @@ export function EditorHeader({
       </button>
     ) : null;
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
+    <div className="flex items-center justify-between gap-3 pb-3">
       <a
         href={backHref}
         aria-label={t("backToList")}
