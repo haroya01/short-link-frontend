@@ -68,10 +68,15 @@ export function EventPageView({
         <Fact label={t("metaWhen")}>
           {when ? (
             <>
-              <span className="block">{when.day}</span>
-              <span className="block">
+              {/* Intl 결과가 서버(Node)와 브라우저의 ICU 에 따라 다르다(CI Node 의 ko 시각이 "PM 7:00"). */}
+              <span className="block" suppressHydrationWarning>
+                {when.day}
+              </span>
+              <span className="block" suppressHydrationWarning>
                 {when.time}{" "}
-                <span className="text-slate-500 dark:text-slate-400">({timezoneLabel(event.timezone, locale)})</span>
+                <span className="text-slate-500 dark:text-slate-400" suppressHydrationWarning>
+                  ({timezoneLabel(event.timezone, locale)})
+                </span>
               </span>
             </>
           ) : (
