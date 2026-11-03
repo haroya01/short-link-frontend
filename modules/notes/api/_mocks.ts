@@ -1318,6 +1318,32 @@ const RIN_NOTE = note({
   createdAt: "2026-10-04T23:00:00Z",
 });
 
+const MENTIONED_THREAD: NoteThread = {
+  note: note({
+    id: 91,
+    body: "@dohyun 알림 가나요?",
+    author: YUNA,
+    createdAt: "2026-10-05T08:00:00Z",
+    mentions: ["dohyun"],
+    visibility: "direct",
+    replyCount: 1,
+  }),
+  parent: null,
+  replies: [
+    note({
+      id: 92,
+      body: "@yuna 네, 잘 왔어요.",
+      author: ME,
+      createdAt: "2026-10-05T08:10:00Z",
+      mentions: ["yuna"],
+      visibility: "direct",
+      inReplyToId: 91,
+    }),
+  ],
+  continuation: [],
+  series: null,
+};
+
 function rootOf(target: Note): Note {
   let current = target;
   while (current.inReplyToId !== null) {
@@ -1338,7 +1364,7 @@ function viewerCanReply(target: Note): boolean {
 const forViewer = (n: Note): Note => ({ ...n, canReply: viewerCanReply(n) });
 
 export function mockViewerThread(id: number): NoteThread {
-  const thread = mockThread(id);
+  const thread = id === MENTIONED_THREAD.note.id ? MENTIONED_THREAD : mockThread(id);
   if (!thread || MOCK_BLOCKS_VIEWER.has(thread.note.author.username)) {
     throw new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" });
   }
