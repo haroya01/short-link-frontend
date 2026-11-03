@@ -125,23 +125,20 @@ export function PostEditorScreen({
       {takenDown && <TakenDownNotice className="mt-3" />}
 
       {ed.kept && (
-        <div
-          data-testid="editor-kept"
-          className="mt-3 flex items-center justify-between gap-3 rounded-surface border border-slate-200 px-3 py-2 text-[13px] text-slate-600 dark:border-slate-800 dark:text-slate-300"
-        >
-          <span>{t("keptNotice")}</span>
-          <span className="flex shrink-0 items-center gap-3">
+        <div data-testid="editor-kept" role="status" className="mt-3 max-w-prose pt-1">
+          <p className="text-[14px] font-semibold text-amber-700 dark:text-amber-400">{t("keptNotice")}</p>
+          <span className="flex items-center gap-4">
             <button
               type="button"
               onClick={ed.restoreKept}
-              className="focus-ring rounded font-medium text-accent-700 hover:underline dark:text-accent-300"
+              className="touch-target focus-ring mt-1.5 inline-block rounded text-[13px] font-medium text-slate-900 underline decoration-slate-300 underline-offset-4 hover:decoration-slate-900 dark:text-slate-100 dark:decoration-slate-600 dark:hover:decoration-slate-100"
             >
               {t("keptRestore")}
             </button>
             <button
               type="button"
               onClick={ed.discardKept}
-              className="focus-ring rounded text-slate-500 hover:underline dark:text-slate-400"
+              className="touch-target focus-ring mt-1.5 inline-block rounded text-[13px] font-medium text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 hover:decoration-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100 dark:hover:decoration-slate-100"
             >
               {t("keptDiscard")}
             </button>

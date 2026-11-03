@@ -36,6 +36,7 @@ export function CanvasTags({
           suggestions={suggestions}
           placeholder={t("tagsPlaceholder")}
           autoFocus
+          bare
         />
         <button
           type="button"

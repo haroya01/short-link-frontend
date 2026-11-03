@@ -55,6 +55,7 @@ import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, M
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { TableHandles } from "@/modules/blog/components/editor/table-handles";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
+import { CalloutMenuButton } from "@/modules/blog/components/editor/callout-menu";
 import {
   PlaceSearchDialog,
   mapsPlaceUrl,
@@ -621,7 +622,7 @@ export function MarkdownEditor({
           await uploadAndInsertMany(editor, files, width);
         }}
       />
-      {/* Always-on top toolbar — 블록 도구(헤딩·리스트·인용·코드·삽입)만의 쉼 상태 affordance.
+      {/* Always-on top toolbar — 블록 도구(헤딩·리스트·인용·박스·코드·삽입)만의 쉼 상태 affordance.
           인라인 마크(B·I·S·코드·링크)는 여기서 뺐다: 선택해야 의미 있는 동작이라 selection 버블이
           정확한 자리고(링크는 빈 캐럿에선 어차피 no-op), 두 줄로 중복 노출되니 툴바가 도구 패널처럼
           시끄러웠다. Sits above the scrolling body so it never scrolls away. */}
@@ -674,7 +675,7 @@ export function MarkdownEditor({
 }
 
 /**
- * Always-on top toolbar — block tools only: headings, lists, quote, code block, and the inserts
+ * Always-on top toolbar — block tools only: headings, lists, quote, callout, code block, and the inserts
  * (image · table · embed · divider), each reflecting its active state live (Tiptap v3 useEditor
  * doesn't re-render on transactions → useEditorState). 원래는 인라인 마크까지 전부 노출했지만
  * (resting-state 가시성 요청), 같은 버튼이 selection 버블과 두 벌로 떠서 슬림화 — 인라인 마크의
@@ -706,16 +707,23 @@ function EditorToolbar({
       bullet: editor.isActive("bulletList"),
       ordered: editor.isActive("orderedList"),
       task: editor.isActive("taskList"),
-      quote: editor.isActive("blockquote"),
+      quote: editor.isActive("blockquote", { alert: null }),
       codeBlock: editor.isActive("codeBlock"),
       bold: editor.isActive("bold"),
       link: editor.isActive("link"),
     }),
   });
 
+  const cls = (active?: boolean) =>
+    `touch-target focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors ${
+      active
+        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
+        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+    }`;
+
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
   const image: Item = { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() };
-  const groups: Item[][] = [
+  const groups: (Item | React.ReactElement)[][] = [
     [
       { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
       { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: onPickLink },
@@ -729,6 +737,7 @@ function EditorToolbar({
       { icon: ListOrdered, label: t("slash.orderedList"), active: a.ordered, run: () => editor.chain().focus().toggleOrderedList().run() },
       { icon: ListChecks, label: t("slash.taskList"), active: a.task, run: () => editor.chain().focus().toggleTaskList().run() },
       { icon: Quote, label: t("slash.quote"), active: a.quote, run: () => editor.chain().focus().toggleBlockquote().run() },
+      <CalloutMenuButton key="callout" editor={editor} className={cls} />,
       { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],
     [
@@ -739,13 +748,6 @@ function EditorToolbar({
     ],
   ];
 
-  const cls = (active?: boolean) =>
-    `touch-target focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors ${
-      active
-        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
-        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-    }`;
-
   return (
     <div className="relative border-b border-slate-100 dark:border-slate-800">
       <div
@@ -753,12 +755,11 @@ function EditorToolbar({
         data-testid="editor-toolbar"
         {...edgeFade.attrs}
         style={edgeFade.style}
-        className="flex items-center gap-0.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex items-center gap-2 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {groups.map((group, gi) => (
-          <div key={gi} className="flex items-center gap-0.5">
-            {gi > 0 && <span className="mx-1 h-5 w-px shrink-0 bg-slate-200 dark:bg-slate-700" aria-hidden />}
-            {group.map((it, i) => (
+          <div key={gi} className="flex items-center">
+            {group.map((it, i) => !("icon" in it) ? it : (
               <button
                 key={i}
                 type="button"

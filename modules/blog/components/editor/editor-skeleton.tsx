@@ -10,7 +10,7 @@ export function EditorSkeleton() {
       className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3"
       aria-busy
     >
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+      <div className="flex items-center justify-between pb-3">
         <Skeleton className="h-6 w-16" />
         <div className="flex gap-2">
           <Skeleton className="h-8 w-20" />
