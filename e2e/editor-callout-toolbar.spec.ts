@@ -9,6 +9,8 @@ async function openEditor(page: Page, path = "/ko/blog/write/new") {
 }
 
 const css = (el: Locator, prop: string) => el.evaluate((node, p) => getComputedStyle(node).getPropertyValue(p), prop);
+const GREENS = ["5, 150, 105", "4, 120, 87", "16, 185, 129", "52, 211, 153", "110, 231, 183", "6, 95, 70", "167, 243, 208", "209, 250, 229", "236, 253, 245", "6, 78, 59"];
+const isGreen = (color: string) => GREENS.some((g) => color.includes(`(${g}`));
 
 test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
@@ -80,6 +82,19 @@ test.describe("desktop", () => {
     await expect(resume.locator("svg")).toHaveCount(0);
     const draft = page.locator("main li").getByText("임시저장", { exact: true }).first();
     expect(await css(draft, "background-color")).toBe("rgba(0, 0, 0, 0)");
+    const pin = page.locator("main li").filter({ hasText: "로컬에서 쓴 발행 글" }).getByRole("button", { name: "대표글로 고정" });
+    await pin.click();
+    const pinned = page.locator("main li").filter({ hasText: "로컬에서 쓴 발행 글" }).getByRole("button", { name: "고정 해제", pressed: true });
+    await expect(pinned).toHaveAttribute("aria-pressed", "true");
+    expect(isGreen(await css(pinned, "color"))).toBe(false);
+    expect(await css(pinned, "border-top-width")).toBe("0px");
+
+    await page.getByRole("listitem").getByRole("link", { name: /신고로 내려진 글/ }).click();
+    const notice = page.getByRole("status").filter({ hasText: "운영 정책으로 내려진 글이에요" });
+    await expect(notice).toBeVisible({ timeout: 30_000 });
+    expect(await css(notice, "border-left-width")).toBe("0px");
+    expect(await css(notice, "background-color")).toBe("rgba(0, 0, 0, 0)");
+    await expect(notice.getByRole("link", { name: "이용약관 보기" })).toHaveCSS("text-decoration-line", "underline");
 
     await openEditor(page, "/ko/blog/write/7002");
     await page.getByRole("button", { name: "발행", exact: true }).click();

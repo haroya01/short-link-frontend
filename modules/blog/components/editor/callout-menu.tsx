@@ -133,7 +133,7 @@ export function CalloutMenuButton({ editor, className }: { editor: Editor; class
               >
                 <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
                 <span className="flex-1">{t(labelKey)}</span>
-                {current === kind && <Check aria-hidden className="h-4 w-4 shrink-0 text-accent-700 dark:text-accent-400" />}
+                {current === kind && <Check aria-hidden className="h-4 w-4 shrink-0 text-slate-900 dark:text-slate-100" />}
               </button>
             ))}
           </div>,

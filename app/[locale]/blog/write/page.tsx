@@ -370,7 +370,7 @@ export default function WriteIndexPage() {
                         title={p.pinOrder != null ? t("featuredPinnedLabel") : t("featuredPin")}
                         className={`focus-ring touch-target grid h-8 w-8 place-items-center rounded-lg transition-colors ${
                           p.pinOrder != null
-                            ? "text-accent-700 hover:bg-accent-50 dark:text-accent-300 dark:hover:bg-accent-500/15"
+                            ? "text-slate-900 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
                             : "text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                         }`}
                       >
