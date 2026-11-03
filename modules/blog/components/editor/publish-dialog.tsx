@@ -326,11 +326,11 @@ export function PublishDialog({
               요약 → 작가·날짜, 이미지는 오른쪽 작은 4:3 썸네일(없으면 완성된 타이포 행). 요약은 행
               안에서 바로 고치고, 커버 조작은 카드 아래 한 줄로 뺀다(축소된 썸네일 위 오버레이는
               들어갈 자리가 없다). 라벨 달린 폼 필드와 힌트 문장들을 이 한 덩어리가 대체한다. */}
-          <section aria-label={t("previewCardLabel")}>
+          <section aria-label={t("previewCardLabel")} className="border-b border-slate-100 pb-3 dark:border-slate-800">
             <p className="mb-2 text-[12px] font-medium text-slate-500 dark:text-slate-400">
               {t("previewCardLabel")}
             </p>
-            <div className="rounded-2xl border border-slate-200 px-4 py-4 dark:border-slate-700">
+            <div>
               <input
                 ref={fileRef}
                 type="file"

@@ -13,9 +13,10 @@ type Props = {
   suggestions?: string[];
   autoFocus?: boolean;
   disabled?: boolean;
+  bare?: boolean;
 };
 
-export function TagInput({ tags, onChange, limits, placeholder, suggestions, autoFocus, disabled = false }: Props) {
+export function TagInput({ tags, onChange, limits, placeholder, suggestions, autoFocus, disabled = false, bare = false }: Props) {
   const t = useTranslations("tags");
   const [draft, setDraft] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,7 +67,11 @@ export function TagInput({ tags, onChange, limits, placeholder, suggestions, aut
 
   return (
     <div className="group/tags">
-      <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
+      <div
+        className={`flex flex-wrap items-center gap-1.5 border-slate-200 focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500 ${
+          bare ? "border-b py-1.5" : "rounded-lg border px-2.5 py-2"
+        }`}
+      >
         {tags.map((tag) => (
           <span
             key={tag}
@@ -115,7 +120,9 @@ export function TagInput({ tags, onChange, limits, placeholder, suggestions, aut
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => addSuggestion(s)}
               disabled={disabled}
-              className="focus-ring rounded-full border border-slate-200 px-2.5 py-1 text-[12px] text-slate-500 transition-colors hover:border-accent-400 hover:text-accent-700 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500 dark:hover:text-accent-300"
+              className={`focus-ring text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300 ${
+                bare ? "rounded px-1 py-1" : "rounded-full border border-slate-200 px-2.5 py-1 hover:border-accent-400 dark:border-slate-700 dark:hover:border-accent-500"
+              }`}
             >
               + {s}
             </button>

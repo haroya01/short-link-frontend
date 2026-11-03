@@ -220,22 +220,13 @@ export function SlashMenu({
                         : "hover:bg-slate-50 dark:hover:bg-slate-800"
                     }`}
                   >
-                    <span
-                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-md border ${
-                        i === active
-                          ? "border-accent-200 bg-white text-accent-700 dark:border-accent-500/30 dark:bg-slate-850 dark:text-accent-300"
-                          : "border-slate-200 bg-white text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+                    <item.icon
+                      className={`h-4 w-4 shrink-0 ${
+                        i === active ? "text-accent-700 dark:text-accent-300" : "text-slate-400 dark:text-slate-400"
                       }`}
-                    >
-                      <item.icon className="h-[18px] w-[18px]" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium text-slate-800 dark:text-slate-100">
-                        {t(item.labelKey)}
-                      </span>
-                      <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">
-                        {t(`desc.${item.labelKey}`)}
-                      </span>
+                    />
+                    <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
+                      {t(item.labelKey)}
                     </span>
                   </button>
                 );
