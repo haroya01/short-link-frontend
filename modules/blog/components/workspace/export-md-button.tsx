@@ -41,7 +41,7 @@ export function ExportMdButton() {
         disabled={busy}
         title={t("exportAllHint")}
         aria-label={t("exportAll")}
-        className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50 sm:px-3.5"
+        className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-60 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
         {/* 헤더에 버튼 셋이 서는 폭이라 모바일에선 아이콘만 — 라벨은 sm↑ */}

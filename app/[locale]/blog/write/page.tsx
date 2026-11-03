@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "lucide-react";
+import { ArrowDown, ArrowUp, BarChart3, PenSquare, Pin, X } from "lucide-react";
 import { ExportMdButton } from "@/modules/blog/components/workspace/export-md-button";
 import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
@@ -156,21 +156,17 @@ export default function WriteIndexPage() {
       </header>
 
       {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 컨트롤보다 먼저 답한다.
-          가장 최근 임시저장 1건만, 헤더 바로 아래 고정(보기와 무관). 초록은 머리의 '새 글
-          쓰기' 하나라 이 카드는 종이 카드. 임시저장이 없으면 섹션 자체가 없다. */}
+          가장 최근 임시저장 1건만, 헤더 바로 아래 고정(보기와 무관). 임시저장이 없으면 섹션 자체가 없다. */}
       {!loading && latestDraft && (
         <BlogLink
           href={`${writeBase}/${latestDraft.id}`}
-          className="focus-ring group mb-5 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800/60"
+          className="focus-ring group -mx-3 mb-5 flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40"
         >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-300">
-            <PenSquare className="h-4 w-4" />
-          </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[12px] font-medium text-slate-500 dark:text-slate-400">
               {t("continueWriting")}
             </span>
-            <span className="mt-0.5 block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+            <span className="mt-0.5 block truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
               {latestDraft.title.trim() || t("untitled")}
             </span>
           </span>
@@ -183,23 +179,22 @@ export default function WriteIndexPage() {
       {/* 한 줄 툴바 — 보기 전환(왼쪽)과 상태 필터(오른쪽)를 같은 행에 접는다. 컨트롤이 세 줄로
           쌓여 콘텐츠보다 먼저 쏟아지던 판을 정리. 상태 칩은 전체 보기에서만 의미가 있다. */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <div className="inline-flex gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+        <div className="inline-flex gap-4">
           {([
-            ["all", t("viewAll"), List],
-            ["series", t("viewBySeries"), Layers],
-          ] as const).map(([v, label, Icon]) => (
+            ["all", t("viewAll")],
+            ["series", t("viewBySeries")],
+          ] as const).map(([v, label]) => (
             <button
               key={v}
               type="button"
               onClick={() => changeView(v)}
               aria-pressed={view === v}
-              className={`focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors ${
+              className={`focus-ring inline-flex min-h-11 items-center rounded text-[13px] transition-colors ${
                 view === v
-                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  ? "font-semibold text-slate-900 dark:text-slate-100"
+                  : "font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
-              <Icon className="h-3.5 w-3.5" />
               {label}
             </button>
           ))}
@@ -232,14 +227,13 @@ export default function WriteIndexPage() {
         <>
       {/* 대표글 관리 — 핀한 글을 공개 블로그 '대표글' 섹션에 이 순서로 노출. 순서 조정·해제는 여기서. */}
       {!loading && pinned.length > 0 && (
-        <section className="mb-5 rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
-          <h2 className="mb-2 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
-            <Pin className="h-3.5 w-3.5 fill-current text-slate-400 dark:text-slate-500" />
+        <section className="mb-5 border-b border-slate-100 pb-3 dark:border-slate-800">
+          <h2 className="mb-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
             {t("featuredManageTitle")}
           </h2>
           <ul className="flex flex-col">
             {pinned.map((p, i) => (
-              <li key={p.id} className="flex items-center gap-2 rounded-lg px-1 py-1.5">
+              <li key={p.id} className="flex items-center gap-2 py-1.5">
                 <span className="w-5 shrink-0 text-center text-[12px] font-semibold tabular-nums text-slate-500 dark:text-slate-400">
                   {i + 1}
                 </span>
@@ -374,10 +368,10 @@ export default function WriteIndexPage() {
                         aria-pressed={p.pinOrder != null}
                         aria-label={p.pinOrder != null ? t("featuredUnpin") : t("featuredPin")}
                         title={p.pinOrder != null ? t("featuredPinnedLabel") : t("featuredPin")}
-                        className={`focus-ring touch-target grid h-8 w-8 place-items-center rounded-lg border backdrop-blur transition-colors ${
+                        className={`focus-ring touch-target grid h-8 w-8 place-items-center rounded-lg transition-colors ${
                           p.pinOrder != null
-                            ? "border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 dark:border-accent-500/40 dark:bg-accent-500/15 dark:text-accent-300"
-                            : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                            ? "text-accent-700 hover:bg-accent-50 dark:text-accent-300 dark:hover:bg-accent-500/15"
+                            : "text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                         }`}
                       >
                         <Pin className={`h-4 w-4 ${p.pinOrder != null ? "fill-current" : ""}`} />
@@ -387,7 +381,7 @@ export default function WriteIndexPage() {
                       <BlogLink
                         href={`${analyticsBase}/${p.id}`}
                         aria-label={t("viewAnalytics")}
-                        className="focus-ring touch-target inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                        className="focus-ring touch-target inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
                       >
                         <BarChart3 className="h-4 w-4" />
                         <span className="hidden sm:inline">{t("viewAnalytics")}</span>

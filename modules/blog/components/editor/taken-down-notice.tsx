@@ -11,7 +11,7 @@ export function TakenDownNotice({ id, className = "" }: { id?: string; className
       id={id}
       role="note"
       data-testid="taken-down-notice"
-      className={`rounded-surface border border-red-200 bg-red-50/60 px-3 py-2.5 text-[13px] leading-relaxed text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200 ${className}`}
+      className={`border-l-2 border-red-400 py-0.5 pl-3 text-[13px] leading-relaxed text-red-800 dark:border-red-500/60 dark:text-red-200 ${className}`}
     >
       <p className="font-semibold">{t("takenDownTitle")}</p>
       <p className="mt-0.5">

@@ -127,7 +127,7 @@ export function PostEditorScreen({
       {ed.kept && (
         <div
           data-testid="editor-kept"
-          className="mt-3 flex items-center justify-between gap-3 rounded-surface border border-slate-200 px-3 py-2 text-[13px] text-slate-600 dark:border-slate-800 dark:text-slate-300"
+          className="mt-3 flex items-center justify-between gap-3 border-l-2 border-slate-300 py-0.5 pl-3 text-[13px] text-slate-600 dark:border-slate-600 dark:text-slate-300"
         >
           <span>{t("keptNotice")}</span>
           <span className="flex shrink-0 items-center gap-3">
