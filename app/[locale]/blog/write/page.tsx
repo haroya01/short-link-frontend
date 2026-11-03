@@ -142,7 +142,7 @@ export default function WriteIndexPage() {
             </p>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="-ml-3 flex flex-wrap items-center gap-2 sm:ml-0">
           <ExportMdButton />
           <ImportMdButton onDone={load} />
           <BlogLink

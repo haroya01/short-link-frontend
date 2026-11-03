@@ -25,6 +25,7 @@ test.describe("desktop", () => {
     const menu = page.getByRole("menu", { name: "박스" });
     await box.click();
     await expect(menu.getByRole("menuitemradio")).toHaveText(KINDS);
+    await expect(page.locator(".tiptap")).toBeFocused();
     await menu.getByRole("menuitemradio", { name: "주의" }).click();
     await expect(menu).toHaveCount(0);
     await expect(page.locator(".tiptap blockquote[data-alert='warning']")).toHaveText("조심할 것");

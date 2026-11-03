@@ -225,13 +225,8 @@ export function SlashMenu({
                         i === active ? "text-accent-700 dark:text-accent-300" : "text-slate-400 dark:text-slate-400"
                       }`}
                     />
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium text-slate-800 dark:text-slate-100">
-                        {t(item.labelKey)}
-                      </span>
-                      <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">
-                        {t(`desc.${item.labelKey}`)}
-                      </span>
+                    <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
+                      {t(item.labelKey)}
                     </span>
                   </button>
                 );

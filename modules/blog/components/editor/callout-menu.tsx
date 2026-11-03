@@ -16,7 +16,7 @@ export const CALLOUT_CHOICES: { kind: CalloutKind; icon: LucideIcon; labelKey: s
   { kind: "caution", icon: OctagonAlert, labelKey: "calloutCaution" },
 ];
 
-export function toggleCallout(editor: Editor, kind: CalloutKind) {
+function toggleCallout(editor: Editor, kind: CalloutKind) {
   if (editor.isActive("blockquote", { alert: kind })) editor.chain().focus().toggleBlockquote().run();
   else editor.chain().focus().setCallout(kind).run();
 }
@@ -28,6 +28,7 @@ export function CalloutMenuButton({ editor, className }: { editor: Editor; class
   const t = useTranslations("postEditor.slash");
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ left: 0, top: 0 });
+  const viaKeyboard = useRef(false);
   const { mounted, closing } = usePresence(open, 160);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -40,7 +41,7 @@ export function CalloutMenuButton({ editor, className }: { editor: Editor; class
   useEffect(() => {
     if (!open || !mounted) return;
     const items = () => Array.from(menuRef.current?.querySelectorAll<HTMLElement>(ITEM_SELECTOR) ?? []);
-    (items().find((el) => el.getAttribute("aria-checked") === "true") ?? items()[0])?.focus();
+    if (viaKeyboard.current) (items().find((el) => el.getAttribute("aria-checked") === "true") ?? items()[0])?.focus();
     function onPointer(event: PointerEvent) {
       const target = event.target as Node;
       if (!menuRef.current?.contains(target) && !triggerRef.current?.contains(target)) setOpen(false);
@@ -56,7 +57,7 @@ export function CalloutMenuButton({ editor, className }: { editor: Editor; class
       const index = list.indexOf(document.activeElement as HTMLElement);
       const next =
         event.key === "ArrowDown" ? (index + 1) % list.length
-        : event.key === "ArrowUp" ? (index - 1 + list.length) % list.length
+        : event.key === "ArrowUp" ? (index <= 0 ? list.length - 1 : index - 1)
         : event.key === "Home" ? 0
         : event.key === "End" ? list.length - 1
         : -1;
@@ -80,8 +81,9 @@ export function CalloutMenuButton({ editor, className }: { editor: Editor; class
     };
   }, [open, mounted]);
 
-  function toggle() {
+  function toggle(event: React.MouseEvent) {
     if (open) return setOpen(false);
+    viaKeyboard.current = event.detail === 0;
     const r = triggerRef.current?.getBoundingClientRect();
     if (!r) return;
     setPos({ left: Math.max(8, Math.min(r.left, window.innerWidth - MENU_W - 8)), top: r.bottom + 6 });

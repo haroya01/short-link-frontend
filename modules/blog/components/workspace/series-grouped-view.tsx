@@ -505,7 +505,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
 
           <div className="-mx-2 pb-2">
             {members.length === 0 ? (
-              <p className="px-1 py-1.5 text-sm text-slate-500 dark:text-slate-400">{t("seriesNoMembers")}</p>
+              <p className="px-2 py-1.5 text-sm text-slate-500 dark:text-slate-400">{t("seriesNoMembers")}</p>
             ) : (
               <ol className="space-y-0.5">
                 {members.map((entry, i) => (
