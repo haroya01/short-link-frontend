@@ -38,6 +38,7 @@ export default function EventDetailPage() {
   const t = useTranslations("events.detail");
   const tList = useTranslations("events.list");
   const tStatus = useTranslations("events.status");
+  const tPublic = useTranslations("events.public");
   const locale = useLocale();
   const { ready, authenticated } = useAuth();
   const { toast } = useToast();
@@ -130,7 +131,10 @@ export default function EventDetailPage() {
             {tStatus(phase)}
           </span>
           {" · "}
-          {formatEventRange(event.startsAt, event.endsAt, event.timezone, locale)}
+          {formatEventRange(event.startsAt, event.endsAt, event.timezone, locale, {
+            am: tPublic("am"),
+            pm: tPublic("pm"),
+          })}
           {event.locationText ? ` · ${event.locationText}` : ""}
           {" · "}
           <span className="tabular-nums">
