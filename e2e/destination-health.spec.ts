@@ -24,8 +24,13 @@ test.describe("destination health", () => {
     });
     await page.goto(`/ko/stats/${CODE}`);
 
-    const banner = page.getByRole("alert").filter({ hasText: "목적지가 열리지 않아요." });
+    const banner = page.getByRole("status").filter({ hasText: "목적지가 열리지 않아요." });
     await expect(banner).toContainText("페이지가 사라져서(404)");
+    const look = await banner.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { background: style.backgroundColor, border: style.borderTopWidth, icons: el.querySelectorAll("svg").length };
+    });
+    expect(look).toEqual({ background: "rgba(0, 0, 0, 0)", border: "0px", icons: 0 });
     await banner.getByRole("button", { name: "목적지 바꾸기" }).click();
     await expect(page.getByRole("dialog").getByText("링크 편집")).toBeVisible();
   });
