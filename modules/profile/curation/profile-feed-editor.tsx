@@ -106,6 +106,8 @@ type Props = {
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 };
 
+const OTHER_LINKS_PREVIEW = 5;
+
 /**
  * The middle panel of the profile editor: ordered list of feed items (mix of links + text/divider/
  * image blocks), three "+ block" buttons up top, and a collapsed list of unfeatured links at the
@@ -149,6 +151,8 @@ export function ProfileFeedEditor({
     .filter((i): i is { kind: "LINK"; code: string } => i.kind === "LINK")
     .map((i) => i.code);
   const otherLinks = (links ?? []).filter((l) => !featuredCodes.includes(l.shortCode));
+  const [showAllOthers, setShowAllOthers] = useState(false);
+  const shownOthers = showAllOthers ? otherLinks : otherLinks.slice(0, OTHER_LINKS_PREVIEW);
 
   return (
     <div className="space-y-3">
@@ -216,7 +220,7 @@ export function ProfileFeedEditor({
                 {t("addMore")} ({otherLinks.length})
               </summary>
               <ul className="mt-2 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 dark:divide-slate-800">
-                {otherLinks.map((link) => (
+                {shownOthers.map((link) => (
                   <li
                     key={link.shortCode}
                     className="flex items-center justify-between gap-3 px-3 py-2"
@@ -236,12 +240,23 @@ export function ProfileFeedEditor({
                       type="button"
                       onClick={() => onToggle(link.shortCode, true)}
                       disabled={pendingShortCode === link.shortCode}
-                      className="text-[11px] font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                      className="touch-target focus-ring shrink-0 rounded-sm text-xs font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
                     >
                       {t("add")}
                     </button>
                   </li>
                 ))}
+                {otherLinks.length > shownOthers.length && (
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => setShowAllOthers(true)}
+                      className="focus-ring w-full rounded-b-md px-3 py-2.5 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50"
+                    >
+                      {t("showMoreLinks", { count: otherLinks.length - shownOthers.length })}
+                    </button>
+                  </li>
+                )}
               </ul>
             </details>
           )}

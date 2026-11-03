@@ -15,6 +15,8 @@ import {
   registerCustomDomain,
   verifyCustomDomain,
 } from "@/lib/api";
+import { GroupedList } from "@/components/common/grouped-list";
+import { ErrorRow, NoteRow } from "@/components/settings/settings-rows";
 import type { CustomDomain } from "@/types";
 
 export function CustomDomainsSection() {
@@ -23,6 +25,8 @@ export function CustomDomainsSection() {
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [items, setItems] = useState<CustomDomain[] | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const loadedRef = useRef(false);
   const [domain, setDomain] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -56,10 +60,12 @@ export function CustomDomainsSection() {
   async function refresh() {
     try {
       setItems(await listCustomDomains());
+      loadedRef.current = true;
+      setLoadFailed(false);
     } catch {
       // Keep the existing list on a transient failure so a single failed poll doesn't wipe the
-      // rows and stop the auto-verify poller. Only the initial load falls back to an empty list.
-      setItems((prev) => (prev === null ? [] : prev));
+      // rows and stop the auto-verify poller.
+      if (!loadedRef.current) setLoadFailed(true);
     }
   }
 
@@ -99,36 +105,43 @@ export function CustomDomainsSection() {
   }
 
   return (
-    <div className="space-y-3">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{t("description")}</p>
+    <>
+      <GroupedList title={t("title")} footer={t("description")}>
+        <form onSubmit={handleRegister} className="flex gap-2 px-4 py-3">
+          <Input
+            type="text"
+            aria-label={t("domainLabel")}
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            placeholder="go.example.com"
+            disabled={busy}
+            required
+            className="min-w-0 flex-1"
+          />
+          <Button type="submit" variant="outline" className="h-11" disabled={busy || !domain.trim()}>
+            {busy ? t("registering") : t("register")}
+          </Button>
+        </form>
 
-      <form onSubmit={handleRegister} className="grid gap-2 sm:grid-cols-[1fr_auto]">
-        <Input
-          type="text"
-          value={domain}
-          onChange={(e) => setDomain(e.target.value)}
-          placeholder="go.example.com"
-          disabled={busy}
-          required
-        />
-        <Button type="submit" size="lg" variant="outline" disabled={busy || !domain.trim()}>
-          {busy ? t("registering") : t("register")}
-        </Button>
-      </form>
-
-      {items === null ? (
-        <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
-      ) : items.length === 0 ? null : (
-        <ul className="space-y-2">
-          {items.map((d) => (
-            <li key={d.id}>
-              <DomainRow d={d} onVerify={handleVerify} onDelete={handleDelete} t={t} />
-            </li>
-          ))}
-        </ul>
-      )}
+        {loadFailed ? (
+          <ErrorRow
+            message={t("loadError")}
+            retryLabel={t("retry")}
+            onRetry={() => {
+              setLoadFailed(false);
+              void refresh();
+            }}
+          />
+        ) : items === null ? (
+          <NoteRow>{t("loading")}</NoteRow>
+        ) : items.length === 0 ? (
+          <NoteRow>{t("empty")}</NoteRow>
+        ) : (
+          items.map((d) => <DomainRow key={d.id} d={d} onVerify={handleVerify} onDelete={handleDelete} t={t} />)
+        )}
+      </GroupedList>
       {confirmDialog}
-    </div>
+    </>
   );
 }
 
@@ -156,13 +169,11 @@ function DomainRow({
   const remainingMs = d.autoVerifyUntil ? new Date(d.autoVerifyUntil).getTime() - now : 0;
 
   return (
-    <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-      <div className="flex items-center justify-between gap-2 px-3 py-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <code className="truncate font-mono text-sm font-medium text-slate-900 dark:text-slate-100">{d.domain}</code>
-          <StatusPill verified={d.verified} inAutoWindow={inAutoWindow} remainingMs={remainingMs} t={t} />
-        </div>
-        <div className="flex items-center gap-1">
+    <div>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3">
+        <code className="min-w-0 break-all font-mono text-sm font-medium text-slate-900 dark:text-slate-100">{d.domain}</code>
+        <StatusPill verified={d.verified} inAutoWindow={inAutoWindow} remainingMs={remainingMs} t={t} />
+        <div className="ml-auto flex items-center gap-1">
           {!d.verified && !inAutoWindow && (
             <Button type="button" size="sm" variant="outline" onClick={() => onVerify(d.id)}>
               {t("verifyNow")}
@@ -173,7 +184,7 @@ function DomainRow({
             size="icon"
             variant="ghost"
             aria-label={t("delete")}
-            className="text-slate-400 dark:text-slate-400 hover:text-red-600"
+            className="text-slate-400 hover:text-red-600 dark:text-slate-400"
             onClick={() => onDelete(d.id)}
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -182,14 +193,9 @@ function DomainRow({
       </div>
 
       {!d.verified && (
-        <div className="space-y-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-3 py-3">
-          <DnsRecord
-            type="TXT"
-            host={d.verificationHost}
-            value={d.verificationToken}
-            hint={t("dnsTxtHint")}
-          />
-          <DnsRecord type="CNAME" host={d.domain} value="kurl.me" hint={t("dnsCnameHint")} />
+        <div className="space-y-3 border-t border-slate-100 px-4 py-3 dark:border-slate-800">
+          <DnsRecord type="TXT" host={d.verificationHost} value={d.verificationToken} hint={t("dnsTxtHint")} t={t} />
+          <DnsRecord type="CNAME" host={d.domain} value="kurl.me" hint={t("dnsCnameHint")} t={t} />
         </div>
       )}
     </div>
@@ -230,25 +236,27 @@ function DnsRecord({
   host,
   value,
   hint,
+  t,
 }: {
   type: "TXT" | "CNAME";
   host: string;
   value: string;
   hint: string;
+  t: ReturnType<typeof useTranslations<"settings.customDomains">>;
 }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       <p className="text-[11px] text-slate-500 dark:text-slate-400">{hint}</p>
-      <div className="flex items-stretch overflow-hidden rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-mono text-[11px]">
-        <span className="flex items-center bg-slate-100 dark:bg-slate-800 px-2 text-slate-500 dark:text-slate-400">{type}</span>
-        <CopyCell label={host} className="flex-1 border-l border-slate-200 dark:border-slate-800" />
-        <CopyCell label={value} className="flex-1 border-l border-slate-200 dark:border-slate-800" />
+      <div className="overflow-hidden rounded-md border border-slate-200 bg-white font-mono text-[11px] dark:border-slate-800 dark:bg-slate-900 sm:flex sm:items-stretch">
+        <span className="flex items-center bg-slate-100 px-2 py-1 text-slate-500 dark:bg-slate-800 dark:text-slate-400">{type}</span>
+        <CopyCell name={t("dnsHost")} label={host} />
+        <CopyCell name={t("dnsValue")} label={value} />
       </div>
     </div>
   );
 }
 
-function CopyCell({ label, className = "" }: { label: string; className?: string }) {
+function CopyCell({ name, label }: { name: string; label: string }) {
   const [copied, setCopied] = useState(false);
   async function copy() {
     try {
@@ -263,12 +271,12 @@ function CopyCell({ label, className = "" }: { label: string; className?: string
     <button
       type="button"
       onClick={copy}
-      className={
-        "group flex min-w-0 items-center justify-between gap-2 px-2 py-1.5 text-left text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 " +
-        className
-      }
+      className="group flex w-full min-w-0 items-center justify-between gap-2 border-t border-slate-200 px-2 py-1.5 text-left text-slate-800 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800/50 sm:w-auto sm:flex-1 sm:basis-0 sm:border-l sm:border-t-0"
     >
-      <span className="min-w-0 truncate">{label}</span>
+      <span className="min-w-0">
+        <span className="mr-1.5 font-sans text-slate-400 dark:text-slate-500">{name}</span>{" "}
+        <span className="break-all">{label}</span>
+      </span>
       {copied ? (
         <Check className="h-3 w-3 shrink-0 text-slate-900 dark:text-slate-100" />
       ) : (
