@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { eventPhase } from "./phase";
+import type { MyEvent } from "@/modules/events/api/events";
+import { eventPhase, ownerEventPhase } from "./phase";
 
 const NOW = Date.parse("2026-11-03T12:00:00Z");
 
@@ -67,5 +68,27 @@ describe("eventPhase", () => {
       expect(eventPhase({ ...august, registrationClosedReason: null }, NOW)).toBe("open");
       expect(eventPhase(august, NOW)).toBe("ended");
     });
+  });
+});
+
+describe("ownerEventPhase", () => {
+  const mine = {
+    id: 1, slug: "a", title: "성수 모각코", descriptionMd: null, coverImageUrl: null,
+    startsAt: "2026-11-10T10:00:00Z", endsAt: null, timezone: "Asia/Seoul", locationText: null, locationUrl: null,
+    onlineUrl: null, capacity: 20, closeAt: null, contactField: "KAKAO", status: "OPEN", registrationCount: 7,
+    questions: [], links: [], createdAt: "2026-11-01T00:00:00Z",
+  } satisfies MyEvent;
+
+  it("reads seats from the registration count and the rest like the participant page", () => {
+    expect(ownerEventPhase(mine, NOW)).toBe("open");
+    expect(ownerEventPhase({ ...mine, registrationCount: 20 }, NOW)).toBe("full");
+    expect(ownerEventPhase({ ...mine, status: "CLOSED" }, NOW)).toBe("closed");
+    expect(ownerEventPhase({ ...mine, startsAt: "2026-10-31T10:00:00Z" }, NOW)).toBe("ended");
+    expect(ownerEventPhase({ ...mine, status: "CANCELED" }, NOW)).toBe("canceled");
+  });
+
+  it("follows the server's reason when the owner view carries one", () => {
+    expect(ownerEventPhase({ ...mine, registrationClosedReason: "DEADLINE" }, NOW)).toBe("closed");
+    expect(ownerEventPhase({ ...mine, startsAt: "2026-10-31T10:00:00Z", registrationClosedReason: null }, NOW)).toBe("open");
   });
 });

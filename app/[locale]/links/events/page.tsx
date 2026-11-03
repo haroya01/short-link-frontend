@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
-import { eventPhase, type EventPhase } from "@/modules/events/lib/phase";
+import { ownerEventPhase } from "@/modules/events/lib/phase";
 import { EventsIntro } from "@/modules/events/components/events-intro";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
@@ -95,7 +95,7 @@ function EventsList({
       ) : (
         <ul className="mt-4 flex flex-col divide-y divide-slate-100 border-t border-slate-200 dark:divide-slate-800/60 dark:border-slate-800">
           {events.map((event) => {
-            const phase = listPhase(event, now);
+            const phase = ownerEventPhase(event, now);
             return (
               <li key={event.id}>
                 <Link href={`/events/${event.id}`} className="group flex items-center gap-4 py-3.5">
@@ -134,16 +134,5 @@ function EventsList({
         </ul>
       )}
     </LinksPage>
-  );
-}
-
-function listPhase(event: MyEvent, now: number): EventPhase {
-  return eventPhase(
-    {
-      ...event,
-      acceptingRegistrations: event.status === "OPEN",
-      spotsLeft: event.capacity == null ? null : event.capacity - event.registrationCount,
-    },
-    now,
   );
 }

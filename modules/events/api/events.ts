@@ -66,6 +66,7 @@ export type MyEvent = {
   closeAt: string | null;
   contactField: ContactField;
   status: "OPEN" | "CLOSED" | "CANCELED";
+  registrationClosedReason?: RegistrationClosedReason | null;
   registrationCount: number;
   questions: EventQuestion[];
   links: EventLink[];

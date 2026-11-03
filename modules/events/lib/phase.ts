@@ -1,4 +1,4 @@
-import type { PublicEvent, RegistrationClosedReason } from "@/modules/events/api/events";
+import type { MyEvent, PublicEvent, RegistrationClosedReason } from "@/modules/events/api/events";
 
 export type EventPhase = "open" | "full" | "closed" | "ended" | "canceled";
 
@@ -32,4 +32,15 @@ export function eventPhase(event: PhaseInput, now: number): EventPhase {
   if (event.spotsLeft != null && event.spotsLeft <= 0) return "full";
   if (!event.acceptingRegistrations) return "closed";
   return "open";
+}
+
+export function ownerEventPhase(event: MyEvent, now: number): EventPhase {
+  return eventPhase(
+    {
+      ...event,
+      acceptingRegistrations: event.status === "OPEN",
+      spotsLeft: event.capacity == null ? null : event.capacity - event.registrationCount,
+    },
+    now,
+  );
 }
