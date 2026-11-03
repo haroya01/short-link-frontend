@@ -16,10 +16,9 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const total = data.totalClicks;
   if (total === 0) return null;
 
-  const newCount = data.returnRate?.newVisitors ?? 0;
   const returningCount = data.returnRate?.returningVisitors ?? 0;
-  const uniqueDenom = newCount + returningCount;
-  const clicksPerUnique = uniqueDenom === 0 ? 0 : data.humanClicks / uniqueDenom;
+  const unique = data.uniqueClicks ?? 0;
+  const clicksPerUnique = unique === 0 ? 0 : data.humanClicks / unique;
   const returningRatio = data.returnRate?.ratio ?? 0;
   const previewClicks = data.previewClicks ?? 0;
   const realClicks = data.humanClicks;
@@ -35,7 +34,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
     {
       label: t("clicksPerUnique"),
       value: clicksPerUnique.toFixed(1),
-      hint: t("clicksPerUniqueHint", { unique: uniqueDenom }),
+      hint: t("clicksPerUniqueHint", { unique }),
     },
     {
       label: t("realVsPreview"),
