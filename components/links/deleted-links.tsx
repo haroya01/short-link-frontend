@@ -67,15 +67,17 @@ export function DeletedLinks({ onRestored, onUnavailable }: { onRestored: () => 
         {items.map((item) => (
           <li key={item.shortCode} className="flex items-center gap-3 py-2.5 pl-3 pr-2 sm:px-4">
             <span className="min-w-0 flex-1 py-0.5">
-              <span className="block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{linkDisplayName(item)}</span>
+              <span className="flex min-w-0 items-center gap-1.5">
+                <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{linkDisplayName(item)}</span>
+                <span className="shrink-0 whitespace-nowrap text-xs font-medium tabular-nums text-slate-500 dark:text-slate-400">
+                  {t("daysLeft", { days: daysUntil(item.purgeAt, { timezone: item.timezone }) })}
+                </span>
+              </span>
               <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[13px] text-slate-500 dark:text-slate-400 sm:text-sm">
                 <span className="shrink-0 font-mono">/{item.shortCode}</span>
                 <span aria-hidden>·</span>
                 <span className="truncate">{t("deletedAt", { when: when(item.deletedAt, item.timezone) })}</span>
               </span>
-            </span>
-            <span className="shrink-0 whitespace-nowrap text-[13px] tabular-nums text-slate-500 dark:text-slate-400">
-              {t("daysLeft", { days: daysUntil(item.purgeAt, { timezone: item.timezone }) })}
             </span>
             <Button
               type="button"
@@ -107,14 +109,14 @@ function DeletedSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <li key={i} className="flex items-center gap-3 py-2.5 pl-3 pr-2 sm:px-4">
           <span className="min-w-0 flex-1 py-0.5">
-            <span className="flex h-[22px] items-center">
+            <span className="flex h-[22px] items-center gap-1.5">
               <Skeleton className="h-3.5 w-32 sm:w-44" />
+              <Skeleton className="h-2.5 w-12" />
             </span>
             <span className="mt-0.5 flex h-5 items-center">
               <Skeleton className="h-3 w-40" />
             </span>
           </span>
-          <Skeleton className="h-3 w-14 shrink-0" />
           <Skeleton className="h-8 w-20 shrink-0" />
         </li>
       ))}
