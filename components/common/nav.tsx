@@ -162,7 +162,7 @@ export function Nav() {
           )}
           {(!ready || !authenticated) && (
             <div data-auth-slot={ready ? undefined : "anon"} className="contents">
-              <LanguageSwitcher />
+              <LanguageSwitcher product="links" />
               {/* kurl desktop theme toggle — signed-out visitors have no account menu, so the toggle
                   stays on the bar; without it kurl-on-desktop could only inherit the shared cookie,
                   never set it. */}

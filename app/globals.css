@@ -61,6 +61,8 @@
   --chart-tooltip-bg: #ffffff;
   --chart-tooltip-border: #e5e8e6;
   --chart-tooltip-text: #131a16;
+  --focus-ink: var(--slate-900);
+  --focus-offset: 255 255 255;
   /* 떠 있는 층 그림자 두 단(tailwind shadow-float·shadow-modal). 잉크색으로 물들인 그림자 —
      기본 검정 그림자는 초록 저채도 종이 위에서 회색 얼룩으로 뜬다. */
   --shadow-float: 0 1px 2px rgba(19, 26, 22, 0.06), 0 12px 28px -10px rgba(19, 26, 22, 0.2);
@@ -99,6 +101,8 @@
   --chart-tooltip-bg: rgb(var(--slate-850));
   --chart-tooltip-border: rgb(var(--slate-700));
   --chart-tooltip-text: rgb(var(--slate-100));
+  --focus-ink: var(--slate-100);
+  --focus-offset: var(--slate-950);
   --shadow-float: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 28px -10px rgba(0, 0, 0, 0.7);
   --shadow-modal: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 56px -16px rgba(0, 0, 0, 0.8);
   --avatar-rose-bg: #3a2128;
@@ -202,6 +206,11 @@ html.dark body {
 }
 html.dark {
   color-scheme: dark;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--focus-ink));
+  outline-offset: 2px;
 }
 
 /* Native checkboxes and radios take the selection ink instead of the browser's own blue. */
@@ -477,14 +486,14 @@ mark.kurl-highlight--mine {
    * the wrapper already uses box-shadow for its baseline + hover lift — combining them is fragile,
    * outline sits on its own paint layer. */
   .profile-card:focus-visible {
-    outline: 2px solid theme(colors.accent.600);
+    outline: 2px solid rgb(var(--focus-ink));
     outline-offset: 2px;
   }
 
   /* Shared focus ring for inner buttons inside .profile-card-static wrappers (Gallery nav,
    * Contact dock, Place action grid, Event calendar dropdown, etc.). These widgets aren't on the
    * card wrapper itself so they don't pick up the .profile-card:focus-visible rule — applying
-   * .focus-ring directly to the button gives them the same accent outline.
+   * .focus-ring directly to the button gives them the same outline.
    *
    * <p>Single utility instead of typing out `focus-visible:outline focus-visible:outline-2 ...`
    * on every clickable inside a card — repeated 6+ times across the entry components, easy to
@@ -493,12 +502,7 @@ mark.kurl-highlight--mine {
      composes with an element's existing drop shadow via Tailwind's ring/shadow vars. Change the
      focus treatment here once instead of in every call site. */
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2;
-  }
-  /* Tailwind's default ring-offset color is white — on a dark surface the 2px offset reads as a white
-     halo around the focus ring. Match it to the page base instead. */
-  .dark .focus-ring {
-    @apply focus-visible:ring-offset-slate-950;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--focus-ink))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--focus-offset))];
   }
   /* 전면 오버레이 뒤 막은 이것 하나 — 대화상자·시트·서랍이 같은 농도, 흐림 없음. */
   .scrim {
@@ -1740,7 +1744,7 @@ body[data-cookie-consent="visible"] {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  background: theme(colors.accent.500);
+  background: inherit;
   opacity: 0;
   animation: live-ping 900ms var(--ease) 1;
 }
@@ -2423,10 +2427,10 @@ html[data-theme-vt] .vt-link-code {
   0% { background-color: var(--arrive-peak); }
   100% { background-color: transparent; }
 }
-.click-arrive-a { --arrive-peak: rgb(5 150 105 / 0.14); animation: click-arrive-a 1.8s cubic-bezier(0.22, 1, 0.36, 1); }
-.click-arrive-b { --arrive-peak: rgb(5 150 105 / 0.14); animation: click-arrive-b 1.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.click-arrive-a { --arrive-peak: rgb(19 26 22 / 0.07); animation: click-arrive-a 1.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.click-arrive-b { --arrive-peak: rgb(19 26 22 / 0.07); animation: click-arrive-b 1.8s cubic-bezier(0.22, 1, 0.36, 1); }
 /* 다크 표면에선 같은 알파가 훨씬 옅게 읽힌다 — 피크만 한 단계 올려 체감 균형을 맞춘다. */
-.dark .click-arrive-a, .dark .click-arrive-b { --arrive-peak: rgb(16 185 129 / 0.22); }
+.dark .click-arrive-a, .dark .click-arrive-b { --arrive-peak: rgb(230 234 231 / 0.1); }
 
 @keyframes count-bump {
   0% { transform: translateY(0.45em); opacity: 0; }

@@ -67,7 +67,7 @@ export function ResultLine({
               {display}
             </span>
           </a>
-          <CopyButton size="sm" variant="accent" label={t("copy")} value={result.shortUrl} />
+          <CopyButton size="sm" label={t("copy")} value={result.shortUrl} />
           <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-accent-600 dark:bg-accent-500" />
         </div>
         {passes > 0 && (
@@ -85,7 +85,7 @@ export function ResultLine({
           {truncateMiddle(originalUrl, 48)}
         </span>
         {result.passwordProtected ? (
-          <span className="inline-flex items-center gap-1 font-medium text-accent-700 dark:text-accent-400">
+          <span className="inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-100">
             <Lock aria-hidden className="h-3.5 w-3.5" />
             {t("passwordProtected")}
           </span>
@@ -109,7 +109,7 @@ export function ResultLine({
             <SignInLink
               reason="stats"
               next="/dashboard"
-              className="focus-ring rounded-sm font-medium text-accent-700 underline decoration-accent-300 decoration-1 underline-offset-[3px] transition-colors hover:text-accent-800 dark:text-accent-400 dark:decoration-accent-700 dark:hover:text-accent-300"
+              className="focus-ring rounded-sm font-medium text-slate-900 underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors hover:decoration-slate-900 dark:text-slate-100 dark:decoration-slate-600 dark:hover:decoration-slate-100"
             >
               {t("anonymousExpirySignup")}
             </SignInLink>

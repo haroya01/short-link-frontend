@@ -134,7 +134,7 @@ export function ActionMenu({
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <span className="flex-1">{itemLabel}</span>
-                {checked && <Check aria-hidden className="h-4 w-4 shrink-0 text-accent-700 dark:text-accent-400" />}
+                {checked && <Check aria-hidden className="h-4 w-4 shrink-0 text-slate-900 dark:text-slate-100" />}
               </button>
             ),
           )}

@@ -135,7 +135,7 @@ export function ImageCropperDialog({
             type="button"
             onClick={handleConfirm}
             disabled={busy || !areaPixels}
-            className="focus-ring rounded-lg bg-accent-500 px-4 py-1.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="focus-ring rounded-lg bg-white px-4 py-1.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? t("applying") : t("apply")}
           </button>

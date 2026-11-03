@@ -49,7 +49,7 @@ export function DashboardOnboardingScene() {
               1,540
             </p>
           </div>
-          <svg viewBox="0 0 100 26" className="h-[26px] w-[110px] shrink-0 text-accent-600 dark:text-accent-400">
+          <svg viewBox="0 0 100 26" className="h-[26px] w-[110px] shrink-0 text-slate-900 dark:text-slate-100">
             <path
               pathLength="100"
               className="obs-draw"
@@ -86,7 +86,7 @@ export function CampaignOnboardingScene() {
         >
           <div className="mx-auto h-1.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
           <div className="mx-auto mt-1 h-1.5 w-8 rounded bg-slate-100 dark:bg-slate-800" />
-          <div className="mt-2 h-9 rounded-md bg-accent-50 dark:bg-accent-500/10" />
+          <div className="mt-2 h-9 rounded-md bg-slate-100 dark:bg-slate-800" />
           <div className="mt-2 flex justify-center">
             <QrCode className="h-7 w-7 text-slate-900 dark:text-slate-100" />
           </div>

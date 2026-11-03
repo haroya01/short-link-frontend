@@ -28,7 +28,7 @@ export function SceneBar({
         </span>
       </div>
       <div
-        className="obs-bar mt-1 h-1 rounded-full bg-accent-600 dark:bg-accent-500"
+        className="obs-bar mt-1 h-1 rounded-full bg-slate-900 dark:bg-slate-100"
         style={{ width, animationDelay: delay }}
       />
     </div>
