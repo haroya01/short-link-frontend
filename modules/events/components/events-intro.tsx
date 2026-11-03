@@ -6,34 +6,28 @@ import { buttonVariants } from "@/components/ui/button";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { inert } from "@/lib/utils";
 import type { ContactField, EventAnalytics, PublicEvent } from "@/modules/events/api/events";
+import { exampleEventTimes } from "@/modules/events/lib/example";
+import type { EventWhenText } from "@/modules/events/lib/format";
 import { AnalyticsPanel } from "./analytics-panel";
 import { EventPageView } from "./event-page-view";
 
-const DAY_MS = 86_400_000;
-
-function exampleNow(): number {
-  const built = Date.parse(`${process.env.NEXT_PUBLIC_BUILD_DATE ?? ""}T10:00:00Z`);
-  return Number.isNaN(built) ? Date.UTC(2026, 8, 28, 10) : built;
-}
-
 const CONTACT: Record<string, ContactField> = { ko: "KAKAO", ja: "LINE" };
 
-export function EventsIntro() {
+export function EventsIntro({ when }: { when: EventWhenText }) {
   const t = useTranslations("events.intro");
   const tDemo = useTranslations("events.intro.demo");
   const locale = useLocale();
-  const now = exampleNow();
+  const { now, startsAt, endsAt, timezone } = exampleEventTimes(locale);
 
   const event = useMemo<PublicEvent>(() => {
-    const start = now + 9 * DAY_MS;
     return {
       slug: "example",
       title: tDemo("eventTitle"),
       descriptionMd: null,
       coverImageUrl: null,
-      startsAt: new Date(start).toISOString(),
-      endsAt: new Date(start + 2 * 3_600_000).toISOString(),
-      timezone: locale === "ja" ? "Asia/Tokyo" : "Asia/Seoul",
+      startsAt,
+      endsAt,
+      timezone,
       locationText: tDemo("eventPlace"),
       locationUrl: null,
       onlineUrl: null,
@@ -48,7 +42,7 @@ export function EventsIntro() {
       organizerAvatarUrl: null,
       questions: [{ id: 1, type: "SHORT_TEXT", label: tDemo("question"), options: [], required: false }],
     };
-  }, [tDemo, locale, now]);
+  }, [tDemo, locale, startsAt, endsAt, timezone]);
 
   const analytics = useMemo<EventAnalytics>(() => {
     const channels = [tDemo("channels.groupChat"), tDemo("channels.instagram"), tDemo("channels.qrPoster")];
@@ -84,6 +78,7 @@ export function EventsIntro() {
         <Band label={t("example.guest")}>
           <EventPageView
             event={event}
+            when={when}
             now={now}
             heading="h2"
             preview

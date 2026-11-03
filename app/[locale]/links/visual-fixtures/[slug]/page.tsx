@@ -4,6 +4,7 @@ import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { Markdown } from "@/modules/blog/components/markdown";
 import { EventPageView } from "@/modules/events/components/event-page-view";
+import { eventWhenText } from "@/modules/events/lib/format";
 import type { PublicEvent } from "@/modules/events/api/events";
 import type { ContactCardConfig } from "@/types";
 
@@ -50,6 +51,7 @@ const FIXTURES: Record<string, () => React.ReactNode> = {
   "public-event": () => (
     <EventPageView
       event={SAMPLE_EVENT}
+      when={eventWhenText(SAMPLE_EVENT, "ko", { am: "오전", pm: "오후" })}
       now={Date.parse("2026-08-01T00:00:00Z")}
       description={<Markdown>{SAMPLE_EVENT.descriptionMd ?? ""}</Markdown>}
     />

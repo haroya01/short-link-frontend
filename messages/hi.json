@@ -4156,7 +4156,9 @@
       "contactInstagramPlaceholder": "@handle",
       "metaWhen": "कब",
       "aboutTitle": "विवरण",
-      "endedNotice": "यह इवेंट समाप्त हो चुका है।"
+      "endedNotice": "यह इवेंट समाप्त हो चुका है।",
+      "am": "am",
+      "pm": "pm"
     },
     "list": {
       "title": "इवेंट",

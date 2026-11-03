@@ -22,6 +22,7 @@ test.describe("desktop", () => {
   test("an end before the start is reported right under the end field, on leaving it and on publish", async ({ page }) => {
     const posts = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.locator("#ef-title").fill("성수 모각코");
     await page.locator("#ef-starts").fill("2030-04-01T19:00");
     await page.locator("#ef-ends").fill("2030-04-01T18:00");
@@ -47,6 +48,7 @@ test.describe("desktop", () => {
   test("publishing an empty title marks the title field and sends nothing", async ({ page }) => {
     const posts = await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await expect(page.getByText("* 필수", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "발행하기" }).click();
     await expect(page.locator("#ef-title-error")).toHaveText("제목을 적어 주세요");
@@ -64,6 +66,7 @@ test.describe("desktop", () => {
         }),
     });
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.locator("#ef-title").fill("성수 모각코");
     await page.locator("#ef-starts").fill("2030-04-01T19:00");
     await page.locator("#ef-close").fill("2030-04-01T18:00");
@@ -77,6 +80,7 @@ test.describe("desktop", () => {
   test("the preview beside the form follows what is typed", async ({ page }) => {
     await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await expect(preview(page)).toBeVisible();
     await expect(page.getByRole("tab", { name: "미리보기" })).toBeHidden();
 
@@ -106,6 +110,7 @@ test.describe("phone", () => {
   test("a tab switches between the form and the same preview", async ({ page }) => {
     await organizer(page);
     await page.goto("/ko/events/new");
+    await expect(page.locator("#ef-starts")).not.toHaveValue("");
     await page.locator("#ef-title").fill("퇴근 후 러닝");
     await expect(preview(page)).toBeHidden();
 
@@ -123,15 +128,17 @@ test.describe("phone", () => {
 });
 
 test.describe("signed out", () => {
-  test("the intro hydrates without a text mismatch, so the pre-paint flags on <html> survive", async ({ page }) => {
-    const errors: string[] = [];
-    page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto("/ko/events");
-    await expect(page.getByRole("link", { name: "로그인하고 시작하기" })).toBeVisible();
-    await page.waitForTimeout(500);
-    await expect(page.locator("html")).toHaveAttribute("data-js", "");
-    expect(errors.filter((message) => /#4(18|23|25)\b|hydrat/i.test(message))).toEqual([]);
-  });
+  for (const path of ["/ko/events", "/ko/events/new"]) {
+    test(`${path} hydrates without a text mismatch, so the pre-paint flags on <html> survive`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on("pageerror", (error) => errors.push(error.message));
+      await page.goto(path);
+      await expect(page.getByRole("link", { name: "로그인하고 시작하기" })).toBeVisible();
+      await page.waitForTimeout(500);
+      await expect(page.locator("html")).toHaveAttribute("data-js", "");
+      expect(errors.filter((message) => /#4(18|23|25)\b|hydrat/i.test(message))).toEqual([]);
+    });
+  }
 
   test("the events intro shows the real participant page and the real analytics panel", async ({ page }) => {
     await page.goto("/ko/events");

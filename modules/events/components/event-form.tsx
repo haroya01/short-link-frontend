@@ -14,7 +14,7 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn } from "@/lib/utils";
 import type { ContactField, EventDraft, MyEvent, PublicEvent, QuestionSpec } from "@/modules/events/api/events";
 import { commitCover, presignCover } from "@/modules/events/api/events";
-import { isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
+import { eventWhenText, isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
 import {
   eventFormErrors,
   FIELD_ORDER,
@@ -56,9 +56,10 @@ type FormState = {
   questions: QuestionSpec[];
 };
 
-function initialState(event: MyEvent | null): FormState {
-  const timezone =
-    event?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? "Asia/Tokyo";
+const LOCALE_ZONE: Record<string, string> = { ko: "Asia/Seoul", ja: "Asia/Tokyo" };
+
+function initialState(event: MyEvent | null, locale: string): FormState {
+  const timezone = event?.timezone ?? LOCALE_ZONE[locale] ?? "UTC";
   return {
     title: event?.title ?? "",
     descriptionMd: event?.descriptionMd ?? "",
@@ -101,10 +102,11 @@ export function EventForm({
   onSubmit: (draft: EventDraft) => Promise<void>;
 }) {
   const t = useTranslations("events.form");
+  const tPublic = useTranslations("events.public");
   const locale = useLocale();
   const errorMessage = useApiErrorMessage();
   const { me } = useAuth();
-  const [form, setForm] = useState<FormState>(() => initialState(event));
+  const [form, setForm] = useState<FormState>(() => initialState(event, locale));
   const [coverUrl, setCoverUrl] = useState<string | null>(event?.coverImageUrl ?? null);
   const [touched, setTouched] = useState<Partial<Record<EventFormField, boolean>>>({});
   const [serverErrors, setServerErrors] = useState<EventFormErrors>({});
@@ -119,7 +121,7 @@ export function EventForm({
   };
   const touch = (field: EventFormField) => setTouched((prev) => (prev[field] ? prev : { ...prev, [field]: true }));
 
-  // 기본 시작은 다음 주 19:00(iOS 생성 폼과 같음). 서버와 클라이언트의 now 가 달라 마운트 뒤에 채운다.
+  // 기본 시작(다음 주 19:00, iOS 생성 폼과 같음)과 시간대는 서버와 브라우저가 달라 마운트 뒤에 채운다.
   useEffect(() => {
     if (event != null) return;
     setForm((prev) => {
@@ -129,7 +131,8 @@ export function EventForm({
       base.setHours(19, 0, 0, 0);
       const pad = (n: number) => String(n).padStart(2, "0");
       const wall = `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}T${pad(base.getHours())}:${pad(base.getMinutes())}`;
-      return { ...prev, startsAtLocal: wall };
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || prev.timezone;
+      return { ...prev, startsAtLocal: wall, timezone };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -208,6 +211,10 @@ export function EventForm({
       required: q.required,
     })),
   };
+
+  const previewWhen = preview.startsAt
+    ? eventWhenText(preview, locale, { am: tPublic("am"), pm: tPublic("pm") })
+    : null;
 
   const showTab = (next: Tab) => {
     setTab(next);
@@ -459,6 +466,7 @@ export function EventForm({
           >
             <EventPageView
               event={preview}
+              when={previewWhen}
               now={now}
               heading="h2"
               preview

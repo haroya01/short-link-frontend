@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { isHttpUrl } from "@/lib/extract-url";
 import type { PublicEvent } from "@/modules/events/api/events";
-import { formatEventWhen, timezoneLabel } from "@/modules/events/lib/format";
+import type { EventWhenText } from "@/modules/events/lib/format";
 import { placeIdFromUrl } from "@/modules/events/lib/place";
 import { eventPhase } from "@/modules/events/lib/phase";
 import { RegistrationPanel } from "./registration-panel";
@@ -17,6 +17,7 @@ const LINK =
 
 export function EventPageView({
   event,
+  when,
   now,
   description,
   heading = "h1",
@@ -25,6 +26,7 @@ export function EventPageView({
   onRegistered,
 }: {
   event: PublicEvent;
+  when: EventWhenText | null;
   now: number;
   description?: ReactNode;
   heading?: "h1" | "h2";
@@ -35,9 +37,6 @@ export function EventPageView({
   const t = useTranslations("events.public");
   const locale = useLocale();
   const Heading = heading;
-  const when = Number.isNaN(Date.parse(event.startsAt))
-    ? null
-    : formatEventWhen(event.startsAt, event.endsAt, event.timezone, locale);
   const placeId = MAPS_KEY && event.locationUrl ? placeIdFromUrl(event.locationUrl) : null;
 
   return (
@@ -68,15 +67,9 @@ export function EventPageView({
         <Fact label={t("metaWhen")}>
           {when ? (
             <>
-              {/* Intl 결과가 서버(Node)와 브라우저의 ICU 에 따라 다르다(CI Node 의 ko 시각이 "PM 7:00"). */}
-              <span className="block" suppressHydrationWarning>
-                {when.day}
-              </span>
-              <span className="block" suppressHydrationWarning>
-                {when.time}{" "}
-                <span className="text-slate-500 dark:text-slate-400" suppressHydrationWarning>
-                  ({timezoneLabel(event.timezone, locale)})
-                </span>
+              <span className="block">{when.day}</span>
+              <span className="block">
+                {when.time} <span className="text-slate-500 dark:text-slate-400">({when.zone})</span>
               </span>
             </>
           ) : (

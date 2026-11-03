@@ -4156,7 +4156,9 @@
       "contactInstagramPlaceholder": "@handle",
       "metaWhen": "Thời gian",
       "aboutTitle": "Giới thiệu",
-      "endedNotice": "Sự kiện đã kết thúc."
+      "endedNotice": "Sự kiện đã kết thúc.",
+      "am": "SA",
+      "pm": "CH"
     },
     "list": {
       "title": "Sự kiện",

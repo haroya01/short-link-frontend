@@ -40,7 +40,9 @@ const meetup: PublicEvent = {
 
 function render(event: PublicEvent) {
   const root = document.createElement("template");
-  root.innerHTML = renderToStaticMarkup(<EventPageView event={event} now={NOW} />);
+  root.innerHTML = renderToStaticMarkup(
+    <EventPageView event={event} when={{ day: "11월 10일 (화)", time: "오후 7:00", zone: "대한민국 시간" }} now={NOW} />,
+  );
   return root.content;
 }
 
