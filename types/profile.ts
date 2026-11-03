@@ -78,7 +78,7 @@ export type PublicProfileEntry = {
   originalUrl: string | null;
   ogTitle: string | null;
   ogImage: string | null;
-  clickCount: number | null;
+  clickCount?: number | null;
   highlighted: boolean | null;
   /** LINK behind a password: the server withholds originalUrl and ogImage. Null for blocks. */
   protected?: boolean | null;

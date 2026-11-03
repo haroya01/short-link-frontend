@@ -12,6 +12,7 @@ import { DailyChart } from "@/components/links/stats/charts/daily-chart";
 import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn } from "@/lib/utils";
+import { sourceBreakdown } from "@/lib/stats-sources";
 import type { LinkStats } from "@/types";
 
 function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats }) {
@@ -22,12 +23,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
     case "section-hourly":
       return <HourChart data={data.hourClicks ?? []} compact />;
     case "section-sources":
-      return (
-        <BreakdownList
-          items={(data.referrerHostClicks ?? []).map((r) => ({ label: r.host, count: r.count }))}
-          maxItems={5}
-        />
-      );
+      return <BreakdownList {...sourceBreakdown(data, t("breakdown.direct"))} maxItems={5} />;
     case "section-device":
       return <DeviceChart data={data.deviceClicks ?? []} />;
     case "section-bots": {
@@ -60,11 +56,12 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
       return (
         <BreakdownList
           items={(data.countryClicks ?? []).map((c) => ({ label: c.country, count: c.count }))}
+          total={data.humanClicks}
           maxItems={5}
         />
       );
     case "section-client-app":
-      return <ClientAppBreakdown items={data.clientAppClicks ?? []} maxItems={5} />;
+      return <ClientAppBreakdown items={data.clientAppClicks ?? []} total={data.humanClicks} maxItems={5} />;
     case "section-channel-depth":
       // 충성도 문장의 근거는 클릭 순위가 아니라 채널별 재방문율이다 — 상세와 같은 표를 그대로.
       return (
@@ -76,11 +73,8 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
 }
 
 /** 룰 엔진은 i18n 을 모르는 순수 함수다. 메시지 키·날짜 번역은 렌더 직전 여기서만 한다. */
-function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTranslations>, locale: string) {
+function resolveParams(entry: JournalEntry, locale: string) {
   const resolved = { ...entry.params };
-  for (const name of entry.translatedParams ?? []) {
-    resolved[name] = tStats(String(entry.params[name]));
-  }
   const date = resolved.date;
   if (typeof date === "string" && /^\d{2}-\d{2}$/.test(date)) {
     const [month, day] = date.split("-").map(Number);
@@ -101,7 +95,6 @@ export function StatsJournal({
   initialVisible?: number;
 }) {
   const t = useTranslations("stats.journal");
-  const tStats = useTranslations("stats");
   const locale = useLocale();
   const entries = buildJournal(data);
   const [showAll, setShowAll] = useState(false);
@@ -141,7 +134,7 @@ export function StatsJournal({
               >
                 <span className="flex items-start gap-3">
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
-                    {t(entry.key, resolveParams(entry, tStats, locale))}
+                    {t(entry.key, resolveParams(entry, locale))}
                   </span>
                   <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
                     {t("evidence")}
