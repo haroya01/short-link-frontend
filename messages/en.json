@@ -1406,12 +1406,6 @@
     "invalidType": "Only JPG, PNG, WebP are allowed",
     "tooBig": "Image is too large"
   },
-  "expiringBanner": {
-    "title": "{count, plural, one {# link expires} other {# links expire}} in the next 3 days",
-    "hint": "Extend the expiry or delete the ones you don't need.",
-    "showAll": "Show all",
-    "dismiss": "Dismiss"
-  },
   "dashboard": {
     "label": "dashboard",
     "title": "My Links",
@@ -1448,25 +1442,6 @@
     "emptyTitle": "Make your first link",
     "emptyDesc": "Shorten one URL and within a minute the clicks / countries / channels / devices view fills in. Takes 30 seconds.",
     "emptyCta": "Shorten now",
-    "onboarding": {
-      "eyebrow": "Welcome",
-      "title": "Three steps",
-      "subtitle": "Shorten a link and post it where people will see it. Clicks collect here.",
-      "step1Title": "Shorten a link",
-      "step1Desc": "Paste a long URL into the shortener, set a code, expiry or password if you like, then press Shorten.",
-      "step2Title": "Share it",
-      "step2Desc": "Post it in an Instagram bio, KakaoTalk or on a business card. You can download a QR code too.",
-      "step3Title": "See the stats",
-      "step3Desc": "Clicks are broken down by channel, country, device and time of day.",
-      "secondaryCta": "Or preview the analytics screen",
-      "scene": {
-        "weekClicks": "Clicks this week",
-        "example": "Example"
-      }
-    },
-    "noResultTitle": "No matches",
-    "noResultDesc": "Could not find any link matching \"{query}\".",
-    "noResultDescFiltered": "No links match the current filters.",
     "table": {
       "shortUrl": "Link name",
       "originalUrl": "Destination",
@@ -1490,15 +1465,15 @@
       "edit": "Edit",
       "delete": "Delete",
       "more": "More",
-      "openOriginal": "Open destination"
+      "openOriginal": "Open destination",
+      "qr": "QR code",
+      "settings": "Link settings"
     },
     "favorite": {
       "add": "Add to favorites",
       "remove": "Remove from favorites",
       "filter": "Favorites",
       "emptyTitle": "No favorite links yet",
-      "emptyDesc": "Star a link in All links to save it here.",
-      "syncedHint": "Saved to your account and available in the app and on the web.",
       "saveFailed": "Could not save favorites. Please try again.",
       "loadFailed": "Could not load favorites.",
       "orderTitle": "Favorite order",
@@ -1507,7 +1482,7 @@
       "moveUp": "Move {name} up",
       "moveDown": "Move {name} down"
     },
-    "deleteConfirmTitle": "Delete this link?",
+    "deleteConfirmTitle": "Delete /{code}?",
     "deleteConfirmDesc": "Deleted links cannot be recovered. Click stats are also lost.",
     "deleteOk": "Delete",
     "deleted": "Link deleted",
@@ -1531,7 +1506,8 @@
         "HAS_EXPIRY": "Has expiry",
         "EXPIRING_SOON": "Expiring in 3 days",
         "EXPIRED": "Expired"
-      }
+      },
+      "remove": "Remove filter {label}"
     },
     "bulkSelectAll": "Select all links on this page",
     "bulkSelectRow": "Select /{code}",
@@ -1549,17 +1525,17 @@
       "description": "Header columns: url (required), custom_code, expires_at (ISO-8601). The first row is auto-detected as a header if it matches.",
       "limitHint": "Up to 100 rows per upload. You'll get a result CSV after validation.",
       "cancel": "Cancel",
-      "close": "Close",
       "upload": "Upload",
       "uploading": "Uploading...",
       "uploadFailed": "Upload failed.",
       "resultSummary": "{ok} succeeded · {failed} failed",
       "resultHint": "The result CSV includes per-row outcome (short_url or error).",
       "downloadResult": "Download result CSV",
-      "uploadAnother": "Upload another",
-      "done": "Done"
+      "done": "Done",
+      "chooseFile": "Choose file",
+      "noFile": "No file chosen"
     },
-    "loadFailed": "Could not load links. Please try again.",
+    "loadFailed": "Couldn't load your links.",
     "overviewFailed": "Could not load account statistics.",
     "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
     "libraryViews": "Link collection",
@@ -1567,7 +1543,12 @@
     "subtitleCount": "{count, plural, one {# link} other {# links}}",
     "selectMode": "Select",
     "selectDone": "Done",
-    "todayDelta": "{count, number} today"
+    "todayDelta": "{count, number} today",
+    "firstRunTitle": "No links yet",
+    "searchClear": "Clear search",
+    "noResultQuery": "No links match “{query}”",
+    "noResultFiltered": "No links match these filters",
+    "expiringSoon": "{count} expiring in 3 days"
   },
   "edit": {
     "title": "Edit link",
@@ -4344,7 +4325,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "favorite": "Add to favorites",
-    "unfavorite": "Remove from favorites"
+    "unfavorite": "Remove from favorites",
+    "settings": "Link settings"
   },
   "linkReport": {
     "title": "Report a link",

@@ -5,6 +5,7 @@ import { usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
 import { appStoreUrl, type IosApp } from "@/lib/app-store";
 import { linksHref } from "@/lib/host";
+import { LanguageSwitcher } from "@/components/common/language-switcher";
 
 const LINK = "inline-flex min-h-6 items-center hover:text-slate-900 dark:hover:text-slate-100";
 
@@ -180,9 +181,12 @@ function DirectoryFooter({ app }: { app?: IosApp }) {
             </ul>
           </section>
         </div>
-        <p className="mt-10 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
-          {t("copyright", { year: new Date().getFullYear() })}
-        </p>
+        <div className="mt-10 flex items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          <p>{t("copyright", { year: new Date().getFullYear() })}</p>
+          <div className="sm:hidden">
+            <LanguageSwitcher placement="up" withLabel />
+          </div>
+        </div>
       </div>
     </footer>
   );

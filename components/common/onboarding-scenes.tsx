@@ -8,66 +8,6 @@ import { SceneBar, SceneExample } from "@/components/common/onboarding-scene-par
  */
 
 
-/** 대시보드 온보딩 — 긴 URL 이 kurl 필로 줄고, 미니 통계 카드에 클릭이 흘러든다. */
-export function DashboardOnboardingScene() {
-  const t = useTranslations("dashboard.onboarding.scene");
-  return (
-    <div
-      aria-hidden
-      className="relative h-[190px] overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 dark:border-slate-700/70 dark:bg-slate-900/50"
-    >
-      <SceneExample label={t("example")} />
-      <div
-        className="obs-rise absolute left-4 top-4 max-w-[70%] truncate rounded-lg bg-slate-100 px-2.5 py-1.5 font-mono text-[10px] text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-        style={{ animationDelay: "0.1s" }}
-      >
-        https://shop.example.com/summer-sale?utm_source=instagram
-      </div>
-
-      <div
-        className="obs-pop absolute left-4 top-[46px] flex items-center gap-1.5"
-        style={{ animationDelay: "0.55s" }}
-      >
-        <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
-          ↳
-        </span>
-        <span className="inline-flex items-center rounded-md border border-accent-300/60 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-accent-700 dark:border-accent-700/60 dark:bg-slate-950 dark:text-accent-400">
-          kurl.me/sp2ng
-        </span>
-      </div>
-
-      <div
-        className="obs-pop absolute inset-x-4 bottom-4 rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900"
-        style={{ animationDelay: "1.05s" }}
-      >
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-              {t("weekClicks")}
-            </p>
-            <p className="mt-0.5 text-xl font-semibold tabular-nums leading-none text-slate-900 dark:text-slate-100">
-              1,540
-            </p>
-          </div>
-          <svg viewBox="0 0 100 26" className="h-[26px] w-[110px] shrink-0 text-accent-600 dark:text-accent-400">
-            <path
-              pathLength="100"
-              className="obs-draw"
-              style={{ animationDelay: "1.4s" }}
-              d="M0 22 L14 18 L28 20 L42 11 L56 14 L70 6 L84 9 L100 2"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /** QR 캠페인 온보딩 — 포스터의 QR 과 곳별 스캔 수. */
 export function CampaignOnboardingScene() {
   const t = useTranslations("campaignsApp.onboarding.scene");

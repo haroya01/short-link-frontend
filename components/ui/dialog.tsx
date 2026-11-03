@@ -72,7 +72,7 @@ export function ConfirmDialog({
   }, [busy]);
 
   useFocusTrap(dialogRef, {
-    active: open,
+    active: open && present && mounted,
     onEscape: () => {
       if (!busyRef.current) onOpenChange(false);
     },

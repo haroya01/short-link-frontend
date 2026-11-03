@@ -1406,12 +1406,6 @@
     "invalidType": "JPG, PNG, WebP만 가능해요",
     "tooBig": "이미지가 너무 커요. 권장 용량을 확인해 주세요."
   },
-  "expiringBanner": {
-    "title": "{count}개 링크가 3일 안에 만료돼요",
-    "hint": "필요한 링크는 만료일을 연장하거나 삭제해두세요.",
-    "showAll": "모두 보기",
-    "dismiss": "닫기"
-  },
   "dashboard": {
     "label": "dashboard",
     "title": "내 링크",
@@ -1448,25 +1442,6 @@
     "emptyTitle": "첫 링크를 만들어볼까요",
     "emptyDesc": "URL 하나만 단축해도 1분 안에 클릭·국가·채널·디바이스 분석이 채워지기 시작해요. 한 번 단축에 30초도 안 걸려요.",
     "emptyCta": "지금 단축하기",
-    "onboarding": {
-      "eyebrow": "처음 오신 걸 환영해요",
-      "title": "세 단계면 돼요",
-      "subtitle": "링크를 줄여 필요한 곳에 붙이면, 눌린 기록이 여기에 쌓여요.",
-      "step1Title": "링크 줄이기",
-      "step1Desc": "단축 칸에 긴 주소를 붙여 넣고, 필요하면 코드·만료·비밀번호를 정한 뒤 단축을 눌러요.",
-      "step2Title": "공유하기",
-      "step2Desc": "인스타그램 소개, 카카오톡, 명함 어디든 붙여요. QR 코드도 받을 수 있어요.",
-      "step3Title": "통계 확인",
-      "step3Desc": "클릭이 들어오면 채널·나라·기기·시간대별로 나눠 보여 드려요.",
-      "secondaryCta": "통계 화면이 어떤지 데모로 보기",
-      "scene": {
-        "weekClicks": "이번 주 클릭",
-        "example": "예시"
-      }
-    },
-    "noResultTitle": "검색 결과가 없어요",
-    "noResultDesc": "\"{query}\"와 일치하는 링크를 찾지 못했어요.",
-    "noResultDescFiltered": "지금 조건에 맞는 링크가 없어요.",
     "table": {
       "shortUrl": "링크 이름",
       "originalUrl": "목적지",
@@ -1490,15 +1465,15 @@
       "edit": "편집",
       "delete": "삭제",
       "more": "더보기",
-      "openOriginal": "목적지 열기"
+      "openOriginal": "목적지 열기",
+      "qr": "QR 코드",
+      "settings": "링크 설정"
     },
     "favorite": {
       "add": "즐겨찾기에 추가",
       "remove": "즐겨찾기 해제",
       "filter": "즐겨찾기",
       "emptyTitle": "즐겨찾기한 링크가 없어요",
-      "emptyDesc": "전체 링크에서 별표를 누르면 이곳에 저장돼요.",
-      "syncedHint": "계정에 저장되어 앱과 웹에서 같은 링크를 찾을 수 있어요.",
       "saveFailed": "즐겨찾기를 저장하지 못했어요. 다시 시도해 주세요.",
       "loadFailed": "즐겨찾기를 불러오지 못했어요.",
       "orderTitle": "즐겨찾기 순서",
@@ -1507,7 +1482,7 @@
       "moveUp": "{name} 위로 이동",
       "moveDown": "{name} 아래로 이동"
     },
-    "deleteConfirmTitle": "링크를 삭제할까요?",
+    "deleteConfirmTitle": "/{code} 링크를 삭제할까요?",
     "deleteConfirmDesc": "삭제된 링크는 복구할 수 없어요. 클릭 통계도 함께 사라져요.",
     "deleteOk": "삭제",
     "deleted": "링크를 삭제했어요",
@@ -1529,9 +1504,10 @@
         "ACTIVE": "유효한 링크만",
         "NEVER": "만료 없음",
         "HAS_EXPIRY": "만료가 있는 것",
-        "EXPIRING_SOON": "3 일 내 만료",
+        "EXPIRING_SOON": "3일 안에 만료",
         "EXPIRED": "만료된 링크"
-      }
+      },
+      "remove": "{label} 필터 지우기"
     },
     "bulkSelectAll": "이 페이지의 모든 링크 선택",
     "bulkSelectRow": "/{code} 선택",
@@ -1549,17 +1525,17 @@
       "description": "헤더는 url(필수), custom_code, expires_at(ISO-8601). 첫 줄이 헤더면 자동으로 인식해요.",
       "limitHint": "한 번에 최대 100줄. 봇/만료 검증 후 결과 CSV를 받을 수 있어요.",
       "cancel": "취소",
-      "close": "닫기",
       "upload": "업로드",
       "uploading": "업로드 중…",
       "uploadFailed": "업로드에 실패했어요.",
       "resultSummary": "성공 {ok}건 · 실패 {failed}건",
       "resultHint": "결과 CSV에 각 줄별 결과(short_url 또는 error)가 포함돼 있어요.",
       "downloadResult": "결과 CSV 다운로드",
-      "uploadAnother": "다른 파일 업로드",
-      "done": "완료"
+      "done": "완료",
+      "chooseFile": "파일 선택",
+      "noFile": "선택한 파일 없음"
     },
-    "loadFailed": "링크를 불러오지 못했어요. 다시 시도해 주세요.",
+    "loadFailed": "링크를 불러오지 못했어요.",
     "overviewFailed": "전체 링크 통계를 불러오지 못했어요.",
     "accountScope": "계정 전체 · {tz} · 자동 접속 포함 누적 {total}회 · 목록 필터와 별도로 집계",
     "libraryViews": "링크 목록 선택",
@@ -1567,7 +1543,12 @@
     "subtitleCount": "링크 {count}개",
     "selectMode": "선택",
     "selectDone": "완료",
-    "todayDelta": "오늘 {count, number}"
+    "todayDelta": "오늘 {count, number}",
+    "firstRunTitle": "아직 만든 링크가 없어요",
+    "searchClear": "검색어 지우기",
+    "noResultQuery": "“{query}” 검색 결과가 없어요",
+    "noResultFiltered": "조건에 맞는 링크가 없어요",
+    "expiringSoon": "3일 안에 만료 {count}개"
   },
   "edit": {
     "title": "링크 편집",
@@ -4344,7 +4325,8 @@
     "edit": "편집",
     "delete": "삭제",
     "favorite": "즐겨찾기에 추가",
-    "unfavorite": "즐겨찾기 해제"
+    "unfavorite": "즐겨찾기 해제",
+    "settings": "링크 설정"
   },
   "linkReport": {
     "title": "링크 신고",

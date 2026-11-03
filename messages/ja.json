@@ -1406,12 +1406,6 @@
     "invalidType": "JPG・PNG・WebP のみ可能です",
     "tooBig": "画像のサイズが上限を超えています"
   },
-  "expiringBanner": {
-    "title": "{count}件のリンクが3日以内に期限切れになります",
-    "hint": "必要なリンクは期限を延長するか、不要なものは削除してください。",
-    "showAll": "すべて表示",
-    "dismiss": "閉じる"
-  },
   "dashboard": {
     "label": "dashboard",
     "title": "マイリンク",
@@ -1448,25 +1442,6 @@
     "emptyTitle": "最初のリンクを作ってみませんか",
     "emptyDesc": "URL を1つ短縮するだけで、1分以内にクリック・国・チャネル・デバイスのデータが揃い始めます。所要30秒。",
     "emptyCta": "今すぐ短縮",
-    "onboarding": {
-      "eyebrow": "ようこそ",
-      "title": "3 ステップで完了",
-      "subtitle": "リンクを短縮して貼れば、クリックの記録がここにたまります。",
-      "step1Title": "リンクを短縮",
-      "step1Desc": "短縮欄に長いURLを貼り付け、必要ならコード・期限・パスワードを決めてから「短縮」を押します。",
-      "step2Title": "リンクを共有",
-      "step2Desc": "Instagramのプロフィール、LINE、名刺など、どこにでも貼れます。QRコードもダウンロードできます。",
-      "step3Title": "統計を確認",
-      "step3Desc": "クリックが入ると、チャネル・国・端末・時間帯別に分けて表示します。",
-      "secondaryCta": "分析画面をデモで見る",
-      "scene": {
-        "weekClicks": "今週のクリック",
-        "example": "例"
-      }
-    },
-    "noResultTitle": "該当する結果がありません",
-    "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
-    "noResultDescFiltered": "現在の条件に一致するリンクがありません。",
     "table": {
       "shortUrl": "リンク名",
       "originalUrl": "リンク先",
@@ -1490,15 +1465,15 @@
       "edit": "編集",
       "delete": "削除",
       "more": "その他",
-      "openOriginal": "リンク先を開く"
+      "openOriginal": "リンク先を開く",
+      "qr": "QRコード",
+      "settings": "リンク設定"
     },
     "favorite": {
       "add": "お気に入りに追加",
       "remove": "お気に入りを解除",
       "filter": "お気に入り",
       "emptyTitle": "お気に入りのリンクはまだありません",
-      "emptyDesc": "全リンクで星を付けたリンクが、ここに並びます。",
-      "syncedHint": "アカウントに保存され、アプリとウェブで同じリンクを確認できます。",
       "saveFailed": "お気に入りを保存できませんでした。もう一度お試しください。",
       "loadFailed": "お気に入りを読み込めませんでした。",
       "orderTitle": "お気に入りの順序",
@@ -1507,7 +1482,7 @@
       "moveUp": "{name}を上に移動",
       "moveDown": "{name}を下に移動"
     },
-    "deleteConfirmTitle": "このリンクを削除しますか？",
+    "deleteConfirmTitle": "/{code}を削除しますか？",
     "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
     "deleteOk": "削除",
     "deleted": "リンクを削除しました",
@@ -1531,7 +1506,8 @@
         "HAS_EXPIRY": "期限あり",
         "EXPIRING_SOON": "3日以内に期限切れ",
         "EXPIRED": "期限切れ"
-      }
+      },
+      "remove": "{label}の絞り込みを解除"
     },
     "bulkSelectAll": "このページの全リンクを選択",
     "bulkSelectRow": "/{code}を選択",
@@ -1549,17 +1525,17 @@
       "description": "ヘッダー：url（必須）、custom_code、expires_at（ISO-8601）。先頭行がヘッダーなら自動で検出します。",
       "limitHint": "1回あたり最大100行。検証後に結果 CSV をダウンロードできます。",
       "cancel": "キャンセル",
-      "close": "閉じる",
       "upload": "アップロード",
       "uploading": "アップロード中…",
       "uploadFailed": "アップロードに失敗しました。",
       "resultSummary": "成功{ok}件 · 失敗{failed}件",
       "resultHint": "結果CSVには行ごとの結果 (short_url または error) が含まれます。",
       "downloadResult": "結果CSVをダウンロード",
-      "uploadAnother": "別のファイルをアップロード",
-      "done": "完了"
+      "done": "完了",
+      "chooseFile": "ファイルを選択",
+      "noFile": "ファイル未選択"
     },
-    "loadFailed": "リンクを読み込めませんでした。もう一度お試しください。",
+    "loadFailed": "リンクを読み込めませんでした。",
     "overviewFailed": "アカウントの統計を読み込めませんでした。",
     "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
     "libraryViews": "リンク一覧の選択",
@@ -1567,7 +1543,12 @@
     "subtitleCount": "リンク{count}件",
     "selectMode": "選択",
     "selectDone": "完了",
-    "todayDelta": "今日 {count, number}"
+    "todayDelta": "今日 {count, number}",
+    "firstRunTitle": "まだ作成したリンクはありません",
+    "searchClear": "検索語を消去",
+    "noResultQuery": "「{query}」に一致するリンクはありません",
+    "noResultFiltered": "条件に一致するリンクはありません",
+    "expiringSoon": "期限間近{count}件"
   },
   "edit": {
     "title": "リンク編集",
@@ -4344,7 +4325,8 @@
     "edit": "編集",
     "delete": "削除",
     "favorite": "お気に入りに追加",
-    "unfavorite": "お気に入りを解除"
+    "unfavorite": "お気に入りを解除",
+    "settings": "リンク設定"
   },
   "linkReport": {
     "title": "リンクを報告",

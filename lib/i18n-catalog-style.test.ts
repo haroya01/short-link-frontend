@@ -28,7 +28,7 @@ const KANA_KANJI = "ぁ-ゖァ-ヺー一-龯々〆";
 // The link product's own surfaces: the shortener and its landing, the link dashboard, the link-in-bio
 // editor and events. Landing copy keeps its voice, but the same three habits stay out.
 const LINK_PRODUCT = [
-  "home", "meta", "shortenForm", "composer", "result", "dashboard", "edit", "linkSheet", "expiringBanner",
+  "home", "meta", "shortenForm", "composer", "result", "dashboard", "edit", "linkSheet",
   "publicProfile", "settings.profile", "events",
 ];
 const inLinkProduct = ([key]: [string, string]) => LINK_PRODUCT.some((ns) => key === ns || key.startsWith(`${ns}.`));
