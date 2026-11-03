@@ -107,19 +107,32 @@ export default function ProfileEditPage() {
         />
       )}
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+        <div className="min-w-0 basis-full sm:basis-0 sm:flex-1">
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
         </div>
-        {/* 리드 페이지는 이메일 폼이 생긴 뒤에만 — 폼 추가 대화상자가 모인 주소가 어디로 가는지 말해 준다. */}
-        {hasEmailForm && (
-          <SwitchLink href={blogHref("/leads")} icon={Mail} className="shrink-0">
-            {t("leadsLink")}
-          </SwitchLink>
-        )}
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          {hasEmailForm && (
+            <SwitchLink href={blogHref("/leads")} icon={Mail} className="shrink-0">
+              {t("leadsLink")}
+            </SwitchLink>
+          )}
+          <MobilePreviewSheet>
+            <ProfilePreview
+              username={draft.username}
+              bio={draft.bio}
+              theme={draft.theme}
+              avatarUrl={draft.avatarUrl}
+              bannerUrl={draft.bannerUrl}
+              socials={draft.socials}
+              entries={draft.entries}
+              framed={false}
+            />
+          </MobilePreviewSheet>
+        </div>
       </div>
 
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at
@@ -152,18 +165,6 @@ export default function ProfileEditPage() {
           />
         </aside>
       </div>
-
-      <MobilePreviewSheet>
-        <ProfilePreview
-          username={draft.username}
-          bio={draft.bio}
-          theme={draft.theme}
-          avatarUrl={draft.avatarUrl}
-          bannerUrl={draft.bannerUrl}
-          socials={draft.socials}
-          entries={draft.entries}
-        />
-      </MobilePreviewSheet>
     </LinksPage>
   );
 }

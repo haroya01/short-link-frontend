@@ -30,6 +30,7 @@ type Props = {
    * row where surrounding icons already establish the "copy / open / qr" vocabulary.
    */
   iconOnly?: boolean;
+  iconClassName?: string;
   /** 속삭임 행(단축 답 줄 아래)용 텍스트 트리거 — 버튼 상자 없이 밑줄 글자만. */
   textTrigger?: boolean;
   /** "lg" = a full-size labelled button (bottom-sheet action rows). */
@@ -83,6 +84,7 @@ export function QrButton({
   showSrcInput = true,
   defaultSrcHint = "",
   iconOnly = false,
+  iconClassName,
   textTrigger = false,
   size = "sm",
 }: Props) {
@@ -109,7 +111,10 @@ export function QrButton({
           disabled={!baseUrl}
           aria-label={t("triggerAria")}
           title={t("triggerAria")}
-          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50"
+          className={
+            iconClassName ??
+            "grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50"
+          }
         >
           <QrCode className="h-3.5 w-3.5" />
         </button>

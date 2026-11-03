@@ -7,6 +7,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
+import { prefersReducedMotion } from "./use-reduced-motion";
 import { useRafThrottledListener } from "./use-raf-throttled-listener";
 
 /**
@@ -75,7 +76,7 @@ export function useCardTilt(): {
   const onPointerMove = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {
       const el = cardRef.current;
-      if (!el) return;
+      if (!el || prefersReducedMotion()) return;
       pointerOverRef.current = true;
       const rect = el.getBoundingClientRect();
       const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
@@ -93,7 +94,7 @@ export function useCardTilt(): {
   // breathing on scroll while the text sits on a properly dark base until the visitor engages.
   const applyScrollVars = useCallback(() => {
     const el = cardRef.current;
-    if (!el || pointerOverRef.current || !visibleRef.current) return;
+    if (!el || pointerOverRef.current || !visibleRef.current || prefersReducedMotion()) return;
     const rect = el.getBoundingClientRect();
     const vh = window.innerHeight || 1;
     const cardMid = rect.top + rect.height / 2;

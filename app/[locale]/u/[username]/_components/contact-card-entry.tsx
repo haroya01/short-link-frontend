@@ -5,7 +5,6 @@ import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
 import { parseContactCardConfig } from "@/modules/profile/lib/block-config-parsers";
-import { playCardFlipSound } from "@/modules/profile/lib/card-flip-sound";
 import { useCardTilt } from "@/hooks/use-card-tilt";
 import type { ThemeColors } from "../_lib/theme";
 import { getPalette } from "./contact-card-palettes";
@@ -115,7 +114,6 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
 
   function toggleFlip() {
     setFlipped((v) => !v);
-    playCardFlipSound();
   }
 
   if (!card.name) return null;
@@ -169,18 +167,18 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
             no transition — radial-gradient updates instantly), which looked "끊긴" / disconnected
             when both rode on the same 600ms transition. */}
         <div
-          className="relative [transform-style:preserve-3d]"
+          className="relative [transform-style:preserve-3d] motion-reduce:!transition-none"
           style={{
             transform: `rotateY(${flipped ? 180 : 0}deg)`,
             transition: "transform 600ms var(--ease)",
           }}
         >
           <div
-            className="relative [transform-style:preserve-3d]"
+            className="relative [transform-style:preserve-3d] motion-reduce:!transition-none"
             style={{
               transform:
                 "rotateX(var(--rotate-y, 0deg)) rotateY(var(--rotate-x, 0deg))",
-              transition: "transform 80ms ease-out",
+              transition: "transform 80ms var(--ease)",
             }}
           >
             {/* FRONT */}
@@ -442,7 +440,7 @@ function CardFace({
           filter: "brightness(0.85) contrast(2.2) saturate(0.85)",
           mixBlendMode: "color-dodge",
           opacity: "calc(var(--card-opacity, 0.3) * 0.95)",
-          transition: "opacity 220ms ease-out",
+          transition: "opacity 220ms var(--ease)",
         }}
       />
       {/* SHINE layer 2 — second rainbow at a different angle (-30°) offset by RAW pointer
@@ -460,7 +458,7 @@ function CardFace({
           filter: "brightness(0.85) contrast(1.7) saturate(0.8)",
           mixBlendMode: "color-dodge",
           opacity: "calc(var(--card-opacity, 0.3) * 0.55)",
-          transition: "opacity 220ms ease-out",
+          transition: "opacity 220ms var(--ease)",
         }}
       />
       {/* GLARE — radial highlight at pointer position, OVERLAY blend so it brightens the shine
@@ -474,7 +472,7 @@ function CardFace({
             : "radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%), hsla(0,0%,100%,0.6) 8%, hsla(0,0%,100%,0.25) 22%, hsla(0,0%,0%,0.4) 90%)",
           mixBlendMode: "overlay",
           opacity: "calc(var(--card-opacity, 0.3) * 0.7 + 0.12)",
-          transition: "opacity 220ms ease-out",
+          transition: "opacity 220ms var(--ease)",
         }}
       />
       {/* Faint grain — surface doesn't read as glass-clean. */}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
 import type { ShareChannel, Social } from "@/types";
+import { QrButton } from "@/components/links/qr/button";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
   colors: ThemeColors;
   /** Channel + the owner's own URL pairs. Each renders as a button linking to {@link Social#url}. */
   socials: Social[];
+  qrFilename: string;
   labels: {
     /**
      * Per-channel aria-label ("Visit X", "Visit LINE", …), pre-resolved server-side. Has to be a
@@ -34,7 +36,7 @@ type Props = {
  *   <li><b>Share this profile</b> — Copy + (mobile) native share. Operate on the kurl profile URL.</li>
  * </ul>
  */
-export function ShareRow({ url, colors, socials, labels }: Props) {
+export function ShareRow({ url, colors, socials, qrFilename, labels }: Props) {
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
 
@@ -98,6 +100,15 @@ export function ShareRow({ url, colors, socials, labels }: Props) {
           <Copy className={`h-3.5 w-3.5 ${colors.muted}`} />
         )}
       </button>
+      <QrButton
+        url={url}
+        filename={qrFilename}
+        logoSrc="/icon.svg"
+        showSrcInput={false}
+        defaultSrcHint="profile"
+        iconOnly
+        iconClassName={`focus-ring ${buttonClass} ${colors.muted} disabled:opacity-50`}
+      />
     </div>
   );
 }
