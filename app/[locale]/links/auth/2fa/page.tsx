@@ -111,7 +111,6 @@ export default function TwoFactorChallengePage() {
         )}
         <Button
           type="submit"
-          variant="accent"
           className="h-11 w-full"
           disabled={submitting || code.length === 0}
         >

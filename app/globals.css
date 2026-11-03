@@ -639,7 +639,7 @@ html[data-first-load] .profile-fade {
     @apply bg-transparent p-0 text-slate-100;
   }
   .prose-text-block a {
-    @apply text-accent-700 underline-offset-2 hover:underline;
+    @apply underline underline-offset-2;
   }
   .prose-text-block blockquote {
     @apply mb-1.5 border-l-2 border-slate-300 pl-3 text-slate-600;

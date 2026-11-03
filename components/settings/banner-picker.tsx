@@ -97,7 +97,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
         aria-label={t("change")}
         // aspect-ratio + relative + min-h-0 keeps the button locked to 3:1 regardless of an
         // unstyled image flash during reflow.
-        className="group relative block w-full overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 transition-colors hover:border-accent-300"
+        className="group relative block w-full overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 transition-colors hover:border-slate-400"
         style={{ aspectRatio: "3 / 1" }}
       >
         {currentUrl ? (

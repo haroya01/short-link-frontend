@@ -29,7 +29,7 @@ const STATUS_FILTERS: (AbuseReportStatus | "ALL")[] = [
 const STATUS_BADGE: Record<AbuseReportStatus, string> = {
   OPEN: "bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300",
   REVIEWING: "bg-blue-100 dark:bg-blue-500/15 text-blue-800 dark:text-blue-300",
-  RESOLVED: "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300",
+  RESOLVED: "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100",
   REJECTED: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
 };
 
@@ -309,7 +309,7 @@ export function AbuseReportsManager() {
                       <button
                         type="button"
                         onClick={() => handleResolve(r, "RESOLVED")}
-                        className="rounded border border-emerald-200 dark:border-emerald-500/30 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                        className="rounded border border-slate-300 dark:border-slate-600 px-2 py-0.5 text-xs text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
                         {t("action.resolve")}
                       </button>

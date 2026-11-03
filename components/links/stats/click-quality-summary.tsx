@@ -51,7 +51,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
 
   return (
     <section>
-      <h2 className="mb-3 text-[10px] font-semibold text-accent-700 dark:text-accent-400">
+      <h2 className="mb-3 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
         {t("title")}
       </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

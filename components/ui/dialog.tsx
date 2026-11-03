@@ -18,8 +18,7 @@ type DialogProps = {
   busyLabel?: string;
   cancelLabel?: string;
   destructive?: boolean;
-  /** Override the confirm button variant (e.g. "accent" for a primary save). Defaults to default,
-   *  or destructive when {@code destructive}. */
+  /** Override the confirm button variant. Defaults to default, or destructive when {@code destructive}. */
   confirmVariant?: ButtonProps["variant"];
   onConfirm: () => void | Promise<void>;
   children?: React.ReactNode;
@@ -161,7 +160,7 @@ export function ConfirmDialog({
             {cancelLabel ?? t("cancel")}
           </Button>
           <Button
-            variant={confirmVariant ?? (destructive ? "destructive" : "default")}
+            variant={confirmVariant ?? (destructive ? "destructive" : undefined)}
             disabled={busy || confirmDisabled}
             onClick={async () => {
               setBusy(true);

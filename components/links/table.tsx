@@ -193,7 +193,7 @@ export function LinksTable({
               if (selectMode) setSelected(new Set());
               setSelectMode((v) => !v);
             }}
-            className="focus-ring min-h-11 px-1 text-xs font-medium text-accent-700 dark:text-accent-400 sm:hidden"
+            className="focus-ring min-h-11 px-1 text-xs font-medium text-slate-900 dark:text-slate-100 sm:hidden"
           >
             {selectMode ? t("selectDone") : t("selectMode")}
           </button>
@@ -254,7 +254,7 @@ export function LinksTable({
                         className={cn(
                           "block text-[12px] tabular-nums",
                           (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
-                            ? "text-accent-700 dark:text-accent-400"
+                            ? "text-slate-900 dark:text-slate-100"
                             : "text-slate-500 dark:text-slate-400",
                         )}
                       >
@@ -335,7 +335,7 @@ export function LinksTable({
                       className={cn(
                         "block text-[12px] tabular-nums",
                         (item.clicksLast7d.at(-1) ?? 0) + (bump?.extra ?? 0) > 0
-                          ? "text-accent-700 dark:text-accent-400"
+                          ? "text-slate-900 dark:text-slate-100"
                           : "text-slate-500 dark:text-slate-400",
                       )}
                     >
@@ -478,7 +478,7 @@ function TagFilterChip({
       type="button"
       onClick={onClick}
       className={cn(
-        "focus-ring inline-flex items-center rounded-full font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
+        "focus-ring inline-flex items-center rounded-full font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100",
         compact ? "px-2 py-0.5 text-[10px]" : "px-3 py-1.5 text-[13px]",
       )}
     >

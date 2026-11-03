@@ -242,7 +242,7 @@ function DemoLinkDestinationsPreview() {
         >
           <option value="">{t("countryAny")}</option>
         </select>
-        <Button type="submit" size="sm" variant="accent" disabled>
+        <Button type="submit" size="sm" disabled>
           {t("add")}
         </Button>
       </form>
@@ -312,7 +312,7 @@ function DemoDestinationRow({
         {d.url}
       </code>
       <div className="mt-1.5 h-1 w-full overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
-        <div className="h-full bg-accent-600" style={{ width: `${Math.min(100, pct)}%` }} />
+        <div className="h-full bg-slate-900 dark:bg-slate-100" style={{ width: `${Math.min(100, pct)}%` }} />
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <input
@@ -412,7 +412,7 @@ function DemoLinkWebhooksPreview() {
           disabled
           onClick={lock}
         />
-        <Button type="submit" size="sm" variant="accent" disabled>
+        <Button type="submit" size="sm" disabled>
           {t("register")}
         </Button>
       </form>
@@ -429,7 +429,7 @@ function DemoLinkWebhooksPreview() {
                 {DEMO_WEBHOOK.url}
               </code>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                <span className="rounded bg-accent-100 dark:bg-accent-500/15 px-1.5 py-0.5 text-[10px] font-medium text-accent-700 dark:text-accent-400">
+                <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-slate-900 dark:text-slate-100">
                   {DEMO_WEBHOOK.lastStatusCode}
                 </span>
                 <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-slate-300">

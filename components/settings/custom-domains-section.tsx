@@ -270,7 +270,7 @@ function CopyCell({ label, className = "" }: { label: string; className?: string
     >
       <span className="truncate">{label}</span>
       {copied ? (
-        <Check className="h-3 w-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
+        <Check className="h-3 w-3 shrink-0 text-slate-900 dark:text-slate-100" />
       ) : (
         <Copy className="h-3 w-3 shrink-0 text-slate-300 transition group-hover:text-slate-500" />
       )}

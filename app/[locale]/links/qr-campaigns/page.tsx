@@ -52,7 +52,7 @@ export default function QrCampaignsLandingPage() {
           lead={t("hero.sub")}
           action={
             cta(
-              buttonVariants({ variant: "accent", size: "xl" }),
+              buttonVariants({ variant: "default", size: "xl" }),
               t("hero.cta"),
             )
           }

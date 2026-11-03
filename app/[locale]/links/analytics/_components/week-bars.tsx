@@ -33,7 +33,7 @@ export function WeekBars({
           formatter={(value: number) => [formatNumber(value), seriesLabel]}
           labelFormatter={(label: string) => label}
         />
-        <Bar isAnimationActive={animate} dataKey="count" fill="#059669" radius={[3, 3, 0, 0]} maxBarSize={36} />
+        <Bar isAnimationActive={animate} dataKey="count" fill="currentColor" className="text-slate-900 dark:text-slate-100" radius={[3, 3, 0, 0]} maxBarSize={36} />
       </BarChart>
     </ResponsiveContainer>
   );

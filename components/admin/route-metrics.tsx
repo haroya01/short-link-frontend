@@ -410,7 +410,7 @@ function SortableHeader({
         onClick={onClick}
         className={cn(
           "inline-flex items-center gap-1 transition-colors hover:text-slate-900 dark:hover:text-slate-100",
-          active ? "text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400",
+          active ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
         )}
       >
         {label}

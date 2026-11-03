@@ -21,7 +21,7 @@ export function ShowcaseLanding() {
         title={t("ctaTitle")}
         lead={t("ctaSubhead")}
         action={
-          <SignInLink reason="profile" next="/profile/auto" className={buttonVariants({ variant: "accent", size: "xl" })}>
+          <SignInLink reason="profile" next="/profile/auto" className={buttonVariants({ variant: "default", size: "xl" })}>
             {t("cta")}
           </SignInLink>
         }
@@ -99,7 +99,7 @@ function ProfileShowcase() {
                 aria-label={`@${p.username} ${t("demoCta")}`}
                 className={cn(
                   "focus-ring inline-flex shrink-0 items-center gap-1 rounded-sm text-[13px] font-medium underline-offset-4 hover:underline",
-                  active ? "text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400",
+                  active ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
                 )}
               >
                 {t("demoCta")}
@@ -142,7 +142,7 @@ function ProfileShowcase() {
 
       <Link
         href={`/showcase/${profile.username}`}
-        className="focus-ring inline-flex items-center gap-1 justify-self-start rounded-sm text-[14px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400 lg:hidden"
+        className="focus-ring inline-flex items-center gap-1 justify-self-start rounded-sm text-[14px] font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100 lg:hidden"
       >
         @{profile.username} {t("demoCta")}
       </Link>

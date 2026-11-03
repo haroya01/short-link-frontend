@@ -36,7 +36,7 @@ function BrowserRecent({ exclude }: { exclude: string[] }) {
           <SignInLink
             reason="links"
             next="/dashboard"
-            className="focus-ring rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
+            className="focus-ring rounded-sm font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
           >
             {t("recentLogin")}
           </SignInLink>
@@ -49,7 +49,7 @@ function BrowserRecent({ exclude }: { exclude: string[] }) {
             href={item.shortUrl}
             target="_blank"
             rel="noreferrer"
-            className="focus-ring shrink-0 rounded-sm font-mono text-[13px] font-semibold text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+            className="focus-ring shrink-0 rounded-sm font-mono text-[13px] font-semibold text-slate-900 underline-offset-4 hover:underline dark:text-slate-100"
           >
             /{item.shortCode}
           </a>

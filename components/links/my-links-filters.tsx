@@ -121,7 +121,7 @@ export function MyLinksFiltersPanel({ filters, onChange, tagOptions }: Props & {
           <select
             value={filters.tag ?? ""}
             onChange={(e) => patch({ tag: e.target.value || undefined })}
-            className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+            className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-ring"
           >
             <option value="">{t("any")}</option>
             {tagOptions.map((name) => (
@@ -151,7 +151,7 @@ export function MyLinksFiltersPanel({ filters, onChange, tagOptions }: Props & {
                 (e.target.value as MyLinksFilters["expiry"]) || undefined,
             })
           }
-          className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+          className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-ring"
         >
           <option value="">{t("any")}</option>
           {EXPIRY_OPTIONS.map((value) => (

@@ -34,7 +34,7 @@ export function MetaCard({ meta }: { meta: AdminLinkRow }) {
           {meta.ownerId != null ? (
             <Link
               href={`/admin/links?ownerId=${meta.ownerId}`}
-              className="text-accent-700 hover:underline dark:text-accent-400"
+              className="text-slate-900 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100"
             >
               {meta.ownerEmail ?? t("detail.anonymousOwner")}
             </Link>

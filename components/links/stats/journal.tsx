@@ -143,7 +143,7 @@ export function StatsJournal({
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
                     {t(entry.key, resolveParams(entry, tStats, locale))}
                   </span>
-                  <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
+                  <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
                     {t("evidence")}
                     <ChevronDown
                       aria-hidden
@@ -192,7 +192,7 @@ export function StatsJournal({
                       type="button"
                       tabIndex={open ? 0 : -1}
                       onClick={() => onNavigate(entry.evidence)}
-                      className="focus-ring mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-[13px] font-medium text-slate-500 transition-colors duration-150 ease-out hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+                      className="focus-ring mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-[13px] font-medium text-slate-500 transition-colors duration-150 ease-out hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
                     >
                       {t("detail")}
                     </button>

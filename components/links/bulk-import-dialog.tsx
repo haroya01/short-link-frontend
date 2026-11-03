@@ -111,7 +111,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
               <Button type="button" variant="outline" onClick={close} disabled={busy}>
                 {t("cancel")}
               </Button>
-              <Button type="submit" variant="accent" disabled={busy || !file}>
+              <Button type="submit" disabled={busy || !file}>
                 {busy ? t("uploading") : t("upload")}
               </Button>
             </div>
@@ -132,7 +132,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
                 <Button type="button" variant="ghost" size="sm" onClick={reset}>
                   {t("uploadAnother")}
                 </Button>
-                <Button type="button" variant="accent" size="sm" onClick={close}>
+                <Button type="button" size="sm" onClick={close}>
                   {t("done")}
                 </Button>
               </div>

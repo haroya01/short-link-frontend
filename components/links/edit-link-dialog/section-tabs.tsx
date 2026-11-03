@@ -39,7 +39,7 @@ export function SectionTabs({ active, onSelect, t }: Props) {
               document.getElementById(`edit-tab-${SECTIONS[next]}`)?.focus();
             }}
             className={
-              "relative -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 " +
+              "relative -mb-px min-h-10 shrink-0 whitespace-nowrap border-b-2 px-3 text-sm font-medium transition-colors focus-ring " +
               (selected
                 ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
                 : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100")

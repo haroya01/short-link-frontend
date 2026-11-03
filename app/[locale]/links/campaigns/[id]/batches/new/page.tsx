@@ -500,7 +500,6 @@ function PastePanel({
           </Button>
           <Button
             type="button"
-            variant="accent"
             onClick={onApply}
             disabled={preview.length === 0}
           >
@@ -552,7 +551,7 @@ function SubmitBar({
         <Button type="button" variant="outline" onClick={onCancel}>
           {t("cancel")}
         </Button>
-        <Button type="submit" variant="accent" disabled={!canSubmit}>
+        <Button type="submit" disabled={!canSubmit}>
           {submitting ? t("creating") : t("submit", { count: rowCount })}
         </Button>
       </div>

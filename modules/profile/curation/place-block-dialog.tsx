@@ -170,7 +170,7 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
             }}
           />
           {config.lat != null && config.lng != null && (
-            <p className="mt-1 flex items-center gap-1 text-[11px] text-emerald-600">
+            <p className="mt-1 flex items-center gap-1 text-[11px] text-slate-900 dark:text-slate-100">
               <MapPin className="h-3 w-3" />
               {config.address}
             </p>
@@ -210,7 +210,7 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
                   className={
                     "flex aspect-square flex-col items-center justify-center gap-0.5 rounded-md border text-[10px] font-medium transition " +
                     (active
-                      ? "border-accent-600 bg-accent-50 text-accent-700 dark:border-accent-400 dark:bg-accent-500/10 dark:text-accent-400"
+                      ? "border-slate-900 bg-slate-100 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                       : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200")
                   }
                 >

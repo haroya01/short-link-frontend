@@ -73,7 +73,7 @@ export function BarPlot({
                 <span
                   className={cn(
                     "block w-3/5 max-w-4 transition-colors duration-150 ease-[var(--ease)]",
-                    active === i ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700",
+                    active === i ? "bg-slate-900 dark:bg-slate-100" : "bg-slate-300 dark:bg-slate-700",
                     intro && "bar-grow-y",
                   )}
                   style={{ height: `max(2px, ${(p.count / max) * 100}%)`, animationDelay: intro ? `${i * 14}ms` : undefined }}

@@ -95,7 +95,7 @@ export function StatsCards({
         className={cn(
           "relative col-span-full overflow-hidden rounded-2xl p-0 text-left shadow-card-flat transition-[transform,box-shadow] duration-200 ease-[var(--ease)] lg:col-span-1 dark:shadow-none",
           canNavigate("section-daily")
-            ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-ring active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
         )}
       >
@@ -177,7 +177,7 @@ function Stat({
       className={cn(
         "flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-card-flat transition-[transform,box-shadow,border-color] duration-200 ease-[var(--ease)] dark:shadow-none",
         interactive
-          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
+          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lift focus-ring active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",
       )}
     >
@@ -203,7 +203,7 @@ function Stat({
           <span
             className={cn(
               "block h-full rounded-full",
-              muted ? "bg-slate-300 dark:bg-slate-600" : "bg-accent-500 dark:bg-accent-400",
+              muted ? "bg-slate-300 dark:bg-slate-600" : "bg-slate-500 dark:bg-slate-400",
             )}
             style={{ width: `${Math.round(Math.min(1, Math.max(0, ratio)) * 100)}%` }}
           />

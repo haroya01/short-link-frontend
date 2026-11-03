@@ -86,7 +86,7 @@ export default function CtaLibraryPage() {
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("description")}</p>
         </div>
         {!editing && (
-          <Button type="button" variant="accent" onClick={() => setEditing("new")}>
+          <Button type="button" onClick={() => setEditing("new")}>
             {t("new")}
           </Button>
         )}
@@ -253,7 +253,7 @@ function CtaEditor({
         <Button type="button" variant="ghost" onClick={onCancel}>
           {tc("cancel")}
         </Button>
-        <Button type="submit" variant="accent" disabled={saving}>
+        <Button type="submit" disabled={saving}>
           {saving ? t("saving") : initial ? t("save") : t("create")}
         </Button>
       </div>

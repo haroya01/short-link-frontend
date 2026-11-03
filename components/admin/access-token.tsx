@@ -61,7 +61,7 @@ export function AdminAccessToken() {
               onClick={copy}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 px-3 text-[13px] font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
-              {copied ? <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" /> : <Copy className="h-4 w-4" />}
+              {copied ? <Check className="h-4 w-4 text-slate-900 dark:text-slate-100" /> : <Copy className="h-4 w-4" />}
               {copied ? t("copied") : t("copy")}
             </button>
           </div>
@@ -72,7 +72,7 @@ export function AdminAccessToken() {
             type="button"
             onClick={issue}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-slate-100 px-4 py-2 text-sm font-medium text-white dark:text-slate-900 transition-colors hover:bg-slate-800 dark:hover:bg-slate-200 disabled:opacity-60"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

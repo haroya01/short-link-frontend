@@ -23,7 +23,7 @@ async function openWhen(page: Page, handlers: Parameters<typeof mockBackend>[1] 
 function accentOf(page: Page) {
   return page.evaluate(() => {
     const probe = document.createElement("span");
-    probe.className = "bg-accent-600";
+    probe.className = "bg-slate-900";
     document.body.append(probe);
     const color = getComputedStyle(probe).backgroundColor;
     probe.remove();

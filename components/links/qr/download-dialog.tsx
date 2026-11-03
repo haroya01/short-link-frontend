@@ -129,7 +129,7 @@ export function QrDownloadDialog({
               type="checkbox"
               checked={label}
               onChange={(e) => setLabel(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-accent-600 dark:text-accent-400 focus:ring-accent-600"
+              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
             />
             <span className="text-[13px] text-slate-700 dark:text-slate-300">{t("labelCheckbox")}</span>
           </label>
@@ -180,7 +180,7 @@ function SegmentButton({
       className={
         "flex flex-col items-center justify-center rounded-lg border px-2 py-2 text-center transition-colors " +
         (active
-          ? "border-accent-600 bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400"
+          ? "border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
           : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >

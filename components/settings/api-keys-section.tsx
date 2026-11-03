@@ -240,7 +240,7 @@ function UsageSnippets() {
                 href={s.hint.href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-block text-[11px] text-accent-700 dark:text-accent-400 underline hover:text-accent-800"
+                className="inline-block text-[11px] text-slate-900 dark:text-slate-100 underline hover:text-slate-900"
               >
                 {s.hint.text}
               </a>

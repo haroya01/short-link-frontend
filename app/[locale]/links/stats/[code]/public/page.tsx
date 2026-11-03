@@ -50,7 +50,7 @@ export default function PublicStatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/" className="focus-ring rounded-sm text-[15px] font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
+            <Link href="/" className="focus-ring rounded-sm text-[15px] font-medium text-slate-900 underline-offset-4 underline decoration-slate-300 hover:decoration-slate-900 dark:decoration-slate-600 dark:hover:decoration-slate-100 dark:text-slate-100">
               {t("backToDashboard")}
             </Link>
           }
@@ -63,14 +63,14 @@ export default function PublicStatsPage() {
     <div className="container max-w-6xl space-y-5 py-10">
       <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-card-flat">
         <div>
-          <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
+          <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
             {tPublic("title")}
           </p>
           <h1 className="mt-1.5 tabular-nums text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             /{data.shortCode}
           </h1>
         </div>
-        <span className="rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-[11px] font-medium text-accent-700 dark:text-accent-400 ring-1 ring-inset ring-accent-200">
+        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-300">
           {tPublic("publicBadge")}
         </span>
       </header>

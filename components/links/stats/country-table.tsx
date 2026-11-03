@@ -14,9 +14,8 @@ export function CountryTable({ data }: Props) {
     return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
   }
   const total = data.reduce((a, b) => a + b.count, 0) || 1;
-  // Top country pct guides the leader highlight ({@code accent-700} vs the ramp's
-  // {@code accent-600}) so the row that dominates the audience pops a step harder than the
-  // long-tail. Falls back to the first entry if multiple share the top — that's still the
+  // Top country pct guides the leader highlight (ink vs the ramp's gray) so the row that
+  // dominates the audience pops a step harder than the long-tail. Falls back to the first entry if multiple share the top — that's still the
   // narrative anchor row.
   const topCount = data.reduce((m, c) => Math.max(m, c.count), 0);
   return (
@@ -64,7 +63,7 @@ export function CountryTable({ data }: Props) {
                     <div
                       className={cn(
                         "h-full rounded-full",
-                        isLeader ? "bg-accent-700" : "bg-accent-600",
+                        isLeader ? "bg-slate-900 dark:bg-slate-100" : "bg-slate-300 dark:bg-slate-600",
                       )}
                       style={{
                         width: `${ratio * 100}%`,
