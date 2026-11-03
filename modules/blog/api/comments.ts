@@ -28,6 +28,7 @@ export interface CommentPage {
   items: CommentView[];
   next: string | null;
   latest: string | null;
+  total: number | null;
 }
 
 export const COMMENT_PAGE_SIZE = 20;
@@ -109,6 +110,7 @@ function mockThreadOf(postId: number): CommentView[] {
 function mockCommentPage(postId: number, query: { cursor?: string | null; after?: string | null; limit: number }): CommentPage {
   const all = [...mockThreadOf(postId)].sort((a, b) => a.id - b.id);
   const latest = String(all[all.length - 1]?.id ?? 0);
+  const total = all.filter((c) => !c.deleted).length;
   if (query.after != null) {
     const after = Number(query.after);
     const newer = all.filter((c) => c.id > after);
@@ -119,6 +121,7 @@ function mockCommentPage(postId: number, query: { cursor?: string | null; after?
       items: [...slice, ...parents].sort((a, b) => a.id - b.id),
       next: newer.length > query.limit ? String(slice[slice.length - 1].id) : null,
       latest,
+      total,
     };
   }
   const tops = all.filter((c) => c.parentId == null && c.id > Number(query.cursor ?? 0));
@@ -127,6 +130,7 @@ function mockCommentPage(postId: number, query: { cursor?: string | null; after?
     items: all.filter((c) => shown.has(c.id) || (c.parentId != null && shown.has(c.parentId))),
     next: tops.length > query.limit ? String(tops[query.limit - 1].id) : null,
     latest,
+    total,
   };
 }
 
@@ -156,6 +160,7 @@ export async function listCommentPage(
     items: body.items,
     next: typeof body.next === "string" && body.next !== "" ? body.next : null,
     latest: body.latest == null ? null : String(body.latest),
+    total: typeof body.total === "number" ? body.total : null,
   };
 }
 

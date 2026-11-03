@@ -64,6 +64,7 @@ export function NoteThreadView({
   const [arrivedNote, setArrivedNote] = useState("");
   const [washed, setWashed] = useState<number | null>(null);
   const [loadingReplies, setLoadingReplies] = useState(false);
+  const [repliesTotal, setRepliesTotal] = useState<number | null>(null);
   const repliesAfter = useRef(true);
   const threadRef = useRef(thread);
   const repliesEnd = useRef<HTMLDivElement>(null);
@@ -149,6 +150,7 @@ export function NoteThreadView({
       const page = await listNoteRepliesAfter(initial.note.id, after);
       if (!page) return false;
       offerReplies(page.items);
+      if (page.total !== undefined) setRepliesTotal(page.total);
       if (page.continued) {
         void getNoteThread(initial.note.id, THREAD_REPLIES_PAGE).then(
           (fresh) => setThread((current) => ({ ...current, continuation: fresh.continuation })),
@@ -190,6 +192,7 @@ export function NoteThreadView({
     try {
       const page = await listNoteRepliesAfter(thread.note.id, next);
       setThread((current) => appendReplyPage(current, page?.items ?? [], page?.next ?? null));
+      if (page?.total !== undefined) setRepliesTotal(page.total);
     } catch {
       toast(t("repliesLoadFailed"), "error");
     } finally {
@@ -389,8 +392,10 @@ export function NoteThreadView({
         {thread.replies.length > 0 && (
           <h2 id="note-replies" className="pt-4 text-[15px] font-semibold text-slate-900 dark:text-slate-100">
             {t("repliesTitle")}{" "}
-            {!thread.repliesNext && (
-              <span className="font-normal tabular-nums text-slate-500 dark:text-slate-400">{thread.replies.length}</span>
+            {(thread.repliesNext ? repliesTotal : thread.replies.length) !== null && (
+              <span className="font-normal tabular-nums text-slate-500 dark:text-slate-400">
+                {thread.repliesNext ? repliesTotal : thread.replies.length}
+              </span>
             )}
           </h2>
         )}

@@ -193,6 +193,7 @@ export interface NoteRepliesPage {
   next: string | null;
   latest?: string | null;
   continued?: boolean;
+  total?: number;
 }
 
 export const THREAD_REPLIES_PAGE = 20;
