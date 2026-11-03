@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { DragHandle } from "@tiptap/extension-drag-handle-react";
 import type { Editor } from "@tiptap/react";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import { useTranslations } from "next-intl";
+import { CALLOUT_CHOICES } from "@/modules/blog/components/editor/callout-menu";
 import {
   Copy,
   GripVertical,
@@ -35,6 +36,14 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
   const [target, setTarget] = useState<Target | null>(null);
   const [menuAt, setMenuAt] = useState<{ x: number; y: number } | null>(null);
   const gripRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const menu = menuRef.current;
+    if (!menuAt || !menu) return;
+    const top = Math.max(8, Math.min(menuAt.y, window.innerHeight - menu.offsetHeight - 8));
+    if (top !== menuAt.y) setMenuAt({ x: menuAt.x, y: top });
+  }, [menuAt]);
 
   // Insert an empty paragraph right after the hovered block and drop the caret into it, then type "/"
   // so the slash menu opens — same as clicking Notion's "+".
@@ -124,6 +133,7 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
             {/* Click-away catcher */}
             <div className="fixed inset-0 z-40" onMouseDown={() => setMenuAt(null)} />
             <div
+              ref={menuRef}
               role="menu"
               className="fixed z-50 w-44 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-float dark:border-slate-700 dark:bg-slate-850"
               style={{ left: menuAt.x, top: menuAt.y }}
@@ -142,6 +152,22 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
                 >
                   <it.icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
                   {it.label}
+                </button>
+              ))}
+              <p className="px-2 pb-1 pt-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                {ts("groupCallout")}
+              </p>
+              {CALLOUT_CHOICES.map(({ kind, icon: Icon, labelKey }) => (
+                <button
+                  key={kind}
+                  type="button"
+                  role="menuitem"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => turnInto(() => editor.chain().focus().setCallout(kind).run())}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+                >
+                  <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
+                  {ts(labelKey)}
                 </button>
               ))}
               <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />

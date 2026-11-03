@@ -7,19 +7,19 @@ import type { PostStatus } from "@/modules/blog/api/posts";
 // 900, …) in the editor header / write list / workspace row — collapsed here so a post's status reads
 // the same colour everywhere.
 const TONE: Record<PostStatus, string> = {
-  DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
-  PUBLISHED: "text-slate-500 dark:text-slate-400",
-  SCHEDULED: "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100",
-  UNPUBLISHED: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  DRAFT: "font-semibold text-slate-700 dark:text-slate-200",
+  PUBLISHED: "font-medium text-slate-500 dark:text-slate-400",
+  SCHEDULED: "font-semibold text-slate-900 dark:text-slate-100",
+  UNPUBLISHED: "font-semibold text-amber-700 dark:text-amber-300",
 };
-const TAKEN_DOWN_TONE = "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300";
+const TAKEN_DOWN_TONE = "font-semibold text-red-700 dark:text-red-300";
 
-/** The single post-status pill. Label comes from the `postEditor.status{STATUS}` messages. */
+/** The single post-status label. Label comes from the `postEditor.status{STATUS}` messages. */
 export function PostStatusBadge({ status, takenDown = false }: { status: PostStatus; takenDown?: boolean }) {
   const t = useTranslations("postEditor");
   return (
     <span
-      className={`inline-flex items-center rounded-full py-0.5 text-[12px] font-medium ${status === "PUBLISHED" && !takenDown ? "" : "px-2.5"} ${takenDown ? TAKEN_DOWN_TONE : TONE[status]}`}
+      className={`inline-flex items-center text-[12px] ${takenDown ? TAKEN_DOWN_TONE : TONE[status]}`}
     >
       {takenDown ? t("statusTakenDown") : t(`status${status}`)}
     </span>
