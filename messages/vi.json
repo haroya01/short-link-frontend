@@ -1587,7 +1587,8 @@
     "subtitleCount": "{count} liên kết",
     "selectMode": "Chọn",
     "selectDone": "Xong",
-    "todayDelta": "Hôm nay {count, number}"
+    "todayDelta": "Hôm nay {count, number}",
+    "liveToday": "Hôm nay {count, number} lượt nhấp"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",

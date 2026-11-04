@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { ArrowUpDown, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StatsMorphLink } from "@/components/links/stats-morph-link";
@@ -9,7 +9,6 @@ import { ActionMenu } from "@/components/common/action-menu";
 import { CopyButton } from "@/components/common/copy-button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
-import { LiveDot } from "@/components/common/live-dot";
 import { LinkSheet } from "@/components/links/link-sheet";
 import { Sparkline } from "@/components/links/stats/sparkline";
 import { useToast } from "@/components/ui/toast";
@@ -41,6 +40,7 @@ type Props = {
   liveByCode?: Record<string, LiveBump>;
   favoritesDisabled?: boolean;
   sortingDisabled?: boolean;
+  enter?: boolean;
 };
 
 export function LinksTable({
@@ -55,6 +55,7 @@ export function LinksTable({
   liveByCode,
   favoritesDisabled = false,
   sortingDisabled = false,
+  enter = false,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
@@ -64,8 +65,15 @@ export function LinksTable({
   const [selectMode, setSelectMode] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [entering, setEntering] = useState(enter);
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
+
+  useEffect(() => {
+    if (!entering) return;
+    const id = setTimeout(() => setEntering(false), 1400);
+    return () => clearTimeout(id);
+  }, [entering]);
 
   const allOnPage = items.map((s) => s.shortCode);
   const allSelected = allOnPage.length > 0 && allOnPage.every((c) => selected.has(c));
@@ -200,7 +208,7 @@ export function LinksTable({
           <span className="hidden w-[136px] sm:block" aria-hidden />
         </div>
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const bump = liveByCode?.[item.shortCode];
             const expiry = expiryState(item.expiresAt);
             const favorite = isFavorite(item.shortCode);
@@ -210,7 +218,9 @@ export function LinksTable({
                 className={cn(
                   "group transition-colors last:rounded-b-2xl hover:bg-slate-50/70 dark:hover:bg-slate-800/40",
                   bump && (bump.seq % 2 ? "click-arrive-a" : "click-arrive-b"),
+                  entering && !bump && "row-enter",
                 )}
+                style={entering ? ({ "--row-at": `${Math.min(index, 10) * 35}ms` } as CSSProperties) : undefined}
               >
                 <div className="flex items-center gap-2 py-2 pl-3 pr-1.5 sm:hidden">
                   {selectMode && (
@@ -245,10 +255,10 @@ export function LinksTable({
                         <span className="font-mono">/{item.shortCode}</span> · {hostOf(item.originalUrl)}
                       </span>
                     </span>
-                    <Sparkline values={item.clicksLast7d} width={48} height={20} className="shrink-0 text-slate-400 dark:text-slate-500" />
+                    <Sparkline values={item.clicksLast7d} width={48} height={20} className="row-spark shrink-0 text-slate-400 dark:text-slate-500" />
                     <span className="w-[4.5rem] shrink-0 text-right">
                       <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                        {formatNumber((item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0))}
+                        <RollingCount value={(item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0)} seq={bump?.seq} />
                       </span>
                       <span
                         className={cn(
@@ -317,19 +327,13 @@ export function LinksTable({
                   values={item.clicksLast7d}
                   width={56}
                   height={20}
-                  className="hidden shrink-0 text-slate-400 dark:text-slate-500 md:block"
+                  className="row-spark hidden shrink-0 text-slate-400 dark:text-slate-500 md:block"
                 />
                 <div className="flex shrink-0 items-center gap-1.5 text-right">
-                  {bump && <LiveDot />}
+                  {bump && <span key={bump.seq} aria-hidden className="live-dot-once relative inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" />}
                   <span className="min-w-[4.5rem]">
                     <span className="block text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                      {bump ? (
-                        <span key={bump.seq} className="count-bump">
-                          {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
-                        </span>
-                      ) : (
-                        formatNumber(item.humanClickCount ?? item.clickCount)
-                      )}
+                      <RollingCount value={(item.humanClickCount ?? item.clickCount) + (bump?.extra ?? 0)} seq={bump?.seq} />
                     </span>
                     <span
                       className={cn(
@@ -430,6 +434,17 @@ export function LinksTable({
         }}
       />
     </div>
+  );
+}
+
+function RollingCount({ value, seq }: { value: number; seq?: number }) {
+  if (!seq) return <>{formatNumber(value)}</>;
+  return (
+    <span className="inline-flex overflow-hidden">
+      <span key={seq} className="count-roll">
+        {formatNumber(value)}
+      </span>
+    </span>
   );
 }
 

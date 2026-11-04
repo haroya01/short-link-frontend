@@ -1587,7 +1587,8 @@
     "subtitleCount": "{count} लिंक",
     "selectMode": "चुनें",
     "selectDone": "हो गया",
-    "todayDelta": "आज {count, number}"
+    "todayDelta": "आज {count, number}",
+    "liveToday": "आज {count, number} क्लिक"
   },
   "edit": {
     "title": "लिंक संपादित करें",

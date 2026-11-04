@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable, type LiveBump } from "@/components/links/table";
+import { LIVE_TODAY_START, LiveToday, arriveToday, crossedDay, todayCount, type LiveTodayState } from "@/components/links/live-today";
 import { MobileComposer } from "@/components/links/mobile-composer";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { useSharedUrl } from "@/lib/use-shared-url";
@@ -71,10 +72,13 @@ export default function DashboardPage() {
   const linksQuery = useMyLinks(filters, { enabled: enabled && urlFiltersRead && !favoritesOnly });
   const overviewQuery = useQuery({ queryKey: ["links", "overview", me?.id], queryFn: ({ signal }) => getLinkOverview(signal), enabled: enabled && me?.id != null });
 
+  const invalidateLinks = useInvalidateLinks();
+
   // 클릭이 도착하는 순간 — 계정 스트림이 실어오는 클릭을 행별 가산분으로 쌓아 표를 깨운다.
   // 봇 클릭은 조용히 무시(통계 표면과 동일한 신뢰 계약).
   const [liveByCode, setLiveByCode] = useState<Record<string, LiveBump>>({});
-  useAccountClickStream({
+  const [liveToday, setLiveToday] = useState<LiveTodayState>(LIVE_TODAY_START);
+  const { connected, everConnected } = useAccountClickStream({
     enabled,
     onClick: (click) => {
       if (click.bot) return;
@@ -85,10 +89,13 @@ export default function DashboardPage() {
           [click.shortCode]: { extra: (cur?.extra ?? 0) + 1, seq: (cur?.seq ?? 0) + 1 },
         };
       });
+      const crossed = crossedDay(click, overviewQuery.data);
+      if (crossed) void invalidateLinks();
+      const at = overviewQuery.dataUpdatedAt;
+      setLiveToday((prev) => arriveToday(prev, click, at, crossed));
     },
   });
   const tagsQuery = useTags({ enabled });
-  const invalidateLinks = useInvalidateLinks();
 
   const items = useMemo(
     () => linksQuery.data?.pages.flatMap((p) => p.items) ?? [],
@@ -115,6 +122,11 @@ export default function DashboardPage() {
   const listError = favoritesOnly ? favorites.error : linksQuery.error;
   const error = listError ? t("loadFailed") : null;
   const account = overviewQuery.data;
+  const showingList = !loading && !error && displayItems.length > 0;
+  const [listSeen, setListSeen] = useState(false);
+  useEffect(() => {
+    if (showingList) setListSeen(true);
+  }, [showingList]);
 
   async function toggleFavorite(code: string) {
     try { await favorites.toggle(code); } catch { toast(t("favorite.saveFailed"), "error"); }
@@ -174,13 +186,16 @@ export default function DashboardPage() {
   return (
     <LinksPage className="space-y-4 max-sm:pb-16">
       <div className="flex items-end justify-between gap-3">
-        <div>
-          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-            {t("title")}
-          </h1>
-          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
-            {account && <span>{t("subtitleCount", { count: account.totalLinks })}</span>}
-            <button type="button" onClick={() => setBulkOpen(true)} className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100 sm:hidden">{t("bulkImport.button")}</button>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-3">
+            <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+              {t("title")}
+            </h1>
+            <button type="button" onClick={() => setBulkOpen(true)} className="text-sm text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100 sm:hidden">{t("bulkImport.button")}</button>
+          </div>
+          <p className="mt-1 flex min-h-5 min-w-0 items-center gap-x-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+            {account && <span className="shrink-0">{t("subtitleCount", { count: account.totalLinks })}</span>}
+            {account && everConnected && <LiveToday count={todayCount(account.clicksToday, liveToday, overviewQuery.dataUpdatedAt)} latest={liveToday.latest} seq={liveToday.seq} live={connected} />}
           </p>
         </div>
         <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
@@ -302,6 +317,7 @@ export default function DashboardPage() {
                 favoritesDisabled={favorites.busy || favorites.isLoading || !!favorites.error}
                 sortingDisabled={favoritesOnly}
                 liveByCode={liveByCode}
+                enter={!listSeen}
               />
               {!favoritesOnly && linksQuery.hasNextPage && (
                 <div className="flex justify-center pt-2">

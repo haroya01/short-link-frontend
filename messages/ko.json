@@ -1587,7 +1587,8 @@
     "subtitleCount": "링크 {count}개",
     "selectMode": "선택",
     "selectDone": "완료",
-    "todayDelta": "오늘 {count, number}"
+    "todayDelta": "오늘 {count, number}",
+    "liveToday": "오늘 클릭 {count, number}"
   },
   "edit": {
     "title": "링크 편집",

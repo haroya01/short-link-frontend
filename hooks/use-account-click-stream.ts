@@ -30,10 +30,11 @@ type StreamTokenResponse = {
  * Authorization 헤더를 못 실으므로 액세스 JWT 를 단명 스트림 토큰으로 바꿔 쿼리로 접속한다.
  * 서버 타임아웃(5분)·네트워크 단절은 지수 백오프로 재접속하며 언마운트 시 닫는다.
  */
-export function useAccountClickStream(opts: Options = {}): { connected: boolean } {
+export function useAccountClickStream(opts: Options = {}): { connected: boolean; everConnected: boolean } {
   const { enabled = true, onClick } = opts;
 
   const [connected, setConnected] = useState(false);
+  const [everConnected, setEverConnected] = useState(false);
   const onClickRef = useRef(onClick);
   useEffect(() => {
     onClickRef.current = onClick;
@@ -76,6 +77,7 @@ export function useAccountClickStream(opts: Options = {}): { connected: boolean 
       es.addEventListener("ready", () => {
         backoff = 1000;
         setConnected(true);
+        setEverConnected(true);
       });
       es.addEventListener("click", (event) => {
         try {
@@ -101,5 +103,5 @@ export function useAccountClickStream(opts: Options = {}): { connected: boolean 
     };
   }, [enabled]);
 
-  return { connected };
+  return { connected, everConnected };
 }

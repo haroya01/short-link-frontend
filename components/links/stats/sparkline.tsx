@@ -38,6 +38,7 @@ function SparklineImpl({ values, width = 64, height = 18, className }: Props) {
     >
       <polyline
         points={points}
+        pathLength={1}
         fill="none"
         stroke="currentColor"
         strokeWidth="1.25"

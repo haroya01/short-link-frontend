@@ -1587,7 +1587,8 @@
     "subtitleCount": "リンク{count}件",
     "selectMode": "選択",
     "selectDone": "完了",
-    "todayDelta": "今日 {count, number}"
+    "todayDelta": "今日 {count, number}",
+    "liveToday": "今日のクリック {count, number}"
   },
   "edit": {
     "title": "リンク編集",

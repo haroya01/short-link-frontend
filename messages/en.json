@@ -1587,7 +1587,8 @@
     "subtitleCount": "{count, plural, one {# link} other {# links}}",
     "selectMode": "Select",
     "selectDone": "Done",
-    "todayDelta": "{count, number} today"
+    "todayDelta": "{count, number} today",
+    "liveToday": "{count, plural, one {# click} other {# clicks}} today"
   },
   "edit": {
     "title": "Edit link",
