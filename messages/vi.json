@@ -1840,16 +1840,6 @@
         "note": "{dc} lượt nhấp từ trung tâm dữ liệu được tính là truy cập tự động."
       }
     },
-    "clientApp": {
-      "kakaotalk": "KakaoTalk",
-      "instagram": "Instagram",
-      "line": "LINE",
-      "facebook": "Facebook",
-      "naver": "Naver",
-      "daum": "Daum",
-      "tiktok": "TikTok",
-      "twitter": "X (Twitter)"
-    },
     "fetchSite": {
       "direct": "Mở trực tiếp",
       "crossSite": "Bấm vào một liên kết",
@@ -2086,6 +2076,17 @@
   "statLabels": {
     "unknown": "Không rõ",
     "kakaotalk": "KakaoTalk",
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)",
+      "browser": "Trình duyệt thường"
+    },
     "channel": {
       "social": "Mạng xã hội",
       "messaging": "Nhắn tin",

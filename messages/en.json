@@ -1840,16 +1840,6 @@
         "note": "{dc} datacenter clicks were counted as automated."
       }
     },
-    "clientApp": {
-      "kakaotalk": "KakaoTalk",
-      "instagram": "Instagram",
-      "line": "LINE",
-      "facebook": "Facebook",
-      "naver": "Naver",
-      "daum": "Daum",
-      "tiktok": "TikTok",
-      "twitter": "X (Twitter)"
-    },
     "fetchSite": {
       "direct": "Opened directly",
       "crossSite": "Followed a link",
@@ -2086,6 +2076,17 @@
   "statLabels": {
     "unknown": "Unknown",
     "kakaotalk": "KakaoTalk",
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)",
+      "browser": "Regular browser"
+    },
     "channel": {
       "social": "Social",
       "messaging": "Messaging",

@@ -14,15 +14,72 @@ export type JournalEntry = {
 };
 
 /**
- * 백엔드 {@code LinkInsights} 와 같은 문턱값. 백엔드도 같은 두 문장(IN_APP_BROWSER·
- * CHANNEL_LOYALTY)을 만들지만 그 결과({@code insights})는 이 화면이 읽지 않는다 — 일지 문장의
- * 진실원은 여기 한 곳이다. 문턱을 맞춰 둬야 같은 링크를 웹과 API 로 봤을 때 말이 갈리지 않는다.
+ * 백엔드 {@code LinkInsights} 와 같은 문턱값. 서버가 사실 코드를 줄 때는 서버가 기준이고, 이 규칙은
+ * 옛 서버를 위한 대비책이다. 문턱이 같아야 대비책으로 그려도 말이 갈리지 않는다.
  */
 const MIN_TOTAL_FOR_INSIGHTS = 10;
 const MIN_HUMAN_FOR_VELOCITY = 30;
 const IN_APP_SHARE_THRESHOLD = 0.2;
 const CHANNEL_LOYALTY_THRESHOLD = 0.3;
 const CHANNEL_LOYALTY_MIN_VISITORS = 5;
+
+/** 서버 사실 코드 = stats.journal.<key>. 메시지가 없는 코드는 그리지 않는다. */
+const JOURNAL_CODES: ReadonlySet<string> = new Set([
+  "velocity",
+  "trendUp",
+  "trendDown",
+  "peakDay",
+  "topSource",
+  "channelLoyalty",
+  "inAppBrowser",
+  "peakHour",
+  "returning",
+  "returningRecent",
+  "topCountry",
+  "mobileHeavy",
+  "desktopHeavy",
+  "botHigh",
+  "botFiltered",
+  "fastFirstClick",
+]);
+
+const SERVER_EVIDENCE: Readonly<Record<string, string>> = {
+  hourly: "section-hourly",
+  daily: "section-daily",
+  sources: "section-sources",
+  channelDepth: "section-channel-depth",
+  clientApps: "section-client-app",
+  visitors: "chapter-who",
+  countries: "chapter-where",
+  devices: "section-device",
+  automated: "section-bots",
+};
+
+function serverParams(params: Record<string, string | number>): Record<string, string | number> {
+  const out = { ...params };
+  if (typeof out.x === "number") out.x = out.x.toFixed(1);
+  if (typeof out.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(out.date)) out.date = out.date.slice(5);
+  return out;
+}
+
+/**
+ * 일지 문장의 기준은 서버다(insights[] 의 code·params). 서버가 사실 코드를 주지 않으면(옛 서버)
+ * 같은 규칙의 웹 계산 {@link buildJournal} 로 그린다.
+ */
+export function journalEntries(data: LinkStats): JournalEntry[] {
+  const facts = (data.insights ?? []).filter((fact) => fact.code);
+  if (facts.length === 0) return buildJournal(data);
+  return facts
+    .filter((fact) => JOURNAL_CODES.has(fact.code!))
+    .map((fact, index, all) => ({
+      key: fact.code!,
+      params: serverParams(fact.params ?? {}),
+      evidence: SERVER_EVIDENCE[fact.evidence ?? ""] ?? "",
+      spark: fact.spark ?? undefined,
+      ratio: fact.ratio ?? undefined,
+      weight: all.length - index,
+    }));
+}
 
 /**
  * 링크 일지 — "읽는 통계"의 심장. LinkStats 를 판단이 실린 문장 후보로 바꾼다.
@@ -68,7 +125,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   }
 
   // 최고점이 있던 날
-  if (counts.length > 0) {
+  if (counts.length > 0 && counts.reduce((s, c) => s + c, 0) >= MIN_TOTAL_FOR_INSIGHTS) {
     const peak = Math.max(...counts);
     const peakIdx = counts.lastIndexOf(peak);
     if (peak > 0 && daily[peakIdx]?.date) {
@@ -135,7 +192,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   }
 
   // 하루 중 피크 시간
-  if (typeof data.peakHour === "number" && data.peakHour !== null) {
+  if (typeof data.peakHour === "number" && enoughHuman) {
     entries.push({
       key: "peakHour",
       params: { hour: data.peakHour },
