@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { mergeRegionClicks, regionMessageKey } from "@/lib/regions";
-import { CLIENT_APPS, FETCH_SITE_KEYS } from "@/lib/stats-labels";
+import { FETCH_SITE_KEYS, useStatsLabels } from "@/lib/stats-labels";
 import type { ClientAppClick, FetchSiteClick, RegionClick } from "@/types";
 
 /**
@@ -25,16 +25,13 @@ export function ClientAppBreakdown({
   total?: number;
   subgrid?: boolean;
 }) {
-  const t = useTranslations("stats");
+  const labels = useStatsLabels();
   return (
     <BreakdownList
       maxItems={maxItems}
       total={total}
       subgrid={subgrid}
-      items={items.map((a) => ({
-        label: CLIENT_APPS.has(a.app) ? t(`clientApp.${a.app}`) : a.app,
-        count: a.count,
-      }))}
+      items={items.map((a) => ({ label: labels.clientApp(a.app), count: a.count }))}
     />
   );
 }

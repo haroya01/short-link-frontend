@@ -1840,16 +1840,6 @@
         "note": "डेटा सेंटर से आए {dc} क्लिक स्वचालित माने गए।"
       }
     },
-    "clientApp": {
-      "kakaotalk": "KakaoTalk",
-      "instagram": "Instagram",
-      "line": "LINE",
-      "facebook": "Facebook",
-      "naver": "Naver",
-      "daum": "Daum",
-      "tiktok": "TikTok",
-      "twitter": "X (Twitter)"
-    },
     "fetchSite": {
       "direct": "सीधे खोला",
       "crossSite": "लिंक पर क्लिक करके",
@@ -2086,6 +2076,17 @@
   "statLabels": {
     "unknown": "अज्ञात",
     "kakaotalk": "KakaoTalk",
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)",
+      "browser": "सामान्य ब्राउज़र"
+    },
     "channel": {
       "social": "सोशल",
       "messaging": "मैसेजिंग",

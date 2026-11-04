@@ -1840,16 +1840,6 @@
         "note": "データセンター由来の{dc}件は自動アクセスとして分類しています。"
       }
     },
-    "clientApp": {
-      "kakaotalk": "カカオトーク",
-      "instagram": "Instagram",
-      "line": "LINE",
-      "facebook": "Facebook",
-      "naver": "Naver",
-      "daum": "Daum",
-      "tiktok": "TikTok",
-      "twitter": "X（Twitter）"
-    },
     "fetchSite": {
       "direct": "自分で開いた",
       "crossSite": "リンクをたどって",
@@ -2086,6 +2076,17 @@
   "statLabels": {
     "unknown": "不明",
     "kakaotalk": "カカオトーク",
+    "clientApp": {
+      "kakaotalk": "カカオトーク",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X（Twitter）",
+      "browser": "通常のブラウザ"
+    },
     "channel": {
       "social": "ソーシャル",
       "messaging": "メッセージアプリ",
