@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { scrollUntilPresent } from "./helpers/scroll-until";
 
-// Mock-on lane: signed in as @dohyun. 둘러보기 is a search box over three lanes, 추천 · 다른 서버 · 사람.
-// 추천 is kurl's trending posts in the home row with follow cards after the third, then the endless
+// Mock-on lane: signed in as @dohyun. 둘러보기 is a search box over three lanes, 발견 · 다른 서버 · 사람.
+// 발견 is kurl's trending posts in the home row with follow cards after the third, then the endless
 // 다른 서버 stream; recent searches and hashtags wait behind the search box.
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -15,12 +15,12 @@ async function top(locator: Locator) {
   return (await locator.boundingBox())!.y;
 }
 
-test("추천 leads with kurl posts in the home row, follow cards after the third, then 다른 서버 that keeps going", async ({
+test("발견 leads with kurl posts in the home row, follow cards after the third, then 다른 서버 that keeps going", async ({
   page,
 }) => {
   await open(page);
-  await expect(page.getByRole("tab")).toHaveText(["추천", "다른 서버", "사람"]);
-  await expect(page.getByRole("tab", { name: "추천" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tab")).toHaveText(["발견", "다른 서버", "사람"]);
+  await expect(page.getByRole("tab", { name: "발견" })).toHaveAttribute("aria-selected", "true");
   const picks = page.getByTestId("explore-picks");
   const posts = picks.locator("[data-post-id]");
   await expect(posts.first().locator("[data-home-post-body]")).toBeVisible({ timeout: 30_000 });
@@ -60,7 +60,7 @@ test("lanes switch in place under a head that does not move, and the URL keeps t
   await expect(page.getByTestId("follow-suggestions").getByTestId("suggestion-yuna")).toBeVisible();
   expect(await head.boundingBox()).toEqual(before);
 
-  await page.getByRole("tab", { name: "추천" }).click();
+  await page.getByRole("tab", { name: "발견" }).click();
   await expect(page).toHaveURL(/\/explore$/);
   await expect(page.getByTestId("explore-picks").locator("[data-post-id]").first()).toBeVisible({ timeout: 1_000 });
 
