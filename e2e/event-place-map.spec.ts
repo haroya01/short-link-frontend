@@ -284,11 +284,13 @@ test.describe("event place, map first", () => {
     await expect(nameField(page)).toHaveCount(0);
   });
 
-  for (const viewport of [
-    { width: 390, height: 844 },
-    { width: 1440, height: 600 },
-  ]) {
-    test(`at ${viewport.width}px, when the map arrives while the organizer reads below the place field, what they read stays put`, async ({ page }) => {
+  for (const [viewport, anchoring] of [
+    [{ width: 390, height: 844 }, true],
+    [{ width: 390, height: 844 }, false],
+    [{ width: 1440, height: 600 }, true],
+    [{ width: 1440, height: 600 }, false],
+  ] as const) {
+    test(`at ${viewport.width}px ${anchoring ? "with" : "without"} the browser's scroll anchoring, the map arriving above the organizer's view leaves what they read in place`, async ({ page }) => {
       await page.setViewportSize(viewport);
       await fakeGoogleMaps(page, { manualReady: true });
       await places(page);
@@ -297,6 +299,7 @@ test.describe("event place, map first", () => {
       await expect(search(page)).toBeVisible();
       await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
 
+      if (!anchoring) await page.addStyleTag({ content: "html { overflow-anchor: none !important; }" });
       await reveal(page).evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 40));
       const reading = page.locator("#ef-cap");
       const before = (await reading.boundingBox())!.y;
