@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -99,9 +99,13 @@ export function LocationField({
   const [mode, setMode] = useState<MapMode>(() => (MAPS_KEY && !mapsJsFailed() ? "loading" : "off"));
   const [query, setQuery] = useState("");
   const [missed, setMissed] = useState(false);
+  const [instant, setInstant] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mapElement = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const revealRef = useRef<HTMLDivElement>(null);
+  const keepView = useRef<number | null>(null);
   const live = useRef<{ api: MapsApi; map: GoogleMap; pin: MapPin } | null>(null);
   const session = useRef(newSessionToken());
   const pickSeq = useRef(0);
@@ -145,6 +149,9 @@ export function LocationField({
         const loaded = map.addListener("tilesloaded", () => {
           loaded.remove();
           if (!alive) return;
+          const above = (revealRef.current?.getBoundingClientRect().top ?? 0) < 0;
+          keepView.current = above ? (rootRef.current?.getBoundingClientRect().bottom ?? null) : null;
+          setInstant(above || prefersReducedMotion());
           setMode("ready");
           handlers.current.ready();
         });
@@ -158,6 +165,19 @@ export function LocationField({
       stopListening();
     };
   }, []);
+
+  useLayoutEffect(() => {
+    const before = keepView.current;
+    if (!mapOpen || before == null || !rootRef.current) return;
+    keepView.current = null;
+    const page = document.documentElement;
+    const anchoring = page.style.overflowAnchor;
+    page.style.overflowAnchor = "none";
+    window.scrollBy(0, rootRef.current.getBoundingClientRect().bottom - before);
+    requestAnimationFrame(() => {
+      page.style.overflowAnchor = anchoring;
+    });
+  }, [mapOpen]);
 
   const search = (input: string) => {
     if (!MAPS_KEY) return;
@@ -372,7 +392,7 @@ export function LocationField({
   const showLinkField = mapOpen ? manualLink : !picked && linkOpen;
 
   return (
-    <div className="relative flex flex-col gap-4">
+    <div ref={rootRef} className="flex flex-col">
       <div key="search" className="flex flex-col gap-1.5">
         <div className="relative">
           <Input
@@ -490,25 +510,35 @@ export function LocationField({
       {mode !== "off" ? (
         <div
           key="map"
-          ref={mapElement}
-          data-testid="location-map"
+          ref={revealRef}
+          data-testid="location-map-reveal"
           aria-hidden={mapOpen ? undefined : true}
           {...inert(!mapOpen)}
           className={cn(
-            "aspect-[4/3] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800",
-            mapOpen ? "motion-safe:animate-fade-in" : "pointer-events-none absolute inset-x-0 top-0 -z-10 opacity-0",
+            "grid",
+            !instant &&
+              "transition-[grid-template-rows,opacity,margin-top] duration-300 ease-[var(--ease)] motion-reduce:transition-none",
+            mapOpen ? "mt-4 grid-rows-[1fr] opacity-100" : "pointer-events-none grid-rows-[0fr] opacity-0",
           )}
-        />
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div
+              ref={mapElement}
+              data-testid="location-map"
+              className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
+            />
+          </div>
+        </div>
       ) : null}
 
       {mapOpen && missed ? (
-        <p key="missed" className="-mt-2 text-[12px] text-slate-500 dark:text-slate-400">
+        <p key="missed" className="mt-2 text-[12px] text-slate-500 dark:text-slate-400">
           {t("mapMissed")}
         </p>
       ) : null}
 
       {mapOpen && (picked || text) ? (
-        <div key="picked" className="flex flex-col gap-1.5 motion-safe:animate-fade-in">
+        <div key="picked" className="mt-4 flex flex-col gap-1.5 motion-safe:animate-fade-in">
           <label htmlFor="ef-loc-name" className={FIELD_LABEL}>
             {t("placeName")}
           </label>
@@ -536,7 +566,7 @@ export function LocationField({
       ) : null}
 
       {showLinkField ? (
-        <div key="link" className="flex flex-col gap-1.5">
+        <div key="link" className="mt-4 flex flex-col gap-1.5">
           <label htmlFor="ef-locurl" className={FIELD_LABEL}>
             {t("locationUrl")}
           </label>

@@ -4,7 +4,11 @@ import { mockBackend, signIn } from "./helpers/mock-backend";
 const TOKYO = { lat: 35.6812, lng: 139.7671 };
 const SKY = { lat: 35.6585, lng: 139.7022 };
 
-type FakeOptions = { authFails?: boolean; geocode?: { place_id: string; formatted_address: string } | null };
+type FakeOptions = {
+  authFails?: boolean;
+  manualReady?: boolean;
+  geocode?: { place_id: string; formatted_address: string } | null;
+};
 
 async function fakeGoogleMaps(page: Page, options: FakeOptions = {}) {
   await page.addInitScript((opts: FakeOptions) => {
@@ -29,6 +33,7 @@ async function fakeGoogleMaps(page: Page, options: FakeOptions = {}) {
         this.center = options.center;
         this.zoom = options.zoom;
         fake.map = this;
+        if (opts.manualReady) return;
         setTimeout(() => (opts.authFails ? window.gm_authFailure?.() : this.emit("tilesloaded")), 30);
       }
       addListener(name: string, handler: Handler) {
@@ -132,6 +137,7 @@ async function organizer(page: Page, saved?: Record<string, unknown>) {
 }
 
 const mapBox = (page: Page) => page.locator("#ef-panel-edit").getByTestId("location-map");
+const reveal = (page: Page) => page.locator("#ef-panel-edit").getByTestId("location-map-reveal");
 const search = (page: Page) => page.locator("#ef-panel-edit").getByRole("combobox", { name: "장소" });
 const nameField = (page: Page) => page.locator("#ef-panel-edit").getByLabel("장소 이름");
 const fakeState = (page: Page) =>
@@ -150,8 +156,8 @@ test.describe("event place, map first", () => {
     await organizer(page);
     await page.goto("/ko/events/new");
 
-    await expect(mapBox(page)).not.toHaveAttribute("aria-hidden", "true");
-    await expect(mapBox(page)).toHaveCSS("opacity", "1");
+    await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
+    await expect(reveal(page)).toHaveCSS("opacity", "1");
     await expect.poll(async () => (await fakeState(page)).center).toEqual(TOKYO);
     const state = await fakeState(page);
     expect(state.options).toMatchObject({ gestureHandling: "cooperative", clickableIcons: true });
@@ -167,7 +173,7 @@ test.describe("event place, map first", () => {
     const unexpected = await places(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
-    await expect(mapBox(page)).not.toHaveAttribute("aria-hidden", "true");
+    await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
     await page.locator("#ef-title").fill("장소 모집");
 
     await search(page).fill("渋谷");
@@ -201,7 +207,7 @@ test.describe("event place, map first", () => {
     await places(page);
     await organizer(page);
     await page.goto("/ko/events/new");
-    await expect(mapBox(page)).not.toHaveAttribute("aria-hidden", "true");
+    await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
 
     const stopped = await page.evaluate(() =>
       (window as unknown as { __fake: { map: { tap(a: number, b: number, c?: string): { stopped: boolean } } } }).__fake.map
@@ -222,7 +228,7 @@ test.describe("event place, map first", () => {
     await places(page);
     const sent = await organizer(page);
     await page.goto("/ko/events/new");
-    await expect(mapBox(page)).not.toHaveAttribute("aria-hidden", "true");
+    await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
     await page.locator("#ef-title").fill("장소 모집");
 
     await page.evaluate(() =>
@@ -239,7 +245,7 @@ test.describe("event place, map first", () => {
     await places(page);
     await organizer(page);
     await page.goto("/ko/events/new");
-    await expect(mapBox(page)).not.toHaveAttribute("aria-hidden", "true");
+    await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
 
     await page.evaluate(() =>
       (window as unknown as { __fake: { map: { tap(a: number, b: number): unknown } } }).__fake.map.tap(35.663, 139.699),
@@ -276,5 +282,63 @@ test.describe("event place, map first", () => {
     await expect(search(page)).toHaveValue("SHIBUYA SKY");
     await expect(page.locator('#ef-panel-edit iframe[src*="/maps/embed/v1/place"]')).toBeVisible();
     await expect(nameField(page)).toHaveCount(0);
+  });
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1440, height: 600 },
+  ]) {
+    test(`at ${viewport.width}px, when the map arrives while the organizer reads below the place field, what they read stays put`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await fakeGoogleMaps(page, { manualReady: true });
+      await places(page);
+      await organizer(page);
+      await page.goto("/ko/events/new");
+      await expect(search(page)).toBeVisible();
+      await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
+
+      await reveal(page).evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 40));
+      const reading = page.locator("#ef-cap");
+      const before = (await reading.boundingBox())!.y;
+      expect((await reveal(page).boundingBox())!.y).toBeLessThan(0);
+      expect(before).toBeGreaterThan(0);
+      expect(before).toBeLessThan(viewport.height);
+
+      await page.evaluate(() => (window as unknown as { __fake: { map: { emit(name: string): void } } }).__fake.map.emit("tilesloaded"));
+      await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
+      await page.waitForTimeout(600);
+      expect(Math.abs((await reading.boundingBox())!.y - before)).toBeLessThanOrEqual(1);
+    });
+  }
+
+  test("the map opens by growing in place on the house curve", async ({ page }) => {
+    await fakeGoogleMaps(page, { manualReady: true });
+    await places(page);
+    await organizer(page);
+    await page.goto("/ko/events/new");
+    await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
+    await search(page).scrollIntoViewIfNeeded();
+
+    const opening = reveal(page);
+    await expect(opening).toHaveCSS("grid-template-rows", "0px");
+    await page.evaluate(() => (window as unknown as { __fake: { map: { emit(name: string): void } } }).__fake.map.emit("tilesloaded"));
+    await expect(opening).toHaveCSS("transition-property", /grid-template-rows/);
+    await expect(opening).toHaveCSS("transition-timing-function", "cubic-bezier(0.16, 1, 0.3, 1)");
+    await expect(opening).toHaveCSS("opacity", "1");
+
+  });
+
+  test("with reduced motion the map opens at once", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await fakeGoogleMaps(page, { manualReady: true });
+    await places(page);
+    await organizer(page);
+    await page.goto("/ko/events/new");
+    await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
+    await search(page).scrollIntoViewIfNeeded();
+    await page.evaluate(() => (window as unknown as { __fake: { map: { emit(name: string): void } } }).__fake.map.emit("tilesloaded"));
+    await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
+    await expect(reveal(page)).toHaveCSS("transition-property", "all");
+    await expect(reveal(page)).toHaveCSS("transition-duration", "0s");
   });
 });
