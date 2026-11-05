@@ -93,7 +93,7 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3001
           CI: "true"
-        run: npx playwright test e2e/event-place-search.spec.ts --project=chromium
+        run: npx playwright test e2e/event-place-search.spec.ts e2e/event-place-map.spec.ts --project=chromium
       - name: Upload report on failure
         if: failure()
         uses: actions/upload-artifact@v4

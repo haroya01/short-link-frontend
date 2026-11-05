@@ -4174,6 +4174,8 @@
       "timezone": "Múi giờ",
       "whereTitle": "Địa điểm",
       "locationPlaceholder": "Tên địa điểm hoặc địa chỉ",
+      "placeName": "Tên địa điểm",
+      "mapMissed": "Không tìm thấy địa chỉ cho vị trí này",
       "clearPlace": "Xóa địa điểm",
       "locationUrl": "Liên kết bản đồ",
       "addMapLink": "Dùng liên kết bản đồ",

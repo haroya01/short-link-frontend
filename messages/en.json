@@ -4174,6 +4174,8 @@
       "timezone": "Time zone",
       "whereTitle": "Where",
       "locationPlaceholder": "Place name or address",
+      "placeName": "Place name",
+      "mapMissed": "Couldn't find an address for this spot",
       "clearPlace": "Clear venue",
       "locationUrl": "Map link",
       "addMapLink": "Use a map link",

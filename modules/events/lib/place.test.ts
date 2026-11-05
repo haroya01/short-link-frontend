@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clearPlace, editPlaceText, pickPlace, placeIdFromUrl, savedPlace } from "./place";
+import { clearPlace, editPlaceText, mapStart, pickPlace, placeIdFromUrl, savedPlace } from "./place";
 
 const shibuya = { placeId: "ChIJ-shibuya_1", main: "渋谷駅", secondary: "日本、東京都渋谷区" };
 const shibuyaLink =
@@ -74,5 +74,39 @@ describe("reopening a saved event", () => {
 
   it("has no place to anchor when the saved name is empty", () => {
     expect(savedPlace("", shibuyaLink).picked).toBeNull();
+  });
+});
+
+describe("where the map opens", () => {
+  it("opens on the city of the form's time zone", () => {
+    expect(mapStart("Asia/Tokyo", "ko")).toEqual({ center: { lat: 35.6812, lng: 139.7671 }, zoom: 12 });
+    expect(mapStart("Asia/Seoul", "ja")).toEqual({ center: { lat: 37.5665, lng: 126.978 }, zoom: 12 });
+    expect(mapStart("America/Los_Angeles", "ko").center).toEqual({ lat: 34.0522, lng: -118.2437 });
+  });
+
+  it("falls back to the locale's city when the time zone has none", () => {
+    expect(mapStart("UTC", "ko").center).toEqual({ lat: 37.5665, lng: 126.978 });
+    expect(mapStart("UTC", "ja").center).toEqual({ lat: 35.6812, lng: 139.7671 });
+  });
+
+  it("shows the whole world when neither says where", () => {
+    expect(mapStart("UTC", "en")).toEqual({ center: { lat: 20, lng: 0 }, zoom: 2 });
+  });
+});
+
+describe("a place picked on the map", () => {
+  it("fills the name and a link the event page can turn back into the same map", () => {
+    const next = pickPlace({ placeId: "ChIJ-poi_1", main: "SHIBUYA SKY", secondary: "日本、〒150-0002 東京都渋谷区渋谷2丁目24−12" });
+    expect(next.text).toBe("SHIBUYA SKY");
+    expect(next.url).toBe("https://www.google.com/maps/search/?api=1&query=SHIBUYA%20SKY&query_place_id=ChIJ-poi_1");
+    expect(placeIdFromUrl(next.url)).toBe("ChIJ-poi_1");
+    expect(next.picked).toEqual({ placeId: "ChIJ-poi_1", name: "SHIBUYA SKY", address: "日本、〒150-0002 東京都渋谷区渋谷2丁目24−12" });
+  });
+
+  it("names a tapped spot after its address and does not repeat it as the address line", () => {
+    const next = pickPlace({ placeId: "ChIJ-spot", main: "東京都渋谷区道玄坂1丁目2", secondary: "" });
+    expect(next.text).toBe("東京都渋谷区道玄坂1丁目2");
+    expect(next.picked?.address).toBeNull();
+    expect(placeIdFromUrl(next.url)).toBe("ChIJ-spot");
   });
 });

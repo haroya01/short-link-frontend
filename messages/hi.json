@@ -4174,6 +4174,8 @@
       "timezone": "समय क्षेत्र",
       "whereTitle": "कहाँ",
       "locationPlaceholder": "स्थान का नाम या पता",
+      "placeName": "स्थान का नाम",
+      "mapMissed": "इस जगह का पता नहीं मिला",
       "clearPlace": "स्थान हटाएँ",
       "locationUrl": "नक्शा लिंक",
       "addMapLink": "नक्शा लिंक जोड़ें",

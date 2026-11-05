@@ -4174,6 +4174,8 @@
       "timezone": "시간대",
       "whereTitle": "장소",
       "locationPlaceholder": "장소 이름이나 주소",
+      "placeName": "장소 이름",
+      "mapMissed": "이 자리의 주소를 찾지 못했어요",
       "clearPlace": "장소 지우기",
       "locationUrl": "지도 링크",
       "addMapLink": "링크로 넣기",

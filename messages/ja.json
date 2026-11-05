@@ -4174,6 +4174,8 @@
       "timezone": "タイムゾーン",
       "whereTitle": "場所",
       "locationPlaceholder": "場所名や住所",
+      "placeName": "場所の名前",
+      "mapMissed": "この場所の住所が見つかりませんでした",
       "clearPlace": "会場をクリア",
       "locationUrl": "地図リンク",
       "addMapLink": "リンクで指定",
