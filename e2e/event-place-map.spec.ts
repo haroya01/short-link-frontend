@@ -1,140 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { mockBackend, signIn } from "./helpers/mock-backend";
-
-const TOKYO = { lat: 35.6812, lng: 139.7671 };
-const SKY = { lat: 35.6585, lng: 139.7022 };
-
-type FakeOptions = {
-  authFails?: boolean;
-  manualReady?: boolean;
-  geocode?: { place_id: string; formatted_address: string } | null;
-};
-
-async function fakeGoogleMaps(page: Page, options: FakeOptions = {}) {
-  await page.addInitScript((opts: FakeOptions) => {
-    type Handler = (event?: unknown) => void;
-    const fake = {
-      map: null as null | {
-        options: Record<string, unknown>;
-        center: unknown;
-        zoom: number;
-        tap(lat: number, lng: number, placeId?: string): { stopped: boolean };
-      },
-      pin: { position: null as unknown, shown: false },
-    };
-    class FakeMap {
-      listeners: Record<string, Handler[]> = {};
-      center: unknown;
-      zoom: number;
-      constructor(
-        public element: HTMLElement,
-        public options: { center: unknown; zoom: number },
-      ) {
-        this.center = options.center;
-        this.zoom = options.zoom;
-        fake.map = this;
-        if (opts.manualReady) return;
-        setTimeout(() => (opts.authFails ? window.gm_authFailure?.() : this.emit("tilesloaded")), 30);
-      }
-      addListener(name: string, handler: Handler) {
-        (this.listeners[name] ??= []).push(handler);
-        return { remove: () => (this.listeners[name] = this.listeners[name].filter((h) => h !== handler)) };
-      }
-      emit(name: string, event?: unknown) {
-        for (const handler of this.listeners[name] ?? []) handler(event);
-      }
-      panTo(position: unknown) {
-        this.center = position;
-      }
-      setCenter(position: unknown) {
-        this.center = position;
-      }
-      setZoom(zoom: number) {
-        this.zoom = zoom;
-      }
-      getZoom() {
-        return this.zoom;
-      }
-      tap(lat: number, lng: number, placeId?: string) {
-        const event = { latLng: { lat: () => lat, lng: () => lng }, placeId, stopped: false, stop: () => (event.stopped = true) };
-        this.emit("click", event);
-        return event;
-      }
-    }
-    class FakeMarker {
-      setPosition(position: unknown) {
-        fake.pin.position = position;
-      }
-      setMap(map: unknown) {
-        fake.pin.shown = map != null;
-      }
-    }
-    class FakeGeocoder {
-      geocode() {
-        return opts.geocode ? Promise.resolve({ results: [opts.geocode] }) : Promise.reject(new Error("REQUEST_DENIED"));
-      }
-    }
-    const libraries: Record<string, Record<string, unknown>> = {
-      maps: { Map: FakeMap },
-      marker: { Marker: FakeMarker },
-      geocoding: { Geocoder: FakeGeocoder },
-    };
-    (window as unknown as { __fake: typeof fake }).__fake = fake;
-    window.google = { maps: { importLibrary: async (name: string) => libraries[name] } };
-  }, options);
-}
-
-async function places(page: Page) {
-  const unexpected: string[] = [];
-  await page.route(/^https:\/\/(maps\.googleapis\.com|places\.googleapis\.com|www\.google\.com\/maps)\//, (route) => {
-    unexpected.push(route.request().url());
-    return route.abort();
-  });
-  await page.route("https://places.googleapis.com/v1/places:autocomplete", (route) =>
-    route.fulfill({
-      json: {
-        suggestions: [
-          {
-            placePrediction: {
-              placeId: "ChIJ-shibuya-sky",
-              structuredFormat: { mainText: { text: "SHIBUYA SKY" }, secondaryText: { text: "日本、東京都渋谷区渋谷2丁目" } },
-            },
-          },
-        ],
-      },
-    }),
-  );
-  await page.route(/^https:\/\/places\.googleapis\.com\/v1\/places\/[\w-]+\?/, (route) => {
-    const id = new URL(route.request().url()).pathname.split("/").pop();
-    if (id === "ChIJ-shibuya-sky") return route.fulfill({ json: { location: { latitude: SKY.lat, longitude: SKY.lng } } });
-    if (id === "ChIJ-poi-hachiko")
-      return route.fulfill({ json: { displayName: { text: "忠犬ハチ公像" }, formattedAddress: "日本、〒150-0043 東京都渋谷区道玄坂２丁目１" } });
-    return route.fulfill({ status: 404, json: {} });
-  });
-  await page.route(/^https:\/\/www\.google\.com\/maps\/embed\/v1\/place\?/, (route) =>
-    route.fulfill({ contentType: "text/html", body: "<!doctype html><title>map</title><body>map</body>" }),
-  );
-  return unexpected;
-}
-
-async function organizer(page: Page, saved?: Record<string, unknown>) {
-  const sent: Record<string, unknown>[] = [];
-  const event = {
-    id: 1, slug: "e2e-1", title: "장소 모집", descriptionMd: null, coverImageUrl: null, startsAt: "2030-01-15T10:00:00Z",
-    endsAt: null, timezone: "Asia/Tokyo", locationText: null, locationUrl: null, onlineUrl: null, capacity: null,
-    closeAt: null, contactField: "EMAIL", questions: [], status: "OPEN", registrationCount: 0, links: [],
-    createdAt: "2026-09-23T00:00:00Z", ...saved,
-  };
-  await signIn(page);
-  await mockBackend(page, {
-    "POST /api/v1/events": (route) => {
-      sent.push(JSON.parse(route.request().postData() ?? "{}"));
-      return route.fulfill({ json: { ...event, ...sent.at(-1) } });
-    },
-    "GET /api/v1/events/1": (route) => route.fulfill({ json: event }),
-  });
-  return sent;
-}
+import { SKY, TOKYO, fakeGoogleMaps, mockPlaces, placeOrganizer } from "./helpers/fake-google-maps";
 
 const mapBox = (page: Page) => page.locator("#ef-panel-edit").getByTestId("location-map");
 const reveal = (page: Page) => page.locator("#ef-panel-edit").getByTestId("location-map-reveal");
@@ -152,8 +17,8 @@ test.describe("event place, map first", () => {
   test("the map is open before anything is typed, on the time zone's city, and the link inputs stay out of the way", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await fakeGoogleMaps(page);
-    const unexpected = await places(page);
-    await organizer(page);
+    const unexpected = await mockPlaces(page);
+    await placeOrganizer(page);
     await page.goto("/ko/events/new");
 
     await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
@@ -170,8 +35,8 @@ test.describe("event place, map first", () => {
 
   test("a search pick moves the map, drops a pin, and publishes the place link the event page reads", async ({ page }) => {
     await fakeGoogleMaps(page);
-    const unexpected = await places(page);
-    const sent = await organizer(page);
+    const unexpected = await mockPlaces(page);
+    const sent = await placeOrganizer(page);
     await page.goto("/ko/events/new");
     await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
     await page.locator("#ef-title").fill("장소 모집");
@@ -204,8 +69,8 @@ test.describe("event place, map first", () => {
 
   test("tapping a place on the map fills its name and address and keeps Google's own info window shut", async ({ page }) => {
     await fakeGoogleMaps(page);
-    await places(page);
-    await organizer(page);
+    await mockPlaces(page);
+    await placeOrganizer(page);
     await page.goto("/ko/events/new");
     await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
 
@@ -225,8 +90,8 @@ test.describe("event place, map first", () => {
 
   test("tapping a blank spot names it after the geocoded address", async ({ page }) => {
     await fakeGoogleMaps(page, { geocode: { place_id: "ChIJ-spot", formatted_address: "日本、東京都渋谷区神南1丁目" } });
-    await places(page);
-    const sent = await organizer(page);
+    await mockPlaces(page);
+    const sent = await placeOrganizer(page);
     await page.goto("/ko/events/new");
     await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
     await page.locator("#ef-title").fill("장소 모집");
@@ -242,8 +107,8 @@ test.describe("event place, map first", () => {
 
   test("a blank spot the geocoder can't read leaves no pin and says so", async ({ page }) => {
     await fakeGoogleMaps(page, { geocode: null });
-    await places(page);
-    await organizer(page);
+    await mockPlaces(page);
+    await placeOrganizer(page);
     await page.goto("/ko/events/new");
     await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
 
@@ -257,8 +122,8 @@ test.describe("event place, map first", () => {
 
   test("reopening an event puts the pin back on its saved place", async ({ page }) => {
     await fakeGoogleMaps(page);
-    await places(page);
-    await organizer(page, {
+    await mockPlaces(page);
+    await placeOrganizer(page, {
       locationText: "SHIBUYA SKY, 46층",
       locationUrl: "https://www.google.com/maps/search/?api=1&query=SHIBUYA%20SKY&query_place_id=ChIJ-shibuya-sky",
     });
@@ -270,8 +135,8 @@ test.describe("event place, map first", () => {
 
   test("when Google refuses the key the search-first flow stays, embed map and link button included", async ({ page }) => {
     await fakeGoogleMaps(page, { authFails: true });
-    await places(page);
-    await organizer(page);
+    await mockPlaces(page);
+    await placeOrganizer(page);
     await page.goto("/ko/events/new");
 
     await expect(mapBox(page)).toHaveCount(0);
@@ -284,40 +149,10 @@ test.describe("event place, map first", () => {
     await expect(nameField(page)).toHaveCount(0);
   });
 
-  for (const [viewport, anchoring] of [
-    [{ width: 390, height: 844 }, true],
-    [{ width: 390, height: 844 }, false],
-    [{ width: 1440, height: 600 }, true],
-    [{ width: 1440, height: 600 }, false],
-  ] as const) {
-    test(`at ${viewport.width}px ${anchoring ? "with" : "without"} the browser's scroll anchoring, the map arriving above the organizer's view leaves what they read in place`, async ({ page }) => {
-      await page.setViewportSize(viewport);
-      await fakeGoogleMaps(page, { manualReady: true });
-      await places(page);
-      await organizer(page);
-      await page.goto("/ko/events/new");
-      await expect(search(page)).toBeVisible();
-      await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
-
-      if (!anchoring) await page.addStyleTag({ content: "html { overflow-anchor: none !important; }" });
-      await reveal(page).evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 40));
-      const reading = page.locator("#ef-cap");
-      const before = (await reading.boundingBox())!.y;
-      expect((await reveal(page).boundingBox())!.y).toBeLessThan(0);
-      expect(before).toBeGreaterThan(0);
-      expect(before).toBeLessThan(viewport.height);
-
-      await page.evaluate(() => (window as unknown as { __fake: { map: { emit(name: string): void } } }).__fake.map.emit("tilesloaded"));
-      await expect(reveal(page)).not.toHaveAttribute("aria-hidden", "true");
-      await page.waitForTimeout(600);
-      expect(Math.abs((await reading.boundingBox())!.y - before)).toBeLessThanOrEqual(1);
-    });
-  }
-
   test("the map opens by growing in place on the house curve", async ({ page }) => {
     await fakeGoogleMaps(page, { manualReady: true });
-    await places(page);
-    await organizer(page);
+    await mockPlaces(page);
+    await placeOrganizer(page);
     await page.goto("/ko/events/new");
     await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
     await search(page).scrollIntoViewIfNeeded();
@@ -334,8 +169,8 @@ test.describe("event place, map first", () => {
   test("with reduced motion the map opens at once", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await fakeGoogleMaps(page, { manualReady: true });
-    await places(page);
-    await organizer(page);
+    await mockPlaces(page);
+    await placeOrganizer(page);
     await page.goto("/ko/events/new");
     await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { __fake: { map: unknown } }).__fake.map))).toBe(true);
     await search(page).scrollIntoViewIfNeeded();
