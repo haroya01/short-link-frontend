@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
+import { expectOnTop } from "./helpers/on-top";
 
 const DAY = 86_400_000;
 const at = (days: number) => new Date(Date.now() + days * DAY).toISOString();
@@ -69,14 +70,47 @@ test("a past event and a full one read as such in the head", async ({ page }) =>
   await expect(main(page).locator("header")).toContainText("정원 마감");
 });
 
-test("right after publishing, the short link sweeps in with one copy button and no banner sentence", async ({ page }) => {
+test("right after publishing, the first share row is the moment and the link is not listed twice", async ({ page }) => {
   await organizer(page, event());
   await page.goto("/ko/events/1?created=1");
   const line = page.getByTestId("event-created-line");
-  await expect(line.getByRole("link", { name: /\/mk11$/ })).toBeVisible();
-  await expect(line.getByRole("button")).toHaveCount(1);
+  await expect(line).toContainText("기본");
+  await expect(line.getByText(/\/mk11$/)).toBeVisible();
+  await expect(line.getByRole("button")).toHaveCount(2);
   await expect(line.getByRole("button", { name: "링크 복사", exact: true })).toBeVisible();
+  await expect(line.getByRole("button", { name: "QR", exact: true })).toBeVisible();
+  await expect(main(page).getByText(/\/mk11$/)).toHaveCount(1);
   await expect(page.getByText("이 링크를 단톡이나 SNS에 올려 주세요", { exact: false })).toHaveCount(0);
+});
+
+test("the head links and the CSV export are full-size targets", async ({ page }) => {
+  await organizer(page, event());
+  await page.goto("/ko/events/1");
+  for (const target of [
+    main(page).getByRole("link", { name: "공개 페이지 보기" }),
+    main(page).getByRole("link", { name: "수정", exact: true }),
+    main(page).getByRole("button", { name: "CSV 내보내기" }),
+  ]) {
+    expect((await target.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test("a CSV export that fails says so", async ({ page }) => {
+  await organizer(page, event());
+  await page.route("**/api/v1/events/1/attendees.csv", (route) => route.fulfill({ status: 500 }));
+  await page.goto("/ko/events/1");
+  await main(page).getByRole("button", { name: "CSV 내보내기" }).click();
+  await expectOnTop(page.getByText("CSV를 내려받지 못했어요"));
+});
+
+test("the analytics bars start on one line across the three groups", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await organizer(page, event());
+  await page.goto("/ko/events/1");
+  const bars = main(page).getByTestId("breakdown-list").locator("li > span:nth-child(2)");
+  await expect(bars).toHaveCount(3);
+  const starts = await bars.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().left)));
+  expect(new Set(starts).size).toBe(1);
 });
 
 test("share rows, attendees and analytics carry no boxes or position hints", async ({ page }) => {

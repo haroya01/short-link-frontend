@@ -57,7 +57,6 @@ export default function PosterBuilderPage() {
   // 아직 없는 사용자는 generic kurl.me 로 placeholder QR 미리보기.
   const previewShortUrl =
     batches === null ? null : (batches[0]?.shortUrl ?? "https://kurl.me");
-  const previewBatchCount = batches?.length ?? 0;
   const [previewQrDataUrl, setPreviewQrDataUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!previewShortUrl) {
@@ -225,10 +224,6 @@ export default function PosterBuilderPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 px-4 py-3 text-[12px] leading-snug text-slate-600 dark:text-slate-300">
-        {t("toolHint")}
-      </div>
-
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-3">
           {!pdfFile ? (
@@ -240,7 +235,6 @@ export default function PosterBuilderPage() {
               onBoxChange={setBox}
               onRemove={() => handleFile(null)}
               qrDataUrl={previewQrDataUrl}
-              batchCount={previewBatchCount}
             />
           )}
         </div>
@@ -260,8 +254,14 @@ export default function PosterBuilderPage() {
               })}
             </p>
             {batchCount === 0 && (
-              <p className="mt-2 text-[11px] text-rose-600">
+              <p className="mt-2 flex flex-wrap items-baseline gap-x-2 text-[12px] text-slate-500 dark:text-slate-400">
                 {t("noBatchesHint")}
+                <Link
+                  href={`/campaigns/${campaignId}/batches/new`}
+                  className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-4 hover:decoration-slate-900 dark:text-slate-100 dark:decoration-slate-600 dark:hover:decoration-slate-100"
+                >
+                  {t("addBatch")}
+                </Link>
               </p>
             )}
           </div>
@@ -274,9 +274,7 @@ export default function PosterBuilderPage() {
             {composing ? t("composing") : t("download", { count: batchCount })}
           </Button>
 
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
-            {t("notSavedHint")}
-          </div>
+          <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("notSavedHint")}</p>
 
           {error && (
             <div className="rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-[12px] text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-400">
@@ -340,14 +338,12 @@ function PreviewWithBox({
   onBoxChange,
   onRemove,
   qrDataUrl,
-  batchCount,
 }: {
   file: File;
   box: QrBoxFraction;
   onBoxChange: (b: QrBoxFraction) => void;
   onRemove: () => void;
   qrDataUrl: string | null;
-  batchCount: number;
 }) {
   const t = useTranslations("campaignApp.posterBuilder");
   return (
@@ -366,11 +362,7 @@ function PreviewWithBox({
       </div>
       <PdfPreview file={file} box={box} onBoxChange={onBoxChange} qrDataUrl={qrDataUrl} />
       <p className="text-[11px] text-slate-500 dark:text-slate-400">
-        {batchCount > 1
-          ? t("dragHintWithBatches", { count: batchCount })
-          : batchCount === 0
-            ? t("dragHintWithoutBatches")
-            : t("dragHint")}
+        {t("dragHint")}
       </p>
     </div>
   );

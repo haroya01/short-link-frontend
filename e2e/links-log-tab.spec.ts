@@ -15,8 +15,8 @@ test("the log tab opens straight into the click rows and pages by cursor", async
   const rows = panel.locator("tbody tr");
   await expect(rows).toHaveCount(50);
   await expect(rows.first()).toContainText("Seoul, 대한민국");
-  await expect(panel.getByRole("button", { name: "클릭 이벤트 CSV" })).toBeVisible();
-  await expect(panel.getByRole("button", { name: "일별 통계 CSV" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "클릭 기록 CSV" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "일별 클릭 CSV" })).toBeVisible();
 
   await panel.getByRole("button", { name: "더 보기" }).click();
   await expect(rows).toHaveCount(62);
@@ -48,7 +48,7 @@ test("the privacy policy says raw clicks go after 90 days and request logs after
 test("link settings no longer carry the click log or its exports", async ({ page }) => {
   await page.goto(`/ko/stats/${CODE}#settings`);
   await expect(page.getByRole("heading", { name: "보호" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "클릭 이벤트 CSV" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "클릭 기록 CSV" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "원본 클릭 로그" })).toHaveCount(0);
 });
 

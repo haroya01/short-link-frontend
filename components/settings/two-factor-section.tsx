@@ -14,6 +14,9 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { GROUPED_CELL, GroupedList } from "@/components/common/grouped-list";
+import { ActionRow, BlockRow, ErrorRow, NoteRow } from "@/components/settings/settings-rows";
+import { formatDate } from "@/lib/utils";
 import type { TwoFactorSetup, TwoFactorStatus } from "@/types";
 
 type Mode = "loading" | "off" | "enrolling" | "on" | "error";
@@ -138,49 +141,54 @@ export function TwoFactorSection() {
     setCode("");
   }
 
-  if (mode === "loading") {
-    return <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>;
-  }
+  const codeInput = (
+    <Input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      autoComplete="one-time-code"
+      maxLength={6}
+      aria-label={t("codeLabel")}
+      placeholder={t("codePlaceholder")}
+      value={code}
+      onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+      className="w-32 font-mono"
+    />
+  );
 
   return (
-    <div className="space-y-4">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{t("description")}</p>
+    <GroupedList title={t("title")} footer={t("description")}>
+      {mode === "loading" && <NoteRow>{t("loading")}</NoteRow>}
+
+      {mode === "error" && (
+        <ErrorRow
+          message={t("loadError")}
+          retryLabel={t("retry")}
+          onRetry={() => {
+            setMode("loading");
+            void refresh();
+          }}
+        />
+      )}
 
       {recoveryCodes && (
-        <RecoveryCodesPanel codes={recoveryCodes} onDismiss={() => setRecoveryCodes(null)} />
+        <BlockRow>
+          <RecoveryCodesPanel codes={recoveryCodes} onDismiss={() => setRecoveryCodes(null)} />
+        </BlockRow>
       )}
 
       {mode === "off" && (
-        <div className="flex items-center gap-3">
-          <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300">
-            {t("statusOff")}
-          </span>
+        <div className={GROUPED_CELL}>
+          <span className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("statusOff")}</span>
           <Button size="sm" onClick={handleStart} disabled={busy}>
             {busy ? t("starting") : t("enableButton")}
           </Button>
         </div>
       )}
 
-      {mode === "error" && (
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 dark:text-slate-400">{t("loadError")}</span>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              setMode("loading");
-              refresh();
-            }}
-          >
-            {t("retry")}
-          </Button>
-        </div>
-      )}
-
       {mode === "enrolling" && setup && (
-        <div className="space-y-3 rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
-          <p className="font-medium">{t("scanTitle")}</p>
-          <p>{t("scanHint")}</p>
+        <BlockRow>
+          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("scanTitle")}</p>
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             {qrDataUrl ? (
               <Image
@@ -190,71 +198,47 @@ export function TwoFactorSection() {
                 width={220}
                 height={220}
                 unoptimized
-                className="rounded border border-amber-300 bg-white dark:bg-slate-900"
+                className="rounded-md border border-slate-200 bg-white dark:border-slate-700"
               />
             ) : (
-              <div className="h-[220px] w-[220px] animate-pulse rounded border border-amber-200 dark:border-amber-500/30 bg-white/60 dark:bg-slate-900/60" />
+              <div className="h-[220px] w-[220px] animate-pulse rounded-md border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800" />
             )}
-            <div className="flex-1 space-y-2">
-              <p>{t("manualKeyHint")}</p>
-              <code data-sentry-mask className="block break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <p className="text-xs text-slate-500 dark:text-slate-400">{t("manualKeyHint")}</p>
+              <code data-sentry-mask className="block break-all rounded-md bg-slate-50 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:bg-slate-800 dark:text-slate-100">
                 {setup.secret}
               </code>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              placeholder={t("codePlaceholder")}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              className="w-32 font-mono"
-            />
-            <Button
-              size="sm"
-              onClick={handleConfirm}
-              disabled={busy || code.length !== 6}
-            >
+            {codeInput}
+            <Button size="sm" onClick={handleConfirm} disabled={busy || code.length !== 6}>
               {busy ? t("confirming") : t("confirmButton")}
             </Button>
             <Button size="sm" variant="ghost" onClick={handleCancelEnroll} disabled={busy}>
               {t("cancel")}
             </Button>
           </div>
-        </div>
+        </BlockRow>
       )}
 
       {mode === "on" && (
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-[11px] font-medium text-slate-900 dark:text-slate-100">
-              {t("statusOn")}
-            </span>
+        <>
+          <div className={GROUPED_CELL}>
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("statusOn")}</span>
             {status?.lastUsedAt && (
-              <span className="text-xs text-slate-500 dark:text-slate-400">
-                {t("lastUsed")}: {status.lastUsedAt.replace("T", " ").slice(0, 19)}
+              <span className="min-w-0 truncate text-sm tabular-nums text-slate-500 dark:text-slate-400">
+                {t("lastUsed")} {formatDate(status.lastUsedAt)}
               </span>
             )}
           </div>
-          {(confirmDisable || confirmRegenerate) && (
-            <div className="space-y-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-3">
-              <p className="text-xs text-slate-700 dark:text-slate-300">
+          {confirmDisable || confirmRegenerate ? (
+            <BlockRow>
+              <p className="text-sm text-slate-700 dark:text-slate-300">
                 {confirmDisable ? t("confirmDisableHint") : t("confirmRegenerateHint")}
               </p>
               <div className="flex items-center gap-2">
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={6}
-                  placeholder={t("codePlaceholder")}
-                  value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                  className="w-32 font-mono"
-                />
+                {codeInput}
                 <Button
                   size="sm"
                   variant={confirmDisable ? "destructive" : "default"}
@@ -276,26 +260,18 @@ export function TwoFactorSection() {
                   {t("cancel")}
                 </Button>
               </div>
-            </div>
-          )}
-          {!confirmDisable && !confirmRegenerate && (
-            <div className="flex flex-wrap items-center gap-2">
-              <Button size="sm" variant="outline" onClick={() => setConfirmRegenerate(true)}>
-                {t("regenerateAction")}
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-red-600 dark:text-red-400 hover:bg-red-50"
-                onClick={() => setConfirmDisable(true)}
-              >
+            </BlockRow>
+          ) : (
+            <>
+              <ActionRow onClick={() => setConfirmRegenerate(true)}>{t("regenerateAction")}</ActionRow>
+              <ActionRow danger onClick={() => setConfirmDisable(true)}>
                 {t("disableAction")}
-              </Button>
-            </div>
+              </ActionRow>
+            </>
           )}
-        </div>
+        </>
       )}
-    </div>
+    </GroupedList>
   );
 }
 
@@ -313,7 +289,7 @@ function RecoveryCodesPanel({ codes, onDismiss }: { codes: string[]; onDismiss: 
   }
 
   return (
-    <div className="space-y-3 rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
+    <div className="space-y-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
       <p className="font-medium">{t("recoveryTitle")}</p>
       <p>{t("recoveryHint")}</p>
       <div data-sentry-mask className="grid grid-cols-2 gap-1.5 sm:grid-cols-5">

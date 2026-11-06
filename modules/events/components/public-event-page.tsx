@@ -31,6 +31,15 @@ export function PublicEventPage({
           registration={
             cancelToken ? <CancelRegistrationPanel slug={event.slug} token={cancelToken} eventTitle={event.title} /> : undefined
           }
+          onClosed={(reason) =>
+            setEvent((prev) => ({
+              ...prev,
+              acceptingRegistrations: false,
+              registrationClosedReason: reason,
+              status: reason === "CANCELED" ? "CANCELED" : prev.status,
+              spotsLeft: reason === "FULL" ? 0 : prev.spotsLeft,
+            }))
+          }
           onRegistered={(spotsLeft) =>
             setEvent((prev) => ({
               ...prev,

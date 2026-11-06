@@ -1852,16 +1852,6 @@
         "note": "데이터센터 클릭 {dc}건은 자동 접속으로 분류했어요."
       }
     },
-    "clientApp": {
-      "kakaotalk": "카카오톡",
-      "instagram": "인스타그램",
-      "line": "라인",
-      "facebook": "페이스북",
-      "naver": "네이버",
-      "daum": "다음",
-      "tiktok": "틱톡",
-      "twitter": "X(트위터)"
-    },
     "fetchSite": {
       "direct": "직접 열기",
       "crossSite": "링크를 눌러서",
@@ -1912,8 +1902,8 @@
       "detailClose": "닫기"
     },
     "rawData": {
-      "exportEvents": "클릭 이벤트 CSV",
-      "exportStats": "일별 통계 CSV",
+      "exportEvents": "클릭 기록 CSV",
+      "exportStats": "일별 클릭 CSV",
       "exporting": "내보내는 중…",
       "loadMore": "더 보기",
       "retention": "{days}일보다 오래된 개별 클릭은 보관하지 않아요",
@@ -2098,6 +2088,17 @@
   "statLabels": {
     "unknown": "알 수 없음",
     "kakaotalk": "카카오톡",
+    "clientApp": {
+      "kakaotalk": "카카오톡",
+      "instagram": "인스타그램",
+      "line": "라인",
+      "facebook": "페이스북",
+      "naver": "네이버",
+      "daum": "다음",
+      "tiktok": "틱톡",
+      "twitter": "X(트위터)",
+      "browser": "일반 브라우저"
+    },
     "channel": {
       "social": "소셜",
       "messaging": "메신저",
@@ -2639,7 +2640,9 @@
       "inDays": "{days}일 후",
       "inWeeks": "{weeks}주 후",
       "ended": "종료",
-      "eventEnded": "종료된 이벤트"
+      "eventEnded": "종료된 이벤트",
+      "am": "오전",
+      "pm": "오후"
     },
     "place": {
       "directions": "길찾기",
@@ -2764,7 +2767,7 @@
     },
     "q6": {
       "q": "유료인가요?",
-      "a": "모든 기능이 무료예요. URL 단축, 통계, 공개 프로필, 여러 블록, 커스텀 도메인까지 모두 무료로 쓸 수 있어요.\n\n유료 플랜과 광고는 없어요."
+      "a": "모든 기능이 무료예요. URL 단축, 통계, 공개 프로필, 여러 블록까지 모두 무료로 쓸 수 있어요.\n\n유료 플랜과 광고는 없어요."
     },
     "ctaButton": "주소 줄이기"
   },
@@ -2935,7 +2938,7 @@
       "usernameLabel": "사용자 이름",
       "usernameHint": "3~16자의 영문 소문자, 숫자, 밑줄(_).",
       "usernameInvalid": "사용자 이름은 3~16자의 영문 소문자, 숫자, 밑줄(_)만 쓸 수 있어요.",
-      "usernameChangeHint": "변경 시 이전 URL은 30일간 자동 redirect 후 만료돼요.",
+      "usernameChangeHint": "바꾸면 이전 주소는 30일 동안 새 주소로 이어지고, 그 뒤에 끊겨요.",
       "usernameChangeConfirm": "@{prev} → @{next} 주소로 바꿀까요? 이전 주소는 30일 동안만 유효해요.",
       "usernameChangeAction": "변경",
       "usernameUnsaved": "사용자 이름 저장 안 됨",
@@ -2957,7 +2960,7 @@
       },
       "socialsLabel": "공유·SNS 버튼",
       "socialKakaoLabel": "카카오톡 채널",
-      "socialsHint": "공개 프로필 하단에 표시할 채널을 골라 주세요. 각 채널마다 본인 계정 URL을 함께 입력하면 방문자가 그 URL로 이동해요. 최대 2개, 선택한 순서대로 노출돼요.",
+      "socialsHint": "고른 순서대로 프로필 아래에 두 개까지 보여요.",
       "socialsCount": "{count}/{max} 선택",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -2967,7 +2970,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "올바른 http(s) URL을 입력해주세요.",
-      "previewTitle": "공개 프로필 미리보기 (실시간)",
+      "previewTitle": "미리보기",
       "closePreview": "미리보기 닫기",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
@@ -2978,8 +2981,7 @@
       "quickAdd": {
         "title": "링크 추가",
         "firstTitle": "첫 링크 추가",
-        "firstHint": "Instagram, 블로그, 유튜브 등 어떤 주소든 라벨과 함께 넣을 수 있어요. 이 페이지는 SNS 프로필 링크가 돼요.",
-        "hint": "URL과 라벨을 넣으면 단축부터 프로필 노출까지 자동이에요. 연달아 여러 개 추가할 수 있어요.",
+        "hint": "넣은 주소는 짧은 링크가 되어 프로필에 바로 올라가요.",
         "urlPlaceholder": "https://... 또는 mailto:...",
         "labelPlaceholder": "라벨 (예: 📝 블로그)",
         "templatesLabel": "또는 빠른 URL 채우기 (라벨은 본인이 입력)",
@@ -3001,29 +3003,26 @@
       "openShort": "열기",
       "yourPage": "공개 프로필",
       "featuredTitle": "공개 프로필에 보일 항목",
-      "featuredHint": "끌어서 순서를 바꿔요(휴대폰은 ↑↓). ★를 누른 링크가 대표로 맨 위에 와요. 헤더로 섹션을 만들면 접고 펴거나 통째로 옮길 수 있어요.",
-      "sectionExpand": "섹션 펴기",
-      "sectionCollapse": "섹션 접기",
-      "sectionItemCount": "{count}개",
+      "featuredHint": "대표는 하나만 고를 수 있고 맨 위에 보여요.",
       "featuredEmpty": "노출할 링크가 없어요.",
       "featuredEmptyHasOthers": "노출할 링크가 없어요. 고를 수 있는 내 링크가 {count}개 있어요.",
       "addBlockMenu": "추가",
       "addMoreBlocks": "그 외 블록",
       "remove": "삭제",
-      "removeLink": "빼기",
-      "highlight": "대표로 맨 위에 (하나만)",
+      "removeLink": "프로필에서 빼기",
+      "highlight": "대표로 올리기",
       "labelEdit": "라벨 수정 (방문자에게 보이는 이름)",
       "labelEmpty": "라벨 추가",
       "labelPlaceholder": "예: 📝 블로그",
       "addMore": "다른 내 링크에서 추가",
       "add": "추가",
-      "addHeader": "+ 텍스트",
-      "addDivider": "+ 구분선",
-      "addImage": "+ 이미지",
-      "addEmbed": "+ 임베드",
-      "addContactCard": "+ 명함",
-      "addGallery": "+ 갤러리",
-      "addProductCard": "+ 상품 카드",
+      "addHeader": "텍스트",
+      "addDivider": "구분선",
+      "addImage": "이미지",
+      "addEmbed": "임베드",
+      "addContactCard": "명함",
+      "addGallery": "갤러리",
+      "addProductCard": "상품 카드",
       "addProductCardTitle": "상품 카드 추가",
       "editProductCardTitle": "상품 카드 수정",
       "addProductCardDescription": "케이크·매물·시술·강의처럼 카드로 보여 줄 아이템이에요(최대 {max}개). 좌우로 넘겨 볼 수 있어요.",
@@ -3041,7 +3040,7 @@
       "productCardFieldImages": "이미지 (최대 {max}장)",
       "productCardImagesEmpty": "이미지를 추가해 주세요",
       "productCardImageAdd": "이미지 추가",
-      "productCardImageFocalHint": "썸네일 위의 점을 드래그해 중요한 부분을 가운데에 맞춰 주세요. 공개 프로필에서 그 부분이 잘리지 않게 보여요.",
+      "productCardImageFocalHint": "점을 끌어서 공개 프로필에서 잘리지 않을 부분을 정해요.",
       "productCardImageSizeHint": "권장: 4:3 비율 (예: 800×600), 한 장당 5MB 이하. JPG · PNG · WebP 지원.",
       "productCardImageMoveLeft": "왼쪽으로",
       "productCardImageMoveRight": "오른쪽으로",
@@ -3059,18 +3058,18 @@
       "productCardFieldCtaLabelPlaceholder": "예: 주문",
       "productCardFieldCtaUrl": "버튼 URL",
       "productCardAddItem": "아이템 추가",
-      "addEmailForm": "+ 이메일 수집",
+      "addEmailForm": "이메일 수집",
       "addEmailFormTitle": "이메일 수집 폼 추가",
       "editEmailFormTitle": "이메일 수집 폼 수정",
-      "addEmailFormDescription": "방문자가 이메일을 남길 수 있는 작은 폼이에요. 모인 주소는 대시보드에서 보거나 CSV로 받을 수 있어요.",
+      "addEmailFormDescription": "모인 이메일은 나만 볼 수 있고 CSV로 받을 수 있어요.",
       "addEmailFormPlaceholder": "(이메일 폼 미설정)",
-      "addBooking": "+ 예약",
+      "addBooking": "예약",
       "addBookingTitle": "예약 블록 추가",
       "editBookingTitle": "예약 블록 수정",
       "addBookingDescription": "Calendly · Cal.com · 네이버예약 · 카카오 톡채널 같은 외부 예약 페이지를 카드로 보여줘요.",
       "addBookingPlaceholder": "(예약 미설정)",
-      "addEvent": "+ 이벤트",
-      "addPlace": "+ 매장",
+      "addEvent": "이벤트",
+      "addPlace": "매장",
       "addPlaceTitle": "매장·장소 추가",
       "editPlaceTitle": "매장·장소 수정",
       "addPlaceDescription": "카페·매장·스튜디오·팝업처럼 한 곳을 카드로 보여 줘요. 구글 장소에서 검색하면 주소와 좌표가 자동으로 채워져요.",
@@ -3121,11 +3120,9 @@
       "emailFormFieldTitlePlaceholder": "예: 새 소식 받기",
       "emailFormFieldSubtitle": "부가 설명 (옵션)",
       "emailFormFieldSubtitlePlaceholder": "예: 신상품 출시·강의 오픈·한정 메뉴 소식을 가장 먼저 알려드려요.",
-      "emailFormFieldSubtitleHint": "방문자가 '왜 이메일을 남겨야 할지' 알 수 있게 한두 문장 적어주세요.",
       "emailFormFieldPlaceholder": "입력란 안내",
       "emailFormFieldSuccess": "제출 후 메시지",
       "emailFormFieldSuccessPlaceholder": "예: 등록 완료. 감사합니다 :)",
-      "emailFormHowItWorks": "방문자가 이메일을 남기면 나만 볼 수 있는 리드 페이지에 모여요. CSV로 받아 Mailchimp · 스티비 · 채널톡 등으로 가져가세요.",
       "emailFormViewLeadsCta": "수집된 이메일 보기",
       "leadsLink": "수집된 이메일",
       "stats": {
@@ -3135,9 +3132,9 @@
         "loadFailed": "통계를 불러오지 못했어요.",
         "summary": {
           "title": "프로필 방문",
-          "today": "오늘",
-          "week": "7 일",
-          "month": "30 일",
+          "today": "24시간",
+          "week": "7일",
+          "month": "30일",
           "allTime": "누적"
         },
         "daily": {
@@ -3251,9 +3248,9 @@
       "contactFieldName": "이름",
       "contactFieldNamePlaceholder": "홍길동",
       "contactFieldTitle": "직책",
-      "contactFieldTitlePlaceholder": "Engineer",
+      "contactFieldTitlePlaceholder": "예: 백엔드 개발자",
       "contactFieldCompany": "회사",
-      "contactFieldCompanyPlaceholder": "Acme Inc.",
+      "contactFieldCompanyPlaceholder": "예: kurl",
       "contactFieldEmail": "이메일",
       "contactFieldPhone": "전화번호",
       "contactFieldWebsite": "웹사이트",
@@ -3324,7 +3321,22 @@
       "dividerLabel": "구분선",
       "loading": "불러오는 중…",
       "noLinks": "단축한 링크가 아직 없어요.",
-      "toggleFailed": "변경에 실패했어요."
+      "toggleFailed": "변경에 실패했어요.",
+      "showMoreLinks": "{count}개 더 보기",
+      "contactPalette": {
+        "amethyst": "자수정",
+        "rose-gold": "로즈골드",
+        "emerald": "에메랄드",
+        "sapphire": "사파이어",
+        "sunset": "노을",
+        "midnight": "한밤",
+        "champagne": "샴페인",
+        "aurora": "오로라"
+      },
+      "featuredMark": "대표",
+      "rowActions": "작업 더 보기",
+      "moveUp": "위로 옮기기",
+      "moveDown": "아래로 옮기기"
     },
     "profileTitle": "계정 정보",
     "email": "이메일",
@@ -3332,8 +3344,8 @@
     "joinedAt": "가입일",
     "role": "권한",
     "preferencesTitle": "환경설정",
-    "timezoneLabel": "타임존",
-    "timezoneHint": "통계 페이지의 시간 기준이 돼요.",
+    "timezoneLabel": "시간대",
+    "timezoneHint": "시간대는 통계에서 하루를 나누는 기준이에요.",
     "save": "저장",
     "saved": "저장됨",
     "saveFailed": "저장에 실패했어요.",
@@ -3341,8 +3353,7 @@
     "dataTitle": "데이터",
     "exportButton": "내 데이터 다운로드 (JSON)",
     "exportHint": "사용자 정보, 모든 링크, 클릭 이벤트가 담겨요. IP는 가려져요.",
-    "dangerTitle": "위험 구역",
-    "deleteHint": "삭제 신청 후 30일간 유예 기간이 있어요. 그 사이에 다시 로그인하면 자동으로 복구되고, 30일이 지나면 계정과 모든 링크·통계가 완전히 삭제돼요.",
+    "deleteHint": "삭제 신청 후 30일간 유예 기간이 있어요. 그 사이에 다시 로그인하면 자동으로 복구되고, 30일이 지나면 계정과 모든 링크·통계가 완전히 삭제돼요. 로그인 없이 만든 링크에는 영향이 없어요.",
     "deleteButton": "계정 삭제",
     "deleteConfirmTitle": "정말 삭제할까요?",
     "deleteConfirmDesc": "30일 안에 다시 로그인하면 복구돼요. 그 뒤에는 영구 삭제돼요. 확인하려면 \"DELETE\"를 입력하세요.",
@@ -3352,21 +3363,20 @@
     "deleting": "삭제 중…",
     "twofa": {
       "title": "2단계 인증 (2FA)",
-      "description": "TOTP 인증 앱(Google Authenticator, Authy 등)을 등록하면 로그인할 때 6자리 코드 입력 단계가 추가돼요. 인증 앱을 분실해도 로그인할 수 있도록, 활성화 직후 나타나는 복구 코드 10개를 안전한 곳에 보관해 주세요.",
+      "description": "로그인할 때 인증 앱의 6자리 코드를 한 번 더 받아요.",
       "loading": "불러오는 중…",
       "statusOn": "사용 중",
       "statusOff": "사용 안 함",
       "lastUsed": "마지막 사용",
-      "enableButton": "2FA 활성화",
+      "enableButton": "켜기",
       "starting": "준비 중…",
       "startFailed": "2FA 등록 시작에 실패했어요.",
-      "scanTitle": "인증 앱에서 QR 코드를 스캔하세요",
-      "scanHint": "스캔이 안 되면 아래 키를 직접 입력해도 돼요.",
-      "manualKeyHint": "수동 키 (수동 입력용):",
+      "scanTitle": "인증 앱으로 QR 코드를 스캔해 주세요",
+      "manualKeyHint": "스캔이 안 되면 이 키를 앱에 직접 넣어 주세요.",
       "codePlaceholder": "123456",
       "confirmButton": "활성화",
       "confirming": "확인 중…",
-      "confirmFailed": "코드가 맞지 않아요. 다시 시도하세요.",
+      "confirmFailed": "코드가 맞지 않아요.",
       "cancel": "취소",
       "enrolled": "2FA가 활성화되었어요.",
       "regenerateAction": "복구 코드 재생성",
@@ -3380,13 +3390,14 @@
       "regenerated": "복구 코드가 새로 발급되었어요.",
       "disabled": "2FA가 꺼졌어요.",
       "recoveryTitle": "복구 코드를 안전한 곳에 저장하세요",
-      "recoveryHint": "각 코드는 1번만 사용 가능해요. 인증 앱 분실 시 로그인을 위해 비밀번호 매니저나 인쇄해서 보관하세요.",
+      "recoveryHint": "인증 앱을 잃어버리면 이 코드로 로그인해요. 코드마다 한 번씩만 쓸 수 있어요.",
       "recoveryCopyAll": "전체 복사",
       "recoveryCopied": "복구 코드가 복사되었어요.",
       "recoveryCopyFailed": "복사하지 못했어요",
       "recoveryDismiss": "확인했어요, 닫기",
       "loadError": "2FA 상태를 불러오지 못했어요.",
-      "retry": "다시 시도"
+      "retry": "다시 시도",
+      "codeLabel": "인증 코드"
     },
     "customDomains": {
       "title": "커스텀 도메인",
@@ -3395,7 +3406,7 @@
       "registering": "등록 중…",
       "registerFailed": "도메인 등록에 실패했어요.",
       "loading": "불러오는 중…",
-      "empty": "등록된 도메인이 없어요. 위 입력란에 본인 도메인을 입력해서 시작하세요.",
+      "empty": "등록한 도메인이 없어요.",
       "statusPending": "검증 대기",
       "statusVerified": "검증 완료",
       "statusAutoChecking": "자동 확인 중 · {time}",
@@ -3407,18 +3418,23 @@
       "deleted": "도메인을 삭제했어요",
       "deleteConfirm": "이 도메인을 삭제할까요? 이 도메인으로 만든 단축 링크가 바로 멈춰요.",
       "deleteFailed": "삭제에 실패했어요.",
-      "dnsTxtHint": "도메인 소유 확인용: DNS에 TXT 레코드를 추가하세요",
-      "dnsCnameHint": "트래픽 전달용: 같은 DNS에 CNAME도 추가하세요"
+      "dnsTxtHint": "도메인 소유 확인: DNS에 이 TXT 레코드를 추가해 주세요",
+      "dnsCnameHint": "트래픽 연결: 같은 DNS에 이 CNAME 레코드도 추가해 주세요",
+      "domainLabel": "도메인",
+      "loadError": "도메인을 불러오지 못했어요.",
+      "retry": "다시 시도",
+      "dnsHost": "호스트",
+      "dnsValue": "값"
     },
     "apiKeys": {
       "title": "API 키",
-      "description": "스크립트나 자동화에서 kurl API를 호출할 때 사용해요. 발급된 키는 한 번만 표시되니 즉시 안전한 곳에 저장하세요.",
-      "namePlaceholder": "키 이름 (예: 사내 리포트 봇)",
+      "description": "발급한 키는 그때 한 번만 보여요.",
+      "namePlaceholder": "예: 사내 리포트 봇",
       "issue": "발급",
       "issuing": "발급 중…",
       "issueFailed": "발급에 실패했어요.",
       "justIssuedTitle": "새 키가 발급되었어요",
-      "justIssuedHint": "이 화면을 닫으면 다시 볼 수 없어요. 비밀번호처럼 안전하게 보관하세요.",
+      "justIssuedHint": "이 화면을 닫으면 다시 볼 수 없어요. 비밀번호처럼 안전하게 보관해 주세요.",
       "reveal": "보기",
       "hide": "숨기기",
       "copy": "복사",
@@ -3434,14 +3450,21 @@
       "revoking": "폐기 중…",
       "revoked": "폐기되었어요.",
       "revokeFailed": "폐기에 실패했어요.",
-      "revokeConfirm": "이 키를 폐기하면 즉시 사용 불가능해요. 계속할까요?",
+      "revokeConfirm": "이 키를 폐기할까요?",
       "revokedLabel": "폐기됨",
-      "usageTitle": "이 키로 바로 할 수 있는 것",
+      "usageTitle": "이 키로 할 수 있는 것",
       "usageShorten": "링크 단축",
       "usagePublish": "마크다운 파일로 글 발행 (kurl-publish CLI)",
       "usageExport": "내 글 전체 백업 (zip)",
-      "usageCliHint": "kurl-publish.py 스크립트 받기 (GitHub)"
-    }
+      "usageCliHint": "kurl-publish.py 스크립트 받기 (GitHub)",
+      "nameLabel": "키 이름",
+      "revokeConfirmBody": "이 키로 오는 요청은 바로 거절돼요.",
+      "loadError": "API 키를 불러오지 못했어요.",
+      "retry": "다시 시도",
+      "usageLinks": "링크",
+      "usageBlog": "kurl log"
+    },
+    "exportFailed": "내려받지 못했어요."
   },
   "publicStats": {
     "title": "공개 통계",
@@ -3462,14 +3485,15 @@
     },
     "batchCard": {
       "quantityUnit": "{count}장",
-      "distributor": "배포자 · {name}",
-      "downloadQr": "{name} QR 다운로드",
-      "edit": "{name} 편집",
-      "delete": "{name} 삭제"
+      "edit": "편집",
+      "delete": "삭제",
+      "menu": "{name} 메뉴",
+      "qr": "QR 내려받기",
+      "open": "링크 열기"
     },
     "batchDialogs": {
       "editTitle": "배포 묶음 편집",
-      "editDescription": "이름·배포자·지역·수량·메모만 수정할 수 있어요. 단축 링크(인쇄된 QR)는 그대로 유지돼요.",
+      "editDescription": "인쇄된 QR 주소는 그대로예요.",
       "save": "저장",
       "updated": "배포 묶음을 수정했어요",
       "updateFailed": "수정하지 못했어요. 다시 시도해 주세요.",
@@ -3483,7 +3507,7 @@
       "deleted": "배포 묶음을 삭제했어요",
       "deleteFailed": "삭제하지 못했어요. 다시 시도해 주세요.",
       "deleteWarningTitle": "단축 링크도 함께 삭제돼요.",
-      "deleteWarningBody": "이미 인쇄된 QR 코드를 스캔하면 '링크 없음' 페이지를 보게 돼요. 발주 전이라면 안전하지만, 배포 후라면 종료 정책 (REDIRECT)으로 살리는 쪽을 먼저 검토하세요.",
+      "deleteWarningBody": "이미 인쇄된 QR은 '링크 없음' 페이지로 가요.",
       "quantityUnit": "{count}장"
     },
     "new": {
@@ -3495,7 +3519,7 @@
       "nameLabel": "QR 캠페인 이름",
       "namePlaceholder": "예: 신주쿠 봄 포스터 배포",
       "startLabel": "시작 시점",
-      "startHint": "대부분 '지금 시작'. 발주·인쇄 일정에 맞춰 시작하려면 예약.",
+      "startHint": "시작 전 스캔은 테스트로 따로 세요.",
       "startNow": "지금 시작",
       "startSchedule": "시작 시간 예약",
       "endLabel": "종료 시점",
@@ -3510,13 +3534,15 @@
         "redirectTitle": "다른 페이지로 자동 전환",
         "redirectBody": "후기·다음 캠페인·대기자 등록처럼, 인쇄된 QR을 버리지 않고 다른 곳으로 이어요."
       },
-      "messagePlaceholder": "예: 캠페인이 끝났어요. 다음 이벤트는 12월에 만나요.\n문의: @kurl_official",
+      "messagePlaceholder": "예: 이벤트가 끝났어요. 다음엔 12월에 만나요.",
       "messageHint": "비워 두면 기본 안내문이 나와요. 줄바꿈은 그대로 보여요 ·",
       "redirectHint": "캠페인이 끝나는 순간 인쇄된 QR이 모두 이 URL로 넘어가요.",
       "cancel": "취소",
       "creating": "만드는 중…",
       "submit": "QR 캠페인 만들기",
-      "leaveConfirm": "저장하지 않고 나갈까요? 입력한 내용이 사라져요."
+      "leaveConfirm": "저장하지 않고 나갈까요? 입력한 내용이 사라져요.",
+      "messageLabel": "만료 페이지 메시지",
+      "redirectLabel": "끝난 뒤 보낼 주소"
     },
     "detail": {
       "loadFailed": "불러오지 못했어요",
@@ -3531,46 +3557,47 @@
       "confirmArchiveDesc": "목록에서는 숨겨지지만 데이터는 그대로 남아요.",
       "archived": "QR 캠페인을 보관했어요",
       "archiveFailed": "보관하지 못했어요. 다시 시도해 주세요.",
-      "cancel": "취소",
       "actions": {
         "stats": "분석",
         "endNow": "지금 종료",
-        "reapply": "종료 정책 재적용",
-        "archive": "보관"
+        "reapply": "종료 정책 다시 적용",
+        "archive": "보관",
+        "more": "더 보기"
       },
       "prepare": {
-        "eyebrow": "배포 준비",
-        "title": "인쇄소 · Canva에 넘길 자산",
-        "description": "묶음 {count}개의 QR 코드와 메타 표예요. 디자인 도구에서 포스터·전단지에 넣어 발주하세요.",
+        "title": "인쇄 준비",
         "printSheet": "A4 시트",
         "posterBuilder": "포스터에 QR",
         "qrZip": "QR ZIP",
         "batchCsv": "묶음 CSV"
       },
       "policy": {
-        "eyebrow": "종료 후 동작",
         "keep": "그대로 유지",
         "expire": "만료 페이지로",
         "redirect": "다른 페이지로 자동 전환",
-        "savedEnded": "메시지를 저장했어요. '종료 정책 재적용' 을 누르면 인쇄된 QR에도 반영돼요.",
-        "saved": "만료 페이지 메시지를 저장했어요",
-        "saveFailed": "저장하지 못했어요. 다시 시도해 주세요.",
         "messageLabel": "만료 페이지 메시지",
-        "edit": "수정",
-        "add": "추가",
-        "messagePlaceholder": "예: 캠페인이 종료됐어요. 다음 이벤트는 12월에 만나요.",
-        "saving": "저장 중…",
-        "save": "저장",
         "defaultMessageHint": "메시지를 비워 두면 기본 안내문이 나와요.",
-        "defaultDestination": "기본 목적지 URL · {url}"
+        "defaultDestination": "기본 목적지 URL",
+        "heading": "종료 후",
+        "title": "동작",
+        "redirectLabel": "보낼 주소"
       },
       "batches": {
         "title": "배포 묶음",
-        "description": "QR 한 개를 여러 장 인쇄해서 배포한 한 단위. 배포자·지역별로 나눠야 분석이 의미 있어요.",
         "add": "배포 묶음 추가",
         "emptyTitle": "아직 배포 묶음이 없어요"
       },
-      "csvFailed": "CSV를 내려받지 못했어요. 다시 시도해 주세요."
+      "csvFailed": "CSV를 내려받지 못했어요. 다시 시도해 주세요.",
+      "settings": {
+        "open": "설정",
+        "title": "캠페인 설정",
+        "save": "저장",
+        "saved": "캠페인 설정을 저장했어요",
+        "savedEnded": "저장했어요. 인쇄된 QR에는 '종료 정책 다시 적용'을 눌러야 반영돼요.",
+        "saveFailed": "저장하지 못했어요. 다시 시도해 주세요.",
+        "defaultUrlHint": "바꿔도 이미 만든 묶음의 목적지는 그대로예요."
+      },
+      "statsFailed": "숫자를 불러오지 못했어요"
     },
     "batchesNew": {
       "loadFailed": "불러오지 못했어요",
@@ -3580,11 +3607,11 @@
       "createFailed": "만들지 못했어요. 다시 시도해 주세요.",
       "backToCampaign": "QR 캠페인으로",
       "title": "배포 묶음 추가",
-      "introCampaign": "<name></name> 의 새 묶음들.",
+      "introCampaign": "<name></name>",
       "addRow": "행 추가",
       "pasteToggle": "스프레드시트에서 붙여넣기",
-      "defaultUrlActive": "<strong>기본 목적지 URL을 쓰는 중이에요.</strong> 목적지 URL 칸을 비우면 <code></code>이 자동으로 들어가요. 묶음마다 다른 URL을 쓰려면 직접 입력하세요.",
-      "defaultUrlMissing": "<strong>기본 목적지 URL이 없어요.</strong> 묶음마다 목적지 URL을 직접 입력해야 해요.",
+      "defaultUrlActive": "목적지를 비우면 기본 URL을 써요 · <code></code>",
+      "defaultUrlMissing": "기본 URL이 없어서 묶음마다 목적지를 적어야 해요.",
       "fields": {
         "name": "묶음 이름",
         "distributor": "배포자",
@@ -3592,11 +3619,12 @@
         "quantity": "수량",
         "destinationUrl": "목적지 URL"
       },
-      "compareHint": "비교 분석 가능",
       "placeholders": {
         "name": "예: 신주쿠역 동쪽",
-        "distributor": "A 또는 김배포",
-        "defaultValue": "(기본값)"
+        "distributor": "예: A",
+        "defaultValue": "(기본값)",
+        "quantity": "예: 500",
+        "area": "예: 신주쿠 동쪽"
       },
       "hints": {
         "defaultOptional": "비우면 기본값 사용",
@@ -3606,19 +3634,19 @@
         "nameRequired": "묶음 이름을 적어 주세요",
         "quantityRequired": "수량을 적어 주세요",
         "quantityPositive": "1 이상으로 적어 주세요",
-        "destinationRequired": "URL을 적어 주세요. 캠페인 기본 URL이 없어요.",
+        "destinationRequired": "목적지를 적어 주세요",
         "destinationUrl": "http:// 또는 https://로 시작해야 해요"
       },
-      "removeRow": "{index}번째 행 삭제",
+      "removeRow": "{index}번째 행 빼기",
       "pasteTitle": "스프레드시트 행 붙여넣기",
       "pasteColumns": "컬럼 순서: <code>묶음 이름 / 배포자 / 지역 / 수량 / 목적지 URL / 메모</code> (탭 또는 쉼표 구분)",
       "close": "닫기",
-      "pastePlaceholder": "신주쿠역 동쪽\tA\tShinjuku East\t500\t\n오쿠보\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pastePlaceholder": "신주쿠역 동쪽\tA\tShinjuku East\t500",
       "pasteZeroRows": "0개 행",
       "pastePreviewRows": "{count}개 행 인식",
       "cancel": "취소",
       "pasteApply": "{count}개 행 추가",
-      "invalidRows": "{count}개 행에 입력 오류가 있어요. 빨간 표시된 칸을 고쳐주세요.",
+      "invalidRows": "{count}개 행을 고쳐야 해요",
       "summary": "<strong>{rowCount}</strong>개 묶음 · <strong>{totalQuantity}</strong>장 인쇄·배포 예정",
       "creating": "만드는 중…",
       "submit": "{count}개 묶음 만들기"
@@ -3631,49 +3659,45 @@
       "composeFailed": "합치지 못했어요. 다시 시도해 주세요.",
       "backToCampaign": "QR 캠페인으로",
       "title": "포스터에 QR 박기",
-      "introCampaign": "<name></name> · 배포 묶음 {count}개마다 PDF 페이지를 복제해 각각 다른 QR을 넣고, 합본 PDF로 내려받아요.",
-      "toolHint": "디자인은 Canva·인디자인·PowerPoint에서 끝내고 PDF로 가져오세요. 여기서는 QR 자리만 정해요.",
+      "introCampaign": "<name></name> · 묶음 {count}개마다 다른 QR을 넣은 합본 PDF를 만들어요.",
       "targetLabel": "합성 대상",
       "targetSummary": "<strong>{count}개</strong> 배포 묶음 · 결과는 <strong>{pages}페이지</strong> PDF",
-      "noBatchesHint": "먼저 배포 묶음을 추가하세요. (QR 캠페인 상세 → 배포 묶음 추가)",
+      "noBatchesHint": "아직 배포 묶음이 없어요",
       "composing": "합성 중…",
       "download": "합본 PDF 다운로드 ({count}페이지)",
-      "notSavedHint": "QR 위치는 저장되지 않아요. 같은 PDF로 다시 오면 상자를 다시 그려 주세요.",
+      "notSavedHint": "QR 위치는 저장되지 않아요.",
       "dropTitle": "PDF 끌어다 놓거나 클릭해서 업로드",
-      "dropSubtitle": "1페이지 PDF · Canva/인디자인 export 권장",
+      "dropSubtitle": "1페이지 PDF",
       "removePdf": "PDF 삭제",
       "otherPdf": "다른 PDF",
-      "dragHint": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요.",
-      "dragHintWithBatches": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요. 미리보기는 첫 번째 묶음이에요({count}개 중 1번째). 묶음마다 다른 QR이 들어가요.",
-      "dragHintWithoutBatches": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요. 배포 묶음이 없어서 placeholder QR로 미리보고 있어요. 실제 합성은 묶음 추가 후 가능.",
+      "dragHint": "상자를 끌어 옮기고, 모서리를 끌어 크기를 바꿔요.",
       "boxAria": "QR 박스 위치/크기",
-      "qrPreviewAlt": "QR 미리보기"
+      "qrPreviewAlt": "QR 미리보기",
+      "addBatch": "배포 묶음 추가"
     },
     "printSheet": {
       "loadFailed": "불러오지 못했어요",
       "backToCampaign": "QR 캠페인으로",
       "title": "A4 QR 시트",
-      "introCampaign": "<name></name> · 브라우저 인쇄로 PDF 저장 (Cmd/Ctrl + P).",
+      "introCampaign": "<name></name> · 인쇄 창에서 PDF로 저장할 수 있어요.",
       "print": "인쇄",
-      "empty": "인쇄할 배포 묶음이 없어요. 묶음을 먼저 추가하세요.",
+      "empty": "인쇄할 배포 묶음이 없어요",
       "perPage": "한 페이지에",
       "layouts": {
         "comfortable": {
-          "label": "12개 (3×4)",
-          "hint": "넉넉 · 명함 크기"
+          "label": "12개 (3×4)"
         },
         "standard": {
-          "label": "20개 (4×5)",
-          "hint": "표준"
+          "label": "20개 (4×5)"
         },
         "dense": {
-          "label": "30개 (5×6)",
-          "hint": "빽빽 · 작은 라벨"
+          "label": "30개 (5×6)"
         }
       },
       "showLabel": "라벨 표시",
       "cutMarks": "잘림선",
-      "pagePerBatch": "묶음당 한 페이지 (같은 QR 가득)"
+      "pagePerBatch": "묶음마다 한 페이지를 같은 QR로 채우기",
+      "addBatch": "배포 묶음 추가"
     },
     "campaignStats": {
       "loadFailed": "불러오지 못했어요",
@@ -3683,10 +3707,7 @@
       "loading": "불러오는 중…",
       "groups": {
         "distributorTitle": "배포자별 성과",
-        "distributorHint": "100장당 클릭 비율이라 수량이 다른 배포자끼리도 효율을 비교할 수 있어요.",
-        "areaTitle": "지역별 성과",
-        "areaHint": "다음에 어디에 뿌릴지 정하는 기준이에요.",
-        "meta": "클릭 {clicks} · {quantity}장"
+        "areaTitle": "지역별 성과"
       },
       "compare": {
         "title": "다른 캠페인과 비교",
@@ -3694,12 +3715,12 @@
         "none": "비교 안 함",
         "current": "현재",
         "comparison": "비교",
-        "selectHint": "위 목록에서 비교할 캠페인을 골라 주세요."
+        "selectHint": "비교할 캠페인을 고르면 나란히 보여요."
       },
       "kpi": {
         "totalClicks": "사람 클릭",
         "perHundred": "100장당",
-        "topArea": "Top 지역",
+        "topArea": "1위 지역",
         "batches": "배포 묶음",
         "totalDistributed": "총 인쇄·배포"
       },
@@ -3711,41 +3732,34 @@
       },
       "recommendation": {
         "title": "다음 배포 추천",
-        "description": "지금 총 {total}장을 같은 양으로 다시 나눠요. 평균은 100장당 {average}회예요.",
         "footnote": "효율 비율로 추천해요. 평균의 30% 미만은 빼고, 나머지는 비율대로 다시 나눠요(한 묶음 최대 3배).",
         "verdict": {
-          "BOOST": "증가",
+          "BOOST": "늘리기",
           "KEEP": "유지",
-          "REDUCE": "감축",
-          "PRUNE": "폐기"
+          "REDUCE": "줄이기",
+          "PRUNE": "빼기"
         },
         "rowMeta": "{current} → {recommended}장 · 100장당 {rate}회",
         "tooFewBatches": "배포 묶음이 {minimum}개 이상이면 추천이 나와요. 지금 {current}개예요.",
-        "tooFewClicks": "사람 클릭이 {minimum}회 이상이면 추천이 나와요. 지금 {current}회예요."
+        "tooFewClicks": "사람 클릭이 {minimum}회 이상이면 추천이 나와요. 지금 {current}회예요.",
+        "aside": "총 {total}장 · 평균 100장당 {average}회"
       },
       "daily": {
-        "title": "일별 클릭",
-        "description": "캠페인 시작 이후 · {tz}"
+        "title": "일별 클릭"
       },
       "hourly": {
-        "title": "시간대별 클릭",
-        "description": "{tz}",
-        "tooltip": "{hour}시: {clicks}"
+        "title": "시간대별 클릭"
       },
       "heatmap": {
-        "title": "요일 × 시간대 분포",
-        "description": "{tz}"
+        "title": "요일 × 시간대 분포"
       },
       "testScans": {
-        "title": "시작 전 테스트 스캔",
-        "description": "<strong>{count}회</strong>: 캠페인 시작 전 스캔이라 분석 합계에서 빠져요.",
-        "last": "마지막 테스트 · {date}"
+        "note": "시작 전 테스트 스캔 {count}회는 빠졌어요."
       },
       "byBatch": {
-        "empty": "아직 배포 묶음이 없어요. 추가하면 여기에 묶음별 성과가 나와요.",
+        "empty": "아직 배포 묶음이 없어요",
         "title": "묶음별 성과",
-        "description": "클릭 수 내림차순. 막대는 최대값 대비 상대 비율.",
-        "meta": "/ {quantity}장 · 100장당 {rate}회"
+        "add": "배포 묶음 추가"
       }
     }
   },
@@ -3762,7 +3776,6 @@
     "loadFailed": "QR 캠페인을 불러오지 못했어요.",
     "newCampaign": "새 QR 캠페인",
     "batchCount": "{count}개 묶음",
-    "details": "자세히",
     "onboarding": {
       "title": "전단지마다 다른 QR로 반응을 비교해요",
       "body": "지역·배포자·묶음마다 QR을 따로 만들어 뿌리고, 어느 묶음에서 클릭이 많았는지 봐요. 다음 배포 위치는 그 숫자로 정하면 돼요.",
@@ -3791,8 +3804,7 @@
   "qrDownload": {
     "zipTitle": "QR ZIP 다운로드",
     "singleTitle": "{name} QR 다운로드",
-    "zipDescription": "캠페인의 모든 배포 묶음 QR을 한 묶음으로. 인쇄소·디자이너에게 통째로 넘길 자산.",
-    "singleDescription": "단일 배포 묶음의 QR PNG.",
+    "zipDescription": "배포 묶음마다 PNG 하나씩, ZIP 하나로 받아요.",
     "confirm": "다운로드",
     "sizeLabel": "크기",
     "sizes": {
@@ -3801,18 +3813,15 @@
       "print": "일반 인쇄",
       "poster": "대형 포스터"
     },
-    "ecLabel": "손상 허용 (Error correction)",
-    "ecHint": "외부 노출·오염이 많은 환경일수록 높게.",
+    "ecLabel": "손상 허용",
+    "ecHint": "높일수록 더러워져도 읽히지만 무늬가 촘촘해져요.",
     "ec": {
       "data": "데이터 우선",
       "standard": "표준",
       "outdoor": "야외·오염",
       "maximum": "최대 보호"
     },
-    "labelText": "라벨 텍스트",
-    "labelHint": "QR 아래 묶음 이름을 작게 박아 인쇄소가 식별 가능.",
-    "labelCheckbox": "QR 아래에 묶음 이름 인쇄",
-    "notSaved": "다운로드 옵션은 저장되지 않아요. 같은 캠페인을 옵션을 바꿔 여러 번 받을 수 있어요."
+    "labelCheckbox": "QR 아래에 묶음 이름 넣기"
   },
   "qrCampaigns": {
     "meta": {
@@ -4092,7 +4101,7 @@
     "public": {
       "hostedBy": "주최",
       "attending": "참여 {count}명",
-      "addToCalendar": "Google 캘린더에 추가",
+      "addToCalendar": "내 캘린더에 추가",
       "onlineLink": "온라인 참가 링크",
       "spotsLeft": "남은 자리 {count} / {capacity}",
       "formTitle": "참가 신청",
@@ -4111,7 +4120,7 @@
       "alreadyRegisteredTitle": "이미 신청했어요",
       "registerAnother": "다른 사람도 신청하기",
       "successBodyEmail": "확인 메일을 보냈어요. 참석이 어려워지면 메일 속 링크로 취소할 수 있어요.",
-      "successBody": "참석이 어려워지면 아래 취소 링크로 취소할 수 있어요. 링크를 꼭 보관해 주세요.",
+      "successBody": "참석이 어려워지면 이 취소 링크로 취소할 수 있어요. 링크를 꼭 보관해 주세요.",
       "copyCancelLink": "취소 링크 복사",
       "cancelLinkCopied": "복사했어요",
       "viralHook": "kurl로 만든 모집 페이지예요.",
@@ -4129,9 +4138,7 @@
         "answerRequired": "답을 적어 주세요",
         "choiceRequired": "하나를 골라 주세요",
         "consentRequired": "개인정보 제공에 동의해 주세요",
-        "full": "방금 정원이 마감됐어요",
         "alreadyRegistered": "이미 이 연락처로 신청되어 있어요",
-        "closed": "신청이 마감되었어요",
         "generic": "신청에 실패했어요. 잠시 후 다시 시도해 주세요.",
         "invalidEmail": "이메일 주소를 다시 확인해 주세요 (예: hong@naver.com)",
         "invalidPhone": "전화번호를 다시 확인해 주세요 (예: 010-1234-5678)",
@@ -4152,7 +4159,10 @@
       "aboutTitle": "소개",
       "endedNotice": "끝난 모임이에요.",
       "am": "오전",
-      "pm": "오후"
+      "pm": "오후",
+      "calendarGoogle": "Google 캘린더",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple 캘린더(.ics) 다운로드"
     },
     "list": {
       "title": "모집",
@@ -4176,6 +4186,8 @@
       "timezone": "시간대",
       "whereTitle": "장소",
       "locationPlaceholder": "장소 이름이나 주소",
+      "placeName": "장소 이름",
+      "mapMissed": "이 자리의 주소를 찾지 못했어요",
       "clearPlace": "장소 지우기",
       "locationUrl": "지도 링크",
       "addMapLink": "링크로 넣기",
@@ -4247,8 +4259,7 @@
       "statusChangeFailed": "변경에 실패했어요",
       "cancelDialogTitle": "모임을 취소할까요?",
       "cancelDialogBody": "공개 페이지에 취소로 표시되고 신청을 더 받지 않아요. 되돌릴 수 없어요. 새 신청만 막으려면 '신청 마감하기'를 쓰세요.",
-      "cancelDialogConfirm": "모임 취소",
-      "heroCopy": "링크 복사"
+      "cancelDialogConfirm": "모임 취소"
     },
     "share": {
       "copied": "복사됨",
@@ -4283,7 +4294,8 @@
       "channel": "유입 채널",
       "status": "상태",
       "confirmed": "확정",
-      "canceled": "취소"
+      "canceled": "취소",
+      "exportFailed": "CSV를 내려받지 못했어요"
     },
     "status": {
       "open": "모집 중",
@@ -4291,6 +4303,9 @@
       "canceled": "취소됨",
       "ended": "끝남",
       "full": "정원 마감"
+    },
+    "meta": {
+      "description": "모임 소개와 신청 폼을 링크 하나로 만들어요. 참가자는 로그인 없이 신청하고, 정원이 차면 마감돼요."
     }
   },
   "linkAnalytics": {

@@ -7,11 +7,18 @@ import type { LinkStats } from "@/types";
  * UTF-8 BOM 은 엑셀이 한글 라벨을 깨뜨리지 않게 하는 실무 관행.
  */
 export function buildStatsCsv(data: LinkStats): string {
-  const rows: string[][] = [["section", "label", "count"]];
-  for (const d of data.dailyClicks ?? []) rows.push(["daily", d.date, String(d.count)]);
-  for (const r of data.referrerHostClicks ?? []) rows.push(["referrer", r.host, String(r.count)]);
-  for (const c of data.countryClicks ?? []) rows.push(["country", c.country, String(c.count)]);
-  for (const v of data.deviceClicks ?? []) rows.push(["device", v.device, String(v.count)]);
+  const rows: string[][] = [["section", "label", "count", "scope"]];
+  const kpi = (label: string, value: number | undefined, scope: string) => {
+    if (typeof value === "number") rows.push(["kpi", label, String(value), scope]);
+  };
+  kpi("human_clicks", data.humanClicks, "human");
+  kpi("estimated_visitors", data.uniqueClicks, "human");
+  kpi("automated", data.botClicks, "automated");
+  kpi("total_clicks", data.totalClicks, "all");
+  for (const d of data.dailyClicks ?? []) rows.push(["daily", d.date, String(d.count), "human"]);
+  for (const r of data.referrerHostClicks ?? []) rows.push(["referrer", r.host, String(r.count), "human"]);
+  for (const c of data.countryClicks ?? []) rows.push(["country", c.country, String(c.count), "human"]);
+  for (const v of data.deviceClicks ?? []) rows.push(["device", v.device, String(v.count), "human"]);
   return "﻿" + rows.map((row) => row.map(csvCell).join(",")).join("\n");
 }
 

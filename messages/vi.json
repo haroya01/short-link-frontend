@@ -1852,16 +1852,6 @@
         "note": "{dc} lượt nhấp từ trung tâm dữ liệu được tính là truy cập tự động."
       }
     },
-    "clientApp": {
-      "kakaotalk": "KakaoTalk",
-      "instagram": "Instagram",
-      "line": "LINE",
-      "facebook": "Facebook",
-      "naver": "Naver",
-      "daum": "Daum",
-      "tiktok": "TikTok",
-      "twitter": "X (Twitter)"
-    },
     "fetchSite": {
       "direct": "Mở trực tiếp",
       "crossSite": "Bấm vào một liên kết",
@@ -1912,8 +1902,8 @@
       "detailClose": "Đóng"
     },
     "rawData": {
-      "exportEvents": "CSV sự kiện nhấp",
-      "exportStats": "CSV thống kê hằng ngày",
+      "exportEvents": "CSV nhật ký nhấp",
+      "exportStats": "CSV lượt nhấp hằng ngày",
       "exporting": "Đang xuất…",
       "loadMore": "Xem thêm",
       "retention": "Không lưu từng lượt nhấp cũ hơn {days} ngày",
@@ -2098,6 +2088,17 @@
   "statLabels": {
     "unknown": "Không rõ",
     "kakaotalk": "KakaoTalk",
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)",
+      "browser": "Trình duyệt thường"
+    },
     "channel": {
       "social": "Mạng xã hội",
       "messaging": "Nhắn tin",
@@ -2639,7 +2640,9 @@
       "inDays": "trong {days} ngày",
       "inWeeks": "trong {weeks} tuần",
       "ended": "Đã kết thúc",
-      "eventEnded": "Sự kiện đã kết thúc"
+      "eventEnded": "Sự kiện đã kết thúc",
+      "am": "SA",
+      "pm": "CH"
     },
     "place": {
       "directions": "Chỉ đường",
@@ -2764,7 +2767,7 @@
     },
     "q6": {
       "q": "Có tính phí không?",
-      "a": "Mọi tính năng đều miễn phí: rút gọn, phân tích, trang hồ sơ, mọi loại khối và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
+      "a": "Mọi tính năng đều miễn phí: rút gọn, phân tích, trang hồ sơ và mọi loại khối.\n\nKhông có gói trả phí, cũng không có quảng cáo."
     },
     "ctaButton": "Rút gọn một URL"
   },
@@ -2957,7 +2960,7 @@
       },
       "socialsLabel": "Nút mạng xã hội",
       "socialKakaoLabel": "Kênh KakaoTalk",
-      "socialsHint": "Chọn các kênh hiện ở cuối hồ sơ công khai của bạn. Với mỗi kênh, dán URL tài khoản của bạn để khách chạm nút sẽ đến đó. Tối đa 2, hiển thị theo thứ tự bạn chọn.",
+      "socialsHint": "Tối đa hai kênh hiện ở cuối hồ sơ, theo thứ tự bạn chọn.",
       "socialsCount": "{count}/{max} đã chọn",
       "socialUrlPlaceholderX": "https://x.com/tencuaban",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~lineid",
@@ -2967,7 +2970,7 @@
       "socialUrlPlaceholderInstagram": "https://instagram.com/tencuaban",
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/tencuaban",
       "socialUrlInvalid": "Vui lòng dán một URL http(s) hợp lệ.",
-      "previewTitle": "Xem trước trực tiếp",
+      "previewTitle": "Xem trước",
       "closePreview": "Đóng xem trước",
       "previewUsernamePlaceholder": "tên người dùng",
       "previewBioPlaceholder": "Tiểu sử của bạn sẽ hiện ở đây",
@@ -2978,8 +2981,7 @@
       "quickAdd": {
         "title": "Thêm liên kết",
         "firstTitle": "Thêm liên kết đầu tiên",
-        "firstHint": "Mọi URL như Instagram, blog, YouTube đều hiện trên liên kết bio của bạn kèm nhãn.",
-        "hint": "Dán bất kỳ URL nào + một nhãn. Chúng tôi rút gọn và đưa nó nổi bật. Thêm bao nhiêu tùy thích.",
+        "hint": "Mỗi URL thành một liên kết rút gọn và lên hồ sơ ngay.",
         "urlPlaceholder": "https://... hoặc mailto:...",
         "labelPlaceholder": "Nhãn (ví dụ: 📝 Blog)",
         "templatesLabel": "Hoặc điền nhanh URL (bạn vẫn tự gõ nhãn)",
@@ -3001,29 +3003,26 @@
       "openShort": "Mở",
       "yourPage": "Hồ sơ công khai",
       "featuredTitle": "Dòng tin hồ sơ",
-      "featuredHint": "Kéo để sắp xếp lại (di động dùng ↑↓). Liên kết có ★ nằm trên cùng làm mục nổi bật. Thêm tiêu đề để gom các mục thành một phần có thể thu gọn và di chuyển như một khối.",
-      "sectionExpand": "Mở rộng phần",
-      "sectionCollapse": "Thu gọn phần",
-      "sectionItemCount": "{count} mục",
+      "featuredHint": "Chỉ chọn được một mục nổi bật, và mục đó hiện trên cùng.",
       "featuredEmpty": "Chưa có liên kết nào để hiển thị.",
       "featuredEmptyHasOthers": "Chưa có liên kết nào để hiển thị. Bạn có {count} liên kết khác để chọn.",
       "addBlockMenu": "Thêm",
       "addMoreBlocks": "Thêm khối",
       "remove": "Xóa",
-      "removeLink": "Gỡ",
-      "highlight": "Đưa lên đầu làm mục nổi bật (chỉ một)",
+      "removeLink": "Gỡ khỏi hồ sơ",
+      "highlight": "Đặt làm nổi bật",
       "labelEdit": "Sửa nhãn (thứ khách nhìn thấy)",
       "labelEmpty": "Thêm nhãn",
       "labelPlaceholder": "ví dụ: 📝 Blog",
       "addMore": "Thêm từ các liên kết khác của bạn",
       "add": "Thêm",
-      "addHeader": "+ Văn bản",
-      "addDivider": "+ Đường phân cách",
-      "addImage": "+ Ảnh",
-      "addEmbed": "+ Nhúng",
-      "addContactCard": "+ Thẻ liên hệ",
-      "addGallery": "+ Thư viện ảnh",
-      "addProductCard": "+ Thẻ sản phẩm",
+      "addHeader": "Văn bản",
+      "addDivider": "Đường phân cách",
+      "addImage": "Ảnh",
+      "addEmbed": "Nhúng",
+      "addContactCard": "Thẻ liên hệ",
+      "addGallery": "Thư viện ảnh",
+      "addProductCard": "Thẻ sản phẩm",
       "addProductCardTitle": "Thêm thẻ sản phẩm",
       "editProductCardTitle": "Sửa thẻ sản phẩm",
       "addProductCardDescription": "Thẻ cho thực đơn / danh mục / dịch vụ / khóa học (tối đa {max}). Khách vuốt để xem.",
@@ -3059,13 +3058,13 @@
       "productCardFieldCtaLabelPlaceholder": "ví dụ: Đặt hàng",
       "productCardFieldCtaUrl": "URL nút",
       "productCardAddItem": "Thêm mục",
-      "addBooking": "+ Đặt lịch",
+      "addBooking": "Đặt lịch",
       "addBookingTitle": "Thêm khối đặt lịch",
       "editBookingTitle": "Sửa khối đặt lịch",
       "addBookingDescription": "Đưa một trang đặt lịch bên ngoài (Calendly, Cal.com, Microsoft Bookings, v.v.) lên thành một thẻ trên hồ sơ của bạn.",
       "addBookingPlaceholder": "(chưa đặt lịch)",
-      "addEvent": "+ Sự kiện",
-      "addPlace": "+ Địa điểm",
+      "addEvent": "Sự kiện",
+      "addPlace": "Địa điểm",
       "addPlaceTitle": "Thêm địa điểm",
       "editPlaceTitle": "Sửa địa điểm",
       "addPlaceDescription": "Hiện một địa điểm dưới dạng thẻ, như quán cà phê, cửa hàng, studio hay cửa hàng pop-up. Tìm trên Google Places là địa chỉ và tọa độ tự điền.",
@@ -3112,20 +3111,18 @@
       "bookingFieldCtaLabelPlaceholder": "ví dụ: Đặt lịch",
       "bookingUnsupportedProvider": "Tên miền này chưa được hỗ trợ.",
       "bookingSupportedProviders": "Nhà cung cấp được hỗ trợ",
-      "addEmailForm": "+ Đăng ký email",
+      "addEmailForm": "Đăng ký email",
       "addEmailFormTitle": "Thêm biểu mẫu đăng ký email",
       "editEmailFormTitle": "Sửa biểu mẫu đăng ký email",
-      "addEmailFormDescription": "Một biểu mẫu ngắn để khách để lại email. Các địa chỉ thu thập được hiện trên bảng điều khiển / xuất CSV của bạn.",
+      "addEmailFormDescription": "Chỉ bạn xem được email đã thu thập và có thể xuất ra CSV.",
       "addEmailFormPlaceholder": "(chưa có biểu mẫu email)",
       "emailFormFieldTitle": "Tiêu đề biểu mẫu",
       "emailFormFieldTitlePlaceholder": "ví dụ: Nhận bản tin của tôi",
       "emailFormFieldSubtitle": "Phụ đề (tùy chọn)",
       "emailFormFieldSubtitlePlaceholder": "ví dụ: Biết đầu tiên về sản phẩm mới, lớp học mở và thực đơn giới hạn.",
-      "emailFormFieldSubtitleHint": "Một hoặc hai câu nói cho khách biết vì sao họ nên để lại email.",
       "emailFormFieldPlaceholder": "Văn bản gợi ý trong ô nhập",
       "emailFormFieldSuccess": "Thông báo thành công",
       "emailFormFieldSuccessPlaceholder": "ví dụ: Cảm ơn bạn đã đăng ký :)",
-      "emailFormHowItWorks": "Email khách để lại sẽ vào bảng 'khách tiềm năng' riêng tư của bạn. Xuất ra CSV và nhập vào Mailchimp / công cụ email của bạn.",
       "emailFormViewLeadsCta": "Xem email đã thu thập",
       "leadsLink": "Email đã thu thập",
       "stats": {
@@ -3135,7 +3132,7 @@
         "loadFailed": "Không tải được thống kê.",
         "summary": {
           "title": "Lượt truy cập hồ sơ",
-          "today": "Hôm nay",
+          "today": "24 giờ",
           "week": "7 ngày",
           "month": "30 ngày",
           "allTime": "Toàn thời gian"
@@ -3251,9 +3248,9 @@
       "contactFieldName": "Tên",
       "contactFieldNamePlaceholder": "Nguyễn Văn A",
       "contactFieldTitle": "Chức danh",
-      "contactFieldTitlePlaceholder": "Kỹ sư",
+      "contactFieldTitlePlaceholder": "ví dụ: Kỹ sư backend",
       "contactFieldCompany": "Công ty",
-      "contactFieldCompanyPlaceholder": "Acme Inc.",
+      "contactFieldCompanyPlaceholder": "ví dụ: kurl",
       "contactFieldEmail": "Email",
       "contactFieldPhone": "Điện thoại",
       "contactFieldWebsite": "Website",
@@ -3324,7 +3321,22 @@
       "dividerLabel": "Đường phân cách",
       "loading": "Đang tải...",
       "noLinks": "Chưa có liên kết.",
-      "toggleFailed": "Cập nhật thất bại."
+      "toggleFailed": "Cập nhật thất bại.",
+      "showMoreLinks": "Xem thêm {count}",
+      "contactPalette": {
+        "amethyst": "Thạch anh tím",
+        "rose-gold": "Vàng hồng",
+        "emerald": "Ngọc lục bảo",
+        "sapphire": "Lam ngọc",
+        "sunset": "Hoàng hôn",
+        "midnight": "Nửa đêm",
+        "champagne": "Sâm panh",
+        "aurora": "Cực quang"
+      },
+      "featuredMark": "Nổi bật",
+      "rowActions": "Thêm thao tác",
+      "moveUp": "Chuyển lên",
+      "moveDown": "Chuyển xuống"
     },
     "profileTitle": "Thông tin tài khoản",
     "email": "Email",
@@ -3333,15 +3345,14 @@
     "role": "Vai trò",
     "preferencesTitle": "Tùy chọn",
     "timezoneLabel": "Múi giờ",
-    "timezoneHint": "Dùng làm múi giờ báo cáo trên các trang thống kê.",
+    "timezoneHint": "Múi giờ quyết định mốc bắt đầu mỗi ngày trong thống kê.",
     "save": "Lưu",
     "saved": "Đã lưu",
     "saveFailed": "Lưu thất bại.",
     "interfaceLanguage": "Ngôn ngữ giao diện",
     "dataTitle": "Dữ liệu",
     "exportButton": "Tải dữ liệu của tôi (JSON)",
-    "exportHint": "Thông tin người dùng + tất cả liên kết + sự kiện nhấp (IP đã được che).",
-    "dangerTitle": "Vùng nguy hiểm",
+    "exportHint": "Gồm thông tin tài khoản, mọi liên kết và sự kiện nhấp. IP đã được che.",
     "deleteHint": "Tài khoản của bạn bước vào thời gian ân hạn 30 ngày sau khi xóa. Đăng nhập lại trong khoảng đó để khôi phục mọi thứ; sau 30 ngày tài khoản và toàn bộ liên kết/thống kê bị xóa vĩnh viễn. Liên kết ẩn danh không bị ảnh hưởng.",
     "deleteButton": "Xóa tài khoản của tôi",
     "deleteConfirmTitle": "Thật sự xóa?",
@@ -3352,21 +3363,20 @@
     "deleting": "Đang xóa...",
     "twofa": {
       "title": "Xác thực hai yếu tố (2FA)",
-      "description": "Thêm một ứng dụng xác thực TOTP (Google Authenticator, Authy, 1Password, v.v.) để có thêm một bước khi đăng nhập. Ngay sau khi bật, hãy lưu 10 mã khôi phục ở nơi an toàn để vẫn đăng nhập được nếu mất ứng dụng.",
+      "description": "Khi đăng nhập, bạn nhập thêm mã 6 số từ ứng dụng xác thực.",
       "loading": "Đang tải...",
       "statusOn": "Đã bật",
       "statusOff": "Đã tắt",
       "lastUsed": "Dùng lần cuối",
-      "enableButton": "Bật 2FA",
+      "enableButton": "Bật",
       "starting": "Đang chuẩn bị...",
       "startFailed": "Không bắt đầu được việc đăng ký 2FA.",
       "scanTitle": "Quét QR bằng ứng dụng xác thực của bạn",
-      "scanHint": "Hoặc gõ khóa thủ công vào ứng dụng nếu không quét được.",
-      "manualKeyHint": "Khóa thủ công:",
+      "manualKeyHint": "Không quét được? Nhập khóa này vào ứng dụng.",
       "codePlaceholder": "123456",
       "confirmButton": "Kích hoạt",
       "confirming": "Đang xác minh...",
-      "confirmFailed": "Mã không khớp. Thử lại.",
+      "confirmFailed": "Mã không khớp.",
       "cancel": "Hủy",
       "enrolled": "2FA giờ đã được bật.",
       "regenerateAction": "Tạo lại mã khôi phục",
@@ -3380,18 +3390,19 @@
       "regenerated": "Đã cấp mã khôi phục mới.",
       "disabled": "Đã tắt 2FA.",
       "recoveryTitle": "Lưu mã khôi phục của bạn ở nơi an toàn",
-      "recoveryHint": "Mỗi mã chỉ dùng được một lần. Dùng chúng nếu bạn mất quyền truy cập ứng dụng xác thực, và hãy in ra hoặc lưu trong trình quản lý mật khẩu.",
+      "recoveryHint": "Nếu mất ứng dụng xác thực, hãy đăng nhập bằng một mã này. Mỗi mã dùng được một lần.",
       "recoveryCopyAll": "Sao chép tất cả",
       "recoveryCopied": "Đã sao chép mã khôi phục.",
       "recoveryCopyFailed": "Sao chép thất bại.",
       "recoveryDismiss": "Tôi đã lưu, đóng",
       "loadError": "Không tải được trạng thái 2FA của bạn.",
-      "retry": "Thử lại"
+      "retry": "Thử lại",
+      "codeLabel": "Mã xác thực"
     },
     "apiKeys": {
       "title": "Khóa API",
-      "description": "Dùng chúng từ script hoặc tự động hóa gọi API của kurl. Khóa đầy đủ chỉ hiển thị một lần, nên hãy sao chép ngay vào nơi an toàn.",
-      "namePlaceholder": "Tên (ví dụ: 'Bot báo cáo nội bộ')",
+      "description": "Khóa mới chỉ hiện một lần, ngay khi cấp.",
+      "namePlaceholder": "ví dụ: Bot báo cáo nội bộ",
       "issue": "Cấp",
       "issuing": "Đang cấp...",
       "issueFailed": "Cấp khóa thất bại.",
@@ -3412,13 +3423,19 @@
       "revoking": "Đang thu hồi...",
       "revoked": "Đã thu hồi.",
       "revokeFailed": "Thu hồi thất bại.",
-      "revokeConfirm": "Thu hồi khóa này sẽ vô hiệu nó ngay lập tức. Tiếp tục?",
+      "revokeConfirm": "Thu hồi khóa này?",
       "revokedLabel": "Đã thu hồi",
-      "usageTitle": "Khóa này có thể làm gì ngay",
+      "usageTitle": "Khóa này dùng để làm gì",
       "usageShorten": "Rút gọn liên kết",
       "usagePublish": "Đăng bài từ tệp Markdown (kurl-publish CLI)",
       "usageExport": "Sao lưu toàn bộ bài viết (zip)",
-      "usageCliHint": "Tải script kurl-publish.py (GitHub)"
+      "usageCliHint": "Tải script kurl-publish.py (GitHub)",
+      "nameLabel": "Tên khóa",
+      "revokeConfirmBody": "Yêu cầu dùng khóa này sẽ bị từ chối ngay.",
+      "loadError": "Không tải được khóa API.",
+      "retry": "Thử lại",
+      "usageLinks": "Liên kết",
+      "usageBlog": "kurl log"
     },
     "customDomains": {
       "title": "Tên miền tùy chỉnh",
@@ -3427,7 +3444,7 @@
       "registering": "Đang đăng ký...",
       "registerFailed": "Đăng ký tên miền thất bại.",
       "loading": "Đang tải...",
-      "empty": "Chưa có tên miền nào. Nhập tên miền của bạn ở trên để bắt đầu.",
+      "empty": "Chưa có tên miền nào.",
       "statusPending": "Đang chờ",
       "statusVerified": "Đã xác minh",
       "statusAutoChecking": "Đang tự kiểm tra · {time}",
@@ -3440,8 +3457,14 @@
       "deleteConfirm": "Xóa tên miền này? Các liên kết ngắn trên tên miền này sẽ ngừng hoạt động ngay lập tức.",
       "deleteFailed": "Xóa thất bại.",
       "dnsTxtHint": "Kiểm tra quyền sở hữu: thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
-      "dnsCnameHint": "Định tuyến lưu lượng: thêm bản ghi CNAME này tại cùng nhà cung cấp"
-    }
+      "dnsCnameHint": "Định tuyến lưu lượng: thêm bản ghi CNAME này tại cùng nhà cung cấp",
+      "domainLabel": "Tên miền",
+      "loadError": "Không tải được tên miền.",
+      "retry": "Thử lại",
+      "dnsHost": "Máy chủ",
+      "dnsValue": "Giá trị"
+    },
+    "exportFailed": "Không tải xuống được dữ liệu."
   },
   "publicStats": {
     "title": "Thống kê công khai",
@@ -3462,14 +3485,15 @@
     },
     "batchCard": {
       "quantityUnit": "{count} tờ",
-      "distributor": "Người phát · {name}",
-      "downloadQr": "Tải QR cho {name}",
-      "edit": "Sửa {name}",
-      "delete": "Xóa {name}"
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "menu": "Menu {name}",
+      "qr": "Tải QR",
+      "open": "Mở liên kết"
     },
     "batchDialogs": {
       "editTitle": "Sửa đợt phát",
-      "editDescription": "Bạn chỉ chỉnh được tên, người phát, khu vực, số lượng, và ghi chú. Liên kết ngắn in trong QR giữ nguyên.",
+      "editDescription": "Liên kết rút gọn trong QR đã in vẫn giữ nguyên.",
       "save": "Lưu",
       "updated": "Đã cập nhật đợt",
       "updateFailed": "Cập nhật thất bại",
@@ -3483,7 +3507,7 @@
       "deleted": "Đã xóa đợt",
       "deleteFailed": "Xóa thất bại",
       "deleteWarningTitle": "Liên kết ngắn cũng sẽ bị xóa.",
-      "deleteWarningBody": "Người quét mã QR đã in sẽ thấy trang không tìm thấy liên kết. Việc này an toàn trước khi đặt in, nhưng sau khi phát thì thường nên giữ nó hoạt động với một chính sách kết thúc.",
+      "deleteWarningBody": "QR đã in sẽ mở trang không tìm thấy liên kết.",
       "quantityUnit": "{count} tờ"
     },
     "new": {
@@ -3495,7 +3519,7 @@
       "nameLabel": "Tên chiến dịch QR",
       "namePlaceholder": "ví dụ: Đợt áp phích xuân khu Shinjuku",
       "startLabel": "Bắt đầu",
-      "startHint": "Thường là bắt đầu ngay. Chỉ lên lịch khi ngày in hoặc đặt hàng đòi hỏi.",
+      "startHint": "Lượt quét trước khi bắt đầu được tính riêng là thử nghiệm.",
       "startNow": "Bắt đầu ngay",
       "startSchedule": "Lên lịch bắt đầu",
       "endLabel": "Kết thúc",
@@ -3510,13 +3534,15 @@
         "redirectTitle": "Chuyển hướng nơi khác",
         "redirectBody": "Gửi QR đã in tới trang đánh giá, chiến dịch tiếp theo, danh sách chờ, hay bất kỳ URL theo sau nào."
       },
-      "messagePlaceholder": "ví dụ: Chiến dịch này đã kết thúc. Hẹn gặp ở sự kiện tiếp theo vào tháng Mười Hai.\nLiên hệ: @kurl_official",
+      "messagePlaceholder": "VD: Sự kiện đã kết thúc. Hẹn gặp vào tháng 12.",
       "messageHint": "Để trống sẽ dùng thông báo mặc định. Ngắt dòng được giữ nguyên ·",
       "redirectHint": "URL chuyển hướng được áp dụng cho mã QR đã in khi chiến dịch kết thúc.",
       "cancel": "Hủy",
       "creating": "Đang tạo...",
       "submit": "Tạo chiến dịch QR",
-      "leaveConfirm": "Rời đi mà không lưu? Nội dung bạn đã nhập sẽ bị mất."
+      "leaveConfirm": "Rời đi mà không lưu? Nội dung bạn đã nhập sẽ bị mất.",
+      "messageLabel": "Thông điệp trang kết thúc",
+      "redirectLabel": "URL chuyển đến sau khi kết thúc"
     },
     "detail": {
       "loadFailed": "Tải thất bại",
@@ -3531,46 +3557,47 @@
       "confirmArchiveDesc": "Nó sẽ bị ẩn khỏi danh sách, nhưng dữ liệu vẫn còn nguyên.",
       "archived": "Đã lưu trữ chiến dịch QR",
       "archiveFailed": "Lưu trữ thất bại",
-      "cancel": "Hủy",
       "actions": {
         "stats": "Thống kê",
         "endNow": "Kết thúc ngay",
         "reapply": "Áp dụng lại chính sách kết thúc",
-        "archive": "Lưu trữ"
+        "archive": "Lưu trữ",
+        "more": "Thêm"
       },
       "prepare": {
-        "eyebrow": "Chuẩn bị phát",
-        "title": "Tài nguyên cho nhà in và Canva",
-        "description": "Mã QR và siêu dữ liệu cho {count} đợt. Thả chúng vào áp phích hoặc tờ rơi trước khi đặt in.",
+        "title": "Chuẩn bị in",
         "printSheet": "Trang A4",
         "posterBuilder": "Thêm QR vào áp phích",
         "qrZip": "QR ZIP",
         "batchCsv": "CSV theo đợt"
       },
       "policy": {
-        "eyebrow": "Sau khi chiến dịch kết thúc",
         "keep": "Giữ nguyên",
         "expire": "Hiện trang hết hạn",
         "redirect": "Chuyển hướng nơi khác",
-        "savedEnded": "Đã lưu thông báo. Dùng áp dụng lại chính sách kết thúc để đẩy nó tới QR đã in.",
-        "saved": "Đã lưu thông báo trang hết hạn",
-        "saveFailed": "Lưu thất bại",
         "messageLabel": "Thông báo trang hết hạn",
-        "edit": "Sửa",
-        "add": "Thêm",
-        "messagePlaceholder": "ví dụ: Chiến dịch này đã kết thúc. Hẹn gặp ở sự kiện tiếp theo vào tháng Mười Hai.",
-        "saving": "Đang lưu...",
-        "save": "Lưu",
         "defaultMessageHint": "Để trống thông báo để hiện thông báo mặc định.",
-        "defaultDestination": "URL đích mặc định · {url}"
+        "defaultDestination": "URL đích mặc định",
+        "heading": "Sau khi kết thúc",
+        "title": "Hành vi",
+        "redirectLabel": "Chuyển đến"
       },
       "batches": {
         "title": "Các đợt phát",
-        "description": "Một đơn vị phát in dùng cùng một QR. Chia theo người phát hoặc khu vực để phân tích có ý nghĩa.",
         "add": "Thêm đợt",
         "emptyTitle": "Chưa có đợt phát nào"
       },
-      "csvFailed": "Tải CSV thất bại"
+      "csvFailed": "Tải CSV thất bại",
+      "settings": {
+        "open": "Cài đặt",
+        "title": "Cài đặt chiến dịch",
+        "save": "Lưu",
+        "saved": "Đã lưu cài đặt chiến dịch",
+        "savedEnded": "Đã lưu. Hãy áp dụng lại chính sách kết thúc để cập nhật QR đã in.",
+        "saveFailed": "Không lưu được. Hãy thử lại.",
+        "defaultUrlHint": "Đổi URL này không ảnh hưởng các đợt đã tạo."
+      },
+      "statsFailed": "Không tải được số liệu"
     },
     "batchesNew": {
       "loadFailed": "Tải thất bại",
@@ -3580,11 +3607,11 @@
       "createFailed": "Tạo thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thêm các đợt phát",
-      "introCampaign": "Các đợt mới cho <name></name>.",
+      "introCampaign": "<name></name>",
       "addRow": "Thêm dòng",
       "pasteToggle": "Dán từ bảng tính",
-      "defaultUrlActive": "<strong>Đã đặt URL đích mặc định.</strong> Để trống trường đích để dùng <code></code>. Chỉ nhập URL cho các đợt cần đích khác.",
-      "defaultUrlMissing": "<strong>Chưa đặt URL đích mặc định.</strong> Mỗi đợt cần URL đích riêng.",
+      "defaultUrlActive": "Để trống đích đến để dùng URL mặc định · <code></code>",
+      "defaultUrlMissing": "Chưa có URL mặc định nên mỗi đợt cần đích đến riêng.",
       "fields": {
         "name": "Tên đợt",
         "distributor": "Người phát",
@@ -3592,11 +3619,12 @@
         "quantity": "Số lượng",
         "destinationUrl": "URL đích"
       },
-      "compareHint": "Hữu ích để so sánh",
       "placeholders": {
         "name": "ví dụ: Ga Shinjuku cửa Đông",
         "distributor": "A hoặc tên người phát",
-        "defaultValue": "(mặc định)"
+        "defaultValue": "(mặc định)",
+        "quantity": "ví dụ: 500",
+        "area": "ví dụ: Shinjuku Đông"
       },
       "hints": {
         "defaultOptional": "Để trống sẽ dùng mặc định",
@@ -3606,19 +3634,19 @@
         "nameRequired": "Tên đợt là bắt buộc",
         "quantityRequired": "Số lượng là bắt buộc",
         "quantityPositive": "Nhập số từ 1 trở lên",
-        "destinationRequired": "Nhập URL. Chiến dịch này chưa có URL mặc định.",
+        "destinationRequired": "Nhập đích đến",
         "destinationUrl": "Phải bắt đầu bằng http:// hoặc https://"
       },
-      "removeRow": "Xóa dòng {index}",
+      "removeRow": "Bỏ dòng {index}",
       "pasteTitle": "Dán các dòng bảng tính",
       "pasteColumns": "Thứ tự cột: <code>Tên đợt / Người phát / Khu vực / Số lượng / URL đích / Ghi chú</code> (phân tách bằng tab hoặc dấu phẩy)",
       "close": "Đóng",
-      "pastePlaceholder": "Ga Shinjuku cửa Đông\tA\tShinjuku Đông\t500\t\nOkubo\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pastePlaceholder": "Ga Shinjuku cửa Đông\tA\tShinjuku Đông\t500",
       "pasteZeroRows": "0 dòng",
       "pastePreviewRows": "Phát hiện {count} dòng",
       "cancel": "Hủy",
       "pasteApply": "Thêm {count} dòng",
-      "invalidRows": "{count} dòng có lỗi nhập. Sửa các ô được tô sáng.",
+      "invalidRows": "Cần sửa {count} dòng",
       "summary": "<strong>{rowCount}</strong> đợt · dự kiến <strong>{totalQuantity}</strong> tờ",
       "creating": "Đang tạo...",
       "submit": "Tạo {count} đợt"
@@ -3631,49 +3659,45 @@
       "composeFailed": "Ghép thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thêm QR vào áp phích",
-      "introCampaign": "<name></name> · Nhân bản PDF một lần cho mỗi đợt (tổng {count}), mỗi cái có QR riêng, rồi tải về một PDF gộp.",
-      "toolHint": "Hoàn thiện thiết kế trong Canva, InDesign hay PowerPoint rồi xuất PDF. Ở đây bạn chỉ đặt vị trí QR.",
+      "introCampaign": "<name></name> · Một PDF gộp, mỗi đợt trong {count} đợt có QR riêng.",
       "targetLabel": "Mục tiêu ghép",
       "targetSummary": "<strong>{count}</strong> đợt · đầu ra là PDF <strong>{pages} trang</strong>",
-      "noBatchesHint": "Thêm các đợt phát trước. (Chi tiết chiến dịch QR → Thêm đợt)",
+      "noBatchesHint": "Chưa có đợt nào",
       "composing": "Đang ghép...",
       "download": "Tải PDF gộp ({count} trang)",
-      "notSavedHint": "Vị trí QR không được lưu. Nếu sau này bạn quay lại với cùng PDF, hãy vẽ lại khung. Các đợt in chiến dịch được xem là đơn đặt một lần.",
+      "notSavedHint": "Vị trí QR không được lưu.",
       "dropTitle": "Thả PDF vào đây hoặc nhấp để tải lên",
-      "dropSubtitle": "PDF 1 trang · khuyến nghị xuất từ Canva/InDesign",
+      "dropSubtitle": "PDF 1 trang",
       "removePdf": "Xóa PDF",
       "otherPdf": "PDF khác",
-      "dragHint": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải.",
-      "dragHintWithBatches": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải. Bản xem trước dùng đợt đầu (1 trên {count}). Mỗi đợt có QR khác nhau.",
-      "dragHintWithoutBatches": "Kéo khung QR để di chuyển, hoặc đổi cỡ từ tay nắm góc dưới phải. Chưa có đợt nào, nên bản xem trước dùng QR giữ chỗ. Ghép thật khả dụng sau khi thêm đợt.",
+      "dragHint": "Kéo khung để di chuyển, kéo góc để đổi cỡ.",
       "boxAria": "Vị trí và kích thước khung QR",
-      "qrPreviewAlt": "Xem trước QR"
+      "qrPreviewAlt": "Xem trước QR",
+      "addBatch": "Thêm đợt"
     },
     "printSheet": {
       "loadFailed": "Tải thất bại",
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Trang QR A4",
-      "introCampaign": "<name></name> · Lưu thành PDF qua in trình duyệt (Cmd/Ctrl + P).",
+      "introCampaign": "<name></name> · Lưu thành PDF từ hộp thoại in.",
       "print": "In",
-      "empty": "Không có đợt nào để in. Thêm một đợt trước.",
+      "empty": "Không có đợt nào để in",
       "perPage": "Mỗi trang",
       "layouts": {
         "comfortable": {
-          "label": "12 (3×4)",
-          "hint": "Thoáng · cỡ danh thiếp"
+          "label": "12 (3×4)"
         },
         "standard": {
-          "label": "20 (4×5)",
-          "hint": "Tiêu chuẩn"
+          "label": "20 (4×5)"
         },
         "dense": {
-          "label": "30 (5×6)",
-          "hint": "Dày đặc · nhãn nhỏ"
+          "label": "30 (5×6)"
         }
       },
       "showLabel": "Hiện nhãn",
       "cutMarks": "Dấu cắt",
-      "pagePerBatch": "Một trang đầy đủ cho mỗi đợt"
+      "pagePerBatch": "Mỗi đợt một trang đầy QR của đợt đó",
+      "addBatch": "Thêm đợt"
     },
     "campaignStats": {
       "loadFailed": "Tải thất bại",
@@ -3683,10 +3707,7 @@
       "loading": "Đang tải...",
       "groups": {
         "distributorTitle": "Hiệu quả theo người phát",
-        "distributorHint": "Lượt nhấp trên 100 tờ, nên có thể so sánh các người phát ngay cả khi số lượng khác nhau.",
-        "areaTitle": "Hiệu quả theo khu vực",
-        "areaHint": "Dùng cái này để quyết định nơi phát tiếp theo.",
-        "meta": "lượt nhấp {clicks} · {quantity} tờ"
+        "areaTitle": "Hiệu quả theo khu vực"
       },
       "compare": {
         "title": "So sánh với chiến dịch khác",
@@ -3694,7 +3715,7 @@
         "none": "Không so sánh",
         "current": "Hiện tại",
         "comparison": "So sánh",
-        "selectHint": "Chọn một chiến dịch từ menu thả xuống ở trên."
+        "selectHint": "Chọn một chiến dịch để xem song song."
       },
       "kpi": {
         "totalClicks": "Lượt nhấp của người",
@@ -3711,41 +3732,34 @@
       },
       "recommendation": {
         "title": "Gợi ý phát đợt tiếp theo",
-        "description": "Phân phối lại cùng tổng {total} tờ. Trung bình là {average} lượt / 100 tờ.",
         "footnote": "Gợi ý dựa trên tỷ lệ hiệu suất. Dưới 30% mức trung bình bị cắt; phần còn lại được phân bổ lại theo tỷ lệ, giới hạn 3 lần mỗi đợt.",
         "verdict": {
           "BOOST": "Tăng",
           "KEEP": "Giữ",
           "REDUCE": "Giảm",
-          "PRUNE": "Cắt"
+          "PRUNE": "Bỏ"
         },
         "rowMeta": "{current} → {recommended} tờ · {rate} lượt / 100 tờ",
         "tooFewBatches": "Gợi ý sẽ hiện khi có từ {minimum} đợt trở lên. Hiện có {current}.",
-        "tooFewClicks": "Gợi ý sẽ hiện sau {minimum} lượt nhấp của người. Hiện có {current}."
+        "tooFewClicks": "Gợi ý sẽ hiện sau {minimum} lượt nhấp của người. Hiện có {current}.",
+        "aside": "{total} tờ · TB {average} mỗi 100"
       },
       "daily": {
-        "title": "Lượt nhấp hằng ngày",
-        "description": "Kể từ khi chiến dịch bắt đầu · {tz}"
+        "title": "Lượt nhấp hằng ngày"
       },
       "hourly": {
-        "title": "Lượt nhấp theo giờ",
-        "description": "{tz}",
-        "tooltip": "{hour}:00: {clicks}"
+        "title": "Lượt nhấp theo giờ"
       },
       "heatmap": {
-        "title": "Phân bố thứ × giờ",
-        "description": "{tz}"
+        "title": "Phân bố thứ × giờ"
       },
       "testScans": {
-        "title": "Quét thử trước khi bắt đầu",
-        "description": "<strong>{count}</strong> trước khi chiến dịch bắt đầu. Đã loại khỏi tổng phân tích.",
-        "last": "Lần thử cuối · {date}"
+        "note": "Đã loại {count} lượt quét thử trước khi bắt đầu."
       },
       "byBatch": {
-        "empty": "Chưa có đợt phát nào. Hiệu quả từng đợt hiện ở đây sau khi bạn thêm một đợt.",
+        "empty": "Chưa có đợt nào",
         "title": "Hiệu quả theo đợt",
-        "description": "Sắp xếp theo lượt nhấp giảm dần. Các thanh tương đối so với dòng cao nhất.",
-        "meta": "/ {quantity} tờ · {rate} lượt / 100 tờ"
+        "add": "Thêm đợt"
       }
     }
   },
@@ -3762,7 +3776,6 @@
     "loadFailed": "Không tải được chiến dịch QR.",
     "newCampaign": "Chiến dịch QR mới",
     "batchCount": "{count} đợt",
-    "details": "Chi tiết",
     "onboarding": {
       "title": "Mỗi lô tờ rơi một mã QR riêng để so sánh",
       "body": "Tạo mã QR riêng cho từng khu vực, người phát và lô, rồi xem lô nào có nhiều lượt nhấp. Dùng các con số đó để chọn nơi phát lần sau.",
@@ -3791,8 +3804,7 @@
   "qrDownload": {
     "zipTitle": "Tải ZIP QR",
     "singleTitle": "Tải QR {name}",
-    "zipDescription": "Tất cả mã QR của các đợt trong một gói, sẵn sàng giao cho nhà in hoặc nhà thiết kế.",
-    "singleDescription": "PNG QR cho một đợt phát.",
+    "zipDescription": "Mỗi đợt một ảnh PNG, gộp trong một tệp ZIP.",
     "confirm": "Tải về",
     "sizeLabel": "Kích thước",
     "sizes": {
@@ -3801,18 +3813,15 @@
       "print": "In tiêu chuẩn",
       "poster": "Áp phích lớn"
     },
-    "ecLabel": "Mức chịu hư hại (Sửa lỗi)",
-    "ecHint": "Dùng mức cao hơn cho môi trường ngoài trời hoặc bẩn.",
+    "ecLabel": "Mức chịu hư hại",
+    "ecHint": "Mức cao hơn vẫn đọc được khi bẩn nhưng mã dày hơn.",
     "ec": {
       "data": "Ưu tiên dữ liệu",
       "standard": "Tiêu chuẩn",
       "outdoor": "Ngoài trời / bẩn",
       "maximum": "Bảo vệ tối đa"
     },
-    "labelText": "Văn bản nhãn",
-    "labelHint": "In tên đợt dưới QR để nhà in nhận diện.",
-    "labelCheckbox": "In tên đợt dưới QR",
-    "notSaved": "Tùy chọn tải về không được lưu. Bạn có thể tải cùng một chiến dịch nhiều lần với các tùy chọn khác nhau."
+    "labelCheckbox": "Thêm tên đợt bên dưới QR"
   },
   "qrCampaigns": {
     "meta": {
@@ -4092,7 +4101,7 @@
     "public": {
       "hostedBy": "Tổ chức bởi",
       "attending": "{count} người tham gia",
-      "addToCalendar": "Thêm vào Google Calendar",
+      "addToCalendar": "Thêm vào lịch",
       "onlineLink": "Liên kết tham gia trực tuyến",
       "spotsLeft": "Còn {count} / {capacity} chỗ",
       "formTitle": "Đăng ký tham gia",
@@ -4111,7 +4120,7 @@
       "alreadyRegisteredTitle": "Bạn đã đăng ký rồi",
       "registerAnother": "Đăng ký cho người khác",
       "successBodyEmail": "Chúng tôi đã gửi email xác nhận. Dùng liên kết trong email để hủy nếu bận.",
-      "successBody": "Hãy lưu liên kết hủy bên dưới phòng khi bạn bận.",
+      "successBody": "Hãy lưu liên kết hủy này phòng khi bạn bận.",
       "copyCancelLink": "Sao chép liên kết hủy",
       "cancelLinkCopied": "Đã sao chép",
       "viralHook": "Trang này được tạo bằng kurl.",
@@ -4129,9 +4138,7 @@
         "answerRequired": "Vui lòng trả lời câu hỏi này",
         "choiceRequired": "Vui lòng chọn một mục",
         "consentRequired": "Vui lòng đồng ý chia sẻ thông tin liên hệ",
-        "full": "Chỗ cuối cùng vừa được lấy",
         "alreadyRegistered": "Liên hệ này đã đăng ký rồi",
-        "closed": "Đã đóng đăng ký",
         "generic": "Đăng ký thất bại. Vui lòng thử lại.",
         "invalidEmail": "Vui lòng kiểm tra lại email (VD: hong@gmail.com)",
         "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
@@ -4152,7 +4159,10 @@
       "aboutTitle": "Giới thiệu",
       "endedNotice": "Sự kiện đã kết thúc.",
       "am": "SA",
-      "pm": "CH"
+      "pm": "CH",
+      "calendarGoogle": "Google Calendar",
+      "calendarOutlook": "Outlook",
+      "calendarIcs": "Apple / tải .ics"
     },
     "list": {
       "title": "Sự kiện",
@@ -4176,6 +4186,8 @@
       "timezone": "Múi giờ",
       "whereTitle": "Địa điểm",
       "locationPlaceholder": "Tên địa điểm hoặc địa chỉ",
+      "placeName": "Tên địa điểm",
+      "mapMissed": "Không tìm thấy địa chỉ cho vị trí này",
       "clearPlace": "Xóa địa điểm",
       "locationUrl": "Liên kết bản đồ",
       "addMapLink": "Dùng liên kết bản đồ",
@@ -4247,8 +4259,7 @@
       "statusChangeFailed": "Cập nhật thất bại",
       "cancelDialogTitle": "Hủy sự kiện này?",
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
-      "cancelDialogConfirm": "Hủy sự kiện",
-      "heroCopy": "Sao chép liên kết"
+      "cancelDialogConfirm": "Hủy sự kiện"
     },
     "share": {
       "copied": "Đã sao chép",
@@ -4283,7 +4294,8 @@
       "channel": "Kênh",
       "status": "Trạng thái",
       "confirmed": "Đã xác nhận",
-      "canceled": "Đã hủy"
+      "canceled": "Đã hủy",
+      "exportFailed": "Không tải được CSV"
     },
     "status": {
       "open": "Đang mở",
@@ -4291,6 +4303,9 @@
       "canceled": "Đã hủy",
       "ended": "Đã kết thúc",
       "full": "Hết chỗ"
+    },
+    "meta": {
+      "description": "Tạo trang sự kiện kèm biểu mẫu đăng ký chỉ bằng một liên kết. Người tham gia đăng ký không cần tài khoản, đủ chỗ thì tự đóng."
     }
   },
   "linkAnalytics": {

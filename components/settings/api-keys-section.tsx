@@ -9,8 +9,10 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { GROUPED_CELL, GroupedList } from "@/components/common/grouped-list";
+import { BlockRow, ErrorRow, NoteRow } from "@/components/settings/settings-rows";
 import type { ApiKeySummary, IssuedApiKey } from "@/types";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 export function ApiKeysSection() {
   const t = useTranslations("settings.apiKeys");
@@ -18,6 +20,7 @@ export function ApiKeysSection() {
   const errorMessage = useApiErrorMessage();
   const { toast } = useToast();
   const [keys, setKeys] = useState<ApiKeySummary[] | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [name, setName] = useState("");
   const [issuing, setIssuing] = useState(false);
   const [revoking, setRevoking] = useState<number | null>(null);
@@ -32,12 +35,21 @@ export function ApiKeysSection() {
         if (!cancelled) setKeys(items);
       })
       .catch(() => {
-        if (!cancelled) setKeys([]);
+        if (!cancelled) setLoadFailed(true);
       });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  async function retryLoad() {
+    setLoadFailed(false);
+    try {
+      setKeys(await listApiKeys());
+    } catch {
+      setLoadFailed(true);
+    }
+  }
 
   async function refresh() {
     try {
@@ -66,7 +78,13 @@ export function ApiKeysSection() {
   }
 
   async function handleRevoke(id: number) {
-    if (!(await confirm({ title: t("revokeConfirm"), destructive: true }))) return;
+    const ok = await confirm({
+      title: t("revokeConfirm"),
+      description: t("revokeConfirmBody"),
+      confirmLabel: t("revoke"),
+      destructive: true,
+    });
+    if (!ok) return;
     setRevoking(id);
     try {
       await revokeApiKey(id);
@@ -91,88 +109,74 @@ export function ApiKeysSection() {
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{t("description")}</p>
+    <>
+      <GroupedList title={t("title")} footer={t("description")}>
+        <form onSubmit={handleIssue} className="flex gap-2 px-4 py-3">
+          <Input
+            type="text"
+            aria-label={t("nameLabel")}
+            placeholder={t("namePlaceholder")}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={100}
+            disabled={issuing}
+            className="min-w-0 flex-1"
+          />
+          <Button type="submit" variant="outline" disabled={issuing} className="h-11">
+            {issuing ? t("issuing") : t("issue")}
+          </Button>
+        </form>
 
-      <form onSubmit={handleIssue} className="flex gap-2">
-        <Input
-          type="text"
-          placeholder={t("namePlaceholder")}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={100}
-          disabled={issuing}
-          className="flex-1"
-        />
-        <Button type="submit" size="lg" variant="outline" disabled={issuing}>
-          {issuing ? t("issuing") : t("issue")}
-        </Button>
-      </form>
+        {issued && (
+          <BlockRow>
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+              <p className="font-medium">{t("justIssuedTitle")}</p>
+              <p className="mt-1">{t("justIssuedHint")}</p>
+              <code data-sentry-mask className="mt-2 block min-w-0 break-all rounded-md bg-white px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+                {revealed ? issued.rawKey : "•".repeat(issued.rawKey.length)}
+              </code>
+              <div className="mt-2 flex gap-2">
+                <Button type="button" size="sm" variant="outline" onClick={() => setRevealed((v) => !v)}>
+                  {revealed ? t("hide") : t("reveal")}
+                </Button>
+                <Button type="button" size="sm" variant="outline" onClick={handleCopy}>
+                  {copied ? t("copied") : t("copy")}
+                </Button>
+                <Button type="button" size="sm" variant="ghost" className="ml-auto" onClick={() => setIssued(null)}>
+                  {t("dismiss")}
+                </Button>
+              </div>
+            </div>
+          </BlockRow>
+        )}
 
-      {issued && (
-        <div className="rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
-          <p className="font-medium">{t("justIssuedTitle")}</p>
-          <p className="mt-1">{t("justIssuedHint")}</p>
-          <code data-sentry-mask className="mt-2 block min-w-0 break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
-            {revealed ? issued.rawKey : "•".repeat(issued.rawKey.length)}
-          </code>
-          <div className="mt-2 flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => setRevealed((v) => !v)}
-            >
-              {revealed ? t("hide") : t("reveal")}
-            </Button>
-            <Button type="button" size="sm" variant="outline" onClick={handleCopy}>
-              {copied ? t("copied") : t("copy")}
-            </Button>
-          </div>
-          <button
-            type="button"
-            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900"
-            onClick={() => setIssued(null)}
-          >
-            {t("dismiss")}
-          </button>
-        </div>
-      )}
-
-      {keys === null ? (
-        <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
-      ) : keys.length === 0 ? (
-        <p className="text-xs text-slate-500 dark:text-slate-400">{t("empty")}</p>
-      ) : (
-        <ul className="space-y-2">
-          {keys.map((key) => {
+        {loadFailed ? (
+          <ErrorRow message={t("loadError")} retryLabel={t("retry")} onRetry={() => void retryLoad()} />
+        ) : keys === null ? (
+          <NoteRow>{t("loading")}</NoteRow>
+        ) : keys.length === 0 ? (
+          <NoteRow>{t("empty")}</NoteRow>
+        ) : (
+          keys.map((key) => {
             const isActive = key.revokedAt === null;
             return (
-              <li
-                key={key.id}
-                className={
-                  "flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs " +
-                  (isActive ? "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900" : "border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400")
-                }
-              >
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <code className="font-mono text-[11px] text-slate-700 dark:text-slate-300">{key.prefix}…</code>
-                    {key.name && (
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{key.name}</span>
+              <div key={key.id} className={GROUPED_CELL}>
+                <div className="min-w-0">
+                  <p
+                    className={cn(
+                      "truncate text-sm font-medium",
+                      isActive ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
                     )}
-                    {!isActive && (
-                      <span className="rounded bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-700 dark:text-slate-300">
-                        {t("revokedLabel")}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                    {t("createdAt")}: {formatDate(key.createdAt)} ·{" "}
-                    {t("lastUsedAt")}: {key.lastUsedAt ? formatDate(key.lastUsedAt) : t("never")}
-                  </div>
+                  >
+                    {key.name ?? <code className="font-mono text-[13px]">{key.prefix}…</code>}
+                  </p>
+                  <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                    {key.name && <code className="font-mono">{key.prefix}… · </code>}
+                    {t("createdAt")} {formatDate(key.createdAt)} · {t("lastUsedAt")}{" "}
+                    {key.lastUsedAt ? formatDate(key.lastUsedAt) : t("never")}
+                  </p>
                 </div>
-                {isActive && (
+                {isActive ? (
                   <Button
                     type="button"
                     size="sm"
@@ -182,16 +186,18 @@ export function ApiKeysSection() {
                   >
                     {revoking === key.id ? t("revoking") : t("revoke")}
                   </Button>
+                ) : (
+                  <span className="shrink-0 text-xs text-slate-500 dark:text-slate-400">{t("revokedLabel")}</span>
                 )}
-              </li>
+              </div>
             );
-          })}
-        </ul>
-      )}
+          })
+        )}
 
-      <UsageSnippets />
+        <UsageSnippets />
+      </GroupedList>
       {confirmDialog}
-    </div>
+    </>
   );
 }
 
@@ -203,48 +209,71 @@ export function ApiKeysSection() {
 function UsageSnippets() {
   const t = useTranslations("settings.apiKeys");
   const base = `https://${process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me"}`;
-  const snippets = [
+  const groups: { title: string; snippets: { label: string; code: string; hint?: { text: string; href: string } }[] }[] = [
     {
-      label: t("usageShorten"),
-      code: `curl -X POST ${base}/api/v1/links \\\n  -H "X-API-Key: kurl_xxx" \\\n  -H "Content-Type: application/json" \\\n  -d '{"url": "https://example.com/very/long"}'`,
+      title: t("usageLinks"),
+      snippets: [
+        {
+          label: t("usageShorten"),
+          code: `curl -X POST ${base}/api/v1/links \\\n  -H "X-API-Key: kurl_xxx" \\\n  -H "Content-Type: application/json" \\\n  -d '{"url": "https://example.com/very/long"}'`,
+        },
+      ],
     },
     {
-      label: t("usagePublish"),
-      code: `export KURL_API_KEY=kurl_xxx\npython3 kurl-publish.py note.md --publish`,
-      hint: {
-        text: t("usageCliHint"),
-        href: "https://github.com/haroya01/short-link/blob/main/tools/kurl-publish.py",
-      },
-    },
-    {
-      label: t("usageExport"),
-      code: `curl -H "X-API-Key: kurl_xxx" -o kurl-export.zip \\\n  ${base}/api/v1/posts/export`,
+      title: t("usageBlog"),
+      snippets: [
+        {
+          label: t("usagePublish"),
+          code: `export KURL_API_KEY=kurl_xxx\npython3 kurl-publish.py note.md --publish`,
+          hint: {
+            text: t("usageCliHint"),
+            href: "https://github.com/haroya01/short-link/blob/main/tools/kurl-publish.py",
+          },
+        },
+        {
+          label: t("usageExport"),
+          code: `curl -H "X-API-Key: kurl_xxx" -o kurl-export.zip \\\n  ${base}/api/v1/posts/export`,
+        },
+      ],
     },
   ];
 
   return (
-    <details className="group rounded-md border border-slate-200 dark:border-slate-800">
-      <summary className="focus-ring flex cursor-pointer list-none items-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 [&::-webkit-details-marker]:hidden">
-        <ChevronRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-open:rotate-90" />
+    <details className="group/usage">
+      <summary
+        className={cn(
+          "focus-ring cursor-pointer list-none rounded-b-2xl text-sm font-medium text-slate-900 transition-colors hover:bg-slate-50 group-open/usage:rounded-b-none dark:text-slate-100 dark:hover:bg-slate-800/50 [&::-webkit-details-marker]:hidden",
+          GROUPED_CELL,
+        )}
+      >
         {t("usageTitle")}
+        <ChevronRight
+          aria-hidden
+          className="h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 ease-[var(--ease)] group-open/usage:rotate-90"
+        />
       </summary>
-      <div className="space-y-3 border-t border-slate-100 dark:border-slate-800 px-3 py-3">
-        {snippets.map((s) => (
-          <div key={s.label} className="space-y-1">
-            <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{s.label}</p>
-            <pre className="overflow-x-auto rounded bg-slate-50 dark:bg-slate-900 px-2.5 py-2 font-mono text-[11px] leading-relaxed text-slate-800 dark:text-slate-200">
-              {s.code}
-            </pre>
-            {s.hint && (
-              <a
-                href={s.hint.href}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-block text-[11px] text-slate-900 dark:text-slate-100 underline hover:text-slate-900"
-              >
-                {s.hint.text}
-              </a>
-            )}
+      <div className="space-y-5 border-t border-slate-100 px-4 py-3 dark:border-slate-800">
+        {groups.map((group) => (
+          <div key={group.title} className="space-y-3">
+            <p className="text-xs font-medium text-slate-900 dark:text-slate-100">{group.title}</p>
+            {group.snippets.map((s) => (
+              <div key={s.label} className="space-y-1">
+                <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{s.label}</p>
+                <pre className="overflow-x-auto rounded-md bg-slate-50 px-2.5 py-2 font-mono text-[11px] leading-relaxed text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+                  {s.code}
+                </pre>
+                {s.hint && (
+                  <a
+                    href={s.hint.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="focus-ring inline-block rounded-sm text-[11px] text-slate-900 underline dark:text-slate-100"
+                  >
+                    {s.hint.text}
+                  </a>
+                )}
+              </div>
+            ))}
           </div>
         ))}
       </div>

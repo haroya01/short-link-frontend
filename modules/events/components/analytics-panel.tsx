@@ -3,11 +3,13 @@
 import { useTranslations } from "next-intl";
 import { BreakdownRows } from "@/components/links/stats/breakdown-rows";
 import { KpiLine } from "@/components/links/stats/kpi-line";
+import { useStatsLabels } from "@/lib/stats-labels";
 import type { EventAnalytics } from "@/modules/events/api/events";
 import { cn, formatNumber } from "@/lib/utils";
 
 export function AnalyticsPanel({ analytics, className }: { analytics: EventAnalytics; className?: string }) {
   const t = useTranslations("events.analytics");
+  const labels = useStatsLabels();
   const conversion =
     analytics.totalClicks > 0 ? `${Math.round((analytics.totalRegistrations / analytics.totalClicks) * 100)}%` : "—";
 
@@ -24,13 +26,26 @@ export function AnalyticsPanel({ analytics, className }: { analytics: EventAnaly
         ]}
       />
 
-      <Breakdown
-        title={t("registrationsByChannel")}
-        buckets={analytics.registrationsByChannel}
-        emptyLabel={t("noRegistrations")}
-      />
-      <Breakdown title={t("clicksByLink")} buckets={analytics.clicksByLink} emptyLabel={t("noClicks")} />
-      <Breakdown title={t("clicksByClientApp")} buckets={analytics.clicksByClientApp} emptyLabel={t("noClicks")} />
+      <div className="sm:grid sm:grid-cols-[minmax(0,max-content)_minmax(4rem,1fr)_auto_auto] sm:gap-x-4">
+        <Breakdown
+          title={t("registrationsByChannel")}
+          buckets={analytics.registrationsByChannel}
+          label={(key) => (key === "direct" ? labels.channel(key) : labels.clientApp(key))}
+          emptyLabel={t("noRegistrations")}
+        />
+        <Breakdown
+          title={t("clicksByLink")}
+          buckets={analytics.clicksByLink}
+          label={(key) => (key === "?" ? labels.unknown : key)}
+          emptyLabel={t("noClicks")}
+        />
+        <Breakdown
+          title={t("clicksByClientApp")}
+          buckets={analytics.clicksByClientApp}
+          label={labels.clientApp}
+          emptyLabel={t("noClicks")}
+        />
+      </div>
     </section>
   );
 }
@@ -38,22 +53,22 @@ export function AnalyticsPanel({ analytics, className }: { analytics: EventAnaly
 function Breakdown({
   title,
   buckets,
+  label,
   emptyLabel,
 }: {
   title: string;
   buckets: { key: string; count: number }[];
+  label: (key: string) => string;
   emptyLabel: string;
 }) {
   return (
-    <div className="mt-6">
-      <h3 className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{title}</h3>
-      <div className="mt-2.5">
-        {buckets.length === 0 ? (
-          <p className="text-[13px] text-slate-500 dark:text-slate-400">{emptyLabel}</p>
-        ) : (
-          <BreakdownRows items={buckets.map((bucket) => ({ label: bucket.key, count: bucket.count }))} maxItems={8} />
-        )}
-      </div>
-    </div>
+    <>
+      <h3 className="mb-2.5 mt-6 text-[13px] font-semibold text-slate-500 dark:text-slate-400 sm:col-span-full">{title}</h3>
+      {buckets.length === 0 ? (
+        <p className="text-[13px] text-slate-500 dark:text-slate-400 sm:col-span-full">{emptyLabel}</p>
+      ) : (
+        <BreakdownRows items={buckets.map((bucket) => ({ label: label(bucket.key), count: bucket.count }))} maxItems={8} subgrid />
+      )}
+    </>
   );
 }

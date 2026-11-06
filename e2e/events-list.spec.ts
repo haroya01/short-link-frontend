@@ -49,3 +49,15 @@ test("no events is one line and one new-event button", async ({ page }) => {
   await expect(page.getByRole("main").getByRole("link", { name: "새 모집" })).toHaveCount(1);
   await expect(page.getByRole("main").locator("svg")).toHaveCount(0);
 });
+
+test("the events intro has its own canonical and description, and the organizer pages stay out of search", async ({ page }) => {
+  await page.goto("/ko/events");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/ko\/events$/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /^모임 소개와 신청 폼을 링크 하나로/);
+  await expect(page.locator('meta[name="robots"]')).not.toHaveAttribute("content", /noindex/);
+
+  for (const path of ["/ko/events/new", "/ko/events/1"]) {
+    await page.goto(path);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  }
+});

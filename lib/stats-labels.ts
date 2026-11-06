@@ -9,7 +9,7 @@ import { countryName } from "@/lib/utils";
  */
 
 /** 백엔드 {@code clientApp.*} 메시지 키와 같은 목록. */
-export const CLIENT_APPS: ReadonlySet<string> = new Set([
+const CLIENT_APPS: ReadonlySet<string> = new Set([
   "kakaotalk",
   "instagram",
   "line",
@@ -114,12 +114,14 @@ export function statsLabels(t: Translate, locale: string) {
       return code;
     }
   };
+  const clientApp = (value: string | null | undefined) =>
+    !value || value === "direct" ? t("clientApp.browser") : CLIENT_APPS.has(value) ? t(`clientApp.${value}`) : value;
   const source = (value: string | null | undefined) => {
     if (!value) return unknown;
     const profile = /^profile-(.+)$/.exec(value);
     return profile ? t("source.profile", { user: profile[1] }) : value;
   };
-  return { unknown, channel, device, os: named, browser: named, country, bot, language, source };
+  return { unknown, channel, device, os: named, browser: named, country, bot, language, source, clientApp };
 }
 
 export function useStatsLabels(): StatsLabels {

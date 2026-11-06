@@ -9,12 +9,12 @@ import { cn, inert } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
 import { linksHref } from "@/lib/host";
-import type { PublicEvent, RegistrationResult } from "@/modules/events/api/events";
+import type { PublicEvent, RegistrationClosedReason, RegistrationResult } from "@/modules/events/api/events";
 import { registerForEvent } from "@/modules/events/api/events";
-import { googleCalendarUrl } from "@/modules/events/lib/format";
 import type { EventPhase } from "@/modules/events/lib/phase";
 import { rememberRegistration, rememberedRegistration } from "@/modules/events/lib/remembered-registration";
 import { RequiredMark } from "@/components/ui/required-mark";
+import { AddToCalendarMenu } from "@/modules/profile/components/add-to-calendar-menu";
 
 type Step = "idle" | "submitting" | "done";
 type FieldKey = "name" | "contact" | "consent" | `q${number}`;
@@ -28,11 +28,13 @@ export function RegistrationPanel({
   phase,
   preview = false,
   onRegistered,
+  onClosed,
 }: {
   event: PublicEvent;
   phase: EventPhase;
   preview?: boolean;
   onRegistered?: (spotsLeft: number | null) => void;
+  onClosed?: (reason: RegistrationClosedReason) => void;
 }) {
   const t = useTranslations("events.public");
   const [step, setStep] = useState<Step>("idle");
@@ -64,7 +66,7 @@ export function RegistrationPanel({
     );
   }
   if (phase !== "open") {
-    return <ClosedState message={closedMessage(t, phase)} />;
+    return <ClosedState message={closedMessage(t, phase)} reopens={phase === "full" || phase === "closed"} />;
   }
 
   const clearError = (key: FieldKey) =>
@@ -112,9 +114,10 @@ export function RegistrationPanel({
       setStep("idle");
       const code = err instanceof ApiError ? (err.detail as { code?: string }).code : undefined;
       if (code === "INVALID_CONTACT") setErrors({ contact: contactError(t, event.contactField) });
-      else if (code === "EVENT_FULL") setFormError(t("errors.full"));
+      else if (code === "EVENT_FULL") onClosed?.("FULL");
+      else if (code === "EVENT_REGISTRATION_CLOSED") onClosed?.("CLOSED");
+      else if (code === "EVENT_CANCELED") onClosed?.("CANCELED");
       else if (code === "ALREADY_REGISTERED") setFormError(t("errors.alreadyRegistered"));
-      else if (code === "EVENT_REGISTRATION_CLOSED") setFormError(t("errors.closed"));
       else setFormError(t("errors.generic"));
     }
   };
@@ -302,14 +305,21 @@ function SuccessPanel({
         {event.contactField === "EMAIL" ? t("successBodyEmail") : t("successBody")}
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
-        <a
-          href={googleCalendarUrl(event)}
-          target="_blank"
-          rel="noreferrer"
+        <AddToCalendarMenu
+          event={{
+            title: event.title,
+            startsAt: event.startsAt,
+            endsAt: event.endsAt,
+            location: event.locationText ?? event.onlineUrl,
+            description: null,
+            url: typeof window === "undefined" ? null : `${window.location.origin}${window.location.pathname}`,
+          }}
+          uid={`event-${event.slug}@kurl.me`}
+          filename={`${event.slug}.ics`}
+          label={t("addToCalendar")}
+          labels={{ google: t("calendarGoogle"), outlook: t("calendarOutlook"), ics: t("calendarIcs") }}
           className={buttonVariants({ size: "lg" })}
-        >
-          {t("addToCalendar")}
-        </a>
+        />
         <button
           type="button"
           onClick={async () => {
@@ -344,14 +354,18 @@ function SuccessPanel({
   );
 }
 
-function ClosedState({ message }: { message: string }) {
+function ClosedState({ message, reopens }: { message: string; reopens: boolean }) {
   const t = useTranslations("events.public");
   return (
     <section id="register" className={SECTION}>
-      <p className="text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200">{message}</p>
-      <button type="button" disabled className={cn(buttonVariants({ size: "xl" }), BIG_BUTTON, "mt-4")}>
-        {t("submit")}
-      </button>
+      <p role="status" className="text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200">
+        {message}
+      </p>
+      {reopens ? (
+        <button type="button" disabled className={cn(buttonVariants({ size: "xl" }), BIG_BUTTON, "mt-4")}>
+          {t("submit")}
+        </button>
+      ) : null}
     </section>
   );
 }

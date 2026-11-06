@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
-import { ProfileShareFab } from "@/modules/profile/components/share-fab";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { EntryList } from "./_components/entry-list";
 import { ProfileHeader } from "./_components/profile-header";
@@ -61,6 +60,7 @@ export async function generateMetadata({
     title: `@${profile.username} · kurl`,
     description: profile.bio ?? `${entries.filter((e) => e.kind === "LINK").length} links`,
     alternates: { canonical: profileUrl },
+    ...(entries.length === 0 && profile.publishedPostCount === 0 ? { robots: { index: false } } : {}),
     openGraph: {
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
@@ -149,6 +149,7 @@ export default async function PublicProfilePage({
           username={profile.username}
           colors={colors}
           socials={profile.socials ?? []}
+          qrFilename={`${profile.username}.png`}
           labels={{
             visitOn: {
               x: t("visit.x"),
@@ -168,10 +169,6 @@ export default async function PublicProfilePage({
           <MadeWithKurl tone={{ text: colors.muted, strong: colors.primary, border: colors.cardBorder }} />
         </div>
       </div>
-      <ProfileShareFab
-        url={`${SITE_URL}/u/${profile.username}`}
-        filename={`${profile.username}.png`}
-      />
       <ProfileOwnerFab username={profile.username} />
       <ProfileVisitBeacon username={profile.username} />
     </div>

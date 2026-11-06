@@ -131,9 +131,15 @@ export default function PrintSheetPage() {
         ) : error ? (
           <ErrorState message={error} onRetry={() => window.location.reload()} />
         ) : (batches ?? []).length === 0 ? (
-          <div className="py-4 text-[13px] text-slate-500 dark:text-slate-400">
+          <p className="flex flex-wrap items-baseline gap-x-2 py-4 text-[13px] text-slate-500 dark:text-slate-400">
             {t("empty")}
-          </div>
+            <Link
+              href={`/campaigns/${campaignId}/batches/new`}
+              className="font-medium text-slate-900 underline decoration-slate-300 underline-offset-4 hover:decoration-slate-900 dark:text-slate-100 dark:decoration-slate-600 dark:hover:decoration-slate-100"
+            >
+              {t("addBatch")}
+            </Link>
+          </p>
         ) : null}
       </div>
 
@@ -196,9 +202,6 @@ function OptionsBar({
               }
             >
               <span className="text-[12px] font-medium">{t(`layouts.${l.id}.label`)}</span>
-              <span className="mt-0.5 text-[10px] leading-tight text-slate-500 dark:text-slate-400">
-                {t(`layouts.${l.id}.hint`)}
-              </span>
             </button>
           ))}
         </div>

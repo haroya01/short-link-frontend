@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
+import { CreatedLine } from "@/modules/events/components/created-line";
 import type { EventLink, MyEvent } from "@/modules/events/api/events";
 import { createAliasLink } from "@/modules/events/api/events";
 import { shortUrlOf } from "@/lib/short-url";
@@ -16,7 +17,15 @@ const ROW_BUTTON =
  * 배포 도구 — 채널별 별칭 링크가 곧 유입 분석의 축. "단톡용 링크는 단톡에만" 이 지켜질수록
  * 대시보드의 채널 분해가 정확해진다.
  */
-export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksChange: () => void }) {
+export function SharePanel({
+  event,
+  onLinksChange,
+  freshFrom,
+}: {
+  event: MyEvent;
+  onLinksChange: () => void;
+  freshFrom?: string;
+}) {
   const t = useTranslations("events.share");
   const { toast } = useToast();
   const [label, setLabel] = useState("");
@@ -65,28 +74,40 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
 
       <ul className="mt-3 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
-        {event.links.map((link) => (
-          <li key={link.linkId} className="flex items-center gap-2 py-3">
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-[15px] font-medium text-slate-900 dark:text-slate-100">
-                {link.label}
+        {event.links.map((link, index) => {
+          const qrButton = (
+            <button type="button" onClick={() => downloadQr(link)} className={ROW_BUTTON}>
+              {t("qr")}
+            </button>
+          );
+          if (index === 0 && freshFrom != null && link.shortCode != null) {
+            return (
+              <CreatedLine key={link.linkId} label={link.label} longUrl={freshFrom} shortUrl={shortUrlOf(link.shortCode)}>
+                {qrButton}
+              </CreatedLine>
+            );
+          }
+          return (
+            <li key={link.linkId} className="flex items-center gap-2 py-3">
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-medium text-slate-900 dark:text-slate-100">
+                  {link.label}
+                </span>
+                <span className="mt-0.5 block truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
+                  {link.shortCode ? shortUrlOf(link.shortCode).replace(/^https?:\/\//, "") : "—"}
+                </span>
               </span>
-              <span className="mt-0.5 block truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
-                {link.shortCode ? shortUrlOf(link.shortCode).replace(/^https?:\/\//, "") : "—"}
-              </span>
-            </span>
-            {link.shortCode ? (
-              <>
-                <button type="button" onClick={() => copy(link.shortCode!)} className={ROW_BUTTON}>
-                  {copiedCode === link.shortCode ? t("copied") : t("copy")}
-                </button>
-                <button type="button" onClick={() => downloadQr(link)} className={ROW_BUTTON}>
-                  {t("qr")}
-                </button>
-              </>
-            ) : null}
-          </li>
-        ))}
+              {link.shortCode ? (
+                <>
+                  <button type="button" onClick={() => copy(link.shortCode!)} className={ROW_BUTTON}>
+                    {copiedCode === link.shortCode ? t("copied") : t("copy")}
+                  </button>
+                  {qrButton}
+                </>
+              ) : null}
+            </li>
+          );
+        })}
       </ul>
 
       <form onSubmit={addAlias} className="mt-3 flex items-center gap-2">

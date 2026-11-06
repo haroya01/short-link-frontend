@@ -5,7 +5,7 @@ import { realLinkStats } from "@/lib/link-stats-real.fixture";
 
 vi.mock("next-intl", () => ({
   useLocale: () => "ko",
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string, values?: Record<string, unknown>) => (values ? `${key} ${JSON.stringify(values)}` : key),
 }));
 
 import { StatsJournal } from "./journal";
@@ -52,5 +52,16 @@ describe("journal evidence uses the sentence's denominator", () => {
     const rows = openEvidence("topSource");
     expect(rows["instagram.com"]).toBe("34%");
     expect(rows["channel.direct"]).toBe("17%");
+  });
+});
+
+describe("journal sentences", () => {
+  it("name the country instead of printing its code", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    act(() => root!.render(<StatsJournal data={realLinkStats()} onNavigate={() => {}} initialVisible={20} />));
+    const sentence = Array.from(host.querySelectorAll("button")).find((b) => b.textContent?.startsWith("topCountry"));
+    expect(sentence?.textContent).toContain('"country":"대한민국"');
   });
 });

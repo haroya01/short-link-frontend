@@ -97,7 +97,7 @@ export function ProfileMetaForm({
         <Input
           value={username}
           onChange={(e) => onUsernameChange(e.target.value)}
-          placeholder="haroya"
+          placeholder="yourname"
           pattern="^[a-z0-9][a-z0-9_]{2,15}$"
           maxLength={16}
         />

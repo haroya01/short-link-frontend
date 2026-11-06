@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -35,7 +35,11 @@ type RowErrorKey =
   | "quantityPositive"
   | "destinationRequired"
   | "destinationUrl";
-type RowErrors = Partial<Record<"name" | "quantity" | "destinationUrl", RowErrorKey>>;
+type RowField = "name" | "quantity" | "destinationUrl";
+type RowErrors = Partial<Record<RowField, RowErrorKey>>;
+type RowTouched = Partial<Record<RowField, true>>;
+
+const ALL_TOUCHED: RowTouched = { name: true, quantity: true, destinationUrl: true };
 
 const KOREAN_BATCH_NAME_WITH_SPACE = String.fromCharCode(0xbb36, 0xc74c, 0x0020, 0xc774, 0xb984);
 const KOREAN_BATCH_NAME_COMPACT = String.fromCharCode(0xbb36, 0xc74c, 0xc774, 0xb984);
@@ -72,6 +76,9 @@ export default function NewBatchPage() {
   const [pasteOpen, setPasteOpen] = useState(false);
   const [pasteText, setPasteText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [touched, setTouched] = useState<Record<string, RowTouched>>({});
+  const [attempted, setAttempted] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(campaignId)) {
@@ -111,8 +118,21 @@ export default function NewBatchPage() {
     [rows],
   );
 
+  const visibleErrors = useMemo<RowErrors[]>(
+    () =>
+      rows.map((row, i) => {
+        const seen = attempted ? ALL_TOUCHED : (touched[row.id] ?? {});
+        return Object.fromEntries(Object.entries(rowErrors[i]).filter(([field]) => seen[field as RowField]));
+      }),
+    [rows, rowErrors, touched, attempted],
+  );
+
   const invalidCount = rowErrors.filter((e) => Object.keys(e).length > 0).length;
-  const canSubmit = rows.length > 0 && invalidCount === 0 && !submitting;
+  const canSubmit = rows.length > 0 && !submitting;
+
+  function touch(rowId: string, field: RowField) {
+    setTouched((prev) => (prev[rowId]?.[field] ? prev : { ...prev, [rowId]: { ...prev[rowId], [field]: true } }));
+  }
 
   function updateRow(idx: number, patch: Partial<RowDraft>) {
     setRows((prev) => prev.map((r, i) => (i === idx ? { ...r, ...patch } : r)));
@@ -136,6 +156,7 @@ export default function NewBatchPage() {
       const trimmedFirst = prev.length === 1 && isRowEmpty(prev[0]) ? [] : prev;
       return [...trimmedFirst, ...parsed];
     });
+    setTouched((prev) => ({ ...prev, ...Object.fromEntries(parsed.map((r) => [r.id, ALL_TOUCHED])) }));
     setPasteText("");
     setPasteOpen(false);
     toast(t("pasteAdded", { count: parsed.length }), "success");
@@ -144,6 +165,11 @@ export default function NewBatchPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
+    if (invalidCount > 0) {
+      setAttempted(true);
+      requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+      return;
+    }
     setSubmitting(true);
     try {
       await createCampaignBatchesBulk(campaignId, {
@@ -199,12 +225,13 @@ export default function NewBatchPage() {
         <DestinationHint defaultDestinationUrl={campaign?.defaultDestinationUrl ?? null} />
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-3">
         <RowsTable
           rows={rows}
-          rowErrors={rowErrors}
+          rowErrors={visibleErrors}
           hasDefault={hasDefault}
           onUpdate={updateRow}
+          onTouch={touch}
           onRemove={removeRow}
         />
 
@@ -231,7 +258,7 @@ export default function NewBatchPage() {
 
         <SubmitBar
           rowCount={rows.length}
-          invalidCount={invalidCount}
+          invalidCount={attempted ? invalidCount : 0}
           totalQuantity={totalQuantity}
           canSubmit={canSubmit}
           submitting={submitting}
@@ -248,34 +275,14 @@ function DestinationHint({
   defaultDestinationUrl: string | null;
 }) {
   const t = useTranslations("campaignApp.batchesNew");
-  if (defaultDestinationUrl) {
-    return (
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
-        <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
-          {t.rich("defaultUrlActive", {
-            strong: (chunks) => (
-              <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>
-            ),
-            code: () => (
-              <code className="rounded bg-white dark:bg-slate-900 px-1 py-0.5 text-[11px]">
-                {defaultDestinationUrl}
-              </code>
-            ),
-          })}
-        </p>
-      </div>
-    );
-  }
   return (
-    <div className="rounded-2xl border border-amber-200 dark:border-amber-500/30 bg-amber-50/60 px-4 py-3">
-      <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
-        {t.rich("defaultUrlMissing", {
-          strong: (chunks) => (
-            <span className="font-medium text-amber-800 dark:text-amber-300">{chunks}</span>
-          ),
-        })}
-      </p>
-    </div>
+    <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+      {defaultDestinationUrl
+        ? t.rich("defaultUrlActive", {
+            code: () => <code className="break-all font-mono text-[12px] text-slate-700 dark:text-slate-300">{defaultDestinationUrl}</code>,
+          })
+        : t("defaultUrlMissing")}
+    </p>
   );
 }
 
@@ -284,12 +291,14 @@ function RowsTable({
   rowErrors,
   hasDefault,
   onUpdate,
+  onTouch,
   onRemove,
 }: {
   rows: RowDraft[];
   rowErrors: RowErrors[];
   hasDefault: boolean;
   onUpdate: (idx: number, patch: Partial<RowDraft>) => void;
+  onTouch: (rowId: string, field: RowField) => void;
   onRemove: (idx: number) => void;
 }) {
   const t = useTranslations("campaignApp.batchesNew");
@@ -321,6 +330,7 @@ function RowsTable({
             hasDefault={hasDefault}
             canRemove={rows.length > 1}
             onUpdate={(patch) => onUpdate(idx, patch)}
+            onTouch={(field) => onTouch(row.id, field)}
             onRemove={() => onRemove(idx)}
           />
         ))}
@@ -336,6 +346,7 @@ function RowItem({
   hasDefault,
   canRemove,
   onUpdate,
+  onTouch,
   onRemove,
 }: {
   index: number;
@@ -344,6 +355,7 @@ function RowItem({
   hasDefault: boolean;
   canRemove: boolean;
   onUpdate: (patch: Partial<RowDraft>) => void;
+  onTouch: (field: RowField) => void;
   onRemove: () => void;
 }) {
   const t = useTranslations("campaignApp.batchesNew");
@@ -356,22 +368,24 @@ function RowItem({
             aria-required
             value={row.name}
             onChange={(e) => onUpdate({ name: e.target.value })}
+            onBlur={() => onTouch("name")}
+            aria-invalid={errors.name ? true : undefined}
             placeholder={t("placeholders.name")}
             className={errors.name ? "border-rose-400 focus-visible:ring-rose-400" : undefined}
           />
         </Cell>
-        <Cell label={t("fields.distributor")} hint={t("compareHint")}>
+        <Cell label={t("fields.distributor")}>
           <Input
             value={row.distributor}
             onChange={(e) => onUpdate({ distributor: e.target.value })}
             placeholder={t("placeholders.distributor")}
           />
         </Cell>
-        <Cell label={t("fields.area")} hint={t("compareHint")}>
+        <Cell label={t("fields.area")}>
           <Input
             value={row.area}
             onChange={(e) => onUpdate({ area: e.target.value })}
-            placeholder="Shinjuku East"
+            placeholder={t("placeholders.area")}
           />
         </Cell>
         <Cell label={t("fields.quantity")} required error={errors.quantity ? t(`errors.${errors.quantity}`) : undefined}>
@@ -382,7 +396,9 @@ function RowItem({
             inputMode="numeric"
             value={row.quantity}
             onChange={(e) => onUpdate({ quantity: e.target.value })}
-            placeholder="500"
+            onBlur={() => onTouch("quantity")}
+            aria-invalid={errors.quantity ? true : undefined}
+            placeholder={t("placeholders.quantity")}
             className={errors.quantity ? "border-rose-400 focus-visible:ring-rose-400" : undefined}
           />
         </Cell>
@@ -395,6 +411,8 @@ function RowItem({
             type="url"
             value={row.destinationUrl}
             onChange={(e) => onUpdate({ destinationUrl: e.target.value })}
+            onBlur={() => onTouch("destinationUrl")}
+            aria-invalid={errors.destinationUrl ? true : undefined}
             placeholder={hasDefault ? t("placeholders.defaultValue") : "https://example.com/landing"}
             className={errors.destinationUrl ? "border-rose-400 focus-visible:ring-rose-400" : undefined}
           />

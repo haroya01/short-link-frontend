@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { createPortal } from "react-dom";
+import { useMemo, type CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Calendar, CalendarPlus, ChevronDown, Clock, MapPin } from "lucide-react";
+import { Clock, MapPin } from "lucide-react";
 import type { EventConfig } from "@/types";
-import {
-  downloadIcs,
-  googleCalendarUrl,
-  outlookCalendarUrl,
-} from "@/modules/profile/lib/calendar-export";
+import { AddToCalendarMenu } from "@/modules/profile/components/add-to-calendar-menu";
 import { parseEventConfig } from "@/modules/profile/lib/block-config-parsers";
 import { offsetToIana } from "@/modules/profile/lib/event-date";
+import { eventWhenText, type DayPeriods } from "@/modules/events/lib/format";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -50,54 +46,6 @@ export function EventEntryCard({ id, content, colors, fadeStyle, featured = fals
   const tProfile = useTranslations("publicProfile");
   const locale = useLocale();
   const config = useMemo(() => parseEventConfig(content), [content]);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuPos, setMenuPos] = useState<{ top: number; left: number; width: number } | null>(
-    null,
-  );
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-
-  // Measure the trigger button on every open so the portaled menu sits exactly under it.
-  // Two PRs of in-DOM positioning got partly clipped by sibling cards' stacking contexts
-  // (profile-card-static uses will-change:transform which makes z-index unreliable across
-  // siblings). Rendering the menu via portal to document.body bypasses all of that — the
-  // menu lives outside the entry list entirely so there's nothing to clip or layer it.
-  //
-  // Auto-flip: if there's < 160px below the button (rough menu height with the three items)
-  // the menu would extend below the viewport on mobile. Position it above the button in
-  // that case so the visitor doesn't have to scroll to see the options.
-  useLayoutEffect(() => {
-    if (!menuOpen || !buttonRef.current) return;
-    const r = buttonRef.current.getBoundingClientRect();
-    const MENU_HEIGHT = 160;
-    const viewportH = window.innerHeight;
-    const spaceBelow = viewportH - r.bottom;
-    const top =
-      spaceBelow < MENU_HEIGHT && r.top > MENU_HEIGHT
-        ? r.top - MENU_HEIGHT - 4
-        : r.bottom + 4;
-    setMenuPos({ top, left: r.left, width: r.width });
-  }, [menuOpen]);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onClick = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (menuRef.current?.contains(target)) return;
-      if (buttonRef.current?.contains(target)) return;
-      setMenuOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
-    document.addEventListener("click", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("click", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [menuOpen]);
-
   if (!config) return null;
 
   const start = new Date(config.startsAt);
@@ -106,12 +54,9 @@ export function EventEntryCard({ id, content, colors, fadeStyle, featured = fals
   const hostOffset = offsetMatch ? offsetMatch[1] : null;
 
   const dateBadge = formatDateBadge(start, hostOffset, locale);
-  const timeLabel = formatTimeLabel(config, locale);
+  const timeLabel = formatTimeLabel(config, locale, { am: t("am"), pm: t("pm") });
   const relative = formatRelativeTime(start, t);
   const isPast = start.getTime() < Date.now();
-
-  const gcalHref = googleCalendarUrl(config) ?? undefined;
-  const outlookHref = outlookCalendarUrl(config) ?? undefined;
 
   return (
     <li className="profile-fade" style={fadeStyle}>
@@ -155,14 +100,14 @@ export function EventEntryCard({ id, content, colors, fadeStyle, featured = fals
               {config.title}
             </p>
             <p
-              className={`mt-1.5 inline-flex items-center gap-1.5 text-[12px] ${colors.muted}`}
+              className={`mt-1.5 flex items-center gap-1.5 text-[12px] ${colors.muted}`}
             >
               <Clock className="h-3 w-3 shrink-0" />
               <span>{timeLabel}</span>
             </p>
             {config.location && (
               <p
-                className={`mt-1 inline-flex items-start gap-1.5 text-[12px] ${colors.muted}`}
+                className={`mt-1 flex items-start gap-1.5 text-[12px] ${colors.muted}`}
               >
                 <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
                 <span className="truncate">{config.location}</span>
@@ -186,84 +131,15 @@ export function EventEntryCard({ id, content, colors, fadeStyle, featured = fals
           ) : (
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                {/* Primary CTA shell uses the DESIGN.md §1 token (h-10 rounded-lg text-[13px]) so
-                    this button matches PlaceEntry 길찾기 / ContactCard 연락처 저장 / EmailForm
-                    submit. Earlier rounded-md + py-2 made the event CTA half a notch shorter than
-                    its siblings and visibly off-brand on a profile that mixed both archetypes. */}
-                <button
-                  ref={buttonRef}
-                  type="button"
-                  onClick={() => setMenuOpen((v) => !v)}
-                  aria-haspopup="menu"
-                  aria-expanded={menuOpen}
+                <AddToCalendarMenu
+                  event={config}
+                  uid={`event-${id}@kurl.me`}
+                  filename={`event-${id}.ics`}
+                  label={t("addToCalendar")}
+                  labels={{ google: t("google"), outlook: t("outlook"), ics: t("appleIcs") }}
+                  tone="light"
                   className={`group inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[13px] font-medium active:scale-[0.98] ${colors.ctaPrimary}`}
-                >
-                  <CalendarPlus className="h-3.5 w-3.5" />
-                  {t("addToCalendar")}
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 opacity-70 transition-transform duration-200 ${
-                      menuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {menuOpen &&
-                  menuPos &&
-                  typeof document !== "undefined" &&
-                  createPortal(
-                    // Rendered into document.body so no ancestor's overflow / transform /
-                    // stacking-context can clip or layer below it. {@code position: fixed}
-                    // with measured viewport coordinates is the price of leaving the entry
-                    // list subtree, but it's the only way to be immune from sibling cards'
-                    // own paint layers.
-                    <div
-                      ref={menuRef}
-                      role="menu"
-                      style={{
-                        position: "fixed",
-                        top: menuPos.top,
-                        left: menuPos.left,
-                        width: menuPos.width,
-                      }}
-                      className="z-[100] origin-top overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-float animate-dropdown-in"
-                    >
-                      {gcalHref && (
-                        <a
-                          href={gcalHref}
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50"
-                        >
-                          <Calendar className="h-3 w-3" />
-                          {t("google")}
-                        </a>
-                      )}
-                      {outlookHref && (
-                        <a
-                          href={outlookHref}
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50"
-                        >
-                          <Calendar className="h-3 w-3" />
-                          {t("outlook")}
-                        </a>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          downloadIcs(config, `event-${id}.ics`, `event-${id}@kurl.me`);
-                          setMenuOpen(false);
-                        }}
-                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-50"
-                      >
-                        <Calendar className="h-3 w-3" />
-                        {t("appleIcs")}
-                      </button>
-                    </div>,
-                    document.body,
-                  )}
+                />
               </div>
               {config.url && (
                 <a
@@ -306,24 +182,12 @@ function formatDateBadge(
   }
 }
 
-function formatTimeLabel(config: EventConfig, locale: string): string {
-  const start = new Date(config.startsAt);
-  const offsetMatch = config.startsAt.match(/([+\-]\d{2}:?\d{2}|Z)$/);
-  const offset = offsetMatch ? offsetMatch[1] : null;
-  const opts: Intl.DateTimeFormatOptions = {
-    weekday: "short",
-    hour: "numeric",
-    minute: "2-digit",
-  };
-  if (offset) {
-    try {
-      opts.timeZone = offsetToIana(offset);
-      opts.timeZoneName = "short";
-    } catch {
-      /* fall through to plain format */
-    }
-  }
-  return new Intl.DateTimeFormat(locale, opts).format(start);
+function formatTimeLabel(config: EventConfig, locale: string, dayPeriods: DayPeriods): string {
+  const offset = config.startsAt.match(/([+\-]\d{2}:?\d{2}|Z)$/)?.[1] ?? null;
+  const timezone = offset ? offsetToIana(offset) : "UTC";
+  const when = eventWhenText({ startsAt: config.startsAt, endsAt: config.endsAt ?? null, timezone }, locale, dayPeriods);
+  const crossesDays = /[–〜]$/.test(when.day);
+  return `${crossesDays ? `${when.day} ${when.time}` : when.time} (${when.zone})`;
 }
 
 /**
