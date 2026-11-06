@@ -41,7 +41,7 @@ export default defineConfig({
     },
     {
       name: "webkit-desktop",
-      testMatch: /post-audience-(reader|webkit)\.spec\.ts$/,
+      testMatch: /(post-audience-(reader|webkit)|event-place-map-scroll)\.spec\.ts$/,
       use: { ...devices["Desktop Safari"] },
     },
     {

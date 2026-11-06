@@ -14,6 +14,7 @@ async function google(page: Page) {
     unexpected.push(route.request().url());
     return route.abort();
   });
+  await page.route(/^https:\/\/maps\.googleapis\.com\/maps\/api\/js\?/, (route) => route.abort());
   await page.route("https://places.googleapis.com/v1/places:autocomplete", (route) => {
     const { input } = JSON.parse(route.request().postData() ?? "{}") as { input: string };
     searches.push(input);
