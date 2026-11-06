@@ -10,6 +10,7 @@ export type LinkOverview = {
   clicksToday: number;
   zeroClickLinks: number;
   expiringLinks: number;
+  deletedLinks?: number;
   timezone: string;
   updatedAt: string;
   dailyClicks: { date: string; count: number }[];

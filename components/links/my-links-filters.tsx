@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, ListFilter, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,15 +47,18 @@ export function MyLinksFiltersToggle({
         size="sm"
         aria-expanded={open}
         onClick={() => onOpenChange(!open)}
+        className="max-sm:px-2.5"
       >
-        {t("toggle")}
+        <ListFilter aria-hidden className="h-4 w-4 sm:hidden" />
+        <span className="max-sm:sr-only">{t("toggle")}</span>
         {activeCount > 0 && (
           <span className="rounded-full bg-slate-900 dark:bg-white px-1.5 py-0.5 text-[10px] font-semibold text-white dark:text-slate-900">
             {activeCount}
           </span>
         )}
         <ChevronDown
-          className={cn("h-3.5 w-3.5 transition", open && "rotate-180")}
+          aria-hidden
+          className={cn("hidden h-3.5 w-3.5 transition sm:block", open && "rotate-180")}
         />
       </Button>
 

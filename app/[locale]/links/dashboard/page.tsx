@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LinksTable, type LiveBump } from "@/components/links/table";
+import { DeletedLinks } from "@/components/links/deleted-links";
 import { MobileComposer } from "@/components/links/mobile-composer";
 import { ShortenPanel, type ShortenedEntry } from "@/components/links/shorten/shorten-panel";
 import { useSharedUrl } from "@/lib/use-shared-url";
@@ -59,14 +60,17 @@ export default function DashboardPage() {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [made, setMade] = useState<ShortenedEntry[] | null>(null);
   const sharedUrl = useSharedUrl();
-  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [view, setView] = useState<"all" | "favorites" | "deleted">("all");
+  const favoritesOnly = view === "favorites";
+  const setFavoritesOnly = (on: boolean) => setView(on ? "favorites" : "all");
+  const [restoreMissing, setRestoreMissing] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [ordering, setOrdering] = useState(false);
   const [selecting, setSelecting] = useState(false);
   const favorites = useLinkFavorites();
 
   const enabled = ready && authenticated;
-  const linksQuery = useMyLinks(filters, { enabled: enabled && urlFiltersRead && !favoritesOnly });
+  const linksQuery = useMyLinks(filters, { enabled: enabled && urlFiltersRead && view === "all" });
   const overviewQuery = useQuery({ queryKey: ["links", "overview", me?.id], queryFn: ({ signal }) => getLinkOverview(signal), enabled: enabled && me?.id != null });
 
   // 클릭이 도착하는 순간 — 계정 스트림이 실어오는 클릭을 행별 가산분으로 쌓아 표를 깨운다.
@@ -113,6 +117,11 @@ export default function DashboardPage() {
   const listError = favoritesOnly ? favorites.error : linksQuery.error;
   const error = listError ? t("loadFailed") : null;
   const account = overviewQuery.data;
+  const restorable: boolean | null = restoreMissing ? false : account ? typeof account.deletedLinks === "number" : null;
+  const markRestoreMissing = useCallback(() => {
+    setRestoreMissing(true);
+    setView((v) => (v === "deleted" ? "all" : v));
+  }, []);
 
   async function toggleFavorite(code: string) {
     try { await favorites.toggle(code); } catch { toast(t("favorite.saveFailed"), "error"); }
@@ -131,7 +140,7 @@ export default function DashboardPage() {
     Boolean(filters.expiry) ||
     Boolean(filters.createdAfter) ||
     Boolean(filters.createdBefore);
-  const firstRun = !loading && !error && !favoritesOnly && !hasActiveFilter && items.length === 0;
+  const firstRun = view === "all" && !loading && !error && !hasActiveFilter && items.length === 0;
 
   // Debounce the search box into the server-side `q` filter so the user doesn't have to wait for
   // each keystroke to round-trip and the query covers the full link set, not just the first page.
@@ -215,12 +224,15 @@ export default function DashboardPage() {
       <MobileComposer hidden={selecting} initialUrl={sharedUrl ?? undefined} onCreated={() => void invalidateLinks()} />
 
       {firstRun ? (
-        <EmptyState title={t("firstRunTitle")} />
+        <EmptyState
+          title={t("firstRunTitle")}
+          action={restorable && (account?.deletedLinks ?? 0) > 0 ? <TextAction onClick={() => setView("deleted")}>{t("views.deleted")}</TextAction> : undefined}
+        />
       ) : (
         <>
           <div className="space-y-3">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <div className="relative flex-1">
+              <div className={cn("relative flex-1", view === "deleted" && "invisible max-sm:hidden")}>
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
                 <Input
                   type="search"
@@ -244,35 +256,41 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800" role="group" aria-label={t("libraryViews")}>
-                  {[false, true].map((fav) => (
-                    <button
-                      key={String(fav)}
-                      type="button"
-                      aria-pressed={favoritesOnly === fav}
-                      onClick={() => { setFavoritesOnly(fav); if (!fav) setOrdering(false); }}
-                      className={cn(
-                        "focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors",
-                        favoritesOnly === fav
-                          ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                          : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
-                      )}
-                    >
-                      {fav ? t("favorite.filter") : t("allLinks")}
-                    </button>
-                  ))}
+                  {(["all", "favorites", "deleted"] as const).map((key) =>
+                    key === "deleted" && restorable === false ? null : (
+                      <button
+                        key={key}
+                        type="button"
+                        aria-pressed={view === key}
+                        disabled={key === "deleted" && restorable === null}
+                        onClick={() => { setView(key); if (key !== "favorites") setOrdering(false); }}
+                        className={cn(
+                          "focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors",
+                          key === "deleted" && restorable === null && "invisible",
+                          view === key
+                            ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                            : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+                        )}
+                      >
+                        {key === "favorites" ? t("favorite.filter") : key === "deleted" ? t("views.deleted") : t("allLinks")}
+                      </button>
+                    ),
+                  )}
                 </div>
                 {favoritesOnly && favorites.items.length > 1 && <Button variant="ghost" className="min-h-10" onClick={() => setOrdering((value) => !value)} aria-expanded={ordering}>{ordering ? t("favorite.orderDone") : t("favorite.orderTitle")}</Button>}
-                <MyLinksFiltersToggle filters={filters} onChange={setFilters} open={filtersOpen} onOpenChange={setFiltersOpen} />
+                {view !== "deleted" && <MyLinksFiltersToggle filters={filters} onChange={setFilters} open={filtersOpen} onOpenChange={setFiltersOpen} />}
               </div>
             </div>
-            {filtersOpen && <MyLinksFiltersPanel filters={filters} onChange={setFilters} tagOptions={tagOptions} />}
+            {filtersOpen && view !== "deleted" && <MyLinksFiltersPanel filters={filters} onChange={setFilters} tagOptions={tagOptions} />}
             {ordering && favoritesOnly && <FavoriteOrder items={favorites.items} busy={favorites.busy} onReorder={(codes) => void reorderFavorites(codes)} />}
 
 
           </div>
 
-          {!favoritesOnly && favorites.error && !loading && !error && <ErrorState message={t("favorite.loadFailed")} onRetry={() => void favorites.refetch()} />}
-          {loading ? (
+          {view === "all" && favorites.error && !loading && !error && <ErrorState message={t("favorite.loadFailed")} onRetry={() => void favorites.refetch()} />}
+          {view === "deleted" ? (
+            <DeletedLinks onRestored={() => void invalidateLinks()} onUnavailable={markRestoreMissing} />
+          ) : loading ? (
             <LoadingList />
           ) : error ? (
             <ErrorState message={error} onRetry={() => { void favorites.refetch(); if (!favoritesOnly) void linksQuery.refetch(); }} />
@@ -309,6 +327,8 @@ export default function DashboardPage() {
                 sortingDisabled={favoritesOnly}
                 liveByCode={liveByCode}
                 onSelectingChange={setSelecting}
+                restorable={restorable === true}
+                onRestoreMissing={markRestoreMissing}
               />
               {!favoritesOnly && linksQuery.hasNextPage && (
                 <div className="flex justify-center pt-2">

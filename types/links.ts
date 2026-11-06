@@ -54,6 +54,14 @@ export type MyLinksPage = {
   hasMore: boolean;
 };
 
+export type DeletedLink = { link: MyLink; deletedAt: string; restorableUntil: string; daysLeft: number };
+
+export type DeletedLinksPage = {
+  items: DeletedLink[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
 export type UpdateLinkRequest = {
   clearExpiresAt?: boolean;
   originalUrl?: string;

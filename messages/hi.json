@@ -1511,7 +1511,6 @@
     "bulkSelectedCount": "{count} चुने गए",
     "bulkClearSelection": "साफ़ करें",
     "bulkDeleteAction": "चुने गए हटाएँ",
-    "bulkDeleting": "हटाया जा रहा है...",
     "bulkDeleted": "{count} लिंक हटा दिए",
     "bulkDeleteFailed": "{total} में से {failed} हटाने में विफल",
     "bulkDeleteConfirmTitle": "{count} लिंक हटाएँ?",
@@ -1545,7 +1544,20 @@
     "searchClear": "खोज साफ़ करें",
     "noResultQuery": "“{query}” से मेल खाता कोई लिंक नहीं",
     "noResultFiltered": "इन फ़िल्टर से मेल खाता कोई लिंक नहीं",
-    "expiringSoon": "3 दिनों में समाप्त: {count}"
+    "expiringSoon": "3 दिनों में समाप्त: {count}",
+    "undo": "पूर्ववत करें",
+    "restoreFailed": "लिंक वापस नहीं लाया जा सका।",
+    "restored": "लिंक वापस आ गया",
+    "deleteConfirmRestorable": "यह 30 दिनों तक 'हटाए गए' में रहेगा, वहाँ से वापस ला सकते हैं।",
+    "views": {
+      "deleted": "हटाए गए"
+    },
+    "deletedEmpty": "हाल में हटाया गया कोई लिंक नहीं",
+    "deletedLoadFailed": "हटाए गए लिंक लोड नहीं हो सके।",
+    "deletedAt": "{when} हटाया गया",
+    "daysLeft": "{days, plural, =0 {आखिरी दिन} other {# दिन बचे}}",
+    "restore": "वापस लाएँ",
+    "restoreLink": "/{code} वापस लाएँ"
   },
   "edit": {
     "title": "लिंक संपादित करें",
