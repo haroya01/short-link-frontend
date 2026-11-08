@@ -4,6 +4,10 @@ import { AuthorHome, authorHomeMetadata } from "./_components/author-home";
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. ?tag= 필터는 middleware 가 ./tag_filter 로 보낸다.
 export const revalidate = 30;
 
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: {
