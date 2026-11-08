@@ -26,7 +26,7 @@ export async function authorHomeMetadata(username: string): Promise<Metadata> {
   const { author } = result.data;
   const origin = authorStaticBaseUrl(username);
   // og:image 를 여기서 명시하지 않는다 — 명시하면 파일 컨벤션 opengraph-image.tsx(아바타 원형+
-  // @핸들+마크 합성 카드)를 완전히 덮어써, 아바타 "원본 JPEG"가 카드로 나갔다(적대 검증 r3):
+  // @핸들+마크 합성 카드)를 완전히 덮어써, 아바타 "원본 JPEG"가 카드로 나갔다:
   // 1.91:1 크롭 플랫폼에선 얼굴 가로 띠만 남고, 개인 사진 원본이 스크레이퍼 캐시에 풀사이즈로
   // 박제된다. 생성 카드가 공유 카드의 진실원이다.
   return {
