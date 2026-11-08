@@ -72,7 +72,7 @@ describe("theme surface", () => {
 });
 
 describe("writeThemeCookie", () => {
-  it("writes a kurl choice on the apex to .kurl.me, where the card subdomain reads it", () => {
+  it("writes a kurl choice on the apex to .kurl.me, where another kurl host reads it", () => {
     const written = at("kurl.me", "/ko/settings");
     writeThemeCookie("dark");
     expect(written).toEqual([

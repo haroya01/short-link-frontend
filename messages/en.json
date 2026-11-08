@@ -2739,11 +2739,11 @@
     },
     "q2": {
       "q": "How is a short link different from a link-in-bio page?",
-      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination, like a Twitter post, an Instagram comment or a business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use yourname.kurl.me as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both: it shortens individual URLs and builds a profile page that bundles them."
+      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination, like a Twitter post, an Instagram comment or a business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use kurl.me/u/yourname as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both: it shortens individual URLs and builds a profile page that bundles them."
     },
     "q3": {
       "q": "What is kurl?",
-      "a": "kurl is a free URL shortener and link-in-bio service. There are no ads, and you can shorten links without signing in.\n\nSign in to see stats by device, country and channel. Your links stay until you delete them, and you can build a profile page at an address like yourname.kurl.me."
+      "a": "kurl is a free URL shortener and link-in-bio service. There are no ads, and you can shorten links without signing in.\n\nSign in to see stats by device, country and channel. Your links stay until you delete them, and you can build a profile page at an address like kurl.me/u/yourname."
     },
     "q4": {
       "q": "What can a profile page contain?",

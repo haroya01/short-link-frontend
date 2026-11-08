@@ -2739,11 +2739,11 @@
     },
     "q2": {
       "q": "Liên kết ngắn khác trang link-in-bio thế nào?",
-      "a": "Liên kết ngắn là ánh xạ 1:1: một URL dài → một URL ngắn. Phù hợp nhất cho một điểm đến duy nhất, như bài đăng Twitter, bình luận Instagram hay danh thiếp.\n\nTrang link-in-bio gom nhiều liên kết sau một URL. Vì Instagram chỉ cho đặt một liên kết trong hồ sơ, người sáng tạo dùng tencuaban.kurl.me làm liên kết đó, dẫn khách tới một trang nhỏ gồm email, đặt lịch, cửa hàng, blog và mạng xã hội của họ.\n\nkurl làm được cả hai: rút gọn từng URL và dựng một trang hồ sơ gom chúng lại."
+      "a": "Liên kết ngắn là ánh xạ 1:1: một URL dài → một URL ngắn. Phù hợp nhất cho một điểm đến duy nhất, như bài đăng Twitter, bình luận Instagram hay danh thiếp.\n\nTrang link-in-bio gom nhiều liên kết sau một URL. Vì Instagram chỉ cho đặt một liên kết trong hồ sơ, người sáng tạo dùng kurl.me/u/tencuaban làm liên kết đó, dẫn khách tới một trang nhỏ gồm email, đặt lịch, cửa hàng, blog và mạng xã hội của họ.\n\nkurl làm được cả hai: rút gọn từng URL và dựng một trang hồ sơ gom chúng lại."
     },
     "q3": {
       "q": "kurl là gì?",
-      "a": "kurl là dịch vụ rút gọn URL và link-in-bio miễn phí. Không có quảng cáo, và bạn có thể rút gọn liên kết mà không cần đăng nhập.\n\nĐăng nhập để xem thống kê theo thiết bị, quốc gia và kênh. Liên kết được giữ cho đến khi bạn xoá, và bạn có thể tạo trang hồ sơ tại một địa chỉ như tencuaban.kurl.me."
+      "a": "kurl là dịch vụ rút gọn URL và link-in-bio miễn phí. Không có quảng cáo, và bạn có thể rút gọn liên kết mà không cần đăng nhập.\n\nĐăng nhập để xem thống kê theo thiết bị, quốc gia và kênh. Liên kết được giữ cho đến khi bạn xoá, và bạn có thể tạo trang hồ sơ tại một địa chỉ như kurl.me/u/tencuaban."
     },
     "q4": {
       "q": "Một trang hồ sơ có thể chứa gì?",

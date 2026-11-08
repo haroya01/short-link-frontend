@@ -1,41 +1,20 @@
 /**
- * kurl Subdomain Publishing Worker.
+ * kurl Subdomain Worker (`*.kurl.me/*`).
  *
- * `*.kurl.me/*` 요청을 Vercel 의 Next.js 프런트엔드로 proxy. 원래 host (예: john.kurl.me
- * 또는 blog.kurl.me) 는 X-Original-Host 헤더로 전달 → Next.js middleware 가 host 별 분기:
- *   - author subdomain ({username}.kurl.me) → /p/{username}/* internal rewrite
- *   - blog.kurl.me → /blog/* internal rewrite (C-plus product surface)
+ * blog.kurl.me 만 Vercel 의 Next.js 프런트엔드로 proxy 한다. 원래 host 는 X-Original-Host 헤더로
+ * 전달 → Next.js middleware 가 blog host 를 /blog/* 로 rewrite. Vercel Hobby 는 kurl.me 서브도메인을
+ * 자기 default deployment URL 로만 받으므로 이 Worker 가 host 정보를 헤더로 넘긴다.
  *
- * Vercel Hobby 의 wildcard domain 미지원 우회 — Vercel 는 자기 default deployment URL 만 보고,
- * 본 Worker 가 subdomain 정보를 헤더로 propagate.
- *
- * 무시 (pass through to default CF routing):
- *   - 예약 시스템 subdomain (www / app / api / origin / admin / help / status / mail /
- *     kurl / official). app 은 DNS only (CF 안 거침), 나머지는 Proxied (CF 안에서 EC2 backend 행).
- *   - .kurl.me 가 아닌 host (defensive — route config 상 보통 안 옴)
- *
- * Worker route: `*.kurl.me/*` (wrangler.toml).
+ * 예약 시스템 subdomain 과 .kurl.me 가 아닌 host 는 default CF routing 으로 넘긴다. 옛 명함
+ * 서브도메인({username}.kurl.me)의 루트는 kurl.me/u/{username} 으로 보내고, 그 밖의 서브도메인
+ * 요청은 Vercel 에 닿지 않게 여기서 404 로 끝낸다.
  *
  * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
  */
 
+import { routeSubdomain } from "./route";
+
 const VERCEL_DEPLOYMENT_HOST = "short-link-frontend-blond.vercel.app";
-
-const KURL_DOMAIN_SUFFIX = ".kurl.me";
-
-// 시스템 subdomain — Vercel 로 forward 안 함. blog 는 C-plus product 라 reserved 에서 제외.
-const RESERVED_SUBDOMAINS = new Set([
-  "www",
-  "app",
-  "api",
-  "origin",
-  "admin",
-  "help",
-  "status",
-  "mail",
-  "kurl",
-  "official",
-]);
 
 export interface Env {}
 
@@ -43,32 +22,12 @@ export default {
   async fetch(request: Request, _env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const host = url.hostname.toLowerCase();
+    const route = routeSubdomain(host, url.pathname, url.search);
 
-    // Defensive: route 설정 상 *.kurl.me 만 와야 함. 그 외는 default origin 으로.
-    if (!host.endsWith(KURL_DOMAIN_SUFFIX)) {
-      return fetch(request);
-    }
+    if (route.kind === "pass") return fetch(request);
+    if (route.kind === "redirect") return Response.redirect(route.location, 301);
+    if (route.kind === "notFound") return new Response("Not found", { status: 404 });
 
-    const subdomain = host.slice(0, -KURL_DOMAIN_SUFFIX.length);
-
-    // Apex `kurl.me` 자체는 별도 Worker (kurl-router) 가 처리. 본 Worker route 가
-    // `*.kurl.me/*` 라 apex 는 안 옴. defensive 분기.
-    if (!subdomain || subdomain === "kurl") {
-      return fetch(request);
-    }
-
-    // Multi-level subdomain (foo.bar.kurl.me) 는 wildcard cert (Universal SSL 1-level)
-    // 범위 밖. 차단.
-    if (subdomain.includes(".")) {
-      return new Response("Subdomain depth not supported", { status: 404 });
-    }
-
-    // 예약 subdomain — default CF routing 으로 (Proxied 인 경우 EC2, DNS only 인 경우 직접).
-    if (RESERVED_SUBDOMAINS.has(subdomain)) {
-      return fetch(request);
-    }
-
-    // Wildcard subdomain (john.kurl.me 등) — Vercel 로 proxy.
     const vercelUrl = `https://${VERCEL_DEPLOYMENT_HOST}${url.pathname}${url.search}`;
 
     const headers = new Headers(request.headers);

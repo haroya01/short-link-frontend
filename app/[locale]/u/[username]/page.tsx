@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { serializeJsonLd } from "@/lib/json-ld";
-import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
@@ -35,7 +34,7 @@ async function loadProfile(
     if (result.status === 404) notFound();
     return result;
   }
-  const target = oldHandleRedirect(await headers(), username, result.data.username, locale, searchParams);
+  const target = oldHandleRedirect(username, result.data.username, locale, searchParams);
   if (target) redirect(target);
   return result;
 }

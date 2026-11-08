@@ -222,8 +222,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Blog posts + their author homes. The canonical shape is blog.kurl.me/@{username}[/{slug}] — the
-  // {username}.kurl.me subdomain was re-purposed to the link-in-bio 명함 (middleware rewrites it), so a
-  // subdomain post URL 404s. Mirror the post page's own canonical (authorBaseUrl → BLOG_URL/@{user}).
+  // {username}.kurl.me subdomain serves no posts, so a subdomain post URL 404s. Mirror the post page's own canonical (authorBaseUrl → BLOG_URL/@{user}).
   // No locale prefix — author surfaces are host-root, single-language. Dedupe author homes across posts.
   const posts = await fetchPublicPosts();
   const authorHomes = new Set<string>();

@@ -24,30 +24,15 @@ function routeFeedVariant(req: NextRequest, url: URL): void {
   url.pathname = `${url.pathname.replace(/\/$/, "")}/browse`;
 }
 
-// Cloudflare Worker 가 *.kurl.me 요청을 Vercel 로 proxy 할 때 set 하는 헤더.
+// Cloudflare Worker 가 blog.kurl.me 요청을 Vercel 로 proxy 할 때 set 하는 헤더.
 const ORIGINAL_HOST_HEADER = "x-original-host";
-
-// 작가 페이지 subdomain 에서 제외할 시스템 host.
-const RESERVED_SUBDOMAINS = new Set([
-  "www",
-  "app",
-  "api",
-  "origin",
-  "admin",
-  "blog",
-  "help",
-  "status",
-  "mail",
-  "kurl",
-  "official",
-]);
 
 const DEFAULT_LOCALE = routing.defaultLocale;
 const SUPPORTED_LOCALES = routing.locales as readonly string[];
 const LOCALE_RE = /^([a-z]{2})(\/.*)?$/;
 
 /**
- * Pick the visitor's locale for a no-locale entry on a blog/author host (where we rewrite instead of
+ * Pick the visitor's locale for a no-locale entry on the blog host (where we rewrite instead of
  * letting next-intl redirect, so its own detection never runs): a prior NEXT_LOCALE choice wins, then
  * the browser's Accept-Language, then the ko fallback. Keeps blog.kurl from forcing English on a
  * Japanese/Korean visitor while still honoring an explicit /en.
@@ -70,15 +55,6 @@ const BLOG_HOST_ENV = process.env.NEXT_PUBLIC_BLOG_HOST;
 
 function cleanHost(host: string | null): string {
   return (host ?? "").toLowerCase().split(":")[0];
-}
-
-function extractAuthorSubdomain(host: string | null): string | null {
-  const cleaned = cleanHost(host);
-  if (!cleaned.endsWith(".kurl.me")) return null;
-  const sub = cleaned.slice(0, -".kurl.me".length);
-  if (!sub || sub.includes(".")) return null;
-  if (RESERVED_SUBDOMAINS.has(sub)) return null;
-  return sub;
 }
 
 function isBlogHost(host: string | null): boolean {
@@ -177,19 +153,7 @@ export default function middleware(req: NextRequest) {
   const redirect = legacyRedirect(req, host ?? "");
   if (redirect) return redirect;
 
-  // 2. 유저 명함 — {username}.kurl.me/{anything} → /{locale}/u/{username}/{anything}
-  // 서브도메인은 이제 링크인바이오(명함)다. 블로그 작가 프로필은 blog.kurl.me/@{username} 로 분리됨
-  // (아래 blog-host 분기). 명함은 단일 페이지라 보통 root 만 의미가 있다.
-  const authorSub = extractAuthorSubdomain(originalHost);
-  if (authorSub) {
-    const url = req.nextUrl.clone();
-    const path = url.pathname;
-    const loc = detectLocale(req);
-    url.pathname = path === "/" ? `/${loc}/u/${authorSub}` : `/${loc}/u/${authorSub}${path}`;
-    return NextResponse.rewrite(url);
-  }
-
-  // 3. blog.kurl.me — /{locale?}/foo → /{locale}/blog/foo rewrite. Detect an optional leading
+  // 2. blog.kurl.me — /{locale?}/foo → /{locale}/blog/foo rewrite. Detect an optional leading
   //    locale and preserve the FULL remaining path (encoding-safe slice). Previously a no-locale
   //    multi-segment path like /write or /randomword fell through to /{locale}/blog (the feed),
   //    so unknown paths showed the feed instead of 404 and /write/{id} lost its id.
@@ -212,7 +176,7 @@ export default function middleware(req: NextRequest) {
     }
   }
 
-  // 4. dev / preview path-based blog — /blog-preview/* 또는 /{locale}/blog-preview/* → /{locale}/blog/*
+  // 3. dev / preview path-based blog — /blog-preview/* 또는 /{locale}/blog-preview/* → /{locale}/blog/*
   const previewMatch = req.nextUrl.pathname.match(
     /^(\/[a-z]{2})?\/blog-preview(\/.*)?$/,
   );
@@ -234,7 +198,7 @@ export default function middleware(req: NextRequest) {
     if (url.pathname !== before) return NextResponse.rewrite(url);
   }
 
-  // 5. kurl.me / default — /{locale}/foo → /{locale}/links/foo rewrite
+  // 4. kurl.me / default — /{locale}/foo → /{locale}/links/foo rewrite
   // 단 이미 /{locale}/{links,blog,p,u} 으로 시작하면 그대로 (internal route 보호). 루트 locale 의
   // 메타데이터 라우트(opengraph-image / twitter-image — app/[locale]/ 직하)도 links 로 보내면 404 →
   // Discord/Kakao 등 공유 미리보기 이미지가 깨진다. 그대로 둬서 file-convention 라우트가 살게 한다.
@@ -268,7 +232,7 @@ export default function middleware(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // 6. locale 없는 path — next-intl 의 default redirect (locale prefix 부착)
+  // 5. locale 없는 path — next-intl 의 default redirect (locale prefix 부착)
   return intlMiddleware(req);
 }
 

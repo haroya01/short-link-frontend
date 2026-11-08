@@ -17,12 +17,12 @@ export function linksHref(path: string = "/"): string {
 }
 
 /**
- * A user's link-in-bio 명함 (vanity surface). prod → the bare subdomain `{user}.kurl.me`;
- * dev/preview → the same-origin `/{locale}/u/{user}` route. This is the front door for a person on
- * kurl; their blog author profile lives separately at `blog.kurl.me/@{user}` (see authorHref).
+ * A user's link-in-bio 명함. prod → `kurl.me/u/{user}` (the locale is negotiated there);
+ * dev/preview → the same-origin `/{locale}/u/{user}` route. Their blog author profile lives
+ * separately at `blog.kurl.me/@{user}` (see authorHref).
  */
 export function cardHref(username: string, locale: string): string {
-  return KURL_HOST ? `https://${username}.${KURL_HOST}/` : `/${locale}/u/${username}`;
+  return KURL_HOST ? `https://${KURL_HOST}/u/${username}` : `/${locale}/u/${username}`;
 }
 
 export function blogHref(path: string = "/"): string {

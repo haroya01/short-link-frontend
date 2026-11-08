@@ -65,3 +65,21 @@ describe("trustedOriginalHost", () => {
     }
   });
 });
+
+describe("cardHref", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("points a production card at the apex /u path, not a subdomain", async () => {
+    vi.stubEnv("NEXT_PUBLIC_KURL_HOST", "kurl.me");
+    vi.resetModules();
+    const { cardHref } = await import("./host");
+    expect(cardHref("dohyun", "ja")).toBe("https://kurl.me/u/dohyun");
+  });
+
+  it("keeps the same-origin locale path off-platform", async () => {
+    vi.stubEnv("NEXT_PUBLIC_KURL_HOST", "");
+    vi.resetModules();
+    const { cardHref } = await import("./host");
+    expect(cardHref("dohyun", "ja")).toBe("/ja/u/dohyun");
+  });
+});

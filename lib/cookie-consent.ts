@@ -46,7 +46,7 @@ export function hasSettledConsent(): boolean {
   return readConsent() !== null;
 }
 
-/** Same parent-domain scoping as writeThemeCookie — one consent across kurl.me + {user}.kurl.me. */
+/** Same parent-domain scoping as writeThemeCookie — one consent across kurl.me + blog.kurl.me. */
 export function writeConsent(value: ConsentValue) {
   if (typeof document === "undefined") return;
   const host = location.hostname;
