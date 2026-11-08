@@ -27,12 +27,22 @@ describe("public discovery fetches", () => {
     );
   });
 
-  it("stay anonymous and ISR-cached for a visitor", async () => {
+  it("stay anonymous and ISR-cached for a visitor, under the tag a publish clears", async () => {
     mocks.readToken.mockReturnValue(null);
     const { listSuggestedAuthors } = await import("./public-posts");
     await listSuggestedAuthors(5);
     expect(mocks.fetchWithTimeout).toHaveBeenCalledWith(expect.stringContaining("/api/v1/public/authors?limit=5"), {
-      next: { revalidate: 30 },
+      next: { revalidate: 30, tags: ["public-posts"] },
+    });
+  });
+
+  it("keep a caller's own tags next to the shared one, without repeating it", async () => {
+    vi.stubGlobal("window", undefined);
+    mocks.fetchWithTimeout.mockImplementation(async () => new Response(JSON.stringify({ author: {}, posts: [] }), { status: 200 }));
+    const { listPublicPosts } = await import("./public-posts");
+    await listPublicPosts("Hana");
+    expect(mocks.fetchWithTimeout).toHaveBeenCalledWith(expect.stringContaining("/api/v1/public/profiles/Hana/posts"), {
+      next: { revalidate: 30, tags: ["author-posts:hana", "public-posts"] },
     });
   });
 

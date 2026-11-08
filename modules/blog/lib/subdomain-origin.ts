@@ -17,3 +17,8 @@ export function authorBaseUrl(req: HeaderReader, username: string): string {
     process.env.NEXT_PUBLIC_BLOG_HOST || (reqHost ? reqHost.split(":")[0] : "blog.kurl.me");
   return `https://${blogHost}/@${username}`;
 }
+
+/** {@link authorBaseUrl} without the request: the configured blog host, else `blog.kurl.me`. */
+export function authorStaticBaseUrl(username: string): string {
+  return `https://${process.env.NEXT_PUBLIC_BLOG_HOST || "blog.kurl.me"}/@${username}`;
+}

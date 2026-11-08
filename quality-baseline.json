@@ -63,7 +63,6 @@
   "eslint:ratchet/no-history-comment|app/[locale]/links/stats/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/p/[username]/[slug]/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/p/[username]/layout.tsx|": 1,
-  "eslint:ratchet/no-history-comment|app/[locale]/p/[username]/page.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/u/[username]/_components/contact-card-entry.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/u/[username]/_components/image-entry-card.tsx|": 1,
   "eslint:ratchet/no-history-comment|app/[locale]/u/[username]/_components/product-card-entry.tsx|": 2,

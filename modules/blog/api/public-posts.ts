@@ -259,7 +259,7 @@ export async function fetchPublic<T>(
         ? { cache: "no-store", headers: { ...extra, Authorization: `Bearer ${token}` } }
         : opts?.noStore
           ? { cache: "no-store", ...own }
-          : { next: { revalidate: REVALIDATE_SECONDS, ...(opts?.tags ? { tags: opts.tags } : {}) }, ...own },
+          : { next: { revalidate: REVALIDATE_SECONDS, tags: [...new Set([...(opts?.tags ?? []), PUBLIC_POSTS_TAG])] }, ...own },
     );
     if (res.status === 200) {
       const data = (await res.json()) as T;

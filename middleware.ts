@@ -1,6 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { routeAuthorTagVariant, routeTagFeedVariant } from "./lib/blog-variants";
 import { BLOG_FEED_COOKIE, NOTES_FEED_COOKIE, rememberedBlogTab, rememberedHomeTab } from "./modules/blog/lib/feed-memory";
 
 const intlMiddleware = createMiddleware(routing);
@@ -167,11 +168,13 @@ export default function middleware(req: NextRequest) {
     const authorMatch = rest.match(/^\/@([^/]+)(\/.*)?$/);
     if (authorMatch) {
       url.pathname = `/${locale}/p/${decodeURIComponent(authorMatch[1])}${authorMatch[2] ?? ""}`;
+      routeAuthorTagVariant(url);
       return NextResponse.rewrite(url);
     }
     if (!url.pathname.match(/^\/[a-z]{2}\/blog(\/|$)/)) {
       url.pathname = `/${locale}/blog${rest === "/" ? "" : rest}`;
       routeFeedVariant(req, url);
+      routeTagFeedVariant(url);
       return NextResponse.rewrite(url);
     }
   }
@@ -186,6 +189,7 @@ export default function middleware(req: NextRequest) {
     const rest = previewMatch[2] ?? "";
     url.pathname = `${locale}/blog${rest}`;
     routeFeedVariant(req, url);
+    routeTagFeedVariant(url);
     return NextResponse.rewrite(url);
   }
 
@@ -195,6 +199,8 @@ export default function middleware(req: NextRequest) {
     const url = req.nextUrl.clone();
     const before = url.pathname;
     routeFeedVariant(req, url);
+    routeTagFeedVariant(url);
+    routeAuthorTagVariant(url);
     if (url.pathname !== before) return NextResponse.rewrite(url);
   }
 
