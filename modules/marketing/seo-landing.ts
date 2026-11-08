@@ -170,7 +170,7 @@ export const SEO_PAGES: SeoPage[] = [
           },
           {
             title: "공개 프로필",
-            body: "사용자 이름을 정하면 사용자이름.kurl.me 주소에 내 링크를 모은 페이지가 생겨요. SNS 프로필에는 그 주소 하나만 넣으면 돼요.",
+            body: "사용자 이름을 정하면 kurl.me/u/사용자이름 주소에 내 링크를 모은 페이지가 생겨요. SNS 프로필에는 그 주소 하나만 넣으면 돼요.",
           },
           {
             title: "카카오톡 공유",
@@ -210,7 +210,7 @@ export const SEO_PAGES: SeoPage[] = [
           },
           {
             title: "Public profile",
-            body: "Pick a username and you get a page at username.kurl.me that collects your links. Your social profiles only need that one address.",
+            body: "Pick a username and you get a page at kurl.me/u/username that collects your links. Your social profiles only need that one address.",
           },
           {
             title: "KakaoTalk sharing",
@@ -250,7 +250,7 @@ export const SEO_PAGES: SeoPage[] = [
           },
           {
             title: "公開プロフィール",
-            body: "ユーザー名を決めると、ユーザー名.kurl.me のアドレスに自分のリンクをまとめたページができます。SNSのプロフィールには、そのアドレスをひとつ載せるだけです。",
+            body: "ユーザー名を決めると、kurl.me/u/ユーザー名 のアドレスに自分のリンクをまとめたページができます。SNSのプロフィールには、そのアドレスをひとつ載せるだけです。",
           },
           {
             title: "カカオトークでの共有",
@@ -284,13 +284,13 @@ SEO_PAGES.push(
       ko: {
         title: "링크 인 바이오 만들기",
         description:
-          "여러 링크를 한 페이지에 모으는 링크 인 바이오를 kurl 공개 프로필로 무료로 만들어요. 사용자이름.kurl.me 주소를 SNS 프로필에 넣고, 어떤 링크가 눌렸는지 통계로 봐요.",
+          "여러 링크를 한 페이지에 모으는 링크 인 바이오를 kurl 공개 프로필로 무료로 만들어요. kurl.me/u/사용자이름 주소를 SNS 프로필에 넣고, 어떤 링크가 눌렸는지 통계로 봐요.",
         intro:
-          "링크 인 바이오는 내 링크를 한 페이지에 모아 두고, SNS 프로필에는 그 페이지 주소 하나만 넣는 방식이에요. kurl에서는 공개 프로필이 그 페이지예요. 로그인하고 사용자 이름을 정하면 사용자이름.kurl.me 주소가 생기고, 거기에 링크를 하나씩 더하면 돼요.",
+          "링크 인 바이오는 내 링크를 한 페이지에 모아 두고, SNS 프로필에는 그 페이지 주소 하나만 넣는 방식이에요. kurl에서는 공개 프로필이 그 페이지예요. 로그인하고 사용자 이름을 정하면 kurl.me/u/사용자이름 주소가 생기고, 거기에 링크를 하나씩 더하면 돼요.",
         features: [
           {
             title: "내 이름이 들어간 주소",
-            body: "사용자 이름이 그대로 주소가 돼요. 사용자 이름이 mina라면 프로필 주소는 mina.kurl.me예요.",
+            body: "사용자 이름이 그대로 주소가 돼요. 사용자 이름이 mina라면 프로필 주소는 kurl.me/u/mina예요.",
           },
           {
             title: "링크 말고도 담을 수 있는 블록",
@@ -320,13 +320,13 @@ SEO_PAGES.push(
       en: {
         title: "Make a link in bio page",
         description:
-          "Make a free link in bio page that gathers your links with a kurl public profile. Put username.kurl.me in your social bios and see which links get clicked.",
+          "Make a free link in bio page that gathers your links with a kurl public profile. Put kurl.me/u/username in your social bios and see which links get clicked.",
         intro:
-          "A link in bio page gathers your links in one place, and your social profiles carry just that page's address. On kurl, that page is your public profile. Sign in and pick a username to get a username.kurl.me address, then add links one at a time.",
+          "A link in bio page gathers your links in one place, and your social profiles carry just that page's address. On kurl, that page is your public profile. Sign in and pick a username to get a kurl.me/u/username address, then add links one at a time.",
         features: [
           {
             title: "An address with your name",
-            body: "Your username becomes the address. If your username is mina, your profile lives at mina.kurl.me.",
+            body: "Your username becomes the address. If your username is mina, your profile lives at kurl.me/u/mina.",
           },
           {
             title: "Blocks beyond links",
@@ -356,13 +356,13 @@ SEO_PAGES.push(
       ja: {
         title: "リンクインバイオを作る",
         description:
-          "複数のリンクを1ページにまとめるリンクインバイオを、kurlの公開プロフィールで無料で作れます。ユーザー名.kurl.meのアドレスをSNSのプロフィールに載せ、どのリンクが押されたかを統計で確認できます。",
+          "複数のリンクを1ページにまとめるリンクインバイオを、kurlの公開プロフィールで無料で作れます。kurl.me/u/ユーザー名のアドレスをSNSのプロフィールに載せ、どのリンクが押されたかを統計で確認できます。",
         intro:
-          "リンクインバイオは、自分のリンクを1ページにまとめ、SNSのプロフィールにはそのページのアドレスだけを載せる方法です。kurlでは公開プロフィールがそのページです。ログインしてユーザー名を決めると ユーザー名.kurl.me のアドレスができ、そこにリンクを1つずつ足していきます。",
+          "リンクインバイオは、自分のリンクを1ページにまとめ、SNSのプロフィールにはそのページのアドレスだけを載せる方法です。kurlでは公開プロフィールがそのページです。ログインしてユーザー名を決めると kurl.me/u/ユーザー名 のアドレスができ、そこにリンクを1つずつ足していきます。",
         features: [
           {
             title: "名前が入ったアドレス",
-            body: "ユーザー名がそのままアドレスになります。ユーザー名がminaなら、プロフィールのアドレスは mina.kurl.me です。",
+            body: "ユーザー名がそのままアドレスになります。ユーザー名がminaなら、プロフィールのアドレスは kurl.me/u/mina です。",
           },
           {
             title: "リンク以外のブロック",
@@ -417,7 +417,7 @@ SEO_PAGES.push(
         faq: [
           {
             q: "인스타그램에는 어떻게 넣나요?",
-            a: "인스타그램 앱에서 프로필 편집을 열고, 링크 항목에 사용자이름.kurl.me 주소를 붙여 넣으면 돼요.",
+            a: "인스타그램 앱에서 프로필 편집을 열고, 링크 항목에 kurl.me/u/사용자이름 주소를 붙여 넣으면 돼요.",
           },
           {
             q: "비용이 드나요?",
@@ -449,7 +449,7 @@ SEO_PAGES.push(
         faq: [
           {
             q: "How do I add it to Instagram?",
-            a: "In the Instagram app, open Edit profile and paste your username.kurl.me address into the link field.",
+            a: "In the Instagram app, open Edit profile and paste your kurl.me/u/username address into the link field.",
           },
           {
             q: "Does it cost anything?",
@@ -481,7 +481,7 @@ SEO_PAGES.push(
         faq: [
           {
             q: "Instagramにはどう入れますか？",
-            a: "Instagramアプリでプロフィール編集を開き、リンクの項目に ユーザー名.kurl.me のアドレスを貼り付けます。",
+            a: "Instagramアプリでプロフィール編集を開き、リンクの項目に kurl.me/u/ユーザー名 のアドレスを貼り付けます。",
           },
           {
             q: "費用はかかりますか？",

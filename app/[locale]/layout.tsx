@@ -195,7 +195,7 @@ export default async function RootLayout({
 
   // No-FOUC theme. Dark mode is supported on BOTH products, but the PREFERENCE is per-product
   // (사용자 결정 2026-07-15): 블로그에서 다크를 써도 kurl(링크단축)은 기본 백을 지킨다. 블로그
-  // 표면은 `theme` 쿠키, kurl 표면(명함 {user}.kurl.me 포함)은 전용 `kurl_theme` — 어느 쪽인지는
+  // 표면은 `theme` 쿠키, kurl 표면(명함 포함)은 전용 `kurl_theme` — 어느 쪽인지는
   // lib/theme-cookie.ts 의 themeCookieNameScript(isBlogSurface() 의 pre-paint 판본)가 고른다.
   // 고른 값이 없을 때: 블로그 표면은 OS 다크 설정을 따르고(followSystemThemeScript), kurl 표면은 흰 기본.
   // The auth hint shares this tag: a second standalone inline <script> in <head> was dropped from
@@ -203,7 +203,7 @@ export default async function RootLayout({
   // one tag that's proven to survive everywhere.
   // The choice is a `.kurl.me` cookie. localStorage is per-origin, so ON the platform (any *.kurl.me)
   // we must NOT fall back to it: a stale 'dark' left in the apex's localStorage would paint the
-  // dashboard dark while the shared cookie — and the card on {user}.kurl.me — are light. So
+  // dashboard dark while the shared cookie is light. So
   // on-platform the cookie is the SOLE stored choice (absent → the surface default: OS on blog, light on kurl,
   // e.g. after iOS Safari's 7-day script-cookie cap expires); only off-platform (localhost / Vercel
   // previews, a single origin) does the localStorage fallback still apply.

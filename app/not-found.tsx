@@ -54,7 +54,7 @@ const localeStyle =
 /* No-FOUC 테마 — 이 문서는 로케일 레이아웃 밖에서 렌더돼 그쪽 테마 스크립트를 못 탄다.
    빠뜨리면 다크 사용자가 404 를 라이트로 맞는다(만료 링크·오타 URL 이 흔한 진입).
    쿠키 이름은 [locale]/layout.tsx 와 같은 themeCookieNameScript(lib/theme-cookie.ts)가 고른다 —
-   블로그 표면=`theme`, kurl 표면(명함 {user}.kurl.me 포함)=`kurl_theme`. */
+   블로그 표면=`theme`, kurl 표면(명함 포함)=`kurl_theme`. */
 const PLATFORM_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
 const themeInitScript =
   "(function(){try{" +

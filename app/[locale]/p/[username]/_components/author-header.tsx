@@ -123,7 +123,7 @@ export async function AuthorHeader({
   ];
 
   const since = posts.length > 0 ? earliestMonth(posts, locale) : null;
-  const cardHost = `${author.username}.${KURL_HOST}`;
+  const cardLabel = `${KURL_HOST}/u/${author.username}`;
 
   const meta = [
     author.hasLinkInBio && (
@@ -133,7 +133,7 @@ export async function AuthorHeader({
         title={tNav("profile")}
         className="focus-ring inline-flex items-center gap-1 rounded-sm font-mono text-[13px] text-slate-600 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-300 dark:hover:text-accent-400"
       >
-        {cardHost}
+        {cardLabel}
         <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
       </a>
     ),
