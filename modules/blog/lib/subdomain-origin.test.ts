@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { authorBaseUrl } from "./subdomain-origin";
+import { authorBaseUrl, authorStaticBaseUrl } from "./subdomain-origin";
 
 /** A header reader stub backed by a plain map. */
 function headers(map: Record<string, string>) {
@@ -41,5 +41,23 @@ describe("authorBaseUrl", () => {
     delete process.env.NEXT_PUBLIC_BLOG_HOST;
     const req = headers({});
     expect(authorBaseUrl(req, "dohyeon")).toBe("https://blog.kurl.me/@dohyeon");
+  });
+});
+
+describe("authorStaticBaseUrl", () => {
+  const saved = process.env.NEXT_PUBLIC_BLOG_HOST;
+  afterEach(() => {
+    if (saved === undefined) delete process.env.NEXT_PUBLIC_BLOG_HOST;
+    else process.env.NEXT_PUBLIC_BLOG_HOST = saved;
+  });
+
+  it("builds the canonical author home without reading the request", () => {
+    process.env.NEXT_PUBLIC_BLOG_HOST = "blog.kurl.me";
+    expect(authorStaticBaseUrl("dohyeon")).toBe("https://blog.kurl.me/@dohyeon");
+  });
+
+  it("falls back to blog.kurl.me when no blog host is configured", () => {
+    delete process.env.NEXT_PUBLIC_BLOG_HOST;
+    expect(authorStaticBaseUrl("dohyeon")).toBe("https://blog.kurl.me/@dohyeon");
   });
 });

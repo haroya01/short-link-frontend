@@ -1,0 +1,166 @@
+import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { BlogEmpty } from "@/modules/blog/components/blog-empty";
+import { authorHref } from "@/modules/blog/lib/author-href";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { PostLedger } from "@/modules/blog/components/post-ledger";
+import { AuthorRail } from "@/modules/blog/components/author-rail";
+import { ReadingShell } from "@/modules/blog/components/reading-shell";
+import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
+import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
+import { authorStaticBaseUrl } from "@/modules/blog/lib/subdomain-origin";
+
+export async function authorHomeMetadata(username: string): Promise<Metadata> {
+  const result = await listPublicPosts(username);
+  // 존재하지 않는 작가는 여기서 404 를 확정한다 — 페이지에서만 notFound() 를 던지면 레이아웃 스트리밍이
+  // 먼저 커밋돼 HTTP 200 + not-found UI 로 나간다(soft-404). generateMetadata 는 응답 커밋 전에 끝나므로
+  // 여기서 던져야 404 상태코드가 나간다. 일시적 백엔드 오류("error")는 던지지 않고 폴백 제목만 둔다.
+  if (!result.ok) {
+    if (result.status === 404) notFound();
+    return { title: `@${username}` };
+  }
+  const { author } = result.data;
+  const origin = authorStaticBaseUrl(username);
+  // og:image 를 여기서 명시하지 않는다 — 명시하면 파일 컨벤션 opengraph-image.tsx(아바타 원형+
+  // @핸들+마크 합성 카드)를 완전히 덮어써, 아바타 "원본 JPEG"가 카드로 나갔다(적대 검증 r3):
+  // 1.91:1 크롭 플랫폼에선 얼굴 가로 띠만 남고, 개인 사진 원본이 스크레이퍼 캐시에 풀사이즈로
+  // 박제된다. 생성 카드가 공유 카드의 진실원이다.
+  return {
+    title: `@${author.username}`,
+    description: author.bio ?? undefined,
+    alternates: {
+      canonical: origin,
+      types: { "application/rss+xml": `${origin}/feed` },
+    },
+    openGraph: {
+      title: `@${author.username}`,
+      description: author.bio ?? undefined,
+      url: origin,
+      type: "profile",
+    },
+    // Without an explicit twitter card the author home inherits the generic site card on X/Slack.
+    // 이미지는 명시하지 않는다(위와 동일) — X 는 twitter:image 부재 시 og:image 로 폴백한다.
+    twitter: {
+      card: "summary_large_image",
+      title: `@${author.username}`,
+      description: author.bio ?? undefined,
+    },
+  };
+}
+
+export async function AuthorHome({
+  locale,
+  username,
+  rawTag,
+}: {
+  locale: string;
+  username: string;
+  rawTag?: string;
+}) {
+  const result = await listPublicPosts(username);
+  // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
+  if (!result.ok) {
+    if (result.status !== 404) throw new Error(`public posts fetch failed: ${username}`);
+    notFound();
+  }
+
+  const { author, posts } = result.data;
+  const seriesResult = await listPublicSeries(username);
+  const series = seriesResult.ok ? seriesResult.data.series : [];
+  const t = await getTranslations({ locale, namespace: "publicPost" });
+
+  // ProfilePage > Person — the author entity for this weblog home. Mirrors the link-in-bio profile
+  // (/u/{user}) Person node so Google can tie the two surfaces to one person (rich-snippet byline,
+  // knowledge-panel candidate). Author subdomain is the canonical home, so url points there.
+  const origin = authorStaticBaseUrl(username);
+  const profileJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: origin,
+    mainEntity: {
+      "@type": "Person",
+      name: author.username,
+      alternateName: `@${author.username}`,
+      url: origin,
+      ...(author.bio ? { description: author.bio } : {}),
+      ...(author.avatarUrl ? { image: author.avatarUrl } : {}),
+    },
+  };
+
+  // Tag filter is author-scoped: it narrows THIS author's posts (the rail links here with ?tag=),
+  // never the cross-author topic feed. Keep the full list for the rail's tag/archive derivation.
+  const activeTag = rawTag?.trim() || undefined;
+  const visiblePosts = activeTag ? posts.filter((p) => p.tags.includes(activeTag)) : posts;
+
+  // 대표글(author-pinned) lead the home in their own labelled section so the ordering reads as a
+  // deliberate highlight, not an unexplained reshuffle. Under a tag filter the section split is
+  // dropped — the filter is the organizing principle there, so just show the flat filtered list.
+  const pinnedPosts = activeTag ? [] : visiblePosts.filter((p) => p.pinned);
+  const recentPosts = activeTag ? visiblePosts : visiblePosts.filter((p) => !p.pinned);
+
+  // The author header (identity + tabs) is rendered once by the persistent layout (ProfileChrome) so
+  // it never re-mounts on a tab switch; this page renders only its content column + rail.
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(profileJsonLd) }}
+      />
+      <ReadingShell
+        className="mt-4 sm:mt-8"
+        rail={
+          posts.length > 0 ? (
+            <AuthorRail
+              username={author.username}
+              locale={locale}
+              posts={posts}
+              series={series}
+              activeTag={activeTag}
+            />
+          ) : undefined
+        }
+      >
+        <AuthorContentTransition>
+        {activeTag && (
+          // Active tag filter banner — names the scope (this author's posts under #tag) and offers a
+          // clear, never sending the reader off to the global topic feed.
+          <div className="mb-5 flex items-center gap-2 text-[14px]">
+            <span className="text-slate-500 dark:text-slate-400">{t("tagFilterLabel")}</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">#{activeTag}</span>
+            <BlogLink
+              href={authorHref(author.username, locale)}
+              className="focus-ring ml-1 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+            >
+              {t("tagFilterClear")}
+            </BlogLink>
+          </div>
+        )}
+
+        {posts.length === 0 ? (
+          <BlogEmpty title={t("emptyPosts")} />
+        ) : visiblePosts.length === 0 ? (
+          <BlogEmpty title={t("tagFilterEmpty", { tag: activeTag ?? "" })} />
+        ) : (
+          <div className="space-y-10">
+            {pinnedPosts.length > 0 && (
+              <section>
+                <RailHeading className="mb-3">{t("featuredPosts")}</RailHeading>
+                <FeedList>
+                  {pinnedPosts.map((p) => (
+                    <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
+                  ))}
+                </FeedList>
+              </section>
+            )}
+            {recentPosts.length > 0 && <PostLedger posts={recentPosts} username={author.username} locale={locale} />}
+          </div>
+        )}
+        </AuthorContentTransition>
+      </ReadingShell>
+    </>
+  );
+}

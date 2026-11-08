@@ -193,12 +193,12 @@ export async function listPublicCollectionsByUsername(
     const mine = collectionMocks.mockMineCollections();
     return Promise.resolve(mine.filter((c) => c.visibility === "PUBLIC"));
   }
-  const res = await fetchWithTimeout(
-    `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/collections`,
-    { cache: "no-store" },
+  const result = await fetchPublic<CollectionSummary[]>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/collections`,
   );
-  if (!res.ok) return [];
-  return (await res.json()) as CollectionSummary[];
+  if (result.ok) return result.data;
+  if (result.status === "error") throw new Error(`public collections fetch failed: ${username}`);
+  return [];
 }
 
 /** Collection detail — connected blocks resolved (ordered). Public collections are readable signed-out;
