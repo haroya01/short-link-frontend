@@ -4,6 +4,10 @@ import { TagFeed, tagFeedMetadata } from "./_components/tag-feed";
 // ?sort= · ?view= 는 middleware 가 ./browse 로 보낸다 — 이 페이지는 기본 보기만 캐시한다.
 export const revalidate = 30;
 
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: {
