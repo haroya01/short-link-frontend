@@ -67,7 +67,7 @@ describe("reading surfaces the server filters per reader", () => {
     await fetchPublicConnectionFeed(0, 6);
     expect(mocks.fetchWithTimeout).toHaveBeenLastCalledWith(
       expect.stringContaining("/api/v1/public/feed/connections?page=0&size=6"),
-      { next: { revalidate: 30 } },
+      { next: { revalidate: 30, tags: ["public-posts"] } },
     );
   });
 });

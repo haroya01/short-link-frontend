@@ -71,3 +71,43 @@ describe("refreshing cached lists after a post's audience or countries change", 
     expect(statuses.slice(6)).toEqual([429, 429]);
   });
 });
+
+describe("the backend clearing every public page after a post changes", () => {
+  function signal(secret: string | null) {
+    return new Request("http://localhost/ko/blog/revalidate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(secret !== null ? { "X-Revalidate-Secret": secret } : {}) },
+      body: "{}",
+    });
+  }
+
+  it("clears the shared public tag when the secret matches, without asking the backend anything", async () => {
+    vi.stubEnv("REVALIDATE_SECRET", "s3cret");
+    const { POST } = await route();
+    expect((await POST(signal("s3cret"))).status).toBe(204);
+    expect(mocks.revalidateTag.mock.calls.map(([tag]) => tag)).toEqual(["public-posts"]);
+    expect(mocks.fetchWithTimeout).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it("refuses a wrong secret, and any secret while none is configured", async () => {
+    vi.stubEnv("REVALIDATE_SECRET", "s3cret");
+    let { POST } = await route();
+    expect((await POST(signal("nope"))).status).toBe(401);
+    vi.stubEnv("REVALIDATE_SECRET", "");
+    ({ POST } = await route());
+    expect((await POST(signal(""))).status).toBe(401);
+    expect(mocks.revalidateTag).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it("caps a burst of signals", async () => {
+    vi.stubEnv("REVALIDATE_SECRET", "s3cret");
+    const { POST } = await route();
+    const statuses = [];
+    for (let i = 0; i < 8; i++) statuses.push((await POST(signal("s3cret"))).status);
+    expect(statuses.filter((s) => s === 204)).toHaveLength(6);
+    expect(statuses.slice(6)).toEqual([429, 429]);
+    vi.unstubAllEnvs();
+  });
+});
