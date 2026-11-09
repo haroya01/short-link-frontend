@@ -140,7 +140,7 @@ test("a signed-out reader sees 이미 본 글 above the row at seenFrom, and wha
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect(latest.locator(`[data-remote-uri="${uri(14)}"]`)).toBeVisible();
   await page.waitForTimeout(1_500);
-  await page.getByRole("tab", { name: "추천" }).click();
+  await page.getByRole("tab", { name: "발견" }).click();
   await expect.poll(() => asked.seen.length).toBe(2);
   expect(asked.seen[1].uris).toContain(uri(14));
   expect(asked.seen[1].uris.filter((sent) => asked.seen[0].uris.includes(sent))).toEqual([]);
