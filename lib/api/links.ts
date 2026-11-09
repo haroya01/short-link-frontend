@@ -3,6 +3,7 @@ import type {
   ClaimResult,
   CreateLinkRequest,
   CreateLinkResponse,
+  DeletedLinksPage,
   LinkDetail,
   LinkProtectionRequest,
   LinkProtectionResponse,
@@ -126,6 +127,15 @@ export async function updateLink(
 
 export async function deleteLink(shortCode: string): Promise<void> {
   await request(`/api/v1/links/${shortCode}`, { method: "DELETE" });
+}
+
+export async function restoreLink(shortCode: string): Promise<void> {
+  await request(`/api/v1/links/${encodeURIComponent(shortCode)}/restore`, { method: "POST" });
+}
+
+export async function listDeletedLinks(after?: string, signal?: AbortSignal): Promise<DeletedLinksPage> {
+  const qs = after ? `?${new URLSearchParams({ after })}` : "";
+  return request<DeletedLinksPage>(`/api/v1/links/me/deleted${qs}`, { method: "GET", signal });
 }
 
 export async function getLinkDetail(shortCode: string): Promise<LinkDetail> {

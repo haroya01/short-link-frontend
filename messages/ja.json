@@ -1511,7 +1511,6 @@
     "bulkSelectedCount": "{count}件選択中",
     "bulkClearSelection": "選択解除",
     "bulkDeleteAction": "選択を削除",
-    "bulkDeleting": "削除中…",
     "bulkDeleted": "{count}件のリンクを削除しました",
     "bulkDeleteFailed": "{total}件中{failed}件の削除に失敗",
     "bulkDeleteConfirmTitle": "{count}件のリンクを削除しますか？",
@@ -1545,7 +1544,20 @@
     "searchClear": "検索をクリア",
     "noResultQuery": "「{query}」に一致するリンクはありません",
     "noResultFiltered": "条件に一致するリンクはありません",
-    "expiringSoon": "期限間近{count}件"
+    "expiringSoon": "期限間近{count}件",
+    "undo": "元に戻す",
+    "restoreFailed": "リンクを復元できませんでした。",
+    "restored": "リンクを復元しました",
+    "deleteConfirmRestorable": "30日間は「最近削除」から復元できます。",
+    "views": {
+      "deleted": "最近削除"
+    },
+    "deletedEmpty": "最近削除したリンクはありません",
+    "deletedLoadFailed": "最近削除したリンクを読み込めませんでした。",
+    "deletedAt": "{when}に削除",
+    "daysLeft": "{days, plural, =0 {今日まで} other {残り#日}}",
+    "restore": "復元",
+    "restoreLink": "/{code}を復元"
   },
   "edit": {
     "title": "リンク編集",

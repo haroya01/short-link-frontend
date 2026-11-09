@@ -15,9 +15,7 @@ import { QrModal } from "@/components/links/qr/button";
 import { useRouter } from "@/i18n/navigation";
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { Sparkline } from "@/components/links/stats/sparkline";
-import { useToast } from "@/components/ui/toast";
-import { deleteLink } from "@/lib/api";
-import { useApiErrorMessage } from "@/lib/error-messages";
+import { useLinkDeletion } from "@/components/links/use-link-deletion";
 import { cn, formatNumber } from "@/lib/utils";
 import { linkDisplayName } from "@/lib/link-library-view";
 import { LinkStateBadges } from "@/components/links/link-state-badges";
@@ -46,6 +44,9 @@ type Props = {
   favoritesDisabled?: boolean;
   sortingDisabled?: boolean;
   onSelectingChange?: (selecting: boolean) => void;
+  /** 서버가 지운 링크를 30일 보관하는가 — 아니면 되돌리기와 보관 문구를 숨긴다. */
+  restorable?: boolean;
+  onRestoreMissing?: () => void;
 };
 
 export function LinksTable({
@@ -61,6 +62,8 @@ export function LinksTable({
   favoritesDisabled = false,
   sortingDisabled = false,
   onSelectingChange,
+  restorable = false,
+  onRestoreMissing,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
@@ -73,17 +76,16 @@ export function LinksTable({
   const [selectMode, setSelectMode] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
   const [bulkCount, setBulkCount] = useState(0);
-  const [bulkDeleting, setBulkDeleting] = useState(false);
-  const { toast } = useToast();
-  const errorMessage = useApiErrorMessage();
   const navHidden = useHideOnScroll();
+  const { hidden, remove } = useLinkDeletion({ restorable, onChanged, onRestoreMissing });
+  const rows = hidden.size > 0 ? items.filter((item) => !hidden.has(item.shortCode)) : items;
 
   useEffect(() => {
     onSelectingChange?.(selectMode);
   }, [selectMode, onSelectingChange]);
   useEffect(() => () => onSelectingChange?.(false), [onSelectingChange]);
 
-  const allOnPage = items.map((s) => s.shortCode);
+  const allOnPage = rows.map((s) => s.shortCode);
   const allSelected = allOnPage.length > 0 && allOnPage.every((c) => selected.has(c));
   const someSelected = !allSelected && allOnPage.some((c) => selected.has(c));
 
@@ -128,31 +130,11 @@ export function LinksTable({
     setConfirmOpen(true);
   }
 
-  async function handleDelete(code: string) {
-    try {
-      await deleteLink(code);
-      toast(t("deleted"), "success");
-      onChanged();
-    } catch (err) {
-      toast(errorMessage(err, t("deleteFailed")), "error");
-    }
-  }
-
-  async function handleBulkDelete() {
-    if (selected.size === 0) return;
-    setBulkDeleting(true);
+  function handleBulkDelete() {
     const codes = Array.from(selected);
-    const results = await Promise.allSettled(codes.map((c) => deleteLink(c)));
-    const failed = results.filter((r) => r.status === "rejected").length;
-    setBulkDeleting(false);
-    setBulkConfirmOpen(false);
+    if (codes.length === 0) return;
     setSelected(new Set());
-    if (failed === 0) {
-      toast(t("bulkDeleted", { count: codes.length }), "success");
-    } else {
-      toast(t("bulkDeleteFailed", { failed, total: codes.length }), "error");
-    }
-    onChanged();
+    void remove(codes);
   }
 
   return (
@@ -226,7 +208,7 @@ export function LinksTable({
           <span className="hidden w-[76px] sm:block" aria-hidden />
         </div>
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-          {items.map((item) => {
+          {rows.map((item) => {
             const bump = liveByCode?.[item.shortCode];
             const favorite = isFavorite(item.shortCode);
             return (
@@ -411,22 +393,21 @@ export function LinksTable({
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         title={t("deleteConfirmTitle", { code: confirmCode ?? "" })}
-        description={t("deleteConfirmDesc")}
+        description={restorable ? t("deleteConfirmRestorable") : t("deleteConfirmDesc")}
         destructive
         confirmLabel={t("deleteOk")}
-        onConfirm={async () => {
-          if (confirmCode) await handleDelete(confirmCode);
+        onConfirm={() => {
+          if (confirmCode) void remove([confirmCode]);
         }}
       />
 
       <ConfirmDialog
         open={bulkConfirmOpen}
-        onOpenChange={(o) => !bulkDeleting && setBulkConfirmOpen(o)}
+        onOpenChange={setBulkConfirmOpen}
         title={t("bulkDeleteConfirmTitle", { count: bulkCount })}
-        description={t("bulkDeleteConfirmDesc")}
+        description={restorable ? t("deleteConfirmRestorable") : t("bulkDeleteConfirmDesc")}
         destructive
-        confirmLabel={bulkDeleting ? t("bulkDeleting") : t("bulkDeleteAction")}
-        confirmDisabled={bulkDeleting}
+        confirmLabel={t("bulkDeleteAction")}
         onConfirm={handleBulkDelete}
       />
 

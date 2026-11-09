@@ -8,7 +8,7 @@ import {
 import { useAuth } from "@/lib/auth";
 import { useCallback } from "react";
 
-import { getLinkDetail, listMyLinks, listTags, type MyLinksFilters } from "./links";
+import { getLinkDetail, listDeletedLinks, listMyLinks, listTags, type MyLinksFilters } from "./links";
 import type { LinkDetail } from "@/types";
 
 const linksKeys = {
@@ -35,6 +35,18 @@ export function useMyLinks(filters: MyLinksFilters, options?: { enabled?: boolea
     getNextPageParam: (lastPage) =>
       lastPage.hasMore ? lastPage.nextCursor ?? undefined : undefined,
     enabled: options?.enabled ?? true,
+  });
+}
+
+export function useDeletedLinks(options?: { enabled?: boolean }) {
+  const { me } = useAuth();
+  return useInfiniteQuery({
+    queryKey: [...linksKeys.all, "deleted", me?.id],
+    queryFn: ({ pageParam, signal }) => listDeletedLinks(pageParam, signal),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextCursor ?? undefined : undefined),
+    enabled: options?.enabled ?? true,
+    retry: false,
   });
 }
 

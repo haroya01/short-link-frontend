@@ -94,6 +94,7 @@ test.describe("dashboard filters", () => {
       await page.goto("/ko/dashboard");
       const search = page.getByPlaceholder(/목적지 또는 코드/);
       await expect(search).toBeVisible();
+      await expect(page.getByText("링크 1개")).toBeVisible();
       const before = await search.boundingBox();
 
       const toggle = page.getByRole("button", { name: /^필터/ });
