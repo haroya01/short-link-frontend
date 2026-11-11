@@ -97,22 +97,23 @@ const section = (page: Page, title: string) =>
   page.locator("section").filter({ has: page.getByRole("heading", { name: title, exact: true }) });
 
 // Two zones on either side of UTC: a time drawn in the server's zone, wherever the server runs, is wrong in at least one.
+// Korean AM/PM reads 오전/오후 or AM/PM depending on the browser's ICU version; both are accepted.
 for (const viewer of [
   {
     zone: "Asia/Seoul",
-    fetched: "2026. 11. 10. 오후 2:02에 가져옴",
-    changed: "마지막 변경 2026. 11. 9. 오후 9:14",
+    fetched: /2026\. 11\. 10\. (오후|PM) 2:02에 가져옴/,
+    changed: /마지막 변경 2026\. 11\. 9\. (오후|PM) 9:14/,
     joined: "2026. 11. 1. 가입",
     until: "2026. 12. 1.까지 정지",
-    switchedOff: "꺼짐 · 관리자 · 2026. 9. 30. 오후 12:00",
+    switchedOff: /^꺼짐 · 관리자 · 2026\. 9\. 30\. (오후|PM) 12:00$/,
   },
   {
     zone: "America/New_York",
-    fetched: "2026. 11. 10. 오전 12:02에 가져옴",
-    changed: "마지막 변경 2026. 11. 9. 오전 7:14",
+    fetched: /2026\. 11\. 10\. (오전|AM) 12:02에 가져옴/,
+    changed: /마지막 변경 2026\. 11\. 9\. (오전|AM) 7:14/,
     joined: "2026. 10. 31. 가입",
     until: "2026. 11. 30.까지 정지",
-    switchedOff: "꺼짐 · 관리자 · 2026. 9. 29. 오후 11:00",
+    switchedOff: /^꺼짐 · 관리자 · 2026\. 9\. 29\. (오후|PM) 11:00$/,
   },
 ]) {
   test.describe(`admin link detail times for a viewer in ${viewer.zone}`, () => {
@@ -129,7 +130,7 @@ for (const viewer of [
       await expect(evidence).toContainText(viewer.joined);
       await expect(evidence.getByText(viewer.until, { exact: true })).toBeVisible();
 
-      await expect(section(page, "악용 대응").getByText(viewer.switchedOff, { exact: true })).toBeVisible();
+      await expect(section(page, "악용 대응").getByText(viewer.switchedOff)).toBeVisible();
 
       const clicks = section(page, "클릭 기록");
       await expect(clicks.getByText("Asia/Seoul", { exact: true })).toBeVisible();

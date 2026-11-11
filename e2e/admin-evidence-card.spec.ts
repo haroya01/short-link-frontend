@@ -10,6 +10,7 @@ const BLURRED = fs.readFileSync(path.join(__dirname, "fixtures/preview-blurred.j
 const SHARP = fs.readFileSync(path.join(__dirname, "fixtures/preview-sharp.jpg"));
 
 // A zone no build or CI machine runs in, so a time formatted in the server's zone cannot pass by coincidence.
+// Korean AM/PM reads 오전/오후 or AM/PM depending on the browser's ICU version; both are accepted.
 test.use({ timezoneId: "Asia/Kathmandu" });
 
 const LINK_ROW = {
@@ -187,7 +188,7 @@ test.describe("admin evidence card", () => {
 
     await expect(group(page, "목적지가 밝힌 내용")).toContainText("Claim your prize today");
     await expect(group(page, "목적지가 밝힌 내용")).toContainText("Enter your card number to receive the reward.");
-    await expect(group(page, "목적지가 밝힌 내용")).toContainText(/2026\. 11\. 10\. 오전 10:47에 가져옴/);
+    await expect(group(page, "목적지가 밝힌 내용")).toContainText(/2026\. 11\. 10\. (오전|AM) 10:47에 가져옴/);
 
     const destinations = card(page).getByTestId("evidence-destination");
     await expect(destinations).toHaveCount(3);
@@ -197,7 +198,7 @@ test.describe("admin evidence card", () => {
 
     await expect(group(page, "목적지 변경")).toContainText("최근 180일 · 기본 주소 2번 · 분배 목적지 1번");
     await expect(card(page).getByTestId("evidence-latest-change")).toHaveText("기본 주소safe.example→prize.example");
-    await expect(group(page, "목적지 변경")).toContainText(/마지막 변경 2026\. 11\. 9\. 오후 5:59/);
+    await expect(group(page, "목적지 변경")).toContainText(/마지막 변경 2026\. 11\. 9\. (오후|PM) 5:59/);
 
     await expect(group(page, "만든 계정").getByText("2026. 12. 1.까지 정지", { exact: true })).toBeVisible();
     await expect(group(page, "만든 계정")).toContainText(/2026\. 11\. 1\. 가입 · 링크 12개 · 꺼진 링크 3개$/);
@@ -389,8 +390,8 @@ test.describe("admin evidence card", () => {
 
   for (const [fetchStatus, fetchedAt, lines] of [
     ["PENDING", null, ["아직 가져오지 않았어요"]],
-    ["RETRYABLE", "2026-11-10T05:02:00Z", ["가져오지 못해 다시 시도하는 중이에요", "마지막 시도 2026. 11. 10. 오전 10:47"]],
-    ["ERROR", "2026-11-10T05:02:00Z", ["가져오지 못했어요", "마지막 시도 2026. 11. 10. 오전 10:47"]],
+    ["RETRYABLE", "2026-11-10T05:02:00Z", ["가져오지 못해 다시 시도하는 중이에요", /마지막 시도 2026\. 11\. 10\. (오전|AM) 10:47/]],
+    ["ERROR", "2026-11-10T05:02:00Z", ["가져오지 못했어요", /마지막 시도 2026\. 11\. 10\. (오전|AM) 10:47/]],
   ] as const) {
     test(`a page that was not fetched (${fetchStatus}) says so instead of looking empty`, async ({ page }) => {
       const server = fakeServer({
