@@ -2425,6 +2425,86 @@
         "countries": "Chưa có dữ liệu quốc gia"
       }
     },
+    "evidence": {
+      "title": "Căn cứ đánh giá",
+      "desc": "Máy chủ thu thập các thông tin này nên màn hình này không kết nối tới đích đến.",
+      "page": {
+        "label": "Đích đến tự giới thiệu",
+        "blank": "Trang không có tiêu đề hay mô tả",
+        "pending": "Chưa lấy về",
+        "retrying": "Không lấy được, đang thử lại",
+        "failed": "Không lấy được",
+        "fetchedAt": "Lấy về lúc {time}",
+        "triedAt": "Lần thử gần nhất {time}",
+        "more": "Xem tất cả",
+        "less": "Thu gọn"
+      },
+      "image": {
+        "label": "Ảnh xem trước",
+        "none": "Không có ảnh",
+        "withheld": "Không tải ảnh vì liên kết này có báo cáo nội dung tình dục",
+        "altBlurred": "Ảnh xem trước đã làm mờ",
+        "altSharp": "Ảnh xem trước rõ nét",
+        "reveal": "Xem rõ",
+        "recordNote": "Việc xem sẽ được ghi lại",
+        "hide": "Làm mờ lại",
+        "recorded": "Lần xem này đã được ghi lại",
+        "revealFailed": "Không tải được ảnh rõ nét",
+        "failed": "Không tải được ảnh",
+        "unavailable": {
+          "NO_IMAGE": "Không có ảnh",
+          "FETCH_REFUSED": "Máy chủ không lấy được ảnh",
+          "TOO_MANY_PIXELS": "Ảnh quá lớn nên không thu nhỏ được",
+          "UNDECODABLE": "Không đọc được tệp ảnh",
+          "OTHER": "Không thể hiển thị ảnh"
+        }
+      },
+      "destinations": {
+        "label": "Nơi liên kết dẫn tới",
+        "unknownHost": "Địa chỉ không đọc được",
+        "kind": {
+          "ORIGINAL": "Mặc định",
+          "BRANCH": "Chia tách",
+          "AFTER_EXPIRY": "Sau khi hết hạn"
+        },
+        "weight": "Trọng số {weight}"
+      },
+      "history": {
+        "label": "Thay đổi đích đến",
+        "none": "Không thay đổi trong {days} ngày qua",
+        "within": "{days} ngày qua",
+        "urlChanges": "Địa chỉ chính đổi {count} lần",
+        "destinationChanges": "Đích chia tách đổi {count} lần",
+        "latest": "Thay đổi gần nhất {time}",
+        "target": {
+          "url": "Địa chỉ chính",
+          "destination": "Đích chia tách"
+        },
+        "nothing": "không có"
+      },
+      "creator": {
+        "label": "Tài khoản tạo",
+        "anonymous": "Được tạo khi chưa đăng nhập",
+        "joined": "Tham gia {date}",
+        "links": "{count} liên kết",
+        "disabledLinks": "{count} đã tắt",
+        "status": {
+          "ACTIVE": "Hoạt động",
+          "SUSPENDED": "Tạm khóa",
+          "BANNED": "Cấm vĩnh viễn",
+          "DELETED": "Đã xóa"
+        },
+        "suspendedUntil": "Tạm khóa đến {date}"
+      },
+      "reports": {
+        "label": "Báo cáo",
+        "none": "Không có",
+        "open": "{count} chưa xử lý",
+        "noOpen": "Không có báo cáo chưa xử lý",
+        "total": "Tổng {count}",
+        "noReason": "Không nêu lý do"
+      }
+    },
     "humanClicks": "Lượt nhấp của người",
     "totalClicks": "Tổng {count}",
     "clicks": {

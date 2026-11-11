@@ -2425,6 +2425,86 @@
         "countries": "国データはまだありません"
       }
     },
+    "evidence": {
+      "title": "判断材料",
+      "desc": "サーバーが集めた内容なので、この画面からリンク先には接続しません。",
+      "page": {
+        "label": "リンク先が示す内容",
+        "blank": "タイトルと説明のないページです",
+        "pending": "まだ取得していません",
+        "retrying": "取得できなかったため再試行中です",
+        "failed": "取得できませんでした",
+        "fetchedAt": "{time}に取得",
+        "triedAt": "最終試行 {time}",
+        "more": "すべて表示",
+        "less": "閉じる"
+      },
+      "image": {
+        "label": "プレビュー画像",
+        "none": "画像はありません",
+        "withheld": "性的なコンテンツの通報があるリンクのため、画像を読み込みません",
+        "altBlurred": "ぼかしたプレビュー画像",
+        "altSharp": "鮮明なプレビュー画像",
+        "reveal": "ぼかしを外す",
+        "recordNote": "表示すると記録されます",
+        "hide": "ぼかしに戻す",
+        "recorded": "表示が記録されました",
+        "revealFailed": "鮮明な画像を読み込めませんでした",
+        "failed": "画像を読み込めませんでした",
+        "unavailable": {
+          "NO_IMAGE": "画像はありません",
+          "FETCH_REFUSED": "サーバーが画像を取得できませんでした",
+          "TOO_MANY_PIXELS": "画像が大きすぎて縮小できませんでした",
+          "UNDECODABLE": "読み取れない画像ファイルです",
+          "OTHER": "画像を表示できません"
+        }
+      },
+      "destinations": {
+        "label": "転送先",
+        "unknownHost": "読み取れないアドレス",
+        "kind": {
+          "ORIGINAL": "基本",
+          "BRANCH": "振り分け",
+          "AFTER_EXPIRY": "期限切れ後"
+        },
+        "weight": "重み {weight}"
+      },
+      "history": {
+        "label": "リンク先の変更",
+        "none": "直近{days}日間、変更はありません",
+        "within": "直近{days}日間",
+        "urlChanges": "基本アドレスを{count}回変更",
+        "destinationChanges": "振り分け先を{count}回変更",
+        "latest": "最新の変更 {time}",
+        "target": {
+          "url": "基本アドレス",
+          "destination": "振り分け先"
+        },
+        "nothing": "なし"
+      },
+      "creator": {
+        "label": "作成したアカウント",
+        "anonymous": "ログインせずに作成されたリンクです",
+        "joined": "{date}に登録",
+        "links": "リンク{count}件",
+        "disabledLinks": "停止中のリンク{count}件",
+        "status": {
+          "ACTIVE": "有効",
+          "SUSPENDED": "停止",
+          "BANNED": "永久停止",
+          "DELETED": "退会"
+        },
+        "suspendedUntil": "{date}まで停止"
+      },
+      "reports": {
+        "label": "通報",
+        "none": "ありません",
+        "open": "未処理{count}件",
+        "noOpen": "未処理の通報なし",
+        "total": "全{count}件",
+        "noReason": "理由なし"
+      }
+    },
     "humanClicks": "人によるクリック",
     "totalClicks": "全体 {count}",
     "clicks": {

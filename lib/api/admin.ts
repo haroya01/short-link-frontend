@@ -29,7 +29,7 @@ import type {
   ServerBlockSeverity,
 } from "@/types";
 
-import { request } from "./client";
+import { request, requestBlob } from "./client";
 import type { LinkEvent } from "./link-events";
 
 export async function getAdminHealthMetrics(): Promise<AdminHealthMetrics> {
@@ -185,6 +185,18 @@ export async function setAdminLinkClicksExcluded(
     `/api/v1/admin/links/${encodeURIComponent(code)}/clicks/${excluded ? "exclude" : "restore"}`,
     { method: "POST", body: { clickIds } },
   );
+}
+
+/**
+ * The destination's preview image, fetched and shrunk by the server. `clear: false` is the blurred
+ * thumbnail; every `clear: true` request is written to the audit log.
+ */
+export async function getAdminLinkPreviewImage(code: string, clear: boolean): Promise<Blob> {
+  const { blob } = await requestBlob(
+    `/api/v1/admin/links/${encodeURIComponent(code)}/preview-image?clear=${clear}`,
+    { method: "GET", timeoutMs: 20_000 },
+  );
+  return blob;
 }
 
 export async function getBlockedDomains(): Promise<BlockedDomain[]> {

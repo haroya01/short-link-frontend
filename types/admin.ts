@@ -246,8 +246,57 @@ export type ServerBlock = {
 
 export type AdminLinkSort = "recent" | "clicks";
 
+/**
+ * `page` text comes from the destination itself and is untrusted. Enum-like fields stay `string`
+ * because the server may add values.
+ */
+export type AdminLinkEvidence = {
+  page: {
+    title: string | null;
+    description: string | null;
+    /** PENDING | OK | RETRYABLE | ERROR */
+    fetchStatus: string | null;
+    fetchedAt: string | null;
+    hasImage: boolean;
+    imageWithheld: boolean;
+  };
+  destinations: {
+    host: string | null;
+    /** ORIGINAL | BRANCH | AFTER_EXPIRY */
+    kind: string;
+    weight: number | null;
+    countryCode: string | null;
+    deviceClass: string | null;
+    os: string | null;
+  }[];
+  history: {
+    retentionDays: number;
+    urlChanges: number;
+    destinationChanges: number;
+    /** `action` is LINK_UPDATED for the main address, LINK_DESTINATION_* for a branch. */
+    latest: { action: string; at: string; fromHost: string | null; toHost: string | null } | null;
+  };
+  creator: {
+    anonymous: boolean;
+    userId: number | null;
+    joinedAt: string | null;
+    /** ACTIVE | SUSPENDED | BANNED | DELETED */
+    status: string | null;
+    suspendedUntil: string | null;
+    links: number | null;
+    disabledLinks: number | null;
+  };
+  /** `open` counts reports still OPEN or REVIEWING; a report filed without a reason code has `reason: null`. */
+  reports: { total: number; open: number; reasons: { reason: string | null; count: number }[] };
+};
+
 /** One row of the admin link browser paired with the same {@link LinkStats} the owner stats page renders. */
-export type AdminLinkDetail = { meta: AdminLinkRow; stats: LinkStats };
+export type AdminLinkDetail = {
+  meta: AdminLinkRow;
+  stats: LinkStats;
+  /** Absent from backends older than the evidence card, null when the server found nothing to gather. */
+  evidence?: AdminLinkEvidence | null;
+};
 
 export type RecentLink = {
   shortCode: string;
