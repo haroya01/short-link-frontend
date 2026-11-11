@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { notFound, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -8,14 +8,18 @@ import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminLinkDetail } from "@/lib/api";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/toast";
 import { Link } from "@/i18n/navigation";
 import type { AdminLinkDetail } from "@/types";
+import { ClickTable } from "./_components/click-table";
 import { DetailStats } from "./_components/detail-stats";
 import { EnforcementCard } from "./_components/enforcement-card";
 import { MetaCard } from "./_components/meta-card";
 
 export function AdminLinkDetailView() {
   const t = useTranslations("admin");
+  const tc = useTranslations("common");
+  const { toast } = useToast();
   const params = useParams<{ code: string }>();
   const code = params.code;
   const { ready, authenticated, isAdmin } = useAuth();
@@ -24,6 +28,21 @@ export function AdminLinkDetailView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  const refreshSeq = useRef(0);
+
+  function refreshQuietly() {
+    const seq = ++refreshSeq.current;
+    getAdminLinkDetail(code)
+      .then((d) => {
+        if (seq === refreshSeq.current) setData(d);
+      })
+      .catch(() => {
+        if (seq !== refreshSeq.current) return;
+        toast(t("clicks.refreshFailed"), "error", {
+          action: { label: tc("retry"), onClick: refreshQuietly },
+        });
+      });
+  }
 
   useEffect(() => {
     if (!ready) return;
@@ -86,6 +105,7 @@ export function AdminLinkDetailView() {
             onMetaChange={(meta) => setData((d) => (d ? { ...d, meta } : d))}
           />
           <DetailStats stats={data.stats} />
+          <ClickTable code={code} timezone={data.stats.timezone} onChanged={refreshQuietly} />
         </>
       ) : null}
     </main>

@@ -2425,6 +2425,40 @@
         "countries": "아직 국가 데이터가 없어요"
       }
     },
+    "humanClicks": "사람 클릭",
+    "totalClicks": "전체 {count}",
+    "clicks": {
+      "title": "클릭 기록",
+      "views": "보기",
+      "view": {
+        "human": "사람 클릭",
+        "excluded": "제외됨"
+      },
+      "col": {
+        "time": "시각",
+        "place": "위치",
+        "device": "기기",
+        "source": "유입",
+        "ip": "IP"
+      },
+      "selectAll": "불러온 클릭 전체 선택",
+      "selectRow": "{time} 클릭 선택",
+      "selected": "{count}건 선택됨",
+      "clear": "선택 해제",
+      "exclude": "제외",
+      "restore": "되돌리기",
+      "excluded": "{count, plural, =0 {이미 제외된 클릭이에요} other {#건을 제외했어요}}",
+      "restored": "{count, plural, =0 {이미 되돌린 클릭이에요} other {#건을 되돌렸어요}}",
+      "excludeFailed": "{count, plural, =0 {제외하지 못했어요. 다시 시도해 주세요.} other {#건만 제외했어요. 나머지는 다시 시도해 주세요.}}",
+      "restoreFailed": "{count, plural, =0 {되돌리지 못했어요. 다시 시도해 주세요.} other {#건만 되돌렸어요. 나머지는 다시 시도해 주세요.}}",
+      "loadMore": "더 보기",
+      "loadFailed": "클릭 기록을 불러오지 못했어요",
+      "empty": "아직 사람 클릭이 없어요",
+      "emptyExcluded": "제외한 클릭이 없어요",
+      "noneSoFar": "지금까지 읽은 {count}건에는 없어요",
+      "retention": "원본 기록이 남아 있는 클릭만 나와요. 더 오래된 클릭은 합계에만 있어요.",
+      "refreshFailed": "요약 숫자를 새로 읽지 못했어요"
+    },
     "activity": {
       "recentLinksTitle": "최근 링크",
       "recentLinksDesc": "새로 만들어진 링크",

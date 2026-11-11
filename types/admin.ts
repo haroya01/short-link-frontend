@@ -201,6 +201,8 @@ export type AdminLinkRow = {
   ownerId: number | null;
   ownerEmail: string | null;
   clickCount: number;
+  /** Absent from backends that only report the bot-inclusive total. */
+  humanClickCount?: number;
   passwordProtected: boolean;
   maxViews: number | null;
   viewCount: number;

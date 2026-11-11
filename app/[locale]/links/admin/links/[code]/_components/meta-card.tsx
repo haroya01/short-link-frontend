@@ -10,11 +10,13 @@ import {
 } from "@/components/admin/link-browser";
 import { Section } from "@/components/common/section";
 import { Link } from "@/i18n/navigation";
+import { leadClicks } from "@/lib/admin-clicks";
 import { cn, formatDate, formatNumber, truncateMiddle } from "@/lib/utils";
 import type { AdminLinkRow } from "@/types";
 
 export function MetaCard({ meta }: { meta: AdminLinkRow }) {
   const t = useTranslations("admin");
+  const clicks = leadClicks(meta);
   return (
     <Section title={t("detail.title")}>
       <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
@@ -46,20 +48,24 @@ export function MetaCard({ meta }: { meta: AdminLinkRow }) {
         </Field>
 
         <Field label={t("detail.meta.destination")} className="sm:col-span-2">
-          <a
-            href={meta.originalUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="break-all text-slate-700 hover:underline dark:text-slate-300"
-            title={meta.originalUrl}
-          >
+          <span className="break-all text-slate-700 dark:text-slate-300" title={meta.originalUrl}>
             {truncateMiddle(meta.originalUrl, 72)}
-          </a>
+          </span>
         </Field>
 
-        <Field label={t("detail.meta.clicks")}>
-          <span className="font-mono font-medium tabular-nums text-slate-900 dark:text-slate-100">
-            {formatNumber(meta.clickCount)}
+        <Field label={clicks.total == null ? t("detail.meta.clicks") : t("humanClicks")}>
+          <span className="inline-flex flex-wrap items-baseline gap-x-2">
+            <span
+              data-testid="admin-link-clicks"
+              className="font-mono font-medium tabular-nums text-slate-900 dark:text-slate-100"
+            >
+              {formatNumber(clicks.lead)}
+            </span>
+            {clicks.total != null && (
+              <span className="text-xs tabular-nums text-slate-500 dark:text-slate-400">
+                {t("totalClicks", { count: formatNumber(clicks.total) })}
+              </span>
+            )}
           </span>
         </Field>
 
