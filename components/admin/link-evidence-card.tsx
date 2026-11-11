@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useId, useReducer, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { STATUS_STYLES } from "@/components/admin/link-browser";
 import { Section } from "@/components/common/section";
@@ -87,11 +87,13 @@ function Facts({ items }: { items: (string | null | false)[] }) {
   );
 }
 
+// next-intl formats in the server's time zone unless told otherwise; these times are read in the operator's own.
 function useDateTime() {
   const format = useFormatter();
+  const timeZone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
   return {
-    time: (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium", timeStyle: "short" }),
-    date: (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium" }),
+    time: (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium", timeStyle: "short", timeZone }),
+    date: (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium", timeZone }),
   };
 }
 
