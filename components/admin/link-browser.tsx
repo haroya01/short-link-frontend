@@ -5,6 +5,7 @@ import { notFound, useSearchParams } from "next/navigation";
 import { Lock, Search, ShieldBan, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ApiError, blockDomain, getAdminLinks, getBlockedDomains } from "@/lib/api";
+import { leadClicks } from "@/lib/admin-clicks";
 import { hostOf, isDomainCovered } from "@/lib/blocked-domains";
 import { PageControls } from "@/components/admin/page-controls";
 import { ErrorState } from "@/components/common/error-state";
@@ -124,6 +125,7 @@ export function LinkBrowser() {
   }, [query, ownerId, sort, page, tick]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const leadsWithHumans = items.some((l) => l.humanClickCount != null);
   const initialLoading = loading && items.length === 0;
 
   function submitSearch(e: React.FormEvent) {
@@ -205,7 +207,9 @@ export function LinkBrowser() {
                     <TH>{t("browse.links.col.code")}</TH>
                     <TH>{t("browse.links.col.destination")}</TH>
                     <TH>{t("browse.links.col.owner")}</TH>
-                    <TH className="text-right">{t("browse.links.col.clicks")}</TH>
+                    <TH className="text-right">
+                      {leadsWithHumans ? t("humanClicks") : t("browse.links.col.clicks")}
+                    </TH>
                     <TH>{t("browse.links.col.status")}</TH>
                     <TH>{t("browse.links.col.created")}</TH>
                     <TH />
@@ -231,15 +235,7 @@ export function LinkBrowser() {
                         </span>
                       </TD>
                       <TD className="max-w-[22rem] text-xs text-slate-500 dark:text-slate-400">
-                        <a
-                          href={l.originalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer nofollow"
-                          className="hover:underline"
-                          title={l.originalUrl}
-                        >
-                          {truncateMiddle(l.originalUrl, 56)}
-                        </a>
+                        <span title={l.originalUrl}>{truncateMiddle(l.originalUrl, 56)}</span>
                       </TD>
                       <TD className="text-xs text-slate-500 dark:text-slate-400">
                         {l.ownerId != null ? (
@@ -253,8 +249,8 @@ export function LinkBrowser() {
                           t("table.anonymous")
                         )}
                       </TD>
-                      <TD className="text-right tabular-nums font-medium">
-                        {formatNumber(l.clickCount)}
+                      <TD className="text-right tabular-nums">
+                        <ClickCell row={l} />
                       </TD>
                       <TD>
                         <span
@@ -289,6 +285,21 @@ export function LinkBrowser() {
         )}
       </div>
     </Section>
+  );
+}
+
+function ClickCell({ row }: { row: AdminLinkRow }) {
+  const t = useTranslations("admin");
+  const clicks = leadClicks(row);
+  return (
+    <>
+      <span className="block font-medium">{formatNumber(clicks.lead)}</span>
+      {clicks.total != null && (
+        <span className="block whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
+          {t("totalClicks", { count: formatNumber(clicks.total) })}
+        </span>
+      )}
+    </>
   );
 }
 

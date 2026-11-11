@@ -30,6 +30,7 @@ import type {
 } from "@/types";
 
 import { request } from "./client";
+import type { LinkEvent } from "./link-events";
 
 export async function getAdminHealthMetrics(): Promise<AdminHealthMetrics> {
   return request<AdminHealthMetrics>("/api/v1/admin/health-metrics", { method: "GET" });
@@ -146,6 +147,43 @@ export async function setAdminLinkDisabled(
   return request<AdminLinkModerationResult>(
     `/api/v1/admin/links/${encodeURIComponent(code)}/${disabled ? "disable" : "enable"}`,
     { method: "POST" },
+  );
+}
+
+export interface AdminLinkClick {
+  id: number;
+  excluded: boolean;
+  click: LinkEvent;
+}
+
+export interface AdminLinkClicksPage {
+  items: AdminLinkClick[];
+  nextCursor: string | null;
+}
+
+/** Raw clicks of one link, newest first, bots and excluded clicks included. */
+export async function getAdminLinkClicks(
+  code: string,
+  cursor: string | null,
+  limit: number,
+): Promise<AdminLinkClicksPage> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (cursor) params.set("cursor", cursor);
+  return request<AdminLinkClicksPage>(
+    `/api/v1/admin/links/${encodeURIComponent(code)}/clicks?${params}`,
+    { method: "GET" },
+  );
+}
+
+/** The server accepts at most 200 ids per call and reports how many clicks it actually changed. */
+export async function setAdminLinkClicksExcluded(
+  code: string,
+  clickIds: number[],
+  excluded: boolean,
+): Promise<{ shortCode: string; changed: number }> {
+  return request<{ shortCode: string; changed: number }>(
+    `/api/v1/admin/links/${encodeURIComponent(code)}/clicks/${excluded ? "exclude" : "restore"}`,
+    { method: "POST", body: { clickIds } },
   );
 }
 

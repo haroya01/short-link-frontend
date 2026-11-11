@@ -2425,6 +2425,40 @@
         "countries": "Chưa có dữ liệu quốc gia"
       }
     },
+    "humanClicks": "Lượt nhấp của người",
+    "totalClicks": "Tổng {count}",
+    "clicks": {
+      "title": "Nhật ký nhấp",
+      "views": "Chế độ xem",
+      "view": {
+        "human": "Lượt nhấp của người",
+        "excluded": "Đã loại trừ"
+      },
+      "col": {
+        "time": "Thời gian",
+        "place": "Vị trí",
+        "device": "Thiết bị",
+        "source": "Nguồn giới thiệu",
+        "ip": "IP"
+      },
+      "selectAll": "Chọn tất cả lượt nhấp đã tải",
+      "selectRow": "Chọn lượt nhấp lúc {time}",
+      "selected": "{count} đã chọn",
+      "clear": "Bỏ chọn",
+      "exclude": "Loại trừ",
+      "restore": "Khôi phục",
+      "excluded": "{count, plural, =0 {Các lượt nhấp này đã được loại trừ từ trước} other {Đã loại trừ # lượt nhấp}}",
+      "restored": "{count, plural, =0 {Các lượt nhấp này đã được khôi phục từ trước} other {Đã khôi phục # lượt nhấp}}",
+      "excludeFailed": "{count, plural, =0 {Không loại trừ được. Vui lòng thử lại.} other {Chỉ loại trừ được # lượt nhấp. Vui lòng thử lại phần còn lại.}}",
+      "restoreFailed": "{count, plural, =0 {Không khôi phục được. Vui lòng thử lại.} other {Chỉ khôi phục được # lượt nhấp. Vui lòng thử lại phần còn lại.}}",
+      "loadMore": "Xem thêm",
+      "loadFailed": "Không tải được nhật ký nhấp",
+      "empty": "Chưa có lượt nhấp của người",
+      "emptyExcluded": "Không có lượt nhấp nào bị loại trừ",
+      "noneSoFar": "Chưa thấy trong {count} lượt nhấp đã đọc",
+      "retention": "Chỉ hiển thị các lượt nhấp còn lưu bản ghi gốc. Lượt nhấp cũ hơn chỉ còn trong tổng số.",
+      "refreshFailed": "Không làm mới được số liệu tóm tắt"
+    },
     "activity": {
       "recentLinksTitle": "Liên kết gần đây",
       "recentLinksDesc": "Vừa được tạo",

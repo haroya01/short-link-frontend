@@ -2425,6 +2425,40 @@
         "countries": "No country data yet"
       }
     },
+    "humanClicks": "Human clicks",
+    "totalClicks": "{count} total",
+    "clicks": {
+      "title": "Click log",
+      "views": "View",
+      "view": {
+        "human": "Human clicks",
+        "excluded": "Excluded"
+      },
+      "col": {
+        "time": "Time",
+        "place": "Location",
+        "device": "Device",
+        "source": "Referrer",
+        "ip": "IP"
+      },
+      "selectAll": "Select all loaded clicks",
+      "selectRow": "Select the click at {time}",
+      "selected": "{count} selected",
+      "clear": "Clear",
+      "exclude": "Exclude",
+      "restore": "Restore",
+      "excluded": "{count, plural, =0 {Already excluded} one {Excluded # click} other {Excluded # clicks}}",
+      "restored": "{count, plural, =0 {Already restored} one {Restored # click} other {Restored # clicks}}",
+      "excludeFailed": "{count, plural, =0 {Could not exclude. Please try again.} one {Only # click was excluded. Please try the rest again.} other {Only # clicks were excluded. Please try the rest again.}}",
+      "restoreFailed": "{count, plural, =0 {Could not restore. Please try again.} one {Only # click was restored. Please try the rest again.} other {Only # clicks were restored. Please try the rest again.}}",
+      "loadMore": "Load more",
+      "loadFailed": "Could not load the click log",
+      "empty": "No human clicks yet",
+      "emptyExcluded": "No excluded clicks",
+      "noneSoFar": "{count, plural, one {None in the # click read so far} other {None in the # clicks read so far}}",
+      "retention": "Only clicks whose raw record is still kept are listed. Older clicks remain only in the totals.",
+      "refreshFailed": "Could not refresh the summary numbers"
+    },
     "activity": {
       "recentLinksTitle": "Recent links",
       "recentLinksDesc": "Newly created",

@@ -2425,6 +2425,40 @@
         "countries": "国データはまだありません"
       }
     },
+    "humanClicks": "人によるクリック",
+    "totalClicks": "全体 {count}",
+    "clicks": {
+      "title": "クリック記録",
+      "views": "表示",
+      "view": {
+        "human": "人によるクリック",
+        "excluded": "除外済み"
+      },
+      "col": {
+        "time": "時刻",
+        "place": "地域",
+        "device": "デバイス",
+        "source": "参照元",
+        "ip": "IP"
+      },
+      "selectAll": "読み込んだクリックをすべて選択",
+      "selectRow": "{time}のクリックを選択",
+      "selected": "{count}件選択中",
+      "clear": "選択解除",
+      "exclude": "除外",
+      "restore": "元に戻す",
+      "excluded": "{count, plural, =0 {すでに除外されています} other {#件を除外しました}}",
+      "restored": "{count, plural, =0 {すでに元に戻されています} other {#件を元に戻しました}}",
+      "excludeFailed": "{count, plural, =0 {除外できませんでした。もう一度お試しください。} other {#件だけ除外しました。残りはもう一度お試しください。}}",
+      "restoreFailed": "{count, plural, =0 {元に戻せませんでした。もう一度お試しください。} other {#件だけ元に戻しました。残りはもう一度お試しください。}}",
+      "loadMore": "もっと見る",
+      "loadFailed": "クリック記録を読み込めませんでした",
+      "empty": "まだ人によるクリックがありません",
+      "emptyExcluded": "除外したクリックはありません",
+      "noneSoFar": "ここまでに読み込んだ{count}件にはありません",
+      "retention": "元の記録が残っているクリックだけが表示されます。それより古いクリックは合計にのみ含まれます。",
+      "refreshFailed": "概要の数字を更新できませんでした"
+    },
     "activity": {
       "recentLinksTitle": "最近のリンク",
       "recentLinksDesc": "新しく作成されたリンク",
