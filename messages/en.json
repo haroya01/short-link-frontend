@@ -2425,6 +2425,86 @@
         "countries": "No country data yet"
       }
     },
+    "evidence": {
+      "title": "Evidence",
+      "desc": "Gathered by the server, so this screen never contacts the destination.",
+      "page": {
+        "label": "What the destination says",
+        "blank": "The page has no title or description",
+        "pending": "Not fetched yet",
+        "retrying": "Could not be fetched, trying again",
+        "failed": "Could not be fetched",
+        "fetchedAt": "Fetched {time}",
+        "triedAt": "Last tried {time}",
+        "more": "Show all",
+        "less": "Show less"
+      },
+      "image": {
+        "label": "Preview image",
+        "none": "No image",
+        "withheld": "Not loaded because this link has a sexual content report",
+        "altBlurred": "Blurred preview image",
+        "altSharp": "Sharp preview image",
+        "reveal": "Unblur",
+        "recordNote": "Viewing is recorded",
+        "hide": "Blur again",
+        "recorded": "This view was recorded",
+        "revealFailed": "Could not load the sharp image",
+        "failed": "Could not load the image",
+        "unavailable": {
+          "NO_IMAGE": "No image",
+          "FETCH_REFUSED": "The server could not fetch the image",
+          "TOO_MANY_PIXELS": "The image is too large to shrink",
+          "UNDECODABLE": "The image file could not be read",
+          "OTHER": "The image cannot be shown"
+        }
+      },
+      "destinations": {
+        "label": "Where it sends people",
+        "unknownHost": "Unreadable address",
+        "kind": {
+          "ORIGINAL": "Default",
+          "BRANCH": "Split",
+          "AFTER_EXPIRY": "After expiry"
+        },
+        "weight": "Weight {weight}"
+      },
+      "history": {
+        "label": "Destination changes",
+        "none": "No changes in the last {days} days",
+        "within": "Last {days} days",
+        "urlChanges": "{count, plural, one {# main address change} other {# main address changes}}",
+        "destinationChanges": "{count, plural, one {# split destination change} other {# split destination changes}}",
+        "latest": "Latest change {time}",
+        "target": {
+          "url": "Main address",
+          "destination": "Split destination"
+        },
+        "nothing": "none"
+      },
+      "creator": {
+        "label": "Who made it",
+        "anonymous": "Made without signing in",
+        "joined": "Joined {date}",
+        "links": "{count, plural, one {# link} other {# links}}",
+        "disabledLinks": "{count} switched off",
+        "status": {
+          "ACTIVE": "Active",
+          "SUSPENDED": "Suspended",
+          "BANNED": "Banned",
+          "DELETED": "Deleted"
+        },
+        "suspendedUntil": "Suspended until {date}"
+      },
+      "reports": {
+        "label": "Reports",
+        "none": "None",
+        "open": "{count} unresolved",
+        "noOpen": "None unresolved",
+        "total": "{count} total",
+        "noReason": "No reason given"
+      }
+    },
     "humanClicks": "Human clicks",
     "totalClicks": "{count} total",
     "clicks": {

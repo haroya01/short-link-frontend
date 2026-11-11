@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminLinkDetail } from "@/lib/api";
+import { LinkEvidenceCard } from "@/components/admin/link-evidence-card";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
@@ -100,6 +101,7 @@ export function AdminLinkDetailView() {
       ) : data ? (
         <>
           <MetaCard meta={data.meta} />
+          {data.evidence && <LinkEvidenceCard code={code} evidence={data.evidence} />}
           <EnforcementCard
             meta={data.meta}
             onMetaChange={(meta) => setData((d) => (d ? { ...d, meta } : d))}

@@ -2425,6 +2425,86 @@
         "countries": "아직 국가 데이터가 없어요"
       }
     },
+    "evidence": {
+      "title": "판단 근거",
+      "desc": "서버가 모은 내용이라 이 화면에서는 목적지에 접속하지 않아요.",
+      "page": {
+        "label": "목적지가 밝힌 내용",
+        "blank": "제목과 설명이 없는 페이지예요",
+        "pending": "아직 가져오지 않았어요",
+        "retrying": "가져오지 못해 다시 시도하는 중이에요",
+        "failed": "가져오지 못했어요",
+        "fetchedAt": "{time}에 가져옴",
+        "triedAt": "마지막 시도 {time}",
+        "more": "전체 보기",
+        "less": "접기"
+      },
+      "image": {
+        "label": "미리보기 이미지",
+        "none": "이미지가 없어요",
+        "withheld": "성적인 콘텐츠 신고가 있는 링크라 이미지를 불러오지 않아요",
+        "altBlurred": "가린 미리보기 이미지",
+        "altSharp": "선명한 미리보기 이미지",
+        "reveal": "선명하게 보기",
+        "recordNote": "보면 기록이 남아요",
+        "hide": "다시 가리기",
+        "recorded": "본 기록이 남았어요",
+        "revealFailed": "선명한 이미지를 불러오지 못했어요",
+        "failed": "이미지를 불러오지 못했어요",
+        "unavailable": {
+          "NO_IMAGE": "이미지가 없어요",
+          "FETCH_REFUSED": "서버가 이미지를 받아 오지 못했어요",
+          "TOO_MANY_PIXELS": "이미지가 너무 커서 줄이지 못했어요",
+          "UNDECODABLE": "읽을 수 없는 이미지 파일이에요",
+          "OTHER": "이미지를 보여 줄 수 없어요"
+        }
+      },
+      "destinations": {
+        "label": "보내는 곳",
+        "unknownHost": "읽을 수 없는 주소",
+        "kind": {
+          "ORIGINAL": "기본",
+          "BRANCH": "분배",
+          "AFTER_EXPIRY": "만료 후"
+        },
+        "weight": "가중치 {weight}"
+      },
+      "history": {
+        "label": "목적지 변경",
+        "none": "최근 {days}일 동안 바뀐 적 없어요",
+        "within": "최근 {days}일",
+        "urlChanges": "기본 주소 {count}번",
+        "destinationChanges": "분배 목적지 {count}번",
+        "latest": "마지막 변경 {time}",
+        "target": {
+          "url": "기본 주소",
+          "destination": "분배 목적지"
+        },
+        "nothing": "없음"
+      },
+      "creator": {
+        "label": "만든 계정",
+        "anonymous": "로그인 없이 만든 링크예요",
+        "joined": "{date} 가입",
+        "links": "링크 {count}개",
+        "disabledLinks": "꺼진 링크 {count}개",
+        "status": {
+          "ACTIVE": "활성",
+          "SUSPENDED": "정지",
+          "BANNED": "영구 정지",
+          "DELETED": "탈퇴"
+        },
+        "suspendedUntil": "{date}까지 정지"
+      },
+      "reports": {
+        "label": "신고",
+        "none": "없어요",
+        "open": "처리 전 {count}건",
+        "noOpen": "처리 전 신고 없음",
+        "total": "전체 {count}건",
+        "noReason": "사유 없음"
+      }
+    },
     "humanClicks": "사람 클릭",
     "totalClicks": "전체 {count}",
     "clicks": {
