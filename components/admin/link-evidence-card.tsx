@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
-import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { Fragment, useEffect, useId, useReducer, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { STATUS_STYLES } from "@/components/admin/link-browser";
 import { Section } from "@/components/common/section";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import {
 } from "@/lib/admin-evidence";
 import { getAdminLinkPreviewImage } from "@/lib/api";
 import { cn, countryName } from "@/lib/utils";
+import { useViewerTimes } from "@/lib/viewer-times";
 import type { AdminLinkEvidence } from "@/types";
 
 const CREATOR_STATUS_STYLES = {
@@ -87,19 +88,9 @@ function Facts({ items }: { items: (string | null | false)[] }) {
   );
 }
 
-// next-intl formats in the server's time zone unless told otherwise; these times are read in the operator's own.
-function useDateTime() {
-  const format = useFormatter();
-  const timeZone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
-  return {
-    time: (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium", timeStyle: "short", timeZone }),
-    date: (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium", timeZone }),
-  };
-}
-
 function PageText({ page }: { page: AdminLinkEvidence["page"] }) {
   const t = useTranslations("admin");
-  const { time } = useDateTime();
+  const { time } = useViewerTimes();
   const state = pageState(page);
   const { title, description } = pageText(page);
   const [open, setOpen] = useState(false);
@@ -365,7 +356,7 @@ function useConditions() {
 
 function History({ history }: { history: AdminLinkEvidence["history"] }) {
   const t = useTranslations("admin");
-  const { time } = useDateTime();
+  const { time } = useViewerTimes();
   const summary = historySummary(history);
   if (!summary) return <p className={MUTED}>{t("evidence.history.none", { days: history.retentionDays })}</p>;
   const nothing = <span className={MUTED}>{t("evidence.history.nothing")}</span>;
@@ -400,7 +391,7 @@ function History({ history }: { history: AdminLinkEvidence["history"] }) {
 
 function Creator({ creator }: { creator: AdminLinkEvidence["creator"] }) {
   const t = useTranslations("admin");
-  const { date } = useDateTime();
+  const { date } = useViewerTimes();
   const summary = creatorSummary(creator);
   if (summary.anonymous) return <p className={MUTED}>{t("evidence.creator.anonymous")}</p>;
   return (
