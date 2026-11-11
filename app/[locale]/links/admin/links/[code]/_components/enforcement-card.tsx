@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { MessageSquareWarning, Power, PowerOff, ShieldBan, ShieldCheck } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { blockDomain, getBlockedDomains, setAdminLinkDisabled, warnUser } from "@/lib/api";
 import { hostOf, isDomainCovered } from "@/lib/blocked-domains";
+import { useViewerTimes } from "@/lib/viewer-times";
 import { Section } from "@/components/common/section";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,7 +24,7 @@ export function EnforcementCard({
   onMetaChange: (meta: AdminLinkRow) => void;
 }) {
   const t = useTranslations("admin");
-  const format = useFormatter();
+  const { time } = useViewerTimes();
   const host = useMemo(() => hostOf(meta.originalUrl), [meta.originalUrl]);
 
   const [switching, setSwitching] = useState(false);
@@ -114,12 +115,7 @@ export function EnforcementCard({
                   <PowerOff className="h-3.5 w-3.5" />
                   {t("enforce.linkDisabled", {
                     reason: t(`enforce.disabledReason.${meta.disabledReason}`),
-                    date: meta.disabledAt
-                      ? format.dateTime(new Date(meta.disabledAt), {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
-                      : "—",
+                    date: meta.disabledAt ? time(meta.disabledAt) : "—",
                   })}
                 </span>
                 <Button
