@@ -1,5 +1,4 @@
 import { DATE_LOCALE } from "@/lib/date";
-import { linksHref } from "@/lib/host";
 import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -15,12 +14,12 @@ import { LegacyHeadingHash, PostToc } from "@/modules/blog/components/post-toc";
 import { PostDock } from "@/modules/blog/components/post-dock";
 import { PostAuthorCard } from "@/modules/blog/components/post-author-card";
 import { PostComments } from "@/modules/blog/components/comments";
-import { FollowButton } from "@/modules/blog/components/follow-button";
 import { AuthorGate, AuthorOnly } from "@/modules/blog/components/author-gate";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
 import { PostActionRow } from "../_components/post-action-row";
+import { POST_ARTICLE, POST_PAGE_GRID, PostAuthorRail, PostColophon, PostHeader } from "../_components/post-chrome";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
 import { PostCollections } from "@/modules/blog/components/post-collections";
@@ -28,20 +27,15 @@ import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { PublishCelebration } from "@/modules/blog/components/publish-celebration";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/lib/author-href";
-import { splitHyphenWords } from "@/modules/blog/lib/hyphen-words";
-import { Avatar } from "@/modules/blog/components/avatar";
-import { AuthorName } from "@/modules/blog/components/author-name";
 import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { postSeriesNav, seriesEntries, seriesEpisodes } from "@/modules/blog/lib/series-items";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { canOptimizeCover } from "@/modules/blog/lib/optimized-image";
-import { contentLang } from "@/modules/blog/lib/content-lang";
 import { audienceOf, isIndexable } from "@/modules/blog/lib/post-audience";
 import { postMetadata } from "@/modules/blog/lib/post-metadata";
 import { PostGate } from "../_components/post-gate";
 import { PostKeyScope } from "../_components/post-key-scope";
-import { BylineMeta } from "../_components/byline-meta";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -55,9 +49,6 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   "https://kurl.me";
-
-const BYLINE_NAME =
-  "text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400";
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
@@ -210,12 +201,7 @@ export default async function PublicPostPage({
       };
 
   return (
-    // Symmetric 3-column grid: equal side gutters keep the 42rem article in the exact page center,
-    // the same reading band as the feed/profile (§10.1 max-w-7xl 불변식). Rails live in the gutters and
-    // never shift it. xl:gap-6 (not gap-10) tightens the two gutters so the rail content sits closer to
-    // the reading column — the wide gutter left the author block floating alone far to the left; a
-    // snugger gap gives the three columns a shared rhythm without touching the 42rem band.
-    <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
+    <main className={POST_PAGE_GRID}>
       {keyed && !lock && <PostKeyScope postId={post.id} postKey={postKey} />}
       {articleJsonLd && (
         <script
@@ -229,37 +215,7 @@ export default async function PublicPostPage({
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
         />
       )}
-      {/* Left rail (xl+): a persistent author identity + follow that stays once the in-article header
-          scrolls away. In the left gutter, justify-self-end so it hugs the reading column instead of
-          floating alone at the far edge; w-64 fills the gutter so the void reads as an even ~24px inset
-          on either side of the rail (matching the grid gap) rather than a lonely avatar in wide empty
-          space. The centered 42rem article never moves. */}
-      <aside className="hidden py-20 xl:block xl:justify-self-end">
-        <div className="sticky top-28 w-64">
-          <a
-            href={authorHref(author.username, locale)}
-            className="group flex items-center gap-3 rounded focus-ring"
-            data-bhv="profile"
-            data-bhv-id={author.username}
-          >
-            <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="lg" />
-            <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
-          </a>
-          {author.bio && (
-            <p
-              lang={contentLang(author.bio)}
-              className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400"
-            >
-              {author.bio}
-            </p>
-          )}
-          {!lock && (
-            <div className="mt-4">
-              <FollowButton username={author.username} initialFollowerCount={0} sourcePostId={post.id} />
-            </div>
-          )}
-        </div>
-      </aside>
+      <PostAuthorRail author={author} locale={locale} postId={post.id} follow={!lock} />
 
       {/* 시리즈 회차 스와이프 — 시리즈 소속 글에서만(프리뷰 제외) 본문 컬럼을 감싸 좌우 스와이프로
           이전/다음 회차 이동. 시리즈가 없으면 SeriesSwipe 는 렌더되지 않는다(아래 분기). */}
@@ -271,7 +227,7 @@ export default async function PublicPostPage({
       {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
           났는지의 출처. */}
       <article
-        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 max-[1100px]:pb-[calc(var(--post-dock-h,0px)+3.5rem)] sm:pt-20 min-[1100px]:pb-20"
+        className={POST_ARTICLE}
         lang={post.languageTag}
         data-bhv-post={post.id}
       >
@@ -291,73 +247,18 @@ export default async function PublicPostPage({
           </>
         )}
 
-      {/* 마스트헤드 아래 조용한 헤어라인(§10.1 border-slate-100 계열)으로 제목·메타를 하나의 블록으로
-          닫는다 — xl 에선 헤더가 얇은 메타 한 줄뿐이라 닫는 선이 없으면 본문과 경계가 흐릿했다. */}
-      <header className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800 sm:mb-12 sm:pb-8">
-        {eyebrow && (
-          <p className="mb-3 text-[12px] font-medium text-slate-500 dark:text-slate-400">{eyebrow}</p>
-        )}
-        {/* 모바일 30px → sm+ 37px: 힘은 크기가 아니라 weight(bold)+tight tracking 에서. 이전 32/40px 은
-            좁은 뷰포트에서 두 줄로 크게 쏟아져 포트폴리오 목업처럼 읽혔다 — 스텝만 ~6% 줄여 절제하되,
-            본문 h2(24px)보다는 항상 확실히 크게(30 > 24) 유지해 위계는 그대로. leading 은 큰 디스플레이의
-            tight 감(1.15/1.1)을 이어간다. */}
-        <h1 className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg">
-          {splitHyphenWords(post.title).map((part, i) =>
-            part.keep ? (
-              <span key={i} className="whitespace-nowrap">
-                {part.text}
-              </span>
-            ) : (
-              part.text
-            ),
-          )}
-        </h1>
-        <div className="mt-5 flex items-center justify-between gap-3 sm:mt-6">
-          {/* <xl: full author identity + follow inline. xl: those move to the left rail, so the header
-              keeps only date·reading time + share — no duplicated author/follow at the top. */}
-          <a
-            href={authorHref(author.username, locale)}
-            className="group flex min-w-0 flex-1 items-center gap-3 rounded focus-ring xl:hidden"
-            data-bhv="profile"
-            data-bhv-id={author.username}
-          >
-            <Avatar src={author.avatarUrl} name={author.displayName || author.username} handle={author.username} size="lg" />
-            <span className="min-w-0">
-              <AuthorName name={author.displayName} handle={author.username} className={BYLINE_NAME} />
-              <span className="block text-[13px] text-slate-500 dark:text-slate-400">
-                <BylineMeta {...byline} />
-              </span>
-            </span>
-          </a>
-          <p className="hidden text-[13px] text-slate-500 dark:text-slate-400 xl:block">
-            <BylineMeta {...byline} />
-          </p>
-          {!lock && (
-          <AuthorOnly username={author.username}>
-            <div data-post-actions className="ml-auto flex shrink-0 items-center gap-2">
-              <span className="xl:hidden">
-                <FollowButton
-                  username={author.username}
-                  initialFollowerCount={0}
-                  showCount={false}
-                  sourcePostId={post.id}
-                />
-              </span>
-              <PostActionRow
-                postId={post.id}
-                postTitle={post.title}
-                postSlug={post.slug}
-                postUrl={postUrl}
-                likeCount={post.likeCount}
-                authorUsername={author.username}
-                locale={locale}
-                menuOnlyBelowWide
-              />
-            </div>
-          </AuthorOnly>
-          )}
-        </div>
-      </header>
+      <PostHeader
+        eyebrow={eyebrow}
+        title={post.title}
+        author={author}
+        locale={locale}
+        byline={byline}
+        actions={
+          lock
+            ? null
+            : { postId: post.id, postTitle: post.title, postSlug: post.slug, postUrl, likeCount: post.likeCount }
+        }
+      />
 
       {lock ? (
         <AuthorGate username={author.username} subject="post">
@@ -475,19 +376,13 @@ export default async function PublicPostPage({
       </AuthorGate>
       )}
 
-      {/* 글 페이지엔 공용 푸터가 없다 — ©·약관·개인정보만 콜로폰 톤으로. */}
       {!isPreview && (
-        <p className="mt-16 flex items-center justify-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-          <span>{tFooter("copyright", { year: new Date().getFullYear() })}</span>
-          <span aria-hidden>·</span>
-          <a href={linksHref(`/${locale}/terms`)} className="focus-ring rounded underline-offset-2 hover:underline">
-            {tFooter("terms")}
-          </a>
-          <span aria-hidden>·</span>
-          <a href={linksHref(`/${locale}/privacy`)} className="focus-ring rounded underline-offset-2 hover:underline">
-            {tFooter("privacy")}
-          </a>
-        </p>
+        <PostColophon
+          locale={locale}
+          copyright={tFooter("copyright", { year: new Date().getFullYear() })}
+          terms={tFooter("terms")}
+          privacy={tFooter("privacy")}
+        />
       )}
       </article>
       </SeriesSwipe>

@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Quote } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { askToSignIn } from "@/components/auth/login-prompt";
 import { useToast } from "@/components/ui/toast";
 import { emitPostQuoted } from "@/modules/blog/lib/consequence-events";
+import type { NoteRoom } from "@/modules/notes/api/notes";
 import { openNote } from "@/modules/notes/lib/note-href";
+import { quoteRoom } from "@/modules/notes/lib/quote-wall";
+import { NoteGlyph } from "./note-glyph";
 import { NoteQuoteDialog } from "./note-quote-dialog";
 
-type QuotedPost = { postId: number; title: string; slug: string; authorUsername: string };
+type QuotedPost = { postId: number; title: string; slug: string; authorUsername: string; room?: NoteRoom | null };
 
-export function useQuoteInNote({ postId, title, slug, authorUsername }: QuotedPost) {
+export function useQuoteInNote({ postId, title, slug, authorUsername, room }: QuotedPost) {
   const t = useTranslations("notes");
   const locale = useLocale();
   const router = useRouter();
@@ -23,7 +25,11 @@ export function useQuoteInNote({ postId, title, slug, authorUsername }: QuotedPo
   const start = () => (authenticated ? setOpen(true) : askToSignIn("quote"));
   const dialog = (
     <NoteQuoteDialog
-      quoted={open ? { post: { id: postId, title, slug, authorUsername } } : null}
+      quoted={
+        open
+          ? { post: { id: postId, title, slug, authorUsername, ...(room ? { audience: "ROOM" as const } : {}) }, room: quoteRoom({ room }) }
+          : null
+      }
       onClose={() => setOpen(false)}
       onPosted={(note) => {
         setOpen(false);
@@ -49,7 +55,7 @@ export function QuoteInNoteButton(props: QuotedPost) {
         title={t("quoteAction")}
         className="touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring dark:text-slate-400 dark:hover:text-accent-400"
       >
-        <Quote className="h-4 w-4" aria-hidden />
+        <NoteGlyph name="quote" className="h-4 w-4" />
         <span>{t("quoteLabel")}</span>
       </button>
       {dialog}

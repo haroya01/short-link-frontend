@@ -1,6 +1,7 @@
 import { ArticleBlocks, LinkPreviewView, type ArticleEmbeds } from "@/modules/blog/components/article-blocks";
 import { fetchNoteThread } from "@/modules/notes/api/notes";
 import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
+import { noteQuotableIn } from "@/modules/notes/lib/quote-wall";
 import { getLinkPreview, type PublicPostBlock } from "@/modules/blog/api/public-posts";
 
 export { extractHeadings, readingMinutes } from "@/modules/blog/components/article-blocks";
@@ -14,11 +15,11 @@ export function ArticleBody(props: { blocks: PublicPostBlock[]; postId?: number;
   return <ArticleBlocks {...props} embeds={SERVER_EMBEDS} />;
 }
 
-/** A kurl note carried in the post. Fetched as an anonymous reader, so a note only its author's
- *  followers may see — or one since deleted — falls back to a plain link card. */
+/** A kurl note carried in the post. The server renders only posts outside rooms, where a note is a
+ *  card when anyone may see it; any other note, or one since deleted, is a plain link card. */
 async function NoteEmbed({ id, url }: { id: number; url: string }) {
   const res = await fetchNoteThread(id);
-  if (!res.ok) return <LinkPreviewCard url={url} />;
+  if (!res.ok || !noteQuotableIn(res.data.note, null)) return <LinkPreviewCard url={url} />;
   return (
     <div className="my-8 [&_*]:!no-underline" data-note-embed={id}>
       <QuotedNoteCard note={res.data.note} full />

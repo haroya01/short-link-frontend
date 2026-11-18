@@ -12,3 +12,7 @@ export function openNote(note: Pick<Note, "id" | "author">, locale: string, push
   if (/^https?:\/\//.test(href)) window.location.assign(href);
   else push(href);
 }
+
+export function quoteInPostPath(noteUrl: string, roomId: number | null): string {
+  return `/write/new?quote=${encodeURIComponent(noteUrl)}${roomId === null ? "" : `&room=${roomId}`}`;
+}

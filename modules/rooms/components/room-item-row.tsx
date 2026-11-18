@@ -26,6 +26,7 @@ export function RoomItemRow({
   context,
   onReplace,
   onRemove,
+  onQuoted,
 }: {
   item: RoomItem;
   maxReplies: number;
@@ -33,6 +34,7 @@ export function RoomItemRow({
   context?: ReactNode;
   onReplace: (note: Note) => void;
   onRemove: (id: number) => void;
+  onQuoted: (note: Note) => void;
 }) {
   const locale = useLocale();
   const replies = item.replies.slice(0, maxReplies);
@@ -41,7 +43,14 @@ export function RoomItemRow({
   return (
     <div data-room-item={item.kind === "note" ? `note-${item.note.id}` : `post-${item.post.id}`}>
       {item.kind === "note" ? (
-        <NoteFeedRow note={item.note} isNew={isNew} context={context} onReplace={onReplace} onRemove={onRemove} />
+        <NoteFeedRow
+          note={item.note}
+          isNew={isNew}
+          context={context}
+          onReplace={onReplace}
+          onRemove={onRemove}
+          onQuoted={onQuoted}
+        />
       ) : (
         <HomePostRow post={item.post} context={context} />
       )}

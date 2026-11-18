@@ -1,10 +1,10 @@
 import React, { act, createElement, forwardRef } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { NoteReplyPolicy } from "@/modules/notes/api/notes";
+import type { NoteReplyPolicy, NoteRoom, QuotedNote } from "@/modules/notes/api/notes";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 
-const mocks = vi.hoisted(() => ({ createNote: vi.fn() }));
+const mocks = vi.hoisted(() => ({ createNote: vi.fn(), listMyRooms: vi.fn() }));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key, useLocale: () => "ko" }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ me: { id: 1, username: "dohyun", avatarUrl: null } }) }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
@@ -16,6 +16,7 @@ vi.mock("@/modules/notes/api/notes", async (original) => ({
   updateFederationSettings: vi.fn(),
 }));
 vi.mock("@/modules/blog/api/public-posts", () => ({ getLinkPreview: () => Promise.resolve({ ok: false }) }));
+vi.mock("@/modules/rooms/api/rooms", () => ({ listMyRooms: mocks.listMyRooms }));
 vi.mock("./note-card", () => ({ NoteLengthRing: () => null }));
 vi.mock("next-view-transitions", () => ({ Link: (props: { children: React.ReactNode }) => createElement("a", null, props.children) }));
 vi.mock("./scheduled-notes", () => ({
@@ -53,6 +54,7 @@ beforeEach(() => {
   mocks.createNote.mockImplementation((draft: { body: string }) =>
     Promise.resolve({ id: 500, body: draft.body, linkPreview: null }),
   );
+  mocks.listMyRooms.mockResolvedValue([]);
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -70,6 +72,8 @@ async function render(
     threadReplyPolicy?: NoteReplyPolicy;
     draft?: NoteDraft;
     onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
+    room?: NoteRoom;
+    quotedNote?: QuotedNote;
   } = {},
 ) {
   await act(async () => root.render(<NoteComposer onCreated={vi.fn()} {...props} />));
@@ -91,7 +95,7 @@ const policySelect = () => host.querySelector<HTMLSelectElement>('select[aria-la
 const submit = () =>
   act(async () =>
     Array.from(host.querySelectorAll("button"))
-      .find((b) => b.textContent === "submit" || b.textContent === "replySubmit")!
+      .find((b) => ["submit", "replySubmit", "postToRoom"].includes(b.textContent ?? ""))!
       .click(),
   );
 
@@ -216,6 +220,63 @@ describe("device drafts", () => {
     await type("답글은 그 자리에서만");
     await settle();
     expect(stored()).toEqual([]);
+  });
+});
+
+describe("a quote and the room it goes to", () => {
+  const quoted = (id: number): QuotedNote => ({
+    id,
+    body: "퇴근하다 한강 들름 바람 미쳤음",
+    createdAt: "2026-11-19T09:00:00Z",
+    author: { id: 31, username: "minji", avatarUrl: null },
+    media: [],
+  });
+  const destination = () => host.querySelector<HTMLSelectElement>("[data-note-destination]");
+
+  it("posts the quote of a room's note into that room, with no destination to pick and no draft kept", async () => {
+    mocks.listMyRooms.mockResolvedValue([{ id: 5, name: "우리 가족" }]);
+    const onDraftChange = vi.fn();
+    await render({ room: { id: 1, name: "동아리 사람들" }, quotedNote: quoted(9910), onDraftChange });
+    await type("나도 어제 거기 있었는데");
+    expect(destination()).toBeNull();
+    expect(mocks.listMyRooms).not.toHaveBeenCalled();
+    expect(host.querySelector("[data-note-room-audience]")!.textContent).toBe("roomAudience");
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null });
+    await settle();
+    expect(stored()).toEqual([]);
+    await submit();
+    expect(mocks.createNote).toHaveBeenCalledWith(
+      expect.objectContaining({ quotedNoteId: 9910, roomId: 1, visibility: null }),
+    );
+  });
+
+  it("lets the quote of a public note go to one of my rooms, and keeps no draft once a room is picked", async () => {
+    mocks.listMyRooms.mockResolvedValue([{ id: 5, name: "우리 가족" }]);
+    const onDraftChange = vi.fn();
+    await render({ quotedNote: quoted(5), onDraftChange });
+    await type("가족한테도 보여 주고 싶은 사진");
+    expect(Array.from(destination()!.options).map((o) => o.value)).toEqual(["", "5"]);
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: null });
+    await act(async () => {
+      destination()!.value = "5";
+      destination()!.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null });
+    await settle();
+    expect(stored()).toEqual([]);
+    await submit();
+    expect(mocks.createNote).toHaveBeenCalledWith(
+      expect.objectContaining({ quotedNoteId: 5, roomId: 5, visibility: null }),
+    );
+  });
+
+  it("posts the quote of a public note to my notes unless a room is picked", async () => {
+    await render({ quotedNote: quoted(5) });
+    await type("이 사진들 보고 나도 오늘 걸었다");
+    await submit();
+    const sent = mocks.createNote.mock.calls[0][0];
+    expect(sent).toMatchObject({ quotedNoteId: 5, visibility: "public" });
+    expect(sent).not.toHaveProperty("roomId");
   });
 });
 

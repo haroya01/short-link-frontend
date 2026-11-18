@@ -10,6 +10,8 @@ import {
 import { getLinkPreview, type LinkPreview, type PublicPostBlock } from "@/modules/blog/api/public-posts";
 import { fetchNoteThread, type Note } from "@/modules/notes/api/notes";
 import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
+import { noteQuotableIn } from "@/modules/notes/lib/quote-wall";
+import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
 
 function ClientLinkPreview({ url }: { url: string }) {
   const [data, setData] = useState<LinkPreview | null | undefined>(undefined);
@@ -26,7 +28,10 @@ function ClientLinkPreview({ url }: { url: string }) {
   return <LinkPreviewView url={url} data={data} />;
 }
 
+/** The browser reads with the reader's own token, so what they may read is not the test: every
+ *  reader of one post gets the card or the link card by the note's and the post's room alone. */
 function ClientNoteEmbed({ id, url }: { id: number; url: string }) {
+  const roomId = useInsideRoom();
   const [note, setNote] = useState<Note | null | undefined>(undefined);
   useEffect(() => {
     let live = true;
@@ -38,7 +43,7 @@ function ClientNoteEmbed({ id, url }: { id: number; url: string }) {
     };
   }, [id]);
   if (note === undefined) return <LinkPreviewSkeleton />;
-  if (note === null) return <ClientLinkPreview url={url} />;
+  if (note === null || !noteQuotableIn(note, roomId)) return <ClientLinkPreview url={url} />;
   return (
     <div className="my-8 [&_*]:!no-underline" data-note-embed={id}>
       <QuotedNoteCard note={note} full />

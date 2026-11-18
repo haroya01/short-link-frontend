@@ -168,13 +168,13 @@ export function NoteComposer({
     quote: quote ? { post: quote } : quotedNote ? { note: quotedNote } : null,
     imageCount: images.length,
   };
-  const hasContent = hasDraftContent(snapshot);
+  const hasContent = keepsDrafts && !destination && hasDraftContent(snapshot);
   const report = useRef<() => void>(() => undefined);
   report.current = () => onDraftChange?.({ hasContent, id: draftId.current });
   const persist = useRef<() => void>(() => undefined);
   persist.current = () => {
     if (!keepsDrafts || !me) return;
-    if (hasContent && !destination) {
+    if (hasContent) {
       draftId.current ??= newNoteDraftId();
       saveNoteDraft(me.id, { ...snapshot, id: draftId.current, updatedAt: Date.now() });
     } else if (draftId.current) {

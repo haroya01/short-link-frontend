@@ -179,6 +179,13 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
   if (detail.kind === "loading") return <NoteListSkeleton />;
 
   const room = detail.room;
+  const posted = (note: Note) => {
+    if (note.room?.id !== room.id) return;
+    setItems((current) =>
+      roomNoteIds(current).has(note.id) ? current : [{ kind: "note", note, replies: [] }, ...current],
+    );
+    setFresh((current) => new Set(current).add(note.id));
+  };
   const times = items.map(itemTime);
   const label = (day: DayBreak) =>
     day.kind === "today"
@@ -226,15 +233,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
         </div>
         <div className="mt-3 flex items-start gap-2 border-b border-slate-100 dark:border-slate-800">
           <div className="min-w-0 flex-1">
-            <NoteComposer
-              room={{ id: room.id, name: room.name }}
-              onCreated={(note) => {
-                setItems((current) =>
-                  roomNoteIds(current).has(note.id) ? current : [{ kind: "note", note, replies: [] }, ...current],
-                );
-                setFresh((current) => new Set(current).add(note.id));
-              }}
-            />
+            <NoteComposer room={{ id: room.id, name: room.name }} onCreated={posted} />
           </div>
           <BlogLink
             href={blogPath(`/write/new?room=${room.id}`)}
@@ -282,6 +281,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
                         )
                       }
                       onRemove={(id) => setItems((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)))}
+                      onQuoted={posted}
                     />
                   </div>
                 </LiveRow>

@@ -14,6 +14,7 @@ import { deletePost } from "@/modules/blog/api/posts";
 import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { buildAuthorShareUrl } from "@/modules/blog/lib/publishing-share";
+import type { NoteRoom } from "@/modules/notes/api/notes";
 import { useQuoteInNote } from "@/modules/notes/components/quote-in-note-button";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { useBlockAuthor } from "@/modules/notes/components/use-block-author";
@@ -32,6 +33,7 @@ export function PostReaderMenu({
   postUrl,
   locale,
   withShare = true,
+  room = null,
 }: {
   postId: number;
   authorUsername: string;
@@ -40,6 +42,7 @@ export function PostReaderMenu({
   postUrl: string;
   locale: string;
   withShare?: boolean;
+  room?: NoteRoom | null;
 }) {
   const t = useTranslations("notes");
   const tp = useTranslations("publicPost");
@@ -64,7 +67,7 @@ export function PostReaderMenu({
   }, [open, focusFirst]);
 
   const { blocked, block, unblock, confirmDialog } = useBlockAuthor(authorUsername);
-  const quote = useQuoteInNote({ postId, title: postTitle, slug: postSlug, authorUsername });
+  const quote = useQuoteInNote({ postId, title: postTitle, slug: postSlug, authorUsername, room });
   const [confirm, deleteDialog] = useConfirm();
 
   if (!ready) return null;

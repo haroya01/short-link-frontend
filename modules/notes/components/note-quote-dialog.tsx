@@ -13,8 +13,8 @@ import { NoteComposer } from "./note-composer";
 import { NoteDraftsButton } from "./note-drafts-sheet";
 
 type Quoted =
-  | { note: QuotedNote }
-  | { post: QuotedPost }
+  | { note: QuotedNote; room?: NoteRoom | null }
+  | { post: QuotedPost; room?: NoteRoom | null }
   | { fresh: true; title: string; draft?: NoteDraft; room?: NoteRoom };
 
 export function NoteQuoteDialog({
@@ -106,7 +106,7 @@ export function NoteQuoteDialog({
           <h2 id={titleId} className="text-[16px] font-semibold text-slate-900 dark:text-slate-100">
             {"fresh" in shown ? shown.title : "note" in shown ? t("quoteTitle") : t("quoteAction")}
           </h2>
-          {"fresh" in shown && shown.room ? (
+          {shown.room ? (
             <span />
           ) : (
             <NoteDraftsButton onPick={(next) => setDraft(next)} currentId={kept.id} className="justify-self-end" />
@@ -135,6 +135,7 @@ export function NoteQuoteDialog({
             <NoteComposer
               key={`note-${shown.note.id}`}
               quotedNote={shown.note}
+              room={shown.room ?? null}
               autoFocus
               onCreated={onPosted}
               onDraftChange={onDraftChange}
@@ -143,6 +144,7 @@ export function NoteQuoteDialog({
             <NoteComposer
               key={`post-${shown.post.id}`}
               quote={shown.post}
+              room={shown.room ?? null}
               autoFocus
               onCreated={onPosted}
               onDraftChange={onDraftChange}

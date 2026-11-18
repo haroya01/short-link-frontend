@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Link2, MoreHorizontal, NotebookPen, Pin, Quote, Share } from "lucide-react";
+import { Link2, MoreHorizontal, NotebookPen, Pin, Share } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api/client";
@@ -30,6 +30,7 @@ import {
   isShareable,
   setNoteRepost,
   type Note,
+  type NoteRoom,
 } from "@/modules/notes/api/notes";
 import { noteLength } from "@/modules/notes/lib/note-text";
 import { FollowButton } from "@/modules/blog/components/follow-button";
@@ -50,7 +51,8 @@ import { QuotedNoteCard } from "./quoted-note-card";
 import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
-import { noteHref, openNote } from "@/modules/notes/lib/note-href";
+import { noteHref, openNote, quoteInPostPath } from "@/modules/notes/lib/note-href";
+import { quoteRoom } from "@/modules/notes/lib/quote-wall";
 import { ReplyPolicyDialog, replyRestrictedKey } from "./note-reply-policy";
 import { roomPath } from "@/modules/rooms/lib/room-href";
 import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
@@ -745,7 +747,11 @@ export function NoteCard({
                   <span className="sr-only">{t("replyLabel")} </span>
                   {note.replyCount > 0 && <span className="tabular-nums">{note.replyCount}</span>}
                 </button>
-                {!inRoom && <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />}
+                {inRoom ? (
+                  <RoomQuoteControl note={note} room={inRoom} buttonClass={action} onQuote={() => setQuoting(true)} />
+                ) : (
+                  <RepostControl note={note} buttonClass={action} onQuote={() => setQuoting(true)} />
+                )}
                 {emphasis && (
                   <button
                     type="button"
@@ -816,7 +822,7 @@ export function NoteCard({
       )}
       <NoteReplyDialog target={replying ? note : null} onClose={() => setReplying(false)} onReplied={replied} />
       <NoteQuoteDialog
-        quoted={quoting ? { note } : null}
+        quoted={quoting ? { note, room: quoteRoom(note) } : null}
         onClose={() => setQuoting(false)}
         onPosted={(created) => {
           setQuoting(false);
@@ -936,7 +942,70 @@ export function RepostControl({
             className={cn(item, "text-slate-800 dark:text-slate-100")}
           >
             {t("quoteNote")}
-            <Quote className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+            <NoteGlyph name="quote" className="h-[18px] w-[18px]" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RoomQuoteControl({
+  note,
+  room,
+  buttonClass,
+  onQuote,
+}: {
+  note: Note;
+  room: NoteRoom;
+  buttonClass: string;
+  onQuote: () => void;
+}) {
+  const t = useTranslations("notes");
+  const locale = useLocale();
+  const { open, setOpen, root } = usePopoverMenu();
+
+  function quoteInPost() {
+    setOpen(false);
+    const url = new URL(noteHref(note, locale), window.location.href).toString();
+    window.location.assign(blogHref(quoteInPostPath(url, room.id)));
+  }
+
+  const item =
+    "focus-ring flex w-full items-center justify-between gap-3 rounded-surface px-3 py-2 text-left text-[14px] font-medium text-slate-800 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800";
+  return (
+    <div ref={root} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={t("quoteNote")}
+        data-note-quote={note.id}
+        className={buttonClass}
+      >
+        <NoteGlyph name="quote" className="h-[18px] w-[18px]" />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute left-0 top-9 z-20 w-48 rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onQuote();
+            }}
+            className={item}
+          >
+            {t("quoteAction")}
+            <NoteGlyph name="quote" className="h-[18px] w-[18px]" />
+          </button>
+          <button type="button" role="menuitem" onClick={quoteInPost} className={item}>
+            {t("quoteInPost")}
+            <NotebookPen className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
           </button>
         </div>
       )}
@@ -1010,7 +1079,7 @@ export function ShareMenu({ href, buttonClass, quotable = false }: { href: strin
       askToSignIn("quote");
       return;
     }
-    window.location.assign(blogHref(`/write/new?quote=${encodeURIComponent(url())}`));
+    window.location.assign(blogHref(quoteInPostPath(url(), null)));
   }
 
   const item =

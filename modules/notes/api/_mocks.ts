@@ -34,7 +34,19 @@ import type {
   ScheduledNote,
   TrendingNoteTag,
 } from "./notes";
-import { mockFollowingRoomNotes, mockFollowingRoomPosts } from "@/modules/rooms/api/_mocks";
+import {
+  mockFollowingRoomNotes,
+  mockFollowingRoomPosts,
+  mockPostInRoom,
+  mockRoomNote,
+  mockRoomNoteQuotes,
+  mockRoomPostCard,
+  mockRoomPostQuotes,
+  mockRoomPostsCarrying,
+  mockRoomThread,
+  type MockRoomQuote,
+} from "@/modules/rooms/api/_mocks";
+import { noteQuotableIn, postQuotableIn } from "@/modules/notes/lib/quote-wall";
 import { readStorageString } from "@/lib/storage-json";
 import { mockLiveArrivals } from "@/lib/api/mock-live";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
@@ -523,7 +535,8 @@ const withQuotes = (n: Note): Note => {
 };
 
 export function mockQuotingPosts(id: number, page: number): PublicFeedView {
-  return { items: page === 0 ? (QUOTING_POSTS[id] ?? []) : [], page, size: 20, hasNext: false };
+  const carrying = mockRoomPostsCarrying(id) ?? QUOTING_POSTS[id] ?? [];
+  return { items: page === 0 ? carrying : [], page, size: 20, hasNext: false };
 }
 
 export function mockFederatedNotes(page: number): NoteFeed {
@@ -1192,11 +1205,15 @@ export function mockBookmarkedNotes(page: number): NoteFeed {
 }
 
 export function mockNoteQuotes(id: number, page: number): NoteFeed {
+  const inRoom = mockRoomNoteQuotes(id);
+  if (inRoom) return { items: page === 0 ? inRoom : [], page, hasNext: false };
   const items = page === 0 ? notes.filter((n) => n.quotedNote?.id === id) : [];
   return { items: items.map(withQuotes), page, hasNext: false };
 }
 
 export function mockPostQuotes(postId: number, page: number): PostQuotes {
+  const inRoom = mockRoomPostQuotes(postId);
+  if (inRoom) return { items: page === 0 ? inRoom : [], page, hasNext: false, total: inRoom.length };
   const quoting = notes.filter((n) => n.quotedPost?.id === postId);
   return { items: page === 0 ? quoting.map(withQuotes) : [], page, hasNext: false, total: quoting.length };
 }
@@ -1366,7 +1383,7 @@ function viewerCanReply(target: Note): boolean {
 const forViewer = (n: Note): Note => ({ ...n, canReply: viewerCanReply(n) });
 
 export function mockViewerThread(id: number, replies?: number): NoteThread {
-  const thread = id === MENTIONED_THREAD.note.id ? MENTIONED_THREAD : mockThread(id, replies);
+  const thread = id === MENTIONED_THREAD.note.id ? MENTIONED_THREAD : (mockThread(id, replies) ?? mockRoomThread(id));
   if (!thread || MOCK_BLOCKS_VIEWER.has(thread.note.author.username)) {
     throw new ApiError(404, { status: 404, code: "NOTE_NOT_FOUND" });
   }
@@ -1377,6 +1394,14 @@ export function mockViewerThread(id: number, replies?: number): NoteThread {
     replies: thread.replies.map(forViewer),
     viewerCanModerate: rootOf(thread.note).author.id === ME.id,
   };
+}
+
+export function mockReadableThread(id: number, replies?: number): NoteThread | null {
+  try {
+    return mockViewerThread(id, replies);
+  } catch {
+    return null;
+  }
 }
 
 export function mockHiddenReplies(id: number): Note[] {
@@ -1502,6 +1527,7 @@ let scheduledNotes: ScheduledNote[] = [
 ];
 
 export function mockSchedule(draft: NoteDraft, scheduledAt: string): ScheduledNote {
+  quoteFor(draft);
   const scheduled: ScheduledNote = {
     id: nextScheduledId++,
     scheduledAt,
@@ -1549,6 +1575,8 @@ export function mockCreate(draft: NoteDraft): Note {
   if (parent && !viewerCanReply(parent)) {
     throw new ApiError(403, { status: 403, code: "NOTE_REPLY_RESTRICTED" });
   }
+  const quote = quoteFor(draft);
+  if (draft.roomId) return mockPostInRoom(draft, quote);
   const created = note({
     id: nextId++,
     body: draft.body.trim(),
@@ -1556,8 +1584,8 @@ export function mockCreate(draft: NoteDraft): Note {
     likeCount: 0,
     createdAt: new Date().toISOString(),
     inReplyToId: draft.inReplyToId,
-    quotedNote: quotedNoteOf(draft.quotedNoteId),
-    quotedPost: quotedPostOf(draft.quotedPostId),
+    quotedNote: quote.quotedNote,
+    quotedPost: quote.quotedPost,
     contentWarning: draft.contentWarning ?? null,
     sensitive: Boolean(draft.sensitive || draft.contentWarning),
     visibility: draft.visibility ?? "public",
@@ -1608,14 +1636,29 @@ export function mockVote(id: number, choices: number[]): NotePoll {
   return poll;
 }
 
+/** The server's rule for what a note may quote: what a room holds is quoted only inside that room. */
+function quoteFor(draft: NoteDraft): MockRoomQuote {
+  const roomId = draft.roomId ?? null;
+  const quotedNote = draft.quotedNoteId === null ? null : (notes.find((n) => n.id === draft.quotedNoteId) ?? mockRoomNote(draft.quotedNoteId));
+  if (quotedNote && !noteQuotableIn(quotedNote, roomId)) {
+    throw new ApiError(400, { status: 400, code: "NOTE_NOT_SHAREABLE" });
+  }
+  const roomPost = draft.quotedPostId === null ? null : mockRoomPostCard(draft.quotedPostId);
+  if (roomPost && !postQuotableIn(roomPost, roomId)) {
+    throw new ApiError(400, { status: 400, code: "NOTE_QUOTE_NOT_FOUND" });
+  }
+  return {
+    quotedNote: quotedNote ? quotedNoteOf(quotedNote) : null,
+    quotedPost: roomPost ? roomPost.card : quotedPostOf(draft.quotedPostId),
+  };
+}
+
 function quotedPostOf(id: number | null): Note["quotedPost"] {
   const post = id === null ? undefined : MOCK_ALL_ITEMS.find((p) => p.id === id);
   return post ? { id: post.id, title: post.title, slug: post.slug, authorUsername: post.author.username } : null;
 }
 
-function quotedNoteOf(id: number | null): Note["quotedNote"] {
-  const quoted = id === null ? undefined : notes.find((n) => n.id === id);
-  if (!quoted) return null;
+function quotedNoteOf(quoted: Note): Note["quotedNote"] {
   return {
     id: quoted.id,
     body: quoted.body,
