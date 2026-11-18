@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
-// Mock-on lane at phone width: the session is @dohyun. 둘러보기 is three lanes under the search box,
+// Mock-on lane at phone width: the session is @dohyun. 둘러보기 is two lanes under the search box,
 // with the people to follow in 사람 and the hashtags behind the search box, and the feed's ⋯ menu
 // carries 복사 and 신고 as the app's does.
 test.use({ viewport: { width: 390, height: 844 } });
@@ -15,7 +15,7 @@ async function openExplore(page: Page) {
 
 test("둘러보기 keeps follow suggestions in 사람 and hashtags behind the search box, in the app's order", async ({ page }) => {
   const explore = await openExplore(page);
-  await expect(explore.getByRole("tab")).toHaveText(["추천", "다른 서버", "사람"]);
+  await expect(explore.getByRole("tab")).toHaveText(["트렌드", "사람"]);
   await explore.getByRole("tab", { name: "사람" }).click();
   await expect(explore.getByTestId("follow-suggestions").getByTestId("suggestion-haruka")).toBeVisible({ timeout: 30_000 });
   await expect(explore.getByTestId("explore-writers").getByRole("heading")).toHaveText("작가");
@@ -31,11 +31,10 @@ test("둘러보기 keeps follow suggestions in 사람 and hashtags behind the se
 test("signed out, 둘러보기 offers the blog's writers in place of the note suggestions", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.setItem("kurl:mock-signed-out", "1"));
   const explore = await openExplore(page);
-  await expect(explore.getByTestId("explore-people-strip").getByRole("listitem").first()).toContainText("글", {
+  await explore.getByRole("tab", { name: "사람" }).click();
+  await expect(explore.getByTestId("explore-writers").getByRole("listitem").first()).toContainText("글", {
     timeout: 30_000,
   });
-  await explore.getByRole("tab", { name: "사람" }).click();
-  await expect(explore.getByTestId("explore-writers")).toBeVisible();
   await expect(explore.getByTestId("follow-suggestions")).toHaveCount(0);
 });
 

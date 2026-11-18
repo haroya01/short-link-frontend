@@ -36,7 +36,6 @@ function gate() {
 
 type Serve = {
   trending?: (route: Route, call: number) => Promise<void>;
-  latest?: (route: Route) => Promise<void>;
   resolve?: (route: Route) => Promise<void>;
 };
 
@@ -46,22 +45,15 @@ function cursorOf(route: Route) {
   return new URL(route.request().url()).searchParams.get("cursor");
 }
 
-async function serve(page: Page, { trending: list, latest, resolve }: Serve = {}) {
+async function serve(page: Page, { trending: list, resolve }: Serve = {}) {
   const seen = {
     trending: [] as string[],
-    latest: [] as string[],
     resolved: [] as string[],
     liked: [] as string[],
     reposted: [] as string[],
     created: [] as unknown[],
   };
-  const forYou = async (route: Route) => {
-    seen.latest.push(new URL(route.request().url()).search);
-    if (latest) await latest(route);
-    else await route.fulfill({ json: { items: ITEMS.slice(2), next: null } });
-  };
   await mockBackend(page, {
-    "GET /api/v1/federation/for-you": forYou,
     "GET /api/v1/federation/trending": async (route) => {
       seen.trending.push(new URL(route.request().url()).search);
       if (list) await list(route, seen.trending.length);
@@ -93,21 +85,17 @@ async function serve(page: Page, { trending: list, latest, resolve }: Serve = {}
   return seen;
 }
 
-function lane(page: Page, key: "picks" | "remote") {
-  const group = page.locator(`[data-explore-lane="${key}"] [data-testid="remote-feed"]`);
-  return { group, card: (index: number) => group.locator(`[data-remote-uri="${ITEMS[index].uri}"]`) };
-}
-
 async function open(page: Page) {
   await page.goto("/ko/blog/explore");
-  return lane(page, "picks");
+  const group = page.locator('[data-explore-lane="trends"] [data-testid="remote-feed"]');
+  return { group, card: (index: number) => group.locator(`[data-remote-uri="${ITEMS[index].uri}"]`) };
 }
 
 async function scrollToEnd(page: Page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
 }
 
-test("추천 ends in what is trending elsewhere and keeps going as the reader scrolls: the trending pool, then received notes under their heading", async ({
+test("트렌드 without topics is what is trending elsewhere and keeps going as the reader scrolls: the trending pool, then received notes under their heading", async ({
   page,
 }) => {
   const answer = gate();
@@ -130,7 +118,7 @@ test("추천 ends in what is trending elsewhere and keeps going as the reader sc
   });
   const { group, card } = await open(page);
 
-  await expect(page.getByRole("tab", { name: "추천" })).toHaveAttribute("aria-selected", "true", { timeout: 30_000 });
+  await expect(page.getByRole("tab", { name: "트렌드" })).toHaveAttribute("aria-selected", "true", { timeout: 30_000 });
   await expect(group).toHaveAttribute("data-remote-view", "trending");
   await expect(group.locator('[data-testid="note-list-skeleton"] > div')).toHaveCount(3);
   answer.open();
@@ -166,42 +154,6 @@ test("추천 ends in what is trending elsewhere and keeps going as the reader sc
   expect(next.y).toBeGreaterThan(first.y);
   await expect(group.getByRole("button", { name: "더 보기" })).toHaveCount(0);
   expect(seen.resolved).toEqual([]);
-});
-
-test("다른 서버 lists other servers' posts in 맞춤 order without the trending line, and pages on its own cursor", async ({
-  page,
-}) => {
-  await signIn(page);
-  const seen = await serve(page, {
-    latest: (route) =>
-      cursorOf(route) === null
-        ? route.fulfill({ json: { items: ITEMS.slice(0, 4), next: "t4" } })
-        : route.fulfill({ json: { items: ITEMS.slice(4), next: null } }),
-  });
-  const picks = await open(page);
-  await expect(picks.card(0)).toBeVisible({ timeout: 30_000 });
-
-  await page.getByRole("tab", { name: "다른 서버" }).click();
-  await expect(page).toHaveURL(/\/explore\?lane=remote$/);
-  await expect(page.getByRole("tab", { name: "다른 서버" })).toHaveAttribute("aria-selected", "true");
-  const { group, card } = lane(page, "remote");
-  await expect(group).toHaveAttribute("data-remote-view", "for-you");
-  await expect(card(3)).toBeVisible();
-  await expect(card(0)).not.toContainText("에서 인기");
-  await expect(card(0).getByRole("button", { name: "좋아요", exact: true })).toHaveText("128");
-
-  await expect
-    .poll(
-      async () => {
-        await scrollToEnd(page);
-        return seen.latest;
-      },
-      { timeout: 20_000 },
-    )
-    .toEqual(["?limit=20", "?limit=20&cursor=t4"]);
-  await expect(group.locator("[data-remote-uri]")).toHaveCount(7);
-  await expect(group.getByRole("heading", { name: "받은 노트" })).toHaveCount(0);
-  expect(seen.trending).toEqual(["?limit=20"]);
 });
 
 test("a page that fails further down says so under the list, and 다시 시도 picks up from there", async ({ page }) => {

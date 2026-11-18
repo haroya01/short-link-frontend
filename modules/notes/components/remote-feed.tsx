@@ -12,7 +12,7 @@ import type { RemoteNotesPage, RemoteView, SeenFeed } from "@/modules/notes/api/
 import { noteVerdict, useNoteFilters } from "@/modules/notes/lib/note-filters";
 import { remoteRows, type RemoteRow } from "@/modules/notes/lib/remote-rows";
 import { seenQueue, watchSeen } from "@/modules/notes/lib/remote-seen";
-import { useRemoteNotes } from "@/modules/notes/lib/use-remote-trending";
+import { useRemoteNotes, type RemoteNotes } from "@/modules/notes/lib/use-remote-trending";
 import { NoteCard } from "./note-card";
 import { NoteListSkeleton } from "./note-list";
 import { TrendingNoteCard, trendingDisplayNote } from "./remote-trending";
@@ -30,7 +30,7 @@ const receivedHeading =
 const rowHeading = "pt-5 text-[13px] font-semibold text-slate-500 dark:text-slate-400";
 const FAILED = { "for-you": "forYouFailed", latest: "latestFailed", trending: "trendingFailed" } as const;
 
-function useRemoteRows(): (pages: RemoteNotesPage[]) => RemoteRow[] {
+export function useRemoteRows(): (pages: RemoteNotesPage[]) => RemoteRow[] {
   const filters = useNoteFilters();
   const blocked = useBlockedNames();
   const { me } = useAuth();
@@ -49,29 +49,7 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
   const notes = useRemoteNotes(view);
   const rowsOf = useRemoteRows();
   const { ready, authenticated } = useAuth();
-  const sentinel = useRef<HTMLDivElement>(null);
-  const loaded = notes.state === "ready" ? notes : null;
-  const autoLoad = loaded !== null && loaded.hasMore && !loaded.moreFailed && !loaded.loadingMore;
-  const stalled = loaded?.stalled === true;
-  const more = loaded?.more;
   const feed = view === "trending" ? null : view;
-
-  useEffect(() => {
-    const el = sentinel.current;
-    if (!el || !autoLoad || stalled || !more) return;
-    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && more(), {
-      rootMargin: "600px 0px",
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [autoLoad, stalled, more]);
-
-  useEffect(() => {
-    if (!autoLoad || !stalled || !more) return;
-    const onScroll = () => more();
-    window.addEventListener("scroll", onScroll, { once: true, passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [autoLoad, stalled, more]);
 
   useEffect(() => {
     if (!feed) return;
@@ -127,28 +105,7 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
         ))}
       </div>
       {notes.hasMore ? (
-        <div ref={sentinel} role="status" aria-live="polite" className="mt-6 flex flex-col items-center gap-2 pb-6">
-          <button
-            type="button"
-            onClick={notes.more}
-            disabled={notes.loadingMore}
-            className="focus-ring inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
-          >
-            {notes.loadingMore ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />
-                {tFeed("loadingMore")}
-              </>
-            ) : notes.moreFailed ? (
-              tFeed("retry")
-            ) : (
-              tFeed("loadMore")
-            )}
-          </button>
-          {notes.moreFailed && !notes.loadingMore && (
-            <p className="text-[12px] text-slate-500 dark:text-slate-400">{tFeed("loadMoreError")}</p>
-          )}
-        </div>
+        <RemoteMore notes={notes} />
       ) : (
         view === "trending" &&
         signedOut && (
@@ -157,6 +114,56 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
             <SignInEmptyState reason="federatedNotes" icon={Globe} />
           </>
         )
+      )}
+    </div>
+  );
+}
+
+export function RemoteMore({ notes }: { notes: Extract<RemoteNotes, { state: "ready" }> }) {
+  const tFeed = useTranslations("publicFeed");
+  const sentinel = useRef<HTMLDivElement>(null);
+  const { hasMore, moreFailed, loadingMore, stalled, more } = notes;
+  const autoLoad = hasMore && !moreFailed && !loadingMore;
+
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el || !autoLoad || stalled) return;
+    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && more(), {
+      rootMargin: "600px 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [autoLoad, stalled, more]);
+
+  useEffect(() => {
+    if (!autoLoad || !stalled) return;
+    const onScroll = () => more();
+    window.addEventListener("scroll", onScroll, { once: true, passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [autoLoad, stalled, more]);
+
+  if (!hasMore) return null;
+  return (
+    <div ref={sentinel} role="status" aria-live="polite" className="mt-6 flex flex-col items-center gap-2 pb-6">
+      <button
+        type="button"
+        onClick={more}
+        disabled={loadingMore}
+        className="focus-ring inline-flex items-center gap-2 rounded-surface border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+      >
+        {loadingMore ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />
+            {tFeed("loadingMore")}
+          </>
+        ) : moreFailed ? (
+          tFeed("retry")
+        ) : (
+          tFeed("loadMore")
+        )}
+      </button>
+      {moreFailed && !loadingMore && (
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">{tFeed("loadMoreError")}</p>
       )}
     </div>
   );

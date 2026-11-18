@@ -265,35 +265,6 @@ export class NoteImageUploadError extends Error {
   }
 }
 
-/** Mastodon's trending hashtags: tags several accounts used this week, notes per day oldest first. */
-export interface TrendingNoteTag {
-  tag: string;
-  accounts: number;
-  uses: number;
-  history: number[];
-}
-
-export function listTrendingNoteTags(): Promise<TrendingNoteTag[]> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockTrendingNoteTags());
-  return request<TrendingNoteTag[]>("/api/v1/public/notes/trending-tags", { method: "GET" });
-}
-
-export function listLinkedNotes(url: string, page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockLinkedNotes(url, page));
-  return request<NoteFeed>(
-    `/api/v1/public/notes/links?url=${encodeURIComponent(url)}&page=${page}&size=20`,
-    { method: "GET" },
-  );
-}
-
-export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockTaggedNotes(tag, page));
-  return request<NoteFeed>(
-    `/api/v1/public/notes/tags/${encodeURIComponent(tag)}?page=${page}&size=20`,
-    { method: "GET" },
-  );
-}
-
 export interface RemoteAccount {
   id: number;
   acct: string;

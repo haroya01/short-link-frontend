@@ -26,7 +26,7 @@ test("in dark the same tint turns to its night pair", async ({ page, context }) 
 });
 
 test("an account on another server is tinted by its full handle", async ({ page }) => {
-  await page.goto("/ko/blog/explore?lane=remote");
+  await page.goto("/ko/blog/explore");
   const disc = page.getByTestId("remote-feed").locator("[data-avatar-tint]", { hasText: "M" }).first();
   await expect(disc).toBeVisible({ timeout: 30_000 });
   await expect(disc).toHaveAttribute("data-avatar-tint", "sky");
