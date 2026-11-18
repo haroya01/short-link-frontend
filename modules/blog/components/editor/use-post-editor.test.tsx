@@ -526,6 +526,32 @@ describe("a slug the server would refuse never blocks the title and body", () =>
   });
 });
 
+describe("a missing-title error", () => {
+  it("stays while the title is blank and clears the moment a title is typed", async () => {
+    api.getPost.mockResolvedValue({ ...POST, title: "" });
+    await mount();
+    let published: boolean | undefined;
+    await act(async () => { published = await editor.changeStatus("publish"); });
+    expect(published).toBe(false);
+    expect(editor.error).toBe("titleRequired");
+    expect(api.publishPost).not.toHaveBeenCalled();
+
+    await act(async () => { editor.setTitle("  "); });
+    expect(editor.error).toBe("titleRequired");
+    await act(async () => { editor.setTitle("Now it has a title"); });
+    expect(editor.error).toBeNull();
+  });
+
+  it("leaves any other error alone when the title changes", async () => {
+    api.getPost.mockResolvedValue({ ...POST, tags: [] });
+    await mount();
+    await act(async () => { await editor.changeStatus("publish"); });
+    expect(editor.error).toBe("tagsRequired");
+    await act(async () => { editor.setTitle("Retitled"); });
+    expect(editor.error).toBe("tagsRequired");
+  });
+});
+
 describe("a scheduled post keeps its title", () => {
   it("refuses to save the title empty, since the scheduled publish would fail", async () => {
     api.getPost.mockResolvedValue({ ...POST, status: "SCHEDULED", scheduledAt: "2099-01-01T00:00:00Z" });

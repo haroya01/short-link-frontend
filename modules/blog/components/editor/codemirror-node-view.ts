@@ -18,7 +18,7 @@ import {
 } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
 import { tags as t } from "@lezer/highlight";
-import { codeBlockFrame } from "@/modules/blog/components/editor/code-block-frame";
+import { codeBlockFrame, showLanguage } from "@/modules/blog/components/editor/code-block-frame";
 
 const readerCodeColors = HighlightStyle.define([
   { tag: [t.comment, t.quote], color: "#9ca49f", fontStyle: "italic" },
@@ -262,7 +262,7 @@ export class CodeMirrorNodeView {
       this.updating = false;
     }
     if (newLang !== oldLang) {
-      this.languageSelect.value = newLang;
+      showLanguage(this.languageSelect, newLang);
       void this.applyLanguage(newLang);
     }
     return true;

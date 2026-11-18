@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { Extension } from "@tiptap/core";
+import { Link } from "@tiptap/extension-link";
+import { AllSelection, Plugin, TextSelection, type EditorState } from "@tiptap/pm/state";
 import StarterKit from "@tiptap/starter-kit";
 import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -194,6 +196,39 @@ const EnterSoftBreak = Extension.create({
   },
 });
 
+const PostLink = Link.extend({
+  inclusive() {
+    return false;
+  },
+});
+
+const EmptyDocCaret = Extension.create({
+  name: "emptyDocCaret",
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        appendTransaction: (_transactions, _oldState, state) => {
+          const { selection, doc } = state;
+          const only = doc.firstChild;
+          if (!(selection instanceof AllSelection) || doc.childCount !== 1 || !only?.isTextblock || only.content.size > 0) {
+            return null;
+          }
+          return state.tr.setSelection(TextSelection.create(doc, 1));
+        },
+      }),
+    ];
+  },
+});
+
+const showsImageBubble = ({ editor }: { editor: Editor }) => editor.isActive("image");
+
+// Text formatting only — an image is a NodeSelection (no text run to mark), and it has its own
+// bubble (ImageBubble). Without this the default text bubble popped over a selected image too.
+function showsTextBubble({ editor, state }: { editor: Editor; state: EditorState }) {
+  const { empty, from, to } = state.selection;
+  return !empty && !editor.isActive("image") && state.doc.textBetween(from, to).length > 0;
+}
+
 /**
  * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
  * highlight + auto-indent). Content round-trips as markdown via tiptap-markdown, so the existing
@@ -231,7 +266,12 @@ export function MarkdownEditor({
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [scroller, setScroller] = useState<HTMLDivElement | null>(null);
+  const attachScroller = useCallback((el: HTMLDivElement | null) => {
+    scrollerRef.current = el;
+    setScroller(el);
+  }, []);
   const caretRaf = useRef<number | undefined>(undefined);
   const [placeOpen, setPlaceOpen] = useState(false);
   // Serializing the whole doc to markdown (+ a parent setState) on EVERY keystroke freezes typing on
@@ -416,8 +456,10 @@ export function MarkdownEditor({
         bold: false,
         italic: false,
         strike: false,
-        link: { openOnClick: false, enableClickSelection: true },
+        link: false,
       }),
+      PostLink.configure({ openOnClick: false, enableClickSelection: true }),
+      EmptyDocCaret,
       DropCursorLine,
       MarkdownText,
       MarkdownHardBreak,
@@ -606,8 +648,8 @@ export function MarkdownEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <BubbleBar editor={editor} onEditLink={() => openLink(editor, "link")} />
-      <ImageBubble editor={editor} />
+      {scroller && <BubbleBar editor={editor} boundary={scroller} onEditLink={() => openLink(editor, "link")} />}
+      {scroller && <ImageBubble editor={editor} boundary={scroller} />}
       <TableHandles editor={editor} />
       <EditorBlockHandle editor={editor} />
       <input
@@ -634,7 +676,19 @@ export function MarkdownEditor({
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
           breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
-      <div ref={scrollerRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+      <div
+        ref={attachScroller}
+        onMouseDown={(e) => {
+          const el = e.currentTarget;
+          const blank = e.target === el || e.target === editor.view.dom.parentElement;
+          const below = e.clientY > editor.view.dom.getBoundingClientRect().bottom;
+          const onScrollbar = e.clientX >= el.getBoundingClientRect().left + el.clientLeft + el.clientWidth;
+          if (!blank || !below || onScrollbar || e.button !== 0) return;
+          e.preventDefault();
+          editor.chain().focus("end").run();
+        }}
+        className="min-h-0 flex-1 overflow-y-auto px-5 py-4"
+      >
         <EditorContent editor={editor} className="h-full" />
       </div>
       <SlashMenu
@@ -785,8 +839,20 @@ function EditorToolbar({
  * above covers discovery). Shows the inline marks; block insertion also lives in the slash (`/`) menu
  * and markdown input rules (`## `, `> `, `- `, ``` ```).
  */
-function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: string) => void }) {
+function BubbleBar({
+  editor,
+  boundary,
+  onEditLink,
+}: {
+  editor: Editor;
+  boundary: HTMLElement;
+  onEditLink: (href: string) => void;
+}) {
   const t = useTranslations("postEditor");
+  const placement = useMemo(
+    () => ({ flip: { boundary, padding: 8 }, shift: { boundary, padding: 8, crossAxis: true } }),
+    [boundary],
+  );
   const btn = (active: boolean) =>
     `touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
       active
@@ -822,12 +888,8 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
     <BubbleMenu
       editor={editor}
       pluginKey="textBubble"
-      // Text formatting only — an image is a NodeSelection (no text run to mark), and it has its own
-      // bubble (ImageBubble). Without this the default text bubble popped over a selected image too.
-      shouldShow={({ editor, state }) => {
-        const { empty } = state.selection;
-        return !empty && !editor.isActive("image");
-      }}
+      shouldShow={showsTextBubble}
+      options={placement}
     >
       {/* Inner div carries the chrome + a testid so tests target the bubble's marks, not the
           identically-labelled always-on toolbar buttons. */}
@@ -861,8 +923,12 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
  * (image-width.ts), so a change round-trips through markdown → block → the reader. Align only reads on
  * a column-width or «half» image (wide/full bleed the column), so it's hidden for those widths.
  */
-function ImageBubble({ editor }: { editor: Editor }) {
+function ImageBubble({ editor, boundary }: { editor: Editor; boundary: HTMLElement }) {
   const t = useTranslations("postEditor");
+  const placement = useMemo(
+    () => ({ flip: false, shift: { boundary, padding: 8, crossAxis: true } }),
+    [boundary],
+  );
   // useEditor doesn't re-render on transactions → subscribe so the active width/align highlight tracks
   // the current selection (and the bubble re-reads the alt after each change).
   const state = useEditorState({
@@ -929,7 +995,8 @@ function ImageBubble({ editor }: { editor: Editor }) {
     <BubbleMenu
       editor={editor}
       pluginKey="imageBubble"
-      shouldShow={({ editor }) => editor.isActive("image")}
+      shouldShow={showsImageBubble}
+      options={placement}
     >
       <div
         data-testid="image-bubble"

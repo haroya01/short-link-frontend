@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Camera, ChartBar, Check, ChevronDown, Clock, ImagePlus, Loader2, MessageCircle, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ApiError } from "@/lib/api/client";
@@ -150,6 +150,7 @@ export function NoteComposer({
   const { me } = useAuth();
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
+  const scheduleId = useId();
   const camera = useCoarsePointer();
   const draftId = useRef<string | null>(draft?.id ?? null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(draft?.id ?? null);
@@ -608,23 +609,29 @@ export function NoteComposer({
           {cardUrl && linkCard && linkCard.url === cardUrl && <NoteLinkCard preview={linkCard} linked={false} />}
 
           {scheduledAt && (
-            <div className="mt-2 flex items-center gap-2 text-[13px] text-slate-600 dark:text-slate-300">
+            <div
+              data-note-schedule
+              className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-slate-600 dark:text-slate-300"
+            >
               <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <label className="inline-flex items-center gap-2">
+              <label htmlFor={scheduleId} className="whitespace-nowrap">
                 {t("scheduleLabel")}
+              </label>
+              <div className="order-last min-w-0 basis-full sm:order-none sm:basis-auto">
                 <input
+                  id={scheduleId}
                   type="datetime-local"
                   value={scheduledAt}
                   min={earliestLocal()}
                   onChange={(e) => setScheduledAt(e.target.value)}
-                  className="focus-ring rounded-surface border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
+                  className="focus-ring max-w-full rounded-surface border border-slate-200 bg-transparent px-2 py-1 text-[13px] dark:border-slate-700"
                 />
-              </label>
+              </div>
               <button
                 type="button"
                 onClick={() => setScheduledAt("")}
                 aria-label={t("scheduleRemove")}
-                className="focus-ring rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                className="focus-ring ml-auto shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200 sm:ml-0"
               >
                 <X className="h-3.5 w-3.5" aria-hidden />
               </button>
@@ -819,7 +826,7 @@ export function NoteComposer({
                 <Clock className="h-5 w-5" strokeWidth={scheduledAt ? 2.25 : 1.75} aria-hidden />
               </button>
             )}
-            <div className="flex min-w-0 flex-auto items-center gap-3">
+            <div className="flex min-w-0 flex-auto flex-wrap items-center gap-x-3 gap-y-2">
               {picksDestination && rooms.length > 0 && parts.length === 0 && (
                 <label className="relative inline-flex min-w-0 items-center gap-1 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
                   <select
@@ -831,7 +838,7 @@ export function NoteComposer({
                     }}
                     aria-label={t("destinationLabel")}
                     data-note-destination
-                    className="focus-ring min-w-0 max-w-[10rem] cursor-pointer appearance-none truncate rounded bg-transparent hover:text-slate-900 dark:hover:text-white"
+                    className="focus-ring min-w-0 max-w-[10rem] cursor-pointer appearance-none truncate rounded bg-transparent hover:text-slate-900 dark:hover:text-white max-sm:[field-sizing:content]"
                   >
                     <option value="">{t("destinationMine")}</option>
                     {rooms.map((r) => (
@@ -850,7 +857,7 @@ export function NoteComposer({
                   value={visibility ?? ""}
                   onChange={(e) => setVisibility((e.target.value || null) as NoteVisibility | null)}
                   aria-label={t("visibilityLabel")}
-                  className="focus-ring min-w-0 cursor-pointer appearance-none truncate rounded bg-transparent pr-1 hover:text-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring min-w-0 cursor-pointer appearance-none truncate rounded bg-transparent pr-1 hover:text-slate-800 dark:hover:text-slate-200 max-sm:[field-sizing:content]"
                 >
                   {inReplyToId && <option value="">{t("visibilitySameAsParent")}</option>}
                   <option value="public">{t("visibilityPublic")}</option>

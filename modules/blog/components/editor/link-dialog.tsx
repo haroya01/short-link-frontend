@@ -146,7 +146,8 @@ function LinkForm({
             type="url"
             inputMode="url"
             autoComplete="off"
-            autoFocus={!request.text || mode === "card"}
+            autoFocus
+            data-autofocus
             value={href}
             onChange={(e) => {
               setHref(e.target.value);

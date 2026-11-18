@@ -82,3 +82,33 @@ describe("stacked focus traps", () => {
     expect(innerEscape).not.toHaveBeenCalled();
   });
 });
+
+function Opening({ marked }: { marked: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useFocusTrap(ref, { active: true });
+  return (
+    <div ref={ref}>
+      <button type="button">toggle</button>
+      <input aria-label="address" data-autofocus={marked ? "" : undefined} />
+    </div>
+  );
+}
+
+describe("where focus lands when a trap opens", () => {
+  beforeEach(() => {
+    vi.stubGlobal("requestAnimationFrame", (run: FrameRequestCallback) => {
+      run(0);
+      return 0;
+    });
+  });
+
+  it("goes to the first control by default", async () => {
+    await act(async () => root.render(<Opening marked={false} />));
+    expect(document.activeElement).toBe(button("toggle"));
+  });
+
+  it("goes to the control marked data-autofocus instead", async () => {
+    await act(async () => root.render(<Opening marked />));
+    expect(document.activeElement).toBe(document.querySelector('[aria-label="address"]'));
+  });
+});

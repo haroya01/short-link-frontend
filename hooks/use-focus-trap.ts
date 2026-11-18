@@ -36,7 +36,8 @@ export function useFocusTrap(
     if (autoFocus) {
       // After a paint — the container mounts in the same commit that flips `active`.
       requestAnimationFrame(() => {
-        const target = focusableElements(ref.current)[0] ?? ref.current;
+        const preferred = ref.current?.querySelector<HTMLElement>("[data-autofocus]");
+        const target = preferred ?? focusableElements(ref.current)[0] ?? ref.current;
         target?.focus();
       });
     }
