@@ -65,7 +65,9 @@ async function render() {
   root = createRoot(host);
   await act(async () =>
     root.render(
-      createElement(MemberPostGate, { colophon: createElement("p", null, "colophon"), children: createElement("h1", null, "not found") }),
+      <MemberPostGate colophon={<p>colophon</p>}>
+        <h1>not found</h1>
+      </MemberPostGate>,
     ),
   );
 }
@@ -94,6 +96,14 @@ it("stays the 404 page when the signed-in read is a 404 too", async () => {
 
 it("stays the 404 page when the server answers with a locked card", async () => {
   mocks.readPostDetail.mockResolvedValue({ ok: true, data: detail({ audience: "FOLLOWERS", room: null, locked: { reason: "FOLLOWERS" } }) });
+  await render();
+
+  expect(host.textContent).toBe("not found");
+  expect(host.querySelector("[data-body]")).toBeNull();
+});
+
+it("stays the 404 page for a post outside rooms, whatever the signed-in read returns", async () => {
+  mocks.readPostDetail.mockResolvedValue({ ok: true, data: detail({ audience: "PUBLIC", room: null }) });
   await render();
 
   expect(host.textContent).toBe("not found");

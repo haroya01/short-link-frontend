@@ -23,7 +23,8 @@ function decoded(segment: string): string {
 }
 
 /** A room's post is 404 to the anonymous server render. A signed-in reader asks again with their own
- *  token, and the post opens in their browser when the server lets them in; the response stays a 404. */
+ *  token, and the post opens in their browser when the server lets them in; the response stays a 404.
+ *  Only a room's post opens here: any other address the server refused (a spent preview link, say) stays refused. */
 export function MemberPostGate({ children, colophon }: { children: ReactNode; colophon: ReactNode }) {
   const params = useParams<{ username: string; slug: string }>();
   const { ready, authenticated } = useAuth();
@@ -39,7 +40,8 @@ export function MemberPostGate({ children, colophon }: { children: ReactNode; co
     let live = true;
     readPostDetail(username, slug, {}).then((result) => {
       if (!live) return;
-      const detail = result.ok && result.data.post.locked == null ? result.data : null;
+      const opened = result.ok && result.data.post.locked == null && result.data.post.room != null;
+      const detail = opened ? result.data : null;
       setRead({ key, detail, failed: !result.ok && result.status === "error" });
     });
     return () => {
