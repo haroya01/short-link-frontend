@@ -239,6 +239,10 @@ export function usePostEditor(
   const setTitle = (v: string) => {
     currentDraft.current.title = v;
     setTitleRaw(v);
+    if (v.trim()) {
+      const missing = [t("titleRequired"), t("scheduledTitleRequired")];
+      setError((current) => (current != null && missing.includes(current) ? null : current));
+    }
     touchDirty();
   };
   const setSlug = (v: string) => {

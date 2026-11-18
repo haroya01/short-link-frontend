@@ -64,10 +64,10 @@ export function EditorHeader({
         onClick={onRetrySave ?? onSave}
         disabled={busy}
         data-save-failed
-        className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/15"
+        className="focus-ring inline-flex min-w-0 items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/15"
       >
-        <AlertCircle className="h-4 w-4" aria-hidden />
-        {t("saveFailedRetry")}
+        <AlertCircle className="h-4 w-4 shrink-0" aria-hidden />
+        <span className="truncate">{t("saveFailedRetry")}</span>
       </button>
     ) : null;
   return (
@@ -82,12 +82,12 @@ export function EditorHeader({
           e.preventDefault();
           onBack();
         }}
-        className="focus-ring touch-target -ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        className="focus-ring touch-target -ml-2 inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
         <ArrowLeft className="h-4 w-4" />
         <span className="hidden sm:inline">{t("backToList")}</span>
       </a>
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-1 sm:gap-2">
         {isDraft && failure ? (
           failure
         ) : isDraft ? (
@@ -95,27 +95,35 @@ export function EditorHeader({
           // reassures: 저장 중… → 저장됨, and 자동 저장 at rest so it's clear saving is automatic.
           <span
             aria-live="polite"
-            className="inline-flex items-center gap-1.5 px-2 text-[13px] font-medium text-slate-500 dark:text-slate-400"
+            className="inline-flex min-w-0 items-center gap-1.5 whitespace-nowrap px-1 text-[13px] font-medium text-slate-500 dark:text-slate-400 sm:px-2"
           >
             {saving ? (
-              t("saving")
+              <span className="truncate">{t("saving")}</span>
             ) : saved ? (
               <>
-                <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />
-                {t("saved")}
+                <Check className="h-4 w-4 shrink-0 text-accent-600 dark:text-accent-400" aria-hidden />
+                <span className="sr-only sm:not-sr-only">{t("saved")}</span>
               </>
             ) : savedTime ? (
               // 체크 2초가 지나간 쉼 상태 — "마지막 저장이 언제였나"를 시각으로.
-              <span className="text-slate-500 dark:text-slate-400">{t("savedAt", { time: savedTime })}</span>
+              <>
+                <Check className="h-4 w-4 shrink-0 text-accent-600 dark:text-accent-400 sm:hidden" aria-hidden />
+                <span className="tabular-nums sm:hidden" aria-hidden>
+                  {savedTime}
+                </span>
+                <span className="sr-only sm:not-sr-only">{t("savedAt", { time: savedTime })}</span>
+              </>
             ) : (
-              t("autoSave")
+              <span className="truncate">{t("autoSave")}</span>
             )}
           </span>
         ) : (
           // Published / unpublished / scheduled don't autosave (the live post must not change
           // mid-edit) — keep the explicit 저장 button.
           <>
-            <PostStatusBadge status={status} takenDown={takenDown} />
+            <span className="flex min-w-0 items-center overflow-hidden whitespace-nowrap">
+              <PostStatusBadge status={status} takenDown={takenDown} />
+            </span>
             {/* 공개 글은 명시 저장 — 버튼 옆 시각이 "마지막으로 반영된 때"를 말해 준다. */}
             {!saving && !saved && savedTime && (
               <span className="hidden text-[12px] text-slate-500 dark:text-slate-400 sm:inline">
@@ -127,10 +135,10 @@ export function EditorHeader({
                 type="button"
                 onClick={onSave}
                 disabled={saving || busy}
-                className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="focus-ring inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800 sm:px-3"
               >
-                {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
-                {saving ? t("saving") : saved ? t("saved") : t("save")}
+                {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" aria-hidden />}
+                {saved && !saving ? <span className="sr-only sm:not-sr-only">{t("saved")}</span> : saving ? t("saving") : t("save")}
               </button>
             )}
           </>
@@ -139,33 +147,46 @@ export function EditorHeader({
           type="button"
           onClick={onOpenPublish}
           disabled={busy}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+          className={`focus-ring inline-flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50 sm:px-4 ${
+            isDraft ? "px-3" : "px-2"
+          }`}
         >
-          {isDraft ? <Send className="h-4 w-4" /> : <Settings2 className="h-4 w-4" />}
-          {/* Already-public posts aren't being "published" — this opens metadata + 내리기/예약, so it
-              reads as 글 설정, not 발행 설정 (which only fits a draft about to go live). */}
-          {isDraft ? t("publish") : t("postSettings")}
+          {isDraft ? (
+            <>
+              <Send className="hidden h-4 w-4 sm:block" aria-hidden />
+              {t("publish")}
+            </>
+          ) : (
+            // Already-public posts aren't being "published" — this opens metadata + 내리기/예약, so it
+            // reads as 글 설정, not 발행 설정 (which only fits a draft about to go live).
+            <>
+              <Settings2 className="h-4 w-4" aria-hidden />
+              <span className="sr-only sm:not-sr-only">{t("postSettings")}</span>
+            </>
+          )}
         </button>
-        {preview}
-        {postId != null && <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />}
-        <button
-          type="button"
-          onClick={onExport}
-          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300"
-          title={t("exportMd")}
-          aria-label={t("exportMd")}
-        >
-          <Download className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          disabled={busy}
-          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-red-500/15 dark:hover:text-red-400"
-          title={t("delete")}
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          {preview}
+          {postId != null && <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />}
+          <button
+            type="button"
+            onClick={onExport}
+            className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+            title={t("exportMd")}
+            aria-label={t("exportMd")}
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={busy}
+            className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-red-500/15 dark:hover:text-red-400"
+            title={t("delete")}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

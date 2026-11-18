@@ -2,7 +2,7 @@ import CodeBlock from "@tiptap/extension-code-block";
 import { InputRule, type Editor } from "@tiptap/core";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import type { EditorView as PMEditorView, ViewMutationRecord } from "@tiptap/pm/view";
-import { codeBlockFrame } from "@/modules/blog/components/editor/code-block-frame";
+import { codeBlockFrame, showLanguage } from "@/modules/blog/components/editor/code-block-frame";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 
 type CodeMirrorModule = typeof import("@/modules/blog/components/editor/codemirror-node-view");
@@ -58,7 +58,7 @@ class PlainCodeView {
   update(node: PMNode): boolean {
     if (node.type !== this.node.type || codeMirror) return false;
     this.node = node;
-    this.languageSelect.value = node.attrs.language || "";
+    showLanguage(this.languageSelect, node.attrs.language || "");
     return true;
   }
 

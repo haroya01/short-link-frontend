@@ -4,6 +4,51 @@ const CODE_LANGUAGES = [
   "sql", "yaml", "bash", "markdown",
 ];
 
+const LANGUAGE_ALIASES = new Map<string, string>([
+  ["js", "javascript"],
+  ["mjs", "javascript"],
+  ["cjs", "javascript"],
+  ["node", "javascript"],
+  ["ts", "typescript"],
+  ["py", "python"],
+  ["python3", "python"],
+  ["kt", "kotlin"],
+  ["golang", "go"],
+  ["rs", "rust"],
+  ["c++", "cpp"],
+  ["cxx", "cpp"],
+  ["cs", "csharp"],
+  ["c#", "csharp"],
+  ["rb", "ruby"],
+  ["yml", "yaml"],
+  ["sh", "bash"],
+  ["shell", "bash"],
+  ["zsh", "bash"],
+  ["md", "markdown"],
+  ["htm", "html"],
+  ["text", ""],
+  ["txt", ""],
+  ["plain", ""],
+  ["plaintext", ""],
+]);
+
+export function pickerLanguage(language: string): string {
+  const key = language.trim().toLowerCase();
+  return LANGUAGE_ALIASES.get(key) ?? (CODE_LANGUAGES.includes(key) ? key : language);
+}
+
+export function showLanguage(select: HTMLSelectElement, language: string) {
+  const value = pickerLanguage(language);
+  if (!Array.from(select.options).some((opt) => opt.value === value)) {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = value;
+    opt.className = "bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100";
+    select.append(opt);
+  }
+  select.value = value;
+}
+
 export interface CodeBlockFrame {
   dom: HTMLElement;
   languageSelect: HTMLSelectElement;
@@ -38,7 +83,7 @@ export function codeBlockFrame(languageLabel: string, language: string): CodeBlo
     opt.className = "bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100";
     languageSelect.append(opt);
   }
-  languageSelect.value = language;
+  showLanguage(languageSelect, language);
   languageSelect.addEventListener("mousedown", (e) => e.stopPropagation());
   bar.append(dots, languageSelect);
 
