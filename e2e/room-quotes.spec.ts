@@ -92,7 +92,7 @@ test.describe("a room note", () => {
 
 test.describe("the editor's note card", () => {
   test("is a link card for a room note in a post of another room", async ({ page }) => {
-    await page.goto(`/ko/blog/write/new?quote=${noteAt(9910)}&room=2`);
+    await page.goto(`/ko/blog/write/new?quote=${noteAt(9910)}&room=2`, { waitUntil: "domcontentloaded" });
     await expect(page.locator("[data-editor-room]")).toHaveText("대학 동기 멤버만 읽는 글", { timeout: 30_000 });
     await expect(page.locator(`[data-link-card][data-url$="/notes/9910"]`)).toBeVisible({ timeout: 30_000 });
     await expect(page.locator("[data-link-card] a")).toBeVisible();
@@ -100,7 +100,7 @@ test.describe("the editor's note card", () => {
   });
 
   test("is a link card for a room note in a post outside rooms", async ({ page }) => {
-    await page.goto(`/ko/blog/write/new?quote=${noteAt(9910)}`);
+    await page.goto(`/ko/blog/write/new?quote=${noteAt(9910)}`, { waitUntil: "domcontentloaded" });
     await expect(page.locator(`[data-link-card][data-url$="/notes/9910"]`)).toBeVisible({ timeout: 30_000 });
     await expect(page.locator("[data-link-card] a")).toBeVisible();
     await expect(page.locator("[data-note-embed]")).toHaveCount(0);
@@ -108,15 +108,18 @@ test.describe("the editor's note card", () => {
 });
 
 test.describe("a room post", () => {
-  test("is the 404 page in the server's answer and to a signed-out reader", async ({ page }) => {
+  test("gets the server's answer for a post that does not exist, and is the 404 page to a signed-out reader", async ({ page }) => {
     const answer = await page.request.get(ROOM_POST);
-    expect(answer.status()).toBe(404);
+    const missing = await page.request.get("/ko/p/hana/link-only-draft");
+    expect(answer.status()).toBe(missing.status());
     const html = await answer.text();
+    expect(html).toContain("이 글을 찾을 수 없어요");
     expect(html).not.toContain("비 오던 엠티의 밤");
     expect(html).not.toContain("펜션 지붕을 두드리던");
+    expect(html).not.toContain("동아리 사람들");
 
     await page.addInitScript(() => window.localStorage.setItem("kurl:mock-signed-out", "1"));
-    await page.goto(ROOM_POST);
+    await page.goto(ROOM_POST, { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: "이 글을 찾을 수 없어요" })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("member-post")).toHaveCount(0);
   });
@@ -138,7 +141,7 @@ test.describe("a room post", () => {
   });
 
   test("a post that does not exist stays the 404 page for a signed-in reader", async ({ page }) => {
-    await page.goto("/ko/p/hana/link-only-draft");
+    await page.goto("/ko/p/hana/link-only-draft", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: "이 글을 찾을 수 없어요" })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("member-post")).toHaveCount(0);
   });

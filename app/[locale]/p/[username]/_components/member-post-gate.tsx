@@ -22,8 +22,9 @@ function decoded(segment: string): string {
   }
 }
 
-/** A room's post is 404 to the anonymous server render. A signed-in reader asks again with their own
- *  token, and the post opens in their browser when the server lets them in; the response stays a 404.
+/** A room's post does not exist for the anonymous server render. A signed-in reader asks again with
+ *  their own token, and the post opens in their browser when the server lets them in; the page the
+ *  server sent stays the one for a post that does not exist.
  *  Only a room's post opens here: any other address the server refused (a spent preview link, say) stays refused. */
 export function MemberPostGate({ children, colophon }: { children: ReactNode; colophon: ReactNode }) {
   const params = useParams<{ username: string; slug: string }>();
