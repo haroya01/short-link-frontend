@@ -37,6 +37,16 @@ export function useTopics(limit = TOPICS_LIMIT, enabled = true): Topics {
   };
 }
 
+const NOTHING: RemoteNotes = {
+  state: "ready",
+  pages: [],
+  hasMore: false,
+  loadingMore: false,
+  moreFailed: false,
+  stalled: false,
+  more: () => {},
+};
+
 function matches(topic: Topic, target: TopicTarget): boolean {
   if ("tag" in target) return topic.kind === "tag" && topic.tag.toLowerCase() === target.tag.toLowerCase();
   return topic.kind === "link" && sameLink(topic.url, target.url);
@@ -56,14 +66,16 @@ export function useTopicPosts(target: TopicTarget): { notes: RemoteNotes; topic:
   const listed = useListedTopic(target);
   const kind = "tag" in target ? "tag" : "url";
   const value = "tag" in target ? target.tag : target.url;
+  const blank = value.trim() === "";
   const { data, isError, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["notes", "topic-posts", kind, value, authenticated ? "member" : "anonymous"],
       queryFn: ({ pageParam }) => listTopicPosts(target, pageParam),
       initialPageParam: null as string | null,
       getNextPageParam: (last) => last.next,
-      enabled: ready,
+      enabled: ready && !blank,
     });
+  if (blank) return { topic: null, notes: NOTHING };
   if (data) {
     return {
       topic: data.pages[0]?.topic ?? null,

@@ -4,18 +4,10 @@ import { ArrowUpRight, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
 import { PageLinkProvider } from "@/modules/notes/lib/page-link";
-import { sameLink } from "@/modules/notes/lib/topics";
+import { linkHost, sameLink } from "@/modules/notes/lib/topics";
 import { useTopicPosts } from "@/modules/notes/lib/use-topics";
 import type { RemoteNotes } from "@/modules/notes/lib/use-remote-trending";
 import { TopicPosts } from "./topic-posts";
-
-function linkHost(url: string): string {
-  try {
-    return new URL(url).host;
-  } catch {
-    return url;
-  }
-}
 
 function isWebUrl(url: string): boolean {
   try {

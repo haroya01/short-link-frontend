@@ -192,6 +192,13 @@ describe("a topic's posts", () => {
     expect(loaded().pages[0].items).toHaveLength(1);
   });
 
+  it("asks nothing for a blank tag or address and has nothing to show", async () => {
+    await render(<Posts tag=" " />);
+    expect(mocks.listTopicPosts).not.toHaveBeenCalled();
+    expect(loaded()).toMatchObject({ pages: [], hasMore: false });
+    expect(seen.topic).toBeNull();
+  });
+
   it("shows the topic the list already gave while the posts load, matching the tag whatever its case", async () => {
     client.setQueryData(["explore", "topics", 20, "anonymous"], [{ ...snow, tag: "Suica", id: "tag:suica" }]);
     mocks.listTopicPosts.mockReturnValue(new Promise(() => {}));
