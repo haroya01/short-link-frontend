@@ -75,7 +75,7 @@ test.describe("a room note", () => {
     await dialog.getByRole("textbox").first().fill("쓰다 만 인용");
     await dialog.getByRole("button", { name: "취소" }).click();
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByTestId("toast")).toHaveCount(0);
+    expect(await page.getByTestId("toast").count()).toBe(0);
     expect(await page.evaluate(() => window.localStorage.getItem("kurl:note-drafts:1"))).toBeNull();
   });
 
