@@ -20,7 +20,7 @@ jobs:
   visual:
     # Playwright 1.59.1 has no browser install for ubuntu-26.04; unpin together with a Playwright upgrade.
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
     env:
       # Visual fixtures are static — don't need a real backend. Build still expects this var
       # to be defined; pointing at a noop URL keeps the build happy.
@@ -37,6 +37,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Build Next.js
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
       - name: Start Next.js
         run: |
