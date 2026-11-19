@@ -179,6 +179,22 @@ describe("a topic's posts", () => {
     expect(loaded().pages).toHaveLength(2);
   });
 
+  it("says it is refreshing while the posts it shows are asked for again", async () => {
+    let settle!: (value: TopicPostsPage) => void;
+    const again = new Promise<TopicPostsPage>((resolve) => (settle = resolve));
+    mocks.listTopicPosts.mockResolvedValueOnce(page(["a"], "t1")).mockReturnValueOnce(again);
+    await render(<Posts key="first" />);
+    expect(loaded()).toMatchObject({ refreshing: false, hasMore: true });
+
+    await render(<Posts key="again" />);
+    expect(mocks.listTopicPosts).toHaveBeenCalledTimes(2);
+    expect(loaded()).toMatchObject({ refreshing: true, loadingMore: false });
+
+    await act(async () => settle(page(["a"], "t1")));
+    await flush();
+    expect(loaded().refreshing).toBe(false);
+  });
+
   it("says failed when the first page fails", async () => {
     mocks.listTopicPosts.mockRejectedValue(new Error("503"));
     await render(<Posts />);

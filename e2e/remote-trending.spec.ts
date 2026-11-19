@@ -2,6 +2,7 @@ import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 import { remoteTrendingItem as trending } from "./helpers/remote-notes";
+import { topicTag } from "./helpers/topics";
 
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -190,6 +191,45 @@ test("a page that fails further down says so under the list, and 다시 시도 p
   await group.getByRole("button", { name: "다시 시도" }).click();
   await expect(group.locator("[data-remote-uri]")).toHaveCount(7);
   expect(seen.trending).toEqual(["?limit=20", "?limit=20&cursor=t5", "?limit=20&cursor=t5"]);
+});
+
+test("a list that is being refreshed when its end comes into view loads the next page once the refresh is in", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await signIn(page);
+  const refreshed = gate();
+  let firstPages = 0;
+  const seen = await serve(page, {
+    trending: async (route) => {
+      if (cursorOf(route) === "r") return route.fulfill({ json: { items: [RECEIVED], next: null } });
+      firstPages += 1;
+      if (firstPages > 1) await refreshed.opened;
+      await route.fulfill({ json: { items: ITEMS, next: "r" } });
+    },
+  });
+  await page.route("**/api/v1/federation/topics*", (route) =>
+    route.fulfill({ json: { items: Array.from({ length: 10 }, (_, i) => topicTag(`주제${i + 1}`)) } }),
+  );
+  const { group } = await open(page);
+  await expect(group.locator("[data-remote-uri]")).toHaveCount(7, { timeout: 30_000 });
+  expect(seen.trending).toEqual(["?limit=20"]);
+
+  await page.clock.fastForward("06:00");
+  const nav = page.getByRole("navigation");
+  await nav.getByRole("link", { name: "홈" }).click();
+  await expect(group).toHaveCount(0);
+  await nav.getByRole("link", { name: "둘러보기" }).click();
+  await expect(group.locator("[data-remote-uri]")).toHaveCount(7);
+  await expect.poll(() => seen.trending).toEqual(["?limit=20", "?limit=20"]);
+
+  await scrollToEnd(page);
+  await expect(group.getByRole("button", { name: "더 보기" })).toBeInViewport();
+  expect(seen.trending).toHaveLength(2);
+  refreshed.open();
+
+  await expect(group.locator('article[data-note-id="12"]')).toBeVisible();
+  expect(seen.trending).toEqual(["?limit=20", "?limit=20", "?limit=20&cursor=r"]);
 });
 
 test("liking brings the post over by its AP id, then likes the local note, and the post is brought over once", async ({

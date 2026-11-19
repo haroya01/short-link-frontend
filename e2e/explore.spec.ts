@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { batchIntersectionReports } from "./helpers/batched-intersections";
 import { scrollUntilPresent } from "./helpers/scroll-until";
 
 // Mock-on lane: signed in as @dohyun. 둘러보기 is a search box over two lanes, 트렌드 · 사람. 트렌드 is what
@@ -67,6 +68,21 @@ test("트렌드 ranks what is going around, the reader's language first and 다�
   await expect(lane.locator("[data-post-id]")).toHaveCount(0);
   await expect(page.getByTestId("explore-people-strip")).toHaveCount(0);
   await expect(page).toHaveURL(/\/explore$/);
+});
+
+test("인기 글 loads its next page when its end comes into view, even when the browser reports that in one batch with an earlier out-of-view report", async ({
+  page,
+}) => {
+  const outOfViewHeld = await batchIntersectionReports(page, '[data-testid="remote-feed"] [role="status"]');
+  await open(page);
+  const remote = page.getByTestId("explore-trends").getByTestId("remote-feed");
+  await expect(remote.locator("[data-remote-uri]")).toHaveCount(7, { timeout: 30_000 });
+  await expect(remote.getByRole("button", { name: "더 보기" })).toBeVisible();
+  await outOfViewHeld();
+
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect(remote.locator('article[data-note-id="13"]')).toBeVisible();
+  await expect(remote.getByRole("button", { name: "더 보기" })).toHaveCount(0);
 });
 
 test("더 보기 lays the longer list out in place, numbered on, and goes away", async ({ page }) => {
