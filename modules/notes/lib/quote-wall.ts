@@ -33,3 +33,9 @@ export function postQuotableIn(post: WalledPost, roomId: number | null): boolean
   const audience = post.audience ?? "PUBLIC";
   return audience === "PUBLIC" || audience === "FOLLOWERS" || audience === "PASSWORD";
 }
+
+/** Whether the server would take any quote of this post: one posted in its room for a room's post,
+ *  one posted anywhere for an open post, none for a link-only post. */
+export function postQuotable(post: WalledPost): boolean {
+  return postQuotableIn(post, post.room?.id ?? null);
+}

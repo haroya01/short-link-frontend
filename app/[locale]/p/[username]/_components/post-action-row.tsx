@@ -2,7 +2,9 @@ import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { ShareButton } from "@/modules/blog/components/share-button";
+import type { PostAudience } from "@/modules/blog/lib/post-audience";
 import type { NoteRoom } from "@/modules/notes/api/notes";
+import { postQuotable } from "@/modules/notes/lib/quote-wall";
 import { PostReaderMenu } from "./post-reader-menu";
 
 /**
@@ -20,6 +22,7 @@ export function PostActionRow({
   locale,
   menuOnlyBelowWide = false,
   room = null,
+  audience = null,
 }: {
   postId: number;
   postTitle: string;
@@ -30,6 +33,7 @@ export function PostActionRow({
   locale: string;
   menuOnlyBelowWide?: boolean;
   room?: NoteRoom | null;
+  audience?: PostAudience | null;
 }) {
   return (
     <div data-post-action-row className="flex items-center gap-1">
@@ -48,6 +52,7 @@ export function PostActionRow({
         locale={locale}
         withShare={menuOnlyBelowWide && !room}
         room={room}
+        quotable={postQuotable({ audience, room })}
       />
     </div>
   );

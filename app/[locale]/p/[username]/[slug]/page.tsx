@@ -256,7 +256,14 @@ export default async function PublicPostPage({
         actions={
           lock
             ? null
-            : { postId: post.id, postTitle: post.title, postSlug: post.slug, postUrl, likeCount: post.likeCount }
+            : {
+                postId: post.id,
+                postTitle: post.title,
+                postSlug: post.slug,
+                postUrl,
+                likeCount: post.likeCount,
+                audience: post.audience,
+              }
         }
       />
 
@@ -342,6 +349,7 @@ export default async function PublicPostPage({
             likeCount={post.likeCount}
             authorUsername={author.username}
             locale={locale}
+            audience={post.audience}
           />
         </footer>
 
@@ -351,7 +359,13 @@ export default async function PublicPostPage({
 
         <PostAuthorCard author={author} locale={locale} postId={post.id} />
 
-        <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
+        <PostComments
+          postId={post.id}
+          authorUsername={author.username}
+          title={post.title}
+          slug={post.slug}
+          audience={post.audience}
+        />
 
         <Suspense fallback={null}>
           <PostCollections postId={post.id} />

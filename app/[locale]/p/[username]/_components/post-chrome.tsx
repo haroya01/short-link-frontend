@@ -27,7 +27,7 @@ const BYLINE_NAME =
 
 type HeaderActions = Pick<
   ComponentProps<typeof PostActionRow>,
-  "postId" | "postTitle" | "postSlug" | "postUrl" | "likeCount" | "room"
+  "postId" | "postTitle" | "postSlug" | "postUrl" | "likeCount" | "room" | "audience"
 >;
 
 /** Left rail (xl+): a persistent author identity + follow that stays once the in-article header

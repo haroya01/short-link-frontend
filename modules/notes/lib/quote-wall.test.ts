@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { PostAudience } from "@/modules/blog/lib/post-audience";
 import type { NoteVisibility } from "@/modules/notes/api/notes";
-import { noteQuotableIn, postQuotableIn, quoteListedOn, quoteRoom } from "./quote-wall";
+import { noteQuotableIn, postQuotable, postQuotableIn, quoteListedOn, quoteRoom } from "./quote-wall";
 
 const CLUB = { id: 1, name: "동아리 사람들" };
 const FAMILY = { id: 5, name: "우리 가족" };
@@ -56,6 +56,18 @@ describe("where a post may be quoted", () => {
   it("a room post that arrives without its room goes nowhere", () => {
     expect(postQuotableIn({ audience: "ROOM" }, CLUB.id)).toBe(false);
     expect(postQuotableIn({ audience: "ROOM" }, OUTSIDE)).toBe(false);
+  });
+});
+
+describe("whether a post offers a quote at all", () => {
+  it("does for an open post and for a room's post, and not for a link-only post", () => {
+    expect(postQuotable({ audience: "PUBLIC" })).toBe(true);
+    expect(postQuotable({ audience: "FOLLOWERS" })).toBe(true);
+    expect(postQuotable({ audience: "PASSWORD" })).toBe(true);
+    expect(postQuotable({})).toBe(true);
+    expect(postQuotable({ audience: "ROOM", room: CLUB })).toBe(true);
+    expect(postQuotable({ audience: "UNLISTED" })).toBe(false);
+    expect(postQuotable({ audience: "ROOM" })).toBe(false);
   });
 });
 

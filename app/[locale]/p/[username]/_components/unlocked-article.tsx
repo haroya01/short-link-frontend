@@ -96,13 +96,21 @@ export function UnlockedArticle({
           authorUsername={author.username}
           locale={locale}
           room={room}
+          audience={post.audience}
         />
       </footer>
 
       <div data-post-end aria-hidden />
 
       <PostAuthorCard author={author} locale={locale} postId={post.id} />
-      <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} room={room} />
+      <PostComments
+        postId={post.id}
+        authorUsername={author.username}
+        title={post.title}
+        slug={post.slug}
+        room={room}
+        audience={post.audience}
+      />
       <ReadingResume postKey={`${author.username}/${post.slug}`} />
       <PublishCelebration slug={post.slug} />
       <LegacyHeadingHash headings={headings} />

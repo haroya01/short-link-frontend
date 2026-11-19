@@ -263,6 +263,22 @@ test.describe("quotes already in a room", () => {
   });
 });
 
+test("a link-only post offers no 노트로 인용, which the server would refuse; an open post does", async ({ page }) => {
+  await page.goto("/ko/p/hana/link-only-draft?k=mock-unlisted-key", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { level: 1, name: "링크로만 나누는 초안" })).toBeVisible({ timeout: 30_000 });
+  for (const row of [page.locator("[data-post-actions]"), page.getByTestId("post-actions")]) {
+    await row.getByRole("button", { name: "글 메뉴" }).click();
+    await expect(row.getByRole("menuitem", { name: "신고" })).toBeVisible();
+    await expect(row.getByRole("menuitem", { name: "노트로 인용" })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+  }
+
+  await page.goto("/ko/p/hana/open-letter", { waitUntil: "domcontentloaded" });
+  const open = page.getByTestId("post-actions");
+  await open.getByRole("button", { name: "글 메뉴" }).click({ timeout: 30_000 });
+  await expect(open.getByRole("menuitem", { name: "노트로 인용" })).toBeVisible();
+});
+
 test("my own note from a room I left reads without the room post it quoted", async ({ page }) => {
   await page.goto("/ko/p/dohyun/notes/9920", { waitUntil: "domcontentloaded" });
   const note = page.locator('article[data-note-id="9920"]');

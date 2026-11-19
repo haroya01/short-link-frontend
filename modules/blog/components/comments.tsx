@@ -29,7 +29,8 @@ import { useLikeFailed } from "@/hooks/use-like-failed";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
 import { listPostQuotes, type Note, type NoteRoom, type PostQuotes } from "@/modules/notes/api/notes";
-import { quoteListedOn } from "@/modules/notes/lib/quote-wall";
+import { postQuotable, quoteListedOn } from "@/modules/notes/lib/quote-wall";
+import type { PostAudience } from "@/modules/blog/lib/post-audience";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteList } from "@/modules/notes/components/note-list";
@@ -60,12 +61,14 @@ export function PostComments({
   title,
   slug,
   room = null,
+  audience = null,
 }: {
   postId: number;
   authorUsername: string;
   title: string;
   slug: string;
   room?: NoteRoom | null;
+  audience?: PostAudience | null;
 }) {
   const t = useTranslations("comments");
   const tCommon = useTranslations("common");
@@ -545,7 +548,9 @@ export function PostComments({
         <div className="mt-4" role="tabpanel" data-testid="post-quote-notes">
           <div className="mb-2 flex items-center justify-between gap-3">
             <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("notesTabHint")}</p>
-            <QuoteInNoteButton postId={postId} title={title} slug={slug} authorUsername={authorUsername} room={room} />
+            {postQuotable({ audience, room }) && (
+              <QuoteInNoteButton postId={postId} title={title} slug={slug} authorUsername={authorUsername} room={room} />
+            )}
           </div>
           <NoteList
             load={loadQuotes}

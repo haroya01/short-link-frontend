@@ -122,6 +122,7 @@ function MemberPost({ detail, colophon }: { detail: PublicPostDetail; colophon: 
             postUrl,
             likeCount: post.likeCount,
             room,
+            audience: post.audience,
           }}
         />
         <AuthorGate username={author.username} subject="post">

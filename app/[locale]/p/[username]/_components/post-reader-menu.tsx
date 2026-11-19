@@ -34,6 +34,7 @@ export function PostReaderMenu({
   locale,
   withShare = true,
   room = null,
+  quotable = true,
 }: {
   postId: number;
   authorUsername: string;
@@ -43,6 +44,8 @@ export function PostReaderMenu({
   locale: string;
   withShare?: boolean;
   room?: NoteRoom | null;
+  /** False where the server would refuse the quote (a link-only post), so the item is not offered. */
+  quotable?: boolean;
 }) {
   const t = useTranslations("notes");
   const tp = useTranslations("publicPost");
@@ -153,17 +156,19 @@ export function PostReaderMenu({
               {ts("label")}
             </button>
           )}
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false);
-              quote.start();
-            }}
-            className={item}
-          >
-            {t("quoteAction")}
-          </button>
+          {quotable && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                quote.start();
+              }}
+              className={item}
+            >
+              {t("quoteAction")}
+            </button>
+          )}
           {authenticated && !own && (
             <button
               type="button"
