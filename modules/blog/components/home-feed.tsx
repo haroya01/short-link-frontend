@@ -354,7 +354,7 @@ function HomeList({
   useEffect(() => {
     const el = sentinel.current;
     if (!el || !autoLoad) return;
-    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && void fetchNextPage(), {
+    const io = new IntersectionObserver((entries) => entries.some((entry) => entry.isIntersecting) && void fetchNextPage(), {
       rootMargin: "600px 0px",
     });
     io.observe(el);

@@ -144,7 +144,7 @@ export function RoomTimeline({ roomId }: { roomId: number }) {
   useEffect(() => {
     const el = sentinel.current;
     if (!el || !hasNext || loadingMore) return;
-    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && void more(), {
+    const io = new IntersectionObserver((entries) => entries.some((entry) => entry.isIntersecting) && void more(), {
       rootMargin: "600px 0px",
     });
     io.observe(el);
