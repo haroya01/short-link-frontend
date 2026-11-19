@@ -820,6 +820,105 @@ describe("autosave cadence", () => {
     expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: expect.stringMatching(/^쉬지 않고 (19|20|21)$/) }], {});
   });
 
+  it("does not save again at once when the writer typed while an autosave was on its way", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+    let live = "첫 문장";
+    editor.liveMarkdown.current = () => live;
+
+    const onItsWay = deferred<[]>();
+    api.replaceBlocks.mockReturnValueOnce(onItsWay.promise);
+    await act(async () => { editor.setMarkdown(live); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(4000); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+
+    live = "첫 문장 그리고 그사이에 친 문장";
+    await act(async () => { editor.markDirty(); });
+    await act(async () => { onItsWay.resolve([]); await vi.advanceTimersByTimeAsync(0); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+    expect(editor.saving).toBe(false);
+    expect(isEditorDirty()).toBe(true);
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(3900); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+    await act(async () => { await vi.advanceTimersByTimeAsync(200); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(2);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: live }], {});
+    expect(isEditorDirty()).toBe(false);
+  });
+
+  it("sends what was typed meanwhile within twenty seconds of that save leaving, while the writer never pauses", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+    let live = "첫 문장";
+    editor.liveMarkdown.current = () => live;
+
+    const onItsWay = deferred<[]>();
+    api.replaceBlocks.mockReturnValueOnce(onItsWay.promise);
+    await act(async () => { editor.setMarkdown(live); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(4000); });
+    live = "첫 문장 다음";
+    await act(async () => { editor.markDirty(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(3000); });
+    await act(async () => { onItsWay.resolve([]); await vi.advanceTimersByTimeAsync(0); });
+
+    for (let second = 1; second <= 16; second++) {
+      live = `쉬지 않고 ${second}`;
+      await act(async () => { editor.setMarkdown(live); });
+      await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    }
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(1);
+    await act(async () => { await vi.advanceTimersByTimeAsync(1100); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(2);
+  });
+
+  it("still sends the words typed meanwhile before leaving, when Back joins an autosave on its way", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+    let live = "첫 문장";
+    editor.liveMarkdown.current = () => live;
+
+    const onItsWay = deferred<[]>();
+    api.replaceBlocks.mockReturnValueOnce(onItsWay.promise);
+    await act(async () => { editor.setMarkdown(live); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(4000); });
+    live = "첫 문장 그리고 나가기 직전의 문장";
+    await act(async () => { editor.markDirty(); });
+    let leaving!: Promise<void>;
+    await act(async () => { leaving = editor.leave(); });
+    expect(router.push).not.toHaveBeenCalled();
+
+    await act(async () => { onItsWay.resolve([]); await leaving; });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(2);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: live }], {});
+    expect(api.replaceBlocks.mock.invocationCallOrder[1]).toBeLessThan(router.push.mock.invocationCallOrder[0]);
+  });
+
+  it("still sends the words typed meanwhile when the tab goes to the background during an autosave", async () => {
+    await mount();
+    await act(async () => { await editor.save(); });
+    vi.clearAllMocks();
+    let live = "첫 문장";
+    editor.liveMarkdown.current = () => live;
+
+    const onItsWay = deferred<[]>();
+    api.replaceBlocks.mockReturnValueOnce(onItsWay.promise);
+    await act(async () => { editor.setMarkdown(live); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(4000); });
+    live = "첫 문장 그리고 탭을 떠나기 직전의 문장";
+    await act(async () => { editor.markDirty(); });
+    const visibility = vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    await act(async () => { document.dispatchEvent(new Event("visibilitychange")); });
+    visibility.mockRestore();
+
+    await act(async () => { onItsWay.resolve([]); await vi.advanceTimersByTimeAsync(0); });
+    expect(api.replaceBlocks).toHaveBeenCalledTimes(2);
+    expect(api.replaceBlocks).toHaveBeenLastCalledWith(16, [{ type: "PARAGRAPH", content: live }], {});
+  });
+
   it("sends only the part that changed: the body alone, or the title alone", async () => {
     await mount();
     await act(async () => { await editor.save(); });
