@@ -31,6 +31,7 @@ export type RemoteNotes =
       pages: RemoteNotesPage[];
       hasMore: boolean;
       loadingMore: boolean;
+      refreshing: boolean;
       moreFailed: boolean;
       stalled: boolean;
       more: () => void;
@@ -48,7 +49,7 @@ function remoteNotesKey(view: RemoteView, member: boolean, hide: boolean) {
 
 export function useRemoteNotes(view: RemoteView, enabled = true, hide = false): RemoteNotes {
   const { ready, authenticated } = useAuth();
-  const { data, isError, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+  const { data, isError, isRefetching, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: remoteNotesKey(view, authenticated, hide),
       queryFn: ({ pageParam }) =>
@@ -69,6 +70,7 @@ export function useRemoteNotes(view: RemoteView, enabled = true, hide = false): 
       pages: data.pages,
       hasMore: hasNextPage,
       loadingMore: isFetchingNextPage || chain,
+      refreshing: isRefetching,
       moreFailed: isFetchNextPageError,
       stalled: empties > EMPTY_PAGE_CHAIN,
       more: () => void fetchNextPage({ cancelRefetch: false }),

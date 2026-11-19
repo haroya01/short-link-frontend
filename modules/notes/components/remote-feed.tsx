@@ -122,13 +122,13 @@ function RemoteNotesList({ view }: { view: RemoteView }) {
 export function RemoteMore({ notes }: { notes: Extract<RemoteNotes, { state: "ready" }> }) {
   const tFeed = useTranslations("publicFeed");
   const sentinel = useRef<HTMLDivElement>(null);
-  const { hasMore, moreFailed, loadingMore, stalled, more } = notes;
-  const autoLoad = hasMore && !moreFailed && !loadingMore;
+  const { hasMore, moreFailed, loadingMore, refreshing, stalled, more } = notes;
+  const autoLoad = hasMore && !moreFailed && !loadingMore && !refreshing;
 
   useEffect(() => {
     const el = sentinel.current;
     if (!el || !autoLoad || stalled) return;
-    const io = new IntersectionObserver((entries) => entries[0]?.isIntersecting && more(), {
+    const io = new IntersectionObserver((entries) => entries.some((entry) => entry.isIntersecting) && more(), {
       rootMargin: "600px 0px",
     });
     io.observe(el);

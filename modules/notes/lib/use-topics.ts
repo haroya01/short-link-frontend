@@ -42,6 +42,7 @@ const NOTHING: RemoteNotes = {
   pages: [],
   hasMore: false,
   loadingMore: false,
+  refreshing: false,
   moreFailed: false,
   stalled: false,
   more: () => {},
@@ -67,7 +68,7 @@ export function useTopicPosts(target: TopicTarget): { notes: RemoteNotes; topic:
   const kind = "tag" in target ? "tag" : "url";
   const value = "tag" in target ? target.tag : target.url;
   const blank = value.trim() === "";
-  const { data, isError, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+  const { data, isError, isRefetching, isFetchNextPageError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["notes", "topic-posts", kind, value, authenticated ? "member" : "anonymous"],
       queryFn: ({ pageParam }) => listTopicPosts(target, pageParam),
@@ -84,6 +85,7 @@ export function useTopicPosts(target: TopicTarget): { notes: RemoteNotes; topic:
         pages: data.pages,
         hasMore: hasNextPage,
         loadingMore: isFetchingNextPage,
+        refreshing: isRefetching,
         moreFailed: isFetchNextPageError,
         stalled: false,
         more: () => void fetchNextPage({ cancelRefetch: false }),
