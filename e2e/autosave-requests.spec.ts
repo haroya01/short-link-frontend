@@ -27,21 +27,26 @@ const POST = {
 };
 const ME = { id: 1, email: "e2e@kurl.test", role: "USER", createdAt: NOW, username: "e2euser" };
 
-type Saves = { patch: number; put: number; lastBody: string };
+type Saves = { patch: number; put: number; lastBody: string; onTheirWay: (() => void)[] };
 
-async function openDraft(page: Page): Promise<Saves> {
-  const saves: Saves = { patch: 0, put: 0, lastBody: "" };
+async function openDraft(page: Page, { held = false } = {}): Promise<Saves> {
+  const saves: Saves = { patch: 0, put: 0, lastBody: "", onTheirWay: [] };
+  const answer = () => (held ? new Promise<void>((land) => saves.onTheirWay.push(land)) : Promise.resolve());
   await page.route("**/api/v1/**", (route) => route.fulfill({ status: 200, contentType: "application/json", body: "[]" }));
   await page.route("**/api/v1/users/me", (route) => route.fulfill({ json: ME }));
-  await page.route(`**/api/v1/posts/${POST_ID}`, (route) => {
-    if (route.request().method() === "PATCH") saves.patch += 1;
+  await page.route(`**/api/v1/posts/${POST_ID}`, async (route) => {
+    if (route.request().method() === "PATCH") {
+      saves.patch += 1;
+      await answer();
+    }
     return route.fulfill({ json: POST });
   });
-  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, async (route) => {
     if (route.request().method() === "PUT") {
       saves.put += 1;
       const blocks = (route.request().postDataJSON()?.blocks ?? []) as { content: string | null }[];
       saves.lastBody = blocks.map((b) => b.content ?? "").join("\n");
+      await answer();
     }
     return route.fulfill({ json: [] });
   });
@@ -73,8 +78,35 @@ test("a minute of writing saves on pauses and at most every twenty seconds, send
   await expect.poll(() => saves.lastBody).toContain("문장 16을 쓴다.");
 
   test.info().annotations.push({ type: "saves in the minute", description: `PATCH ${during.patch}, PUT ${during.put}` });
-  expect(during.put).toBeLessThanOrEqual(5);
-  expect(during.patch).toBeLessThanOrEqual(2);
+  expect(during.put).toBeLessThanOrEqual(3);
+  expect(during.patch).toBeLessThanOrEqual(1);
+});
+
+test("a save that lands while the writer is typing does not start another; those words go out on the next pause", async ({ page }) => {
+  const saves = await openDraft(page, { held: true });
+  const land = () => saves.onTheirWay.splice(0).forEach((answer) => answer());
+  const status = page.locator("main textarea").first().locator("xpath=../div[1]").locator("[aria-live]");
+
+  await page.locator('textarea[autocomplete="off"]').first().fill("한 편의 글");
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("문장 1을 쓴다. ");
+  await page.clock.runFor(4500);
+  await expect.poll(() => saves.patch).toBe(1);
+
+  await page.keyboard.type("문장 2를 쓴다. ");
+  land();
+  await expect.poll(() => saves.put).toBe(1);
+  await page.keyboard.type("문장 3을 쓴다. ");
+  land();
+  await expect(status).toContainText(/\d{2}:\d{2}/);
+  expect(saves.put).toBe(1);
+  expect(saves.lastBody).not.toContain("문장 3을 쓴다.");
+
+  await page.clock.runFor(4500);
+  await expect.poll(() => saves.put).toBe(2);
+  expect(saves.lastBody).toContain("문장 3을 쓴다.");
+  expect(saves.patch).toBe(1);
+  land();
 });
 
 test("leaving the tab saves the last words at once", async ({ page }) => {
