@@ -17,7 +17,8 @@ concurrency:
 
 jobs:
   e2e-mock:
-    runs-on: ubuntu-latest
+    # Playwright 1.59.1 has no browser install for ubuntu-26.04; unpin together with a Playwright upgrade.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       # Build still expects an API base; a noop URL keeps it happy. Every request is intercepted by
@@ -61,7 +62,7 @@ jobs:
           retention-days: 7
 
   e2e-maps-key:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       # WebKit rejects port 0 before page.route sees the request; a closed real port works for both browsers.
