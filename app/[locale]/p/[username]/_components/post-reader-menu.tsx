@@ -14,6 +14,7 @@ import { deletePost } from "@/modules/blog/api/posts";
 import { ACTION_ICON, actionIconButton } from "@/modules/blog/components/action-icon-button";
 import { authorHref } from "@/modules/blog/lib/author-href";
 import { buildAuthorShareUrl } from "@/modules/blog/lib/publishing-share";
+import type { NoteRoom } from "@/modules/notes/api/notes";
 import { useQuoteInNote } from "@/modules/notes/components/quote-in-note-button";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { useBlockAuthor } from "@/modules/notes/components/use-block-author";
@@ -32,6 +33,8 @@ export function PostReaderMenu({
   postUrl,
   locale,
   withShare = true,
+  room = null,
+  quotable = true,
 }: {
   postId: number;
   authorUsername: string;
@@ -40,6 +43,9 @@ export function PostReaderMenu({
   postUrl: string;
   locale: string;
   withShare?: boolean;
+  room?: NoteRoom | null;
+  /** False where the server would refuse the quote (a link-only post), so the item is not offered. */
+  quotable?: boolean;
 }) {
   const t = useTranslations("notes");
   const tp = useTranslations("publicPost");
@@ -64,7 +70,7 @@ export function PostReaderMenu({
   }, [open, focusFirst]);
 
   const { blocked, block, unblock, confirmDialog } = useBlockAuthor(authorUsername);
-  const quote = useQuoteInNote({ postId, title: postTitle, slug: postSlug, authorUsername });
+  const quote = useQuoteInNote({ postId, title: postTitle, slug: postSlug, authorUsername, room });
   const [confirm, deleteDialog] = useConfirm();
 
   if (!ready) return null;
@@ -150,17 +156,19 @@ export function PostReaderMenu({
               {ts("label")}
             </button>
           )}
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false);
-              quote.start();
-            }}
-            className={item}
-          >
-            {t("quoteAction")}
-          </button>
+          {quotable && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                quote.start();
+              }}
+              className={item}
+            >
+              {t("quoteAction")}
+            </button>
+          )}
           {authenticated && !own && (
             <button
               type="button"

@@ -12,6 +12,7 @@ import { dockButton } from "@/modules/blog/components/dock-button";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { TocSheet, type TocHeading } from "@/modules/blog/components/post-toc";
 import { useDockedComposerOpen } from "@/modules/blog/lib/docked-composer";
+import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
 
 const GAP = 12;
 const READING_TRAVEL = 44;
@@ -78,6 +79,7 @@ export function PostDock({
   const composerOpen = useDockedComposerOpen();
   const pastEnd = usePastPostEnd();
   const tucked = useTucked();
+  const inRoom = useInsideRoom() !== null;
   const withToc = headings.length >= 2;
   const away = !entered || keyboard > 0 || composerOpen || pastEnd;
 
@@ -131,7 +133,7 @@ export function PostDock({
             <List className="h-[18px] w-[18px]" aria-hidden />
           </button>
         )}
-        <ConnectButton postId={postId} postTitle={postTitle} variant="dock" />
+        {!inRoom && <ConnectButton postId={postId} postTitle={postTitle} variant="dock" />}
         <LikeButton postId={postId} initialCount={likeCount} postTitle={postTitle} variant="dock" />
         <BookmarkButton postId={postId} variant="dock" />
       </div>

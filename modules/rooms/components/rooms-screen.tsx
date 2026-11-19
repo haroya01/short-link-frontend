@@ -33,6 +33,7 @@ import {
 } from "@/modules/rooms/api/rooms";
 import { arrangeRooms, itemsOfRoom, pinnedCount } from "@/modules/rooms/lib/room-bands";
 import { roomPath } from "@/modules/rooms/lib/room-href";
+import { prependNotes } from "@/modules/rooms/lib/room-items";
 import { cn } from "@/lib/utils";
 import { QuietRoomLine, RoomBlock, RoomsSection } from "./room-block";
 import { CreateRoomDialog, JoinByLinkDialog } from "./room-dialogs";
@@ -165,6 +166,7 @@ export function RoomsScreen() {
   const replace = (note: Note) =>
     setRecent((current) => current.map((c) => (c.kind === "note" && c.note.id === note.id ? { ...c, note } : c)));
   const remove = (id: number) => setRecent((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)));
+  const quoted = (note: Note) => setRecent((current) => prependNotes(current, [note]));
 
   if (ready && !authenticated) {
     return (
@@ -229,6 +231,7 @@ export function RoomsScreen() {
               onPin={pin}
               onReplace={replace}
               onRemove={remove}
+              onQuoted={quoted}
             />
           ))}
           {view === "rooms" && quiet.length > 0 && (

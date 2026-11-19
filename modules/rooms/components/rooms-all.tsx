@@ -9,7 +9,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import type { Note } from "@/modules/notes/api/notes";
 import { NoteListSkeleton } from "@/modules/notes/components/note-list";
 import { listAllRoomItems, markRoomRead, type RoomItem } from "@/modules/rooms/api/rooms";
-import { itemKey, itemRoomId } from "@/modules/rooms/lib/room-items";
+import { itemKey, itemRoomId, prependNotes } from "@/modules/rooms/lib/room-items";
 import { roomPath } from "@/modules/rooms/lib/room-href";
 import { InsideRoomProvider } from "@/modules/rooms/lib/room-scope";
 import { noteSeen, readTargets, roomLineBreaks } from "@/modules/rooms/lib/rooms-view";
@@ -162,6 +162,7 @@ export const RoomsAll = forwardRef<RoomsAllHandle, { empty: boolean }>(function 
                   )
                 }
                 onRemove={(id) => setItems((current) => current.filter((c) => !(c.kind === "note" && c.note.id === id)))}
+                onQuoted={(note) => setItems((current) => prependNotes(current, [note]))}
               />
             </InsideRoomProvider>
           </div>

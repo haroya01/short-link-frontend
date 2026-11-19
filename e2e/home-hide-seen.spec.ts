@@ -3,7 +3,7 @@ import { mockBackend, signIn } from "./helpers/mock-backend";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock lane (Playwright routes): 추천 asks the server to leave out what the reader has already seen
-// (tab=for-you&seen=hide on every page, with the device when signed out); 둘러보기 맞춤 does not. In 추천
+// (tab=for-you&seen=hide on every page, with the device when signed out). In 추천
 // a row counts as seen the moment any of it shows, kurl rows by kurl:note:/kurl:post: keys and other
 // servers' rows by uri. A refresh first waits for what is pending to be answered, then asks the first
 // page again and lays it out. When the list ends, 추천 says 다 봤어요 with a way to 팔로잉.
@@ -118,7 +118,7 @@ async function serve(page: Page, { home = MINE, slowSeen = 0, homeFails = false 
   return asked;
 }
 
-test("추천 asks every page with tab=for-you, seen=hide and the device, and 둘러보기 맞춤 asks without seen", async ({ page }) => {
+test("추천 asks every page with tab=for-you, seen=hide and the device", async ({ page }) => {
   const asked = await serve(page);
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
   await page.goto("/ko/blog");
@@ -140,12 +140,6 @@ test("추천 asks every page with tab=for-you, seen=hide and the device, and 둘
   const again = new URLSearchParams(asked.home.at(-1)!.search);
   expect([again.get("tab"), again.get("seen"), again.get("cursor"), again.get("since")]).toEqual(["for-you", "hide", null, null]);
   expect(asked.forYou).toEqual([]);
-
-  await page.goto("/ko/blog/explore?lane=remote");
-  await expect(page.locator(`[data-explore-lane="remote"] [data-remote-uri="${uri(1)}"]`)).toBeVisible({
-    timeout: 30_000,
-  });
-  expect(asked.forYou.map((sent) => new URLSearchParams(sent.search).get("seen"))).toEqual([null]);
 });
 
 test("a row counts the moment it shows, kurl rows by their key, and a refresh waits for that to be answered first", async ({

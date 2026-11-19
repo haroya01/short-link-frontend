@@ -28,7 +28,9 @@ import { useToast } from "@/components/ui/toast";
 import { useLikeFailed } from "@/hooks/use-like-failed";
 import { ConversationComposer, focusEnd } from "@/modules/blog/components/conversation-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
-import { isShareable, listPostQuotes, type Note, type PostQuotes } from "@/modules/notes/api/notes";
+import { listPostQuotes, type Note, type NoteRoom, type PostQuotes } from "@/modules/notes/api/notes";
+import { postQuotable, quoteListedOn } from "@/modules/notes/lib/quote-wall";
+import type { PostAudience } from "@/modules/blog/lib/post-audience";
 import { onPostQuoted } from "@/modules/blog/lib/consequence-events";
 import { useBlockedNames } from "@/modules/blog/lib/user-blocks";
 import { NoteList } from "@/modules/notes/components/note-list";
@@ -58,11 +60,15 @@ export function PostComments({
   authorUsername,
   title,
   slug,
+  room = null,
+  audience = null,
 }: {
   postId: number;
   authorUsername: string;
   title: string;
   slug: string;
+  room?: NoteRoom | null;
+  audience?: PostAudience | null;
 }) {
   const t = useTranslations("comments");
   const tCommon = useTranslations("common");
@@ -75,6 +81,7 @@ export function PostComments({
   const [quotedNow, setQuotedNow] = useState<Note[]>([]);
   const loadQuotes = useCallback((page: number) => listPostQuotes(postId, page), [postId]);
   const [tab, setTab] = useState<"comments" | "notes">("comments");
+  const roomId = room?.id ?? null;
 
   useEffect(() => {
     let alive = true;
@@ -89,13 +96,13 @@ export function PostComments({
   useEffect(
     () =>
       onPostQuoted((quotedPostId, note) => {
-        if (quotedPostId !== postId || !isShareable(note.visibility)) return;
+        if (quotedPostId !== postId || !quoteListedOn(note, roomId)) return;
         setQuotedNow((current) => (current.some((n) => n.id === note.id) ? current : [note, ...current]));
         setQuotes((current) =>
           current ? { ...current, total: current.total + 1 } : { items: [], page: 0, hasNext: false, total: 1 },
         );
       }),
-    [postId],
+    [postId, roomId],
   );
   const [body, setBody] = useState("");
   // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
@@ -541,7 +548,9 @@ export function PostComments({
         <div className="mt-4" role="tabpanel" data-testid="post-quote-notes">
           <div className="mb-2 flex items-center justify-between gap-3">
             <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("notesTabHint")}</p>
-            <QuoteInNoteButton postId={postId} title={title} slug={slug} authorUsername={authorUsername} />
+            {postQuotable({ audience, room }) && (
+              <QuoteInNoteButton postId={postId} title={title} slug={slug} authorUsername={authorUsername} room={room} />
+            )}
           </div>
           <NoteList
             load={loadQuotes}

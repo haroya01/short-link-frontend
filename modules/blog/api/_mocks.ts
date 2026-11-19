@@ -556,6 +556,12 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
           ["EMBED", "http://localhost/ko/p/yuna/notes/5"],
         ] as Array<[string, string | null]>)
       : []),
+    ...(item.slug === "locked-diary"
+      ? ([
+          ["PARAGRAPH", "동아리 방에서 본 한마디를 옮겨 둔다."],
+          ["EMBED", "http://localhost/ko/p/minji/notes/9910"],
+        ] as Array<[string, string | null]>)
+      : []),
   ];
   return rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null }));
 }

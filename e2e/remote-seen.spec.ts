@@ -1,14 +1,12 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 
-// Mock lane (Playwright routes): 다른 서버 맞춤 puts what the reader has not seen first. The page that
-// starts the seen part carries seenFrom and the list draws 이미 본 글 above that row. A post counts as
-// seen after a second at least half on screen; those go to /federation/seen in batches, with the
-// device id when signed out. An empty page with a next is followed at once, three times in a row.
+// Mock lane (Playwright routes): what the reader saw in 홈 추천 goes to /federation/seen in batches, by
+// token when signed in. In the stream of other servers' posts an empty page with a next is followed
+// at once, three times in a row.
 test.use({ viewport: { width: 390, height: 844 } });
 
 const NOW = "2026-10-22T09:00:00Z";
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 function note(id: number, body: string) {
   return {
@@ -59,16 +57,13 @@ type Page_ = { items: unknown[]; next: string | null; seenFrom?: number };
 type Seen = { uris: string[]; device: string | null; auth: string | null };
 
 async function serve(page: Page, latest: (cursor: string | null) => Page_, home?: Page_) {
-  const asked = { latest: [] as string[], devices: [] as (string | null)[], seen: [] as Seen[] };
-  const list = (route: Route) => {
-    const cursor = new URL(route.request().url()).searchParams.get("cursor");
-    asked.latest.push(cursor ?? "");
-    asked.devices.push(route.request().headers()["x-kurl-device"] ?? null);
-    return route.fulfill({ json: latest(cursor) });
-  };
+  const asked = { latest: [] as string[], seen: [] as Seen[] };
   await mockBackend(page, {
-    "GET /api/v1/federation/latest": list,
-    "GET /api/v1/federation/for-you": list,
+    "GET /api/v1/federation/trending": (route: Route) => {
+      const cursor = new URL(route.request().url()).searchParams.get("cursor");
+      asked.latest.push(cursor ?? "");
+      return route.fulfill({ json: latest(cursor) });
+    },
     "POST /api/v1/federation/seen": (route: Route) => {
       const headers = route.request().headers();
       asked.seen.push({
@@ -102,70 +97,6 @@ async function hideTab(page: Page) {
 
 const sentUris = (asked: { seen: Seen[] }) => asked.seen.flatMap((batch) => batch.uris);
 
-test("a signed-out reader sees 이미 본 글 above the row at seenFrom, and what stayed on screen is sent with the device id", async ({
-  page,
-}) => {
-  const asked = await serve(page, (cursor) =>
-    cursor === "s1.t12"
-      ? { items: [pooled(13), pooled(14)], next: null }
-      : { items: Array.from({ length: 12 }, (_, i) => pooled(i + 1)), next: "s1.t12", seenFrom: 2 },
-  );
-  await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote");
-  const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
-  await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
-
-  const divider = latest.getByRole("heading", { name: "이미 본 글", exact: true });
-  await expect(divider).toHaveCount(1);
-  await expect(divider).toHaveText("이미 본 글");
-  await expect(divider.locator("svg")).toHaveCount(0);
-  await expect(latest.locator("[data-remote-uri]").nth(2)).toContainText("이미 본 글");
-  await expect(latest.locator("[data-remote-uri]").nth(1)).not.toContainText("이미 본 글");
-  const line = (await divider.boundingBox())!;
-  const third = (await latest.locator(`[data-remote-uri="${uri(3)}"] article`).boundingBox())!;
-  expect(line.y + line.height).toBeLessThanOrEqual(third.y + 1);
-
-  const device = asked.devices[0];
-  expect(device).toMatch(UUID);
-  expect(await page.evaluate(() => window.localStorage.getItem("kurl:device-id"))).toBe(device);
-
-  await page.waitForTimeout(1_500);
-  await hideTab(page);
-  await expect.poll(() => asked.seen.length).toBe(1);
-  expect(asked.seen[0].device).toBe(device);
-  expect(asked.seen[0].auth).toBeNull();
-  expect(asked.seen[0].uris).toContain(uri(1));
-  expect(asked.seen[0].uris).not.toContain(uri(12));
-
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await expect(latest.locator(`[data-remote-uri="${uri(14)}"]`)).toBeVisible();
-  await page.waitForTimeout(1_500);
-  await page.getByRole("tab", { name: "추천" }).click();
-  await expect.poll(() => asked.seen.length).toBe(2);
-  expect(asked.seen[1].uris).toContain(uri(14));
-  expect(asked.seen[1].uris.filter((sent) => asked.seen[0].uris.includes(sent))).toEqual([]);
-  expect(asked.devices.every((sent) => sent === device)).toBe(true);
-});
-
-test("a row scrolled past in under a second is not sent", async ({ page }) => {
-  const asked = await serve(page, () => ({ items: Array.from({ length: 20 }, (_, i) => pooled(i + 1)), next: null }));
-  await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote");
-  const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
-  await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
-
-  await page.evaluate(async (passed) => {
-    document.querySelector(`[data-remote-uri="${passed}"]`)!.scrollIntoView({ block: "center" });
-    await new Promise((done) => setTimeout(done, 300));
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  }, uri(10));
-  await page.waitForTimeout(1_500);
-  await hideTab(page);
-  await expect.poll(() => asked.seen.length).toBe(1);
-  expect(asked.seen[0].uris).toContain(uri(20));
-  expect(asked.seen[0].uris).not.toContain(uri(10));
-});
-
 test("empty pages with a next are followed at once, three in a row, then the list waits", async ({ page }) => {
   let fill = 3;
   const asked = await serve(page, (cursor) => {
@@ -174,8 +105,8 @@ test("empty pages with a next are followed at once, three in a row, then the lis
     return { items: [pooled(1)], next: null };
   });
   await page.addInitScript(() => window.localStorage.setItem("kurl:cookie-consent:v1", "accepted"));
-  await page.goto("/ko/blog/explore?lane=remote");
-  const latest = page.locator('[data-explore-lane="remote"] [data-testid="remote-feed"]');
+  await page.goto("/ko/blog/explore");
+  const latest = page.locator('[data-explore-lane="trends"] [data-testid="remote-feed"]');
   await expect(latest.locator(`[data-remote-uri="${uri(1)}"]`)).toBeVisible({ timeout: 30_000 });
   expect(asked.latest).toEqual(["", "u1", "u2", "u3"]);
 

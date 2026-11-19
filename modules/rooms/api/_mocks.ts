@@ -2,7 +2,8 @@ import { ApiError, mockEmpty } from "@/lib/api/client";
 import { readStorageString } from "@/lib/storage-json";
 import { mockLiveArrivals } from "@/lib/api/mock-live";
 import type { HomePost } from "@/modules/blog/api/home-feed";
-import type { Note, NoteDraft, NoteFeed } from "@/modules/notes/api/notes";
+import type { PublicFeedItem, PublicPostDetail } from "@/modules/blog/api/public-posts";
+import type { Note, NoteDraft, NoteFeed, NoteThread, QuotedNote, QuotedPost } from "@/modules/notes/api/notes";
 import type {
   InviteSource,
   RoomDetail,
@@ -40,6 +41,13 @@ interface Post {
   body: string;
   minutesAgo: number;
   createdAt?: string;
+  quotedNote?: QuotedNote | null;
+  quotedPost?: QuotedPost | null;
+}
+
+export interface MockRoomQuote {
+  quotedNote: QuotedNote | null;
+  quotedPost: QuotedPost | null;
 }
 
 const person = (id: number, username: string, displayName: string | null): Person => ({
@@ -108,7 +116,10 @@ interface BlogPost {
   minutesAgo: number;
   cover: string | null;
   readMinutes: number;
+  body?: [string, string][];
 }
+
+const noteAddress = (author: Person, id: number) => `http://localhost/ko/p/${author.username}/notes/${id}`;
 
 const BLOG_POSTS: BlogPost[] = [
   {
@@ -121,6 +132,14 @@ const BLOG_POSTS: BlogPost[] = [
     minutesAgo: 30,
     cover: "https://picsum.photos/seed/kurlmt/1200/675",
     readMinutes: 4,
+    body: [
+      ["PARAGRAPH", "펜션 지붕을 두드리던 빗소리가 새벽까지 이어졌다. 보드게임은 세 시에 끝났고 단체 사진은 끝내 한 장도 건지지 못했다."],
+      ["PARAGRAPH", "사진을 정리하다가 방에 올렸던 한마디."],
+      ["EMBED", noteAddress(YUKI, 9908)],
+      ["PARAGRAPH", "졸업 앨범 이야기는 다른 방에서 나왔다."],
+      ["EMBED", noteAddress(KIM, 9905)],
+      ["PARAGRAPH", "다음 엠티에는 삼각대를 챙기기로 했다."],
+    ],
   },
   {
     id: 8802,
@@ -145,6 +164,20 @@ const BLOG_POSTS: BlogPost[] = [
     readMinutes: 6,
   },
 ];
+
+// dohyun left this room. His own note there stays his to read; the room post it quotes does not.
+const LEFT_ROOM = { id: 7, name: "지난 스터디" };
+const LEFT_ROOM_POST: BlogPost = {
+  id: 8805,
+  roomId: LEFT_ROOM.id,
+  author: YUKI,
+  slug: "study-last-day",
+  title: "스터디 마지막 날 정리",
+  excerpt: "여덟 주 동안 읽은 것과 남은 질문들.",
+  minutesAgo: 60 * 24 * 30,
+  cover: null,
+  readMinutes: 3,
+};
 
 const REPLIES: Record<string, [number, Person, string][]> = {
   "note-9910": [
@@ -234,6 +267,62 @@ const iso = (minutesAgo: number) => new Date(Date.now() - minutesAgo * 60_000).t
 const postedAt = (post: Post) => post.createdAt ?? iso(post.minutesAgo);
 const newestFirst = (a: Post, b: Post) => postedAt(b).localeCompare(postedAt(a));
 
+function quotedView(post: Post): QuotedNote {
+  return {
+    id: post.id,
+    body: post.body,
+    createdAt: postedAt(post),
+    author: { id: post.author.id, username: post.author.username, displayName: post.author.displayName, avatarUrl: post.author.avatarUrl },
+    media: [],
+    contentWarning: null,
+    sensitive: false,
+  };
+}
+
+function postCard(post: BlogPost): QuotedPost {
+  return { id: post.id, title: post.title, slug: post.slug, authorUsername: post.author.username, audience: "ROOM" };
+}
+
+const QUOTE_SEEDS: Post[] = [
+  { id: 9912, roomId: 1, author: JUNHO, body: "이 사진들 나도 받고 싶다", minutesAgo: 1 },
+  { id: 9911, roomId: 1, author: MINJI, body: "이 글 읽다가 그날 생각나서 웃음", minutesAgo: 2 },
+];
+
+function seededQuotes(): Post[] {
+  if (readStorageString("kurl:mock-room-quotes") !== "1") return [];
+  const quoted = POSTS.find((p) => p.id === 9908)!;
+  const post = BLOG_POSTS.find((b) => b.id === 8801)!;
+  return [
+    { ...QUOTE_SEEDS[0], quotedNote: quotedView(quoted) },
+    { ...QUOTE_SEEDS[1], quotedPost: postCard(post) },
+  ];
+}
+
+function leftRoomNotes(): Post[] {
+  return [
+    {
+      id: 9920,
+      roomId: LEFT_ROOM.id,
+      author: ME,
+      body: "마지막 날 정리 덕분에 끝까지 읽었어요",
+      minutesAgo: 60 * 24 * 29,
+      quotedPost: postCard(LEFT_ROOM_POST),
+    },
+  ];
+}
+
+function everyPost(): Post[] {
+  return [...posts, ...seededQuotes(), ...longRoomPosts(), ...leftRoomNotes()];
+}
+
+const isMember = (roomId: number) => state().some((r) => r.id === roomId);
+const roomName = (roomId: number) => knownRoom(roomId)?.name ?? (roomId === LEFT_ROOM.id ? LEFT_ROOM.name : "");
+
+function carriedBy(post: Post): BlogPost[] {
+  const address = noteAddress(post.author, post.id);
+  return BLOG_POSTS.filter((b) => b.roomId === post.roomId && b.body?.some(([type, content]) => type === "EMBED" && content === address));
+}
+
 function noteOf(post: Post): Note {
   return {
     id: post.id,
@@ -244,12 +333,14 @@ function noteOf(post: Post): Note {
     likedByMe: false,
     author: { id: post.author.id, username: post.author.username, displayName: post.author.displayName, avatarUrl: post.author.avatarUrl },
     media: [],
-    quotedPost: null,
+    quotedPost: isMember(post.roomId) ? (post.quotedPost ?? null) : null,
     inReplyToId: null,
     replyCount: REPLIES[`note-${post.id}`]?.length ?? 0,
     repostCount: null,
     repostedByMe: false,
-    quotedNote: null,
+    quotedNote: isMember(post.roomId) ? (post.quotedNote ?? null) : null,
+    quoteCount:
+      everyPost().filter((p) => p.roomId === post.roomId && p.quotedNote?.id === post.id).length + carriedBy(post).length,
     linkPreview: null,
     bookmarkedByMe: false,
     conversationMuted: false,
@@ -261,7 +352,7 @@ function noteOf(post: Post): Note {
     poll: null,
     replyPolicy: "everyone",
     canReply: true,
-    room: { id: post.roomId, name: knownRoom(post.roomId)?.name ?? "" },
+    room: { id: post.roomId, name: roomName(post.roomId) },
   };
 }
 
@@ -277,7 +368,9 @@ function longRoomPosts(): Post[] {
 }
 
 function roomPosts(id: number): Post[] {
-  return [...posts, ...(id === LONG_ROOM_ID ? longRoomPosts() : [])].filter((p) => p.roomId === id).sort(newestFirst);
+  return [...posts, ...seededQuotes(), ...(id === LONG_ROOM_ID ? longRoomPosts() : [])]
+    .filter((p) => p.roomId === id)
+    .sort(newestFirst);
 }
 
 function listItem(r: Room): RoomListItem {
@@ -518,12 +611,104 @@ export function mockJoin(code: string): Promise<RoomJoined> {
   return done({ status: "joined", roomId: r.id });
 }
 
-export function mockPostInRoom(draft: NoteDraft): Promise<Note> {
+/** The server answers for the destination room before it looks at the quote. */
+export function mockRequireMember(roomId: number): void {
+  if (!isMember(roomId)) throw new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" });
+}
+
+export function mockPostInRoom(draft: NoteDraft, quote: MockRoomQuote): Note {
   const roomId = draft.roomId!;
-  find(roomId);
-  const post: Post = { id: nextNoteId++, roomId, author: ME, body: draft.body.trim(), minutesAgo: 0, createdAt: new Date().toISOString() };
+  mockRequireMember(roomId);
+  const post: Post = {
+    id: nextNoteId++,
+    roomId,
+    author: ME,
+    body: draft.body.trim(),
+    minutesAgo: 0,
+    createdAt: new Date().toISOString(),
+    ...quote,
+  };
   posts = [post, ...posts];
-  return done(noteOf(post));
+  return noteOf(post);
+}
+
+function readablePost(id: number): Post | undefined {
+  return everyPost().find((p) => p.id === id && (isMember(p.roomId) || p.author.id === ME.id));
+}
+
+export function mockRoomNote(id: number): Note | null {
+  const post = readablePost(id);
+  return post ? noteOf(post) : null;
+}
+
+export function mockRoomThread(id: number): NoteThread | null {
+  const post = readablePost(id);
+  if (!post) return null;
+  const note = noteOf(post);
+  const replies = (REPLIES[`note-${id}`] ?? []).map(([replyId, who, body], index) => ({
+    ...noteOf({ id: replyId, roomId: post.roomId, author: who, body, minutesAgo: Math.max(post.minutesAgo - index - 1, 0) }),
+    inReplyToId: id,
+    replyCount: 0,
+  }));
+  return { note, parent: null, replies, continuation: [], series: null, hiddenReplyCount: 0, viewerCanModerate: post.author.id === ME.id };
+}
+
+const roomBlogPosts = () => [...BLOG_POSTS, LEFT_ROOM_POST];
+
+export function mockRoomPostCard(id: number): { card: QuotedPost; room: { id: number; name: string } } | null {
+  const post = roomBlogPosts().find((b) => b.id === id);
+  if (!post || !isMember(post.roomId)) return null;
+  return { card: postCard(post), room: { id: post.roomId, name: roomName(post.roomId) } };
+}
+
+export function mockRoomNoteQuotes(id: number): Note[] | null {
+  const quoted = readablePost(id);
+  if (!quoted) return null;
+  return everyPost()
+    .filter((p) => p.roomId === quoted.roomId && p.quotedNote?.id === id)
+    .sort(newestFirst)
+    .map(noteOf);
+}
+
+export function mockRoomPostQuotes(postId: number): Note[] | null {
+  const post = mockRoomPostCard(postId);
+  if (!post) return null;
+  return everyPost()
+    .filter((p) => p.roomId === post.room.id && p.quotedPost?.id === postId)
+    .sort(newestFirst)
+    .map(noteOf);
+}
+
+export function mockRoomPostsCarrying(noteId: number): PublicFeedItem[] | null {
+  const post = readablePost(noteId);
+  return post ? carriedBy(post).map(blogPostView) : null;
+}
+
+export function mockRoomPostDetail(slug: string, viewer: boolean): PublicPostDetail | null | undefined {
+  const post = roomBlogPosts().find((b) => b.slug === slug);
+  if (!post) return undefined;
+  if (!viewer || !isMember(post.roomId)) return null;
+  const rows = post.body ?? [["PARAGRAPH", post.excerpt]];
+  return {
+    author: { id: post.author.id, username: post.author.username, displayName: post.author.displayName, avatarUrl: post.author.avatarUrl, bio: null },
+    post: {
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      ogImageUrl: post.cover,
+      languageTag: "ko",
+      tags: [],
+      likeCount: 2,
+      publishedAt: iso(post.minutesAgo),
+      lastEditedAt: null,
+      pinned: false,
+      audience: "ROOM",
+      room: { id: post.roomId, name: roomName(post.roomId) },
+    },
+    blocks: rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null })),
+    series: null,
+  };
 }
 
 function blogPostView(post: BlogPost): HomePost {
@@ -549,7 +734,7 @@ function blogPostView(post: BlogPost): HomePost {
 }
 
 function mixed(roomIds: Set<number>, withLong: boolean): RoomItem[] {
-  const notes = [...posts, ...(withLong ? longRoomPosts() : [])]
+  const notes = [...posts, ...seededQuotes(), ...(withLong ? longRoomPosts() : [])]
     .filter((p) => roomIds.has(p.roomId))
     .map((p): [string, RoomItem] => [postedAt(p), { kind: "note", note: noteOf(p), replies: replyViews(`note-${p.id}`) }]);
   const blog = BLOG_POSTS.filter((b) => roomIds.has(b.roomId)).map((b): [string, RoomItem] => [

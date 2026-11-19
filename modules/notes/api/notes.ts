@@ -3,6 +3,7 @@ import { mockFails } from "@/lib/api/mock-fail";
 import { stripImageMetadata } from "@/lib/image-resize";
 import {
   fetchPublic,
+  hasViewer,
   type FetchResult,
   type PublicFeedView,
   type SeriesItemLink,
@@ -14,8 +15,6 @@ const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 // 목 노트는 목 빌드에서만 싣는다 — 조건이 빌드 상수로 접히면 require 가 번들에서 빠진다.
 const noteMocks: typeof import("./_mocks") | null =
   process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("./_mocks") : null;
-const roomMocks: typeof import("@/modules/rooms/api/_mocks") | null =
-  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("@/modules/rooms/api/_mocks") : null;
 
 export const NOTE_MAX_LENGTH = 500;
 /** A thread posts 2 to this many notes at once (the server's limit). */
@@ -239,9 +238,7 @@ export const NOTE_MAX_WARNING_LENGTH = 100;
  *  reposted or quoted. */
 export type NoteVisibility = "public" | "unlisted" | "private" | "direct" | "room";
 
-export function isShareable(visibility: NoteVisibility | undefined): boolean {
-  return visibility === undefined || visibility === "public" || visibility === "unlisted";
-}
+export { isShareable } from "@/modules/notes/lib/quote-wall";
 
 export interface FederationSettings {
   enabled: boolean;
@@ -263,35 +260,6 @@ export class NoteImageUploadError extends Error {
     super(code);
     this.name = "NoteImageUploadError";
   }
-}
-
-/** Mastodon's trending hashtags: tags several accounts used this week, notes per day oldest first. */
-export interface TrendingNoteTag {
-  tag: string;
-  accounts: number;
-  uses: number;
-  history: number[];
-}
-
-export function listTrendingNoteTags(): Promise<TrendingNoteTag[]> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockTrendingNoteTags());
-  return request<TrendingNoteTag[]>("/api/v1/public/notes/trending-tags", { method: "GET" });
-}
-
-export function listLinkedNotes(url: string, page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockLinkedNotes(url, page));
-  return request<NoteFeed>(
-    `/api/v1/public/notes/links?url=${encodeURIComponent(url)}&page=${page}&size=20`,
-    { method: "GET" },
-  );
-}
-
-export function listTaggedNotes(tag: string, page = 0): Promise<NoteFeed> {
-  if (noteMocks) return Promise.resolve(noteMocks.mockTaggedNotes(tag, page));
-  return request<NoteFeed>(
-    `/api/v1/public/notes/tags/${encodeURIComponent(tag)}?page=${page}&size=20`,
-    { method: "GET" },
-  );
 }
 
 export interface RemoteAccount {
@@ -700,10 +668,10 @@ export function fetchAuthorNotes(username: string): Promise<FetchResult<NoteFeed
 
 const repliesQuery = (replies?: number) => (replies ? `?replies=${replies}` : "");
 
-/** Server-side, anonymous thread for the note page and its metadata. */
+/** Anonymous on the server (the note page and its metadata); in the browser it carries the reader's token. */
 export function fetchNoteThread(id: number, replies?: number): Promise<FetchResult<NoteThread>> {
   if (noteMocks) {
-    const thread = noteMocks.mockThread(id, replies);
+    const thread = hasViewer() ? noteMocks.mockReadableThread(id, replies) : noteMocks.mockThread(id, replies);
     return Promise.resolve(thread ? { ok: true, data: thread } : { ok: false, status: 404 });
   }
   return fetchPublic<NoteThread>(`/api/v1/public/notes/${id}${repliesQuery(replies)}`, { noStore: true });
@@ -776,7 +744,6 @@ export async function cancelScheduledNote(id: number): Promise<void> {
 }
 
 export function createNote(draft: NoteDraft): Promise<Note> {
-  if (draft.roomId && roomMocks) return roomMocks.mockPostInRoom(draft);
   if (noteMocks) return Promise.resolve(noteMocks.mockCreate(draft));
   return request<Note>("/api/v1/notes", { method: "POST", body: draft });
 }

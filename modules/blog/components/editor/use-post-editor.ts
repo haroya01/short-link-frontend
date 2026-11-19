@@ -187,9 +187,11 @@ export function usePostEditor(
   // `markdown` state so a Save/Publish fired right after an edit (or with the editor still focused)
   // serializes the LATEST content — not a stale closure (the source of dropped last-keystroke saves).
   const liveMarkdown = useRef<(() => string) | null>(null);
-  // The in-flight save() promise covers all snapshots through the latest edit. Overlapping callers
-  // (autosave + Publish/leave/restore) join it; cleared only when that whole flight finishes.
+  // The in-flight save() promise. Overlapping callers (autosave + Publish/leave/restore) join it; cleared
+  // only when that whole flight finishes. Once a caller that waits on the result has joined
+  // (mustCatchUp), the flight covers all snapshots through the latest edit.
   const inFlightSave = useRef<Promise<boolean> | null>(null);
+  const mustCatchUp = useRef(false);
   // Bumped on load/restore so the page can remount the editor with fresh content — Tiptap seeds from
   // initialValue only at mount, so without this a revision restore updates state but the editor keeps
   // showing the old doc.
@@ -381,7 +383,7 @@ export function usePostEditor(
     unsavedSince.current ??= Date.now();
     const idle = Math.min(AUTOSAVE_IDLE_MS, Math.max(0, AUTOSAVE_MAX_WAIT_MS - (Date.now() - unsavedSince.current)));
     const delay = failStreak.current === 0 ? idle : Math.min(AUTOSAVE_IDLE_MS * 2 ** failStreak.current, 30000);
-    const id = window.setTimeout(() => void save(), delay);
+    const id = window.setTimeout(() => void save({ catchUp: false }), delay);
     return () => window.clearTimeout(id);
     // save is intentionally omitted — content deps re-arm the timer with the latest closure.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -472,10 +474,11 @@ export function usePostEditor(
   // Returns true when the content is persisted (a successful save, or already-saved identical content),
   // false when the save failed — so a lifecycle action (Publish/Schedule) or leave() can hold instead
   // of proceeding on a stale snapshot or dropping edits.
-  async function save(): Promise<boolean> {
+  async function save({ catchUp = true }: { catchUp?: boolean } = {}): Promise<boolean> {
     if (currentDraft.current.post == null && postId != null) return false;
     // One flight includes any catch-up snapshots. Leave/publish/restore all await the whole flight,
     // so none can navigate or replace server content while a newer save is still outstanding.
+    if (catchUp) mustCatchUp.current = true;
     const pending = inFlightSave.current;
     if (pending) return pending;
     // Defer the body until the promise ref is installed, including the identical-payload fast path.
@@ -488,6 +491,7 @@ export function usePostEditor(
             currentDraft.current;
           const md = liveMarkdown.current?.() ?? markdown;
           const seqAtSnapshot = editSeq.current;
+          const snapshotAt = Date.now();
           if (currentDraft.current.post == null) {
             const nothingToKeep =
               !title.trim() && !md.trim() && tags.length === 0 && !coverUrl && !excerpt.trim() && seriesId == null;
@@ -586,19 +590,25 @@ export function usePostEditor(
           setLastSavedAt(new Date());
           failStreak.current = 0;
           autoRetryBlocked.current = false;
-          // Catch up before reporting success: Back must never leave with the final keystrokes still
-          // dirty, and a joined Publish must not publish an earlier metadata/body snapshot.
-          // Publish-panel prefills use raw setters (no dirty sequence), but must still join a save
-          // already in progress so its eventual preview/publish matches the visible cover/excerpt.
-          if (
-            editSeq.current !== seqAtSnapshot ||
-            (liveMarkdown.current?.() ?? md) !== md ||
+          // Catch up before reporting success to a caller that waits on this flight: Back must never
+          // leave with the final keystrokes still dirty, and a joined Publish must not publish an earlier
+          // metadata/body snapshot. Publish-panel prefills use raw setters (no dirty sequence), but must
+          // still join a save already in progress so its eventual preview/publish matches the visible
+          // cover/excerpt.
+          // A timer-fired autosave nobody waits on must not re-save at once: what was typed while it was
+          // on its way stays dirty and goes out on the next pause, or twenty seconds after this snapshot.
+          const typedMeanwhile = editSeq.current !== seqAtSnapshot || (liveMarkdown.current?.() ?? md) !== md;
+          const prefilledMeanwhile =
             currentDraft.current.coverUrl !== coverUrl ||
             currentDraft.current.coverChosen !== coverChosen ||
-            currentDraft.current.excerpt !== excerpt
-          ) continue;
-          setDirty(false);
+            currentDraft.current.excerpt !== excerpt;
+          if (mustCatchUp.current && (typedMeanwhile || prefilledMeanwhile)) continue;
           setSaveFailed(false);
+          if (typedMeanwhile) {
+            unsavedSince.current = snapshotAt;
+            return true;
+          }
+          setDirty(false);
           setSaved(true);
           window.setTimeout(() => setSaved(false), 2000);
           return true;
@@ -623,6 +633,7 @@ export function usePostEditor(
       } finally {
         setSaving(false);
         inFlightSave.current = null;
+        mustCatchUp.current = false;
       }
     });
     inFlightSave.current = run;

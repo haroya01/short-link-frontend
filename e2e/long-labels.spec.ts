@@ -57,7 +57,7 @@ test.describe("desktop", () => {
   });
 
   test("en: a who-to-follow reason reads in full", async ({ page }) => {
-    await page.goto("/en/blog/explore");
+    await page.goto("/en/blog/explore?lane=people");
     const reason = page.getByText(/^Followed by \d+ (person|people) you follow$/).first();
     await expect(reason).toBeVisible({ timeout: 30_000 });
     expect(await reason.evaluate((el) => el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1)).toBe(true);

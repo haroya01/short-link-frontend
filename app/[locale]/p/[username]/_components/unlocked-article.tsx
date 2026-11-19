@@ -19,6 +19,7 @@ import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
+import { InsideRoomProvider } from "@/modules/rooms/lib/room-scope";
 import { PostHighlights } from "./post-highlights";
 import { TagChips } from "./post-meta";
 import { PostActionRow } from "./post-action-row";
@@ -51,8 +52,10 @@ export function UnlockedArticle({
       : null;
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const room = post.room ?? null;
 
   return (
+    <InsideRoomProvider roomId={room?.id ?? null}>
     <div data-testid="unlocked-article">
       <ViewBeacon username={author.username} slug={post.slug} postId={post.id} />
       <ReadBeacon postId={post.id} />
@@ -92,13 +95,22 @@ export function UnlockedArticle({
           likeCount={post.likeCount}
           authorUsername={author.username}
           locale={locale}
+          room={room}
+          audience={post.audience}
         />
       </footer>
 
       <div data-post-end aria-hidden />
 
       <PostAuthorCard author={author} locale={locale} postId={post.id} />
-      <PostComments postId={post.id} authorUsername={author.username} title={post.title} slug={post.slug} />
+      <PostComments
+        postId={post.id}
+        authorUsername={author.username}
+        title={post.title}
+        slug={post.slug}
+        room={room}
+        audience={post.audience}
+      />
       <ReadingResume postKey={`${author.username}/${post.slug}`} />
       <PublishCelebration slug={post.slug} />
       <LegacyHeadingHash headings={headings} />
@@ -116,5 +128,6 @@ export function UnlockedArticle({
           document.body,
         )}
     </div>
+    </InsideRoomProvider>
   );
 }

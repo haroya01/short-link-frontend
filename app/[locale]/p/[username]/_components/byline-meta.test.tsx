@@ -12,6 +12,7 @@ const messages: Record<string, string> = {
   "condition.REGION": "일부 나라 제한",
   "condition.COUNTRIES": "{countries} 제한",
   "condition.separator": "·",
+  roomMembersOnly: "{room} 멤버만",
 };
 vi.mock("next-intl", () => ({
   useLocale: () => "ko",
@@ -105,6 +106,16 @@ describe("the byline of a post", () => {
     mocks.me = { username: "someone-else" };
     await render({ audience: "FOLLOWERS", locked: { reason: "REGION_CHECK" } }, null);
     expect(host.textContent).toBe("2026년 5월 14일 · 3분 · 팔로워 공개 · 일부 나라 제한");
+  });
+
+  it("names the room of a room's post", async () => {
+    await render({ audience: "ROOM", room: { name: "동아리 사람들" } });
+    expect(host.textContent).toBe("2026년 5월 14일 · 3분 · 동아리 사람들 멤버만");
+  });
+
+  it("says nothing about a room it cannot name", async () => {
+    await render({ audience: "ROOM" });
+    expect(host.textContent).toBe("2026년 5월 14일 · 3분");
   });
 
   it("drops back to the bare date when the post locks again", async () => {

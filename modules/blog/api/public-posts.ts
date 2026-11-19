@@ -2,6 +2,8 @@ import { cache } from "react";
 import { blogMocks } from "@/modules/blog/api/_mock-gates";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+const roomMocks: typeof import("@/modules/rooms/api/_mocks") | null =
+  process.env.NEXT_PUBLIC_USE_MOCKS === "1" ? require("@/modules/rooms/api/_mocks") : null;
 import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { freshToken, mockEmpty, mockFailure, readToken } from "@/lib/api/client";
 import { redactCard, type AudienceFields } from "@/modules/blog/lib/post-audience";
@@ -42,6 +44,8 @@ export interface PublicPostListItem extends AudienceFields, PostOwnerFields {
   lastEditedAt: string | null;
   /** Author-pinned 대표글 — surfaces in the blog's 대표글 section, ordered before 최근 글. */
   pinned: boolean;
+  /** Only on a room post, which the server gives to that room's members alone. */
+  room?: { id: number; name: string } | null;
 }
 
 export interface PublicSeriesNavLink {
@@ -355,7 +359,7 @@ function redactPostList(list: PublicPostList): PublicPostList {
 export const findPublicPost = cache(
   (username: string, slug: string, key?: string | null): Promise<FetchResult<PublicPostDetail>> => {
     if (blogMocks) {
-      const data = blogMocks.mockPostDetail(username, slug, { viewer: false, key, render: "server" });
+      const data = mockDetail(username, slug, { viewer: false, key, render: "server" });
       return Promise.resolve(data ? { ok: true, data } : { ok: false, status: 404 });
     }
     return fetchPublic<PublicPostDetail>(postDetailPath(username, slug), {
@@ -364,6 +368,13 @@ export const findPublicPost = cache(
     });
   },
 );
+
+type MockAccess = Parameters<NonNullable<typeof blogMocks>["mockPostDetail"]>[2];
+
+function mockDetail(username: string, slug: string, access: NonNullable<MockAccess>): PublicPostDetail | null {
+  const inRoom = roomMocks?.mockRoomPostDetail(slug, access.viewer && access.render === "browser");
+  return inRoom !== undefined ? inRoom : blogMocks!.mockPostDetail(username, slug, access);
+}
 
 function postDetailPath(username: string, slug: string): string {
   return `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`;
@@ -379,7 +390,7 @@ export async function readPostDetail(
   access: { key?: string | null; grant?: string | null },
 ): Promise<PostDetailRead> {
   if (blogMocks) {
-    const data = blogMocks.mockPostDetail(username, slug, {
+    const data = mockDetail(username, slug, {
       viewer: hasViewer(),
       key: access.key,
       grant: access.grant,

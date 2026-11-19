@@ -1,19 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { ArrowUpRight, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BlogEmpty } from "@/modules/blog/components/blog-empty";
-import { listLinkedNotes, type NoteLinkPreview } from "@/modules/notes/api/notes";
-import { NoteList } from "./note-list";
-
-function linkHost(url: string): string {
-  try {
-    return new URL(url).host;
-  } catch {
-    return url;
-  }
-}
+import { PageLinkProvider } from "@/modules/notes/lib/page-link";
+import { linkHost, sameLink } from "@/modules/notes/lib/topics";
+import { useTopicPosts } from "@/modules/notes/lib/use-topics";
+import type { RemoteNotes } from "@/modules/notes/lib/use-remote-trending";
+import { TopicPosts } from "./topic-posts";
 
 function isWebUrl(url: string): boolean {
   try {
@@ -24,22 +18,24 @@ function isWebUrl(url: string): boolean {
   }
 }
 
+function previewTitle(notes: RemoteNotes, url: string): string | null {
+  if (notes.state !== "ready") return null;
+  for (const entry of notes.pages[0]?.items ?? []) {
+    const preview = entry.kind === "pool" ? entry.item.linkPreview : entry.note.linkPreview;
+    if (preview?.title && sameLink(preview.url, url)) return preview.title;
+  }
+  return null;
+}
+
 export function LinkedNotes({ url }: { url: string }) {
   const t = useTranslations("notes");
-  const [preview, setPreview] = useState<NoteLinkPreview | null>(null);
-  const load = useCallback(
-    async (page: number) => {
-      const feed = await listLinkedNotes(url, page);
-      if (page === 0) setPreview(feed.items.find((n) => n.linkPreview?.url === url)?.linkPreview ?? null);
-      return feed;
-    },
-    [url],
-  );
+  const { notes, topic } = useTopicPosts({ url });
   const host = linkHost(url);
+  const title = (topic?.kind === "link" ? topic.title : null) ?? previewTitle(notes, url);
   const heading = (
     <span className="min-w-0 flex-1">
       <span className="line-clamp-3 text-[17px] font-semibold text-slate-900 dark:text-slate-100">
-        {preview?.title || host}
+        {title || host}
       </span>
       <span className="mt-0.5 block truncate text-[13px] text-slate-500 dark:text-slate-400">{host}</span>
     </span>
@@ -64,12 +60,9 @@ export function LinkedNotes({ url }: { url: string }) {
         <div className="mt-2 flex items-start gap-3 py-3">{heading}</div>
       )}
       <div className="border-t border-slate-100 dark:border-slate-800">
-        <NoteList
-          key={url}
-          load={load}
-          filterContext="public"
-          empty={<BlogEmpty title={t("emptyLink")} />}
-        />
+        <PageLinkProvider value={url}>
+          <TopicPosts key={url} notes={notes} empty={<BlogEmpty title={t("emptyLink")} />} />
+        </PageLinkProvider>
       </div>
     </div>
   );

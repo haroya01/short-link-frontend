@@ -52,6 +52,11 @@ describe("a protected or country-limited card never carries body-derived parts",
     expect(cardMark({ audience: "UNLISTED" })).toBe("UNLISTED");
     expect(cardMark({ audience: "PUBLIC" })).toBeNull();
   });
+
+  it("puts no mark on a room post's card: only that room's members are handed one", () => {
+    expect(cardMark({ audience: "ROOM" })).toBeNull();
+    expect(isRedactedCard({ audience: "ROOM" })).toBe(false);
+  });
 });
 
 describe("the password a writer types", () => {
