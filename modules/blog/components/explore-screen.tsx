@@ -8,17 +8,19 @@ import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { rememberSearch } from "@/modules/blog/lib/recent-searches";
 import { glideMs } from "@/modules/blog/components/feed-sort-tabs";
-import { ExploreLanePanel, type ExploreLane } from "@/modules/blog/components/explore-lanes";
+import { ExploreLanePanel } from "@/modules/blog/components/explore-lanes";
+import { EXPLORE_LANES as LANES, laneOf, laneSearch, type ExploreLane } from "@/modules/blog/lib/explore-lane";
 import { ExploreSearchStarts } from "@/modules/blog/components/explore-search-starts";
 import { SearchLiveResults } from "@/modules/blog/components/search-live-results";
 
 const searchHref = (q: string) => blogHref(`/?q=${encodeURIComponent(q)}`);
 
-const LANES: readonly ExploreLane[] = ["picks", "remote", "people"];
 const PAD = 10;
 
-function laneOf(value: string | null): ExploreLane {
-  return value === "remote" || value === "people" ? value : "picks";
+function replaceLane(lane: ExploreLane) {
+  const { pathname, search, hash } = window.location;
+  const next = laneSearch(search, lane);
+  if (next !== search) window.history.replaceState(window.history.state, "", pathname + next + hash);
 }
 
 export function ExploreScreen() {
@@ -26,8 +28,8 @@ export function ExploreScreen() {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
-  const [lane, setLane] = useState<ExploreLane>("picks");
-  const [visited, setVisited] = useState<ReadonlySet<ExploreLane>>(() => new Set<ExploreLane>(["picks"]));
+  const [lane, setLane] = useState<ExploreLane>("trends");
+  const [visited, setVisited] = useState<ReadonlySet<ExploreLane>>(() => new Set<ExploreLane>(["trends"]));
   const [from, setFrom] = useState<ExploreLane | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -48,15 +50,13 @@ export function ExploreScreen() {
     setFrom(lane);
     setLane(next);
     setVisited((seen) => (seen.has(next) ? seen : new Set(seen).add(next)));
-    const url = new URL(window.location.href);
-    if (next === "picks") url.searchParams.delete("lane");
-    else url.searchParams.set("lane", next);
-    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+    replaceLane(next);
   }
 
   useLayoutEffect(() => {
     const linked = laneOf(new URLSearchParams(window.location.search).get("lane"));
-    if (linked === "picks") return;
+    replaceLane(linked);
+    if (linked === "trends") return;
     setLane(linked);
     setVisited(new Set([linked]));
   }, []);
@@ -141,7 +141,7 @@ export function ExploreScreen() {
               hidden={key !== lane}
               className={key === lane ? slide : undefined}
             >
-              <ExploreLanePanel lane={key} onPeople={() => pick("people")} />
+              <ExploreLanePanel lane={key} />
             </div>
           ))}
         </div>
@@ -160,12 +160,10 @@ function LaneTabs({
   onLane: (lane: ExploreLane) => void;
 }) {
   const t = useTranslations("publicFeed");
-  const tNotes = useTranslations("notes");
   const tabs = useRef<HTMLDivElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number; ms: number } | null>(null);
   const label: Record<ExploreLane, string> = {
-    picks: t("forYou"),
-    remote: tNotes("feedFederated"),
+    trends: t("exploreTrends"),
     people: t("searchPeopleTab"),
   };
 

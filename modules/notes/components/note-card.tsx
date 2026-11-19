@@ -51,6 +51,8 @@ import { QuotedPostCard } from "./quoted-post-card";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { noteHref, openNote } from "@/modules/notes/lib/note-href";
+import { usePageLink } from "@/modules/notes/lib/page-link";
+import { repeatsPageLink } from "@/modules/notes/lib/topics";
 import { ReplyPolicyDialog, replyRestrictedKey } from "./note-reply-policy";
 import { roomPath } from "@/modules/rooms/lib/room-href";
 import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
@@ -124,6 +126,7 @@ export function NoteCard({
   const { toast } = useToast();
   const likeFailed = useLikeFailed();
   const mine = me?.id === note.author.id;
+  const repeatsPage = repeatsPageLink(note.body, note.linkPreview, usePageLink());
   const [editing, setEditing] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [mediaShown, setMediaShown] = useState(false);
@@ -665,7 +668,7 @@ export function NoteCard({
               <div className={revealed ? "animate-fade-in motion-reduce:animate-none" : undefined}>
                 {note.quotedPost && <QuotedPostCard post={note.quotedPost} />}
                 {note.quotedNote && <QuotedNoteCard note={note.quotedNote} />}
-                {note.linkPreview && <NoteLinkCard preview={note.linkPreview} />}
+                {note.linkPreview && !repeatsPage && <NoteLinkCard preview={note.linkPreview} />}
               </div>
             )}
 

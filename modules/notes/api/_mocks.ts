@@ -32,7 +32,6 @@ import type {
   ProfileRepliesFeed,
   RemoteAccount,
   ScheduledNote,
-  TrendingNoteTag,
 } from "./notes";
 import { mockFollowingRoomNotes, mockFollowingRoomPosts } from "@/modules/rooms/api/_mocks";
 import { readStorageString } from "@/lib/storage-json";
@@ -40,6 +39,7 @@ import { mockLiveArrivals } from "@/lib/api/mock-live";
 import type { RemoteAccountSearchBody, RemoteDomainListBody, RemoteResolveBody } from "./federation-search";
 import type { RemoteAccountsBody, RemoteMutesBody } from "./remote-safety";
 import type { RemoteItem, RemoteNotesBody, RemoteView, TrendingNote } from "./remote-trending";
+import type { TopicPostsBody, TopicTarget, TopicView, TopicsBody } from "./topics";
 
 const ME = { id: 1, username: "dohyun", avatarUrl: "https://i.pravatar.cc/120?img=12" };
 const YUNA = { id: 15, username: "yuna", avatarUrl: "https://i.pravatar.cc/120?img=20" };
@@ -533,21 +533,6 @@ export function mockFederatedNotes(page: number): NoteFeed {
   return { items: page === 0 ? received.map(withQuotes) : [], page, hasNext: false };
 }
 
-export function mockTrendingNoteTags(): TrendingNoteTag[] {
-  return [
-    { tag: "산책", accounts: 3, uses: 5, history: [1, 0, 0, 1, 0, 1, 2] },
-    { tag: "kurl", accounts: 2, uses: 2, history: [0, 0, 0, 0, 0, 1, 1] },
-  ];
-}
-
-export function mockLinkedNotes(url: string, page: number): NoteFeed {
-  const items =
-    page === 0
-      ? notes.filter((n) => (n.visibility ?? "public") === "public" && n.linkPreview?.url === url)
-      : [];
-  return { items: items.map(withQuotes), page, hasNext: false };
-}
-
 export function mockTrendingNotes(page: number): NoteFeed {
   const ranked = [...topLevel().filter((n) => (n.visibility ?? "public") === "public")].sort(
     (a, b) => (b.likeCount ?? 0) + b.replyCount - ((a.likeCount ?? 0) + a.replyCount),
@@ -878,7 +863,7 @@ export function mockResolveRemote(q: string): Promise<RemoteResolveBody> {
     if (q.replace(/^@/, "").startsWith("nobody@")) return missing();
     return mockLookupRemote(q).then((account) => ({ account, note: null }));
   }
-  const trending = TRENDING.find((item) => item.uri === q);
+  const trending = [...TRENDING, ...Object.values(TOPIC_POSTS).flat()].find((item) => item.uri === q);
   if (trending) return bringOver(trending).then((local) => ({ account: null, note: withQuotes(local) }));
   const [user, noteId] = address.pathname.split("/").filter(Boolean);
   const account = remoteAccounts.find((a) => a.domain === domain && `@${a.username}` === user);
@@ -1075,6 +1060,280 @@ export function mockRemoteNotes(view: RemoteView, cursor: string | null, limit: 
   return Promise.resolve({ items: TRENDING.slice(offset, end), next: end < TRENDING.length ? `t${end}` : "r" });
 }
 
+type MockTopic = Omit<TopicView, "own">;
+
+function tagTopic(
+  tag: string,
+  language: string | null,
+  people: number,
+  servers: string[],
+  related: TopicView["related"] = [],
+): MockTopic {
+  return {
+    id: `tag:${tag.toLowerCase()}`,
+    kind: "tag",
+    tag,
+    url: null,
+    title: null,
+    source: null,
+    image: null,
+    language,
+    people,
+    servers,
+    related,
+  };
+}
+
+function linkTopic(
+  url: string,
+  title: string,
+  source: string | null,
+  language: string | null,
+  people: number,
+  servers: string[],
+): MockTopic {
+  return { id: `link:${url}`, kind: "link", tag: null, url, title, source, image: null, language, people, servers, related: [] };
+}
+
+const LIBRARY_NIGHT = "https://saebyeok.example/local/library-night";
+const LIBRARY_MIDNIGHT = "https://harborpost.example/city/library-midnight";
+
+const TOPICS: MockTopic[] = [
+  linkTopic(LIBRARY_NIGHT, "동네 도서관, 다음 달부터 평일 밤 10시까지 연다", "새벽일보", "ko", 31, [
+    "moim.example",
+    "byeol.example",
+  ]),
+  tagTopic("첫눈", "ko", 24, ["moim.example", "byeol.example"], [
+    {
+      url: "https://baramnalssi.example/forecast/first-snow",
+      title: "주말 중부 내륙에 첫눈 예보, 쌓이는 눈은 1~3cm",
+      source: "바람날씨",
+      image: null,
+    },
+    {
+      url: "https://dongnesanchaek.example/walks/first-snow",
+      title: "첫눈 오는 날 걷기 좋은 길 다섯 곳",
+      source: "동네산책",
+      image: null,
+    },
+  ]),
+  linkTopic(
+    "https://salim.example/money/lunchbox-price",
+    "편의점 도시락 값 또 올랐다, 직장인 점심 평균 만 원 넘어",
+    "오늘의 살림",
+    "ko",
+    18,
+    ["moim.example"],
+  ),
+  tagTopic("산책", "ko", 9, ["byeol.example", "moim.example"]),
+  linkTopic("https://www.gilmok.example/essay/bus-stories", "퇴근길 버스에서 읽기 좋은 단편 일곱 편", null, "ko", 7, [
+    "moim.example",
+  ]),
+  linkTopic("https://dongnesosik.example/market/weekend", "주말 플리마켓, 비가 와도 실내에서 연다", "동네소식", "ko", 5, [
+    "byeol.example",
+  ]),
+  tagTopic("오늘의도시락", "ko", 4, ["moim.example"]),
+  tagTopic("朝の一枚", "ja", 58, ["asagao.example", "komorebi.example"]),
+  linkTopic("https://aozora-shimbun.example/town/kissaten", "駅前の喫茶店、来月で六十年の営業に幕", "あおぞら新聞", "ja", 41, [
+    "asagao.example",
+    "komorebi.example",
+  ]),
+  linkTopic(
+    "https://machikado.example/news/illumination",
+    "商店街のイルミネーション、今年は点灯を一時間早めます",
+    "まちかど通信",
+    "ja",
+    22,
+    ["komorebi.example"],
+  ),
+  tagTopic("読書記録", "ja", 12, ["asagao.example"]),
+  linkTopic("https://kawaberi.example/pool", "市民プール、今年は九月末まで開けます", "川べり日報", "ja", 9, ["asagao.example"]),
+  tagTopic("喫茶店巡り", "ja", 7, ["komorebi.example"]),
+  linkTopic("https://fude.example/notes/fountain-pen", "古い万年筆を直して使う", null, "ja", 5, ["asagao.example"]),
+  linkTopic(
+    LIBRARY_MIDNIGHT,
+    "City library will stay open until midnight during exam weeks",
+    "Harbor Post",
+    "en",
+    36,
+    ["quay.example", "lantern.example"],
+  ),
+  tagTopic("caturday", "en", 16, ["quay.example", "lantern.example"]),
+  linkTopic("https://notes.tidepool.example/busy-week", "A small server's guide to surviving a busy week", null, "en", 11, [
+    "lantern.example",
+  ]),
+  linkTopic(
+    "https://ferrygazette.example/transit/night-buses",
+    "Night buses return on three routes after two years",
+    "The Ferry Gazette",
+    "en",
+    9,
+    ["quay.example"],
+  ),
+  tagTopic("nowplaying", null, 8, ["quay.example", "asagao.example"]),
+  tagTopic("shelfie", "en", 7, ["lantern.example"]),
+  linkTopic(
+    "https://tidewater.example/food/corner-bakery",
+    "The corner bakery that still closes when the bread runs out",
+    "Tidewater Weekly",
+    "en",
+    6,
+    ["quay.example"],
+  ),
+  tagTopic("rainwalk", "en", 5, ["lantern.example"]),
+  linkTopic(
+    "https://morgenblatt.example/stadt/bibliothek-sonntag",
+    "Die Stadtbibliothek öffnet jetzt auch sonntags",
+    "Morgenblatt",
+    "de",
+    6,
+    ["laterne.example"],
+  ),
+  tagTopic("balade", "fr", 4, ["quai.example"]),
+];
+
+function topicPost(
+  acct: string,
+  displayName: string,
+  status: number,
+  createdAt: string,
+  body: string,
+  extra: Partial<TrendingNote> = {},
+): TrendingNote {
+  const [user, host] = acct.split("@");
+  return trendingItem(`https://${host}/users/${user}/statuses/${status}`, body, acct, displayName, 0, [host], {
+    createdAt,
+    likeCount: status % 37,
+    repostCount: status % 5,
+    replyCount: status % 3,
+    ...extra,
+  });
+}
+
+const libraryCard = (url: string, title: string, description: string) => ({
+  linkPreview: { url, title, description, image: null },
+});
+const NIGHT_CARD = libraryCard(
+  LIBRARY_NIGHT,
+  "동네 도서관, 다음 달부터 평일 밤 10시까지 연다",
+  "구립도서관 여섯 곳이 다음 달 1일부터 평일 문 닫는 시간을 밤 10시로 늦춘다.",
+);
+const MIDNIGHT_CARD = libraryCard(
+  LIBRARY_MIDNIGHT,
+  "City library will stay open until midnight during exam weeks",
+  "The central branch extends its hours for three weeks each term, starting this winter.",
+);
+
+const TOPIC_POSTS: Record<string, TrendingNote[]> = {
+  "tag:첫눈": [
+    topicPost("sora@moim.example", "소라", 7101, "2026-10-16T11:48:00Z", "퇴근하려고 나왔는데 눈발이 날린다. 우산 없는데 그냥 맞고 가기로. #첫눈"),
+    topicPost("hangyeol@byeol.example", "한결", 7102, "2026-10-16T11:26:00Z", "#첫눈 오면 연락하자던 친구한테 진짜 연락이 왔다. 10년 만에."),
+    topicPost("dami@moim.example", "다미", 7103, "2026-10-16T11:09:00Z", "옥상에 널어 둔 빨래 생각이 이제야 났다 #첫눈"),
+    topicPost(
+      "nuri@byeol.example",
+      "누리",
+      7104,
+      "2026-10-16T10:42:00Z",
+      "버스 창문에 김 서린 데다 누가 눈사람을 그려 놨다. 오늘 출근길은 이걸로 됐다. #첫눈",
+    ),
+    topicPost("onyu@moim.example", "온유", 7105, "2026-10-16T09:50:00Z", "올해 #첫눈 은 작년보다 열흘 빠르다고. 패딩 꺼내야겠다."),
+    topicPost("bori@byeol.example", "보리네", 7106, "2026-10-16T08:35:00Z", "강아지가 눈을 처음 봐서 현관에서 한 발짝도 안 나온다 #첫눈"),
+  ],
+  "tag:산책": [
+    topicPost("jian@byeol.example", "지안", 7201, "2026-10-05T11:10:00Z", "점심 먹고 20분 걷는 게 요즘 제일 잘한 결정이다 #산책"),
+    topicPost("hangyeol@byeol.example", "한결", 7202, "2026-10-05T09:40:00Z", "강변 길에 억새가 다 폈다. 다음 주면 질 듯. #산책"),
+    topicPost("sora@moim.example", "소라", 7203, "2026-10-04T22:15:00Z", "이어폰 두고 나왔는데 오히려 좋았다. 발소리만 듣고 한 바퀴. #산책"),
+    topicPost(
+      "dami@moim.example",
+      "다미",
+      7204,
+      "2026-10-04T08:05:00Z",
+      "동네 한 바퀴 돌 때마다 새로 생긴 가게를 하나씩 발견한다. 오늘은 수선집. #산책",
+    ),
+    topicPost("onyu@moim.example", "온유", 7205, "2026-10-03T12:30:00Z", "비 그친 직후가 #산책 하기 제일 좋은 시간이라고 생각한다"),
+  ],
+  [`link:${LIBRARY_NIGHT}`]: [
+    topicPost(
+      "jian@byeol.example",
+      "지안",
+      7301,
+      "2026-10-16T11:40:00Z",
+      `평일에 도서관 가 본 게 언제인지 기억도 안 나는데, 10시까지면 얘기가 다르지.\n${LIBRARY_NIGHT}`,
+      NIGHT_CARD,
+    ),
+    topicPost("nuri@byeol.example", "누리", 7302, "2026-10-16T11:05:00Z", LIBRARY_NIGHT, NIGHT_CARD),
+    topicPost(
+      "dami@moim.example",
+      "다미",
+      7303,
+      "2026-10-16T10:20:00Z",
+      `열람실만 여는 건지 대출도 되는 건지가 중요한데 ${LIBRARY_NIGHT} 기사엔 대출도 된다고 나와 있다`,
+      NIGHT_CARD,
+    ),
+    topicPost("onyu@moim.example", "온유", 7304, "2026-10-16T09:15:00Z", "우리 구도 해 주면 좋겠다. 시험 기간만이라도."),
+  ],
+  "tag:朝の一枚": [
+    topicPost("minato@asagao.example", "みなと", 7401, "2026-10-16T11:30:00Z", "ベランダから。今朝は雲が低い。 #朝の一枚", { language: "ja" }),
+    topicPost("yuzu@komorebi.example", "ゆず", 7402, "2026-10-16T10:55:00Z", "始発待ちのホーム、まだ誰もいない。 #朝の一枚", { language: "ja" }),
+    topicPost(
+      "shiori@asagao.example",
+      "しおり",
+      7403,
+      "2026-10-16T10:10:00Z",
+      "コーヒーを淹れてから撮るつもりが、先に飲んでしまった #朝の一枚",
+      { language: "ja" },
+    ),
+  ],
+  [`link:${LIBRARY_MIDNIGHT}`]: [
+    topicPost(
+      "june@quay.example",
+      "June",
+      7501,
+      "2026-10-16T11:20:00Z",
+      `Midnight closing during exams would have saved my second year. Good on them.\n${LIBRARY_MIDNIGHT}`,
+      { language: "en", ...MIDNIGHT_CARD },
+    ),
+    topicPost("ines@lantern.example", "Ines", 7502, "2026-10-16T10:30:00Z", LIBRARY_MIDNIGHT, { language: "en", ...MIDNIGHT_CARD }),
+  ],
+};
+
+function readerLanguage(): string {
+  const lang = typeof document === "undefined" ? "" : document.documentElement.lang;
+  return lang.split("-")[0] || "ko";
+}
+
+function topicView(topic: MockTopic): TopicView {
+  return { ...topic, own: topic.language === readerLanguage() };
+}
+
+export function mockTopics(limit: number): TopicsBody {
+  const ranked = TOPICS.map(topicView).sort(
+    (a, b) => Number(b.own) - Number(a.own) || b.people - a.people || a.id.localeCompare(b.id),
+  );
+  return { items: ranked.slice(0, limit) };
+}
+
+const MOCK_TOPIC_PAGE = 4;
+
+export function mockTopicPosts(target: TopicTarget, cursor: string | null): TopicPostsBody {
+  const id = "tag" in target ? `tag:${target.tag.toLowerCase()}` : `link:${target.url}`;
+  const topic = TOPICS.find((candidate) => candidate.id === id);
+  const kept =
+    "tag" in target
+      ? notes.filter((n) => n.body.toLowerCase().includes(`#${target.tag.toLowerCase()}`))
+      : notes.filter((n) => (n.visibility ?? "public") === "public" && n.linkPreview?.url === target.url);
+  const window = [...kept.map(withQuotes), ...(TOPIC_POSTS[id] ?? [])].sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt),
+  );
+  const offset = Number(cursor?.slice(1)) || 0;
+  const end = offset + MOCK_TOPIC_PAGE;
+  return {
+    topic: topic ? topicView(topic) : null,
+    items: window.slice(offset, end),
+    next: end < window.length ? `t${end}` : null,
+  };
+}
+
 const broughtOver = new Map<string, number>();
 
 function bringOver(item: TrendingNote): Promise<Note> {
@@ -1162,12 +1421,6 @@ export function mockDirectNotes(page: number): NoteFeed {
     page === 0
       ? notes.filter((n) => n.visibility === "direct" && (n.author.id === ME.id || n.mentions?.includes(ME.username)))
       : [];
-  return { items: items.map(withQuotes), page, hasNext: false };
-}
-
-export function mockTaggedNotes(tag: string, page: number): NoteFeed {
-  const needle = `#${tag.toLowerCase()}`;
-  const items = page === 0 ? notes.filter((n) => n.body.toLowerCase().includes(needle)) : [];
   return { items: items.map(withQuotes), page, hasNext: false };
 }
 

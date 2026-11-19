@@ -11,23 +11,20 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { rememberSearch, useRecentSearches } from "@/modules/blog/lib/recent-searches";
-import { listTrendingNoteTags } from "@/modules/notes/api/notes";
 import { noteTagHref } from "@/modules/notes/components/note-body";
+import { startTags } from "@/modules/notes/lib/topics";
+import { useTopics } from "@/modules/notes/lib/use-topics";
 
 const searchHref = (q: string) => blogHref(`/?q=${encodeURIComponent(q)}`);
 
 function useStartTags() {
-  const noteTags = useQuery({
-    queryKey: ["explore", "note-tags"],
-    queryFn: () => listTrendingNoteTags().then((found) => found.slice(0, 5).map((trend) => trend.tag)),
-    staleTime: 5 * 60_000,
-  });
+  const { topics } = useTopics();
   const postTags = useQuery({
     queryKey: ["explore", "popular-tags"],
     queryFn: () => listPopularTags(12).then((found) => (found.ok ? found.data.map((tag) => tag.tag) : [])),
     staleTime: 5 * 60_000,
   });
-  const notes = noteTags.data ?? [];
+  const notes = startTags(topics);
   const taken = new Set(notes.map((tag) => tag.toLowerCase()));
   const posts = (postTags.data ?? []).filter((tag) => !taken.has(tag.toLowerCase()));
   return [
