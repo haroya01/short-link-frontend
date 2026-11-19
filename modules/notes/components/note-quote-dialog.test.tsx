@@ -11,14 +11,24 @@ vi.mock("./note-composer", () => ({
     room?: NoteRoom | null;
     quotedNote?: QuotedNote | null;
     quote?: QuotedPost | null;
-    onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
+    onDraftChange?: (state: { hasContent: boolean; id: string | null; unsaved: boolean }) => void;
   }) => {
     mocks.composer(props);
     return createElement(
       "div",
       null,
-      createElement("button", { "data-testid": "kept", onClick: () => props.onDraftChange?.({ hasContent: true, id: "d1" }) }),
-      createElement("button", { "data-testid": "not-kept", onClick: () => props.onDraftChange?.({ hasContent: false, id: null }) }),
+      createElement("button", {
+        "data-testid": "kept",
+        onClick: () => props.onDraftChange?.({ hasContent: true, id: "d1", unsaved: false }),
+      }),
+      createElement("button", {
+        "data-testid": "not-kept",
+        onClick: () => props.onDraftChange?.({ hasContent: false, id: null, unsaved: false }),
+      }),
+      createElement("button", {
+        "data-testid": "unsaved",
+        onClick: () => props.onDraftChange?.({ hasContent: false, id: null, unsaved: true }),
+      }),
     );
   },
 }));
@@ -83,11 +93,39 @@ describe("where the quote dialog posts", () => {
     expect(drafts()).not.toBeNull();
   });
 
+  const press = (testId: string) =>
+    act(async () => document.querySelector<HTMLButtonElement>(`[data-testid="${testId}"]`)!.click());
+  const button = (label: string) => Array.from(document.querySelectorAll("button")).find((b) => b.textContent === label);
+  const cancel = () => act(async () => button("cancel")!.click());
+
+  it("asks before closing only when something is written and no draft keeps it", async () => {
+    const onClose = vi.fn();
+    await open({ note: NOTE, room: CLUB }, onClose);
+    await cancel();
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(button("highlightReplyDiscard")).toBeUndefined();
+
+    await press("unsaved");
+    await cancel();
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).toContain("discardTitle");
+    await act(async () => button("highlightReplyKeepWriting")!.click());
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).not.toContain("discardTitle");
+
+    await cancel();
+    await act(async () => button("highlightReplyDiscard")!.click());
+    expect(onClose).toHaveBeenCalledTimes(2);
+    expect(mocks.toast).not.toHaveBeenCalled();
+
+    await press("kept");
+    await cancel();
+    expect(onClose).toHaveBeenCalledTimes(3);
+    expect(button("highlightReplyDiscard")).toBeUndefined();
+    expect(mocks.toast).toHaveBeenCalledWith("draftSaved");
+  });
+
   it("says a draft was saved only when the composer keeps one", async () => {
-    const press = (testId: string) =>
-      act(async () => document.querySelector<HTMLButtonElement>(`[data-testid="${testId}"]`)!.click());
-    const cancel = () =>
-      act(async () => Array.from(document.querySelectorAll("button")).find((b) => b.textContent === "cancel")!.click());
     const onClose = vi.fn();
     await open({ note: NOTE, room: CLUB }, onClose);
     await press("not-kept");

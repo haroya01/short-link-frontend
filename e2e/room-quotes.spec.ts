@@ -71,12 +71,25 @@ test.describe("a room note", () => {
     await expect(first.locator("article.note-arrive")).toHaveCount(1);
   });
 
-  test("a room quote left unsent is not kept as a draft and does not say it was", async ({ page }) => {
+  test("a room quote left unsent asks before it is thrown away, keeps no draft and does not say it saved one", async ({ page }) => {
     await openRoom(page);
     await (await openQuoteMenu(page, 9909)).getByRole("menuitem", { name: "노트로 인용" }).click();
     const dialog = page.getByRole("dialog", { name: "노트 인용" });
+    await dialog.getByRole("button", { name: "취소" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByRole("dialog", { name: "작성 중인 노트를 버릴까요?" })).toHaveCount(0);
+
+    await (await openQuoteMenu(page, 9909)).getByRole("menuitem", { name: "노트로 인용" }).click();
     await dialog.getByRole("textbox").first().fill("쓰다 만 인용");
     await dialog.getByRole("button", { name: "취소" }).click();
+    const asks = page.getByRole("dialog", { name: "작성 중인 노트를 버릴까요?" });
+    await expectOnTop(asks.getByRole("button", { name: "버리기" }));
+    await asks.getByRole("button", { name: "계속 쓰기" }).click();
+    await expect(asks).toHaveCount(0);
+    await expect(dialog.getByRole("textbox").first()).toHaveValue("쓰다 만 인용");
+
+    await page.keyboard.press("Escape");
+    await asks.getByRole("button", { name: "버리기" }).click();
     await expect(dialog).toHaveCount(0);
     expect(await page.getByTestId("toast").count()).toBe(0);
     expect(await page.evaluate(() => window.localStorage.getItem("kurl:note-drafts:1"))).toBeNull();

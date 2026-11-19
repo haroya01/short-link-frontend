@@ -4906,6 +4906,7 @@
     "draftsTitle": "임시저장",
     "draftsEmpty": "임시저장한 글이 없어요",
     "draftSaved": "임시저장했어요",
+    "discardTitle": "작성 중인 노트를 버릴까요?",
     "draftImagesDropped": "사진 {count}장은 임시저장되지 않았어요",
     "draftDeleted": "임시저장을 삭제했어요",
     "draftDelete": "임시저장 삭제",

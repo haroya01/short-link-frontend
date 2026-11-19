@@ -102,8 +102,9 @@ export function NoteComposer({
   autoFocus?: boolean;
   /** A device draft to continue; the parent keys the composer by its id. */
   draft?: NoteDraft | null;
-  /** Whether the composer holds something worth keeping, and the id of the draft that keeps it. */
-  onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
+  /** `hasContent`: a device draft keeps what is written (`id` once it is stored). `unsaved`: something
+   *  is written and nothing keeps it, because a note bound for a room has no draft. */
+  onDraftChange?: (state: { hasContent: boolean; id: string | null; unsaved: boolean }) => void;
   /** The inline composer's "임시저장 N", shown beside the text once the composer opens. */
   draftsButton?: (currentId: string | null, hidden: boolean) => ReactNode;
 }) {
@@ -169,8 +170,9 @@ export function NoteComposer({
     imageCount: images.length,
   };
   const hasContent = keepsDrafts && !destination && hasDraftContent(snapshot);
+  const unsaved = !inReplyToId && destination !== null && (hasDraftContent(snapshot) || images.length > 0);
   const report = useRef<() => void>(() => undefined);
-  report.current = () => onDraftChange?.({ hasContent, id: draftId.current });
+  report.current = () => onDraftChange?.({ hasContent, id: draftId.current, unsaved });
   const persist = useRef<() => void>(() => undefined);
   persist.current = () => {
     if (!keepsDrafts || !me) return;

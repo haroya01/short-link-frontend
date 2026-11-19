@@ -71,7 +71,7 @@ async function render(
     inReplyToId?: number;
     threadReplyPolicy?: NoteReplyPolicy;
     draft?: NoteDraft;
-    onDraftChange?: (state: { hasContent: boolean; id: string | null }) => void;
+    onDraftChange?: (state: { hasContent: boolean; id: string | null; unsaved: boolean }) => void;
     room?: NoteRoom;
     quotedNote?: QuotedNote;
   } = {},
@@ -158,11 +158,11 @@ describe("device drafts", () => {
     const onDraftChange = vi.fn();
     await render({ onDraftChange });
     await type("닫아도 남아야 하는 글");
-    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: null });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: null, unsaved: false });
     await settle();
     expect(stored()).toHaveLength(1);
     expect(stored()[0]).toMatchObject({ body: "닫아도 남아야 하는 글", visibility: "public", replyPolicy: "everyone" });
-    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: stored()[0].id });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: stored()[0].id, unsaved: false });
 
     await type("");
     await settle();
@@ -237,11 +237,12 @@ describe("a quote and the room it goes to", () => {
     mocks.listMyRooms.mockResolvedValue([{ id: 5, name: "우리 가족" }]);
     const onDraftChange = vi.fn();
     await render({ room: { id: 1, name: "동아리 사람들" }, quotedNote: quoted(9910), onDraftChange });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null, unsaved: false });
     await type("나도 어제 거기 있었는데");
     expect(destination()).toBeNull();
     expect(mocks.listMyRooms).not.toHaveBeenCalled();
     expect(host.querySelector("[data-note-room-audience]")!.textContent).toBe("roomAudience");
-    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null, unsaved: true });
     await settle();
     expect(stored()).toEqual([]);
     await submit();
@@ -256,18 +257,34 @@ describe("a quote and the room it goes to", () => {
     await render({ quotedNote: quoted(5), onDraftChange });
     await type("가족한테도 보여 주고 싶은 사진");
     expect(Array.from(destination()!.options).map((o) => o.value)).toEqual(["", "5"]);
-    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: null });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: true, id: null, unsaved: false });
     await act(async () => {
       destination()!.value = "5";
       destination()!.dispatchEvent(new Event("change", { bubbles: true }));
     });
-    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null });
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null, unsaved: true });
     await settle();
     expect(stored()).toEqual([]);
     await submit();
     expect(mocks.createNote).toHaveBeenCalledWith(
       expect.objectContaining({ quotedNoteId: 5, roomId: 5, visibility: null }),
     );
+  });
+
+  it("has nothing unsaved once a room note is posted", async () => {
+    const onDraftChange = vi.fn();
+    await render({ room: { id: 1, name: "동아리 사람들" }, onDraftChange });
+    await type("올리고 나면 남는 게 없다");
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null, unsaved: true });
+    await submit();
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null, unsaved: false });
+  });
+
+  it("counts nothing as unsaved in a reply, whose text stays with the note it answers", async () => {
+    const onDraftChange = vi.fn();
+    await render({ inReplyToId: 70, onDraftChange });
+    await type("답글은 그 자리에 남는다");
+    expect(onDraftChange).toHaveBeenLastCalledWith({ hasContent: false, id: null, unsaved: false });
   });
 
   it("posts the quote of a public note to my notes unless a room is picked", async () => {

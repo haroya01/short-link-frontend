@@ -4906,6 +4906,7 @@
     "draftsTitle": "下書き",
     "draftsEmpty": "下書きはまだありません",
     "draftSaved": "下書きに保存しました",
+    "discardTitle": "書きかけのノートを破棄しますか？",
     "draftImagesDropped": "写真{count}枚は下書きに残っていません",
     "draftDeleted": "下書きを削除しました",
     "draftDelete": "下書きを削除",
