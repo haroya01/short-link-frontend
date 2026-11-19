@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
 // Mock lane: the viewer follows mina@mastodon.social; deals@spam.example starts blocked and
@@ -14,6 +14,15 @@ async function openAccountMenu(page: Page) {
 
 const overflow = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+
+const linesPerItem = (menu: Locator) =>
+  menu.getByRole("menuitem").evaluateAll((items) =>
+    items.map((item) => {
+      const range = document.createRange();
+      range.selectNodeContents(item);
+      return new Set(Array.from(range.getClientRects(), (rect) => Math.round(rect.top))).size;
+    }),
+  );
 
 test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
@@ -40,6 +49,15 @@ test.describe("desktop", () => {
     await expect(page.getByText("차단한 계정이에요")).toHaveCount(0);
     await expect(page.locator('article[data-note-id="12"]')).toBeVisible();
     await expect(page.getByRole("button", { name: "팔로우", exact: true })).toBeVisible();
+  });
+
+  test("the account menu opens at its own width, not the button's, with each item on one line", async ({ page }) => {
+    await page.goto("/ko/blog/remote/9800");
+    await openAccountMenu(page);
+    const menu = page.getByRole("menu");
+    await expect(menu.getByRole("menuitem")).toHaveText(["뮤트…", "차단", "mastodon.social 차단"]);
+    expect(Math.round((await menu.boundingBox())!.width)).toBe(224);
+    expect(await linesPerItem(menu)).toEqual([1, 1, 1]);
   });
 
   test("muting an account elsewhere uses the same dialog and keeps its notes on its page", async ({ page }) => {
@@ -195,6 +213,21 @@ test.describe("phone", () => {
     });
     expect(await overflow(page)).toBeLessThanOrEqual(0);
   });
+
+  for (const width of [390, 320]) {
+    test(`at ${width}px the account menu stays inside the screen with each item on one line`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto("/ko/blog/remote/9800");
+      await openAccountMenu(page);
+      const menu = page.getByRole("menu");
+      await expect(menu.getByRole("menuitem")).toHaveText(["뮤트…", "차단", "mastodon.social 차단"]);
+      const box = (await menu.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+      expect(await linesPerItem(menu)).toEqual([1, 1, 1]);
+      expect(await overflow(page)).toBeLessThanOrEqual(0);
+    });
+  }
 
   test("the account menu, the blocked account line and the settings lists fit a phone", async ({ page }) => {
     await page.goto("/ko/blog/remote/9800");
