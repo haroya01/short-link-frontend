@@ -20,6 +20,7 @@ import { markdownLead } from "@/modules/blog/lib/markdown-lead";
 import { scheduledLabel } from "@/modules/blog/lib/scheduled-label";
 import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { ErrorState } from "@/components/common/error-state";
+import { InsideRoomProvider } from "@/modules/rooms/lib/room-scope";
 
 /** The writing surface for an existing post (`postId`) or a new one that is created on its first save (`null`). */
 export function PostEditorScreen({
@@ -172,6 +173,7 @@ export function PostEditorScreen({
       {/* Clean writing surface: title flows straight into the body — no form strip. All publish
           metadata (cover · 요약 · 시리즈 · 태그 · slug) lives in the 발행 설정 dialog. */}
       <div className="-mx-5 mt-4 min-h-0 flex-1 overflow-hidden">
+        <InsideRoomProvider roomId={ed.audience === "ROOM" ? (ed.room?.id ?? null) : null}>
         <MarkdownEditor
           // Remount on load / revision-restore so the editor reseeds from the fresh content (Tiptap
           // only reads initialValue at mount). reloadKey bumps on load()/restore, never on typing.
@@ -188,6 +190,7 @@ export function PostEditorScreen({
           onUploadingChange={ed.setUploading}
           uploadsSettledRef={ed.uploadsSettled}
         />
+        </InsideRoomProvider>
       </div>
 
       {/* While the publish dialog is open it surfaces the error in its own footer — don't double it here. */}

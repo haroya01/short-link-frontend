@@ -8,8 +8,10 @@ import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { kurlNoteId } from "@/modules/blog/lib/kurl-link";
-import { getNoteThread, isShareable, type Note } from "@/modules/notes/api/notes";
+import { getNoteThread, type Note } from "@/modules/notes/api/notes";
 import { QuotedNoteCard } from "@/modules/notes/components/quoted-note-card";
+import { noteQuotableIn } from "@/modules/notes/lib/quote-wall";
+import { useInsideRoom } from "@/modules/rooms/lib/room-scope";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import { LinkCardBase } from "@/modules/blog/components/editor/link-card-base";
 
@@ -52,24 +54,26 @@ function LinkCardView(props: NodeViewProps) {
   return noteId ? <NoteCardView {...props} noteId={noteId} /> : <PreviewCardView {...props} />;
 }
 
-/** Mirrors the reader's NoteEmbed: readers fetch the note anonymously, so a note only some may see
- *  shows here as the link card they will get. */
+/** Mirrors the reader: a note anyone may see is a card, a room's note is a card only in a post of
+ *  that room, and every other note shows here as the link card readers will get. */
 function NoteCardView(props: NodeViewProps & { noteId: number }) {
   const { node, deleteNode, selected, noteId } = props;
   const t = useTranslations("postEditor.blockMenu");
   const url = (node.attrs.url as string) || "";
-  const [note, setNote] = useState<Note | null | undefined>(undefined);
+  const roomId = useInsideRoom();
+  const [read, setRead] = useState<Note | null | undefined>(undefined);
 
   useEffect(() => {
     let alive = true;
     getNoteThread(noteId)
-      .then((thread) => alive && setNote(isShareable(thread.note.visibility) ? thread.note : null))
-      .catch(() => alive && setNote(null));
+      .then((thread) => alive && setRead(thread.note))
+      .catch(() => alive && setRead(null));
     return () => {
       alive = false;
     };
   }, [noteId]);
 
+  const note = read && !noteQuotableIn(read, roomId) ? null : read;
   if (note === null) return <PreviewCardView {...props} />;
   return (
     <NodeViewWrapper

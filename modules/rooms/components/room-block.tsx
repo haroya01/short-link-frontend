@@ -111,6 +111,7 @@ export function RoomBlock({
   onPin,
   onReplace,
   onRemove,
+  onQuoted,
 }: {
   room: RoomListItem;
   items: RoomItem[];
@@ -118,6 +119,7 @@ export function RoomBlock({
   onPin: (room: RoomListItem, pinned: boolean) => void;
   onReplace: (note: Note) => void;
   onRemove: (id: number) => void;
+  onQuoted: (note: Note) => void;
 }) {
   const t = useTranslations("rooms");
   const ago = useCompactTime();
@@ -160,7 +162,14 @@ export function RoomBlock({
         <InsideRoomProvider roomId={room.id}>
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {items.map((item) => (
-              <RoomItemRow key={itemKey(item)} item={item} maxReplies={1} onReplace={onReplace} onRemove={onRemove} />
+              <RoomItemRow
+                key={itemKey(item)}
+                item={item}
+                maxReplies={1}
+                onReplace={onReplace}
+                onRemove={onRemove}
+                onQuoted={onQuoted}
+              />
             ))}
           </div>
         </InsideRoomProvider>

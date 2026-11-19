@@ -2,11 +2,15 @@ import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { ShareButton } from "@/modules/blog/components/share-button";
+import type { PostAudience } from "@/modules/blog/lib/post-audience";
+import type { NoteRoom } from "@/modules/notes/api/notes";
+import { postQuotable } from "@/modules/notes/lib/quote-wall";
 import { PostReaderMenu } from "./post-reader-menu";
 
 /**
  * ♡ · 저장 · 엮기 · 공유 · ⋯ as one row of the same icon button. Below 1100px the dock carries the reader
- * actions, so the header (`menuOnlyBelowWide`) keeps just the ⋯ there.
+ * actions, so the header (`menuOnlyBelowWide`) keeps just the ⋯ there. A room's post has no 엮기 or 공유:
+ * neither may carry it out of the room.
  */
 export function PostActionRow({
   postId,
@@ -17,6 +21,8 @@ export function PostActionRow({
   authorUsername,
   locale,
   menuOnlyBelowWide = false,
+  room = null,
+  audience = null,
 }: {
   postId: number;
   postTitle: string;
@@ -26,14 +32,16 @@ export function PostActionRow({
   authorUsername: string;
   locale: string;
   menuOnlyBelowWide?: boolean;
+  room?: NoteRoom | null;
+  audience?: PostAudience | null;
 }) {
   return (
     <div data-post-action-row className="flex items-center gap-1">
       <div className={menuOnlyBelowWide ? "hidden min-[1100px]:contents" : "contents"}>
         <LikeButton postId={postId} initialCount={likeCount} postTitle={postTitle} />
         <BookmarkButton postId={postId} />
-        <ConnectButton postId={postId} postTitle={postTitle} />
-        <ShareButton postUrl={postUrl} postSlug={postSlug} postTitle={postTitle} />
+        {!room && <ConnectButton postId={postId} postTitle={postTitle} />}
+        {!room && <ShareButton postUrl={postUrl} postSlug={postSlug} postTitle={postTitle} />}
       </div>
       <PostReaderMenu
         postId={postId}
@@ -42,7 +50,9 @@ export function PostActionRow({
         postSlug={postSlug}
         postUrl={postUrl}
         locale={locale}
-        withShare={menuOnlyBelowWide}
+        withShare={menuOnlyBelowWide && !room}
+        room={room}
+        quotable={postQuotable({ audience, room })}
       />
     </div>
   );

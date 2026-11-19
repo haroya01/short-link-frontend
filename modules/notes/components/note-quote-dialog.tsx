@@ -7,14 +7,17 @@ import { cn } from "@/lib/utils";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import type { Note, NoteRoom, QuotedNote, QuotedPost } from "@/modules/notes/api/notes";
 import type { NoteDraft } from "@/modules/notes/lib/note-drafts";
 import { NoteComposer } from "./note-composer";
 import { NoteDraftsButton } from "./note-drafts-sheet";
 
+type Kept = { hasContent: boolean; id: string | null; unsaved: boolean };
+
 type Quoted =
-  | { note: QuotedNote }
-  | { post: QuotedPost }
+  | { note: QuotedNote; room?: NoteRoom | null }
+  | { post: QuotedPost; room?: NoteRoom | null }
   | { fresh: true; title: string; draft?: NoteDraft; room?: NoteRoom };
 
 export function NoteQuoteDialog({
@@ -27,14 +30,17 @@ export function NoteQuoteDialog({
   onPosted: (note: Note) => void;
 }) {
   const t = useTranslations("notes");
+  const tPost = useTranslations("publicPost");
   const { toast } = useToast();
+  const [confirm, confirmDialog] = useConfirm();
+  const asking = useRef(false);
   const open = quoted !== null;
   const panel = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const [mounted, setMounted] = useState(false);
   const [shown, setShown] = useState<Quoted | null>(quoted);
   const [draft, setDraft] = useState<NoteDraft | null>(null);
-  const [kept, setKept] = useState<{ hasContent: boolean; id: string | null }>({ hasContent: false, id: null });
+  const [kept, setKept] = useState<Kept>({ hasContent: false, id: null, unsaved: false });
   const { mounted: present, closing } = usePresence(open, 160);
 
   const opened = useRef(false);
@@ -50,12 +56,28 @@ export function NoteQuoteDialog({
     setDraft("fresh" in quoted ? quoted.draft ?? null : null);
   }, [quoted]);
 
-  const close = () => {
+  const close = async () => {
+    if (asking.current) return;
+    if (kept.unsaved) {
+      asking.current = true;
+      const discard = await confirm({
+        title: t("discardTitle"),
+        confirmLabel: tPost("highlightReplyDiscard"),
+        cancelLabel: tPost("highlightReplyKeepWriting"),
+        destructive: true,
+      });
+      asking.current = false;
+      if (!discard) return;
+    }
     if (kept.hasContent) toast(t("draftSaved"));
     onClose();
   };
-  const onDraftChange = useCallback((state: { hasContent: boolean; id: string | null }) => {
-    setKept((current) => (current.hasContent === state.hasContent && current.id === state.id ? current : state));
+  const onDraftChange = useCallback((state: Kept) => {
+    setKept((current) =>
+      current.hasContent === state.hasContent && current.id === state.id && current.unsaved === state.unsaved
+        ? current
+        : state,
+    );
   }, []);
 
   useFocusTrap(panel, { active: open, onEscape: close, autoFocus: false });
@@ -106,7 +128,7 @@ export function NoteQuoteDialog({
           <h2 id={titleId} className="text-[16px] font-semibold text-slate-900 dark:text-slate-100">
             {"fresh" in shown ? shown.title : "note" in shown ? t("quoteTitle") : t("quoteAction")}
           </h2>
-          {"fresh" in shown && shown.room ? (
+          {shown.room ? (
             <span />
           ) : (
             <NoteDraftsButton onPick={(next) => setDraft(next)} currentId={kept.id} className="justify-self-end" />
@@ -135,6 +157,7 @@ export function NoteQuoteDialog({
             <NoteComposer
               key={`note-${shown.note.id}`}
               quotedNote={shown.note}
+              room={shown.room ?? null}
               autoFocus
               onCreated={onPosted}
               onDraftChange={onDraftChange}
@@ -143,6 +166,7 @@ export function NoteQuoteDialog({
             <NoteComposer
               key={`post-${shown.post.id}`}
               quote={shown.post}
+              room={shown.room ?? null}
               autoFocus
               onCreated={onPosted}
               onDraftChange={onDraftChange}
@@ -150,6 +174,7 @@ export function NoteQuoteDialog({
           )}
         </div>
       </div>
+      {confirmDialog}
     </div>,
     document.body,
   );

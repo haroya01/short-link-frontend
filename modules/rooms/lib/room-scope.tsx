@@ -4,7 +4,7 @@ import { createContext, useContext, type ReactNode } from "react";
 
 const InsideRoom = createContext<number | null>(null);
 
-export function InsideRoomProvider({ roomId, children }: { roomId: number; children: ReactNode }) {
+export function InsideRoomProvider({ roomId, children }: { roomId: number | null; children: ReactNode }) {
   return <InsideRoom.Provider value={roomId}>{children}</InsideRoom.Provider>;
 }
 
