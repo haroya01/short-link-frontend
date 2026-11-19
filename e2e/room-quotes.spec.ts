@@ -8,6 +8,9 @@ import { expectOnTop, toastBy } from "./helpers/on-top";
 test.use({ viewport: { width: 390, height: 844 } });
 
 const ROOM_POST = "/ko/p/yuki_dev/rainy-mt-night";
+const NO_SUCH_POST = "/ko/p/hana/link-only-draft";
+const notFound = (page: Page) => page.getByRole("heading", { name: "이 글을 찾을 수 없어요" });
+const notFoundWords = (page: Page) => notFound(page).locator("xpath=..").innerText();
 const noteAt = (id: number) => encodeURIComponent(`http://localhost/ko/p/x/notes/${id}`);
 
 test.beforeEach(async ({ page }) => {
@@ -110,7 +113,7 @@ test.describe("the editor's note card", () => {
 test.describe("a room post", () => {
   test("gets the server's answer for a post that does not exist, and is the 404 page to a signed-out reader", async ({ page }) => {
     const answer = await page.request.get(ROOM_POST);
-    const missing = await page.request.get("/ko/p/hana/link-only-draft");
+    const missing = await page.request.get(NO_SUCH_POST);
     expect(answer.status()).toBe(missing.status());
     const html = await answer.text();
     expect(html).toContain("이 글을 찾을 수 없어요");
@@ -119,9 +122,26 @@ test.describe("a room post", () => {
     expect(html).not.toContain("동아리 사람들");
 
     await page.addInitScript(() => window.localStorage.setItem("kurl:mock-signed-out", "1"));
+    await page.goto(NO_SUCH_POST, { waitUntil: "domcontentloaded" });
+    await expect(notFound(page)).toBeVisible({ timeout: 30_000 });
+    const words = await notFoundWords(page);
     await page.goto(ROOM_POST, { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { name: "이 글을 찾을 수 없어요" })).toBeVisible({ timeout: 30_000 });
+    await expect(notFound(page)).toBeVisible({ timeout: 30_000 });
+    expect(await notFoundWords(page)).toBe(words);
     await expect(page.getByTestId("member-post")).toHaveCount(0);
+    await expect(page.locator("main[aria-busy]")).toHaveCount(0);
+  });
+
+  test("is the same 404 page to a signed-in reader who is not in the room", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem("kurl:mock-empty", "rooms"));
+    await page.goto(NO_SUCH_POST, { waitUntil: "domcontentloaded" });
+    await expect(notFound(page)).toBeVisible({ timeout: 30_000 });
+    const words = await notFoundWords(page);
+    await page.goto(ROOM_POST, { waitUntil: "domcontentloaded" });
+    await expect(notFound(page)).toBeVisible({ timeout: 30_000 });
+    expect(await notFoundWords(page)).toBe(words);
+    await expect(page.getByTestId("member-post")).toHaveCount(0);
+    await expect(page.locator("body")).not.toContainText("비 오던 엠티의 밤");
   });
 
   test("opens for a member, named as the room's, with nothing that carries it out", async ({ page }) => {
@@ -141,8 +161,8 @@ test.describe("a room post", () => {
   });
 
   test("a post that does not exist stays the 404 page for a signed-in reader", async ({ page }) => {
-    await page.goto("/ko/p/hana/link-only-draft", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { name: "이 글을 찾을 수 없어요" })).toBeVisible({ timeout: 30_000 });
+    await page.goto(NO_SUCH_POST, { waitUntil: "domcontentloaded" });
+    await expect(notFound(page)).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("member-post")).toHaveCount(0);
   });
 
@@ -241,6 +261,15 @@ test.describe("quotes already in a room", () => {
     await expect(posts.getByRole("link", { name: /비 오던 엠티의 밤/ })).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('article[data-note-id="9912"]')).toContainText("이 사진들 나도 받고 싶다");
   });
+});
+
+test("my own note from a room I left reads without the room post it quoted", async ({ page }) => {
+  await page.goto("/ko/p/dohyun/notes/9920", { waitUntil: "domcontentloaded" });
+  const note = page.locator('article[data-note-id="9920"]');
+  await expect(note).toContainText("마지막 날 정리 덕분에 끝까지 읽었어요", { timeout: 30_000 });
+  await expect(note.locator("[data-note-room]")).toHaveText("지난 스터디 방에서");
+  await expect(note.locator("[data-quoted-post-id]")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText("스터디 마지막 날 정리");
 });
 
 test.describe("at phone width", () => {

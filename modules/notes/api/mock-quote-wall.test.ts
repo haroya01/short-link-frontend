@@ -5,6 +5,9 @@ import { mockCreate, mockNoteQuotes, mockPostQuotes, mockReadableThread, mockSch
 
 const CLUB = 1;
 const CLASSMATES = 2;
+const INVITED_ONLY = 4;
+const LEFT = 7;
+const NOTE_IN_LEFT_ROOM = 9920;
 const CLUB_NOTE = 9910;
 const CLUB_POST = 8801;
 const PUBLIC_NOTE = 5;
@@ -63,6 +66,19 @@ describe("the mock keeps the server's rule for quotes and rooms", () => {
     expect(note.room?.id).toBe(CLUB);
     expect(note.quotedNote?.id).toBe(PUBLIC_NOTE);
     expect(mockNoteQuotes(PUBLIC_NOTE, 0).items).toHaveLength(before);
+  });
+
+  it("answers for a room the writer is not in before it looks at the quote", () => {
+    expect(refusal(() => mockCreate(draft({ quotedNoteId: CLUB_NOTE, roomId: INVITED_ONLY })))).toBe("NOTE_ROOM_NOT_FOUND");
+    expect(refusal(() => mockCreate(draft({ quotedPostId: CLUB_POST, roomId: LEFT })))).toBe("NOTE_ROOM_NOT_FOUND");
+  });
+
+  it("keeps a writer's own note from a room they left, without the room post it quoted", () => {
+    const note = mockReadableThread(NOTE_IN_LEFT_ROOM)?.note;
+    expect(note?.room).toEqual({ id: LEFT, name: "지난 스터디" });
+    expect(note?.body).toBe("마지막 날 정리 덕분에 끝까지 읽었어요");
+    expect(note?.quotedPost).toBeNull();
+    expect(mockThread(NOTE_IN_LEFT_ROOM)).toBeNull();
   });
 
   it("gives a room's note to its members and to no anonymous reader", () => {

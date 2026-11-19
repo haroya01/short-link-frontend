@@ -165,6 +165,20 @@ const BLOG_POSTS: BlogPost[] = [
   },
 ];
 
+// dohyun left this room. His own note there stays his to read; the room post it quotes does not.
+const LEFT_ROOM = { id: 7, name: "지난 스터디" };
+const LEFT_ROOM_POST: BlogPost = {
+  id: 8805,
+  roomId: LEFT_ROOM.id,
+  author: YUKI,
+  slug: "study-last-day",
+  title: "스터디 마지막 날 정리",
+  excerpt: "여덟 주 동안 읽은 것과 남은 질문들.",
+  minutesAgo: 60 * 24 * 30,
+  cover: null,
+  readMinutes: 3,
+};
+
 const REPLIES: Record<string, [number, Person, string][]> = {
   "note-9910": [
     [9951, JUNHO, "나도 어제 거기 있었는데"],
@@ -284,9 +298,25 @@ function seededQuotes(): Post[] {
   ];
 }
 
-function everyPost(): Post[] {
-  return [...posts, ...seededQuotes(), ...longRoomPosts()];
+function leftRoomNotes(): Post[] {
+  return [
+    {
+      id: 9920,
+      roomId: LEFT_ROOM.id,
+      author: ME,
+      body: "마지막 날 정리 덕분에 끝까지 읽었어요",
+      minutesAgo: 60 * 24 * 29,
+      quotedPost: postCard(LEFT_ROOM_POST),
+    },
+  ];
 }
+
+function everyPost(): Post[] {
+  return [...posts, ...seededQuotes(), ...longRoomPosts(), ...leftRoomNotes()];
+}
+
+const isMember = (roomId: number) => state().some((r) => r.id === roomId);
+const roomName = (roomId: number) => knownRoom(roomId)?.name ?? (roomId === LEFT_ROOM.id ? LEFT_ROOM.name : "");
 
 function carriedBy(post: Post): BlogPost[] {
   const address = noteAddress(post.author, post.id);
@@ -303,12 +333,12 @@ function noteOf(post: Post): Note {
     likedByMe: false,
     author: { id: post.author.id, username: post.author.username, displayName: post.author.displayName, avatarUrl: post.author.avatarUrl },
     media: [],
-    quotedPost: post.quotedPost ?? null,
+    quotedPost: isMember(post.roomId) ? (post.quotedPost ?? null) : null,
     inReplyToId: null,
     replyCount: REPLIES[`note-${post.id}`]?.length ?? 0,
     repostCount: null,
     repostedByMe: false,
-    quotedNote: post.quotedNote ?? null,
+    quotedNote: isMember(post.roomId) ? (post.quotedNote ?? null) : null,
     quoteCount:
       everyPost().filter((p) => p.roomId === post.roomId && p.quotedNote?.id === post.id).length + carriedBy(post).length,
     linkPreview: null,
@@ -322,7 +352,7 @@ function noteOf(post: Post): Note {
     poll: null,
     replyPolicy: "everyone",
     canReply: true,
-    room: { id: post.roomId, name: knownRoom(post.roomId)?.name ?? "" },
+    room: { id: post.roomId, name: roomName(post.roomId) },
   };
 }
 
@@ -581,9 +611,14 @@ export function mockJoin(code: string): Promise<RoomJoined> {
   return done({ status: "joined", roomId: r.id });
 }
 
+/** The server answers for the destination room before it looks at the quote. */
+export function mockRequireMember(roomId: number): void {
+  if (!isMember(roomId)) throw new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" });
+}
+
 export function mockPostInRoom(draft: NoteDraft, quote: MockRoomQuote): Note {
   const roomId = draft.roomId!;
-  if (!state().some((r) => r.id === roomId)) throw new ApiError(404, { status: 404, code: "NOTE_ROOM_NOT_FOUND" });
+  mockRequireMember(roomId);
   const post: Post = {
     id: nextNoteId++,
     roomId,
@@ -598,8 +633,7 @@ export function mockPostInRoom(draft: NoteDraft, quote: MockRoomQuote): Note {
 }
 
 function readablePost(id: number): Post | undefined {
-  const member = new Set(state().map((r) => r.id));
-  return everyPost().find((p) => p.id === id && member.has(p.roomId));
+  return everyPost().find((p) => p.id === id && (isMember(p.roomId) || p.author.id === ME.id));
 }
 
 export function mockRoomNote(id: number): Note | null {
@@ -619,10 +653,12 @@ export function mockRoomThread(id: number): NoteThread | null {
   return { note, parent: null, replies, continuation: [], series: null, hiddenReplyCount: 0, viewerCanModerate: post.author.id === ME.id };
 }
 
+const roomBlogPosts = () => [...BLOG_POSTS, LEFT_ROOM_POST];
+
 export function mockRoomPostCard(id: number): { card: QuotedPost; room: { id: number; name: string } } | null {
-  const post = BLOG_POSTS.find((b) => b.id === id);
-  if (!post || !state().some((r) => r.id === post.roomId)) return null;
-  return { card: postCard(post), room: { id: post.roomId, name: knownRoom(post.roomId)?.name ?? "" } };
+  const post = roomBlogPosts().find((b) => b.id === id);
+  if (!post || !isMember(post.roomId)) return null;
+  return { card: postCard(post), room: { id: post.roomId, name: roomName(post.roomId) } };
 }
 
 export function mockRoomNoteQuotes(id: number): Note[] | null {
@@ -649,9 +685,9 @@ export function mockRoomPostsCarrying(noteId: number): PublicFeedItem[] | null {
 }
 
 export function mockRoomPostDetail(slug: string, viewer: boolean): PublicPostDetail | null | undefined {
-  const post = BLOG_POSTS.find((b) => b.slug === slug);
+  const post = roomBlogPosts().find((b) => b.slug === slug);
   if (!post) return undefined;
-  if (!viewer || !state().some((r) => r.id === post.roomId)) return null;
+  if (!viewer || !isMember(post.roomId)) return null;
   const rows = post.body ?? [["PARAGRAPH", post.excerpt]];
   return {
     author: { id: post.author.id, username: post.author.username, displayName: post.author.displayName, avatarUrl: post.author.avatarUrl, bio: null },
@@ -668,7 +704,7 @@ export function mockRoomPostDetail(slug: string, viewer: boolean): PublicPostDet
       lastEditedAt: null,
       pinned: false,
       audience: "ROOM",
-      room: { id: post.roomId, name: knownRoom(post.roomId)?.name ?? "" },
+      room: { id: post.roomId, name: roomName(post.roomId) },
     },
     blocks: rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null })),
     series: null,

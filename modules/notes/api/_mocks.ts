@@ -38,6 +38,7 @@ import {
   mockFollowingRoomNotes,
   mockFollowingRoomPosts,
   mockPostInRoom,
+  mockRequireMember,
   mockRoomNote,
   mockRoomNoteQuotes,
   mockRoomPostCard,
@@ -1639,6 +1640,7 @@ export function mockVote(id: number, choices: number[]): NotePoll {
 /** The server's rule for what a note may quote: what a room holds is quoted only inside that room. */
 function quoteFor(draft: NoteDraft): MockRoomQuote {
   const roomId = draft.roomId ?? null;
+  if (roomId !== null) mockRequireMember(roomId);
   const quotedNote = draft.quotedNoteId === null ? null : (notes.find((n) => n.id === draft.quotedNoteId) ?? mockRoomNote(draft.quotedNoteId));
   if (quotedNote && !noteQuotableIn(quotedNote, roomId)) {
     throw new ApiError(400, { status: 400, code: "NOTE_NOT_SHAREABLE" });
