@@ -254,7 +254,7 @@ function RemoteAccountMenu({
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-11 z-20 w-56 max-w-full rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900"
+          className="absolute left-0 top-11 z-20 w-56 max-w-full rounded-surface border border-slate-200 bg-white p-1 shadow-float dark:border-slate-800 dark:bg-slate-900 sm:max-w-none"
         >
           {oneAccount && (
             <>
