@@ -19,7 +19,7 @@ jobs:
   e2e-mock:
     # Playwright 1.59.1 has no browser install for ubuntu-26.04; unpin together with a Playwright upgrade.
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       # Build still expects an API base; a noop URL keeps it happy. Every request is intercepted by
       # Playwright routes, and NEXT_PUBLIC_USE_MOCKS is left unset so the real fetch path runs (the
@@ -35,6 +35,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Build Next.js
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
       - name: Start Next.js
         run: |
@@ -63,7 +65,7 @@ jobs:
 
   e2e-maps-key:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
     env:
       # WebKit rejects port 0 before page.route sees the request; a closed real port works for both browsers.
       NEXT_PUBLIC_API_BASE: http://127.0.0.1:4010
@@ -80,6 +82,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
       - name: Build Next.js (Maps key)
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
       - name: Start Next.js
         run: |

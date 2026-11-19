@@ -2,6 +2,7 @@ import { expect, test, type Page, type Route } from "@playwright/test";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 import { remoteTrendingItem as trending } from "./helpers/remote-notes";
+import { topicTag } from "./helpers/topics";
 
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -36,6 +37,7 @@ function gate() {
 
 type Serve = {
   trending?: (route: Route, call: number) => Promise<void>;
+  topics?: (route: Route) => Promise<void>;
   resolve?: (route: Route) => Promise<void>;
 };
 
@@ -45,7 +47,7 @@ function cursorOf(route: Route) {
   return new URL(route.request().url()).searchParams.get("cursor");
 }
 
-async function serve(page: Page, { trending: list, resolve }: Serve = {}) {
+async function serve(page: Page, { trending: list, topics, resolve }: Serve = {}) {
   const seen = {
     trending: [] as string[],
     resolved: [] as string[],
@@ -81,6 +83,7 @@ async function serve(page: Page, { trending: list, resolve }: Serve = {}) {
       return route.fulfill({ status: 201, json: { ...LOCAL, id: 9001, body: "덧붙인 생각", quotedNote: { ...LOCAL } } });
     },
     "GET /api/v1/federation/settings": (route) => route.fulfill({ json: { enabled: true, noticeSeen: true, handle: null } }),
+    ...(topics ? { "GET /api/v1/federation/topics": topics } : {}),
   });
   return seen;
 }
@@ -188,6 +191,45 @@ test("a page that fails further down says so under the list, and 다시 시도 p
   await group.getByRole("button", { name: "다시 시도" }).click();
   await expect(group.locator("[data-remote-uri]")).toHaveCount(7);
   expect(seen.trending).toEqual(["?limit=20", "?limit=20&cursor=t5", "?limit=20&cursor=t5"]);
+});
+
+test("a list that is being refreshed when its end comes into view loads the next page once the refresh is in", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await signIn(page);
+  const refreshed = gate();
+  let firstPages = 0;
+  const seen = await serve(page, {
+    trending: async (route) => {
+      if (cursorOf(route) === "r") return route.fulfill({ json: { items: [RECEIVED], next: null } });
+      firstPages += 1;
+      if (firstPages > 1) await refreshed.opened;
+      await route.fulfill({ json: { items: ITEMS, next: "r" } });
+    },
+  });
+  await page.route("**/api/v1/federation/topics*", (route) =>
+    route.fulfill({ json: { items: Array.from({ length: 10 }, (_, i) => topicTag(`주제${i + 1}`)) } }),
+  );
+  const { group } = await open(page);
+  await expect(group.locator("[data-remote-uri]")).toHaveCount(7, { timeout: 30_000 });
+  expect(seen.trending).toEqual(["?limit=20"]);
+
+  await page.clock.fastForward("06:00");
+  const nav = page.getByRole("navigation");
+  await nav.getByRole("link", { name: "홈" }).click();
+  await expect(group).toHaveCount(0);
+  await nav.getByRole("link", { name: "둘러보기" }).click();
+  await expect(group.locator("[data-remote-uri]")).toHaveCount(7);
+  await expect.poll(() => seen.trending).toEqual(["?limit=20", "?limit=20"]);
+
+  await scrollToEnd(page);
+  await expect(group.getByRole("button", { name: "더 보기" })).toBeInViewport();
+  expect(seen.trending).toHaveLength(2);
+  refreshed.open();
+
+  await expect(group.locator('article[data-note-id="12"]')).toBeVisible();
+  expect(seen.trending).toEqual(["?limit=20", "?limit=20", "?limit=20&cursor=r"]);
 });
 
 test("liking brings the post over by its AP id, then likes the local note, and the post is brought over once", async ({
@@ -327,21 +369,54 @@ test("with nothing trending, received notes come straight in without a heading",
   await expect(group.getByRole("heading", { name: "받은 노트" })).toHaveCount(0);
 });
 
-test("a list that failed says so in one grey line, and 다시 시도 loads it", async ({ page }) => {
+const UNAVAILABLE = { status: 503, json: { status: 503, title: "Service Unavailable" } };
+
+test("a list that fails once the lane is drawn says so in one grey line, and 다시 시도 loads it", async ({ page }) => {
   await signIn(page);
+  const drawn = gate();
   const seen = await serve(page, {
-    trending: (route, call) =>
-      call === 1
-        ? route.fulfill({ status: 503, json: { status: 503, title: "Service Unavailable" } })
-        : route.fulfill({ json: { items: ITEMS } }),
+    trending: async (route, call) => {
+      if (call > 1) return route.fulfill({ json: { items: ITEMS } });
+      await drawn.opened;
+      await route.fulfill(UNAVAILABLE);
+    },
   });
   const { group } = await open(page);
+  await expect(group).toBeVisible({ timeout: 30_000 });
+  drawn.open();
   const line = group.getByText("인기 글을 불러오지 못했어요").locator("..");
   await expect(line).toBeVisible({ timeout: 30_000 });
   await expect(line.locator("svg")).toHaveCount(0);
+  expect(seen.trending).toHaveLength(1);
 
   await line.getByRole("button", { name: "다시 시도" }).click();
   await expect(group.locator("[data-remote-uri]")).toHaveCount(7);
+  await expect(group.getByText("인기 글을 불러오지 못했어요")).toHaveCount(0);
+  expect(seen.trending).toHaveLength(2);
+});
+
+test("a list that failed while the topics were still loading is asked once more as the lane is drawn, and shows its cards without the grey line", async ({
+  page,
+}) => {
+  await signIn(page);
+  const failed = gate();
+  const seen = await serve(page, {
+    trending: (route, call) => (call === 1 ? route.fulfill(UNAVAILABLE) : route.fulfill({ json: { items: ITEMS } })),
+    topics: async (route) => {
+      await failed.opened;
+      await route.fulfill({ json: { items: [] } });
+    },
+  });
+  const unavailable = page.waitForResponse(
+    (response) => response.url().includes("/api/v1/federation/trending") && response.status() === 503,
+  );
+  const { group } = await open(page);
+  await (await unavailable).finished();
+  expect(seen.trending).toHaveLength(1);
+  await expect(group).toHaveCount(0);
+  failed.open();
+
+  await expect(group.locator("[data-remote-uri]")).toHaveCount(7, { timeout: 30_000 });
   await expect(group.getByText("인기 글을 불러오지 못했어요")).toHaveCount(0);
   expect(seen.trending).toHaveLength(2);
 });

@@ -224,7 +224,7 @@ export function FollowingFeed({
     if (!el || !hasNext || loadError) return;
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) loadMore();
+        if (entries.some((entry) => entry.isIntersecting)) loadMore();
       },
       { rootMargin: "600px 0px" },
     );

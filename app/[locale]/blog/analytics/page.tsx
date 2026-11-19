@@ -327,7 +327,7 @@ function PostPerformanceList() {
     if (!el || error) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) void loadMore();
+        if (entries.some((entry) => entry.isIntersecting)) void loadMore();
       },
       { rootMargin: "400px" },
     );

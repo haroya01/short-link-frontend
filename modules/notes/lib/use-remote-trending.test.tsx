@@ -259,6 +259,45 @@ describe("the list of posts from other servers", () => {
     expect(mocks.listRemoteNotes).toHaveBeenCalledTimes(2);
   });
 
+  it("says it is refreshing while the list it shows is asked for again, and a next page waits until that is in", async () => {
+    mocks.listRemoteNotes.mockResolvedValueOnce(pool([item], "t20"));
+    await mount();
+    expect(loaded().refreshing).toBe(false);
+
+    const again = deferred<RemoteNotesPage>();
+    mocks.listRemoteNotes.mockReturnValueOnce(again.promise);
+    await act(async () => vi.advanceTimersByTimeAsync(REMOTE_TRENDING_STALE_MS + 1000));
+    await mount();
+    expect(loaded()).toMatchObject({ refreshing: true, loadingMore: false, hasMore: true });
+    await act(async () => loaded().more());
+    await flush();
+    expect(mocks.listRemoteNotes.mock.calls).toEqual([
+      ["trending", null],
+      ["trending", null],
+    ]);
+
+    await act(async () => again.settle(pool([item], "t20")));
+    await flush();
+    expect(loaded().refreshing).toBe(false);
+    mocks.listRemoteNotes.mockResolvedValueOnce(pool([], null));
+    await act(async () => loaded().more());
+    await flush();
+    expect(mocks.listRemoteNotes).toHaveBeenLastCalledWith("trending", "t20");
+    expect(loaded()).toMatchObject({ refreshing: false, hasMore: false });
+  });
+
+  it("is not refreshing while a next page loads", async () => {
+    const next = deferred<RemoteNotesPage>();
+    mocks.listRemoteNotes.mockResolvedValueOnce(pool([item], "t20")).mockReturnValueOnce(next.promise);
+    await mount();
+    await act(async () => loaded().more());
+    await flush();
+    expect(loaded()).toMatchObject({ loadingMore: true, refreshing: false });
+    await act(async () => next.settle(pool([], null)));
+    await flush();
+    expect(loaded()).toMatchObject({ loadingMore: false, refreshing: false });
+  });
+
   it("asks again when the reader signs in, since their list is filtered for them", async () => {
     mocks.auth = { authenticated: false, ready: true };
     mocks.listRemoteNotes.mockResolvedValue(pool([item]));

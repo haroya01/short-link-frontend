@@ -20,7 +20,7 @@ jobs:
   e2e-mock-on:
     # Playwright 1.59.1 has no browser install for ubuntu-26.04; unpin together with a Playwright upgrade.
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       NEXT_PUBLIC_USE_MOCKS: "1"
       # No network is hit in mock mode, but the build still wants a base defined.
@@ -35,6 +35,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Build Next.js (mock-on)
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
       - name: Start Next.js
         run: |
@@ -63,7 +65,7 @@ jobs:
 
   e2e-webkit-access:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
     env:
       NEXT_PUBLIC_USE_MOCKS: "1"
       NEXT_PUBLIC_API_BASE: http://127.0.0.1:4010
@@ -77,6 +79,8 @@ jobs:
       - name: Install Playwright WebKit
         run: npx playwright install --with-deps webkit
       - name: Build Next.js (mock-on, cross-origin API base)
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
       - name: Start Next.js
         run: |

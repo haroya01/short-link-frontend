@@ -1,4 +1,5 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
+import { batchIntersectionReports } from "./helpers/batched-intersections";
 import { mockBackend, signIn } from "./helpers/mock-backend";
 import { expectOnTop, toastBy } from "./helpers/on-top";
 
@@ -103,6 +104,23 @@ test("홈 asks for 추천 and follows the cursor to the next page as the reader 
     .toEqual(["?tab=for-you&limit=20&seen=hide", "?tab=for-you&limit=20&cursor=13.1&seen=hide"]);
   await expect(feed.locator('article[data-note-id="301"]')).toBeVisible();
   await page.waitForTimeout(600);
+  expect(seen.home).toHaveLength(2);
+});
+
+test("홈 asks for the next page when its end comes into view, even when the browser reports that in one batch with an earlier out-of-view report", async ({
+  page,
+}) => {
+  const outOfViewHeld = await batchIntersectionReports(page, '[data-testid="home-feed"] [role="status"]');
+  await signIn(page);
+  const seen = await serve(page);
+  await page.goto("/ko/blog");
+  const feed = page.getByTestId("home-feed");
+  await expect(feed.locator('article[data-note-id="101"]')).toBeVisible({ timeout: 30_000 });
+  await outOfViewHeld();
+  expect(seen.home).toHaveLength(1);
+
+  await scrollToEnd(page);
+  await expect(feed.locator('article[data-note-id="301"]')).toBeVisible();
   expect(seen.home).toHaveLength(2);
 });
 
