@@ -6,14 +6,23 @@ import { describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/.well-known/apple-app-site-association/route";
 import { routing } from "@/i18n/routing";
 import middleware from "@/middleware";
-import { appLinkComponents, PROFILE_PAGE_NAMES } from "./app-site-association";
+import { appLinkComponents, WEB_ONLY_PROFILE_PAGES } from "./app-site-association";
 
 vi.mock("next-intl/middleware", () => ({ default: () => () => new Response(null) }));
 
 const APP = path.resolve(__dirname, "../app/[locale]");
 const AUTHOR = "p/[username]";
 const ROOMS = "blog/rooms";
-const IN_APP = new Set([AUTHOR, `${AUTHOR}/[slug]`, `${AUTHOR}/notes/[id]`, `${ROOMS}/join/[code]`]);
+const TABS = ["notes", "replies", "media", "reposts", "series", "collections"];
+const WEB_ONLY = ["about", "bookmarks", "feed", "liked", "opengraph-image", "tag_filter"];
+const IN_APP = new Set([
+  AUTHOR,
+  `${AUTHOR}/[slug]`,
+  `${AUTHOR}/notes/[id]`,
+  `${AUTHOR}/series/[slug]`,
+  ...TABS.map((tab) => `${AUTHOR}/${tab}`),
+  `${ROOMS}/join/[code]`,
+]);
 const SAMPLE: Record<string, string> = { "[slug]": "first-post", "[id]": "42", "[code]": "r100x" };
 const PREFIXES = ["", ...routing.locales.map((locale) => `/${locale}`)];
 
@@ -94,7 +103,7 @@ describe("the app link association file", () => {
     expect(body.applinks.details[0].components).toEqual(appLinkComponents());
   });
 
-  it("opens the profile, post, note and room invite pages in the app and leaves every other page under them to the browser", () => {
+  it("opens a profile and its tabs, a post, a note, a series and a room invite in the app and leaves every other page under them to the browser", () => {
     const routes = [...routesUnder(AUTHOR), ...routesUnder(ROOMS)];
     expect(routes.filter((route) => IN_APP.has(route))).toHaveLength(IN_APP.size);
     for (const prefix of PREFIXES) {
@@ -106,9 +115,21 @@ describe("the app link association file", () => {
     }
   });
 
-  it("names every fixed page under an author, so none of them is taken for a post", () => {
+  it("sorts every fixed page under an author into a tab the app shows or a page left to the browser", () => {
     const fixed = [...folders(path.join(APP, AUTHOR)).filter((name) => !name.startsWith("[")), "opengraph-image"];
-    expect([...PROFILE_PAGE_NAMES].sort()).toEqual(fixed.sort());
+    expect([...WEB_ONLY_PROFILE_PAGES].sort()).toEqual(WEB_ONLY);
+    expect([...TABS, ...WEB_ONLY].sort()).toEqual(fixed.sort());
+  });
+
+  it("takes the six profile tabs and a series, and leaves the pages the app has no screen for", () => {
+    for (const prefix of PREFIXES) {
+      const author = `${prefix}/@dohyun`;
+      for (const tab of TABS) expect(opensInApp(`${author}/${tab}`), `${author}/${tab}`).toBe(true);
+      for (const page of WEB_ONLY) expect(opensInApp(`${author}/${page}`), `${author}/${page}`).toBe(false);
+      expect(opensInApp(`${author}/series/first-series`), `${author}/series/first-series`).toBe(true);
+      expect(opensInApp(`${author}/series/first-series/more`), `${author}/series/first-series/more`).toBe(false);
+      expect(opensInApp(`${author}/notes/5/quotes`), `${author}/notes/5/quotes`).toBe(false);
+    }
   });
 
   it("leaves the rest of the blog, other languages and deeper paths to the browser", () => {
@@ -127,6 +148,8 @@ describe("the app link association file", () => {
       "/rooms/join/",
       "/@dohyun/first-post/",
       "/@dohyun/first-post/comments",
+      "/@dohyun/series/",
+      "/@dohyun/series/first-series/",
       "/en/@dohyun/notes/42/",
       "/rooms/join/r100x/",
     ]) {

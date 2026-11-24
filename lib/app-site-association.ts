@@ -2,20 +2,7 @@ import { routing } from "@/i18n/routing";
 
 const APP_ID = "5R78H9H4YU.focustime.kurl";
 
-export const PROFILE_PAGE_NAMES = [
-  "about",
-  "bookmarks",
-  "collections",
-  "feed",
-  "liked",
-  "media",
-  "notes",
-  "opengraph-image",
-  "replies",
-  "reposts",
-  "series",
-  "tag_filter",
-] as const;
+export const WEB_ONLY_PROFILE_PAGES = ["about", "bookmarks", "feed", "liked", "opengraph-image", "tag_filter"] as const;
 
 export interface LinkComponent {
   "/": string;
@@ -33,8 +20,10 @@ function componentsUnder(prefix: string): LinkComponent[] {
     open("/rooms/join/?*"),
     web("/@*/notes/*/*"),
     open("/@*/notes/?*"),
+    web("/@*/series/*/*"),
+    open("/@*/series/?*"),
     web("/@*/*/*"),
-    ...PROFILE_PAGE_NAMES.map((name) => web(`/@*/${name}`)),
+    ...WEB_ONLY_PROFILE_PAGES.map((name) => web(`/@*/${name}`)),
     { ...web("/@*/?*"), "?": { preview: "?*" } },
     open("/@*/?*"),
     open("/@?*"),
