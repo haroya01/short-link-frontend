@@ -6,8 +6,10 @@ type Handler = (route: Route) => unknown;
 const json = (body: unknown): Handler => (route) => route.fulfill({ json: body });
 const fail: Handler = (route) => route.fulfill({ status: 500, json: { title: "boom" } });
 
+const IN_A_MONTH = new Date(Date.now() + 30 * 86_400_000).toISOString();
+
 const campaign = (over: Record<string, unknown> = {}) => ({
-  id: ID, name: "신주쿠 봄 포스터", status: "ACTIVE", startsAt: "2026-10-20T00:00:00Z", endsAt: "2026-11-20T15:00:00Z", endedAt: null,
+  id: ID, name: "신주쿠 봄 포스터", status: "ACTIVE", startsAt: "2026-10-20T00:00:00Z", endsAt: IN_A_MONTH, endedAt: null,
   defaultDestinationUrl: null, postEndAction: "KEEP", postEndDestinationUrl: null, postEndMessage: null, batchCount: 2,
   createdAt: "2026-10-18T03:00:00Z", updatedAt: "2026-10-18T03:00:00Z", ...over,
 });
