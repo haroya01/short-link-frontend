@@ -73,8 +73,13 @@ function pattern(glob: string): RegExp {
   return new RegExp(`^${body}$`);
 }
 
-function opensInApp(pathname: string): boolean {
-  const first = appLinkComponents().find((component) => pattern(component["/"]).test(pathname));
+function opensInApp(address: string): boolean {
+  const url = new URL(address, "https://blog.kurl.me");
+  const first = appLinkComponents().find(
+    (component) =>
+      pattern(component["/"]).test(url.pathname) &&
+      Object.entries(component["?"] ?? {}).every(([name, glob]) => pattern(glob).test(url.searchParams.get(name) ?? "")),
+  );
   return first !== undefined && !first.exclude;
 }
 
@@ -126,6 +131,17 @@ describe("the app link association file", () => {
       "/rooms/join/r100x/",
     ]) {
       expect(opensInApp(pathname), pathname).toBe(false);
+    }
+  });
+
+  it("leaves a draft preview link to the browser and takes every other link to a post", () => {
+    for (const prefix of PREFIXES) {
+      const post = `${prefix}/@dohyun/first-post`;
+      expect(opensInApp(`${post}?preview=t0ken`), post).toBe(false);
+      expect(opensInApp(`${post}?k=key&preview=t0ken`), post).toBe(false);
+      for (const query of ["", "?k=key", "?highlightId=7", "?hl=word", "?preview="]) {
+        expect(opensInApp(`${post}${query}`), `${post}${query}`).toBe(true);
+      }
     }
   });
 

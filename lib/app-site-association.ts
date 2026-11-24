@@ -19,6 +19,7 @@ export const PROFILE_PAGE_NAMES = [
 
 export interface LinkComponent {
   "/": string;
+  "?"?: Record<string, string>;
   exclude?: true;
 }
 
@@ -34,6 +35,7 @@ function componentsUnder(prefix: string): LinkComponent[] {
     open("/@*/notes/?*"),
     web("/@*/*/*"),
     ...PROFILE_PAGE_NAMES.map((name) => web(`/@*/${name}`)),
+    { ...web("/@*/?*"), "?": { preview: "?*" } },
     open("/@*/?*"),
     open("/@?*"),
   ];

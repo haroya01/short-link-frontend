@@ -5,6 +5,7 @@ const BLOG_HOST = { "x-original-host": "blog.kurl.me" };
 
 interface Component {
   "/": string;
+  "?"?: Record<string, string>;
   exclude?: boolean;
 }
 
@@ -19,7 +20,8 @@ test("the association file answers as JSON with no redirect, behind the blog hos
     expect(applinks.details[0].appIDs).toEqual(["5R78H9H4YU.focustime.kurl"]);
 
     const components: Component[] = applinks.details[0].components;
-    const at = (path: string, exclude: boolean) => components.findIndex((c) => c["/"] === path && !!c.exclude === exclude);
+    const at = (path: string, exclude: boolean) =>
+      components.findIndex((c) => c["/"] === path && !!c.exclude === exclude && !c["?"]);
     for (const prefix of ["", "/en", "/ko", "/ja", "/vi", "/hi"]) {
       for (const taken of ["/rooms/join/?*", "/@?*", "/@*/?*", "/@*/notes/?*"]) {
         expect(at(`${prefix}${taken}`, false), `${prefix}${taken}`).toBeGreaterThanOrEqual(0);
@@ -27,6 +29,9 @@ test("the association file answers as JSON with no redirect, behind the blog hos
       expect(at(`${prefix}/@*/series`, true)).toBeGreaterThanOrEqual(0);
       expect(at(`${prefix}/@*/series`, true)).toBeLessThan(at(`${prefix}/@*/?*`, false));
       expect(at(`${prefix}/@*/notes/*/*`, true)).toBeLessThan(at(`${prefix}/@*/notes/?*`, false));
+      const preview = components.findIndex((c) => c["/"] === `${prefix}/@*/?*` && c.exclude && c["?"]?.preview === "?*");
+      expect(preview).toBeGreaterThanOrEqual(0);
+      expect(preview).toBeLessThan(at(`${prefix}/@*/?*`, false));
     }
   }
 });
