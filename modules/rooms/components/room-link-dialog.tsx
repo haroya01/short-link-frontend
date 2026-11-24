@@ -5,7 +5,8 @@ import { Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
-import { createRoomInvite, roomShareUrl, type RoomInvite } from "@/modules/rooms/api/rooms";
+import { createRoomInvite, type RoomInvite } from "@/modules/rooms/api/rooms";
+import { roomInviteUrl } from "@/modules/rooms/lib/room-href";
 import { PANEL_TEXT_BUTTON, RoomPanel } from "./room-panel";
 
 const LIMITS = [0, 5, 10, 20, 50];
@@ -39,7 +40,7 @@ export function RoomLinkDialog({
   const limitId = useId();
   const expiryId = useId();
   const approvalId = useId();
-  const url = roomShareUrl(invite);
+  const url = roomInviteUrl(invite.code);
 
   useEffect(() => {
     if (!open) return;

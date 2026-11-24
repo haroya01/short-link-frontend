@@ -16,13 +16,13 @@ import {
   listRoomInvites,
   personName,
   ROOM_MAX_PICKED,
-  roomShareUrl,
   searchInviteCandidates,
   type InviteSource,
   type RoomInvite,
   type RoomPerson,
 } from "@/modules/rooms/api/rooms";
 import { inviteUsable } from "@/modules/rooms/lib/room-bands";
+import { roomInviteUrl } from "@/modules/rooms/lib/room-href";
 import { PANEL_TEXT_BUTTON, RoomPanel } from "./room-panel";
 import { RoomLinkDialog } from "./room-link-dialog";
 
@@ -134,7 +134,7 @@ export function RoomInviteSheet({
   async function copy() {
     if (!invite) return;
     try {
-      await navigator.clipboard.writeText(roomShareUrl(invite));
+      await navigator.clipboard.writeText(roomInviteUrl(invite.code));
       toast(t("linkCopied"));
     } catch {
       toast(t("linkCopyFailed"), "error");
@@ -144,7 +144,7 @@ export function RoomInviteSheet({
   async function share() {
     if (!invite) return;
     try {
-      await navigator.share({ title: roomName, url: roomShareUrl(invite) });
+      await navigator.share({ title: roomName, url: roomInviteUrl(invite.code) });
     } catch {
       return;
     }

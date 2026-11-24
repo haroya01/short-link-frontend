@@ -124,10 +124,6 @@ export interface RoomItemsPage {
   next: string | null;
 }
 
-export function roomShareUrl(invite: RoomInvite): string {
-  return invite.url ?? invite.pageUrl;
-}
-
 export function personName(person: Pick<RoomPerson, "displayName" | "username">): string {
   return person.displayName?.trim() || person.username;
 }
