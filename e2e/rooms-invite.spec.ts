@@ -36,6 +36,10 @@ test("the invite sheet marks members and pending invites, gathers picks above an
   await expect(page.getByTestId("room-invitees").locator("[data-room-person]")).toHaveText([/하늘/, /은성/, /김독자/]);
 });
 
+function inviteAddress(page: Page, code: string): string {
+  return new URL(`/blog-preview/rooms/join/${code}`, page.url()).href;
+}
+
 test("search finds people outside the two lists", async ({ page }) => {
   const sheet = await openInvite(page);
   await sheet.getByRole("searchbox", { name: "이름이나 아이디로 찾기" }).fill("나래");
@@ -49,15 +53,48 @@ test("QR opens the link and its settings on their own, and a new link takes the 
   await sheet.getByRole("button", { name: "QR" }).click();
   const dialog = page.getByTestId("room-link-dialog");
   await expect(dialog.getByRole("img", { name: "초대 QR 코드" })).toBeVisible();
-  await expect(dialog.locator("[data-room-link-url]")).toHaveText("https://kurl.me/R100k");
+  await expect(dialog.locator("[data-room-link-url]")).toHaveText(inviteAddress(page, "r100x"));
   await dialog.getByLabel("사용 횟수").selectOption({ label: "5번" });
   await dialog.getByRole("switch", { name: "들어오기 전에 승인" }).click();
   await dialog.locator("[data-room-make-link]").click();
-  await expect(dialog.locator("[data-room-link-url]")).toHaveText("https://kurl.me/R101k");
+  await expect(dialog.locator("[data-room-link-url]")).toHaveText(inviteAddress(page, "r101x"));
   await expect(dialog).toContainText("코드 r101x · 0/5번 사용");
   await dialog.getByRole("button", { name: "완료" }).click();
   await expect(dialog).toHaveCount(0);
   await expect(sheet).toBeVisible();
+});
+
+test("copy and share hand out the invite page address the QR window shows, not a short link", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.addInitScript(() => {
+    const shared: string[] = [];
+    Object.assign(window, { sharedUrls: shared });
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: async (data: ShareData) => void shared.push(data.url ?? ""),
+    });
+  });
+  const sheet = await openInvite(page);
+  const address = inviteAddress(page, "r100x");
+
+  await sheet.getByRole("button", { name: "링크 복사" }).click();
+  await expectOnTop(toastBy(page, "초대 링크를 복사했어요"));
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(address);
+
+  await sheet.getByRole("button", { name: "공유" }).click();
+  expect(await page.evaluate(() => (window as unknown as { sharedUrls: string[] }).sharedUrls)).toEqual([address]);
+
+  await sheet.getByRole("button", { name: "QR" }).click();
+  const dialog = page.getByTestId("room-link-dialog");
+  await expect(dialog.locator("[data-room-link-url]")).toHaveText(address);
+  await dialog.getByRole("button", { name: "링크 복사" }).click();
+  await expectOnTop(toastBy(page, "초대 링크를 복사했어요"));
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(address);
+});
+
+test("an address in the shape the sheet hands out opens the invite page", async ({ page }) => {
+  await page.goto("/blog-preview/rooms/join/hike");
+  await expect(page.getByTestId("room-join").getByRole("heading", { level: 1 })).toHaveText("주말 등산 모임", { timeout: 30_000 });
 });
 
 test("settings: the owner approves a request, removes a member and renames the room", async ({ page }) => {
